@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+./gradlew -Pandroid.testInstrumentationRunnerArguments.takeScreenshots=true connectedScenariosDebugAndroidTest

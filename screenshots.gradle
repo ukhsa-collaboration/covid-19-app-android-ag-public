@@ -1,0 +1,57 @@
+import java.nio.file.Files
+
+def testReportDirectory = "$buildDir/reports/TestReport"
+def appReportDirectory = "$buildDir/reports/AppReport"
+def folderOnDevice = '/sdcard/Pictures/covid19'
+
+void deleteDir(File file) {
+    def contents = file.listFiles()
+    if (contents != null) {
+        for (File f : contents) {
+            if (!Files.isSymbolicLink(f.toPath())) {
+                deleteDir(f)
+            }
+        }
+    }
+    file.delete()
+}
+
+def clearScreenshotsTask = task('clearScreenshots', type: Exec) {
+    executable "${android.getAdbExe().toString()}"
+    args 'shell', 'rm', '-r', folderOnDevice
+}
+
+def createScreenshotDirectoryTask = task('createScreenshotDirectory', type: Exec, group: 'reporting') {
+    executable "${android.getAdbExe().toString()}"
+    args 'shell', 'mkdir', '-p', folderOnDevice
+}
+
+def fetchScreenshotsTask = task('fetchScreenshots', type: Exec, group: 'reporting') {
+    executable "${android.getAdbExe().toString()}"
+    args 'pull', "$folderOnDevice/.", testReportDirectory
+
+    finalizedBy {
+        clearScreenshotsTask
+    }
+
+    dependsOn {
+        createScreenshotDirectoryTask
+    }
+
+    doFirst {
+        def testReportDir = new File(testReportDirectory)
+        deleteDir(testReportDir)
+        testReportDir.mkdirs()
+        def appReportDir = new File(appReportDirectory)
+        deleteDir(appReportDir)
+        appReportDir.mkdirs()
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'connectedScenariosDebugAndroidTest') {
+        task.finalizedBy {
+            fetchScreenshotsTask
+        }
+    }
+}

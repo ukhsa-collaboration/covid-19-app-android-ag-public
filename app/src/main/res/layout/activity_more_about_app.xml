@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/TransparentActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="?attr/toolbarColor"
+        app:contentInsetStartWithNavigation="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/about_this_app_title" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="32dp"
+            android:paddingBottom="37dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/how_this_app_works_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp">
+
+                <View
+                    android:id="@+id/line_how_app_works"
+                    android:layout_width="4dp"
+                    android:layout_height="0dp"
+                    android:background="?android:colorPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/howItWorksTitle"
+                    style="@style/Title3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/title_how_app_works"
+                    app:layout_constraintStart_toEndOf="@id/line_how_app_works"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/about_how_this_app_works_text"
+                    app:layout_constraintStart_toEndOf="@id/line_how_app_works"
+                    app:layout_constraintTop_toBottomOf="@id/howItWorksTitle" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/about_user_data_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp">
+
+                <View
+                    android:id="@+id/line_about_data"
+                    android:layout_width="4dp"
+                    android:layout_height="0dp"
+                    android:background="?android:colorPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/aboutUserDataTitle"
+                    style="@style/Title3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/about_your_data_title"
+                    app:layout_constraintStart_toEndOf="@id/line_about_data"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/aboutUserDataText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/about_your_data_text"
+                    app:layout_constraintStart_toEndOf="@id/line_about_data"
+                    app:layout_constraintTop_toBottomOf="@id/aboutUserDataTitle" />
+
+                <TextView
+                    android:id="@+id/linkManageData"
+                    style="@style/LinkText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/about_manage_my_data"
+                    app:layout_constraintTop_toBottomOf="@id/aboutUserDataText" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/our_policies_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp">
+
+                <View
+                    android:id="@+id/line_our_policies"
+                    android:layout_width="4dp"
+                    android:layout_height="0dp"
+                    android:background="?android:colorPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/ourPoliciesTitle"
+                    style="@style/Title3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/about_our_policies_title"
+                    app:layout_constraintStart_toEndOf="@id/line_our_policies"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/ourPoliciesText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/about_our_policies_text"
+                    app:layout_constraintStart_toEndOf="@id/line_our_policies"
+                    app:layout_constraintTop_toBottomOf="@id/ourPoliciesTitle" />
+
+                <TextView
+                    android:id="@+id/linkTermsOfUse"
+                    style="@style/LinkTextWithIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/terms_of_use_onboarding"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ourPoliciesText" />
+
+                <TextView
+                    android:id="@+id/linkPrivacyNotice"
+                    style="@style/LinkTextWithIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/privacy_notice_onboarding"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/linkTermsOfUse" />
+
+                <TextView
+                    android:id="@+id/linkAccessibilityStatement"
+                    style="@style/LinkTextWithIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/about_accessibility_statement"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/linkPrivacyNotice" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/commonQuestionsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp">
+
+                <View
+                    android:id="@+id/lineCommonQuestions"
+                    android:layout_width="4dp"
+                    android:layout_height="0dp"
+                    android:background="?android:colorPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/commonQuestionsTitle"
+                    style="@style/Title3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/about_common_questions_title"
+                    app:layout_constraintStart_toEndOf="@id/lineCommonQuestions"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/commonQuestionsText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/about_common_questions_text"
+                    app:layout_constraintStart_toEndOf="@id/lineCommonQuestions"
+                    app:layout_constraintTop_toBottomOf="@id/commonQuestionsTitle" />
+
+                <TextView
+                    android:id="@+id/linkCommonQuestions"
+                    style="@style/LinkTextWithIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/about_common_questions_link"
+                    app:layout_constraintStart_toEndOf="@id/lineCommonQuestions"
+                    app:layout_constraintTop_toBottomOf="@id/commonQuestionsText" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/softwareInformationContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp">
+
+                <View
+                    android:id="@+id/lineSoftwareInformation"
+                    android:layout_width="4dp"
+                    android:layout_height="0dp"
+                    android:background="?android:colorPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/softwareInformationTitle"
+                    style="@style/Title3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/about_software_information_title"
+                    app:layout_constraintStart_toEndOf="@id/lineSoftwareInformation"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textSoftwareInformation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/about_software_information_text"
+                    app:layout_constraintStart_toEndOf="@id/lineSoftwareInformation"
+                    app:layout_constraintTop_toBottomOf="@id/softwareInformationTitle" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

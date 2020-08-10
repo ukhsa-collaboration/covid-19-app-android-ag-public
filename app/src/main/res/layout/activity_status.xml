@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/statusBanner"
+        layout="@layout/banner_home" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/statusContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:clipChildren="false">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AreaRiskView
+                android:id="@+id/riskAreaView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="24dp"
+                android:elevation="2dp"
+                android:visibility="gone"
+                tools:areaRiskText="CM2 area risk level is LOW"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <FrameLayout
+                android:id="@+id/stateContainer"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:clipChildren="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/riskAreaView">
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.IsolationStatusView
+                    android:id="@+id/isolationView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:clipChildren="false"
+                    android:visibility="gone"
+                    tools:visibility="gone" />
+
+                <FrameLayout
+                    android:id="@+id/contactTracingView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipChildren="false"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <uk.nhs.nhsx.covid19.android.app.widgets.DefaultStatusView
+                        android:id="@+id/contactTracingActiveView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clipChildren="false"
+                        android:visibility="gone"
+                        tools:visibility="gone" />
+
+                    <include
+                        android:id="@+id/contactTracingStoppedView"
+                        layout="@layout/include_stopped"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+                </FrameLayout>
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/mainActionsContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/stateContainer">
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
+                    android:id="@+id/optionVenueCheckIn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    app:optionIcon="@drawable/ic_scan_qr"
+                    app:optionText="@string/status_option_scan_qr_codes" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
+                    android:id="@+id/optionReportSymptoms"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    app:optionIcon="@drawable/ic_report"
+                    app:optionText="@string/status_option_report_symptoms" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
+                    android:id="@+id/optionOrderTest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    app:optionIcon="@drawable/ic_testing"
+                    app:optionText="@string/book_free_test" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
+                    android:id="@+id/optionReadAdvice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    app:optionIcon="@drawable/ic_advice"
+                    app:optionText="@string/status_option_read_latest_advice" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
+                    android:id="@+id/optionReadSelfIsolationAdvice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:visibility="gone"
+                    app:optionIcon="@drawable/ic_advice"
+                    app:optionText="@string/status_option_read_self_isolation_advice" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
+                    android:id="@+id/optionAboutTheApp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    app:optionIcon="@drawable/ic_about_app"
+                    app:optionText="@string/status_option_how_the_app_works" />
+
+                <LinearLayout
+                    android:id="@+id/optionContactTracing"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/status_option_background"
+                    android:gravity="center_vertical"
+                    android:minHeight="56dp"
+                    android:paddingHorizontal="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_signal" />
+
+                    <TextView
+                        style="@style/ActionText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:text="@string/status_option_contact_tracing" />
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/encounterDetectionSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/earlyVersionNotice"
+                style="@style/ActionText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32sp"
+                android:layout_marginTop="32dp"
+                android:paddingBottom="60dp"
+                android:text="@string/this_is_an_early_access_release_of_the_nhs_covid_19_app_exclusively_for_clinical_investigations"
+                app:layout_constraintTop_toBottomOf="@id/mainActionsContainer" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/debugOptionsContainer"
+                android:name="uk.nhs.nhsx.covid19.android.app.status.DebugFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/earlyVersionNotice"
+                tools:visibility="visible" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

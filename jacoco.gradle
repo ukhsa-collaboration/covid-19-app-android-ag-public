@@ -1,0 +1,68 @@
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "0.8.5"
+    // Custom reports directory can be specified like this:
+    // reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = false
+}
+
+project.afterEvaluate {
+
+    android.applicationVariants.all { variant ->
+        def variantName = variant.name
+        def testTaskName = "test${variantName.capitalize()}UnitTest"
+
+        tasks.create(name: "${testTaskName}Coverage", type: JacocoReport, dependsOn: "$testTaskName") {
+            group = "Reporting"
+            description = "Generate Jacoco coverage reports for the ${variantName.capitalize()} build."
+
+            reports {
+                html.enabled = true
+                xml.enabled = true
+            }
+
+            def excludes = [
+                    'jdk.internal.*',
+                    '**/R.class',
+                    '**/R$*.class',
+                    '**/BuildConfig.*',
+                    '**/Manifest*.*',
+                    '**/*Test.*',
+                    'android/**/*.*',
+                    '**/databinding/**/*.*',
+                    '**/android/databinding/*Binding.*',
+                    '**/BR.*',
+                    '**/*_MembersInjector.*',
+                    '**/Dagger*Component.*',
+                    '**/Dagger*Component$Builder.*',
+                    '**/*Module_*Factory.*',
+                    '**/*_Factory.*',
+                    '**/*Fragment*.*',
+                    '**/*Activity*.*',
+                    '**/*Adapter*.*',
+                    '**/*ViewPager*.*',
+                    '**/*ViewHolder*.*',
+                    '**/*Module*.*',
+                    '**/fieldtests/*.*',
+                    '**/widgets/*.*',
+                    '**/fieldtests/**/*.*',
+            ]
+            def javaClasses = fileTree(dir: variant.javaCompiler.destinationDir, excludes: excludes)
+            def kotlinClasses = fileTree(dir: "${buildDir}/tmp/kotlin-classes/${variantName}", excludes: excludes)
+            classDirectories.from = files([javaClasses, kotlinClasses])
+
+            sourceDirectories.from = files([
+                    "$project.projectDir/src/main/java",
+                    "$project.projectDir/src/${variantName}/java",
+                    "$project.projectDir/src/main/kotlin",
+                    "$project.projectDir/src/${variantName}/kotlin"
+            ])
+
+            executionData.from = files("${project.buildDir}/jacoco/${testTaskName}.exec")
+        }
+    }
+}

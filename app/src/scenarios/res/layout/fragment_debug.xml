@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/debugOptionsContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/status_option_background"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="32dp"
+    android:paddingBottom="50dp">
+
+    <Button
+        android:id="@+id/submitKeys"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Submit Keys" />
+
+    <Button
+        android:id="@+id/exportKeys"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Export Keys" />
+
+    <Button
+        android:id="@+id/importKeys"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Import Keys" />
+
+    <Button
+        android:id="@+id/startDownloadTask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start download task" />
+
+    <Button
+        android:id="@+id/sendPositiveTestResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send positive test result" />
+
+    <Button
+        android:id="@+id/sendNegativeTestResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send negative test result" />
+
+    <Button
+        android:id="@+id/defaultState"
+        style="@style/PrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Default" />
+
+    <Button
+        android:id="@+id/indexState"
+        style="@style/PrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Index" />
+
+    <Button
+        android:id="@+id/contactState"
+        style="@style/PrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Contact" />
+
+    <Button
+        android:id="@+id/riskyVenue"
+        style="@style/PrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Risky Venue" />
+
+    <Button
+        android:id="@+id/riskyPostCode"
+        style="@style/PrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Risky Postcode" />
+
+</LinearLayout>

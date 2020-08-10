@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <ImageView
+        android:id="@+id/imgCirclePulseAnim"
+        android:layout_width="@dimen/anim_circle_size"
+        android:layout_height="@dimen/anim_circle_size"
+        android:layout_gravity="center"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toBottomOf="@id/imgRedCircle"
+        app:layout_constraintEnd_toEndOf="@id/imgRedCircle"
+        app:layout_constraintStart_toStartOf="@id/imgRedCircle"
+        app:layout_constraintTop_toTopOf="@id/imgRedCircle"
+        app:srcCompat="@drawable/ic_red_circle" />
+
+    <ImageView
+        android:id="@+id/imgCircleSmallPulseAnim"
+        android:layout_width="@dimen/anim_circle_size"
+        android:layout_height="@dimen/anim_circle_size"
+        android:layout_gravity="center"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toBottomOf="@id/imgRedCircle"
+        app:layout_constraintEnd_toEndOf="@id/imgRedCircle"
+        app:layout_constraintStart_toStartOf="@id/imgRedCircle"
+        app:layout_constraintTop_toTopOf="@id/imgRedCircle"
+        app:srcCompat="@drawable/ic_red_circle" />
+
+    <LinearLayout
+        android:id="@+id/isolationTitleContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/titleIsolationCountdown"
+            style="@style/TitleIsolation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/you_need_to_self_isolate" />
+
+        <TextView
+            android:id="@+id/subTitleIsolationCountdown"
+            style="@style/SubTitleIsolation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_horizontal"
+            android:text="@string/isolation_until_date" />
+    </LinearLayout>
+
+    <uk.nhs.nhsx.covid19.android.app.widgets.CircularProgressBar
+        android:id="@+id/isolationCountdownView"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        app:cpb_background_progressbar_color="?colorSurface"
+        app:cpb_background_progressbar_width="6dp"
+        app:cpb_progress="30"
+        app:cpb_progressbar_color="?attr/colorError"
+        app:cpb_progressbar_width="6dp"
+        app:cpb_round_border="true"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/isolationTitleContainer" />
+
+    <ImageView
+        android:id="@+id/imgRedCircle"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:layout_gravity="center"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toBottomOf="@id/isolationCountdownView"
+        app:layout_constraintEnd_toEndOf="@id/isolationCountdownView"
+        app:layout_constraintStart_toStartOf="@id/isolationCountdownView"
+        app:layout_constraintTop_toTopOf="@id/isolationCountdownView"
+        app:srcCompat="@drawable/ic_red_circle" />
+
+    <TextView
+        android:id="@+id/isolationDaysToGo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        tools:text="14"
+        android:textAlignment="center"
+        android:textColor="?attr/colorOnError"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imgRedCircle"
+        app:layout_constraintEnd_toEndOf="@+id/imgRedCircle"
+        app:layout_constraintStart_toStartOf="@+id/imgRedCircle"
+        app:layout_constraintTop_toTopOf="@+id/imgRedCircle" />
+
+    <TextView
+        android:id="@+id/titleDaysToGo"
+        style="@style/Title1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center_horizontal"
+        tools:text="Days to go"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/isolationCountdownView" />
+</merge>

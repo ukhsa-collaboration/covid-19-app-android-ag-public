@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/TransparentActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        app:contentInsetStartWithNavigation="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/about_manage_my_data" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="?android:colorBackground"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+            <TextView
+                style="@style/AboutAppTitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="32dp"
+                android:gravity="center_vertical"
+                android:text="@string/postal_district" />
+
+            <TextView
+                android:id="@+id/postalDistrict"
+                style="@style/AboutAppItemValueText"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:background="?attr/colorSurface"
+                android:gravity="center_vertical"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp"
+                tools:text="SW" />
+
+            <TextView
+                android:id="@+id/titleLatestResult"
+                style="@style/AboutAppTitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="9dp"
+                android:gravity="center_vertical"
+                android:text="@string/title_last_test_result_taken" />
+
+            <LinearLayout
+                android:id="@+id/latestResultContainer"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:background="?attr/colorSurface"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/lastResultValue"
+                    style="@style/AboutAppItemValueText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="10dp"
+                    tools:text="Value" />
+
+                <TextView
+                    android:id="@+id/lastResultDate"
+                    style="@style/Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|end"
+                    android:paddingEnd="30dp"
+                    tools:text="Date" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/titleSymptoms"
+                style="@style/AboutAppTitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="9dp"
+                android:gravity="center_vertical"
+                android:text="@string/title_symptoms" />
+
+            <LinearLayout
+                android:id="@+id/symptomsDataSection"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:background="?attr/colorSurface"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    style="@style/AboutAppItemValueText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/about_my_data_symptoms_date" />
+
+                <TextView
+                    android:id="@+id/textViewSymptomsDate"
+                    style="@style/Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|end"
+                    android:paddingEnd="30dp"
+                    tools:text="@string/about_my_data_symptoms_date" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/titleEncounter"
+                style="@style/AboutAppTitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="9dp"
+                android:gravity="center_vertical"
+                android:text="@string/title_encounter" />
+
+            <LinearLayout
+                android:id="@+id/encounterDataSection"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:background="?attr/colorSurface"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    style="@style/AboutAppItemValueText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/about_my_data_symptoms_date" />
+
+                <TextView
+                    android:id="@+id/textEncounterDate"
+                    style="@style/Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|end"
+                    android:paddingEnd="30dp"
+                    tools:text="@string/about_my_data_symptoms_date" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/venueVisitsTitle"
+                style="@style/AboutAppTitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="9dp"
+                android:gravity="center_vertical"
+                android:text="@string/title_venue_history" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/venueHistoryList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorSurface"
+                android:gravity="center_vertical"
+                android:overScrollMode="never"
+                tools:itemCount="4"
+                tools:listitem="@layout/item_user_data" />
+
+            <TextView
+                android:id="@+id/actionDeleteAllData"
+                style="@style/ErrorText"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="20dp"
+                android:gravity="center"
+                android:text="@string/about_delete_all_data" />
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

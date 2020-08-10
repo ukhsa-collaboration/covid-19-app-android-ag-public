@@ -1,0 +1,8 @@
+<network-security-config>
+
+    <!--    This entry is needed for testing on device with okhttp/mockwebserver -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">localhost</domain>
+    </domain-config>
+
+</network-security-config>

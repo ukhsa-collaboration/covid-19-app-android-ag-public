@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2020 NHSX. All rights reserved.
+  -->
+
+<resources>
+    <!-- primary colors -->
+    <color name="nhs_blue">#005EB8</color>
+    <color name="nhs_lighter_blue">#0072CE</color>
+    <color name="nhs_button_green">#007F3B</color>
+    <color name="light_green">#4EBD74</color>
+
+    <!-- greyscale -->
+    <color name="black">#000000</color>
+    <color name="primary_text_grey">#212B32</color>
+    <color name="secondary_text_grey">#4C6272</color>
+    <color name="tertiary_text_grey">#D8DDE0</color>
+    <color name="background">#F0F4F5</color>
+    <color name="surface_background">#FFFFFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- status colors -->
+    <color name="error_red">#D5281B</color>
+    <color name="focus_yellow">#FFEB3B</color>
+    <color name="amber">#FFB81C</color>
+
+    <!-- use case relevant colors -->
+    <color name="qr_code_overlay">#AA000000</color>
+    <color name="about_app_text_color">#333333</color>
+
+    <!-- geiger animation colors -->
+    <color name="circle_one_green">#78B998</color>
+    <color name="circle_two_green">#A8D1BE</color>
+    <color name="circle_three_green">#CCE3D9</color>
+    <color name="circle_four_green">#D8E8E3</color>
+    <!-- isolation countdown colors -->
+    <color name="progress_background">#D8D0D2</color>
+
+    <color name="links_toolbar_color">@color/nhs_blue</color>
+</resources>

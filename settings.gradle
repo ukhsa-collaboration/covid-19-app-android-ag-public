@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "NHS COVID-19"

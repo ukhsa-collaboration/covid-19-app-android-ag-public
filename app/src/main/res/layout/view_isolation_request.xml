@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_lock" />
+
+        <TextView
+            android:id="@+id/isolationRequestTitle1"
+            style="@style/TitleIsolation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            tools:text="Please isolate for" />
+
+        <TextView
+            android:id="@+id/isolationRequestTitle2"
+            style="@style/Title1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="56sp"
+            tools:text="7 days" />
+
+        <uk.nhs.nhsx.covid19.android.app.widgets.StateInfoView
+            android:id="@+id/isolationRequestInfoView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+            android:background="@color/surface_background"
+            app:stateColor="@color/tertiary_text_grey"
+            app:stateText="" />
+
+        <uk.nhs.nhsx.covid19.android.app.util.ParagraphsContainer
+            android:id="@+id/isolationRequestParagraphContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/isolationRequestOnlineServiceLink"
+            style="@style/LinkTextWithIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:text="@string/nhs_111_online_service" />
+
+        <Button
+            android:id="@+id/isolationRequestActionButton"
+            style="@style/PrimaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            tools:text="Action" />
+
+    </LinearLayout>
+</ScrollView>

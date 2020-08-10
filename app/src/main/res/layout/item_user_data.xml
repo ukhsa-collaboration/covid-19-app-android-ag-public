@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/colorSurface">
+
+    <TextView
+        android:id="@+id/textVenueName"
+        style="@style/ActionText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_marginStart="32dp"
+        tools:text="The Harp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/textVenueId"/>
+
+    <TextView
+        style="@style/ActionText"
+        android:id="@+id/textVenueId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Id: HHF94J5H"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintTop_toTopOf="@id/textVenueName"
+        app:layout_constraintStart_toEndOf="@id/textVenueName"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/textDate"
+        style="@style/Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/textVenueName"
+        app:layout_constraintTop_toBottomOf="@id/textVenueName"
+        tools:text="17 Jul 2020 12:15 - 01:00 18 Jul 2020" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  ~ Copyright © 2020 NHSX. All rights reserved.
+  -->
+
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?colorPrimary">
+
+    <item android:id="@android:id/background">
+        <shape>
+            <solid android:color="?colorPrimary" />
+            <corners android:radius="8dp" />
+            <padding
+                android:bottom="0dp"
+                android:left="0dp"
+                android:right="0dp"
+                android:top="0dp" />
+        </shape>
+    </item>
+</ripple>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2020 NHSX. All rights reserved.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_isolate"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="80dp">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/nhsLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:baselineAlignBottom="true"
+        android:contentDescription="@null"
+        android:paddingVertical="4dp"
+        android:scaleType="center"
+        android:src="@drawable/nhs_logo_light"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nhsLogo">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                android:id="@+id/edgeCaseTitle"
+                style="@style/OnboardingTitle"
+                android:layout_width="400dp"
+                android:layout_height="wrap_content"
+                android:paddingTop="100dp"
+                android:text="@string/tablet_support_title"
+                android:textSize="48sp" />
+
+            <TextView
+                android:id="@+id/edgeCaseText"
+                android:layout_width="400dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:lineSpacingMultiplier="1.2"
+                android:text="@string/tablet_support_description"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tabletInformationUrl"
+                style="@style/PrimaryTextLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:paddingVertical="16dp"
+                android:text="@string/tablet_information_url" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

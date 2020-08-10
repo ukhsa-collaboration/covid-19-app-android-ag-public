@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/testResultContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_toolbar_background" />
+
+    <include
+        android:id="@+id/goodNewsContainer"
+        layout="@layout/view_good_news"
+        android:visibility="gone"
+        tools:visibility="gone" />
+
+    <include
+        android:id="@+id/isolationRequestContainer"
+        layout="@layout/view_isolation_request"
+        android:visibility="gone"
+        tools:visibility="gone" />
+</LinearLayout>
