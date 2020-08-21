@@ -4,11 +4,11 @@
 
 package uk.nhs.nhsx.covid19.android.app.common
 
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_edge_case.edgeCaseText
 import kotlinx.android.synthetic.main.activity_edge_case.edgeCaseTitle
@@ -21,7 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import javax.inject.Inject
 import javax.inject.Named
 
-class EnableBluetoothActivity : AppCompatActivity(R.layout.activity_edge_case) {
+class EnableBluetoothActivity : BaseActivity(R.layout.activity_edge_case) {
 
     @Inject
     @Named(BLUETOOTH_STATE_NAME)
@@ -63,14 +63,27 @@ class EnableBluetoothActivity : AppCompatActivity(R.layout.activity_edge_case) {
     }
 
     private fun navigateToBluetoothSettings() {
-        val intent = Intent(Intent.ACTION_MAIN, null)
-        intent.addCategory(Intent.CATEGORY_LAUNCHER)
-        intent.component = ComponentName(
-            "com.android.settings",
-            "com.android.settings.bluetooth.BluetoothSettings"
-        )
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(intent)
+        val bluetoothSettingsIntent = Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS)
+
+        val canDeviceResolveBluetoothSettingsIntent =
+            packageManager.resolveActivity(
+                bluetoothSettingsIntent,
+                PackageManager.MATCH_DEFAULT_ONLY
+            ) != null
+
+        if (canDeviceResolveBluetoothSettingsIntent) {
+            try {
+                startActivity(bluetoothSettingsIntent)
+            } catch (e: Exception) {
+                showBluetoothSettingsNavigationFailedMessage()
+            }
+        } else {
+            showBluetoothSettingsNavigationFailedMessage()
+        }
+    }
+
+    private fun showBluetoothSettingsNavigationFailedMessage() {
+        Toast.makeText(this, R.string.enable_bluetooth_error_hint, Toast.LENGTH_LONG).show()
     }
 
     companion object {

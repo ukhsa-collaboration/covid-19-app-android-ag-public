@@ -8,6 +8,7 @@ import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityListener
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityWorker
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
+import uk.nhs.nhsx.covid19.android.app.status.StatusBaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ClearOutdatedDataWorker
 import uk.nhs.nhsx.covid19.android.app.common.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableExposureNotificationsActivity
@@ -37,7 +38,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.ExpirationCheckReceiver
 import uk.nhs.nhsx.covid19.android.app.receiver.UpdateReceiver
 import uk.nhs.nhsx.covid19.android.app.status.DebugFragment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
-import uk.nhs.nhsx.covid19.android.app.questionnaire.review.PositiveSymptomsActivity
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
 import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWorker
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWorker
@@ -55,11 +56,12 @@ import javax.inject.Singleton
     ]
 )
 interface ApplicationComponent {
+    fun inject(baseActivity: BaseActivity)
     fun inject(activity: MainActivity)
     fun inject(activity: PermissionActivity)
     fun inject(activity: PostCodeActivity)
     fun inject(activity: StatusActivity)
-    fun inject(activity: BaseActivity)
+    fun inject(activity: StatusBaseActivity)
     fun inject(activity: EnableBluetoothActivity)
     fun inject(activity: EnableLocationActivity)
     fun inject(activity: EnableExposureNotificationsActivity)
@@ -74,7 +76,7 @@ interface ApplicationComponent {
     fun inject(qrScannerActivity: QrScannerActivity)
     fun inject(questionnaireActivity: QuestionnaireActivity)
     fun inject(testOrderingActivity: TestOrderingActivity)
-    fun inject(positiveSymptomsActivity: PositiveSymptomsActivity)
+    fun inject(symptomsAdviceIsolateActivity: SymptomsAdviceIsolateActivity)
     fun inject(isolationExpirationActivity: IsolationExpirationActivity)
     fun inject(reviewSymptomsActivity: ReviewSymptomsActivity)
     fun inject(expirationCheckReceiver: ExpirationCheckReceiver)

@@ -18,7 +18,7 @@ import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityViewModel.App
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager.AvailableUpdateStatus.Available
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager.AvailableUpdateStatus.NoUpdateAvailable
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager.AvailableUpdateStatus.UpdateError
-import uk.nhs.nhsx.covid19.android.app.common.TranslatedString
+import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.remote.data.AppAvailabilityResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumAppVersion
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumSdkVersion
@@ -92,26 +92,29 @@ class AppAvailabilityViewModelTest {
     }
 
     @Test
-    fun `app version is lower than min app version and cannot check update availabilty`() = runBlocking {
-        every { appAvailabilityProvider.appAvailability } returns stubResponse(
-            minSdkValue = 23,
-            minAppVersionCode = 10
-        )
-        coEvery { updateManager.getAvailableUpdateVersionCode() } returns UpdateError(RuntimeException())
+    fun `app version is lower than min app version and cannot check update availabilty`() =
+        runBlocking {
+            every { appAvailabilityProvider.appAvailability } returns stubResponse(
+                minSdkValue = 23,
+                minAppVersionCode = 10
+            )
+            coEvery { updateManager.getAvailableUpdateVersionCode() } returns UpdateError(
+                RuntimeException()
+            )
 
-        testSubject.checkAvailability(deviceSdkVersion = 23, appVersionCode = 9)
+            testSubject.checkAvailability(deviceSdkVersion = 23, appVersionCode = 9)
 
-        verify { observer.onChanged(AppVersionNotSupported("Please Update App")) }
-    }
+            verify { observer.onChanged(AppVersionNotSupported("Please Update App")) }
+        }
 
     private fun stubResponse(minSdkValue: Int = 23, minAppVersionCode: Int = 8) =
         AppAvailabilityResponse(
             minimumAppVersion = MinimumAppVersion(
-                description = TranslatedString(enGB = "Please Update App"),
+                description = Translatable(mapOf("en-GB" to "Please Update App")),
                 value = minAppVersionCode
             ),
             minimumSdkVersion = MinimumSdkVersion(
-                TranslatedString(enGB = "Please Update Device"),
+                description = Translatable(mapOf("en-GB" to "Please Update Device")),
                 value = minSdkValue
             )
         )

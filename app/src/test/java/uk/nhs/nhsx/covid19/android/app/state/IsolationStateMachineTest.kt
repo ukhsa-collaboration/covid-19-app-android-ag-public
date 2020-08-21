@@ -478,6 +478,21 @@ class IsolationStateMachineTest {
         assertEquals(Default(previousIsolation = indexCase), actual)
     }
 
+    @Test
+    fun `reset should put state machine in default state with no history`() {
+        val startDate = Instant.now(fixedClock)
+        val expiryDate = LocalDate.now(fixedClock).plusDays(3)
+        val indexCase = Isolation(startDate, expiryDate, IndexCase(LocalDate.parse("2020-05-20")))
+
+        every { stateProvider.state } returns indexCase
+
+        val testSubject = createIsolationStateMachine()
+
+        testSubject.reset()
+
+        assertEquals(Default(), testSubject.readState())
+    }
+
     private fun indexCase(): Isolation {
         val startDate = Instant.now(fixedClock)
         val expiryDate = LocalDate.now(fixedClock).plusDays(3)

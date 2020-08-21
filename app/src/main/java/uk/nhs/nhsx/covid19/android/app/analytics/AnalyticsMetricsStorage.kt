@@ -7,7 +7,7 @@ import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import javax.inject.Inject
 
 class AnalyticsMetricsStorage @Inject constructor(
-    analyticsMetricsJsonStorage: AnalyticsMetricsJsonStorage,
+    private val analyticsMetricsJsonStorage: AnalyticsMetricsJsonStorage,
     moshi: Moshi
 ) {
     fun reset() {
@@ -32,14 +32,12 @@ class AnalyticsMetricsStorage @Inject constructor(
 
     private val adapter = moshi.adapter(Metrics::class.java)
 
-    private var metricsJson = analyticsMetricsJsonStorage.metricsJson
-
     var metrics: Metrics
-        get() = metricsJson?.let {
+        get() = analyticsMetricsJsonStorage.value?.let {
             adapter.fromJson(it) ?: Metrics()
         } ?: Metrics()
         set(value) {
-            metricsJson = adapter.toJson(value)
+            analyticsMetricsJsonStorage.value = adapter.toJson(value)
         }
 }
 
@@ -47,7 +45,7 @@ class AnalyticsMetricsJsonStorage @Inject constructor(sharedPreferences: SharedP
 
     private val metricsPrefs = sharedPreferences.with<String>(ANALYTICS_METRICS_KEY)
 
-    var metricsJson by metricsPrefs
+    var value by metricsPrefs
 
     companion object {
         const val ANALYTICS_METRICS_KEY = "ANALYTICS_METRICS_KEY"

@@ -2,7 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.onboarding.postcode
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
@@ -29,7 +29,7 @@ class PostCodeViewModelTest {
     fun `valid post code`() = runBlocking {
         testSubject.viewState().observeForever(postCodeViewState)
 
-        every { postCodeValidator.validate(any()) } returns true
+        coEvery { postCodeValidator.validate(any()) } returns true
 
         val postCode = "CM1"
         testSubject.validate(postCode)
@@ -41,7 +41,7 @@ class PostCodeViewModelTest {
     fun `invalid post code`() = runBlocking {
         testSubject.viewState().observeForever(postCodeViewState)
 
-        every { postCodeValidator.validate(any()) } returns false
+        coEvery { postCodeValidator.validate(any()) } returns false
 
         val postCode = "CM1"
         testSubject.validate(postCode)

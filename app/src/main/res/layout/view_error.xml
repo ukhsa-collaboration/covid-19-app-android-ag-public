@@ -21,7 +21,7 @@
 
         <TextView
             android:id="@+id/errorTitle"
-            style="@style/TextViewActionTitle"
+            style="@style/ActionText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/error_title" />

@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.common
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.work.BackoffPolicy.EXPONENTIAL
 import androidx.work.BackoffPolicy.LINEAR
 import androidx.work.Constraints
@@ -14,15 +15,13 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.squareup.moshi.Moshi
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTask.CLEAR_OUTDATED_DATA
+import uk.nhs.nhsx.covid19.android.app.common.PeriodicTask.RISKY_VENUE_POLLING
 import uk.nhs.nhsx.covid19.android.app.exposure.SubmitKeysWorker
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInitialWorker
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposurePollingCircuitBreakerWorker
 import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadKeysWorker
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenuesWorker
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.RiskyVenuesCircuitBreakerInitialWorker
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.RiskyVenuesCircuitBreakerPollingWorker
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.RiskyVenuesCircuitBreakerPollingWorker.Companion.APPROVAL_TOKEN
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.RiskyVenuesCircuitBreakerPollingWorker.Companion.VENUE_ID
 import uk.nhs.nhsx.covid19.android.app.remote.data.TemporaryExposureKeysPayload
 import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWorker
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWorker
@@ -66,6 +65,11 @@ class PeriodicTasks @Inject constructor(
                 .setConstraints(constraints)
                 .build()
 
+        val riskyVenuesPollingCircuitBreakerWork =
+            PeriodicWorkRequestBuilder<RiskyVenuesCircuitBreakerPollingWorker>(interval, timeUnit)
+                .setConstraints(constraints)
+                .build()
+
         val policy = if (keepPrevious) {
             KEEP
         } else {
@@ -98,7 +102,25 @@ class PeriodicTasks @Inject constructor(
                 policy,
                 clearOutdatedData
             )
+            enqueueUniquePeriodicWork(
+                RISKY_VENUE_POLLING.workName,
+                policy,
+                riskyVenuesPollingCircuitBreakerWork
+            )
         }
+    }
+
+    @VisibleForTesting
+    fun scheduleVirologyTestResultFetching() {
+        val downloadVirologyTestResults =
+            OneTimeWorkRequestBuilder<DownloadVirologyTestResultWorker>()
+                .build()
+
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            PeriodicTask.DOWNLOAD_VIROLOGY_TEST_RESULTS.workName,
+            ExistingWorkPolicy.REPLACE,
+            downloadVirologyTestResults
+        )
     }
 
     fun scheduleExposureCircuitBreakerPolling(
@@ -107,7 +129,6 @@ class PeriodicTasks @Inject constructor(
         interval: Long = 2,
         timeUnit: TimeUnit = HOURS
     ) {
-
         val inputData =
             Data.Builder()
                 .putString(ExposurePollingCircuitBreakerWorker.APPROVAL_TOKEN, approvalToken)
@@ -144,62 +165,6 @@ class PeriodicTasks @Inject constructor(
         WorkManager.getInstance(context).enqueue(initialExposureCircuitBreakerWork)
     }
 
-    fun scheduleRiskyVenuesCircuitBreakerInitial(
-        venueId: String,
-        interval: Long = 2,
-        timeUnit: TimeUnit = HOURS
-    ) {
-        val inputData =
-            Data.Builder()
-                .putString(RiskyVenuesCircuitBreakerInitialWorker.VENUE_ID, venueId)
-                .build()
-
-        val initialRiskyVenuesCircuitBreakerWork =
-            OneTimeWorkRequestBuilder<RiskyVenuesCircuitBreakerInitialWorker>()
-                .setBackoffCriteria(LINEAR, interval, timeUnit)
-                .setConstraints(constraints)
-                .setInputData(inputData)
-                .build()
-
-        WorkManager.getInstance(context).enqueueUniqueWork(
-            "VenueCheck{$venueId}",
-            ExistingWorkPolicy.KEEP,
-            initialRiskyVenuesCircuitBreakerWork
-        )
-    }
-
-    fun scheduleRiskyVenuesCircuitBreakerPolling(
-        approvalToken: String,
-        venueId: String,
-        interval: Long = 2,
-        timeUnit: TimeUnit = HOURS
-    ) {
-        val inputData =
-            Data.Builder()
-                .putString(APPROVAL_TOKEN, approvalToken)
-                .putString(VENUE_ID, venueId)
-                .build()
-
-        val riskyVenuesPollingCircuitBreakerWork =
-            OneTimeWorkRequestBuilder<RiskyVenuesCircuitBreakerPollingWorker>()
-                .setBackoffCriteria(LINEAR, interval, timeUnit)
-                .setConstraints(constraints)
-                .setInputData(inputData)
-                .build()
-
-        WorkManager.getInstance(context).enqueueUniqueWork(
-            getRiskyVenuePollingWorkName(venueId),
-            ExistingWorkPolicy.KEEP,
-            riskyVenuesPollingCircuitBreakerWork
-        )
-    }
-
-    fun cancelRiskyVenuePolling(venueId: String) {
-        WorkManager.getInstance(context).cancelUniqueWork(getRiskyVenuePollingWorkName(venueId))
-    }
-
-    private fun getRiskyVenuePollingWorkName(venueId: String) = "VenuePolling{$venueId}"
-
     fun scheduleKeysSubmission(
         payload: TemporaryExposureKeysPayload,
         interval: Long = 5,
@@ -231,4 +196,5 @@ enum class PeriodicTask(val workName: String) {
     DOWNLOAD_RISKY_VENUES("downloadAndProcessRiskyVenus"),
     DOWNLOAD_VIROLOGY_TEST_RESULTS("downloadVirologyTestResults"),
     CLEAR_OUTDATED_DATA("clearOutdatedData"),
+    RISKY_VENUE_POLLING("RiskyVenuePolling")
 }

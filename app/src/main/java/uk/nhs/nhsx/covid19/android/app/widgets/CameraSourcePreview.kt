@@ -15,7 +15,6 @@
  */
 package uk.nhs.nhsx.covid19.android.app.widgets
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.util.AttributeSet
@@ -61,24 +60,25 @@ class CameraSourcePreview @JvmOverloads constructor(
         cameraSource = null
     }
 
-    @SuppressLint("MissingPermission")
     private fun startIfReady() {
-        if (startRequested && surfaceAvailable) {
+        if (!(startRequested && surfaceAvailable)) {
+            return
+        }
+
+        try {
             cameraSource!!.start(surfaceView.holder)
             startRequested = false
+        } catch (se: SecurityException) {
+            Timber.e(se, "Do not have permission to start the camera")
+        } catch (e: IOException) {
+            Timber.e(e, "Could not start camera source.")
         }
     }
 
     private inner class SurfaceCallback : Callback {
         override fun surfaceCreated(surface: SurfaceHolder) {
             surfaceAvailable = true
-            try {
-                startIfReady()
-            } catch (se: SecurityException) {
-                Timber.e(se, "Do not have permission to start the camera")
-            } catch (e: IOException) {
-                Timber.e(e, "Could not start camera source.")
-            }
+            startIfReady()
         }
 
         override fun surfaceDestroyed(surface: SurfaceHolder) {
@@ -132,13 +132,7 @@ class CameraSourcePreview @JvmOverloads constructor(
         for (i in 0 until childCount) {
             getChildAt(i).layout(0, 0, childWidth, childHeight)
         }
-        try {
-            startIfReady()
-        } catch (se: SecurityException) {
-            Timber.e(se, "Do not have permission to start the camera")
-        } catch (e: IOException) {
-            Timber.e(e, "Could not start camera source.")
-        }
+        startIfReady()
     }
 
     private val isPortraitMode: Boolean

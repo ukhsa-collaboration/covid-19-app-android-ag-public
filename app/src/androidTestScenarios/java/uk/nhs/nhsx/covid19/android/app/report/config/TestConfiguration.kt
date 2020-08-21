@@ -18,5 +18,6 @@ enum class Theme(val exportName: String) {
 data class TestConfiguration(
     val orientation: Orientation,
     val fontScale: FontScale,
-    val theme: Theme
+    val theme: Theme,
+    val languageCode: String? = null
 )

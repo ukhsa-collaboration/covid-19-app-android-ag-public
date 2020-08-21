@@ -5,6 +5,7 @@ import com.google.android.gms.nearby.exposurenotification.ExposureInformation
 import com.google.android.gms.nearby.exposurenotification.ExposureSummary
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import java.io.File
+import java.util.Date
 
 class MockExposureNotificationApi : ExposureNotificationApi {
 
@@ -56,6 +57,9 @@ class MockExposureNotificationApi : ExposureNotificationApi {
         return listOf(
             ExposureInformation
                 .ExposureInformationBuilder()
+                .setAttenuationDurations(intArrayOf(1000))
+                .setTotalRiskScore(1000)
+                .setDateMillisSinceEpoch(Date().time)
                 .build()
         )
     }

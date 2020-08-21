@@ -1,9 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright © 2020 NHSX. All rights reserved.
   -->
 
 <resources>
-
     <!-- Used for the key title on the page -->
     <style name="Title1">
         <item name="android:textColor">?android:textColorPrimary</item>
@@ -127,20 +127,15 @@
     </style>
 
     <style name="TextViewError" parent="Widget.AppCompat.TextView">
-        <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:lineSpacingMultiplier">1.18</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/error_red</item>
     </style>
 
     <style name="PrimaryTextLink" parent="LinkTextWithIcon">
         <item name="android:gravity">center_vertical</item>
         <item name="android:minHeight">48dp</item>
-    </style>
-
-    <style name="TextViewActionTitle" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textSize">16sp</item>
-        <item name="fontFamily">sans-serif-medium</item>
     </style>
 
     <style name="OnboardingTitle" parent="Widget.MaterialComponents.TextView">

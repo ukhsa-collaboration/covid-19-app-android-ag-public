@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_about_user_data.actionDeleteAllData
@@ -26,6 +25,7 @@ import kotlinx.android.synthetic.main.activity_about_user_data.venueVisitsTitle
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -42,7 +42,8 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import javax.inject.Inject
 
-class UserDataActivity : AppCompatActivity(R.layout.activity_about_user_data) {
+class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
+
     @Inject
     lateinit var factory: ViewModelFactory<UserDataViewModel>
 
@@ -88,6 +89,13 @@ class UserDataActivity : AppCompatActivity(R.layout.activity_about_user_data) {
             }
         )
 
+        viewModel.getAllUserDataDeleted().observe(
+            this,
+            Observer {
+                handleAllUserDataDeleted()
+            }
+        )
+
         viewModel.loadUserData()
 
         actionDeleteAllData.setOnClickListener {
@@ -100,7 +108,8 @@ class UserDataActivity : AppCompatActivity(R.layout.activity_about_user_data) {
             titleLatestResult.gone()
             latestResultContainer.gone()
         } else {
-            val dateTime = LocalDateTime.ofInstant(latestTestResult.testEndDate, ZoneId.systemDefault())
+            val dateTime =
+                LocalDateTime.ofInstant(latestTestResult.testEndDate, ZoneId.systemDefault())
             lastResultValue.text = getTestResultText(latestTestResult)
             lastResultDate.text = dateTime.uiFormat()
 
@@ -120,11 +129,11 @@ class UserDataActivity : AppCompatActivity(R.layout.activity_about_user_data) {
         builder.setPositiveButton(
             R.string.about_delete_positive_text
         ) { _, _ ->
-            deleteDataAndOpenOnboardingScreen()
+            viewModel.deleteAllUserData()
         }
 
         builder.setNegativeButton(
-            R.string.about_delete_negative_text
+            R.string.cancel
         ) { dialog, _ ->
             dialog.dismiss()
         }
@@ -132,17 +141,11 @@ class UserDataActivity : AppCompatActivity(R.layout.activity_about_user_data) {
         builder.show()
     }
 
-    private fun deleteDataAndOpenOnboardingScreen() {
-        deleteAllData()
-
+    private fun handleAllUserDataDeleted() {
         startActivity<MainActivity> {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         finish()
-    }
-
-    private fun deleteAllData() {
-        viewModel.deleteAllUserData()
     }
 
     private fun handleStateMachineState(it: State) {
@@ -157,7 +160,8 @@ class UserDataActivity : AppCompatActivity(R.layout.activity_about_user_data) {
             titleEncounter.visible()
             encounterDataSection.visible()
 
-            val dateTime = LocalDateTime.ofInstant(isolation.contactCase.startDate, ZoneId.systemDefault())
+            val dateTime =
+                LocalDateTime.ofInstant(isolation.contactCase.startDate, ZoneId.systemDefault())
             textEncounterDate.text = dateTime.uiFormat()
         } else {
             titleEncounter.gone()

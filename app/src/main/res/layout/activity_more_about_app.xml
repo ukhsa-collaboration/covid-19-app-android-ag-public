@@ -38,7 +38,7 @@
                     android:id="@+id/line_how_app_works"
                     android:layout_width="4dp"
                     android:layout_height="0dp"
-                    android:background="?android:colorPrimary"
+                    android:background="@color/style_purple"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -73,7 +73,7 @@
                     android:id="@+id/line_about_data"
                     android:layout_width="4dp"
                     android:layout_height="0dp"
-                    android:background="?android:colorPrimary"
+                    android:background="@color/style_orange"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -119,7 +119,7 @@
                     android:id="@+id/line_our_policies"
                     android:layout_width="4dp"
                     android:layout_height="0dp"
-                    android:background="?android:colorPrimary"
+                    android:background="@color/nhs_lighter_blue"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -144,7 +144,7 @@
                     app:layout_constraintStart_toEndOf="@id/line_our_policies"
                     app:layout_constraintTop_toBottomOf="@id/ourPoliciesTitle" />
 
-                <TextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                     android:id="@+id/linkTermsOfUse"
                     style="@style/LinkTextWithIcon"
                     android:layout_width="wrap_content"
@@ -155,18 +155,18 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/ourPoliciesText" />
 
-                <TextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                     android:id="@+id/linkPrivacyNotice"
                     style="@style/LinkTextWithIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:gravity="center_vertical"
-                    android:text="@string/privacy_notice_onboarding"
+                    android:text="@string/privacy_notice"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/linkTermsOfUse" />
 
-                <TextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                     android:id="@+id/linkAccessibilityStatement"
                     style="@style/LinkTextWithIcon"
                     android:layout_width="wrap_content"
@@ -188,7 +188,7 @@
                     android:id="@+id/lineCommonQuestions"
                     android:layout_width="4dp"
                     android:layout_height="0dp"
-                    android:background="?android:colorPrimary"
+                    android:background="@color/style_teal"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -213,7 +213,7 @@
                     app:layout_constraintStart_toEndOf="@id/lineCommonQuestions"
                     app:layout_constraintTop_toBottomOf="@id/commonQuestionsTitle" />
 
-                <TextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                     android:id="@+id/linkCommonQuestions"
                     style="@style/LinkTextWithIcon"
                     android:layout_width="wrap_content"
@@ -235,7 +235,7 @@
                     android:id="@+id/lineSoftwareInformation"
                     android:layout_width="4dp"
                     android:layout_height="0dp"
-                    android:background="?android:colorPrimary"
+                    android:background="@color/nhs_blue"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -260,6 +260,20 @@
                     app:layout_constraintStart_toEndOf="@id/lineSoftwareInformation"
                     app:layout_constraintTop_toBottomOf="@id/softwareInformationTitle" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                style="@style/Title3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="@string/about_description"
+                android:textAlignment="center" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:srcCompat="@drawable/ic_onboarding_welcome" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

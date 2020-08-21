@@ -9,7 +9,7 @@ import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.common.TranslatedString
+import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.remote.AppAvailabilityApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.AppAvailabilityResponse
@@ -60,11 +60,11 @@ class GetAvailabilityStatusTest {
     private fun stubResponse(minSdkValue: Int = 23, minAppVersionCode: Int = 8) =
         AppAvailabilityResponse(
             minimumAppVersion = MinimumAppVersion(
-                description = TranslatedString(enGB = "Please Update or Not available"),
+                description = Translatable(mapOf("en-GB" to "Please Update or Not available")),
                 value = minAppVersionCode
             ),
             minimumSdkVersion = MinimumSdkVersion(
-                TranslatedString(enGB = "Not supported"),
+                description = Translatable(mapOf("en-GB" to "Not supported")),
                 value = minSdkValue
             )
         )

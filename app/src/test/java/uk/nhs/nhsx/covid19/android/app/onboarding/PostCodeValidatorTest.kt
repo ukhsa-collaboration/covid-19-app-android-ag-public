@@ -4,52 +4,50 @@
 
 package uk.nhs.nhsx.covid19.android.app.onboarding
 
-import io.mockk.Called
+import io.mockk.coEvery
 import io.mockk.mockk
-import io.mockk.verifyAll
-import org.assertj.core.api.Assertions.assertThat
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeProvider
+import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeLoader
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeValidator
+import kotlin.test.assertEquals
 
 class PostCodeValidatorTest {
 
-    private val postCodeProvider = mockk<PostCodeProvider>(relaxed = true)
+    private val postCodeLoader = mockk<PostCodeLoader>(relaxed = true)
     private val validator =
         PostCodeValidator(
-            postCodeProvider
+            postCodeLoader
         )
 
     @Test
-    fun emptyPostCode() {
+    fun emptyPostCode() = runBlocking {
+        coEvery { postCodeLoader.readListFromJson() } returns listOf()
+
         val isValid = validator.validate("")
 
-        assertThat(isValid).isFalse()
-
-        verifyAll {
-            postCodeProvider wasNot Called
-        }
+        assertEquals(false, isValid)
     }
 
     @Test
-    fun invalidPostCode() {
-        val isValid = validator.validate("A")
+    fun invalidPostCode() = runBlocking {
+        coEvery { postCodeLoader.readListFromJson() } returns provideListOfPostCodes()
 
-        assertThat(isValid).isFalse()
+        val isValid = validator.validate("AAA")
 
-        verifyAll {
-            postCodeProvider wasNot Called
-        }
+        assertEquals(false, isValid)
     }
 
     @Test
-    fun validPostCodePrefix() {
-        val isValid = validator.validate("SW15")
+    fun validPostCodePrefix() = runBlocking {
+        coEvery { postCodeLoader.readListFromJson() } returns provideListOfPostCodes()
 
-        assertThat(isValid).isTrue()
+        val isValid = validator.validate("ZE1")
 
-        verifyAll {
-            postCodeProvider.value = ("SW15")
-        }
+        assertEquals(true, isValid)
+    }
+
+    private fun provideListOfPostCodes(): List<String> {
+        return listOf("ZE1", "ZE2", "ZE3")
     }
 }

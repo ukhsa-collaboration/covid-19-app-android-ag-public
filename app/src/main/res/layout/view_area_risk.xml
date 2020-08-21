@@ -1,47 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:gravity="center_vertical"
-    tools:parentTag="android.widget.LinearLayout">
-
-    <View
-        android:id="@+id/areaRiskIndicator"
-        android:layout_width="6dp"
-        android:layout_height="match_parent"
-        tools:background="@color/error_red" />
+    tools:padding="16dp"
+    tools:parentTag="LinearLayout">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:id="@+id/areaRiskIndicator"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:contentDescription="@null"
-        android:src="@drawable/ic_location"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:scaleType="centerInside"
+        tools:src="@drawable/ic_location_green" />
 
-    <TextView
+    <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
         android:id="@+id/areaRiskText"
         style="@style/Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_weight="1"
-        android:textColor="?attr/colorOnSurface"
-        android:paddingLeft="4dp"
+        android:paddingHorizontal="4dp"
         android:paddingVertical="6dp"
+        android:textColor="?attr/colorOnSurface"
         tools:text="SW12 area risk level is HIGH asdasdasdasd" />
 
-    <TextView
-        android:id="@+id/areaRiskMoreInfo"
-        style="@style/LinkTextWithIcon"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
-        android:gravity="center_vertical"
-        android:text="@string/more_info"
-        android:contentDescription="@string/more_info_content_description" />
+        android:contentDescription="@null"
+        android:src="@drawable/ic_chevron_right" />
+
 </merge>

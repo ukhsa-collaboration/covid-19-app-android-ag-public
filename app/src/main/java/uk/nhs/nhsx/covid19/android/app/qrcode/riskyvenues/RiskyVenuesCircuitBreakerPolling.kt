@@ -1,8 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 
-import androidx.work.ListenableWorker.Result
+import com.jeroenmols.featureflag.framework.FeatureFlag
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.NO
-import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.PENDING
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.YES
 import uk.nhs.nhsx.covid19.android.app.notifications.AndroidUserInbox
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
@@ -13,25 +13,38 @@ import javax.inject.Inject
 class RiskyVenuesCircuitBreakerPolling @Inject constructor(
     private val riskyVenuesCircuitBreakerApi: RiskyVenuesCircuitBreakerApi,
     private val notificationProvider: NotificationProvider,
-    private val userInbox: AndroidUserInbox
+    private val userInbox: AndroidUserInbox,
+    private val riskyVenuePollingConfigurationProvider: RiskyVenuePollingConfigurationProvider,
+    private val removeOutdatedRiskyVenuePollingConfigurations: RemoveOutdatedRiskyVenuePollingConfigurations
 ) {
 
-    suspend fun doWork(approvalToken: String, venueId: String): Result =
-        runCatching {
-            val response =
-                riskyVenuesCircuitBreakerApi.getRiskyVenuesBreakerResolution(approvalToken)
+    suspend fun doWork() {
+        if (!RuntimeBehavior.isFeatureEnabled(FeatureFlag.HIGH_RISK_VENUES)) {
+            return
+        }
 
-            when (response.approval) {
-                YES -> {
-                    notificationProvider.showRiskyVenueVisitNotification()
-                    userInbox.addUserInboxItem(ShowVenueAlert(venueId))
-                    Result.success()
+        removeOutdatedRiskyVenuePollingConfigurations.invoke()
+
+        var latestApprovedConfig: RiskyVenuePollingConfiguration? = null
+
+        riskyVenuePollingConfigurationProvider.configs.forEach { config ->
+            runCatching {
+                val response =
+                    riskyVenuesCircuitBreakerApi.getRiskyVenuesBreakerResolution(config.approvalToken)
+
+                when (response.approval) {
+                    YES -> {
+                        latestApprovedConfig = config
+                        riskyVenuePollingConfigurationProvider.remove(config)
+                    }
+                    NO -> riskyVenuePollingConfigurationProvider.remove(config)
+                    else -> Unit
                 }
-                NO -> Result.success()
-                PENDING -> Result.retry()
             }
         }
-            .getOrElse {
-                Result.retry()
-            }
+        latestApprovedConfig?.let {
+            notificationProvider.showRiskyVenueVisitNotification()
+            userInbox.addUserInboxItem(ShowVenueAlert(it.venueId))
+        }
+    }
 }

@@ -33,7 +33,7 @@ class FieldTestsActivity : AppCompatActivity() {
 
         setNavigateUpToolbar(
             toolbar = findViewById(R.id.fieldTestToolbar),
-            title = R.string.field_tests,
+            titleResId = R.string.field_tests,
             homeIndicator = R.drawable.ic_arrow_back_primary
         )
     }

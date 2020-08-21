@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:labelFor="@id/postCodeEditText"
-                android:text="@string/authentication_title" />
+                android:text="@string/authentication_title"/>
 
             <TextView
                 style="@style/Body1"

@@ -12,6 +12,8 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsViewMo
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.ExplicitDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.NotStated
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomAdvice.DoNotIsolate
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomAdvice.Isolate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsFixture.symptom1
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsFixture.symptom2
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsFixture.symptom3
@@ -23,6 +25,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import java.time.Instant
 import java.time.LocalDate
@@ -35,7 +38,7 @@ class ReviewSymptomsViewModelTest {
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val riskCalculator = mockk<RiskCalculator>()
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
-    private val navigateToIsolationScreenObserver = mockk<Observer<Boolean>>(relaxed = true)
+    private val navigateToIsolationScreenObserver = mockk<Observer<SymptomAdvice>>(relaxed = true)
     private val analyticsManager = mockk<AnalyticsEventProcessor>(relaxed = true)
     private val testSubject =
         ReviewSymptomsViewModel(isolationStateMachine, riskCalculator, analyticsManager)
@@ -212,7 +215,7 @@ class ReviewSymptomsViewModelTest {
 
     @Test
     fun `onButtonConfirmedClicked and user should not self-isolate`() {
-        testSubject.navigateToIsolationScreen().observeForever(navigateToIsolationScreenObserver)
+        testSubject.navigateToSymptomAdviceScreen().observeForever(navigateToIsolationScreenObserver)
         val onsetDate = ExplicitDate(LocalDate.parse("2020-05-21"))
         setupStateWithSelectedOnsetDate(onsetDate)
         every { riskCalculator.isRiskAboveThreshold(any(), any()) } returns false
@@ -220,12 +223,12 @@ class ReviewSymptomsViewModelTest {
 
         testSubject.onButtonConfirmedClicked()
 
-        verify { navigateToIsolationScreenObserver.onChanged(false) }
+        verify { navigateToIsolationScreenObserver.onChanged(DoNotIsolate) }
     }
 
     @Test
     fun `onButtonConfirmedClicked and user should self-isolate`() {
-        testSubject.navigateToIsolationScreen().observeForever(navigateToIsolationScreenObserver)
+        testSubject.navigateToSymptomAdviceScreen().observeForever(navigateToIsolationScreenObserver)
         val onsetDate = LocalDate.parse("2020-05-21")
         setupStateWithSelectedOnsetDate(ExplicitDate(onsetDate))
         every { riskCalculator.isRiskAboveThreshold(any(), any()) } returns true
@@ -237,7 +240,24 @@ class ReviewSymptomsViewModelTest {
 
         testSubject.onButtonConfirmedClicked()
 
-        verify { navigateToIsolationScreenObserver.onChanged(true) }
+        verify { navigateToIsolationScreenObserver.onChanged(Isolate(true, 0)) }
+    }
+
+    @Test
+    fun `onButtonConfirmedClicked and user should self-isolate although negative symptoms when contact case`() {
+        testSubject.navigateToSymptomAdviceScreen().observeForever(navigateToIsolationScreenObserver)
+        val onsetDate = LocalDate.parse("2020-05-21")
+        setupStateWithSelectedOnsetDate(ExplicitDate(onsetDate))
+        every { riskCalculator.isRiskAboveThreshold(any(), any()) } returns false
+        every { isolationStateMachine.readState() } returns Isolation(
+            Instant.now(),
+            LocalDate.parse("2020-05-24"),
+            contactCase = ContactCase(Instant.parse("2020-05-19T12:00:00Z"))
+        )
+
+        testSubject.onButtonConfirmedClicked()
+
+        verify { navigateToIsolationScreenObserver.onChanged(Isolate(false, 0)) }
     }
 
     private fun setupStateWithSelectedOnsetDate(onsetDate: SelectedDate = CannotRememberDate) {

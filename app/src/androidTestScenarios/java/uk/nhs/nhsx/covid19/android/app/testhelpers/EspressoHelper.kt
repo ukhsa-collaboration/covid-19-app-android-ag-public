@@ -2,8 +2,18 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers
 
 import android.app.Activity
 import android.app.Instrumentation
+import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.PorterDuff.Mode
+import android.graphics.drawable.Drawable
 import android.view.View
+import android.widget.ImageView
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.NestedScrollView
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewInteraction
@@ -17,9 +27,11 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
 import org.hamcrest.CoreMatchers
+import org.hamcrest.Description
 import org.hamcrest.Matcher
+import org.hamcrest.TypeSafeMatcher
 
-fun getCurrentActivity(): Activity {
+fun getCurrentActivity(): Activity? {
     getInstrumentation().waitForIdleSync()
     var currentActivity: Activity? = null
     getInstrumentation().runOnMainSync {
@@ -30,7 +42,7 @@ fun getCurrentActivity(): Activity {
                 ).elementAtOrNull(0)
         }
     }
-    return currentActivity!!
+    return currentActivity
 }
 
 fun assertBrowserIsOpened(url: String, block: () -> Unit) {
@@ -67,3 +79,32 @@ fun ViewInteraction.isDisplayed(): Boolean =
         check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
         true
     }.getOrElse { false }
+
+fun withDrawable(@DrawableRes id: Int, @ColorRes tint: Int? = null, tintMode: Mode = Mode.SRC_IN) =
+    object : TypeSafeMatcher<View>() {
+        override fun describeTo(description: Description) {
+            description.appendText("ImageView with drawable same as drawable with id $id")
+            tint?.let { description.appendText(", tint color id: $tint, mode: $tintMode") }
+        }
+
+        override fun matchesSafely(view: View): Boolean {
+            val context = view.context
+            val tintColor = tint?.toColor(context)
+            val expectedBitmap = context.getDrawable(id)?.tinted(tintColor, tintMode)?.toBitmap()
+
+            return view is ImageView && view.drawable.toBitmap().sameAs(expectedBitmap)
+        }
+    }
+
+private fun Int.toColor(context: Context) = ContextCompat.getColor(context, this)
+
+private fun Drawable.tinted(
+    @ColorInt tintColor: Int? = null,
+    tintMode: Mode = Mode.SRC_IN
+) =
+    apply {
+        setTintList(tintColor?.toColorStateList())
+        setTintMode(tintMode)
+    }
+
+private fun Int.toColorStateList() = ColorStateList.valueOf(this)

@@ -51,6 +51,7 @@ class AndroidReporter internal constructor(
         }
         save()
         resetSystemFontScaling()
+        testAppContext.reset()
     }
 
     private fun applyConfiguration(testConfiguration: TestConfiguration) {
@@ -61,6 +62,7 @@ class AndroidReporter internal constructor(
         adjustFontScale(testConfiguration.fontScale)
         applyTheme(testConfiguration.theme)
         testAppContext.reset()
+        testAppContext.setLocale(testConfiguration.languageCode)
     }
 
     private fun setScreenOrientation(orientation: Orientation) {
@@ -91,7 +93,8 @@ class AndroidReporter internal constructor(
         val orientationName = currentTestConfiguration.orientation.exportName
         val fontScaleName = currentTestConfiguration.fontScale.exportName
         val themeName = currentTestConfiguration.theme.exportName
-        val filename = "$orientationName-$fontScaleName-$themeName-$stepName"
+        val languageCode = currentTestConfiguration.languageCode ?: "en"
+        val filename = "$orientationName-$fontScaleName-$themeName-$stepName-$languageCode"
 
         val outputFilename = takeScreenshot(filename, screenshotFolderName)
         if (outputFilename != null) {

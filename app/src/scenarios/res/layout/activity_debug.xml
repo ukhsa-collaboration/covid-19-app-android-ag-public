@@ -56,8 +56,18 @@
                 android:id="@+id/exposureNotificationMocks"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Use mock"
-                />
+                android:text="Use mock" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Language" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/languageSpinner"
+                style="@style/Widget.AppCompat.Spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/title_scenarios"
@@ -99,89 +109,12 @@
                 android:layout_height="wrap_content"
                 android:text="Screens" />
 
-            <Button
-                android:id="@+id/enableBluetooth"
-                style="@style/PrimaryButton"
+            <LinearLayout
+                android:id="@+id/screenButtonContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Enable bluetooth" />
+                android:orientation="vertical"/>
 
-            <Button
-                android:id="@+id/enableLocationService"
-                style="@style/PrimaryButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Enable location services" />
-
-            <Button
-                android:id="@+id/enableExposureNotifications"
-                style="@style/PrimaryButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Enable exposure notifications" />
-
-            <Button
-                android:id="@+id/qrScanner"
-                style="@style/PrimaryButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="QR Code Scanner" />
-
-            <Button
-                android:id="@+id/qrScannerSuccess"
-                style="@style/PrimaryButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="QR Code Scan Success" />
-
-            <Button
-                android:id="@+id/qrScannerFailure"
-                style="@style/PrimaryButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="QR Code Scan Failure" />
-
-            <Button
-                android:id="@+id/qrScannerPermissionNotGranted"
-                style="@style/PrimaryButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="QR Code Permission Not Granted" />
-
-            <Button
-                android:id="@+id/qrScannerNotSupported"
-                style="@style/PrimaryButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="QR Code Scanning Not Supported" />
-
-            <Button
-                android:id="@+id/qrScannerMoreInfo"
-                style="@style/PrimaryButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="QR Code More Info" />
-
-            <Button
-                android:id="@+id/questionnaireScreen"
-                style="@style/PrimaryButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Questionnaire screen" />
-
-            <Button
-                android:id="@+id/testingInformationScreen"
-                style="@style/PrimaryButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Testing information" />
-
-            <Button
-                android:id="@+id/testResultActivity"
-                style="@style/PrimaryButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Test result" />
         </LinearLayout>
     </ScrollView>
 

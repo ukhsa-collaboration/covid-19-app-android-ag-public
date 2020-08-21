@@ -3,23 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:padding="16dp"
+    tools:gravity="center_vertical"
     tools:parentTag="LinearLayout">
 
-    <ImageView
-        android:id="@+id/statusOptionIcon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:contentDescription="@null"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_scan_qr" />
+    <FrameLayout
+        android:id="@+id/statusOptionIconContainer"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        tools:backgroundTint="@color/style_purple"
+        android:background="@drawable/status_option_icon_background">
+
+        <ImageView
+            android:id="@+id/statusOptionIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:scaleType="centerInside"
+            android:layout_gravity="center"
+            tools:src="@drawable/ic_venue_check_in" />
+    </FrameLayout>
 
     <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
         android:id="@+id/statusOptionText"
         style="@style/ActionText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_weight="1"
         tools:text="Status option text" />
 
@@ -27,6 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@null"
+        android:layout_marginEnd="16dp"
         android:src="@drawable/ic_chevron_right" />
 
 </merge>

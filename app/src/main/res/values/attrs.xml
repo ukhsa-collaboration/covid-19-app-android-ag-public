@@ -13,10 +13,11 @@
     <attr name="editTextBorder" format="color" />
     <declare-styleable name="AreaRiskView">
         <attr name="areaRiskText" format="string" />
-        <attr name="areaRiskColor" format="reference" />
+        <attr name="areaRisk" format="string" />
     </declare-styleable>
     <declare-styleable name="StatusOptionView">
         <attr name="optionIcon" format="reference" />
+        <attr name="optionIconBackgroundColor" format="reference"/>
         <attr name="optionText" format="string" />
     </declare-styleable>
     <declare-styleable name="StateInfoView">

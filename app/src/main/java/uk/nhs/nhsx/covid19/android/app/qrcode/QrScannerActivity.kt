@@ -24,7 +24,6 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.util.forEach
@@ -46,13 +45,14 @@ import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.R.string
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.Scanning
 import uk.nhs.nhsx.covid19.android.app.util.gone
 import uk.nhs.nhsx.covid19.android.app.util.visible
 import javax.inject.Inject
 
-class QrScannerActivity : AppCompatActivity(R.layout.activity_qr_code_scanner) {
+class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
 
     @Inject
     lateinit var factory: ViewModelFactory<QrScannerViewModel>

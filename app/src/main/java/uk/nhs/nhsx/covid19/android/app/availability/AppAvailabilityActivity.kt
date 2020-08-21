@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.availability
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
 import kotlinx.android.synthetic.main.activity_app_availability.description
 import kotlinx.android.synthetic.main.activity_app_availability.goToPlayStore
@@ -17,13 +16,15 @@ import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityViewModel.App
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityViewModel.AppAvailabilityState.DeviceSdkIsNotSupported
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityViewModel.AppAvailabilityState.Supported
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityViewModel.AppAvailabilityState.UpdateAvailable
+import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.util.gone
 import uk.nhs.nhsx.covid19.android.app.util.visible
 import javax.inject.Inject
 
-class AppAvailabilityActivity : AppCompatActivity(R.layout.activity_app_availability) {
+class AppAvailabilityActivity : BaseActivity(R.layout.activity_app_availability) {
+
     @Inject
     lateinit var factory: ViewModelFactory<AppAvailabilityViewModel>
     private val viewModel: AppAvailabilityViewModel by viewModels { factory }

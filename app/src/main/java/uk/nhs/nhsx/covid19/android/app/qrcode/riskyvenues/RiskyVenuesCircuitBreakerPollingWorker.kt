@@ -28,16 +28,8 @@ class RiskyVenuesCircuitBreakerPollingWorker(context: Context, workerParameters:
             return Result.retry()
         }
 
-        val approvalToken = inputData.getString(APPROVAL_TOKEN)
-        val venueId = inputData.getString(VENUE_ID)
-
         analyticsEventProcessor.track(BackgroundTaskCompletion)
-        return if (approvalToken.isNullOrEmpty() || venueId.isNullOrEmpty()) Result.failure()
-        else riskyVenuesCircuitBreakerPolling.doWork(approvalToken, venueId)
-    }
-
-    companion object {
-        const val APPROVAL_TOKEN = "APPROVAL_TOKEN"
-        const val VENUE_ID = "VENUE_ID"
+        riskyVenuesCircuitBreakerPolling.doWork()
+        return Result.success()
     }
 }

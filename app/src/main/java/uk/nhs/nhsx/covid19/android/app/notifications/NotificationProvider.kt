@@ -237,15 +237,20 @@ class NotificationProvider @Inject constructor(private val context: Context) {
 
     private fun createNotification(
         notificationChannel: String,
-        @StringRes title: Int,
-        @StringRes description: Int?,
+        @StringRes message: Int,
+        @StringRes actionText: Int?,
         pendingIntent: PendingIntent,
         autoCancel: Boolean = true
     ) =
         NotificationCompat.Builder(context, notificationChannel)
             .setSmallIcon(R.mipmap.ic_notification)
-            .setContentTitle(context.getString(title))
-            .apply { description?.let { setContentText(context.getString(it)) } }
+            .setContentText(context.getString(message))
+            .setStyle(NotificationCompat.BigTextStyle().bigText(context.getString(message)))
+            .apply {
+                actionText?.let {
+                    addAction(0, context.getString(it), pendingIntent)
+                }
+            }
             .setAutoCancel(autoCancel)
             .setContentIntent(pendingIntent)
             .build()

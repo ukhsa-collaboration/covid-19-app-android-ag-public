@@ -38,7 +38,7 @@ class AppAvailabilityViewModel @Inject constructor(
                     minimumSDKVersion.value > deviceSdkVersion -> {
                         appAvailabilityState.postValue(
                             DeviceSdkIsNotSupported(
-                                minimumSDKVersion.description.provideTranslation()
+                                minimumSDKVersion.description.translate()
                             )
                         )
                     }
@@ -58,14 +58,14 @@ class AppAvailabilityViewModel @Inject constructor(
             is Available -> {
                 if (minimumAppVersion.value > possibleUpdate.versionCode)
                     appAvailabilityState.postValue(
-                        AppVersionNotSupported(minimumAppVersion.description.provideTranslation())
+                        AppVersionNotSupported(minimumAppVersion.description.translate())
                     )
                 else
-                    appAvailabilityState.postValue(UpdateAvailable(minimumAppVersion.description.provideTranslation()))
+                    appAvailabilityState.postValue(UpdateAvailable(minimumAppVersion.description.translate()))
             }
             else -> appAvailabilityState.postValue(
                 AppVersionNotSupported(
-                    minimumAppVersion.description.provideTranslation()
+                    minimumAppVersion.description.translate()
                 )
             )
         }

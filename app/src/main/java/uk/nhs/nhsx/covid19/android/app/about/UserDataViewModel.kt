@@ -14,6 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State
 import uk.nhs.nhsx.covid19.android.app.testordering.LatestTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.LatestTestResultProvider
+import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import javax.inject.Inject
 
 class UserDataViewModel @Inject constructor(
@@ -36,6 +37,9 @@ class UserDataViewModel @Inject constructor(
     private val latestTestResultLiveData: MutableLiveData<LatestTestResult> = MutableLiveData()
     fun getLatestTestResult(): LiveData<LatestTestResult> = latestTestResultLiveData
 
+    private val allUserDataDeletedLiveData: MutableLiveData<Unit> = SingleLiveEvent()
+    fun getAllUserDataDeleted(): LiveData<Unit> = allUserDataDeletedLiveData
+
     fun loadUserData() {
         viewModelScope.launch {
             postCode.postValue(postCodePrefs.value)
@@ -46,8 +50,14 @@ class UserDataViewModel @Inject constructor(
     }
 
     fun deleteAllUserData() {
+        deleteAllUserDataExceptAuthCode()
+        allUserDataDeletedLiveData.postValue(Unit)
+    }
+
+    private fun deleteAllUserDataExceptAuthCode() {
         val authenticationCode = authenticationProvider.value
         sharedPreferences.edit().clear().apply()
+        stateMachine.reset()
         venuesStorage.removeAllVenueVisits()
         authenticationProvider.value = authenticationCode
     }

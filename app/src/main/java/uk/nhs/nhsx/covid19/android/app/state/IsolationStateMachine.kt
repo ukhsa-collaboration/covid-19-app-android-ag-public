@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.state
 import com.squareup.moshi.JsonClass
 import com.tinder.StateMachine
 import com.tinder.StateMachine.Transition
-import org.jetbrains.annotations.TestOnly
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowEncounterDetection
@@ -77,6 +76,7 @@ data class OnPositiveSelfAssessment(val onsetDate: SelectedDate) : Event()
 data class OnPositiveTestResult(val testDate: Instant) : Event()
 data class OnNegativeTestResult(val testDate: Instant) : Event()
 private object OnExpired : Event()
+private object OnReset : Event()
 
 sealed class SideEffect {
     object SendExposedNotification : SideEffect()
@@ -152,9 +152,8 @@ class IsolationStateMachine(
         return !LocalDate.now(clock).isBefore(until)
     }
 
-    @TestOnly
     fun reset() {
-        stateMachine.transition(OnExpired)
+        stateMachine.transition(OnReset)
     }
 
     internal val stateMachine = StateMachine.create<State, Event, SideEffect> {
@@ -164,7 +163,8 @@ class IsolationStateMachine(
             on<OnExposedNotification> {
                 val contactCaseIsolationDays =
                     getConfigurationDurations().contactCase
-                val until = it.exposureDate.atZone(ZoneOffset.UTC).toLocalDate().plusDays(contactCaseIsolationDays.toLong())
+                val until = it.exposureDate.atZone(ZoneOffset.UTC).toLocalDate()
+                    .plusDays(contactCaseIsolationDays.toLong())
                 transitionTo(
                     Isolation(
                         contactCase = ContactCase(now),
@@ -189,6 +189,9 @@ class IsolationStateMachine(
             on<OnNegativeTestResult> {
                 val updatedDefaultState = this.withUpdatedTestResult(it.testDate, NEGATIVE)
                 transitionTo(updatedDefaultState, SendTestResultNotification)
+            }
+            on<OnReset> {
+                transitionTo(Default())
             }
         }
         state<Isolation> {
@@ -246,6 +249,9 @@ class IsolationStateMachine(
             on<OnExpired> {
                 transitionTo(Default(previousIsolation = this))
             }
+            on<OnReset> {
+                transitionTo(Default())
+            }
         }
         onTransition {
             val validTransition = it as? Transition.Valid ?: return@onTransition
@@ -264,11 +270,10 @@ class IsolationStateMachine(
                 }
             }
 
-            val expiryDate = when (newState) {
-                is Isolation -> newState.expiryDate
-                is Default -> return@onTransition
+            when (newState) {
+                is Isolation -> isolationExpirationAlarmController.setupExpirationCheck(newState.expiryDate)
+                is Default -> isolationExpirationAlarmController.cancelExpirationCheckIfAny()
             }
-            isolationExpirationAlarmController.setupExpirationCheck(expiryDate)
         }
     }
 

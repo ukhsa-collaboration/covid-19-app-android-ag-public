@@ -32,7 +32,7 @@ class IsolationExpirationAlarmController @Inject constructor(
 
         val expirationCheckReceiver = PendingIntent.getBroadcast(
             context,
-            1337,
+            EXPIRATION_ALARM_INTENT_ID,
             Intent(context, ExpirationCheckReceiver::class.java),
             PendingIntent.FLAG_CANCEL_CURRENT
         )
@@ -42,5 +42,19 @@ class IsolationExpirationAlarmController @Inject constructor(
             startAt,
             expirationCheckReceiver
         )
+    }
+
+    fun cancelExpirationCheckIfAny() {
+        val pendingIntent = PendingIntent.getBroadcast(
+            context, EXPIRATION_ALARM_INTENT_ID, Intent(context, ExpirationCheckReceiver::class.java),
+            PendingIntent.FLAG_NO_CREATE
+        )
+        if (pendingIntent != null) {
+            Timber.d("expiration alarm cancelled")
+            alarmManager.cancel(pendingIntent)
+        }
+    }
+    companion object {
+        private const val EXPIRATION_ALARM_INTENT_ID = 1337
     }
 }

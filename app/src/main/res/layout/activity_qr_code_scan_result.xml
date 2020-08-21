@@ -55,7 +55,8 @@
         android:lineSpacingMultiplier="1.18"
         android:textAlignment="center"
         app:layout_constraintTop_toBottomOf="@id/titleTextView"
-        tools:text="Thank you for scanning. You have now checked in." />
+        tools:layout_editor_absoluteX="32dp"
+        tools:text="@string/qr_code_success_subtitle" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/actionButton"
@@ -65,7 +66,8 @@
         android:layout_marginHorizontal="32dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@id/textCancelCheckIn"
-        tools:text="Back to home" />
+        tools:layout_editor_absoluteX="32dp"
+        tools:text="@string/back_to_home" />
 
     <TextView
         android:id="@+id/textCancelCheckIn"

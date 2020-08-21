@@ -12,6 +12,8 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.ExplicitDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.NotStated
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomAdvice.DoNotIsolate
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomAdvice.Isolate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.NegativeHeader
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.PositiveHeader
@@ -19,11 +21,21 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSympto
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
+import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import uk.nhs.nhsx.covid19.android.app.state.remainingDaysInIsolation
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import javax.inject.Inject
+
+sealed class SymptomAdvice {
+    data class Isolate(
+        val isPositiveSymptoms: Boolean,
+        val isolationDurationDays: Int
+    ) : SymptomAdvice()
+    object DoNotIsolate : SymptomAdvice()
+}
 
 class ReviewSymptomsViewModel @Inject constructor(
     private val isolationStateMachine: IsolationStateMachine,
@@ -43,8 +55,8 @@ class ReviewSymptomsViewModel @Inject constructor(
 
     fun viewState(): LiveData<ViewState> = viewState
 
-    private val navigateToIsolationScreen = SingleLiveEvent<Boolean>()
-    fun navigateToIsolationScreen(): LiveData<Boolean> = navigateToIsolationScreen
+    private val navigateToSymptomAdviceScreen = SingleLiveEvent<SymptomAdvice>()
+    fun navigateToSymptomAdviceScreen(): LiveData<SymptomAdvice> = navigateToSymptomAdviceScreen
 
     @VisibleForTesting
     internal var riskThreshold = 0.0F
@@ -116,8 +128,15 @@ class ReviewSymptomsViewModel @Inject constructor(
                 } else {
                     analyticsEventProcessor.track(CompletedQuestionnaireButDidNotStartIsolation)
                 }
-                val isolationState = isolationStateMachine.readState()
-                navigateToIsolationScreen.postValue(isolationState !is Default)
+                when (val isolationState = isolationStateMachine.readState()) {
+                    is Default -> navigateToSymptomAdviceScreen.postValue(DoNotIsolate)
+                    is Isolation -> navigateToSymptomAdviceScreen.postValue(
+                        Isolate(
+                            isPositiveSymptoms = !isolationState.isContactCaseOnly(),
+                            isolationDurationDays = isolationStateMachine.remainingDaysInIsolation().toInt()
+                        )
+                    )
+                }
             }
         }
     }

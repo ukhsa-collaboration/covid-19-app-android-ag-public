@@ -1,10 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.widgets
 
 import android.content.Context
-import android.provider.Settings.Global
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.animation.AnimationUtils
 import androidx.constraintlayout.widget.ConstraintLayout
 import kotlinx.android.synthetic.main.view_isolation_status.view.imgCirclePulseAnim
 import kotlinx.android.synthetic.main.view_isolation_status.view.imgCircleSmallPulseAnim
@@ -13,6 +11,8 @@ import kotlinx.android.synthetic.main.view_isolation_status.view.isolationDaysTo
 import kotlinx.android.synthetic.main.view_isolation_status.view.subTitleIsolationCountdown
 import kotlinx.android.synthetic.main.view_isolation_status.view.titleDaysToGo
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.status.PulseAnimationView
+import uk.nhs.nhsx.covid19.android.app.util.getLocale
 import uk.nhs.nhsx.covid19.android.app.util.toReadableFormat
 import java.time.Instant
 import java.time.LocalDate
@@ -24,18 +24,23 @@ class IsolationStatusView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr) {
+) : ConstraintLayout(context, attrs, defStyleAttr), PulseAnimationView {
 
     private var daysToGo = 0
 
     var isAnimationEnabled = false
         set(value) {
             field = value
-            if (isAnimationEnabled) startAnimations() else stopAnimations()
+            updateAnimations(
+                context = context,
+                isAnimationEnabled = isAnimationEnabled,
+                animatedView = imgCirclePulseAnim,
+                smallAnimatedView = imgCircleSmallPulseAnim
+            )
         }
 
     init {
-        initializeViews()
+        LayoutInflater.from(context).inflate(R.layout.view_isolation_status, this, true)
     }
 
     fun initialize(startDate: Instant, endDate: LocalDate) {
@@ -51,14 +56,14 @@ class IsolationStatusView @JvmOverloads constructor(
         ).toInt()
 
         titleDaysToGo.text =
-            context.resources.getQuantityString(R.plurals.isolation_days_to_go, daysToGo)
+            context.resources.getQuantityString(R.plurals.isolation_days_to_go, daysToGo, daysToGo)
 
         isolationCountdownView.progress = daysToGo.toFloat()
         isolationCountdownView.progressMax = totalDurationInDays.toFloat()
 
         val lastIsolationDate = endDate.minusDays(1)
         subTitleIsolationCountdown.text = context.getString(
-            R.string.isolation_until_date, lastIsolationDate.toReadableFormat()
+            R.string.isolation_until_date, lastIsolationDate.toReadableFormat(context.getLocale())
         )
 
         isolationDaysToGo.text = daysToGo.toString()
@@ -66,41 +71,8 @@ class IsolationStatusView @JvmOverloads constructor(
         contentDescription = context.resources.getQuantityString(
             R.plurals.isolation_view_accessibility_description,
             daysToGo,
-            lastIsolationDate.toReadableFormat(),
+            lastIsolationDate.toReadableFormat(context.getLocale()),
             daysToGo
         )
-
-        startAnimations()
-    }
-
-    private fun initializeViews() {
-        LayoutInflater.from(context).inflate(R.layout.view_isolation_status, this, true)
-    }
-
-    private fun startAnimations() {
-        if (animationsDisabled() || !isAnimationEnabled) {
-            return
-        }
-        val circlePulsatingAnimation = AnimationUtils.loadAnimation(
-            context, R.anim.anim_pulse
-        )
-        val circlePulsatingAnimationSmall = AnimationUtils.loadAnimation(
-            context, R.anim.anim_pulse_small
-        )
-        imgCirclePulseAnim.startAnimation(circlePulsatingAnimation)
-        imgCircleSmallPulseAnim.startAnimation(circlePulsatingAnimationSmall)
-    }
-
-    private fun stopAnimations() {
-        imgCirclePulseAnim.clearAnimation()
-        imgCircleSmallPulseAnim.clearAnimation()
-    }
-
-    private fun animationsDisabled(): Boolean {
-        val animationDurationScale = Global.getFloat(
-            context.contentResolver,
-            Global.ANIMATOR_DURATION_SCALE, 1f
-        )
-        return animationDurationScale == 0.0f
     }
 }

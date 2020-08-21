@@ -4,25 +4,25 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.observe
 import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.android.synthetic.main.activity_post_code.errorIndicatorLeft
-import kotlinx.android.synthetic.main.activity_post_code.errorText
+import kotlinx.android.synthetic.main.activity_post_code.errorInfoContainer
 import kotlinx.android.synthetic.main.activity_post_code.postCodeContinue
 import kotlinx.android.synthetic.main.activity_post_code.postCodeEditText
 import kotlinx.android.synthetic.main.activity_post_code.scrollView
 import kotlinx.android.synthetic.main.activity_post_code.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.util.scrollToView
 import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
 import javax.inject.Inject
 
-class PostCodeActivity : AppCompatActivity(R.layout.activity_post_code) {
+class PostCodeActivity : BaseActivity(R.layout.activity_post_code) {
 
     @Inject
     lateinit var factory: ViewModelFactory<PostCodeViewModel>
@@ -50,17 +50,17 @@ class PostCodeActivity : AppCompatActivity(R.layout.activity_post_code) {
 
     private fun handleInvalidPostCode() {
         postCodeEditText.setBackgroundResource(R.drawable.edit_text_background_error)
-        errorText.announceForAccessibility(
-            "${getString(R.string.post_code_invalid_announcement)} ${errorText.text}"
+        errorInfoContainer.isVisible = true
+        errorInfoContainer.announceForAccessibility(
+            "${getString(R.string.post_code_invalid_title)}. ${getString(R.string.valid_post_code_is_required)}"
         )
-        errorText.isVisible = true
         errorIndicatorLeft.isVisible = true
-        scrollView.scrollToView(errorText)
+        scrollView.scrollToView(errorInfoContainer)
     }
 
     private fun handleValidPostCode() {
         postCodeEditText.setBackgroundResource(R.drawable.edit_text_background)
-        errorText.isVisible = false
+        errorInfoContainer.isVisible = false
         errorIndicatorLeft.isVisible = false
         navigateToStatusActivity()
     }

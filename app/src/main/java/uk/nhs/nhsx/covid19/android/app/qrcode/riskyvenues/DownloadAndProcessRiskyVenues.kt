@@ -4,7 +4,6 @@ import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.common.Result
 import uk.nhs.nhsx.covid19.android.app.common.runSafely
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesApi
@@ -15,7 +14,7 @@ class DownloadAndProcessRiskyVenues @Inject constructor(
     private val venueMatchFinder: VenueMatchFinder,
     private val visitedVenuesStorage: VisitedVenuesStorage,
     private val filterOutdatedVisits: FilterOutdatedVisits,
-    private val periodicTasks: PeriodicTasks
+    private val riskyVenuesCircuitBreakerTasks: RiskyVenuesCircuitBreakerTasks
 ) {
 
     suspend operator fun invoke(): Result<Unit> {
@@ -33,23 +32,20 @@ class DownloadAndProcessRiskyVenues @Inject constructor(
 
                 val notNotifiedVisitedRiskyVenuesIds = venueMatchFinder.findMatches(riskyVenues)
 
+                if (notNotifiedVisitedRiskyVenuesIds.isEmpty()) return@runSafely
+
                 visitedVenuesStorage.markAsWasInRiskyList(notNotifiedVisitedRiskyVenuesIds)
 
-                notNotifiedVisitedRiskyVenuesIds.forEach { venueId ->
-                    periodicTasks.scheduleRiskyVenuesCircuitBreakerInitial(venueId)
-                }
+                riskyVenuesCircuitBreakerTasks.scheduleRiskyVenuesCircuitBreakerInitial(
+                    notNotifiedVisitedRiskyVenuesIds
+                )
             }
         }
     }
 
     private suspend fun clearOutDatedVisits() {
         val visits = visitedVenuesStorage.getVisits()
-
         val updatedVisits = filterOutdatedVisits.invoke(visits)
-
-        visits
-            .filterNot { updatedVisits.contains(it) }
-            .forEach { periodicTasks.cancelRiskyVenuePolling(it.venue.id) }
 
         visitedVenuesStorage.setVisits(updatedVisits)
     }

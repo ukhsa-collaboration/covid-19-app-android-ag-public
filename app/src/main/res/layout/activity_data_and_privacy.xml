@@ -82,15 +82,15 @@
                 android:text="@string/onboarding_before_activating_app"
                 android:textStyle="bold" />
 
-            <TextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                 android:id="@+id/privacyNoticeLink"
                 style="@style/LinkTextWithIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="@string/explanation_privacy_notice" />
+                android:text="@string/privacy_notice" />
 
-            <TextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                 android:id="@+id/termsOfUseLink"
                 style="@style/LinkTextWithIcon"
                 android:layout_width="wrap_content"

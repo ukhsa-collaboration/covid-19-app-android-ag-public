@@ -28,6 +28,14 @@
     <color name="qr_code_overlay">#AA000000</color>
     <color name="about_app_text_color">#333333</color>
 
+    <!-- style colors -->
+    <color name="style_purple">#AF71FF</color>
+    <color name="style_orange">#F68116</color>
+    <color name="style_pink">#D33C80</color>
+    <color name="style_teal">#29B2B2</color>
+    <color name="style_red">#ED3D3D</color>
+    <color name="style_green">#27C998</color>
+
     <!-- geiger animation colors -->
     <color name="circle_one_green">#78B998</color>
     <color name="circle_two_green">#A8D1BE</color>

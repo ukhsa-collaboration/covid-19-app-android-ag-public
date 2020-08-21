@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.about
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_more_about_app.linkAccessibilityStatement
 import kotlinx.android.synthetic.main.activity_more_about_app.linkCommonQuestions
 import kotlinx.android.synthetic.main.activity_more_about_app.linkManageData
@@ -13,14 +12,12 @@ import kotlinx.android.synthetic.main.activity_more_about_app.textSoftwareInform
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.util.URL_ACCESSIBILITY_STATEMENT
-import uk.nhs.nhsx.covid19.android.app.util.URL_COMMON_QUESTIONS
-import uk.nhs.nhsx.covid19.android.app.util.URL_PRIVACY_NOTICE
-import uk.nhs.nhsx.covid19.android.app.util.URL_TERMS_OF_USE
+import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.util.openUrl
 import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
 
-class MoreAboutAppActivity : AppCompatActivity(R.layout.activity_more_about_app) {
+class MoreAboutAppActivity : BaseActivity(R.layout.activity_more_about_app) {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -29,7 +26,8 @@ class MoreAboutAppActivity : AppCompatActivity(R.layout.activity_more_about_app)
         val appName = getString(R.string.app_name)
         val appVersion = BuildConfig.VERSION_NAME
         val dateOfRelease = getReleaseDate()
-        textSoftwareInformation.text = getString(R.string.about_software_information_text, appName, appVersion, dateOfRelease)
+        textSoftwareInformation.text =
+            getString(R.string.about_software_information_text, appName, appVersion, dateOfRelease)
 
         setupListeners()
     }
@@ -40,19 +38,19 @@ class MoreAboutAppActivity : AppCompatActivity(R.layout.activity_more_about_app)
 
     private fun setupListeners() {
         linkCommonQuestions.setOnClickListener {
-            openUrl(URL_COMMON_QUESTIONS)
+            openUrl(R.string.url_common_questions)
         }
 
         linkTermsOfUse.setOnClickListener {
-            openUrl(URL_TERMS_OF_USE)
+            openUrl(R.string.url_terms_of_use)
         }
 
         linkPrivacyNotice.setOnClickListener {
-            openUrl(URL_PRIVACY_NOTICE)
+            openUrl(R.string.url_privacy_notice)
         }
 
         linkAccessibilityStatement.setOnClickListener {
-            openUrl(URL_ACCESSIBILITY_STATEMENT)
+            openUrl(R.string.url_accessibility_statement)
         }
 
         linkManageData.setOnClickListener {

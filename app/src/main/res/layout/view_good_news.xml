@@ -56,7 +56,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <TextView
+        <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
             android:id="@+id/goodNewsOnlineServiceLink"
             style="@style/LinkTextWithIcon"
             android:layout_width="wrap_content"

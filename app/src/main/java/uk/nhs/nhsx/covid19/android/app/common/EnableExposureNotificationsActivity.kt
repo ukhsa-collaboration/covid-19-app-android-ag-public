@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.google.android.gms.common.api.Status
 import com.google.android.material.snackbar.Snackbar
@@ -13,7 +12,6 @@ import kotlinx.android.synthetic.main.activity_edge_case.edgeCaseText
 import kotlinx.android.synthetic.main.activity_edge_case.edgeCaseTitle
 import kotlinx.android.synthetic.main.activity_edge_case.takeActionButton
 import kotlinx.android.synthetic.main.activity_status.statusContainer
-
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.Error
@@ -23,7 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
 import uk.nhs.nhsx.covid19.android.app.status.ExposureStatusViewModel
 import javax.inject.Inject
 
-class EnableExposureNotificationsActivity : AppCompatActivity(R.layout.activity_edge_case) {
+class EnableExposureNotificationsActivity : BaseActivity(R.layout.activity_edge_case) {
 
     @Inject
     lateinit var factory: ViewModelFactory<ExposureStatusViewModel>

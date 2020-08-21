@@ -7,16 +7,17 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_authentication_code.authCodeContinue
 import kotlinx.android.synthetic.main.activity_authentication_code.authCodeEditText
 import kotlinx.android.synthetic.main.activity_authentication_code.errorIndicatorLeft
 import kotlinx.android.synthetic.main.activity_authentication_code.errorText
 import kotlinx.android.synthetic.main.activity_authentication_code.progressBar
+import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.R.drawable
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.onboarding.MainOnboardingActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.authentication.AuthenticationCodeViewModel.AuthCodeViewState.Invalid
@@ -30,7 +31,8 @@ import uk.nhs.nhsx.covid19.android.app.util.invisible
 import uk.nhs.nhsx.covid19.android.app.util.visible
 import javax.inject.Inject
 
-class AuthenticationCodeActivity : AppCompatActivity(R.layout.activity_authentication_code) {
+class AuthenticationCodeActivity : BaseActivity(R.layout.activity_authentication_code) {
+
     @Inject
     lateinit var factory: ViewModelFactory<AuthenticationCodeViewModel>
 
@@ -108,6 +110,7 @@ class AuthenticationCodeActivity : AppCompatActivity(R.layout.activity_authentic
     }
 
     class FormattingTextWatcher(private val editText: EditText) : TextWatcher {
+
         override fun afterTextChanged(s: Editable) {
         }
 
@@ -115,7 +118,6 @@ class AuthenticationCodeActivity : AppCompatActivity(R.layout.activity_authentic
         }
 
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-
             editText.removeTextChangedListener(this)
             val cleanString = s.toString().replace(AUTH_CODE_REGEX_FORMAT.toRegex(), "")
             val formattedString = if (cleanString.length > 4) {
@@ -125,7 +127,11 @@ class AuthenticationCodeActivity : AppCompatActivity(R.layout.activity_authentic
             }
             editText.setText(formattedString)
 
-            editText.setSelection(formattedString.length)
+            try {
+                editText.setSelection(editText.text.length)
+            } catch (e: IndexOutOfBoundsException) {
+                Timber.e(e)
+            }
 
             editText.addTextChangedListener(this)
         }

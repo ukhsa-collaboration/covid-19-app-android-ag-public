@@ -1,12 +1,14 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
 import android.content.SharedPreferences
+import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jeroenmols.featureflag.framework.FeatureFlag.TEST_ORDERING
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
+import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
@@ -122,10 +124,21 @@ class StatusViewModel @Inject constructor(
         checkIsolationState()
     }
 
-    sealed class RiskyPostCodeViewState {
-        data class LowRisk(val mainPostCode: String?) : RiskyPostCodeViewState()
-        data class MediumRisk(val mainPostCode: String?) : RiskyPostCodeViewState()
-        data class HighRisk(val mainPostCode: String?) : RiskyPostCodeViewState()
+    sealed class RiskyPostCodeViewState : Parcelable {
+        @Parcelize
+        data class LowRisk(val mainPostCode: String?, val name: String = LOW.name) :
+            RiskyPostCodeViewState()
+
+        @Parcelize
+        data class MediumRisk(val mainPostCode: String?, val name: String = MEDIUM.name) :
+            RiskyPostCodeViewState()
+
+        @Parcelize
+
+        data class HighRisk(val mainPostCode: String?, val name: String = HIGH.name) :
+            RiskyPostCodeViewState()
+
+        @Parcelize
         object Unknown : RiskyPostCodeViewState()
     }
 }

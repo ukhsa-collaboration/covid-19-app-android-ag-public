@@ -16,13 +16,13 @@ class NetworkTrafficStatsTest {
     )
 
     @Test
-    fun `last stored value is empty returns null and updates the last stored value`() {
+    fun `last stored value is empty returns zero and updates the last stored value`() {
         every { networkStatsStorage.lastDownloadedBytes } returns null
 
         val result = testSubject.getTotalBytesDownloaded()
 
         verify { networkStatsStorage.lastDownloadedBytes = NUMBER_OF_DOWNLOADED_BYTES }
-        assertEquals(null, result)
+        assertEquals(0, result)
     }
 
     @Test

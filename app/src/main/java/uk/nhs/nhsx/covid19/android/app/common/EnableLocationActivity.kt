@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_edge_case.edgeCaseText
 import kotlinx.android.synthetic.main.activity_edge_case.edgeCaseTitle
@@ -17,7 +16,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import javax.inject.Inject
 import javax.inject.Named
 
-class EnableLocationActivity : AppCompatActivity(R.layout.activity_edge_case) {
+class EnableLocationActivity : BaseActivity(R.layout.activity_edge_case) {
 
     @Inject
     @Named(LOCATION_STATE_NAME)

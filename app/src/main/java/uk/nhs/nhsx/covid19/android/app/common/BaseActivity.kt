@@ -1,62 +1,51 @@
 package uk.nhs.nhsx.covid19.android.app.common
 
-import android.os.Bundle
+import android.annotation.TargetApi
+import android.content.Context
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
+import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.appComponent
-import uk.nhs.nhsx.covid19.android.app.di.module.AppModule.Companion.BLUETOOTH_STATE_NAME
-import uk.nhs.nhsx.covid19.android.app.di.module.AppModule.Companion.LOCATION_STATE_NAME
-import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
-import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
-import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
+import java.util.Locale
 import javax.inject.Inject
-import javax.inject.Named
 
 abstract class BaseActivity(contentView: Int) : AppCompatActivity(contentView) {
 
     @Inject
-    lateinit var exposureNotificationManager: ExposureNotificationManager
+    lateinit var applicationLocaleProvider: ApplicationLocaleProvider
 
-    @Inject
-    @Named(BLUETOOTH_STATE_NAME)
-    lateinit var bluetoothStateProvider: AvailabilityStateProvider
-
-    @Inject
-    @Named(LOCATION_STATE_NAME)
-    lateinit var locationStateProvider: AvailabilityStateProvider
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        appComponent.inject(this)
-
-        bluetoothStateProvider.availabilityState.observe(
-            this,
-            Observer { state ->
-                if (state == DISABLED) {
-                    EnableBluetoothActivity.start(this)
-                }
-            }
-        )
-
-        locationStateProvider.availabilityState.observe(
-            this,
-            Observer { state ->
-                if (state == DISABLED) {
-                    EnableLocationActivity.start(this)
-                }
-            }
-        )
+    override fun attachBaseContext(baseContext: Context) {
+        baseContext.applicationContext.appComponent.inject(this)
+        if (BuildConfig.FLAVOR == "scenarios") {
+            super.attachBaseContext(updateBaseContextLocale(baseContext))
+        } else {
+            super.attachBaseContext(baseContext)
+        }
     }
 
-    override fun onResume() {
-        super.onResume()
-        bluetoothStateProvider.start(this)
-        locationStateProvider.start(this)
+    private fun updateBaseContextLocale(context: Context): Context {
+        val locale = applicationLocaleProvider.getLocale()
+        Locale.setDefault(locale)
+        return if (VERSION.SDK_INT > VERSION_CODES.N) {
+            updateResourcesLocale(context, locale)
+        } else {
+            updateResourcesLocaleLegacy(context, locale)
+        }
     }
 
-    override fun onPause() {
-        super.onPause()
-        bluetoothStateProvider.stop(this)
-        locationStateProvider.stop(this)
+    @TargetApi(VERSION_CODES.N_MR1)
+    private fun updateResourcesLocale(context: Context, locale: Locale): Context {
+        val config = context.resources.configuration
+        config.setLocale(locale)
+        return context.createConfigurationContext(config)
+    }
+
+    @SuppressWarnings("deprecation")
+    private fun updateResourcesLocaleLegacy(context: Context, locale: Locale): Context {
+        val config = context.resources.configuration
+        config.locale = locale
+        context.resources.updateConfiguration(config, context.resources.displayMetrics)
+        return context
     }
 }

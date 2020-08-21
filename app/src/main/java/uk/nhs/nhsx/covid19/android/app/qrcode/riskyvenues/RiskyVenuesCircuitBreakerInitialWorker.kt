@@ -7,6 +7,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.BackgroundTaskCo
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.RiskyVenuesCircuitBreakerTasks.Companion.VENUE_IDS
 import javax.inject.Inject
 
 class RiskyVenuesCircuitBreakerInitialWorker(
@@ -27,16 +28,13 @@ class RiskyVenuesCircuitBreakerInitialWorker(
         applicationContext.appComponent.inject(this)
 
         if (!appAvailabilityProvider.isAppAvailable()) {
-            return Result.retry()
+            return Result.failure()
         }
 
         analyticsEventProcessor.track(BackgroundTaskCompletion)
-        return inputData.getString(VENUE_ID)?.let { venueId ->
-            riskyVenuesCircuitBreakerInitialWork.doWork(venueId)
-        } ?: Result.failure()
-    }
 
-    companion object {
-        const val VENUE_ID = "VENUE_ID"
+        return inputData.getStringArray(VENUE_IDS)?.let { venueIds ->
+            riskyVenuesCircuitBreakerInitialWork.doWork(venueIds.toList())
+        } ?: Result.failure()
     }
 }

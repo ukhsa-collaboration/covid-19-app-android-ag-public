@@ -13,7 +13,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.CoreMatchers.not
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.R.id
 import uk.nhs.nhsx.covid19.android.app.testhelpers.isDisplayed
 import uk.nhs.nhsx.covid19.android.app.testhelpers.stringFromResId
 
@@ -32,7 +31,7 @@ class PostCodeRobot {
         onView(withId(R.id.postCodeContinue)).check(matches(isDisplayed()))
     }
 
-    fun isActivityDisplayed() = onView(withId(id.postCodeContinue)).isDisplayed()
+    fun isActivityDisplayed() = onView(withId(R.id.postCodeContinue)).isDisplayed()
 
     fun checkActivityDoesNotExist() {
         onView(withId(R.id.postCodeContinue)).check(doesNotExist())
@@ -46,12 +45,12 @@ class PostCodeRobot {
         onView(withText(R.string.post_code_example)).check(matches(isDisplayed()))
     }
 
-    fun checkErrorTextIsNotDisplayed() {
-        onView(withId(R.id.errorText)).check(matches(not(isDisplayed())))
+    fun checkErrorContainerIsNotDisplayed() {
+        onView(withId(R.id.errorInfoContainer)).check(matches(not(isDisplayed())))
     }
 
-    fun checkErrorTextIsDisplayed() {
-        onView(withId(R.id.errorText)).perform(scrollTo()).check(matches(isDisplayed()))
+    fun checkErrorContainerIsDisplayed() {
+        onView(withId(R.id.errorInfoContainer)).perform(scrollTo()).check(matches(isDisplayed()))
     }
 
     fun checkEditTextIs(expectedValue: String) {

@@ -23,6 +23,14 @@
     <color name="focus_yellow">#FFEB3B</color>
     <color name="amber">#FFB81C</color>
 
+    <!-- style colors -->
+    <color name="style_purple">#8666B3</color>
+    <color name="style_orange">#DB985A</color>
+    <color name="style_pink">#BF5F8A</color>
+    <color name="style_teal">#63AAAA</color>
+    <color name="style_red">#F39892</color>
+    <color name="style_green">#4EBD74</color>
+
     <!-- geiger animation colors -->
     <color name="circle_one_green">#78B998</color>
     <color name="circle_two_green">#A8D1BE</color>

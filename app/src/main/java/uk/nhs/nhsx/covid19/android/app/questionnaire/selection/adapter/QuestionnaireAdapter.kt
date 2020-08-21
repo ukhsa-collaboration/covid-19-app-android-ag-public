@@ -28,8 +28,8 @@ class QuestionnaireAdapter(
 
     class QuestionnaireViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(question: Question, listener: (Question) -> Unit) = with(itemView) {
-            checkboxQuestion.text = question.symptom.title.provideTranslation()
-            textQuestionDescription.text = question.symptom.description.provideTranslation()
+            checkboxQuestion.text = question.symptom.title.translate()
+            textQuestionDescription.text = question.symptom.description.translate()
             checkboxQuestion.isChecked = question.isChecked
             val background = if (question.isChecked) {
                 R.drawable.question_selected_background

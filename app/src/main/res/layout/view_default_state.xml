@@ -33,11 +33,13 @@
         android:src="@drawable/ic_tick_light" />
 
     <TextView
-        style="@style/TextViewActionTitle"
+        style="@style/ActionTextBold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:maxWidth="150dp"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/anim_circle_size"
+        android:gravity="center"
+        android:layout_marginTop="52dp"
         android:text="@string/contact_tracing_active" />
 
 </merge>

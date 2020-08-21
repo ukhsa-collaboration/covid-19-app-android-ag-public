@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:contentDescription="@null"
-            android:src="@drawable/nhs_logo" />
+            android:src="@drawable/nhs_logo_on_transparent" />
 
         <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
             android:id="@+id/moreInfoTitle"

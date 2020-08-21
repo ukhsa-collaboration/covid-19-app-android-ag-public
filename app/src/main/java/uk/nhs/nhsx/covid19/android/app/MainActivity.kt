@@ -49,6 +49,11 @@ class MainActivity : AppCompatActivity() {
         viewModel.start()
     }
 
+    override fun onPause() {
+        super.onPause()
+        overridePendingTransition(0, 0)
+    }
+
     companion object {
         fun start(context: Context) =
             context.startActivity(getIntent(context))

@@ -3,49 +3,55 @@ package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 import androidx.work.ListenableWorker.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.NO
+import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.PENDING
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.YES
-import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesCircuitBreakerApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesCircuitBreakerRequest
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesCircuitBreakerResponse
+import java.time.Instant
 import javax.inject.Inject
 
 class RiskyVenuesCircuitBreakerInitialWork @Inject constructor(
     private val riskyVenuesCircuitBreakerApi: RiskyVenuesCircuitBreakerApi,
     private val notificationProvider: NotificationProvider,
-    private val periodicTasks: PeriodicTasks,
-    private val userInbox: UserInbox
+    private val userInbox: UserInbox,
+    private val riskyVenuePollingConfigurationProvider: RiskyVenuePollingConfigurationProvider,
+    private val visitedVenuesStorage: VisitedVenuesStorage
 ) {
 
-    suspend fun doWork(venueId: String): Result = withContext(Dispatchers.IO) {
-        try {
-            val response = riskyVenuesCircuitBreakerApi.submitInitialVenueIdForApproval(
-                RiskyVenuesCircuitBreakerRequest(venueId)
-            )
+    suspend fun doWork(riskyVenueIds: List<String>): Result =
+        withContext(Dispatchers.IO) {
+            riskyVenueIds.forEach { riskyVenueId ->
+                try {
+                    val response: RiskyVenuesCircuitBreakerResponse =
+                        riskyVenuesCircuitBreakerApi.submitInitialVenueIdForApproval(
+                            RiskyVenuesCircuitBreakerRequest(riskyVenueId)
+                        )
 
-            return@withContext when (response.approval) {
-                YES -> {
-                    notifyUser(venueId)
-                    Result.success()
-                }
-                NO -> Result.success()
-                PENDING -> {
-                    startPolling(response.approvalToken, venueId)
-                    Result.success()
+                    when (response.approval) {
+                        YES -> notifyUser(riskyVenueId)
+                        PENDING -> {
+                            riskyVenuePollingConfigurationProvider.add(
+                                RiskyVenuePollingConfiguration(
+                                    startedAt = Instant.now(),
+                                    venueId = riskyVenueId,
+                                    approvalToken = response.approvalToken
+                                )
+                            )
+                        }
+                        else -> Unit
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e)
+                    visitedVenuesStorage.undoMarkWasInRiskyList(riskyVenueId)
                 }
             }
-        } catch (e: Exception) {
-            return@withContext Result.retry()
+            return@withContext Result.success()
         }
-    }
-
-    private fun startPolling(approvalToken: String, venueId: String) {
-        periodicTasks.scheduleRiskyVenuesCircuitBreakerPolling(approvalToken, venueId)
-    }
 
     private fun notifyUser(venueId: String) {
         userInbox.addUserInboxItem(ShowVenueAlert(venueId))

@@ -6,9 +6,10 @@ import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
 import uk.nhs.covid19.config.SignatureKey
-import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
-import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager
 import uk.nhs.nhsx.covid19.android.app.availability.GooglePlayUpdateProvider
+import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager
+import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
+import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.notifications.AndroidUserInbox
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
@@ -26,7 +27,8 @@ class AppModule(
     private val bluetoothStateProvider: AvailabilityStateProvider,
     private val locationStateProvider: AvailabilityStateProvider,
     private val encryptedSharedPreferences: SharedPreferences,
-    private val qrCodesSignatureKey: SignatureKey
+    private val qrCodesSignatureKey: SignatureKey,
+    private val applicationLocaleProvider: ApplicationLocaleProvider
 ) {
     @Provides
     fun provideContext() = applicationContext
@@ -77,6 +79,11 @@ class AppModule(
 
     @Provides
     fun provideQrCodesSignatureKey(): SignatureKey = qrCodesSignatureKey
+
+    @Provides
+    @Singleton
+    fun provideApplicationLocaleProvider(): ApplicationLocaleProvider =
+        applicationLocaleProvider
 
     companion object {
         const val BLUETOOTH_STATE_NAME = "BLUETOOTH_STATE"

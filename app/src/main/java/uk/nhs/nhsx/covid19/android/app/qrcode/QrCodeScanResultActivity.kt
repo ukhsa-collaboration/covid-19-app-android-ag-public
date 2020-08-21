@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.addCallback
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.actionButton
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.resultIcon
@@ -19,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_qr_code_scan_result.titleTextView
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.topCloseButton
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.CameraPermissionNotGranted
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.InvalidContent
@@ -33,7 +33,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-class QrCodeScanResultActivity : AppCompatActivity(R.layout.activity_qr_code_scan_result) {
+class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_result) {
 
     private lateinit var state: State
 
@@ -81,7 +81,7 @@ class QrCodeScanResultActivity : AppCompatActivity(R.layout.activity_qr_code_sca
             resultIcon.setImageResource(R.drawable.ic_qr_code_success)
             titleTextView.text = getString(R.string.qr_code_success_title, venueName, time)
             subtitleTextView.setText(R.string.qr_code_success_subtitle)
-            actionButton.setText(R.string.qr_code_success_action)
+            actionButton.setText(R.string.back_to_home)
             actionButton.setOnClickListener {
                 StatusActivity.start(this@QrCodeScanResultActivity)
             }

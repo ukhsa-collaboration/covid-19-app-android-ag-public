@@ -9,6 +9,7 @@ import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import androidx.work.Configuration
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import com.jeroenmols.featureflag.framework.TestSetting
 import timber.log.Timber
@@ -18,6 +19,7 @@ import uk.nhs.covid19.config.qrCodesSignatureKey
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalyticsWorker
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityListener
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityWorker
+import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.di.ApplicationComponent
 import uk.nhs.nhsx.covid19.android.app.di.DaggerApplicationComponent
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
@@ -28,7 +30,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate
 
-class ExposureApplication : Application() {
+class ExposureApplication : Application(), Configuration.Provider {
     lateinit var appComponent: ApplicationComponent
 
     private var appAvailabilityListener: AppAvailabilityListener? = null
@@ -62,6 +64,15 @@ class ExposureApplication : Application() {
         }
     }
 
+    override fun getWorkManagerConfiguration(): Configuration {
+        val builder = Configuration.Builder()
+        builder.setMaxSchedulerLimit(WORK_MANAGER_SCHEDULER_LIMIT)
+        if (BuildConfig.DEBUG) {
+            builder.setMinimumLoggingLevel(android.util.Log.DEBUG)
+        }
+        return builder.build()
+    }
+
     fun updateLifecycleListener() {
         appAvailabilityListener?.let {
             unregisterActivityLifecycleCallbacks(it)
@@ -73,8 +84,10 @@ class ExposureApplication : Application() {
 
     fun buildAndUseAppComponent(
         networkModule: NetworkModule,
-        exposureNotificationApi: ExposureNotificationApi = GoogleExposureNotificationApi(this)
+        exposureNotificationApi: ExposureNotificationApi = GoogleExposureNotificationApi(this),
+        languageCode: String? = null
     ) {
+        val sharedPreferences = createEncryptedSharedPreferences()
         appComponent = DaggerApplicationComponent.builder()
             .appModule(
                 AppModule(
@@ -82,8 +95,9 @@ class ExposureApplication : Application() {
                     exposureNotificationApi,
                     AndroidBluetoothStateProvider(),
                     AndroidLocationStateProvider(),
-                    createEncryptedSharedPreferences(),
-                    qrCodesSignatureKey
+                    sharedPreferences,
+                    qrCodesSignatureKey,
+                    ApplicationLocaleProvider(sharedPreferences, languageCode)
                 )
             )
             .networkModule(networkModule)
@@ -100,6 +114,10 @@ class ExposureApplication : Application() {
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
+
+    companion object {
+        private const val WORK_MANAGER_SCHEDULER_LIMIT = 50
+    }
 }
 
 val Context.appComponent: ApplicationComponent

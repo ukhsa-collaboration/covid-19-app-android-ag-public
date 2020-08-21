@@ -30,6 +30,7 @@ class ExposureStatusViewModelTest {
     private val activationResultObserver =
         mockk<Observer<ExposureNotificationActivationResult>>(relaxed = true)
 
+    private val exposureNotificationsChangedObserver = mockk<Observer<Boolean>>(relaxed = true)
     private val exposureNotificationsEnabledObserver = mockk<Observer<Boolean>>(relaxed = true)
 
     @Before
@@ -96,6 +97,43 @@ class ExposureStatusViewModelTest {
     }
 
     @Test
+    fun `exposure notification is changed returns true`() = runBlocking {
+        testSubject.exposureNotificationsChanged()
+            .observeForever(exposureNotificationsChangedObserver)
+
+        coEvery { exposureNotificationService.isEnabled() } returns true
+
+        testSubject.checkExposureNotificationsChanged()
+
+        verify { exposureNotificationsChangedObserver.onChanged(true) }
+    }
+
+    @Test
+    fun `checking exposure notification is changed twice returns true only once`() = runBlocking {
+        testSubject.exposureNotificationsChanged()
+            .observeForever(exposureNotificationsChangedObserver)
+
+        coEvery { exposureNotificationService.isEnabled() } returns true
+
+        testSubject.checkExposureNotificationsChanged()
+        testSubject.checkExposureNotificationsChanged()
+
+        verify(exactly = 1) { exposureNotificationsChangedObserver.onChanged(true) }
+    }
+
+    @Test
+    fun `exposure notification is changed returns false`() = runBlocking {
+        testSubject.exposureNotificationsChanged()
+            .observeForever(exposureNotificationsChangedObserver)
+
+        coEvery { exposureNotificationService.isEnabled() } returns false
+
+        testSubject.checkExposureNotificationsChanged()
+
+        verify { exposureNotificationsChangedObserver.onChanged(false) }
+    }
+
+    @Test
     fun `exposure notification is enabled returns true`() = runBlocking {
         testSubject.exposureNotificationsEnabled()
             .observeForever(exposureNotificationsEnabledObserver)
@@ -105,6 +143,19 @@ class ExposureStatusViewModelTest {
         testSubject.checkExposureNotificationsEnabled()
 
         verify { exposureNotificationsEnabledObserver.onChanged(true) }
+    }
+
+    @Test
+    fun `checking exposure notification is enabled twice returns true twice`() = runBlocking {
+        testSubject.exposureNotificationsEnabled()
+            .observeForever(exposureNotificationsEnabledObserver)
+
+        coEvery { exposureNotificationService.isEnabled() } returns true
+
+        testSubject.checkExposureNotificationsEnabled()
+        testSubject.checkExposureNotificationsEnabled()
+
+        verify(exactly = 2) { exposureNotificationsEnabledObserver.onChanged(true) }
     }
 
     @Test
@@ -122,7 +173,7 @@ class ExposureStatusViewModelTest {
     @Test
     fun `stop exposure notifications`() = runBlocking {
 
-        testSubject.exposureNotificationsEnabled()
+        testSubject.exposureNotificationsChanged()
             .observeForever(exposureNotificationsEnabledObserver)
 
         coEvery { exposureNotificationService.isEnabled() } returns true

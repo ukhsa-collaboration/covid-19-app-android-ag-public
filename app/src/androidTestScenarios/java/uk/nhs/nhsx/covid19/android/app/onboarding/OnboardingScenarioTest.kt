@@ -113,7 +113,7 @@ class OnboardingScenarioTest : EspressoTest() {
 
         step(
             "Authentication code entry",
-            "TThe user is asked to enter their partial authcode before" +
+            "The user is asked to enter their partial authcode before" +
                 "they can proceed."
         )
 
@@ -231,7 +231,7 @@ class OnboardingScenarioTest : EspressoTest() {
 
         postCodeRobot.clickContinue()
 
-        postCodeRobot.checkErrorTextIsDisplayed()
+        postCodeRobot.checkErrorContainerIsDisplayed()
 
         step(
             "Enter postcode – error",
@@ -257,7 +257,7 @@ class OnboardingScenarioTest : EspressoTest() {
             "The user is asked to enter their postcode."
         )
 
-        postCodeRobot.enterPostCode("A1")
+        postCodeRobot.enterPostCode("ZE1")
 
         step(
             "Enter postcode",

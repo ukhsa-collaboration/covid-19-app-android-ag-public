@@ -2,7 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.remote.data
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import uk.nhs.nhsx.covid19.android.app.common.TranslatedString
+import uk.nhs.nhsx.covid19.android.app.common.Translatable
 
 @JsonClass(generateAdapter = true)
 data class AppAvailabilityResponse(
@@ -13,12 +13,12 @@ data class AppAvailabilityResponse(
 
 @JsonClass(generateAdapter = true)
 data class MinimumAppVersion(
-    val description: TranslatedString,
+    val description: Translatable,
     val value: Int
 )
 
 @JsonClass(generateAdapter = true)
 data class MinimumSdkVersion(
-    val description: TranslatedString,
+    val description: Translatable,
     val value: Int
 )

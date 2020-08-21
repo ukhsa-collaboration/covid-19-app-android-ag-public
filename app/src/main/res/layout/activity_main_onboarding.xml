@@ -99,7 +99,7 @@
                     android:background="@drawable/ic_onboarding_circle"
                     android:contentDescription="@null"
                     android:scaleType="centerInside"
-                    android:src="@drawable/ic_onboarding_qrcode"
+                    android:src="@drawable/ic_venue_check_in"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/notificationText" />
 
@@ -134,7 +134,7 @@
                     android:background="@drawable/ic_onboarding_circle"
                     android:contentDescription="@null"
                     android:scaleType="centerInside"
-                    android:src="@drawable/ic_onboarding_check_symptoms"
+                    android:src="@drawable/ic_report_symptoms"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/venueCheckInText" />
 
@@ -219,7 +219,7 @@
         android:layout_marginHorizontal="32dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
-        android:text="@string/onboarding_welcome_continue"
+        android:text="@string/continue_button"
         app:layout_constraintBottom_toTopOf="@id/adultWarning" />
 
     <TextView

@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.net.TrafficStats
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 class NetworkTrafficStats(
     private val networkStatsStorage: NetworkStatsStorage,
@@ -20,35 +21,39 @@ class NetworkTrafficStats(
 
     fun getTotalBytesDownloaded(): Int? = runCatching {
         val lastStoredValue = networkStatsStorage.lastDownloadedBytes
+
+        val totalDownloadedBytes = networkDownloadDataProvider().absoluteValue
+
         return if (lastStoredValue != null) {
 
-            val totalDownloadedBytes =
-                if (networkDownloadDataProvider() > lastStoredValue)
-                    networkDownloadDataProvider() - lastStoredValue
+            val dailyDownloadedBytes =
+                if (totalDownloadedBytes > lastStoredValue)
+                    totalDownloadedBytes - lastStoredValue
                 else
-                    networkDownloadDataProvider()
+                    totalDownloadedBytes
 
-            networkStatsStorage.lastDownloadedBytes = totalDownloadedBytes
-            totalDownloadedBytes
+            networkStatsStorage.lastDownloadedBytes = dailyDownloadedBytes
+            dailyDownloadedBytes
         } else {
-            networkStatsStorage.lastDownloadedBytes = networkDownloadDataProvider()
-            null
+            networkStatsStorage.lastDownloadedBytes = totalDownloadedBytes
+            0
         }
     }.getOrNull()
 
     fun getTotalBytesUploaded(): Int? = runCatching {
         val lastStored = networkStatsStorage.lastUploadedBytes
+        val totalUploadedBytes = networkUploadDataProvider().absoluteValue
         return if (lastStored != null) {
-            val totalUploadedBytes =
-                if (networkUploadDataProvider() > lastStored)
-                    networkUploadDataProvider() - lastStored
+            val dailyUploadedBytes =
+                if (totalUploadedBytes > lastStored)
+                    totalUploadedBytes - lastStored
                 else
-                    networkUploadDataProvider()
-            networkStatsStorage.lastUploadedBytes = totalUploadedBytes
-            totalUploadedBytes
+                    totalUploadedBytes
+            networkStatsStorage.lastUploadedBytes = dailyUploadedBytes
+            dailyUploadedBytes
         } else {
-            networkStatsStorage.lastUploadedBytes = networkUploadDataProvider()
-            null
+            networkStatsStorage.lastUploadedBytes = totalUploadedBytes
+            0
         }
     }.getOrNull()
 }

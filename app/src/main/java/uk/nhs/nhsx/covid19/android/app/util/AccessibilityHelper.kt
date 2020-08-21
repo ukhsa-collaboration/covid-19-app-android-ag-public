@@ -5,6 +5,7 @@ import android.view.View
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
 import android.widget.ScrollView
+import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -18,17 +19,21 @@ fun Context.smallestScreenWidth(): Int = resources.configuration.smallestScreenW
 
 fun AppCompatActivity.setNavigateUpToolbar(
     toolbar: MaterialToolbar,
-    @StringRes title: Int,
+    @StringRes titleResId: Int,
     @DrawableRes homeIndicator: Int = R.drawable.ic_arrow_back_primary
 ) {
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     supportActionBar?.setHomeAsUpIndicator(homeIndicator)
     supportActionBar?.setHomeActionContentDescription(R.string.go_back)
-    supportActionBar?.title = getString(title)
+    supportActionBar?.title = getString(titleResId)
     toolbar.setNavigationOnClickListener { onBackPressed() }
 
-    toolbar.getChildAt(0)?.setUpAccessibilityHeading()
+    toolbar.getChildAt(0)?.let {
+        if (it is TextView) {
+            it.setUpAccessibilityHeading()
+        }
+    }
 }
 
 /**

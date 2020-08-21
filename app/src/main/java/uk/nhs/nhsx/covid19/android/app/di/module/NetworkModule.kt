@@ -22,6 +22,7 @@ import uk.nhs.nhsx.covid19.android.app.state.StateJson
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
+import uk.nhs.nhsx.covid19.android.app.util.adapters.TranslatableAdapter
 import java.util.UUID
 import javax.inject.Named
 import javax.inject.Singleton
@@ -167,6 +168,7 @@ class NetworkModule(
             .add(StateJson.stateMoshiAdapter)
             .add(LocalDateAdapter())
             .add(InstantAdapter())
+            .add(TranslatableAdapter())
             .build()
     }
 

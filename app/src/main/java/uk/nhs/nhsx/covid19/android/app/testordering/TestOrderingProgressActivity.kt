@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_test_ordering_progress.buttonTryAgain
 import kotlinx.android.synthetic.main.activity_test_ordering_progress.errorStateContainer
@@ -13,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_test_ordering_progress.loadingPro
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Error
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Loading
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Success
@@ -23,7 +23,7 @@ import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.visible
 import javax.inject.Inject
 
-class TestOrderingProgressActivity : AppCompatActivity(R.layout.activity_test_ordering_progress) {
+class TestOrderingProgressActivity : BaseActivity(R.layout.activity_test_ordering_progress) {
 
     @Inject
     lateinit var factory: ViewModelFactory<TestOrderingProgressViewModel>

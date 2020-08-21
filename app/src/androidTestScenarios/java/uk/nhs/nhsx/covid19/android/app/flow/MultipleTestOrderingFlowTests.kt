@@ -61,7 +61,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         testAppContext.virologyTestingApi.testResultForPollingToken = mutableMapOf(firstToken to NEGATIVE)
 
-        testAppContext.getPeriodicTasks().schedule(keepPrevious = false)
+        testAppContext.getPeriodicTasks().scheduleVirologyTestResultFetching()
 
         await.atMost(
             10,
@@ -74,7 +74,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         testAppContext.virologyTestingApi.testResultForPollingToken[secondToken] = POSITIVE
 
-        testAppContext.getPeriodicTasks().schedule(keepPrevious = false)
+        testAppContext.getPeriodicTasks().scheduleVirologyTestResultFetching()
 
         await.atMost(10, SECONDS) ignoreException NoMatchingViewException::class untilAsserted {
             testResultRobot.checkActivityDisplaysPositiveAndFinishIsolation()

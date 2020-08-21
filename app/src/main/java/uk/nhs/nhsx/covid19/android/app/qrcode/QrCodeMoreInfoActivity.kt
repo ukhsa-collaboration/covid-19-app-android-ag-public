@@ -3,11 +3,12 @@ package uk.nhs.nhsx.covid19.android.app.qrcode
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_qr_code_more_info.buttonReturnToCheckIn
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 
-class QrCodeMoreInfoActivity : AppCompatActivity(R.layout.activity_qr_code_more_info) {
+class QrCodeMoreInfoActivity : BaseActivity(R.layout.activity_qr_code_more_info) {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

@@ -18,6 +18,11 @@
         android:theme="@style/AppTheme"
         tools:targetApi="n">
 
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            tools:node="remove" />
+
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
@@ -74,7 +79,7 @@
             android:name=".testordering.TestOrderingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".questionnaire.review.PositiveSymptomsActivity"
+            android:name=".questionnaire.review.SymptomsAdviceIsolateActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".state.IsolationExpirationActivity"
@@ -109,6 +114,13 @@
         <activity
             android:name=".qrcode.riskyvenues.VenueAlertActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".status.RiskLevelActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".edgecases.TabletNotSupportedActivity"
+            android:screenOrientation="portrait" />
+
         <!-- Receivers -->
         <receiver
             android:name=".exposure.encounter.ExposureNotificationBroadcastReceiver"

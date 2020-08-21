@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcel
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,10 +21,13 @@ import kotlinx.android.synthetic.main.activity_review_symptoms.textSelectDate
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.ExplicitDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.NotStated
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomAdvice.DoNotIsolate
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomAdvice.Isolate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.SymptomsReviewAdapter
@@ -40,7 +42,8 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-class ReviewSymptomsActivity : AppCompatActivity(R.layout.activity_review_symptoms) {
+class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
+
     private lateinit var calendarConstraints: CalendarConstraints
 
     @Inject
@@ -78,15 +81,18 @@ class ReviewSymptomsActivity : AppCompatActivity(R.layout.activity_review_sympto
             }
         )
 
-        viewModel.navigateToIsolationScreen().observe(
+        viewModel.navigateToSymptomAdviceScreen().observe(
             this,
-            Observer { userInIsolationState: Boolean ->
-                if (userInIsolationState) {
-                    PositiveSymptomsActivity.start(this)
-                    finish()
-                } else {
-                    startActivity<NoSymptomsActivity> {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            Observer { symptomAdvice: SymptomAdvice ->
+                when (symptomAdvice) {
+                    is DoNotIsolate -> {
+                        startActivity<NoSymptomsActivity> {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        }
+                    }
+                    is Isolate -> {
+                        SymptomsAdviceIsolateActivity.start(this, symptomAdvice.isPositiveSymptoms, symptomAdvice.isolationDurationDays)
+                        finish()
                     }
                 }
             }

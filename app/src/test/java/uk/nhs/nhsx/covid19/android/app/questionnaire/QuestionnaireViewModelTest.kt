@@ -13,7 +13,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.Lce
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
-import uk.nhs.nhsx.covid19.android.app.common.TranslatedString
+import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.LoadQuestionnaire
@@ -183,7 +183,11 @@ class QuestionnaireViewModelTest {
     }
 
     private fun question(name: String, checked: Boolean): Question {
-        val symptom = Symptom(TranslatedString(name), TranslatedString(""), 1.0)
+        val symptom = Symptom(
+            title = Translatable(mapOf("en-GB" to name)),
+            description = Translatable(mapOf("en-GB" to "")),
+            riskWeight = 1.0
+        )
         return ReviewSymptomItem.Question(symptom, checked)
     }
 }

@@ -13,6 +13,7 @@ import uk.nhs.nhsx.covid19.android.app.notifications.AndroidUserInbox
 import uk.nhs.nhsx.covid19.android.app.onboarding.authentication.AuthenticationProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.testordering.LatestTestResultProvider
 import javax.inject.Singleton
@@ -43,4 +44,6 @@ interface TestAppComponent : ApplicationComponent {
     fun getAuthenticationCodeProvider(): AuthenticationProvider
 
     fun providePeriodicTasks(): PeriodicTasks
+
+    fun getIsolationConfigurationProvider(): IsolationConfigurationProvider
 }

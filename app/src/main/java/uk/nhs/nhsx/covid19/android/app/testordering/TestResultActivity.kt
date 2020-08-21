@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.google.android.gms.common.api.Status
 import kotlinx.android.synthetic.main.activity_test_result.goodNewsContainer
@@ -25,6 +24,7 @@ import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestTit
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.exposure.SubmitTemporaryExposureKeys.SubmitResult.Failure
 import uk.nhs.nhsx.covid19.android.app.exposure.SubmitTemporaryExposureKeys.SubmitResult.ResolutionRequired
@@ -35,14 +35,13 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainStat
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.RESULT_NEGATIVE_NOT_IN_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.RESULT_POSITIVE_IN_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.RESULT_POSITIVE_NOT_IN_ISOLATION
-import uk.nhs.nhsx.covid19.android.app.util.URL_NHS_111_ONLINE
 import uk.nhs.nhsx.covid19.android.app.util.gone
 import uk.nhs.nhsx.covid19.android.app.util.invisible
 import uk.nhs.nhsx.covid19.android.app.util.openUrl
 import uk.nhs.nhsx.covid19.android.app.util.visible
 import javax.inject.Inject
 
-class TestResultActivity : AppCompatActivity(R.layout.activity_test_result) {
+class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
     @Inject
     lateinit var factory: ViewModelFactory<TestResultViewModel>
@@ -56,11 +55,11 @@ class TestResultActivity : AppCompatActivity(R.layout.activity_test_result) {
         startViewModelListeners()
 
         goodNewsOnlineServiceLink.setOnClickListener {
-            openUrl(URL_NHS_111_ONLINE)
+            openUrl(R.string.url_nhs_111_online)
         }
 
         isolationRequestOnlineServiceLink.setOnClickListener {
-            openUrl(URL_NHS_111_ONLINE)
+            openUrl(R.string.url_nhs_111_online)
         }
 
         viewModel.onCreate()

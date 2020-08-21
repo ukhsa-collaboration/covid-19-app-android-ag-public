@@ -25,11 +25,22 @@ class ExposureStatusViewModel @Inject constructor(
     fun exposureNotificationActivationResult(): SingleLiveEvent<ExposureNotificationActivationResult> =
         exposureNotificationActivationResult
 
+    private val exposureNotificationsChangedLiveData = MutableLiveData<Boolean>()
+
+    fun exposureNotificationsChanged(): LiveData<Boolean> =
+        distinctUntilChanged(exposureNotificationsChangedLiveData)
+
     private val exposureNotificationsEnabledLiveData = MutableLiveData<Boolean>()
-    fun exposureNotificationsEnabled(): LiveData<Boolean> =
-        distinctUntilChanged(exposureNotificationsEnabledLiveData)
+
+    fun exposureNotificationsEnabled(): LiveData<Boolean> = exposureNotificationsEnabledLiveData
 
     val submitKeyLiveData = MutableLiveData<SubmitResult>()
+
+    fun checkExposureNotificationsChanged() {
+        viewModelScope.launch {
+            exposureNotificationsChangedLiveData.postValue(exposureNotificationManager.isEnabled())
+        }
+    }
 
     fun checkExposureNotificationsEnabled() {
         viewModelScope.launch {
@@ -42,7 +53,7 @@ class ExposureStatusViewModel @Inject constructor(
             if (!exposureNotificationManager.isEnabled()) {
                 val startResult = exposureNotificationManager.startExposureNotifications()
                 exposureNotificationActivationResult.postValue(startResult)
-                checkExposureNotificationsEnabled()
+                checkExposureNotificationsChanged()
             } else {
                 exposureNotificationActivationResult.postValue(Success)
             }
@@ -58,7 +69,7 @@ class ExposureStatusViewModel @Inject constructor(
     fun stopExposureNotifications() {
         viewModelScope.launch {
             exposureNotificationManager.stopExposureNotifications()
-            checkExposureNotificationsEnabled()
+            checkExposureNotificationsChanged()
         }
     }
 

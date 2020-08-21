@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="field_tests">Field Tests</string>
+    <string name="field_tests" translatable="false">Field Tests</string>
 </resources>

@@ -7,9 +7,10 @@
     android:orientation="vertical">
 
     <ScrollView
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true" >
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,8 +22,8 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="40dp"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_lock" />
 
@@ -59,7 +60,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/exposure_notification_recommendation" />
 
-            <TextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                 android:id="@+id/onlineServiceLinkTextView"
                 style="@style/LinkTextWithIcon"
                 android:layout_width="wrap_content"

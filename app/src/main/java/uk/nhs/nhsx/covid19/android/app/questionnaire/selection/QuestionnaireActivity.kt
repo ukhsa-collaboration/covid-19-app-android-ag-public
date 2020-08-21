@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_questionnaire.buttonTryAgain
@@ -19,6 +18,7 @@ import kotlinx.android.synthetic.main.include_show_questionnaire.textNoSymptoms
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Error
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Loading
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Success
@@ -35,7 +35,8 @@ import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.visible
 import javax.inject.Inject
 
-class QuestionnaireActivity : AppCompatActivity(R.layout.activity_questionnaire) {
+class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
+
     private lateinit var questionnaireAdapter: QuestionnaireAdapter
 
     @Inject

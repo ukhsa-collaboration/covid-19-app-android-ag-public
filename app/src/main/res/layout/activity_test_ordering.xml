@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/test_ordering_description_4" />
 
-            <TextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                 android:id="@+id/orderTestPrivacyNoticeLink"
                 style="@style/LinkTextWithIcon"
                 android:layout_width="wrap_content"
@@ -70,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/test_ordering_description_5" />
 
-            <TextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                 android:id="@+id/appPrivacyNoticeLink"
                 style="@style/LinkTextWithIcon"
                 android:layout_width="wrap_content"
@@ -87,7 +87,7 @@
                 android:layout_weight="1"
                 android:text="@string/test_ordering_description_6" />
 
-            <TextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                 android:id="@+id/bookTestForSomeoneElseLink"
                 style="@style/LinkTextWithIcon"
                 android:layout_width="wrap_content"

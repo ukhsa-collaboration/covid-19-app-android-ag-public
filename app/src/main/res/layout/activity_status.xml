@@ -8,7 +8,22 @@
 
     <include
         android:id="@+id/statusBanner"
-        layout="@layout/banner_home" />
+        layout="@layout/banner_home"/>
+
+    <uk.nhs.nhsx.covid19.android.app.widgets.AreaRiskView
+        android:id="@+id/riskAreaView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="24dp"
+        android:elevation="2dp"
+        android:visibility="gone"
+        tools:areaRiskText="CM2 area risk level is LOW"
+        tools:areaRisk="LOW"
+        tools:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -19,21 +34,7 @@
             android:id="@+id/statusContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:animateLayoutChanges="true"
-            android:clipChildren="false">
-
-            <uk.nhs.nhsx.covid19.android.app.widgets.AreaRiskView
-                android:id="@+id/riskAreaView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="24dp"
-                android:elevation="2dp"
-                android:visibility="gone"
-                tools:areaRiskText="CM2 area risk level is LOW"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            android:animateLayoutChanges="false">
 
             <FrameLayout
                 android:id="@+id/stateContainer"
@@ -42,7 +43,7 @@
                 android:clipChildren="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/riskAreaView">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.IsolationStatusView
                     android:id="@+id/isolationView"
@@ -91,11 +92,21 @@
                 app:layout_constraintTop_toBottomOf="@id/stateContainer">
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
+                    android:id="@+id/optionOrderTest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    app:optionIcon="@drawable/ic_book_test"
+                    app:optionIconBackgroundColor="@color/style_orange"
+                    app:optionText="@string/book_free_test" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
                     android:id="@+id/optionVenueCheckIn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    app:optionIcon="@drawable/ic_scan_qr"
+                    app:optionIcon="@drawable/ic_venue_check_in"
+                    app:optionIconBackgroundColor="@color/style_purple"
                     app:optionText="@string/status_option_scan_qr_codes" />
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
@@ -103,16 +114,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    app:optionIcon="@drawable/ic_report"
+                    app:optionIcon="@drawable/ic_report_symptoms"
+                    app:optionIconBackgroundColor="@color/style_orange"
                     app:optionText="@string/status_option_report_symptoms" />
-
-                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
-                    android:id="@+id/optionOrderTest"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    app:optionIcon="@drawable/ic_testing"
-                    app:optionText="@string/book_free_test" />
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
                     android:id="@+id/optionReadAdvice"
@@ -120,24 +124,17 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     app:optionIcon="@drawable/ic_advice"
+                    app:optionIconBackgroundColor="@color/style_pink"
                     app:optionText="@string/status_option_read_latest_advice" />
-
-                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
-                    android:id="@+id/optionReadSelfIsolationAdvice"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:visibility="gone"
-                    app:optionIcon="@drawable/ic_advice"
-                    app:optionText="@string/status_option_read_self_isolation_advice" />
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
                     android:id="@+id/optionAboutTheApp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    app:optionIcon="@drawable/ic_about_app"
-                    app:optionText="@string/status_option_how_the_app_works" />
+                    app:optionIcon="@drawable/ic_info"
+                    app:optionIconBackgroundColor="@color/style_teal"
+                    app:optionText="@string/about_this_app_title" />
 
                 <LinearLayout
                     android:id="@+id/optionContactTracing"
@@ -149,11 +146,11 @@
                     android:paddingHorizontal="16dp">
 
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:contentDescription="@null"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_signal" />
+                        android:src="@drawable/ic_contact_tracing" />
 
                     <TextView
                         style="@style/ActionText"
@@ -195,6 +192,5 @@
                 app:layout_constraintTop_toBottomOf="@id/earlyVersionNotice"
                 tools:visibility="visible" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

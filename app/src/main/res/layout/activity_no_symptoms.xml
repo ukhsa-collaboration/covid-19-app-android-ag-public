@@ -35,7 +35,7 @@
         android:text="@string/message_no_coronavirus_symptoms"
         app:layout_constraintTop_toBottomOf="@id/titleNoSymptoms" />
 
-    <TextView
+    <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
         android:id="@+id/noSymptomsOnlineServiceLink"
         style="@style/LinkTextWithIcon"
         android:layout_width="wrap_content"

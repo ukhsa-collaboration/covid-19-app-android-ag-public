@@ -17,6 +17,7 @@ import androidx.work.WorkManager
 import uk.nhs.covid19.config.Configurations
 import uk.nhs.covid19.config.qrCodesSignatureKey
 import uk.nhs.nhsx.covid19.android.app.ExposureApplication
+import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
@@ -31,7 +32,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.state.Event
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect
 import uk.nhs.nhsx.covid19.android.app.state.State
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.testordering.LatestTestResult
 import uk.nhs.nhsx.covid19.android.app.util.getPrivateProperty
 import java.util.concurrent.atomic.AtomicReference
@@ -53,6 +53,8 @@ class TestApplicationContext {
     private val sharedPreferences =
         app.createEncryptedSharedPreferences("testEncryptedSharedPreferences")
 
+    private val applicationLocaleProvider = ApplicationLocaleProvider(sharedPreferences)
+
     private val component: TestAppComponent = DaggerTestAppComponent.builder()
         .appModule(
             AppModule(
@@ -61,7 +63,8 @@ class TestApplicationContext {
                 bluetoothStateProvider,
                 locationStateProvider,
                 sharedPreferences,
-                qrCodesSignatureKey
+                qrCodesSignatureKey,
+                applicationLocaleProvider
             )
         )
         .networkModule(NetworkModule(Configurations.qa))
@@ -89,7 +92,7 @@ class TestApplicationContext {
 
         closeNotificationPanel()
 
-        setState(Default())
+        component.provideIsolationStateMachine().reset()
     }
 
     fun setBluetoothEnabled(isEnabled: Boolean) {
@@ -120,6 +123,9 @@ class TestApplicationContext {
         component.getLatestTestResultProvider().latestTestResult = latestTestResult
     }
 
+    fun getLatestTestResultProvider() =
+        component.getLatestTestResultProvider().latestTestResult
+
     fun setState(state: State) {
         val ref = component.provideIsolationStateMachine()
             .stateMachine
@@ -142,6 +148,13 @@ class TestApplicationContext {
     fun getPeriodicTasks(): PeriodicTasks {
         return component.providePeriodicTasks()
     }
+
+    fun getIsolationConfigurationProvider() =
+        component.getIsolationConfigurationProvider()
+
+    fun setLocale(languageName: String?) {
+        applicationLocaleProvider.language = languageName
+    }
 }
 
 fun stringFromResId(@StringRes stringRes: Int): String {
@@ -153,6 +166,7 @@ class TestBluetoothStateProvider : AvailabilityStateProvider {
     val bluetoothStateMutable = MutableLiveData<AvailabilityState>()
     override val availabilityState: LiveData<AvailabilityState> = bluetoothStateMutable
     override fun start(context: Context) {
+        bluetoothStateMutable.postValue(bluetoothStateMutable.value)
     }
 
     override fun stop(context: Context) {
@@ -164,6 +178,7 @@ class TestLocationStateProvider : AvailabilityStateProvider {
     override val availabilityState: LiveData<AvailabilityState> = locationStateMutable
 
     override fun start(context: Context) {
+        locationStateMutable.postValue(locationStateMutable.value)
     }
 
     override fun stop(context: Context) {

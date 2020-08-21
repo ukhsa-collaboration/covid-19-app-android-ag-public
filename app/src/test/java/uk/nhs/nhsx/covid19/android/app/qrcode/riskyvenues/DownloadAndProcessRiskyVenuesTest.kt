@@ -11,7 +11,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesApi
@@ -26,14 +25,15 @@ class DownloadAndProcessRiskyVenuesTest {
     private val venueMatchFinder = mockk<VenueMatchFinder>(relaxed = true)
     private val visitedVenueStorage = mockk<VisitedVenuesStorage>(relaxed = true)
     private val filterOutdatedVisits = mockk<FilterOutdatedVisits>()
-    private val periodicTasks = mockk<PeriodicTasks>(relaxed = true)
+    private val riskyVenuesCircuitBreakerTasks =
+        mockk<RiskyVenuesCircuitBreakerTasks>(relaxed = true)
 
     private val testSubject = DownloadAndProcessRiskyVenues(
         riskyVenuesApi,
         venueMatchFinder,
         visitedVenueStorage,
         filterOutdatedVisits,
-        periodicTasks
+        riskyVenuesCircuitBreakerTasks
     )
 
     private val riskyVenues = listOf(
@@ -106,8 +106,10 @@ class DownloadAndProcessRiskyVenuesTest {
 
         testSubject()
 
-        coVerify(exactly = 1) { visitedVenueStorage.markAsWasInRiskyList(emptyList()) }
-        coVerify(exactly = 0) { periodicTasks.scheduleRiskyVenuesCircuitBreakerInitial(any()) }
+        coVerify(exactly = 0) { visitedVenueStorage.markAsWasInRiskyList(emptyList()) }
+        coVerify(exactly = 0) {
+            riskyVenuesCircuitBreakerTasks.scheduleRiskyVenuesCircuitBreakerInitial(any())
+        }
     }
 
     @Test
@@ -118,18 +120,12 @@ class DownloadAndProcessRiskyVenuesTest {
         testSubject()
 
         coVerify(exactly = 1) { visitedVenueStorage.markAsWasInRiskyList(listOf(riskyVenues[0].id)) }
-        coVerify(exactly = 1) { periodicTasks.scheduleRiskyVenuesCircuitBreakerInitial(riskyVenues[0].id) }
-    }
-
-    @Test
-    fun `clearing outdated visits cancels polling task associated with venue`() = runBlocking {
-        coEvery { riskyVenuesApi.getListOfRiskyVenues() } returns RiskyVenuesResponse(venues = emptyList())
-        coEvery { visitedVenueStorage.getVisits() } returns venueVisits
-        coEvery { filterOutdatedVisits.invoke(venueVisits) } returns emptyList()
-
-        testSubject()
-
-        coVerify(exactly = 1) { periodicTasks.cancelRiskyVenuePolling(venueVisits[0].venue.id) }
-        coVerify(exactly = 1) { visitedVenueStorage.setVisits(emptyList()) }
+        coVerify(exactly = 1) {
+            riskyVenuesCircuitBreakerTasks.scheduleRiskyVenuesCircuitBreakerInitial(
+                listOf(
+                    riskyVenues[0].id
+                )
+            )
+        }
     }
 }
