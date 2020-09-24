@@ -21,6 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsFixture.symp
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.NegativeHeader
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.PositiveHeader
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
+import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
@@ -234,8 +235,8 @@ class ReviewSymptomsViewModelTest {
         every { riskCalculator.isRiskAboveThreshold(any(), any()) } returns true
         every { isolationStateMachine.readState() } returns Isolation(
             Instant.now(),
-            LocalDate.parse("2020-05-24"),
-            indexCase = IndexCase(onsetDate)
+            DurationDays(),
+            indexCase = IndexCase(onsetDate, LocalDate.parse("2020-05-24"))
         )
 
         testSubject.onButtonConfirmedClicked()
@@ -251,8 +252,8 @@ class ReviewSymptomsViewModelTest {
         every { riskCalculator.isRiskAboveThreshold(any(), any()) } returns false
         every { isolationStateMachine.readState() } returns Isolation(
             Instant.now(),
-            LocalDate.parse("2020-05-24"),
-            contactCase = ContactCase(Instant.parse("2020-05-19T12:00:00Z"))
+            DurationDays(),
+            contactCase = ContactCase(Instant.parse("2020-05-19T12:00:00Z"), LocalDate.parse("2020-05-24"))
         )
 
         testSubject.onButtonConfirmedClicked()

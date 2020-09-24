@@ -2,6 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="uk.nhs.nhsx.covid19.android.app">
 
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true" />
+    <uses-feature android:name="android.hardware.bluetooth" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -18,6 +21,10 @@
         android:theme="@style/AppTheme"
         tools:targetApi="n">
 
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="barcode" />
+
         <provider
             android:name="androidx.work.impl.WorkManagerInitializer"
             android:authorities="${applicationId}.workmanager-init"
@@ -25,7 +32,6 @@
 
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,91 +41,41 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".onboarding.MainOnboardingActivity"
-            android:screenOrientation="portrait" />
+        <activity android:name=".onboarding.WelcomeActivity" />
+        <activity android:name=".edgecases.AgeRestrictionActivity" />
         <activity
             android:name=".onboarding.postcode.PostCodeActivity"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".onboarding.PermissionActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".status.StatusActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".edgecases.DeviceNotSupportedActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".common.EnableBluetoothActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".common.EnableLocationActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".common.EnableExposureNotificationsActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".qrcode.QrScannerActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".qrcode.QrCodeScanResultActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".questionnaire.selection.QuestionnaireActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".questionnaire.review.NoSymptomsActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".questionnaire.review.ReviewSymptomsActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".testordering.TestOrderingActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".questionnaire.review.SymptomsAdviceIsolateActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".state.IsolationExpirationActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".onboarding.DataAndPrivacyActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".about.MoreAboutAppActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".testordering.TestResultActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".exposure.encounter.EncounterDetectionActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".qrcode.QrCodeMoreInfoActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".about.UserDataActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".testordering.TestOrderingProgressActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".availability.AppAvailabilityActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".onboarding.authentication.AuthenticationCodeActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".qrcode.riskyvenues.VenueAlertActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".status.RiskLevelActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".edgecases.TabletNotSupportedActivity"
-            android:screenOrientation="portrait" />
+        <activity android:name=".onboarding.PermissionActivity" />
+        <activity android:name=".status.StatusActivity" />
+        <activity android:name=".edgecases.DeviceNotSupportedActivity" />
+        <activity android:name=".common.EnableBluetoothActivity" />
+        <activity android:name=".common.EnableLocationActivity" />
+        <activity android:name=".common.EnableExposureNotificationsActivity" />
+        <activity android:name=".qrcode.QrScannerActivity" />
+        <activity android:name=".qrcode.QrCodeScanResultActivity" />
+        <activity android:name=".questionnaire.selection.QuestionnaireActivity" />
+        <activity android:name=".questionnaire.review.NoSymptomsActivity" />
+        <activity android:name=".questionnaire.review.ReviewSymptomsActivity" />
+        <activity android:name=".testordering.TestOrderingActivity" />
+        <activity android:name=".questionnaire.review.SymptomsAdviceIsolateActivity" />
+        <activity android:name=".state.IsolationExpirationActivity" />
+        <activity android:name=".onboarding.DataAndPrivacyActivity" />
+        <activity android:name=".about.MoreAboutAppActivity" />
+        <activity android:name=".testordering.TestResultActivity" />
+        <activity android:name=".testordering.SubmitKeysProgressActivity" />
+        <activity android:name=".exposure.encounter.EncounterDetectionActivity" />
+        <activity android:name=".qrcode.QrCodeHelpActivity" />
+        <activity android:name=".about.UserDataActivity" />
+        <activity android:name=".about.EditPostalDistrictActivity" />
+        <activity android:name=".testordering.TestOrderingProgressActivity" />
+        <activity android:name=".availability.AppAvailabilityActivity" />
+        <activity android:name=".onboarding.authentication.AuthenticationCodeActivity" />
+        <activity android:name=".qrcode.riskyvenues.VenueAlertActivity" />
+        <activity android:name=".status.RiskLevelActivity" />
+        <activity android:name=".edgecases.TabletNotSupportedActivity" />
+        <activity android:name=".exposure.ShareKeysInformationActivity" />
+        <activity android:name=".testordering.linktestresult.LinkTestResultActivity" />
 
         <!-- Receivers -->
         <receiver
@@ -133,6 +89,8 @@
         </receiver>
 
         <receiver android:name=".receiver.ExpirationCheckReceiver" />
+        <receiver android:name=".receiver.ExposureNotificationReminderReceiver" />
+        <receiver android:name=".analytics.AnalyticsAggregatorReceiver"/>
         <receiver android:name=".receiver.AlarmRestarter">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -146,5 +104,4 @@
             </intent-filter>
         </receiver>
     </application>
-
 </manifest>

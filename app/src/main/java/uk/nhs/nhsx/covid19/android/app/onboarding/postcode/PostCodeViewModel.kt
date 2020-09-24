@@ -1,40 +1,26 @@
 package uk.nhs.nhsx.covid19.android.app.onboarding.postcode
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.OnboardingCompletion
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
-import java.util.Locale
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeUpdateState
+import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import javax.inject.Inject
 
 class PostCodeViewModel @Inject constructor(
-    private val postCodeValidator: PostCodeValidator,
-    private val postCodePrefs: PostCodeProvider,
-    private val analyticsEventProcessor: AnalyticsEventProcessor
+    private val postCodeUpdater: PostCodeUpdater
 ) : ViewModel() {
 
-    private val postCodeLiveData = MutableLiveData<PostCodeViewState>()
+    private val postCodeLiveData = SingleLiveEvent<PostCodeUpdateState>()
+    fun viewState(): LiveData<PostCodeUpdateState> = postCodeLiveData
 
-    fun viewState(): LiveData<PostCodeViewState> = postCodeLiveData
-
-    fun validate(postCode: String) {
+    fun updateMainPostCode(postCode: String) {
         viewModelScope.launch {
-            val postCodeUpperCased = postCode.toUpperCase(Locale.UK)
-            if (postCodeValidator.validate(postCodeUpperCased)) {
-                postCodePrefs.value = postCodeUpperCased
-                postCodeLiveData.postValue(PostCodeViewState.Valid)
-                analyticsEventProcessor.track(OnboardingCompletion)
-            } else {
-                postCodeLiveData.postValue(PostCodeViewState.Invalid)
-            }
-        }
-    }
+            val updateResult: PostCodeUpdateState = postCodeUpdater.update(postCode)
 
-    sealed class PostCodeViewState {
-        object Valid : PostCodeViewState()
-        object Invalid : PostCodeViewState()
+            postCodeLiveData.postValue(updateResult)
+        }
     }
 }

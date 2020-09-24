@@ -11,17 +11,16 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
-import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.HIGH
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.LOW
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.MEDIUM
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState
-import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.HighRisk
-import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.LowRisk
-import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.MediumRisk
+import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Risk
+import uk.nhs.nhsx.covid19.android.app.util.DistrictAreaStringProvider
 
 class StatusViewModelTest {
 
@@ -29,12 +28,16 @@ class StatusViewModelTest {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val postCodeProvider = mockk<PostCodeProvider>(relaxed = true)
-    private val riskyPostCodeDetectedProvider = mockk<RiskyPostCodeDetectedProvider>(relaxed = true)
+    private val riskyPostCodeDetectedProvider = mockk<AreaRiskLevelProvider>(relaxed = true)
     private val sharedPreferences = mockk<SharedPreferences>(relaxed = true)
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val userInbox = mockk<UserInbox>(relaxed = true)
     private val periodicTasks = mockk<PeriodicTasks>(relaxed = true)
     private val notificationProvider = mockk<NotificationProvider>(relaxed = true)
+    private val districtAreaUrlProvider = mockk<DistrictAreaStringProvider>(relaxed = true)
+    private val startAppReviewFlowConstraint = mockk<ShouldShowInAppReview>(relaxed = true)
+    private val lastReviewFlowStartedDateProvider =
+        mockk<LastAppRatingStartedDateProvider>(relaxed = true)
 
     private val areaRiskStateObserver = mockk<Observer<RiskyPostCodeViewState>>(relaxed = true)
 
@@ -46,18 +49,25 @@ class StatusViewModelTest {
             isolationStateMachine,
             userInbox,
             periodicTasks,
-            notificationProvider
+            notificationProvider,
+            districtAreaUrlProvider,
+            startAppReviewFlowConstraint,
+            lastReviewFlowStartedDateProvider
         )
+
+    private val lowRisk = Risk("A1", 0, 0, LOW)
+    private val mediumRisk = Risk("A1", 0, 0, MEDIUM)
+    private val highRisk = Risk("A1", 0, 0, HIGH)
 
     @Before
     fun setUp() {
-        postCodeProvider.value = "A1"
-        testSubject.areaRiskState().observeForever(areaRiskStateObserver)
+        every { postCodeProvider.value } returns "A1"
+        testSubject.onAreaRiskLevelChanged().observeForever(areaRiskStateObserver)
     }
 
     @After
     fun tearDown() {
-        testSubject.areaRiskState().removeObserver(areaRiskStateObserver)
+        testSubject.onAreaRiskLevelChanged().removeObserver(areaRiskStateObserver)
     }
 
     @Test
@@ -66,7 +76,7 @@ class StatusViewModelTest {
 
         testSubject.updateAreaRisk()
 
-        verify { areaRiskStateObserver.onChanged(LowRisk(postCodeProvider.value)) }
+        verify { areaRiskStateObserver.onChanged(lowRisk) }
     }
 
     @Test
@@ -75,7 +85,7 @@ class StatusViewModelTest {
 
         testSubject.updateAreaRisk()
 
-        verify { areaRiskStateObserver.onChanged(MediumRisk(postCodeProvider.value)) }
+        verify { areaRiskStateObserver.onChanged(mediumRisk) }
     }
 
     @Test
@@ -84,7 +94,7 @@ class StatusViewModelTest {
 
         testSubject.updateAreaRisk()
 
-        verify { areaRiskStateObserver.onChanged(HighRisk(postCodeProvider.value)) }
+        verify { areaRiskStateObserver.onChanged(highRisk) }
     }
 
     @Test
@@ -93,7 +103,7 @@ class StatusViewModelTest {
 
         testSubject.updateAreaRisk()
 
-        verify { areaRiskStateObserver.onChanged(MediumRisk(postCodeProvider.value)) }
+        verify { areaRiskStateObserver.onChanged(mediumRisk) }
     }
 
     @Test
@@ -102,7 +112,7 @@ class StatusViewModelTest {
 
         testSubject.updateAreaRisk()
 
-        verify { areaRiskStateObserver.onChanged(LowRisk(postCodeProvider.value)) }
+        verify { areaRiskStateObserver.onChanged(lowRisk) }
     }
 
     @Test
@@ -111,7 +121,7 @@ class StatusViewModelTest {
 
         testSubject.updateAreaRisk()
 
-        verify { areaRiskStateObserver.onChanged(MediumRisk(postCodeProvider.value)) }
+        verify { areaRiskStateObserver.onChanged(mediumRisk) }
     }
 
     @Test
@@ -120,7 +130,7 @@ class StatusViewModelTest {
 
         testSubject.updateAreaRisk()
 
-        verify { areaRiskStateObserver.onChanged(HighRisk(postCodeProvider.value)) }
+        verify { areaRiskStateObserver.onChanged(highRisk) }
     }
 
     @Test

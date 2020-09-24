@@ -47,7 +47,15 @@ class AndroidReporter internal constructor(
     fun runWithConfigurations(builderAction: Reporter.() -> Unit) {
         testConfigurations.forEach { configuration ->
             applyConfiguration(configuration)
-            builderAction()
+            for (i in 0..2) {
+                try {
+                    builderAction()
+                    break
+                } catch (exception: Exception) {
+                    UiDevice.getInstance(getInstrumentation()).pressBack()
+                    testAppContext.reset()
+                }
+            }
         }
         save()
         resetSystemFontScaling()
@@ -98,7 +106,7 @@ class AndroidReporter internal constructor(
 
         val outputFilename = takeScreenshot(filename, screenshotFolderName)
         if (outputFilename != null) {
-            val tags = listOf(orientationName, fontScaleName, themeName)
+            val tags = listOf(orientationName, fontScaleName, themeName, languageCode)
             val screenshot = Screenshot("$screenshotFolderName/$outputFilename", tags)
 
             createOrUpdateStep(stepName, stepDescription, screenshot)
@@ -130,7 +138,7 @@ class AndroidReporter internal constructor(
     private fun save() {
         val report = Report(
             description = description,
-            kind = kind,
+            kind = kind.description,
             name = name,
             scenario = scenario,
             steps = steps.values.toList()
@@ -165,10 +173,62 @@ fun EspressoTest.reporter(
     if (takeScreenshots) {
         val configurations = listOf(
             TestConfiguration(Orientation.PORTRAIT, FontScale.DEFAULT, Theme.LIGHT),
-            TestConfiguration(Orientation.PORTRAIT, FontScale.SMALL, Theme.LIGHT),
-            TestConfiguration(Orientation.PORTRAIT, FontScale.LARGEST, Theme.LIGHT),
-            TestConfiguration(Orientation.PORTRAIT, FontScale.DEFAULT, Theme.DARK)
-        )
+            TestConfiguration(Orientation.LANDSCAPE, FontScale.SMALL, Theme.DARK),
+            TestConfiguration(
+                Orientation.PORTRAIT,
+                FontScale.SMALL,
+                Theme.LIGHT,
+                languageCode = "ar"
+            ),
+            TestConfiguration(
+                Orientation.PORTRAIT,
+                FontScale.SMALL,
+                Theme.LIGHT,
+                languageCode = "bn"
+            ),
+            TestConfiguration(
+                Orientation.PORTRAIT,
+                FontScale.SMALL,
+                Theme.LIGHT,
+                languageCode = "cy"
+            ),
+            TestConfiguration(
+                Orientation.PORTRAIT,
+                FontScale.SMALL,
+                Theme.LIGHT,
+                languageCode = "gu"
+            ),
+            TestConfiguration(
+                Orientation.PORTRAIT,
+                FontScale.SMALL,
+                Theme.LIGHT,
+                languageCode = "pa"
+            ),
+            TestConfiguration(
+                Orientation.PORTRAIT,
+                FontScale.SMALL,
+                Theme.LIGHT,
+                languageCode = "ro"
+            ),
+            TestConfiguration(
+                Orientation.PORTRAIT,
+                FontScale.SMALL,
+                Theme.LIGHT,
+                languageCode = "tr"
+            ),
+            TestConfiguration(
+                Orientation.PORTRAIT,
+                FontScale.SMALL,
+                Theme.LIGHT,
+                languageCode = "ur"
+            ),
+            TestConfiguration(
+                Orientation.PORTRAIT,
+                FontScale.SMALL,
+                Theme.LIGHT,
+                languageCode = "zh"
+            )
+        ).sortedBy { it.orientation }
 
         AndroidReporter(
             testAppContext,

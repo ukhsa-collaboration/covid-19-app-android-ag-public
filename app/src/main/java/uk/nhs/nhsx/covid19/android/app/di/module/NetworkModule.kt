@@ -1,22 +1,18 @@
 package uk.nhs.nhsx.covid19.android.app.di.module
 
-import com.moczul.ok2curl.CurlInterceptor
-import com.moczul.ok2curl.logger.Loggable
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import okhttp3.CertificatePinner
 import okhttp3.ConnectionSpec
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.TlsVersion.TLS_1_2
 import okhttp3.TlsVersion.TLS_1_3
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import timber.log.Timber
 import uk.nhs.covid19.config.EnvironmentConfiguration
 import uk.nhs.covid19.config.Remote
-import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.di.module.SignatureValidationInterceptor.Companion.HEADER_REQUEST_ID
 import uk.nhs.nhsx.covid19.android.app.state.StateJson
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
@@ -24,12 +20,14 @@ import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.TranslatableAdapter
 import java.util.UUID
+import java.util.concurrent.TimeUnit.MINUTES
 import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 class NetworkModule(
-    private val configuration: EnvironmentConfiguration
+    private val configuration: EnvironmentConfiguration,
+    private val interceptors: List<Interceptor>
 ) {
     @Provides
     @Singleton
@@ -63,7 +61,6 @@ class NetworkModule(
     @Singleton
     @Named(DISTRIBUTION_REMOTE)
     fun provideDistributionOkHttpClient(
-        httpLoggingInterceptor: HttpLoggingInterceptor,
         base64Decoder: Base64Decoder
     ): OkHttpClient {
         val signatureValidationInterceptor = createSignatureValidationInterceptor(
@@ -73,8 +70,8 @@ class NetworkModule(
         )
         return createOkHttpClient(
             configuration.distributedRemote,
-            httpLoggingInterceptor,
-            signatureValidationInterceptor
+            signatureValidationInterceptor,
+            interceptors
         )
     }
 
@@ -82,7 +79,6 @@ class NetworkModule(
     @Singleton
     @Named(API_REMOTE)
     fun provideApiOkHttpClient(
-        httpLoggingInterceptor: HttpLoggingInterceptor,
         base64Decoder: Base64Decoder
     ): OkHttpClient {
         val signatureValidationInterceptor = createSignatureValidationInterceptor(
@@ -92,8 +88,8 @@ class NetworkModule(
         )
         return createOkHttpClient(
             configuration.apiRemote,
-            httpLoggingInterceptor,
-            signatureValidationInterceptor
+            signatureValidationInterceptor,
+            interceptors
         )
     }
 
@@ -109,8 +105,8 @@ class NetworkModule(
 
     private fun createOkHttpClient(
         remote: Remote,
-        httpLoggingInterceptor: HttpLoggingInterceptor,
-        signatureValidationInterceptor: SignatureValidationInterceptor
+        signatureValidationInterceptor: SignatureValidationInterceptor,
+        interceptors: List<Interceptor>
     ): OkHttpClient {
         val certificatePinnerBuilder = CertificatePinner.Builder().apply {
             remote.certificates.forEach { certificate ->
@@ -127,8 +123,13 @@ class NetworkModule(
             .connectionSpecs(listOf(connectionSpecs))
             .followRedirects(true)
             .followSslRedirects(false)
+            .connectTimeout(1, MINUTES)
+            .readTimeout(1, MINUTES)
+            .writeTimeout(1, MINUTES)
+            .callTimeout(2, MINUTES)
             .addInterceptor { chain ->
-                val newRequest = chain.request().newBuilder().apply {
+                val request = chain.request()
+                val newRequest = request.newBuilder().apply {
                     remote.headers.forEach { (name, value) ->
                         addHeader(name, value)
                     }
@@ -138,27 +139,12 @@ class NetworkModule(
                 chain.proceed(newRequest)
             }
             .addInterceptor(signatureValidationInterceptor)
-
-        if (BuildConfig.DEBUG) {
-            builder
-                .addInterceptor(httpLoggingInterceptor)
-                .addInterceptor(
-                    CurlInterceptor(
-                        Loggable { log ->
-                            Timber.tag("Ok2Curl").v(log)
-                        }
-                    )
-                )
-        }
+            .apply {
+                interceptors.forEach {
+                    addInterceptor(it)
+                }
+            }
         return builder.build()
-    }
-
-    @Provides
-    @Singleton
-    fun getHttpLoggingInterceptor(): HttpLoggingInterceptor {
-        val httpLoggingInterceptor = HttpLoggingInterceptor()
-        httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-        return httpLoggingInterceptor
     }
 
     @Provides

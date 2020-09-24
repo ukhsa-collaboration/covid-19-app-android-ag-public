@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <View
+        android:id="@+id/enterCodeErrorIndicator"
+        android:layout_width="4dp"
+        android:layout_height="match_parent"
+        android:background="?attr/colorError"
+        android:visibility="invisible"
+        tools:visibility="visible"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical">
+
+        <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            android:id="@+id/enterCodeTitle"
+            style="@style/Title3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@id/enterCodeEditText"
+            tools:text="@string/authentication_enter_code_subtitle" />
+
+        <TextView
+            android:id="@+id/enterCodeText"
+            style="@style/Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="8dp"
+            tools:text="@string/authentication_example" />
+
+        <TextView
+            android:id="@+id/enterCodeErrorText"
+            style="@style/ErrorTextBold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:lineSpacingMultiplier="1.18"
+            tools:text="@string/valid_auth_code_is_required"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/enterCodeEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_background"
+                android:importantForAutofill="no"
+                android:inputType="textNoSuggestions"
+                android:maxLength="9" />
+
+            <ProgressBar
+                android:id="@+id/enterCodeProgress"
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="16dp"
+                android:indeterminateTint="?attr/colorPrimary"
+                android:visibility="gone"/>
+        </FrameLayout>
+    </LinearLayout>
+</merge>

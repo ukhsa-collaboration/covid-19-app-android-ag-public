@@ -4,17 +4,13 @@
     android:viewportWidth="120"
     android:viewportHeight="120">
   <path
-      android:pathData="M62,100C84.091,100 102,82.091 102,60C102,37.909 84.091,20 62,20C39.909,20 22,37.909 22,60C22,82.091 39.909,100 62,100Z"
-      android:strokeLineJoin="round"
-      android:strokeWidth="3.6549"
-      android:fillColor="@color/transparent"
-      android:strokeColor="?colorSecondary"
-      android:strokeLineCap="round"/>
+      android:pathData="M61.395,60m-39.767,0a39.767,39.767 0,1 1,79.535 0a39.767,39.767 0,1 1,-79.535 0"
+      android:fillColor="@color/nhs_button_green"/>
   <path
-      android:pathData="M44.082,67.579L50.117,75.86L79.965,39.93"
+      android:pathData="M44.082,67.579L50.117,75.859L79.965,39.93"
       android:strokeLineJoin="round"
       android:strokeWidth="3.6549"
-      android:fillColor="@color/transparent"
-      android:strokeColor="?colorSecondary"
+      android:fillColor="#00000000"
+      android:strokeColor="@color/background"
       android:strokeLineCap="round"/>
 </vector>

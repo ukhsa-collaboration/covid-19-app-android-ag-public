@@ -16,6 +16,7 @@ class DataAndPrivacyRobot {
     }
 
     fun clickConfirmOnboarding() {
-        onView(withId(R.id.buttonAgree)).perform(click())
+        // clickOn(R.id.buttonAgree)
+        onView(withId(R.id.buttonAgree)).perform(scrollTo(), click())
     }
 }

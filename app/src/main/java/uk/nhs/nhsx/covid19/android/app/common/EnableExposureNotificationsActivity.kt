@@ -24,9 +24,8 @@ import javax.inject.Inject
 class EnableExposureNotificationsActivity : BaseActivity(R.layout.activity_edge_case) {
 
     @Inject
-    lateinit var factory: ViewModelFactory<ExposureStatusViewModel>
-
-    private val viewModel: ExposureStatusViewModel by viewModels { factory }
+    lateinit var exposureStatusViewModelFactory: ViewModelFactory<ExposureStatusViewModel>
+    private val viewModel: ExposureStatusViewModel by viewModels { exposureStatusViewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +36,14 @@ class EnableExposureNotificationsActivity : BaseActivity(R.layout.activity_edge_
 
         takeActionButton.text = getString(R.string.enable_exposure_notifications)
 
+        startObservingExposureNotificationActivation()
+
+        takeActionButton.setOnClickListener {
+            viewModel.startExposureNotifications()
+        }
+    }
+
+    private fun startObservingExposureNotificationActivation() {
         viewModel.exposureNotificationActivationResult().observe(
             this,
             Observer { viewState ->
@@ -47,10 +54,6 @@ class EnableExposureNotificationsActivity : BaseActivity(R.layout.activity_edge_
                 }
             }
         )
-
-        takeActionButton.setOnClickListener {
-            viewModel.startExposureNotifications()
-        }
     }
 
     private fun handleSuccess() {

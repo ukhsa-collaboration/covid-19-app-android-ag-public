@@ -20,7 +20,6 @@ import android.Manifest.permission.CAMERA
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -36,18 +35,19 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.google.android.gms.vision.barcode.BarcodeDetector.Builder
 import kotlinx.android.synthetic.main.activity_qr_code_scanner.closeButton
-import kotlinx.android.synthetic.main.activity_qr_code_scanner.focusedArea
 import kotlinx.android.synthetic.main.activity_qr_code_scanner.howToUseScannerHint
 import kotlinx.android.synthetic.main.activity_qr_code_scanner.scannerSurfaceView
 import kotlinx.android.synthetic.main.activity_qr_code_scanner.textHold
 import kotlinx.android.synthetic.main.activity_qr_code_scanner.textMoreInfo
 import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.R.string
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.Scanning
+import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.util.gone
 import uk.nhs.nhsx.covid19.android.app.util.visible
 import javax.inject.Inject
@@ -61,7 +61,6 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
 
     private var barcodeDetector: BarcodeDetector? = null
     private var cameraSource: CameraSource? = null
-    private val focusedAreaRect = Rect()
 
     public override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle)
@@ -81,7 +80,7 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
         )
         closeButton.setOnClickListener { finish() }
         textMoreInfo.setOnClickListener {
-            QrCodeMoreInfoActivity.start(this)
+            startActivity<QrCodeHelpActivity>()
         }
     }
 
@@ -132,7 +131,11 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
     private fun resumeCamera() {
         barcodeDetector = Builder(this).setBarcodeFormats(Barcode.QR_CODE).build()
         val detector = barcodeDetector ?: return
+
         if (!detector.isOperational) {
+            if (BuildConfig.DEBUG) {
+                return
+            }
             Timber.e("Detector is not operational")
             finish()
             QrCodeScanResultActivity.start(
@@ -140,6 +143,7 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
                 QrCodeScanResult.ScanningNotSupported
             )
         }
+
         cameraSource = CameraSource.Builder(this, detector)
             .setAutoFocusEnabled(true)
             .build()
@@ -152,8 +156,6 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
             object : Processor<Barcode> {
                 override fun release() {}
                 override fun receiveDetections(detections: Detections<Barcode>) {
-                    focusedArea.getHitRect(focusedAreaRect)
-
                     val qrCodes = detections.detectedItems
                     if (qrCodes.isEmpty()) {
                         return

@@ -35,12 +35,8 @@
     <color name="style_teal">#29B2B2</color>
     <color name="style_red">#ED3D3D</color>
     <color name="style_green">#27C998</color>
+    <color name="style_light_blue">#12A0F0</color>
 
-    <!-- geiger animation colors -->
-    <color name="circle_one_green">#78B998</color>
-    <color name="circle_two_green">#A8D1BE</color>
-    <color name="circle_three_green">#CCE3D9</color>
-    <color name="circle_four_green">#D8E8E3</color>
     <!-- isolation countdown colors -->
     <color name="progress_background">#D8D0D2</color>
 

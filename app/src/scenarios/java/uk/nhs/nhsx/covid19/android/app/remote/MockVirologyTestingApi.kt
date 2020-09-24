@@ -3,13 +3,18 @@ package uk.nhs.nhsx.covid19.android.app.remote
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeRequest
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestOrderResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultRequestBody
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultResponse
 import java.io.IOException
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 class MockVirologyTestingApi : VirologyTestingApi {
 
@@ -17,15 +22,16 @@ class MockVirologyTestingApi : VirologyTestingApi {
     var pollingTestResultHttpStatusCode = 200
     var pollingToken = "1234"
     var testResultForPollingToken = mutableMapOf(pollingToken to POSITIVE)
+    var diagnosisKeySubmissionToken = "g"
 
     override suspend fun getHomeKitOrder(emptyBodyObject: Any): VirologyTestOrderResponse {
         if (!shouldPass) throw IOException()
 
         return VirologyTestOrderResponse(
-            websiteUrlWithQuery = "https://a.b/c&d=e",
+            websiteUrlWithQuery = "about:blank",
             tokenParameterValue = "e",
             testResultPollingToken = pollingToken,
-            diagnosisKeySubmissionToken = "g"
+            diagnosisKeySubmissionToken = diagnosisKeySubmissionToken
         )
     }
 
@@ -34,9 +40,11 @@ class MockVirologyTestingApi : VirologyTestingApi {
     ): Response<VirologyTestResultResponse> {
         if (!shouldPass) throw IOException()
 
-        val testResult = testResultForPollingToken[virologyTestResultRequestBody.testResultPollingToken] ?: throw IOException("No test result for token")
-
         val virologyTestResultResponse = if (pollingTestResultHttpStatusCode == 200) {
+            val testResult =
+                testResultForPollingToken[virologyTestResultRequestBody.testResultPollingToken]
+                    ?: throw IOException("No test result for token")
+
             VirologyTestResultResponse(
                 testEndDate = Instant.now(),
                 testResult = testResult
@@ -52,6 +60,46 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 pollingTestResultHttpStatusCode,
                 "".toResponseBody("application/json; charset=utf-8".toMediaTypeOrNull())
             )
+        }
+    }
+
+    override suspend fun getTestResultForCtaToken(
+        virologyCtaExchangeRequest: VirologyCtaExchangeRequest
+    ): Response<VirologyCtaExchangeResponse> {
+        return when (virologyCtaExchangeRequest.ctaToken) {
+            "pstvpstv" -> {
+                Response.success(
+                    VirologyCtaExchangeResponse(
+                        diagnosisKeySubmissionToken = "diagnosis_submission_token",
+                        testEndDate = Instant.now().minus(2, ChronoUnit.DAYS),
+                        testResult = POSITIVE
+                    )
+                )
+            }
+            "negatvee" -> {
+                Response.success(
+                    VirologyCtaExchangeResponse(
+                        diagnosisKeySubmissionToken = "diagnosis_submission_token",
+                        testEndDate = Instant.now().minus(2, ChronoUnit.DAYS),
+                        testResult = NEGATIVE
+                    )
+                )
+            }
+            "vdvdvdvd" -> {
+                Response.success(
+                    VirologyCtaExchangeResponse(
+                        diagnosisKeySubmissionToken = "diagnosis_submission_token",
+                        testEndDate = Instant.now().minus(2, ChronoUnit.DAYS),
+                        testResult = VOID
+                    )
+                )
+            }
+            else -> {
+                Response.error(
+                    404,
+                    "".toResponseBody("application/json; charset=utf-8".toMediaTypeOrNull())
+                )
+            }
         }
     }
 

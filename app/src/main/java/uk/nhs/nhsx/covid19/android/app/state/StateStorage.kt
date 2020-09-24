@@ -8,11 +8,14 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.StateJson.ContactCaseJson
 import uk.nhs.nhsx.covid19.android.app.state.StateJson.DefaultJson
+import uk.nhs.nhsx.covid19.android.app.state.StateJson.IndexCaseJson
 import uk.nhs.nhsx.covid19.android.app.state.StateJson.IsolationJson
 import uk.nhs.nhsx.covid19.android.app.state.StateJson.PreviousIsolationJson
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
@@ -22,6 +25,7 @@ import javax.inject.Inject
 
 class StateStorage @Inject constructor(
     private val stateStringStorage: StateStringStorage,
+    private val isolationConfigurationProvider: IsolationConfigurationProvider,
     moshi: Moshi
 ) {
 
@@ -36,40 +40,20 @@ class StateStorage @Inject constructor(
             stateStringStorage.prefsValue?.let {
                 runCatching {
                     val fromJson = stateSerializationAdapter.fromJson(it)
-                    fromJson?.lastOrNull()?.toState() ?: Default()
+                    fromJson?.lastOrNull()?.toState(isolationConfigurationProvider.durationDays)
+                        ?: Default()
                 }
                     .getOrElse {
                         Timber.e(it)
                         Default()
-                    } // TODO add crash analytics and come up with a more sophisticated solution
+                    }
             } ?: Default()
         set(newState) {
             val updatedHistory = mutableListOf<State>().apply {
-                addAll(getHistory())
                 add(newState)
             }.map { it.toStateJson() }
             stateStringStorage.prefsValue = stateSerializationAdapter.toJson(updatedHistory)
         }
-
-    fun getHistory(): List<State> {
-        return stateStringStorage.prefsValue?.let {
-            runCatching {
-                val fromJson = stateSerializationAdapter.fromJson(it)
-                fromJson?.map { it.toState() }
-            }
-                .getOrElse {
-                    Timber.e(it)
-                    listOf(Default())
-                }
-        } ?: listOf(Default())
-    }
-
-    fun updateHistory(updatedHistory: List<State>) {
-        updatedHistory.map { it.toStateJson() }
-            .apply {
-                stateStringStorage.prefsValue = stateSerializationAdapter.toJson(this)
-            }
-    }
 }
 
 class StateStringStorage @Inject constructor(sharedPreferences: SharedPreferences) {
@@ -97,24 +81,42 @@ sealed class StateJson {
     @JsonClass(generateAdapter = true)
     data class DefaultJson(
         val previousIsolation: PreviousIsolationJson?,
-        override val version: Int = 1
+        override val version: Int = 2
     ) : StateJson()
 
     @JsonClass(generateAdapter = true)
     data class IsolationJson(
         val isolationStart: Instant,
+        @Deprecated("Please store expiry date inside specific indexCase or contactCase")
         val expiryDate: LocalDate,
-        val indexCase: IndexCase?,
-        val contactCase: ContactCase?,
-        override val version: Int = 1
+        val indexCase: IndexCaseJson?,
+        val contactCase: ContactCaseJson?,
+        val isolationConfiguration: DurationDays?,
+        override val version: Int = 2
     ) : StateJson()
+
+    @Json(name = "IndexCase")
+    @JsonClass(generateAdapter = true)
+    data class IndexCaseJson(
+        val symptomsOnsetDate: LocalDate,
+        val expiryDate: LocalDate?
+    )
+
+    @Json(name = "ContactCase")
+    @JsonClass(generateAdapter = true)
+    data class ContactCaseJson(
+        val startDate: Instant,
+        val expiryDate: LocalDate?
+    )
 
     @JsonClass(generateAdapter = true)
     data class PreviousIsolationJson(
         val isolationStart: Instant,
+        @Deprecated("Please store expiry date inside specific indexCase or contactCase")
         val expiryDate: LocalDate,
         val indexCase: IndexCase?,
-        val contactCase: ContactCase?
+        val contactCase: ContactCase?,
+        val isolationConfiguration: DurationDays
     )
 }
 
@@ -125,7 +127,8 @@ private fun State.toStateJson(): StateJson = when (this) {
                 previousIsolation.isolationStart,
                 previousIsolation.expiryDate,
                 previousIsolation.indexCase,
-                previousIsolation.contactCase
+                previousIsolation.contactCase,
+                previousIsolation.isolationConfiguration
             )
         } else null
         DefaultJson(isolationJson)
@@ -133,28 +136,80 @@ private fun State.toStateJson(): StateJson = when (this) {
     is Isolation -> IsolationJson(
         isolationStart,
         expiryDate,
-        indexCase,
-        contactCase
+        indexCase?.let { IndexCaseJson(it.symptomsOnsetDate, it.expiryDate) },
+        contactCase?.let { ContactCaseJson(it.startDate, it.expiryDate) },
+        isolationConfiguration
     )
 }
 
-private fun StateJson.toState(): State =
+private fun StateJson.toState(latestIsolationConfiguration: DurationDays): State =
     when (this) {
-        is DefaultJson -> {
-            val previousIsolation = if (previousIsolation != null) {
-                Isolation(
-                    previousIsolation.isolationStart,
-                    previousIsolation.expiryDate,
-                    previousIsolation.indexCase,
-                    previousIsolation.contactCase
-                )
-            } else null
-            Default(previousIsolation = previousIsolation)
+        is DefaultJson -> when (this.version) {
+            1 -> {
+                val previousIsolation = if (previousIsolation != null) {
+                    val updatedIndexCase =
+                        previousIsolation.indexCase?.copy(expiryDate = previousIsolation.expiryDate)
+                    val updatedContactCase =
+                        previousIsolation.contactCase?.copy(expiryDate = previousIsolation.expiryDate)
+                    Isolation(
+                        previousIsolation.isolationStart,
+                        latestIsolationConfiguration,
+                        updatedIndexCase,
+                        updatedContactCase
+                    )
+                } else null
+                Default(previousIsolation = previousIsolation)
+            }
+            2 -> {
+                val previousIsolation = if (previousIsolation != null) {
+                    Isolation(
+                        previousIsolation.isolationStart,
+                        previousIsolation.isolationConfiguration,
+                        previousIsolation.indexCase,
+                        previousIsolation.contactCase
+                    )
+                } else null
+                Default(previousIsolation = previousIsolation)
+            }
+            else -> {
+                Default(previousIsolation = null)
+            }
         }
-        is IsolationJson -> Isolation(
-            isolationStart,
-            expiryDate,
-            indexCase,
-            contactCase
-        )
+
+        is IsolationJson -> when (this.version) {
+            1 -> {
+                Isolation(
+                    isolationStart,
+                    latestIsolationConfiguration,
+                    indexCase?.let {
+                        IndexCase(
+                            it.symptomsOnsetDate,
+                            expiryDate
+                        )
+                    },
+                    contactCase?.let {
+                        ContactCase(
+                            it.startDate,
+                            expiryDate
+                        )
+                    }
+                )
+            }
+            2 -> {
+                Isolation(
+                    isolationStart,
+                    isolationConfiguration ?: latestIsolationConfiguration,
+                    indexCase?.let { IndexCase(it.symptomsOnsetDate, it.expiryDate ?: expiryDate) },
+                    contactCase?.let {
+                        ContactCase(
+                            it.startDate,
+                            it.expiryDate ?: expiryDate
+                        )
+                    }
+                )
+            }
+            else -> {
+                Default(previousIsolation = null)
+            }
+        }
     }

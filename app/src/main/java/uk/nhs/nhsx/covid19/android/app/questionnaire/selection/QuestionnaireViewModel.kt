@@ -25,6 +25,11 @@ class QuestionnaireViewModel @Inject constructor(
     fun navigateToReviewScreen(): LiveData<List<Question>> = navigateToReviewScreen
 
     fun loadQuestionnaire() {
+        if (viewState.value is Lce.Success) {
+            // Only load the questionnaire once
+            return
+        }
+
         viewModelScope.launch {
             viewState.postValue(Lce.Loading)
 

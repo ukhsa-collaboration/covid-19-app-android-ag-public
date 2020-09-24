@@ -3,8 +3,9 @@ package uk.nhs.nhsx.covid19.android.app.state
 import com.squareup.moshi.Moshi
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
+import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
@@ -24,16 +25,35 @@ class StateStorageTest {
         .build()
 
     private val statusStringStorage = mockk<StateStringStorage>(relaxed = true)
+    private val isolationConfigurationProvider =
+        mockk<IsolationConfigurationProvider>(relaxed = true)
 
     private val testSubject =
         StateStorage(
             statusStringStorage,
+            isolationConfigurationProvider,
             moshi
         )
 
+    private val durationDays = DurationDays()
+
+    @Before
+    fun setUp() {
+        every { isolationConfigurationProvider.durationDays } returns durationDays
+    }
+
     @Test
     fun `parses default case properly`() {
-        every { statusStringStorage.prefsValue } returns """[$DEFAULT]"""
+        every { statusStringStorage.prefsValue } returns """[$DEFAULT_V2]"""
+
+        val parsedState = testSubject.state
+
+        assertEquals(Default(), parsedState)
+    }
+
+    @Test
+    fun `parses default case v1 properly`() {
+        every { statusStringStorage.prefsValue } returns """[$DEFAULT_V1]"""
 
         val parsedState = testSubject.state
 
@@ -42,24 +62,48 @@ class StateStorageTest {
 
     @Test
     fun `parses index case properly`() {
-        every { statusStringStorage.prefsValue } returns """[$INDEX_CASE]"""
+        every { statusStringStorage.prefsValue } returns """[$INDEX_CASE_V2]"""
 
         val parsedState = testSubject.state
 
         assertEquals(
-            Isolation(startDate, expiryDate, indexCase = IndexCase(onsetDate)),
+            Isolation(startDate, durationDays, indexCase = IndexCase(onsetDate, expiryDate)),
+            parsedState
+        )
+    }
+
+    @Test
+    fun `parses index case v1 migration properly`() {
+        every { statusStringStorage.prefsValue } returns """[$INDEX_CASE_V1]"""
+
+        val parsedState = testSubject.state
+
+        assertEquals(
+            Isolation(startDate, durationDays, indexCase = IndexCase(onsetDate, expiryDate)),
             parsedState
         )
     }
 
     @Test
     fun `parses contact case properly`() {
-        every { statusStringStorage.prefsValue } returns """[$CONTACT_CASE]"""
+        every { statusStringStorage.prefsValue } returns """[$CONTACT_CASE_V2]"""
 
         val parsedState = testSubject.state
 
         assertEquals(
-            Isolation(startDate, expiryDate, contactCase = ContactCase(startDate)),
+            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, expiryDate)),
+            parsedState
+        )
+    }
+
+    @Test
+    fun `parses contact case v1 migration properly`() {
+        every { statusStringStorage.prefsValue } returns """[$CONTACT_CASE_V1]"""
+
+        val parsedState = testSubject.state
+
+        assertEquals(
+            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, expiryDate)),
             parsedState
         )
     }
@@ -82,47 +126,26 @@ class StateStorageTest {
         assertEquals(Default(), parsedState)
     }
 
-    @Test
-    fun `parses history`() {
-        every { statusStringStorage.prefsValue } returns """[$INDEX_CASE, $CONTACT_CASE, $DEFAULT]"""
-
-        val parsedHistory = testSubject.getHistory()
-
-        val expected = listOf(
-            Isolation(startDate, expiryDate, indexCase = IndexCase(onsetDate)),
-            Isolation(startDate, expiryDate, contactCase = ContactCase(startDate)),
-            Default()
-        )
-        assertEquals(expected, parsedHistory)
-    }
-
-    @Test
-    fun `saves updated history`() {
-        val updatedHistory = listOf(
-            Isolation(startDate, expiryDate, indexCase = IndexCase(onsetDate)),
-            Isolation(startDate, expiryDate, contactCase = ContactCase(startDate)),
-            Default()
-        )
-
-        testSubject.updateHistory(updatedHistory)
-
-        verify {
-            statusStringStorage.prefsValue =
-                """[$INDEX_CASE,$CONTACT_CASE,$DEFAULT]"""
-        }
-    }
-
     companion object {
         private val startDate = Instant.parse("2020-05-21T10:00:00Z")
         private val expiryDate = LocalDate.of(2020, 7, 22)
         private val onsetDate = LocalDate.parse("2020-05-21")
 
-        const val DEFAULT =
+        const val DEFAULT_V1 =
             """{"type":"Default","version":1}"""
-        const val INDEX_CASE =
+        const val DEFAULT_V2 =
+            """{"type":"Default","version":2}"""
+
+        const val INDEX_CASE_V1 =
             """{"type":"Isolation","isolationStart":"2020-05-21T10:00:00Z","expiryDate":"2020-07-22","indexCase":{"symptomsOnsetDate":"2020-05-21"},"version":1}"""
-        const val CONTACT_CASE =
+        const val INDEX_CASE_V2 =
+            """{"type":"Isolation","isolationStart":"2020-05-21T10:00:00Z","expiryDate":"2020-06-11","indexCase":{"symptomsOnsetDate":"2020-05-21","expiryDate":"2020-07-22"},"isolationConfiguration":{"contactCase":14,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21,"pendingTasksRetentionPeriod":14},"version":2}"""
+
+        const val CONTACT_CASE_V1 =
             """{"type":"Isolation","isolationStart":"2020-05-21T10:00:00Z","expiryDate":"2020-07-22","contactCase":{"startDate":"2020-05-21T10:00:00Z"},"version":1}"""
+        const val CONTACT_CASE_V2 =
+            """{"type":"Isolation","isolationStart":"2020-05-21T10:00:00Z","expiryDate":"2020-06-11","contactCase":{"startDate":"2020-05-21T10:00:00Z","expiryDate":"2020-07-22"},"isolationConfiguration":{"contactCase":14,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21,"pendingTasksRetentionPeriod":14},"version":2}"""
+
         const val INVALID_CASE =
             """{"type":"UnknownCase","testDate":1594733801229,"expiryDate":1595338601229,"version":1}"""
     }

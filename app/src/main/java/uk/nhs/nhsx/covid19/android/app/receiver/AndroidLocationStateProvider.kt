@@ -39,6 +39,6 @@ class AndroidLocationStateProvider : AvailabilityStateProvider,
         if (intent.action != LocationManager.PROVIDERS_CHANGED_ACTION) {
             return
         }
-        locationStateMutable.value = determineLocationAvailabilityState(context)
+        locationStateMutable.postValue(determineLocationAvailabilityState(context))
     }
 }

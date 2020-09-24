@@ -15,12 +15,15 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.NestedScrollView
+import androidx.recyclerview.widget.RecyclerView
+import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ScrollToAction
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
@@ -108,3 +111,34 @@ private fun Drawable.tinted(
     }
 
 private fun Int.toColorStateList() = ColorStateList.valueOf(this)
+
+fun withViewAtPosition(position: Int, itemMatcher: Matcher<View?>): Matcher<View?>? {
+    return object : BoundedMatcher<View?, RecyclerView?>(RecyclerView::class.java) {
+        override fun describeTo(description: Description?) {
+            itemMatcher.describeTo(description)
+        }
+
+        override fun matchesSafely(recyclerView: RecyclerView?): Boolean {
+            val viewHolder: RecyclerView.ViewHolder? =
+                recyclerView?.findViewHolderForAdapterPosition(position)
+            return viewHolder != null && itemMatcher.matches(viewHolder.itemView)
+        }
+    }
+}
+
+fun clickChildViewWithId(id: Int): ViewAction? {
+    return object : ViewAction {
+        override fun getConstraints(): Matcher<View>? {
+            return null
+        }
+
+        override fun getDescription(): String {
+            return "Click on a child view with specified id."
+        }
+
+        override fun perform(uiController: UiController?, view: View) {
+            val v = view.findViewById<View>(id)
+            v.performClick()
+        }
+    }
+}

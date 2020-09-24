@@ -7,6 +7,7 @@
     android:orientation="vertical">
 
     <ScrollView
+        style="@style/ScrollContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -15,24 +16,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="32dp"
-            android:paddingEnd="32dp">
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingTop="40dp">
 
             <ImageView
+                style="@style/GoneInLandscape"
                 android:id="@+id/doneIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="40dp"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_tick" />
+                android:src="@drawable/ic_isolation_expired_or_over" />
 
             <TextView
                 style="@style/Title1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="@dimen/vertical_margin_large"
                 android:text="@string/expiration_notification_title"
                 android:textAlignment="center"
                 android:textSize="56sp" />
@@ -42,8 +42,7 @@
                 style="@style/TitleIsolation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="32dp"
-                android:paddingEnd="32dp"
+                android:paddingHorizontal="32dp"
                 android:textAlignment="center"
                 tools:text="@string/your_isolation_will_finish" />
 
@@ -51,7 +50,7 @@
                 android:id="@+id/temperatureNoticeView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="@dimen/vertical_margin_large"
                 android:background="@color/surface_background"
                 app:stateColor="@color/amber"
                 app:stateText="@string/expiration_temperature_hint" />
@@ -59,7 +58,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/expiration_notification_recommendation" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
@@ -69,10 +68,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
-                android:gravity="center"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:text="@string/nhs_111_online_service" />
+                android:text="@string/nhs_111_online_service"
+                app:linkUrl="@string/url_nhs_111_online"/>
 
             <View
                 android:layout_width="wrap_content"
@@ -84,7 +81,7 @@
                 style="@style/PrimaryButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
+                android:layout_marginVertical="@dimen/vertical_margin_large"
                 android:text="@string/back_to_home" />
 
         </LinearLayout>

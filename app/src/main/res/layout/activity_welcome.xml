@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        layout="@layout/include_onboarding_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/confirmOnboarding"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingTop="@dimen/vertical_margin_large"
+            android:paddingBottom="@dimen/vertical_margin">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/introMarker"
+                style="@style/GoneInLandscape"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_onboarding_welcome" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                android:id="@+id/welcomeTitle"
+                style="@style/Title1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/onboarding_welcome_title" />
+
+            <TextView
+                android:id="@+id/welcomeSubtitle"
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/onboarding_subtitle" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin">
+
+                <ImageView
+                    android:id="@+id/iconNotification"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/ic_onboarding_circle"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_onboarding_notification"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                    android:id="@+id/notificationTitle"
+                    style="@style/Title3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/onboarding_notifications_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/iconNotification"
+                    app:layout_constraintTop_toTopOf="@id/iconNotification" />
+
+                <TextView
+                    android:id="@+id/notificationText"
+                    style="@style/Body1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/onboarding_notifications_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/notificationTitle"
+                    app:layout_constraintTop_toBottomOf="@id/notificationTitle" />
+
+                <ImageView
+                    android:id="@+id/venueCheckInIcon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/vertical_margin"
+                    android:background="@drawable/ic_onboarding_circle"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_venue_check_in"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/notificationText" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                    android:id="@+id/venueCheckInTitle"
+                    style="@style/Title3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/onboarding_venue_check_in_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/venueCheckInIcon"
+                    app:layout_constraintTop_toTopOf="@id/venueCheckInIcon" />
+
+                <TextView
+                    android:id="@+id/venueCheckInText"
+                    style="@style/Body1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/onboarding_venue_check_in_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/venueCheckInTitle"
+                    app:layout_constraintTop_toBottomOf="@id/venueCheckInTitle" />
+
+                <ImageView
+                    android:id="@+id/checkSymptomsIcon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/vertical_margin"
+                    android:background="@drawable/ic_onboarding_circle"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_report_symptoms"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/venueCheckInText" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                    android:id="@+id/checkSymptomsTitle"
+                    style="@style/Title3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/onboarding_check_symptoms_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/checkSymptomsIcon"
+                    app:layout_constraintTop_toTopOf="@id/checkSymptomsIcon" />
+
+                <TextView
+                    android:id="@+id/checkSymptomsText"
+                    style="@style/Body1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/onboarding_check_symptoms_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/checkSymptomsTitle"
+                    app:layout_constraintTop_toBottomOf="@id/checkSymptomsTitle" />
+
+                <ImageView
+                    android:id="@+id/isolationCountdownIcon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/vertical_margin"
+                    android:background="@drawable/ic_onboarding_circle"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_onboarding_countdown"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/checkSymptomsText" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                    android:id="@+id/isolationCountdownTitle"
+                    style="@style/Title3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/onboarding_isolation_countdown_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/isolationCountdownIcon"
+                    app:layout_constraintTop_toTopOf="@id/isolationCountdownIcon" />
+
+                <TextView
+                    android:id="@+id/isolationCountdownText"
+                    style="@style/Body1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/onboarding_isolation_countdown_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/isolationCountdownTitle"
+                    app:layout_constraintTop_toBottomOf="@id/isolationCountdownTitle" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/confirmOnboarding"
+        style="@style/PrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_horizontal"
+        android:layout_marginTop="@dimen/vertical_margin"
+        android:layout_marginBottom="@dimen/vertical_margin_large"
+        android:text="@string/continue_button"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

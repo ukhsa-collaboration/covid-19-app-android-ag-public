@@ -14,7 +14,7 @@ class TestOrderingProgressActivityTest : EspressoTest() {
     fun opensBrowser() = notReported {
         testAppContext.virologyTestingApi.shouldPass = true
 
-        assertBrowserIsOpened("https://a.b/c&d=e") {
+        assertBrowserIsOpened("about:blank") {
             startTestActivity<TestOrderingProgressActivity>()
         }
     }
@@ -31,7 +31,7 @@ class TestOrderingProgressActivityTest : EspressoTest() {
 
         testAppContext.virologyTestingApi.shouldPass = true
 
-        assertBrowserIsOpened("https://a.b/c&d=e") {
+        assertBrowserIsOpened("about:blank") {
             testOrderingProgressRobot.clickTryAgainButton()
         }
     }

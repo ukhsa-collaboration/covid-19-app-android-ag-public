@@ -3,65 +3,148 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
-import uk.nhs.nhsx.covid19.android.app.exposure.SubmitTemporaryExposureKeys
-import uk.nhs.nhsx.covid19.android.app.exposure.SubmitTemporaryExposureKeys.SubmitResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
+import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
+import uk.nhs.nhsx.covid19.android.app.state.State
+import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import uk.nhs.nhsx.covid19.android.app.state.newStateWithTestResult
+import uk.nhs.nhsx.covid19.android.app.state.previousIsolationIsIndexCase
 import uk.nhs.nhsx.covid19.android.app.state.remainingDaysInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.RESULT_IGNORE
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.RESULT_NEGATIVE_IN_ISOLATION
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.RESULT_NEGATIVE_NOT_IN_ISOLATION
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.RESULT_POSITIVE_IN_ISOLATION
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.RESULT_POSITIVE_NOT_IN_ISOLATION
-import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.Ignore
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeNotInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeWillBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeWontBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveThenNegativeWillBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveContinueIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveWillBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveWontBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidNotInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidWillBeInIsolation
 import javax.inject.Inject
 
 class TestResultViewModel @Inject constructor(
-    private val latestTestResultProvider: LatestTestResultProvider,
-    private val stateMachine: IsolationStateMachine,
-    private val submitTemporaryExposureKeys: SubmitTemporaryExposureKeys,
-    private val keyWindowCalculator: KeyWindowCalculator
+    private val testResultsProvider: TestResultsProvider,
+    private val isolationConfigurationProvider: IsolationConfigurationProvider,
+    private val stateMachine: IsolationStateMachine
 ) : ViewModel() {
 
     private val viewState = MutableLiveData<ViewState>()
     fun viewState(): LiveData<ViewState> = viewState
 
-    private val keyUploadResult = SingleLiveEvent<SubmitResult>()
-    fun keyUploadResult(): LiveData<SubmitResult> = keyUploadResult
+    private var wasAcknowledged = false
+
+    private lateinit var testResult: ReceivedTestResult
 
     fun onCreate() {
-        val virologyTestResult = latestTestResultProvider.latestTestResult?.testResult
-        val inIsolationNow = stateMachine.readState() is Isolation
-        val mainState = if (virologyTestResult == POSITIVE && inIsolationNow) {
-            RESULT_POSITIVE_IN_ISOLATION
-        } else if (virologyTestResult == POSITIVE && !inIsolationNow) {
-            RESULT_POSITIVE_NOT_IN_ISOLATION
-        } else if (virologyTestResult == NEGATIVE && inIsolationNow) {
-            RESULT_NEGATIVE_IN_ISOLATION
-        } else if (virologyTestResult == NEGATIVE && !inIsolationNow) {
-            RESULT_NEGATIVE_NOT_IN_ISOLATION
-        } else {
-            RESULT_IGNORE
+        if (viewState.value != null) {
+            return
         }
-        val remainingDaysInIsolation = stateMachine.remainingDaysInIsolation().toInt()
-        viewState.postValue(ViewState(mainState, remainingDaysInIsolation))
+
+        val receivedTestResult = getHighestPriorityTestResult()
+        if (receivedTestResult == null) {
+            val remainingDaysInIsolation = stateMachine.remainingDaysInIsolation().toInt()
+            viewState.postValue(ViewState(Ignore, remainingDaysInIsolation))
+        } else {
+            testResult = receivedTestResult
+
+            val state = stateMachine.readState()
+            val newStateWithTestResult =
+                state.newStateWithTestResult(testResultsProvider, isolationConfigurationProvider, testResult)
+            val willBeInIsolation = newStateWithTestResult is Isolation
+            val isLastTestResultPositive = testResultsProvider.isLastTestResultPositive()
+
+            val mainState = when (testResult.testResult) {
+                POSITIVE -> mainStateWhenPositive(willBeInIsolation, state)
+                NEGATIVE -> when (state) {
+                    is Isolation -> when (isLastTestResultPositive) {
+                        true -> PositiveThenNegativeWillBeInIsolation
+                        false -> {
+                            when (willBeInIsolation) {
+                                true -> NegativeWillBeInIsolation
+                                false -> NegativeWontBeInIsolation
+                            }
+                        }
+                    }
+                    is Default -> NegativeNotInIsolation
+                }
+                VOID -> when (state) {
+                    is Isolation -> VoidWillBeInIsolation
+                    is Default -> VoidNotInIsolation
+                }
+            }
+            val remainingDaysInIsolation =
+                stateMachine.remainingDaysInIsolation(newStateWithTestResult).toInt()
+            viewState.postValue(ViewState(mainState, remainingDaysInIsolation))
+        }
     }
 
-    fun submitKeys() {
-        viewModelScope.launch {
-            val dateWindow = keyWindowCalculator.calculateDateWindow()
-            if (dateWindow == null) {
-                keyUploadResult.postValue(SubmitResult.Failure(IllegalStateException("Can't calculate date window")))
-                return@launch
-            }
+    private fun mainStateWhenPositive(
+        willBeInIsolation: Boolean,
+        state: State
+    ): MainState {
+        val isLastTestResultNegative = testResultsProvider.isLastTestResultNegative()
 
-            val result = submitTemporaryExposureKeys.invoke(dateWindow)
-            keyUploadResult.postValue(result)
+        return when (state) {
+            is Isolation -> mainStateWhenPositiveIgnoringLastTestResult(willBeInIsolation)
+            is Default -> {
+                when (state.previousIsolationIsIndexCase() && !isLastTestResultNegative) {
+                    true -> mainStateWhenPositiveIgnoringLastTestResult(willBeInIsolation)
+                    false -> PositiveWillBeInIsolation(testResult.diagnosisKeySubmissionToken)
+                }
+            }
         }
+    }
+
+    private fun mainStateWhenPositiveIgnoringLastTestResult(willBeInIsolation: Boolean): MainState {
+        return when (willBeInIsolation) {
+            true -> PositiveContinueIsolation(testResult.diagnosisKeySubmissionToken)
+            false -> PositiveWontBeInIsolation(testResult.diagnosisKeySubmissionToken)
+        }
+    }
+
+    fun acknowledgeTestResult() {
+        if (wasAcknowledged) {
+            return
+        }
+
+        wasAcknowledged = true
+
+        viewState.value?.let {
+            when (it.mainState) {
+                PositiveThenNegativeWillBeInIsolation ->
+                    stateMachine.processEvent(
+                        OnTestResultAcknowledge(testResult, removeTestResult = true)
+                    )
+                else ->
+                    stateMachine.processEvent(
+                        OnTestResultAcknowledge(testResult, removeTestResult = false)
+                    )
+            }
+        }
+    }
+
+    private fun getHighestPriorityTestResult(): ReceivedTestResult? {
+        testResultsProvider.testResults.values
+            .filter { it.acknowledgedDate == null }
+            .firstOrNull { it.testResult == POSITIVE }
+            ?.let { return it }
+
+        testResultsProvider.testResults.values
+            .filter { it.acknowledgedDate == null }
+            .firstOrNull { it.testResult == NEGATIVE }
+            ?.let { return it }
+
+        testResultsProvider.testResults.values
+            .filter { it.acknowledgedDate == null }
+            .firstOrNull { it.testResult == VOID }
+            ?.let { return it }
+
+        return null
     }
 
     data class ViewState(
@@ -69,11 +152,16 @@ class TestResultViewModel @Inject constructor(
         val remainingDaysInIsolation: Int
     )
 
-    enum class MainState {
-        RESULT_NEGATIVE_IN_ISOLATION,
-        RESULT_NEGATIVE_NOT_IN_ISOLATION,
-        RESULT_POSITIVE_IN_ISOLATION,
-        RESULT_POSITIVE_NOT_IN_ISOLATION,
-        RESULT_IGNORE
+    sealed class MainState {
+        object NegativeNotInIsolation : MainState()
+        object NegativeWillBeInIsolation : MainState()
+        object NegativeWontBeInIsolation : MainState()
+        data class PositiveWillBeInIsolation(val diagnosisKeySubmissionToken: String) : MainState()
+        data class PositiveContinueIsolation(val diagnosisKeySubmissionToken: String) : MainState()
+        data class PositiveWontBeInIsolation(val diagnosisKeySubmissionToken: String) : MainState()
+        object PositiveThenNegativeWillBeInIsolation : MainState()
+        object VoidNotInIsolation : MainState()
+        object VoidWillBeInIsolation : MainState()
+        object Ignore : MainState()
     }
 }

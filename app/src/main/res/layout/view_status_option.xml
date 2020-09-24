@@ -23,7 +23,7 @@
             tools:src="@drawable/ic_venue_check_in" />
     </FrameLayout>
 
-    <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+    <TextView
         android:id="@+id/statusOptionText"
         style="@style/ActionText"
         android:layout_width="wrap_content"
@@ -32,6 +32,7 @@
         tools:text="Status option text" />
 
     <ImageView
+        android:id="@+id/statusOptionLinkIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@null"

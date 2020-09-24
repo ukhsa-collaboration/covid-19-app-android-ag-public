@@ -9,13 +9,18 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.addCallback
 import androidx.activity.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.actionButton
+import kotlinx.android.synthetic.main.activity_qr_code_scan_result.qrCodeHelpContainer
+import kotlinx.android.synthetic.main.activity_qr_code_scan_result.qrScanHelpLink
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.resultIcon
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.subtitleTextView
+import kotlinx.android.synthetic.main.activity_qr_code_scan_result.successVenueDateTime
+import kotlinx.android.synthetic.main.activity_qr_code_scan_result.successVenueName
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.textCancelCheckIn
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.titleTextView
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.topCloseButton
+import kotlinx.android.synthetic.main.activity_qr_code_scan_result.venueInfoContainer
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
@@ -25,12 +30,12 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.InvalidContent
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.Scanning
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.ScanningNotSupported
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.Success
+import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.util.gone
+import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import uk.nhs.nhsx.covid19.android.app.util.visible
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_result) {
@@ -46,12 +51,9 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
-        viewModel.getVisitRemovedResult().observe(
-            this,
-            Observer {
-                finish()
-            }
-        )
+        viewModel.getVisitRemovedResult().observe(this) {
+            finish()
+        }
 
         state = when (val scanResult = intent.getParcelableExtra(SCAN_RESULT) as QrCodeScanResult) {
             is Success -> SuccessState(scanResult.venueName)
@@ -75,20 +77,25 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
 
     inner class SuccessState(private val venueName: String) : State {
         override fun setup() {
-            val currentDateTime = Instant.now()
-            val time = DateTimeFormatter.ofPattern("HH:mm")
-                .format(currentDateTime.atZone(ZoneId.systemDefault()))
+            val currentDateTime = LocalDateTime.now()
             resultIcon.setImageResource(R.drawable.ic_qr_code_success)
-            titleTextView.text = getString(R.string.qr_code_success_title, venueName, time)
+            titleTextView.setText(R.string.qr_code_success_title)
+            successVenueName.text = venueName
+            successVenueDateTime.text = currentDateTime.uiFormat(this@QrCodeScanResultActivity)
             subtitleTextView.setText(R.string.qr_code_success_subtitle)
             actionButton.setText(R.string.back_to_home)
             actionButton.setOnClickListener {
-                StatusActivity.start(this@QrCodeScanResultActivity)
+                StatusActivity.start(
+                    this@QrCodeScanResultActivity,
+                    startedFromVenueCheckInSuccess = true
+                )
             }
             textCancelCheckIn.visible()
             textCancelCheckIn.setOnClickListener {
                 viewModel.removeLastVisit()
             }
+            venueInfoContainer.visible()
+            qrCodeHelpContainer.gone()
         }
     }
 
@@ -113,6 +120,8 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
             onBackPressedDispatcher.addCallback {
                 StatusActivity.start(this@QrCodeScanResultActivity)
             }
+            venueInfoContainer.gone()
+            qrCodeHelpContainer.gone()
         }
 
         override fun onResume() {
@@ -125,14 +134,19 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
     inner class InvalidContentState : State {
         override fun setup() {
             resultIcon.setImageResource(R.drawable.ic_qr_code_failure)
-            titleTextView.setText(R.string.something_went_wrong)
-            subtitleTextView.setText(R.string.qr_code_failure_description)
+            titleTextView.setText(R.string.qr_code_failure_title)
+            subtitleTextView.setText(R.string.qr_code_failure_subtitle)
             actionButton.setText(R.string.back_to_home)
             actionButton.setOnClickListener {
                 StatusActivity.start(this@QrCodeScanResultActivity)
             }
+            qrScanHelpLink.setOnClickListener {
+                startActivity<QrCodeHelpActivity>()
+            }
             textCancelCheckIn.gone()
             topCloseButton.gone()
+            venueInfoContainer.gone()
+            qrCodeHelpContainer.visible()
         }
     }
 
@@ -147,12 +161,14 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
             }
             textCancelCheckIn.gone()
             topCloseButton.gone()
+            venueInfoContainer.gone()
+            qrCodeHelpContainer.gone()
         }
     }
 
     companion object {
 
-        private const val SCAN_RESULT = "SCAN_RESULT"
+        const val SCAN_RESULT = "SCAN_RESULT"
 
         fun start(context: Context, qrCodeScanResult: QrCodeScanResult) =
             context.startActivity(getIntent(context, qrCodeScanResult))

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_toolbar_primary" />
+
+    <ScrollView
+        android:id="@+id/linkTestResultScrollView"
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingVertical="@dimen/vertical_margin"
+            android:paddingStart="@dimen/margin_horizontal_reduced"
+            android:paddingEnd="@dimen/margin_horizontal">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                style="@style/Title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:paddingHorizontal="@dimen/margin_horizontal_reduced_relative"
+                android:text="@string/link_test_result_title" />
+
+            <TextView
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:paddingHorizontal="@dimen/margin_horizontal_reduced_relative"
+                android:text="@string/link_test_result_text" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.EnterCodeView
+                android:id="@+id/linkTestResultEnterCodeView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/vertical_margin"
+                app:codeInputRegex="[^0123456789abcdefghjkmnpqrstvwxyz]"
+                app:errorText="@string/valid_auth_code_is_required"
+                app:example="@string/link_test_result_enter_code_example"
+                app:title="@string/link_test_result_enter_code_title" />
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/linkTestResultContinue"
+        style="@style/PrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_horizontal"
+        android:layout_marginVertical="@dimen/vertical_margin"
+        android:text="@string/continue_button" />
+</LinearLayout>

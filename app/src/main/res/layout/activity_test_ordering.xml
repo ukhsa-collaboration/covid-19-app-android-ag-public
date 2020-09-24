@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/testOrderingContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,6 +10,7 @@
 
     <ScrollView
         android:id="@+id/testOrderingContent"
+        style="@style/ScrollContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -17,41 +19,41 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="32dp">
+            android:paddingHorizontal="@dimen/margin_horizontal">
 
-            <TextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
                 style="@style/Title1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginTop="@dimen/vertical_margin_large"
                 android:text="@string/test_ordering_title" />
 
             <TextView
                 style="@style/Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
+                android:layout_marginTop="@dimen/vertical_margin_large"
                 android:text="@string/test_ordering_description_1" />
 
             <TextView
                 style="@style/Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
+                android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/test_ordering_description_2" />
 
             <TextView
                 style="@style/Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
+                android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/test_ordering_description_3" />
 
             <TextView
                 style="@style/Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/test_ordering_description_4" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
@@ -59,10 +61,8 @@
                 style="@style/LinkTextWithIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:text="@string/test_ordering_testing_privacy_notice" />
+                android:text="@string/test_ordering_testing_privacy_notice"
+                app:linkUrl="@string/url_order_test_privacy" />
 
             <TextView
                 style="@style/Body1"
@@ -75,16 +75,13 @@
                 style="@style/LinkTextWithIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:text="@string/test_ordering_app_privacy_notice" />
+                android:text="@string/test_ordering_app_privacy_notice"
+                app:linkUrl="@string/url_privacy_notice" />
 
             <TextView
                 style="@style/Body1"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:text="@string/test_ordering_description_6" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
@@ -92,22 +89,18 @@
                 style="@style/LinkTextWithIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:text="@string/test_ordering_book_test_for_someone_else" />
+                android:text="@string/test_ordering_book_test_for_someone_else"
+                app:linkUrl="@string/url_order_test_for_someone_else" />
 
             <Button
                 android:id="@+id/orderTest"
                 style="@style/PrimaryButtonWithIcon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="32dp"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:layout_marginBottom="@dimen/vertical_margin_large"
                 android:text="@string/book_free_test_now" />
 
         </LinearLayout>
-
     </ScrollView>
-
 </LinearLayout>

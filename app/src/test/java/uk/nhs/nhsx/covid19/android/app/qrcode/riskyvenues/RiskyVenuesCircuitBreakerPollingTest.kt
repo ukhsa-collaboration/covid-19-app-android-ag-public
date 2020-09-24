@@ -10,9 +10,9 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.NO
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.PENDING
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.YES
-import uk.nhs.nhsx.covid19.android.app.notifications.AndroidUserInbox
+import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowVenueAlert
+import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesCircuitBreakerApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesCircuitBreakerPollingResponse
 import java.time.Instant
@@ -21,7 +21,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
     private val riskyVenuesCircuitBreakerApi = mockk<RiskyVenuesCircuitBreakerApi>()
     private val notificationProvider = mockk<NotificationProvider>(relaxed = true)
-    private val userInbox = mockk<AndroidUserInbox>(relaxed = true)
+    private val userInbox = mockk<UserInbox>(relaxed = true)
     private val riskyVenuePollingConfigurationProvider =
         mockk<RiskyVenuePollingConfigurationProvider>(relaxed = true)
     private val removeOutdatedRiskyVenuePollingConfigurations =

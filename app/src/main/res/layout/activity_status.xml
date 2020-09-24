@@ -8,24 +8,24 @@
 
     <include
         android:id="@+id/statusBanner"
-        layout="@layout/banner_home"/>
+        layout="@layout/banner_home" />
 
     <uk.nhs.nhsx.covid19.android.app.widgets.AreaRiskView
         android:id="@+id/riskAreaView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
+        android:layout_marginHorizontal="@dimen/margin_horizontal_small"
         android:layout_marginTop="24dp"
-        android:elevation="2dp"
+        android:elevation="1dp"
         android:visibility="gone"
-        tools:areaRiskText="CM2 area risk level is LOW"
+        app:optionExternalLink="false"
+        app:optionIconBackgroundColor="?colorSurface"
         tools:areaRisk="LOW"
-        tools:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        tools:areaRiskText="CM2 area risk level is LOW"
+        tools:visibility="visible" />
 
     <androidx.core.widget.NestedScrollView
+        style="@style/ScrollContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fillViewport="true">
@@ -34,7 +34,8 @@
             android:id="@+id/statusContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:animateLayoutChanges="false">
+            android:animateLayoutChanges="false"
+            android:paddingHorizontal="@dimen/margin_horizontal_small">
 
             <FrameLayout
                 android:id="@+id/stateContainer"
@@ -51,6 +52,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:clipChildren="false"
+                    android:focusable="true"
                     android:visibility="gone"
                     tools:visibility="gone" />
 
@@ -85,26 +87,17 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
+                android:paddingBottom="@dimen/vertical_margin_large"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/stateContainer">
-
-                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
-                    android:id="@+id/optionOrderTest"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    app:optionIcon="@drawable/ic_book_test"
-                    app:optionIconBackgroundColor="@color/style_orange"
-                    app:optionText="@string/book_free_test" />
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
                     android:id="@+id/optionVenueCheckIn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
+                    app:optionExternalLink="false"
                     app:optionIcon="@drawable/ic_venue_check_in"
                     app:optionIconBackgroundColor="@color/style_purple"
                     app:optionText="@string/status_option_scan_qr_codes" />
@@ -114,15 +107,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
+                    app:optionExternalLink="false"
                     app:optionIcon="@drawable/ic_report_symptoms"
                     app:optionIconBackgroundColor="@color/style_orange"
                     app:optionText="@string/status_option_report_symptoms" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
+                    android:id="@+id/optionOrderTest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    app:optionExternalLink="false"
+                    app:optionIcon="@drawable/ic_book_test"
+                    app:optionIconBackgroundColor="@color/style_orange"
+                    app:optionText="@string/book_free_test" />
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
                     android:id="@+id/optionReadAdvice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
+                    app:optionExternalLink="true"
                     app:optionIcon="@drawable/ic_advice"
                     app:optionIconBackgroundColor="@color/style_pink"
                     app:optionText="@string/status_option_read_latest_advice" />
@@ -132,9 +137,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
+                    app:optionExternalLink="false"
                     app:optionIcon="@drawable/ic_info"
                     app:optionIconBackgroundColor="@color/style_teal"
                     app:optionText="@string/about_this_app_title" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
+                    android:id="@+id/optionLinkTestResult"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    app:optionExternalLink="false"
+                    app:optionIcon="@drawable/ic_link_test_result"
+                    app:optionIconBackgroundColor="@color/nhs_lighter_blue"
+                    app:optionText="@string/status_option_link_test_result" />
 
                 <LinearLayout
                     android:id="@+id/optionContactTracing"
@@ -171,17 +187,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/earlyVersionNotice"
-                style="@style/ActionText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="32sp"
-                android:layout_marginTop="32dp"
-                android:paddingBottom="60dp"
-                android:text="@string/this_is_an_early_access_release_of_the_nhs_covid_19_app_exclusively_for_clinical_investigations"
-                app:layout_constraintTop_toBottomOf="@id/mainActionsContainer" />
-
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/debugOptionsContainer"
                 android:name="uk.nhs.nhsx.covid19.android.app.status.DebugFragment"
@@ -189,7 +194,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/earlyVersionNotice"
+                app:layout_constraintTop_toBottomOf="@id/mainActionsContainer"
                 tools:visibility="visible" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

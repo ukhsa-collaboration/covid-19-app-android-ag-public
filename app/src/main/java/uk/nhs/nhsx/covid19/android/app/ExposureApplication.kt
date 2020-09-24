@@ -4,14 +4,15 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKeys
 import androidx.work.Configuration
+import androidx.work.WorkManager
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import com.jeroenmols.featureflag.framework.TestSetting
+import com.jeroenmols.featureflag.framework.TestSetting.DEBUG_ANALYTICS
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 import uk.nhs.covid19.config.production
@@ -28,7 +29,9 @@ import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.GoogleExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
-import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate
+import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
+import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
+import java.util.concurrent.TimeUnit.MINUTES
 
 class ExposureApplication : Application(), Configuration.Provider {
     lateinit var appComponent: ApplicationComponent
@@ -38,14 +41,15 @@ class ExposureApplication : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
 
-        buildAndUseAppComponent(NetworkModule(production))
+        buildAndUseAppComponent(NetworkModule(production, additionalInterceptors))
 
-        if (BuildConfig.DEBUG) {
+        if (isTestBuild) {
             Timber.plant(DebugTree())
         }
-        RuntimeBehavior.initialize(this, BuildConfig.DEBUG)
+        RuntimeBehavior.initialize(this, isTestBuild)
 
-        SubmitAnalyticsWorker.schedule(this)
+        initializeWorkManager()
+        initializeAnalytics()
 
         if (RuntimeBehavior.isFeatureEnabled(TestSetting.STRICT_MODE)) {
             StrictMode.setThreadPolicy(
@@ -64,10 +68,24 @@ class ExposureApplication : Application(), Configuration.Provider {
         }
     }
 
+    private fun initializeWorkManager() {
+        // Google insist we need to initialise WorkManager in onCreate()
+        WorkManager.getInstance(this)
+    }
+
+    private fun initializeAnalytics() {
+        if (RuntimeBehavior.isFeatureEnabled(DEBUG_ANALYTICS)) {
+            SubmitAnalyticsWorker.schedule(this, 15, MINUTES, replaceExisting = true)
+        } else {
+            SubmitAnalyticsWorker.schedule(this)
+        }
+        appComponent.provideAnalyticsReminder().scheduleNextAnalyticsAggregator()
+    }
+
     override fun getWorkManagerConfiguration(): Configuration {
         val builder = Configuration.Builder()
         builder.setMaxSchedulerLimit(WORK_MANAGER_SCHEDULER_LIMIT)
-        if (BuildConfig.DEBUG) {
+        if (isTestBuild) {
             builder.setMinimumLoggingLevel(android.util.Log.DEBUG)
         }
         return builder.build()
@@ -87,7 +105,8 @@ class ExposureApplication : Application(), Configuration.Provider {
         exposureNotificationApi: ExposureNotificationApi = GoogleExposureNotificationApi(this),
         languageCode: String? = null
     ) {
-        val sharedPreferences = createEncryptedSharedPreferences()
+        val sharedPreferences = EncryptionUtils.tryCreateEncryptedSharedPreferences(this)
+        val encryptedFile = EncryptionUtils.createEncryptedFile(this, "venues")
         appComponent = DaggerApplicationComponent.builder()
             .appModule(
                 AppModule(
@@ -96,6 +115,7 @@ class ExposureApplication : Application(), Configuration.Provider {
                     AndroidBluetoothStateProvider(),
                     AndroidLocationStateProvider(),
                     sharedPreferences,
+                    encryptedFile,
                     qrCodesSignatureKey,
                     ApplicationLocaleProvider(sharedPreferences, languageCode)
                 )
@@ -106,17 +126,9 @@ class ExposureApplication : Application(), Configuration.Provider {
         updateLifecycleListener()
     }
 
-    fun createEncryptedSharedPreferences(fileName: String = SharedPrefsDelegate.fileName) =
-        EncryptedSharedPreferences.create(
-            fileName,
-            MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
-            this,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
-
     companion object {
         private const val WORK_MANAGER_SCHEDULER_LIMIT = 50
+        val isTestBuild = BuildConfig.DEBUG || BuildConfig.FLAVOR == "scenarios"
     }
 }
 
@@ -125,6 +137,9 @@ val Context.appComponent: ApplicationComponent
 
 val Context.app: ExposureApplication
     get() = (applicationContext as ExposureApplication)
+
+fun Context.inPortraitMode(): Boolean =
+    resources.configuration.orientation == ORIENTATION_PORTRAIT
 
 inline fun <reified T : Activity> Context.startActivity(config: Intent.() -> Unit = {}) =
     startActivity(componentIntent<T>(config))

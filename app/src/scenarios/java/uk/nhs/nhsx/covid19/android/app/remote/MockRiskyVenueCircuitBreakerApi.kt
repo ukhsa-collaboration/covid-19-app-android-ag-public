@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.remote
 
-import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.PENDING
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.YES
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesCircuitBreakerPollingResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesCircuitBreakerRequest
@@ -13,7 +12,7 @@ class MockRiskyVenueCircuitBreakerApi : RiskyVenuesCircuitBreakerApi {
     ): RiskyVenuesCircuitBreakerResponse =
         RiskyVenuesCircuitBreakerResponse(
             approvalToken = "sample approval token",
-            approval = PENDING
+            approval = YES
         )
 
     override suspend fun getRiskyVenuesBreakerResolution(

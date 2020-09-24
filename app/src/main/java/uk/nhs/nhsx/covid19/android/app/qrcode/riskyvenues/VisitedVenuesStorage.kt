@@ -1,8 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 
-import android.content.Context
-import androidx.security.crypto.EncryptedFile
-import androidx.security.crypto.MasterKeys
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -10,28 +7,26 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.withContext
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
+import uk.nhs.nhsx.covid19.android.app.util.EncryptedFileInfo
 import uk.nhs.nhsx.covid19.android.app.util.getNextLocalMidnightTime
+import uk.nhs.nhsx.covid19.android.app.util.readText
 import uk.nhs.nhsx.covid19.android.app.util.roundDownToNearestQuarter
 import uk.nhs.nhsx.covid19.android.app.util.roundUpToNearestQuarter
-import java.io.File
+import uk.nhs.nhsx.covid19.android.app.util.writeText
 import java.io.IOException
-import java.io.OutputStreamWriter
 import java.time.Clock
 import java.time.Instant
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
-class VisitedVenuesStorage @Inject constructor(context: Context, moshi: Moshi) {
-
+class VisitedVenuesStorage @Inject constructor(
+    moshi: Moshi,
+    encryptedFileInfo: EncryptedFileInfo
+) {
     private val context = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
-    private val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
-    private val venuesFile = File(context.filesDir, "venues")
-    private val encryptedFile = EncryptedFile.Builder(
-        venuesFile,
-        context,
-        masterKeyAlias,
-        EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB
-    ).build()
+
+    private val venuesFile = encryptedFileInfo.file
+    private val encryptedFile = encryptedFileInfo.encryptedFile
 
     private val type = Types.newParameterizedType(
         List::class.java,
@@ -78,12 +73,19 @@ class VisitedVenuesStorage @Inject constructor(context: Context, moshi: Moshi) {
 
         venuesFile.delete()
 
-        val writer = OutputStreamWriter(encryptedFile.openFileOutput(), Charsets.UTF_8)
-        writer.use { it.write(updatedVisitedVenues) }
+        encryptedFile.writeText(updatedVisitedVenues)
     }
 
     fun removeAllVenueVisits() {
         venuesFile.delete()
+    }
+
+    suspend fun removeVenueVisit(position: Int) {
+        val visitedVenues = getVisitedVenuesMutable()
+
+        visitedVenues.removeAt(position)
+
+        setVisits(visitedVenues)
     }
 
     suspend fun markAsWasInRiskyList(venueIds: List<String>) = withContext(context) {
@@ -98,8 +100,7 @@ class VisitedVenuesStorage @Inject constructor(context: Context, moshi: Moshi) {
 
     private fun getVisitedVenuesMutable(): MutableList<VenueVisit> {
         return try {
-            val inputStream = encryptedFile.openFileInput()
-            val fileContents = inputStream.bufferedReader().use { it.readText() }
+            val fileContents = encryptedFile.readText()
             adapter.fromJson(fileContents).orEmpty().toMutableList()
         } catch (exception: IOException) {
             mutableListOf()

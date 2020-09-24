@@ -10,13 +10,12 @@ import uk.nhs.nhsx.covid19.android.app.availability.GooglePlayUpdateProvider
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
-import uk.nhs.nhsx.covid19.android.app.notifications.AndroidUserInbox
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.util.AndroidBase64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.DeviceDetection
+import uk.nhs.nhsx.covid19.android.app.util.EncryptedFileInfo
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -27,6 +26,7 @@ class AppModule(
     private val bluetoothStateProvider: AvailabilityStateProvider,
     private val locationStateProvider: AvailabilityStateProvider,
     private val encryptedSharedPreferences: SharedPreferences,
+    private val encryptedFileInfo: EncryptedFileInfo,
     private val qrCodesSignatureKey: SignatureKey,
     private val applicationLocaleProvider: ApplicationLocaleProvider
 ) {
@@ -52,6 +52,9 @@ class AppModule(
     fun provideEncryptedSharedPreferences(): SharedPreferences = encryptedSharedPreferences
 
     @Provides
+    fun provideEncryptedFileInfo(): EncryptedFileInfo = encryptedFileInfo
+
+    @Provides
     @Singleton
     fun provideNotificationProvider(): NotificationProvider =
         NotificationProvider(applicationContext)
@@ -59,11 +62,6 @@ class AppModule(
     @Provides
     @Singleton
     fun provideBase64Decoder(): Base64Decoder = AndroidBase64Decoder()
-
-    @Provides
-    @Singleton
-    fun providerUserInbox(sharedPreferences: SharedPreferences): UserInbox =
-        AndroidUserInbox(sharedPreferences)
 
     @Provides
     @Singleton

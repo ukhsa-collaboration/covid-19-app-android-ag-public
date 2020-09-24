@@ -1,59 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingStart="32dp"
-    android:paddingEnd="32dp">
+    android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/imageNoSymptom"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="107dp"
-        android:contentDescription="@null"
-        android:src="@drawable/image_no_symptoms"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/titleNoSymptoms"
-        style="@style/Title1"
+    <ScrollView
+        style="@style/ScrollContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/title_no_coronavirus_symptoms"
-        app:layout_constraintTop_toBottomOf="@id/imageNoSymptom" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingTop="32dp">
 
-    <TextView
-        android:id="@+id/messageNoSymptoms"
-        style="@style/Body1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/message_no_coronavirus_symptoms"
-        app:layout_constraintTop_toBottomOf="@id/titleNoSymptoms" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal">
 
-    <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
-        android:id="@+id/noSymptomsOnlineServiceLink"
-        style="@style/LinkTextWithIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"
-        android:text="@string/nhs_111_online_service"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/messageNoSymptoms" />
+            <ImageView
+                android:id="@+id/imageNoSymptom"
+                style="@style/GoneInLandscape"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="100dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_isolation_negative_or_finished" />
+
+            <TextView
+                android:id="@+id/titleNoSymptoms"
+                style="@style/Title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:text="@string/title_no_coronavirus_symptoms" />
+
+            <TextView
+                android:id="@+id/messageNoSymptoms"
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/message_no_coronavirus_symptoms" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                android:id="@+id/noSymptomsOnlineServiceLink"
+                style="@style/LinkTextWithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                android:text="@string/nhs_111_online_service"
+                app:linkUrl="@string/url_nhs_111_online" />
+
+        </LinearLayout>
+    </ScrollView>
 
     <Button
         android:id="@+id/buttonReturnToHomeScreen"
         style="@style/PrimaryButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="31dp"
-        android:text="@string/back_to_home"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_marginHorizontal="@dimen/margin_horizontal"
+        android:layout_marginVertical="@dimen/vertical_margin"
+        android:text="@string/back_to_home" />
+
+</LinearLayout>

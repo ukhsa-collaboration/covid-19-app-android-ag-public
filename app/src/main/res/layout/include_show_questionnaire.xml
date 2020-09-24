@@ -3,6 +3,7 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/questionnaireScrollView"
+    style="@style/ScrollContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -10,21 +11,22 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingStart="@dimen/margin_horizontal_reduced"
+        android:paddingEnd="@dimen/margin_horizontal"
+        android:paddingBottom="@dimen/vertical_margin_large">
 
         <LinearLayout
             android:id="@+id/errorPanel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="@dimen/margin_horizontal_reduced_relative"
+            android:layout_marginTop="@dimen/vertical_margin"
             android:background="@drawable/questionnaire_error_background"
             android:focusable="true"
             android:orientation="vertical"
-            android:paddingStart="16dp"
+            android:paddingHorizontal="16dp"
             android:paddingTop="18dp"
-            android:paddingEnd="16dp"
             android:paddingBottom="21dp"
             android:visibility="gone"
             tools:visibility="visible">
@@ -48,7 +50,7 @@
             style="@style/HeaderSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="@dimen/margin_horizontal_reduced_relative"
             android:layout_marginTop="32dp"
             android:contentDescription="@string/questionnaire_review_one_of_two"
             android:text="@string/questionnaire_1_of_2" />
@@ -58,9 +60,8 @@
             style="@style/Title1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="@dimen/margin_horizontal_reduced_relative"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="32dp"
             android:text="@string/questionnaire_title" />
 
         <TextView
@@ -68,18 +69,16 @@
             style="@style/Body1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="@dimen/margin_horizontal_reduced_relative"
             android:layout_marginTop="14dp"
-            android:layout_marginEnd="32dp"
             android:text="@string/questionnaire_description" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/questionsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="21dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="@dimen/margin_horizontal_reduced_relative"
+            android:layout_marginTop="@dimen/vertical_margin"
             android:layout_marginBottom="16dp"
             android:overScrollMode="never"
             tools:listitem="@layout/item_question" />
@@ -89,19 +88,15 @@
             style="@style/PrimaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginStart="@dimen/margin_horizontal_reduced_relative"
             android:text="@string/continue_button" />
 
-        <TextView
+        <uk.nhs.nhsx.covid19.android.app.widgets.UnderlinedTextView
             android:id="@+id/textNoSymptoms"
             style="@style/LinkText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="32dp"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginStart="@dimen/margin_horizontal_reduced_relative"
             android:gravity="center"
             android:text="@string/questionnaire_no_symptoms" />
     </LinearLayout>

@@ -64,10 +64,10 @@ enum class FeatureFlag(
         "Enable signature validation",
         defaultValue = true
     ),
-    ONBOARDING_AUTHENTICATION(
-        "feature.onboardingAuthentication",
-        "Onboarding Authentication",
-        "Require authentication during onboarding",
+    IN_APP_REVIEW(
+        "feature.inAppReview",
+        "In-app Review",
+        "Enable in-app reviews",
         defaultValue = true
     )
 }
@@ -89,5 +89,17 @@ enum class TestSetting(
         "Enable strict mode",
         "Detect IO operations accidentally performed on the main Thread",
         defaultValue = true
+    ),
+    DEBUG_ANALYTICS(
+        "testsetting.debuganalytics",
+        "Submit analytics every 15 min",
+        "WorkManager will schedule the task every 15 min instead of once a day",
+        defaultValue = false
+    ),
+    USE_WEB_VIEW_FOR_INTERNAL_BROWSER(
+        "testsetting.usewebview",
+        "Use WebView for internal browser",
+        "Appium tests has problem connecting to CustomTabs tabs, so we need to provide alternative option",
+        defaultValue = false
     )
 }

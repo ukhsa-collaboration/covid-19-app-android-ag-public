@@ -11,7 +11,7 @@ import androidx.work.WorkerParameters
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.util.toWorkerResult
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeUnit.DAYS
+import java.util.concurrent.TimeUnit.HOURS
 import javax.inject.Inject
 
 class SubmitAnalyticsWorker(
@@ -19,7 +19,8 @@ class SubmitAnalyticsWorker(
     workerParameters: WorkerParameters
 ) : CoroutineWorker(context, workerParameters) {
 
-    @Inject lateinit var submitAnalytics: SubmitAnalytics
+    @Inject
+    lateinit var submitAnalytics: SubmitAnalytics
 
     override suspend fun doWork(): Result {
         applicationContext.appComponent.inject(this)
@@ -28,7 +29,12 @@ class SubmitAnalyticsWorker(
     }
 
     companion object {
-        fun schedule(context: Context, interval: Long = 1, timeUnit: TimeUnit = DAYS) {
+        fun schedule(
+            context: Context,
+            interval: Long = 24,
+            timeUnit: TimeUnit = HOURS,
+            replaceExisting: Boolean = false
+        ) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(CONNECTED)
                 .build()
@@ -38,10 +44,12 @@ class SubmitAnalyticsWorker(
                     .setConstraints(constraints)
                     .build()
 
+            val existingPeriodicWorkPolicy =
+                if (replaceExisting) ExistingPeriodicWorkPolicy.REPLACE else ExistingPeriodicWorkPolicy.KEEP
             WorkManager.getInstance(context)
                 .enqueueUniquePeriodicWork(
                     "SubmitAnalyticsWorker",
-                    ExistingPeriodicWorkPolicy.KEEP,
+                    existingPeriodicWorkPolicy,
                     submitAnalyticsWorker
                 )
         }

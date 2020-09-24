@@ -6,9 +6,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import kotlinx.android.synthetic.main.activity_test_ordering_progress.buttonTryAgain
-import kotlinx.android.synthetic.main.activity_test_ordering_progress.errorStateContainer
-import kotlinx.android.synthetic.main.activity_test_ordering_progress.loadingProgress
+import kotlinx.android.synthetic.main.activity_progress.buttonTryAgain
+import kotlinx.android.synthetic.main.activity_progress.errorStateContainer
+import kotlinx.android.synthetic.main.activity_progress.loadingProgress
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
@@ -23,7 +23,7 @@ import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.visible
 import javax.inject.Inject
 
-class TestOrderingProgressActivity : BaseActivity(R.layout.activity_test_ordering_progress) {
+class TestOrderingProgressActivity : BaseActivity(R.layout.activity_progress) {
 
     @Inject
     lateinit var factory: ViewModelFactory<TestOrderingProgressViewModel>
@@ -37,6 +37,7 @@ class TestOrderingProgressActivity : BaseActivity(R.layout.activity_test_orderin
         setNavigateUpToolbar(toolbar, R.string.empty, R.drawable.ic_close_primary)
 
         viewModel.loadVirologyTestOrder()
+
         setupListeners()
         setupViewModelListeners()
     }

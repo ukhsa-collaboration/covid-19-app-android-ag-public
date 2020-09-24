@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.keysdownload
 
 import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
+import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration.ExposureConfigurationBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
@@ -9,9 +10,9 @@ import uk.nhs.nhsx.covid19.android.app.common.runSafely
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadKeysParams.Intervals.Daily
 import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadKeysParams.Intervals.Hourly
-import uk.nhs.nhsx.covid19.android.app.exposure.toExposureConfiguration
 import uk.nhs.nhsx.covid19.android.app.remote.ExposureConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.KeysDistributionApi
+import uk.nhs.nhsx.covid19.android.app.remote.data.ExposureConfigurationResponse
 import uk.nhs.nhsx.covid19.android.app.util.FileHelper
 import java.util.UUID
 import javax.inject.Inject
@@ -81,5 +82,22 @@ class DownloadAndProcessKeys @Inject constructor(
 
     private fun createToken(timestamp: String): String {
         return "$timestamp-${UUID.randomUUID()}"
+    }
+}
+
+fun ExposureConfigurationResponse.toExposureConfiguration(): ExposureConfiguration {
+    return with(this.exposureNotification) {
+        ExposureConfigurationBuilder()
+            .setMinimumRiskScore(minimumRiskScore)
+            .setAttenuationScores(*attenuationLevelValues.toIntArray())
+            .setAttenuationWeight(attenuationWeight.toInt())
+            .setDaysSinceLastExposureScores(*daysSinceLastExposureLevelValues.toIntArray())
+            .setDaysSinceLastExposureWeight(daysSinceLastExposureWeight)
+            .setDurationScores(*durationLevelValues.toIntArray())
+            .setDurationWeight(durationWeight.toInt())
+            .setTransmissionRiskScores(*transmissionRiskLevelValues.toIntArray())
+            .setTransmissionRiskWeight(transmissionRiskWeight.toInt())
+            .setDurationAtAttenuationThresholds(*attenuationDurationThresholds.toIntArray())
+            .build()
     }
 }

@@ -6,8 +6,11 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_about_user_data.actionDeleteAllData
+import kotlinx.android.synthetic.main.activity_about_user_data.editPostalDistrict
+import kotlinx.android.synthetic.main.activity_about_user_data.editVenueVisits
 import kotlinx.android.synthetic.main.activity_about_user_data.encounterDataSection
 import kotlinx.android.synthetic.main.activity_about_user_data.lastResultDate
 import kotlinx.android.synthetic.main.activity_about_user_data.lastResultValue
@@ -19,31 +22,34 @@ import kotlinx.android.synthetic.main.activity_about_user_data.textViewSymptomsD
 import kotlinx.android.synthetic.main.activity_about_user_data.titleEncounter
 import kotlinx.android.synthetic.main.activity_about_user_data.titleLatestResult
 import kotlinx.android.synthetic.main.activity_about_user_data.titleSymptoms
-import kotlinx.android.synthetic.main.activity_about_user_data.toolbar
 import kotlinx.android.synthetic.main.activity_about_user_data.venueHistoryList
 import kotlinx.android.synthetic.main.activity_about_user_data.venueVisitsTitle
+import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.VenueVisitsUiState
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.state.State
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.testordering.LatestTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.util.gone
 import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import uk.nhs.nhsx.covid19.android.app.util.visible
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import javax.inject.Inject
 
 class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
-
     @Inject
     lateinit var factory: ViewModelFactory<UserDataViewModel>
 
@@ -75,14 +81,14 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
             }
         )
 
-        viewModel.getVenueVisits().observe(
+        viewModel.getVenueVisitsUiState().observe(
             this,
-            Observer { venueVisits ->
-                showVenueVisits(venueVisits)
+            Observer { venueVisitsUiState ->
+                updateVenueVisitsContainer(venueVisitsUiState)
             }
         )
 
-        viewModel.getLatestTestResult().observe(
+        viewModel.getReceivedTestResult().observe(
             this,
             Observer {
                 handleShowingLatestTestResult(it)
@@ -96,33 +102,47 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
             }
         )
 
-        viewModel.loadUserData()
-
         actionDeleteAllData.setOnClickListener {
-            showConfirmationDialog()
+            showConfirmDeletingAllDataDialog()
+        }
+
+        editVenueVisits.setOnClickListener {
+            viewModel.onEditVenueVisitClicked()
+        }
+
+        editPostalDistrict.setOnClickListener {
+            EditPostalDistrictActivity.start(this)
         }
     }
 
-    private fun handleShowingLatestTestResult(latestTestResult: LatestTestResult?) {
-        if (latestTestResult == null) {
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadUserData()
+    }
+
+    private fun handleShowingLatestTestResult(receivedTestResult: ReceivedTestResult?) {
+        if (receivedTestResult == null) {
             titleLatestResult.gone()
             latestResultContainer.gone()
         } else {
-            val dateTime =
-                LocalDateTime.ofInstant(latestTestResult.testEndDate, ZoneId.systemDefault())
-            lastResultValue.text = getTestResultText(latestTestResult)
-            lastResultDate.text = dateTime.uiFormat()
+            val latestTestResultDate: LocalDate =
+                LocalDateTime.ofInstant(receivedTestResult.testEndDate, ZoneId.systemDefault()).toLocalDate()
+            lastResultValue.text = getTestResultText(receivedTestResult)
+            lastResultDate.text = latestTestResultDate.uiFormat(this)
 
             titleLatestResult.visible()
             latestResultContainer.visible()
         }
     }
 
-    private fun getTestResultText(latestTestResult: LatestTestResult) =
-        if (latestTestResult.testResult == POSITIVE) getString(R.string.about_positive) else
-            getString(R.string.about_negative)
+    private fun getTestResultText(receivedTestResult: ReceivedTestResult) =
+        when (receivedTestResult.testResult) {
+            POSITIVE -> getString(R.string.about_positive)
+            NEGATIVE -> getString(R.string.about_negative)
+            VOID -> getString(R.string.about_void)
+        }
 
-    private fun showConfirmationDialog() {
+    private fun showConfirmDeletingAllDataDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.about_delete_your_data_title))
         builder.setMessage(R.string.delete_data_explanation)
@@ -160,9 +180,9 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
             titleEncounter.visible()
             encounterDataSection.visible()
 
-            val dateTime =
-                LocalDateTime.ofInstant(isolation.contactCase.startDate, ZoneId.systemDefault())
-            textEncounterDate.text = dateTime.uiFormat()
+            val encounterDate: LocalDate =
+                LocalDateTime.ofInstant(isolation.contactCase.startDate, ZoneId.systemDefault()).toLocalDate()
+            textEncounterDate.text = encounterDate.uiFormat(this)
         } else {
             titleEncounter.gone()
             encounterDataSection.gone()
@@ -171,7 +191,7 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
             titleSymptoms.visible()
             symptomsDataSection.visible()
 
-            textViewSymptomsDate.text = isolation.indexCase.symptomsOnsetDate.uiFormat()
+            textViewSymptomsDate.text = isolation.indexCase.symptomsOnsetDate.uiFormat(this)
         } else {
             titleSymptoms.gone()
             symptomsDataSection.gone()
@@ -186,20 +206,57 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
         encounterDataSection.gone()
     }
 
-    private fun showVenueVisits(venueVisits: List<VenueVisit>?) {
-        if (venueVisits.isNullOrEmpty()) {
+    private fun updateVenueVisitsContainer(venueVisitsUiState: VenueVisitsUiState) {
+        if (venueVisitsUiState.venueVisits.isNullOrEmpty()) {
             venueVisitsTitle.gone()
+            editVenueVisits.gone()
+            venueHistoryList.gone()
+        } else {
+            venueVisitsTitle.visible()
+            editVenueVisits.visible()
+            venueHistoryList.visible()
 
-            return
+            setUpVenueVisitsAdapter(venueVisitsUiState.venueVisits, venueVisitsUiState.isInEditMode)
+
+            editVenueVisits.text =
+                if (venueVisitsUiState.isInEditMode) getString(R.string.done_button_text) else getString(
+                    R.string.edit
+                )
         }
-
-        setUpVenueVisitsAdapter(venueVisits)
     }
 
-    private fun setUpVenueVisitsAdapter(venueVisits: List<VenueVisit>) {
-        venueVisitsAdapter = VenueVisitsAdapter(venueVisits)
+    private fun setUpVenueVisitsAdapter(venueVisits: List<VenueVisit>, showDeleteIcon: Boolean) {
+        venueVisitsAdapter = VenueVisitsAdapter(venueVisits, showDeleteIcon) {
+            showDeleteVenueVisitConfirmationDialog(it)
+        }
+        venueHistoryList.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                DividerItemDecoration.VERTICAL
+            )
+        )
         venueHistoryList.layoutManager = LinearLayoutManager(this)
         venueHistoryList.adapter = venueVisitsAdapter
+    }
+
+    private fun showDeleteVenueVisitConfirmationDialog(deletedVenueVisitPosition: Int) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.delete_single_venue_visit_title))
+        builder.setMessage(R.string.delete_single_venue_visit_text)
+        builder.setPositiveButton(
+            R.string.confirm
+        ) { dialog, _ ->
+            viewModel.deleteVenueVisit(deletedVenueVisitPosition)
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton(
+            R.string.cancel
+        ) { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.show()
     }
 
     companion object {

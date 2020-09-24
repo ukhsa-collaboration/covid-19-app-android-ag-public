@@ -11,7 +11,6 @@
     tools:context=".onboarding.postcode.PostCodeActivity">
 
     <include
-        android:id="@+id/toolbar"
         layout="@layout/include_onboarding_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,9 +18,10 @@
 
     <ScrollView
         android:id="@+id/scrollView"
+        style="@style/ScrollContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/vertical_margin"
         app:layout_constraintBottom_toTopOf="@id/postCodeContinue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
@@ -30,98 +30,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="32dp"
-            android:paddingBottom="16dp">
+            android:paddingBottom="@dimen/vertical_margin">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/introMarker"
+                style="@style/GoneInLandscape"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginVertical="20dp"
+                android:layout_marginVertical="@dimen/vertical_margin"
                 android:layout_marginLeft="4dp"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_area"
+                android:src="@drawable/ic_onboarding_postcode"
                 tools:ignore="RtlHardcoded" />
 
-            <LinearLayout
+            <uk.nhs.nhsx.covid19.android.app.widgets.PostCodeView
+                android:id="@+id/postCodeView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <View
-                    android:id="@+id/errorIndicatorLeft"
-                    android:layout_width="4dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="12dp"
-                    android:background="?attr/colorError"
-                    android:visibility="gone" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
-                        android:id="@+id/postCodeTitle"
-                        style="@style/Title1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:labelFor="@id/postCodeEditText"
-                        android:text="@string/post_code_title" />
-
-                    <TextView
-                        style="@style/Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="@string/post_code_example" />
-
-                    <LinearLayout
-                        android:id="@+id/errorInfoContainer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:orientation="vertical"
-                        android:focusable="true"
-                        android:visibility="gone">
-
-                        <TextView
-                            style="@style/ErrorTextBold"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:lineSpacingMultiplier="1.18"
-                            android:paddingBottom="4dp"
-                            android:text="@string/post_code_invalid_title" />
-
-                        <TextView
-                            style="@style/ErrorTextBold"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:lineSpacingMultiplier="1.18"
-                            android:paddingBottom="12dp"
-                            android:text="@string/valid_post_code_is_required" />
-                    </LinearLayout>
-
-                    <EditText
-                        android:id="@+id/postCodeEditText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:background="@drawable/edit_text_background"
-                        android:importantForAutofill="no"
-                        android:inputType="textPostalAddress|textCapCharacters"
-                        android:maxLength="4" />
-                </LinearLayout>
-
-            </LinearLayout>
+                android:paddingStart="@dimen/margin_horizontal_reduced"
+                android:paddingEnd="@dimen/margin_horizontal" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
                 style="@style/Title3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/vertical_margin"
                 android:lineSpacingMultiplier="1.2"
+                android:paddingHorizontal="@dimen/margin_horizontal"
                 android:text="@string/post_code_rationale_title"
                 tools:ignore="RtlSymmetry" />
 
@@ -132,11 +68,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:lineSpacingMultiplier="1.2"
+                android:paddingHorizontal="@dimen/margin_horizontal"
                 android:text="@string/post_code_rationale"
                 tools:ignore="RtlSymmetry" />
         </LinearLayout>
-
-
     </ScrollView>
 
     <com.google.android.material.button.MaterialButton
@@ -145,8 +80,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginStart="@dimen/margin_horizontal_reduced"
+        android:layout_marginEnd="@dimen/margin_horizontal"
+        android:layout_marginBottom="@dimen/vertical_margin"
         android:text="@string/continue_button"
         app:layout_constraintBottom_toBottomOf="parent" />
 

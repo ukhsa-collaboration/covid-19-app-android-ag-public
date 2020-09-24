@@ -9,6 +9,7 @@ import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import java.time.Instant
 import javax.inject.Inject
 
+@Deprecated("Not used anymore since 3.3. Use TestResultsProvider instead.")
 class LatestTestResultProvider @Inject constructor(
     private val latestTestResultStorage: LatestTestResultStorage,
     moshi: Moshi

@@ -39,6 +39,15 @@
         <item name="splashScreenColor">@color/nhs_blue</item>
         <item name="toolbarColor">@color/nhs_blue</item>
         <item name="toolbarTextColor">?attr/colorOnPrimary</item>
+        <item name="bottomSheetDialogTheme">@style/ExpandedBottomSheetDialog</item>
+    </style>
+
+    <style name="ExpandedBottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+    </style>
+
+    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="behavior_peekHeight">512dp</item>
     </style>
 
     <style name="AppTheme.Launcher">

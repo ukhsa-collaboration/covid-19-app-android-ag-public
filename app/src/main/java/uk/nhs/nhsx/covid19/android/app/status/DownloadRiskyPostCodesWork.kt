@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uk.nhs.nhsx.covid19.android.app.common.runSafely
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
-import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeProvider
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyPostDistrictsApi
 import uk.nhs.nhsx.covid19.android.app.util.toWorkerResult
 import javax.inject.Inject
@@ -15,8 +15,7 @@ import javax.inject.Inject
 class DownloadRiskyPostCodesWork @Inject constructor(
     private val riskyPostCodeApi: RiskyPostDistrictsApi,
     private val postCodeProvider: PostCodeProvider,
-    private val riskyPostCodeDetectedPrefs: RiskyPostCodeDetectedProvider,
-    private val areaRiskChangedPrefs: AreaRiskChangedProvider,
+    private val areaRiskLevelPrefs: AreaRiskLevelProvider,
     private val notificationProvider: NotificationProvider
 ) {
 
@@ -33,13 +32,12 @@ class DownloadRiskyPostCodesWork @Inject constructor(
             val mainPostCode =
                 postCodeProvider.value ?: return@runSafely ListenableWorker.Result.success()
 
-            val currentMainPostCodeRiskLevel = riskyPostCodeDetectedPrefs.toRiskLevel()
+            val currentMainPostCodeRiskLevel = areaRiskLevelPrefs.toRiskLevel()
             val updatedMainPostCodeRiskLevel = riskyPostCodes.postDistricts[mainPostCode]
 
-            val hasRiskinessChanged = currentMainPostCodeRiskLevel != updatedMainPostCodeRiskLevel
+            val hasRiskinessChanged = currentMainPostCodeRiskLevel != null && currentMainPostCodeRiskLevel != updatedMainPostCodeRiskLevel
 
-            riskyPostCodeDetectedPrefs.setRiskyPostCodeLevel(updatedMainPostCodeRiskLevel)
-            areaRiskChangedPrefs.value = hasRiskinessChanged
+            areaRiskLevelPrefs.setRiskyPostCodeLevel(updatedMainPostCodeRiskLevel)
 
             if (hasRiskinessChanged && !StatusActivity.isVisible) {
                 notificationProvider.showAreaRiskChangedNotification()

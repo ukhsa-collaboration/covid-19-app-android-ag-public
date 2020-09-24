@@ -11,7 +11,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
-import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeProvider
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyPostDistrictsApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.PostDistrictsResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.HIGH
@@ -22,15 +22,13 @@ class DownloadRiskyPostCodesWorkTest {
 
     private val riskyPostCodeApi = mockk<RiskyPostDistrictsApi>(relaxed = true)
     private val postCodeProvider = mockk<PostCodeProvider>(relaxed = true)
-    private val riskyPostCodeDetectedProvider = mockk<RiskyPostCodeDetectedProvider>(relaxed = true)
-    private val areaRiskChangedProvider = mockk<AreaRiskChangedProvider>(relaxed = true)
+    private val areaRiskLevelProvider = mockk<AreaRiskLevelProvider>(relaxed = true)
     private val notificationProvider = mockk<NotificationProvider>(relaxed = true)
 
     private val testSubject = DownloadRiskyPostCodesWork(
         riskyPostCodeApi,
         postCodeProvider,
-        riskyPostCodeDetectedProvider,
-        areaRiskChangedProvider,
+        areaRiskLevelProvider,
         notificationProvider
     )
 
@@ -49,8 +47,7 @@ class DownloadRiskyPostCodesWorkTest {
 
         assert(checkAreaRiskChangedResult == ListenableWorker.Result.success())
 
-        verify(exactly = 1) { riskyPostCodeDetectedProvider.setRiskyPostCodeLevel(HIGH) }
-        verify { areaRiskChangedProvider setProperty "value" value eq(true) }
+        verify(exactly = 1) { areaRiskLevelProvider.setRiskyPostCodeLevel(HIGH) }
         verify(exactly = 1) { notificationProvider.showAreaRiskChangedNotification() }
     }
 
@@ -64,8 +61,7 @@ class DownloadRiskyPostCodesWorkTest {
 
         assert(checkAreaRiskChangedResult == ListenableWorker.Result.success())
 
-        verify(exactly = 1) { riskyPostCodeDetectedProvider.setRiskyPostCodeLevel(HIGH) }
-        verify { areaRiskChangedProvider setProperty "value" value eq(true) }
+        verify(exactly = 1) { areaRiskLevelProvider.setRiskyPostCodeLevel(HIGH) }
         verify(exactly = 1) { notificationProvider.showAreaRiskChangedNotification() }
     }
 
@@ -79,8 +75,7 @@ class DownloadRiskyPostCodesWorkTest {
 
         assert(checkAreaRiskChangedResult == ListenableWorker.Result.success())
 
-        verify(exactly = 1) { riskyPostCodeDetectedProvider.setRiskyPostCodeLevel(LOW) }
-        verify { areaRiskChangedProvider setProperty "value" value eq(true) }
+        verify(exactly = 1) { areaRiskLevelProvider.setRiskyPostCodeLevel(LOW) }
         verify(exactly = 1) { notificationProvider.showAreaRiskChangedNotification() }
     }
 
@@ -94,8 +89,7 @@ class DownloadRiskyPostCodesWorkTest {
 
         assert(checkAreaRiskChangedResult == ListenableWorker.Result.success())
 
-        verify(exactly = 1) { riskyPostCodeDetectedProvider.setRiskyPostCodeLevel(HIGH) }
-        verify { areaRiskChangedProvider setProperty "value" value eq(true) }
+        verify(exactly = 1) { areaRiskLevelProvider.setRiskyPostCodeLevel(HIGH) }
         verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
     }
 
@@ -109,8 +103,7 @@ class DownloadRiskyPostCodesWorkTest {
 
         assert(checkAreaRiskChangedResult == ListenableWorker.Result.success())
 
-        verify(exactly = 1) { riskyPostCodeDetectedProvider.setRiskyPostCodeLevel(MEDIUM) }
-        verify { areaRiskChangedProvider setProperty "value" value eq(true) }
+        verify(exactly = 1) { areaRiskLevelProvider.setRiskyPostCodeLevel(MEDIUM) }
         verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
     }
 
@@ -124,8 +117,7 @@ class DownloadRiskyPostCodesWorkTest {
 
         assert(checkAreaRiskChangedResult == ListenableWorker.Result.success())
 
-        verify(exactly = 1) { riskyPostCodeDetectedProvider.setRiskyPostCodeLevel(LOW) }
-        verify { areaRiskChangedProvider setProperty "value" value eq(true) }
+        verify(exactly = 1) { areaRiskLevelProvider.setRiskyPostCodeLevel(LOW) }
         verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
     }
 
@@ -139,8 +131,7 @@ class DownloadRiskyPostCodesWorkTest {
 
         assert(checkAreaRiskChangedResult == ListenableWorker.Result.success())
 
-        verify(exactly = 1) { riskyPostCodeDetectedProvider.setRiskyPostCodeLevel(LOW) }
-        verify { areaRiskChangedProvider setProperty "value" value eq(false) }
+        verify(exactly = 1) { areaRiskLevelProvider.setRiskyPostCodeLevel(LOW) }
         verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
     }
 
@@ -154,8 +145,7 @@ class DownloadRiskyPostCodesWorkTest {
 
         assert(checkAreaRiskChangedResult == ListenableWorker.Result.success())
 
-        verify(exactly = 1) { riskyPostCodeDetectedProvider.setRiskyPostCodeLevel(HIGH) }
-        verify { areaRiskChangedProvider setProperty "value" value eq(false) }
+        verify(exactly = 1) { areaRiskLevelProvider.setRiskyPostCodeLevel(HIGH) }
         verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
     }
 
@@ -175,8 +165,7 @@ class DownloadRiskyPostCodesWorkTest {
 
         assert(checkAreaRiskChangedResult == ListenableWorker.Result.success())
 
-        verify(exactly = 0) { riskyPostCodeDetectedProvider.setRiskyPostCodeLevel(LOW) }
-        verify(exactly = 0) { areaRiskChangedProvider setProperty "value" value eq(false) }
+        verify(exactly = 0) { areaRiskLevelProvider.setRiskyPostCodeLevel(LOW) }
         verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
     }
 
@@ -193,8 +182,7 @@ class DownloadRiskyPostCodesWorkTest {
 
         assert(checkAreaRiskChangedResult == ListenableWorker.Result.failure())
 
-        verify(exactly = 0) { riskyPostCodeDetectedProvider.setRiskyPostCodeLevel(LOW) }
-        verify(exactly = 0) { areaRiskChangedProvider setProperty "value" value eq(false) }
+        verify(exactly = 0) { areaRiskLevelProvider.setRiskyPostCodeLevel(LOW) }
         verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
     }
 
@@ -206,8 +194,21 @@ class DownloadRiskyPostCodesWorkTest {
 
         assert(checkAreaRiskChangedResult == ListenableWorker.Result.Success())
 
-        verify(exactly = 0) { riskyPostCodeDetectedProvider.setRiskyPostCodeLevel(LOW) }
-        verify(exactly = 0) { areaRiskChangedProvider setProperty "value" value eq(false) }
+        verify(exactly = 0) { areaRiskLevelProvider.setRiskyPostCodeLevel(LOW) }
+        verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
+    }
+
+    @Test
+    fun `does not send notification when changing risk from null`() = runBlocking {
+        mainPostCodeLevelWasNull()
+        postCodeListContainsMainPostCodeWithHighRiskLevel()
+        statusScreenIsNotShowing()
+
+        val checkAreaRiskChangedResult = testSubject.doWork()
+
+        assert(checkAreaRiskChangedResult == ListenableWorker.Result.success())
+
+        verify(exactly = 1) { areaRiskLevelProvider.setRiskyPostCodeLevel(HIGH) }
         verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
     }
 
@@ -253,16 +254,20 @@ class DownloadRiskyPostCodesWorkTest {
         every { postCodeProvider.value }.returns("BE3")
     }
 
+    private fun mainPostCodeLevelWasNull() {
+        every { areaRiskLevelProvider.toRiskLevel() }.returns(null)
+    }
+
     private fun mainPostCodeLevelWasHigh() {
-        every { riskyPostCodeDetectedProvider.toRiskLevel() }.returns(HIGH)
+        every { areaRiskLevelProvider.toRiskLevel() }.returns(HIGH)
     }
 
     private fun mainPostCodeLevelWasMedium() {
-        every { riskyPostCodeDetectedProvider.toRiskLevel() }.returns(MEDIUM)
+        every { areaRiskLevelProvider.toRiskLevel() }.returns(MEDIUM)
     }
 
     private fun mainPostCodeLevelWasLow() {
-        every { riskyPostCodeDetectedProvider.toRiskLevel() }.returns(LOW)
+        every { areaRiskLevelProvider.toRiskLevel() }.returns(LOW)
     }
 
     private fun statusScreenIsNotShowing() {

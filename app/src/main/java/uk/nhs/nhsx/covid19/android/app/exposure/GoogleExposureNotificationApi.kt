@@ -2,15 +2,16 @@ package uk.nhs.nhsx.covid19.android.app.exposure
 
 import android.content.Context
 import android.util.Base64
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
 import com.google.android.gms.nearby.exposurenotification.ExposureInformation
 import com.google.android.gms.nearby.exposurenotification.ExposureSummary
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import java.io.File
-import java.lang.Exception
 
 class GoogleExposureNotificationApi(context: Context) : ExposureNotificationApi {
 
@@ -40,6 +41,9 @@ class GoogleExposureNotificationApi(context: Context) : ExposureNotificationApi 
     override suspend fun temporaryExposureKeyHistory(): List<NHSTemporaryExposureKey> =
         exposureNotificationClient.temporaryExposureKeyHistory.await()
             .map { it.toNHSTemporaryExposureKey() }
+            .apply {
+                Timber.d("Initial keys: $this")
+            }
 
     override suspend fun provideDiagnosisKeys(
         files: List<File>,
@@ -54,6 +58,17 @@ class GoogleExposureNotificationApi(context: Context) : ExposureNotificationApi 
 
     override suspend fun getExposureSummary(token: String): ExposureSummary =
         exposureNotificationClient.getExposureSummary(token).await()
+
+    override suspend fun isAvailable(): Boolean {
+        return try {
+            exposureNotificationClient.start()
+            true
+        } catch (apiException: ApiException) {
+            apiException.status.hasResolution()
+        } catch (exception: Exception) {
+            false
+        }
+    }
 
     private fun TemporaryExposureKey.toNHSTemporaryExposureKey(): NHSTemporaryExposureKey =
         NHSTemporaryExposureKey(

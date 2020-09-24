@@ -8,16 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.ExposureNotificationsNotAvailable
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.OnboardingCompleted
-import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.OnboardingPermissionsCompleted
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.OnboardingStarted
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.TabletNotSupported
-import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.UserNotAuthenticated
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.edgecases.TabletNotSupportedActivity
-import uk.nhs.nhsx.covid19.android.app.onboarding.MainOnboardingActivity
-import uk.nhs.nhsx.covid19.android.app.onboarding.authentication.AuthenticationCodeActivity
-import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
+import uk.nhs.nhsx.covid19.android.app.onboarding.WelcomeActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import javax.inject.Inject
 
@@ -36,10 +32,8 @@ class MainActivity : AppCompatActivity() {
         viewModel.viewState().observe(this) { mainViewState ->
             when (mainViewState) {
                 TabletNotSupported -> TabletNotSupportedActivity.start(this)
-                UserNotAuthenticated -> AuthenticationCodeActivity.start(this)
-                OnboardingStarted -> MainOnboardingActivity.start(this)
+                OnboardingStarted -> WelcomeActivity.start(this)
                 OnboardingCompleted -> StatusActivity.start(this)
-                OnboardingPermissionsCompleted -> PostCodeActivity.start(this)
                 ExposureNotificationsNotAvailable -> startActivity<DeviceNotSupportedActivity>()
             }.also {
                 finish()

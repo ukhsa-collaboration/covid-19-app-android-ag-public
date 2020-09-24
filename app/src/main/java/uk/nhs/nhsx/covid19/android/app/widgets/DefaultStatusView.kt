@@ -7,13 +7,13 @@ import android.widget.FrameLayout
 import kotlinx.android.synthetic.main.view_default_state.view.imgCirclePulseAnim
 import kotlinx.android.synthetic.main.view_default_state.view.imgCircleSmallPulseAnim
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.status.PulseAnimationView
 
 class DefaultStatusView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr), PulseAnimationView {
+) : FrameLayout(context, attrs, defStyleAttr),
+    PulseAnimationView {
 
     var isAnimationEnabled = false
         set(value) {

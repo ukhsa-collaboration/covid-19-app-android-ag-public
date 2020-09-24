@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.widgets
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.core.text.parseAsHtml
 import kotlinx.android.synthetic.main.view_status_option.view.statusOptionIcon
 import kotlinx.android.synthetic.main.view_status_option.view.statusOptionText
 import uk.nhs.nhsx.covid19.android.app.R
@@ -15,12 +14,6 @@ class AreaRiskView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : StatusOptionView(context, attrs, defStyleAttr) {
-
-    var text: String = ""
-        set(value) {
-            field = value
-            statusOptionText.text = text
-        }
 
     var areaRisk: String? = null
         set(value) {
@@ -39,10 +32,9 @@ class AreaRiskView @JvmOverloads constructor(
             0,
             0
         ).apply {
-            val attrText = getString(R.styleable.AreaRiskView_areaRiskText)?.parseAsHtml()
+            text = getString(R.styleable.AreaRiskView_areaRiskText)
             val attrAreaRisk = getString(R.styleable.AreaRiskView_areaRisk)
 
-            statusOptionText.text = attrText ?: ""
             statusOptionText.setPaddingRelative(0, 0, 0, 0)
             setAreaRiskIndicator(attrAreaRisk)
 

@@ -21,12 +21,7 @@ class ReviewSymptomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView
 
     fun bind(question: Question, listener: (Question) -> Unit) = with(itemView) {
         val symptomName = question.symptom.title.translate()
-        val reviewSymptomMessage = if (question.isChecked) {
-            context.getString(R.string.questionnaire_yes_i_have_symptom, symptomName)
-        } else {
-            context.getString(R.string.questionnaire_no_i_dont_have_symptom, symptomName)
-        }
-        textReviewSymptom.text = reviewSymptomMessage
+        textReviewSymptom.text = symptomName
         textChange.setOnClickListener { listener(question) }
         textChange.contentDescription =
             context.getString(

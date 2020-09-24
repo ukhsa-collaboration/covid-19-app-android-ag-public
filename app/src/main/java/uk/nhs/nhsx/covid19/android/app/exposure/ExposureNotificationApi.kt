@@ -14,4 +14,5 @@ interface ExposureNotificationApi {
     suspend fun provideDiagnosisKeys(files: List<File>, exposureConfiguration: ExposureConfiguration, token: String)
     suspend fun getExposureInformation(token: String): List<ExposureInformation>
     suspend fun getExposureSummary(token: String): ExposureSummary
+    suspend fun isAvailable(): Boolean
 }

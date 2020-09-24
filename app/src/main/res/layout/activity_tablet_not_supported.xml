@@ -1,71 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright © 2020 NHSX. All rights reserved.
   -->
-
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_isolate"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingHorizontal="80dp">
+    android:orientation="vertical">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/nhsLogo"
-        android:layout_width="wrap_content"
+    <uk.nhs.nhsx.covid19.android.app.widgets.LogoView
+        android:id="@+id/logoView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginVertical="@dimen/vertical_margin"
         android:baselineAlignBottom="true"
-        android:contentDescription="@null"
-        android:paddingVertical="4dp"
-        android:scaleType="center"
-        android:src="@drawable/nhs_logo_light"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:contentDescription="@null" />
 
     <ScrollView
         android:id="@+id/scrollView"
+        style="@style/ScrollContainer"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="16dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/vertical_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nhsLogo">
+        app:layout_constraintTop_toBottomOf="@id/logoView">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingBottom="@dimen/vertical_margin_large">
 
             <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
                 android:id="@+id/edgeCaseTitle"
                 style="@style/OnboardingTitle"
-                android:layout_width="400dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="100dp"
                 android:text="@string/tablet_support_title"
                 android:textSize="48sp" />
 
             <TextView
                 android:id="@+id/edgeCaseText"
-                android:layout_width="400dp"
+                style="@style/Body1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:lineSpacingMultiplier="1.2"
+                android:layout_marginTop="@dimen/vertical_margin_large"
                 android:text="@string/tablet_support_description"
                 android:textSize="18sp" />
 
-            <TextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                 android:id="@+id/tabletInformationUrl"
-                style="@style/PrimaryTextLink"
+                style="@style/LinkTextWithIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:paddingVertical="16dp"
-                android:text="@string/tablet_information_url" />
-
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:text="@string/tablet_information_url"
+                app:linkUrl="@string/url_nhs_tablet_device" />
         </LinearLayout>
-
     </ScrollView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

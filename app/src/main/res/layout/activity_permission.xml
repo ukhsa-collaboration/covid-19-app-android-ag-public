@@ -9,7 +9,6 @@
     android:layout_height="match_parent">
 
     <include
-        android:id="@+id/toolbar"
         layout="@layout/include_onboarding_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -17,9 +16,10 @@
 
     <ScrollView
         android:id="@+id/scrollView"
+        style="@style/ScrollContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/vertical_margin"
         app:layout_constraintBottom_toTopOf="@id/permissionContinue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
@@ -28,11 +28,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="32dp"
+            android:paddingHorizontal="@dimen/margin_horizontal"
             android:paddingTop="16dp"
             android:paddingBottom="16dp">
 
             <androidx.appcompat.widget.AppCompatImageView
+                style="@style/GoneInLandscape"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center_horizontal"
@@ -44,23 +45,21 @@
                 style="@style/Title1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
-                android:layout_marginBottom="24dp"
+                android:layout_marginTop="@dimen/vertical_margin_large"
                 android:text="@string/permission_title" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
                 style="@style/Title3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:lineSpacingMultiplier="1.2"
+                android:layout_marginTop="@dimen/vertical_margin_large"
                 android:text="@string/exposure_notifications_rationale_title" />
 
             <TextView
-                style="@style/ActionText"
+                style="@style/Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:lineSpacingMultiplier="1.2"
-                android:paddingTop="8dp"
+                android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/onboarding_exposure_notifications_description" />
         </LinearLayout>
 
@@ -72,8 +71,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginHorizontal="@dimen/margin_horizontal"
+        android:layout_marginBottom="@dimen/vertical_margin_large"
         android:text="@string/continue_button"
         app:layout_constraintBottom_toBottomOf="parent" />
 

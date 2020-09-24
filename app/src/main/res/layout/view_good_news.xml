@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/ScrollContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,36 +10,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="32dp"
-        android:paddingEnd="32dp">
+        android:paddingHorizontal="@dimen/margin_horizontal">
 
         <ImageView
             android:id="@+id/goodNewsIcon"
+            style="@style/GoneInLandscape"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:contentDescription="@null"
-            android:src="@drawable/ic_tick"
-            android:visibility="invisible" />
+            tools:src="@drawable/ic_isolation_negative_or_finished" />
 
-        <TextView
+        <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
             android:id="@+id/goodNewsTitle"
             style="@style/Title1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="@dimen/vertical_margin_large"
             android:text="@string/expiration_notification_title"
             android:textAlignment="center"
             android:textSize="56sp"
-            android:visibility="invisible" />
+            android:visibility="invisible"
+            tools:visibility="visible" />
 
-        <TextView
+        <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
             android:id="@+id/goodNewsSubtitle"
             style="@style/TitleIsolation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="32dp"
-            android:paddingEnd="32dp"
+            android:paddingHorizontal="32dp"
             android:textAlignment="center"
             tools:text="You will be released from isolation at some point" />
 
@@ -46,33 +46,31 @@
             android:id="@+id/goodNewsInfoView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="@dimen/vertical_margin_large"
             android:background="@color/surface_background"
             app:stateColor="@color/amber" />
 
-        <uk.nhs.nhsx.covid19.android.app.util.ParagraphsContainer
+        <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
             android:id="@+id/goodNewsParagraphContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/vertical_margin" />
 
         <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
             android:id="@+id/goodNewsOnlineServiceLink"
             style="@style/LinkTextWithIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:gravity="center_vertical"
-            android:minWidth="48dp"
-            android:minHeight="48dp"
-            android:text="@string/nhs_111_online_service" />
+            android:text="@string/nhs_111_online_service"
+            app:linkUrl="@string/url_nhs_111_online" />
 
         <Button
             android:id="@+id/goodNewsActionButton"
             style="@style/PrimaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginTop="@dimen/vertical_margin"
+            android:layout_marginBottom="@dimen/vertical_margin_large"
             tools:text="Action" />
 
     </LinearLayout>

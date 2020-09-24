@@ -15,27 +15,27 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
-import uk.nhs.nhsx.covid19.android.app.exposure.toExposureConfiguration
+import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.toExposureConfiguration
 import uk.nhs.nhsx.covid19.android.app.fieldtests.utils.KeyFileWriter
+import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.HIGH
 import uk.nhs.nhsx.covid19.android.app.remote.ExposureConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.HIGH
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnExposedNotification
-import uk.nhs.nhsx.covid19.android.app.state.OnNegativeTestResult
 import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.OnPositiveTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.LatestTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.LatestTestResultProvider
+import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingTokensProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import java.io.File
 import java.time.Instant
@@ -46,12 +46,12 @@ import javax.inject.Inject
 class DebugViewModel @Inject constructor(
     private val isolationStateMachine: IsolationStateMachine,
     private val periodicTasks: PeriodicTasks,
-    private val latestTestResultProvider: LatestTestResultProvider,
+    private val testResultProvider: TestResultsProvider,
     private val testOrderingTokensProvider: TestOrderingTokensProvider,
     private val venueStorage: VisitedVenuesStorage,
     private val userInbox: UserInbox,
     private val notificationProvider: NotificationProvider,
-    private val riskyPostCodeDetectedProvider: RiskyPostCodeDetectedProvider,
+    private val areaRiskLevelProvider: AreaRiskLevelProvider,
     private val exposureNotificationApi: ExposureNotificationApi,
     private val exposureConfigurationApi: ExposureConfigurationApi
 ) : ViewModel() {
@@ -71,14 +71,16 @@ class DebugViewModel @Inject constructor(
         viewModelScope.launch {
             delay(3_000)
             testOrderingTokensProvider.remove(config)
-            val latestTestResult =
-                LatestTestResult(config.diagnosisKeySubmissionToken, Instant.now(), POSITIVE)
-            latestTestResultProvider.latestTestResult = latestTestResult
 
+            val receivedTestResult = ReceivedTestResult(
+                config.diagnosisKeySubmissionToken,
+                Instant.now(),
+                POSITIVE
+            )
+
+            testResultProvider.add(receivedTestResult)
             isolationStateMachine.processEvent(
-                OnPositiveTestResult(
-                    Instant.now()
-                )
+                OnTestResult(receivedTestResult)
             )
         }
     }
@@ -92,14 +94,39 @@ class DebugViewModel @Inject constructor(
         viewModelScope.launch {
             delay(3_000)
             testOrderingTokensProvider.remove(config)
-            val latestTestResult =
-                LatestTestResult(config.diagnosisKeySubmissionToken, Instant.now(), NEGATIVE)
-            latestTestResultProvider.latestTestResult = latestTestResult
 
+            val receivedTestResult = ReceivedTestResult(
+                config.diagnosisKeySubmissionToken,
+                Instant.now(),
+                NEGATIVE
+            )
+
+            testResultProvider.add(receivedTestResult)
             isolationStateMachine.processEvent(
-                OnNegativeTestResult(
-                    Instant.now()
-                )
+                OnTestResult(receivedTestResult)
+            )
+        }
+    }
+
+    fun sendVoidTestResult(context: Context) {
+        val config = testOrderingTokensProvider.configs.firstOrNull()
+        if (config == null) {
+            Toast.makeText(context, "Order a test first!", LENGTH_LONG).show()
+            return
+        }
+        viewModelScope.launch {
+            delay(3_000)
+            testOrderingTokensProvider.remove(config)
+
+            val receivedTestResult = ReceivedTestResult(
+                config.diagnosisKeySubmissionToken,
+                Instant.now(),
+                VOID
+            )
+
+            testResultProvider.add(receivedTestResult)
+            isolationStateMachine.processEvent(
+                OnTestResult(receivedTestResult)
             )
         }
     }
@@ -136,7 +163,7 @@ class DebugViewModel @Inject constructor(
     }
 
     fun setRiskyPostCode() {
-        riskyPostCodeDetectedProvider.setRiskyPostCodeLevel(HIGH)
+        areaRiskLevelProvider.setRiskyPostCodeLevel(HIGH)
     }
 
     fun importKeys(file: File) {
@@ -186,7 +213,7 @@ class DebugViewModel @Inject constructor(
             .setKeyData(Base64.decode(temporaryTracingKey.key, Base64.DEFAULT))
             .setRollingStartIntervalNumber(temporaryTracingKey.rollingStartNumber)
             .setRollingPeriod(temporaryTracingKey.rollingPeriod)
-            .setTransmissionRiskLevel(7)
+            .setTransmissionRiskLevel(temporaryTracingKey.transmissionRiskLevel ?: 0)
             .build()
     }
 }

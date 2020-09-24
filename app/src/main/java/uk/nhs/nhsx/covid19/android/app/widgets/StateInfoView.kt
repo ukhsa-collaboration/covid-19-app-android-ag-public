@@ -7,6 +7,7 @@ import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.view_state_info.view.stateColorView
 import kotlinx.android.synthetic.main.view_state_info.view.stateTextView
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.util.setUpAccessibilityHeading
 
 class StateInfoView @JvmOverloads constructor(
     context: Context,
@@ -29,6 +30,7 @@ class StateInfoView @JvmOverloads constructor(
     init {
         initializeViews()
         applyAttributes(context, attrs)
+        stateTextView.setUpAccessibilityHeading()
     }
 
     override fun announceForAccessibility(error: CharSequence) {

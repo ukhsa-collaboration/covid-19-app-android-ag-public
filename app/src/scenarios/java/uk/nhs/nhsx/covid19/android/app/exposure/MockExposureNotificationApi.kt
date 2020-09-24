@@ -10,7 +10,6 @@ import java.util.Date
 class MockExposureNotificationApi : ExposureNotificationApi {
 
     private var isEnabled = false
-    private var canBeChanged = true
     private var temporaryExposureKeyHistoryWasCalled = false
 
     override suspend fun isEnabled(): Boolean {
@@ -18,20 +17,15 @@ class MockExposureNotificationApi : ExposureNotificationApi {
     }
 
     override suspend fun start() {
-        if (canBeChanged) {
-            isEnabled = true
-        }
+        isEnabled = true
     }
 
     override suspend fun stop() {
-        if (canBeChanged) {
-            this.isEnabled = false
-        }
+        isEnabled = false
     }
 
-    fun setEnabled(isEnabled: Boolean, canBeChanged: Boolean = true) {
+    fun setEnabled(isEnabled: Boolean) {
         this.isEnabled = isEnabled
-        this.canBeChanged = canBeChanged
     }
 
     override suspend fun temporaryExposureKeyHistory(): List<NHSTemporaryExposureKey> {
@@ -66,5 +60,9 @@ class MockExposureNotificationApi : ExposureNotificationApi {
 
     override suspend fun getExposureSummary(token: String): ExposureSummary {
         return ExposureSummary.ExposureSummaryBuilder().build()
+    }
+
+    override suspend fun isAvailable(): Boolean {
+        return true
     }
 }

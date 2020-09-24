@@ -11,9 +11,9 @@ import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomViewHolder
-import uk.nhs.nhsx.covid19.android.app.testhelpers.NestedScrollViewScrollToAction
 
 class ReviewSymptomsRobot {
 
@@ -24,13 +24,11 @@ class ReviewSymptomsRobot {
     }
 
     fun selectCannotRememberDate() {
-        onView(withId(R.id.checkboxNoDate))
-            .perform(NestedScrollViewScrollToAction(), click())
+        clickOn(R.id.checkboxNoDate)
     }
 
     fun confirmSelection() {
-        onView(withId(R.id.buttonConfirmSymptoms))
-            .perform(NestedScrollViewScrollToAction(), click())
+        clickOn(R.id.buttonConfirmSymptoms)
     }
 
     fun changeFirstNegativeSymptom() {
@@ -41,6 +39,11 @@ class ReviewSymptomsRobot {
                     clickOnViewChild(R.id.textChange)
                 )
             )
+    }
+
+    fun checkReviewSymptomsErrorIsDisplayed() {
+        onView(withText(R.string.questionnaire_input_date_error))
+            .check(matches(isDisplayed()))
     }
 
     fun clickOnViewChild(viewId: Int) = object : ViewAction {

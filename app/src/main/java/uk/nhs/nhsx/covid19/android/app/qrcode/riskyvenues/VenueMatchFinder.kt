@@ -88,7 +88,7 @@ class VenueMatchFinder @Inject constructor(private val visitedVenuesStorage: Vis
                 return true
             }
 
-            // the other interval contains this interval 
+            // the other interval contains this interval
             return (
                 (other.start == start && inclusiveStart || other.start.isAfter(start)) &&
                     (other.end == end && inclusiveEnd || other.end.isBefore(end))

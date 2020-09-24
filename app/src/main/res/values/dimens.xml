@@ -3,4 +3,14 @@
     <dimen name="default_stroke_width">7dp</dimen>
     <dimen name="default_background_stroke_width">3dp</dimen>
     <dimen name="anim_circle_size">40dp</dimen>
+    <dimen name="margin_horizontal">32dp</dimen>
+    <dimen name="margin_horizontal_reduced">16dp</dimen>
+    <dimen name="margin_horizontal_reduced_relative">16dp</dimen>
+    <dimen name="bottom_button_spacing">0dp</dimen>
+    <dimen name="vertical_margin">16dp</dimen>
+    <dimen name="vertical_margin_large">32dp</dimen>
+    <dimen name="horizontal_margin_in_scroll_container">32dp</dimen>
+    <dimen name="margin_horizontal_small">16dp</dimen>
+    <dimen name="margin_horizontal_none">0dp</dimen>
+    <dimen name="margin_horizontal_list_item">32dp</dimen>
 </resources>

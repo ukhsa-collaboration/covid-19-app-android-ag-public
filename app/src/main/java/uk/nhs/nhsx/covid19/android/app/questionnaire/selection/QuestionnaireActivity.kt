@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_questionnaire.buttonTryAgain
@@ -30,6 +31,7 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivi
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.adapter.QuestionnaireAdapter
 import uk.nhs.nhsx.covid19.android.app.startActivity
+import uk.nhs.nhsx.covid19.android.app.util.ScrollableLayoutManager
 import uk.nhs.nhsx.covid19.android.app.util.gone
 import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.visible
@@ -127,8 +129,17 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
         }
 
         textNoSymptoms.setOnClickListener {
-            finish()
-            startActivity<NoSymptomsActivity>()
+            AlertDialog.Builder(this)
+                .setTitle(R.string.questionnaire_discard_symptoms_dialog_title)
+                .setMessage(R.string.questionnaire_discard_symptoms_dialog_message)
+                .setNegativeButton(R.string.cancel) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setPositiveButton(R.string.remove) { _, _ ->
+                    finish()
+                    startActivity<NoSymptomsActivity>()
+                }
+                .show()
         }
 
         buttonReviewSymptoms.setOnClickListener {
@@ -164,7 +175,11 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
             viewModel.toggleQuestion(it)
         }
         questionsRecyclerView.layoutManager =
-            ScrollableLayoutManager(this, nestedScrollView, questionsRecyclerView)
+            ScrollableLayoutManager(
+                this,
+                nestedScrollView,
+                questionsRecyclerView
+            )
         questionsRecyclerView.adapter = questionnaireAdapter
     }
 

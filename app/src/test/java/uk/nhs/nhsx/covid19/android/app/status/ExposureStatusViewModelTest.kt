@@ -14,24 +14,43 @@ import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
-import uk.nhs.nhsx.covid19.android.app.exposure.SubmitTemporaryExposureKeys
+import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationReminderAlarmController
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
+import java.time.Clock
+import java.time.Duration
+import java.time.Instant
+import java.time.ZoneOffset
 
 class ExposureStatusViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val exposureNotificationService = mockk<ExposureNotificationManager>()
+    private val exposureNotificationService = mockk<ExposureNotificationManager>(relaxed = true)
 
-    private val submitTemporaryExposureKeys = mockk<SubmitTemporaryExposureKeys>()
+    private val exposureNotificationReminderAlarmController =
+        mockk<ExposureNotificationReminderAlarmController>(relaxed = true)
 
-    private val testSubject =
-        ExposureStatusViewModel(exposureNotificationService, submitTemporaryExposureKeys)
+    private val notificationProvider = mockk<NotificationProvider>(relaxed = true)
+
+    private val resumeContactTracingNotificationTimeProvider =
+        mockk<ResumeContactTracingNotificationTimeProvider>(relaxed = true)
+
+    private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
+
+    private val testSubject = ExposureStatusViewModel(
+        exposureNotificationService,
+        exposureNotificationReminderAlarmController,
+        notificationProvider,
+        resumeContactTracingNotificationTimeProvider,
+        fixedClock
+    )
 
     private val activationResultObserver =
         mockk<Observer<ExposureNotificationActivationResult>>(relaxed = true)
 
     private val exposureNotificationsChangedObserver = mockk<Observer<Boolean>>(relaxed = true)
     private val exposureNotificationsEnabledObserver = mockk<Observer<Boolean>>(relaxed = true)
+    private val exposureNotificationReminderRequestObserver = mockk<Observer<Void>>(relaxed = true)
 
     @Before
     fun setUp() {
@@ -48,6 +67,7 @@ class ExposureStatusViewModelTest {
         testSubject.startExposureNotifications()
 
         verify { activationResultObserver.onChanged(ExposureNotificationActivationResult.Success) }
+        verify { exposureNotificationReminderAlarmController.cancel() }
     }
 
     @Test
@@ -71,6 +91,7 @@ class ExposureStatusViewModelTest {
                 )
             )
         }
+        verify(exactly = 0) { exposureNotificationReminderAlarmController.cancel() }
     }
 
     @Test
@@ -94,6 +115,7 @@ class ExposureStatusViewModelTest {
                 )
             )
         }
+        verify(exactly = 0) { exposureNotificationReminderAlarmController.cancel() }
     }
 
     @Test
@@ -172,15 +194,23 @@ class ExposureStatusViewModelTest {
 
     @Test
     fun `stop exposure notifications`() = runBlocking {
-
         testSubject.exposureNotificationsChanged()
-            .observeForever(exposureNotificationsEnabledObserver)
-
-        coEvery { exposureNotificationService.isEnabled() } returns true
-        coEvery { exposureNotificationService.stopExposureNotifications() } returns Unit
+            .observeForever(exposureNotificationsChangedObserver)
 
         testSubject.stopExposureNotifications()
 
         coVerify { exposureNotificationService.stopExposureNotifications() }
+        verify { exposureNotificationsChangedObserver.onChanged(any()) }
+    }
+
+    @Test
+    fun `schedule exposure notification reminder sets alarm controller`() {
+        val delay = Duration.ofHours(1)
+        val alarmTime = Instant.now(fixedClock).plus(delay)
+
+        testSubject.scheduleExposureNotificationReminder(delay)
+
+        verify { resumeContactTracingNotificationTimeProvider setProperty "value" value eq(alarmTime.toEpochMilli()) }
+        verify { exposureNotificationReminderAlarmController.setup(alarmTime) }
     }
 }

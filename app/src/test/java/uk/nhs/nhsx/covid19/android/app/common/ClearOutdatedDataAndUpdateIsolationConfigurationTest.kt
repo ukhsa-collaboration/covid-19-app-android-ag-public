@@ -10,13 +10,12 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationConfigurationResponse
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage
-import uk.nhs.nhsx.covid19.android.app.testordering.LatestTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.LatestTestResultProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -25,7 +24,7 @@ import java.time.ZoneOffset
 class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
     private val stateStorage = mockk<StateStorage>(relaxed = true)
-    private val testResultProvider = mockk<LatestTestResultProvider>(relaxed = true)
+    private val testResultsProvider = mockk<TestResultsProvider>(relaxed = true)
     private val isolationConfigurationProvider =
         mockk<IsolationConfigurationProvider>(relaxed = true)
     private val isolationConfigurationApi = mockk<IsolationConfigurationApi>(relaxed = true)
@@ -33,7 +32,7 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
     private val testSubject = ClearOutdatedDataAndUpdateIsolationConfiguration(
         stateStorage,
-        testResultProvider,
+        testResultsProvider,
         isolationConfigurationProvider,
         isolationConfigurationApi,
         fixedClock
@@ -51,39 +50,29 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
     @Test
     fun `updates the state history when state expiration date is outdated`() = runBlocking {
-        every { stateStorage.getHistory() } returns listOf(getIndexCase(isOutdated = true))
+        every { stateStorage.state } returns getIndexCase(isOutdated = true)
 
         testSubject.doWork()
 
-        verify { stateStorage.updateHistory(emptyList()) }
+        verify { testResultsProvider.clear() }
     }
 
     @Test
-    fun `keeps the state history when state expiration date is not outdated`() = runBlocking {
-        val initialHistory = listOf(getIndexCase(isOutdated = false))
-        every { stateStorage.getHistory() } returns initialHistory
+    fun `keeps the state history and test result when previous state expiration date in default state is not outdated`() = runBlocking {
+        every { stateStorage.state } returns getDefaultState(false)
 
         testSubject.doWork()
 
-        verify { stateStorage.updateHistory(initialHistory) }
+        verify(exactly = 0) { testResultsProvider.clear() }
     }
 
     @Test
-    fun `clears test result when test end date is outdated`() = runBlocking {
-        every { testResultProvider.latestTestResult } returns getLatestTestResult(isOutdated = true)
+    fun `keeps the state history and test result when  in default state and previous isolation state is outdated`() = runBlocking {
+        every { stateStorage.state } returns getDefaultState(true)
 
         testSubject.doWork()
 
-        verify { testResultProvider.latestTestResult = null }
-    }
-
-    @Test
-    fun `keeps test result when test end date is not outdated`() = runBlocking {
-        every { testResultProvider.latestTestResult } returns getLatestTestResult(isOutdated = false)
-
-        testSubject.doWork()
-
-        verify(exactly = 0) { testResultProvider.latestTestResult = null }
+        verify { testResultsProvider.clear() }
     }
 
     @Test
@@ -96,18 +85,13 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
     private fun getIndexCase(isOutdated: Boolean): Isolation =
         Isolation(
             isolationStart = Instant.now(fixedClock),
-            expiryDate = LocalDate.now(fixedClock).minusDays(if (isOutdated) 15 else 7),
+            isolationConfiguration = DurationDays(),
             indexCase = IndexCase(
-                symptomsOnsetDate = LocalDate.now(fixedClock).minusDays(17)
+                symptomsOnsetDate = LocalDate.now(fixedClock).minusDays(17),
+                expiryDate = LocalDate.now(fixedClock).minusDays(if (isOutdated) 15 else 7)
             )
         )
 
-    private fun getLatestTestResult(isOutdated: Boolean): LatestTestResult =
-        LatestTestResult(
-            diagnosisKeySubmissionToken = "token",
-            testEndDate = if (isOutdated) Instant.parse("2020-07-12T01:00:00.00Z") else Instant.now(
-                fixedClock
-            ),
-            testResult = POSITIVE
-        )
+    private fun getDefaultState(isOutdated: Boolean): Default =
+        Default(previousIsolation = getIndexCase(isOutdated))
 }

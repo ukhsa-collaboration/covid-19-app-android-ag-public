@@ -62,7 +62,7 @@ class IsolationExpirationActivity : BaseActivity(R.layout.activity_isolation_exp
             if (expired) R.string.expiration_notification_description_passed else R.string.your_isolation_will_finish
         expirationDescription.text = resources.getString(
             pattern,
-            lastDayOfIsolation.uiFormat()
+            lastDayOfIsolation.uiFormat(this)
         )
 
         temperatureNoticeView.isVisible = showTemperatureNotice

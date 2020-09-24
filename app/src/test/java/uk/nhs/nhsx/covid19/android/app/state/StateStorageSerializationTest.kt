@@ -4,18 +4,20 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.StateJson.Companion.stateMoshiAdapter
+import uk.nhs.nhsx.covid19.android.app.state.StateJson.ContactCaseJson
 import uk.nhs.nhsx.covid19.android.app.state.StateJson.DefaultJson
+import uk.nhs.nhsx.covid19.android.app.state.StateJson.IndexCaseJson
 import uk.nhs.nhsx.covid19.android.app.state.StateJson.IsolationJson
 import uk.nhs.nhsx.covid19.android.app.state.StateJson.PreviousIsolationJson
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
 import java.time.Instant
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
+import java.time.temporal.ChronoUnit.DAYS
 import kotlin.test.assertFailsWith
 
 class StateStorageSerializationTest {
@@ -34,8 +36,9 @@ class StateStorageSerializationTest {
         val defaultJson = DefaultJson(
             previousIsolation = PreviousIsolationJson(
                 isolationStart = Instant.now(), expiryDate = LocalDate.now(),
-                indexCase = IndexCase(LocalDate.now(), TestResult(Instant.now(), NEGATIVE)),
-                contactCase = ContactCase(Instant.now())
+                indexCase = IndexCase(LocalDate.now(), LocalDate.now()),
+                contactCase = ContactCase(Instant.now(), LocalDate.now()),
+                isolationConfiguration = DurationDays()
             )
         )
         val res: String = testSubject.toJson(defaultJson)
@@ -51,11 +54,12 @@ class StateStorageSerializationTest {
         val original = IsolationJson(
             start,
             expiryDate,
-            indexCase = IndexCase(
+            indexCase = IndexCaseJson(
                 LocalDate.parse("2020-08-08"),
-                TestResult(Instant.now().minus(1, ChronoUnit.HOURS), NEGATIVE)
+                expiryDate
             ),
-            contactCase = ContactCase(Instant.now().minus(1, ChronoUnit.DAYS))
+            contactCase = ContactCaseJson(Instant.now().minus(1, DAYS), expiryDate),
+            isolationConfiguration = DurationDays()
         )
         val res = testSubject.toJson(original)
 

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
@@ -24,6 +25,7 @@ import kotlinx.android.synthetic.main.activity_status.encounterDetectionSwitch
 import kotlinx.android.synthetic.main.activity_status.isolationView
 import kotlinx.android.synthetic.main.activity_status.optionAboutTheApp
 import kotlinx.android.synthetic.main.activity_status.optionContactTracing
+import kotlinx.android.synthetic.main.activity_status.optionLinkTestResult
 import kotlinx.android.synthetic.main.activity_status.optionOrderTest
 import kotlinx.android.synthetic.main.activity_status.optionReadAdvice
 import kotlinx.android.synthetic.main.activity_status.optionReportSymptoms
@@ -38,9 +40,8 @@ import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.Error
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.ResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.Success
-import uk.nhs.nhsx.covid19.android.app.exposure.SubmitTemporaryExposureKeys.SubmitResult
-import uk.nhs.nhsx.covid19.android.app.exposure.SubmitTemporaryExposureKeys.SubmitResult.Failure
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
@@ -50,20 +51,17 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.canOrderTest
 import uk.nhs.nhsx.covid19.android.app.state.canReportSymptoms
-import uk.nhs.nhsx.covid19.android.app.status.ExposureStatusViewModel.Companion.REQUEST_CODE_SUBMIT_KEYS_PERMISSION
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.ExposureConsent
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.IsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.TestResult
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.VenueAlert
-import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.HighRisk
-import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.LowRisk
-import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.MediumRisk
+import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Risk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.util.gone
 import uk.nhs.nhsx.covid19.android.app.util.openUrl
-import uk.nhs.nhsx.covid19.android.app.util.showSnackBarShort
 import uk.nhs.nhsx.covid19.android.app.util.visible
 import javax.inject.Inject
 
@@ -71,14 +69,10 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
 
     @Inject
     lateinit var exposureStatusViewModelFactory: ViewModelFactory<ExposureStatusViewModel>
-
-    internal val exposureStatusViewModel: ExposureStatusViewModel by viewModels {
-        exposureStatusViewModelFactory
-    }
+    private val exposureStatusViewModel: ExposureStatusViewModel by viewModels { exposureStatusViewModelFactory }
 
     @Inject
     lateinit var statusViewModelFactory: ViewModelFactory<StatusViewModel>
-
     private val statusViewModel: StatusViewModel by viewModels { statusViewModelFactory }
 
     private val dateChangedReceiver = object : BroadcastReceiver() {
@@ -86,6 +80,8 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
             statusViewModel.onDateChanged()
         }
     }
+
+    private lateinit var readAdviceUrl: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,10 +97,41 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
 
         startListeningForInformationScreen()
 
+        startListeningToExposureNotificationStopped()
+
         setClickListeners()
+
+        NotificationManagerCompat.from(this)
+            .cancel(NotificationProvider.EXPOSURE_REMINDER_NOTIFICATION_ID)
+        val notificationFlag =
+            intent.getStringExtra(NotificationProvider.TAP_EXPOSURE_NOTIFICATION_REMINDER_FLAG)
+        if (!notificationFlag.isNullOrEmpty()) {
+            exposureStatusViewModel.startExposureNotifications()
+        }
+
+        statusViewModel.latestAdviceUrl().observe(this) { districtAreaAwareUrl ->
+            readAdviceUrl = getString(districtAreaAwareUrl)
+        }
+
+        if (RuntimeBehavior.isFeatureEnabled(FeatureFlag.IN_APP_REVIEW)) {
+            checkIfInAppReviewShouldBeDisplayed()
+        }
+    }
+
+    private fun checkIfInAppReviewShouldBeDisplayed() {
+        val startedFromVenueCheckInSuccess =
+            intent.getBooleanExtra(STARTED_FROM_VENUE_CHECK_IN_SUCCESS, false)
+
+        if (startedFromVenueCheckInSuccess) {
+            statusViewModel.attemptToStartAppReviewFlow(this)
+        }
     }
 
     private fun setClickListeners() {
+        optionReadAdvice.setOnClickListener {
+            openUrl(readAdviceUrl, useInternalBrowser = true)
+        }
+
         optionReportSymptoms.setOnClickListener {
             startActivity<QuestionnaireActivity>()
         }
@@ -123,23 +150,24 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
             MoreAboutAppActivity.start(this)
         }
 
+        optionLinkTestResult.setOnClickListener {
+            startActivity<LinkTestResultActivity>()
+        }
+
         optionContactTracing.setOnClickListener {
             encounterDetectionSwitch.isChecked = !encounterDetectionSwitch.isChecked
             if (encounterDetectionSwitch.isChecked) {
                 exposureStatusViewModel.startExposureNotifications()
             } else {
                 exposureStatusViewModel.stopExposureNotifications()
+                statusViewModel.onStopExposureNotificationsClicked()
             }
         }
 
         riskAreaView.setOnClickListener {
-            statusViewModel.areaRiskState().value?.let {
+            statusViewModel.onAreaRiskLevelChanged().value?.let {
                 RiskLevelActivity.start(this, it)
             }
-        }
-
-        optionReadAdvice.setOnClickListener {
-            openUrl(R.string.url_latest_advice, useInternalBrowser = true)
         }
     }
 
@@ -173,7 +201,9 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
                         optionOrderTest.isVisible =
                             state.canOrderTest && RuntimeBehavior.isFeatureEnabled(FeatureFlag.TEST_ORDERING)
                         optionReportSymptoms.isVisible =
-                            state.canReportSymptoms && RuntimeBehavior.isFeatureEnabled(SELF_DIAGNOSIS)
+                            state.canReportSymptoms && RuntimeBehavior.isFeatureEnabled(
+                            SELF_DIAGNOSIS
+                        )
                         showIsolationView()
                     }
                 }
@@ -181,12 +211,22 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         )
     }
 
+    private fun startListeningToExposureNotificationStopped() {
+        statusViewModel.onExposureNotificationStopped().observe(this) { canReceiveReminder ->
+            if (canReceiveReminder) {
+                showExposureNotificationReminderDialog()
+            }
+        }
+    }
+
     private fun showIsolationView() {
+        optionReadAdvice.text = getString(R.string.status_option_read_self_isolation_advice)
         contactTracingView.gone()
         isolationView.visible()
     }
 
     private fun showDefaultView() {
+        optionReadAdvice.text = getString(R.string.status_option_read_latest_advice)
         isolationView.gone()
         contactTracingView.visible()
         optionOrderTest.gone()
@@ -199,20 +239,6 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
             contactTracingActiveView.isVisible = isEnabled
             contactTracingStoppedView.isVisible = !isEnabled
             setAnimationsEnabled(isEnabled)
-        }
-
-        exposureStatusViewModel.submitKeyLiveData.observe(this) { result ->
-            when (result) {
-                SubmitResult.Success -> showSnackBarShort(
-                    statusContainer,
-                    "Keys successfully uploaded"
-                )
-                is Failure -> handleError(result.throwable.toString())
-                is SubmitResult.ResolutionRequired -> handleResolution(
-                    result.status,
-                    REQUEST_CODE_SUBMIT_KEYS_PERMISSION
-                )
-            }
         }
 
         exposureStatusViewModel.exposureNotificationActivationResult().observe(this) { viewState ->
@@ -231,33 +257,15 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         if (!RuntimeBehavior.isFeatureEnabled(HIGH_RISK_POST_DISTRICTS)) {
             return
         }
-        statusViewModel.areaRiskState().observe(this) { areaRiskState ->
+        statusViewModel.onAreaRiskLevelChanged().observe(this) { areaRiskState ->
             when (areaRiskState) {
-                is LowRisk -> {
+                is Risk -> {
                     riskAreaView.text = getString(
-                        R.string.status_area_risk_level,
+                        areaRiskState.textResId,
                         areaRiskState.mainPostCode,
-                        getString(R.string.status_area_risk_level_low)
+                        getString(areaRiskState.areaRiskLevelResId)
                     )
-                    riskAreaView.areaRisk = areaRiskState.name
-                    riskAreaView.visible()
-                }
-                is MediumRisk -> {
-                    riskAreaView.text = getString(
-                        R.string.status_area_risk_level,
-                        areaRiskState.mainPostCode,
-                        getString(R.string.status_area_risk_level_medium)
-                    )
-                    riskAreaView.areaRisk = areaRiskState.name
-                    riskAreaView.visible()
-                }
-                is HighRisk -> {
-                    riskAreaView.text = getString(
-                        R.string.status_area_risk_level,
-                        areaRiskState.mainPostCode,
-                        getString(R.string.status_area_risk_level_high)
-                    )
-                    riskAreaView.areaRisk = areaRiskState.name
+                    riskAreaView.areaRisk = areaRiskState.areaRisk.name
                     riskAreaView.visible()
                 }
                 is Unknown -> riskAreaView.gone()
@@ -304,14 +312,18 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         status.startResolutionForResult(this, code)
     }
 
+    private fun showExposureNotificationReminderDialog() {
+        ExposureNotificationReminderDialog(this) { duration ->
+            exposureStatusViewModel.scheduleExposureNotificationReminder(duration)
+        }.show()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                REQUEST_CODE_START_EXPOSURE_NOTIFICATION -> exposureStatusViewModel.startExposureNotifications()
-                REQUEST_CODE_SUBMIT_KEYS_PERMISSION -> exposureStatusViewModel.submitKeys()
-            }
-        } else if (resultCode == Activity.RESULT_CANCELED && requestCode == REQUEST_CODE_START_EXPOSURE_NOTIFICATION) {
+
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_START_EXPOSURE_NOTIFICATION) {
+            exposureStatusViewModel.startExposureNotifications()
+        } else {
             encounterDetectionSwitch.isChecked = false
         }
     }
@@ -319,16 +331,18 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
     companion object {
         var isVisible = false
 
-        fun start(context: Context) {
-            context.startActivity(getIntent(context))
+        fun start(context: Context, startedFromVenueCheckInSuccess: Boolean = false) {
+            context.startActivity(getIntent(context, startedFromVenueCheckInSuccess))
         }
 
-        private fun getIntent(context: Context) =
+        private fun getIntent(context: Context, startedFromVenueCheckInSuccess: Boolean) =
             Intent(context, StatusActivity::class.java)
                 .apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    putExtra(STARTED_FROM_VENUE_CHECK_IN_SUCCESS, startedFromVenueCheckInSuccess)
                 }
 
+        const val STARTED_FROM_VENUE_CHECK_IN_SUCCESS = "STARTED_FROM_VENUE_CHECK_IN_SUCCESS"
         const val REQUEST_CODE_START_EXPOSURE_NOTIFICATION = 1337
     }
 }

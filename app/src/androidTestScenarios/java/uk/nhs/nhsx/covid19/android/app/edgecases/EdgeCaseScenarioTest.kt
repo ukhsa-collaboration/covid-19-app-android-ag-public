@@ -1,18 +1,14 @@
 package uk.nhs.nhsx.covid19.android.app.edgecases
 
-import androidx.test.espresso.NoMatchingViewException
-import org.awaitility.kotlin.await
-import org.awaitility.kotlin.ignoreException
-import org.awaitility.kotlin.untilAsserted
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.report.Reporter
+import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.edgecases.EnableBluetoothRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.edgecases.EnableLocationRobot
-import java.util.concurrent.TimeUnit.SECONDS
 
 class EdgeCaseScenarioTest : EspressoTest() {
 
@@ -22,23 +18,12 @@ class EdgeCaseScenarioTest : EspressoTest() {
 
     @Test
     fun openingHomeActivityWithBluetoothDisabled_shouldNavigateToEnableBluetoothActivity() =
-        reporter(
-            "Edge case",
-            "Bluetooth disabled",
-            "The user enters the home screen but does not have bluetooth enabled.",
-            Reporter.Kind.FLOW
-        ) {
-            testAppContext.setBluetoothEnabled(false)
-
+        notReported {
             startTestActivity<StatusActivity>()
 
-            enableBluetoothRobot.checkActivityIsDisplayed()
+            testAppContext.setBluetoothEnabled(false)
 
-            step(
-                "Start",
-                "The user is presented with a screen that shows that bluetooth " +
-                    "has to be enabled to use the app."
-            )
+            waitFor { enableBluetoothRobot.checkActivityIsDisplayed() }
         }
 
     @Test
@@ -46,53 +31,38 @@ class EdgeCaseScenarioTest : EspressoTest() {
         reporter(
             "Edge case",
             "Enable bluetooth from app",
-            "The user enters the home screen but does not have bluetooth enabled. " +
-                "The user is presented with a screen that urges them to enable bluetooth. " +
-                "The user enables bluetooth and is navigated back to the home screen.",
+            "When the user opens the app with Bluetooth disabled, a screen is shown that urges them to start Bluetooth.",
             Reporter.Kind.FLOW
         ) {
-            testAppContext.setBluetoothEnabled(false)
-
             startTestActivity<StatusActivity>()
 
-            enableBluetoothRobot.checkActivityIsDisplayed()
+            testAppContext.setBluetoothEnabled(false)
+
+            waitFor { enableBluetoothRobot.checkActivityIsDisplayed() }
 
             step(
                 "Start",
-                "The user is presented with a screen that shows that bluetooth " +
-                    "has to be enabled to use the app."
+                "The user is presented with a screen that shows that bluetooth has to be enabled to use the app."
             )
 
             testAppContext.setBluetoothEnabled(true)
 
             step(
                 "Bluetooth enabled",
-                "After successfully enabling bluetooth, the app navigates back to " +
-                    "the home screen."
+                "After successfully enabling bluetooth, the app navigates back to the home screen."
             )
 
-            statusRobot.checkActivityIsDisplayed()
+            waitFor { statusRobot.checkActivityIsDisplayed() }
         }
 
     @Test
     fun openingHomeActivityWithLocationServicesDisabled_shouldNavigateToEnableLocationActivity() =
-        reporter(
-            "Edge case",
-            "Location services disabled",
-            "The user enters the home screen but does not have location services enabled.",
-            Reporter.Kind.FLOW
-        ) {
-            testAppContext.setLocationEnabled(false)
-
+        notReported {
             startTestActivity<StatusActivity>()
 
-            enableLocationRobot.checkActivityIsDisplayed()
+            testAppContext.setLocationEnabled(false)
 
-            step(
-                "Start",
-                "The user is presented with a screen that shows that location " +
-                    "services have to be enabled to use the app."
-            )
+            waitFor { enableLocationRobot.checkActivityIsDisplayed() }
         }
 
     @Test
@@ -100,33 +70,27 @@ class EdgeCaseScenarioTest : EspressoTest() {
         reporter(
             "Edge case",
             "Enable location services from app",
-            "The user enters the home screen but does not have location services enabled. " +
-                "The user is presented with a screen that urges them to enable location services. " +
-                "The user enables location services and is navigated back to the home screen.",
+            "When the user opens the app with location services disabled, a screen is shown that urges them to start location services.",
             Reporter.Kind.FLOW
         ) {
-            testAppContext.setLocationEnabled(false)
-
             startTestActivity<StatusActivity>()
 
-            enableLocationRobot.checkActivityIsDisplayed()
+            testAppContext.setLocationEnabled(false)
+
+            waitFor { enableLocationRobot.checkActivityIsDisplayed() }
 
             step(
                 "Start",
-                "The user is presented with a screen that shows that location services " +
-                    "has to be enabled to use the app."
+                "The user is presented with a screen that shows that location services has to be enabled to use the app."
             )
 
             testAppContext.setLocationEnabled(true)
 
             step(
                 "Location services enabled",
-                "After successfully enabling location services, the app navigates back to " +
-                    "the home screen."
+                "After successfully enabling location services, the app navigates back to the home screen."
             )
 
-            await.atMost(10, SECONDS) ignoreException NoMatchingViewException::class untilAsserted {
-                statusRobot.checkActivityIsDisplayed()
-            }
+            waitFor { statusRobot.checkActivityIsDisplayed() }
         }
 }

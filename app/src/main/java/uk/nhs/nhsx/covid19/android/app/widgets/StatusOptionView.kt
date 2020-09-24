@@ -7,9 +7,13 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
+import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction
 import android.widget.LinearLayout
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import kotlinx.android.synthetic.main.view_status_option.view.statusOptionIcon
 import kotlinx.android.synthetic.main.view_status_option.view.statusOptionIconContainer
+import kotlinx.android.synthetic.main.view_status_option.view.statusOptionLinkIndicator
 import kotlinx.android.synthetic.main.view_status_option.view.statusOptionText
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.util.dpToPx
@@ -20,15 +24,35 @@ open class StatusOptionView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-    private var attrText: String? = ""
+    var text: String? = ""
+        set(value) {
+            field = value
+            statusOptionText.text = value
+        }
+
+    private var attrIsExternalLink: Boolean = false
 
     init {
         initializeViews()
         applyAttributes(context, attrs)
     }
 
-    override fun announceForAccessibility(error: CharSequence) {
-        super.announceForAccessibility(attrText)
+    override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo?) {
+        super.onInitializeAccessibilityNodeInfo(info)
+
+        if (attrIsExternalLink) {
+            info?.contentDescription =
+                context.getString(R.string.accessibility_announcement_link, statusOptionText.text)
+            info?.addAction(
+                AccessibilityAction(
+                    AccessibilityNodeInfoCompat.ACTION_CLICK,
+                    context.getString(R.string.open_in_browser_warning)
+                )
+            )
+        } else {
+            info?.contentDescription =
+                context.getString(R.string.accessibility_announcement_button, statusOptionText.text)
+        }
     }
 
     private fun initializeViews() {
@@ -46,14 +70,22 @@ open class StatusOptionView @JvmOverloads constructor(
             val attrOptionIcon = getDrawable(R.styleable.StatusOptionView_optionIcon)
             val attrOptionIconBackgroundColor =
                 getColor(R.styleable.StatusOptionView_optionIconBackgroundColor, -1)
-            attrText = getString(R.styleable.StatusOptionView_optionText)
+            text = getString(R.styleable.StatusOptionView_optionText)
+            attrIsExternalLink = getBoolean(R.styleable.StatusOptionView_optionExternalLink, false)
 
-            statusOptionText.text = attrText
+            statusOptionText.text = text
             statusOptionText.setPaddingRelative(16.dpToPx.toInt(), 0, 0, 0)
+
             statusOptionIconContainer.backgroundTintList =
                 ColorStateList.valueOf(attrOptionIconBackgroundColor)
+
             attrOptionIcon?.isAutoMirrored = true
             statusOptionIcon.setImageDrawable(attrOptionIcon)
+
+            val linkIndicator =
+                context.getDrawable(if (attrIsExternalLink) R.drawable.ic_link_status_option_view else R.drawable.ic_chevron_right)
+            linkIndicator?.isAutoMirrored = true
+            statusOptionLinkIndicator.setImageDrawable(linkIndicator)
 
             recycle()
         }

@@ -10,97 +10,104 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <uk.nhs.nhsx.covid19.android.app.widgets.FocusView
+    <LinearLayout
+        style="@style/OrientationAwareLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:dimColor="@color/qr_code_overlay"
-        app:focusBorderRadius="14dp"
-        app:focusHeight="256dp"
-        app:focusWidth="256dp" />
+        android:baselineAligned="false"
+        android:weightSum="1">
 
-    <View
-        android:id="@+id/focusedArea"
-        android:layout_width="256dp"
-        android:layout_height="256dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5">
 
-    <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
-        android:id="@+id/titleScanQRCode"
-        style="@style/Title1.Light"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginHorizontal="48dp"
-        android:layout_marginBottom="17dp"
-        android:gravity="center"
-        android:text="@string/scan_qr_code_to_check_in"
-        android:textColor="@color/white"
-        app:autoSizeMaxTextSize="25sp"
-        app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toTopOf="@id/textMoreInfo"
-        app:layout_constraintEnd_toEndOf="@id/focusedArea"
-        app:layout_constraintStart_toStartOf="@id/focusedArea" />
+            <uk.nhs.nhsx.covid19.android.app.widgets.FocusView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                app:dimColor="@color/qr_code_overlay"
+                app:focusBorderRadius="14dp"
+                app:focusPaddingBottom="16dp"
+                app:focusPaddingHorizontal="16dp"
+                app:focusPaddingTop="56dp" />
+        </FrameLayout>
 
-    <TextView
-        android:id="@+id/textMoreInfo"
-        style="@style/ActionText.Light.Medium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="24dp"
-        android:drawableStart="@drawable/ic_info"
-        android:drawablePadding="7dp"
-        android:drawableTint="@color/white"
-        android:gravity="center"
-        android:text="@string/qr_code_more_info"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@id/focusedArea"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:background="@color/qr_code_overlay">
 
-    <TextView
-        android:id="@+id/textHold"
-        style="@style/ActionText.Light.Medium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:gravity="center"
-        android:text="@string/how_to_scan_qr_code"
-        android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/focusedArea" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:orientation="vertical"
+                android:paddingBottom="48dp">
 
-    <TextView
-        android:id="@+id/howToUseScannerHint"
-        style="@style/ActionText.Light.Medium"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:gravity="top|center_horizontal"
-        android:text="@string/qr_code_scan_explanation"
-        android:textColor="@color/white"
-        app:autoSizeMaxTextSize="16sp"
-        app:autoSizeTextType="uniform"
-        app:layout_constraintTop_toBottomOf="@id/textHold" />
+                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                    android:id="@+id/titleScanQRCode"
+                    style="@style/Title1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="32dp"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center"
+                    android:text="@string/scan_qr_code_to_check_in"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/textMoreInfo"
+                    style="@style/ActionText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginHorizontal="32dp"
+                    android:drawableStart="@drawable/ic_info"
+                    android:drawablePadding="7dp"
+                    android:drawableTint="@color/white"
+                    android:gravity="center"
+                    android:text="@string/qr_code_more_info"
+                    android:textAlignment="center"
+                    android:textColor="@color/white" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                    android:id="@+id/textHold"
+                    style="@style/ActionText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="32dp"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:text="@string/how_to_scan_qr_code"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/howToUseScannerHint"
+                    style="@style/ActionText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="32dp"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:text="@string/qr_code_scan_explanation"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/closeButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_alignParentEnd="true"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="?selectableItemBackgroundBorderless"
         android:contentDescription="@string/close"
         android:scaleType="center"
         android:src="@drawable/ic_close_white"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

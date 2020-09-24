@@ -28,7 +28,7 @@ import uk.nhs.covid19.config.EnvironmentConfiguration
 import uk.nhs.covid19.config.Remote
 import uk.nhs.covid19.config.production
 import uk.nhs.covid19.config.qrCodesSignatureKey
-import uk.nhs.nhsx.covid19.android.app.R.style
+import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
 import uk.nhs.nhsx.covid19.android.app.about.MoreAboutAppActivity
 import uk.nhs.nhsx.covid19.android.app.about.UserDataActivity
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
@@ -43,14 +43,15 @@ import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.edgecases.TabletNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.GoogleExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi
+import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
 import uk.nhs.nhsx.covid19.android.app.featureflag.testsettings.TestSettingsActivity
 import uk.nhs.nhsx.covid19.android.app.fieldtests.FieldTestsActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.DataAndPrivacyActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
-import uk.nhs.nhsx.covid19.android.app.onboarding.authentication.AuthenticationCodeActivity
+import uk.nhs.nhsx.covid19.android.app.onboarding.WelcomeActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
-import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeMoreInfoActivity
+import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeHelpActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.CameraPermissionNotGranted
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.InvalidContent
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.ScanningNotSupported
@@ -63,10 +64,16 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolat
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
+import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.LOW
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
+import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
+import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
+import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
 import java.time.LocalDate
 
 class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
@@ -183,13 +190,11 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
     private fun setupScenariosButtons() {
         scenario_main.setOnClickListener {
-            finish()
             MainActivity.start(this)
         }
 
         scenarioOnboarding.setOnClickListener {
-            finish()
-            AuthenticationCodeActivity.start(this)
+            WelcomeActivity.start(this)
         }
 
         fieldTests.setOnClickListener {
@@ -202,10 +207,6 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
     }
 
     private fun setupScreenButtons() {
-        addScreenButton("Authentication") {
-            AuthenticationCodeActivity.start(this)
-        }
-
         addScreenButton("Post code") {
             PostCodeActivity.start(this)
         }
@@ -250,8 +251,8 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             QrCodeScanResultActivity.start(this, ScanningNotSupported)
         }
 
-        addScreenButton("QR Code More Info") {
-            startActivity<QrCodeMoreInfoActivity>()
+        addScreenButton("QR Code Help") {
+            startActivity<QrCodeHelpActivity>()
         }
 
         addScreenButton("Risky Venue Alert") {
@@ -301,13 +302,37 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         addScreenButton("Tablet not supported") {
             startActivity<TabletNotSupportedActivity>()
         }
+
+        addScreenButton("Share keys information") {
+            startActivity<ShareKeysInformationActivity>()
+        }
+
+        addScreenButton("Risk level") {
+            RiskLevelActivity.start(
+                this,
+                RiskyPostCodeViewState.Risk(
+                    "CM2",
+                    R.string.status_area_risk_level,
+                    R.string.status_area_risk_level_low,
+                    LOW
+                )
+            )
+        }
+
+        addScreenButton("Edit post code") {
+            EditPostalDistrictActivity.start(this)
+        }
+
+        addScreenButton("Link test result") {
+            startActivity<LinkTestResultActivity>()
+        }
     }
 
     private fun addScreenButton(
         title: String,
         action: () -> Unit
     ) {
-        val button = Button(ContextThemeWrapper(this, style.PrimaryButton))
+        val button = Button(ContextThemeWrapper(this, R.style.PrimaryButton))
         button.text = title
         button.setOnClickListener { action() }
         screenButtonContainer.addView(button)
@@ -340,17 +365,20 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
     private fun useRegularApplicationComponent(useMockExposureApi: Boolean) {
         app.buildAndUseAppComponent(
-            NetworkModule(getConfiguration()),
+            NetworkModule(getConfiguration(), additionalInterceptors),
             getExposureNotificationApi(useMockExposureApi),
             languageCode = debugSharedPreferences.getString(SELECTED_LANGUAGE, null)
         )
     }
 
     private fun useMockApplicationComponent(useMockExposureApi: Boolean) {
-        val sharedPreferences = (application as ExposureApplication)
+        val sharedPreferences = EncryptionUtils
             .createEncryptedSharedPreferences(
+                this,
+                EncryptionUtils.getDefaultMasterKey(),
                 "mockedEncryptedSharedPreferences"
             )
+        val encryptedFile = EncryptionUtils.createEncryptedFile(this, "venues")
         val languageCode = debugSharedPreferences.getString(SELECTED_LANGUAGE, null)
         app.appComponent =
             DaggerMockApplicationComponent.builder()
@@ -361,12 +389,13 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
                         AndroidBluetoothStateProvider(),
                         AndroidLocationStateProvider(),
                         sharedPreferences,
+                        encryptedFile,
                         qrCodesSignatureKey,
                         ApplicationLocaleProvider(sharedPreferences, languageCode)
                     )
                 )
                 .mockApiModule(MockApiModule())
-                .networkModule(NetworkModule(getConfiguration()))
+                .networkModule(NetworkModule(getConfiguration(), additionalInterceptors))
                 .build()
         app.updateLifecycleListener()
     }

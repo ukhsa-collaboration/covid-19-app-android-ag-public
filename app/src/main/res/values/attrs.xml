@@ -5,8 +5,9 @@
         <attr name="error_title" format="string" />
     </declare-styleable>
     <declare-styleable name="FocusView">
-        <attr name="focusWidth" format="dimension" />
-        <attr name="focusHeight" format="dimension" />
+        <attr name="focusPaddingHorizontal" format="dimension" />
+        <attr name="focusPaddingTop" format="dimension" />
+        <attr name="focusPaddingBottom" format="dimension" />
         <attr name="focusBorderRadius" format="dimension" />
         <attr name="dimColor" format="color" />
     </declare-styleable>
@@ -19,10 +20,20 @@
         <attr name="optionIcon" format="reference" />
         <attr name="optionIconBackgroundColor" format="reference"/>
         <attr name="optionText" format="string" />
+        <attr name="optionExternalLink" format="boolean" />
     </declare-styleable>
     <declare-styleable name="StateInfoView">
         <attr name="stateColor" format="reference" />
         <attr name="stateText" format="string" />
+    </declare-styleable>
+    <declare-styleable name="EnterCodeView">
+        <attr name="title" format="string" />
+        <attr name="example" format="string" />
+        <attr name="errorText" format="string" />
+        <attr name="codeInputRegex" format="string" />
+    </declare-styleable>
+    <declare-styleable name="LinkTextView">
+        <attr name="linkUrl" format="reference" />
     </declare-styleable>
     <declare-styleable name="CircularProgressBar">
         <attr name="cpb_progress" format="integer" />
@@ -58,5 +69,8 @@
         <attr name="splashScreenColor" format="color" />
         <attr name="toolbarColor" format="color" />
         <attr name="toolbarTextColor" format="color" />
+    </declare-styleable>
+    <declare-styleable name="LogoView">
+        <attr name="isAccessibilityHeadingCompat" format="boolean" />
     </declare-styleable>
 </resources>

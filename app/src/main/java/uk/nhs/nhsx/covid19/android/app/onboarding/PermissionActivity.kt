@@ -6,44 +6,59 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import com.google.android.gms.common.api.Status
 import kotlinx.android.synthetic.main.activity_permission.permissionContinue
+import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableExposureNotificationsActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
-import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult
-import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.Error
+import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.ResolutionRequired
+import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.Success
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.ExposureStatusViewModel
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import javax.inject.Inject
 
 class PermissionActivity : BaseActivity(R.layout.activity_permission) {
 
     @Inject
-    lateinit var factory: ViewModelFactory<ExposureStatusViewModel>
+    lateinit var permissionFactory: ViewModelFactory<PermissionViewModel>
+    private val permissionViewModel: PermissionViewModel by viewModels { permissionFactory }
 
-    private val viewModel: ExposureStatusViewModel by viewModels { factory }
+    @Inject
+    lateinit var exposureStatusViewModelFactory: ViewModelFactory<ExposureStatusViewModel>
+    private val exposureStatusViewModel: ExposureStatusViewModel by viewModels { exposureStatusViewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
         permissionContinue.setOnClickListener {
-            viewModel.startExposureNotifications()
+            exposureStatusViewModel.startExposureNotifications()
         }
 
-        viewModel.exposureNotificationActivationResult().observe(
+        startObservingExposureNotificationActivation()
+
+        permissionViewModel.onboardingCompleted().observe(this) {
+            StatusActivity.start(this)
+        }
+    }
+
+    private fun startObservingExposureNotificationActivation() {
+        exposureStatusViewModel.exposureNotificationActivationResult().observe(
             this,
             Observer { viewState ->
                 when (viewState) {
-                    is ExposureNotificationActivationResult.ResolutionRequired ->
+                    is ResolutionRequired ->
                         handleResolution(viewState.status)
-                    ExposureNotificationActivationResult.Success ->
-                        PostCodeActivity.start(this)
-                    is ExposureNotificationActivationResult.Error ->
+                    Success ->
+                        permissionViewModel.setOnboardingCompleted()
+                    is Error ->
                         handleError(viewState.exception)
                 }
             }
@@ -51,6 +66,7 @@ class PermissionActivity : BaseActivity(R.layout.activity_permission) {
     }
 
     private fun handleError(exception: Exception) {
+        Timber.e(exception)
         startActivity<DeviceNotSupportedActivity>()
     }
 
@@ -66,7 +82,7 @@ class PermissionActivity : BaseActivity(R.layout.activity_permission) {
 
         if (requestCode == REQUEST_CODE_START_EXPOSURE_NOTIFICATION) {
             if (resultCode == Activity.RESULT_OK) {
-                viewModel.startExposureNotifications()
+                exposureStatusViewModel.startExposureNotifications()
             } else {
                 val intent = Intent(this, EnableExposureNotificationsActivity::class.java)
                 startActivityForResult(intent, REQUEST_CODE_START_EXPOSURE_NOTIFICATION_RATIONALE)
@@ -74,7 +90,7 @@ class PermissionActivity : BaseActivity(R.layout.activity_permission) {
         } else if (requestCode == REQUEST_CODE_START_EXPOSURE_NOTIFICATION_RATIONALE &&
             resultCode == Activity.RESULT_OK
         ) {
-            viewModel.startExposureNotifications()
+            exposureStatusViewModel.startExposureNotifications()
         }
     }
 

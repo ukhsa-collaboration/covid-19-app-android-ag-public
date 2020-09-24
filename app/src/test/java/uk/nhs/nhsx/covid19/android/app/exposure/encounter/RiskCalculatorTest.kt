@@ -2,23 +2,30 @@ package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
 import com.google.android.gms.nearby.exposurenotification.ExposureInformation
 import com.google.android.gms.nearby.exposurenotification.ExposureInformation.ExposureInformationBuilder
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.ExposureConfigurationResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.ExposureNotification
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskCalculation
+import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class RiskCalculatorTest {
 
     private lateinit var subject: RiskCalculator
+    private lateinit var infectiousnessFactorCalculator: InfectiousnessFactorCalculator
 
     private val riskCalculationConfiguration = getConfigurationWithThreshold().riskCalculation
 
     @Before
     fun setup() {
-        subject = RiskCalculator()
+        infectiousnessFactorCalculator = mockk()
+        every { infectiousnessFactorCalculator.infectiousnessFactor(any()) } returns 1.0
+        subject = RiskCalculator(infectiousnessFactorCalculator = infectiousnessFactorCalculator)
     }
 
     @Test
@@ -99,13 +106,41 @@ class RiskCalculatorTest {
         Assert.assertEquals(4, riskScore.first)
     }
 
+    @Test
+    fun `calls infectiousness factor calculator with days from onset which is calculated from transmission risk level`() {
+        val expectedDaysFromOnset = 3
+        val transmissionRiskLevel = 4
+
+        val exposureInfo = getExposureInfoWith(listOf(5, 0, 0), transmissionRiskLevel = transmissionRiskLevel)
+
+        subject(listOf(exposureInfo), riskCalculationConfiguration)
+
+        verify {
+            infectiousnessFactorCalculator.infectiousnessFactor(expectedDaysFromOnset)
+        }
+    }
+
+    @Test
+    fun `infectiousness factor is used in risk calculation`() {
+        every { infectiousnessFactorCalculator.infectiousnessFactor(any()) } returns 0.5
+
+        val exposureInfo = getExposureInfoWith(listOf(30, 0, 0))
+
+        val riskScore = subject(listOf(exposureInfo), riskCalculationConfiguration)
+
+        val expectedRiskScore = 900.0
+        assertEquals(expectedRiskScore, riskScore!!.second)
+    }
+
     private fun getExposureInfoWith(
         attenuationDurations: List<Int>,
-        dateMillis: Long = 0
+        dateMillis: Long = 0,
+        transmissionRiskLevel: Int = 0
     ): ExposureInformation {
         return ExposureInformationBuilder()
             .setAttenuationDurations(attenuationDurations.toIntArray())
             .setDateMillisSinceEpoch(dateMillis)
+            .setTransmissionRiskLevel(transmissionRiskLevel)
             .build()
     }
 

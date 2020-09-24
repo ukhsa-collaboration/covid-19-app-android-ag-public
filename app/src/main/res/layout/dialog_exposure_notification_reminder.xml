@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        style="@style/ActionTextBold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="8dp"
+        android:text="@string/resume_contact_tracing_title" />
+
+    <TextView
+        style="@style/ActionText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:paddingBottom="8dp"
+        android:text="@string/resume_contact_tracing_subtitle" />
+
+    <RadioButton
+        android:id="@+id/minute_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1 minute (DEBUG only)"
+        android:textAppearance="@style/ActionText"
+        android:visibility="gone"
+        tools:ignore="HardcodedText"
+        tools:visibility="visible" />
+
+    <RadioButton
+        android:id="@+id/hours_4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/template_hours"
+        android:textAppearance="@style/ActionText" />
+
+    <RadioButton
+        android:id="@+id/hours_8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/template_hours"
+        android:textAppearance="@style/ActionText" />
+
+    <RadioButton
+        android:id="@+id/hours_12"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/template_hours"
+        android:textAppearance="@style/ActionText" />
+
+    <TextView
+        android:id="@+id/dont_remind"
+        style="@style/LinkText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|end"
+        android:paddingTop="8dp"
+        android:text="@string/resume_contact_tracing_don_t_remind_me"
+        android:textAllCaps="true" />
+
+</LinearLayout>

@@ -21,12 +21,15 @@ import kotlinx.android.synthetic.scenarios.fragment_debug.riskyPostCode
 import kotlinx.android.synthetic.scenarios.fragment_debug.riskyVenue
 import kotlinx.android.synthetic.scenarios.fragment_debug.sendNegativeTestResult
 import kotlinx.android.synthetic.scenarios.fragment_debug.sendPositiveTestResult
+import kotlinx.android.synthetic.scenarios.fragment_debug.sendVoidTestResult
 import kotlinx.android.synthetic.scenarios.fragment_debug.startDownloadTask
 import kotlinx.android.synthetic.scenarios.fragment_debug.submitKeys
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
+import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.Error
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.ResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.Success
@@ -78,9 +81,8 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
     }
 
     private fun showDebugOptions() {
-
         submitKeys.setOnClickListener {
-            (activity as StatusActivity).exposureStatusViewModel.submitKeys()
+            activity?.startActivity<ShareKeysInformationActivity> {}
         }
 
         exportKeys.setOnClickListener {
@@ -103,6 +105,10 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
 
         sendNegativeTestResult.setOnClickListener {
             debugViewModel.sendNegativeTestResult(requireContext())
+        }
+
+        sendVoidTestResult.setOnClickListener {
+            debugViewModel.sendVoidTestResult(requireContext())
         }
 
         defaultState.setOnClickListener {

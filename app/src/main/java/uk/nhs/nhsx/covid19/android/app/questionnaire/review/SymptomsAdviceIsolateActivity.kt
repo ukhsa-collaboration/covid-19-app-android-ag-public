@@ -7,41 +7,40 @@ import android.os.Bundle
 import androidx.core.view.isVisible
 import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
+import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.daysToIsolateContainer
 import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.daysUntilExpirationTextView
-import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.onlineServiceLinkTextView
 import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.postDaysTextView
 import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.preDaysTextView
 import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.stateActionButton
 import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.stateExplanation
+import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.stateIcon
 import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.stateInfoView
-import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.toolbar
+import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.util.gone
-import uk.nhs.nhsx.covid19.android.app.util.openUrl
 import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.setUpAccessibilityHeading
 
-class SymptomsAdviceIsolateActivity :
-    BaseActivity(R.layout.activity_symptoms_advice_isolate) {
+class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_advice_isolate) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
         setNavigateUpToolbar(toolbar, R.string.empty, R.drawable.ic_close_primary)
+
         toolbar.setNavigationOnClickListener {
             navigateToStatusActivity()
         }
 
-        onlineServiceLinkTextView.setOnClickListener {
-            openUrl(R.string.url_nhs_111_online)
-        }
-
         val isPositiveSymptoms = intent.getBooleanExtra(EXTRA_IS_POSITIVE_SYMPTOMS, false)
         val isolationDuration = intent.getIntExtra(EXTRA_ISOLATION_DURATION, 0)
+
+        daysToIsolateContainer.setUpAccessibilityHeading()
 
         if (isPositiveSymptoms) {
             setupPositiveSymptomsUi(isolationDuration)
@@ -68,6 +67,8 @@ class SymptomsAdviceIsolateActivity :
     }
 
     private fun setupPositiveSymptomsUi(daysUntilExpiration: Int) {
+        stateIcon.setImageResource(R.drawable.ic_isolation_book_test)
+
         preDaysTextView.text = getString(R.string.self_isolate_for)
         daysUntilExpirationTextView.text = resources.getQuantityString(
             R.plurals.state_isolation_days,
@@ -96,6 +97,8 @@ class SymptomsAdviceIsolateActivity :
     }
 
     private fun setupNegativeSymptomsUi(daysUntilExpiration: Int) {
+        stateIcon.setImageResource(R.drawable.ic_isolation_contact)
+
         preDaysTextView.text = getString(R.string.self_isolate_for)
         daysUntilExpirationTextView.text = resources.getQuantityString(
             R.plurals.state_isolation_days,

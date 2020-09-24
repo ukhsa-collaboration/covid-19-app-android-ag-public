@@ -12,7 +12,6 @@
         android:id="@+id/stateColorView"
         android:layout_width="8dp"
         android:layout_height="match_parent"
-        android:layout_marginEnd="16dp"
         tools:background="@color/amber" />
 
     <TextView
@@ -21,9 +20,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
         android:paddingVertical="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:textColor="?attr/colorOnSurface"
         tools:text="Sample text" />
 </merge>

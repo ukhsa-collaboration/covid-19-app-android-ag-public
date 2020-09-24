@@ -11,7 +11,7 @@ class MockActivationApi : ActivationApi {
             return Response.success(null)
         }
         return Response.error(
-            400, "{}".toResponseBody("application/jso".toMediaType())
+            400, "{}".toResponseBody("application/json".toMediaType())
         )
     }
 

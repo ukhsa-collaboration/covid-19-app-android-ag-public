@@ -9,8 +9,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionViewModel.ExposedNotificationResult
+import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowEncounterDetection
+import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
@@ -41,8 +42,11 @@ class EncounterDetectionViewModelTest {
 
         every { isolationStateMachine.readState() } returns Isolation(
             isolationStart = Instant.now(),
-            expiryDate = LocalDate.now().plusDays(14),
-            contactCase = ContactCase(startDate = Instant.now())
+            isolationConfiguration = DurationDays(),
+            contactCase = ContactCase(
+                startDate = Instant.now(),
+                expiryDate = LocalDate.now().plusDays(14)
+            )
         )
 
         testSubject.getIsolationDays()

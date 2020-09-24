@@ -49,11 +49,13 @@ class AnalyticsEventProcessor @Inject constructor(
 
                 runningNormallyBackgroundTick += 1
 
-                if (stateStorage.state is Isolation) isIsolatingBackgroundTick += 1
+                val currentState = stateStorage.state
 
-                if (stateStorage.getHistory().any { it is Isolation && it.isContactCaseOnly() }) hasHadRiskyContactBackgroundTick += 1
-
-                if (stateStorage.getHistory().any { it is Isolation && it.isIndexCaseOnly() }) hasSelfDiagnosedPositiveBackgroundTick += 1
+                if (currentState is Isolation) {
+                    isIsolatingBackgroundTick += 1
+                    if (currentState.isContactCaseOnly()) hasHadRiskyContactBackgroundTick += 1
+                    if (currentState.isIndexCaseOnly()) hasSelfDiagnosedPositiveBackgroundTick += 1
+                }
 
                 if (!exposureNotificationApi.isEnabled()) encounterDetectionPausedBackgroundTick += 1
             }

@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/ScrollContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,21 +10,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="32dp"
-        android:paddingEnd="32dp">
+        android:paddingHorizontal="@dimen/margin_horizontal">
 
         <ImageView
+            android:id="@+id/isolationRequestImage"
+            style="@style/GoneInLandscape"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:contentDescription="@null"
-            android:src="@drawable/ic_lock" />
+            tools:src="@drawable/ic_isolation_book_test" />
 
         <TextView
             android:id="@+id/isolationRequestTitle1"
             style="@style/TitleIsolation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/vertical_margin_large"
             android:textAlignment="center"
             tools:text="Please isolate for" />
 
@@ -40,16 +43,16 @@
             android:id="@+id/isolationRequestInfoView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginTop="@dimen/vertical_margin_large"
             android:background="@color/surface_background"
             app:stateColor="@color/tertiary_text_grey"
             app:stateText="" />
 
-        <uk.nhs.nhsx.covid19.android.app.util.ParagraphsContainer
+        <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
             android:id="@+id/isolationRequestParagraphContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/vertical_margin_large" />
 
         <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
             android:id="@+id/isolationRequestOnlineServiceLink"
@@ -58,14 +61,15 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:gravity="center"
-            android:text="@string/nhs_111_online_service" />
+            android:text="@string/nhs_111_online_service"
+            app:linkUrl="@string/url_nhs_111_online" />
 
         <Button
             android:id="@+id/isolationRequestActionButton"
             style="@style/PrimaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="@dimen/vertical_margin_large"
             tools:text="Action" />
 
     </LinearLayout>

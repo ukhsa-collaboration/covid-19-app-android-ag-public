@@ -8,6 +8,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
+import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
@@ -55,8 +56,8 @@ class DisplayStateExpirationNotificationTest {
             val expiryDate = LocalDate.of(2020, 5, 22)
             every { isolationStateMachine.readState(validateExpiry = false) } returns Isolation(
                 startDate,
-                expiryDate,
-                indexCase = IndexCase(symptomsOnset)
+                DurationDays(),
+                indexCase = IndexCase(symptomsOnset, expiryDate)
             )
 
             val testSubject = DisplayStateExpirationNotification(
@@ -85,8 +86,8 @@ class DisplayStateExpirationNotificationTest {
             val expiryDate = LocalDate.of(2020, 5, 23)
             every { isolationStateMachine.readState() } returns Isolation(
                 startDate,
-                expiryDate,
-                indexCase = IndexCase(symptomsOnset)
+                DurationDays(),
+                indexCase = IndexCase(symptomsOnset, expiryDate)
             )
 
             val testSubject = DisplayStateExpirationNotification(

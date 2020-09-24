@@ -2,8 +2,8 @@ package com.jeroenmols.featureflag.framework
 
 import com.jeroenmols.featureflag.framework.FeatureFlag.HIGH_RISK_POST_DISTRICTS
 import com.jeroenmols.featureflag.framework.FeatureFlag.HIGH_RISK_VENUES
+import com.jeroenmols.featureflag.framework.FeatureFlag.IN_APP_REVIEW
 import com.jeroenmols.featureflag.framework.FeatureFlag.ISOLATION_COMPANION
-import com.jeroenmols.featureflag.framework.FeatureFlag.ONBOARDING_AUTHENTICATION
 import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_DIAGNOSIS
 import com.jeroenmols.featureflag.framework.FeatureFlag.SIGNATURE_VALIDATION
 import com.jeroenmols.featureflag.framework.FeatureFlag.TEST_ORDERING
@@ -22,7 +22,7 @@ class StoreFeatureFlagProvider : FeatureFlagProvider {
                 ISOLATION_COMPANION -> true
                 TEST_ORDERING -> true
                 SIGNATURE_VALIDATION -> true
-                ONBOARDING_AUTHENTICATION -> true
+                IN_APP_REVIEW -> true
             }
         } else {
             // TestSettings should never be shipped to users

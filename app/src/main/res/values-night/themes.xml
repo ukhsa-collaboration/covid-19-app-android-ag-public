@@ -36,5 +36,6 @@
         <item name="splashScreenColor">@color/black</item>
         <item name="toolbarColor">@color/surface_background</item>
         <item name="toolbarTextColor">@color/primary_text_grey</item>
+        <item name="bottomSheetDialogTheme">@style/ExpandedBottomSheetDialog</item>
     </style>
 </resources>

@@ -1,96 +1,123 @@
 package uk.nhs.nhsx.covid19.android.app.notifications
 
 import android.content.SharedPreferences
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowEncounterDetection
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowIsolationExpiration
+import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
+import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowIsolationExpiration
+import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowVenueAlert
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 
 sealed class UserInboxItem {
-    data class ShowIsolationExpiration(val expirationDate: LocalDate) : UserInboxItem()
     object ShowTestResult : UserInboxItem()
-    data class ShowVenueAlert(val venueId: String) : UserInboxItem()
-    object ShowEncounterDetection : UserInboxItem()
 }
 
-interface UserInbox {
-    fun addUserInboxItem(item: UserInboxItem)
-    fun fetchInbox(): UserInboxItem?
-    fun clearItem(item: UserInboxItem)
-    fun registerListener(onUserInboxChanged: () -> Unit)
-    fun unregisterListener(onUserInboxChanged: () -> Unit)
+sealed class AddableUserInboxItem : UserInboxItem() {
+    data class ShowIsolationExpiration(val expirationDate: LocalDate) : AddableUserInboxItem()
+    data class ShowVenueAlert(val venueId: String) : AddableUserInboxItem()
+    object ShowEncounterDetection : AddableUserInboxItem()
 }
 
 @Singleton
-class AndroidUserInbox @Inject constructor(val sharedPreferences: SharedPreferences) : UserInbox {
+class UserInbox @Inject constructor(
+    private val isolationExpirationDateProvider: IsolationExpirationDateProvider,
+    private val riskyVenueIdProvider: RiskyVenueIdProvider,
+    private val shouldShowEncounterDetectionActivityProvider: ShouldShowEncounterDetectionActivityProvider,
+    private val testResultsProvider: TestResultsProvider
+) {
 
-    private val isolationExpirationDatePrefs = sharedPreferences.with<String>(ISOLATION_EXPIRATION_DATE)
-    private var isolationExpirationDate: String? by isolationExpirationDatePrefs
+    internal var listeners = mutableListOf<() -> Unit>()
 
-    private val testResultPrefs = sharedPreferences.with<Boolean>(SHOULD_SHOW_TEST_RESULT)
-    private var testResult: Boolean? by testResultPrefs
-
-    private val riskyVenueIdPrefs = sharedPreferences.with<String>(RISKY_VENUE_ID)
-    private var riskyVenueId: String? by riskyVenueIdPrefs
-
-    private val encounterDetectionPrefs = sharedPreferences.with<Boolean>(SHOULD_SHOW_ENCOUNTER_DETECTION_ACTIVITY)
-    private var encounterDetection: Boolean? by encounterDetectionPrefs
-
-    private var listeners = mutableListOf<() -> Unit>()
-
-    override fun registerListener(onUserInboxChanged: () -> Unit) {
+    fun registerListener(onUserInboxChanged: () -> Unit) {
         listeners.add(onUserInboxChanged)
     }
 
-    override fun unregisterListener(onUserInboxChanged: () -> Unit) {
+    fun unregisterListener(onUserInboxChanged: () -> Unit) {
         listeners.remove(onUserInboxChanged)
     }
 
-    override fun addUserInboxItem(item: UserInboxItem) {
-        when (item) {
-            is ShowIsolationExpiration -> isolationExpirationDate = item.expirationDate.toString()
-            is ShowTestResult -> testResult = true
-            is ShowVenueAlert -> riskyVenueId = item.venueId
-            is ShowEncounterDetection -> encounterDetection = true
-        }
+    fun notifyChanges() {
         listeners.forEach { it() }
     }
 
-    override fun fetchInbox(): UserInboxItem? {
-        if (isolationExpirationDate != null) {
-            return ShowIsolationExpiration(LocalDate.parse(isolationExpirationDate))
+    fun addUserInboxItem(item: AddableUserInboxItem) {
+        when (item) {
+            is ShowIsolationExpiration ->
+                isolationExpirationDateProvider.value = item.expirationDate.toString()
+            is ShowVenueAlert ->
+                riskyVenueIdProvider.value = item.venueId
+            is ShowEncounterDetection ->
+                shouldShowEncounterDetectionActivityProvider.value = true
         }
-        if (testResult != null && testResult == true) {
+        notifyChanges()
+    }
+
+    fun fetchInbox(): UserInboxItem? {
+        if (isolationExpirationDateProvider.value != null) {
+            return ShowIsolationExpiration(LocalDate.parse(isolationExpirationDateProvider.value))
+        }
+        if (testResultsProvider.testResults.values.any { it.acknowledgedDate == null }) {
             return ShowTestResult
         }
-        if (encounterDetection != null && encounterDetection == true) {
+        if (shouldShowEncounterDetectionActivityProvider.value != null &&
+            shouldShowEncounterDetectionActivityProvider.value == true
+        ) {
             return ShowEncounterDetection
         }
-        val venueId = riskyVenueId
+        val venueId = riskyVenueIdProvider.value
         if (venueId != null) {
             return ShowVenueAlert(venueId)
         }
         return null
     }
 
-    override fun clearItem(item: UserInboxItem) {
+    fun clearItem(item: AddableUserInboxItem) {
         when (item) {
-            is ShowIsolationExpiration -> isolationExpirationDate = null
-            is ShowTestResult -> testResult = null
-            is ShowVenueAlert -> riskyVenueId = null
-            is ShowEncounterDetection -> encounterDetection = null
+            is ShowIsolationExpiration -> isolationExpirationDateProvider.value = null
+            is ShowVenueAlert -> riskyVenueIdProvider.value = null
+            is ShowEncounterDetection -> shouldShowEncounterDetectionActivityProvider.value = null
         }
-        listeners.forEach { it() }
+        notifyChanges()
     }
+}
+
+class IsolationExpirationDateProvider @Inject constructor(
+    sharedPreferences: SharedPreferences
+) {
+    private val prefs = sharedPreferences.with<String>(ISOLATION_EXPIRATION_DATE)
+
+    var value: String? by prefs
 
     companion object {
-        const val SHOULD_SHOW_TEST_RESULT = "SHOULD_SHOW_TEST_RESULT"
-        const val ISOLATION_EXPIRATION_DATE = "ISOLATION_EXPIRATION_DATE"
-        const val SHOULD_SHOW_ENCOUNTER_DETECTION_ACTIVITY = "SHOULD_SHOW_ENCOUNTER_DETECTION_ACTIVITY"
-        const val RISKY_VENUE_ID = "RISKY_VENUE_ID"
+        private const val ISOLATION_EXPIRATION_DATE = "ISOLATION_EXPIRATION_DATE"
+    }
+}
+
+class RiskyVenueIdProvider @Inject constructor(
+    sharedPreferences: SharedPreferences
+) {
+    private val prefs = sharedPreferences.with<String>(RISKY_VENUE_ID)
+
+    var value: String? by prefs
+
+    companion object {
+        private const val RISKY_VENUE_ID = "RISKY_VENUE_ID"
+    }
+}
+
+class ShouldShowEncounterDetectionActivityProvider @Inject constructor(
+    sharedPreferences: SharedPreferences
+) {
+    private val prefs =
+        sharedPreferences.with<Boolean>(SHOULD_SHOW_ENCOUNTER_DETECTION_ACTIVITY)
+
+    var value: Boolean? by prefs
+
+    companion object {
+        private const val SHOULD_SHOW_ENCOUNTER_DETECTION_ACTIVITY =
+            "SHOULD_SHOW_ENCOUNTER_DETECTION_ACTIVITY"
     }
 }

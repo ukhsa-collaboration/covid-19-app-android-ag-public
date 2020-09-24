@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.google.android.gms.common.api.Status
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -11,10 +10,8 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.ResolutionRequired
-import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
-import uk.nhs.nhsx.covid19.android.app.onboarding.authentication.AuthenticationProvider
-import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeProvider
+import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
+import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.util.DeviceDetection
 
 class MainViewModelTest {
@@ -24,36 +21,28 @@ class MainViewModelTest {
 
     private val deviceDetection = mockk<DeviceDetection>()
 
-    private val postCodeProvider = mockk<PostCodeProvider>()
-
-    private val authCodeProvider = mockk<AuthenticationProvider>()
-
-    private val exposureNotificationManager = mockk<ExposureNotificationManager>()
+    private val exposureNotificationApi = mockk<ExposureNotificationApi>()
 
     private val mainViewState = mockk<Observer<MainViewModel.MainViewState>>(relaxed = true)
 
+    private val onboardingCompletedProvider = mockk<OnboardingCompletedProvider>(relaxed = true)
+
     private val testSubject = MainViewModel(
         deviceDetection,
-        postCodeProvider,
-        authCodeProvider,
-        exposureNotificationManager
+        exposureNotificationApi,
+        onboardingCompletedProvider
     )
 
     @Before
     fun setUp() {
-        val status = mockk<Status>()
-        coEvery { exposureNotificationManager.startExposureNotifications() } returns ResolutionRequired(status)
+        coEvery { exposureNotificationApi.isAvailable() } returns true
     }
 
     @Test
     fun `onboarding completed`() = runBlocking {
         every { deviceDetection.isTablet() } returns false
 
-        every { authCodeProvider.isAuthenticated() } returns true
-
-        coEvery { exposureNotificationManager.isEnabled() } returns true
-
-        every { postCodeProvider.value } returns "CM1"
+        coEvery { onboardingCompletedProvider.value } returns true
 
         testSubject.viewState().observeForever(mainViewState)
 
@@ -66,11 +55,7 @@ class MainViewModelTest {
     fun `device not supported`() = runBlocking {
         every { deviceDetection.isTablet() } returns true
 
-        every { authCodeProvider.isAuthenticated() } returns true
-
-        coEvery { exposureNotificationManager.isEnabled() } returns false
-
-        every { postCodeProvider.value } returns null
+        coEvery { exposureNotificationApi.isEnabled() } returns false
 
         testSubject.viewState().observeForever(mainViewState)
 
@@ -80,31 +65,12 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `not authenticated`() = runBlocking {
-        every { deviceDetection.isTablet() } returns false
-
-        every { authCodeProvider.isAuthenticated() } returns false
-
-        coEvery { exposureNotificationManager.isEnabled() } returns false
-
-        every { postCodeProvider.value } returns null
-
-        testSubject.viewState().observeForever(mainViewState)
-
-        testSubject.start()
-
-        verify { mainViewState.onChanged(MainViewModel.MainViewState.UserNotAuthenticated) }
-    }
-
-    @Test
     fun `start onboarding`() = runBlocking {
         every { deviceDetection.isTablet() } returns false
 
-        every { authCodeProvider.isAuthenticated() } returns true
+        coEvery { exposureNotificationApi.isEnabled() } returns false
 
-        coEvery { exposureNotificationManager.isEnabled() } returns false
-
-        every { postCodeProvider.value } returns null
+        coEvery { onboardingCompletedProvider.value } returns false
 
         testSubject.viewState().observeForever(mainViewState)
 
@@ -112,4 +78,20 @@ class MainViewModelTest {
 
         verify { mainViewState.onChanged(MainViewModel.MainViewState.OnboardingStarted) }
     }
+
+    @Test
+    fun `when post code was entered and permissions not enabled user will be in OnboardingStarted state`() =
+        runBlocking {
+            every { deviceDetection.isTablet() } returns false
+
+            coEvery { exposureNotificationApi.isEnabled() } returns false
+
+            coEvery { onboardingCompletedProvider.value } returns false
+
+            testSubject.viewState().observeForever(mainViewState)
+
+            testSubject.start()
+
+            verify { mainViewState.onChanged(MainViewModel.MainViewState.OnboardingStarted) }
+        }
 }

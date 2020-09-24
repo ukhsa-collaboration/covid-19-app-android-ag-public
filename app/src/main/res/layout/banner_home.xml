@@ -6,16 +6,10 @@
     android:background="@color/transparent"
     app:contentInsetStart="0dp">
 
-    <FrameLayout
+    <uk.nhs.nhsx.covid19.android.app.widgets.LogoView
+        android:id="@+id/logoView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:isAccessibilityHeadingCompat="true" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:contentDescription="@null"
-            android:src="@drawable/nhs_logo_on_transparent" />
-
-    </FrameLayout>
 </com.google.android.material.appbar.MaterialToolbar>

@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import io.mockk.called
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyOrder
@@ -53,6 +54,37 @@ class QuestionnaireViewModelTest {
 
         testSubject.loadQuestionnaire()
 
+        verifyOrder {
+            loadQuestionnaireResultObserver.onChanged(Lce.Loading)
+            loadQuestionnaireResultObserver.onChanged(
+                Lce.Success(
+                    QuestionnaireState(
+                        listOf(),
+                        riskThreshold = 100.0f,
+                        symptomsOnsetWindowDays = 14,
+                        showError = false
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `load questionnaire multiple times does not fire multiple requests`() = runBlocking {
+        testSubject.viewState().observeForever(loadQuestionnaireResultObserver)
+
+        coEvery { loadQuestionnaire.invoke() } returns Success(
+            QuestionnaireResponse(
+                listOf(),
+                riskThreshold = 100.0f,
+                symptomsOnsetWindowDays = 14
+            )
+        )
+
+        testSubject.loadQuestionnaire()
+        testSubject.loadQuestionnaire()
+
+        coVerify(exactly = 1) { loadQuestionnaire.invoke() }
         verifyOrder {
             loadQuestionnaireResultObserver.onChanged(Lce.Loading)
             loadQuestionnaireResultObserver.onChanged(

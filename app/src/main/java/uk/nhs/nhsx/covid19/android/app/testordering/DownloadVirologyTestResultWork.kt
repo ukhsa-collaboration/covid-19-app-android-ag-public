@@ -10,6 +10,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultRe
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
@@ -17,8 +18,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultRequestBody
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultResponse
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.OnNegativeTestResult
-import uk.nhs.nhsx.covid19.android.app.state.OnPositiveTestResult
+import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
 import java.time.Clock
 import java.time.Instant
 import java.time.temporal.ChronoUnit.DAYS
@@ -59,8 +59,6 @@ class DownloadVirologyTestResultWork(
 
         val configs = testOrderingTokensProvider.configs
 
-        var latestTestResult: LatestTestResult? = null
-
         configs.forEach { config ->
             try {
                 // FIXME: move into separate class
@@ -69,44 +67,29 @@ class DownloadVirologyTestResultWork(
                 }
 
                 val pollingToken = config.testResultPollingToken
-                val virologyTestResult = fetchVirologyTestResult(pollingToken) ?: return@forEach
-                if (latestTestResult == null || virologyTestResult.testEndDate.isAfter(
-                    latestTestResult?.testEndDate
+                val testResultResponse = fetchVirologyTestResult(pollingToken) ?: return@forEach
+                val receivedTestResult = ReceivedTestResult(
+                    config.diagnosisKeySubmissionToken,
+                    testResultResponse.testEndDate,
+                    testResultResponse.testResult
                 )
-                ) {
-                    latestTestResult = LatestTestResult(
-                        diagnosisKeySubmissionToken = config.diagnosisKeySubmissionToken,
-                        testEndDate = virologyTestResult.testEndDate,
-                        testResult = virologyTestResult.testResult
-                    )
-                }
-
+                logAnalytics(receivedTestResult.testResult)
+                stateMachine.processEvent(OnTestResult(receivedTestResult))
                 testOrderingTokensProvider.remove(config)
             } catch (exception: Exception) {
                 Timber.e(exception)
             }
         }
 
-        latestTestResultProvider.latestTestResult = latestTestResult
-
-        latestTestResult?.let {
-            when (it.testResult) {
-                POSITIVE -> {
-                    stateMachine.processEvent(OnPositiveTestResult(it.testEndDate))
-                    analyticsEventProcessor.track(PositiveResultReceived)
-                }
-                NEGATIVE -> {
-                    stateMachine.processEvent(OnNegativeTestResult(it.testEndDate))
-                    analyticsEventProcessor.track(NegativeResultReceived)
-                }
-                VOID -> {
-                    Timber.d("Latest test result is void")
-                    analyticsEventProcessor.track(VoidResultReceived)
-                }
-            }
-        }
-
         return ListenableWorker.Result.success()
+    }
+
+    private suspend fun logAnalytics(result: VirologyTestResult) {
+        when (result) {
+            POSITIVE -> analyticsEventProcessor.track(PositiveResultReceived)
+            NEGATIVE -> analyticsEventProcessor.track(NegativeResultReceived)
+            VOID -> analyticsEventProcessor.track(VoidResultReceived)
+        }
     }
 
     private suspend fun fetchVirologyTestResult(pollingToken: String): VirologyTestResultResponse? {

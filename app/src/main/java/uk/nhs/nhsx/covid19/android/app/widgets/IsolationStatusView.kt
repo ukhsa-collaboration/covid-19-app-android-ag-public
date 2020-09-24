@@ -11,9 +11,8 @@ import kotlinx.android.synthetic.main.view_isolation_status.view.isolationDaysTo
 import kotlinx.android.synthetic.main.view_isolation_status.view.subTitleIsolationCountdown
 import kotlinx.android.synthetic.main.view_isolation_status.view.titleDaysToGo
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.status.PulseAnimationView
-import uk.nhs.nhsx.covid19.android.app.util.getLocale
-import uk.nhs.nhsx.covid19.android.app.util.toReadableFormat
+import uk.nhs.nhsx.covid19.android.app.util.setUpAccessibilityHeading
+import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -24,7 +23,8 @@ class IsolationStatusView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr), PulseAnimationView {
+) : ConstraintLayout(context, attrs, defStyleAttr),
+    PulseAnimationView {
 
     private var daysToGo = 0
 
@@ -44,6 +44,8 @@ class IsolationStatusView @JvmOverloads constructor(
     }
 
     fun initialize(startDate: Instant, endDate: LocalDate) {
+        setUpAccessibilityHeading()
+
         val totalDurationInDays = ChronoUnit.DAYS.between(
             startDate.truncatedTo(ChronoUnit.DAYS),
             endDate.atStartOfDay(
@@ -63,7 +65,7 @@ class IsolationStatusView @JvmOverloads constructor(
 
         val lastIsolationDate = endDate.minusDays(1)
         subTitleIsolationCountdown.text = context.getString(
-            R.string.isolation_until_date, lastIsolationDate.toReadableFormat(context.getLocale())
+            R.string.isolation_until_date, lastIsolationDate.uiFormat(context)
         )
 
         isolationDaysToGo.text = daysToGo.toString()
@@ -71,7 +73,7 @@ class IsolationStatusView @JvmOverloads constructor(
         contentDescription = context.resources.getQuantityString(
             R.plurals.isolation_view_accessibility_description,
             daysToGo,
-            lastIsolationDate.toReadableFormat(context.getLocale()),
+            lastIsolationDate.uiFormat(context),
             daysToGo
         )
     }

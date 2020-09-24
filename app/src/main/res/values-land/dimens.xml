@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_horizontal">128dp</dimen>
+    <dimen name="margin_horizontal_reduced">112dp</dimen>
+    <dimen name="bottom_button_spacing">8dp</dimen>
+    <dimen name="vertical_margin">8dp</dimen>
+    <dimen name="vertical_margin_large">8dp</dimen>
+    <dimen name="horizontal_margin_in_scroll_container">96dp</dimen>
+    <dimen name="margin_horizontal_small">128dp</dimen>
+    <dimen name="margin_horizontal_none">120dp</dimen>
+    <dimen name="margin_horizontal_list_item">32dp</dimen>
+</resources>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/logo"
-        layout="@layout/view_logo"
+    <uk.nhs.nhsx.covid19.android.app.widgets.LogoView
+        android:id="@+id/logoView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -15,31 +15,36 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
+        style="@style/ScrollContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:padding="32dp"
         app:layout_constraintBottom_toTopOf="@+id/takeActionButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/logo">
+        app:layout_constraintTop_toBottomOf="@id/logoView">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginTop="@dimen/vertical_margin"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingBottom="@dimen/vertical_margin_large">
 
             <TextView
                 android:id="@+id/edgeCaseTitle"
                 style="@style/Title1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp" />
+                android:layout_marginBottom="32dp"
+                tools:text="Edge case title" />
 
             <TextView
                 android:id="@+id/edgeCaseText"
                 style="@style/Body1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                tools:text="Edge case text" />
         </LinearLayout>
     </ScrollView>
 
@@ -48,9 +53,8 @@
         style="@style/PrimaryButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginHorizontal="@dimen/margin_horizontal"
+        android:layout_marginVertical="@dimen/vertical_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

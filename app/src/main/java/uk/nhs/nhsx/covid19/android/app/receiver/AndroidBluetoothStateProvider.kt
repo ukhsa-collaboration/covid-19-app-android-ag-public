@@ -19,10 +19,9 @@ class AndroidBluetoothStateProvider : AvailabilityStateProvider,
     private val bluetoothStateMutable = SingleLiveEvent<AvailabilityState>()
 
     private fun updateState() {
+        val isEmulator = BuildConfig.DEBUG && BluetoothAdapter.getDefaultAdapter() == null
         val currentState =
-            if (BluetoothAdapter.getDefaultAdapter()?.isEnabled == true ||
-                (BuildConfig.DEBUG && BluetoothAdapter.getDefaultAdapter() == null)
-            ) {
+            if (BluetoothAdapter.getDefaultAdapter()?.isEnabled == true || isEmulator) {
                 ENABLED
             } else {
                 DISABLED
@@ -49,6 +48,6 @@ class AndroidBluetoothStateProvider : AvailabilityStateProvider,
 
         val bluetoothState = if (state == STATE_ON) ENABLED else DISABLED
 
-        bluetoothStateMutable.value = bluetoothState
+        bluetoothStateMutable.postValue(bluetoothState)
     }
 }

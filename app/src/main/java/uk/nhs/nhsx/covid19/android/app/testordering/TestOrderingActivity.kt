@@ -4,16 +4,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_test_ordering.appPrivacyNoticeLink
-import kotlinx.android.synthetic.main.activity_test_ordering.bookTestForSomeoneElseLink
 import kotlinx.android.synthetic.main.activity_test_ordering.orderTest
-import kotlinx.android.synthetic.main.activity_test_ordering.orderTestPrivacyNoticeLink
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
-import uk.nhs.nhsx.covid19.android.app.util.openUrl
 import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.setUpOpensInBrowserWarning
 
 class TestOrderingActivity : BaseActivity(R.layout.activity_test_ordering) {
 
@@ -23,22 +20,11 @@ class TestOrderingActivity : BaseActivity(R.layout.activity_test_ordering) {
 
         setNavigateUpToolbar(toolbar, R.string.book_free_test, R.drawable.ic_arrow_back_white)
 
+        orderTest.setUpOpensInBrowserWarning()
         setupListeners()
     }
 
     private fun setupListeners() {
-        orderTestPrivacyNoticeLink.setOnClickListener {
-            openUrl(R.string.url_order_test_privacy)
-        }
-
-        appPrivacyNoticeLink.setOnClickListener {
-            openUrl(R.string.url_privacy_notice)
-        }
-
-        bookTestForSomeoneElseLink.setOnClickListener {
-            openUrl(R.string.url_order_test_for_someone_else)
-        }
-
         orderTest.setOnClickListener {
             startActivityForResult(
                 TestOrderingProgressActivity.getIntent(this),

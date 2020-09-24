@@ -6,16 +6,15 @@ import uk.nhs.nhsx.covid19.android.app.state.State
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage
-import uk.nhs.nhsx.covid19.android.app.testordering.LatestTestResultProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
 import java.time.Clock
-import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 class ClearOutdatedDataAndUpdateIsolationConfiguration(
     private val stateStorage: StateStorage,
-    private val testResultProvider: LatestTestResultProvider,
+    private val testResultsProvider: TestResultsProvider,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val isolationConfigurationApi: IsolationConfigurationApi,
     private val clock: Clock
@@ -24,12 +23,12 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration(
     @Inject
     constructor(
         stateStorage: StateStorage,
-        testResultProvider: LatestTestResultProvider,
+        testResultsProvider: TestResultsProvider,
         isolationConfigurationProvider: IsolationConfigurationProvider,
         isolationConfigurationApi: IsolationConfigurationApi
     ) : this(
         stateStorage,
-        testResultProvider,
+        testResultsProvider,
         isolationConfigurationProvider,
         isolationConfigurationApi,
         Clock.systemDefaultZone()
@@ -41,9 +40,9 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration(
 
         val expiryDays = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
 
-        clearOutdatedStateHistory(expiryDays)
-
-        clearOutdatedTestResults(expiryDays)
+        if (isOutdated(stateStorage.state, expiryDays)) {
+            testResultsProvider.clear()
+        }
     }
 
     private suspend fun updateIsolationConfiguration() {
@@ -51,23 +50,11 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration(
         isolationConfigurationProvider.durationDays = response.durationDays
     }
 
-    private fun clearOutdatedTestResults(expirationDuration: Int) {
-        if (testResultProvider.latestTestResult?.testEndDate?.isMoreThanDaysAgo(expirationDuration) == true) {
-            testResultProvider.latestTestResult = null
-        }
-    }
-
-    private fun clearOutdatedStateHistory(expirationDuration: Int) {
-        stateStorage.getHistory()
-            .filter { !isOutdated(it, expirationDuration) }
-            .let { list ->
-                stateStorage.updateHistory(list)
-            }
-    }
-
     private fun isOutdated(state: State, expirationDuration: Int): Boolean {
         return when (state) {
-            is Default -> false
+            is Default ->
+                state.previousIsolation?.expiryDate?.isMoreThanDaysAgo(expirationDuration)
+                    ?: false
             is Isolation -> state.expiryDate.isMoreThanDaysAgo(expirationDuration)
         }
     }
@@ -75,12 +62,6 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration(
     private fun LocalDate.isMoreThanDaysAgo(days: Int) =
         until(
             LocalDate.now(clock),
-            ChronoUnit.DAYS
-        ) >= days
-
-    private fun Instant.isMoreThanDaysAgo(days: Int) =
-        until(
-            Instant.now(clock),
             ChronoUnit.DAYS
         ) >= days
 }

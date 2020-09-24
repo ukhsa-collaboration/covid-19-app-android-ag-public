@@ -1,43 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        style="@style/TransparentActionBar"
-        android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        app:contentInsetStartWithNavigation="8dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/about_manage_my_data" />
+    <include layout="@layout/view_toolbar_primary" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
+        style="@style/ScrollContainer"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:background="?android:colorBackground"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar">
+            android:paddingHorizontal="@dimen/margin_horizontal_none">
 
-            <TextView
-                style="@style/AboutAppTitleText"
-                android:layout_width="wrap_content"
-                android:layout_height="42dp"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
-                android:layout_marginTop="32dp"
-                android:gravity="center_vertical"
-                android:text="@string/postal_district" />
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:gravity="center_vertical">
+
+                <TextView
+                    style="@style/AboutAppTitleText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/postal_district" />
+
+                <TextView
+                    android:id="@+id/editPostalDistrict"
+                    style="@style/LinkText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="30dp"
+                    android:text="@string/edit" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/postalDistrict"
@@ -46,8 +51,7 @@
                 android:layout_height="42dp"
                 android:background="?attr/colorSurface"
                 android:gravity="center_vertical"
-                android:paddingStart="30dp"
-                android:paddingEnd="30dp"
+                android:paddingHorizontal="30dp"
                 tools:text="SW" />
 
             <TextView
@@ -165,22 +169,39 @@
                     tools:text="@string/about_my_data_symptoms_date" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/venueVisitsTitle"
-                style="@style/AboutAppTitleText"
-                android:layout_width="wrap_content"
-                android:layout_height="42dp"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="9dp"
-                android:gravity="center_vertical"
-                android:text="@string/title_venue_history" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/venueVisitsTitle"
+                    style="@style/AboutAppTitleText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/title_venue_history" />
+
+                <TextView
+                    android:id="@+id/editVenueVisits"
+                    style="@style/LinkText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|end"
+                    android:paddingHorizontal="30dp"
+                    android:text="@string/edit" />
+
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/venueHistoryList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorSurface"
-                android:gravity="center_vertical"
+                android:nestedScrollingEnabled="false"
                 android:overScrollMode="never"
                 tools:itemCount="4"
                 tools:listitem="@layout/item_user_data" />
@@ -190,12 +211,9 @@
                 style="@style/ErrorText"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="30dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginVertical="20dp"
                 android:gravity="center"
                 android:text="@string/about_delete_all_data" />
         </LinearLayout>
-    </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

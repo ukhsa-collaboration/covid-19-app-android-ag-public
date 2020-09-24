@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
@@ -29,8 +28,9 @@ class FocusView @JvmOverloads constructor(
     private val transparentPaint = Paint()
     private val paint = Paint()
     private val rect = RectF()
-    private val focusWidth: Int
-    private val focusHeight: Int
+    private val focusPaddingTop: Int
+    private val focusPaddingBottom: Int
+    private val focusPaddingHorizontal: Int
     private val focusBorderRadius: Float
 
     init {
@@ -39,15 +39,29 @@ class FocusView @JvmOverloads constructor(
             R.styleable.FocusView,
             0, 0
         ).apply {
-
             try {
-                focusWidth =
-                    getDimensionPixelSize(R.styleable.FocusView_focusWidth, 256.dpToPx.toInt())
-                focusHeight =
-                    getDimensionPixelSize(R.styleable.FocusView_focusHeight, 256.dpToPx.toInt())
+                focusPaddingTop =
+                    getDimensionPixelSize(
+                        R.styleable.FocusView_focusPaddingTop,
+                        0.dpToPx.toInt()
+                    )
+                focusPaddingBottom =
+                    getDimensionPixelSize(
+                        R.styleable.FocusView_focusPaddingBottom,
+                        0.dpToPx.toInt()
+                    )
+                focusPaddingHorizontal =
+                    getDimensionPixelSize(
+                        R.styleable.FocusView_focusPaddingHorizontal,
+                        0.dpToPx.toInt()
+                    )
                 focusBorderRadius =
                     getDimension(R.styleable.FocusView_focusBorderRadius, 14.dpToPx)
-                backgroundPaint.color = getColor(R.styleable.FocusView_dimColor, Color.BLACK)
+                backgroundPaint.color = getColor(
+                    R.styleable.FocusView_dimColor,
+                    context.getColor(R.color.qr_code_overlay)
+                )
+                backgroundPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC)
 
                 transparentPaint.color =
                     ContextCompat.getColor(context, android.R.color.transparent)
@@ -72,10 +86,10 @@ class FocusView @JvmOverloads constructor(
         val c = internalCanvas ?: return
         c.drawRect(0f, 0f, c.width.toFloat(), c.height.toFloat(), backgroundPaint)
         rect.set(
-            (width - focusWidth) / 2f,
-            (height - focusHeight) / 2f,
-            (width + focusWidth) / 2f,
-            (height + focusHeight) / 2f
+            focusPaddingHorizontal.toFloat(),
+            focusPaddingTop.toFloat(),
+            (width - focusPaddingHorizontal).toFloat(),
+            (height - focusPaddingBottom).toFloat()
         )
         c.drawRoundRect(rect, focusBorderRadius, focusBorderRadius, transparentPaint)
 

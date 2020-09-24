@@ -42,22 +42,23 @@
         tools:visibility="gone">
 
         <ImageView
+            style="@style/GoneInLandscape"
             android:id="@+id/imageError"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:contentDescription="@null"
             android:src="@drawable/image_error"
-            app:layout_constraintBottom_toTopOf="@id/buttonTryAgain"
+            android:layout_marginTop="120dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/textErrorTitle"
             style="@style/Title1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="56dp"
             android:gravity="center"
             android:text="@string/something_went_wrong"
             app:layout_constraintTop_toBottomOf="@id/imageError" />

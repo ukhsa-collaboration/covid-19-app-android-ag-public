@@ -12,11 +12,12 @@ tasks.withType(Test) {
 
 project.afterEvaluate {
 
-    android.applicationVariants.all { variant ->
-        def variantName = variant.name
+    def productionReleaseVariant = android.applicationVariants.find { v -> v.name == "productionRelease" }
+    if (productionReleaseVariant != null) {
+        def variantName = productionReleaseVariant.name
         def testTaskName = "test${variantName.capitalize()}UnitTest"
 
-        tasks.create(name: "${testTaskName}Coverage", type: JacocoReport, dependsOn: "$testTaskName") {
+        tasks.create(name: "unitTestCoverage", type: JacocoReport, dependsOn: "$testTaskName") {
             group = "Reporting"
             description = "Generate Jacoco coverage reports for the ${variantName.capitalize()} build."
 
@@ -44,14 +45,16 @@ project.afterEvaluate {
                     '**/*Fragment*.*',
                     '**/*Activity*.*',
                     '**/*Adapter*.*',
+                    '**/*Creator.class',
                     '**/*ViewPager*.*',
                     '**/*ViewHolder*.*',
                     '**/*Module*.*',
                     '**/fieldtests/*.*',
                     '**/widgets/*.*',
+                    '**/remote/**',
                     '**/fieldtests/**/*.*',
             ]
-            def javaClasses = fileTree(dir: variant.javaCompiler.destinationDir, excludes: excludes)
+            def javaClasses = fileTree(dir: productionReleaseVariant.javaCompiler.destinationDir, excludes: excludes)
             def kotlinClasses = fileTree(dir: "${buildDir}/tmp/kotlin-classes/${variantName}", excludes: excludes)
             classDirectories.from = files([javaClasses, kotlinClasses])
 
@@ -63,6 +66,65 @@ project.afterEvaluate {
             ])
 
             executionData.from = files("${project.buildDir}/jacoco/${testTaskName}.exec")
+        }
+    }
+
+    def scenariosDebugVariant = android.applicationVariants.find { v -> v.name == "scenariosDebug" }
+    if (scenariosDebugVariant != null) {
+        def variantName = scenariosDebugVariant.name
+
+        tasks.create(name: "uiTestCoverage", type: JacocoReport, dependsOn: "connected${variantName.capitalize()}AndroidTest") {
+            group = "Reporting"
+            description = "Generate Jacoco UI test coverage reports for the ${variantName.capitalize()} build."
+
+            reports {
+                html.enabled = true
+                xml.enabled = true
+            }
+
+            def excludes = [
+                    'jdk.internal.*',
+                    '**/R.class',
+                    '**/R$*.class',
+                    '**/BuildConfig.*',
+                    '**/Manifest*.*',
+                    '**/*Test.*',
+                    'android/**/*.*',
+                    '**/databinding/**/*.*',
+                    '**/android/databinding/*Binding.*',
+                    '**/BR.*',
+                    '**/*Mock*.*',
+                    '**/*JsonAdapter.*',
+                    '**/*Debug*.*',
+                    '**/*_MembersInjector.*',
+                    '**/Dagger*Component.*',
+                    '**/Dagger*Component$Builder.*',
+                    '**/*Module_*Factory.*',
+                    '**/*_Factory.*',
+                    '**/*$Lambda$*.*',
+                    '**/*Creator.class',
+                    '**/*Module*.*',
+                    '**/fieldtests/*.*',
+                    '**/widgets/*.*',
+                    '**/remote/**',
+                    '**/fieldtests/**/*.*',
+            ]
+
+            def javaClasses = fileTree(dir: scenariosDebugVariant.javaCompiler.destinationDir, excludes: excludes)
+            def kotlinClasses = fileTree(dir: "${buildDir}/tmp/kotlin-classes/${variantName}", excludes: excludes)
+            classDirectories.from = files([javaClasses, kotlinClasses])
+
+            sourceDirectories.from = files([
+                    "$project.projectDir/src/main/java",
+                    "$project.projectDir/src/${variantName}/java",
+                    "$project.projectDir/src/main/kotlin",
+                    "$project.projectDir/src/${variantName}/kotlin"
+            ])
+
+            def variantTestExecFolder = "${variantName}AndroidTest"
+            executionData.from = fileTree(dir: project.buildDir, includes: [
+                    "outputs/code_coverage/${variantTestExecFolder}/connected/*coverage.ec"
+            ])
         }
     }
 }

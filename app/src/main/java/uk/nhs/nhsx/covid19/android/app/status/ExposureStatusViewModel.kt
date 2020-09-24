@@ -9,15 +9,35 @@ import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.Success
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
-import uk.nhs.nhsx.covid19.android.app.exposure.SubmitTemporaryExposureKeys
-import uk.nhs.nhsx.covid19.android.app.exposure.SubmitTemporaryExposureKeys.SubmitResult
+import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationReminderAlarmController
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
+import java.time.Clock
+import java.time.Duration
+import java.time.Instant
 import javax.inject.Inject
 
-class ExposureStatusViewModel @Inject constructor(
+class ExposureStatusViewModel(
     private val exposureNotificationManager: ExposureNotificationManager,
-    private val submitTemporaryExposureKeys: SubmitTemporaryExposureKeys
+    private val exposureNotificationReminderAlarmController: ExposureNotificationReminderAlarmController,
+    private val notificationProvider: NotificationProvider,
+    private val resumeContactTracingNotificationTimeProvider: ResumeContactTracingNotificationTimeProvider,
+    private val clock: Clock
 ) : ViewModel() {
+
+    @Inject
+    constructor(
+        exposureNotificationManager: ExposureNotificationManager,
+        exposureNotificationReminderAlarmController: ExposureNotificationReminderAlarmController,
+        notificationProvider: NotificationProvider,
+        resumeContactTracingNotificationTimeProvider: ResumeContactTracingNotificationTimeProvider
+    ) : this(
+        exposureNotificationManager,
+        exposureNotificationReminderAlarmController,
+        notificationProvider,
+        resumeContactTracingNotificationTimeProvider,
+        clock = Clock.systemUTC()
+    )
 
     private val exposureNotificationActivationResult =
         SingleLiveEvent<ExposureNotificationActivationResult>()
@@ -34,8 +54,6 @@ class ExposureStatusViewModel @Inject constructor(
 
     fun exposureNotificationsEnabled(): LiveData<Boolean> = exposureNotificationsEnabledLiveData
 
-    val submitKeyLiveData = MutableLiveData<SubmitResult>()
-
     fun checkExposureNotificationsChanged() {
         viewModelScope.launch {
             exposureNotificationsChangedLiveData.postValue(exposureNotificationManager.isEnabled())
@@ -50,19 +68,18 @@ class ExposureStatusViewModel @Inject constructor(
 
     fun startExposureNotifications() {
         viewModelScope.launch {
-            if (!exposureNotificationManager.isEnabled()) {
-                val startResult = exposureNotificationManager.startExposureNotifications()
-                exposureNotificationActivationResult.postValue(startResult)
+            val startResult = if (!exposureNotificationManager.isEnabled()) {
+                val result = exposureNotificationManager.startExposureNotifications()
                 checkExposureNotificationsChanged()
+                result
             } else {
-                exposureNotificationActivationResult.postValue(Success)
+                Success
             }
-        }
-    }
-
-    fun submitKeys() {
-        viewModelScope.launch {
-            submitKeyLiveData.postValue(submitTemporaryExposureKeys(null))
+            exposureNotificationActivationResult.postValue(startResult)
+            if (startResult == Success) {
+                exposureNotificationReminderAlarmController.cancel()
+                resumeContactTracingNotificationTimeProvider.value = null
+            }
         }
     }
 
@@ -71,6 +88,12 @@ class ExposureStatusViewModel @Inject constructor(
             exposureNotificationManager.stopExposureNotifications()
             checkExposureNotificationsChanged()
         }
+    }
+
+    fun scheduleExposureNotificationReminder(delay: Duration) {
+        val alarmTime = Instant.now(clock).plus(delay)
+        resumeContactTracingNotificationTimeProvider.value = alarmTime.toEpochMilli()
+        exposureNotificationReminderAlarmController.setup(alarmTime)
     }
 
     companion object {

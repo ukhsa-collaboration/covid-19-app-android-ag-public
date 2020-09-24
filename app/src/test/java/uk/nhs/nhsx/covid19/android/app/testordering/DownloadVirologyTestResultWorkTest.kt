@@ -25,8 +25,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultRequestBody
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultResponse
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.OnNegativeTestResult
-import uk.nhs.nhsx.covid19.android.app.state.OnPositiveTestResult
+import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
@@ -120,7 +119,12 @@ class DownloadVirologyTestResultWorkTest {
 
         val result = testSubject.invoke()
 
-        verify { stateMachine.processEvent(OnPositiveTestResult(testResultDate)) }
+        val testResult = ReceivedTestResult(
+            config.diagnosisKeySubmissionToken,
+            testResultDate,
+            POSITIVE
+        )
+        verify { stateMachine.processEvent(OnTestResult(testResult)) }
 
         assertEquals(ListenableWorker.Result.success(), result)
     }
@@ -138,13 +142,18 @@ class DownloadVirologyTestResultWorkTest {
 
         val result = testSubject.invoke()
 
-        verify { stateMachine.processEvent(OnNegativeTestResult(testResultDate)) }
+        val testResult = ReceivedTestResult(
+            config.diagnosisKeySubmissionToken,
+            testResultDate,
+            NEGATIVE
+        )
+        verify { stateMachine.processEvent(OnTestResult(testResult)) }
 
         assertEquals(ListenableWorker.Result.success(), result)
     }
 
     @Test
-    fun `on void do not notify isolation state machine`() = runBlocking {
+    fun `on void notify isolation state machine`() = runBlocking {
         val config = TestOrderPollingConfig(from, "token", "submission_token")
         every { testOrderTokensProvider.configs } returns listOf(config)
         val testResultDate = from.plus(1, ChronoUnit.DAYS)
@@ -156,13 +165,18 @@ class DownloadVirologyTestResultWorkTest {
 
         val result = testSubject.invoke()
 
-        verify { stateMachine wasNot called }
+        val testResult = ReceivedTestResult(
+            config.diagnosisKeySubmissionToken,
+            testResultDate,
+            VOID
+        )
+        verify { stateMachine.processEvent(OnTestResult(testResult)) }
 
         assertEquals(ListenableWorker.Result.success(), result)
     }
 
     @Test
-    fun `notify only about the newest result`() = runBlocking {
+    fun `notify about all test results`() = runBlocking {
         every { testOrderTokensProvider.configs } returns listOf(config1, config2)
         val testResultDate1 = from.plus(1, ChronoUnit.DAYS)
         val testResultDate2 = from.plus(2, ChronoUnit.DAYS)
@@ -178,9 +192,18 @@ class DownloadVirologyTestResultWorkTest {
         )
 
         testSubject.invoke()
-
-        verify { stateMachine.processEvent(OnPositiveTestResult(testResultDate2)) }
-        verify(exactly = 0) { stateMachine.processEvent(OnNegativeTestResult(testResultDate1)) }
+        val testResult1 = ReceivedTestResult(
+            config1.diagnosisKeySubmissionToken,
+            testResultDate1,
+            NEGATIVE
+        )
+        val testResult2 = ReceivedTestResult(
+            config2.diagnosisKeySubmissionToken,
+            testResultDate2,
+            POSITIVE
+        )
+        verify { stateMachine.processEvent(OnTestResult(testResult2)) }
+        verify { stateMachine.processEvent(OnTestResult(testResult1)) }
     }
 
     @Test

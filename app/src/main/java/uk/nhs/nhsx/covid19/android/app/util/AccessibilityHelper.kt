@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.View
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
-import android.widget.ScrollView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -12,22 +11,28 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
 import com.google.android.material.appbar.MaterialToolbar
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.R.string
 
 fun Context.smallestScreenWidth(): Int = resources.configuration.smallestScreenWidthDp
 
 fun AppCompatActivity.setNavigateUpToolbar(
     toolbar: MaterialToolbar,
     @StringRes titleResId: Int,
-    @DrawableRes homeIndicator: Int = R.drawable.ic_arrow_back_primary
+    @DrawableRes homeIndicator: Int = R.drawable.ic_arrow_back_primary,
+    listenerAction: () -> Unit = {}
 ) {
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     supportActionBar?.setHomeAsUpIndicator(homeIndicator)
     supportActionBar?.setHomeActionContentDescription(R.string.go_back)
     supportActionBar?.title = getString(titleResId)
-    toolbar.setNavigationOnClickListener { onBackPressed() }
+    toolbar.setNavigationOnClickListener {
+        listenerAction()
+        onBackPressed()
+    }
 
     toolbar.getChildAt(0)?.let {
         if (it is TextView) {
@@ -57,13 +62,25 @@ fun View.setUpAccessibilityHeading() {
     )
 }
 
-fun ScrollView.scrollToView(view: View) {
-    post { smoothScrollTo(0, view.top) }
-}
-
-fun Context.announce(@StringRes textToAnnounceRes: Int) {
-    val text = getString(textToAnnounceRes)
-    announce(text)
+fun View.setUpOpensInBrowserWarning() {
+    ViewCompat.setAccessibilityDelegate(
+        this,
+        object : AccessibilityDelegateCompat() {
+            override fun onInitializeAccessibilityNodeInfo(
+                host: View?,
+                info: AccessibilityNodeInfoCompat
+            ) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                info.roleDescription = "Link"
+                info.addAction(
+                    AccessibilityActionCompat(
+                        AccessibilityNodeInfoCompat.ACTION_CLICK,
+                        context.getString(string.open_in_browser_warning)
+                    )
+                )
+            }
+        }
+    )
 }
 
 fun Context.announce(textToAnnounce: String) {
