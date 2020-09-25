@@ -282,7 +282,7 @@
     <string name="onboarding_age_restriction_text">This app is only for people aged 16 years or over.</string>
     <string name="onboarding_privacy_title">Protecting your privacy</string>
     <string name="onboarding_privacy_control_title">You are in control</string>
-    <string name="onboarding_privacy_control_text">The NHS values your privacy, meaning the app cannot tell who you are, where you are or who is with you.\n\nIf you test positive for coronavirus, you can choose to share your data with the NHS so we can alert other app users. We use automated-decision making to help determine which other users need to be anonymously alerted.</string>
+    <string name="onboarding_privacy_control_text">The NHS values your privacy, meaning the app cannot tell who you are, where you are or who is with you.\n\nIf you test positive for coronavirus, you can choose to share your data with the NHS so we can alert other app users. We use automated decision-making to help determine which other users need to be anonymously alerted.</string>
     <string name="onboarding_privacy_your_data_title">Your data</string>
     <string name="onboarding_privacy_your_data_text1">The app securely and anonymously stores data for 14 days after it has been recorded. You can delete the data from the app at anytime in your app settings, or by uninstalling the app. Your phone may keep some basic data – this is controlled by your phone’s operating system.</string>
     <string name="onboarding_privacy_your_data_text2">When you use the App you will be helping your community stay healthy and save lives.  Anonymous information from the app helps us know where the virus is and how to control it.</string>
