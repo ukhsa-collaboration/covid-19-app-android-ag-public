@@ -81,6 +81,25 @@ class QuestionnaireViewModel @Inject constructor(
         }
     }
 
+    fun onButtonCancelClicked(noSymptomsCallback: () -> Unit) {
+        val questions = getQuestions() ?: return
+        if (questions.any { it.isChecked }) {
+            AlertDialog.Builder(this)
+                .setTitle(R.string.questionnaire_discard_symptoms_dialog_title)
+                .setMessage(R.string.questionnaire_discard_symptoms_dialog_message)
+                .setNegativeButton(R.string.cancel) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setPositiveButton(R.string.remove) { _, _ ->
+                    noSymptomsCallback()
+                }
+                .show()
+        } else {
+            noSymptomsCallback()
+        }
+        
+    }
+
     private fun getQuestions(): List<Question>? {
         val result = viewState.value
         if (result is Lce.Success) {

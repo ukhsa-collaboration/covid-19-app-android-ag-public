@@ -129,17 +129,10 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
         }
 
         textNoSymptoms.setOnClickListener {
-            AlertDialog.Builder(this)
-                .setTitle(R.string.questionnaire_discard_symptoms_dialog_title)
-                .setMessage(R.string.questionnaire_discard_symptoms_dialog_message)
-                .setNegativeButton(R.string.cancel) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .setPositiveButton(R.string.remove) { _, _ ->
-                    finish()
-                    startActivity<NoSymptomsActivity>()
-                }
-                .show()
+            viewModel.onButtonCancelClicked {
+                finish()
+                startActivity<NoSymptomsActivity>()
+            }
         }
 
         buttonReviewSymptoms.setOnClickListener {
