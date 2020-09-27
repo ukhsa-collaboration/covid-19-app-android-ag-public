@@ -129,12 +129,24 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
         }
 
         textNoSymptoms.setOnClickListener {
-            viewModel.onButtonCancelClicked {
-                finish()
-                startActivity<NoSymptomsActivity>()
+            if (viewModel.getQuestionsChecked()) {
+                AlertDialog.Builder(this)
+                .setTitle(R.string.questionnaire_discard_symptoms_dialog_title)
+                .setMessage(R.string.questionnaire_discard_symptoms_dialog_message)
+                .setNegativeButton(R.string.cancel) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setPositiveButton(R.string.remove) { _, _ ->
+                    finish()
+                    startActivity<NoSymptomsActivity>()
+                }
+                .show()
+            } else {
+               finish()
+               startActivity<NoSymptomsActivity>()
             }
         }
-
+        
         buttonReviewSymptoms.setOnClickListener {
             viewModel.onButtonReviewSymptomsClicked()
         }
