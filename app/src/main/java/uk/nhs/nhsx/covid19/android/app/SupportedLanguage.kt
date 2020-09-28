@@ -9,7 +9,8 @@ enum class SupportedLanguage(val displayName: String, val code: String? = null) 
     GUJARATI("Gujarati", "gu"),
     WELSH("Welsh", "cy"),
     ARABIC("Arabic", "ar"),
-    CHINESE("Chinese", "zh"),
+    SIMPLIFIED_CHINESE("Chinese (Simplified)", "zh-Hans"),
+    TRADITIONAL_CHINESE("Chinese (Traditional)", "zh-Hant"),
     ROMANIAN("Romanian", "ro"),
     TURKISH("Turkish", "tr"),
 }

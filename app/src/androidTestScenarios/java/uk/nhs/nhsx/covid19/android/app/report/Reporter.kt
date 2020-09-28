@@ -226,7 +226,13 @@ fun EspressoTest.reporter(
                 Orientation.PORTRAIT,
                 FontScale.SMALL,
                 Theme.LIGHT,
-                languageCode = "zh"
+                languageCode = "zh-Hans"
+            ),
+            TestConfiguration(
+                Orientation.PORTRAIT,
+                FontScale.SMALL,
+                Theme.LIGHT,
+                languageCode = "zh-Hant"
             )
         ).sortedBy { it.orientation }
 

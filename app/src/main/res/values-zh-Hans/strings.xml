@@ -304,7 +304,7 @@
   <string name="accessibility_announcement_button">%s ，按钮</string>
   <string name="accessibility_announcement_link">%s ，链接</string>
   <string name="visit_the_link_to_find_out_more">访问链接了解更多信息</string>
-  <string name="locale">zh</string>
+  <string name="locale">zh-Hans</string>
   <string name="url_provide_feedback">https://covid19.nhs.uk/contact-us.html</string>
   <string name="qr_code_failure_subtitle">可能是您没有扫描官方的NHS QR 或该码已损坏。</string>
   <string name="qr_code_failure_help_link">帮助进行场所签入</string>
