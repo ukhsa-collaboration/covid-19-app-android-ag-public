@@ -73,7 +73,7 @@ class RiskCalculatorTest {
     }
 
     @Test
-    fun `test parameterised greatest risk score amonst exposured is returned`() {
+    fun `test parameterised greatest risk score amongst exposured is returned`() {
         val shorterExposure = getExposureInfoWith(listOf(5, 0, 0))
         val longerExposure = getExposureInfoWith(listOf(15, 0, 0))
 

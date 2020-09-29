@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:minHeight="64dp"
         android:padding="16dp"
-        android:text="Dynamically adjust the runtime behavior of the app. This is a internal only feature that musn't be used by anyone else."
+        android:text="Dynamically adjust the runtime behavior of the app. This is a internal only feature that mustn't be used by anyone else."
         android:textAppearance="?attr/textAppearanceListItemSecondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
