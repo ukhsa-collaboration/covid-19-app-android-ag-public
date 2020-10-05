@@ -2,7 +2,7 @@ package com.jeroenmols.featureflag.framework
 
 /**
  * A Feature uniquely identifies a part of the app code that can either be enabled or disabled.
- * Features only have two states by design to simplify the implementation
+ * Features only have two states by design to simplify the implementation.
  *
  * @property key unique value that identifies a test setting (for "Remote Config tool" flags this is shared across Android/iOS)
  */
