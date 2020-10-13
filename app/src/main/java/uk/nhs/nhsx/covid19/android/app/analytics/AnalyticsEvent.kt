@@ -10,4 +10,5 @@ sealed class AnalyticsEvent {
     object PositiveResultReceived : AnalyticsEvent()
     object NegativeResultReceived : AnalyticsEvent()
     object VoidResultReceived : AnalyticsEvent()
+    object UpdateNetworkStats : AnalyticsEvent()
 }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -30,30 +29,40 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/vertical_margin_large"
                 android:contentDescription="@null"
-                tools:src="@drawable/ic_low_risk_map" />
+                tools:src="@drawable/ic_map_risk_green" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
                 android:id="@+id/titleRiskLevel"
-                style="@style/Title3"
+                style="@style/Title1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_large"
                 tools:text="SW12 area risk level is LOW" />
 
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                android:id="@+id/subtitleRiskLevel"
+                style="@style/Title3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="21dp"
+                tools:text="Data from the NHS shows that the spread of coronavirus in your area is low." />
+
             <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
                 android:id="@+id/riskLevelInformation"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin" />
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:layout_weight="1" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
-                android:id="@+id/linkRiskLevel"
-                style="@style/LinkTextWithIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonRiskLevelLink"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="10dp"
+                android:drawableEnd="@drawable/ic_link"
+                android:drawableTint="@color/background"
                 android:text="@string/risk_level_link_text"
-                app:linkUrl="@string/url_postal_code_risk_more_info" />
+                android:textAllCaps="false" />
         </LinearLayout>
     </ScrollView>
-
 </LinearLayout>

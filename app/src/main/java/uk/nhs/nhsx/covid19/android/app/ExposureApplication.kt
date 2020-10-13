@@ -12,12 +12,10 @@ import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import com.jeroenmols.featureflag.framework.TestSetting
-import com.jeroenmols.featureflag.framework.TestSetting.DEBUG_ANALYTICS
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 import uk.nhs.covid19.config.production
 import uk.nhs.covid19.config.qrCodesSignatureKey
-import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalyticsWorker
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityListener
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityWorker
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
@@ -31,9 +29,9 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
 import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
-import java.util.concurrent.TimeUnit.MINUTES
+import uk.nhs.nhsx.covid19.android.app.util.defaultFalse
 
-class ExposureApplication : Application(), Configuration.Provider {
+open class ExposureApplication : Application(), Configuration.Provider {
     lateinit var appComponent: ApplicationComponent
 
     private var appAvailabilityListener: AppAvailabilityListener? = null
@@ -41,15 +39,17 @@ class ExposureApplication : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
 
-        buildAndUseAppComponent(NetworkModule(production, additionalInterceptors))
-
         if (isTestBuild) {
             Timber.plant(DebugTree())
+            Timber.d("onCreate")
         }
+
+        buildAndUseAppComponent(NetworkModule(production, additionalInterceptors))
+
         RuntimeBehavior.initialize(this, isTestBuild)
 
         initializeWorkManager()
-        initializeAnalytics()
+        startPeriodicTasks()
 
         if (RuntimeBehavior.isFeatureEnabled(TestSetting.STRICT_MODE)) {
             StrictMode.setThreadPolicy(
@@ -68,18 +68,15 @@ class ExposureApplication : Application(), Configuration.Provider {
         }
     }
 
+    protected fun startPeriodicTasks() {
+        if (appComponent.provideOnboardingCompleted().value.defaultFalse()) {
+            appComponent.providePeriodicTasks().schedule()
+        }
+    }
+
     private fun initializeWorkManager() {
         // Google insist we need to initialise WorkManager in onCreate()
         WorkManager.getInstance(this)
-    }
-
-    private fun initializeAnalytics() {
-        if (RuntimeBehavior.isFeatureEnabled(DEBUG_ANALYTICS)) {
-            SubmitAnalyticsWorker.schedule(this, 15, MINUTES, replaceExisting = true)
-        } else {
-            SubmitAnalyticsWorker.schedule(this)
-        }
-        appComponent.provideAnalyticsReminder().scheduleNextAnalyticsAggregator()
     }
 
     override fun getWorkManagerConfiguration(): Configuration {
@@ -105,8 +102,13 @@ class ExposureApplication : Application(), Configuration.Provider {
         exposureNotificationApi: ExposureNotificationApi = GoogleExposureNotificationApi(this),
         languageCode: String? = null
     ) {
-        val sharedPreferences = EncryptionUtils.tryCreateEncryptedSharedPreferences(this)
-        val encryptedFile = EncryptionUtils.createEncryptedFile(this, "venues")
+        val encryptedFile = EncryptionUtils.retryOnException {
+            EncryptionUtils.createEncryptedFile(this, "venues")
+        }
+        val sharedPreferences = EncryptionUtils.retryOnException {
+            EncryptionUtils.createEncryptedSharedPreferences(this)
+        }
+
         appComponent = DaggerApplicationComponent.builder()
             .appModule(
                 AppModule(

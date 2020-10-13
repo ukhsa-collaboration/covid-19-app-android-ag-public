@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsAlarm
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationReminderAlarmController
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationAlarmController
@@ -21,9 +20,6 @@ class AlarmRestarter : BroadcastReceiver() {
 
     @Inject
     lateinit var isolationExpirationAlarmController: IsolationExpirationAlarmController
-
-    @Inject
-    lateinit var analyticsAlarm: AnalyticsAlarm
 
     @Inject
     lateinit var exposureNotificationReminderAlarmController: ExposureNotificationReminderAlarmController
@@ -47,8 +43,6 @@ class AlarmRestarter : BroadcastReceiver() {
                 val alarmTime = Instant.ofEpochMilli(it)
                 exposureNotificationReminderAlarmController.setup(alarmTime)
             }
-
-            analyticsAlarm.scheduleNextAnalyticsAggregator()
         }
     }
 }

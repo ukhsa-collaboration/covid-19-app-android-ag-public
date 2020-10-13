@@ -14,7 +14,7 @@ class ParticipantListActivity : AppCompatActivity(R.layout.participant_list) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val participants = intent.getStringArrayListExtra(PARTICIPANTS) ?: listOf<String>()
-        val viewAdapter = ParticipantAdapter(participants)
+        val viewAdapter = ParticipantViewAdapter(participants)
 
         val linearLayoutManager = LinearLayoutManager(this)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)

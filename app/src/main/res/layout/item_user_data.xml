@@ -20,42 +20,45 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textVenueName"
-        style="@style/ActionText"
+    <LinearLayout
+        android:id="@+id/venueNameAndIdContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_horizontal_list_item"
         android:layout_marginTop="16dp"
-        android:gravity="center_vertical"
-        app:layout_constraintEnd_toStartOf="@id/textVenueId"
-        app:layout_constraintStart_toEndOf="@id/imageDeleteVenueVisit"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="The Harp" />
-
-    <TextView
-        android:id="@+id/textVenueId"
-        style="@style/ActionText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:layout_marginEnd="@dimen/margin_horizontal_list_item"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/textVenueName"
-        app:layout_constraintTop_toTopOf="@id/textVenueName"
-        tools:text="Id: HHF94J5H" />
+        app:layout_constraintStart_toEndOf="@id/imageDeleteVenueVisit"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textVenueName"
+            style="@style/ActionText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            tools:text="The Harp" />
+
+        <TextView
+            android:id="@+id/textVenueId"
+            style="@style/ActionText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:maxWidth="120dp"
+            tools:text="Id: HHF94J5H" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textDate"
         style="@style/Body1"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="@id/textVenueName"
-        app:layout_constraintTop_toBottomOf="@id/textVenueName"
+        app:layout_constraintEnd_toEndOf="@id/venueNameAndIdContainer"
+        app:layout_constraintStart_toStartOf="@id/venueNameAndIdContainer"
+        app:layout_constraintTop_toBottomOf="@id/venueNameAndIdContainer"
         tools:text="17 Jul 2020 12:15 - 01:00 18 Jul 2020" />
 </androidx.constraintlayout.widget.ConstraintLayout>

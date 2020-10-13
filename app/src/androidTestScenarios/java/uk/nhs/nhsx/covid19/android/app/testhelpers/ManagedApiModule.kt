@@ -30,7 +30,10 @@ import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
 import javax.inject.Singleton
 
 @Module
-class ManagedApiModule(private val virologyTestingApi: VirologyTestingApi) {
+class ManagedApiModule(
+    private val virologyTestingApi: VirologyTestingApi,
+    private val questionnaireApi: MockQuestionnaireApi
+) {
 
     @Provides
     @Singleton
@@ -52,7 +55,7 @@ class ManagedApiModule(private val virologyTestingApi: VirologyTestingApi) {
 
     @Provides
     @Singleton
-    fun provideQuestionnaireApi(): QuestionnaireApi = MockQuestionnaireApi()
+    fun provideQuestionnaireApi(): QuestionnaireApi = questionnaireApi
 
     @Provides
     @Singleton

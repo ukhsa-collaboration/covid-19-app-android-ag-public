@@ -96,7 +96,7 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
         }
 
         startDownloadTask.setOnClickListener {
-            debugViewModel.startDownloadTask()
+            debugViewModel.startDownloadTask(requireContext())
         }
 
         sendPositiveTestResult.setOnClickListener {

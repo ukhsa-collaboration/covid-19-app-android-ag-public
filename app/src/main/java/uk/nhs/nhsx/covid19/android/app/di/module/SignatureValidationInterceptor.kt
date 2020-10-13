@@ -7,6 +7,7 @@ import okhttp3.Interceptor.Chain
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
+import timber.log.Timber
 import uk.nhs.covid19.config.SignatureKey
 import uk.nhs.nhsx.covid19.android.app.remote.AnalyticsApi
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
@@ -32,16 +33,16 @@ class SignatureValidationInterceptor(
 
         if (RuntimeBehavior.isFeatureEnabled(FeatureFlag.SIGNATURE_VALIDATION)) {
             val signatureHeader = response.header("x-amz-meta-signature")
-                ?: throw IOException("Did not receive required signature header")
+                ?: throwIOException("Did not receive required signature header")
             val signatureHeaderParts =
                 Regex("keyId=\"(.*)\",signature=\"(.*)\"")
                     .find(signatureHeader)
-                    ?.groupValues ?: throw IOException("Could not parse signature header")
+                    ?.groupValues ?: throwIOException("Could not parse signature header")
             val keyId = signatureHeaderParts[1]
             val signature = base64Decoder.decodeToBytes(signatureHeaderParts[2])
 
             val publicKeyString = signatureKeys.firstOrNull { it.id == keyId }
-                ?.pemRepresentation ?: throw IOException("Unknown keyId received")
+                ?.pemRepresentation ?: throwIOException("Unknown keyId received")
 
             val undecoratedString = publicKeyString
                 .split("\n")
@@ -56,7 +57,7 @@ class SignatureValidationInterceptor(
             val message = responseBody?.bytes()
 
             val dateHeader = response.header("x-amz-meta-signature-date")
-                ?: throw IOException("Did not receive required date header: ${request.url}")
+                ?: throwIOException("Did not receive required date header: ${request.url}")
 
             val s = Signature.getInstance("SHA256withECDSA")
                 .apply {
@@ -81,7 +82,7 @@ class SignatureValidationInterceptor(
             val valid: Boolean = s.verify(signature)
 
             if (!valid) {
-                throw IOException("Signature validation failed for request: ${request.url.encodedPath}")
+                throwIOException("Signature validation failed for request: ${request.url.encodedPath}")
             }
 
             return response.newBuilder()
@@ -98,7 +99,7 @@ class SignatureValidationInterceptor(
         message: ByteArray?
     ): ByteArray {
         val requestIdHeader = request.header(HEADER_REQUEST_ID)
-            ?: throw IOException("Did not provide required request id header")
+            ?: throwIOException("Did not provide required request id header")
         val method = request.method
         val path = request.url.encodedPath
 
@@ -120,6 +121,11 @@ class SignatureValidationInterceptor(
         }
 
         return data
+    }
+
+    private fun throwIOException(message: String): Nothing {
+        Timber.e(message)
+        throw IOException(message)
     }
 
     companion object {

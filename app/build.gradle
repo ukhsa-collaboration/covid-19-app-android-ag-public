@@ -33,6 +33,7 @@ android {
         versionName versionNameValue
         versionCode buildNumber
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
 
     adbOptions {

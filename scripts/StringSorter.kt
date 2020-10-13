@@ -1,9 +1,9 @@
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
+import org.w3c.dom.NodeList
 import org.w3c.dom.ls.DOMImplementationLS
 import java.io.File
-import java.io.FileWriter
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import java.nio.charset.Charset
@@ -15,7 +15,7 @@ import javax.xml.transform.stream.StreamResult
 
 fun main() {
     val languageCodes =
-        listOf("ar", "bn", "cy", "en", "gu", "pa", "ro", "tr", "ur", "zh")
+        listOf("ar", "bn", "cy", "en", "gu", "pa", "pl", "ro", "tr", "ur", "zh", "so")
     for (code in languageCodes) {
         val updated = readUnsorted("./locale/$code.xml")
         updateValues(code, "../app/src/main/res/${getValuesDir(code)}/strings.xml", updated)
@@ -49,7 +49,7 @@ private fun updateValues(
 //    transformerFactory.setAttribute("indent-number", 10)
     val transformer = transformerFactory.newTransformer()
     transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8")
-    transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC,"yes")
+    transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")
     transformer.setOutputProperty(OutputKeys.INDENT, "yes")
 //    transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "10")
 
@@ -70,6 +70,7 @@ private fun updateRegularStrings(
     updatedStrings: MutableMap<String, String>
 ) {
     val strings = doc.getElementsByTagName("string")
+    val updatedStrings = (updatedStrings.filterKeys { !it.contains("|") }).toMutableMap()
 
     for (temp in 0 until strings.length) {
         val node = strings.item(temp)
@@ -78,7 +79,7 @@ private fun updateRegularStrings(
             val name = element.getAttribute("name")
             val updatedValue = updatedStrings[name]
             if (updatedValue == null) {
-                print("No new value for string name: $name")
+                println("No new value for string name: $name")
             } else {
                 element.textContent = updatedValue
                 updatedStrings.remove(name)
@@ -86,9 +87,15 @@ private fun updateRegularStrings(
         }
     }
 
-    updatedStrings.forEach { (_, value) ->
-        val newElement = doc.createElement("string")
-        newElement.textContent = value
+    val resources = doc.getElementsByTagName("resources").item(0)
+
+    updatedStrings.forEach { (name, value) ->
+        if (value != "") {
+            val newElement = doc.createElement("string")
+            newElement.setAttribute("name", name)
+            newElement.textContent = value
+            resources.appendChild(newElement)
+        }
     }
 }
 
@@ -116,15 +123,51 @@ private fun updatePlurals(
                     element.textContent = updatedValue
                     updatedPlurals.remove("$pluralName|$quantity")
                 } else {
-                    print("No new value for plural name: $pluralName and quantity: $quantity")
+                    println("No new value for plural name: $pluralName and quantity: $quantity")
                 }
             }
         }
     }
 
     updatedPlurals.forEach { (name, value) ->
-        print("Plurals were omitted: $name: $value")
+        val (pluralName, quantity) = name.split("|")
+
+        val foundParent = addQuantityToExistingPlural(doc, plurals, pluralName, quantity, value)
+        if (!foundParent) {
+            val newPlural = doc.createElement("plurals")
+            newPlural.setAttribute("name", pluralName)
+            doc.documentElement.appendChild(newPlural)
+            val added = addQuantityToExistingPlural(doc, plurals, pluralName, quantity, value)
+            if (!added) {
+                println("Plural was omitted: $name: $value")
+            }
+        }
     }
+}
+
+private fun addQuantityToExistingPlural(
+    doc: Document,
+    plurals: NodeList,
+    pluralName: String,
+    quantity: String,
+    value: String
+): Boolean {
+    var foundParent = false
+    for (temp in 0 until plurals.length) {
+        val node = plurals.item(temp)
+        if (node.nodeType == Node.ELEMENT_NODE) {
+            val pluralElement = node as Element
+            val name = pluralElement.getAttribute("name")
+            if (pluralName == name) {
+                val newElement = doc.createElement("item")
+                newElement.setAttribute("quantity", quantity)
+                newElement.textContent = value
+                pluralElement.appendChild(newElement)
+                foundParent = true
+            }
+        }
+    }
+    return foundParent
 }
 
 private fun readUnsorted(filename: String): MutableMap<String, String> {

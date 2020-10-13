@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
+import androidx.annotation.VisibleForTesting
 import com.squareup.moshi.JsonClass
 import com.tinder.StateMachine
 import com.tinder.StateMachine.Transition
@@ -228,7 +229,7 @@ private fun daysUntil(date: LocalDate) = max(0, ChronoUnit.DAYS.between(LocalDat
 class IsolationStateMachine(
     private val stateStorage: StateStorage,
     private val notificationProvider: NotificationProvider,
-    private val clock: Clock,
+    private var clock: Clock,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val testResultsProvider: TestResultsProvider,
     private val userInbox: UserInbox,
@@ -283,6 +284,11 @@ class IsolationStateMachine(
 
     fun reset() {
         stateMachine.transition(OnReset)
+    }
+
+    @VisibleForTesting
+    fun setClock(testClock: Clock) {
+        clock = testClock
     }
 
     internal val stateMachine = StateMachine.create<State, Event, SideEffect> {

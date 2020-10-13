@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.flow
 import androidx.test.espresso.NoMatchingViewException
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
+import kotlinx.coroutines.runBlocking
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.ignoreException
 import org.awaitility.kotlin.until
@@ -20,17 +21,22 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.EncounterDetectionRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationExpirationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QuestionnaireRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ReviewSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
+import java.time.temporal.ChronoUnit.DAYS
 import java.util.concurrent.TimeUnit.SECONDS
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -38,11 +44,17 @@ import kotlin.test.assertTrue
 class FlowTests : EspressoTest() {
 
     private val statusRobot = StatusRobot()
+
     private val questionnaireRobot = QuestionnaireRobot()
+
     private val reviewSymptomsRobot = ReviewSymptomsRobot()
+
     private val positiveSymptomsRobot = SymptomsAdviceIsolateRobot()
+
     private val testOrderingRobot = TestOrderingRobot()
+
     private val testResultRobot = TestResultRobot()
+
     private val encounterDetectionRobot = EncounterDetectionRobot()
     private val browserRobot = BrowserRobot()
 
@@ -56,6 +68,8 @@ class FlowTests : EspressoTest() {
     fun tearDown() {
         FeatureFlagTestHelper.clearFeatureFlags()
     }
+
+    private val isolationExpirationRobot = IsolationExpirationRobot()
 
     @Test
     fun startDefault_endNegativeTestResult() = notReported {
@@ -77,13 +91,19 @@ class FlowTests : EspressoTest() {
 
         testAppContext.virologyTestingApi.setDefaultTestResult(NEGATIVE)
 
-        testAppContext.getPeriodicTasks().scheduleVirologyTestResultFetching()
+        runBlocking {
+            testAppContext.getDownloadVirologyTestResultWork().invoke()
+        }
 
         await.atMost(10, SECONDS) ignoreException NoMatchingViewException::class untilAsserted {
             testResultRobot.checkActivityDisplaysNegativeAndFinishIsolation()
         }
 
         testResultRobot.clickGoodNewsActionButton()
+
+        await.atMost(10, SECONDS) until {
+            testAppContext.getCurrentState() is Default
+        }
 
         await.atMost(10, SECONDS) until {
             testAppContext.getCurrentState() is Default
@@ -119,7 +139,9 @@ class FlowTests : EspressoTest() {
 
         testAppContext.virologyTestingApi.setDefaultTestResult(POSITIVE)
 
-        testAppContext.getPeriodicTasks().scheduleVirologyTestResultFetching()
+        runBlocking {
+            testAppContext.getDownloadVirologyTestResultWork().invoke()
+        }
 
         waitFor { testResultRobot.checkActivityDisplaysPositiveAndContinueSelfIsolation() }
 
@@ -149,7 +171,8 @@ class FlowTests : EspressoTest() {
 
         assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
 
-        testAppContext.getPeriodicTasks().scheduleExposureCircuitBreakerInitial("test")
+        testAppContext.getExposureNotificationTokenProvider().add("test")
+        testAppContext.getPeriodicTasks().schedule()
 
         await.atMost(10, SECONDS) until {
             (testAppContext.getCurrentState() as Isolation).isBothCases()
@@ -179,7 +202,8 @@ class FlowTests : EspressoTest() {
 
         statusRobot.checkActivityIsDisplayed()
 
-        testAppContext.getPeriodicTasks().scheduleExposureCircuitBreakerInitial("test")
+        testAppContext.getExposureNotificationTokenProvider().add("test")
+        testAppContext.getPeriodicTasks().schedule()
 
         await.atMost(10, SECONDS) until {
             testAppContext.getCurrentState() is Isolation &&
@@ -202,7 +226,7 @@ class FlowTests : EspressoTest() {
 
         testAppContext.virologyTestingApi.setDefaultTestResult(NEGATIVE)
 
-        testAppContext.getPeriodicTasks().schedule(keepPrevious = false)
+        testAppContext.getPeriodicTasks().schedule()
 
         await.atMost(10, SECONDS) until {
             testAppContext.getTestResultsProvider().testResults.values.any { it.testResult == NEGATIVE }
@@ -221,7 +245,8 @@ class FlowTests : EspressoTest() {
 
         statusRobot.checkActivityIsDisplayed()
 
-        testAppContext.getPeriodicTasks().scheduleExposureCircuitBreakerInitial("test")
+        testAppContext.getExposureNotificationTokenProvider().add("test")
+        testAppContext.getPeriodicTasks().schedule()
 
         await.atMost(10, SECONDS) until {
             testAppContext.getCurrentState() is Isolation &&
@@ -244,7 +269,7 @@ class FlowTests : EspressoTest() {
 
         testAppContext.virologyTestingApi.setDefaultTestResult(POSITIVE)
 
-        testAppContext.getPeriodicTasks().schedule(keepPrevious = false)
+        testAppContext.getPeriodicTasks().schedule()
 
         await.atMost(10, SECONDS) until {
             testAppContext.getTestResultsProvider().testResults.values.any { it.testResult == POSITIVE }
@@ -255,6 +280,48 @@ class FlowTests : EspressoTest() {
         await.atMost(10, SECONDS) ignoreException NoMatchingViewException::class untilAsserted {
             testResultRobot.checkActivityDisplaysPositiveAndContinueSelfIsolation()
         }
+    }
+
+    @RetryFlakyTest
+    @Test
+    fun startIndexCase_endDefaultStateDueToExpiration() {
+        testAppContext.setState(
+            state = Isolation(
+                isolationStart = Instant.now(),
+                isolationConfiguration = DurationDays(),
+                indexCase = IndexCase(
+                    symptomsOnsetDate = LocalDate.now().minusDays(3),
+                    expiryDate = LocalDate.now().plus(1, DAYS)
+                )
+            )
+        )
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
+
+        runBlocking {
+            testAppContext.getDisplayStateExpirationNotification().doWork()
+        }
+
+        isolationExpirationRobot.checkActivityIsDisplayed()
+
+        await.atMost(
+            10,
+            SECONDS
+        ) ignoreException NoMatchingViewException::class untilAsserted {
+            isolationExpirationRobot.checkIsolationWillFinish()
+        }
+
+        val from = Instant.now().plus(1, ChronoUnit.DAYS)
+
+        val fromClock = Clock.fixed(from, ZoneOffset.UTC)
+
+        testAppContext.setStateMachineClock(fromClock)
+
+        await.atMost(10, SECONDS) until { testAppContext.getCurrentState() is Default }
     }
 
     private fun completeTestOrdering() = notReported {

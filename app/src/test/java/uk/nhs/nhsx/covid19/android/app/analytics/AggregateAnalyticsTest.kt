@@ -7,14 +7,19 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.BuildConfig
+import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AggregateAnalytics
+import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AnalyticsEventsStorage
+import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AnalyticsMetricsStorage
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsPayload
 import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsWindow
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metadata
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
-import uk.nhs.nhsx.covid19.android.app.util.toISOSecondsFormat
+import java.time.Clock
 import java.time.Instant
+import java.time.ZoneOffset
 
+@Deprecated("Use GroupAnalyticsEvents, this is only for migration")
 class AggregateAnalyticsTest {
 
     private val analyticsMetricsStorage = mockk<AnalyticsMetricsStorage>(relaxed = true)
@@ -22,23 +27,23 @@ class AggregateAnalyticsTest {
     private val networkStatsStorage = mockk<NetworkTrafficStats>(relaxed = true)
     private val updateStatusStorage = mockk<UpdateStatusStorage>(relaxed = true)
     private val analyticsEventsStorage = mockk<AnalyticsEventsStorage>(relaxed = true)
-    private val getNextAnalyticsWindow = mockk<GetAnalyticsWindow>()
 
-    private val startWindowInstant = Instant.parse("2020-07-28T00:00:00.00Z")
-    private val endWindowInstant = Instant.parse("2020-07-28T06:00:00.00Z")
+    private val fixedClock = Clock.fixed(Instant.parse("2020-09-28T00:05:00.00Z"), ZoneOffset.UTC)
 
-    private val testSubject = AggregateAnalytics(
-        analyticsMetricsStorage,
-        postCodeProvider,
-        networkStatsStorage,
-        updateStatusStorage,
-        analyticsEventsStorage,
-        getNextAnalyticsWindow
-    )
+    private val getAnalyticsWindow = GetAnalyticsWindow(fixedClock)
+
+    private val testSubject =
+        AggregateAnalytics(
+            analyticsMetricsStorage,
+            postCodeProvider,
+            networkStatsStorage,
+            updateStatusStorage,
+            analyticsEventsStorage,
+            getAnalyticsWindow
+        )
 
     @Before
     fun setUp() {
-        every { getNextAnalyticsWindow.invoke() } returns (startWindowInstant to endWindowInstant)
         every { networkStatsStorage.getTotalBytesDownloaded() } returns null
         every { networkStatsStorage.getTotalBytesUploaded() } returns null
     }
@@ -50,7 +55,7 @@ class AggregateAnalyticsTest {
 
         testSubject.invoke()
 
-        verify(exactly = 1) { analyticsMetricsStorage.reset() }
+        verify(exactly = 1) { analyticsMetricsStorage.metrics = null }
         verify { analyticsEventsStorage.value = stubAnalyticsPayload(2) }
     }
 
@@ -61,8 +66,18 @@ class AggregateAnalyticsTest {
 
         testSubject.invoke()
 
-        verify(exactly = 1) { analyticsMetricsStorage.reset() }
+        verify(exactly = 1) { analyticsMetricsStorage.metrics = null }
         verify { analyticsEventsStorage.value = stubAnalyticsPayload(1) }
+    }
+
+    @Test
+    fun `don't aggregate analytics on empty metrics storage`() = runBlocking {
+        every { analyticsMetricsStorage.metrics } returns null
+
+        testSubject.invoke()
+
+        verify(exactly = 0) { analyticsMetricsStorage.metrics = null }
+        verify(exactly = 0) { analyticsEventsStorage.value = any() }
     }
 
     private fun stubAnalyticsPayload(size: Int) = mutableListOf<AnalyticsPayload>().apply {
@@ -70,8 +85,8 @@ class AggregateAnalyticsTest {
             add(
                 AnalyticsPayload(
                     analyticsWindow = AnalyticsWindow(
-                        startDate = startWindowInstant.toISOSecondsFormat(),
-                        endDate = endWindowInstant.toISOSecondsFormat()
+                        startDate = "2020-09-27T00:00:00Z",
+                        endDate = "2020-09-28T00:00:00Z"
                     ),
                     includesMultipleApplicationVersions = false,
                     metadata = Metadata(

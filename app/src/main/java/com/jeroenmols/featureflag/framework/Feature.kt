@@ -90,12 +90,6 @@ enum class TestSetting(
         "Detect IO operations accidentally performed on the main Thread",
         defaultValue = true
     ),
-    DEBUG_ANALYTICS(
-        "testsetting.debuganalytics",
-        "Submit analytics every 15 min",
-        "WorkManager will schedule the task every 15 min instead of once a day",
-        defaultValue = false
-    ),
     USE_WEB_VIEW_FOR_INTERNAL_BROWSER(
         "testsetting.usewebview",
         "Use WebView for internal browser",

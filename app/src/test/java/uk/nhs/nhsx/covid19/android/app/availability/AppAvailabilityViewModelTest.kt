@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.availability
 
+import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import io.mockk.coEvery
@@ -10,6 +11,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityViewModel.AppAvailabilityState
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityViewModel.AppAvailabilityState.AppVersionNotSupported
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityViewModel.AppAvailabilityState.DeviceSdkIsNotSupported
@@ -37,6 +39,19 @@ class AppAvailabilityViewModelTest {
             appAvailabilityProvider,
             updateManager
         )
+
+    private val appAvailableResponse = AppAvailabilityResponse(
+        MinimumAppVersion(
+            Translatable(mapOf("en" to "en")),
+            BuildConfig.VERSION_CODE + 1
+        ),
+        MinimumSdkVersion(
+            Translatable(
+                mapOf()
+            ),
+            Build.VERSION.SDK_INT
+        )
+    )
 
     @Before
     fun setUp() {
@@ -92,7 +107,7 @@ class AppAvailabilityViewModelTest {
     }
 
     @Test
-    fun `app version is lower than min app version and cannot check update availabilty`() =
+    fun `app version is lower than min app version and cannot check update availability`() =
         runBlocking {
             every { appAvailabilityProvider.appAvailability } returns stubResponse(
                 minSdkValue = 23,
@@ -106,6 +121,31 @@ class AppAvailabilityViewModelTest {
 
             verify { observer.onChanged(AppVersionNotSupported("Please Update App")) }
         }
+
+    @Test
+    fun `minimum app version bigger than possibleUpdate version code`() = runBlocking {
+        every { appAvailabilityProvider.appAvailability } returns appAvailableResponse
+        coEvery { updateManager.getAvailableUpdateVersionCode() } returns Available(BuildConfig.VERSION_CODE)
+
+        testSubject.checkAvailability()
+
+        verify {
+            observer.onChanged(
+                AppVersionNotSupported(
+                    appAvailableResponse.minimumAppVersion.description.translate()
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `appAvailability is null state is Supported`() = runBlocking {
+        every { appAvailabilityProvider.appAvailability } returns null
+
+        testSubject.checkAvailability(deviceSdkVersion = 23, appVersionCode = 9)
+
+        verify { observer.onChanged(Supported()) }
+    }
 
     private fun stubResponse(minSdkValue: Int = 23, minAppVersionCode: Int = 8) =
         AppAvailabilityResponse(

@@ -10,6 +10,8 @@ import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.OnboardingCompletion
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
+import uk.nhs.nhsx.covid19.android.app.analytics.SubmitOnboardingAnalyticsWorker
+import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 
 class PermissionViewModelTest {
 
@@ -18,9 +20,17 @@ class PermissionViewModelTest {
 
     private val onboardingCompletedProvider = mockk<OnboardingCompletedProvider>(relaxed = true)
     private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxed = true)
+    private val submitAnalyticsWorkerScheduler =
+        mockk<SubmitOnboardingAnalyticsWorker.Scheduler>(relaxed = true)
+    private val periodicTasks = mockk<PeriodicTasks>(relaxed = true)
 
     private val testSubject =
-        PermissionViewModel(onboardingCompletedProvider, analyticsEventProcessor)
+        PermissionViewModel(
+            onboardingCompletedProvider,
+            analyticsEventProcessor,
+            submitAnalyticsWorkerScheduler,
+            periodicTasks
+        )
 
     private val onboardingCompletedObserver = mockk<Observer<Unit>>(relaxed = true)
 
@@ -32,6 +42,8 @@ class PermissionViewModelTest {
 
         verify { onboardingCompletedProvider setProperty "value" value eq(true) }
         coVerify { analyticsEventProcessor.track(OnboardingCompletion) }
+        verify { submitAnalyticsWorkerScheduler.scheduleOnboardingAnalyticsEvent() }
+        verify { periodicTasks.schedule() }
         verify { onboardingCompletedObserver.onChanged(any()) }
     }
 }

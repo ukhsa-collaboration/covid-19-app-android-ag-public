@@ -25,6 +25,9 @@ class RiskLevelFlowTest : EspressoTest() {
 
         statusRobot.checkActivityIsDisplayed()
 
+        // This is necessary because ExposureApplication does not invoke the download tasks when onboarding is not completed
+        testAppContext.getPeriodicTasks().schedule()
+
         waitFor { statusRobot.checkAreaRiskViewIsDisplayed() }
 
         step(
@@ -55,6 +58,9 @@ class RiskLevelFlowTest : EspressoTest() {
 
         statusRobot.checkActivityIsDisplayed()
 
+        // This is necessary because ExposureApplication does not invoke the download tasks when onboarding is not completed
+        testAppContext.getPeriodicTasks().schedule()
+
         waitFor { statusRobot.checkAreaRiskViewIsDisplayed() }
 
         step(
@@ -84,6 +90,9 @@ class RiskLevelFlowTest : EspressoTest() {
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
+
+        // This is necessary because ExposureApplication does not invoke the download tasks when onboarding is not completed
+        testAppContext.getPeriodicTasks().schedule()
 
         waitFor { statusRobot.checkAreaRiskViewIsDisplayed() }
 

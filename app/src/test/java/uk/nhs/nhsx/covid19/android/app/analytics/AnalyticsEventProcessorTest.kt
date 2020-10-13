@@ -15,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultRe
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.OnboardingCompletion
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.QrCodeCheckIn
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.UpdateNetworkStats
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
@@ -25,20 +26,27 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage
+import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneOffset
 
 class AnalyticsEventProcessorTest {
 
-    private val analyticsMetricsStorage = mockk<AnalyticsMetricsStorage>(relaxed = true)
+    private val analyticsMetricsLogStorage = mockk<AnalyticsMetricsLogStorage>(relaxed = true)
     private val stateStorage = mockk<StateStorage>(relaxed = true)
     private val exposureNotificationApi = mockk<ExposureNotificationApi>()
     private val appAvailabilityProvider = mockk<AppAvailabilityProvider>()
+    private val networkTrafficStats = mockk<NetworkTrafficStats>()
+    private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
+
     private val testSubject = AnalyticsEventProcessor(
-        analyticsMetricsStorage,
+        analyticsMetricsLogStorage,
         stateStorage,
         exposureNotificationApi,
-        appAvailabilityProvider
+        appAvailabilityProvider,
+        networkTrafficStats,
+        fixedClock
     )
 
     @Before
@@ -46,7 +54,6 @@ class AnalyticsEventProcessorTest {
         every { appAvailabilityProvider.isAppAvailable() } returns true
         coEvery { exposureNotificationApi.isEnabled() } returns true
         every { stateStorage.state } returns Default()
-        every { analyticsMetricsStorage.metrics } returns Metrics()
     }
 
     @Test
@@ -56,9 +63,14 @@ class AnalyticsEventProcessorTest {
             testSubject.track(BackgroundTaskCompletion)
 
             verify {
-                analyticsMetricsStorage.metrics = Metrics().apply {
-                    totalBackgroundTasks = 1
-                }
+                analyticsMetricsLogStorage.add(
+                    MetricsLogEntry(
+                        Metrics().apply {
+                            totalBackgroundTasks = 1
+                        },
+                        Instant.now(fixedClock)
+                    )
+                )
             }
         }
 
@@ -70,11 +82,16 @@ class AnalyticsEventProcessorTest {
             testSubject.track(BackgroundTaskCompletion)
 
             verify {
-                analyticsMetricsStorage.metrics = Metrics().apply {
-                    runningNormallyBackgroundTick = 1
-                    encounterDetectionPausedBackgroundTick = 1
-                    totalBackgroundTasks = 1
-                }
+                analyticsMetricsLogStorage.add(
+                    MetricsLogEntry(
+                        Metrics().apply {
+                            runningNormallyBackgroundTick = 1
+                            encounterDetectionPausedBackgroundTick = 1
+                            totalBackgroundTasks = 1
+                        },
+                        Instant.now(fixedClock)
+                    )
+                )
             }
         }
 
@@ -95,14 +112,19 @@ class AnalyticsEventProcessorTest {
             testSubject.track(BackgroundTaskCompletion)
 
             verify {
-                analyticsMetricsStorage.metrics = Metrics().apply {
-                    runningNormallyBackgroundTick = 1
-                    isIsolatingBackgroundTick = 1
-                    hasHadRiskyContactBackgroundTick = 0
-                    hasSelfDiagnosedPositiveBackgroundTick = 1
-                    encounterDetectionPausedBackgroundTick = 1
-                    totalBackgroundTasks = 1
-                }
+                analyticsMetricsLogStorage.add(
+                    MetricsLogEntry(
+                        Metrics().apply {
+                            runningNormallyBackgroundTick = 1
+                            isIsolatingBackgroundTick = 1
+                            hasHadRiskyContactBackgroundTick = 0
+                            hasSelfDiagnosedPositiveBackgroundTick = 1
+                            encounterDetectionPausedBackgroundTick = 1
+                            totalBackgroundTasks = 1
+                        },
+                        Instant.now(fixedClock)
+                    )
+                )
             }
         }
 
@@ -120,14 +142,19 @@ class AnalyticsEventProcessorTest {
         testSubject.track(BackgroundTaskCompletion)
 
         verify {
-            analyticsMetricsStorage.metrics = Metrics().apply {
-                runningNormallyBackgroundTick = 1
-                isIsolatingBackgroundTick = 1
-                hasHadRiskyContactBackgroundTick = 1
-                hasSelfDiagnosedPositiveBackgroundTick = 0
-                encounterDetectionPausedBackgroundTick = 1
-                totalBackgroundTasks = 1
-            }
+            analyticsMetricsLogStorage.add(
+                MetricsLogEntry(
+                    Metrics().apply {
+                        runningNormallyBackgroundTick = 1
+                        isIsolatingBackgroundTick = 1
+                        hasHadRiskyContactBackgroundTick = 1
+                        hasSelfDiagnosedPositiveBackgroundTick = 0
+                        encounterDetectionPausedBackgroundTick = 1
+                        totalBackgroundTasks = 1
+                    },
+                    Instant.now(fixedClock)
+                )
+            )
         }
     }
 
@@ -137,14 +164,19 @@ class AnalyticsEventProcessorTest {
             testSubject.track(BackgroundTaskCompletion)
 
             verify {
-                analyticsMetricsStorage.metrics = Metrics().apply {
-                    runningNormallyBackgroundTick = 1
-                    isIsolatingBackgroundTick = 0
-                    hasHadRiskyContactBackgroundTick = 0
-                    hasSelfDiagnosedPositiveBackgroundTick = 0
-                    encounterDetectionPausedBackgroundTick = 0
-                    totalBackgroundTasks = 1
-                }
+                analyticsMetricsLogStorage.add(
+                    MetricsLogEntry(
+                        Metrics().apply {
+                            runningNormallyBackgroundTick = 1
+                            isIsolatingBackgroundTick = 0
+                            hasHadRiskyContactBackgroundTick = 0
+                            hasSelfDiagnosedPositiveBackgroundTick = 0
+                            encounterDetectionPausedBackgroundTick = 0
+                            totalBackgroundTasks = 1
+                        },
+                        Instant.now(fixedClock)
+                    )
+                )
             }
         }
 
@@ -163,14 +195,19 @@ class AnalyticsEventProcessorTest {
             testSubject.track(BackgroundTaskCompletion)
 
             verify {
-                analyticsMetricsStorage.metrics = Metrics().apply {
-                    runningNormallyBackgroundTick = 1
-                    isIsolatingBackgroundTick = 1
-                    hasHadRiskyContactBackgroundTick = 1
-                    hasSelfDiagnosedPositiveBackgroundTick = 0
-                    encounterDetectionPausedBackgroundTick = 0
-                    totalBackgroundTasks = 1
-                }
+                analyticsMetricsLogStorage.add(
+                    MetricsLogEntry(
+                        Metrics().apply {
+                            runningNormallyBackgroundTick = 1
+                            isIsolatingBackgroundTick = 1
+                            hasHadRiskyContactBackgroundTick = 1
+                            hasSelfDiagnosedPositiveBackgroundTick = 0
+                            encounterDetectionPausedBackgroundTick = 0
+                            totalBackgroundTasks = 1
+                        },
+                        Instant.now(fixedClock)
+                    )
+                )
             }
         }
 
@@ -179,9 +216,14 @@ class AnalyticsEventProcessorTest {
         testSubject.track(OnboardingCompletion)
 
         verify {
-            analyticsMetricsStorage.metrics = Metrics().apply {
-                completedOnboarding = 1
-            }
+            analyticsMetricsLogStorage.add(
+                MetricsLogEntry(
+                    Metrics().apply {
+                        completedOnboarding = 1
+                    },
+                    Instant.now(fixedClock)
+                )
+            )
         }
     }
 
@@ -190,9 +232,14 @@ class AnalyticsEventProcessorTest {
         testSubject.track(QrCodeCheckIn)
 
         verify {
-            analyticsMetricsStorage.metrics = Metrics().apply {
-                checkedIn = 1
-            }
+            analyticsMetricsLogStorage.add(
+                MetricsLogEntry(
+                    Metrics().apply {
+                        checkedIn = 1
+                    },
+                    Instant.now(fixedClock)
+                )
+            )
         }
     }
 
@@ -201,9 +248,14 @@ class AnalyticsEventProcessorTest {
         testSubject.track(CanceledCheckIn)
 
         verify {
-            analyticsMetricsStorage.metrics = Metrics().apply {
-                canceledCheckIn = 1
-            }
+            analyticsMetricsLogStorage.add(
+                MetricsLogEntry(
+                    Metrics().apply {
+                        canceledCheckIn = 1
+                    },
+                    Instant.now(fixedClock)
+                )
+            )
         }
     }
 
@@ -212,9 +264,14 @@ class AnalyticsEventProcessorTest {
         testSubject.track(CompletedQuestionnaireAndStartedIsolation)
 
         verify {
-            analyticsMetricsStorage.metrics = Metrics().apply {
-                completedQuestionnaireAndStartedIsolation = 1
-            }
+            analyticsMetricsLogStorage.add(
+                MetricsLogEntry(
+                    Metrics().apply {
+                        completedQuestionnaireAndStartedIsolation = 1
+                    },
+                    Instant.now(fixedClock)
+                )
+            )
         }
     }
 
@@ -223,9 +280,14 @@ class AnalyticsEventProcessorTest {
         testSubject.track(CompletedQuestionnaireButDidNotStartIsolation)
 
         verify {
-            analyticsMetricsStorage.metrics = Metrics().apply {
-                completedQuestionnaireButDidNotStartIsolation = 1
-            }
+            analyticsMetricsLogStorage.add(
+                MetricsLogEntry(
+                    Metrics().apply {
+                        completedQuestionnaireButDidNotStartIsolation = 1
+                    },
+                    Instant.now(fixedClock)
+                )
+            )
         }
     }
 
@@ -234,9 +296,14 @@ class AnalyticsEventProcessorTest {
         testSubject.track(PositiveResultReceived)
 
         verify {
-            analyticsMetricsStorage.metrics = Metrics().apply {
-                receivedPositiveTestResult = 1
-            }
+            analyticsMetricsLogStorage.add(
+                MetricsLogEntry(
+                    Metrics().apply {
+                        receivedPositiveTestResult = 1
+                    },
+                    Instant.now(fixedClock)
+                )
+            )
         }
     }
 
@@ -245,9 +312,14 @@ class AnalyticsEventProcessorTest {
         testSubject.track(NegativeResultReceived)
 
         verify {
-            analyticsMetricsStorage.metrics = Metrics().apply {
-                receivedNegativeTestResult = 1
-            }
+            analyticsMetricsLogStorage.add(
+                MetricsLogEntry(
+                    Metrics().apply {
+                        receivedNegativeTestResult = 1
+                    },
+                    Instant.now(fixedClock)
+                )
+            )
         }
     }
 
@@ -256,9 +328,34 @@ class AnalyticsEventProcessorTest {
         testSubject.track(VoidResultReceived)
 
         verify {
-            analyticsMetricsStorage.metrics = Metrics().apply {
-                receivedVoidTestResult = 1
-            }
+            analyticsMetricsLogStorage.add(
+                MetricsLogEntry(
+                    Metrics().apply {
+                        receivedVoidTestResult = 1
+                    },
+                    Instant.now(fixedClock)
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `on network stats update`() = runBlocking {
+        every { networkTrafficStats.getTotalBytesUploaded() } returns 15
+        every { networkTrafficStats.getTotalBytesDownloaded() } returns 25
+
+        testSubject.track(UpdateNetworkStats)
+
+        verify {
+            analyticsMetricsLogStorage.add(
+                MetricsLogEntry(
+                    Metrics().apply {
+                        cumulativeDownloadBytes = 25
+                        cumulativeUploadBytes = 15
+                    },
+                    Instant.now(fixedClock)
+                )
+            )
         }
     }
 }

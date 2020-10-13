@@ -21,9 +21,9 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
-import uk.nhs.nhsx.covid19.android.app.util.gone
-import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
-import uk.nhs.nhsx.covid19.android.app.util.setUpAccessibilityHeading
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 
 class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_advice_isolate) {
 

@@ -9,7 +9,6 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
 import com.google.android.gms.common.api.Status
 import com.google.android.material.snackbar.Snackbar
@@ -47,6 +46,7 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
+import uk.nhs.nhsx.covid19.android.app.state.State
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.canOrderTest
@@ -55,14 +55,16 @@ import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.ExposureConsent
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.IsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.TestResult
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.VenueAlert
+import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState
+import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.OldRisk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Risk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
-import uk.nhs.nhsx.covid19.android.app.util.gone
-import uk.nhs.nhsx.covid19.android.app.util.openUrl
-import uk.nhs.nhsx.covid19.android.app.util.visible
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
 class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
@@ -77,7 +79,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
 
     private val dateChangedReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            statusViewModel.onDateChanged()
+            statusViewModel.updateViewState()
         }
     }
 
@@ -87,17 +89,15 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
-        startExposureNotifications()
+        startListeningToViewState()
 
-        startObservingExposureNotificationEnabled()
-
-        startObservingHighRiskPostDistricts()
-
-        startListeningToIsolationStateChanges()
+        startListeningToExposureNotificationStopped()
 
         startListeningForInformationScreen()
 
-        startListeningToExposureNotificationStopped()
+        startExposureNotifications()
+
+        startObservingExposureNotificationEnabled()
 
         setClickListeners()
 
@@ -109,12 +109,38 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
             exposureStatusViewModel.startExposureNotifications()
         }
 
-        statusViewModel.latestAdviceUrl().observe(this) { districtAreaAwareUrl ->
-            readAdviceUrl = getString(districtAreaAwareUrl)
-        }
-
         if (RuntimeBehavior.isFeatureEnabled(FeatureFlag.IN_APP_REVIEW)) {
             checkIfInAppReviewShouldBeDisplayed()
+        }
+    }
+
+    private fun startListeningForInformationScreen() {
+        statusViewModel.showInformationScreen().observe(this) {
+            when (it) {
+                is IsolationExpiration -> IsolationExpirationActivity.start(
+                    this,
+                    it.expiryDate.toString()
+                )
+                TestResult -> startActivity<TestResultActivity>()
+                ExposureConsent -> EncounterDetectionActivity.start(this)
+                is VenueAlert -> VenueAlertActivity.start(this, it.venueId)
+            }
+        }
+    }
+
+    private fun startListeningToExposureNotificationStopped() {
+        statusViewModel.onExposureNotificationStopped().observe(this) { canReceiveReminder ->
+            if (canReceiveReminder) {
+                showExposureNotificationReminderDialog()
+            }
+        }
+    }
+
+    private fun startListeningToViewState() {
+        statusViewModel.viewState().observe(this) { viewState ->
+            readAdviceUrl = getString(viewState.latestAdviceUrl)
+            handleIsolationState(viewState.isolationState)
+            handleRiskyPostCodeViewState(viewState.areaRiskState)
         }
     }
 
@@ -165,57 +191,48 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         }
 
         riskAreaView.setOnClickListener {
-            statusViewModel.onAreaRiskLevelChanged().value?.let {
-                RiskLevelActivity.start(this, it)
+            statusViewModel.viewState().value?.let {
+                RiskLevelActivity.start(this, it.areaRiskState)
             }
         }
     }
 
-    private fun startListeningForInformationScreen() {
-        statusViewModel.showInformationScreen().observe(
-            this,
-            Observer {
-                when (it) {
-                    is IsolationExpiration -> IsolationExpirationActivity.start(
-                        this,
-                        it.expiryDate.toString()
-                    )
-                    TestResult -> startActivity<TestResultActivity>()
-                    ExposureConsent -> EncounterDetectionActivity.start(this)
-                    is VenueAlert -> VenueAlertActivity.start(this, it.venueId)
-                }
+    private fun handleIsolationState(isolationState: State) {
+        when (isolationState) {
+            is Default -> {
+                showDefaultView()
             }
-        )
+            is Isolation -> {
+                isolationView.initialize(isolationState.isolationStart, isolationState.expiryDate)
+                optionOrderTest.isVisible =
+                    isolationState.canOrderTest && RuntimeBehavior.isFeatureEnabled(FeatureFlag.TEST_ORDERING)
+                optionReportSymptoms.isVisible = isolationState.canReportSymptoms &&
+                    RuntimeBehavior.isFeatureEnabled(SELF_DIAGNOSIS)
+                showIsolationView()
+            }
+        }
     }
 
-    private fun startListeningToIsolationStateChanges() {
-        statusViewModel.userState().observe(
-            this,
-            Observer { state ->
-                when (state) {
-                    is Default -> {
-                        showDefaultView()
-                    }
-                    is Isolation -> {
-                        isolationView.initialize(state.isolationStart, state.expiryDate)
-                        optionOrderTest.isVisible =
-                            state.canOrderTest && RuntimeBehavior.isFeatureEnabled(FeatureFlag.TEST_ORDERING)
-                        optionReportSymptoms.isVisible =
-                            state.canReportSymptoms && RuntimeBehavior.isFeatureEnabled(
-                            SELF_DIAGNOSIS
-                        )
-                        showIsolationView()
-                    }
-                }
+    private fun handleRiskyPostCodeViewState(riskyPostCodeViewState: RiskyPostCodeViewState) {
+        if (!RuntimeBehavior.isFeatureEnabled(HIGH_RISK_POST_DISTRICTS)) {
+            return
+        }
+        when (riskyPostCodeViewState) {
+            is Risk -> {
+                riskAreaView.text = riskyPostCodeViewState.riskIndicator.name.translate()
+                riskAreaView.areaRisk = riskyPostCodeViewState.riskIndicator
+                riskAreaView.visible()
             }
-        )
-    }
-
-    private fun startListeningToExposureNotificationStopped() {
-        statusViewModel.onExposureNotificationStopped().observe(this) { canReceiveReminder ->
-            if (canReceiveReminder) {
-                showExposureNotificationReminderDialog()
+            is OldRisk -> {
+                riskAreaView.text = getString(
+                    riskyPostCodeViewState.textResId,
+                    riskyPostCodeViewState.mainPostCode,
+                    getString(riskyPostCodeViewState.areaRiskLevelResId)
+                )
+                riskAreaView.oldAreaRisk = riskyPostCodeViewState.areaRisk.name
+                riskAreaView.visible()
             }
+            is Unknown -> riskAreaView.gone()
         }
     }
 
@@ -249,26 +266,6 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
                     viewState.status,
                     REQUEST_CODE_START_EXPOSURE_NOTIFICATION
                 )
-            }
-        }
-    }
-
-    private fun startObservingHighRiskPostDistricts() {
-        if (!RuntimeBehavior.isFeatureEnabled(HIGH_RISK_POST_DISTRICTS)) {
-            return
-        }
-        statusViewModel.onAreaRiskLevelChanged().observe(this) { areaRiskState ->
-            when (areaRiskState) {
-                is Risk -> {
-                    riskAreaView.text = getString(
-                        areaRiskState.textResId,
-                        areaRiskState.mainPostCode,
-                        getString(areaRiskState.areaRiskLevelResId)
-                    )
-                    riskAreaView.areaRisk = areaRiskState.areaRisk.name
-                    riskAreaView.visible()
-                }
-                is Unknown -> riskAreaView.gone()
             }
         }
     }

@@ -1,6 +1,6 @@
 if system("git describe --exact-match --tags HEAD") 
     puts "Tag found, skipping version bump."
-else
+elsif not ARGV.empty?
     puts "No tag found. Bump buildnumber, create tag and push."
     BUILD_NUMBER_PATH = "app/buildNumber"
     build_number = File.open(BUILD_NUMBER_PATH).read.to_i
@@ -11,5 +11,7 @@ else
     system("git add #{BUILD_NUMBER_PATH}")
     system("git commit -m \"Update build number to #{incremented_build_number}\"")
     system("git tag build-#{incremented_build_number}")
-    system("git push origin master --tags")
+    system("git push origin #{ARGV[0]} --tags")
+else
+    puts "No branch provided"
 end

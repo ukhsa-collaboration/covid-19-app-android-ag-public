@@ -8,7 +8,7 @@ import kotlinx.android.synthetic.main.activity_edge_case.edgeCaseTitle
 import kotlinx.android.synthetic.main.activity_edge_case.takeActionButton
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
-import uk.nhs.nhsx.covid19.android.app.util.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 
 class AgeRestrictionActivity : BaseActivity(R.layout.activity_edge_case) {
 

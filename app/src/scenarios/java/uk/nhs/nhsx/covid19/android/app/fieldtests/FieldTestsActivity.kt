@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.fieldtests.ui.main.JoinFragment
-import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 
 class FieldTestsActivity : AppCompatActivity() {
 

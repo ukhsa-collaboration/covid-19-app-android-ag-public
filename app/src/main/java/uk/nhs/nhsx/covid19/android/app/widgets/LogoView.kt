@@ -13,7 +13,7 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostalDistrictProvider
-import uk.nhs.nhsx.covid19.android.app.util.setUpAccessibilityHeading
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 import javax.inject.Inject
 
 class LogoView @JvmOverloads constructor(

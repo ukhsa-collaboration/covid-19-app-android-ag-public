@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.state
 import com.squareup.moshi.Moshi
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
@@ -58,6 +59,24 @@ class StateStorageTest {
         val parsedState = testSubject.state
 
         assertEquals(Default(), parsedState)
+    }
+
+    @Test
+    fun `parses default case with previous contact case v2 properly`() {
+        every { statusStringStorage.prefsValue } returns """[$DEFAULT_WITH_PREVIOUS_CONTACT_V2]"""
+
+        val parsedState = testSubject.state
+
+        assertEquals(
+            Default(
+                previousIsolation = Isolation(
+                    startDate,
+                    durationDays,
+                    contactCase = ContactCase(startDate, expiryDate)
+                )
+            ),
+            parsedState
+        )
     }
 
     @Test
@@ -126,6 +145,52 @@ class StateStorageTest {
         assertEquals(Default(), parsedState)
     }
 
+    @Test
+    fun `test storing default state`() {
+        testSubject.state = Default()
+
+        verify {
+            statusStringStorage.prefsValue =
+                """[$DEFAULT_V2]"""
+        }
+    }
+
+    @Test
+    fun `test storing default state with previous contact case`() {
+        testSubject.state = Default(
+            previousIsolation = Isolation(
+                startDate,
+                durationDays,
+                contactCase = ContactCase(startDate, expiryDate)
+            )
+        )
+
+        verify {
+            statusStringStorage.prefsValue =
+                """[$DEFAULT_WITH_PREVIOUS_CONTACT_V2]"""
+        }
+    }
+
+    @Test
+    fun `test storing index case`() {
+        testSubject.state = Isolation(startDate, durationDays, contactCase = ContactCase(startDate, expiryDate))
+
+        verify {
+            statusStringStorage.prefsValue =
+                """[$CONTACT_CASE_V2]"""
+        }
+    }
+
+    @Test
+    fun `test storing contact case`() {
+        testSubject.state = Isolation(startDate, durationDays, indexCase = IndexCase(onsetDate, expiryDate))
+
+        verify {
+            statusStringStorage.prefsValue =
+                """[$INDEX_CASE_V2]"""
+        }
+    }
+
     companion object {
         private val startDate = Instant.parse("2020-05-21T10:00:00Z")
         private val expiryDate = LocalDate.of(2020, 7, 22)
@@ -135,6 +200,8 @@ class StateStorageTest {
             """{"type":"Default","version":1}"""
         const val DEFAULT_V2 =
             """{"type":"Default","version":2}"""
+        const val DEFAULT_WITH_PREVIOUS_CONTACT_V2 =
+            """{"type":"Default","previousIsolation":{"isolationStart":"2020-05-21T10:00:00Z","expiryDate":"2020-06-11","contactCase":{"startDate":"2020-05-21T10:00:00Z","expiryDate":"2020-07-22"},"isolationConfiguration":{"contactCase":14,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21,"pendingTasksRetentionPeriod":14}},"version":2}"""
 
         const val INDEX_CASE_V1 =
             """{"type":"Isolation","isolationStart":"2020-05-21T10:00:00Z","expiryDate":"2020-07-22","indexCase":{"symptomsOnsetDate":"2020-05-21"},"version":1}"""

@@ -20,7 +20,6 @@ class AlarmRestarterTest : FieldInjectionUnitTest() {
         isolationExpirationAlarmController = mockk(relaxed = true)
         exposureNotificationReminderAlarmController = mockk(relaxed = true)
         resumeContactTracingNotificationTimeProvider = mockk()
-        analyticsAlarm = mockk(relaxed = true)
     }
 
     private val intent = mockk<Intent>(relaxed = true)

@@ -30,13 +30,13 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomAdvice.DoNotI
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomAdvice.Isolate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
-import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.SymptomsReviewAdapter
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.SymptomsReviewViewAdapter
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity.Companion.QUESTION_TO_CHANGE_KEY
 import uk.nhs.nhsx.covid19.android.app.startActivity
-import uk.nhs.nhsx.covid19.android.app.util.gone
-import uk.nhs.nhsx.covid19.android.app.util.invisible
-import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
-import uk.nhs.nhsx.covid19.android.app.util.visible
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.invisible
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -148,14 +148,18 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
 
     private fun updateSymptoms(reviewSymptomItems: List<ReviewSymptomItem>) {
         listReviewSymptoms.layoutManager = LinearLayoutManager(this)
-        listReviewSymptoms.addItemDecoration(
-            DividerItemDecoration(
-                this,
-                DividerItemDecoration.VERTICAL
+
+        if (listReviewSymptoms.itemDecorationCount == 0) {
+            listReviewSymptoms.addItemDecoration(
+                DividerItemDecoration(
+                    this,
+                    DividerItemDecoration.VERTICAL
+                )
             )
-        )
+        }
+
         listReviewSymptoms.adapter =
-            SymptomsReviewAdapter(
+            SymptomsReviewViewAdapter(
                 reviewSymptomItems,
                 ::onChangeClicked
             )

@@ -35,6 +35,20 @@ class PostalDistrictProvider @Inject constructor(sharedPreferences: SharedPrefer
     }
 }
 
-enum class PostCodeDistrict {
-    ENGLAND, WALES, SCOTLAND, NORTHERN_IRELAND
+enum class PostCodeDistrict(val value: String) {
+    ENGLAND("England"),
+    WALES("Wales"),
+    SCOTLAND("Scotland"),
+    NORTHERN_IRELAND("NorthernIreland");
+
+    companion object {
+        fun fromString(stringValue: String?): PostCodeDistrict? =
+            when (stringValue) {
+                ENGLAND.value -> ENGLAND
+                WALES.value -> WALES
+                SCOTLAND.value -> SCOTLAND
+                NORTHERN_IRELAND.value -> NORTHERN_IRELAND
+                else -> null
+            }
+    }
 }

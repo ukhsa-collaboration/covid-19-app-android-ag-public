@@ -12,6 +12,9 @@ class ShareKeysInformationViewModel @Inject constructor(
     private val fetchTemporaryExposureKeys: FetchTemporaryExposureKeys
 ) : ViewModel() {
 
+    var exposureNotificationWasInitiallyDisabled = false
+    var handleSubmitKeyResolutionStarted = false
+
     private val fetchKeysLiveData = SingleLiveEvent<TemporaryExposureKeysFetchResult>()
     fun fetchKeysResult(): LiveData<TemporaryExposureKeysFetchResult> = fetchKeysLiveData
 

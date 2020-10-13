@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.include_onboarding_toolbar.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
-import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 
 class DataAndPrivacyActivity : BaseActivity(R.layout.activity_data_and_privacy) {
 

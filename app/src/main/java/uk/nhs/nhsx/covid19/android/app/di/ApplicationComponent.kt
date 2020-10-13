@@ -4,34 +4,31 @@ import dagger.Component
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
 import uk.nhs.nhsx.covid19.android.app.about.UserDataActivity
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsAggregatorReceiver
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsAlarm
-import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalyticsWorker
+import uk.nhs.nhsx.covid19.android.app.analytics.SubmitOnboardingAnalyticsWorker
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityListener
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityWorker
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ClearOutdatedDataWorker
+import uk.nhs.nhsx.covid19.android.app.common.DownloadTasksWorker
 import uk.nhs.nhsx.covid19.android.app.common.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableExposureNotificationsActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableLocationActivity
+import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.di.module.ApiModule
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
 import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.SubmitKeysWorker
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInitialWorker
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationBroadcastReceiver
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposurePollingCircuitBreakerWorker
-import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadKeysWorker
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
+import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResultActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenuesWorker
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.RiskyVenuesCircuitBreakerInitialWorker
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.RiskyVenuesCircuitBreakerPollingWorker
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
@@ -76,14 +73,9 @@ interface ApplicationComponent {
     fun inject(activity: EnableLocationActivity)
     fun inject(activity: EnableExposureNotificationsActivity)
     fun inject(riskLevelActivity: RiskLevelActivity)
-    fun inject(downloadKeysWorker: DownloadKeysWorker)
     fun inject(downloadRiskyPostCodesWorker: DownloadRiskyPostCodesWorker)
-    fun inject(downloadAndProcessRiskyVenues: DownloadAndProcessRiskyVenuesWorker)
     fun inject(downloadVirologyTestResultWorker: DownloadVirologyTestResultWorker)
-    fun inject(exposureCircuitBreakerInitialWorker: ExposureCircuitBreakerInitialWorker)
-    fun inject(exposurePollingCircuitBreakerWorker: ExposurePollingCircuitBreakerWorker)
     fun inject(riskyVenuesCircuitBreakerInitialWorker: RiskyVenuesCircuitBreakerInitialWorker)
-    fun inject(riskyVenuesCircuitBreakerPollingWorker: RiskyVenuesCircuitBreakerPollingWorker)
     fun inject(qrScannerActivity: QrScannerActivity)
     fun inject(questionnaireActivity: QuestionnaireActivity)
     fun inject(testOrderingActivity: TestOrderingActivity)
@@ -108,13 +100,15 @@ interface ApplicationComponent {
     fun inject(appAvailabilityActivity: AppAvailabilityActivity)
     fun inject(updateReceiver: UpdateReceiver)
     fun inject(venueAlertActivity: VenueAlertActivity)
-    fun inject(submitAnalyticsWorker: SubmitAnalyticsWorker)
     fun inject(debugFragment: DebugFragment)
     fun inject(linkTestResultActivity: LinkTestResultActivity)
     fun inject(logoView: LogoView)
     fun inject(linkTextView: LinkTextView)
-    fun inject(analyticsAggregatorReceiver: AnalyticsAggregatorReceiver)
+    fun inject(downloadTasksWorker: DownloadTasksWorker)
+    fun inject(submitOnboardingAnalyticsWorker: SubmitOnboardingAnalyticsWorker)
 
     fun provideAppAvailabilityListener(): AppAvailabilityListener
-    fun provideAnalyticsReminder(): AnalyticsAlarm
+    fun providePeriodicTasks(): PeriodicTasks
+    fun provideOnboardingCompleted(): OnboardingCompletedProvider
+    fun provideNotificationProvider(): NotificationProvider
 }

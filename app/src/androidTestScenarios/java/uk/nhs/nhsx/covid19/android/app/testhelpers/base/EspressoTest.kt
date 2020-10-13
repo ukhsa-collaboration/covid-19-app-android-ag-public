@@ -14,6 +14,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
+import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryRule
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.util.ScreenshotTakingRule
 import java.util.concurrent.TimeUnit.SECONDS
@@ -21,14 +22,16 @@ import java.util.concurrent.TimeUnit.SECONDS
 @RunWith(AndroidJUnit4::class)
 abstract class EspressoTest {
 
-    lateinit var testAppContext: TestApplicationContext
+    var testAppContext: TestApplicationContext = TestApplicationContext()
 
     @get:Rule
     val screenshotRule = ScreenshotTakingRule()
 
+    @get:Rule
+    var rule = RetryRule(testAppContext, retryCount = 3)
+
     @Before
     fun setup() {
-        testAppContext = TestApplicationContext()
         testAppContext.reset()
     }
 

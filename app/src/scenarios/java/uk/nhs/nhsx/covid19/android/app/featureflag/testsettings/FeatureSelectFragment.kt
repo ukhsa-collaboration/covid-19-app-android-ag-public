@@ -36,14 +36,14 @@ internal class FeatureSelectFragment : Fragment(R.layout.fragment_feature_flag) 
         }
         if (useTestSettings()) {
             recyclerView.adapter =
-                FeatureFlagAdapter(
+                FeatureFlagViewAdapter(
                     TestSetting.values(),
                     runtimeFeatureFlagProvider,
                     checkedListener
                 )
         } else {
             recyclerView.adapter =
-                FeatureFlagAdapter(
+                FeatureFlagViewAdapter(
                     FeatureFlag.values(),
                     runtimeFeatureFlagProvider,
                     checkedListener
@@ -75,7 +75,7 @@ internal class FeatureSelectFragment : Fragment(R.layout.fragment_feature_flag) 
     }
 }
 
-private class FeatureFlagAdapter<T : Feature>(
+private class FeatureFlagViewAdapter<T : Feature>(
     val items: Array<T>,
     val provider: FeatureFlagProvider,
     val checkedListener: Function2<Feature, Boolean, Unit>

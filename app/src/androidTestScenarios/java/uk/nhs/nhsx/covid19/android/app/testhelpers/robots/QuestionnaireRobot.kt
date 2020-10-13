@@ -11,13 +11,27 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed
 import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.adapter.QuestionnaireAdapter.QuestionnaireViewHolder
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.adapter.QuestionnaireViewAdapter.QuestionnaireViewHolder
 
 class QuestionnaireRobot {
 
     fun checkActivityIsDisplayed() {
         onView(withId(R.id.questionnaireMainContainer))
             .check(matches(isDisplayed()))
+    }
+
+    fun checkQuestionnaireIsDisplayed() {
+        onView(withId(R.id.questionListContainer))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkErrorStateIsDisplayed() {
+        onView(withId(R.id.errorStateContainer))
+            .check(matches(isDisplayed()))
+    }
+
+    fun clickTryAgainButton() {
+        clickOn(R.id.buttonTryAgain)
     }
 
     fun selectSymptomsAtPositions(vararg position: Int) {
@@ -56,7 +70,7 @@ class QuestionnaireRobot {
     }
 
     fun continueOnDiscardSymptomsDialog() {
-        onView(withText(R.string.remove))
+        onView(withText(R.string.confirm))
             .perform(click())
     }
 

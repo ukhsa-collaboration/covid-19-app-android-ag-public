@@ -12,7 +12,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.util.dpToPx
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 
 class FocusView @JvmOverloads constructor(
     context: Context,

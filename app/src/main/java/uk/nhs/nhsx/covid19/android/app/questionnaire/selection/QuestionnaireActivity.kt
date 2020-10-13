@@ -29,17 +29,17 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivi
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity.Companion.EXTRA_RISK_THRESHOLD
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity.Companion.EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
-import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.adapter.QuestionnaireAdapter
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.adapter.QuestionnaireViewAdapter
 import uk.nhs.nhsx.covid19.android.app.startActivity
-import uk.nhs.nhsx.covid19.android.app.util.ScrollableLayoutManager
-import uk.nhs.nhsx.covid19.android.app.util.gone
-import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
-import uk.nhs.nhsx.covid19.android.app.util.visible
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.ScrollableLayoutManager
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
 class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
 
-    private lateinit var questionnaireAdapter: QuestionnaireAdapter
+    private lateinit var questionnaireViewAdapter: QuestionnaireViewAdapter
 
     @Inject
     lateinit var factory: ViewModelFactory<QuestionnaireViewModel>
@@ -77,9 +77,9 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
 
         viewModel.navigateToReviewScreen().observe(
             this,
-            Observer { questions ->
+            Observer { viewState ->
                 val extraQuestions = ArrayList<Question>().apply {
-                    addAll(questions)
+                    addAll(viewState.questions)
                 }
 
                 val intent = Intent(this, ReviewSymptomsActivity::class.java).apply {
@@ -88,10 +88,10 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
                         extraQuestions
                     )
                 }.apply {
-                    putExtra(EXTRA_RISK_THRESHOLD, viewModel.getRiskThreshold())
+                    putExtra(EXTRA_RISK_THRESHOLD, viewState.riskThreshold)
                     putExtra(
                         EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS,
-                        viewModel.getSymptomsOnsetWindowDays()
+                        viewState.symptomsOnsetWindowDays
                     )
                 }
 
@@ -106,7 +106,7 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
         if (resultCode == Activity.RESULT_OK && requestCode == CHANGE_QUESTION_REQUEST_CODE) {
             val question = data?.getParcelableExtra<Question>(QUESTION_TO_CHANGE_KEY)
 
-            val index = question?.let { questionnaireAdapter.currentList.indexOf(question) } ?: -1
+            val index = question?.let { questionnaireViewAdapter.currentList.indexOf(question) } ?: -1
 
             (questionsRecyclerView.layoutManager as ScrollableLayoutManager).scrollToIndex(index)
         }
@@ -135,7 +135,7 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
                 .setNegativeButton(R.string.cancel) { dialog, _ ->
                     dialog.dismiss()
                 }
-                .setPositiveButton(R.string.remove) { _, _ ->
+                .setPositiveButton(R.string.confirm) { _, _ ->
                     finish()
                     startActivity<NoSymptomsActivity>()
                 }
@@ -167,11 +167,11 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
     }
 
     private fun submitQuestions(questions: List<Question>) {
-        questionnaireAdapter.submitList(questions)
+        questionnaireViewAdapter.submitList(questions)
     }
 
     private fun setupAdapter() {
-        questionnaireAdapter = QuestionnaireAdapter {
+        questionnaireViewAdapter = QuestionnaireViewAdapter {
             viewModel.toggleQuestion(it)
         }
         questionsRecyclerView.layoutManager =
@@ -180,7 +180,7 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
                 nestedScrollView,
                 questionsRecyclerView
             )
-        questionsRecyclerView.adapter = questionnaireAdapter
+        questionsRecyclerView.adapter = questionnaireViewAdapter
     }
 
     companion object {

@@ -7,7 +7,7 @@ import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.view_state_info.view.stateColorView
 import kotlinx.android.synthetic.main.view_state_info.view.stateTextView
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.util.setUpAccessibilityHeading
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 
 class StateInfoView @JvmOverloads constructor(
     context: Context,

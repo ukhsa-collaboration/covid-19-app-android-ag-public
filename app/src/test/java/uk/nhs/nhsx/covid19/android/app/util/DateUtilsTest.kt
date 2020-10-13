@@ -7,7 +7,6 @@ import java.time.Instant
 import java.time.ZoneId
 
 class DateUtilsTest {
-    private val from = Instant.parse("2014-12-21T10:23:00Z")
 
     @Test
     fun `roundDownToNearestQuarter returns rounded down to 0`() {

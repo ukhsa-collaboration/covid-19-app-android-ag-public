@@ -8,15 +8,15 @@ import androidx.test.runner.screenshot.Screenshot
 import java.io.File
 import java.io.IOException
 
-fun takeScreenshot(screenshotName: String, parentFolderPath: String = "", failure: Boolean = false): String? {
+fun takeScreenshot(
+    screenshotName: String,
+    parentFolderPath: String = "",
+    failure: Boolean = false
+): String? {
     Log.d("Screenshots", "Taking screenshot of '$screenshotName'")
     getCurrentActivity()?.let {
         val screenCapture = Screenshot.capture(it)
-        val rootFolderName = if (failure) {
-            "covid19-failures"
-        } else {
-            "covid19"
-        }
+        val rootFolderName = if (failure) "covid19/failures" else "covid19"
         val processor = ScreenCaptureProcessorWithSubfolderSupport(parentFolderPath, rootFolderName)
         return try {
             screenCapture.name = screenshotName
@@ -31,16 +31,20 @@ fun takeScreenshot(screenshotName: String, parentFolderPath: String = "", failur
     return "Activity not found"
 }
 
-class ScreenCaptureProcessorWithSubfolderSupport(parentFolderPath: String, folderName: String = "covid19") :
+class ScreenCaptureProcessorWithSubfolderSupport(
+    parentFolderPath: String,
+    folderName: String = "covid19"
+) :
     BasicScreenCaptureProcessor() {
     init {
-        this.mDefaultScreenshotPath = File(
+        val file = File(
             File(
                 getExternalStoragePublicDirectory(DIRECTORY_PICTURES),
                 folderName
             ).absolutePath,
             parentFolderPath
         )
+        this.mDefaultScreenshotPath = file.absoluteFile
     }
 
     override fun getFilename(prefix: String): String = prefix

@@ -21,7 +21,6 @@
     <!-- status colors -->
     <color name="error_red">#E67E76</color>
     <color name="focus_yellow">#FFEB3B</color>
-    <color name="amber">#FFB81C</color>
 
     <!-- style colors -->
     <color name="style_purple">#8666B3</color>
@@ -34,4 +33,9 @@
 
     <color name="links_toolbar_color">@color/surface_background</color>
     <color name="about_app_text_color">#FAFAFA</color>
+
+    <color name="risk_green">#4EBD74</color>
+    <color name="risk_yellow">#DFD04B</color>
+    <color name="risk_amber">#FFA552</color>
+    <color name="risk_red">#FF6060</color>
 </resources>

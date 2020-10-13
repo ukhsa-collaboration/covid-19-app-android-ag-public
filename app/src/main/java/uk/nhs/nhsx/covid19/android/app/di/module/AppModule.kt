@@ -14,7 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.util.AndroidBase64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
-import uk.nhs.nhsx.covid19.android.app.util.DeviceDetection
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.DeviceDetection
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedFileInfo
 import javax.inject.Named
 import javax.inject.Singleton

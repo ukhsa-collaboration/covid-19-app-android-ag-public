@@ -9,10 +9,8 @@ class PostCodeValidator @Inject constructor(
 ) {
     suspend fun validate(postCode: String): PostCodeDistrict? {
         val postCodeDistrict =
-            postCodeLoader.loadPostCodes().toList().firstOrNull { postCode in it.second }?.first
-        return postCodeDistrict?.enumValueOrNull<PostCodeDistrict>()
+            postCodeLoader.loadPostCodes().toList()
+                .firstOrNull { postCode.trim() in it.second }?.first
+        return PostCodeDistrict.fromString(postCodeDistrict)
     }
 }
-
-inline fun <reified T : Enum<T>> String.enumValueOrNull(): T? =
-    enumValues<T>().firstOrNull { it.name.equals(this, ignoreCase = true) }

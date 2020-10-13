@@ -8,6 +8,7 @@ import android.os.Build.VERSION_CODES
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import androidx.annotation.RequiresApi
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.edit
 import androidx.security.crypto.EncryptedFile
 import androidx.security.crypto.EncryptedFile.Builder
@@ -17,7 +18,7 @@ import androidx.security.crypto.MasterKeys
 import timber.log.Timber
 import java.io.File
 import java.io.OutputStreamWriter
-import java.security.GeneralSecurityException
+import java.security.SecureRandom
 
 data class EncryptedFileInfo(
     val file: File,
@@ -26,11 +27,16 @@ data class EncryptedFileInfo(
 
 object EncryptionUtils {
     private const val STRONG_BOX_BACKED_MASTER_KEY = "_master_key_strongbox_"
-    private const val KEYSET_PREF_NAME = "__androidx_security_crypto_encrypted_file_pref__"
+    internal const val KEYSET_PREF_NAME = "__androidx_security_crypto_encrypted_file_pref__"
     private const val STRONGBOX_KEYSET_PREF_NAME =
         "__androidx_security_crypto_encrypted_file_strongbox_pref__"
+    private val secureRandom = SecureRandom()
 
-    fun createEncryptedFile(context: Context, name: String): EncryptedFileInfo {
+    fun createEncryptedFile(
+        context: Context,
+        name: String,
+        migrationManager: StrongBoxMigrationManager = StrongBoxMigrationManager
+    ): EncryptedFileInfo {
         val (file, encryptedFile) = if (hasStrongBox(context)) {
             val file = File(context.filesDir, name + "_strongbox")
             Timber.d("Has StrongBox")
@@ -38,7 +44,7 @@ object EncryptionUtils {
             val strongBoxBackedEncryptedFile =
                 getEncryptedFile(context, file, strongBoxMasterKeyAlias, STRONGBOX_KEYSET_PREF_NAME)
             val oldFile = File(context.filesDir, name)
-            migrateToNewMasterKey(context, oldFile, strongBoxBackedEncryptedFile)
+            migrationManager.migrateToNewMasterKey(context, oldFile, strongBoxBackedEncryptedFile)
 
             file to strongBoxBackedEncryptedFile
         } else {
@@ -53,30 +59,7 @@ object EncryptionUtils {
         )
     }
 
-    private fun migrateToNewMasterKey(
-        context: Context,
-        file: File,
-        strongBoxBackedFile: EncryptedFile
-    ) {
-        if (!file.exists()) {
-            return
-        }
-        Timber.d("Needs file migration")
-
-        try {
-            val masterKeyAlias = getDefaultMasterKey()
-            val fileEncryptedWithMasterKeyNotBackedByStrongBox =
-                getEncryptedFile(context, file, masterKeyAlias, KEYSET_PREF_NAME)
-            val contents = fileEncryptedWithMasterKeyNotBackedByStrongBox.readText()
-            strongBoxBackedFile.writeText(contents)
-            file.tryDelete()
-            Timber.d("Migrated")
-        } catch (exception: Exception) {
-            Timber.d(exception, "Could not migrate")
-        }
-    }
-
-    private fun getEncryptedFile(
+    fun getEncryptedFile(
         context: Context,
         file: File,
         masterKeyAlias: String,
@@ -92,8 +75,9 @@ object EncryptionUtils {
         return MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
     }
 
+    @VisibleForTesting
     @RequiresApi(VERSION_CODES.P)
-    private fun getStrongBoxBackedMasterKey(): String {
+    internal fun getStrongBoxBackedMasterKey(): String {
         // We can’t use UserAuthenticationRequired because that limits our background access to encrypted data
         val keyGenParameterSpec = KeyGenParameterSpec.Builder(
             STRONG_BOX_BACKED_MASTER_KEY,
@@ -108,29 +92,30 @@ object EncryptionUtils {
         return MasterKeys.getOrCreate(keyGenParameterSpec)
     }
 
-    private fun hasStrongBox(context: Context) = Build.VERSION.SDK_INT >= 28 &&
+    @VisibleForTesting
+    internal fun hasStrongBox(context: Context) = Build.VERSION.SDK_INT >= 28 &&
         context.packageManager.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
 
-    fun tryCreateEncryptedSharedPreferences(
-        context: Context,
+    fun <T> retryOnException(
         times: Int = 5,
         factor: Double = 2.0,
-        maxDelay: Long = 800
-    ): SharedPreferences {
+        maxDelay: Long = 1_000,
+        function: () -> T
+    ): T {
         var currentDelay = 100L
         repeat(times - 1) {
             try {
-                createEncryptedSharedPreferences(context)
-            } catch (e: GeneralSecurityException) {
+                return function()
+            } catch (e: Exception) {
                 // See https://issuetracker.google.com/issues/158234058
                 Thread.sleep(currentDelay)
-                currentDelay = (currentDelay * factor).toLong().coerceAtMost(maxDelay)
+                currentDelay = (currentDelay * factor + secureRandom.nextInt(100)).toLong().coerceAtMost(maxDelay)
             }
         }
-        return createEncryptedSharedPreferences(context)
+        return function()
     }
 
-    private fun createEncryptedSharedPreferences(context: Context): SharedPreferences {
+    fun createEncryptedSharedPreferences(context: Context): SharedPreferences {
         return if (hasStrongBox(context)) {
             Timber.d("Has StrongBox")
             createStrongBoxBackedEncryptedSharedPreferences(context)
@@ -190,14 +175,6 @@ object EncryptionUtils {
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
-}
-
-private fun File.tryDelete() {
-    try {
-        delete()
-    } catch (exception: Exception) {
-        Timber.d(exception, "Can't delete file")
-    }
 }
 
 fun EncryptedFile.readText(): String {

@@ -7,8 +7,8 @@ import android.util.AttributeSet
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.util.DistrictAreaStringProvider
-import uk.nhs.nhsx.covid19.android.app.util.openUrl
-import uk.nhs.nhsx.covid19.android.app.util.setUpOpensInBrowserWarning
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpOpensInBrowserWarning
 import javax.inject.Inject
 
 class LinkTextView @JvmOverloads constructor(

@@ -1,11 +1,11 @@
 package uk.nhs.nhsx.covid19.android.app.common
 
-import android.annotation.TargetApi
 import android.content.Context
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
+import android.content.res.Configuration
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import uk.nhs.nhsx.covid19.android.app.BuildConfig
+import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import java.util.Locale
 import javax.inject.Inject
@@ -14,6 +14,11 @@ abstract class BaseActivity(contentView: Int) : AppCompatActivity(contentView) {
 
     @Inject
     lateinit var applicationLocaleProvider: ApplicationLocaleProvider
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun attachBaseContext(baseContext: Context) {
         baseContext.applicationContext.appComponent.inject(this)
@@ -24,28 +29,20 @@ abstract class BaseActivity(contentView: Int) : AppCompatActivity(contentView) {
         }
     }
 
+    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
+        if (overrideConfiguration != null) {
+            val uiMode: Int = overrideConfiguration.uiMode
+            overrideConfiguration.setTo(baseContext.resources.configuration)
+            overrideConfiguration.uiMode = uiMode
+        }
+        super.applyOverrideConfiguration(overrideConfiguration)
+    }
+
     private fun updateBaseContextLocale(context: Context): Context {
         val locale = applicationLocaleProvider.getLocale()
         Locale.setDefault(locale)
-        return if (VERSION.SDK_INT > VERSION_CODES.N) {
-            updateResourcesLocale(context, locale)
-        } else {
-            updateResourcesLocaleLegacy(context, locale)
-        }
-    }
-
-    @TargetApi(VERSION_CODES.N_MR1)
-    private fun updateResourcesLocale(context: Context, locale: Locale): Context {
         val config = context.resources.configuration
         config.setLocale(locale)
         return context.createConfigurationContext(config)
-    }
-
-    @SuppressWarnings("deprecation")
-    private fun updateResourcesLocaleLegacy(context: Context, locale: Locale): Context {
-        val config = context.resources.configuration
-        config.locale = locale
-        context.resources.updateConfiguration(config, context.resources.displayMetrics)
-        return context
     }
 }

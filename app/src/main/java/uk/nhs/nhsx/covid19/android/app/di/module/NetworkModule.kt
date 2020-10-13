@@ -13,6 +13,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import uk.nhs.covid19.config.EnvironmentConfiguration
 import uk.nhs.covid19.config.Remote
+import uk.nhs.nhsx.covid19.android.app.analytics.NetworkStatsInterceptor
 import uk.nhs.nhsx.covid19.android.app.di.module.SignatureValidationInterceptor.Companion.HEADER_REQUEST_ID
 import uk.nhs.nhsx.covid19.android.app.state.StateJson
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
@@ -61,7 +62,8 @@ class NetworkModule(
     @Singleton
     @Named(DISTRIBUTION_REMOTE)
     fun provideDistributionOkHttpClient(
-        base64Decoder: Base64Decoder
+        base64Decoder: Base64Decoder,
+        networkStatsInterceptor: NetworkStatsInterceptor
     ): OkHttpClient {
         val signatureValidationInterceptor = createSignatureValidationInterceptor(
             base64Decoder,
@@ -71,7 +73,8 @@ class NetworkModule(
         return createOkHttpClient(
             configuration.distributedRemote,
             signatureValidationInterceptor,
-            interceptors
+            interceptors,
+            networkStatsInterceptor
         )
     }
 
@@ -79,7 +82,8 @@ class NetworkModule(
     @Singleton
     @Named(API_REMOTE)
     fun provideApiOkHttpClient(
-        base64Decoder: Base64Decoder
+        base64Decoder: Base64Decoder,
+        networkStatsInterceptor: NetworkStatsInterceptor
     ): OkHttpClient {
         val signatureValidationInterceptor = createSignatureValidationInterceptor(
             base64Decoder,
@@ -89,7 +93,8 @@ class NetworkModule(
         return createOkHttpClient(
             configuration.apiRemote,
             signatureValidationInterceptor,
-            interceptors
+            interceptors,
+            networkStatsInterceptor
         )
     }
 
@@ -106,7 +111,8 @@ class NetworkModule(
     private fun createOkHttpClient(
         remote: Remote,
         signatureValidationInterceptor: SignatureValidationInterceptor,
-        interceptors: List<Interceptor>
+        interceptors: List<Interceptor>,
+        networkStatsInterceptor: NetworkStatsInterceptor
     ): OkHttpClient {
         val certificatePinnerBuilder = CertificatePinner.Builder().apply {
             remote.certificates.forEach { certificate ->
@@ -144,6 +150,7 @@ class NetworkModule(
                     addInterceptor(it)
                 }
             }
+            .addInterceptor(networkStatsInterceptor)
         return builder.build()
     }
 

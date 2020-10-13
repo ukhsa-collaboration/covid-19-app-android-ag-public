@@ -13,6 +13,11 @@ sealed class Result<out T> {
             is Success -> Success(function(value))
             is Failure -> Failure(throwable)
         }
+
+    fun getOrThrow(): T = when (this) {
+        is Success -> this.value
+        is Failure -> throw this.throwable
+    }
 }
 
 suspend fun <T> runSafely(function: suspend () -> T): Result<T> =

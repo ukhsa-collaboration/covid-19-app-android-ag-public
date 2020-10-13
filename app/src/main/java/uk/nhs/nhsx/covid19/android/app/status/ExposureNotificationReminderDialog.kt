@@ -73,12 +73,6 @@ class ExposureNotificationReminderDialog(
             scheduleExposureNotification(duration)
         }
 
-        builder.setNegativeButton(
-            context.getString(R.string.cancel)
-        ) { dialog, _ ->
-            dialog.dismiss()
-        }
-
         builder.show()
     }
 }

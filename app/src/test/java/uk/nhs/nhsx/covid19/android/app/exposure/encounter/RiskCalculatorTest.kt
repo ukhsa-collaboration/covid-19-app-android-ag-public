@@ -58,7 +58,7 @@ class RiskCalculatorTest {
                 listOf(getExposureInfoWith(durationRiskScorePair.first)),
                 getConfigurationWithThreshold(threshold = 0).riskCalculation
             )
-            Assert.assertEquals(durationRiskScorePair.second, riskScore!!.second, 0.0)
+            Assert.assertEquals(durationRiskScorePair.second, riskScore!!.calculatedRisk, 0.0)
         }
     }
 
@@ -69,11 +69,11 @@ class RiskCalculatorTest {
 
         val riskScore =
             subject(listOf(shorterExposure, longerExposure), riskCalculationConfiguration)
-        Assert.assertEquals(900.0, riskScore!!.second, 0.0)
+        Assert.assertEquals(900.0, riskScore!!.calculatedRisk, 0.0)
     }
 
     @Test
-    fun `test parameterised greatest risk score amonst exposured is returned`() {
+    fun `test parameterised greatest risk score amongst exposed is returned`() {
         val shorterExposure = getExposureInfoWith(listOf(5, 0, 0))
         val longerExposure = getExposureInfoWith(listOf(15, 0, 0))
 
@@ -88,7 +88,7 @@ class RiskCalculatorTest {
                 durationRiskScorePair.first,
                 getConfigurationWithThreshold(threshold = 0).riskCalculation
             )
-            Assert.assertEquals(durationRiskScorePair.second, riskScore!!.second, 0.0)
+            Assert.assertEquals(durationRiskScorePair.second, riskScore!!.calculatedRisk, 0.0)
         }
     }
 
@@ -102,8 +102,8 @@ class RiskCalculatorTest {
 
         )
         val riskScore = subject(exposureInfoList, getConfigurationWithThreshold(threshold = 900).riskCalculation)
-        Assert.assertEquals(1200.0, riskScore!!.second, 0.0)
-        Assert.assertEquals(4, riskScore.first)
+        Assert.assertEquals(1200.0, riskScore!!.calculatedRisk, 0.0)
+        Assert.assertEquals(4, riskScore.startOfDayMillis)
     }
 
     @Test
@@ -129,7 +129,7 @@ class RiskCalculatorTest {
         val riskScore = subject(listOf(exposureInfo), riskCalculationConfiguration)
 
         val expectedRiskScore = 900.0
-        assertEquals(expectedRiskScore, riskScore!!.second)
+        assertEquals(expectedRiskScore, riskScore!!.calculatedRisk)
     }
 
     private fun getExposureInfoWith(

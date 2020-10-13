@@ -12,8 +12,7 @@ import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
-import uk.nhs.nhsx.covid19.android.app.util.DeviceDetection
-
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.DeviceDetection
 class MainViewModelTest {
 
     @get:Rule

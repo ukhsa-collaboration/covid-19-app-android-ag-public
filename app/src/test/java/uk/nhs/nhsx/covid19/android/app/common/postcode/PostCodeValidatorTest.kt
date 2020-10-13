@@ -43,6 +43,15 @@ class PostCodeValidatorTest {
     }
 
     @Test
+    fun trailingWhitespacesPostCode() = runBlocking {
+        coEvery { postCodeLoader.loadPostCodes() } returns provideMapOfDistrictsWithPostCodes()
+
+        val postCodeDistrict = validator.validate(" ZE1 ")
+
+        assertEquals(ENGLAND, postCodeDistrict)
+    }
+
+    @Test
     fun validEnglishPostCodePrefix() = runBlocking {
         coEvery { postCodeLoader.loadPostCodes() } returns provideMapOfDistrictsWithPostCodes()
 
@@ -93,10 +102,10 @@ class PostCodeValidatorTest {
 
     private fun provideMapOfDistrictsWithPostCodes(): Map<String, List<String>> {
         return mapOf(
-            ENGLAND.name to listOf("ZE1", "ZE2", "ZE3"),
-            WALES.name to listOf("WW1", "WW2", "WW3"),
-            SCOTLAND.name to listOf("SC1", "SC2", "SC3"),
-            NORTHERN_IRELAND.name to listOf("NI1", "NI2")
+            ENGLAND.value to listOf("ZE1", "ZE2", "ZE3"),
+            WALES.value to listOf("WW1", "WW2", "WW3"),
+            SCOTLAND.value to listOf("SC1", "SC2", "SC3"),
+            NORTHERN_IRELAND.value to listOf("NI1", "NI2")
         )
     }
 }

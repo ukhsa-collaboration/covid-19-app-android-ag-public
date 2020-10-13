@@ -17,10 +17,10 @@ import uk.nhs.nhsx.covid19.android.app.common.Lce.Error
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Loading
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Success
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
-import uk.nhs.nhsx.covid19.android.app.util.gone
-import uk.nhs.nhsx.covid19.android.app.util.openUrl
-import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
-import uk.nhs.nhsx.covid19.android.app.util.visible
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
 class TestOrderingProgressActivity : BaseActivity(R.layout.activity_progress) {

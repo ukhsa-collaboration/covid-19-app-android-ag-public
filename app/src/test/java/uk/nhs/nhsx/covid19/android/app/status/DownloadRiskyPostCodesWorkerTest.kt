@@ -33,18 +33,18 @@ class DownloadRiskyPostCodesWorkerTest : FieldInjectionUnitTest() {
         val result = testSubject.doWork()
 
         coVerify(exactly = 0) { analyticsEventProcessorMock.track(BackgroundTaskCompletion) }
-        coVerify(exactly = 0) { downloadRiskyPostCodesWorkMock.doWork() }
+        coVerify(exactly = 0) { downloadRiskyPostCodesWorkMock() }
         assertEquals(Result.retry(), result)
     }
 
     @Test
     fun `app is available calls downloadRiskyPostCodesWork doWork & tracking`() = runBlocking {
         every { appAvailabilityProviderMock.isAppAvailable() } returns true
-        coEvery { downloadRiskyPostCodesWorkMock.doWork() } returns Result.success()
+        coEvery { downloadRiskyPostCodesWorkMock() } returns Result.success()
 
         testSubject.doWork()
 
         coVerify(exactly = 1) { analyticsEventProcessorMock.track(BackgroundTaskCompletion) }
-        coVerify(exactly = 1) { downloadRiskyPostCodesWorkMock.doWork() }
+        coVerify(exactly = 1) { downloadRiskyPostCodesWorkMock() }
     }
 }

@@ -3,9 +3,15 @@ package uk.nhs.nhsx.covid19.android.app.remote
 import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
 import uk.nhs.nhsx.covid19.android.app.remote.data.QuestionnaireResponse
+import java.io.IOException
 
 class MockQuestionnaireApi : QuestionnaireApi {
+
+    var shouldPass: Boolean = true
+
     override suspend fun fetchQuestionnaire(): QuestionnaireResponse {
+        if (!shouldPass) throw IOException()
+
         return QuestionnaireResponse(
             symptoms = listOf(
                 Symptom(

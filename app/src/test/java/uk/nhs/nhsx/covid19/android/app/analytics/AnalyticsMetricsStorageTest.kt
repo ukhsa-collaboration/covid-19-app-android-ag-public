@@ -5,9 +5,12 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AnalyticsMetricsJsonStorage
+import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AnalyticsMetricsStorage
 
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class AnalyticsMetricsStorageTest {
 
@@ -16,18 +19,36 @@ class AnalyticsMetricsStorageTest {
     private val analyticsMetricsJsonStorage =
         mockk<AnalyticsMetricsJsonStorage>(relaxed = true)
 
-    private val testSubject = AnalyticsMetricsStorage(
-        analyticsMetricsJsonStorage,
-        moshi
-    )
+    private val testSubject =
+        AnalyticsMetricsStorage(
+            analyticsMetricsJsonStorage,
+            moshi
+        )
 
     @Test
-    fun `verify reset`() {
-        every { analyticsMetricsJsonStorage.value } returns metricsJson
+    fun `verify empty storage`() {
+        every { analyticsMetricsJsonStorage.value } returns null
 
-        testSubject.reset()
+        val parsedMetrics = testSubject.metrics
 
-        verify { analyticsMetricsJsonStorage.value = resetMetricsJson }
+        assertNull(parsedMetrics)
+    }
+
+    @Test
+    fun `verify corrupted storage`() {
+        every { analyticsMetricsJsonStorage.value } returns "dsfdsfsdfdsfdsf"
+
+        val parsedMetrics = testSubject.metrics
+
+        assertNull(parsedMetrics)
+    }
+
+    @Test
+    fun `verify storing null`() {
+
+        testSubject.metrics = null
+
+        verify { analyticsMetricsJsonStorage.value = null }
     }
 
     @Test

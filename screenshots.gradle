@@ -3,7 +3,6 @@ import java.nio.file.Files
 def testReportDirectory = "$buildDir/reports/TestReport"
 def appReportDirectory = "$buildDir/reports/AppReport"
 def folderOnDevice = '/sdcard/Pictures/covid19'
-def failureFolderOnDevice = '/sdcard/Pictures/covid19-failures'
 
 void deleteDir(File file) {
     def contents = file.listFiles()
@@ -19,22 +18,17 @@ void deleteDir(File file) {
 
 def clearScreenshotsTask = task('clearScreenshots', type: Exec) {
     executable "${android.getAdbExe().toString()}"
-    args 'shell', 'rm', '-r', folderOnDevice, failureFolderOnDevice
+    args 'shell', 'rm', '-r', folderOnDevice
 }
 
 def createScreenshotDirectoryTask = task('createScreenshotDirectory', type: Exec, group: 'reporting') {
     executable "${android.getAdbExe().toString()}"
-    args 'shell', 'mkdir', '-p', folderOnDevice, failureFolderOnDevice
+    args 'shell', 'mkdir', '-p', folderOnDevice
 }
 
 def fetchScreenshotsTask = task('fetchScreenshots', type: Exec, group: 'reporting') {
     executable "${android.getAdbExe().toString()}"
     args 'pull', "$folderOnDevice/.", testReportDirectory
-
-    if (file(failureFolderOnDevice).exists()) {
-        executable "${android.getAdbExe().toString()}"
-        args 'pull', "$failureFolderOnDevice/.", testReportDirectory
-    }
 
     finalizedBy {
         clearScreenshotsTask

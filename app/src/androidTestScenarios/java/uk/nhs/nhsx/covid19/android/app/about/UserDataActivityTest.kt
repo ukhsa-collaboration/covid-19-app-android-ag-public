@@ -7,6 +7,7 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.DataAndPrivacyRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MoreAboutAppRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PermissionRobot
@@ -61,6 +62,7 @@ class UserDataActivityTest : EspressoTest() {
         userDataRobot.checkActivityIsDisplayed()
     }
 
+    @RetryFlakyTest
     @Test
     fun clickOnDeleteUserDataOpensWelcomeScreenAndShowsPermissionScreenWithoutDialog() = notReported {
         testAppContext.setPostCode(null)

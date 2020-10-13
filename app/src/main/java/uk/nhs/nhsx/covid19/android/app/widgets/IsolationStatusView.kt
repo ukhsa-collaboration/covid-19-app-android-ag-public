@@ -11,8 +11,8 @@ import kotlinx.android.synthetic.main.view_isolation_status.view.isolationDaysTo
 import kotlinx.android.synthetic.main.view_isolation_status.view.subTitleIsolationCountdown
 import kotlinx.android.synthetic.main.view_isolation_status.view.titleDaysToGo
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.util.setUpAccessibilityHeading
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime

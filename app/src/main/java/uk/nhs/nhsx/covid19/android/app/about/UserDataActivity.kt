@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_about_user_data.actionDeleteAllData
@@ -40,10 +40,10 @@ import uk.nhs.nhsx.covid19.android.app.state.State
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.util.gone
-import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
-import uk.nhs.nhsx.covid19.android.app.util.visible
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -55,53 +55,27 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
 
     private val viewModel: UserDataViewModel by viewModels { factory }
 
-    private lateinit var venueVisitsAdapter: VenueVisitsAdapter
+    private lateinit var venueVisitsViewAdapter: VenueVisitsViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
-        setNavigateUpToolbar(
-            toolbar,
-            R.string.about_manage_my_data,
-            R.drawable.ic_arrow_back_white
-        )
+        setNavigateUpToolbar(toolbar, R.string.about_manage_my_data, R.drawable.ic_arrow_back_white)
 
-        viewModel.getPostCode().observe(
-            this,
-            Observer { postCode ->
-                postalDistrict.text = postCode
-            }
-        )
+        venueHistoryList.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
-        viewModel.getLastStatusMachineState().observe(
-            this,
-            Observer {
-                handleStateMachineState(it)
-            }
-        )
+        setupViewModelListeners()
 
-        viewModel.getVenueVisitsUiState().observe(
-            this,
-            Observer { venueVisitsUiState ->
-                updateVenueVisitsContainer(venueVisitsUiState)
-            }
-        )
+        setupOnClickListeners()
+    }
 
-        viewModel.getReceivedTestResult().observe(
-            this,
-            Observer {
-                handleShowingLatestTestResult(it)
-            }
-        )
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadUserData()
+    }
 
-        viewModel.getAllUserDataDeleted().observe(
-            this,
-            Observer {
-                handleAllUserDataDeleted()
-            }
-        )
-
+    private fun setupOnClickListeners() {
         actionDeleteAllData.setOnClickListener {
             showConfirmDeletingAllDataDialog()
         }
@@ -115,9 +89,26 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.loadUserData()
+    private fun setupViewModelListeners() {
+        viewModel.getPostCode().observe(this) { mainPostCode ->
+            postalDistrict.text = mainPostCode
+        }
+
+        viewModel.getLastStatusMachineState().observe(this) { isolationState ->
+            handleStateMachineState(isolationState)
+        }
+
+        viewModel.getVenueVisitsUiState().observe(this) { venueVisitsUiState ->
+            updateVenueVisitsContainer(venueVisitsUiState)
+        }
+
+        viewModel.getReceivedTestResult().observe(this) { latestTestResult ->
+            handleShowingLatestTestResult(latestTestResult)
+        }
+
+        viewModel.getAllUserDataDeleted().observe(this) {
+            handleAllUserDataDeleted()
+        }
     }
 
     private fun handleShowingLatestTestResult(receivedTestResult: ReceivedTestResult?) {
@@ -226,17 +217,11 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
     }
 
     private fun setUpVenueVisitsAdapter(venueVisits: List<VenueVisit>, showDeleteIcon: Boolean) {
-        venueVisitsAdapter = VenueVisitsAdapter(venueVisits, showDeleteIcon) {
+        venueVisitsViewAdapter = VenueVisitsViewAdapter(venueVisits, showDeleteIcon) {
             showDeleteVenueVisitConfirmationDialog(it)
         }
-        venueHistoryList.addItemDecoration(
-            DividerItemDecoration(
-                this,
-                DividerItemDecoration.VERTICAL
-            )
-        )
         venueHistoryList.layoutManager = LinearLayoutManager(this)
-        venueHistoryList.adapter = venueVisitsAdapter
+        venueHistoryList.adapter = venueVisitsViewAdapter
     }
 
     private fun showDeleteVenueVisitConfirmationDialog(deletedVenueVisitPosition: Int) {

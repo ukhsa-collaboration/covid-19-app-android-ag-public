@@ -19,8 +19,8 @@ import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityViewModel.App
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.startActivity
-import uk.nhs.nhsx.covid19.android.app.util.gone
-import uk.nhs.nhsx.covid19.android.app.util.visible
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
 class AppAvailabilityActivity : BaseActivity(R.layout.activity_app_availability) {

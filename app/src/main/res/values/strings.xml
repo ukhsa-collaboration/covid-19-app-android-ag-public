@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright © 2020 NHSX. All rights reserved.
-  --><resources xmlns:tools="http://schemas.android.com/tools">
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="locale">en</string>
     <!-- URLs -->
-    <string name="url_privacy_notice">https://www.gov.uk/government/publications/nhs-test-and-trace-app-privacy-information/nhs-test-and-trace-app-early-adopter-trial-august-2020-privacy-notice</string>
+    <string name="url_privacy_notice">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_terms_of_use">https://covid19.nhs.uk/our-policies.html</string>
     <string name="url_nhs_tablet_device">https://faq.covid19.nhs.uk/article/KA-01123/en-us</string>
     <string name="url_nhs_111_online">https://111.nhs.uk/</string>
@@ -18,7 +18,7 @@
     <string name="url_order_test_for_someone_else">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="url_provide_feedback">https://covid19.nhs.uk/contact-us.html</string>
 
-    <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-test-and-trace-app-privacy-information/nhs-test-and-trace-app-early-adopter-trial-august-2020-privacy-notice</string>
+    <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_terms_of_use_wls">https://covid19.nhs.uk/our-policies.html</string>
     <string name="url_nhs_tablet_device_wls">https://faq.covid19.nhs.uk/article/KA-01123/en-us</string>
     <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/</string>
@@ -57,7 +57,7 @@
     <string name="go_back">Go back</string>
     <string name="loading">Loading…</string>
     <string name="remove">Remove</string>
-    <string name="empty" translatable="false"/>
+    <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">The app will send you an alert if you have been in close contact with someone who has tested positive for the virus.\n\nTo enable Contact Tracing for this app you need to allow ‘Exposure Notifications’\n\nIf you change your mind, you can change your permissions in settings at any time.</string>
     <string name="permission_title">Contact tracing</string>
     <string name="exposure_notifications_rationale_title">Contact tracing helps prevent the spread of coronavirus (COVID-19)</string>
@@ -67,7 +67,7 @@
     <string name="post_code_title">Enter the first part of your postcode (postcode district)</string>
     <string name="post_code_rationale">The postcode district helps with learning about the spread of coronavirus in different areas. This makes sure we can give the best possible public health advice for your area.\n\nDon’t worry. Your postcode district won’t be used to track your location.</string>
     <string name="post_code_invalid_title">Invalid postcode district code</string>
-    <string name="valid_post_code_is_required">You need an English or Welsh postcode district to use this app.\n\nPlease enter your postcode district code. This is the first part of a postcode. For example: E2, L36, PO30</string>
+    <string name="valid_post_code_is_required">Please enter your postcode district code. This is the first part of a postcode. For example: E2, L36, PO30</string>
     <string name="enable_bluetooth_title">For this app to work, you must have Bluetooth on</string>
     <string name="enable_bluetooth_rationale">This app uses Bluetooth to know when it is near another phone with this app installed. If you have Bluetooth turned off, this app will not work.\n\nThis app uses ‘Bluetooth Low Energy’ - a battery saving technology.\n\nPlease go to settings and turn on Bluetooth</string>
     <string name="enable_bluetooth_error_hint">Please activate Bluetooth in your device settings.</string>
@@ -95,7 +95,7 @@
     <string name="scan_qr_code_to_check_in">Check in to a venue by scanning an official NHS QR code</string>
     <string name="how_to_scan_qr_code">How to scan an official NHS QR code</string>
     <string name="qr_code_success_title">Successful check-in</string>
-    <string name="qr_code_success_subtitle">Thank you for scanning. You have now checked in! You’ll be automatically checked out at midnight or when you scan another official NHS QR code.</string>
+    <string name="qr_code_success_subtitle">Thank you for scanning. You have now checked in!\n\nBy checking in, you will be able to get a notification if people with coronavirus visit this venue at a similar time as you.</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="qr_code_failure_title">QR code not recognised</string>
     <string name="qr_code_failure_subtitle">It could be that you didn’t scan an official NHS QR code or the code is damaged.</string>
@@ -201,7 +201,7 @@
     <string name="terms_of_use_onboarding">Terms of Use</string>
     <string name="about_this_app_title">About this app</string>
     <string name="about_common_questions_title">Common questions</string>
-    <string name="about_common_questions_text">Visit our common questions page to learn more about the NHS COVID-19 app and the wider Test &amp; Trace programme.</string>
+    <string name="about_common_questions_text">Visit our common questions page to learn more about the NHS COVID-19 app and the wider programme.</string>
     <string name="about_common_questions_link">Common questions</string>
     <string name="about_our_policies_title">Our policies</string>
     <string name="about_our_policies_text">Our policies tells you important information about using the app, how we use your data, and how the app is designed to be usable by everyone.</string>
@@ -213,14 +213,12 @@
     <string name="about_software_information_text_app_manufacturer">Manufacturer and maintainer</string>
     <string name="about_software_information_text_app_manufacturer_value">NHS Test &amp; Trace\nDepartment of Health and Social Care\n39 Victoria Street\nWestminster\nLondon\nSW1H 0EU\nUK</string>
     <string name="test_result_positive_no_self_isolation_subtitle">Although you tested positive, your period for self-isolation is over</string>
-    <string name="test_result_positive_no_self_isolation_description">However, if you have a high temperature, continue to self-isolate until it returns to normal</string>
+    <string name="test_result_no_self_isolation_description">However, if you have a high temperature, continue to self-isolate until it returns to normal</string>
     <string name="for_further_advice_visit">For further advice, please contact:</string>
     <string name="test_result_your_test_result">Your test result</string>
     <string name="test_result_positive_continue_self_isolation_title_1">Continue to self-isolate for</string>
     <string name="test_result_positive_continue_self_isolate_explanation">Your test result shows that you had the virus at the time of the test. You have been sent more information by email, text or phone. If you are under 18, you are advised to show this message to a trusted adult.</string>
-    <string name="test_result_negative_no_self_isolation_subtitle">Your self-isolation has now finished</string>
-    <string name="test_result_negative_no_self_isolation_description">Your coronavirus test result is negative</string>
-    <string name="test_result_negative_no_self_isolation_explanation">The test result shows that at the time of testing, you did not have the virus. If you do develop symptoms, report them on this app. If you are under 18, you are advised to show this message to a trusted adult.</string>
+    <string name="test_result_negative_no_self_isolation_subtitle_text">Your coronavirus test result is negative</string>
     <string name="test_result_void_continue_self_isolate_explanation">We could not tell if you had coronavirus when the test was done and you should take the test again. If you are under 18, you are advised to show this message to a trusted adult.</string>
     <string name="test_result_negative_already_not_in_isolation_subtitle">Your coronavirus test result is negative</string>
     <string name="test_result_void_already_not_in_isolation_subtitle">We could not tell if you had coronavirus when the test was done and you should take the test again. If you are under 18, you are advised to show this message to a trusted adult.</string>
@@ -252,7 +250,7 @@
     <string name="qr_code_more_info">More info about venue check-in</string>
     <string name="qr_code_scan_explanation">Hold your phone so that the official NHS QR code appears in the box above. When your phone recognises the QR code, it will show that you have successfully checked in.</string>
     <string name="qr_code_help_title">Help scanning a QR code</string>
-    <string name="qr_code_help_text">If you are not able to scan a QR code and need to check in another way, please speak to a member of staff.</string>
+    <string name="qr_code_help_text">If you are entering a venue (for example, a bar or a restaurant) that has an official NHS QR code poster, use this app to scan it. The app then registers the time you check in to a venue.\n\nBy using the venue check-in, you will be able to get a notification if people with coronavirus visit the same venue at a similar time as you. The notification will include relevant advice, such as to look out for coronavirus symptoms.\n\nIf you are not able to scan a QR code and need to check in another way, please speak to a member of staff.</string>
     <string name="qr_code_help_about_qr_code_title">How do I recognise an official NHS QR code?</string>
     <string name="qr_code_help_about_qr_code_text">This is what the official English/Welsh NHS QR code poster looks like. Use your phone camera to scan the QR code which is the square in the middle.</string>
     <string name="qr_code_help_poster_title_english">English NHS QR code poster:</string>
@@ -284,8 +282,8 @@
     <string name="onboarding_privacy_control_title">You are in control</string>
     <string name="onboarding_privacy_control_text">The NHS values your privacy, meaning the app cannot tell who you are, where you are or who is with you.\n\nIf you test positive for coronavirus, you can choose to share your data with the NHS so we can alert other app users. We use automated-decision making to help determine which other users need to be anonymously alerted.</string>
     <string name="onboarding_privacy_your_data_title">Your data</string>
-    <string name="onboarding_privacy_your_data_text1">The app securely and anonymously stores data for 14 days after it has been recorded. You can delete the data from the app at anytime in your app settings, or by uninstalling the app. Your phone may keep some basic data – this is controlled by your phone’s operating system.</string>
-    <string name="onboarding_privacy_your_data_text2">When you use the App you will be helping your community stay healthy and save lives.  Anonymous information from the app helps us know where the virus is and how to control it.</string>
+    <string name="onboarding_privacy_your_data_text1">The app securely and anonymously stores data for 14 days after it has been recorded. When you use QR codes to check into venues, venue data is stored for 21 days. You can delete the data from the app at anytime in your app settings, or by uninstalling the app. Your phone may keep some basic data – this is controlled by your phone’s operating system.</string>
+    <string name="onboarding_privacy_your_data_text2">When you use the app you will be helping your community stay healthy and save lives.  Anonymous information from the app helps us know where the virus is and how to control it.</string>
     <string name="onboarding_before_activating_app">Before you activate this app, please read the Privacy Notice and agree to the Terms of Use.</string>
     <string name="onboarding_no_thanks">No, thanks</string>
     <string name="onboarding_no_thanks_announcement">No thanks, I do not agree</string>
@@ -315,8 +313,8 @@
     <string name="risk_level_link_text">Definitions of area risk levels</string>
     <string name="low_risk_level_text">Low - your local authority is currently assessed as ‘low risk’, with levels of infection similar to most other parts of the country</string>
     <string name="low_risk_level_text_wls">Low - your local authority is currently assessed as ‘low risk’, with levels of infection similar to most other parts of the country</string>
-    <string name="medium_risk_level_text">Medium - your local authority, or a neighbouring local authority, has higher levels of infection than other parts of the country. The local area plan has been implemented and targeted actions are in place to reduce transmission of infection (e.g. additional testing in care homes and increased community engagement with high risk groups). Some areas may be receiving additional national support (e.g. mobile testing capacity)</string>
-    <string name="medium_risk_level_text_wls">Medium - your local authority, or a neighbouring local authority, has higher levels of infection than other parts of the country. The local area plan has been implemented and targeted actions are in place to reduce transmission of infection (e.g. additional testing in care homes and increased community engagement with high risk groups). Some areas may be receiving additional national support (e.g. mobile testing capacity)</string>
+    <string name="medium_risk_level_text">Medium - your local authority, or a neighbouring local authority, has high or rising levels of infection. Please follow national guidance.</string>
+    <string name="medium_risk_level_text_wls">Medium - your local authority, or a neighbouring local authority, has high or rising levels of infection. Please follow national guidance.</string>
     <string name="high_risk_level_text">High - Your local authority, or a neighbouring local authority, is using additional measures to those in place in the rest of England and Wales (e.g. lockdown) to reduce transmission of infection because of high levels of infection in the local area. A detailed action plan is in place and local resources are being augmented with national support.</string>
     <string name="high_risk_level_text_wls">High - Your local authority, or a neighbouring local authority, is using additional measures to those in place in the rest of England and Wales (e.g. lockdown) to reduce transmission of infection because of high levels of infection in the local area. A detailed action plan is in place and local resources are being augmented with national support.</string>
     <string name="about_description">Thank you for protecting yourself and others by using the app</string>
@@ -350,4 +348,23 @@
     <string name="logo_nhs_wales_description">NHS Wales Test Trace Protect</string>
     <string name="qr_code_help_about_qr_code_image_content_description">Example QR poster saying Let’s Help Stop the Spread of Coronavirus</string>
     <string name="notification_text_updating_database">Loading…</string>
+    <string name="authentication_auth_code_rationale">Please enter one code above. You will have received this code by letter or by email, and it will look like this:\n\n<b>5apv-enka</b>\n\nPlease note, this app is for use by people aged 16 years and over only.</string>
+    <string name="authentication_enter_code_subtitle">Enter your unique code</string>
+    <string name="authentication_example">Example: 5apv-enka</string>
+    <string name="authentication_message">Thank you for helping us improve the NHS COVID-19 app. During this test phase, you will need a unique code to use this app.\n\nWe all want to get back to the things we love. And we can all do our bit to help. This app is an important part of the NHS Test and Trace service. The more of us that use it, the more we can improve it.\n\nUntil a vaccine or treatment for coronavirus is found, NHS Test and Trace and this app remain a vital way to help stop the spread of coronavirus.</string>
+    <string name="authentication_title">Currently only for NHS Volunteer Responders, Isle of Wight and Newham residents</string>
+    <string name="authentication_where_can_i_find_code">Where can I find this code?</string>
+    <string name="questionnaire_no_i_dont_have_symptom">No, I don’t have %s</string>
+    <string name="questionnaire_yes_i_have_symptom">Yes, I have %s</string>
+    <string name="test_result_void_no_self_isolation_subtitle">We could not tell if you had coronavirus</string>
+    <string name="test_result_negative_no_self_isolation_description">Your coronavirus test result is negative</string>
+    <string name="test_result_negative_no_self_isolation_explanation">The test result shows that at the time of testing, you did not have the virus. If you do develop symptoms, report them on this app. If you are under 18, you are advised to show this message to a trusted adult.</string>
+    <string name="test_result_negative_no_self_isolation_subtitle">Your self-isolation has now finished</string>
+    <string name="test_result_positive_no_self_isolation_description">However, if you have a high temperature, continue to self-isolate until it returns to normal</string>
+    <string name="isolation_payment">Isolation payment</string>
+    <string name="apply_now">Apply now</string>
+    <string name="isolation_payment_description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+    <string name="isolation_payment_title">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</string>
+    <string name="notification_title_potential_exposure_explanation">COVID-19 Exposure Check Complete</string>
+    <string name="notification_text_potential_exposure_explanation">Don’t worry, we have assessed your risk and there is no need to take action at this time. Please continue to stay alert and follow the latest advice on social distancing.</string>
 </resources>

@@ -15,7 +15,7 @@ class TestResultRobot {
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     fun checkActivityDisplaysNegativeAndAlreadyFinishedIsolation() {
-        onView(withText(context.getString(R.string.test_result_positive_no_self_isolation_description))).check(
+        onView(withText(context.getString(R.string.test_result_no_self_isolation_description))).check(
             matches(isDisplayed())
         )
     }
@@ -33,7 +33,7 @@ class TestResultRobot {
     }
 
     fun checkActivityDisplaysNegativeAndFinishIsolation() {
-        onView(withText(context.getString(R.string.test_result_negative_no_self_isolation_description)))
+        onView(withText(context.getString(R.string.test_result_no_self_isolation_description)))
             .check(matches(isDisplayed()))
     }
 
@@ -91,7 +91,7 @@ class TestResultRobot {
         onView(withText(R.string.test_result_void_already_not_in_isolation_subtitle))
             .perform(scrollTo())
             .check(matches(isDisplayed()))
-        onView(withText(R.string.test_result_positive_no_self_isolation_description))
+        onView(withText(R.string.test_result_no_self_isolation_description))
             .perform(scrollTo())
             .check(matches(isDisplayed()))
     }

@@ -44,6 +44,7 @@ class NotificationProvider @Inject constructor(private val context: Context) {
         const val APP_AVAILABLE_NOTIFICATION_ID = 5
         const val APP_NOT_AVAILABLE_NOTIFICATION_ID = 6
         const val EXPOSURE_REMINDER_NOTIFICATION_ID = 7
+        const val POTENTIAL_EXPOSURE_EXPLANATION_NOTIFICATION_ID = 8
 
         const val REQUEST_CODE_APP_IS_NOT_AVAILABLE = 1
         const val REQUEST_CODE_APP_IS_AVAILABLE = 2
@@ -55,6 +56,7 @@ class NotificationProvider @Inject constructor(private val context: Context) {
         const val REQUEST_CODE_SHOW_RISKY_VENUE_VISIT_NOTIFICATION = 8
         const val REQUEST_CODE_SHOW_AREA_RISK_CHANGED_NOTIFICATION = 9
         const val REQUEST_CODE_UPDATING_DATABASE_NOTIFICATION = 10
+        const val REQUEST_CODE_POTENTIAL_EXPOSURE_EXPLANATION_NOTIFICATION = 11
 
         // TODO ?maybe move to StatusActivity
         const val TAP_EXPOSURE_NOTIFICATION_REMINDER_FLAG = "TAP_EXPOSURE_NOTIFICATION_REMINDER"
@@ -152,9 +154,9 @@ class NotificationProvider @Inject constructor(private val context: Context) {
 
         val riskyVenueNotification = createNotification(
             RISK_CHANGED_CHANNEL_ID,
-            R.string.notification_title_risky_venue,
-            R.string.notification_text_risky_venue,
-            pendingIntent
+            title = null,
+            message = R.string.notification_title_risky_venue,
+            contentIntent = pendingIntent
         )
 
         NotificationManagerCompat.from(context)
@@ -201,9 +203,11 @@ class NotificationProvider @Inject constructor(private val context: Context) {
 
         val exposureNotification = createNotification(
             ISOLATION_STATE_CHANNEL_ID,
-            R.string.notification_title_state_exposure,
-            R.string.notification_text_state_exposure,
-            pendingIntent
+            title = null,
+            message = getStringOrNull(R.string.notification_title_state_exposure) + "\n\n" + getStringOrNull(
+                R.string.notification_text_state_exposure
+            ),
+            contentIntent = pendingIntent
         )
 
         NotificationManagerCompat.from(context)
@@ -242,10 +246,11 @@ class NotificationProvider @Inject constructor(private val context: Context) {
 
         val exposureReminderNotification = createNotification(
             APP_CONFIGURATION_CHANNEL_ID,
-            R.string.notification_title_exposure_reminder,
-            R.string.notification_action_exposure_reminder,
-            contentIntent,
-            actionIntent
+            title = R.string.notification_title_exposure_reminder,
+            message = null,
+            contentIntent = contentIntent,
+            actionText = R.string.notification_action_exposure_reminder,
+            actionIntent = actionIntent
         )
 
         NotificationManagerCompat.from(context)
@@ -337,6 +342,37 @@ class NotificationProvider @Inject constructor(private val context: Context) {
             )
     }
 
+    fun showPotentialExposureExplanationNotification() {
+        val statusActivityIntent = Intent(context, StatusActivity::class.java)
+        statusActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(
+                context,
+                REQUEST_CODE_POTENTIAL_EXPOSURE_EXPLANATION_NOTIFICATION,
+                statusActivityIntent,
+                0
+            )
+
+        val notification = createNotification(
+            ISOLATION_STATE_CHANNEL_ID,
+            R.string.notification_title_potential_exposure_explanation,
+            R.string.notification_text_potential_exposure_explanation,
+            pendingIntent,
+            useCategoryAlarm = false
+        )
+
+        NotificationManagerCompat.from(context)
+            .notify(
+                POTENTIAL_EXPOSURE_EXPLANATION_NOTIFICATION_ID,
+                notification
+            )
+    }
+
+    fun hidePotentialExposureExplanationNotification() {
+        NotificationManagerCompat.from(context)
+            .cancel(POTENTIAL_EXPOSURE_EXPLANATION_NOTIFICATION_ID)
+    }
+
     fun getUpdatingDatabaseNotification(): Notification {
         val statusActivityIntent = Intent(context, StatusActivity::class.java)
         statusActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -387,9 +423,35 @@ class NotificationProvider @Inject constructor(private val context: Context) {
 
     private fun createNotification(
         notificationChannel: String,
-        @StringRes message: Int,
-        @StringRes actionText: Int?,
+        @StringRes title: Int?,
+        @StringRes message: Int?,
         contentIntent: PendingIntent,
+        @StringRes actionText: Int? = null,
+        actionIntent: PendingIntent? = null,
+        autoCancel: Boolean = true,
+        useCategoryAlarm: Boolean = true
+    ): Notification {
+        return createNotification(
+            notificationChannel,
+            getStringOrNull(title),
+            getStringOrNull(message),
+            contentIntent,
+            actionText,
+            actionIntent,
+            autoCancel,
+            useCategoryAlarm
+        )
+    }
+
+    private fun getStringOrNull(@StringRes stringId: Int?) =
+        if (stringId != null) context.getString(stringId) else null
+
+    private fun createNotification(
+        notificationChannel: String,
+        title: String?,
+        message: String?,
+        contentIntent: PendingIntent,
+        @StringRes actionText: Int? = null,
         actionIntent: PendingIntent? = null,
         autoCancel: Boolean = true,
         useCategoryAlarm: Boolean = true
@@ -401,8 +463,20 @@ class NotificationProvider @Inject constructor(private val context: Context) {
                     setCategory(NotificationCompat.CATEGORY_ALARM) // Shows notification in DND mode
                 }
             }
-            .setContentText(context.getString(message))
-            .setStyle(NotificationCompat.BigTextStyle().bigText(context.getString(message)))
+            .apply {
+                if (title != null) {
+                    setContentTitle(title)
+                }
+            }
+            .apply {
+                if (message != null) {
+                    setContentText(message)
+                    setStyle(
+                        NotificationCompat.BigTextStyle()
+                            .bigText(message)
+                    )
+                }
+            }
             .apply {
                 actionText?.let {
                     addAction(

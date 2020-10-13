@@ -32,9 +32,9 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.ScanningNotSuppor
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.Success
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
-import uk.nhs.nhsx.covid19.android.app.util.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
-import uk.nhs.nhsx.covid19.android.app.util.visible
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import java.time.LocalDateTime
 import javax.inject.Inject
 

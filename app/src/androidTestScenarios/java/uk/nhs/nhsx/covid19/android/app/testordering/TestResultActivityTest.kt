@@ -118,7 +118,7 @@ class TestResultActivityTest : EspressoTest() {
         startTestActivity<TestResultActivity>()
 
         testResultRobot.checkActivityDisplaysNegativeAndFinishIsolation()
-        testResultRobot.checkGoodNewsActionButtonShowsBackHome()
+        testResultRobot.checkGoodNewsActionButtonShowsContinue()
 
         testResultRobot.clickGoodNewsActionButton()
 

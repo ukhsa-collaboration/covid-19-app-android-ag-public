@@ -10,14 +10,39 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:4.0.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jacoco:org.jacoco.core:0.8.5"
+        classpath "org.jacoco:org.jacoco.core:0.8.6"
         classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.12"
         classpath "com.github.triplet.gradle:play-publisher:2.8.0"
     }
 }
 
+plugins {
+    id("io.gitlab.arturbosch.detekt").version("1.13.1")
+}
+
 if (project.hasProperty("coverage")) {
     apply from: "$project.rootDir/jacoco.gradle"
+}
+
+subprojects {
+    apply {
+        plugin("io.gitlab.arturbosch.detekt")
+    }
+
+    tasks.detekt {
+        jvmTarget = "1.8"
+    }
+
+    detekt {
+        buildUponDefaultConfig = true
+        config = files("$rootDir/config/detekt/detekt.yml")
+
+        reports {
+            xml.enabled = false
+            html.enabled = true
+            txt.enabled = false
+        }
+    }
 }
 
 allprojects {

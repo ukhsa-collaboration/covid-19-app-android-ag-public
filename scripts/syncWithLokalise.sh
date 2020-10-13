@@ -2,9 +2,6 @@
 
 # Generate and upload zip for newest translations
 echo "Requesting translations..."
-echo "ProjectId: $1"
-echo "Branch: $2"
-echo "API token: $3"
 response=$(curl --request POST \
   --url "https://api.lokalise.com/api2/projects/$1:$2/files/download" \
   --header 'content-type: application/json' \

@@ -8,21 +8,25 @@ import kotlin.math.absoluteValue
 
 class NetworkTrafficStats(
     private val networkStatsStorage: NetworkStatsStorage,
-    private val networkDownloadDataProvider: () -> Int,
-    private val networkUploadDataProvider: () -> Int
+    private val networkDownloadDataProvider: (Int) -> Int,
+    private val networkUploadDataProvider: (Int) -> Int
 ) {
 
     @Inject
     constructor(networkStatsStorage: NetworkStatsStorage) : this(
         networkStatsStorage,
-        { TrafficStats.getTotalRxBytes().toInt() },
-        { TrafficStats.getTotalTxBytes().toInt() }
+        { TrafficStats.getUidRxBytes(it).toInt() },
+        { TrafficStats.getUidTxBytes(it).toInt() }
     )
+
+    private val uid by lazy {
+        android.os.Process.myUid()
+    }
 
     fun getTotalBytesDownloaded(): Int? = runCatching {
         val lastStoredValue = networkStatsStorage.lastDownloadedBytes
 
-        val totalDownloadedBytes = networkDownloadDataProvider().absoluteValue
+        val totalDownloadedBytes = networkDownloadDataProvider(uid).absoluteValue
 
         return if (lastStoredValue != null) {
 
@@ -42,7 +46,7 @@ class NetworkTrafficStats(
 
     fun getTotalBytesUploaded(): Int? = runCatching {
         val lastStored = networkStatsStorage.lastUploadedBytes
-        val totalUploadedBytes = networkUploadDataProvider().absoluteValue
+        val totalUploadedBytes = networkUploadDataProvider(uid).absoluteValue
         return if (lastStored != null) {
             val dailyUploadedBytes =
                 if (totalUploadedBytes > lastStored)

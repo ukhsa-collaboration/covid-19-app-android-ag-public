@@ -48,7 +48,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
     fun `no risky venue polling configurations`() = runBlocking {
         every { riskyVenuePollingConfigurationProvider.configs } returns listOf()
 
-        testSubject.doWork()
+        testSubject()
 
         coVerify(exactly = 0) { riskyVenuesCircuitBreakerApi.getRiskyVenuesBreakerResolution(any()) }
     }
@@ -60,7 +60,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
             approval = YES
         )
 
-        testSubject.doWork()
+        testSubject()
 
         verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
         verify(exactly = 1) { userInbox.addUserInboxItem(ShowVenueAlert(venueId)) }
@@ -75,7 +75,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
             approval = NO
         )
 
-        testSubject.doWork()
+        testSubject()
 
         verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification() }
         verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(venueId)) }
@@ -90,7 +90,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
             approval = PENDING
         )
 
-        testSubject.doWork()
+        testSubject()
 
         verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification() }
         verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(venueId)) }
@@ -109,7 +109,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
                 approval = YES
             )
 
-            testSubject.doWork()
+            testSubject()
 
             verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(configurations[0].venueId)) }
             verify(exactly = 0) { riskyVenuePollingConfigurationProvider.remove(configurations[0]) }
@@ -130,7 +130,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
                 approval = NO
             )
 
-            testSubject.doWork()
+            testSubject()
 
             verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(configurations[0].venueId)) }
             verify(exactly = 0) { riskyVenuePollingConfigurationProvider.remove(configurations[0]) }

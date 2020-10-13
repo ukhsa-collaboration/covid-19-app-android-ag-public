@@ -1,7 +1,7 @@
 apply plugin: 'jacoco'
 
 jacoco {
-    toolVersion = "0.8.5"
+    toolVersion = "0.8.6"
     // Custom reports directory can be specified like this:
     // reportsDir = file("$buildDir/customJacocoReportDir")
 }
@@ -43,8 +43,11 @@ project.afterEvaluate {
                     '**/*Module_*Factory.*',
                     '**/*_Factory.*',
                     '**/*Fragment*.*',
+                    '**/*Application*.*',
                     '**/*Activity*.*',
-                    '**/*Adapter*.*',
+                    '**/*ViewAdapter*.*',
+                    '**/*JsonAdapter.*',
+                    '**/*Dialog*.*',
                     '**/*Creator.class',
                     '**/*ViewPager*.*',
                     '**/*ViewHolder*.*',
@@ -53,9 +56,10 @@ project.afterEvaluate {
                     '**/widgets/*.*',
                     '**/remote/**',
                     '**/fieldtests/**/*.*',
+                    '**/util/viewutils**'
             ]
             def javaClasses = fileTree(dir: productionReleaseVariant.javaCompiler.destinationDir, excludes: excludes)
-            def kotlinClasses = fileTree(dir: "${buildDir}/tmp/kotlin-classes/${variantName}", excludes: excludes)
+            def kotlinClasses = fileTree(dir: "${buildDir}/tmp/kotlin-classes/${variantName}/uk", excludes: excludes)
             classDirectories.from = files([javaClasses, kotlinClasses])
 
             sourceDirectories.from = files([
@@ -108,6 +112,13 @@ project.afterEvaluate {
                     '**/widgets/*.*',
                     '**/remote/**',
                     '**/fieldtests/**/*.*',
+                    '**/FieldTestConfiguration.class',
+                    '**/featureflag/testsettings/*.*',
+                    '**/ScenariosExposureApplication*.*',
+                    '**/LanguageAdapter.class',
+                    '**/EnvironmentAdapter.class',
+                    '**/SignatureValidationInterceptor.class',
+                    '**/qrcode/QrCodeParser.class',
             ]
 
             def javaClasses = fileTree(dir: scenariosDebugVariant.javaCompiler.destinationDir, excludes: excludes)

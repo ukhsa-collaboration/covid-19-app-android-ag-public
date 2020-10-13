@@ -18,7 +18,7 @@ class RiskyVenuesCircuitBreakerPolling @Inject constructor(
     private val removeOutdatedRiskyVenuePollingConfigurations: RemoveOutdatedRiskyVenuePollingConfigurations
 ) {
 
-    suspend fun doWork() {
+    suspend operator fun invoke() {
         if (!RuntimeBehavior.isFeatureEnabled(FeatureFlag.HIGH_RISK_VENUES)) {
             return
         }

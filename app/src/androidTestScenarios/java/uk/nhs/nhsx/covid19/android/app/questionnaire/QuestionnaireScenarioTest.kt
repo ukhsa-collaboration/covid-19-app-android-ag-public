@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.questionnaire
 
 import com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep
+import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
@@ -16,6 +17,7 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.NoSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QuestionnaireRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ReviewSymptomsRobot
@@ -31,6 +33,11 @@ class QuestionnaireScenarioTest : EspressoTest() {
     private val noSymptomsRobot = NoSymptomsRobot()
     private val reviewSymptomsRobot = ReviewSymptomsRobot()
     private val symptomsAdviceIsolateRobot = SymptomsAdviceIsolateRobot()
+
+    @Before
+    fun setUp() {
+        testAppContext.questionnaireApi.shouldPass = true
+    }
 
     @Test
     fun successfullySelectSymptomsAndCannotRememberDate_GoesToIsolationState() = reporter(
@@ -202,6 +209,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
         )
     }
 
+    @RetryFlakyTest
     @Test
     fun selectNoSymptoms_CancelDialog() = notReported {
         startTestActivity<QuestionnaireActivity>()
@@ -284,5 +292,88 @@ class QuestionnaireScenarioTest : EspressoTest() {
             stepName = "No onset date selected",
             stepDescription = "An error message is shown to the user"
         )
+    }
+
+    @Test
+    fun selectSymptoms_SelectTodayAsDate_NoSymptomsScreenIsDisplayed() = notReported {
+        startTestActivity<QuestionnaireActivity>()
+
+        questionnaireRobot.checkActivityIsDisplayed()
+
+        questionnaireRobot.selectSymptomsAtPositions(3)
+
+        questionnaireRobot.reviewSymptoms()
+
+        reviewSymptomsRobot.confirmReviewSymptomsScreenIsDisplayed()
+
+        reviewSymptomsRobot.clickSelectDate()
+
+        reviewSymptomsRobot.selectDayOfMonth(LocalDate.now().dayOfMonth)
+
+        reviewSymptomsRobot.confirmSelection()
+
+        noSymptomsRobot.confirmNoSymptomsScreenIsDisplayed()
+    }
+
+    @Test
+    fun selectSymptoms_SelectDoNotRememberDateThenSelectTodayAsDate_DoNotRememberIsNotChecked() = notReported {
+        startTestActivity<QuestionnaireActivity>()
+
+        questionnaireRobot.checkActivityIsDisplayed()
+
+        questionnaireRobot.selectSymptomsAtPositions(3)
+
+        questionnaireRobot.reviewSymptoms()
+
+        reviewSymptomsRobot.confirmReviewSymptomsScreenIsDisplayed()
+
+        reviewSymptomsRobot.selectCannotRememberDate()
+
+        reviewSymptomsRobot.checkDoNotRememberDateIsChecked()
+
+        reviewSymptomsRobot.clickSelectDate()
+
+        reviewSymptomsRobot.selectDayOfMonth(LocalDate.now().dayOfMonth)
+
+        reviewSymptomsRobot.checkDoNotRememberDateIsNotChecked()
+    }
+
+    @Test
+    fun selectSymptoms_NavigateToReviewScreen_NavigateBackToSelectSymptoms() = notReported {
+        startTestActivity<QuestionnaireActivity>()
+
+        questionnaireRobot.checkActivityIsDisplayed()
+
+        questionnaireRobot.selectSymptomsAtPositions(3)
+
+        questionnaireRobot.reviewSymptoms()
+
+        testAppContext.device.pressBack()
+
+        questionnaireRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    fun navigateToQuestionnaire_LoadingQuestionnaireFails_ShowsErrorState() = notReported {
+        testAppContext.questionnaireApi.shouldPass = false
+
+        startTestActivity<QuestionnaireActivity>()
+
+        questionnaireRobot.checkErrorStateIsDisplayed()
+    }
+
+    @Test
+    fun navigateToQuestionnaire_LoadingQuestionnaireFailsAndTryAgainSucceeds_NavigateToQuestionnaire() = notReported {
+        testAppContext.questionnaireApi.shouldPass = false
+
+        startTestActivity<QuestionnaireActivity>()
+
+        questionnaireRobot.checkErrorStateIsDisplayed()
+
+        testAppContext.questionnaireApi.shouldPass = true
+
+        questionnaireRobot.clickTryAgainButton()
+
+        questionnaireRobot.checkQuestionnaireIsDisplayed()
     }
 }

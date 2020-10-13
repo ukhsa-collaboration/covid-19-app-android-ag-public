@@ -45,18 +45,29 @@ class AndroidReporter internal constructor(
     private lateinit var currentTestConfiguration: TestConfiguration
 
     fun runWithConfigurations(builderAction: Reporter.() -> Unit) {
+        val failedConfigurations = mutableListOf<Pair<TestConfiguration, Exception>>()
+
         testConfigurations.forEach { configuration ->
             applyConfiguration(configuration)
-            for (i in 0..2) {
+            for (i in 0..4) {
                 try {
                     builderAction()
                     break
                 } catch (exception: Exception) {
                     UiDevice.getInstance(getInstrumentation()).pressBack()
                     testAppContext.reset()
+
+                    if (i == 4) {
+                        Log.e("Reporter", "Configuration failed: $configuration for scenario: $scenario $name", exception)
+                        failedConfigurations.add(configuration to exception)
+                    }
                 }
             }
         }
+        if (failedConfigurations.isNotEmpty()) {
+            throw failedConfigurations[0].second
+        }
+
         save()
         resetSystemFontScaling()
         testAppContext.reset()
@@ -160,6 +171,11 @@ class DummyReporter : Reporter {
     }
 }
 
+fun isReporterRunning() =
+    InstrumentationRegistry.getArguments().getString("takeScreenshots")
+        ?.toBoolean()
+        ?: false
+
 fun EspressoTest.reporter(
     scenario: String,
     title: String,
@@ -167,10 +183,7 @@ fun EspressoTest.reporter(
     kind: Kind,
     builderAction: Reporter.() -> Unit
 ) {
-    val takeScreenshots =
-        InstrumentationRegistry.getArguments().getString("takeScreenshots")?.toBoolean()
-            ?: false
-    if (takeScreenshots) {
+    if (isReporterRunning()) {
         val configurations = listOf(
             TestConfiguration(Orientation.PORTRAIT, FontScale.DEFAULT, Theme.LIGHT),
             TestConfiguration(Orientation.LANDSCAPE, FontScale.SMALL, Theme.DARK),
@@ -227,6 +240,18 @@ fun EspressoTest.reporter(
                 FontScale.SMALL,
                 Theme.LIGHT,
                 languageCode = "zh"
+            ),
+            TestConfiguration(
+                Orientation.PORTRAIT,
+                FontScale.SMALL,
+                Theme.LIGHT,
+                languageCode = "pl"
+            ),
+            TestConfiguration(
+                Orientation.PORTRAIT,
+                FontScale.SMALL,
+                Theme.LIGHT,
+                languageCode = "so"
             )
         ).sortedBy { it.orientation }
 

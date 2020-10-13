@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.view_status_option.view.statusOptionIconCo
 import kotlinx.android.synthetic.main.view_status_option.view.statusOptionLinkIndicator
 import kotlinx.android.synthetic.main.view_status_option.view.statusOptionText
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.util.dpToPx
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 
 open class StatusOptionView @JvmOverloads constructor(
     context: Context,

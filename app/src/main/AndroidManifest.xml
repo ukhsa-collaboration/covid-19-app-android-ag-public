@@ -18,7 +18,7 @@
         android:networkSecurityConfig="@xml/network_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/AppTheme.Launcher"
         tools:targetApi="n">
 
         <meta-data
@@ -31,8 +31,7 @@
             tools:node="remove" />
 
         <activity
-            android:name=".MainActivity"
-            android:theme="@style/AppTheme.Launcher">
+            android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -70,12 +69,12 @@
         <activity android:name=".about.EditPostalDistrictActivity" />
         <activity android:name=".testordering.TestOrderingProgressActivity" />
         <activity android:name=".availability.AppAvailabilityActivity" />
-        <activity android:name=".onboarding.authentication.AuthenticationCodeActivity" />
         <activity android:name=".qrcode.riskyvenues.VenueAlertActivity" />
         <activity android:name=".status.RiskLevelActivity" />
         <activity android:name=".edgecases.TabletNotSupportedActivity" />
         <activity android:name=".exposure.ShareKeysInformationActivity" />
         <activity android:name=".testordering.linktestresult.LinkTestResultActivity" />
+        <activity android:name=".status.IsolationPaymentActivity" />
 
         <!-- Receivers -->
         <receiver

@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.View
 import android.view.animation.AnimationUtils
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.util.animationsDisabled
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.animationsDisabled
 
 interface PulseAnimationView {
 

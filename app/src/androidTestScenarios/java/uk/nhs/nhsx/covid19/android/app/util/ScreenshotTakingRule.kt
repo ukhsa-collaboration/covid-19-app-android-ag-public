@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.util
 
 import android.os.Environment
+import android.util.Log
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import radiography.Radiography
@@ -12,7 +13,7 @@ class ScreenshotTakingRule : TestWatcher() {
 
     override fun failed(e: Throwable?, description: Description) {
         takeScreenshot(
-            parentFolderPath = "/failures/${description.className}",
+            parentFolderPath = description.className,
             screenshotName = description.methodName,
             failure = true
         )
@@ -24,9 +25,14 @@ class ScreenshotTakingRule : TestWatcher() {
 
         val outputFolder = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-            "covid19-failures/failures/${description.className}/"
+            "covid19/failures/${description.className}"
         )
         val file = File(outputFolder, "${description.methodName}.txt")
-        file.writeText(viewHierarchy)
+
+        try {
+            file.writeText(viewHierarchy)
+        } catch (e: Exception) {
+            Log.e("ScreenshotTakingRule", "Unable to store view hierarchy", e)
+        }
     }
 }

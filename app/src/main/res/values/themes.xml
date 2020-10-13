@@ -40,6 +40,31 @@
         <item name="toolbarColor">@color/nhs_blue</item>
         <item name="toolbarTextColor">?attr/colorOnPrimary</item>
         <item name="bottomSheetDialogTheme">@style/ExpandedBottomSheetDialog</item>
+
+        <item name="riskLevelNeutralPanelIconTint">@color/medium_grey</item>
+        <item name="riskLevelNeutralPanelBackgroundColor">@color/white</item>
+        <item name="riskLevelNeutralPanelTextColor">@color/dark_grey</item>
+        <item name="riskLevelNeutralPanelChevronColor">@color/dark_grey</item>
+
+        <item name="riskLevelGreenPanelIconTint">@color/dark_grey</item>
+        <item name="riskLevelGreenPanelBackgroundColor">@color/risk_green</item>
+        <item name="riskLevelGreenPanelTextColor">@color/dark_grey</item>
+        <item name="riskLevelGreenPanelChevronColor">@color/dark_grey</item>
+
+        <item name="riskLevelYellowPanelIconTint">@color/dark_grey</item>
+        <item name="riskLevelYellowPanelBackgroundColor">@color/risk_yellow</item>
+        <item name="riskLevelYellowPanelTextColor">@color/dark_grey</item>
+        <item name="riskLevelYellowPanelChevronColor">@color/dark_grey</item>
+
+        <item name="riskLevelAmberPanelIconTint">@color/dark_grey</item>
+        <item name="riskLevelAmberPanelBackgroundColor">@color/risk_amber</item>
+        <item name="riskLevelAmberPanelTextColor">@color/dark_grey</item>
+        <item name="riskLevelAmberPanelChevronColor">@color/dark_grey</item>
+
+        <item name="riskLevelRedPanelIconTint">@color/white</item>
+        <item name="riskLevelRedPanelBackgroundColor">@color/risk_red</item>
+        <item name="riskLevelRedPanelTextColor">@color/white</item>
+        <item name="riskLevelRedPanelChevronColor">@color/white</item>
     </style>
 
     <style name="ExpandedBottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">

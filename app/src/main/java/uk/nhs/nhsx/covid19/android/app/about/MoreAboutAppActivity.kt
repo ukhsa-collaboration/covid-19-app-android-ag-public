@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
-import uk.nhs.nhsx.covid19.android.app.util.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 
 class MoreAboutAppActivity : BaseActivity(R.layout.activity_more_about_app) {
 
@@ -28,7 +28,7 @@ class MoreAboutAppActivity : BaseActivity(R.layout.activity_more_about_app) {
     }
 
     private fun getReleaseDate(): String {
-        return "08/2020" // TODO Implement it when get enough info
+        return "09/2020" // TODO Implement it when get enough info
     }
 
     private fun setupListeners() {

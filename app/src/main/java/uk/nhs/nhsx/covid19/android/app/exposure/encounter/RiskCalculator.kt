@@ -12,20 +12,20 @@ class RiskCalculator(
     operator fun invoke(
         exposureInfos: List<ExposureInformation>,
         riskCalculation: RiskCalculation
-    ): Pair<Long, Double>? {
+    ): DayRisk? {
         Timber.d("DurationBucketWeights: ${riskCalculation.durationBucketWeights}")
 
         return exposureInfos.groupBy { it.dateMillisSinceEpoch }
             .toSortedMap(Comparator { o1: Long, o2: Long -> if (o1 < o2) 1 else if (o1 == o2) 0 else -1 })
-            .map { entry ->
-                val maxRisk = entry.value.map { exposureInformation ->
+            .map { (startOfDayMillis, exposures) ->
+                val maxRisk = exposures.map { exposureInformation ->
                     risk(
                         exposureInformation,
                         riskCalculation
                     )
                 }.max() ?: 0.0
-                entry.key to maxRisk
-            }.firstOrNull { it.second >= riskCalculation.riskThreshold }
+                DayRisk(startOfDayMillis, maxRisk)
+            }.firstOrNull { it.calculatedRisk >= riskCalculation.riskThreshold }
     }
 
     private fun risk(
@@ -55,3 +55,5 @@ class RiskCalculator(
 
     private fun minutesToSeconds(minutes: Int) = minutes * 60.0
 }
+
+data class DayRisk(val startOfDayMillis: Long, val calculatedRisk: Double)

@@ -12,4 +12,6 @@ enum class SupportedLanguage(val displayName: String, val code: String? = null) 
     CHINESE("Chinese", "zh"),
     ROMANIAN("Romanian", "ro"),
     TURKISH("Turkish", "tr"),
+    POLISH("Polish", "pl"),
+    SOMALI("Somali", "so"),
 }

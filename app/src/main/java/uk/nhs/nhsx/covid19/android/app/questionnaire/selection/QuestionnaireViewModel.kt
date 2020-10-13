@@ -21,8 +21,8 @@ class QuestionnaireViewModel @Inject constructor(
     var viewState = MutableLiveData<Lce<QuestionnaireState>>()
     fun viewState(): LiveData<Lce<QuestionnaireState>> = viewState
 
-    private val navigateToReviewScreen = SingleLiveEvent<List<Question>>()
-    fun navigateToReviewScreen(): LiveData<List<Question>> = navigateToReviewScreen
+    private val navigateToReviewScreen = SingleLiveEvent<QuestionnaireState>()
+    fun navigateToReviewScreen(): LiveData<QuestionnaireState> = navigateToReviewScreen
 
     fun loadQuestionnaire() {
         if (viewState.value is Lce.Success) {
@@ -54,55 +54,27 @@ class QuestionnaireViewModel @Inject constructor(
     }
 
     fun toggleQuestion(updatedQuestion: Question) {
+        val currentViewState = viewState.value!!.data!!
         val toggledQuestion = updatedQuestion.copy(isChecked = !updatedQuestion.isChecked)
-        val questions = getQuestions() ?: return
-        val riskThreshold = getRiskThreshold()
-        val symptomsOnsetWindowDays = getSymptomsOnsetWindowDays()
-        val updatedQuestions = questions.map { question ->
+        val updatedQuestions = currentViewState.questions.map { question ->
             if (question.symptom == updatedQuestion.symptom) {
                 toggledQuestion
             } else {
                 question
             }
         }
-        val state = QuestionnaireState(updatedQuestions, riskThreshold, symptomsOnsetWindowDays, showError = false)
-        viewState.postValue(Lce.Success(state))
+        val updatedViewState =
+            currentViewState.copy(questions = updatedQuestions, showError = false)
+        viewState.postValue(Lce.Success(updatedViewState))
     }
 
     fun onButtonReviewSymptomsClicked() {
-        val questions = getQuestions() ?: return
-        val riskThreshold = getRiskThreshold()
-        val symptomsOnsetWindowDays = getSymptomsOnsetWindowDays()
-        if (questions.any { it.isChecked }) {
-            navigateToReviewScreen.postValue(questions)
+        val currentViewState = viewState.value!!.data!!
+        if (currentViewState.questions.any { it.isChecked }) {
+            navigateToReviewScreen.postValue(currentViewState.copy(showError = false))
         } else {
-            val state = QuestionnaireState(questions, riskThreshold, symptomsOnsetWindowDays, showError = true)
-            viewState.postValue(Lce.Success(state))
+            viewState.postValue(Lce.Success(currentViewState.copy(showError = true)))
         }
-    }
-
-    private fun getQuestions(): List<Question>? {
-        val result = viewState.value
-        if (result is Lce.Success) {
-            return result.data.questions
-        }
-        return null
-    }
-
-    fun getRiskThreshold(): Float {
-        val result = viewState.value
-        if (result is Lce.Success) {
-            return result.data.riskThreshold
-        }
-        return 0.0F
-    }
-
-    fun getSymptomsOnsetWindowDays(): Int {
-        val result = viewState.value
-        if (result is Lce.Success) {
-            return result.data.symptomsOnsetWindowDays
-        }
-        return 14
     }
 }
 

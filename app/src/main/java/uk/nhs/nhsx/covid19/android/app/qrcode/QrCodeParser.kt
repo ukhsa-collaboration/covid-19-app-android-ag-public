@@ -75,6 +75,7 @@ class QrCodeParser @Inject constructor(
 
             val undecoratedString = signatureKey.pemRepresentation
                 .split("\n")
+                .map { it.trim() }
                 .filter { !(it.isEmpty() || it.startsWith("-----")) }
                 .joinToString("")
             val publicKeyBytes: ByteArray = base64Decoder.decodeToBytes(undecoratedString)
@@ -84,7 +85,7 @@ class QrCodeParser @Inject constructor(
             Jwts.parserBuilder()
                 .setSigningKey(publicKey)
                 .build()
-                .parse(jwtString)
+                .parseClaimsJws(jwtString)
             true
         }.getOrElse {
             print(it)

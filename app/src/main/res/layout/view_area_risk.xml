@@ -13,7 +13,7 @@
         android:layout_height="24dp"
         android:contentDescription="@null"
         android:scaleType="centerInside"
-        tools:src="@drawable/ic_location_green" />
+        tools:src="@drawable/ic_location_secondary_grey" />
 
     <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
         android:id="@+id/areaRiskText"

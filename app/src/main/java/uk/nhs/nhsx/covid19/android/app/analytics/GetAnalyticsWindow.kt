@@ -10,18 +10,17 @@ class GetAnalyticsWindow(private val clock: Clock) {
     @Inject
     constructor() : this(Clock.systemUTC())
 
-    operator fun invoke(): Pair<Instant, Instant> =
-        getLastCompletedWindowStart() to getLastCompletedWindowEnd()
+    operator fun invoke(instant: Instant = Instant.now(clock)): Pair<Instant, Instant> =
+        getWindowStart(instant) to getWindowEnd(instant)
 
-    fun getCurrentWindowEnd(): Instant {
-        return Instant.now(clock).truncatedTo(ChronoUnit.DAYS).plus(1, ChronoUnit.DAYS)
+    fun getLastWindow(): Pair<Instant, Instant> =
+        invoke(Instant.now(clock).minus(1, ChronoUnit.DAYS))
+
+    private fun getWindowStart(instant: Instant): Instant {
+        return instant.truncatedTo(ChronoUnit.DAYS)
     }
 
-    private fun getLastCompletedWindowStart(): Instant {
-        return Instant.now(clock).truncatedTo(ChronoUnit.DAYS).minus(1, ChronoUnit.DAYS)
-    }
-
-    private fun getLastCompletedWindowEnd(): Instant {
-        return Instant.now(clock).truncatedTo(ChronoUnit.DAYS)
+    private fun getWindowEnd(instant: Instant): Instant {
+        return instant.truncatedTo(ChronoUnit.DAYS).plus(1, ChronoUnit.DAYS)
     }
 }

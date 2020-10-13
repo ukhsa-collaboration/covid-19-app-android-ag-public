@@ -6,6 +6,7 @@ import org.junit.Test.None
 import uk.nhs.covid19.config.SignatureKey
 import uk.nhs.nhsx.covid19.android.app.utils.Java8Base64Decoder
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class QrCodeParserTest {
 
@@ -113,8 +114,33 @@ class QrCodeParserTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
+    fun `QR code with missing signature is rejected`() {
+        val payload =
+            "UKC19TRACING:1:eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjMifQ.eyJpZCI6IjRXVDU5TTVZIiwib3BuIjoiTXkgR292ZXJubWVudCBPZmZpY2UgT2YgSHVtYW4gUmVzb3VyY2VzIn0."
+        testSubject.parse(payload)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
     fun `invalid QR code with non base64 encoded payload`() {
         val payload = "UKC19TRACING:1:$§fg§:"
         testSubject.parse(payload)
+    }
+
+    @Test
+    fun `QR code with alg-none is rejected`() {
+        val testSubject = QrCodeParser(base64Decoder, moshi, signatureKey)
+
+        assertFailsWith(IllegalArgumentException::class, "QR code signature validation failed") {
+            testSubject.parse("UKC19TRACING:1:eyJhbGciOiJub25lIiwidHlwIjoiSldUIiwia2lkIjoiMyJ9.eyJpZCI6IkZBS0VfSUQiLCJ0eXAiOiJlbnRyeSIsIm9wbiI6IkZBS0UgTkFNRSIsImFkciI6IkZBS0UgQUREUkVTUyIsInB0IjoiVU5JVEVEIEtJTkdET00iLCJwYyI6IkZBSyJ9.ZX2PHtcxFmNwyrHRIbtcQCAHdhwUTb1h1GqVTNqAK7WiE_qO1nbJVU3BWvRu15DR6WBF14MN1I8yC6B1uK7ghg")
+        }
+    }
+
+    @Test
+    fun `QR code with alg-none no signature is rejected`() {
+        val testSubject = QrCodeParser(base64Decoder, moshi, signatureKey)
+
+        assertFailsWith(IllegalArgumentException::class, "QR code signature validation failed") {
+            testSubject.parse("UKC19TRACING:1:eyJhbGciOiJub25lIiwidHlwIjoiSldUIiwia2lkIjoiMyJ9.eyJpZCI6IkZBS0VfSUQiLCJ0eXAiOiJlbnRyeSIsIm9wbiI6IkZBS0UgTkFNRSIsImFkciI6IkZBS0UgQUREUkVTUyIsInB0IjoiVU5JVEVEIEtJTkdET00iLCJwYyI6IkZBSyJ9.")
+        }
     }
 }

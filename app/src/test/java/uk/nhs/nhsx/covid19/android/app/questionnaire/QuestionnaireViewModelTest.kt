@@ -15,7 +15,6 @@ import uk.nhs.nhsx.covid19.android.app.common.Lce
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
 import uk.nhs.nhsx.covid19.android.app.common.Translatable
-import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.LoadQuestionnaire
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireState
@@ -24,6 +23,7 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
 import uk.nhs.nhsx.covid19.android.app.remote.data.QuestionnaireResponse
 
 class QuestionnaireViewModelTest {
+
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -33,7 +33,7 @@ class QuestionnaireViewModelTest {
         mockk<Observer<Lce<QuestionnaireState>>>(relaxed = true)
 
     private val navigateToReviewScreenObserver =
-        mockk<Observer<List<Question>>>(relaxed = true)
+        mockk<Observer<QuestionnaireState>>(relaxed = true)
 
     private val testSubject =
         QuestionnaireViewModel(
@@ -198,20 +198,15 @@ class QuestionnaireViewModelTest {
             question("S1", true),
             question("S2", true)
         )
-        val state = Lce.Success(
-            QuestionnaireState(
-                questions,
-                1.0f,
-                14,
-                false
-            )
-        )
-        testSubject.viewState.postValue(state)
+        val viewState = QuestionnaireState(questions, 1.0f, 14, false)
+        val response = Lce.Success(viewState)
+
+        testSubject.viewState.postValue(response)
         testSubject.navigateToReviewScreen().observeForever(navigateToReviewScreenObserver)
 
         testSubject.onButtonReviewSymptomsClicked()
 
-        verify { navigateToReviewScreenObserver.onChanged(questions) }
+        verify { navigateToReviewScreenObserver.onChanged(viewState) }
     }
 
     private fun question(name: String, checked: Boolean): Question {
@@ -220,6 +215,6 @@ class QuestionnaireViewModelTest {
             description = Translatable(mapOf("en-GB" to "")),
             riskWeight = 1.0
         )
-        return ReviewSymptomItem.Question(symptom, checked)
+        return Question(symptom, checked)
     }
 }

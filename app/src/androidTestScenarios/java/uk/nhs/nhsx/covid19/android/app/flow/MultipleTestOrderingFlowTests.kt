@@ -15,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
@@ -76,7 +77,9 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
         testAppContext.virologyTestingApi.testResultForPollingToken =
             mutableMapOf(firstToken to NEGATIVE)
 
-        testAppContext.getPeriodicTasks().scheduleVirologyTestResultFetching()
+        runBlocking {
+            testAppContext.getDownloadVirologyTestResultWork().invoke()
+        }
 
         waitFor { testResultRobot.checkActivityDisplaysNegativeAndFinishIsolation() }
 
@@ -87,7 +90,9 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
         testAppContext.virologyTestingApi.testResultForPollingToken =
             mutableMapOf(secondToken to POSITIVE)
 
-        testAppContext.getPeriodicTasks().scheduleVirologyTestResultFetching()
+        runBlocking {
+            testAppContext.getDownloadVirologyTestResultWork().invoke()
+        }
 
         waitFor { testResultRobot.checkActivityDisplaysPositiveAndFinishIsolation() }
 
@@ -129,7 +134,9 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
         testAppContext.virologyTestingApi.testResultForPollingToken =
             mutableMapOf(firstToken to NEGATIVE)
 
-        testAppContext.getPeriodicTasks().scheduleVirologyTestResultFetching()
+        runBlocking {
+            testAppContext.getDownloadVirologyTestResultWork().invoke()
+        }
 
         waitFor { testResultRobot.checkActivityDisplaysNegativeAndFinishIsolation() }
 
@@ -140,7 +147,9 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
         testAppContext.virologyTestingApi.testResultForPollingToken =
             mutableMapOf(secondToken to NEGATIVE)
 
-        testAppContext.getPeriodicTasks().scheduleVirologyTestResultFetching()
+        runBlocking {
+            testAppContext.getDownloadVirologyTestResultWork().invoke()
+        }
 
         waitFor { testResultRobot.checkActivityDisplaysNegativeAndAlreadyFinishedIsolation() }
 
@@ -149,6 +158,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
         assertTrue { testAppContext.getCurrentState() is Default }
     }
 
+    @RetryFlakyTest
     @Test
     fun startIndexCase_receiveMultipleTestResultsAtTheSameTime() = notReported {
         testAppContext.setState(

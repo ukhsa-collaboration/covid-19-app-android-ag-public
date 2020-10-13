@@ -32,6 +32,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
+import uk.nhs.nhsx.covid19.android.app.remote.MockQuestionnaireApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
 import uk.nhs.nhsx.covid19.android.app.state.Event
@@ -43,6 +44,7 @@ import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import uk.nhs.nhsx.covid19.android.app.util.getPrivateProperty
 import java.util.Locale
+import java.time.Clock
 import java.util.concurrent.atomic.AtomicReference
 
 class TestApplicationContext {
@@ -50,6 +52,8 @@ class TestApplicationContext {
     val app: ExposureApplication = ApplicationProvider.getApplicationContext()
 
     val virologyTestingApi = MockVirologyTestingApi()
+
+    val questionnaireApi = MockQuestionnaireApi()
 
     internal val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
@@ -88,7 +92,7 @@ class TestApplicationContext {
             )
         )
         .networkModule(NetworkModule(Configurations.qa, additionalInterceptors))
-        .managedApiModule(ManagedApiModule(virologyTestingApi))
+        .managedApiModule(ManagedApiModule(virologyTestingApi, questionnaireApi))
         .build()
 
     init {
@@ -106,6 +110,7 @@ class TestApplicationContext {
         sharedPreferences.edit { clear() }
 
         setExposureNotificationsEnabled(true)
+        setOnboardingCompleted(true)
         setBluetoothEnabled(true)
         setLocationEnabled(true)
 
@@ -146,6 +151,13 @@ class TestApplicationContext {
     fun getCurrentState(): State =
         component.provideIsolationStateMachine().readState()
 
+    fun setStateMachineClock(clock: Clock) {
+        component.provideIsolationStateMachine().setClock(clock)
+    }
+
+    fun getExposureNotificationTokenProvider() =
+        component.getExposureNotificationsTokenProvider()
+
     fun getVisitedVenuesStorage(): VisitedVenuesStorage {
         return component.provideVisitedVenuesStorage()
     }
@@ -165,6 +177,9 @@ class TestApplicationContext {
         return component.providePeriodicTasks()
     }
 
+    fun getDisplayStateExpirationNotification() =
+        component.provideDisplayStateExpirationNotification()
+
     fun getIsolationConfigurationProvider() =
         component.getIsolationConfigurationProvider()
 
@@ -180,6 +195,10 @@ class TestApplicationContext {
         val config = Configuration(res.configuration)
         config.locale = locale
         res.updateConfiguration(config, res.displayMetrics)
+    }
+
+    fun setOnboardingCompleted(completed: Boolean) {
+        component.provideOnboardingCompleted().value = completed
     }
 }
 

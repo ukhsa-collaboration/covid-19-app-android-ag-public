@@ -23,26 +23,15 @@ import kotlinx.android.synthetic.scenarios.activity_debug.scenarioOnboarding
 import kotlinx.android.synthetic.scenarios.activity_debug.scenario_main
 import kotlinx.android.synthetic.scenarios.activity_debug.screenButtonContainer
 import kotlinx.android.synthetic.scenarios.activity_debug.statusScreen
-import uk.nhs.covid19.config.Configurations
-import uk.nhs.covid19.config.EnvironmentConfiguration
-import uk.nhs.covid19.config.Remote
-import uk.nhs.covid19.config.production
-import uk.nhs.covid19.config.qrCodesSignatureKey
 import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
 import uk.nhs.nhsx.covid19.android.app.about.MoreAboutAppActivity
 import uk.nhs.nhsx.covid19.android.app.about.UserDataActivity
-import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.common.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableExposureNotificationsActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableLocationActivity
-import uk.nhs.nhsx.covid19.android.app.di.DaggerMockApplicationComponent
-import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
-import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
-import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
+import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.edgecases.TabletNotSupportedActivity
-import uk.nhs.nhsx.covid19.android.app.exposure.GoogleExposureNotificationApi
-import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
 import uk.nhs.nhsx.covid19.android.app.featureflag.testsettings.TestSettingsActivity
@@ -62,25 +51,21 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
-import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
-import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
-import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.LOW
+import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.GREEN
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
+import uk.nhs.nhsx.covid19.android.app.status.IsolationPaymentActivity
 import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
-import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
 import java.time.LocalDate
 
 class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
-    private lateinit var selectedEnvironment: EnvironmentConfiguration
     private lateinit var debugSharedPreferences: SharedPreferences
-    private var isMockNetwork = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
@@ -89,8 +74,6 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         setSupportActionBar(toolbar)
 
         debugSharedPreferences = getSharedPreferences(DEBUG_PREFERENCES_NAME, Context.MODE_PRIVATE)
-
-        isMockNetwork = environmentSpinner.selectedItemPosition == 0
 
         setupEnvironmentSpinner()
 
@@ -106,20 +89,14 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
     }
 
     private fun setupEnvironmentSpinner() {
-        val environments = mutableListOf<EnvironmentConfiguration>().apply {
-            add(
-                EnvironmentConfiguration(
-                    name = "Mock",
-                    distributedRemote = Remote("localhost", path = null),
-                    apiRemote = Remote("localhost", path = null)
-                )
-            )
-            addAll(Configurations.allConfigs)
-            add(production)
-        }
+        val environments = scenariosApp.environments
         val environmentsAdapter = EnvironmentAdapter(this, environments)
 
         environmentSpinner.adapter = environmentsAdapter
+        val selectedEnvironment = debugSharedPreferences.getInt(SELECTED_ENVIRONMENT, 0)
+            .coerceIn(0, environments.size - 1)
+        environmentSpinner.setSelection(selectedEnvironment)
+
         environmentSpinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
@@ -131,30 +108,20 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
                 id: Long
             ) {
                 debugSharedPreferences.edit().putInt(SELECTED_ENVIRONMENT, position).apply()
-                selectedEnvironment = environments[position]
-                isMockNetwork = position == 0
-
-                setApplicationComponent(isMockNetwork, exposureNotificationMocks.isChecked)
+                scenariosApp.updateDependencyGraph()
             }
-        }
-
-        val selectedEnvironment = debugSharedPreferences.getInt(SELECTED_ENVIRONMENT, 0)
-            .coerceIn(0, environments.size - 1)
-        environmentSpinner.setSelection(selectedEnvironment)
-    }
-
-    private fun setupFeatureFlagButton() {
-        buttonFeatureFlags.setOnClickListener {
-            startActivity(Intent(this, TestSettingsActivity::class.java))
         }
     }
 
     private fun setupExposureNotificationCheckbox() {
+        val useMockedExposureNotifications =
+            debugSharedPreferences.getBoolean(USE_MOCKED_EXPOSURE_NOTIFICATION, false)
+        exposureNotificationMocks.isChecked = useMockedExposureNotifications
+
         exposureNotificationMocks.setOnCheckedChangeListener { _, isChecked ->
-            setApplicationComponent(
-                useMockNetwork = environmentSpinner.selectedItemPosition == 0,
-                useMockExposureApi = isChecked
-            )
+            debugSharedPreferences.edit().putBoolean(USE_MOCKED_EXPOSURE_NOTIFICATION, isChecked)
+                .apply()
+            scenariosApp.updateDependencyGraph()
         }
     }
 
@@ -183,8 +150,14 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
                 debugSharedPreferences.edit()
                     .putString(SELECTED_LANGUAGE, selectedLanguage.code).apply()
 
-                setApplicationComponent(isMockNetwork, exposureNotificationMocks.isChecked)
+                scenariosApp.updateDependencyGraph()
             }
+        }
+    }
+
+    private fun setupFeatureFlagButton() {
+        buttonFeatureFlags.setOnClickListener {
+            startActivity(Intent(this, TestSettingsActivity::class.java))
         }
     }
 
@@ -207,6 +180,9 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
     }
 
     private fun setupScreenButtons() {
+        addScreenButton("Isolation Payment") {
+            startActivity<IsolationPaymentActivity>()
+        }
         addScreenButton("Post code") {
             PostCodeActivity.start(this)
         }
@@ -312,9 +288,20 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
                 this,
                 RiskyPostCodeViewState.Risk(
                     "CM2",
-                    R.string.status_area_risk_level,
-                    R.string.status_area_risk_level_low,
-                    LOW
+                    RiskIndicator(
+                        colorScheme = GREEN,
+                        name = Translatable(mapOf("en" to "Tier1")),
+                        heading = Translatable(mapOf("en" to "Data from the NHS shows that the spread of coronavirus in your area is low.")),
+                        content = Translatable(
+                            mapOf(
+                                "en" to "Your local authority has normal measures for coronavirus in place. It’s important that you continue to follow the latest official government guidance to help control the virus.\n" +
+                                    "\n" +
+                                    "Find out the restrictions for your local area to help reduce the spread of coronavirus."
+                            )
+                        ),
+                        linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
+                        linkUrl = Translatable(mapOf("en" to "https://faq.covid19.nhs.uk/article/KA-01270/en-us"))
+                    )
                 )
             )
         }
@@ -325,6 +312,19 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
         addScreenButton("Link test result") {
             startActivity<LinkTestResultActivity>()
+        }
+
+        addScreenButton("Show all notifications") {
+            val notifications = app.appComponent.provideNotificationProvider()
+            notifications.showPotentialExposureExplanationNotification()
+            notifications.showAppIsAvailable()
+            notifications.showAppIsNotAvailable()
+            notifications.showAreaRiskChangedNotification()
+            notifications.showExposureNotification()
+            notifications.showExposureNotificationReminder()
+            notifications.showRiskyVenueVisitNotification()
+            notifications.showStateExpirationNotification()
+            notifications.showTestResultsReceivedNotification()
         }
     }
 
@@ -353,62 +353,11 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
     }
 
-    private fun getConfiguration(): EnvironmentConfiguration = selectedEnvironment
-
-    private fun setApplicationComponent(
-        useMockNetwork: Boolean,
-        useMockExposureApi: Boolean
-    ) =
-        if (useMockNetwork) useMockApplicationComponent(useMockExposureApi) else useRegularApplicationComponent(
-            useMockExposureApi
-        )
-
-    private fun useRegularApplicationComponent(useMockExposureApi: Boolean) {
-        app.buildAndUseAppComponent(
-            NetworkModule(getConfiguration(), additionalInterceptors),
-            getExposureNotificationApi(useMockExposureApi),
-            languageCode = debugSharedPreferences.getString(SELECTED_LANGUAGE, null)
-        )
-    }
-
-    private fun useMockApplicationComponent(useMockExposureApi: Boolean) {
-        val sharedPreferences = EncryptionUtils
-            .createEncryptedSharedPreferences(
-                this,
-                EncryptionUtils.getDefaultMasterKey(),
-                "mockedEncryptedSharedPreferences"
-            )
-        val encryptedFile = EncryptionUtils.createEncryptedFile(this, "venues")
-        val languageCode = debugSharedPreferences.getString(SELECTED_LANGUAGE, null)
-        app.appComponent =
-            DaggerMockApplicationComponent.builder()
-                .appModule(
-                    AppModule(
-                        applicationContext,
-                        getExposureNotificationApi(useMockExposureApi),
-                        AndroidBluetoothStateProvider(),
-                        AndroidLocationStateProvider(),
-                        sharedPreferences,
-                        encryptedFile,
-                        qrCodesSignatureKey,
-                        ApplicationLocaleProvider(sharedPreferences, languageCode)
-                    )
-                )
-                .mockApiModule(MockApiModule())
-                .networkModule(NetworkModule(getConfiguration(), additionalInterceptors))
-                .build()
-        app.updateLifecycleListener()
-    }
-
-    private fun getExposureNotificationApi(useMockExposureApi: Boolean) =
-        if (useMockExposureApi) MockExposureNotificationApi() else GoogleExposureNotificationApi(
-            this
-        )
-
     companion object {
         const val DEBUG_PREFERENCES_NAME = "debugPreferences"
         const val SELECTED_ENVIRONMENT = "SELECTED_ENVIRONMENT"
         const val SELECTED_LANGUAGE = "SELECTED_LANGUAGE"
+        const val USE_MOCKED_EXPOSURE_NOTIFICATION = "USE_MOCKED_EXPOSURE_NOTIFICATION"
 
         fun start(context: Context) = context.startActivity(getIntent(context))
 

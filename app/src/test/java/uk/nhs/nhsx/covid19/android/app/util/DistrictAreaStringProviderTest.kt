@@ -35,4 +35,26 @@ class DistrictAreaStringProviderTest {
 
         assertEquals(expected, actual)
     }
+
+    @Test
+    fun `provide for Wales when no key in map returns original resource id`() {
+        every { postalDistrictProvider.toPostalDistrict() } returns PostCodeDistrict.WALES
+
+        val actual = testSubject.provide(R.string.tablet_information_url)
+
+        val expected = R.string.tablet_information_url
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `when provided postal district is null returns original resource id`() {
+        every { postalDistrictProvider.toPostalDistrict() } returns null
+
+        val actual = testSubject.provide(R.string.privacy_notice)
+
+        val expected = R.string.privacy_notice
+
+        assertEquals(expected, actual)
+    }
 }

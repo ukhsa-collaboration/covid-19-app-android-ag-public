@@ -6,6 +6,7 @@ import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
 import uk.nhs.nhsx.covid19.android.app.report.Reporter
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.report.reporter
+import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.DataAndPrivacyRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PermissionRobot
@@ -52,7 +53,7 @@ class OnboardingScenarioTest : EspressoTest() {
 
         welcomeRobot.clickConfirmAgePositive()
 
-        dataAndPrivacyRobot.checkActivityIsDisplayed()
+        waitFor { dataAndPrivacyRobot.checkActivityIsDisplayed() }
 
         step(
             "Data and privacy",
@@ -96,6 +97,7 @@ class OnboardingScenarioTest : EspressoTest() {
         )
     }
 
+    @RetryFlakyTest
     @Test
     fun onboardingAgeConfirmationNegative_showAgeRestrictionScreen() = reporter(
         "Onboarding",

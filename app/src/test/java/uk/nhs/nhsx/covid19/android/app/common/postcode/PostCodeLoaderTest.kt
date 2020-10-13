@@ -11,6 +11,7 @@ import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import java.io.IOException
 import kotlin.test.assertEquals
 
 class PostCodeLoaderTest {
@@ -52,8 +53,17 @@ class PostCodeLoaderTest {
     }
 
     @Test
-    fun `read list form json returns empty if json is null`() = runBlocking {
+    fun `read list from json returns empty if json is null`() = runBlocking {
         every { moshiAdapter.fromJson(any<String>()) } returns null
+
+        val result = testSubject.loadPostCodes()
+
+        assertEquals(mapOf(), result)
+    }
+
+    @Test
+    fun `read list from json throws exception which returns empty map`() = runBlocking {
+        every { assetManager.open("postalDistricts.json") } throws IOException()
 
         val result = testSubject.loadPostCodes()
 

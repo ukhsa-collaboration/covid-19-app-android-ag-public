@@ -69,6 +69,31 @@
         <attr name="splashScreenColor" format="color" />
         <attr name="toolbarColor" format="color" />
         <attr name="toolbarTextColor" format="color" />
+
+        <attr name="riskLevelNeutralPanelIconTint" format="color" />
+        <attr name="riskLevelNeutralPanelTextColor" format="color" />
+        <attr name="riskLevelNeutralPanelBackgroundColor" format="color" />
+        <attr name="riskLevelNeutralPanelChevronColor" format="color" />
+
+        <attr name="riskLevelGreenPanelIconTint" format="color" />
+        <attr name="riskLevelGreenPanelTextColor" format="color" />
+        <attr name="riskLevelGreenPanelBackgroundColor" format="color" />
+        <attr name="riskLevelGreenPanelChevronColor" format="color" />
+
+        <attr name="riskLevelYellowPanelIconTint" format="color" />
+        <attr name="riskLevelYellowPanelTextColor" format="color" />
+        <attr name="riskLevelYellowPanelBackgroundColor" format="color" />
+        <attr name="riskLevelYellowPanelChevronColor" format="color" />
+
+        <attr name="riskLevelAmberPanelIconTint" format="color" />
+        <attr name="riskLevelAmberPanelTextColor" format="color" />
+        <attr name="riskLevelAmberPanelBackgroundColor" format="color" />
+        <attr name="riskLevelAmberPanelChevronColor" format="color" />
+
+        <attr name="riskLevelRedPanelIconTint" format="color" />
+        <attr name="riskLevelRedPanelTextColor" format="color" />
+        <attr name="riskLevelRedPanelBackgroundColor" format="color" />
+        <attr name="riskLevelRedPanelChevronColor" format="color" />
     </declare-styleable>
     <declare-styleable name="LogoView">
         <attr name="isAccessibilityHeadingCompat" format="boolean" />

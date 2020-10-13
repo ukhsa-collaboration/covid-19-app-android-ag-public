@@ -32,6 +32,6 @@ class DownloadRiskyPostCodesWorker(
 
         analyticsEventProcessor.track(BackgroundTaskCompletion)
 
-        return downloadRiskyPostCodesWork.doWork()
+        return downloadRiskyPostCodesWork()
     }
 }

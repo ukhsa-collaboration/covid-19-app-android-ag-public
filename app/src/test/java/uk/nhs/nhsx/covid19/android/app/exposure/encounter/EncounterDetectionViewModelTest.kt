@@ -13,6 +13,7 @@ import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEn
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
+import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import java.time.Instant
@@ -61,5 +62,14 @@ class EncounterDetectionViewModelTest {
         verify { userInbox.clearItem(ShowEncounterDetection) }
 
         verify { resultObserver.onChanged(ExposedNotificationResult.ConsentConfirmation) }
+    }
+
+    @Test
+    fun `state is Default`() {
+        every { isolationStateMachine.readState() } returns Default()
+
+        testSubject.getIsolationDays()
+
+        verify(exactly = 0) { resultObserver.onChanged(any()) }
     }
 }
