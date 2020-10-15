@@ -111,7 +111,7 @@ class NotificationProvider @Inject constructor(private val context: Context) {
         createNotificationChannel(
             channelId = BACKGROUND_WORK_CHANNEL_ID,
             channelNameResId = R.string.notification_channel_background_work_name,
-            importance = NotificationManagerCompat.IMPORTANCE_LOW,
+            importance = NotificationManagerCompat.IMPORTANCE_NONE,
             channelDescriptionResId = R.string.notification_channel_background_work_description
         )
     }
