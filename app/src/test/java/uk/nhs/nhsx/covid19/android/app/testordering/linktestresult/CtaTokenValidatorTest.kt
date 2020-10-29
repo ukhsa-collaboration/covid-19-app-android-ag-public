@@ -1,10 +1,12 @@
 package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody.Companion.toResponseBody
+import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
@@ -22,15 +24,32 @@ import kotlin.test.assertEquals
 
 class CtaTokenValidatorTest {
 
-    private val virologyTestingApi = mockk<VirologyTestingApi>(relaxed = true)
+    private val virologyTestingApi = mockk<VirologyTestingApi>()
+    private val crockfordDammValidator = mockk<CrockfordDammValidator>()
 
-    private val testSubject = CtaTokenValidator(virologyTestingApi)
+    private val testSubject = CtaTokenValidator(virologyTestingApi, crockfordDammValidator)
+
+    @Before
+    fun setUp() {
+        every { crockfordDammValidator.validate(any()) } returns true
+    }
 
     @Test
     fun `cta token length wrong`() = runBlocking {
         val ctaToken = ""
 
         val result = testSubject.validate(ctaToken)
+
+        assertEquals(Failure(INVALID), result)
+    }
+
+    @Test
+    fun `crockford damm validator returns false`() = runBlocking {
+        every { crockfordDammValidator.validate(any()) } returns false
+
+        val invalidCtaToken = "12345678"
+
+        val result = testSubject.validate(invalidCtaToken)
 
         assertEquals(Failure(INVALID), result)
     }

@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <include layout="@layout/view_toolbar_primary" />
@@ -18,6 +20,14 @@
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/margin_horizontal"
             android:paddingVertical="@dimen/vertical_margin_large">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:layout_marginBottom="16dp"
+                app:rawText="@string/qr_code_intro_text" />
+
 
             <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
                 android:id="@+id/qrCodeHelpTitle"
@@ -78,34 +88,6 @@
                 android:contentDescription="@string/qr_code_help_poster_content_description_welsh"
                 android:scaleType="fitStart"
                 android:src="@drawable/qr_code_help_poster_welsh" />
-
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
-                style="@style/Title3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin_large"
-                android:text="@string/qr_code_help_how_it_works" />
-
-            <TextView
-                style="@style/Body1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:text="@string/qr_code_help_how_it_works_text" />
-
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
-                style="@style/Title3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin_large"
-                android:text="@string/qr_code_help_how_it_helps_title" />
-
-            <TextView
-                style="@style/Body1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:text="@string/qr_code_help_how_it_helps_text" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -85,7 +85,7 @@
     <string name="test_ordering_description_2">到达那里后，系统会要求您填写一些个人详细信息（例如您的地址），以便您可以得到测试。不过，不会共享您在应用程序或网站上输入的任何内容。</string>
     <string name="test_ordering_description_3">应用程序和网站之间共享的唯一信息是数字“令牌（token)”，可帮助我们将您的测试结果返回给应用程序。</string>
     <string name="test_ordering_description_4">隐私声明中描述了测试过程中使用的所有数据：</string>
-    <string name="book_free_test_now">立即预订免费测试</string>
+    <string name="book_free_test_now">请为您自己预定检测</string>
     <string name="about_this_app_title">该应用程序说明</string>
     <string name="title_how_app_works">这个应用程序是如何运作的</string>
     <string name="about_how_this_app_works_link">这个应用程序是如何运作的</string>
@@ -168,7 +168,7 @@
     <string name="enable_exposure_notifications_rationale">本应用程序使用“暴露通知”功能来通知您是否与冠状病毒检测呈阳性的本应用程序的其他用户有过接触。 \n\n您的手机可能会将这一功能显示为“暴露通知”或“暴露记录”</string>
     <string name="enable_exposure_notifications">启用曝光通知</string>
     <string name="scan_qr_code_to_check_in">通过扫描官方的NHS QR码场所签到</string>
-    <string name="how_to_scan_qr_code">如何扫描NHS官方QR码</string>
+    <string name="how_to_scan_qr_code">如何扫描官方的 NHS QR码</string>
     <string name="qr_code_success_title">成功签到</string>
     <string name="something_went_wrong">出了点问题</string>
     <string name="test_ordering_failure_title">出了点问题</string>
@@ -276,7 +276,7 @@
     <string name="link_test_result_text">如果您从应用程序预订了测试，则无需执行此操作。</string>
     <string name="link_test_result_enter_code_title">输入您的测试代码</string>
     <string name="about_provide_feedback_link">反馈信息</string>
-    <string name="qr_code_help_text">如果您进入一个有官方 NHS QR 码海报的场所（例如，酒吧或餐馆），请使用该应用程序来进行扫码。 该应用程序会记录您进入场所的时间。\n\n通过使用该场所签到功能，如果携带冠状病毒的人在相同时间到访过同一场所，您就会接到一个通知。  通知将会包括相关建议，例如，留心冠状病毒症状。\n\n如果您不能扫描QR，需要通过其他方式进行检查，请与工作人员说明。</string>
+    <string name="qr_code_help_text">如果您不能扫描QR，需要通过其他方式进行检查，请与工作人员说明。</string>
     <string name="qr_code_help_about_qr_code_title">如何识别官方NHS QR码？</string>
     <string name="qr_code_help_about_qr_code_text">这是官方NHS QR码的海报。用您手机摄像头扫描中间那个正方形的QR码。</string>
     <string name="link_test_result_enter_code_example">例如：7g8s3stn</string>
@@ -350,4 +350,6 @@
     <string name="test_result_negative_no_self_isolation_subtitle_text">您的冠状病毒测试结果为阴性</string>
     <string name="notification_text_potential_exposure_explanation">不用担心，我们已经评估了您的风险，目前无需采取任何措施。 请继续保持警惕，并遵循有关社交距离的最新建议。</string>
     <string name="notification_title_potential_exposure_explanation">COVID-19暴露检查完成</string>
+    <string name="qr_code_intro_text">如果您进入一个有官方 NHS QR 码海报的场所（例如，酒吧或餐馆），请使用该应用程序来进行扫码。 该应用程序会记录您进入场所的时间。\n\n通过使用该场所签到功能，如果携带冠状病毒的人在相同时间到访过同一场所，您就会接到一个通知。  通知将会包括相关建议，例如，留心冠状病毒症状。</string>
+    <string name="venue_check_in_title">有关场所签到的更多信息</string>
 </resources>

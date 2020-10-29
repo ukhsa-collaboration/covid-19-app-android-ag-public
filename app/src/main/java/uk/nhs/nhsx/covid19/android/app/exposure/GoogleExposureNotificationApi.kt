@@ -4,9 +4,10 @@ import android.content.Context
 import android.util.Base64
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.Nearby
+import com.google.android.gms.nearby.exposurenotification.DiagnosisKeysDataMapping
 import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
 import com.google.android.gms.nearby.exposurenotification.ExposureInformation
-import com.google.android.gms.nearby.exposurenotification.ExposureSummary
+import com.google.android.gms.nearby.exposurenotification.ExposureWindow
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -38,6 +39,15 @@ class GoogleExposureNotificationApi(context: Context) : ExposureNotificationApi 
         }
     }
 
+    override suspend fun version(): Long? {
+        return try {
+            exposureNotificationClient.version.await()
+        } catch (exception: Exception) {
+            Timber.e(exception, "Can't get version")
+            null
+        }
+    }
+
     override suspend fun temporaryExposureKeyHistory(): List<NHSTemporaryExposureKey> =
         exposureNotificationClient.temporaryExposureKeyHistory.await()
             .map { it.toNHSTemporaryExposureKey() }
@@ -53,11 +63,22 @@ class GoogleExposureNotificationApi(context: Context) : ExposureNotificationApi 
         exposureNotificationClient.provideDiagnosisKeys(files, exposureConfiguration, token).await()
     }
 
+    override suspend fun provideDiagnosisKeys(files: List<File>) {
+        exposureNotificationClient.provideDiagnosisKeys(files).await()
+    }
+
     override suspend fun getExposureInformation(token: String): List<ExposureInformation> =
         exposureNotificationClient.getExposureInformation(token).await()
 
-    override suspend fun getExposureSummary(token: String): ExposureSummary =
-        exposureNotificationClient.getExposureSummary(token).await()
+    override suspend fun getExposureWindows(): List<ExposureWindow> =
+        exposureNotificationClient.exposureWindows.await()
+
+    override suspend fun getDiagnosisKeysDataMapping(): DiagnosisKeysDataMapping =
+        exposureNotificationClient.diagnosisKeysDataMapping.await()
+
+    override fun setDiagnosisKeysDataMapping(dataMapping: DiagnosisKeysDataMapping) {
+        exposureNotificationClient.setDiagnosisKeysDataMapping(dataMapping)
+    }
 
     override suspend fun isAvailable(): Boolean {
         return try {

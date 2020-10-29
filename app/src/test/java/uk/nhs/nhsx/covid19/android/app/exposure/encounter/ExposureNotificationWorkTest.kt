@@ -10,6 +10,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.Result
+import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandleInitialExposureNotification.InitialCircuitBreakerResult
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandlePollingExposureNotification.PollingCircuitBreakerResult
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -27,18 +28,21 @@ class ExposureNotificationWorkTest {
     private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val potentialExposureExplanationHandlerProvider = mockk<Provider<PotentialExposureExplanationHandler>>()
     private val potentialExposureExplanationHandler = mockk<PotentialExposureExplanationHandler>(relaxUnitFun = true)
+    private val exposureNotificationApi = mockk<ExposureNotificationApi>(relaxed = true)
 
     private val testSubject = ExposureNotificationWork(
         exposureNotificationTokensProvider,
         handleInitialExposureNotification,
         handlePollingExposureNotification,
         stateMachine,
-        potentialExposureExplanationHandlerProvider
+        potentialExposureExplanationHandlerProvider,
+        exposureNotificationApi
     )
 
     @Before
     fun setUp() {
         every { potentialExposureExplanationHandlerProvider.get() } returns potentialExposureExplanationHandler
+        coEvery { exposureNotificationApi.version() } returns null
     }
 
     @Test
@@ -52,6 +56,22 @@ class ExposureNotificationWorkTest {
         verify(exactly = 0) { stateMachine.processEvent(any()) }
         verify(exactly = 0) { potentialExposureExplanationHandler.addResult(any()) }
         verify(exactly = 1) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
+
+        assertEquals(Result.Success(Unit), result)
+    }
+
+    @Test
+    fun `no tokens return success for EN version higher than 1,6`() = runBlocking {
+        every { exposureNotificationTokensProvider.tokens } returns emptyList()
+        coEvery { exposureNotificationApi.version() } returns 170345
+
+        val result = testSubject()
+
+        coVerify(exactly = 0) { handleInitialExposureNotification.invoke(any()) }
+        coVerify(exactly = 0) { handlePollingExposureNotification.invoke(any()) }
+        verify(exactly = 0) { stateMachine.processEvent(any()) }
+        verify(exactly = 0) { potentialExposureExplanationHandler.addResult(any()) }
+        verify(exactly = 0) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
 
         assertEquals(Result.Success(Unit), result)
     }
@@ -135,6 +155,32 @@ class ExposureNotificationWorkTest {
             verify(exactly = 1) { potentialExposureExplanationHandler.addResult(capture(slot)) }
             assertEquals(noResult, slot.captured)
             verify(exactly = 1) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
+
+            assertEquals(Result.Success(Unit), result)
+        }
+
+    @Test
+    fun `one token for initial circuit breaker with no response returns success for EN version higher that 1,6`() =
+        runBlocking {
+            every { exposureNotificationTokensProvider.tokens } returns listOf(
+                TokenInfo("token1", startedAt = Instant.now().toEpochMilli())
+            )
+            coEvery { exposureNotificationApi.version() } returns 17837
+
+            val noResult = Result.Success(
+                InitialCircuitBreakerResult.No
+            )
+            coEvery { handleInitialExposureNotification.invoke(any()) } returns noResult
+
+            val result = testSubject()
+
+            coVerify(exactly = 1) { handleInitialExposureNotification.invoke(any()) }
+            verify(exactly = 1) { exposureNotificationTokensProvider.remove("token1") }
+            verify(exactly = 0) { exposureNotificationTokensProvider.updateToPolling(any(), any()) }
+            coVerify(exactly = 0) { handlePollingExposureNotification.invoke(any()) }
+            verify(exactly = 0) { stateMachine.processEvent(any()) }
+            verify(exactly = 0) { potentialExposureExplanationHandler.addResult(any()) }
+            verify(exactly = 0) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
 
             assertEquals(Result.Success(Unit), result)
         }
@@ -251,6 +297,30 @@ class ExposureNotificationWorkTest {
         verify(exactly = 0) { exposureNotificationTokensProvider.updateToPolling(any(), any()) }
         verify(exactly = 1) { potentialExposureExplanationHandler.addResult(any()) }
         verify(exactly = 1) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
+
+        assertTrue { result is Result.Failure }
+    }
+
+    @Test
+    fun `failure on initial circuit breaker return failure for EN version higher than 1,6`() = runBlocking {
+        val testException = Exception()
+        every { exposureNotificationTokensProvider.tokens } returns listOf(
+            TokenInfo("token1", startedAt = Instant.now().toEpochMilli())
+        )
+        coEvery { exposureNotificationApi.version() } returns 17823
+
+        coEvery { handleInitialExposureNotification.invoke(any()) } throws testException
+
+        val result = testSubject()
+
+        coVerify(exactly = 1) { handleInitialExposureNotification.invoke("token1") }
+
+        coVerify(exactly = 0) { handlePollingExposureNotification.invoke(any()) }
+        verify(exactly = 0) { stateMachine.processEvent(any()) }
+        verify(exactly = 0) { exposureNotificationTokensProvider.remove(any()) }
+        verify(exactly = 0) { exposureNotificationTokensProvider.updateToPolling(any(), any()) }
+        verify(exactly = 0) { potentialExposureExplanationHandler.addResult(any()) }
+        verify(exactly = 0) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
 
         assertTrue { result is Result.Failure }
     }

@@ -154,24 +154,6 @@ class VisitedVenuesStorageTest {
     }
 
     @Test
-    fun `undo mark visit as risky no match`() = runBlocking {
-        every { encryptedFile.readText() } returns createJson(wasInRiskyList = true)
-
-        testSubject.undoMarkWasInRiskyList("42")
-        verify { file.delete() }
-        verify { encryptedFile.writeText(createJson(wasInRiskyList = true)) }
-    }
-
-    @Test
-    fun `undo mark visit as risky matching`() = runBlocking {
-        every { encryptedFile.readText() } returns createJson(wasInRiskyList = true)
-
-        testSubject.undoMarkWasInRiskyList(VENUE_VISIT.venue.id)
-        verify { file.delete() }
-        verify { encryptedFile.writeText(createJson()) }
-    }
-
-    @Test
     fun `end visit and start new one`() = runBlocking {
         every { encryptedFile.readText() } returns createJson()
 

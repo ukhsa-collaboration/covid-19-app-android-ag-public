@@ -28,7 +28,7 @@
                 android:contentDescription="@null"
                 android:src="@drawable/ic_isolation_negative_or_finished" />
 
-            <TextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
                 android:id="@+id/titleNoSymptoms"
                 style="@style/Title1"
                 android:layout_width="match_parent"

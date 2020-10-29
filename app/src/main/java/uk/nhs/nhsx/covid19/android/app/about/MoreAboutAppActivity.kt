@@ -12,6 +12,7 @@ import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityButton
 
 class MoreAboutAppActivity : BaseActivity(R.layout.activity_more_about_app) {
 
@@ -23,6 +24,8 @@ class MoreAboutAppActivity : BaseActivity(R.layout.activity_more_about_app) {
         textSoftwareName.setText(R.string.app_name)
         textSoftwareVersion.text = BuildConfig.VERSION_NAME
         textSoftwareDateOfRelease.text = getReleaseDate()
+
+        linkManageData.setUpAccessibilityButton()
 
         setupListeners()
     }

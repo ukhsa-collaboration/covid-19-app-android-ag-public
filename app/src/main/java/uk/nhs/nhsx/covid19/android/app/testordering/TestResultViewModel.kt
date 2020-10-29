@@ -19,19 +19,28 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainStat
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeWontBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveThenNegativeWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveContinueIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveThenNegativeWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveWontBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidWillBeInIsolation
+import java.time.Clock
 import javax.inject.Inject
 
-class TestResultViewModel @Inject constructor(
+class TestResultViewModel constructor(
     private val testResultsProvider: TestResultsProvider,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
-    private val stateMachine: IsolationStateMachine
+    private val stateMachine: IsolationStateMachine,
+    private val clock: Clock
 ) : ViewModel() {
+
+    @Inject
+    constructor(
+        testResultsProvider: TestResultsProvider,
+        isolationConfigurationProvider: IsolationConfigurationProvider,
+        stateMachine: IsolationStateMachine
+    ) : this(testResultsProvider, isolationConfigurationProvider, stateMachine, Clock.systemDefaultZone())
 
     private val viewState = MutableLiveData<ViewState>()
     fun viewState(): LiveData<ViewState> = viewState
@@ -54,7 +63,7 @@ class TestResultViewModel @Inject constructor(
 
             val state = stateMachine.readState()
             val newStateWithTestResult =
-                state.newStateWithTestResult(testResultsProvider, isolationConfigurationProvider, testResult)
+                state.newStateWithTestResult(testResultsProvider, isolationConfigurationProvider, testResult, clock)
             val willBeInIsolation = newStateWithTestResult is Isolation
             val isLastTestResultPositive = testResultsProvider.isLastTestResultPositive()
 
@@ -92,9 +101,14 @@ class TestResultViewModel @Inject constructor(
         return when (state) {
             is Isolation -> mainStateWhenPositiveIgnoringLastTestResult(willBeInIsolation)
             is Default -> {
-                when (state.previousIsolationIsIndexCase() && !isLastTestResultNegative) {
-                    true -> mainStateWhenPositiveIgnoringLastTestResult(willBeInIsolation)
-                    false -> PositiveWillBeInIsolation(testResult.diagnosisKeySubmissionToken)
+                if (!willBeInIsolation) {
+                    PositiveWontBeInIsolation(testResult.diagnosisKeySubmissionToken)
+                } else {
+                    if (state.previousIsolationIsIndexCase() && !isLastTestResultNegative) {
+                        PositiveContinueIsolation(testResult.diagnosisKeySubmissionToken)
+                    } else {
+                        PositiveWillBeInIsolation(testResult.diagnosisKeySubmissionToken)
+                    }
                 }
             }
         }

@@ -75,6 +75,8 @@ sealed class State {
         fun isBothCases(): Boolean =
             isIndexCase() && isContactCase()
 
+        fun hasExpired(clock: Clock): Boolean = !LocalDate.now(clock).isBefore(expiryDate)
+
         val expiryDate: LocalDate
             get() {
                 val potentialExpiryDate = when {
@@ -131,7 +133,8 @@ sealed class State {
 fun State.newStateWithTestResult(
     testResultsProvider: TestResultsProvider,
     isolationConfigurationProvider: IsolationConfigurationProvider,
-    testResult: ReceivedTestResult
+    testResult: ReceivedTestResult,
+    clock: Clock
 ): State {
     return if (this is Isolation && testResult.testResult == NEGATIVE) {
         when {
@@ -142,15 +145,20 @@ fun State.newStateWithTestResult(
         }
     } else if (this is Default && testResult.testResult == POSITIVE) {
         when {
-            testResultsProvider.isLastTestResultNegative() -> createIndexCaseWhenOnsetDataIsNotProvided(
+            testResultsProvider.isLastTestResultNegative() -> tryCreateIndexCaseWhenOnsetDataIsNotProvided(
+                this,
                 isolationConfigurationProvider,
-                testResult.testEndDate
+                testResult.testEndDate,
+                clock
             )
             previousIsolationIsIndexCase() -> this
-            else -> createIndexCaseWhenOnsetDataIsNotProvided(
-                isolationConfigurationProvider,
-                testResult.testEndDate
-            )
+            else ->
+                tryCreateIndexCaseWhenOnsetDataIsNotProvided(
+                    this,
+                    isolationConfigurationProvider,
+                    testResult.testEndDate,
+                    clock
+                )
         }
     } else {
         this
@@ -160,13 +168,14 @@ fun State.newStateWithTestResult(
 fun Default.previousIsolationIsIndexCase() =
     this.previousIsolation != null && this.previousIsolation.isIndexCase()
 
-private fun createIndexCaseWhenOnsetDataIsNotProvided(
+private fun tryCreateIndexCaseWhenOnsetDataIsNotProvided(
+    currentState: State,
     isolationConfigurationProvider: IsolationConfigurationProvider,
-    testResultEndDate: Instant
-): Isolation {
-    val testResultDate = LocalDateTime.ofInstant(testResultEndDate, ZoneId.systemDefault())
-        .toLocalDate()
-    return Isolation(
+    testResultEndDate: Instant,
+    clock: Clock
+): State {
+    val testResultDate = LocalDateTime.ofInstant(testResultEndDate, ZoneId.systemDefault()).toLocalDate()
+    val isolation = Isolation(
         isolationStart = testResultEndDate,
         isolationConfiguration = isolationConfigurationProvider.durationDays,
         indexCase = IndexCase(
@@ -174,6 +183,11 @@ private fun createIndexCaseWhenOnsetDataIsNotProvided(
             expiryDate = testResultDate.plusDays(indexCaseExpiryDateAfterTestResultDate)
         )
     )
+    return if (isolation.hasExpired(clock)) {
+        currentState
+    } else {
+        isolation
+    }
 }
 
 @JsonClass(generateAdapter = true)
@@ -194,6 +208,7 @@ data class OnTestResultAcknowledge(
     val testResult: ReceivedTestResult,
     val removeTestResult: Boolean = false
 ) : Event()
+
 private object OnExpired : Event()
 private object OnReset : Event()
 
@@ -270,16 +285,12 @@ class IsolationStateMachine(
     private fun validateExpiry() {
         val hasExpired = when (val state = stateMachine.state) {
             is Default -> false
-            is Isolation -> hasExpired(state.expiryDate)
+            is Isolation -> state.hasExpired(clock)
         }
 
         if (hasExpired) {
             stateMachine.transition(OnExpired)
         }
-    }
-
-    private fun hasExpired(until: LocalDate): Boolean {
-        return !LocalDate.now(clock).isBefore(until)
     }
 
     fun reset() {
@@ -293,21 +304,20 @@ class IsolationStateMachine(
 
     internal val stateMachine = StateMachine.create<State, Event, SideEffect> {
         initialState(stateStorage.state)
-        val now = Instant.now(clock)
-        val today = now.atZone(ZoneOffset.UTC).toLocalDate()
         state<Default> {
             on<OnExposedNotification> {
                 val contactCaseIsolationDays =
                     getConfigurationDurations().contactCase
                 val until = it.exposureDate.atZone(ZoneOffset.UTC).toLocalDate()
                     .plusDays(contactCaseIsolationDays.toLong())
+                val now = Instant.now(clock)
 
                 val isolation = Isolation(
                     contactCase = ContactCase(now, until),
                     isolationStart = now,
                     isolationConfiguration = getConfigurationDurations()
                 )
-
+                val today = now.atZone(ZoneOffset.UTC).toLocalDate()
                 if (isolation.expiryDate.isAfter(today)) {
                     transitionTo(isolation, SendExposedNotification)
                 } else {
@@ -329,7 +339,8 @@ class IsolationStateMachine(
                 val updatedDefaultState = this.newStateWithTestResult(
                     testResultsProvider,
                     isolationConfigurationProvider,
-                    it.testResult
+                    it.testResult,
+                    clock
                 )
                 transitionTo(
                     updatedDefaultState,
@@ -349,7 +360,7 @@ class IsolationStateMachine(
                     ).atZone(ZoneOffset.UTC).toLocalDate()
 
                     val newState = this.copy(
-                        contactCase = ContactCase(now, expiryDate)
+                        contactCase = ContactCase(Instant.now(clock), expiryDate)
                     )
                     transitionTo(newState, SendExposedNotification)
                 } else {
@@ -376,7 +387,8 @@ class IsolationStateMachine(
                 val updatedDefaultState = this.newStateWithTestResult(
                     testResultsProvider,
                     isolationConfigurationProvider,
-                    it.testResult
+                    it.testResult,
+                    clock
                 )
                 transitionTo(
                     updatedDefaultState,

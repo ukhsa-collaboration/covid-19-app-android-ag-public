@@ -15,9 +15,9 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
-import uk.nhs.nhsx.covid19.android.app.state.SideEffect.SendExposedNotification
-import uk.nhs.nhsx.covid19.android.app.state.SideEffect.HandleTestResult
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.AcknowledgeTestResult
+import uk.nhs.nhsx.covid19.android.app.state.SideEffect.HandleTestResult
+import uk.nhs.nhsx.covid19.android.app.state.SideEffect.SendExposedNotification
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
@@ -1021,6 +1021,32 @@ class IsolationStateMachineTest {
         assertEquals(AcknowledgeTestResult(testResult), sideEffect)
         verify(exactly = 1) { testResultProvider.acknowledge(testResult) }
         verify(exactly = 0) { testResultProvider.remove(testResult) }
+    }
+
+    @Test
+    fun `stay in default state when isolation triggered by positive test result expired`() {
+        val oldTestResult = ReceivedTestResult(
+            "123",
+            Instant.now(fixedClock).minus(10, ChronoUnit.DAYS),
+            POSITIVE
+        )
+        every { testResultProvider.find(oldTestResult.diagnosisKeySubmissionToken) } returns oldTestResult
+
+        every { stateProvider.state } returns Default()
+
+        val testSubject = createIsolationStateMachine(fixedClock)
+
+        val transition = testSubject.processEvent(OnTestResultAcknowledge(oldTestResult))
+
+        val newState = testSubject.readState()
+
+        val expected = Default()
+        val sideEffect = (transition as Transition.Valid).sideEffect
+
+        assertEquals(expected, newState)
+        assertEquals(AcknowledgeTestResult(oldTestResult), sideEffect)
+        verify(exactly = 1) { testResultProvider.acknowledge(oldTestResult) }
+        verify(exactly = 0) { testResultProvider.remove(oldTestResult) }
     }
 
     @Test

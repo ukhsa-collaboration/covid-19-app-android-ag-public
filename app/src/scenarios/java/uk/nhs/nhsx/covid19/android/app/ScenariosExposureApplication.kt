@@ -11,6 +11,7 @@ import uk.nhs.covid19.config.qrCodesSignatureKey
 import uk.nhs.nhsx.covid19.android.app.DebugActivity.Companion.SELECTED_ENVIRONMENT
 import uk.nhs.nhsx.covid19.android.app.DebugActivity.Companion.SELECTED_LANGUAGE
 import uk.nhs.nhsx.covid19.android.app.DebugActivity.Companion.USE_MOCKED_EXPOSURE_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.availability.GooglePlayUpdateProvider
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.di.DaggerMockApplicationComponent
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
@@ -98,7 +99,8 @@ class ScenariosExposureApplication : ExposureApplication() {
                         sharedPreferences,
                         encryptedFile,
                         qrCodesSignatureKey,
-                        ApplicationLocaleProvider(sharedPreferences, languageCode)
+                        ApplicationLocaleProvider(sharedPreferences, languageCode),
+                        GooglePlayUpdateProvider(this)
                     )
                 )
                 .mockApiModule(MockApiModule())

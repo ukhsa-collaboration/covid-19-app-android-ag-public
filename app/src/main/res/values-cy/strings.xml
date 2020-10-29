@@ -36,7 +36,7 @@
     <string name="low_risk_level_text">Isel – ar hyn o bryd mae eich awdurdod lleol yn cael ei asesu fel \'risg isel\', gyda lefelau haint sy\'n debyg i’r rhan fwyaf o rannau eraill y wlad.</string>
     <string name="medium_risk_level_text">Canolig - mae gan eich awdurdod lleol, neu awdurdod lleol cyfagos, lefelau uchel neu gynyddol o haint. Dilynwch y canllawiau cenedlaethol.</string>
     <string name="high_risk_level_text">Uchel – Mae eich awdurdod lleol, neu awdurdod lleol cyfagos, yn defnyddio mesurau ychwanegol i\'r rhai sydd ar waith yng ngweddill Cymru a Lloegr (ee cyfyngiadau symud) i leihau trosglwyddiad yr haint oherwydd bod lefelau uchel o haint yn yr ardal leol. Mae cynllun gweithredu manwl ar waith ac mae cymorth cenedlaethol yn cael ei ddarparu i ategu’r adnoddau lleol.</string>
-    <string name="risk_level_title">Lefel risg</string>
+    <string name="risk_level_title">Lefel Rhybudd Covid Lleol</string>
     <string name="qr_code_permission_denied_action">Rhoi caniatâd i’r camera</string>
     <string name="qr_code_permission_denied_subtitle">Mae\'r ap hwn yn defnyddio\'ch camera i fewngofnodi i leoliadau fel bariau a bwytai.\n\nRhowch ganiatâd i’r camera sganio cod QR swyddogol y GIG.</string>
     <string name="qr_code_unsupported_description">Chwiliwch am ffordd arall o fewngofnodi. Gofynnwch am gymorth gan aelod o staff.</string>
@@ -296,7 +296,7 @@
     <string name="link_test_result_text">Nid oes rhaid i chi wneud hyn os gwnaethoch chi archebu\'r prawf o\'r ap.</string>
     <string name="link_test_result_enter_code_title">Nodwch eich cod ar gyfer y prawf</string>
     <string name="about_provide_feedback_link">Gwybodaeth adborth</string>
-    <string name="qr_code_help_text">Pan fyddwch yn ymweld â rhywle (er enghraifft, bar neu fwyty) sydd yn dangos poster cod QR swyddogol y GIG, defnyddiwch yr ap hwn i sganio\'r cod. Bydd yr ap yn cofrestru\'r amser y gwnaethoch chi fewngofnodi.\n\nDrwy fewngofnodi, fe allwch chi gael eich hysbysu os bydd rhywun â\'r coronafeirws yn ymweld â\'r lle hwn tua\'r un adeg â chi. Bydd yr hysbysiad yn cynnwys cyngor perthnasol, fel bod yn effro i symptomau coronafeirws.\n\nOs na allwch sganio cod QR, ac eisiau mewngofnodi drwy ddull arall, siaradwch ag aelod o staff.</string>
+    <string name="qr_code_help_text">Os na allwch sganio cod QR, ac eisiau mewngofnodi drwy ddull arall, siaradwch ag aelod o staff.</string>
     <string name="qr_code_help_about_qr_code_title">Sut alla i adnabod cod QR swyddogol y GIG?</string>
     <string name="qr_code_help_about_qr_code_text">Dyma enghraifft o boster cod QR swyddogol y GIG yn Saesneg/Cymraeg. Defnyddiwch gamera eich ffôn i sganio\'r cod QR sef y sgwâr yn y canol.</string>
     <string name="link_test_result_enter_code_example">Enghraifft: 7g8s3stn</string>
@@ -370,4 +370,6 @@
     <string name="test_result_negative_no_self_isolation_subtitle_text">Mae canlyniad eich prawf coronafeirws yn negyddol</string>
     <string name="notification_text_potential_exposure_explanation">Peidiwch â phoeni, rydym wedi asesu eich risg ac nid oes angen gweithredu ar hyn o bryd.  Dylech barhau i fod yn ofalus a dilyn y cyngor diweddaraf ar gadw pellter cymdeithasol.</string>
     <string name="notification_title_potential_exposure_explanation">Proses wirio cysylltiadau COVID-19 wedi gorffen</string>
+    <string name="qr_code_intro_text">Pan fyddwch yn ymweld â rhywle (er enghraifft, bar neu fwyty) sydd yn dangos poster cod QR swyddogol y GIG, defnyddiwch yr ap hwn i sganio\'r cod. Bydd yr ap yn cofrestru\'r amser y gwnaethoch chi fewngofnodi.\n\nDrwy fewngofnodi, fe allwch chi gael eich hysbysu os bydd rhywun â\'r coronafeirws yn ymweld â\'r lle hwn tua\'r un adeg â chi. Bydd yr hysbysiad yn cynnwys cyngor perthnasol, fel bod yn effro i symptomau coronafeirws.</string>
+    <string name="venue_check_in_title">Rhagor o wybodaeth am fewngofnodi i leoliad</string>
 </resources>

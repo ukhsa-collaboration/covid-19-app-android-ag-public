@@ -74,4 +74,40 @@ class EncryptionUtilsTest {
             )
         }
     }
+
+    @Test
+    fun `don't retry on success`() {
+        val function: () -> Unit = {}
+        val spyFunction = spyk(function)
+
+        testSubject.retryOnException(
+            times = 5,
+            factor = 1.0,
+            maxDelay = 1,
+            function = spyFunction
+        )
+
+        verify(exactly = 1) { spyFunction.invoke() }
+    }
+
+    @Test
+    fun `retry on exception`() {
+        val exception = Exception()
+        val function: () -> Unit = {
+            throw exception
+        }
+        val spyFunction = spyk(function)
+
+        val result = runCatching {
+            testSubject.retryOnException(
+                times = 5,
+                factor = 1.0,
+                maxDelay = 1,
+                function = spyFunction
+            )
+        }
+
+        verify(exactly = 5) { spyFunction.invoke() }
+        assertEquals(Result.failure(exception), result)
+    }
 }

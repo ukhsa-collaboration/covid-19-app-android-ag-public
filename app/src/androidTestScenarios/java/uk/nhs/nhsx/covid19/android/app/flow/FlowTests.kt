@@ -1,13 +1,10 @@
 package uk.nhs.nhsx.covid19.android.app.flow
 
-import androidx.test.espresso.NoMatchingViewException
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
 import kotlinx.coroutines.runBlocking
 import org.awaitility.kotlin.await
-import org.awaitility.kotlin.ignoreException
 import org.awaitility.kotlin.until
-import org.awaitility.kotlin.untilAsserted
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -20,11 +17,13 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
+import uk.nhs.nhsx.covid19.android.app.testhelpers.AWAIT_AT_MOST_SECONDS
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.EncounterDetectionRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationExpirationRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QuestionnaireRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ReviewSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
@@ -54,6 +53,8 @@ class FlowTests : EspressoTest() {
     private val testOrderingRobot = TestOrderingRobot()
 
     private val testResultRobot = TestResultRobot()
+
+    private val linkTestResultRobot = LinkTestResultRobot()
 
     private val encounterDetectionRobot = EncounterDetectionRobot()
     private val browserRobot = BrowserRobot()
@@ -95,13 +96,11 @@ class FlowTests : EspressoTest() {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        await.atMost(10, SECONDS) ignoreException NoMatchingViewException::class untilAsserted {
-            testResultRobot.checkActivityDisplaysNegativeAndFinishIsolation()
-        }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAndFinishIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 
-        await.atMost(10, SECONDS) until {
+        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
             testAppContext.getCurrentState() is Default
         }
 
@@ -174,7 +173,7 @@ class FlowTests : EspressoTest() {
         testAppContext.getExposureNotificationTokenProvider().add("test")
         testAppContext.getPeriodicTasks().schedule()
 
-        await.atMost(10, SECONDS) until {
+        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
             (testAppContext.getCurrentState() as Isolation).isBothCases()
         }
 
@@ -205,7 +204,7 @@ class FlowTests : EspressoTest() {
         testAppContext.getExposureNotificationTokenProvider().add("test")
         testAppContext.getPeriodicTasks().schedule()
 
-        await.atMost(10, SECONDS) until {
+        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
             testAppContext.getCurrentState() is Isolation &&
                 (testAppContext.getCurrentState() as Isolation).isContactCaseOnly()
         }
@@ -228,15 +227,13 @@ class FlowTests : EspressoTest() {
 
         testAppContext.getPeriodicTasks().schedule()
 
-        await.atMost(10, SECONDS) until {
+        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
             testAppContext.getTestResultsProvider().testResults.values.any { it.testResult == NEGATIVE }
         }
 
         assertTrue { (testAppContext.getCurrentState() as Isolation).isBothCases() }
 
-        await.atMost(10, SECONDS) ignoreException NoMatchingViewException::class untilAsserted {
-            testResultRobot.checkActivityDisplaysNegativeAndContinueSelfIsolation()
-        }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAndContinueSelfIsolation() }
     }
 
     @Test
@@ -248,14 +245,12 @@ class FlowTests : EspressoTest() {
         testAppContext.getExposureNotificationTokenProvider().add("test")
         testAppContext.getPeriodicTasks().schedule()
 
-        await.atMost(10, SECONDS) until {
+        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
             testAppContext.getCurrentState() is Isolation &&
                 (testAppContext.getCurrentState() as Isolation).isContactCaseOnly()
         }
 
-        await.atMost(10, SECONDS) ignoreException NoMatchingViewException::class untilAsserted {
-            encounterDetectionRobot.clickIUnderstandButton()
-        }
+        waitFor { encounterDetectionRobot.clickIUnderstandButton() }
 
         statusRobot.clickReportSymptoms()
 
@@ -271,15 +266,13 @@ class FlowTests : EspressoTest() {
 
         testAppContext.getPeriodicTasks().schedule()
 
-        await.atMost(10, SECONDS) until {
+        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
             testAppContext.getTestResultsProvider().testResults.values.any { it.testResult == POSITIVE }
         }
 
         assertTrue { (testAppContext.getCurrentState() as Isolation).isBothCases() }
 
-        await.atMost(10, SECONDS) ignoreException NoMatchingViewException::class untilAsserted {
-            testResultRobot.checkActivityDisplaysPositiveAndContinueSelfIsolation()
-        }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveAndContinueSelfIsolation() }
     }
 
     @RetryFlakyTest
@@ -308,12 +301,7 @@ class FlowTests : EspressoTest() {
 
         isolationExpirationRobot.checkActivityIsDisplayed()
 
-        await.atMost(
-            10,
-            SECONDS
-        ) ignoreException NoMatchingViewException::class untilAsserted {
-            isolationExpirationRobot.checkIsolationWillFinish()
-        }
+        waitFor { isolationExpirationRobot.checkIsolationWillFinish() }
 
         val from = Instant.now().plus(1, ChronoUnit.DAYS)
 
@@ -322,6 +310,46 @@ class FlowTests : EspressoTest() {
         testAppContext.setStateMachineClock(fromClock)
 
         await.atMost(10, SECONDS) until { testAppContext.getCurrentState() is Default }
+    }
+
+    @Test
+    fun startIndexCase_linkNegativeTestResult() = notReported {
+        testAppContext.setState(
+            state = Isolation(
+                isolationStart = Instant.now(),
+                isolationConfiguration = DurationDays(),
+                indexCase = IndexCase(
+                    symptomsOnsetDate = LocalDate.now().minusDays(3),
+                    expiryDate = LocalDate.now().plus(7, ChronoUnit.DAYS)
+                )
+            )
+        )
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        statusRobot.checkIsolationViewIsDisplayed()
+
+        assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
+
+        statusRobot.clickLinkTestResult()
+
+        linkTestResultRobot.checkActivityIsDisplayed()
+
+        linkTestResultRobot.enterCtaToken("f3dz-cfdt")
+
+        linkTestResultRobot.clickContinue()
+
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAndAlreadyFinishedIsolation() }
+
+        testResultRobot.clickGoodNewsActionButton()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        statusRobot.checkIsolationViewIsNotDisplayed()
+
+        assertTrue { testAppContext.getCurrentState() is Default }
     }
 
     private fun completeTestOrdering() = notReported {

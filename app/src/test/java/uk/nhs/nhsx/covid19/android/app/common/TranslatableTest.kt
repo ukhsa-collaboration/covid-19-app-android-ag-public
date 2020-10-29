@@ -52,9 +52,17 @@ class TranslatableTest {
     }
 
     @Test
-    fun `fall backs to English if cannot find a match`() {
+    fun `fall backs to GB English if cannot find a match`() {
         every { Locale.getDefault() } returns Locale.FRANCE
 
+        assertEquals("Hello", testSubject.translate())
+    }
+
+    @Test
+    fun `fall backs to English if cannot find a match and GB English is not available`() {
+        every { Locale.getDefault() } returns Locale.FRANCE
+
+        val testSubject = Translatable(mapOf("en" to "Hello", "zh-CN" to "你好", "ko-KR" to "test"))
         assertEquals("Hello", testSubject.translate())
     }
 

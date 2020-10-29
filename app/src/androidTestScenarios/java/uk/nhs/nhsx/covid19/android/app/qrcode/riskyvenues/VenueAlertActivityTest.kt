@@ -8,6 +8,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.report.notReported
+import uk.nhs.nhsx.covid19.android.app.testhelpers.AWAIT_AT_MOST_SECONDS
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.VenueAlertRobot
 import java.time.Instant
@@ -55,6 +56,6 @@ class VenueAlertActivityTest : EspressoTest() {
             )
         }
 
-        await.atMost(10, SECONDS) until { activity?.isDestroyed ?: false }
+        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until { activity?.isDestroyed ?: false }
     }
 }

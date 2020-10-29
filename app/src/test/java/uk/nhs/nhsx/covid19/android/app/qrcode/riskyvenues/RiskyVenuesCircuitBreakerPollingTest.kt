@@ -15,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesCircuitBreakerApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesCircuitBreakerPollingResponse
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesCircuitBreakerResponse
 import java.time.Instant
 
 class RiskyVenuesCircuitBreakerPollingTest {
@@ -23,7 +24,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
     private val notificationProvider = mockk<NotificationProvider>(relaxed = true)
     private val userInbox = mockk<UserInbox>(relaxed = true)
     private val riskyVenuePollingConfigurationProvider =
-        mockk<RiskyVenuePollingConfigurationProvider>(relaxed = true)
+        mockk<RiskyVenueCircuitBreakerConfigurationProvider>(relaxed = true)
     private val removeOutdatedRiskyVenuePollingConfigurations =
         mockk<RemoveOutdatedRiskyVenuePollingConfigurations>(relaxed = true)
 
@@ -38,10 +39,13 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
     private val venueId = "1"
     private val approvalToken = "approval_token1"
-    private val configuration = RiskyVenuePollingConfiguration(Instant.now(), venueId, approvalToken)
-    private val configurations = listOf(
-        RiskyVenuePollingConfiguration(Instant.now(), venueId, approvalToken),
-        RiskyVenuePollingConfiguration(Instant.now(), "2", "approval_token2")
+    private val configuration = RiskyVenueCircuitBreakerConfiguration(Instant.now(), venueId, approvalToken)
+    private val pollingConfigurations = listOf(
+        RiskyVenueCircuitBreakerConfiguration(Instant.now(), venueId, approvalToken, isPolling = true),
+        RiskyVenueCircuitBreakerConfiguration(Instant.now(), "2", "approval_token2", isPolling = true)
+    )
+    private val initialConfigurations = listOf(
+        RiskyVenueCircuitBreakerConfiguration(Instant.now(), venueId, null, isPolling = false)
     )
 
     @Test
@@ -100,42 +104,95 @@ class RiskyVenuesCircuitBreakerPollingTest {
     @Test
     fun `exception fetching resolution for first config and approval yes for second config`() =
         runBlocking {
-            every { riskyVenuePollingConfigurationProvider.configs } returns configurations
+            every { riskyVenuePollingConfigurationProvider.configs } returns pollingConfigurations
 
-            coEvery { riskyVenuesCircuitBreakerApi.getRiskyVenuesBreakerResolution(configurations[0].approvalToken) }.throws(
+            coEvery { riskyVenuesCircuitBreakerApi.getRiskyVenuesBreakerResolution(pollingConfigurations[0].approvalToken!!) }.throws(
                 Exception()
             )
-            coEvery { riskyVenuesCircuitBreakerApi.getRiskyVenuesBreakerResolution(configurations[1].approvalToken) } returns RiskyVenuesCircuitBreakerPollingResponse(
+            coEvery { riskyVenuesCircuitBreakerApi.getRiskyVenuesBreakerResolution(pollingConfigurations[1].approvalToken!!) } returns RiskyVenuesCircuitBreakerPollingResponse(
                 approval = YES
             )
 
             testSubject()
 
-            verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(configurations[0].venueId)) }
-            verify(exactly = 0) { riskyVenuePollingConfigurationProvider.remove(configurations[0]) }
+            verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(pollingConfigurations[0].venueId)) }
+            verify(exactly = 0) { riskyVenuePollingConfigurationProvider.remove(pollingConfigurations[0]) }
             verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
-            verify(exactly = 1) { userInbox.addUserInboxItem(ShowVenueAlert(configurations[1].venueId)) }
-            verify(exactly = 1) { riskyVenuePollingConfigurationProvider.remove(configurations[1]) }
+            verify(exactly = 1) { userInbox.addUserInboxItem(ShowVenueAlert(pollingConfigurations[1].venueId)) }
+            verify(exactly = 1) { riskyVenuePollingConfigurationProvider.remove(pollingConfigurations[1]) }
         }
 
     @Test
     fun `exception fetching resolution for first config and approval no for second config`() =
         runBlocking {
-            every { riskyVenuePollingConfigurationProvider.configs } returns configurations
+            every { riskyVenuePollingConfigurationProvider.configs } returns pollingConfigurations
 
-            coEvery { riskyVenuesCircuitBreakerApi.getRiskyVenuesBreakerResolution(configurations[0].approvalToken) }.throws(
+            coEvery { riskyVenuesCircuitBreakerApi.getRiskyVenuesBreakerResolution(pollingConfigurations[0].approvalToken!!) }.throws(
                 Exception()
             )
-            coEvery { riskyVenuesCircuitBreakerApi.getRiskyVenuesBreakerResolution(configurations[1].approvalToken) } returns RiskyVenuesCircuitBreakerPollingResponse(
+            coEvery { riskyVenuesCircuitBreakerApi.getRiskyVenuesBreakerResolution(pollingConfigurations[1].approvalToken!!) } returns RiskyVenuesCircuitBreakerPollingResponse(
                 approval = NO
             )
 
             testSubject()
 
-            verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(configurations[0].venueId)) }
-            verify(exactly = 0) { riskyVenuePollingConfigurationProvider.remove(configurations[0]) }
+            verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(pollingConfigurations[0].venueId)) }
+            verify(exactly = 0) { riskyVenuePollingConfigurationProvider.remove(pollingConfigurations[0]) }
             verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification() }
-            verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(configurations[1].venueId)) }
-            verify(exactly = 1) { riskyVenuePollingConfigurationProvider.remove(configurations[1]) }
+            verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(pollingConfigurations[1].venueId)) }
+            verify(exactly = 1) { riskyVenuePollingConfigurationProvider.remove(pollingConfigurations[1]) }
         }
+
+    @Test
+    fun `triggers notification if circuit breaker approves`() = runBlocking {
+        coEvery { riskyVenuesCircuitBreakerApi.submitInitialVenueIdForApproval(any()) } returns
+            RiskyVenuesCircuitBreakerResponse(
+                approvalToken = approvalToken,
+                approval = YES
+            )
+        every { riskyVenuePollingConfigurationProvider.configs } returns initialConfigurations
+
+        testSubject()
+
+        verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
+        verify(exactly = 1) { userInbox.addUserInboxItem(ShowVenueAlert(venueId)) }
+        verify(exactly = 0) {
+            riskyVenuePollingConfigurationProvider.add(any())
+        }
+    }
+
+    @Test
+    fun `does not trigger notification if circuit breaker doesn't approve`() = runBlocking {
+        coEvery { riskyVenuesCircuitBreakerApi.submitInitialVenueIdForApproval(any()) } returns RiskyVenuesCircuitBreakerResponse(
+            approvalToken = approvalToken,
+            approval = NO
+        )
+        every { riskyVenuePollingConfigurationProvider.configs } returns initialConfigurations
+
+        testSubject()
+
+        verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification() }
+        verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(venueId)) }
+        verify(exactly = 0) {
+            riskyVenuePollingConfigurationProvider.add(any())
+        }
+    }
+
+    @Test
+    fun `will start polling if circuit breaker response pending`() = runBlocking {
+        coEvery { riskyVenuesCircuitBreakerApi.submitInitialVenueIdForApproval(any()) } returns
+            RiskyVenuesCircuitBreakerResponse(
+                approvalToken = approvalToken,
+                approval = PENDING
+            )
+        every { riskyVenuePollingConfigurationProvider.configs } returns initialConfigurations
+
+        testSubject()
+
+        verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification() }
+        verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(venueId)) }
+        verify(exactly = 1) {
+            riskyVenuePollingConfigurationProvider.add(any())
+        }
+    }
 }

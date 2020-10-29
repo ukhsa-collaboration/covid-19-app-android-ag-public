@@ -6,7 +6,8 @@ import com.squareup.moshi.JsonClass
 data class ExposureCircuitBreakerRequest(
     val matchedKeyCount: Int,
     val daysSinceLastExposure: Int,
-    val maximumRiskScore: Double
+    val maximumRiskScore: Double,
+    val riskCalculationVersion: Int
 )
 
 @JsonClass(generateAdapter = true)

@@ -85,7 +85,7 @@
     <string name="test_ordering_description_2">عند وصولك إلى الموقع الإلكتروني، ستتم مُطالبتك بتعبئة بعض التفاصيل الشخصية (مثل عنوانك) لتتمكن من الحصول على اختبارٍ، علمًا بأنه لا يجري مشاركة أي شيءٍ تُسجِّله في التطبيق أو الموقع الإلكتروني.</string>
     <string name="test_ordering_description_3">تتمثل المعلومة الوحيدة التي يجري مشاركتها بين التطبيق والموقع الإلكتروني في \"الرمز\" الرقمي الذي يساعدنا في إعادة نتائج الاختبارات الخاصة بك إلى التطبيق.</string>
     <string name="test_ordering_description_4">ترد جميع البيانات المستخدمة في عملية الاختبار في إشعار الخصوصية:</string>
-    <string name="book_free_test_now">حجز اختبار مجاني الآن</string>
+    <string name="book_free_test_now">احجز موعدك لإجراء الفحص الطبي بنفسك</string>
     <string name="about_this_app_title">نبذة حول التطبيق</string>
     <string name="title_how_app_works">كيفية عمل التطبيق</string>
     <string name="about_how_this_app_works_link">كيفية عمل التطبيق</string>
@@ -164,7 +164,7 @@
     <string name="close">إغلاق</string>
     <string name="go_back">رجوع</string>
     <string name="remove">تأكيد</string>
-    <string name="empty" translatable="false" />
+    <string name="empty" translatable="false"/>
     <string name="onboarding_exposure_notifications_description">سيُرسل التطبيق تحذيرًا إليك في حالة التواصل الوثيق مع شخصٍ ما سجَّل نتيجة إيجابية في اختبار الكشف عن الإصابة بالفيروس.\n\nلتمكين خاصية \"تتبع الاتصال\" في هذا التطبيق، يجب عليك السماح باستلام \"إشعارات التعرّض\".\n\nفي حال تغيير قرارك، يمكنك تغيير الأذونات الممنوحة في الإعدادات متى شئت.</string>
     <string name="privacy_notice">إشعار الخصوصية</string>
     <string name="tablet_information_url">معلومات حول استخدام الحواسب اللوحية</string>
@@ -239,7 +239,7 @@
     <string name="terms_of_use_onboarding">شروط الاستخدام</string>
     <string name="about_common_questions_title">الاسئلة الشائعة</string>
     <string name="about_common_questions_link">الأسئلة الشائعة</string>
-    <string name="about_accessibility_statement">بيان إمكانية الوصول</string>
+    <string name="about_accessibility_statement">بيان إمكانية الاطلاع</string>
     <string name="test_result_no_self_isolation_description">مع ذلك، إذا كنت تعاني من ارتفاع درجة الحرارة، فيجب عليك الاستمرار في العزل الذاتي لنفسك حتى تعود درجة حرارتك إلى الوضع الطبيعي</string>
     <string name="for_further_advice_visit">للاطلاع على المزيد من النصائح، يرجى زيارة الموقع الإلكتروني:</string>
     <string name="test_result_positive_continue_self_isolation_title_1">الاستمرار في تطبيق العزل الذاتي لمدة</string>
@@ -296,7 +296,7 @@
     <string name="link_test_result_text">لا تحتاج إلى فعل ذلك إذا قمت بحجز الاختبار من التطبيق.</string>
     <string name="link_test_result_enter_code_title">أدخل رمز الاختبار</string>
     <string name="about_provide_feedback_link">معلومات حول آراء المستخدمين</string>
-    <string name="qr_code_help_text">يجب استخدام هذا التطبيق عند دخولك إلى مكانٍ ما (حانة أو مطعم على سبيل المثال) يشتمل على أحد ملصقات الاستجابة السريعة المُقدمة من هيئة الخدمات الصحية الوطنية \"NHS QR\" لإجراء مسح ضوئي للملصق؛ علمًا بأن التطبيق يقوم بعد ذلك بتسجيل وقت دخولك إلى المكان.\n\nعند استخدامك لخاصية تسجيل الدخول إلى مكانٍ ما، سيكون بمقدورك استلام إخطارٍ إذا كان هناك أشخاصٌ مصابون بفيروس كورونا يرتادون هذا المكان في نفس الوقت. وسيتضمن الإخطار النصائح ذات الصلة، مثل التحقق من الأعراض المصاحبة للإصابة بفيروس كورونا.\n\nإذا تعذّر عليك إجراء مسح ضوئي لأحد رموز QR وتحتاج إلى تسجيل الدخول بطريقة أخرى، يرجى التحدّث مع أحد الموظفين.</string>
+    <string name="qr_code_help_text">إذا تعذّر عليك إجراء مسح ضوئي لأحد رموز QR وتحتاج إلى تسجيل الدخول بطريقة أخرى، يرجى التحدّث مع أحد الموظفين.</string>
     <string name="qr_code_help_about_qr_code_title">كيف يمكنني التعرّف على أحد رموز NHS QR الرسمية؟</string>
     <string name="qr_code_help_about_qr_code_text">هذا هو الشكل الذي يبدو عليه ملصق رمز الاستجابة السريعة NHS QR الرسمي الإنجليزي/الويلزي. استخدم كاميرا هاتفك لإجراء مسح ضوئي لرمز QR المُوضَّح في المربع الموجود في المنتصف.\n</string>
     <string name="link_test_result_enter_code_example">على سبيل المثال: 7g8s3stn</string>
@@ -370,4 +370,6 @@
     <string name="test_result_negative_no_self_isolation_subtitle_text">نتيجة اختبار الكشف عن إصابتك بفيروس كورونا سلبية</string>
     <string name="notification_text_potential_exposure_explanation">لا داعي للقلق، لقد أجرينا تقييمًا لمدى الخطورة لديك وليس هناك ما يدعو إلى اتخاذ أي إجراءٍ في الوقت الراهن. نُهيب بكم الاستمرار في توخي الحيطة واتباع أحدث النصائح المتعلقة بالتباعد الجسدي.</string>
     <string name="notification_title_potential_exposure_explanation">اكتمل الفحص المتعلق بالتعرّض لفيروس كوفيد-19</string>
+    <string name="qr_code_intro_text">يجب استخدام هذا التطبيق عند دخولك إلى مكانٍ ما (حانة أو مطعم على سبيل المثال) يشتمل على أحد ملصقات الاستجابة السريعة المُقدمة من هيئة الخدمات الصحية الوطنية \"NHS QR\" لإجراء مسح ضوئي للملصق؛ علمًا بأن التطبيق يقوم بعد ذلك بتسجيل وقت دخولك إلى المكان.\n\nعند استخدامك لخاصية تسجيل الدخول إلى مكانٍ ما، سيكون بمقدورك استلام إخطارٍ إذا كان هناك أشخاصٌ مصابون بفيروس كورونا يرتادون هذا المكان في نفس الوقت. وسيتضمن الإخطار النصائح ذات الصلة، مثل التحقق من الأعراض المصاحبة للإصابة بفيروس كورونا.</string>
+    <string name="venue_check_in_title">المزيد من المعلومات حول تسجيل الدخول إلى الأماكن</string>
 </resources>

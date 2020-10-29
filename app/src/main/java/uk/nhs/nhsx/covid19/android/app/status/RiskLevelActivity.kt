@@ -55,14 +55,6 @@ class RiskLevelActivity : BaseActivity(R.layout.activity_risk_level) {
             }
         }
 
-        viewModel.buttonUrlLiveData().observe(this) { urlResource: Int ->
-            openUrl(getString(urlResource))
-        }
-
-        buttonRiskLevelLink.setOnClickListener {
-            viewModel.onRestrictionsButtonClicked()
-        }
-
         buttonRiskLevelLink.setUpOpensInBrowserWarning()
     }
 
@@ -90,7 +82,11 @@ class RiskLevelActivity : BaseActivity(R.layout.activity_risk_level) {
     }
 
     private fun handleOldRiskLevel(oldRisk: OldRisk) {
-        titleRiskLevel.text = getString(oldRisk.textResId, oldRisk.mainPostCode, getString(oldRisk.areaRiskLevelResId))
+        titleRiskLevel.text = getString(
+            oldRisk.textResId,
+            oldRisk.mainPostCode,
+            getString(oldRisk.areaRiskLevelResId)
+        )
 
         when (oldRisk.areaRisk) {
             LOW -> imageRiskLevel.setImageResource(R.drawable.ic_map_risk_green)
@@ -103,6 +99,14 @@ class RiskLevelActivity : BaseActivity(R.layout.activity_risk_level) {
         val riskLevelText =
             getString(viewModel.getDistrictAwareRiskLevelInformation(oldRisk.areaRisk))
         riskLevelInformation.setRawText(riskLevelText)
+
+        viewModel.buttonUrlLiveData().observe(this) { urlResource: Int ->
+            openUrl(getString(urlResource))
+        }
+
+        buttonRiskLevelLink.setOnClickListener {
+            viewModel.onRestrictionsButtonClicked()
+        }
     }
 
     companion object {

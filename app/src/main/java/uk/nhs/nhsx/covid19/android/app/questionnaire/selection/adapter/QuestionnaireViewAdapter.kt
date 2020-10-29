@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.item_question.view.textQuestionDescription
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.adapter.QuestionnaireViewAdapter.QuestionnaireViewHolder
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 
 class QuestionnaireViewAdapter(
     private val listener: (Question) -> Unit
@@ -41,6 +42,8 @@ class QuestionnaireViewAdapter(
             questionContainer.setOnClickListener {
                 listener(question)
             }
+
+            checkboxQuestion.setUpAccessibilityHeading()
         }
     }
 

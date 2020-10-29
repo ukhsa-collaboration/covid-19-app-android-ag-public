@@ -15,17 +15,17 @@ import java.io.IOException
 import javax.inject.Inject
 
 class CtaTokenValidator @Inject constructor(
-    private val virologyTestingApi: VirologyTestingApi
+    private val virologyTestingApi: VirologyTestingApi,
+    private val crockfordDammValidator: CrockfordDammValidator
 ) {
 
     suspend fun validate(ctaToken: String): CtaTokenValidationResult = withContext(Dispatchers.IO) {
         try {
-            if (ctaToken.length != CTA_TOKEN_LENGTH) {
+            if (ctaToken.length != CTA_TOKEN_LENGTH || !crockfordDammValidator.validate(ctaToken)) {
                 return@withContext Failure(INVALID)
             }
 
-            val result =
-                virologyTestingApi.getTestResultForCtaToken(VirologyCtaExchangeRequest(ctaToken))
+            val result = virologyTestingApi.getTestResultForCtaToken(VirologyCtaExchangeRequest(ctaToken))
 
             when {
                 result.isSuccessful -> Success(result.body()!!)

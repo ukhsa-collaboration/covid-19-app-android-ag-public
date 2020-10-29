@@ -135,6 +135,7 @@ class OnboardingScenarioTest : EspressoTest() {
         )
     }
 
+    @RetryFlakyTest
     @Test
     fun onboardingFailedBecauseInvalidPostcodeEntered_showInvalidPostcodeError() = reporter(
         "Onboarding",

@@ -18,6 +18,7 @@ import uk.nhs.covid19.config.production
 import uk.nhs.covid19.config.qrCodesSignatureKey
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityListener
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityWorker
+import uk.nhs.nhsx.covid19.android.app.availability.GooglePlayUpdateProvider
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.di.ApplicationComponent
 import uk.nhs.nhsx.covid19.android.app.di.DaggerApplicationComponent
@@ -119,7 +120,8 @@ open class ExposureApplication : Application(), Configuration.Provider {
                     sharedPreferences,
                     encryptedFile,
                     qrCodesSignatureKey,
-                    ApplicationLocaleProvider(sharedPreferences, languageCode)
+                    ApplicationLocaleProvider(sharedPreferences, languageCode),
+                    GooglePlayUpdateProvider(this)
                 )
             )
             .networkModule(networkModule)

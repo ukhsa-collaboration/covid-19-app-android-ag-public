@@ -5,7 +5,10 @@ import com.google.android.gms.nearby.exposurenotification.ExposureNotificationCl
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient.EXTRA_TOKEN
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.verify
+import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.any
 import uk.nhs.nhsx.covid19.android.app.FieldInjectionUnitTest
@@ -20,14 +23,22 @@ class ExposureNotificationBroadcastReceiverTest : FieldInjectionUnitTest() {
 
     private val intent = mockk<Intent>(relaxed = true)
 
+    @Before
+    override fun setUp() {
+        super.setUp()
+        mockkObject(ExposureNotificationWorker.Companion)
+        every { ExposureNotificationWorker.schedule(context) } returns Unit
+    }
+
     @Test
-    fun scheduleExposureCircuitBreakerInitialCalled() {
+    fun scheduleExposureCircuitBreakerInitialCalled() = runBlocking {
         every { intent.action } returns ACTION_EXPOSURE_STATE_UPDATED
         every { intent.getStringExtra(EXTRA_TOKEN) } returns testToken
 
         testSubject.onReceive(context, intent)
 
         verify { testSubject.exposureNotificationsTokensProvider.add(testToken) }
+        verify { ExposureNotificationWorker.schedule(context) }
     }
 
     @Test
@@ -38,5 +49,6 @@ class ExposureNotificationBroadcastReceiverTest : FieldInjectionUnitTest() {
         testSubject.onReceive(context, intent)
 
         verify(exactly = 0) { testSubject.exposureNotificationsTokensProvider.add(testToken) }
+        verify(exactly = 0) { ExposureNotificationWorker.schedule(context) }
     }
 }

@@ -3,18 +3,20 @@ package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.NO
+import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.PENDING
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.YES
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesCircuitBreakerApi
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesCircuitBreakerRequest
 import javax.inject.Inject
 
 class RiskyVenuesCircuitBreakerPolling @Inject constructor(
     private val riskyVenuesCircuitBreakerApi: RiskyVenuesCircuitBreakerApi,
     private val notificationProvider: NotificationProvider,
     private val userInbox: UserInbox,
-    private val riskyVenuePollingConfigurationProvider: RiskyVenuePollingConfigurationProvider,
+    private val riskyVenueCircuitBreakerConfigurationProvider: RiskyVenueCircuitBreakerConfigurationProvider,
     private val removeOutdatedRiskyVenuePollingConfigurations: RemoveOutdatedRiskyVenuePollingConfigurations
 ) {
 
@@ -25,20 +27,32 @@ class RiskyVenuesCircuitBreakerPolling @Inject constructor(
 
         removeOutdatedRiskyVenuePollingConfigurations.invoke()
 
-        var latestApprovedConfig: RiskyVenuePollingConfiguration? = null
+        var latestApprovedConfig: RiskyVenueCircuitBreakerConfiguration? = null
 
-        riskyVenuePollingConfigurationProvider.configs.forEach { config ->
+        riskyVenueCircuitBreakerConfigurationProvider.configs.forEach { config ->
             runCatching {
-                val response =
-                    riskyVenuesCircuitBreakerApi.getRiskyVenuesBreakerResolution(config.approvalToken)
+                val (approval, approvalToken) = if (config.isPolling) {
+                    Pair(riskyVenuesCircuitBreakerApi.getRiskyVenuesBreakerResolution(config.approvalToken!!).approval, config.approvalToken)
+                } else {
+                    val response = riskyVenuesCircuitBreakerApi.submitInitialVenueIdForApproval(
+                        RiskyVenuesCircuitBreakerRequest(config.venueId)
+                    )
+                    Pair(response.approval, response.approvalToken)
+                }
 
-                when (response.approval) {
+                when (approval) {
                     YES -> {
                         latestApprovedConfig = config
-                        riskyVenuePollingConfigurationProvider.remove(config)
+                        riskyVenueCircuitBreakerConfigurationProvider.remove(config)
                     }
-                    NO -> riskyVenuePollingConfigurationProvider.remove(config)
-                    else -> Unit
+                    NO -> riskyVenueCircuitBreakerConfigurationProvider.remove(config)
+                    PENDING -> {
+                        if (!config.isPolling) {
+                            val pollingConfig = config.copy(isPolling = true, approvalToken = approvalToken)
+                            riskyVenueCircuitBreakerConfigurationProvider.remove(config)
+                            riskyVenueCircuitBreakerConfigurationProvider.add(pollingConfig)
+                        }
+                    }
                 }
             }
         }

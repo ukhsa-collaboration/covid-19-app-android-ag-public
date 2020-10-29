@@ -31,32 +31,12 @@
         </activity>
 
         <activity
-            android:name=".fieldtests.FieldTestsActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".fieldtests.ui.participants.ParticipantListActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
             android:name=".featureflag.testsettings.TestSettingsActivity"
             android:screenOrientation="portrait" />
 
         <activity
             android:name=".browser.BrowserActivity"
             android:screenOrientation="portrait" />
-
-        <!-- Receivers -->
-        <receiver
-            android:name=".fieldtests.nearby.ExposureNotificationBroadcastReceiver"
-            android:exported="true"
-            android:permission="com.google.android.gms.nearby.exposurenotification.EXPOSURE_CALLBACK">
-            <intent-filter>
-                <action android:name="com.google.android.gms.exposurenotification.ACTION_EXPOSURE_STATE_UPDATED" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".fieldtests.nearby.SubmitDataBroadcastReceiver" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -37,20 +37,21 @@ open class StatusOptionView @JvmOverloads constructor(
         applyAttributes(context, attrs)
     }
 
-    override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo?) {
+    override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo) {
         super.onInitializeAccessibilityNodeInfo(info)
+        val infoCompat = AccessibilityNodeInfoCompat.wrap(info)
 
         if (attrIsExternalLink) {
-            info?.contentDescription =
+            info.contentDescription =
                 context.getString(R.string.accessibility_announcement_link, statusOptionText.text)
-            info?.addAction(
+            info.addAction(
                 AccessibilityAction(
                     AccessibilityNodeInfoCompat.ACTION_CLICK,
                     context.getString(R.string.open_in_browser_warning)
                 )
             )
         } else {
-            info?.contentDescription =
+            info.contentDescription =
                 context.getString(R.string.accessibility_announcement_button, statusOptionText.text)
         }
     }

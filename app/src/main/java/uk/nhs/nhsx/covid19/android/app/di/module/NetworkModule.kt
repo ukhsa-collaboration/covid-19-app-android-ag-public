@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.di.module
 
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapters.EnumJsonAdapter
 import dagger.Module
 import dagger.Provides
 import okhttp3.CertificatePinner
@@ -20,6 +21,8 @@ import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.TranslatableAdapter
+import uk.nhs.riskscore.ObservationType
+import uk.nhs.riskscore.ObservationType.gen
 import java.util.UUID
 import java.util.concurrent.TimeUnit.MINUTES
 import javax.inject.Named
@@ -162,6 +165,10 @@ class NetworkModule(
             .add(LocalDateAdapter())
             .add(InstantAdapter())
             .add(TranslatableAdapter())
+            .add(
+                ObservationType::class.java,
+                EnumJsonAdapter.create(ObservationType::class.java).withUnknownFallback(gen)
+            )
             .build()
     }
 

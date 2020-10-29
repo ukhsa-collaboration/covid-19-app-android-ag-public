@@ -18,17 +18,18 @@ import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.Ignore
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeWontBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveThenNegativeWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveContinueIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveThenNegativeWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveWontBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidWillBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.Ignore
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.ViewState
+import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -42,11 +43,12 @@ class TestResultViewModelTest {
     private val testResultsProvider = mockk<TestResultsProvider>(relaxed = true)
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>(relaxed = true)
     private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
+    private val fixedClock = Clock.fixed(symptomsOnsetDate.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC)
 
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
 
     private val testSubject =
-        TestResultViewModel(testResultsProvider, isolationConfigurationProvider, stateMachine)
+        TestResultViewModel(testResultsProvider, isolationConfigurationProvider, stateMachine, fixedClock)
 
     private val isolationState = Isolation(
         isolationStart = symptomsOnsetDate.atStartOfDay(ZoneOffset.UTC).toInstant(),
@@ -105,7 +107,11 @@ class TestResultViewModelTest {
 
             testSubject.onCreate()
 
-            verify { viewStateObserver.onChanged(ViewState(PositiveContinueIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)) }
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveContinueIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)
+                )
+            }
         }
 
     @Test
@@ -121,7 +127,11 @@ class TestResultViewModelTest {
 
             testSubject.onCreate()
 
-            verify { viewStateObserver.onChanged(ViewState(PositiveWontBeInIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)) }
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWontBeInIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)
+                )
+            }
         }
 
     @Test
@@ -231,7 +241,11 @@ class TestResultViewModelTest {
 
             testSubject.onCreate()
 
-            verify { viewStateObserver.onChanged(ViewState(PositiveWontBeInIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)) }
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWontBeInIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)
+                )
+            }
         }
 
     @Test
@@ -247,7 +261,11 @@ class TestResultViewModelTest {
 
             testSubject.onCreate()
 
-            verify { viewStateObserver.onChanged(ViewState(PositiveWillBeInIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)) }
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWillBeInIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)
+                )
+            }
         }
 
     @Test
@@ -263,7 +281,11 @@ class TestResultViewModelTest {
 
             testSubject.onCreate()
 
-            verify { viewStateObserver.onChanged(ViewState(PositiveWontBeInIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)) }
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWontBeInIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)
+                )
+            }
         }
 
     @Test
@@ -279,7 +301,11 @@ class TestResultViewModelTest {
 
             testSubject.onCreate()
 
-            verify { viewStateObserver.onChanged(ViewState(PositiveWillBeInIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)) }
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWillBeInIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)
+                )
+            }
         }
 
     @Test
@@ -305,6 +331,25 @@ class TestResultViewModelTest {
         testSubject.acknowledgeTestResult()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResult, false)) }
+    }
+
+    @Test
+    fun `latest test result positive with expired isolation should return PositiveWontBeInIsolation`() {
+        every { stateMachine.readState() } returns Default()
+        val expiredPositiveTestResult = positiveTestResult.copy(
+            testEndDate = symptomsOnsetDate.atStartOfDay().toInstant(ZoneOffset.UTC).minus(10, ChronoUnit.DAYS)
+        )
+        every { testResultsProvider.testResults } returns mapOf(positiveTestResult.diagnosisKeySubmissionToken to expiredPositiveTestResult)
+
+        testSubject.viewState().observeForever(viewStateObserver)
+
+        testSubject.onCreate()
+
+        verify {
+            viewStateObserver.onChanged(
+                ViewState(PositiveWontBeInIsolation(expiredPositiveTestResult.diagnosisKeySubmissionToken), 0)
+            )
+        }
     }
 
     companion object {

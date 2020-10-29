@@ -5,6 +5,7 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers
 
 import dagger.Component
+import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.di.ApplicationComponent
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
@@ -41,6 +42,9 @@ interface TestAppComponent : ApplicationComponent {
 
     @Singleton
     fun getUserInbox(): UserInbox
+
+    @Singleton
+    fun getAppAvailabilityProvider(): AppAvailabilityProvider
 
     fun provideDisplayStateExpirationNotification(): DisplayStateExpirationNotification
 

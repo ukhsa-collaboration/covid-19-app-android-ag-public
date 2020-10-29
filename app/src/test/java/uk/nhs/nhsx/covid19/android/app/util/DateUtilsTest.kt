@@ -4,6 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.Clock
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneId
 
 class DateUtilsTest {
@@ -98,5 +99,17 @@ class DateUtilsTest {
 
         val nextLocalMidnightTime = time.getNextLocalMidnightTime(fromClock)
         assertEquals(localMidnightInUtc, nextLocalMidnightTime)
+    }
+
+    @Test
+    fun `hoursUntilNow returns four hours from now`() {
+        val fromClock = Clock.fixed(Instant.parse("2014-12-21T06:23:00Z"), ZoneId.of("Europe/London"))
+        val toClock = Clock.fixed(Instant.parse("2014-12-21T10:23:00Z"), ZoneId.of("Europe/London"))
+
+        val fromLocalDateTime = LocalDateTime.now(fromClock)
+
+        val hoursUntil = fromLocalDateTime.hoursUntilNow(toClock)
+
+        assertEquals(4, hoursUntil)
     }
 }

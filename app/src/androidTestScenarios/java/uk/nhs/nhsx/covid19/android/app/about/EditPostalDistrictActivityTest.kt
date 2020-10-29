@@ -4,6 +4,7 @@ import org.awaitility.kotlin.await
 import org.awaitility.kotlin.until
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.report.notReported
+import uk.nhs.nhsx.covid19.android.app.testhelpers.AWAIT_AT_MOST_SECONDS
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.EditPostalDistrictRobot
 import java.util.concurrent.TimeUnit.SECONDS
@@ -56,7 +57,7 @@ class EditPostalDistrictActivityTest : EspressoTest() {
 
         editPostalDistrictRobot.clickSavePostDistrictCode()
 
-        await.atMost(10, SECONDS) until {
+        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
             editPostalDistrictActivity?.isDestroyed ?: false
         }
     }

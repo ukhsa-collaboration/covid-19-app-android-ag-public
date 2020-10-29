@@ -13,6 +13,7 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import java.time.Instant
 import java.time.LocalDate
@@ -162,6 +163,7 @@ class TestResultActivityTest : EspressoTest() {
         assertTrue { testAppContext.getCurrentState() is Isolation }
     }
 
+    @RetryFlakyTest
     @Test
     fun showIsolationScreenWhenReceivingNegativeAndThenPositiveTestResult() = notReported {
         testAppContext.setState(Default())

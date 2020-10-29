@@ -36,7 +36,7 @@
     <string name="low_risk_level_text">Scăzut - autoritatea dvs. locală este evaluată momentan drept „risc scăzut”, cu un nivel de infecție similar cu majoritatea celorlalte părți ale țării</string>
     <string name="medium_risk_level_text">Mediu - autoritatea locală sau o autoritate locală învecinată are niveluri ridicate sau în creștere de infecție. Vă rugăm să urmați instrucțiunile naționale.</string>
     <string name="high_risk_level_text">Ridicat - autoritatea dvs. locală, sau o autoritate locală vecină, folosește măsuri suplimentare celor care se află în vigoare în restul Angliei și Țara Galilor (de exemplu, carantina) pentru a reduce transmiterea infecției din cauza nivelurilor ridicate de infecție în zona locală. Există în vigoare un plan de acțiune detaliat și resursele locale sunt sporite cu sprijin național.</string>
-    <string name="risk_level_title">Nivel de risc</string>
+    <string name="risk_level_title">Nivel Local de Alertă Covid</string>
     <string name="qr_code_permission_denied_action">Autorizare permisiuni cameră</string>
     <string name="qr_code_permission_denied_subtitle">Această aplicație folosește camera dvs. pentru a face check-in-uri în baruri și restaurante.\n\nVă rugăm să autorizați permisiunea camerei de a scana codul oficial NHS QR.</string>
     <string name="qr_code_unsupported_description">Vă rugăm să găsiți o altă modalitate de a face check-in. Discutați cu un membru al personalului pentru a vă ajuta.</string>
@@ -85,7 +85,7 @@
     <string name="test_ordering_description_2">Odată ajuns/ ă acolo, vi se va cere să completați câteva detalii personale (cum ar fi adresa dvs.), astfel încât să puteți obține un test, dar nimic din ceea ce introduceți în aplicație sau pe website nu va fi distribuit.</string>
     <string name="test_ordering_description_3">Singura informație distribuită între aplicație și website este un „jeton” digital care ne ajută să obținem rezultatele testului dvs. înapoi în aplicație.</string>
     <string name="test_ordering_description_4">Orice date utilizate în procesul de testare sunt descrise în notificarea de confidențialitate:</string>
-    <string name="book_free_test_now">Rezervați acum un test gratuit</string>
+    <string name="book_free_test_now">Programați-vă un test</string>
     <string name="about_this_app_title">Despre această aplicație</string>
     <string name="title_how_app_works">Cum funcționează această aplicație</string>
     <string name="about_how_this_app_works_link">Cum funcționează aplicația</string>
@@ -284,7 +284,7 @@
     <string name="link_test_result_text">Nu trebuie să faceți acest lucru dacă ați rezervat testul din aplicație.</string>
     <string name="link_test_result_enter_code_title">Introduceți codul testului dvs</string>
     <string name="about_provide_feedback_link">Informații despre opinii</string>
-    <string name="qr_code_help_text">Dacă intrați într-o locație (de exemplu, un bar sau un restaurant) care afișează un poster cu codul oficial NHS QR, folosiți această aplicație pentru scanare. Aplicația înregistrează apoi ora la care vă înregistrați în locație.\n\nPrin folosirea înregistrării de sosire, veți putea primi o notificare în cazul în care persoanele cu coronavirus vizitează aceiași locație în același timp cu dvs.  Notificarea va include îndrumări relevante, de genul cum să fiți atenți la simptomele de coronavirus.\n\nDacă nu puteți scana un cod QR și trebuie să verificați în alt mod, vă rugăm să discutați cu un membru al personalului.</string>
+    <string name="qr_code_help_text">Dacă nu puteți scana un cod QR și trebuie să verificați în alt mod, vă rugăm să discutați cu un membru al personalului.</string>
     <string name="qr_code_help_about_qr_code_title">Cum recunosc un cod QR NHS oficial?</string>
     <string name="qr_code_help_about_qr_code_text">Așa arată un QR cod oficial al NHS. Utilizați camera telefonului pentru a scana codul QR care este pătratul din mijloc.</string>
     <string name="link_test_result_enter_code_example">Exemplu: 7g8s3stn</string>
@@ -358,4 +358,6 @@
     <string name="test_result_negative_no_self_isolation_subtitle_text">Testul dvs. pentru coronavirus este negativ</string>
     <string name="notification_text_potential_exposure_explanation">Nu vă faceți griji, v-am evaluat nivelul de risc și nu trebuie să acționați momentan. Continuați să stați alert și să urmați ultimele îndrumări pentru distanțare socială.</string>
     <string name="notification_title_potential_exposure_explanation">Verificare de expunere la COVID-19 finalizată.</string>
+    <string name="qr_code_intro_text">Dacă intrați într-o locație (de exemplu, un bar sau un restaurant) care afișează un poster cu codul oficial NHS QR, folosiți această aplicație pentru scanare. Aplicația înregistrează apoi ora la care vă înregistrați în locație.\n\nPrin folosirea înregistrării de sosire, veți putea primi o notificare în cazul în care persoanele cu coronavirus vizitează aceiași locație în același timp cu dvs.  Notificarea va include îndrumări relevante, de genul cum să fiți atenți la simptomele de coronavirus.</string>
+    <string name="venue_check_in_title">Mai multe informații despre check-in în locație</string>
 </resources>

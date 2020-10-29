@@ -9,6 +9,7 @@ import io.mockk.verifyOrder
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -33,7 +34,10 @@ class LinkTestResultViewModelTest {
     private val ctaTokenValidator = mockk<CtaTokenValidator>(relaxed = true)
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
 
-    private val testSubject = LinkTestResultViewModel(ctaTokenValidator, isolationStateMachine)
+    private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxed = true)
+
+    private val testSubject =
+        LinkTestResultViewModel(ctaTokenValidator, isolationStateMachine, analyticsEventProcessor)
 
     private val linkTestResultObserver = mockk<Observer<LinkTestResultViewState>>(relaxed = true)
 

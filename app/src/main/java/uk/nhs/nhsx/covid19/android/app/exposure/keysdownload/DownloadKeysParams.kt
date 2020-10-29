@@ -4,7 +4,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadKeysParams.
 import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadKeysParams.Intervals.Hourly
 import uk.nhs.nhsx.covid19.android.app.util.daysUntilToday
 import uk.nhs.nhsx.covid19.android.app.util.hoursUntilNow
-import uk.nhs.nhsx.covid19.android.app.util.lastDateFormatter
+import uk.nhs.nhsx.covid19.android.app.util.keysQueryFormat
 import java.time.Clock
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -56,7 +56,7 @@ class DownloadKeysParams(
     ): List<Hourly> = mutableListOf<Hourly>().apply {
         repeat(intervals) {
             latestDownloadTime = latestDownloadTime.plusHours(TWO_HOURS)
-            add(Hourly(latestDownloadTime.toDomainString()))
+            add(Hourly(latestDownloadTime.keysQueryFormat()))
         }
     }.toList()
 
@@ -65,7 +65,7 @@ class DownloadKeysParams(
     ): List<Daily> = mutableListOf<Daily>().apply {
         repeat(intervals) {
             latestDownloadTime = latestDownloadTime.plusDays(ONE_DAY).withHour(0)
-            add(Daily(latestDownloadTime.toDomainString()))
+            add(Daily(latestDownloadTime.keysQueryFormat()))
         }
     }.toList()
 
@@ -80,10 +80,6 @@ class DownloadKeysParams(
 
     private fun LocalDateTime.isBeforeToday(clock: Clock): Boolean =
         isBefore(LocalDateTime.now(clock).withHour(0))
-
-    private fun LocalDateTime.toDomainString(): String {
-        return format(lastDateFormatter)
-    }
 
     companion object {
         const val TWO_HOURS = 2L

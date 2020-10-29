@@ -20,6 +20,20 @@ class ParagraphsContainer @JvmOverloads constructor(
 
     init {
         orientation = VERTICAL
+        context.theme.obtainStyledAttributes(
+            attrs,
+            R.styleable.ParagraphsContainer,
+            0,
+            0
+        ).apply {
+            val rawText = getText(R.styleable.ParagraphsContainer_rawText)
+
+            rawText?.let {
+                setRawText(it.toString())
+            }
+
+            recycle()
+        }
     }
 
     fun addAllParagraphs(vararg paragraphs: String) {

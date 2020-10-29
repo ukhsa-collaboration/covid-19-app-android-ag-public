@@ -9,6 +9,7 @@ import io.mockk.slot
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AggregateAnalytics
+import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AnalyticsAlarm
 import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AnalyticsEventsStorage
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
 import uk.nhs.nhsx.covid19.android.app.remote.AnalyticsApi
@@ -28,6 +29,7 @@ class SubmitAnalyticsTest {
     private val groupAnalyticsEvents = mockk<GroupAnalyticsEvents>(relaxed = true)
     private val aggregateAnalytics = mockk<AggregateAnalytics>(relaxed = true)
     private val analyticsEventsStorage = mockk<AnalyticsEventsStorage>(relaxed = true)
+    private val analyticsAlarm = mockk<AnalyticsAlarm>(relaxed = true)
     private val clock = Clock.fixed(Instant.parse("2020-09-28T00:05:00.00Z"), ZoneOffset.UTC)
 
     private val testSubject = SubmitAnalytics(
@@ -36,6 +38,7 @@ class SubmitAnalyticsTest {
         groupAnalyticsEvents,
         aggregateAnalytics,
         analyticsEventsStorage,
+        analyticsAlarm,
         clock
     )
 
@@ -46,6 +49,10 @@ class SubmitAnalyticsTest {
         every { analyticsEventsStorage.value } returns stubAnalyticsPayload(2).value
 
         testSubject.invoke(isOnboardingAnalyticsEvent = false)
+
+        verify(exactly = 1) { analyticsAlarm.cancel() }
+
+        coVerify(exactly = 1) { aggregateAnalytics.invoke() }
 
         coVerify(exactly = 2) { analyticsApi.submitAnalytics(any()) }
 

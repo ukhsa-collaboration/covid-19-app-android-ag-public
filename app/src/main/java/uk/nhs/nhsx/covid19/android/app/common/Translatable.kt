@@ -15,7 +15,7 @@ data class Translatable(val translations: Map<String, String>) : Parcelable {
         val languageCodeOnly = Locale.getDefault().language
 
         if (!isLanguageSupported(languageCodeOnly)) {
-            return translations[fallbackLanguageAndRegion] ?: ""
+            return translations[fallbackLanguageAndRegion] ?: translations[fallbackLanguage] ?: ""
         }
 
         val exactMatch = translations[languageAndRegion]
@@ -30,15 +30,15 @@ data class Translatable(val translations: Map<String, String>) : Parcelable {
                 ) == languageCodeOnly
             }
 
-        return translations[firstMatchedLanguageCode ?: fallbackLanguageAndRegion] ?: ""
+        return translations[firstMatchedLanguageCode ?: fallbackLanguageAndRegion]
+            ?: translations[fallbackLanguage] ?: ""
     }
 
     private fun getLanguageCode(languageAndRegion: String) =
         if (languageAndRegion.contains("-")) languageAndRegion.split("-")[0] else languageAndRegion
 
     private fun isLanguageSupported(languageCode: String) = SupportedLanguage.values()
-        .map { it.code }
-        .filterNotNull()
+        .mapNotNull { it.code }
         .any {
             it == languageCode
         }
@@ -48,5 +48,6 @@ data class Translatable(val translations: Map<String, String>) : Parcelable {
 
     companion object {
         private const val fallbackLanguageAndRegion = "en-GB"
+        private const val fallbackLanguage = "en"
     }
 }

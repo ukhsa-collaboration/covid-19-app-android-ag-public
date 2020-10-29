@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.analytics
 
 import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AggregateAnalytics
+import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AnalyticsAlarm
 import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AnalyticsEventsStorage
 import uk.nhs.nhsx.covid19.android.app.common.Result
 import uk.nhs.nhsx.covid19.android.app.common.runSafely
@@ -19,6 +20,7 @@ class SubmitAnalytics(
     private val groupAnalyticsEvents: GroupAnalyticsEvents,
     private val aggregateAnalytics: AggregateAnalytics,
     private val analyticsEventsStorage: AnalyticsEventsStorage,
+    private val analyticsAlarm: AnalyticsAlarm,
     private val clock: Clock
 ) {
 
@@ -28,13 +30,15 @@ class SubmitAnalytics(
         analyticsApi: AnalyticsApi,
         groupAnalyticsEvents: GroupAnalyticsEvents,
         aggregateAnalytics: AggregateAnalytics,
-        analyticsEventsStorage: AnalyticsEventsStorage
+        analyticsEventsStorage: AnalyticsEventsStorage,
+        analyticsAlarm: AnalyticsAlarm
     ) : this(
         analyticsMetricsLogStorage,
         analyticsApi,
         groupAnalyticsEvents,
         aggregateAnalytics,
         analyticsEventsStorage,
+        analyticsAlarm,
         Clock.systemUTC()
     )
 
@@ -64,6 +68,7 @@ class SubmitAnalytics(
         }
 
     private suspend fun handleMigration() {
+        analyticsAlarm.cancel()
         aggregateAnalytics.invoke()
         analyticsEventsStorage.value?.let {
             it.forEach {

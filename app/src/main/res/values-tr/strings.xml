@@ -36,7 +36,7 @@
     <string name="low_risk_level_text">Düşük - yerel idareniz mevcut durumda bölgenizi \'düşük riskli\' olarak tanımlamaktadır; enfeksiyon seviyeleri ülkenin birçok diğer bölgesine benzerdir</string>
     <string name="medium_risk_level_text">Orta - yerel idareniz veya komşu bir yerel idare, yüksek veya artan enfeksiyon seviyelerine sahiptir. Lütfen ulusal yönergeleri takip edin.</string>
     <string name="high_risk_level_text">Yüksek - yerel idareniz veya komşunuz olan bir bölgenin idaresi, yerel bölgede enfeksiyon seviyelerinin yüksek olması nedeniyle enfeksiyon yayılımını azaltmak üzere İngiltere ve Galler geri kalanında uygulanandan daha fazla tedbir (ör. sokağa çıkma yasakları) uygulamaktadır. Ayrıntılı bir eylem planı uygulamaya konulmuştur ve ulusal çaplı destekle birlikte yerel kaynaklar artırılmaktadır.</string>
-    <string name="risk_level_title">Risk seviyesi</string>
+    <string name="risk_level_title">Yerel Covid Uyarı Seviyesi</string>
     <string name="qr_code_permission_denied_action">Kamera izinlerini etkinleştir</string>
     <string name="qr_code_permission_denied_subtitle">Bu uygulama, barlar ve restoranlar gibi yerlere giriş yapmak için kameranızı kullanır.\n\nResmi NHS QR kodunun taranması için lütfen kamera izinlerini etkinleştirin.</string>
     <string name="qr_code_unsupported_description">Lütfen giriş yapmanın başka bir yolunu bulun. Yardım için personelle görüşün.</string>
@@ -85,7 +85,7 @@
     <string name="test_ordering_description_2">Burada test yaptırmak için bazı kişisel bilgilerinizi (adresiniz gibi) girmeniz gerekecektir ancak uygulamaya ya da web sitesine girdiğiniz hiçbir bilgi paylaşılmayacaktır.</string>
     <string name="test_ordering_description_3">Uygulama ve web sitesi arasında yalnızca test sonuçlarınızın uygulamaya geri aktarılması için bir dijital \'jeton\' paylaşılır.</string>
     <string name="test_ordering_description_4">Test sürecinde kullanılan tüm veriler Gizlilik Bildiriminde açıklanmaktadır:</string>
-    <string name="book_free_test_now">Hemen şimdi ücretsiz test rezervasyonu yaptırın</string>
+    <string name="book_free_test_now">Kendiniz için bir test ayarlayın</string>
     <string name="about_this_app_title">Bu uygulama hakkında</string>
     <string name="title_how_app_works">Uygulama nasıl çalışır?</string>
     <string name="about_how_this_app_works_link">Uygulama nasıl çalışır?</string>
@@ -280,7 +280,7 @@
     <string name="link_test_result_text">Test rezervasyonunu uygulamadan yaptıysanız bu işlemi yapmanıza gerek yoktur.</string>
     <string name="link_test_result_enter_code_title">Test kodunuzu girin</string>
     <string name="about_provide_feedback_link">Fikrinizi bildirin</string>
-    <string name="qr_code_help_text">Resmi bir NHS QR koduna sahip bir mekana giriyorsanız (örneğin, bir bara ya da restorana), kodu taramak için bu uygulamayı kullanın. Uygulama, sonrasında bir mekana giriş zamanınızı kaydeder.\n\nMekana giriş özelliğini kullanarak, koronavirüslü kişilerin aynı mekanı sizinle benzer zamanlarda ziyaret etmesi durumunda bir bildirim alabileceksiniz.  Bildirim, koronavürüs belirtilerine dikkat edilmesi gibi ilgili tavsiyeler de içerecektir.\n\nQR kodunu tarayamıyorsanız ve başka bir şekilde kontrol etmeniz gerekiyorsa, lütfen bir personel ile konuşun.</string>
+    <string name="qr_code_help_text">QR kodunu tarayamıyorsanız ve başka bir şekilde kontrol etmeniz gerekiyorsa, lütfen bir personel ile konuşun.</string>
     <string name="qr_code_help_about_qr_code_title">Resmi bir NHS QR kodunu nasıl tanırım?</string>
     <string name="qr_code_help_about_qr_code_text">Resmi NHS QR kodu posterinin görüntüsü budur. Ortadaki karede olan QR kodunu taramak için telefon kameranızı kullanın.</string>
     <string name="link_test_result_enter_code_example">Örnek: 7g8s3stn</string>
@@ -354,4 +354,6 @@
     <string name="test_result_negative_no_self_isolation_subtitle_text">Koronavirüs test sonucunuz negatif</string>
     <string name="notification_text_potential_exposure_explanation">Merak etmeyin, riskinizi değerlendirdik ve şu anda herhangi birşey yapmanıza gerek yoktur. Lütfen dikkat etmeye ve sosyal mesafe ile ilgili en son tavsiyelere uymaya devam edin.</string>
     <string name="notification_title_potential_exposure_explanation">COVID-19 Maruz Kalma Kontrolü Tamamlandı</string>
+    <string name="qr_code_intro_text">Resmi bir NHS QR koduna sahip bir mekana giriyorsanız (örneğin, bir bara ya da restorana), kodu taramak için bu uygulamayı kullanın. Uygulama, sonrasında bir mekana giriş zamanınızı kaydeder.\n\nMekana giriş özelliğini kullanarak, koronavirüslü kişilerin aynı mekanı sizinle benzer zamanlarda ziyaret etmesi durumunda bir bildirim alabileceksiniz.  Bildirim, koronavürüs belirtilerine dikkat edilmesi gibi ilgili tavsiyeler de içerecektir.</string>
+    <string name="venue_check_in_title">Mekanlara giriş yapma konusunda daha fazla bilgi</string>
 </resources>

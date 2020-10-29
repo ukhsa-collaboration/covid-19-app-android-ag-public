@@ -98,4 +98,7 @@
     <declare-styleable name="LogoView">
         <attr name="isAccessibilityHeadingCompat" format="boolean" />
     </declare-styleable>
+    <declare-styleable name="ParagraphsContainer">
+        <attr name="rawText" format="string" />
+    </declare-styleable>
 </resources>

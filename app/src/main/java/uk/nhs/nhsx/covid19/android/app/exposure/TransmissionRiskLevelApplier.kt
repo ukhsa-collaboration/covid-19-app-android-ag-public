@@ -21,7 +21,10 @@ class TransmissionRiskLevelApplier @Inject constructor(
             .sortedByDescending { it.rollingStartNumber }
             .map { key ->
                 val daysFromOnset = ChronoUnit.DAYS.between(getOnsetDate(), key.date()).toInt()
-                key.copy(transmissionRiskLevel = calculateTransmissionRiskLevel(daysFromOnset))
+                key.copy(
+                    transmissionRiskLevel = calculateTransmissionRiskLevel(daysFromOnset),
+                    daysSinceOnsetOfSymptoms = daysFromOnset
+                )
             }
     }
 

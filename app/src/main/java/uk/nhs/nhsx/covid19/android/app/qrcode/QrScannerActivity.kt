@@ -49,6 +49,7 @@ import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.Scanning
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityButton
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
@@ -82,6 +83,7 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
         textMoreInfo.setOnClickListener {
             startActivity<QrCodeHelpActivity>()
         }
+        textMoreInfo.setUpAccessibilityButton()
     }
 
     override fun onResume() {

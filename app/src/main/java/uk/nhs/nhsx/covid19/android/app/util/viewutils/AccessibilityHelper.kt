@@ -14,7 +14,6 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
 import com.google.android.material.appbar.MaterialToolbar
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.R.string
 
 fun Context.smallestScreenWidth(): Int = resources.configuration.smallestScreenWidthDp
 
@@ -62,22 +61,39 @@ fun View.setUpAccessibilityHeading() {
     )
 }
 
-fun View.setUpOpensInBrowserWarning() {
+fun TextView.setUpOpensInBrowserWarning() {
     ViewCompat.setAccessibilityDelegate(
         this,
         object : AccessibilityDelegateCompat() {
             override fun onInitializeAccessibilityNodeInfo(
-                host: View?,
+                host: View,
                 info: AccessibilityNodeInfoCompat
             ) {
                 super.onInitializeAccessibilityNodeInfo(host, info)
-                info.roleDescription = "Link"
+                info.roleDescription =
+                    context.getString(R.string.accessibility_announcement_link, text)
                 info.addAction(
                     AccessibilityActionCompat(
                         AccessibilityNodeInfoCompat.ACTION_CLICK,
-                        context.getString(string.open_in_browser_warning)
+                        context.getString(R.string.open_in_browser_warning)
                     )
                 )
+            }
+        }
+    )
+}
+
+fun TextView.setUpAccessibilityButton() {
+    ViewCompat.setAccessibilityDelegate(
+        this,
+        object : AccessibilityDelegateCompat() {
+            override fun onInitializeAccessibilityNodeInfo(
+                host: View,
+                info: AccessibilityNodeInfoCompat
+            ) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                info.contentDescription =
+                    context.getString(R.string.accessibility_announcement_button, text)
             }
         }
     )

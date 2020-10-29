@@ -56,8 +56,9 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonRiskLevelLink"
+                style="@style/PrimaryButton"
                 android:layout_width="match_parent"
-                android:layout_height="54dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:drawableEnd="@drawable/ic_link"
                 android:drawableTint="@color/background"

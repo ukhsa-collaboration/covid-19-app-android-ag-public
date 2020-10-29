@@ -90,13 +90,6 @@
                 android:text="Onboarding" />
 
             <Button
-                android:id="@+id/fieldTests"
-                style="@style/PrimaryButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Field Tests" />
-
-            <Button
                 android:id="@+id/statusScreen"
                 style="@style/PrimaryButton"
                 android:layout_width="match_parent"

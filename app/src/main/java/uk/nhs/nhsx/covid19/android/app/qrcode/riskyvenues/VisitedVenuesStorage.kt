@@ -93,11 +93,6 @@ class VisitedVenuesStorage @Inject constructor(
         setVisits(visits.map { it.copy(wasInRiskyList = it.venue.id in venueIds) })
     }
 
-    suspend fun undoMarkWasInRiskyList(venueId: String) = withContext(context) {
-        val visits = getVisitedVenuesMutable()
-        setVisits(visits.map { if (it.venue.id == venueId) it.copy(wasInRiskyList = false) else it })
-    }
-
     private fun getVisitedVenuesMutable(): MutableList<VenueVisit> {
         return try {
             val fileContents = encryptedFile.readText()

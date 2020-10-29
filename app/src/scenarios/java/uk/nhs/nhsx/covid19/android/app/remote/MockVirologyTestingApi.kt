@@ -76,7 +76,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                     )
                 )
             }
-            "negatvee" -> {
+            "f3dzcfdt" -> {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = "diagnosis_submission_token",
@@ -85,7 +85,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                     )
                 )
             }
-            "vdvdvdvd" -> {
+            "8vb7xehg" -> {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = "diagnosis_submission_token",

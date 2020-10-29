@@ -146,10 +146,10 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
     }
 
     private fun saveToFile(context: Context, uri: Uri): File {
-        val fileOutput = context.openFileOutput("temp.zip", Context.MODE_PRIVATE)
-
-        context.contentResolver.openInputStream(uri).use { inputStream ->
-            inputStream!!.copyTo(fileOutput)
+        context.openFileOutput("temp.zip", Context.MODE_PRIVATE).use { fileOutput ->
+            context.contentResolver.openInputStream(uri).use { inputStream ->
+                inputStream!!.copyTo(fileOutput)
+            }
         }
         return File(context.filesDir, "temp.zip")
     }

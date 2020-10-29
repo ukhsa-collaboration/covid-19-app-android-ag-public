@@ -90,12 +90,17 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
                     startedFromVenueCheckInSuccess = true
                 )
             }
+            qrScanHelpLink.setOnClickListener {
+                startActivity<QrCodeHelpActivity>()
+            }
             textCancelCheckIn.visible()
             textCancelCheckIn.setOnClickListener {
                 viewModel.removeLastVisit()
             }
+            topCloseButton.gone()
             venueInfoContainer.visible()
             qrCodeHelpContainer.gone()
+            qrScanHelpLink.visible()
         }
     }
 
@@ -122,6 +127,7 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
             }
             venueInfoContainer.gone()
             qrCodeHelpContainer.gone()
+            qrScanHelpLink.gone()
         }
 
         override fun onResume() {
@@ -133,6 +139,7 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
 
     inner class InvalidContentState : State {
         override fun setup() {
+            qrScanHelpLink.visible()
             resultIcon.setImageResource(R.drawable.ic_qr_code_failure)
             titleTextView.setText(R.string.qr_code_failure_title)
             subtitleTextView.setText(R.string.qr_code_failure_subtitle)
@@ -163,6 +170,7 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
             topCloseButton.gone()
             venueInfoContainer.gone()
             qrCodeHelpContainer.gone()
+            qrScanHelpLink.gone()
         }
     }
 

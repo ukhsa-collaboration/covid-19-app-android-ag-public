@@ -6,6 +6,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -17,7 +18,10 @@ import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenue
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyWindow
+import java.time.Clock
 import java.time.Instant
+import java.time.ZoneOffset
+import kotlin.test.assertEquals
 
 class DownloadAndProcessRiskyVenuesTest {
 
@@ -25,15 +29,18 @@ class DownloadAndProcessRiskyVenuesTest {
     private val venueMatchFinder = mockk<VenueMatchFinder>(relaxed = true)
     private val visitedVenueStorage = mockk<VisitedVenuesStorage>(relaxed = true)
     private val filterOutdatedVisits = mockk<FilterOutdatedVisits>()
-    private val riskyVenuesCircuitBreakerTasks =
-        mockk<RiskyVenuesCircuitBreakerTasks>(relaxed = true)
+    private val riskyVenuesCircuitBreakerPolling = mockk<RiskyVenuesCircuitBreakerPolling>()
+    private val riskyVenueCircuitBreakerConfigurationProvider = mockk<RiskyVenueCircuitBreakerConfigurationProvider>()
+    private val fixedClock = Clock.fixed(Instant.parse("2020-10-07T00:05:00.00Z"), ZoneOffset.UTC)
 
     private val testSubject = DownloadAndProcessRiskyVenues(
         riskyVenuesApi,
         venueMatchFinder,
         visitedVenueStorage,
         filterOutdatedVisits,
-        riskyVenuesCircuitBreakerTasks
+        riskyVenuesCircuitBreakerPolling,
+        riskyVenueCircuitBreakerConfigurationProvider,
+        fixedClock
     )
 
     private val riskyVenues = listOf(
@@ -107,9 +114,7 @@ class DownloadAndProcessRiskyVenuesTest {
         testSubject()
 
         coVerify(exactly = 0) { visitedVenueStorage.markAsWasInRiskyList(emptyList()) }
-        coVerify(exactly = 0) {
-            riskyVenuesCircuitBreakerTasks.scheduleRiskyVenuesCircuitBreakerInitial(any())
-        }
+        coVerify(exactly = 0) { riskyVenueCircuitBreakerConfigurationProvider.addAll(any()) }
     }
 
     @Test
@@ -120,12 +125,17 @@ class DownloadAndProcessRiskyVenuesTest {
         testSubject()
 
         coVerify(exactly = 1) { visitedVenueStorage.markAsWasInRiskyList(listOf(riskyVenues[0].id)) }
-        coVerify(exactly = 1) {
-            riskyVenuesCircuitBreakerTasks.scheduleRiskyVenuesCircuitBreakerInitial(
-                listOf(
-                    riskyVenues[0].id
-                )
-            )
-        }
+        val slot = slot<List<RiskyVenueCircuitBreakerConfiguration>>()
+        coVerify(exactly = 1) { riskyVenueCircuitBreakerConfigurationProvider.addAll(capture(slot)) }
+
+        val expected = RiskyVenueCircuitBreakerConfiguration(
+            startedAt = Instant.now(fixedClock),
+            venueId = riskyVenues[0].id,
+            approvalToken = null,
+            isPolling = false
+        )
+
+        assertEquals(1, slot.captured.size)
+        assertEquals(expected, slot.captured[0])
     }
 }

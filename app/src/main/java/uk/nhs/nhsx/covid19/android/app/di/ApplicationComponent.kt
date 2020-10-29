@@ -19,16 +19,15 @@ import uk.nhs.nhsx.covid19.android.app.di.module.ApiModule
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
 import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
-import uk.nhs.nhsx.covid19.android.app.exposure.SubmitKeysWorker
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationBroadcastReceiver
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWorker
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResultActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.RiskyVenuesCircuitBreakerInitialWorker
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
@@ -75,7 +74,6 @@ interface ApplicationComponent {
     fun inject(riskLevelActivity: RiskLevelActivity)
     fun inject(downloadRiskyPostCodesWorker: DownloadRiskyPostCodesWorker)
     fun inject(downloadVirologyTestResultWorker: DownloadVirologyTestResultWorker)
-    fun inject(riskyVenuesCircuitBreakerInitialWorker: RiskyVenuesCircuitBreakerInitialWorker)
     fun inject(qrScannerActivity: QrScannerActivity)
     fun inject(questionnaireActivity: QuestionnaireActivity)
     fun inject(testOrderingActivity: TestOrderingActivity)
@@ -93,7 +91,6 @@ interface ApplicationComponent {
     fun inject(exposureNotificationBroadcastReceiver: ExposureNotificationBroadcastReceiver)
     fun inject(userDataActivity: UserDataActivity)
     fun inject(editPostalCodeActivity: EditPostalDistrictActivity)
-    fun inject(submitKeysWorker: SubmitKeysWorker)
     fun inject(clearOutdatedDataWorker: ClearOutdatedDataWorker)
     fun inject(appAvailabilityWorker: AppAvailabilityWorker)
     fun inject(testOrderingProgressActivity: TestOrderingProgressActivity)
@@ -106,6 +103,7 @@ interface ApplicationComponent {
     fun inject(linkTextView: LinkTextView)
     fun inject(downloadTasksWorker: DownloadTasksWorker)
     fun inject(submitOnboardingAnalyticsWorker: SubmitOnboardingAnalyticsWorker)
+    fun inject(exposureNotificationWorker: ExposureNotificationWorker)
 
     fun provideAppAvailabilityListener(): AppAvailabilityListener
     fun providePeriodicTasks(): PeriodicTasks

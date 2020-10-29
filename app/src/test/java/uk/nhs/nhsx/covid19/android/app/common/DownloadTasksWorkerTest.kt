@@ -25,7 +25,6 @@ import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadAndProcessK
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenues
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.RiskyVenuesCircuitBreakerPolling
 import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWork
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
 import kotlin.test.assertEquals
@@ -37,8 +36,6 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
     private val analyticsEventProcessorMock = mockk<AnalyticsEventProcessor>(relaxed = true)
     private val downloadVirologyTestResultWorkMock =
         mockk<DownloadVirologyTestResultWork>(relaxed = true)
-    private val riskyVenuesCircuitBreakerPollingMock =
-        mockk<RiskyVenuesCircuitBreakerPolling>(relaxed = true)
     private val downloadRiskyPostCodesWorkMock = mockk<DownloadRiskyPostCodesWork>(relaxed = true)
     private val downloadAndProcessRiskyVenuesMock =
         mockk<DownloadAndProcessRiskyVenues>(relaxed = true)
@@ -53,7 +50,6 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
             appAvailabilityProvider = appAvailabilityProviderMock
             analyticsEventProcessor = analyticsEventProcessorMock
             downloadVirologyTestResultWork = downloadVirologyTestResultWorkMock
-            riskyVenuesCircuitBreakerPolling = riskyVenuesCircuitBreakerPollingMock
             downloadRiskyPostCodesWork = downloadRiskyPostCodesWorkMock
             downloadAndProcessRiskyVenues = downloadAndProcessRiskyVenuesMock
             downloadAndProcessKeys = downloadAndProcessKeysMock
@@ -104,7 +100,6 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
         coVerifyOrder {
             downloadAndProcessKeysMock()
             downloadVirologyTestResultWorkMock()
-            riskyVenuesCircuitBreakerPollingMock()
             downloadRiskyPostCodesWorkMock()
             downloadAndProcessRiskyVenuesMock()
             exposureNotificationWorkMock()

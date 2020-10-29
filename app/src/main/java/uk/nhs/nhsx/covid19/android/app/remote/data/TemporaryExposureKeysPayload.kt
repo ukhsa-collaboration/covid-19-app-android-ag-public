@@ -16,5 +16,6 @@ data class NHSTemporaryExposureKey(
     val key: String,
     val rollingStartNumber: Int,
     val rollingPeriod: Int = 144,
-    val transmissionRiskLevel: Int? = null
+    val transmissionRiskLevel: Int? = null,
+    val daysSinceOnsetOfSymptoms: Int? = null
 ) : Parcelable

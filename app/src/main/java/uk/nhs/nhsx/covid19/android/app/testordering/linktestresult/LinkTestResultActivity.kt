@@ -44,18 +44,26 @@ class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) 
 
         viewModel.viewState().observe(this) { viewState ->
             when (viewState) {
-                Progress -> linkTestResultEnterCodeView.handleProgress()
+                Progress -> handleProgress()
                 Valid -> finish()
-                is Error -> {
-                    linkTestResultScrollView.smoothScrollTo(0, linkTestResultEnterCodeView.top)
-                    linkTestResultEnterCodeView.errorText = when (viewState.type) {
-                        INVALID -> getString(R.string.valid_auth_code_is_required)
-                        NO_CONNECTION -> getString(R.string.link_test_result_error_no_connection)
-                        UNEXPECTED -> getString(R.string.link_test_result_error_unknown)
-                    }
-                    linkTestResultEnterCodeView.handleError()
-                }
+                is Error -> handleError(viewState)
             }
         }
+    }
+
+    private fun handleProgress() {
+        linkTestResultEnterCodeView.handleProgress()
+        linkTestResultContinue.isEnabled = false
+    }
+
+    private fun handleError(viewState: Error) {
+        linkTestResultScrollView.smoothScrollTo(0, linkTestResultEnterCodeView.top)
+        linkTestResultEnterCodeView.errorText = when (viewState.type) {
+            INVALID -> getString(R.string.valid_auth_code_is_required)
+            NO_CONNECTION -> getString(R.string.link_test_result_error_no_connection)
+            UNEXPECTED -> getString(R.string.link_test_result_error_unknown)
+        }
+        linkTestResultEnterCodeView.handleError()
+        linkTestResultContinue.isEnabled = true
     }
 }

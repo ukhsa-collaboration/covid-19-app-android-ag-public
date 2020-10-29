@@ -16,6 +16,7 @@ import org.junit.Rule
 import org.junit.runner.RunWith
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryRule
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
+import uk.nhs.nhsx.covid19.android.app.testhelpers.AWAIT_AT_MOST_SECONDS
 import uk.nhs.nhsx.covid19.android.app.util.ScreenshotTakingRule
 import java.util.concurrent.TimeUnit.SECONDS
 
@@ -53,7 +54,7 @@ abstract class EspressoTest {
             .startActivitySync(intent)
     }
 
-    protected fun waitFor(idleTime: Long = 10L, assertion: () -> Unit) {
+    protected fun waitFor(idleTime: Long = AWAIT_AT_MOST_SECONDS, assertion: () -> Unit) {
         await.atMost(
             idleTime, SECONDS
         ) ignoreExceptionsMatching {

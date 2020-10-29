@@ -5,7 +5,9 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class ExposureConfigurationResponse(
     val exposureNotification: ExposureNotification,
-    val riskCalculation: RiskCalculation
+    val riskCalculation: RiskCalculation,
+    val v2RiskCalculation: V2RiskCalculation,
+    val riskScore: RiskScore
 )
 
 @JsonClass(generateAdapter = true)
@@ -27,3 +29,55 @@ data class RiskCalculation(
     val durationBucketWeights: List<Double>,
     val riskThreshold: Int
 )
+
+@JsonClass(generateAdapter = true)
+data class V2RiskCalculation(
+    val daysSinceOnsetToInfectiousness: List<Int>,
+    val infectiousnessWeights: List<Double>,
+    val reportTypeWhenMissing: Int,
+    val riskThreshold: Double
+)
+
+@JsonClass(generateAdapter = true)
+data class RiskScore(
+    val sampleResolution: Double,
+    val expectedDistance: Double,
+    val minimumDistance: Double,
+    val rssiParameters: RssiParameters,
+    val powerLossParameters: PowerLossParameters,
+    val observationType: ObservationType,
+    val initialData: InitialData,
+    val smootherParameters: SmootherParameters
+) {
+    @JsonClass(generateAdapter = true)
+    data class RssiParameters(
+        val weightCoefficient: Double,
+        val intercept: Double,
+        val covariance: Double
+    )
+
+    @JsonClass(generateAdapter = true)
+    data class PowerLossParameters(
+        val wavelength: Double,
+        val pathLossFactor: Double,
+        val refDeviceLoss: Double
+    )
+
+    enum class ObservationType {
+        log,
+        gen
+    }
+
+    @JsonClass(generateAdapter = true)
+    data class InitialData(
+        val mean: Double,
+        val covariance: Double
+    )
+
+    @JsonClass(generateAdapter = true)
+    data class SmootherParameters(
+        val alpha: Double,
+        val beta: Double,
+        val kappa: Double
+    )
+}

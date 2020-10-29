@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
 import uk.nhs.covid19.config.SignatureKey
-import uk.nhs.nhsx.covid19.android.app.availability.GooglePlayUpdateProvider
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
@@ -16,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.util.AndroidBase64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.DeviceDetection
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedFileInfo
+import java.time.Clock
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -28,7 +28,8 @@ class AppModule(
     private val encryptedSharedPreferences: SharedPreferences,
     private val encryptedFileInfo: EncryptedFileInfo,
     private val qrCodesSignatureKey: SignatureKey,
-    private val applicationLocaleProvider: ApplicationLocaleProvider
+    private val applicationLocaleProvider: ApplicationLocaleProvider,
+    private val updateManager: UpdateManager
 ) {
     @Provides
     fun provideContext() = applicationContext
@@ -70,10 +71,7 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun provideAppVersionCodeUpdateProvider(): UpdateManager =
-        GooglePlayUpdateProvider(
-            applicationContext
-        )
+    fun provideAppVersionCodeUpdateProvider(): UpdateManager = updateManager
 
     @Provides
     fun provideQrCodesSignatureKey(): SignatureKey = qrCodesSignatureKey
@@ -82,6 +80,10 @@ class AppModule(
     @Singleton
     fun provideApplicationLocaleProvider(): ApplicationLocaleProvider =
         applicationLocaleProvider
+
+    @Provides
+    @Singleton
+    fun provideUtcClock(): Clock = Clock.systemUTC()
 
     companion object {
         const val BLUETOOTH_STATE_NAME = "BLUETOOTH_STATE"

@@ -32,8 +32,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 class KeyFileWriter internal constructor(
-    private val context: Context,
-    private val signer: KeyFileSigner? = KeyFileSigner.get()
+    private val context: Context
 ) {
 
     @JvmOverloads
@@ -95,9 +94,7 @@ class KeyFileWriter internal constructor(
         batchNum: Int
     ): TEKSignatureList {
         // In tests the signer is null because Robolectric doesn't support the crypto constructs we use.
-        val signature = ByteString.copyFrom(
-            signer?.sign(exportBytes) ?: "fake-signature".toByteArray()
-        )
+        val signature = ByteString.copyFrom("fake-signature".toByteArray())
         return TEKSignatureList.newBuilder()
             .addSignatures(
                 TEKSignature.newBuilder()
@@ -110,7 +107,7 @@ class KeyFileWriter internal constructor(
     }
 
     private fun signatureInfo(): SignatureInfo {
-        return signer?.signatureInfo() ?: SignatureInfo.getDefaultInstance()
+        return SignatureInfo.getDefaultInstance()
     }
 
     private fun header(): String {

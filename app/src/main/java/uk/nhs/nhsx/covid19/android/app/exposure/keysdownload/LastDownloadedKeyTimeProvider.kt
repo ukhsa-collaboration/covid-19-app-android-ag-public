@@ -14,7 +14,6 @@ class LastDownloadedKeyTimeProvider @Inject constructor(sharedPreferences: Share
 
     fun getLatestStoredTime(): LocalDateTime =
         timestamp.toLocalDateTime()
-    // LocalDateTime.from(Instant.parse("2020-07-21T00:00:00Z"))
 
     fun saveLastStoredTime(dateTime: String) {
         timestamp = LocalDateTime.parse(dateTime, lastDateFormatter).toMillis()

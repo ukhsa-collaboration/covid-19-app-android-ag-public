@@ -30,6 +30,10 @@ fun LocalDateTime.hoursUntilNow(clock: Clock): Int =
 
 val lastDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHH")
 
+fun LocalDateTime.keysQueryFormat(): String {
+    return format(lastDateFormatter)
+}
+
 private val uiTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
 fun LocalDate.uiFormat(context: Context): String =

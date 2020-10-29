@@ -187,13 +187,18 @@ class DebugViewModel @Inject constructor(
 
     fun importKeys(file: File) {
         viewModelScope.launch {
-            val configuration =
-                exposureConfigurationApi.getExposureConfiguration().toExposureConfiguration()
-            exposureNotificationApi.provideDiagnosisKeys(
-                listOf(file),
-                configuration,
-                "manual_import_" + UUID.randomUUID().toString()
-            )
+            val version = exposureNotificationApi.version()
+            if (version != null) {
+                exposureNotificationApi.provideDiagnosisKeys(listOf(file))
+            } else {
+                val configuration =
+                    exposureConfigurationApi.getExposureConfiguration().toExposureConfiguration()
+                exposureNotificationApi.provideDiagnosisKeys(
+                    listOf(file),
+                    configuration,
+                    "manual_import_" + UUID.randomUUID().toString()
+                )
+            }
         }
     }
 
@@ -203,7 +208,7 @@ class DebugViewModel @Inject constructor(
                 val keys: List<NHSTemporaryExposureKey> =
                     exposureNotificationApi.temporaryExposureKeyHistory()
                 Timber.d("Keys: $keys")
-                val writer = KeyFileWriter(context, signer = null)
+                val writer = KeyFileWriter(context)
                 val files = writer.writeForKeys(
                     keys.map(::decodeObject),
                     Instant.now().minus(14, ChronoUnit.DAYS),

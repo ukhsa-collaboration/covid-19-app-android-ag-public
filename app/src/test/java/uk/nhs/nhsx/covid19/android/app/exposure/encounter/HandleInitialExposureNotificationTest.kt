@@ -1,59 +1,46 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
-import com.google.android.gms.nearby.exposurenotification.ExposureInformation
-import com.google.android.gms.nearby.exposurenotification.ExposureSummary
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
-import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandleInitialExposureNotification.InitialCircuitBreakerResult
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandleInitialExposureNotification.InitialCircuitBreakerResult.Yes
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.DayRisk
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.ExposureRiskManager
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.ExposureRiskManagerProvider
 import uk.nhs.nhsx.covid19.android.app.remote.ExposureCircuitBreakerApi
-import uk.nhs.nhsx.covid19.android.app.remote.ExposureConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.ExposureCircuitBreakerResponse
-import uk.nhs.nhsx.covid19.android.app.remote.data.ExposureConfigurationResponse
-import uk.nhs.nhsx.covid19.android.app.remote.data.ExposureNotification
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskCalculation
 import kotlin.test.assertEquals
 
 class HandleInitialExposureNotificationTest {
-
-    private val exposureNotificationApi = mockk<ExposureNotificationApi>()
     private val exposureCircuitBreakerApi = mockk<ExposureCircuitBreakerApi>()
-    private val configurationApi = mockk<ExposureConfigurationApi>()
-    private val riskCalculator = mockk<RiskCalculator>()
+    private val exposureRiskManagerProvider = mockk<ExposureRiskManagerProvider>()
+    private val exposureRiskManager = mockk<ExposureRiskManager>(relaxed = true)
 
     private val testSubject = HandleInitialExposureNotification(
-        exposureNotificationApi,
         exposureCircuitBreakerApi,
-        configurationApi,
-        riskCalculator
+        exposureRiskManagerProvider
     )
 
     @Before
     fun setUp() {
-        coEvery { exposureNotificationApi.getExposureInformation(any()) } returns listOf(
-            ExposureInformation
-                .ExposureInformationBuilder()
-                .build()
-        )
-        coEvery { exposureNotificationApi.getExposureSummary(any()) } returns
-            ExposureSummary.ExposureSummaryBuilder().build()
+        coEvery { exposureRiskManagerProvider.riskManager() } returns exposureRiskManager
+        coEvery { exposureRiskManager.getRiskCalculationVersion() } returns 2
     }
 
     @Test
     fun `circuit breaker responses yes will return yes`() = runBlocking {
 
         val exposureDateTimestamp = 0L
-        val configuration = getConfigurationWithThreshold(threshold = 900)
-        coEvery { configurationApi.getExposureConfiguration() } returns configuration
-
-        every { riskCalculator.invoke(any(), configuration.riskCalculation) } returns DayRisk(exposureDateTimestamp, 1000.00)
+        coEvery { exposureRiskManager.getRisk(any()) } returns DayRisk(
+            exposureDateTimestamp,
+            1000.00
+        )
 
         coEvery {
             exposureCircuitBreakerApi.submitExposureInfo(any())
@@ -62,7 +49,7 @@ class HandleInitialExposureNotificationTest {
         val result = testSubject.invoke("token")
 
         assertEquals(
-            Success(InitialCircuitBreakerResult.Yes(exposureDateTimestamp)),
+            Success(Yes(exposureDateTimestamp)),
             result
         )
     }
@@ -70,11 +57,10 @@ class HandleInitialExposureNotificationTest {
     @Test
     fun `circuit breaker responses no will not change the status state`() = runBlocking {
 
-        val configuration = getConfigurationWithThreshold(threshold = 900)
-
-        coEvery { configurationApi.getExposureConfiguration() } returns configuration
-
-        every { riskCalculator.invoke(any(), configuration.riskCalculation) } returns DayRisk(0L, 1000.00)
+        coEvery { exposureRiskManager.getRisk(any()) } returns DayRisk(
+            0L,
+            1000.00
+        )
 
         coEvery {
             exposureCircuitBreakerApi.submitExposureInfo(any())
@@ -90,12 +76,11 @@ class HandleInitialExposureNotificationTest {
 
     @Test
     fun `circuit breaker responses pending will return pending`() = runBlocking {
-        val configuration = getConfigurationWithThreshold(threshold = 900)
-
         val exposureDateTimestamp = 0L
-        coEvery { configurationApi.getExposureConfiguration() } returns configuration
-
-        every { riskCalculator.invoke(any(), configuration.riskCalculation) } returns DayRisk(exposureDateTimestamp, 1000.00)
+        coEvery { exposureRiskManager.getRisk(any()) } returns DayRisk(
+            exposureDateTimestamp,
+            1000.00
+        )
 
         coEvery {
             exposureCircuitBreakerApi.submitExposureInfo(any())
@@ -111,12 +96,12 @@ class HandleInitialExposureNotificationTest {
 
     @Test
     fun `on network error will return failure`() = runBlocking {
-        val configuration = getConfigurationWithThreshold(threshold = 900)
 
         val testException = Exception()
-        coEvery { configurationApi.getExposureConfiguration() } returns configuration
-
-        every { riskCalculator.invoke(any(), configuration.riskCalculation) } returns DayRisk(0L, 1000.00)
+        coEvery { exposureRiskManager.getRisk(any()) } returns DayRisk(
+            0L,
+            1000.00
+        )
 
         coEvery {
             exposureCircuitBreakerApi.submitExposureInfo(any())
@@ -133,13 +118,7 @@ class HandleInitialExposureNotificationTest {
     @Test
     fun `when maximum score is below threshold returns success without making any network calls`() =
         runBlocking {
-            val configuration = getConfigurationWithThreshold(threshold = 1000)
-
-            coEvery { configurationApi.getExposureConfiguration() } returns configuration
-
-            every { riskCalculator.invoke(any(), configuration.riskCalculation) } returns null
-
-            coVerify(exactly = 0) { configurationApi.getExposureConfiguration() }
+            coEvery { exposureRiskManager.getRisk(any()) } returns null
             coVerify(exactly = 0) { exposureCircuitBreakerApi.submitExposureInfo(any()) }
 
             val result = testSubject.invoke("approval_token")
@@ -149,24 +128,4 @@ class HandleInitialExposureNotificationTest {
                 result
             )
         }
-
-    private fun getConfigurationWithThreshold(threshold: Int = 900) =
-        ExposureConfigurationResponse(
-            exposureNotification = ExposureNotification(
-                minimumRiskScore = 11,
-                attenuationDurationThresholds = listOf(55, 63),
-                attenuationLevelValues = listOf(0, 1, 1, 1, 1, 1, 1, 1),
-                daysSinceLastExposureLevelValues = listOf(5, 5, 5, 5, 5, 5, 5, 5),
-                durationLevelValues = listOf(0, 0, 0, 1, 1, 1, 1, 0),
-                transmissionRiskLevelValues = listOf(1, 3, 4, 5, 6, 7, 8, 6),
-                attenuationWeight = 50.0,
-                daysSinceLastExposureWeight = 20,
-                durationWeight = 50.0,
-                transmissionRiskWeight = 50.0
-            ),
-            riskCalculation = RiskCalculation(
-                durationBucketWeights = listOf(1.0, 0.5, 0.0),
-                riskThreshold = threshold
-            )
-        )
 }

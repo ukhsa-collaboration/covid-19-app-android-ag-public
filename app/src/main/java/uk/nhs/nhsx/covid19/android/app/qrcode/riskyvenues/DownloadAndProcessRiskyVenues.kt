@@ -7,15 +7,37 @@ import kotlinx.coroutines.withContext
 import uk.nhs.nhsx.covid19.android.app.common.Result
 import uk.nhs.nhsx.covid19.android.app.common.runSafely
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesApi
+import java.time.Clock
+import java.time.Instant
 import javax.inject.Inject
 
-class DownloadAndProcessRiskyVenues @Inject constructor(
+class DownloadAndProcessRiskyVenues(
     private val riskyVenuesApi: RiskyVenuesApi,
     private val venueMatchFinder: VenueMatchFinder,
     private val visitedVenuesStorage: VisitedVenuesStorage,
     private val filterOutdatedVisits: FilterOutdatedVisits,
-    private val riskyVenuesCircuitBreakerTasks: RiskyVenuesCircuitBreakerTasks
+    private val riskyVenuesCircuitBreakerPolling: RiskyVenuesCircuitBreakerPolling,
+    private val riskyVenueCircuitBreakerConfigurationProvider: RiskyVenueCircuitBreakerConfigurationProvider,
+    private val clock: Clock
 ) {
+
+    @Inject
+    constructor(
+        riskyVenuesApi: RiskyVenuesApi,
+        venueMatchFinder: VenueMatchFinder,
+        visitedVenuesStorage: VisitedVenuesStorage,
+        filterOutdatedVisits: FilterOutdatedVisits,
+        riskyVenuesCircuitBreakerPolling: RiskyVenuesCircuitBreakerPolling,
+        riskyVenueCircuitBreakerConfigurationProvider: RiskyVenueCircuitBreakerConfigurationProvider
+    ) : this(
+        riskyVenuesApi,
+        venueMatchFinder,
+        visitedVenuesStorage,
+        filterOutdatedVisits,
+        riskyVenuesCircuitBreakerPolling,
+        riskyVenueCircuitBreakerConfigurationProvider,
+        Clock.systemUTC()
+    )
 
     suspend operator fun invoke(): Result<Unit> {
         if (!RuntimeBehavior.isFeatureEnabled(FeatureFlag.HIGH_RISK_VENUES)) {
@@ -36,9 +58,17 @@ class DownloadAndProcessRiskyVenues @Inject constructor(
 
                 visitedVenuesStorage.markAsWasInRiskyList(notNotifiedVisitedRiskyVenuesIds)
 
-                riskyVenuesCircuitBreakerTasks.scheduleRiskyVenuesCircuitBreakerInitial(
-                    notNotifiedVisitedRiskyVenuesIds
-                )
+                val configurations = notNotifiedVisitedRiskyVenuesIds.map { venueId ->
+                    RiskyVenueCircuitBreakerConfiguration(
+                        startedAt = Instant.now(clock),
+                        venueId = venueId,
+                        approvalToken = null,
+                        isPolling = false
+                    )
+                }
+                riskyVenueCircuitBreakerConfigurationProvider.addAll(configurations)
+
+                riskyVenuesCircuitBreakerPolling()
             }
         }
     }

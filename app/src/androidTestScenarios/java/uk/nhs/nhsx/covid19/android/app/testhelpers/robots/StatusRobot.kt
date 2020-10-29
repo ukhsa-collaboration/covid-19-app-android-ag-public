@@ -49,4 +49,8 @@ class StatusRobot {
     fun checkIsolationViewIsDisplayed() {
         onView(withId(R.id.isolationView)).check(matches(isDisplayed()))
     }
+
+    fun checkIsolationViewIsNotDisplayed() {
+        onView(withId(R.id.isolationView)).check(matches(not(isDisplayed())))
+    }
 }

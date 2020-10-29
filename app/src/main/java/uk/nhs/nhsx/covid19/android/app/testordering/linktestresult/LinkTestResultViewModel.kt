@@ -5,7 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeResponse
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
@@ -18,7 +25,8 @@ import javax.inject.Inject
 
 class LinkTestResultViewModel @Inject constructor(
     private val ctaTokenValidator: CtaTokenValidator,
-    private val isolationStateMachine: IsolationStateMachine
+    private val isolationStateMachine: IsolationStateMachine,
+    private val analyticsEventProcessor: AnalyticsEventProcessor
 ) : ViewModel() {
 
     private val linkTestResultLiveData = MutableLiveData<LinkTestResultViewState>()
@@ -35,7 +43,7 @@ class LinkTestResultViewModel @Inject constructor(
         }
     }
 
-    private fun handleTestResultResponse(testResultResponse: VirologyCtaExchangeResponse) {
+    private suspend fun handleTestResultResponse(testResultResponse: VirologyCtaExchangeResponse) {
         isolationStateMachine.processEvent(
             OnTestResult(
                 testResult = ReceivedTestResult(
@@ -46,11 +54,12 @@ class LinkTestResultViewModel @Inject constructor(
                 showNotification = false
             )
         )
+        when (testResultResponse.testResult) {
+            POSITIVE -> analyticsEventProcessor.track(PositiveResultReceived)
+            NEGATIVE -> analyticsEventProcessor.track(NegativeResultReceived)
+            VOID -> analyticsEventProcessor.track(VoidResultReceived)
+        }
         linkTestResultLiveData.postValue(Valid)
-    }
-
-    companion object {
-        private const val CROCKFORD_BASE32_REGEX = "[^0123456789abcdefghjkmnpqrstvwxyz]"
     }
 
     sealed class LinkTestResultViewState {
@@ -61,5 +70,9 @@ class LinkTestResultViewModel @Inject constructor(
 
     enum class LinkTestResultErrorType {
         INVALID, NO_CONNECTION, UNEXPECTED
+    }
+
+    companion object {
+        private const val CROCKFORD_BASE32_REGEX = "[^${CrockfordDammValidator.CROCKFORD_BASE32}]"
     }
 }

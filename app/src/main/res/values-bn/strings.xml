@@ -87,7 +87,7 @@
     <string name="test_ordering_description_2">সেখানে যাওয়ার পর, একটি পরীক্ষা করানোর জন্য আপনাকে কিছু ব্যক্তিগত তথ্য (যেমন আপনার ঠিকানা) প্রদান করার জন্য বলা হবে, কিন্তু আপনি অ্যাপে বা ওয়েবসাইটে যে তথ্য এন্টার করেছেন তা বিনিময় করা হবে না।</string>
     <string name="test_ordering_description_3">অ্যাপ এবং ওয়েবসাইটের মধ্যে বিনিময় করে নেওয়া একমাত্র তথ্য হলো একটি ডিজিটাল ‘টোকেন’ যা আপনার পরীক্ষার ফলাফল অ্যাপে ফিরিয়ে আনতে আমাদের সহায়তা করবে।</string>
     <string name="test_ordering_description_4">পরীক্ষার প্রক্রিয়াতে ব্যবহৃত যে কোনো তথ্যই গোপনীয়তা বিজ্ঞপ্তিতে উল্লেখ রয়েছে:</string>
-    <string name="book_free_test_now">এখনই বিনামূল্যে একটি পরীক্ষা করানো বুকিং করুন</string>
+    <string name="book_free_test_now">আপনার নিজের জন্য একটা পরীক্ষা বুক করুন</string>
     <string name="about_this_app_title">অ্যাপ সম্পর্কিত তথ্য</string>
     <string name="title_how_app_works">এই অ্যাপটি কিভাবে কাজ করে</string>
     <string name="about_how_this_app_works_link">এই অ্যাপটি কিভাবে কাজ করে</string>
@@ -279,11 +279,11 @@
     <string name="about_feedback_information_text">আপনি আমাদের অনলাইন ফর্ম ব্যবহার করে আমাদের সাথে যোগাযোগ করতে পারেন যদি আপনার অ্যাপটির বিষয়ে কোন প্রতিক্রিয়া থাকে, কোন প্রশ্ন থাকে যা সাধারণ প্রশ্নে উত্তর দেওয়া হয়নি, অথবা আপনার যদি কোন প্রযুক্তিগত সমস্যা থাকে।</string>
     <string name="submit_keys_information_text">আমরা অন্য অ্যাপ ব্যবহারকারীদের জানাবো যে তারা এমন একজন ব্যক্তির নিকটে ছিলেন পরীক্ষায় যার করোনাভাইরাস ধরা পড়েছে।</string>
     <string name="submit_keys_information_description_title">ডিভাইসটির এলোপাথাড়ি IDগুলো ভাগাভাগি করুন।</string>
-    <string name="link_test_result_title">আপনার পরীক্ষার ফলাফল সহ টেস্টিং সার্ভিসের কাছ থেকে আপনি ই-মেইল অথবা এসএমএস এর মাধ্যে যে কোডটি পেয়েছেন সেটি এন্টার করুন।</string>
+    <string name="link_test_result_title">আপনার পরীক্ষার ফলাফল সহ টেস্টিং সার্ভিসের কাছ থেকে আপনি ই-মেইল অথবা এসএমএস এর মাধ্যমে যে কোডটি পেয়েছেন সেটি প্রবেশ করান।</string>
     <string name="link_test_result_text">আপনাকে তা করতে হবে না যদি অ্যাপটির মাধ্যমে আপনি আপনার পরীক্ষাটি বুক করে থাকেন।</string>
-    <string name="link_test_result_enter_code_title">আপনার পরীক্ষার কোডটি এন্টার করুন</string>
+    <string name="link_test_result_enter_code_title">আপনার পরীক্ষার কোডটি প্রবেশ করান</string>
     <string name="about_provide_feedback_link">প্রতিক্রিয়ার তথ্য</string>
-    <string name="qr_code_help_text">আপনি যদি কোন ভেন্যুতে প্রবেশ করেন (যেমন, কোন বার বা রেস্টুরেন্ট) যেখানে কোন অফিসিয়াল এনএইচএস কিউআর কোড পোস্টার আছে, সেক্ষেত্রে তা স্ক্যান করতে এই অ্যাপ ব্যবহার করুন। তখন অ্যাপটি সেই ভেন্যুতে আপনার চেক-ইনের সময় নিবন্ধন করবে।\n\nকরোনাভাইরাস আক্রান্ত কোন ব্যক্তি আপনার কাছাকাছি বা একই সময়ে কোন ভেন্যুতে গেলে এই ভেন্যু চেক-ইন ব্যবহার করে আপনি একটি নোটিফিকেশন পেতে সক্ষম হবেন। সেই নোটিফিকেশনে অন্তর্ভুক্ত থাকবে প্রাসঙ্গিক উপদেশ, যেমন করোনাভাইরাসের উপসর্গের উপর নজর রাখা।\n\nআপনি যদি একটি QR কোড স্ক্যান করতে না পারেন এবং অন্য কোনভাবে চেক ইন করতে চান তাহলে কর্মীদলের একজন সদস্যের সাথে কথা বলুন।</string>
+    <string name="qr_code_help_text">আপনি যদি কোন ভেন্যুতে প্রবেশ করেন (যেমন, কোন বার বা রেস্টুরেন্ট) যেখানে কোন অফিসিয়াল এনএইচএস কিউআর কোড পোস্টার আছে, সেক্ষেত্রে তা স্ক্যান করতে এই অ্যাপ ব্যবহার করুন। তখন অ্যাপটি সেই ভেন্যুতে আপনার চেক-ইনের সময় নিবন্ধন করবে।</string>
     <string name="qr_code_help_about_qr_code_title">কি করে আমি একটি সরকারী NHS QR কোড চিনতে পারবো?</string>
     <string name="qr_code_help_about_qr_code_text">সরকারি ইংরেজি/ওয়েলশ্ NHS QR কোড পোস্টার এরকম দেখতে। আপনার ফোনের ক্যামেরা ব্যবহার করুন QR কোড স্ক্যান করতে যা হল মাঝখানের বর্গক্ষেত্রটি।</string>
     <string name="link_test_result_enter_code_example">উদাহরণ: 7g8s3stn</string>
@@ -301,7 +301,7 @@
     <string name="url_latest_advice_in_isolation_wls">https://faq.covid19.nhs.uk/article/KA-01203/en-us</string>
     <string name="url_order_test_privacy_wls">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information/testing-for-coronavirus-privacy-information</string>
     <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
-    <string name="status_option_link_test_result">পরীক্ষার ফলাফল এন্টার করুন</string>
+    <string name="status_option_link_test_result">পরীক্ষার ফলাফল প্রবেশ করান</string>
     <string name="about_software_information_text_app_version">অ্যাপের সংস্করণ</string>
     <string name="about_software_information_text_app_manufacturer_value">NHS Test &amp; Trace\nDepartment of Health and Social Care\n39 Victoria Street\nWestminster\nLondon\nSW1H 0EU\nUK</string>
     <string name="postcode_not_supported">দুর্ভাগ্যজনকভাবে, এই অ্যাপটি আপনার অঞ্চলে সমর্থিত নয়।আপনার অঞ্চল অথবা দেশের জন্যে অনুগ্রহ করে এই অ্যাপটি ডাউনলোড করুন।</string>
@@ -354,4 +354,6 @@
     <string name="test_result_negative_no_self_isolation_subtitle_text">আপনার করোনাভাইরাস পরীক্ষার ফলাফল নেগেটিভ</string>
     <string name="notification_text_potential_exposure_explanation">চিন্তা করবেন না, আমরা আপনার ঝুঁকি নিরূপণ করেছি। এখন কোন ব্যবস্থা নেওয়ার দরকার নেই। দয়া করে সতর্ক থাকবেন এবং সামাজিক দূরত্ব বজায় রাখার ব্যাপারে সর্বশেষ পরামর্শ মেনে চলবেন।</string>
     <string name="notification_title_potential_exposure_explanation">কোভিড -১৯-এর সংস্পর্শে আসা সংক্রান্ত যাচাই সম্পন্ন হয়েছে</string>
+    <string name="qr_code_intro_text">করোনাভাইরাস আক্রান্ত কোন ব্যক্তি আপনার কাছাকাছি বা একই সময়ে কোন ভেন্যুতে গেলে এই ভেন্যু চেক-ইন ব্যবহার করে আপনি একটি নোটিফিকেশন পেতে সক্ষম হবেন। সেই নোটিফিকেশনে অন্তর্ভুক্ত থাকবে প্রাসঙ্গিক উপদেশ, যেমন করোনাভাইরাসের উপসর্গের উপর নজর রাখা।\n\nআপনি যদি একটি QR কোড স্ক্যান করতে না পারেন এবং অন্য কোনভাবে চেক ইন করতে চান তাহলে কর্মীদলের একজন সদস্যের সাথে কথা বলুন।</string>
+    <string name="venue_check_in_title">ভেনু চেক-ইন সম্পর্কিত আরও তথ্য</string>
 </resources>

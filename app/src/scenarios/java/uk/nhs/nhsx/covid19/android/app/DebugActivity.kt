@@ -17,7 +17,6 @@ import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import kotlinx.android.synthetic.scenarios.activity_debug.buttonFeatureFlags
 import kotlinx.android.synthetic.scenarios.activity_debug.environmentSpinner
 import kotlinx.android.synthetic.scenarios.activity_debug.exposureNotificationMocks
-import kotlinx.android.synthetic.scenarios.activity_debug.fieldTests
 import kotlinx.android.synthetic.scenarios.activity_debug.languageSpinner
 import kotlinx.android.synthetic.scenarios.activity_debug.scenarioOnboarding
 import kotlinx.android.synthetic.scenarios.activity_debug.scenario_main
@@ -35,7 +34,6 @@ import uk.nhs.nhsx.covid19.android.app.edgecases.TabletNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
 import uk.nhs.nhsx.covid19.android.app.featureflag.testsettings.TestSettingsActivity
-import uk.nhs.nhsx.covid19.android.app.fieldtests.FieldTestsActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.DataAndPrivacyActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.WelcomeActivity
@@ -168,10 +166,6 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
         scenarioOnboarding.setOnClickListener {
             WelcomeActivity.start(this)
-        }
-
-        fieldTests.setOnClickListener {
-            startActivity<FieldTestsActivity>()
         }
 
         statusScreen.setOnClickListener {

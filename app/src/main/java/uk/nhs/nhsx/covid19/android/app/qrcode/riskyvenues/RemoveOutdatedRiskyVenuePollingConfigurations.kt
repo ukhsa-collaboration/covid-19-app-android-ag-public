@@ -7,17 +7,17 @@ import java.time.temporal.ChronoUnit.DAYS
 import javax.inject.Inject
 
 class RemoveOutdatedRiskyVenuePollingConfigurations(
-    private val riskyVenuePollingConfigurationProvider: RiskyVenuePollingConfigurationProvider,
+    private val riskyVenueCircuitBreakerConfigurationProvider: RiskyVenueCircuitBreakerConfigurationProvider,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val clock: Clock
 ) {
 
     @Inject
     constructor(
-        riskyVenuePollingConfigurationProvider: RiskyVenuePollingConfigurationProvider,
+        riskyVenueCircuitBreakerConfigurationProvider: RiskyVenueCircuitBreakerConfigurationProvider,
         isolationConfigurationProvider: IsolationConfigurationProvider
     ) : this(
-        riskyVenuePollingConfigurationProvider,
+        riskyVenueCircuitBreakerConfigurationProvider,
         isolationConfigurationProvider,
         clock = Clock.systemUTC()
     )
@@ -27,10 +27,10 @@ class RemoveOutdatedRiskyVenuePollingConfigurations(
             isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
 
         val updatedRiskyVenuePollingConfigs =
-            riskyVenuePollingConfigurationProvider.configs.filter {
+            riskyVenueCircuitBreakerConfigurationProvider.configs.filter {
                 !Instant.now(clock).isAfter(it.startedAt.plus(maxDaysUntilExpiry.toLong(), DAYS))
             }
 
-        riskyVenuePollingConfigurationProvider.configs = updatedRiskyVenuePollingConfigs
+        riskyVenueCircuitBreakerConfigurationProvider.configs = updatedRiskyVenuePollingConfigs
     }
 }

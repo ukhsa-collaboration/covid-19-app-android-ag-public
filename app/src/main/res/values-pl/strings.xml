@@ -150,7 +150,7 @@
     <string name="qr_code_permission_denied_action">Wyraź zgodę na uprawnienia aparatu fotograficznego</string>
     <string name="qr_code_cancel_check_in">Anuluj to zameldowanie</string>
     <string name="book_free_test">Zamów bezpłatny test</string>
-    <string name="book_free_test_now">Zamów teraz bezpłatny test</string>
+    <string name="book_free_test_now">Zamów dla siebie test</string>
     <string name="status_option_report_symptoms">Sprawdzanie objawów</string>
     <string name="status_option_read_latest_advice">Zapoznaj się z najnowszymi wytycznymi</string>
     <string name="status_option_read_self_isolation_advice">Zapoznaj się z wytycznymi dotyczącymi izolacji</string>
@@ -257,7 +257,7 @@
     <string name="qr_code_more_info">Więcej informacji na temat meldowania się w lokalach</string>
     <string name="qr_code_scan_explanation">Ustaw telefon tak, aby w okienku ukazał się kod QR NHS. Jeżeli telefon rozpozna kod QR, oznacza to, że pomyślnie zameldowałeś(-aś) się w lokalu.</string>
     <string name="qr_code_help_title">Pomoc z zeskanowaniem kodu QR</string>
-    <string name="qr_code_help_text">Jeśli wchodzisz do jakiegoś miejsca (na przykład baru lub restauracji), w którym znajduje się plakat z oficjalnym kodem QR NHS, użyj tej aplikacji, aby go zeskanować. Aplikacja zarejestruje wówczas godzinę Twojego przybycia (\"zameldowania\") do danego obiektu.\n\nPoprzez zameldowanie się na miejscu, będziesz mógł/mogła otrzymać powiadomienie, jeśli osoby z koronawirusem odwiedzą to samo miejsce w czasie zbliżonym do Twojego.  Powiadomienie będzie zawierało również odpowiednie porady, takie jak zwracanie uwagi na objawy koronawirusa.\n\nJeśli nie jesteś w stanie zeskanować kodu QR i potrzebujesz zameldować się w inny sposób, porozmawiaj z członkiem personelu.</string>
+    <string name="qr_code_help_text">Jeśli nie jesteś w stanie zeskanować kodu QR i potrzebujesz zameldować się w inny sposób, porozmawiaj z członkiem personelu.</string>
     <string name="qr_code_help_about_qr_code_title">Jak rozpoznać oficjalny kod QR NHS?</string>
     <string name="qr_code_help_about_qr_code_text">Tak wygląda oficjalny plakat z kodem QR NHS w języku angielskim / walijskim. Użyj aparatu w  swoim telefonie, aby zeskanować kod QR, którym jest kwadrat pośrodku.</string>
     <string name="qr_code_help_poster_title_english">Angielski plakat z kodem QR NHS:</string>
@@ -316,7 +316,7 @@
     <string name="i_understand">Rozumiem</string>
     <string name="exposure_notification_hint">Mogłeś(-aś) przebywać w pobliżu osoby, która była zakażona koronawirusem. Proszę pozostać w domu i odizolować się, aby chronić siebie i innych.</string>
     <string name="exposure_notification_recommendation">Ryzyko zakażenia i przenoszenia wirusa jest wysokie, nawet jeżeli nie wystąpiły u Ciebie żadne objawy. Jeżeli masz poniżej 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.\n\nOkres izolacji właśnie się rozpoczął. Izolacja powinna trwać przez cały wskazany okres. Zamów test jedynie wtedy, gdy masz objawy koronawirusa.\n\nAby uzyskać dalsze informacje, prosimy o kontakt:</string>
-    <string name="risk_level_title">Poziom ryzyka</string>
+    <string name="risk_level_title">Strefa Ryzyka Zakażenia Covid</string>
     <string name="risk_level_link_text">Definicje poziomów ryzyka</string>
     <string name="low_risk_level_text">Niski – władze lokalne oceniły poziom ryzyka jako niski, co oznacza, że liczba zakażeń utrzymuje się na tym samym poziomie, jak w większości kraju.</string>
     <string name="low_risk_level_text_wls">Niski – władze lokalne oceniły poziom ryzyka jako niski, co oznacza, że liczba zakażeń utrzymuje się na tym samym poziomie, jak w większości kraju.</string>
@@ -370,4 +370,6 @@
     <string name="test_result_positive_no_self_isolation_description">Jeżeli jednak masz wysoką temperaturę, kontynuuj izolację do czasu powrotu do zdrowia.</string>
     <string name="notification_text_potential_exposure_explanation">Nie martw się, oceniliśmy twój stan zagrożenia i obecnie nie musisz podejmować żadnych działań. Zachowaj czujność i postępuj zgodnie z najnowszymi wskazówkami dotyczącymi dystansowania społecznego.</string>
     <string name="notification_title_potential_exposure_explanation">Test narażenia na ryzyko zakażenia COVID-19 został zakończony.</string>
+    <string name="qr_code_intro_text">Jeśli wchodzisz do jakiegoś miejsca (na przykład baru lub restauracji), w którym znajduje się plakat z oficjalnym kodem QR NHS, użyj tej aplikacji, aby go zeskanować. Aplikacja zarejestruje wówczas godzinę Twojego przybycia (\"zameldowania\") do danego obiektu.\n\nPoprzez zameldowanie się na miejscu, będziesz mógł/mogła otrzymać powiadomienie, jeśli osoby z koronawirusem odwiedzą to samo miejsce w czasie zbliżonym do Twojego.  Powiadomienie będzie zawierało również odpowiednie porady, takie jak zwracanie uwagi na objawy koronawirusa.</string>
+    <string name="venue_check_in_title">Więcej informacji na temat meldowania się w lokalach</string>
 </resources>

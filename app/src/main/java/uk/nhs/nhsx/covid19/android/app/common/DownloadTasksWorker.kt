@@ -16,7 +16,6 @@ import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadAndProcessK
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenues
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.RiskyVenuesCircuitBreakerPolling
 import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWork
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
 import uk.nhs.nhsx.covid19.android.app.util.defaultFalse
@@ -35,9 +34,6 @@ class DownloadTasksWorker(
 
     @Inject
     lateinit var downloadVirologyTestResultWork: DownloadVirologyTestResultWork
-
-    @Inject
-    lateinit var riskyVenuesCircuitBreakerPolling: RiskyVenuesCircuitBreakerPolling
 
     @Inject
     lateinit var downloadRiskyPostCodesWork: DownloadRiskyPostCodesWork
@@ -73,7 +69,6 @@ class DownloadTasksWorker(
 
         downloadAndProcessKeys()
         downloadVirologyTestResultWork()
-        riskyVenuesCircuitBreakerPolling()
         downloadRiskyPostCodesWork()
         downloadAndProcessRiskyVenues()
         exposureNotificationWork()

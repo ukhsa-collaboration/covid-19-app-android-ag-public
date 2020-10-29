@@ -7,6 +7,7 @@ import uk.nhs.nhsx.covid19.android.app.common.Result
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
 import uk.nhs.nhsx.covid19.android.app.common.runSafely
+import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandleInitialExposureNotification.InitialCircuitBreakerResult
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandleInitialExposureNotification.InitialCircuitBreakerResult.No
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandleInitialExposureNotification.InitialCircuitBreakerResult.Pending
@@ -23,7 +24,8 @@ class ExposureNotificationWork @Inject constructor(
     private val handleInitialExposureNotification: HandleInitialExposureNotification,
     private val handlePollingExposureNotification: HandlePollingExposureNotification,
     private val stateMachine: IsolationStateMachine,
-    private val potentialExposureExplanationHandler: Provider<PotentialExposureExplanationHandler>
+    private val potentialExposureExplanationHandler: Provider<PotentialExposureExplanationHandler>,
+    private val exposureNotificationApi: ExposureNotificationApi
 ) {
 
     suspend operator fun invoke(): Result<Unit> = withContext(Dispatchers.IO) {
@@ -35,6 +37,7 @@ class ExposureNotificationWork @Inject constructor(
             Timber.d("Number of exposure tokens to handle: ${exposureNotificationTokens.size}")
 
             exposureNotificationTokens.forEach {
+                Timber.d("Exposure notification token info: $it")
                 when (it.exposureDate) {
                     null -> {
                         checkingInitial = true
@@ -48,10 +51,12 @@ class ExposureNotificationWork @Inject constructor(
             }
         }
             .apply {
-                if (this is Failure && checkingInitial) {
-                    potentialExposureExplanationHandler.addResult(this)
+                if (is1dot5ENVersion()) {
+                    if (this is Failure && checkingInitial) {
+                        potentialExposureExplanationHandler.addResult(result = this)
+                    }
+                    potentialExposureExplanationHandler.showNotificationIfNeeded()
                 }
-                potentialExposureExplanationHandler.showNotificationIfNeeded()
             }
     }
 
@@ -60,8 +65,11 @@ class ExposureNotificationWork @Inject constructor(
         potentialExposureExplanationHandler: PotentialExposureExplanationHandler
     ) {
         val result = handleInitialExposureNotification.invoke(token)
+        Timber.d("Handle initial circuit breaker result: $result for token $token")
         handleInitialResult(result, token)
-        potentialExposureExplanationHandler.addResult(result)
+        if (is1dot5ENVersion()) {
+            potentialExposureExplanationHandler.addResult(result)
+        }
     }
 
     private fun handleInitialResult(
@@ -93,15 +101,20 @@ class ExposureNotificationWork @Inject constructor(
     }
 
     private fun updateToPolling(token: String, exposureDate: Long) {
+        Timber.d("Circuit breaker answered POLLING, update token ($token, exposureDate=$exposureDate)")
         exposureNotificationTokensProvider.updateToPolling(token, exposureDate)
     }
 
     private fun handleYes(token: String, exposureDate: Long) {
+        Timber.d("Circuit breaker answered YES for token $token, exposureDate=$exposureDate")
         stateMachine.processEvent(OnExposedNotification(Instant.ofEpochMilli(exposureDate)))
         clearToken(token)
     }
 
     private fun clearToken(token: String) {
+        Timber.d("Circuit breaker answered YES or NO, remove exposure notification token: $token")
         exposureNotificationTokensProvider.remove(token)
     }
+
+    private suspend fun is1dot5ENVersion() = exposureNotificationApi.version() == null
 }

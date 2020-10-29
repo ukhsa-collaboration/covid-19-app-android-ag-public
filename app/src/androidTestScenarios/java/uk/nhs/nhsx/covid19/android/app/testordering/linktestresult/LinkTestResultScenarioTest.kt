@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 
-import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.FLOW
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
@@ -62,7 +61,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.checkActivityIsDisplayed()
 
-        linkTestResultRobot.enterCtaToken("nega-tvee")
+        linkTestResultRobot.enterCtaToken("f3dz-cfdt")
 
         step(
             stepName = "Enter token",
@@ -70,10 +69,6 @@ class LinkTestResultScenarioTest : EspressoTest() {
         )
 
         linkTestResultRobot.clickContinue()
-
-        runBlocking {
-            testAppContext.getDownloadVirologyTestResultWork().invoke()
-        }
 
         waitFor { testResultRobot.checkActivityDisplaysNegativeAndAlreadyFinishedIsolation() }
 
@@ -95,7 +90,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.checkActivityIsDisplayed()
 
-        linkTestResultRobot.enterCtaToken("vdvd-vdvd")
+        linkTestResultRobot.enterCtaToken("8vb7-xehg")
 
         step(
             stepName = "Enter token",
