@@ -11,3 +11,9 @@ fun Context.getThemeColor(@AttrRes attribute: Int): Int {
     theme.resolveAttribute(attribute, typedValue, true)
     return typedValue.data
 }
+
+fun Context.getThemeDrawableResId(@AttrRes attribute: Int): Int {
+    val typedValue = TypedValue()
+    theme.resolveAttribute(attribute, typedValue, true)
+    return typedValue.resourceId
+}

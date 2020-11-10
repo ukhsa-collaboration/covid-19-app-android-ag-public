@@ -17,6 +17,13 @@ repositories {
             password = project.findProperty("gpr.key") ?: System.getenv("PACKAGES_ACCESS_TOKEN")
         }
     }
+    maven {
+        url = 'https://maven.pkg.github.com/nhsx/riskscore-kt-public'
+        credentials {
+            username = project.findProperty("gpr.user") ?: System.getenv("PACKAGES_ACCESS_ACTOR")
+            password = project.findProperty("gpr.key") ?: System.getenv("PACKAGES_ACCESS_TOKEN")
+        }
+    }
 }
 
 def buildNumber = new File('app/buildNumber').text as Integer
@@ -34,6 +41,7 @@ android {
         versionCode buildNumber
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        buildConfigField "String", "VERSION_NAME_SHORT", "\"" + versionNameValue + "\""
     }
 
     adbOptions {
@@ -147,6 +155,7 @@ def retrofit_version = "2.9.0"
 def moshi_version = "1.9.2"
 def okhttp_version = "4.8.0"
 def configuration_version = "1.0.23-SNAPSHOT"
+def riskscore_version = "5.0.0"
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
@@ -179,6 +188,8 @@ dependencies {
     // Configurations
     implementation "uk.nhs.covid19:configuration-production:$configuration_version"
     scenariosImplementation "uk.nhs.covid19:configuration-scenarios:$configuration_version"
+
+    implementation "uk.nhs.covid19:riskscore-kt:$riskscore_version"
 
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"

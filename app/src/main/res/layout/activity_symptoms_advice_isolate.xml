@@ -81,6 +81,21 @@
                 android:layout_marginTop="@dimen/vertical_margin_large" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                android:id="@+id/exposureFaqsLinkTextView"
+                style="@style/LinkTextWithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/exposure_faqs"
+                app:linkUrl="@string/url_exposure_faqs"/>
+
+            <TextView
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/for_further_advice_visit" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                 android:id="@+id/onlineServiceLinkTextView"
                 style="@style/LinkTextWithIcon"
                 android:layout_width="wrap_content"

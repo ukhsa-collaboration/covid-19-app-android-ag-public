@@ -29,8 +29,6 @@ class EncounterDetectionActivity : BaseActivity(R.layout.activity_exposed_notifi
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
-        viewModel.getIsolationDays()
-
         viewModel.isolationState().observe(this) { state ->
             when (state) {
                 is IsolationDurationDays -> displayIsolationDays(state)
@@ -41,6 +39,8 @@ class EncounterDetectionActivity : BaseActivity(R.layout.activity_exposed_notifi
         understandButton.setOnClickListener {
             viewModel.confirmConsent()
         }
+
+        viewModel.getIsolationDays()
     }
 
     private fun navigateToStatusScreen() {

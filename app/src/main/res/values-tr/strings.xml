@@ -36,7 +36,7 @@
     <string name="low_risk_level_text">Düşük - yerel idareniz mevcut durumda bölgenizi \'düşük riskli\' olarak tanımlamaktadır; enfeksiyon seviyeleri ülkenin birçok diğer bölgesine benzerdir</string>
     <string name="medium_risk_level_text">Orta - yerel idareniz veya komşu bir yerel idare, yüksek veya artan enfeksiyon seviyelerine sahiptir. Lütfen ulusal yönergeleri takip edin.</string>
     <string name="high_risk_level_text">Yüksek - yerel idareniz veya komşunuz olan bir bölgenin idaresi, yerel bölgede enfeksiyon seviyelerinin yüksek olması nedeniyle enfeksiyon yayılımını azaltmak üzere İngiltere ve Galler geri kalanında uygulanandan daha fazla tedbir (ör. sokağa çıkma yasakları) uygulamaktadır. Ayrıntılı bir eylem planı uygulamaya konulmuştur ve ulusal çaplı destekle birlikte yerel kaynaklar artırılmaktadır.</string>
-    <string name="risk_level_title">Yerel Covid Uyarı Seviyesi</string>
+    <string name="risk_level_title">Yerel COVID uyarı seviyesi</string>
     <string name="qr_code_permission_denied_action">Kamera izinlerini etkinleştir</string>
     <string name="qr_code_permission_denied_subtitle">Bu uygulama, barlar ve restoranlar gibi yerlere giriş yapmak için kameranızı kullanır.\n\nResmi NHS QR kodunun taranması için lütfen kamera izinlerini etkinleştirin.</string>
     <string name="qr_code_unsupported_description">Lütfen giriş yapmanın başka bir yolunu bulun. Yardım için personelle görüşün.</string>
@@ -85,6 +85,8 @@
     <string name="test_ordering_description_2">Burada test yaptırmak için bazı kişisel bilgilerinizi (adresiniz gibi) girmeniz gerekecektir ancak uygulamaya ya da web sitesine girdiğiniz hiçbir bilgi paylaşılmayacaktır.</string>
     <string name="test_ordering_description_3">Uygulama ve web sitesi arasında yalnızca test sonuçlarınızın uygulamaya geri aktarılması için bir dijital \'jeton\' paylaşılır.</string>
     <string name="test_ordering_description_4">Test sürecinde kullanılan tüm veriler Gizlilik Bildiriminde açıklanmaktadır:</string>
+    <string name="test_ordering_description_5">Bu uygulamanın verilerinizi nasıl kullandığını öğrenmek için şu adresi ziyaret edin:</string>
+    <string name="test_ordering_description_6">Bu uygulamayı yalnızca kendiniz için test talep etmek amacıyla kullanabilirsiniz. Başka birisi için test talebinde bulunmak isterseniz, Devletin resmi koronavirüs testi web sitesini kullanın:</string>
     <string name="book_free_test_now">Kendiniz için bir test ayarlayın</string>
     <string name="about_this_app_title">Bu uygulama hakkında</string>
     <string name="title_how_app_works">Uygulama nasıl çalışır?</string>
@@ -162,8 +164,6 @@
     <string name="post_code_example">Bu uygulamayı kullanmak için İngiltere veya Galler posta kodu girin.\n\nÖrnekler: Posta kodunuz CE1B 2PQ iste lütfen \"CE1B\" yazın. CR0 3RL ise lütfen \"CR0\" yazın. L4 0RE ise lütfen \"L4\" yazın.</string>
     <string name="tablet_support_title">Bu uygulama, mobil akıllı telefonlar için geliştirilmiştir</string>
     <string name="tablet_support_description">Cihazınızın tablet olduğu görülüyor. Bu uygulama yalnızca dışarı çıktığınız her zaman yanınızda bulunan bir cihaz üzerinde kullanılması halinde etki göstereceğinden yalnızca akıllı telefonlar için sunulmaktadır. Lütfen uygulamayı akıllı telefonunuza yükleyin.</string>
-    <string name="test_ordering_description_5">Ayrıca bu uygulamanın bize verdiğiniz verileri nasıl kullandığını öğrenebilirsiniz.</string>
-    <string name="test_ordering_description_6">Bu uygulamayı yalnızca kendiniz için test talep etmek amacıyla kullanabilirsiniz. Başka birisi için test talebinde bulunmak isterseniz, Devletin resmi koronavirüs testi web sitesini kullanın:</string>
     <string name="test_ordering_testing_privacy_notice">Test gizlilik bildirimi</string>
     <string name="test_ordering_app_privacy_notice">Uygulama gizlilik bildirimi</string>
     <string name="test_ordering_book_test_for_someone_else">Başkası için test rezervasyonu yaptırın</string>
@@ -211,7 +211,7 @@
     <string name="message_no_coronavirus_symptoms">Bu belirtilerden herhangi birini geliştirirseniz, bu uygulamadan bunları bildirerek ücretsiz test talebinde bulunun. Sadece koronavirüs belirtileriniz varsa bir test yaptırın.\n\nDaha fazla tavsiye için lütfen ziyaret edin:</string>
     <string name="questionnaire_change_announcement">%1$s belirtisini değiştir</string>
     <string name="state_index_take_coronavirus_test">Ücretsiz bir koronavirüs testi yaptırın</string>
-    <string name="state_test_negative_info">Koronavirüs test sonucunuz negatif ancak yine de belirti geliştirmeniz mümkün. Dolayısıyla karantinada kalmalısınız.\n\nTest sonucunuz, testin yapıldığı esnada virüsle enfekte olmuş olmadığınızı gösteriyor. E-posta, SMS mesaj ya da telefon yoluyla size daha fazla bilgi gönderildi. Eğer 18 yaşın altındaysanız bu mesajı  güvendiğiniz bir yetişkine göstermeniz tavsiye edilir.</string>
+    <string name="state_test_negative_info">Koronavirüs test sonucunuz negatif ancak yine de belirti geliştirmeniz mümkün. Dolayısıyla karantinada kalmalısınız.</string>
     <string name="test_result_negative_continue_self_isolate_explanation">Test sonucunuz testin yapıldığı anda sizde virüs olmadığını göstermektedir. E-posta, SMS mesajı ya da telefon yoluyla size daha fazla bilgi gönderildi. Eğer 18 yaşın altındaysanız bu mesajı  güvendiğiniz bir yetişkine göstermeniz tavsiye edilir.</string>
     <string name="isolation_until_date">şu zamana kadar: %1$s, 23:59</string>
     <string name="questionnaire_review_one_of_two">Adım 1 / 2</string>
@@ -241,7 +241,7 @@
     <string name="title_encounter">TEMAS TARİHİ</string>
     <string name="allow_bluetooth">Bluetooth\'a İzin Ver</string>
     <string name="onboarding_subtitle">Uygulamayı kullandığınızda bölgenizdeki virüs ve halk sağlığı ile ilgili anonim bilgileri paylaşarak COVID-19’u yenmemize yardımcı olacaksınız</string>
-    <string name="onboarding_privacy_control_text">NHS sizin kişisel gizliliğinize değer vermektedir, bu da uygulamanın sizin kim olduğunuzu, nerede bulunduğunuzu veya yanınızda kimin olduğunu bilemeyeceği anlamına gelmektedir.\n\nKoronavirüs testiniz pozitif çıkarsa, diğer uygulama kullanıcılarını uyarabilmemiz için verilerinizi NHS ile paylaşmayı seçebilirsiniz. Diğer uygulama kullanıcılarından hangilerinin anonim uyarı almalarına gerek olduğunu belirlememize yardımcı olması için otomatik karar verme kullanmaktayız.</string>
+    <string name="onboarding_privacy_control_text">NHS sizin kişisel gizliliğinize değer vermektedir, bu da uygulamanın sizin kim olduğunuzu, nerede bulunduğunuzu veya yanınızda kimin olduğunu bilemeyeceği anlamına gelmektedir.\n\nKoronavirüs testiniz pozitif çıkarsa, verilerinizi NHS ile paylaşmayı seçebilirsiniz; böylece İngiltere, Galler, İskoçya, Kuzey İrlanda, Jersey ve Cebelitarık\'taki diğer uygulama kullanıcılarını uyarabiliriz. Devam et seçeneğini seçtiğinizde bildirimlerinizi, bu konumlarda uyarılması gereken diğer uygulama kullanıcılarına açık hale getireceğiz.\n\nDiğer kullanıcılardan hangilerinin anonim olarak uyarılması gerektiğini belirlemeye yardımcı olması için otomatik karar verme olanağını kullanıyoruz.</string>
     <string name="onboarding_privacy_your_data_text1">Uygulama, kaydedildikten sonra verileri 14 gün boyunca güvenli ve anonim olarak depolar. Mekanlara giriş yapmak için QR kodları kullandığınızda, mekan verileri 21 gün boyunca saklanmaktadır. Verileri istediğiniz zaman uygulama ayarlarınızdan veya uygulamayı kaldırarak silebilirsiniz. Telefonunuz bazı temel verileri saklayabilir - bu, telefonunuzun işletim sistemi tarafından kontrol edilir.</string>
     <string name="onboarding_no_thanks">Hayır, teşekkürler</string>
     <string name="go_to_play_store">Play Store\'a Git</string>
@@ -271,7 +271,7 @@
     <string name="resume_contact_tracing_don_t_remind_me">Bana hatırlatma</string>
     <string name="url_how_app_works">https://covid19.nhs.uk/introducing-the-app-turkish.html</string>
     <string name="url_latest_advice_in_isolation">https://faq.covid19.nhs.uk/article/KA-01225/en-us</string>
-    <string name="submit_keys_information_description_text">Uygulama, Maruz Kalma Bildirimlerinizi güncel tutmak için aygıtınızın düzenli olarak paylaştığı kimlikler (harf, rakam ve sembollerden oluşan gelişigüzel diziler) oluşturur. Maruz Kalma Bildirimleri, uygulamanın son 14 gün içinde kimlerin koronavirüse maruz kalmış olabilecekleri konusunda bilgilendirilmesi gerektiğini çözümlemesine yardımcı olur. Kişisel bilgileriniz veya kimliğiniz paylaşılmayacaktır.</string>
+    <string name="submit_keys_information_description_text">Uygulama, Maruz Kalma Bildirimlerinizi güncel tutmak için cihazınızın düzenli olarak paylaştığı kimlikler (rastgele sayılar, harfler ve semboller) oluşturmaktadır. Maruz Kalma Bildirimleri, uygulamanın son 14 gün içinde kimlere koronavirüse maruz kalmış olabileceklerinin bildirilmesi gerektiğini belirlemesine yardımcı olur.\n\nDevam et seçeneğini seçtiğinizde bildirimlerinizi İngiltere, Galler, İskoçya, Kuzey İrlanda, Jersey ve Cebelitarık\'ta uyarılması gereken diğer uygulama kullanıcılarına açık hale getireceğiz.\n\nKişisel bilgileriniz ya da kimliğiniz paylaşılmayacaktır.</string>
     <string name="about_feedback_information_title">Fikrinizi bildirin</string>
     <string name="about_feedback_information_text">Uygulama hakkında geri bildiriminiz, genel sorular bölümünde yanıtlanmayan bir sorunuz varsa veya teknik bir problem yaşıyorsanız, çevrimiçi formumuzu kullanarak bizimle iletişime geçebilirsiniz.</string>
     <string name="submit_keys_information_text">Diğer uygulama kullanıcılarını koronavirüs testi pozitif sonuç veren bir kişinin yakınında bulundukları konusunda bilgilendireceğiz</string>
@@ -356,4 +356,16 @@
     <string name="notification_title_potential_exposure_explanation">COVID-19 Maruz Kalma Kontrolü Tamamlandı</string>
     <string name="qr_code_intro_text">Resmi bir NHS QR koduna sahip bir mekana giriyorsanız (örneğin, bir bara ya da restorana), kodu taramak için bu uygulamayı kullanın. Uygulama, sonrasında bir mekana giriş zamanınızı kaydeder.\n\nMekana giriş özelliğini kullanarak, koronavirüslü kişilerin aynı mekanı sizinle benzer zamanlarda ziyaret etmesi durumunda bir bildirim alabileceksiniz.  Bildirim, koronavürüs belirtilerine dikkat edilmesi gibi ilgili tavsiyeler de içerecektir.</string>
     <string name="venue_check_in_title">Mekanlara giriş yapma konusunda daha fazla bilgi</string>
+    <string name="ask_me_later">Daha sonra sor</string>
+    <string name="exposure_faqs">Daha fazla bilgi için burayı tıklayın</string>
+    <string name="exposure_faqs_title">İngiltere ve Galler\'in dışındaysanız, bulunduğunuz ülkenin yönergelerine uymanız gerekmektedir.</string>
+    <string name="notification_channel_recommended_app_update_name">Tavsiye edilen uygulama güncellemeleri</string>
+    <string name="notification_channel_recommended_app_update_name_description">Bu bildirimler size tavsiye edilen uygulama güncellemeleri hakkında bilgi verir</string>
+    <string name="notification_text_recommended_app_update">Ayrıntıları görüntülemek için dokunun.</string>
+    <string name="notification_title_recommended_app_update">Lütfen NHS COVID-19 uygulamanızı en son sürüme güncelleyin</string>
+    <string name="test_ordering_getting_tested_description">Kendiniz için bir test randevusu alın\' seçeneğini seçmeniz, sizi, test yaptırabilmeniz için bazı kişisel bilgilerinizi (adresiniz gibi) girmenizin isteneceği, hükümetin koronavirüs testi web sitesine götürecektir. Web sitesine girdiğiniz hiçbir bilgi paylaşılmayacaktır.\n\nSonuçlarınızı uygulamaya geri getirmemize yardımcı olması için dijital bir \"jeton\" oluşturulacaktır.</string>
+    <string name="update_in_play_store">Uygulamanızı şimdi güncelleyin</string>
+    <string name="updated_privacy_control_text">Siz seyahat ederken daha verimli çalışmasına yardımcı olması için uygulamada bazı değişiklikler yaptık. Birkaç ülke birlikte çalışmaktadır ve bu nedenle temas takibi insanlar sınırları geçerek farklı ülkelere giriş yaptıklarında çalışmaya devam etmektedir.\n\nİngiltere, Galler, İskoçya, Kuzey İrlanda, Jersey ve Cebelitarık\'ın resmi temas takip uygulamaları kullanıcının anonimliğini korumakla birlikte verileri paylaşabilecektir.\n\nEğer koronavirüs testiniz pozitif çıkarsa verilerinizi NHS ile paylaşmayı seçebilirsiniz ve böylece bu ülkelerde uyarılması gereken diğer uygulama kullanıcılarına bildirim gönderebiliriz.</string>
+    <string name="updated_privacy_title">Politikalarımızdaki değişiklikler</string>
+    <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/article/KA-01337</string>
 </resources>

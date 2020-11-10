@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.view_good_news.goodNewsInfoView
 import kotlinx.android.synthetic.main.view_good_news.goodNewsParagraphContainer
 import kotlinx.android.synthetic.main.view_good_news.goodNewsSubtitle
 import kotlinx.android.synthetic.main.view_good_news.goodNewsTitle
+import kotlinx.android.synthetic.main.view_isolation_request.exposureFaqsLink
 import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestActionButton
 import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestImage
 import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestInfoView
@@ -124,6 +125,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
     ) {
         goodNewsContainer.gone()
         isolationRequestContainer.visible()
+        exposureFaqsLink.visible()
 
         isolationRequestImage.setImageResource(R.drawable.ic_isolation_continue)
         isolationRequestTitle1.text =
@@ -136,8 +138,9 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         isolationRequestInfoView.stateText = getString(R.string.state_test_positive_info)
         isolationRequestInfoView.stateColor = getColor(R.color.error_red)
         isolationRequestParagraphContainer.addAllParagraphs(
-            getString(R.string.test_result_positive_continue_self_isolate_explanation),
-            getString(R.string.for_further_advice_visit)
+            getString(R.string.test_result_positive_continue_self_isolate_explanation_1),
+            getString(R.string.test_result_positive_continue_self_isolate_explanation_2),
+            getString(R.string.exposure_faqs_title)
         )
 
         isolationRequestActionButton.text = getString(R.string.continue_button)
@@ -155,6 +158,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
     private fun showContinueToSelfIsolationScreenOnNegative(remainingDaysInIsolation: Int) {
         goodNewsContainer.gone()
         isolationRequestContainer.visible()
+        exposureFaqsLink.gone()
 
         isolationRequestImage.setImageResource(R.drawable.ic_isolation_continue)
         isolationRequestTitle1.text =
@@ -167,8 +171,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         isolationRequestInfoView.stateText = getString(R.string.state_test_negative_info)
         isolationRequestInfoView.stateColor = getColor(R.color.amber)
         isolationRequestParagraphContainer.addAllParagraphs(
-            getString(R.string.test_result_negative_continue_self_isolate_explanation),
-            getString(R.string.for_further_advice_visit)
+            getString(R.string.test_result_negative_continue_self_isolate_explanation)
         )
 
         isolationRequestActionButton.text = getString(R.string.back_to_home)
@@ -189,6 +192,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
         goodNewsContainer.gone()
         isolationRequestContainer.visible()
+        exposureFaqsLink.gone()
 
         isolationRequestImage.setImageResource(R.drawable.ic_isolation_book_test)
         isolationRequestTitle1.text =
@@ -201,8 +205,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         isolationRequestInfoView.stateText = getString(R.string.state_test_void_info)
         isolationRequestInfoView.stateColor = getColor(R.color.error_red)
         isolationRequestParagraphContainer.addAllParagraphs(
-            getString(R.string.test_result_void_continue_self_isolate_explanation),
-            getString(R.string.for_further_advice_visit)
+            getString(R.string.test_result_void_continue_self_isolate_explanation)
         )
 
         isolationRequestActionButton.text = getString(R.string.book_free_test)
@@ -295,6 +298,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
     private fun showContinueToSelfIsolationScreenOnPositiveThenNegative(remainingDaysInIsolation: Int) {
         goodNewsContainer.gone()
         isolationRequestContainer.visible()
+        exposureFaqsLink.gone()
 
         isolationRequestImage.setImageResource(R.drawable.ic_isolation_continue)
         isolationRequestTitle1.text =
@@ -308,8 +312,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
             getString(R.string.state_test_positive_then_negative_info)
         isolationRequestInfoView.stateColor = getColor(R.color.error_red)
         isolationRequestParagraphContainer.addAllParagraphs(
-            getString(R.string.test_result_positive_then_negative_explanation),
-            getString(R.string.for_further_advice_visit)
+            getString(R.string.test_result_positive_then_negative_explanation)
         )
 
         isolationRequestActionButton.text = getString(R.string.continue_button)
@@ -325,6 +328,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
     ) {
         goodNewsContainer.gone()
         isolationRequestContainer.visible()
+        exposureFaqsLink.visible()
 
         isolationRequestImage.setImageResource(R.drawable.ic_isolation_continue)
         isolationRequestTitle1.text = getString(R.string.self_isolate_for)
@@ -337,7 +341,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         isolationRequestInfoView.stateColor = getColor(R.color.error_red)
         isolationRequestParagraphContainer.addAllParagraphs(
             getString(R.string.test_result_negative_then_positive_continue_explanation),
-            getString(R.string.for_further_advice_visit)
+            getString(R.string.exposure_faqs_title)
         )
 
         isolationRequestActionButton.text = getString(R.string.continue_button)

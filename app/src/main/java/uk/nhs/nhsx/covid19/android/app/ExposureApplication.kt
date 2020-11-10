@@ -17,7 +17,6 @@ import timber.log.Timber.DebugTree
 import uk.nhs.covid19.config.production
 import uk.nhs.covid19.config.qrCodesSignatureKey
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityListener
-import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityWorker
 import uk.nhs.nhsx.covid19.android.app.availability.GooglePlayUpdateProvider
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.di.ApplicationComponent
@@ -30,7 +29,6 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
 import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
-import uk.nhs.nhsx.covid19.android.app.util.defaultFalse
 
 open class ExposureApplication : Application(), Configuration.Provider {
     lateinit var appComponent: ApplicationComponent
@@ -70,9 +68,7 @@ open class ExposureApplication : Application(), Configuration.Provider {
     }
 
     protected fun startPeriodicTasks() {
-        if (appComponent.provideOnboardingCompleted().value.defaultFalse()) {
-            appComponent.providePeriodicTasks().schedule()
-        }
+        appComponent.providePeriodicTasks().schedule()
     }
 
     private fun initializeWorkManager() {
@@ -93,7 +89,6 @@ open class ExposureApplication : Application(), Configuration.Provider {
         appAvailabilityListener?.let {
             unregisterActivityLifecycleCallbacks(it)
         }
-        AppAvailabilityWorker.schedule(this)
         appAvailabilityListener = appComponent.provideAppAvailabilityListener()
         registerActivityLifecycleCallbacks(appAvailabilityListener)
     }

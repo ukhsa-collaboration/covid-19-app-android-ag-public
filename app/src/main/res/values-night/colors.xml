@@ -34,8 +34,13 @@
     <color name="links_toolbar_color">@color/surface_background</color>
     <color name="about_app_text_color">#FAFAFA</color>
 
-    <color name="risk_green">#4EBD74</color>
-    <color name="risk_yellow">#DFD04B</color>
-    <color name="risk_amber">#FFA552</color>
-    <color name="risk_red">#FF6060</color>
+    <color name="risk_neutral_border">#33FFFFFF</color>
+    <color name="risk_green">#00B06D</color>
+    <color name="risk_yellow">#EDB52D</color>
+    <color name="risk_amber">#F17019</color>
+    <color name="risk_red">#D5281B</color>
+    <color name="risk_green_background">#083A27</color>
+    <color name="risk_yellow_background">#3B2A00</color>
+    <color name="risk_amber_background">#5D2702</color>
+    <color name="risk_red_background">#4A1916</color>
 </resources>

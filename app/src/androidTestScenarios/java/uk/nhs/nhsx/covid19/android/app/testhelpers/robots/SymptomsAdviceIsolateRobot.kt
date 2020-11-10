@@ -43,4 +43,18 @@ class SymptomsAdviceIsolateRobot {
         onView(withId(id.stateActionButton))
             .perform(scrollTo(), click())
     }
+
+    fun checkExposureLinkIsDisplayed() {
+        onView(withId(id.exposureFaqsLinkTextView))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkExposureLinkIsNotDisplayed() {
+        onView(withId(id.stateActionButton))
+            .perform(scrollTo())
+
+        onView(withId(id.exposureFaqsLinkTextView))
+            .check(matches(not(isDisplayed())))
+    }
 }

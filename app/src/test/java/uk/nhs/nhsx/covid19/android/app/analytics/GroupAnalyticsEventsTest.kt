@@ -173,11 +173,7 @@ class GroupAnalyticsEventsTest {
 
     private fun stubMetadata() = Metadata(
         deviceModel = "null null",
-        latestApplicationVersion = if (BuildConfig.VERSION_NAME.contains(" ")) {
-            BuildConfig.VERSION_NAME.split(" ")[0]
-        } else {
-            BuildConfig.VERSION_NAME
-        },
+        latestApplicationVersion = BuildConfig.VERSION_NAME_SHORT,
         operatingSystemVersion = "0",
         postalDistrict = ""
     )

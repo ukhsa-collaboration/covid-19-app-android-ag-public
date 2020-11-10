@@ -8,7 +8,8 @@ import uk.nhs.nhsx.covid19.android.app.common.Translatable
 data class AppAvailabilityResponse(
     val minimumAppVersion: MinimumAppVersion,
     @Json(name = "minimumSDKVersion")
-    val minimumSdkVersion: MinimumSdkVersion
+    val minimumSdkVersion: MinimumSdkVersion,
+    val recommendedAppVersion: RecommendedAppVersion
 )
 
 @JsonClass(generateAdapter = true)
@@ -21,4 +22,11 @@ data class MinimumAppVersion(
 data class MinimumSdkVersion(
     val description: Translatable,
     val value: Int
+)
+
+@JsonClass(generateAdapter = true)
+data class RecommendedAppVersion(
+    val description: Translatable,
+    val value: Int,
+    val title: Translatable
 )

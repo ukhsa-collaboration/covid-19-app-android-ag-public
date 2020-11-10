@@ -75,6 +75,8 @@
         <activity android:name=".exposure.ShareKeysInformationActivity" />
         <activity android:name=".testordering.linktestresult.LinkTestResultActivity" />
         <activity android:name=".status.IsolationPaymentActivity" />
+        <activity android:name=".availability.UpdateRecommendedActivity" />
+        <activity android:name=".onboarding.PolicyUpdateActivity" />
 
         <!-- Receivers -->
         <receiver

@@ -8,6 +8,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
+import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
 
 class TestResultRobot {
@@ -138,5 +139,19 @@ class TestResultRobot {
         onView(withId(R.id.isolationRequestActionButton)).check(
             matches(withText(context.getString(R.string.back_to_home)))
         )
+    }
+
+    fun checkExposureLinkIsDisplayed() {
+        onView(withId(R.id.exposureFaqsLink))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkExposureLinkIsNotDisplayed() {
+        onView(withId(R.id.isolationRequestActionButton))
+            .perform(scrollTo())
+
+        onView(withId(R.id.exposureFaqsLink))
+            .check(matches(not(isDisplayed())))
     }
 }

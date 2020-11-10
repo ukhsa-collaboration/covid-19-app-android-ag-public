@@ -7,14 +7,19 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Test
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 import kotlin.test.assertEquals
 
 class AppAvailabilityListenerTest {
 
-    private val appAvailabilityProvider = mockk<AppAvailabilityProvider>()
+    private val appAvailabilityProvider = mockk<AppAvailabilityProvider>(relaxed = true)
     private val appAvailabilityActivity = mockk<AppAvailabilityActivity>()
-    private val appCompatActivity = mockk<AppCompatActivity>()
+    private val appCompatActivity = mockk<AppCompatActivity>(relaxed = true)
     private val context = mockk<Context>(relaxed = true)
+    private val fixedInstant = Instant.parse("2020-05-21T10:00:00Z")
 
     private val testSubject =
         AppAvailabilityListener(
@@ -65,6 +70,62 @@ class AppAvailabilityListenerTest {
         testSubject.onActivityResumed(appAvailabilityActivity)
 
         verify(exactly = 0) { context.startActivity(any()) }
+    }
+
+    @Test
+    fun `start UpdateRecommendedActivity when recommended app is available`() {
+        every { appAvailabilityProvider.isAppAvailable() } returns true
+        every { appAvailabilityProvider.isUpdateRecommended() } returns true
+
+        testSubject.onActivityResumed(appCompatActivity)
+
+        verify { appCompatActivity.startActivity(any()) }
+    }
+
+    @Test
+    fun `do not start UpdateRecommendedActivity when no update available`() {
+        every { appAvailabilityProvider.isAppAvailable() } returns true
+        every { appAvailabilityProvider.isUpdateRecommended() } returns false
+
+        testSubject.onActivityResumed(appCompatActivity)
+
+        verify(exactly = 0) { appCompatActivity.startActivity(any()) }
+    }
+
+    @Test
+    fun `should start UpdateRecommendedActivity when over 5 minutes outside app`() {
+        every { appAvailabilityProvider.isAppAvailable() } returns true
+        every { appAvailabilityProvider.isUpdateRecommended() } returns true
+        testSubject.setClock(Clock.fixed(fixedInstant, ZoneOffset.UTC))
+        testSubject.onActivityPaused(appCompatActivity)
+        testSubject.setClock(Clock.fixed(fixedInstant.plus(8, ChronoUnit.MINUTES), ZoneOffset.UTC))
+        testSubject.onActivityResumed(appCompatActivity)
+
+        verify { appCompatActivity.startActivity(any()) }
+    }
+
+    @Test
+    fun `should not start UpdateRecommendedActivity when less than 5 minutes outside app`() {
+        every { appAvailabilityProvider.isAppAvailable() } returns true
+        every { appAvailabilityProvider.isUpdateRecommended() } returns true
+        testSubject.setClock(Clock.fixed(fixedInstant, ZoneOffset.UTC))
+        testSubject.onActivityPaused(appCompatActivity)
+        testSubject.setClock(Clock.fixed(fixedInstant.plus(2, ChronoUnit.MINUTES), ZoneOffset.UTC))
+        testSubject.onActivityResumed(appCompatActivity)
+
+        verify(exactly = 0) { appCompatActivity.startActivity(any()) }
+    }
+
+    @Test
+    fun `should not start UpdateRecommendedActivity when app is in foreground`() {
+        every { appAvailabilityProvider.isAppAvailable() } returns true
+        every { appAvailabilityProvider.isUpdateRecommended() } returns false
+        testSubject.onActivityResumed(appCompatActivity)
+
+        every { appAvailabilityProvider.isUpdateRecommended() } returns true
+        testSubject.onActivityResumed(appCompatActivity)
+
+        verify(exactly = 0) { appCompatActivity.startActivity(any()) }
     }
 
     @Test

@@ -12,6 +12,7 @@ import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
+import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateProvider
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.DeviceDetection
 class MainViewModelTest {
 
@@ -26,10 +27,13 @@ class MainViewModelTest {
 
     private val onboardingCompletedProvider = mockk<OnboardingCompletedProvider>(relaxed = true)
 
+    private val policyUpdateProvider = mockk<PolicyUpdateProvider>()
+
     private val testSubject = MainViewModel(
         deviceDetection,
         exposureNotificationApi,
-        onboardingCompletedProvider
+        onboardingCompletedProvider,
+        policyUpdateProvider
     )
 
     @Before
@@ -38,16 +42,33 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `onboarding completed`() = runBlocking {
+    fun `policy accepted`() = runBlocking {
         every { deviceDetection.isTablet() } returns false
 
         coEvery { onboardingCompletedProvider.value } returns true
+
+        every { policyUpdateProvider.isPolicyAccepted() } returns true
 
         testSubject.viewState().observeForever(mainViewState)
 
         testSubject.start()
 
-        verify { mainViewState.onChanged(MainViewModel.MainViewState.OnboardingCompleted) }
+        verify { mainViewState.onChanged(MainViewModel.MainViewState.PolicyAccepted) }
+    }
+
+    @Test
+    fun `policy updated`() = runBlocking {
+        every { deviceDetection.isTablet() } returns false
+
+        coEvery { onboardingCompletedProvider.value } returns true
+
+        every { policyUpdateProvider.isPolicyAccepted() } returns false
+
+        testSubject.viewState().observeForever(mainViewState)
+
+        testSubject.start()
+
+        verify { mainViewState.onChanged(MainViewModel.MainViewState.PolicyUpdated) }
     }
 
     @Test
@@ -61,6 +82,19 @@ class MainViewModelTest {
         testSubject.start()
 
         verify { mainViewState.onChanged(MainViewModel.MainViewState.TabletNotSupported) }
+    }
+
+    @Test
+    fun `exposure notifications not available`() = runBlocking {
+        every { deviceDetection.isTablet() } returns false
+
+        coEvery { exposureNotificationApi.isAvailable() } returns false
+
+        testSubject.viewState().observeForever(mainViewState)
+
+        testSubject.start()
+
+        verify { mainViewState.onChanged(MainViewModel.MainViewState.ExposureNotificationsNotAvailable) }
     }
 
     @Test

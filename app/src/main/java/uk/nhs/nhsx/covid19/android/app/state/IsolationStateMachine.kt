@@ -430,7 +430,12 @@ class IsolationStateMachine(
 
             when (newState) {
                 is Isolation -> isolationExpirationAlarmController.setupExpirationCheck(newState.expiryDate)
-                is Default -> isolationExpirationAlarmController.cancelExpirationCheckIfAny()
+                is Default -> {
+                    isolationExpirationAlarmController.cancelExpirationCheckIfAny()
+
+                    notificationProvider.cancelExposureNotification()
+                    userInbox.clearItem(ShowEncounterDetection)
+                }
             }
         }
     }

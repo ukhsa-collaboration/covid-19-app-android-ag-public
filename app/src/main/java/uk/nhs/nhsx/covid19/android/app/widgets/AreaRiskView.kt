@@ -1,15 +1,18 @@
 package uk.nhs.nhsx.covid19.android.app.widgets
 
+import android.R.attr
 import android.content.Context
-import android.content.res.ColorStateList
 import android.util.AttributeSet
+import android.util.TypedValue
+import android.view.Gravity
+import android.view.View
+import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.LinearLayout
 import androidx.annotation.AttrRes
-import kotlinx.android.synthetic.main.view_status_option.view.statusOptionIcon
-import kotlinx.android.synthetic.main.view_status_option.view.statusOptionIconContainer
-import kotlinx.android.synthetic.main.view_status_option.view.statusOptionLinkIndicator
-import kotlinx.android.synthetic.main.view_status_option.view.statusOptionText
+import kotlinx.android.synthetic.main.view_area_risk.view.areaRiskChevron
+import kotlinx.android.synthetic.main.view_area_risk.view.areaRiskIndicator
+import kotlinx.android.synthetic.main.view_area_risk.view.areaRiskText
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.R.drawable
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.AMBER
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.GREEN
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.NEUTRAL
@@ -19,18 +22,26 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.HIGH
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.LOW
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.MEDIUM
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getThemeColor
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.getThemeDrawableResId
 
 class AreaRiskView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : StatusOptionView(context, attrs, defStyleAttr) {
+) : LinearLayout(context, attrs, defStyleAttr) {
+
+    var text: String? = ""
+        set(value) {
+            field = value
+            areaRiskText.text = value
+        }
 
     var areaRisk: RiskIndicator? = null
         set(value) {
             field = value
-            setAreaRiskIndicator(areaRisk)
+            setAreaRiskStyle(areaRisk)
         }
 
     var oldAreaRisk: String? = null
@@ -40,7 +51,15 @@ class AreaRiskView @JvmOverloads constructor(
         }
 
     init {
+        View.inflate(context, R.layout.view_area_risk, this)
         applyAttributes(context, attrs)
+        configureLayout()
+    }
+
+    override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo) {
+        super.onInitializeAccessibilityNodeInfo(info)
+        info.contentDescription =
+            context.getString(R.string.accessibility_announcement_button, areaRiskText.text)
     }
 
     private fun applyAttributes(context: Context, attrs: AttributeSet?) {
@@ -52,13 +71,11 @@ class AreaRiskView @JvmOverloads constructor(
         ).apply {
             text = getString(R.styleable.AreaRiskView_areaRiskText)
 
-            statusOptionText.setPaddingRelative(0, 0, 0, 0)
-
             recycle()
         }
     }
 
-    private fun setAreaRiskIndicator(riskIndicator: RiskIndicator?) {
+    private fun setAreaRiskStyle(riskIndicator: RiskIndicator?) {
         when (riskIndicator?.colorScheme) {
             NEUTRAL -> setNeutral()
             GREEN -> setGreen()
@@ -73,73 +90,82 @@ class AreaRiskView @JvmOverloads constructor(
             LOW.name -> setGreen()
             MEDIUM.name -> setYellow()
             HIGH.name -> setRed()
-            else -> statusOptionIcon.setImageDrawable(null)
+            else -> areaRiskIndicator.setImageDrawable(null)
         }
     }
 
     private fun setNeutral() {
         setColors(
-            R.attr.riskLevelNeutralPanelBackgroundColor,
             R.attr.riskLevelNeutralPanelTextColor,
             R.attr.riskLevelNeutralPanelIconTint,
-            R.attr.riskLevelNeutralPanelChevronColor
+            R.attr.riskLevelNeutralPanelChevronColor,
+            R.attr.riskLevelNeutralPanelBackgroundDrawable
         )
     }
 
     private fun setGreen() {
         setColors(
-            R.attr.riskLevelGreenPanelBackgroundColor,
             R.attr.riskLevelGreenPanelTextColor,
             R.attr.riskLevelGreenPanelIconTint,
-            R.attr.riskLevelGreenPanelChevronColor
+            R.attr.riskLevelGreenPanelChevronColor,
+            R.attr.riskLevelGreenPanelBackgroundDrawable
         )
     }
 
     private fun setYellow() {
         setColors(
-            R.attr.riskLevelYellowPanelBackgroundColor,
             R.attr.riskLevelYellowPanelTextColor,
             R.attr.riskLevelYellowPanelIconTint,
-            R.attr.riskLevelYellowPanelChevronColor
+            R.attr.riskLevelYellowPanelChevronColor,
+            R.attr.riskLevelYellowPanelBackgroundDrawable
         )
     }
 
     private fun setAmber() {
         setColors(
-            R.attr.riskLevelAmberPanelBackgroundColor,
             R.attr.riskLevelAmberPanelTextColor,
             R.attr.riskLevelAmberPanelIconTint,
-            R.attr.riskLevelAmberPanelChevronColor
+            R.attr.riskLevelAmberPanelChevronColor,
+            R.attr.riskLevelAmberPanelBackgroundDrawable
         )
     }
 
     private fun setRed() {
         setColors(
-            R.attr.riskLevelRedPanelBackgroundColor,
             R.attr.riskLevelRedPanelTextColor,
             R.attr.riskLevelRedPanelIconTint,
-            R.attr.riskLevelRedPanelChevronColor
+            R.attr.riskLevelRedPanelChevronColor,
+            R.attr.riskLevelRedPanelBackgroundDrawable
         )
     }
 
     private fun setColors(
-        @AttrRes backgroundColorAttr: Int,
         @AttrRes textColorAttr: Int,
         @AttrRes iconTintColorAttr: Int,
-        @AttrRes chevronColorAttr: Int
+        @AttrRes chevronColorAttr: Int,
+        @AttrRes backgroundDrawableAttr: Int
     ) {
-        val backgroundColor = context.getThemeColor(backgroundColorAttr)
         val textColor = context.getThemeColor(textColorAttr)
         val iconTintColor = context.getThemeColor(iconTintColorAttr)
         val chevronColor = context.getThemeColor(chevronColorAttr)
+        val backgroundDrawableResId = context.getThemeDrawableResId(backgroundDrawableAttr)
 
-        statusOptionIconContainer.backgroundTintList = ColorStateList.valueOf(backgroundColor)
-        this.backgroundTintList = ColorStateList.valueOf(backgroundColor)
+        areaRiskText.setTextColor(textColor)
+        areaRiskIndicator.setImageResource(R.drawable.ic_location_white)
+        areaRiskIndicator.setColorFilter(iconTintColor)
+        areaRiskChevron.setColorFilter(chevronColor)
+        setBackgroundResource(backgroundDrawableResId)
+    }
 
-        statusOptionText.setTextColor(textColor)
-        statusOptionLinkIndicator.setColorFilter(chevronColor)
+    private fun configureLayout() {
+        minimumHeight = 56.dpToPx.toInt()
+        gravity = Gravity.CENTER_VERTICAL
+        setSelectableItemForeground()
+    }
 
-        statusOptionIcon.setImageResource(drawable.ic_location_white)
-        statusOptionIcon.setColorFilter(iconTintColor)
+    private fun setSelectableItemForeground() {
+        val outValue = TypedValue()
+        context.theme.resolveAttribute(attr.selectableItemBackground, outValue, true)
+        foreground = context.getDrawable(outValue.resourceId)
     }
 }

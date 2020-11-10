@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers
 
 import dagger.Module
 import dagger.Provides
-import uk.nhs.nhsx.covid19.android.app.remote.ActivationApi
 import uk.nhs.nhsx.covid19.android.app.remote.AnalyticsApi
 import uk.nhs.nhsx.covid19.android.app.remote.AppAvailabilityApi
 import uk.nhs.nhsx.covid19.android.app.remote.ExposureCircuitBreakerApi
@@ -10,7 +9,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.ExposureConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.KeysDistributionApi
 import uk.nhs.nhsx.covid19.android.app.remote.KeysSubmissionApi
-import uk.nhs.nhsx.covid19.android.app.remote.MockActivationApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockAnalyticsApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockAppAvailabilityApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockExposureCircuitBreakerApi
@@ -85,11 +83,6 @@ class ManagedApiModule(
     @Singleton
     fun provideAppAvailabilityApi(): AppAvailabilityApi =
         MockAppAvailabilityApi()
-
-    @Provides
-    @Singleton
-    fun provideActivationApi(): ActivationApi =
-        MockActivationApi()
 
     @Provides
     @Singleton

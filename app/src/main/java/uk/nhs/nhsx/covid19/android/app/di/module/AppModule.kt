@@ -7,14 +7,15 @@ import dagger.Module
 import dagger.Provides
 import uk.nhs.covid19.config.SignatureKey
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager
+import uk.nhs.nhsx.covid19.android.app.common.AppInfo
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.util.AndroidBase64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.DeviceDetection
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedFileInfo
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.DeviceDetection
 import java.time.Clock
 import javax.inject.Named
 import javax.inject.Singleton
@@ -33,6 +34,9 @@ class AppModule(
 ) {
     @Provides
     fun provideContext() = applicationContext
+
+    @Provides
+    fun provideAppInfo() = AppInfo()
 
     @Provides
     fun provideDeviceDetection(): DeviceDetection =

@@ -36,7 +36,7 @@
     <string name="low_risk_level_text">Scăzut - autoritatea dvs. locală este evaluată momentan drept „risc scăzut”, cu un nivel de infecție similar cu majoritatea celorlalte părți ale țării</string>
     <string name="medium_risk_level_text">Mediu - autoritatea locală sau o autoritate locală învecinată are niveluri ridicate sau în creștere de infecție. Vă rugăm să urmați instrucțiunile naționale.</string>
     <string name="high_risk_level_text">Ridicat - autoritatea dvs. locală, sau o autoritate locală vecină, folosește măsuri suplimentare celor care se află în vigoare în restul Angliei și Țara Galilor (de exemplu, carantina) pentru a reduce transmiterea infecției din cauza nivelurilor ridicate de infecție în zona locală. Există în vigoare un plan de acțiune detaliat și resursele locale sunt sporite cu sprijin național.</string>
-    <string name="risk_level_title">Nivel Local de Alertă Covid</string>
+    <string name="risk_level_title">Nivel local de alertă COVID</string>
     <string name="qr_code_permission_denied_action">Autorizare permisiuni cameră</string>
     <string name="qr_code_permission_denied_subtitle">Această aplicație folosește camera dvs. pentru a face check-in-uri în baruri și restaurante.\n\nVă rugăm să autorizați permisiunea camerei de a scana codul oficial NHS QR.</string>
     <string name="qr_code_unsupported_description">Vă rugăm să găsiți o altă modalitate de a face check-in. Discutați cu un membru al personalului pentru a vă ajuta.</string>
@@ -85,6 +85,8 @@
     <string name="test_ordering_description_2">Odată ajuns/ ă acolo, vi se va cere să completați câteva detalii personale (cum ar fi adresa dvs.), astfel încât să puteți obține un test, dar nimic din ceea ce introduceți în aplicație sau pe website nu va fi distribuit.</string>
     <string name="test_ordering_description_3">Singura informație distribuită între aplicație și website este un „jeton” digital care ne ajută să obținem rezultatele testului dvs. înapoi în aplicație.</string>
     <string name="test_ordering_description_4">Orice date utilizate în procesul de testare sunt descrise în notificarea de confidențialitate:</string>
+    <string name="test_ordering_description_5">Pentru a afla cum utilizează această aplicație informațiile dvs., vizitați:</string>
+    <string name="test_ordering_description_6">Puteți utiliza această aplicație numai pentru a obține un test pentru dvs. Pentru a obține un test pentru altcineva, utilizați website-ul guvernului de testare pentru coronavirus:</string>
     <string name="book_free_test_now">Programați-vă un test</string>
     <string name="about_this_app_title">Despre această aplicație</string>
     <string name="title_how_app_works">Cum funcționează această aplicație</string>
@@ -163,11 +165,9 @@
     <string name="go_to_your_settings">Intrați în Setări</string>
     <string name="enable_location_service_title">Trebuie să activați serviciile de localizare în telefonul dvs.</string>
     <string name="enable_location_service_rationale">Pentru a face ca Bluetooth să funcționeze, trebuie să activați serviciile de locație din telefonul dvs.\n\nAceastă aplicație nu utilizează Bluetooth sau locația dvs. pentru a vă urmări. Identitatea dvs. personală va rămâne protejată în permanență.\n\nDacă nu activați serviciile de localizare pe telefonul dvs., această aplicație nu va funcționa.\n\nPentru a permite funcționarea acestei aplicații, vă rugăm să mergeți la Setări și să activați serviciile de localizare.</string>
-    <string name="post_code_example">Exemple: Dacă codul dvs. poștal este CE1B 2PQ, vă rugăm să introduceți \"CE1B\". Dacă este CR0 3RL, vă rugăm să introduceți \"CR0\". Dacă este L4 0RE, vă rugăm să introduceți \"L4\".</string>
+    <string name="post_code_example">Trebuie să aveți un cod poștal de district englezesc sau galez pentru a utiliza această aplicație.\n\nExemple: Dacă codul dvs. poștal este CE1B 2PQ, vă rugăm să introduceți \"CE1B\". Dacă este CR0 3RL, vă rugăm să introduceți \"CR0\". Dacă este L4 0RE, vă rugăm să introduceți \"L4\".</string>
     <string name="tablet_support_title">Această aplicație este făcută pentru smartphone-urile mobile</string>
     <string name="tablet_support_description">Dispozitivul dvs. pare a fi o tabletă. Această aplicație este disponibilă numai pentru smartphone-uri, deoarece aplicația este eficientă numai dacă o aveți pe un dispozitiv care vă este alături tot timpul când ieșiți în oraș. Vă rugăm să instalați aplicația pe smartphone.</string>
-    <string name="test_ordering_description_5">Puteți afla, de asemenea, modul în care această aplicație folosește datele pe care ni le-ați oferit:</string>
-    <string name="test_ordering_description_6">Puteți utiliza această aplicație numai pentru a obține un test pentru dvs. Pentru a obține un test pentru altcineva, utilizați website-ul guvernului de testare pentru coronavirus:</string>
     <string name="test_ordering_testing_privacy_notice">Notificare de confidențialitate a testării</string>
     <string name="test_ordering_app_privacy_notice">Notificare de confidențialitate a aplicației</string>
     <string name="test_ordering_book_test_for_someone_else">Rezervați un test pentru altcineva</string>
@@ -215,7 +215,7 @@
     <string name="message_no_coronavirus_symptoms">Dacă dezvoltați oricare dintre aceste simptome, raportați-le pe această aplicație și rezervați un test gratuit. Faceți un test numai dacă aveți simptome coronavirus.\n\nPentru sfaturi suplimentare, vă rugăm să vizitați:</string>
     <string name="questionnaire_change_announcement">Schimbare simptom %1$s</string>
     <string name="state_index_take_coronavirus_test">Faceți un test gratuit de coronavirus</string>
-    <string name="state_test_negative_info">Rezultatul testului dvs. de coronavirus este negativ, dar este posibil să dezvoltați totuși simptome, deci ar trebui să rămâneți în izolare.\n\nRezultatul testului dvs. arată că nu ați avut virusul la momentul efectuării testului. Vi s-au trimis mai multe informații prin e-mail, text sau telefon. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere.</string>
+    <string name="state_test_negative_info">Rezultatul testului dvs. de coronavirus este negativ, dar încă este posibil să dezvoltați simptome, deci ar trebui să rămâneți izolat/ ă.</string>
     <string name="test_result_negative_continue_self_isolate_explanation">Rezultatul testului dvs. arată că ați avut virusul în momentul testului. Vi s-au trimis mai multe informații prin e-mail, text sau telefon. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere.</string>
     <string name="isolation_until_date">până %1$s la 23:59</string>
     <string name="questionnaire_review_one_of_two">Pasul 1 din 2</string>
@@ -245,7 +245,7 @@
     <string name="title_encounter">Data întâlnirii</string>
     <string name="allow_bluetooth">Permite bluetooth</string>
     <string name="onboarding_subtitle">Ne veți ajuta să învingem COVID-19 prin schimbul de informații anonime despre virusul din regiunea dvs. și despre sănătatea publică, atunci când utilizați aplicația</string>
-    <string name="onboarding_privacy_control_text">NHS vă apreciază confidențialitatea, ceea ce înseamnă că aplicația nu poate spune cine sunteți, unde sunteți sau cine se află alături de dvs.\n\nDacă sunteți testat/ ă pozitiv pentru coronavirus, puteți alege să partajați datele cu NHS, astfel încât să putem alerta alți utilizatori ai aplicației. Folosim metoda de luare automată a deciziilor pentru a determina ce alți utilizatori trebuie să fie alertați în mod anonim.</string>
+    <string name="onboarding_privacy_control_text">NHS vă apreciază confidențialitatea, ceea ce înseamnă că aplicația nu poate spune cine sunteți, unde sunteți sau cine se află alături de dvs.\n\nDacă sunteți testat/ ă pozitiv pentru coronavirus, puteți alege să partajați informațiile cu NHS, astfel încât să putem anunța alți utilizatori ai aplicației din Anglia, Țara Galilor, Scoția, Irlanda de Nord, Jersey și Gibraltar. Selectând continuare, vom face notificările dvs. disponibile altor utilizatori ai aplicației care trebuie să fie anunțați în aceste locații.\n\nFolosim luarea automată a deciziilor pentru a determina ce alți utilizatori trebuie să fie anunțați în mod anonim.</string>
     <string name="onboarding_privacy_your_data_text1">Aplicația stochează datele în siguranță și anonim timp de 14 zile după ce au fost înregistrate. Când folosiți coduri QR pentru a verifica o locație, datele locației vor fi păstrate timp de 21 zile. Puteți șterge datele din aplicație oricând în setările aplicației dvs. sau dezinstalând aplicația. Este posibil ca telefonul dvs. să păstreze unele date de bază - acest lucru este controlat de sistemul de operare al telefonului dvs.</string>
     <string name="onboarding_no_thanks">Nu, mulțumesc</string>
     <string name="go_to_play_store">Accesați Play Store</string>
@@ -254,14 +254,14 @@
     <string name="update_app_title">Actualizați aplicația</string>
     <string name="valid_auth_code_is_required">Codul dvs. nu a fost recunoscut. Vă rugăm să vă asigurați că folosiți un cod valid.</string>
     <string name="self_isolate_for">Auto-izolare pentru</string>
-    <string name="isolate_after_corona_virus_symptoms">Simptomele dvs. sugerează că este posibil să aveți coronavirus. Vă rugăm să vă izolați împreună cu toate persoanele din locuința dvs. Aceasta înseamnă să stați în casă fără vizitatori. Ar trebui să vă și rezervați imediat un test gratuit. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere.</string>
-    <string name="isolate_after_no_corona_virus_symptoms">Se pare că încă nu aveți niciun simptom de coronavirus, dar amintiți-vă că poate dura până la 14 zile pentru ca simptomele să se dezvolte. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere. Faceți un test numai dacă aveți simptome coronavirus.</string>
+    <string name="isolate_after_corona_virus_symptoms">Simptomele dvs. sugerează că este posibil să aveți coronavirus. Vă rugăm să vă izolați împreună cu toate persoanele din locuința dvs. Aceasta înseamnă să stați în casă fără vizitatori. Ar trebui să vă și rezervați imediat un test gratuit. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere.\n\nVă rugăm să stați acasă și să vă auto-izolați pentru a vă păstra pe dvs. și pe ceilalți în siguranță</string>
+    <string name="isolate_after_no_corona_virus_symptoms">Se pare că încă nu aveți niciun simptom de coronavirus, dar amintiți-vă că poate dura până la 14 zile pentru ca simptomele să se dezvolte. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere. Faceți un test numai dacă aveți simptome coronavirus.\n\nVă rugăm să stați acasă și să vă auto-izolați pentru a vă păstra pe dvs. și pe ceilalți în siguranță. Faceți un test numai dacă aveți simptome coronavirus.</string>
     <string name="your_isolation_will_finish">Auto-izolarea dvs. va lua sfârșit pe %1$s la 23:59</string>
     <string name="qr_code_unsupported_title">Ne pare rău, telefonul dvs. nu acceptă check-in-ul în locație</string>
     <string name="qr_code_scanning">Scanarea unui cod QR NHS oficial</string>
     <string name="i_understand">Înțeleg</string>
     <string name="exposure_notification_hint">Aplicația a detectat că ați fost în contact cu cineva care are coronavirus. Vă rugăm să stați acasă și să vă auto-izolați pentru a vă păstra pe dvs. și pe ceilalți în siguranță.</string>
-    <string name="exposure_notification_recommendation">Aveți un risc ridicat de a avea și de a răspândi virusul, chiar dacă nu aveți niciun simptom. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere.\n\nNumărătoarea inversă de izolare a început și ar trebui să vă auto-izolați pentru întreaga perioadă identificată.\n\nPentru sfaturi suplimentare, vă rugăm să vizitați:</string>
+    <string name="exposure_notification_recommendation">Aveți un risc ridicat de a avea și de a răspândi virusul, chiar dacă nu aveți niciun simptom. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere.\n\nNumărătoarea inversă de izolare a început și ar trebui să vă auto-izolați pentru întreaga perioadă identificată. Faceți un test numai dacă aveți simptome coronavirus.\n\nPentru sfaturi suplimentare, vă rugăm să vizitați:</string>
     <string name="risk_level_link_text">Definițiile nivelelor de risc a zonelor</string>
     <string name="open_in_browser_warning">deschideți în browser-ul dvs.</string>
     <string name="done_button_text">Terminat</string>
@@ -275,7 +275,7 @@
     <string name="resume_contact_tracing_don_t_remind_me">Nu îmi reaminti</string>
     <string name="url_how_app_works">https://covid19.nhs.uk/introducing-the-app-romanian.html</string>
     <string name="url_latest_advice_in_isolation">https://faq.covid19.nhs.uk/article/KA-01231/en-us</string>
-    <string name="submit_keys_information_description_text">Aplicația creează numere de identificare (o serie aleatorie de numere, litere și simboluri) pe care dispozitivul dvs. le partajează în mod regulat pentru a vă menține actualizate notificările de expunere. Notificările de expunere ajută aplicația să afle ce persoană, în ultimele 14 zile, ar trebui să fie notificată că este posibil să fi fost expusă la coronavirus. Datele personale sau identitatea dvs. nu vor fi partajate.</string>
+    <string name="submit_keys_information_description_text">Aplicația creează ID-uri (o serie aleatorie de numere, litere și simboluri) pe care dispozitivul dvs. le partajează în mod regulat pentru a vă menține actualizate notificările de expunere. Notificările de expunere ajută aplicația să afle persoanele care, în ultimele 14 zile, ar trebui să fie notificate că este posibil să fi fost expuse la coronavirus.\n\nSelectând Continuare, vom face notificările dvs. disponibile altor utilizatori ai aplicației care trebuie să fie anunțați în Anglia, Țara Galilor, Scoția, Irlanda de Nord, Jersey și Gibraltar.\n\nDetaliile dvs. personale sau identitatea nu vor fi partajate.</string>
     <string name="about_feedback_information_title">Informații despre opinii</string>
     <string name="about_feedback_information_text">Dacă aveți opinii despre aplicație, o întrebare la care nu se răspunde în întrebările noastre obișnuite sau aveți o problemă tehnică, ne puteți contacta folosind formularul nostru online.</string>
     <string name="submit_keys_information_text">Vom anunța alți utilizatori ai aplicației că s-au aflat în apropierea unei persoane care a fost testată pozitiv pentru coronavirus</string>
@@ -360,4 +360,16 @@
     <string name="notification_title_potential_exposure_explanation">Verificare de expunere la COVID-19 finalizată.</string>
     <string name="qr_code_intro_text">Dacă intrați într-o locație (de exemplu, un bar sau un restaurant) care afișează un poster cu codul oficial NHS QR, folosiți această aplicație pentru scanare. Aplicația înregistrează apoi ora la care vă înregistrați în locație.\n\nPrin folosirea înregistrării de sosire, veți putea primi o notificare în cazul în care persoanele cu coronavirus vizitează aceiași locație în același timp cu dvs.  Notificarea va include îndrumări relevante, de genul cum să fiți atenți la simptomele de coronavirus.</string>
     <string name="venue_check_in_title">Mai multe informații despre check-in în locație</string>
+    <string name="ask_me_later">Întreabă-mă mai târziu</string>
+    <string name="exposure_faqs">Faceți click aici pentru a afla mai multe</string>
+    <string name="exposure_faqs_title">Dacă vă aflați în afara Angliei și Țării Galilor, este nevoie să urmați instrucțiunile în vigoare din țara în care vă aflați.</string>
+    <string name="notification_channel_recommended_app_update_name">Actualizări recomandate ale aplicației</string>
+    <string name="notification_channel_recommended_app_update_name_description">Aceste notificări vă informează despre actualizările recomandate ale aplicației</string>
+    <string name="notification_text_recommended_app_update">Apăsați pentru detalii.</string>
+    <string name="notification_title_recommended_app_update">Vă rugăm să vă actualizați aplicația NHS COVID-19 cu ultima versiune</string>
+    <string name="test_ordering_getting_tested_description">Alegerea „Rezervați un test pentru dvs.” vă va duce la website-ul guvernului pentru testarea coronavirusului, unde vi se va cere să completați câteva detalii personale (cum ar fi adresa dvs.) pentru a obține un test. Nimic din ce introduceți pe website nu va fi distribuit.\n\nVa fi creat un \"jeton\" (\"token\") digital care să ne ajute să vă obținem rezultatele înapoi în aplicație.</string>
+    <string name="update_in_play_store">Actualizați aplicația acum</string>
+    <string name="updated_privacy_control_text">Am făcut câteva modificări ale aplicației pentru a o ajuta să funcționeze mai eficient atunci când călătoriți. Câteva țări lucrează împreună, astfel încât urmărirea contactelor continuă să funcționeze pe măsură ce oamenii trec granițele în diferite țări.\n\nAplicațiile oficiale de urmărire a contactelor din Anglia, Țara Galilor, Scoția, Irlanda de Nord, Jersey și Gibraltar vor putea partaja informații, păstrând în același timp anonimatul utilizatorului.\n\nDacă sunteți testat/ ă pozitiv pentru coronavirus, puteți alege să partajați informațiile cu NHS, astfel încât să putem trimite notificări altor utilizatori ai aplicației care trebuie să fie alertați în aceste țări.</string>
+    <string name="updated_privacy_title">Schimbări în politicile noastre</string>
+    <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/article/KA-01337</string>
 </resources>

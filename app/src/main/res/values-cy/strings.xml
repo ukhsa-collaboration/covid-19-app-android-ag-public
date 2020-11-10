@@ -8,7 +8,7 @@
     <string name="onboarding_venue_check_in_title">Mewngofnodi i leoliadau</string>
     <string name="onboarding_check_symptoms_title">Gwirio’ch symptomau</string>
     <string name="onboarding_isolation_countdown_title">Dyddgyfrif ar gyfer ynysu</string>
-    <string name="onboarding_notifications_text">Cael gwybod pryd fuoch chi’n agos at ddefnyddwyr eraill yr ap sydd wedi profi’n bositif am y coronafeirws</string>
+    <string name="onboarding_notifications_text">Cael gwybod pryd fuoch chi’n agos at ddefnyddwyr eraill yr ap sydd wedi profi’n bositif am y coronafeirws.</string>
     <string name="onboarding_venue_check_in_text">Mewngofnodi i leoedd fel bariau a bwytai gyda sganiwr cod QR yr ap, heb orfod llenwi unrhyw ffurflenni.</string>
     <string name="onboarding_check_symptoms_text">Yn teimlo\'n sâl? Canfyddwch a allai’ch symptomau fod yn arwydd o\'r coronafeirws, ac archebwch brawf am ddim os oes angen un arnoch.</string>
     <string name="onboarding_isolation_countdown_text">Os ydych chi\'n ynysu, bydd yr ap yn cyfrif y dyddiau ac yn rhoi\'r wybodaeth gywir i chi</string>
@@ -36,7 +36,7 @@
     <string name="low_risk_level_text">Isel – ar hyn o bryd mae eich awdurdod lleol yn cael ei asesu fel \'risg isel\', gyda lefelau haint sy\'n debyg i’r rhan fwyaf o rannau eraill y wlad.</string>
     <string name="medium_risk_level_text">Canolig - mae gan eich awdurdod lleol, neu awdurdod lleol cyfagos, lefelau uchel neu gynyddol o haint. Dilynwch y canllawiau cenedlaethol.</string>
     <string name="high_risk_level_text">Uchel – Mae eich awdurdod lleol, neu awdurdod lleol cyfagos, yn defnyddio mesurau ychwanegol i\'r rhai sydd ar waith yng ngweddill Cymru a Lloegr (ee cyfyngiadau symud) i leihau trosglwyddiad yr haint oherwydd bod lefelau uchel o haint yn yr ardal leol. Mae cynllun gweithredu manwl ar waith ac mae cymorth cenedlaethol yn cael ei ddarparu i ategu’r adnoddau lleol.</string>
-    <string name="risk_level_title">Lefel Rhybudd Covid Lleol</string>
+    <string name="risk_level_title">Lefel rhybudd COVID lleol</string>
     <string name="qr_code_permission_denied_action">Rhoi caniatâd i’r camera</string>
     <string name="qr_code_permission_denied_subtitle">Mae\'r ap hwn yn defnyddio\'ch camera i fewngofnodi i leoliadau fel bariau a bwytai.\n\nRhowch ganiatâd i’r camera sganio cod QR swyddogol y GIG.</string>
     <string name="qr_code_unsupported_description">Chwiliwch am ffordd arall o fewngofnodi. Gofynnwch am gymorth gan aelod o staff.</string>
@@ -85,6 +85,8 @@
     <string name="test_ordering_description_2">Ar ôl cyrraedd yno, gofynnir i chi roi rhai manylion personol (megis eich cyfeiriad) er mwyn cael prawf, ond ni fydd unrhyw beth a nodwch ar yr ap na\'r wefan yn cael ei rannu.</string>
     <string name="test_ordering_description_3">Yr unig wybodaeth a rennir rhwng yr ap a’r wefan yw ‘tocyn’ digidol a fydd yn ein helpu i gael canlyniadau eich profion yn ôl i’r ap.</string>
     <string name="test_ordering_description_4">Disgrifir unrhyw ddata a ddefnyddir yn y broses brofi yn yr Hysbysiad Preifatrwydd:</string>
+    <string name="test_ordering_description_5">Gallwch hefyd ganfod sut mae’r ap hwn yn defnyddio’r data rydych wedi’u rhoi i ni:</string>
+    <string name="test_ordering_description_6">Dim ond i gael prawf i chi’ch hun y gallwch ddefnyddio’r ap hwn. I gael prawf i rywun arall, defnyddiwch wefan profi coronafeirws y llywodraeth:</string>
     <string name="book_free_test_now">Archebu prawf am ddim nawr</string>
     <string name="about_this_app_title">Ynglŷn â\'r ap hwn</string>
     <string name="title_how_app_works">Sut mae’r ap hwn yn gweithio</string>
@@ -178,8 +180,6 @@
     <string name="post_code_example">Mae angen cod post ardal yng Nghymru neu yn Lloegr i ddefnyddio\'r ap hwn.\n\nEnghreifftiau: Os mai\'ch cod post yw CE1B 2PQ, nodwch \"CE1B\". Os mai CR0 3RL ydyw, nodwch \"CR0\". Os mai L4 0RE ydyw, nodwch \"L4\".</string>
     <string name="tablet_support_title">Mae\'r ap hwn wedi cael ei wneud ar gyfer ffonau clyfar symudol.</string>
     <string name="tablet_support_description">Mae\'n ymddangos mai llechen yw eich dyfais. Mae\'r ap hwn ar gyfer ffonau clyfar yn unig oherwydd bod yr ap ddim ond yn effeithiol os yw ar ddyfais sydd yn eich meddiant trwy\'r amser. Gosodwch yr ap ar eich ffôn clyfar.</string>
-    <string name="test_ordering_description_5">Gallwch hefyd ganfod sut mae\'r ap hwn yn defnyddio\'r data rydych wedi\'i roi i ni:</string>
-    <string name="test_ordering_description_6">Dim ond i gael prawf i chi’ch hun y gallwch ddefnyddio’r ap hwn. I gael prawf i rywun arall, defnyddiwch wefan profi coronafeirws y llywodraeth:</string>
     <string name="test_ordering_testing_privacy_notice">Hysbysiad preifatrwydd ar gyfer profi</string>
     <string name="test_ordering_app_privacy_notice">Hysbysiad preifatrwydd yr ap</string>
     <string name="test_ordering_book_test_for_someone_else">Archebu prawf i rywun arall</string>
@@ -227,7 +227,7 @@
     <string name="message_no_coronavirus_symptoms">Os byddwch yn datblygu unrhyw un o\'r symptomau hyn, rhowch wybod amdanynt ar yr ap hwn ac archebwch brawf am ddim. Dim ond os oes gennych symptomau coronafeirws y dylech chi gael prawf.\n\nI gael rhagor o gyngor, cysylltwch â:</string>
     <string name="questionnaire_change_announcement">Newidiwch eich ateb am %1$s</string>
     <string name="state_index_take_coronavirus_test">Cymrwch brawf coronafeirws am ddim</string>
-    <string name="state_test_negative_info">Mae canlyniad eich prawf yn negyddol ond gallech ddatblygu symptomau o hyd, felly dylech barhau i hunanynysu.\n\nMae canlyniad eich prawf yn dangos nad oedd y feirws arnoch pan wnaed y prawf. Anfonwyd rhagor o wybodaeth atoch trwy gyfrwng e-bost, neges destun neu ffôn. Os ydych chi o dan 18 oed, fe\'ch cynghorir i ddangos y neges hon i oedolyn dibynadwy.</string>
+    <string name="state_test_negative_info">Mae canlyniad eich prawf yn negyddol ond gallech ddatblygu symptomau o hyd, felly dylech barhau i hunanynysu.</string>
     <string name="test_result_negative_continue_self_isolate_explanation">Mae canlyniad eich prawf yn dangos nad oedd y feirws arnoch pan wnaed y prawf. Anfonwyd rhagor o wybodaeth atoch trwy gyfrwng e-bost, neges destun neu ffôn. Os ydych chi o dan 18 oed, fe\'ch cynghorir i ddangos y neges hon i oedolyn dibynadwy.</string>
     <string name="isolation_until_date">tan %1$s am 23:59</string>
     <string name="questionnaire_review_one_of_two">Cam 1 o 2</string>
@@ -257,7 +257,7 @@
     <string name="title_encounter">Dyddiad cyfarfod</string>
     <string name="allow_bluetooth">Caniatáu Bluetooth</string>
     <string name="onboarding_subtitle">Byddwch yn ein helpu i drechu COVID-19 drwy rannu gwybodaeth ddienw am y feirws yn eich rhanbarth ac am iechyd y cyhoedd pan fyddwch yn defnyddio’r ap.</string>
-    <string name="onboarding_privacy_control_text">Mae\'r GIG yn gwerthfawrogi eich preifatrwydd, sy\'n golygu na all yr ap ddweud pwy ydych chi, ble rydych chi na phwy sydd gyda chi.\n\nOs profwch yn bositif am goronafeirws, gallwch ddewis rhannu eich data gyda\'r GIG er mwyn i ni allu rhybuddio defnyddwyr eraill yr ap. Rydym yn defnyddio penderfyniadau awtomataidd i helpu i benderfynu pa ddefnyddwyr eraill y mae angen eu rhybuddio yn ddienw.</string>
+    <string name="onboarding_privacy_control_text">Mae\'r GIG yn gwerthfawrogi eich preifatrwydd, sy\'n golygu na all yr ap ddweud pwy ydych chi, ble rydych chi na phwy sydd gyda chi.\n\nOs profwch yn bositif am y coronafeirws, gallwch ddewis rhannu eich data gyda\'r GIG er mwyn i ni allu rhybuddio defnyddwyr eraill yr ap yng Nghymru, Lloegr, yr Alban, Gogledd Iwerddon, Jersey a Gibraltar. Drwy ddewis parhau byddwn yn gallu anfon hysbysiadau, os oes angen, at ddefnyddwyr eraill yr ap yn y mannau hynny.\n\nRydym yn defnyddio penderfyniadau awtomataidd i helpu i benderfynu pa ddefnyddwyr eraill y mae angen eu rhybuddio yn ddienw.</string>
     <string name="onboarding_privacy_your_data_text1">Mae\'r ap yn storio data yn ddiogel ac yn ddienw am 14 diwrnod ar ôl iddynt gael eu cofnodi. Pan fyddwch chi\'n defnyddio codau QR i fewngofnodi i leoliadau, bydd y data am y lleoliadau yn cael eu cadw am 21 diwrnod. Gallwch ddileu\'r data o\'r ap ar unrhyw adeg yn eich gosodiadau ap, neu trwy ddadosod yr ap. Efallai y bydd eich ffôn yn cadw rhywfaint o ddata sylfaenol - system weithredu eich ffôn sy\'n rheoli hyn.</string>
     <string name="onboarding_no_thanks">Dim diolch</string>
     <string name="go_to_play_store">Ewch i Play Store</string>
@@ -287,7 +287,7 @@
     <string name="resume_contact_tracing_don_t_remind_me">Peidio â’m hatgoffa</string>
     <string name="url_how_app_works">https://covid19.nhs.uk/introducing-the-app-welsh.html</string>
     <string name="url_latest_advice_in_isolation">https://faq.covid19.nhs.uk/article/KA-01193/en-us</string>
-    <string name="submit_keys_information_description_text">Mae\'r ap yn creu ID (cyfres ar hap o rifau, llythrennau a symbolau) y mae eich dyfais yn eu rhannu\'n rheolaidd er mwyn cadw\'ch Hysbysiadau Cysylltiad yn gyfredol. Mae Hysbysiadau Cysylltiad yn helpu\'r ap i benderfynu pwy ddylai gael gwybod y gallent fod wedi bod mewn cysylltiad â\'r coronafeirws yn yr 14 diwrnod diwethaf. Ni fydd eich manylion personol yn cael eu rhannu ac ni fydd modd eich adnabod.</string>
+    <string name="submit_keys_information_description_text">Mae\'r ap yn creu ID (cyfres ar hap o rifau, llythrennau a symbolau) y mae eich dyfais yn eu rhannu\'n rheolaidd er mwyn cadw\'ch Hysbysiadau Cysylltiad yn gyfredol. Mae Hysbysiadau Cysylltiad yn helpu\'r ap i benderfynu pwy ddylai gael gwybod y gallent fod wedi bod mewn cysylltiad â\'r coronafeirws yn yr 14 diwrnod diwethaf. \n\nDrwy ddewis parhau byddwn yn gallu anfon hysbysiadau, os oes angen, at ddefnyddwyr eraill yr ap yng Nghymru, Lloegr, yr Alban, Gogledd Iwerddon, Jersey a Gibraltar.\n\nNi fydd eich manylion personol yn cael eu rhannu ac ni fydd modd eich adnabod.</string>
     <string name="about_feedback_information_title">Gwybodaeth adborth</string>
     <string name="about_feedback_information_text">Os oes gennych adborth am yr ap, cwestiwn nad yw wedi\'i ateb yn ein cwestiynau cyffredin, neu os oes gennych broblem dechnegol, cysylltwch â ni gan ddefnyddio ein ffurflen ar-lein.</string>
     <string name="submit_keys_information_text">Byddwn yn rhoi gwybod i ddefnyddwyr eraill yr ap eu bod wedi bod yn agos at rywun sydd wedi profi\'n bositif am y coronafeirws.</string>
@@ -372,4 +372,16 @@
     <string name="notification_title_potential_exposure_explanation">Proses wirio cysylltiadau COVID-19 wedi gorffen</string>
     <string name="qr_code_intro_text">Pan fyddwch yn ymweld â rhywle (er enghraifft, bar neu fwyty) sydd yn dangos poster cod QR swyddogol y GIG, defnyddiwch yr ap hwn i sganio\'r cod. Bydd yr ap yn cofrestru\'r amser y gwnaethoch chi fewngofnodi.\n\nDrwy fewngofnodi, fe allwch chi gael eich hysbysu os bydd rhywun â\'r coronafeirws yn ymweld â\'r lle hwn tua\'r un adeg â chi. Bydd yr hysbysiad yn cynnwys cyngor perthnasol, fel bod yn effro i symptomau coronafeirws.</string>
     <string name="venue_check_in_title">Rhagor o wybodaeth am fewngofnodi i leoliad</string>
+    <string name="ask_me_later">Gofyn imi yn nes ymlaen</string>
+    <string name="exposure_faqs">Cliciwch yma i gael rhagor o wybodaeth</string>
+    <string name="exposure_faqs_title">Os ydych chi yn rhywle heblaw Cymru a Lloegr, mae angen i chi ddilyn canllawiau\'r wlad rydych chi ynddi.</string>
+    <string name="notification_channel_recommended_app_update_name">Diweddariadau a argymhellir i\'r ap</string>
+    <string name="notification_channel_recommended_app_update_name_description">Mae\'r hysbysiadau hyn yn dweud wrthych am ddiweddariadau a argymhellir i\'r ap</string>
+    <string name="notification_text_recommended_app_update">Tapiwch i weld y manylion.</string>
+    <string name="notification_title_recommended_app_update">Diweddarwch eich ap COVID-19 y GIG i\'r fersiwn newydd</string>
+    <string name="test_ordering_getting_tested_description">Bydd dewis \'Archebu prawf i chi\'ch hun\' yn mynd â chi i wefan profi coronafeirws y llywodraeth lle gofynnir ichi roi rhai manylion personol (fel eich cyfeiriad) i gael prawf. Ni fydd unrhyw beth a nodwch ar y wefan yn cael ei rannu.\n\n Bydd \'tocyn\' digidol yn cael ei greu a fydd yn ein helpu i anfon eich canlyniadau yn ôl i\'r ap.</string>
+    <string name="update_in_play_store">Diweddarwch eich ap nawr</string>
+    <string name="updated_privacy_control_text">Rydyn ni wedi gwneud rhai newidiadau i\'r ap er mwyn iddo fod yn fwy effeithlon wrth ichi deithio. Mae nifer o wledydd yn gweithio gyda\'i gilydd i sicrhau bod olrhain cysylltiadau yn parhau i weithio wrth i bobl groesi ffiniau i wahanol wledydd.\n\nBydd apiau olrhain cysylltiadau swyddogol Cymru, Lloegr, yr Alban, Gogledd Iwerddon, Jersey a Gibraltar yn gallu rhannu data heb ddatgelu pwy yw\'r defnyddwyr.\n\nOs ydych chi\'n profi\'n bositif am y coronafeirws, gallwch ddewis rhannu eich data gyda\'r GIG er mwyn inni anfon hysbysiadau, os oes angen, at ddefnyddwyr eraill yr ap yn y gwledydd hyn.</string>
+    <string name="updated_privacy_title">Newidiadau i\'n polisïau</string>
+    <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/article/KA-01337</string>
 </resources>

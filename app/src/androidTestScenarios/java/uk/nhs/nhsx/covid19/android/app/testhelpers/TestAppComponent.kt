@@ -12,6 +12,7 @@ import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationTokensProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
+import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateStorage
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenues
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.state.DisplayStateExpirationNotification
@@ -55,4 +56,6 @@ interface TestAppComponent : ApplicationComponent {
     fun getDownloadVirologyTestResultWork(): DownloadVirologyTestResultWork
 
     fun getExposureNotificationsTokenProvider(): ExposureNotificationTokensProvider
+
+    fun getPolicyUpdateStorage(): PolicyUpdateStorage
 }

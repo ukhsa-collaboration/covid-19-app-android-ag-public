@@ -38,29 +38,29 @@
         <item name="toolbarTextColor">@color/primary_text_grey</item>
         <item name="bottomSheetDialogTheme">@style/ExpandedBottomSheetDialog</item>
 
-        <item name="riskLevelNeutralPanelIconTint">@color/almost_white</item>
-        <item name="riskLevelNeutralPanelBackgroundColor">@color/dark_grey</item>
-        <item name="riskLevelNeutralPanelTextColor">@color/almost_white</item>
-        <item name="riskLevelNeutralPanelChevronColor">@color/medium_grey</item>
+        <item name="riskLevelNeutralPanelIconTint">@color/nhs_lighter_blue</item>
+        <item name="riskLevelNeutralPanelTextColor">@color/white</item>
+        <item name="riskLevelNeutralPanelChevronColor">@color/white</item>
+        <item name="riskLevelNeutralPanelBackgroundDrawable">@drawable/area_risk_neutral_background</item>
 
-        <item name="riskLevelGreenPanelIconTint">@color/dark_grey</item>
-        <item name="riskLevelGreenPanelBackgroundColor">@color/risk_green</item>
-        <item name="riskLevelGreenPanelTextColor">@color/dark_grey</item>
-        <item name="riskLevelGreenPanelChevronColor">@color/dark_grey</item>
+        <item name="riskLevelGreenPanelIconTint">@color/risk_green</item>
+        <item name="riskLevelGreenPanelTextColor">@color/white</item>
+        <item name="riskLevelGreenPanelChevronColor">@color/white</item>
+        <item name="riskLevelGreenPanelBackgroundDrawable">@drawable/area_risk_green_background</item>
 
-        <item name="riskLevelYellowPanelIconTint">@color/dark_grey</item>
-        <item name="riskLevelYellowPanelBackgroundColor">@color/risk_yellow</item>
-        <item name="riskLevelYellowPanelTextColor">@color/dark_grey</item>
-        <item name="riskLevelYellowPanelChevronColor">@color/dark_grey</item>
+        <item name="riskLevelYellowPanelIconTint">@color/risk_yellow</item>
+        <item name="riskLevelYellowPanelTextColor">@color/white</item>
+        <item name="riskLevelYellowPanelChevronColor">@color/white</item>
+        <item name="riskLevelYellowPanelBackgroundDrawable">@drawable/area_risk_yellow_background</item>
 
-        <item name="riskLevelAmberPanelIconTint">@color/dark_grey</item>
-        <item name="riskLevelAmberPanelBackgroundColor">@color/risk_amber</item>
-        <item name="riskLevelAmberPanelTextColor">@color/dark_grey</item>
-        <item name="riskLevelAmberPanelChevronColor">@color/dark_grey</item>
+        <item name="riskLevelAmberPanelIconTint">@color/risk_amber</item>
+        <item name="riskLevelAmberPanelTextColor">@color/white</item>
+        <item name="riskLevelAmberPanelChevronColor">@color/white</item>
+        <item name="riskLevelAmberPanelBackgroundDrawable">@drawable/area_risk_amber_background</item>
 
-        <item name="riskLevelRedPanelIconTint">@color/dark_grey</item>
-        <item name="riskLevelRedPanelBackgroundColor">@color/risk_red</item>
-        <item name="riskLevelRedPanelTextColor">@color/dark_grey</item>
-        <item name="riskLevelRedPanelChevronColor">@color/dark_grey</item>
+        <item name="riskLevelRedPanelIconTint">@color/risk_red</item>
+        <item name="riskLevelRedPanelTextColor">@color/white</item>
+        <item name="riskLevelRedPanelChevronColor">@color/white</item>
+        <item name="riskLevelRedPanelBackgroundDrawable">@drawable/area_risk_red_background</item>
     </style>
 </resources>

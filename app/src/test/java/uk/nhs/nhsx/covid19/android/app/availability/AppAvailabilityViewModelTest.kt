@@ -24,6 +24,7 @@ import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.remote.data.AppAvailabilityResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumAppVersion
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumSdkVersion
+import uk.nhs.nhsx.covid19.android.app.remote.data.RecommendedAppVersion
 
 class AppAvailabilityViewModelTest {
 
@@ -50,6 +51,15 @@ class AppAvailabilityViewModelTest {
                 mapOf()
             ),
             Build.VERSION.SDK_INT
+        ),
+        RecommendedAppVersion(
+            Translatable(
+                mapOf()
+            ),
+            BuildConfig.VERSION_CODE,
+            title = Translatable(
+                mapOf()
+            )
         )
     )
 
@@ -156,6 +166,11 @@ class AppAvailabilityViewModelTest {
             minimumSdkVersion = MinimumSdkVersion(
                 description = Translatable(mapOf("en-GB" to "Please Update Device")),
                 value = minSdkValue
+            ),
+            recommendedAppVersion = RecommendedAppVersion(
+                description = Translatable(mapOf("en-GB" to "Please Update App")),
+                value = minAppVersionCode,
+                title = Translatable(mapOf("en-GB" to "Please Update App"))
             )
         )
 }

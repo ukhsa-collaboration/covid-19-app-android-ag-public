@@ -40,7 +40,7 @@
     <string name="about_provide_feedback_link">Macluumaadka jawaab celinta</string>
     <string name="about_software_information_text_app_date_of_release">Taariikhda la sosaaray</string>
     <string name="about_software_information_text_app_manufacturer">Soo saaraha iyo dayactirka</string>
-    <string name="about_software_information_text_app_manufacturer_value">NHS Test &amp; Trace\n Waaxda Caafimaadka iyo Daryeelka Bulshada\n39 Victoria Street\n Westminster\n London\n SW1H 0EU\n UK</string>
+    <string name="about_software_information_text_app_manufacturer_value">NHS Test &amp; Trace\nDepartment of Health and Social Care\n39 Victoria Street\nWestminster\nLondon\nSW1H 0EU\nUK</string>
     <string name="about_software_information_text_app_name">Magaca app</string>
     <string name="about_software_information_text_app_version">Nooca App-ka</string>
     <string name="about_software_information_title">Macluumaadka software-ka</string>
@@ -74,7 +74,7 @@
     <string name="could_be_due_to_run_app">Tan waxaa sababi kara:</string>
     <string name="delete_button_text">Tirtir</string>
     <string name="delete_data_explanation">Macluumaad kasta oo aad ku wadaagto barnaamijkan waxaa loo isticmaali doonaa oo keliya ujeedo caafimaad dadweyne. Xogta la hayo ayaa laga saari doonaa isla marka aad taabatid \'Tirtir xogta\' Tirtiritaankan waxaa kujira wakhti kasta oo gooni gooni isu-go\'doomin ah iyo inta waqtiga kuu hartay. Fadlan la soco in telefoonkaagu uu hayn doono macluumaadka qaar, sida xogta telefoonkaagu uruurinayo si loogu diiwaan geliyo isticmaaleyaasha kale. Xogtan lagama maamulayo app-ka laakiin waxaa isticmaala nidaamka hawlgalka telefoonkaaga. Kadib marka la tirtio Haddii aad rabto inaad waddo adeegsiga barnaamijkan goor dambe, waa inaad markale diyaarisaa.</string>
-    <string name="delete_single_venue_visit_text">Ka saarida goobta waxay yareyn doonta waxtarka raad-raacista shakhsiga.\n\nMarka la tirtiro, ma heli doontid ogaysiisyo ku saabsan goobtan.</string>
+    <string name="delete_single_venue_visit_text">Ka garaynta goobta waxay yareyn doonta waxtarka raad-raacista shakhsiga.\n\nMarka la tirtiro, ma heli doontid ogaysiisyo ku saabsan goobtan.</string>
     <string name="delete_single_venue_visit_title">Ma hubtaa inaad ka tirtirayso goobtan taariikhdaada?</string>
     <string name="done_button_text">La sameeyay</string>
     <string name="edit">Tafatir</string>
@@ -91,7 +91,7 @@
     <string name="expiration_notification_description_passed">Waxaa lagaa sii daayay go\'doominti tan iyo %s markay ahayd 23:59</string>
     <string name="expiration_notification_recommendation">Wixii talo dheeri ah, fadlan la xiriir:</string>
     <string name="expiration_notification_title">War wanaagsan</string>
-    <string name="expiration_temperature_hint">Si kastaba ha noqotee, haddii aad leedahay heerkul sarreeya, sii wad inaad gooni is-go\'doomisid ilaa uu caadi ku soo noqdo</string>
+    <string name="expiration_temperature_hint">Si kastaba ha noqotee, haddii aad leedahay heerkul sarreeya, sii wad inaad gooni isu-go’doomisid ilaa uu caadi ku soo noqdo</string>
     <string name="exposure_notification_hint">App-ka wuxuu ogaadey inaad la kulantay qof qaba coronavirus. Fadlan guriga iska joog oo gooni isu go\'doomi si aad u ilaaliso naftaada iyo dadka kaleba.</string>
     <string name="exposure_notification_recommendation">Waxaad halis ugu jirtaa inaad qabtid oo aad faafiso fayraska xitaa haddii aadan lahayn astaamo. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.\n\nTirinta go\'doomintaada ayaa bilaabatay waana inaad is-go\'doomisaa muddada dhan ee la cadeeyay.Kaliya baaritaan iskaga qaad haddii aad leedahay astaamaha coronavirus.\n\nWixii talo dheeri ah, fadlan la xiriir:</string>
     <string name="exposure_notifications_rationale_title">Raad-raacista shakhsiga waxay gacan ka geysaneysaa kahortagga faafitaanka cudurka coronavirus (COVID-19)</string>
@@ -167,7 +167,7 @@
     <string name="onboarding_no_thanks_announcement">Maya mahadsanid, ma oggoli</string>
     <string name="onboarding_notifications_text">Soo ogow goorta aad ka agdhowaatay isticmaaleyaasha kale ee barnaamijka (app) kuwaasoo laga helay coronavirus.</string>
     <string name="onboarding_notifications_title">Hel ogeysiinta</string>
-    <string name="onboarding_privacy_control_text">Adeegga Caafimaadka Qaranka (NHS) ayaa qiimeeya asturnaantaada. App-ka ayaa dabagal ku haya fayraska, kumana raaci karo mana arki karo cidda aad tahay, meesha aad joogto ama cidda kula joogta. \n\nMacluumaad kasta waxaa lagu kaydiyaa telefoonkaaga, oo laguma keydiyo keydka dhexe. Taasi waxay ka dhigan tahay haddii laga helo coronavirus, waxaad dooran kartaa inaad la wadaagto xogtaada NHS si aan ugu digno dadka kale ee adeegsada barnaamijka (app). Waad hubsan kartaa in xogta shaqsiyeed waligeed telefoonkaaga ka baxeyso oo aad qarsoodi ahaan u noqon doonto waqti kasta.</string>
+    <string name="onboarding_privacy_control_text">Adeegga Caafimaadka Qaranka (NHS) ayaa qiimeeya asturnaantaada. App-ka ayaa dabagal ku haya fayraska, kumana raaci karo mana arki karo cidda aad tahay, meesha aad joogto ama cidda kula joogta. \n\nHaddii laga helo coronavirus, waxaad dooran kartaa inaad la wadaagto xogtaada NHS si aan ugu baraarujinno kuwa kale ee adeegsadayaasha kale ee barnaamijka ee guud ahaan England, Wales, Scotland, Northern Ireland, Jersey iyo Gibraltar. Markaad xulato sii wad waxaan ogeysiisyadaada ka dhigi doonnaa kuwa ay heli karaan adeegsadayaasha kale ee barnaamijka ee u baahan in loogu wargaliyo goobahaas.\n\nWaxaan u adeegsanaa go\'aan qaadashada otomaatiga ah si aan uga caawino adeegsadayaasha kale ee u baahan in si qarsoodi ah loogu wargeliyo.</string>
     <string name="onboarding_privacy_control_title">Adiga ayaa xakameynaya</string>
     <string name="onboarding_privacy_title">Ilaalinta asturnaantaada</string>
     <string name="onboarding_privacy_your_data_text1">Barmaamijka ayaa si aamin ah oo qarsoodi ah u kaydiya xogta 14 maalmood kadib markii la duubay. Markaad isticmaasho koodhadhka QR si aad isaga xaadirisid goobaha, xogta goobta ayaa kaydsanaan doonta 21 maalmood. Waad ka tirtiri kartaa xogta barmaamijka markasta qaybta isku-hagaajinta barmaamijka, ama adiga oo tirtira barnaamijka. Telefoonkaagu wuxuu hayn karaa xog aasaasi ah - tan waxaa gacanta ku haya nidaamka hawlgalka ee telefoonkaaga.</string>
@@ -190,12 +190,12 @@
     <string name="privacy_notice">Ogeysiiska Asturnaanta</string>
     <string name="qr_code_cancel_check_in">Jooji is xaadirintaan</string>
     <string name="qr_code_failure_help_description">Waxaa laga yaabaa inaad isku dayeyso inaad iskaanto koodh rasmi ah oo NHS QR  oo khaldan ama waxaa laga yaabaa in goobtan aan la aqoonsan.\n\nFadlan raadso wado kale oo aad isku xaadiriso. Kala hadal xubin shaqaalaha ah caawimaad.</string>
-    <string name="qr_code_failure_help_link">Ka caawi goobta soo-galista</string>
+    <string name="qr_code_failure_help_link">Iga caawi goobta soo-galista</string>
     <string name="qr_code_failure_subtitle">Waxay noqon kartaa inaadan iskaan-garaynin koodhka rasmiga ah ee NHS QR ah ama koodhku wuu xun yahay.</string>
     <string name="qr_code_failure_title">QR Koodhka lama aqoonsan</string>
     <string name="qr_code_help_about_qr_code_image_content_description">Tusaalaha warqad sawir ee QR dhahaya Aan ka Shaqayno Joojinta Faafitaanka Coronavirus</string>
-    <string name="qr_code_help_about_qr_code_text">Tani waa sida ay u egtahay warqad sawir ah rasmiga ah ee koodhadhka NHS QR Ingiriisiga/Welsh . U adeegso kamaradda telefoonkaaga si aad u iskaan-garayso koodhka QR taasoo ah afar geesta siman ee dhex kujirta.</string>
-    <string name="qr_code_help_about_qr_code_title">Sidaan oo gartaa koodhka rasmiga ah ee NHS QR ah?</string>
+    <string name="qr_code_help_about_qr_code_text">Tani waa sida ay u egtahay warqad sawir ah rasmiga ah ee koodhadhka NHS QR Ingiriisiga/Welsh. U adeegso kamaradda telefoonkaaga si aad u iskaan-garayso koodhka QR taasoo ah afar geesta siman ee dhex kujirta.</string>
+    <string name="qr_code_help_about_qr_code_title">Sideen uu gartaa koodhka rasmiga ah ee NHS QR ah?</string>
     <string name="qr_code_help_how_it_helps_text">Habka app-ka wuxuu u fududeynayaa ganacsiyada inay taageeraan raad-raacista shakhsi. Waxay naga caawinaysaa kuligeen inaan nabad galno, iyadoo ilaalinaysa asturnaantada gaarka ah.</string>
     <string name="qr_code_help_how_it_helps_title">Sida ay wax u caawiso</string>
     <string name="qr_code_help_how_it_works">Sida ay u shaqeyso</string>
@@ -212,7 +212,7 @@
     <string name="qr_code_permission_denied_title">Isku soo xaadiri goob adigoo iskaan garanaysaa koodhka rasmiga ah ee NHS QR</string>
     <string name="qr_code_scan_explanation">Hayso telefoonkaaga si uu koodhka rasmiga ee NHS QR uga muuqdo saanduuqa kore. Marka telefoonkaagu aqoonsado koodhka QR, wuxuu tusi doonaa inaad si guul leh u soo gashay.</string>
     <string name="qr_code_scanning">Raadinta koodh rasmi ah oo ah NHS QR</string>
-    <string name="qr_code_success_subtitle">Waad ku mahadsantahay iskaan saarida. Hada waad is xaadirisay! \n\nMarkaad is-xaadiriso, waxaad awoodi doontaa inaad hesho ogeysiin haddii dadka qaba coronavirus-ka ay soo booqdaan isla goobta wakhti la mid ah wakhtiga aad adigu soo booqatay.</string>
+    <string name="qr_code_success_subtitle">Waad ku mahadsantahay iskaan garaynta. Hadda waad is xaadirisay! \n\nMarkaad is-xaadiriso, waxaad awoodi doontaa inaad hesho ogeysiin haddii dadka qaba coronavirus-ka ay soo booqdaan isla goobta wakhti la mid ah wakhtiga aad adigu soo booqatay.</string>
     <string name="qr_code_success_title">Soo xaadirista waa lagu guuleystay</string>
     <string name="qr_code_unsupported_description">Fadlan raadi qaab kale oo aad isku xadiriso. Kala hadal xubin shaqaalaha ah caawimaad.</string>
     <string name="qr_code_unsupported_title">Waan ka xunnahay, telefoonkaagu ma taageerayo soo galida goobta</string>
@@ -245,7 +245,7 @@
     <string name="resume_contact_tracing_subtitle">Xullo goorta appku ku xasuusin doono inaad dib u daarato raad-raacista shakhsiga</string>
     <string name="resume_contact_tracing_title">Raad-raacista shakhsiga hada way dansantahay</string>
     <string name="risk_level_link_text">Qeexida heerarka halista deegaanka</string>
-    <string name="risk_level_title">Heerka Digniinta Maxaliga ah ee Covid</string>
+    <string name="risk_level_title">heerka digniinta maxaliga ah ee COVID</string>
     <string name="save">Keydso</string>
     <string name="scan_qr_code_to_check_in">Isku soo xaadiri goob adigoo iskaan garanaysaa koodhka rasmiga ah ee NHS QR</string>
     <string name="select_symptoms">Xulo astaamaha</string>
@@ -254,7 +254,7 @@
     <string name="state_and_book_a_test">oo ballanso baaritaan</string>
     <string name="state_index_info">Waxaa laga yaabaa inaad qabtid coronavirus</string>
     <string name="state_index_take_coronavirus_test">Qaado baaritaan coronavirus ee lacag la\'aan ah</string>
-    <string name="state_test_negative_info">Natiijada baaritaankaaga coronavirus waxay caddaynaysaa in aadan qabin cudurka laakin weli waxaa kusoo bixi karaan astaamaha, markaa waa inaad is-go\'doomisaa.\n\nNatiijada baaritaankaaga waxay caddaynaysaa in aadan qabin fayruuska marki baaritaanka la samaynayay. Waxaa maclumaad dheeraad ah laguu soo diray iimayl, qoraal ama telefoonka. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.</string>
+    <string name="state_test_negative_info">Natiijada baaritaankaaga coronavirus waxay caddaynaysaa in aadan qabin cudurka laakin weli waxaa kusoo bixi karaan astaamaha, markaa waa inaad is-go\'doomisaa.</string>
     <string name="state_test_positive_info">Natiijada baaritaankaaga coronavirus waxay caddaynaysaa in aad qabtid cudurka</string>
     <string name="state_test_positive_then_negative_info">Natiijada baaritaankaaga coronavirus waxay caddaynaysaa in aadan qabin cudurka. Si kastaba ha noqotee, sii wad isgo\'doominta maadama aad hore u lahayd cudurka.</string>
     <string name="state_test_void_info">Waan garan kari waynay in aad qabtay cudurka coronavirus.</string>
@@ -272,7 +272,7 @@
     <string name="status_option_read_self_isolation_advice">Akhri talooyinka Is-go\'doominta</string>
     <string name="status_option_report_symptoms">Hubi astaamaha</string>
     <string name="status_option_scan_qr_codes">Isxaadirinta Goobta</string>
-    <string name="submit_keys_information_description_text">Barnaamijku (app) wuxuu abuuraa aqoonsiyo (lambarro taxane ah, xarfo iyo astaamo aan kala sooc lahayn) oo aaladaadu si joogto ah u wadaago si uu uga dhigo ogeysiiskaaga gaadhista (Exposure Notifications) nooca ugu dambeyay. Ogeysiinta Soo gaadhista (Exposure Notifications) ayaa ka caawiya barnaamijka inuu ka soo baxo cidda 14-kii maalmood ee u dambeeyay la ogaysiinayo inay ay macquul tahay in ay qaaddeen coronavirus. Faahfaahintaada shaqsiyeed ama aqoonsigaada lama wadaagi doono.</string>
+    <string name="submit_keys_information_description_text">Barnaamijku wuxuu abuuraa aqoonsiyo (lambarro taxane ah, xarfo iyo astaamo aan kala sooc lahayn) oo aaladdaadu si joogto ah ula wadaagto si aad uga dhigto Exposure Notifications-kaaga kuwo cusub. Exposure Setttings ayaa ka caawiya barnaamijka inuu ka shaqeeyo cidda 14-kii maalmood ee la soo dhaafay lagu wargelinayo inay ay dhici kartaa in ay qaaddeen coronavirus.\n\nMarkaad xulato sii wad waxaan ogeysiisyadaada  ka dhigi doonnaa kuwa ay heli karaan adeegsadayaasha kale ee u baahan in lagu wargaliyo guud ahaan England, Wales, Scotland, Northern Ireland, Jersey iyo Gibraltar.\n\nFaahfaahintaada shakhsiyeed ama aqoonsigaaga lama wadaagi doono.</string>
     <string name="submit_keys_information_description_title">La wadaag aqoonsiyada aaladaha aan kala sooc lahayn</string>
     <string name="submit_keys_information_text">Waxaan ogaysiin doonnaa isticmaaleyaasha kale ee barnaamijka inay u dhawadeen qof laga helay coronavirus</string>
     <string name="submit_keys_information_title">Aqoonsiyada aaladda aan kala sooc lahayn</string>
@@ -287,7 +287,7 @@
     <string name="test_ordering_description_2">Markaad halkaa joogto, waxaa lagaa codsan doonaa inaad buuxiso faahfaahinta shaqsiyadeed (sida cinwaankaaga) si aad u hesho baaritaan, laakiin waxkasta oo aad galiso barnaamijka (app) ama bogga lama wadaagi doono.</string>
     <string name="test_ordering_description_3">Macluumaadka kaliya ee ay wadaagaan inta udhaxeysa barnaamijka iyo bogga ayaa ah \'qoraal\' dijital ah kaas oo naga caawin doona inaan natiijada baaritaankaaga dib ugu dirno barnaamijka.</string>
     <string name="test_ordering_description_4">Macluumaad kasta oo loo adeegsado hannaanka baarista waxaa lagu sharaxay Ogeysiiska Astuurnaanta:</string>
-    <string name="test_ordering_description_5">Waxaad sidoo kale ogaan kartaa sida barnaamijkani u adeegsado xogta aad na siisay:</string>
+    <string name="test_ordering_description_5">Si aad wax uga ogaato sida uu app-kani u isticmaalo xogtaada, fadlan booqo:</string>
     <string name="test_ordering_description_6">Waxaad u adeegsan kartaa oo keliya barnaamijkan inaad naftaada u baarto. Si aad u baarto qof kale, isticmaal degelka dawlada  ee baaritaanka coronavirus:</string>
     <string name="test_ordering_failure_action">Mar kale isku day</string>
     <string name="test_ordering_failure_description">Intaadan mar kale isku dayin, fadlan hubi in qaybta isku-hagaajinta khadka telefoonkaaga inuu daaran yahay, eeg khadkaaga Wi-Fi (haddii aad mid isticmaalayso) oo hubi in qaybta Airplane Mode wuu dansan yahay.</string>
@@ -304,7 +304,7 @@
     <string name="test_result_no_self_isolation_description">Si kastaba ha noqotee, haddii aad leedahay heerkul sarreeya, sii wad inaad gooni is-go\'doomi ilaa uu caadi ku soo noqdo</string>
     <string name="test_result_positive_continue_self_isolate_explanation">Natiijada baaritaankaaga waxay muujineysaa inaad qabtid fayras wakhtiga baaritaanka. Waxaa maclumaad dheeraad ah laguu soo diray iimayl, qoraal ama telefoonka. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay..</string>
     <string name="test_result_positive_continue_self_isolation_title_1">Sii wad inaad is-go\'doomiso ilaa</string>
-    <string name="test_result_positive_no_self_isolation_description">Si kastaba ha noqotee, haddii aad leedahay heerkul sarreeya, sii wad inaad gooni is-go\'doomisid ilaa uu caadi ku soo noqdo</string>
+    <string name="test_result_positive_no_self_isolation_description">Si kastaba ha noqotee, haddii aad leedahay heerkul sarreeya, sii wad inaad gooni isu-go’doomisid ilaa uu caadi ku soo noqdo</string>
     <string name="test_result_positive_no_self_isolation_subtitle">In kasta oo cudurka laga helay, muddadii go\'doomintaada ayaa dhammaatay</string>
     <string name="test_result_positive_then_negative_explanation">Natiijadaada baaritaanka hadda waxay muujineysaa inaadan qabin fayraska wakhtiga baaritaanka. Haddii aad isku aragto astaamo ku soo sheeg barnaamijkan. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad farriintan u tuustid qof weyn oo aad ku kalsoon tahay.</string>
     <string name="test_result_void_already_not_in_isolation_subtitle">Ma ogaan karno inaad qabtay coronavirus markii baaritaanka la sameeyay waana inaad mar labaad baaritaanka martaa. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.</string>
@@ -351,10 +351,22 @@
     <string name="venue_alert_title">Dhawaan ayaad booqatay goob laga yaabo inaad kasoo qaaday coronavirus</string>
     <string name="visit_the_link_to_find_out_more">Booqo marrinka si aad wax badan uga ogaato</string>
     <string name="you_do_not_appear_to_have_symptoms">Uma muuqato inaad leedahay astaamo coronavirus</string>
-    <string name="you_need_to_self_isolate">Waxaad u baahan tahay inaad is-go\'doomisid</string>
+    <string name="you_need_to_self_isolate">Waxaad u baahan tahay inaad isu-go’doomisid</string>
     <string name="your_isolation_will_finish">Is-go\'doomintaadu waxay dhammaan doontaa  %1$s markay tahay 23:59</string>
     <string name="notification_text_potential_exposure_explanation">Ha welwelin, waan qiimeynay halistaada mana loo baahna in tallaabo la qaado xilligan. Fadlan sii wad feejignaanta oo raac talooyinka ugu dambeeya ee ku saabsan kala fogaanshaha bulshada.</string>
     <string name="notification_title_potential_exposure_explanation">Hubinta Soo-gaarista COVID-19 wala Dhammeeyay</string>
     <string name="qr_code_intro_text">Haddii aad galeyso goob (tusaale ahaan, baar ama makhaayad) oo u ku dhegan waraqda koodhka rasmiga ah ee NHS QR, isticmaal barnaamijkan si aad u iskaan garayso. Barnaamijkan ayaa markaas iska diiwaangeliya wakhtiga aad soo gashay goobta.\n\nAdoo adeegsanaya goobta soo-xaadirinta, waxaad awoodi doontaa inaad hesho ogeysiin haddii dadka qaba coronavirus-ka ay soo booqdaan isla goobta wakhti la mid ah wakhtiga aad adigu soo booqatay.  Ogeysiinta waxaa ku jiri doonaa talobixin khuseysa, sida in laga fiirsado astaamaha coronavirus.</string>
     <string name="venue_check_in_title">Faahfaahin dheeraad ah oo ku saabsan soo-galida goobta</string>
+    <string name="ask_me_later">Hadhaw i weydii</string>
+    <string name="exposure_faqs">Halkan guji si aad wax badan uga ogaato</string>
+    <string name="exposure_faqs_title">Haddii aad joogto meel ka baxsan England iyo Wales, waa in aad u hogaansanaataa shuruucda wadanka aad joogto.</string>
+    <string name="notification_channel_recommended_app_update_name">Cusbooneysiinta app-ka ee lagu taliyay</string>
+    <string name="notification_channel_recommended_app_update_name_description">Ogeysiisyadani waxay kuu sheegayaan wax ku saabsan cusbooneysiinta app-ka ee lagu taliyay</string>
+    <string name="notification_text_recommended_app_update">Taabo si aad u aragto faahfaahinta.</string>
+    <string name="notification_title_recommended_app_update">Fadlan ku cusbooneysii app-kaaga NHS COVID-19 nooca ugu dambeeyay</string>
+    <string name="test_ordering_getting_tested_description">Haddii aad doorato \"Ballanso baaritaanka naftaada\" waxa ay ku geyn doontaa barta baaritaanka coronavirus ee dawladda halkaas oo lagu weydiin doono in aad buuxiso macluumaadkaaga shakshiga (sida cinwaankaaga) si aad u hesho baaritaan. Wixii aad barta ku qorto cid kale lalama wadaagi doono.\n\nWaxa la samayn doonaa \'mahadcelin\' dijitaal ah taas oo naga caawin doonta in najiitadaada aan dib u gelino app-ka.</string>
+    <string name="update_in_play_store">Cusbooneysii app-kaaga hadda</string>
+    <string name="updated_privacy_control_text">Waxa aanu wax ka bedelay app-ka si uu si fiican ugu shaqeeyo marka aad safrayso. Dhawr wadan ayaa hadda wada-shaqaynaya si raad-raac shakhsiga uu sii shaqeeyo iyagoo ay dadku u kala gooshayaa xuduudaha dhawr wadan oo kala duwan.\n\nBarnaamijyada rasmiga ee raad-raaca shakhsiga ee England, Wales, Scotland, Northern Ireland, Jersey iyo Gibraltar ayaa wadaagi doona macluumaadka iyaga oo aan shaacinayn macluumaadka isticmaalaha.\n\nHaddii lagaa helo coronavirus, waxa aad dooran karaysaa in macluumaadkaaga lala wadaago NHS si aanu markaas ogeysiis ugu dirno adeegsadayaasha kale ee app-ka ee u baahan in lala socodsiiyo wadamadaas.</string>
+    <string name="updated_privacy_title">Bedel lagu sameeyay shuruucdeena</string>
+    <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/article/KA-01337</string>
 </resources>

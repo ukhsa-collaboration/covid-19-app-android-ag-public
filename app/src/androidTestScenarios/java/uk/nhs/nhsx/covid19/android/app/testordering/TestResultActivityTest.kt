@@ -55,6 +55,7 @@ class TestResultActivityTest : EspressoTest() {
         startTestActivity<TestResultActivity>()
 
         testResultRobot.checkActivityDisplaysPositiveAndContinueSelfIsolation()
+        testResultRobot.checkExposureLinkIsDisplayed()
         testResultRobot.checkIsolationActionButtonShowsContinue()
 
         testResultRobot.clickIsolationActionButton()
@@ -87,6 +88,7 @@ class TestResultActivityTest : EspressoTest() {
         startTestActivity<TestResultActivity>()
 
         testResultRobot.checkActivityDisplaysNegativeAndContinueSelfIsolation()
+        testResultRobot.checkExposureLinkIsNotDisplayed()
         testResultRobot.checkIsolationActionButtonShowsBackHome()
 
         testResultRobot.clickIsolationActionButton()
@@ -156,6 +158,8 @@ class TestResultActivityTest : EspressoTest() {
 
         testResultRobot.checkActivityDisplaysPositiveThenNegativeAndStayInIsolation()
 
+        testResultRobot.checkExposureLinkIsNotDisplayed()
+
         testResultRobot.checkIsolationActionButtonShowsContinue()
 
         testResultRobot.clickIsolationActionButton()
@@ -188,6 +192,8 @@ class TestResultActivityTest : EspressoTest() {
         startTestActivity<TestResultActivity>()
 
         testResultRobot.checkActivityDisplaysPositiveAndSelfIsolate()
+
+        testResultRobot.checkExposureLinkIsDisplayed()
 
         testResultRobot.checkIsolationActionButtonShowsContinue()
 
@@ -262,6 +268,7 @@ class TestResultActivityTest : EspressoTest() {
         startTestActivity<TestResultActivity>()
 
         testResultRobot.checkActivityDisplaysVoidAndContinueSelfIsolation()
+        testResultRobot.checkExposureLinkIsNotDisplayed()
         testResultRobot.checkIsolationActionButtonShowsBookFreeTest()
 
         testResultRobot.clickIsolationActionButton()

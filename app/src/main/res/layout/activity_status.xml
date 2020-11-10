@@ -35,6 +35,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:animateLayoutChanges="false"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:paddingHorizontal="@dimen/margin_horizontal_small">
 
             <FrameLayout

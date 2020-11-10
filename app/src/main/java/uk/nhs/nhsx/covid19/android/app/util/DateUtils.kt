@@ -28,6 +28,12 @@ fun LocalDateTime.hoursUntilNow(clock: Clock): Int =
         ChronoUnit.HOURS
     ).toInt()
 
+fun Instant.minutesUntilNow(clock: Clock): Int =
+    until(
+        Instant.now(clock),
+        ChronoUnit.MINUTES
+    ).toInt()
+
 val lastDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHH")
 
 fun LocalDateTime.keysQueryFormat(): String {

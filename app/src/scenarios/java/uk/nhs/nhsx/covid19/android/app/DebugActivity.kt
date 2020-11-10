@@ -4,6 +4,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.Menu
@@ -22,6 +23,7 @@ import kotlinx.android.synthetic.scenarios.activity_debug.scenarioOnboarding
 import kotlinx.android.synthetic.scenarios.activity_debug.scenario_main
 import kotlinx.android.synthetic.scenarios.activity_debug.screenButtonContainer
 import kotlinx.android.synthetic.scenarios.activity_debug.statusScreen
+import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
 import uk.nhs.nhsx.covid19.android.app.about.MoreAboutAppActivity
 import uk.nhs.nhsx.covid19.android.app.about.UserDataActivity
@@ -319,6 +321,20 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             notifications.showRiskyVenueVisitNotification()
             notifications.showStateExpirationNotification()
             notifications.showTestResultsReceivedNotification()
+            notifications.showRecommendedAppUpdateIsAvailable()
+        }
+
+        addScreenButton("Open market") {
+            val marketIntent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("market://details?id=uk.nhs.covid19.production")
+            )
+            val chooser = Intent.createChooser(marketIntent, "Select market app")
+            if (marketIntent.resolveActivity(packageManager) != null) {
+                startActivity(chooser)
+            } else {
+                Timber.d("Can't start market app")
+            }
         }
     }
 

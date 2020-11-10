@@ -10,7 +10,6 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.content.res.Resources
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -22,9 +21,6 @@ import androidx.work.WorkManager
 import uk.nhs.covid19.config.Configurations
 import uk.nhs.covid19.config.qrCodesSignatureKey
 import uk.nhs.nhsx.covid19.android.app.ExposureApplication
-import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager
-import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager.AvailableUpdateStatus
-import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager.AvailableUpdateStatus.NoUpdateAvailable
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
@@ -48,8 +44,8 @@ import uk.nhs.nhsx.covid19.android.app.util.EncryptedFileInfo
 import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import uk.nhs.nhsx.covid19.android.app.util.getPrivateProperty
-import java.util.Locale
 import java.time.Clock
+import java.util.Locale
 import java.util.concurrent.atomic.AtomicReference
 
 const val AWAIT_AT_MOST_SECONDS: Long = 10
@@ -123,6 +119,7 @@ class TestApplicationContext {
         setOnboardingCompleted(true)
         setBluetoothEnabled(true)
         setLocationEnabled(true)
+        setPolicyUpdateAccepted(true)
 
         closeNotificationPanel()
 
@@ -193,6 +190,10 @@ class TestApplicationContext {
     fun getIsolationConfigurationProvider() =
         component.getIsolationConfigurationProvider()
 
+    fun setPolicyUpdateAccepted(accepted: Boolean) {
+        component.getPolicyUpdateStorage().value = if (accepted) Int.MAX_VALUE.toString() else null
+    }
+
     fun setLocale(languageName: String?) {
         applicationLocaleProvider.language = languageName
         updateResources()
@@ -244,15 +245,5 @@ class TestLocationStateProvider : AvailabilityStateProvider {
     }
 
     override fun stop(context: Context) {
-    }
-}
-
-class TestUpdateManager : UpdateManager {
-
-    var availableUpdateStatus: AvailableUpdateStatus = NoUpdateAvailable
-
-    override suspend fun getAvailableUpdateVersionCode() = availableUpdateStatus
-
-    override suspend fun startUpdate(activity: AppCompatActivity, requestCode: Int) {
     }
 }

@@ -20,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.BackgroundTaskCo
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalytics
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
+import uk.nhs.nhsx.covid19.android.app.availability.GetAvailabilityStatus
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWork
 import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadAndProcessKeys
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
@@ -32,6 +33,7 @@ import kotlin.test.assertEquals
 class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
 
     private val workerParameters = mockk<WorkerParameters>(relaxed = true)
+    private val getAvailabilityStatusMock = mockk<GetAvailabilityStatus>(relaxed = true)
     private val appAvailabilityProviderMock = mockk<AppAvailabilityProvider>(relaxed = true)
     private val analyticsEventProcessorMock = mockk<AnalyticsEventProcessor>(relaxed = true)
     private val downloadVirologyTestResultWorkMock =
@@ -47,6 +49,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
 
     private val testSubject = spyk(
         DownloadTasksWorker(context, workerParameters).apply {
+            getAvailabilityStatus = getAvailabilityStatusMock
             appAvailabilityProvider = appAvailabilityProviderMock
             analyticsEventProcessor = analyticsEventProcessorMock
             downloadVirologyTestResultWork = downloadVirologyTestResultWorkMock

@@ -14,6 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.remote.data.AppAvailabilityResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumAppVersion
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumSdkVersion
+import uk.nhs.nhsx.covid19.android.app.remote.data.RecommendedAppVersion
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -38,6 +39,15 @@ class AppAvailabilityProviderTest {
                 mapOf()
             ),
             Build.VERSION.SDK_INT
+        ),
+        RecommendedAppVersion(
+            Translatable(
+                mapOf()
+            ),
+            BuildConfig.VERSION_CODE,
+            title = Translatable(
+                mapOf()
+            )
         )
     )
 
@@ -53,6 +63,15 @@ class AppAvailabilityProviderTest {
                 mapOf()
             ),
             Build.VERSION.SDK_INT
+        ),
+        RecommendedAppVersion(
+            Translatable(
+                mapOf()
+            ),
+            BuildConfig.VERSION_CODE,
+            title = Translatable(
+                mapOf()
+            )
         )
     )
 
@@ -68,6 +87,15 @@ class AppAvailabilityProviderTest {
                 mapOf()
             ),
             Build.VERSION.SDK_INT + 1
+        ),
+        RecommendedAppVersion(
+            Translatable(
+                mapOf()
+            ),
+            BuildConfig.VERSION_CODE,
+            title = Translatable(
+                mapOf()
+            )
         )
     )
 

@@ -3,34 +3,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    tools:background="@drawable/area_risk_neutral_background"
     tools:gravity="center_vertical"
-    tools:padding="16dp"
     tools:parentTag="LinearLayout">
 
     <ImageView
         android:id="@+id/areaRiskIndicator"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
         android:contentDescription="@null"
         android:scaleType="centerInside"
-        tools:src="@drawable/ic_location_secondary_grey" />
+        tools:src="@drawable/ic_location_white" />
 
     <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
         android:id="@+id/areaRiskText"
         style="@style/Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_weight="1"
-        android:paddingHorizontal="4dp"
-        android:paddingVertical="6dp"
         android:textColor="?attr/colorOnSurface"
-        tools:text="SW12 area risk level is HIGH asdasdasdasd" />
+        tools:text="SW12 area risk level is HIGH" />
 
     <ImageView
+        android:id="@+id/areaRiskChevron"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
         android:contentDescription="@null"
         android:src="@drawable/ic_chevron_right" />
-
 </merge>

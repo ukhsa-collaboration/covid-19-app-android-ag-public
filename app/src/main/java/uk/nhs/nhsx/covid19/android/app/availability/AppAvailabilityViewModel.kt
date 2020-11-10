@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.BuildConfig
-import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityViewModel.AppAvailabilityState.Supported
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityViewModel.AppAvailabilityState.AppVersionNotSupported
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityViewModel.AppAvailabilityState.DeviceSdkIsNotSupported
+import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityViewModel.AppAvailabilityState.Supported
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityViewModel.AppAvailabilityState.UpdateAvailable
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager.AvailableUpdateStatus.Available
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumAppVersion
@@ -68,12 +68,6 @@ class AppAvailabilityViewModel @Inject constructor(
                     minimumAppVersion.description.translate()
                 )
             )
-        }
-    }
-
-    fun startUpdate(activity: AppAvailabilityActivity, requestCode: Int) {
-        viewModelScope.launch {
-            updateManager.startUpdate(activity, requestCode)
         }
     }
 

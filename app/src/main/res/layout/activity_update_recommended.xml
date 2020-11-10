@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/include_onboarding_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingVertical="@dimen/vertical_margin_large">
+
+            <ImageView
+                style="@style/GoneInLandscape"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@null"
+                android:src="@drawable/update_app_recommended" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                    android:id="@+id/updateRecommendationTitle"
+                    style="@style/TitleIsolation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/vertical_margin_large"
+                    tools:text="Update your NHS Test and Trace app to the latest version"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/updateRecommendationDescription"
+                    style="@style/Body1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/vertical_margin"
+                    tools:text="There is a newer version of this app available. Please click Update now to proceed to the app store for the update. If you are unable to start the process at this time, you may choose to postpone. " />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/updateInStore"
+                    style="@style/PrimaryButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_horizontal"
+                    android:layout_marginTop="@dimen/vertical_margin_large"
+                    android:text="@string/update_in_play_store" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/askMeLater"
+                    style="@style/TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginHorizontal="@dimen/margin_horizontal"
+                    android:text="@string/ask_me_later" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

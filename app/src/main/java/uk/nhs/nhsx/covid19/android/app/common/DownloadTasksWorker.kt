@@ -11,6 +11,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalytics
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
+import uk.nhs.nhsx.covid19.android.app.availability.GetAvailabilityStatus
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWork
 import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadAndProcessKeys
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
@@ -25,6 +26,9 @@ class DownloadTasksWorker(
     val context: Context,
     workerParameters: WorkerParameters
 ) : CoroutineWorker(context, workerParameters) {
+
+    @Inject
+    lateinit var getAvailabilityStatus: GetAvailabilityStatus
 
     @Inject
     lateinit var appAvailabilityProvider: AppAvailabilityProvider
@@ -60,12 +64,18 @@ class DownloadTasksWorker(
         applicationContext.appComponent.inject(this)
         Timber.d("Running DownloadTasksWorker")
 
+        setForeground()
+
         val isOnboardingCompleted = onboardingCompletedProvider.value.defaultFalse()
+        if (isOnboardingCompleted) {
+            submitAnalytics(isOnboardingAnalyticsEvent = false)
+        }
+
+        getAvailabilityStatus()
+
         if (!appAvailabilityProvider.isAppAvailable() || !isOnboardingCompleted) {
             return Result.failure()
         }
-
-        setForeground()
 
         downloadAndProcessKeys()
         downloadVirologyTestResultWork()
@@ -73,7 +83,6 @@ class DownloadTasksWorker(
         downloadAndProcessRiskyVenues()
         exposureNotificationWork()
 
-        submitAnalytics(isOnboardingAnalyticsEvent = false)
         analyticsEventProcessor.track(BackgroundTaskCompletion)
 
         return Success.success()

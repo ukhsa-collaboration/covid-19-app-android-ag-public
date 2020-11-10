@@ -7,7 +7,7 @@ import uk.nhs.nhsx.covid19.android.app.about.UserDataActivity
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitOnboardingAnalyticsWorker
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityListener
-import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityWorker
+import uk.nhs.nhsx.covid19.android.app.availability.UpdateRecommendedActivity
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ClearOutdatedDataWorker
 import uk.nhs.nhsx.covid19.android.app.common.DownloadTasksWorker
@@ -23,8 +23,10 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActi
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationBroadcastReceiver
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWorker
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
+import uk.nhs.nhsx.covid19.android.app.onboarding.DataAndPrivacyActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
+import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResultActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
@@ -42,7 +44,6 @@ import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWorker
 import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusBaseActivity
-import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWorker
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitKeysProgressActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingProgressActivity
@@ -73,7 +74,6 @@ interface ApplicationComponent {
     fun inject(activity: EnableExposureNotificationsActivity)
     fun inject(riskLevelActivity: RiskLevelActivity)
     fun inject(downloadRiskyPostCodesWorker: DownloadRiskyPostCodesWorker)
-    fun inject(downloadVirologyTestResultWorker: DownloadVirologyTestResultWorker)
     fun inject(qrScannerActivity: QrScannerActivity)
     fun inject(questionnaireActivity: QuestionnaireActivity)
     fun inject(testOrderingActivity: TestOrderingActivity)
@@ -92,18 +92,20 @@ interface ApplicationComponent {
     fun inject(userDataActivity: UserDataActivity)
     fun inject(editPostalCodeActivity: EditPostalDistrictActivity)
     fun inject(clearOutdatedDataWorker: ClearOutdatedDataWorker)
-    fun inject(appAvailabilityWorker: AppAvailabilityWorker)
     fun inject(testOrderingProgressActivity: TestOrderingProgressActivity)
     fun inject(appAvailabilityActivity: AppAvailabilityActivity)
     fun inject(updateReceiver: UpdateReceiver)
     fun inject(venueAlertActivity: VenueAlertActivity)
     fun inject(debugFragment: DebugFragment)
     fun inject(linkTestResultActivity: LinkTestResultActivity)
+    fun inject(updateRecommendedActivity: UpdateRecommendedActivity)
     fun inject(logoView: LogoView)
     fun inject(linkTextView: LinkTextView)
     fun inject(downloadTasksWorker: DownloadTasksWorker)
     fun inject(submitOnboardingAnalyticsWorker: SubmitOnboardingAnalyticsWorker)
     fun inject(exposureNotificationWorker: ExposureNotificationWorker)
+    fun inject(dataAndPrivacyActivity: DataAndPrivacyActivity)
+    fun inject(policyUpdateActivity: PolicyUpdateActivity)
 
     fun provideAppAvailabilityListener(): AppAvailabilityListener
     fun providePeriodicTasks(): PeriodicTasks

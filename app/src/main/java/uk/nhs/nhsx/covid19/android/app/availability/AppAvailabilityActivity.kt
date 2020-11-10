@@ -1,14 +1,9 @@
 package uk.nhs.nhsx.covid19.android.app.availability
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
-import kotlinx.android.synthetic.main.activity_app_availability.description
-import kotlinx.android.synthetic.main.activity_app_availability.goToPlayStore
-import kotlinx.android.synthetic.main.activity_app_availability.subTitle
-import kotlinx.android.synthetic.main.activity_app_availability.titleText
-import timber.log.Timber
+import kotlinx.android.synthetic.main.activity_app_availability.*
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
@@ -33,10 +28,7 @@ class AppAvailabilityActivity : BaseActivity(R.layout.activity_app_availability)
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
         goToPlayStore.setOnClickListener {
-            viewModel.startUpdate(
-                this,
-                UPDATE_REQUEST_CODE
-            )
+            openAppStore()
         }
 
         viewModel.appAvailabilityState().observe(this) { viewState ->
@@ -49,15 +41,6 @@ class AppAvailabilityActivity : BaseActivity(R.layout.activity_app_availability)
         }
 
         viewModel.checkAvailability()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == UPDATE_REQUEST_CODE) {
-            if (resultCode != RESULT_OK) {
-                Timber.d("Update flow failed! Result code: $resultCode")
-            }
-        }
     }
 
     private fun setUpLayoutAppNotSupported(message: String) {
@@ -79,9 +62,5 @@ class AppAvailabilityActivity : BaseActivity(R.layout.activity_app_availability)
         titleText.text = getString(R.string.update_app_title)
         subTitle.gone()
         description.text = message
-    }
-
-    companion object {
-        const val UPDATE_REQUEST_CODE = 101
     }
 }

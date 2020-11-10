@@ -51,7 +51,7 @@ class ExposureNotificationWork @Inject constructor(
             }
         }
             .apply {
-                if (is1dot5ENVersion()) {
+                if (isLegacyExposureNotificationApiVersion()) {
                     if (this is Failure && checkingInitial) {
                         potentialExposureExplanationHandler.addResult(result = this)
                     }
@@ -67,7 +67,7 @@ class ExposureNotificationWork @Inject constructor(
         val result = handleInitialExposureNotification.invoke(token)
         Timber.d("Handle initial circuit breaker result: $result for token $token")
         handleInitialResult(result, token)
-        if (is1dot5ENVersion()) {
+        if (isLegacyExposureNotificationApiVersion()) {
             potentialExposureExplanationHandler.addResult(result)
         }
     }
@@ -116,5 +116,5 @@ class ExposureNotificationWork @Inject constructor(
         exposureNotificationTokensProvider.remove(token)
     }
 
-    private suspend fun is1dot5ENVersion() = exposureNotificationApi.version() == null
+    private suspend fun isLegacyExposureNotificationApiVersion() = exposureNotificationApi.version() == null
 }

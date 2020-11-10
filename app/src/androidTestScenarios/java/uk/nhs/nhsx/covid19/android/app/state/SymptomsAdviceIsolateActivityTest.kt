@@ -30,6 +30,8 @@ class SymptomsAdviceIsolateActivityTest : EspressoTest() {
         symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
 
         symptomsAdviceIsolateRobot.checkStateInfoViewForPositiveSymptoms()
+
+        symptomsAdviceIsolateRobot.checkExposureLinkIsDisplayed()
     }
 
     @Test
@@ -44,6 +46,8 @@ class SymptomsAdviceIsolateActivityTest : EspressoTest() {
         symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
 
         symptomsAdviceIsolateRobot.checkStateInfoViewForNegativeSymptoms()
+
+        symptomsAdviceIsolateRobot.checkExposureLinkIsNotDisplayed()
     }
 
     @Test
@@ -58,6 +62,8 @@ class SymptomsAdviceIsolateActivityTest : EspressoTest() {
         symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
 
         symptomsAdviceIsolateRobot.checkBottomActionButtonIsDisplayed()
+
+        symptomsAdviceIsolateRobot.checkExposureLinkIsDisplayed()
     }
 
     @Test
@@ -72,5 +78,7 @@ class SymptomsAdviceIsolateActivityTest : EspressoTest() {
         symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
 
         symptomsAdviceIsolateRobot.checkBottomActionButtonIsNotDisplayed()
+
+        symptomsAdviceIsolateRobot.checkExposureLinkIsDisplayed()
     }
 }

@@ -9,6 +9,7 @@ import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.daysToIsolateContainer
 import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.daysUntilExpirationTextView
+import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.exposureFaqsLinkTextView
 import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.postDaysTextView
 import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.preDaysTextView
 import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.stateActionButton
@@ -24,6 +25,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 
 class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_advice_isolate) {
 
@@ -67,6 +69,8 @@ class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_ad
     }
 
     private fun setupPositiveSymptomsUi(daysUntilExpiration: Int) {
+        exposureFaqsLinkTextView.visible()
+
         stateIcon.setImageResource(R.drawable.ic_isolation_book_test)
 
         preDaysTextView.text = getString(R.string.self_isolate_for)
@@ -82,7 +86,7 @@ class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_ad
 
         stateExplanation.addAllParagraphs(
             getString(R.string.isolate_after_corona_virus_symptoms),
-            getString(R.string.for_further_advice_visit)
+            getString(R.string.exposure_faqs_title)
         )
 
         stateActionButton.text = getString(R.string.book_free_test)
@@ -97,6 +101,8 @@ class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_ad
     }
 
     private fun setupNegativeSymptomsUi(daysUntilExpiration: Int) {
+        exposureFaqsLinkTextView.gone()
+
         stateIcon.setImageResource(R.drawable.ic_isolation_contact)
 
         preDaysTextView.text = getString(R.string.self_isolate_for)

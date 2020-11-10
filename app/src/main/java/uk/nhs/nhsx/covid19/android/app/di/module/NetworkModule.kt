@@ -16,6 +16,7 @@ import uk.nhs.covid19.config.EnvironmentConfiguration
 import uk.nhs.covid19.config.Remote
 import uk.nhs.nhsx.covid19.android.app.analytics.NetworkStatsInterceptor
 import uk.nhs.nhsx.covid19.android.app.di.module.SignatureValidationInterceptor.Companion.HEADER_REQUEST_ID
+import uk.nhs.nhsx.covid19.android.app.remote.UserAgentInterceptor
 import uk.nhs.nhsx.covid19.android.app.state.StateJson
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
@@ -86,7 +87,8 @@ class NetworkModule(
     @Named(API_REMOTE)
     fun provideApiOkHttpClient(
         base64Decoder: Base64Decoder,
-        networkStatsInterceptor: NetworkStatsInterceptor
+        networkStatsInterceptor: NetworkStatsInterceptor,
+        userAgentInterceptor: UserAgentInterceptor
     ): OkHttpClient {
         val signatureValidationInterceptor = createSignatureValidationInterceptor(
             base64Decoder,
@@ -96,7 +98,7 @@ class NetworkModule(
         return createOkHttpClient(
             configuration.apiRemote,
             signatureValidationInterceptor,
-            interceptors,
+            listOf(userAgentInterceptor) + interceptors,
             networkStatsInterceptor
         )
     }

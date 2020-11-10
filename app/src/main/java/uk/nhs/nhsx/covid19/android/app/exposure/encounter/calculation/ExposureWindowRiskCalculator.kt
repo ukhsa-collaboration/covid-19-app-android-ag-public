@@ -25,16 +25,11 @@ class ExposureWindowRiskCalculator @Inject constructor(
         riskCalculation: V2RiskCalculation,
         config: RiskScoreCalculatorConfiguration
     ): DayRisk? {
-        Timber.d("Exposure windows: $exposureWindows")
-        Timber.d("Calculator config: $config")
-
         return exposureWindows.map { window ->
             DayRisk(
                 startOfDayMillis = window.dateMillisSinceEpoch,
                 calculatedRisk = window.riskScore(config, riskCalculation)
-            ).also {
-                Timber.d("DayRisk: $it isRecentExposure: ${it.isRecentExposure()}")
-            }
+            )
         }
             .filter { it.isRecentExposure() }
             .also { logHighestRisk(it, riskCalculation) }
@@ -58,9 +53,7 @@ class ExposureWindowRiskCalculator @Inject constructor(
     ): Double {
         val scanInstances = scanInstances.map { it.toNHSScanInstance() }
         val riskScoreCalculator = riskScoreCalculatorProvider.riskScoreCalculator(config)
-        return 60 * riskScoreCalculator.calculate(scanInstances) * infectiousnessFactor(
-            riskCalculation
-        )
+        return 60 * riskScoreCalculator.calculate(scanInstances) * infectiousnessFactor(riskCalculation)
     }
 
     private fun ExposureWindow.infectiousnessFactor(riskCalculation: V2RiskCalculation) =

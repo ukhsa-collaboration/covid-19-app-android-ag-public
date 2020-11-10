@@ -7,13 +7,15 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.ExposureNotificationsNotAvailable
-import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.OnboardingCompleted
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.OnboardingStarted
+import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.PolicyAccepted
+import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.PolicyUpdated
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.TabletNotSupported
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.edgecases.TabletNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.WelcomeActivity
+import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import javax.inject.Inject
 
@@ -33,7 +35,8 @@ class MainActivity : AppCompatActivity() {
             when (mainViewState) {
                 TabletNotSupported -> TabletNotSupportedActivity.start(this)
                 OnboardingStarted -> WelcomeActivity.start(this)
-                OnboardingCompleted -> StatusActivity.start(this)
+                PolicyUpdated -> PolicyUpdateActivity.start(this)
+                PolicyAccepted -> StatusActivity.start(this)
                 ExposureNotificationsNotAvailable -> startActivity<DeviceNotSupportedActivity>()
             }.also {
                 finish()

@@ -53,6 +53,7 @@ class PeriodicTasks @Inject constructor(private val context: Context) {
         workManager.cancelUniqueWork("downloadVirologyTestResults")
         workManager.cancelUniqueWork("RiskyVenuePolling")
         workManager.cancelUniqueWork("SubmitAnalyticsWorker")
+        workManager.cancelUniqueWork("AppAvailabilityWorker")
     }
 }
 

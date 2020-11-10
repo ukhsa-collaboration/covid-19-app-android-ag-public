@@ -17,11 +17,14 @@ class AppAvailabilityProvider @Inject constructor(
     var appAvailability: AppAvailabilityResponse?
         get() = runCatching {
             appAvailabilityStorage?.let {
-                moshi.adapter<AppAvailabilityResponse>(AppAvailabilityResponse::class.java).fromJson(it)
+                moshi.adapter<AppAvailabilityResponse>(AppAvailabilityResponse::class.java)
+                    .fromJson(it)
             }
         }.getOrNull()
         set(value) {
-            appAvailabilityStorage = moshi.adapter<AppAvailabilityResponse>(AppAvailabilityResponse::class.java).toJson(value)
+            appAvailabilityStorage =
+                moshi.adapter<AppAvailabilityResponse>(AppAvailabilityResponse::class.java)
+                    .toJson(value)
         }
 
     fun isAppAvailable(): Boolean {
@@ -33,6 +36,11 @@ class AppAvailabilityProvider @Inject constructor(
                 Build.VERSION.SDK_INT >= appAvailability.minimumSdkVersion.value
         }
     }
+
+    fun isUpdateRecommended() =
+        appAvailability?.let {
+            BuildConfig.VERSION_CODE < it.recommendedAppVersion.value
+        } ?: false
 
     private val appAvailabilityPrefs = sharedPreferences.with<String>(APP_AVAILABILITY_RESPONSE)
     private var appAvailabilityStorage: String? by appAvailabilityPrefs

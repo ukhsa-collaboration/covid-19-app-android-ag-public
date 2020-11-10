@@ -6,6 +6,7 @@ import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.remote.data.AppAvailabilityResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumAppVersion
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumSdkVersion
+import uk.nhs.nhsx.covid19.android.app.remote.data.RecommendedAppVersion
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.AppAvailabilityRobot
@@ -80,6 +81,15 @@ class AppAvailabilityActivityTest : EspressoTest() {
                 )
             ),
             Int.MAX_VALUE
+        ),
+        recommendedAppVersion = RecommendedAppVersion(
+            Translatable(
+                emptyMap()
+            ),
+            0,
+            Translatable(
+                emptyMap()
+            )
         )
     )
 
@@ -97,6 +107,15 @@ class AppAvailabilityActivityTest : EspressoTest() {
                 emptyMap()
             ),
             0
+        ),
+        recommendedAppVersion = RecommendedAppVersion(
+            Translatable(
+                emptyMap()
+            ),
+            0,
+            title = Translatable(
+                emptyMap()
+            )
         )
     )
 
@@ -112,6 +131,15 @@ class AppAvailabilityActivityTest : EspressoTest() {
                 emptyMap()
             ),
             0
+        ),
+        recommendedAppVersion = RecommendedAppVersion(
+            Translatable(
+                emptyMap()
+            ),
+            0,
+            title = Translatable(
+                emptyMap()
+            )
         )
     )
 }

@@ -5,7 +5,6 @@ import dagger.Provides
 import retrofit2.Retrofit
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule.Companion.API_REMOTE
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule.Companion.DISTRIBUTION_REMOTE
-import uk.nhs.nhsx.covid19.android.app.remote.ActivationApi
 import uk.nhs.nhsx.covid19.android.app.remote.AnalyticsApi
 import uk.nhs.nhsx.covid19.android.app.remote.ExposureCircuitBreakerApi
 import uk.nhs.nhsx.covid19.android.app.remote.ExposureConfigurationApi
@@ -80,11 +79,6 @@ class ApiModule {
     @Singleton
     fun provideAppAvailabilityApi(@Named(DISTRIBUTION_REMOTE) retrofit: Retrofit): AppAvailabilityApi =
         retrofit.create(AppAvailabilityApi::class.java)
-
-    @Provides
-    @Singleton
-    fun provideActivationApi(@Named(API_REMOTE) retrofit: Retrofit): ActivationApi =
-        retrofit.create(ActivationApi::class.java)
 
     @Provides
     @Singleton

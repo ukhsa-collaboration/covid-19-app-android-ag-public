@@ -70,11 +70,7 @@ class AggregateAnalytics @Inject constructor(
         }
 
     private fun getMetadata(): Metadata {
-        val latestApplicationVersion = if (BuildConfig.VERSION_NAME.contains(" ")) {
-            BuildConfig.VERSION_NAME.split(" ")[0]
-        } else {
-            BuildConfig.VERSION_NAME
-        }
+        val latestApplicationVersion = BuildConfig.VERSION_NAME_SHORT
         return Metadata(
             deviceModel = "${Build.MANUFACTURER} ${Build.MODEL}",
             latestApplicationVersion = latestApplicationVersion,

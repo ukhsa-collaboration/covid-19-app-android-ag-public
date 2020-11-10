@@ -88,6 +88,8 @@ class IsolationStateMachineTest {
 
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertNull(sideEffect)
+
+        newStateIsolationChecks(actualState)
     }
 
     @Test
@@ -111,6 +113,8 @@ class IsolationStateMachineTest {
 
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertNull(sideEffect)
+
+        newStateDefaultChecks()
     }
 
     @Test
@@ -142,6 +146,8 @@ class IsolationStateMachineTest {
 
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertNull(sideEffect)
+
+        newStateIsolationChecks(actualState)
     }
 
     @Test
@@ -166,6 +172,8 @@ class IsolationStateMachineTest {
         assertEquals(Default(), actual)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultProvider.add(testResult) }
+
+        newStateDefaultChecks()
     }
 
     @Test
@@ -195,6 +203,8 @@ class IsolationStateMachineTest {
         assertEquals(AcknowledgeTestResult(testResult), sideEffect)
         verify(exactly = 1) { testResultProvider.acknowledge(testResult) }
         verify(exactly = 0) { testResultProvider.remove(testResult) }
+
+        newStateDefaultChecks()
     }
 
     @Test
@@ -231,6 +241,8 @@ class IsolationStateMachineTest {
         assertEquals(AcknowledgeTestResult(testResult), sideEffect)
         verify(exactly = 1) { testResultProvider.acknowledge(testResult) }
         verify(exactly = 0) { testResultProvider.remove(testResult) }
+
+        newStateIsolationChecks(actual)
     }
 
     @Test
@@ -255,6 +267,8 @@ class IsolationStateMachineTest {
         assertEquals(Default(), actual)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultProvider.add(testResult) }
+
+        newStateDefaultChecks()
     }
 
     @Test
@@ -281,6 +295,8 @@ class IsolationStateMachineTest {
         assertEquals(AcknowledgeTestResult(testResult), sideEffect)
         verify(exactly = 1) { testResultProvider.acknowledge(testResult) }
         verify(exactly = 0) { testResultProvider.remove(testResult) }
+
+        newStateDefaultChecks()
     }
 
     @Test
@@ -309,6 +325,8 @@ class IsolationStateMachineTest {
         assertEquals(SendExposedNotification, sideEffect)
         verify(exactly = 1) { notificationProvider.showExposureNotification() }
         verify(exactly = 1) { userInbox.addUserInboxItem(ShowEncounterDetection) }
+
+        newStateIsolationChecks(actual)
     }
 
     @Test
@@ -332,6 +350,8 @@ class IsolationStateMachineTest {
         assertNull(sideEffect)
         verify(exactly = 0) { notificationProvider.showExposureNotification() }
         verify(exactly = 0) { userInbox.addUserInboxItem(ShowEncounterDetection) }
+
+        newStateDefaultChecks()
     }
 
     @Test
@@ -355,6 +375,8 @@ class IsolationStateMachineTest {
         assertNull(sideEffect)
         verify(exactly = 0) { notificationProvider.showExposureNotification() }
         verify(exactly = 0) { userInbox.addUserInboxItem(ShowEncounterDetection) }
+
+        newStateDefaultChecks()
     }
 
     @Test
@@ -382,6 +404,8 @@ class IsolationStateMachineTest {
         )
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertEquals(SendExposedNotification, sideEffect)
+
+        newStateIsolationChecks(actual)
     }
 
     @Test
@@ -407,6 +431,8 @@ class IsolationStateMachineTest {
         assertEquals(initialState, actual)
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertNull(sideEffect)
+
+        newStateIsolationChecks(actual)
     }
 
     @Test
@@ -433,6 +459,8 @@ class IsolationStateMachineTest {
         assertEquals(expected, actual)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultProvider.add(testResult) }
+
+        newStateIsolationChecks(actual)
     }
 
     @Test
@@ -461,6 +489,8 @@ class IsolationStateMachineTest {
         assertEquals(AcknowledgeTestResult(testResult), sideEffect)
         verify(exactly = 1) { testResultProvider.acknowledge(testResult) }
         verify(exactly = 0) { testResultProvider.remove(testResult) }
+
+        newStateIsolationChecks(actual)
     }
 
     @Test
@@ -497,6 +527,8 @@ class IsolationStateMachineTest {
         assertEquals(AcknowledgeTestResult(testResult, true), sideEffect)
         verify(exactly = 0) { testResultProvider.acknowledge(testResult) }
         verify(exactly = 1) { testResultProvider.remove(testResult) }
+
+        newStateIsolationChecks(newState)
     }
 
     @Test
@@ -527,6 +559,8 @@ class IsolationStateMachineTest {
         assertEquals(AcknowledgeTestResult(testResult), sideEffect)
         verify(exactly = 1) { testResultProvider.acknowledge(testResult) }
         verify(exactly = 0) { testResultProvider.remove(testResult) }
+
+        newStateIsolationChecks(newState)
     }
 
     @Test
@@ -553,6 +587,8 @@ class IsolationStateMachineTest {
         assertEquals(expected, actual)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultProvider.add(testResult) }
+
+        newStateIsolationChecks(actual)
     }
 
     @Test
@@ -581,6 +617,8 @@ class IsolationStateMachineTest {
         assertEquals(AcknowledgeTestResult(testResult), sideEffect)
         verify(exactly = 1) { testResultProvider.acknowledge(testResult) }
         verify(exactly = 0) { testResultProvider.remove(testResult) }
+
+        newStateIsolationChecks(actual)
     }
 
     @Test
@@ -617,6 +655,8 @@ class IsolationStateMachineTest {
         assertEquals(expected, newState)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultProvider.add(testResult) }
+
+        newStateIsolationChecks(newState)
     }
 
     @Test
@@ -655,6 +695,8 @@ class IsolationStateMachineTest {
         assertEquals(AcknowledgeTestResult(testResult), sideEffect)
         verify(exactly = 1) { testResultProvider.acknowledge(testResult) }
         verify(exactly = 0) { testResultProvider.remove(testResult) }
+
+        newStateDefaultChecks()
     }
 
     @Test
@@ -686,6 +728,8 @@ class IsolationStateMachineTest {
         assertEquals(state, newState)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultProvider.add(testResult) }
+
+        newStateIsolationChecks(newState)
     }
 
     @Test
@@ -720,6 +764,8 @@ class IsolationStateMachineTest {
         assertEquals(AcknowledgeTestResult(testResult), sideEffect)
         verify(exactly = 1) { testResultProvider.acknowledge(testResult) }
         verify(exactly = 0) { testResultProvider.remove(testResult) }
+
+        newStateDefaultChecks()
     }
 
     @Test
@@ -755,6 +801,8 @@ class IsolationStateMachineTest {
 
         assertEquals(expected, actual)
         assertNull(sideEffect)
+
+        newStateIsolationChecks(actual)
     }
 
     @Test
@@ -791,6 +839,8 @@ class IsolationStateMachineTest {
 
         assertEquals(expected, actual)
         assertNull(sideEffect)
+
+        newStateIsolationChecks(actual)
     }
 
     @Test
@@ -831,6 +881,8 @@ class IsolationStateMachineTest {
         assertEquals(expected, newState)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultProvider.add(testResult) }
+
+        newStateIsolationChecks(newState)
     }
 
     @Test
@@ -873,6 +925,8 @@ class IsolationStateMachineTest {
         assertEquals(AcknowledgeTestResult(testResult), sideEffect)
         verify(exactly = 1) { testResultProvider.acknowledge(testResult) }
         verify(exactly = 0) { testResultProvider.remove(testResult) }
+
+        newStateIsolationChecks(newState)
     }
 
     @Test
@@ -909,6 +963,8 @@ class IsolationStateMachineTest {
         assertEquals(expected, newState)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultProvider.add(testResult) }
+
+        newStateIsolationChecks(newState)
     }
 
     @Test
@@ -947,6 +1003,8 @@ class IsolationStateMachineTest {
         assertEquals(AcknowledgeTestResult(testResult), sideEffect)
         verify(exactly = 1) { testResultProvider.acknowledge(testResult) }
         verify(exactly = 0) { testResultProvider.remove(testResult) }
+
+        newStateIsolationChecks(newState)
     }
 
     @Test
@@ -983,6 +1041,8 @@ class IsolationStateMachineTest {
         assertEquals(expected, newState)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultProvider.add(testResult) }
+
+        newStateIsolationChecks(newState)
     }
 
     @Test
@@ -1021,6 +1081,8 @@ class IsolationStateMachineTest {
         assertEquals(AcknowledgeTestResult(testResult), sideEffect)
         verify(exactly = 1) { testResultProvider.acknowledge(testResult) }
         verify(exactly = 0) { testResultProvider.remove(testResult) }
+
+        newStateIsolationChecks(newState)
     }
 
     @Test
@@ -1047,6 +1109,8 @@ class IsolationStateMachineTest {
         assertEquals(AcknowledgeTestResult(oldTestResult), sideEffect)
         verify(exactly = 1) { testResultProvider.acknowledge(oldTestResult) }
         verify(exactly = 0) { testResultProvider.remove(oldTestResult) }
+
+        newStateDefaultChecks()
     }
 
     @Test
@@ -1063,6 +1127,8 @@ class IsolationStateMachineTest {
         val actual = testSubject.readState()
 
         assertEquals(Default(previousIsolation = contactCase), actual)
+
+        newStateDefaultChecks()
     }
 
     @Test
@@ -1079,6 +1145,8 @@ class IsolationStateMachineTest {
         val actual = testSubject.readState()
 
         assertEquals(Default(previousIsolation = indexCase), actual)
+
+        newStateDefaultChecks()
     }
 
     @Test
@@ -1095,6 +1163,20 @@ class IsolationStateMachineTest {
         testSubject.reset()
 
         assertEquals(Default(), testSubject.readState())
+
+        newStateDefaultChecks()
+    }
+
+    private fun newStateDefaultChecks() {
+        verify { alarmController.cancelExpirationCheckIfAny() }
+
+        verify { notificationProvider.cancelExposureNotification() }
+        verify { userInbox.clearItem(ShowEncounterDetection) }
+    }
+
+    private fun newStateIsolationChecks(newState: State) {
+        val newIsolationState = newState as Isolation
+        verify { alarmController.setupExpirationCheck(newIsolationState.expiryDate) }
     }
 
     private fun isolationStateWithIndexCase(expiryDaysFromStartDate: Long): Isolation {
