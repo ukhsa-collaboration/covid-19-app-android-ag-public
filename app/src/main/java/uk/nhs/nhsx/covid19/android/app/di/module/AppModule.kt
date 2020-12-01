@@ -7,9 +7,12 @@ import dagger.Module
 import dagger.Provides
 import uk.nhs.covid19.config.SignatureKey
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager
+import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationChecker
 import uk.nhs.nhsx.covid19.android.app.common.AppInfo
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWorker
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWorkerScheduler
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.util.AndroidBase64Decoder
@@ -30,7 +33,8 @@ class AppModule(
     private val encryptedFileInfo: EncryptedFileInfo,
     private val qrCodesSignatureKey: SignatureKey,
     private val applicationLocaleProvider: ApplicationLocaleProvider,
-    private val updateManager: UpdateManager
+    private val updateManager: UpdateManager,
+    private val batteryOptimizationChecker: BatteryOptimizationChecker
 ) {
     @Provides
     fun provideContext() = applicationContext
@@ -78,6 +82,10 @@ class AppModule(
     fun provideAppVersionCodeUpdateProvider(): UpdateManager = updateManager
 
     @Provides
+    @Singleton
+    fun provideBatteryOptimizationChecker(): BatteryOptimizationChecker = batteryOptimizationChecker
+
+    @Provides
     fun provideQrCodesSignatureKey(): SignatureKey = qrCodesSignatureKey
 
     @Provides
@@ -88,6 +96,10 @@ class AppModule(
     @Provides
     @Singleton
     fun provideUtcClock(): Clock = Clock.systemUTC()
+
+    @Provides
+    fun provideExposureNotificationWorkerScheduler(): ExposureNotificationWorkerScheduler =
+        ExposureNotificationWorker.Companion
 
     companion object {
         const val BLUETOOTH_STATE_NAME = "BLUETOOTH_STATE"

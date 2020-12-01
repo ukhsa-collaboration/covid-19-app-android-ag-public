@@ -1,6 +1,9 @@
 package uk.nhs.nhsx.covid19.android.app.about
 
+import com.jeroenmols.featureflag.framework.FeatureFlag
+import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
@@ -9,6 +12,7 @@ import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.DataAndPrivacyRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MoreAboutAppRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PermissionRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PostCodeRobot
@@ -23,6 +27,7 @@ class UserDataActivityTest : EspressoTest() {
     private val welcomeRobot = WelcomeRobot()
     private val dataAndPrivacyRobot = DataAndPrivacyRobot()
     private val postCodeRobot = PostCodeRobot()
+    private val localAuthorityRobot = LocalAuthorityRobot()
     private val statusRobot = StatusRobot()
     private val permissionRobot = PermissionRobot()
 
@@ -42,6 +47,11 @@ class UserDataActivityTest : EspressoTest() {
     @Before
     fun setUp() = runBlocking {
         testAppContext.getVisitedVenuesStorage().setVisits(visits)
+    }
+
+    @After
+    fun tearDown() {
+        FeatureFlagTestHelper.clearFeatureFlags()
     }
 
     @Test
@@ -64,7 +74,55 @@ class UserDataActivityTest : EspressoTest() {
 
     @RetryFlakyTest
     @Test
-    fun clickOnDeleteUserDataOpensWelcomeScreenAndShowsPermissionScreenWithoutDialog() = notReported {
+    fun clickOnDeleteUserDataWithLocalAuthorityFeatureFlagEnabled_opensWelcomeScreenAndShowsPermissionScreenWithoutDialog() = notReported {
+        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+
+        testAppContext.setPostCode(null)
+
+        startTestActivity<UserDataActivity>()
+
+        userDataRobot.checkActivityIsDisplayed()
+
+        userDataRobot.userClicksOnDeleteAllDataButton()
+
+        userDataRobot.userClicksDeleteDataOnDialog()
+
+        waitFor { welcomeRobot.isActivityDisplayed() }
+
+        welcomeRobot.checkActivityIsDisplayed()
+
+        welcomeRobot.clickConfirmOnboarding()
+
+        welcomeRobot.checkAgeConfirmationDialogIsDisplayed()
+
+        welcomeRobot.clickConfirmAgePositive()
+
+        dataAndPrivacyRobot.checkActivityIsDisplayed()
+
+        dataAndPrivacyRobot.clickConfirmOnboarding()
+
+        postCodeRobot.checkActivityIsDisplayed()
+
+        postCodeRobot.enterPostCode("N12")
+
+        postCodeRobot.clickContinue()
+
+        waitFor { localAuthorityRobot.checkActivityIsDisplayed() }
+
+        localAuthorityRobot.clickConfirm()
+
+        waitFor { permissionRobot.checkActivityIsDisplayed() }
+
+        permissionRobot.clickEnablePermissions()
+
+        statusRobot.checkActivityIsDisplayed()
+    }
+
+    @RetryFlakyTest
+    @Test
+    fun clickOnDeleteUserDataWithLocalAuthorityFeatureFlagDisabled_opensWelcomeScreenAndShowsPermissionScreenWithoutDialog() = notReported {
+        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+
         testAppContext.setPostCode(null)
 
         startTestActivity<UserDataActivity>()

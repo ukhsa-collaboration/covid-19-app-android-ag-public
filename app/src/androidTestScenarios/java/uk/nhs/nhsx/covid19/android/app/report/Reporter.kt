@@ -20,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.report.output.Screenshot
 import uk.nhs.nhsx.covid19.android.app.report.output.Step
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.takeScreenshot
 import java.io.File
 
@@ -82,14 +83,6 @@ class AndroidReporter internal constructor(
         applyTheme(testConfiguration.theme)
         testAppContext.reset()
         testAppContext.setLocale(testConfiguration.languageCode)
-    }
-
-    private fun setScreenOrientation(orientation: Orientation) {
-        val device = UiDevice.getInstance(getInstrumentation())
-        when (orientation) {
-            Orientation.LANDSCAPE -> device.setOrientationLeft()
-            Orientation.PORTRAIT -> device.setOrientationNatural()
-        }
     }
 
     private fun adjustFontScale(fontScale: FontScale) =

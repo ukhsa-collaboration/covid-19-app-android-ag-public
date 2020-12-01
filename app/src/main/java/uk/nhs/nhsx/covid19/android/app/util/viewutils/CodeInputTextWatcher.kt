@@ -18,13 +18,8 @@ class CodeInputTextWatcher(
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
         editText.removeTextChangedListener(this)
         val cleanString = s.toString().replace(codeInputRegex, "")
-        val formattedString = if (cleanString.length > 4) {
-            cleanString.substring(0..3) + "-" + cleanString.substring(4)
-        } else {
-            cleanString
-        }
-        if (s.toString() != formattedString) {
-            editText.setText(formattedString)
+        if (s.toString() != cleanString) {
+            editText.setText(cleanString)
             try {
                 editText.setSelection(editText.text.length)
             } catch (e: IndexOutOfBoundsException) {

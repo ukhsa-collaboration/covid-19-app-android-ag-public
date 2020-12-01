@@ -47,7 +47,7 @@ class ShareKeysInformationActivity : BaseActivity(R.layout.activity_share_keys_i
         setNavigateUpToolbar(
             toolbar,
             R.string.submit_keys_information_title,
-            R.drawable.ic_arrow_back_white
+            upIndicator = R.drawable.ic_arrow_back_white
         )
 
         diagnosisKeySubmissionToken = intent.getStringExtra(SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN)

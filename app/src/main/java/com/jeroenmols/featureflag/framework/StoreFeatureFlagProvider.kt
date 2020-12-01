@@ -1,12 +1,7 @@
 package com.jeroenmols.featureflag.framework
 
-import com.jeroenmols.featureflag.framework.FeatureFlag.HIGH_RISK_POST_DISTRICTS
-import com.jeroenmols.featureflag.framework.FeatureFlag.HIGH_RISK_VENUES
-import com.jeroenmols.featureflag.framework.FeatureFlag.IN_APP_REVIEW
-import com.jeroenmols.featureflag.framework.FeatureFlag.ISOLATION_COMPANION
-import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_DIAGNOSIS
-import com.jeroenmols.featureflag.framework.FeatureFlag.SIGNATURE_VALIDATION
-import com.jeroenmols.featureflag.framework.FeatureFlag.TEST_ORDERING
+import com.jeroenmols.featureflag.framework.FeatureFlag.BATTERY_OPTIMIZATION
+import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_AUTHORITY
 
 class StoreFeatureFlagProvider : FeatureFlagProvider {
 
@@ -16,13 +11,8 @@ class StoreFeatureFlagProvider : FeatureFlagProvider {
     override fun isFeatureEnabled(feature: Feature): Boolean {
         return if (feature is FeatureFlag) {
             when (feature) {
-                HIGH_RISK_POST_DISTRICTS -> true
-                HIGH_RISK_VENUES -> true
-                SELF_DIAGNOSIS -> true
-                ISOLATION_COMPANION -> true
-                TEST_ORDERING -> true
-                SIGNATURE_VALIDATION -> true
-                IN_APP_REVIEW -> true
+                LOCAL_AUTHORITY -> true
+                BATTERY_OPTIMIZATION -> false
             }
         } else {
             // TestSettings should never be shipped to users

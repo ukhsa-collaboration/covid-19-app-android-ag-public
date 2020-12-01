@@ -9,13 +9,14 @@ import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel
+import uk.nhs.nhsx.covid19.android.app.util.adapters.PolicyIconAdapter
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class RiskyPostCodeIndicatorProviderTest {
 
     private val moshi = Moshi.Builder()
+        .add(PolicyIconAdapter())
         .build()
 
     private val riskyPostCodeIndicatorStorage =
@@ -69,11 +70,12 @@ class RiskyPostCodeIndicatorProviderTest {
             heading = Translatable(mapOf("en" to "Heading high")),
             content = Translatable(mapOf("en" to "Content high")),
             linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-            linkUrl = Translatable(mapOf("en" to "https://a.b.c/"))
+            linkUrl = Translatable(mapOf("en" to "https://a.b.c/")),
+            policyData = null
         ),
-        oldRiskLevel = RiskLevel.HIGH
+        riskLevelFromLocalAuthority = true
     )
 
     private val riskyPostCodeIndicatorJson =
-        """{"riskLevel":"high","riskIndicator":{"colorScheme":"red","name":{"translations":{"en":"high"}},"heading":{"translations":{"en":"Heading high"}},"content":{"translations":{"en":"Content high"}},"linkTitle":{"translations":{"en":"Restrictions in your area"}},"linkUrl":{"translations":{"en":"https://a.b.c/"}}},"oldRiskLevel":"H"}"""
+        """{"riskLevel":"high","riskIndicator":{"colorScheme":"red","name":{"translations":{"en":"high"}},"heading":{"translations":{"en":"Heading high"}},"content":{"translations":{"en":"Content high"}},"linkTitle":{"translations":{"en":"Restrictions in your area"}},"linkUrl":{"translations":{"en":"https://a.b.c/"}}},"riskLevelFromLocalAuthority":true}"""
 }

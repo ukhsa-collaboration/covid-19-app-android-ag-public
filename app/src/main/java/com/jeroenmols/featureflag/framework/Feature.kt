@@ -15,7 +15,7 @@ interface Feature {
 
 /**
  * A feature flag is something that disappears over time (hence it is a tool to simplify development)
- * e.g we develop a feature, test it, release it, then we remove it and the feature remain in the app
+ * e.g we develop a feature, test it, release it, then we remove it and the feature remains in the app
  *
  * Note that this has nothing to do with being available as a remote feature flag or not. Some features
  * will be deployed using our feature flag tool, some will not.
@@ -28,47 +28,17 @@ enum class FeatureFlag(
     override val explanation: String,
     override val defaultValue: Boolean = true
 ) : Feature {
-    HIGH_RISK_POST_DISTRICTS(
-        "feature.highRiskPostDistricts",
-        "High risk post districts",
-        "Enabled high risk post districts",
+    LOCAL_AUTHORITY(
+        "feature.localAuthority",
+        "Local authority",
+        "Enable local authority",
         defaultValue = true
     ),
-    HIGH_RISK_VENUES(
-        "feature.highRiskVenues",
-        "High-risk venues",
-        "Enabled high-risk venues",
-        defaultValue = true
-    ),
-    SELF_DIAGNOSIS(
-        "feature.selfDiagnosis",
-        "Self-diagnosis",
-        "Enabled self-diagnosis",
-        defaultValue = true
-    ),
-    ISOLATION_COMPANION(
-        "feature.isolationCompanion",
-        "Isolation companion",
-        "Enabled isolation companion",
-        defaultValue = true
-    ),
-    TEST_ORDERING(
-        "feature.testOrdering",
-        "Test ordering",
-        "Enable test ordering",
-        defaultValue = true
-    ),
-    SIGNATURE_VALIDATION(
-        "feature.signatureValidation",
-        "Signature validation",
-        "Enable signature validation",
-        defaultValue = true
-    ),
-    IN_APP_REVIEW(
-        "feature.inAppReview",
-        "In-app Review",
-        "Enable in-app reviews",
-        defaultValue = true
+    BATTERY_OPTIMIZATION(
+        "feature.batteryOptimization",
+        "Battery optimization",
+        "Enable in-app battery optimization request",
+        defaultValue = false
     )
 }
 

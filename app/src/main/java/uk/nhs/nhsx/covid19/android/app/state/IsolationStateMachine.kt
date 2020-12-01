@@ -51,7 +51,8 @@ sealed class State {
         @JsonClass(generateAdapter = true)
         data class IndexCase(
             val symptomsOnsetDate: LocalDate,
-            val expiryDate: LocalDate
+            val expiryDate: LocalDate,
+            val selfAssessment: Boolean
         )
 
         @JsonClass(generateAdapter = true)
@@ -75,7 +76,11 @@ sealed class State {
         fun isBothCases(): Boolean =
             isIndexCase() && isContactCase()
 
-        fun hasExpired(clock: Clock): Boolean = !LocalDate.now(clock).isBefore(expiryDate)
+        fun isSelfAssessmentIndexCase(): Boolean =
+            indexCase != null && indexCase.selfAssessment
+
+        fun hasExpired(clock: Clock, daysAgo: Int = 0): Boolean =
+            !expiryDate.isAfter(LocalDate.now(clock).minusDays(daysAgo.toLong()))
 
         val expiryDate: LocalDate
             get() {
@@ -149,6 +154,7 @@ fun State.newStateWithTestResult(
                 this,
                 isolationConfigurationProvider,
                 testResult.testEndDate,
+                false,
                 clock
             )
             previousIsolationIsIndexCase() -> this
@@ -157,6 +163,7 @@ fun State.newStateWithTestResult(
                     this,
                     isolationConfigurationProvider,
                     testResult.testEndDate,
+                    false,
                     clock
                 )
         }
@@ -172,6 +179,7 @@ private fun tryCreateIndexCaseWhenOnsetDataIsNotProvided(
     currentState: State,
     isolationConfigurationProvider: IsolationConfigurationProvider,
     testResultEndDate: Instant,
+    selfAssessment: Boolean,
     clock: Clock
 ): State {
     val testResultDate = LocalDateTime.ofInstant(testResultEndDate, ZoneId.systemDefault()).toLocalDate()
@@ -180,7 +188,8 @@ private fun tryCreateIndexCaseWhenOnsetDataIsNotProvided(
         isolationConfiguration = isolationConfigurationProvider.durationDays,
         indexCase = IndexCase(
             symptomsOnsetDate = testResultDate.minusDays(indexCaseOnsetDateBeforeTestResultDate),
-            expiryDate = testResultDate.plusDays(indexCaseExpiryDateAfterTestResultDate)
+            expiryDate = testResultDate.plusDays(indexCaseExpiryDateAfterTestResultDate),
+            selfAssessment = selfAssessment
         )
     )
     return if (isolation.hasExpired(clock)) {
@@ -283,13 +292,15 @@ class IsolationStateMachine(
         }
 
     private fun validateExpiry() {
-        val hasExpired = when (val state = stateMachine.state) {
-            is Default -> false
-            is Isolation -> state.hasExpired(clock)
-        }
-
-        if (hasExpired) {
-            stateMachine.transition(OnExpired)
+        when (val state = stateMachine.state) {
+            is Default -> {
+                val expiryDays = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
+                if (state.previousIsolation?.hasExpired(clock, daysAgo = expiryDays) == true)
+                    stateMachine.transition(OnReset)
+            }
+            is Isolation ->
+                if (state.hasExpired(clock))
+                    stateMachine.transition(OnExpired)
         }
     }
 
@@ -313,7 +324,7 @@ class IsolationStateMachine(
                 val now = Instant.now(clock)
 
                 val isolation = Isolation(
-                    contactCase = ContactCase(now, until),
+                    contactCase = ContactCase(it.exposureDate, until),
                     isolationStart = now,
                     isolationConfiguration = getConfigurationDurations()
                 )
@@ -360,7 +371,7 @@ class IsolationStateMachine(
                     ).atZone(ZoneOffset.UTC).toLocalDate()
 
                     val newState = this.copy(
-                        contactCase = ContactCase(Instant.now(clock), expiryDate)
+                        contactCase = ContactCase(it.exposureDate, expiryDate)
                     )
                     transitionTo(newState, SendExposedNotification)
                 } else {
@@ -377,7 +388,10 @@ class IsolationStateMachine(
                         dontTransition()
                     }
                 } else {
-                    dontTransition()
+                    indexCase?.let { case ->
+                        val newState = this.copy(indexCase = case.copy(selfAssessment = true))
+                        transitionTo(newState)
+                    } ?: dontTransition()
                 }
             }
             on<OnTestResult> {
@@ -405,7 +419,14 @@ class IsolationStateMachine(
         onTransition {
             val validTransition = it as? Transition.Valid ?: return@onTransition
 
+            val currentState = stateStorage.state
             val newState = validTransition.toState
+            if (newState == currentState) {
+                Timber.d("no transition $currentState")
+            } else {
+                Timber.d("transition from $currentState to $newState")
+            }
+
             stateStorage.state = newState
 
             when (val sideEffect = validTransition.sideEffect) {
@@ -470,7 +491,8 @@ class IsolationStateMachine(
                     addIndexCaseToCurrentIsolationOrCreateIsolationWithIndexCase(
                         previousIsolation,
                         onsetDate,
-                        finalExpiryDate
+                        finalExpiryDate,
+                        selfAssessment = true
                     )
                 }
             }
@@ -484,7 +506,8 @@ class IsolationStateMachine(
                 addIndexCaseToCurrentIsolationOrCreateIsolationWithIndexCase(
                     previousIsolation,
                     onsetDate,
-                    finalExpiryDate
+                    finalExpiryDate,
+                    selfAssessment = true
                 )
             }
         }
@@ -493,14 +516,15 @@ class IsolationStateMachine(
     private fun addIndexCaseToCurrentIsolationOrCreateIsolationWithIndexCase(
         previousIsolation: Isolation?,
         onsetDate: LocalDate,
-        expiryDate: LocalDate
-    ): State? {
+        expiryDate: LocalDate,
+        selfAssessment: Boolean
+    ): State {
         return previousIsolation?.copy(
-            indexCase = IndexCase(onsetDate, expiryDate)
+            indexCase = IndexCase(onsetDate, expiryDate, selfAssessment)
         )
             ?: Isolation(
                 isolationStart = Instant.now(clock),
-                indexCase = IndexCase(onsetDate, expiryDate),
+                indexCase = IndexCase(onsetDate, expiryDate, selfAssessment),
                 isolationConfiguration = getConfigurationDurations()
             )
     }

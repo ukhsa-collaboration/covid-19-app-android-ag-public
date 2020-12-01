@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodesLoader
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
@@ -18,13 +20,16 @@ import javax.inject.Inject
 
 class UserDataViewModel @Inject constructor(
     private val postCodePrefs: PostCodeProvider,
+    private val localAuthorityProvider: LocalAuthorityProvider,
     private val venuesStorage: VisitedVenuesStorage,
     private val stateMachine: IsolationStateMachine,
     private val testResultsProvider: TestResultsProvider,
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
+    private val localAuthorityPostCodesLoader: LocalAuthorityPostCodesLoader
 ) : ViewModel() {
-    private val postCode = MutableLiveData<String>()
-    fun getPostCode(): LiveData<String> = postCode
+
+    private val localAuthorityText = MutableLiveData<String>()
+    fun localAuthorityText(): LiveData<String> = localAuthorityText
 
     private val statusMachineLiveData: MutableLiveData<State> = MutableLiveData()
     fun getLastStatusMachineState(): LiveData<State> = statusMachineLiveData
@@ -43,7 +48,7 @@ class UserDataViewModel @Inject constructor(
 
     fun loadUserData() {
         viewModelScope.launch {
-            postCode.postValue(postCodePrefs.value)
+            loadLocalAuthorityText()
 
             val isEditModeActive = venueVisitsUiStateLiveData.value?.isInEditMode ?: false
             venueVisitsUiStateLiveData.postValue(
@@ -51,7 +56,7 @@ class UserDataViewModel @Inject constructor(
             )
             statusMachineLiveData.postValue(stateMachine.readState())
 
-            receivedTestResultLiveData.postValue(testResultsProvider.getLastTestResult())
+            receivedTestResultLiveData.postValue(testResultsProvider.getLastNonVoidTestResult())
         }
     }
 
@@ -74,9 +79,18 @@ class UserDataViewModel @Inject constructor(
     fun onEditVenueVisitClicked() {
         viewModelScope.launch {
             val previousVenueVisitsState = venueVisitsUiStateLiveData.value ?: return@launch
-            val updatedVenueVisitsState = previousVenueVisitsState.copy(isInEditMode = !previousVenueVisitsState.isInEditMode)
+            val updatedVenueVisitsState =
+                previousVenueVisitsState.copy(isInEditMode = !previousVenueVisitsState.isInEditMode)
             venueVisitsUiStateLiveData.postValue(updatedVenueVisitsState)
         }
+    }
+
+    private suspend fun loadLocalAuthorityText() {
+        val text = localAuthorityProvider.value?.let {
+            val localAuthorityName = localAuthorityPostCodesLoader.load()?.localAuthorities?.get(it)?.name
+            localAuthorityName?.let { name -> "$name\n${postCodePrefs.value}" }
+        }
+        localAuthorityText.postValue(text ?: postCodePrefs.value)
     }
 
     data class VenueVisitsUiState(val venueVisits: List<VenueVisit>, val isInEditMode: Boolean)

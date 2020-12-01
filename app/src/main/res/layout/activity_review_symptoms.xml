@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"
-                android:background="@drawable/questionnaire_error_background"
+                android:background="@drawable/error_background"
                 android:focusable="true"
                 android:orientation="vertical"
                 android:padding="16dp"

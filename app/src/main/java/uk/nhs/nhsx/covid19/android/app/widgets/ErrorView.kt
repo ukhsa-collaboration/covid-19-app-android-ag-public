@@ -4,9 +4,10 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import kotlinx.android.synthetic.main.view_error.view.errorDescription
-import kotlinx.android.synthetic.main.view_error.view.errorTitle
+import kotlinx.android.synthetic.main.view_error.view.errorDescriptionView
+import kotlinx.android.synthetic.main.view_error.view.errorTitleView
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 
 class ErrorView @JvmOverloads constructor(
     context: Context,
@@ -15,29 +16,43 @@ class ErrorView @JvmOverloads constructor(
     defStyleRes: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
 
+    var errorTitle: String? = ""
+        set(value) {
+            field = value
+            errorTitleView.text = errorTitle
+        }
+
+    var errorDescription: String? = ""
+        set(value) {
+            field = value
+            errorDescriptionView.text = errorDescription
+        }
+
     init {
         initializeViews()
         applyAttributes(context, attrs)
     }
 
-    override fun announceForAccessibility(error: CharSequence) {
-        val title = context.getString(R.string.error_title)
-        super.announceForAccessibility("$title\n$error")
-    }
-
     private fun initializeViews() {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         inflater.inflate(R.layout.view_error, this)
+
+        val newPadding = 16.dpToPx.toInt()
+        setPadding(newPadding, newPadding, newPadding, newPadding)
+
+        orientation = VERTICAL
+
+        setBackgroundResource(R.drawable.error_background)
+
+        isFocusableInTouchMode = true
+        isFocusable = true
     }
 
     private fun applyAttributes(context: Context, attrs: AttributeSet?) {
         context.theme.obtainStyledAttributes(attrs, R.styleable.ErrorView, 0, 0)
             .apply {
-                val description: String? = getString(R.styleable.ErrorView_error_description)
-                val title: String? = getString(R.styleable.ErrorView_error_title)
-
-                errorDescription.text = description
-                title?.let { errorTitle.text = it }
+                errorTitle = getString(R.styleable.ErrorView_error_title)
+                errorDescription = getString(R.styleable.ErrorView_error_description)
                 recycle()
             }
     }

@@ -4,9 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.view.isVisible
-import com.jeroenmols.featureflag.framework.FeatureFlag
-import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.daysToIsolateContainer
 import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.daysUntilExpirationTextView
 import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.exposureFaqsLinkTextView
@@ -23,7 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 
@@ -33,7 +30,7 @@ class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_ad
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
-        setNavigateUpToolbar(toolbar, R.string.empty, R.drawable.ic_close_primary)
+        setCloseToolbar(toolbar, R.string.empty, R.drawable.ic_close_primary)
 
         toolbar.setNavigationOnClickListener {
             navigateToStatusActivity()
@@ -96,8 +93,6 @@ class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_ad
                 REQUEST_CODE_ORDER_A_TEST
             )
         }
-        stateActionButton.isVisible =
-            RuntimeBehavior.isFeatureEnabled(FeatureFlag.TEST_ORDERING)
     }
 
     private fun setupNegativeSymptomsUi(daysUntilExpiration: Int) {

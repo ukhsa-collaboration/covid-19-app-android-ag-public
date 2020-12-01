@@ -8,6 +8,8 @@ import uk.nhs.nhsx.covid19.android.app.analytics.SubmitOnboardingAnalyticsWorker
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityListener
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateRecommendedActivity
+import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationActivity
+import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationChecker
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ClearOutdatedDataWorker
 import uk.nhs.nhsx.covid19.android.app.common.DownloadTasksWorker
@@ -15,6 +17,7 @@ import uk.nhs.nhsx.covid19.android.app.common.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableExposureNotificationsActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableLocationActivity
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityActivity
 import uk.nhs.nhsx.covid19.android.app.di.module.ApiModule
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
@@ -106,9 +109,12 @@ interface ApplicationComponent {
     fun inject(exposureNotificationWorker: ExposureNotificationWorker)
     fun inject(dataAndPrivacyActivity: DataAndPrivacyActivity)
     fun inject(policyUpdateActivity: PolicyUpdateActivity)
+    fun inject(localAuthorityActivity: LocalAuthorityActivity)
+    fun inject(batteryOptimizationActivity: BatteryOptimizationActivity)
 
     fun provideAppAvailabilityListener(): AppAvailabilityListener
     fun providePeriodicTasks(): PeriodicTasks
     fun provideOnboardingCompleted(): OnboardingCompletedProvider
     fun provideNotificationProvider(): NotificationProvider
+    fun provideBatteryOptimizationChecker(): BatteryOptimizationChecker
 }

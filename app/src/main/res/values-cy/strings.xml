@@ -373,8 +373,6 @@
     <string name="qr_code_intro_text">Pan fyddwch yn ymweld â rhywle (er enghraifft, bar neu fwyty) sydd yn dangos poster cod QR swyddogol y GIG, defnyddiwch yr ap hwn i sganio\'r cod. Bydd yr ap yn cofrestru\'r amser y gwnaethoch chi fewngofnodi.\n\nDrwy fewngofnodi, fe allwch chi gael eich hysbysu os bydd rhywun â\'r coronafeirws yn ymweld â\'r lle hwn tua\'r un adeg â chi. Bydd yr hysbysiad yn cynnwys cyngor perthnasol, fel bod yn effro i symptomau coronafeirws.</string>
     <string name="venue_check_in_title">Rhagor o wybodaeth am fewngofnodi i leoliad</string>
     <string name="ask_me_later">Gofyn imi yn nes ymlaen</string>
-    <string name="exposure_faqs">Cliciwch yma i gael rhagor o wybodaeth</string>
-    <string name="exposure_faqs_title">Os ydych chi yn rhywle heblaw Cymru a Lloegr, mae angen i chi ddilyn canllawiau\'r wlad rydych chi ynddi.</string>
     <string name="notification_channel_recommended_app_update_name">Diweddariadau a argymhellir i\'r ap</string>
     <string name="notification_channel_recommended_app_update_name_description">Mae\'r hysbysiadau hyn yn dweud wrthych am ddiweddariadau a argymhellir i\'r ap</string>
     <string name="notification_text_recommended_app_update">Tapiwch i weld y manylion.</string>
@@ -383,5 +381,25 @@
     <string name="update_in_play_store">Diweddarwch eich ap nawr</string>
     <string name="updated_privacy_control_text">Rydyn ni wedi gwneud rhai newidiadau i\'r ap er mwyn iddo fod yn fwy effeithlon wrth ichi deithio. Mae nifer o wledydd yn gweithio gyda\'i gilydd i sicrhau bod olrhain cysylltiadau yn parhau i weithio wrth i bobl groesi ffiniau i wahanol wledydd.\n\nBydd apiau olrhain cysylltiadau swyddogol Cymru, Lloegr, yr Alban, Gogledd Iwerddon, Jersey a Gibraltar yn gallu rhannu data heb ddatgelu pwy yw\'r defnyddwyr.\n\nOs ydych chi\'n profi\'n bositif am y coronafeirws, gallwch ddewis rhannu eich data gyda\'r GIG er mwyn inni anfon hysbysiadau, os oes angen, at ddefnyddwyr eraill yr ap yn y gwledydd hyn.</string>
     <string name="updated_privacy_title">Newidiadau i\'n polisïau</string>
+    <string name="about_local_authority">Awdurdod Lleol</string>
+    <string name="checkin_information_title_new">Rhagor o wybodaeth am fewngofnodi i leoliad</string>
+    <string name="confirm_and_start">Cadarnhau</string>
+    <string name="exposure_faqs">Cliciwch yma i gael rhagor o wybodaeth</string>
+    <string name="exposure_faqs_title">Os ydych chi yn rhywle heblaw Cymru a Lloegr, mae angen i chi ddilyn canllawiau\'r wlad rydych chi ynddi.</string>
+    <string name="local_authority_error_authority_not_supported_description">Yn anffodus, nid yw\'r ap hwn yn cael ei gefnogi yn eich rhanbarth. Lawrlwythwch yr ap ar gyfer eich rhanbarth neu\'ch gwlad.</string>
+    <string name="local_authority_error_no_authority_selected_description">Mae angen i chi ddewis awdurdod lleol i allu parhau</string>
+    <string name="local_authority_error_no_authority_selected_title">Dewiswch awdurdod lleol</string>
+    <string name="local_authority_information_title">Dewiswch eich awdurdod lleol</string>
+    <string name="local_authority_link">Canfod eich awdurdod lleol</string>
+    <string name="local_authority_title">Eich awdurdod lleol</string>
+    <string name="multiple_local_authorities_description">Gan fod eich ardal cod post ( %s ) mewn mwy nag un awdurdod lleol, mae angen i chi ddewis yr un rydych chi ynddo. Diben hyn yw galluogi\'r ap i roi gwybodaeth ac arweiniad cywirach i chi. \n\n Ewch i GOV.UK os nad ydych chi\'n gwybod pa un yw eich awdurdod lleol.</string>
+    <string name="multiple_local_authorities_title">Dewiswch eich awdurdod lleol</string>
+    <string name="single_local_authority_description">Newyddion da! Bydd yr ap yn gywirach wrth roi gwybodaeth ac arweiniad ar gyfer lefel risg y coronafeirws yn eich ardal chi. \n\nPeidiwch â phoeni, mae eich preifatrwydd yn dal i gael ei ddiogelu. Fydd yr ap byth yn tracio pwy ydych chi na ble\'r ydych chi.</string>
+    <string name="single_local_authority_title">Yr awdurdod lleol ar gyfer %1$s yw %2$s</string>
+    <string name="test_result_positive_continue_self_isolate_explanation_1">Mae canlyniad eich prawf yn dangos bod y feirws arnoch ar adeg y prawf. Anfonwyd e-bost neu neges destun atoch gyda rhagor o wybodaeth.</string>
+    <string name="test_result_positive_continue_self_isolate_explanation_2">Peidiwch â phoeni - i\'r rhan fwyaf o bobl mae\'r symptomau\'n eithaf ysgafn. Fodd bynnag, os bydd eich symptomau\'n gwaethygu, ffoniwch 111 neu ewch i nhs.uk i gael rhagor o gyngor.</string>
     <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/article/KA-01337</string>
+    <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
+    <string name="local_authority_error_authority_not_supported_title">Mae angen i chi ddewis awdurdod lleol i allu parhau</string>
+    <string name="local_authority_information_description">Dewiswch awdurdod lleol. Diben hyn yw galluogi\'r ap i roi gwybodaeth ac arweiniad cywirach i chi.</string>
 </resources>

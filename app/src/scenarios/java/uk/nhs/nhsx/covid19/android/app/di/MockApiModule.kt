@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import uk.nhs.nhsx.covid19.android.app.remote.AnalyticsApi
 import uk.nhs.nhsx.covid19.android.app.remote.AppAvailabilityApi
+import uk.nhs.nhsx.covid19.android.app.remote.EpidemiologyDataApi
 import uk.nhs.nhsx.covid19.android.app.remote.ExposureCircuitBreakerApi
 import uk.nhs.nhsx.covid19.android.app.remote.ExposureConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationConfigurationApi
@@ -11,6 +12,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.KeysDistributionApi
 import uk.nhs.nhsx.covid19.android.app.remote.KeysSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockAnalyticsApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockAppAvailabilityApi
+import uk.nhs.nhsx.covid19.android.app.remote.MockEpidemiologyDataApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockExposureCircuitBreakerApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockExposureConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockIsolationConfigurationApi
@@ -89,4 +91,9 @@ class MockApiModule {
     @Singleton
     fun provideAnalyticsApi(): AnalyticsApi =
         MockAnalyticsApi()
+
+    @Provides
+    @Singleton
+    fun provideEpidemiologyDataApi(): EpidemiologyDataApi =
+        MockEpidemiologyDataApi()
 }

@@ -7,6 +7,5 @@
     style="@style/Body1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp"
     android:lineSpacingMultiplier="1.2"
     tools:text="Some paragraph text" />

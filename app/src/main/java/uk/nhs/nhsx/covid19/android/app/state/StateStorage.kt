@@ -92,14 +92,15 @@ sealed class StateJson {
         val indexCase: IndexCaseJson?,
         val contactCase: ContactCaseJson?,
         val isolationConfiguration: DurationDays?,
-        override val version: Int = 2
+        override val version: Int = 3
     ) : StateJson()
 
     @Json(name = "IndexCase")
     @JsonClass(generateAdapter = true)
     data class IndexCaseJson(
         val symptomsOnsetDate: LocalDate,
-        val expiryDate: LocalDate?
+        val expiryDate: LocalDate?,
+        val selfAssessment: Boolean?
     )
 
     @Json(name = "ContactCase")
@@ -136,7 +137,7 @@ private fun State.toStateJson(): StateJson = when (this) {
     is Isolation -> IsolationJson(
         isolationStart,
         expiryDate,
-        indexCase?.let { IndexCaseJson(it.symptomsOnsetDate, it.expiryDate) },
+        indexCase?.let { IndexCaseJson(it.symptomsOnsetDate, it.expiryDate, it.selfAssessment) },
         contactCase?.let { ContactCaseJson(it.startDate, it.expiryDate) },
         isolationConfiguration
     )
@@ -184,7 +185,8 @@ private fun StateJson.toState(latestIsolationConfiguration: DurationDays): State
                     indexCase?.let {
                         IndexCase(
                             it.symptomsOnsetDate,
-                            expiryDate
+                            expiryDate,
+                            true
                         )
                     },
                     contactCase?.let {
@@ -199,7 +201,32 @@ private fun StateJson.toState(latestIsolationConfiguration: DurationDays): State
                 Isolation(
                     isolationStart,
                     isolationConfiguration ?: latestIsolationConfiguration,
-                    indexCase?.let { IndexCase(it.symptomsOnsetDate, it.expiryDate ?: expiryDate) },
+                    indexCase?.let {
+                        IndexCase(
+                            it.symptomsOnsetDate,
+                            it.expiryDate ?: expiryDate,
+                            true
+                        )
+                    },
+                    contactCase?.let {
+                        ContactCase(
+                            it.startDate,
+                            it.expiryDate ?: expiryDate
+                        )
+                    }
+                )
+            }
+            3 -> {
+                Isolation(
+                    isolationStart,
+                    isolationConfiguration ?: latestIsolationConfiguration,
+                    indexCase?.let {
+                        IndexCase(
+                            it.symptomsOnsetDate,
+                            it.expiryDate ?: expiryDate,
+                            it.selfAssessment ?: true
+                        )
+                    },
                     contactCase?.let {
                         ContactCase(
                             it.startDate,

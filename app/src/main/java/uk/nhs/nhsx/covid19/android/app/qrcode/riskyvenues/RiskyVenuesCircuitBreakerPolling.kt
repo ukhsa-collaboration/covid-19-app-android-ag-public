@@ -1,7 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 
-import com.jeroenmols.featureflag.framework.FeatureFlag
-import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.NO
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.PENDING
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.YES
@@ -21,10 +19,6 @@ class RiskyVenuesCircuitBreakerPolling @Inject constructor(
 ) {
 
     suspend operator fun invoke() {
-        if (!RuntimeBehavior.isFeatureEnabled(FeatureFlag.HIGH_RISK_VENUES)) {
-            return
-        }
-
         removeOutdatedRiskyVenuePollingConfigurations.invoke()
 
         var latestApprovedConfig: RiskyVenueCircuitBreakerConfiguration? = null

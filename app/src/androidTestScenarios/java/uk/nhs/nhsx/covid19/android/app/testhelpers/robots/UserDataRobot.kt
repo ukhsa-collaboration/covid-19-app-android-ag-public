@@ -37,6 +37,10 @@ class UserDataRobot {
         clickOn(R.id.editVenueVisits)
     }
 
+    fun userClicksEditPostalDistrict() {
+        clickOn(R.id.editLocalAuthority)
+    }
+
     fun checkDeleteIconForFirstVenueVisitIsDisplayed() {
         onView(withId(R.id.venueHistoryList))
             .check(

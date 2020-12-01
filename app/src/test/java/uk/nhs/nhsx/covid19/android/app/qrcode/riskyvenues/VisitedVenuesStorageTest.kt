@@ -154,6 +154,31 @@ class VisitedVenuesStorageTest {
     }
 
     @Test
+    fun `mark new visits as risky matching`() = runBlocking {
+        val venueVisit2 = VenueVisit(
+            Venue("3", "otherOrganizationPartName"),
+            Instant.parse(MORNING),
+            Instant.parse(END_OF_DAY),
+            false
+        )
+
+        every { encryptedFile.readText() } returns
+            """
+                [{"venue":{"id":"${VENUE_VISIT.venue.id}","opn":"${VENUE_VISIT.venue.organizationPartName}"},"from":"${VENUE_VISIT.from}","to":"${VENUE_VISIT.to}","wasInRiskyList":true},
+                {"venue":{"id":"${venueVisit2.venue.id}","opn":"${venueVisit2.venue.organizationPartName}"},"from":"${venueVisit2.from}","to":"${venueVisit2.to}","wasInRiskyList":false}]
+            """.trimIndent()
+
+        testSubject.markAsWasInRiskyList(listOf(venueVisit2.venue.id))
+
+        val expectedJson =
+            """[{"venue":{"id":"${VENUE_VISIT.venue.id}","opn":"${VENUE_VISIT.venue.organizationPartName}"},"from":"${VENUE_VISIT.from}","to":"${VENUE_VISIT.to}","wasInRiskyList":true},""" +
+                """{"venue":{"id":"${venueVisit2.venue.id}","opn":"${venueVisit2.venue.organizationPartName}"},"from":"${venueVisit2.from}","to":"${venueVisit2.to}","wasInRiskyList":true}]"""
+                    .trimIndent()
+
+        verify { encryptedFile.writeText(expectedJson) }
+    }
+
+    @Test
     fun `end visit and start new one`() = runBlocking {
         every { encryptedFile.readText() } returns createJson()
 

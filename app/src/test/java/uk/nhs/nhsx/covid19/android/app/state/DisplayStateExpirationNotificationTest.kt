@@ -57,7 +57,7 @@ class DisplayStateExpirationNotificationTest {
             every { isolationStateMachine.readState(validateExpiry = false) } returns Isolation(
                 startDate,
                 DurationDays(),
-                indexCase = IndexCase(symptomsOnset, expiryDate)
+                indexCase = IndexCase(symptomsOnset, expiryDate, true)
             )
 
             val testSubject = DisplayStateExpirationNotification(
@@ -87,7 +87,7 @@ class DisplayStateExpirationNotificationTest {
             every { isolationStateMachine.readState() } returns Isolation(
                 startDate,
                 DurationDays(),
-                indexCase = IndexCase(symptomsOnset, expiryDate)
+                indexCase = IndexCase(symptomsOnset, expiryDate, true)
             )
 
             val testSubject = DisplayStateExpirationNotification(

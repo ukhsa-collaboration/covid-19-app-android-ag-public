@@ -20,8 +20,8 @@ plugins {
     id("io.gitlab.arturbosch.detekt").version("1.13.1")
 }
 
-if (project.hasProperty("coverage")) {
-    apply from: "$project.rootDir/jacoco.gradle"
+ext {
+    jacocoEnabled = System.properties.getProperty("jacocoEnabled") ?: "false"
 }
 
 subprojects {

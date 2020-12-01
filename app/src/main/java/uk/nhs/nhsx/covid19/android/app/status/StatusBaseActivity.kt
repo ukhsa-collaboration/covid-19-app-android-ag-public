@@ -8,6 +8,7 @@ import uk.nhs.nhsx.covid19.android.app.common.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableLocationActivity
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule.Companion.BLUETOOTH_STATE_NAME
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule.Companion.LOCATION_STATE_NAME
+import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import javax.inject.Inject
@@ -22,6 +23,9 @@ abstract class StatusBaseActivity(contentView: Int) : BaseActivity(contentView) 
     @Inject
     @Named(LOCATION_STATE_NAME)
     lateinit var locationStateProvider: AvailabilityStateProvider
+
+    @Inject
+    lateinit var exposureNotificationApi: ExposureNotificationApi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,16 +42,18 @@ abstract class StatusBaseActivity(contentView: Int) : BaseActivity(contentView) 
             }
         )
 
-        locationStateProvider.availabilityState.observe(
-            this,
-            Observer { state ->
-                if (state == DISABLED) {
-                    EnableLocationActivity.start(
-                        this
-                    )
+        if (!exposureNotificationApi.deviceSupportsLocationlessScanning()) {
+            locationStateProvider.availabilityState.observe(
+                this,
+                Observer { state ->
+                    if (state == DISABLED) {
+                        EnableLocationActivity.start(
+                            this
+                        )
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     override fun onResume() {

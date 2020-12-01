@@ -1,7 +1,12 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation
 
 import com.google.android.gms.nearby.exposurenotification.ExposureWindow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.SubmitEpidemiologyData
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.SubmitEpidemiologyData.ExposureWindowWithRisk
 import uk.nhs.nhsx.covid19.android.app.remote.data.V2RiskCalculation
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.riskscore.RiskScoreCalculatorConfiguration
@@ -14,26 +19,67 @@ import javax.inject.Inject
 import com.google.android.gms.nearby.exposurenotification.ScanInstance as GoogleScanInstance
 import uk.nhs.riskscore.ScanInstance as NHSScanInstance
 
-class ExposureWindowRiskCalculator @Inject constructor(
+class ExposureWindowRiskCalculator(
     private val clock: Clock,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
-    private val riskScoreCalculatorProvider: RiskScoreCalculatorProvider
+    private val riskScoreCalculatorProvider: RiskScoreCalculatorProvider,
+    private val submitEpidemiologyData: SubmitEpidemiologyData,
+    private val submitEpidemiologyDataScope: CoroutineScope
 ) {
+
+    @Inject
+    constructor(
+        clock: Clock,
+        isolationConfigurationProvider: IsolationConfigurationProvider,
+        riskScoreCalculatorProvider: RiskScoreCalculatorProvider,
+        submitEpidemiologyData: SubmitEpidemiologyData
+    ) : this(
+        clock,
+        isolationConfigurationProvider,
+        riskScoreCalculatorProvider,
+        submitEpidemiologyData,
+        submitEpidemiologyDataScope = GlobalScope
+    )
 
     operator fun invoke(
         exposureWindows: List<ExposureWindow>,
         riskCalculation: V2RiskCalculation,
         config: RiskScoreCalculatorConfiguration
     ): DayRisk? {
+        Timber.d("Exposure windows: $exposureWindows")
+
         return exposureWindows.map { window ->
-            DayRisk(
-                startOfDayMillis = window.dateMillisSinceEpoch,
-                calculatedRisk = window.riskScore(config, riskCalculation)
+            ExposureWindowWithRisk(
+                dayRisk = DayRisk(
+                    startOfDayMillis = window.dateMillisSinceEpoch,
+                    calculatedRisk = window.riskScore(config, riskCalculation)
+                ),
+                exposureWindow = window
             )
         }
-            .filter { it.isRecentExposure() }
-            .also { logHighestRisk(it, riskCalculation) }
-            .filter { it.calculatedRisk >= riskCalculation.riskThreshold }
+            .also {
+                it.forEach { exposureWindowWithRisk ->
+                    Timber.d("DayRisk: ${exposureWindowWithRisk.dayRisk} for window: ${exposureWindowWithRisk.exposureWindow} isRecentExposure: ${exposureWindowWithRisk.dayRisk.isRecentExposure()}")
+                }
+            }
+            .filter { it.dayRisk.isRecentExposure() }
+            .also {
+                logHighestRisk(
+                    it.map { exposureWindowWithRisk -> exposureWindowWithRisk.dayRisk },
+                    riskCalculation
+                )
+            }
+            .filter { it.dayRisk.calculatedRisk >= riskCalculation.riskThreshold }
+            .also {
+                submitEpidemiologyDataScope.launch {
+                    runCatching {
+                        submitEpidemiologyData(it)
+                    }.getOrElse {
+                        Timber.e(it, "Epidemiology submission failed")
+                    }
+                }
+            }
+            .map { it.dayRisk }
             .maxWith(compareBy({ it.startOfDayMillis }, { it.calculatedRisk }))
     }
 
@@ -53,7 +99,9 @@ class ExposureWindowRiskCalculator @Inject constructor(
     ): Double {
         val scanInstances = scanInstances.map { it.toNHSScanInstance() }
         val riskScoreCalculator = riskScoreCalculatorProvider.riskScoreCalculator(config)
-        return 60 * riskScoreCalculator.calculate(scanInstances) * infectiousnessFactor(riskCalculation)
+        return 60 * riskScoreCalculator.calculate(scanInstances) * infectiousnessFactor(
+            riskCalculation
+        )
     }
 
     private fun ExposureWindow.infectiousnessFactor(riskCalculation: V2RiskCalculation) =

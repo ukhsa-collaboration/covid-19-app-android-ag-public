@@ -1,37 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/errorPanel"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:orientation="horizontal"
-    tools:parentTag="android.widget.LinearLayout">
+    tools:background="@drawable/error_background"
+    tools:orientation="vertical"
+    tools:parentTag="android.widget.LinearLayout"
+    tools:padding="16dp">
 
-    <View
-        android:id="@+id/errorColorBar"
-        android:layout_width="6dp"
-        android:layout_height="match_parent"
-        android:background="?attr/colorError" />
-
-    <LinearLayout
+    <TextView
+        android:id="@+id/errorTitleView"
+        style="@style/Title4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="16dp">
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        tools:text="@string/error_title" />
 
-        <TextView
-            android:id="@+id/errorTitle"
-            style="@style/ActionText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/error_title" />
-
-        <TextView
-            android:id="@+id/errorDescription"
-            style="@style/TextViewError"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            tools:text="Description" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/errorDescriptionView"
+        style="@style/ErrorText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        tools:text="@string/questionnaire_no_symptom_selected" />
 </merge>

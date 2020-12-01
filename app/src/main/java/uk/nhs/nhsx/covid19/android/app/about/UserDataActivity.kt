@@ -8,14 +8,17 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_AUTHORITY
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.android.synthetic.main.activity_about_user_data.actionDeleteAllData
-import kotlinx.android.synthetic.main.activity_about_user_data.editPostalDistrict
+import kotlinx.android.synthetic.main.activity_about_user_data.editLocalAuthority
 import kotlinx.android.synthetic.main.activity_about_user_data.editVenueVisits
 import kotlinx.android.synthetic.main.activity_about_user_data.encounterDataSection
 import kotlinx.android.synthetic.main.activity_about_user_data.lastResultDate
 import kotlinx.android.synthetic.main.activity_about_user_data.lastResultValue
 import kotlinx.android.synthetic.main.activity_about_user_data.latestResultContainer
-import kotlinx.android.synthetic.main.activity_about_user_data.postalDistrict
+import kotlinx.android.synthetic.main.activity_about_user_data.localAuthority
+import kotlinx.android.synthetic.main.activity_about_user_data.localAuthorityTitle
 import kotlinx.android.synthetic.main.activity_about_user_data.symptomsDataSection
 import kotlinx.android.synthetic.main.activity_about_user_data.textEncounterDate
 import kotlinx.android.synthetic.main.activity_about_user_data.textViewSymptomsDate
@@ -50,6 +53,7 @@ import java.time.ZoneId
 import javax.inject.Inject
 
 class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
+
     @Inject
     lateinit var factory: ViewModelFactory<UserDataViewModel>
 
@@ -61,13 +65,21 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
-        setNavigateUpToolbar(toolbar, R.string.about_manage_my_data, R.drawable.ic_arrow_back_white)
+        setNavigateUpToolbar(toolbar, R.string.about_manage_my_data, upIndicator = R.drawable.ic_arrow_back_white)
 
         venueHistoryList.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         setupViewModelListeners()
 
         setupOnClickListeners()
+
+        setLocalAuthorityTitle()
+    }
+
+    private fun setLocalAuthorityTitle() {
+        val localAuthorityTitleResId =
+            if (RuntimeBehavior.isFeatureEnabled(LOCAL_AUTHORITY)) R.string.about_local_authority else R.string.postal_district
+        localAuthorityTitle.text = getString(localAuthorityTitleResId)
     }
 
     override fun onResume() {
@@ -84,14 +96,14 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
             viewModel.onEditVenueVisitClicked()
         }
 
-        editPostalDistrict.setOnClickListener {
+        editLocalAuthority.setOnClickListener {
             EditPostalDistrictActivity.start(this)
         }
     }
 
     private fun setupViewModelListeners() {
-        viewModel.getPostCode().observe(this) { mainPostCode ->
-            postalDistrict.text = mainPostCode
+        viewModel.localAuthorityText().observe(this) { localAuthorityText ->
+            localAuthority.text = localAuthorityText
         }
 
         viewModel.getLastStatusMachineState().observe(this) { isolationState ->

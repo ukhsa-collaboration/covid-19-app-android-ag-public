@@ -14,7 +14,6 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.UUID
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
 
 class TransmissionRiskLevelApplierTest {
     private val stateMachine = mockk<IsolationStateMachine>()
@@ -82,13 +81,16 @@ class TransmissionRiskLevelApplierTest {
     }
 
     @Test
-    fun `throws when isolation state does not have index case`() {
+    fun `returns risk level 0 when isolation state does not have index case`() {
         // Given
         every { stateMachine.readState(any()) } returns isolationWithoutIndexCase()
 
+        // When
+        val keys = transmissionRiskLevelApplier.applyTransmissionRiskLevels(generateKeys(from = 1, to = 5))
+
         // Then
-        assertFails {
-            transmissionRiskLevelApplier.applyTransmissionRiskLevels(generateKeys(from = 1, to = 5))
+        keys.forEach { key ->
+            assertEquals(0, key.transmissionRiskLevel)
         }
     }
 
@@ -113,7 +115,8 @@ class TransmissionRiskLevelApplierTest {
             isolationStart = Instant.parse("2020-07-21T12:00:00Z"),
             indexCase = IndexCase(
                 symptomsOnsetDate,
-                expiryDate = LocalDate.parse("2020-07-27")
+                expiryDate = LocalDate.parse("2020-07-27"),
+                selfAssessment = true
             ),
             isolationConfiguration = DurationDays()
         )

@@ -90,7 +90,7 @@ class VisitedVenuesStorage @Inject constructor(
 
     suspend fun markAsWasInRiskyList(venueIds: List<String>) = withContext(context) {
         val visits = getVisitedVenuesMutable()
-        setVisits(visits.map { it.copy(wasInRiskyList = it.venue.id in venueIds) })
+        setVisits(visits.map { if (it.venue.id in venueIds) it.copy(wasInRiskyList = true) else it })
     }
 
     private fun getVisitedVenuesMutable(): MutableList<VenueVisit> {

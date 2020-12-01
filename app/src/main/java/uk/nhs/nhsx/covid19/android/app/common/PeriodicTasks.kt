@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.common
 
 import android.content.Context
 import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingPeriodicWorkPolicy.REPLACE
 import androidx.work.NetworkType.CONNECTED
 import androidx.work.PeriodicWorkRequestBuilder
@@ -17,7 +18,7 @@ class PeriodicTasks @Inject constructor(private val context: Context) {
         .setRequiredNetworkType(CONNECTED)
         .build()
 
-    fun schedule() {
+    fun schedule(policy: ExistingPeriodicWorkPolicy = REPLACE) {
         cancelLegacyWorks()
 
         val downloadTasksWorkRequest =
@@ -33,12 +34,12 @@ class PeriodicTasks @Inject constructor(private val context: Context) {
         WorkManager.getInstance(context).apply {
             enqueueUniquePeriodicWork(
                 PeriodicTask.PERIODIC_TASKS.workName,
-                REPLACE,
+                policy,
                 downloadTasksWorkRequest
             )
             enqueueUniquePeriodicWork(
                 CLEAR_OUTDATED_DATA.workName,
-                REPLACE,
+                policy,
                 clearOutdatedData
             )
         }

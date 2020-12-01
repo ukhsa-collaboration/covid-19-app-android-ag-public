@@ -7,9 +7,12 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
+import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.OUTSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeResponse
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
@@ -54,12 +57,17 @@ class LinkTestResultViewModel @Inject constructor(
                 showNotification = false
             )
         )
-        when (testResultResponse.testResult) {
+        logAnalytics(testResultResponse.testResult)
+        linkTestResultLiveData.postValue(Valid)
+    }
+
+    private suspend fun logAnalytics(result: VirologyTestResult) {
+        when (result) {
             POSITIVE -> analyticsEventProcessor.track(PositiveResultReceived)
             NEGATIVE -> analyticsEventProcessor.track(NegativeResultReceived)
             VOID -> analyticsEventProcessor.track(VoidResultReceived)
         }
-        linkTestResultLiveData.postValue(Valid)
+        analyticsEventProcessor.track(ResultReceived(result, OUTSIDE_APP))
     }
 
     sealed class LinkTestResultViewState {

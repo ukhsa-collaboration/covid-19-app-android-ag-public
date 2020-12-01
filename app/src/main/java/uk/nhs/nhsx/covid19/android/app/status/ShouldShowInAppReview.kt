@@ -1,7 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
-import com.jeroenmols.featureflag.framework.FeatureFlag
-import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
@@ -26,8 +24,6 @@ class ShouldShowInAppReview @Inject constructor(
 
         val daysBetween = ChronoUnit.DAYS.between(earliestVisit!!.from, latestVisit!!.from)
 
-        return daysBetween > 0 &&
-            RuntimeBehavior.isFeatureEnabled(FeatureFlag.IN_APP_REVIEW) &&
-            lastAppRatingStartedDateProvider.value == null
+        return daysBetween > 0 && lastAppRatingStartedDateProvider.value == null
     }
 }

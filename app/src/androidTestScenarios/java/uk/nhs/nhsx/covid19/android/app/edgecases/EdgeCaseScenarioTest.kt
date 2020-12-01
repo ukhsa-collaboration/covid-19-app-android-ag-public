@@ -66,6 +66,17 @@ class EdgeCaseScenarioTest : EspressoTest() {
         }
 
     @Test
+    fun openingHomeActivityWithLocationServicesDisabled_whenDeviceSupportsLocationlessScanning_shouldStayOnStatusActivity() =
+        notReported {
+            testAppContext.getExposureNotificationApi().setDeviceSupportsLocationlessScanning(true)
+            startTestActivity<StatusActivity>()
+
+            testAppContext.setLocationEnabled(false)
+
+            statusRobot.checkActivityIsDisplayed()
+        }
+
+    @Test
     fun openingHomeActivityWithLocationServicesDisabledThenEnableLocationServices_shouldNavigateBackToHomeActivity() =
         reporter(
             "Edge case",

@@ -68,7 +68,7 @@ class DownloadTasksWorker(
 
         val isOnboardingCompleted = onboardingCompletedProvider.value.defaultFalse()
         if (isOnboardingCompleted) {
-            submitAnalytics(isOnboardingAnalyticsEvent = false)
+            submitAnalytics()
         }
 
         getAvailabilityStatus()
@@ -77,14 +77,15 @@ class DownloadTasksWorker(
             return Result.failure()
         }
 
+        exposureNotificationWork()
         downloadAndProcessKeys()
         downloadVirologyTestResultWork()
         downloadRiskyPostCodesWork()
         downloadAndProcessRiskyVenues()
-        exposureNotificationWork()
 
         analyticsEventProcessor.track(BackgroundTaskCompletion)
 
+        Timber.d("Finishing DownloadTasksWorker")
         return Success.success()
     }
 

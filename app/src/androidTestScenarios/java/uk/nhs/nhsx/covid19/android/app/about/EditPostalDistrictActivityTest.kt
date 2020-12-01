@@ -1,20 +1,27 @@
 package uk.nhs.nhsx.covid19.android.app.about
 
-import org.awaitility.kotlin.await
-import org.awaitility.kotlin.until
+import com.jeroenmols.featureflag.framework.FeatureFlag
+import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
+import junit.framework.Assert.assertTrue
+import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.report.notReported
-import uk.nhs.nhsx.covid19.android.app.testhelpers.AWAIT_AT_MOST_SECONDS
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.EditPostalDistrictRobot
-import java.util.concurrent.TimeUnit.SECONDS
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
 
 class EditPostalDistrictActivityTest : EspressoTest() {
 
     private val editPostalDistrictRobot = EditPostalDistrictRobot()
+    private val localAuthorityRobot = LocalAuthorityRobot()
 
     private val invalidPostDistrictCode = "INV"
     private val validPostDistrictCode = "CM2"
+
+    @After
+    fun tearDown() {
+        FeatureFlagTestHelper.clearFeatureFlags()
+    }
 
     @Test
     fun editPostalDistrictScreenShows() = notReported {
@@ -44,11 +51,28 @@ class EditPostalDistrictActivityTest : EspressoTest() {
 
         editPostalDistrictRobot.clickSavePostDistrictCode()
 
-        editPostalDistrictRobot.checkInvalidPostDistrictErrorIsDisplayed()
+        waitFor { editPostalDistrictRobot.checkInvalidPostDistrictErrorIsDisplayed() }
     }
 
     @Test
-    fun clickSavePostDistrictCodeWhenCodeIsValid_finishesActivity() = notReported {
+    fun clickSavePostDistrictCodeWhenCodeIsValidAndLocalAuthorityFeatureFlagIsEnabled_opensLocalAuthorityActivity() = notReported {
+        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+
+        startTestActivity<EditPostalDistrictActivity>()
+
+        editPostalDistrictRobot.checkActivityIsDisplayed()
+
+        editPostalDistrictRobot.enterPostDistrictCode(validPostDistrictCode)
+
+        editPostalDistrictRobot.clickSavePostDistrictCode()
+
+        localAuthorityRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    fun clickSavePostDistrictCodeWhenCodeIsValidAndLocalAuthorityFeatureFlagIsDisabled_finishesActivity() = notReported {
+        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+
         val editPostalDistrictActivity = startTestActivity<EditPostalDistrictActivity>()
 
         editPostalDistrictRobot.checkActivityIsDisplayed()
@@ -57,9 +81,7 @@ class EditPostalDistrictActivityTest : EspressoTest() {
 
         editPostalDistrictRobot.clickSavePostDistrictCode()
 
-        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
-            editPostalDistrictActivity?.isDestroyed ?: false
-        }
+        waitFor { assertTrue(editPostalDistrictActivity?.isDestroyed ?: false) }
     }
 
     @Test

@@ -6,6 +6,7 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers
 
 import dagger.Component
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.di.ApplicationComponent
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
@@ -33,6 +34,9 @@ import javax.inject.Singleton
 interface TestAppComponent : ApplicationComponent {
     @Singleton
     fun getPostCodeProvider(): PostCodeProvider
+
+    @Singleton
+    fun getLocalAuthorityProvider(): LocalAuthorityProvider
 
     @Singleton
     fun getTestResultsProvider(): TestResultsProvider

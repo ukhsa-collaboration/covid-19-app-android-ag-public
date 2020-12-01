@@ -12,11 +12,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.observe
 import com.google.android.gms.common.api.Status
 import com.google.android.material.snackbar.Snackbar
-import com.jeroenmols.featureflag.framework.FeatureFlag
-import com.jeroenmols.featureflag.framework.FeatureFlag.HIGH_RISK_POST_DISTRICTS
-import com.jeroenmols.featureflag.framework.FeatureFlag.HIGH_RISK_VENUES
-import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_DIAGNOSIS
-import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.android.synthetic.main.activity_status.contactTracingActiveView
 import kotlinx.android.synthetic.main.activity_status.contactTracingStoppedView
 import kotlinx.android.synthetic.main.activity_status.contactTracingView
@@ -56,7 +51,6 @@ import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.IsolationExpirat
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.TestResult
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.VenueAlert
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState
-import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.OldRisk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Risk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
@@ -85,13 +79,17 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
 
     private lateinit var readAdviceUrl: String
 
+    /**
+     * Exposure notification dialog currently displayed, or null if none are displayed
+     */
+    private var currentExposureNotificationReminderDialog: ExposureNotificationReminderDialog? =
+        null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
         startListeningToViewState()
-
-        startListeningToExposureNotificationStopped()
 
         startListeningForInformationScreen()
 
@@ -109,9 +107,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
             exposureStatusViewModel.startExposureNotifications()
         }
 
-        if (RuntimeBehavior.isFeatureEnabled(FeatureFlag.IN_APP_REVIEW)) {
-            checkIfInAppReviewShouldBeDisplayed()
-        }
+        checkIfInAppReviewShouldBeDisplayed()
     }
 
     private fun startListeningForInformationScreen() {
@@ -128,19 +124,20 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         }
     }
 
-    private fun startListeningToExposureNotificationStopped() {
-        statusViewModel.onExposureNotificationStopped().observe(this) { canReceiveReminder ->
-            if (canReceiveReminder) {
-                showExposureNotificationReminderDialog()
-            }
-        }
-    }
-
     private fun startListeningToViewState() {
-        statusViewModel.viewState().observe(this) { viewState ->
+        statusViewModel.viewState.observe(this) { viewState ->
             readAdviceUrl = getString(viewState.latestAdviceUrl)
             handleIsolationState(viewState.isolationState)
             handleRiskyPostCodeViewState(viewState.areaRiskState)
+            handleReminderDialogState(viewState.showExposureNotificationReminderDialog)
+        }
+    }
+
+    private fun handleReminderDialogState(showExposureNotificationReminderDialog: Boolean) {
+        if (showExposureNotificationReminderDialog) {
+            showExposureNotificationReminderDialog()
+        } else {
+            dismissExposureNotificationReminderDialog()
         }
     }
 
@@ -161,7 +158,6 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         optionReportSymptoms.setOnClickListener {
             startActivity<QuestionnaireActivity>()
         }
-        optionReportSymptoms.isVisible = RuntimeBehavior.isFeatureEnabled(SELF_DIAGNOSIS)
 
         optionOrderTest.setOnClickListener {
             startActivity<TestOrderingActivity>()
@@ -170,7 +166,6 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         optionVenueCheckIn.setOnClickListener {
             QrScannerActivity.start(this)
         }
-        optionVenueCheckIn.isVisible = RuntimeBehavior.isFeatureEnabled(HIGH_RISK_VENUES)
 
         optionAboutTheApp.setOnClickListener {
             MoreAboutAppActivity.start(this)
@@ -191,7 +186,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         }
 
         riskAreaView.setOnClickListener {
-            statusViewModel.viewState().value?.let {
+            statusViewModel.viewState.value?.let {
                 RiskLevelActivity.start(this, it.areaRiskState)
             }
         }
@@ -204,32 +199,18 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
             }
             is Isolation -> {
                 isolationView.initialize(isolationState.isolationStart, isolationState.expiryDate)
-                optionOrderTest.isVisible =
-                    isolationState.canOrderTest && RuntimeBehavior.isFeatureEnabled(FeatureFlag.TEST_ORDERING)
-                optionReportSymptoms.isVisible = isolationState.canReportSymptoms &&
-                    RuntimeBehavior.isFeatureEnabled(SELF_DIAGNOSIS)
+                optionOrderTest.isVisible = isolationState.canOrderTest
+                optionReportSymptoms.isVisible = isolationState.canReportSymptoms
                 showIsolationView()
             }
         }
     }
 
     private fun handleRiskyPostCodeViewState(riskyPostCodeViewState: RiskyPostCodeViewState) {
-        if (!RuntimeBehavior.isFeatureEnabled(HIGH_RISK_POST_DISTRICTS)) {
-            return
-        }
         when (riskyPostCodeViewState) {
             is Risk -> {
                 riskAreaView.text = riskyPostCodeViewState.riskIndicator.name.translate()
                 riskAreaView.areaRisk = riskyPostCodeViewState.riskIndicator
-                riskAreaView.visible()
-            }
-            is OldRisk -> {
-                riskAreaView.text = getString(
-                    riskyPostCodeViewState.textResId,
-                    riskyPostCodeViewState.mainPostCode,
-                    getString(riskyPostCodeViewState.areaRiskLevelResId)
-                )
-                riskAreaView.oldAreaRisk = riskyPostCodeViewState.areaRisk.name
                 riskAreaView.visible()
             }
             is Unknown -> riskAreaView.gone()
@@ -246,8 +227,8 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         optionReadAdvice.text = getString(R.string.status_option_read_latest_advice)
         isolationView.gone()
         contactTracingView.visible()
+        optionReportSymptoms.visible()
         optionOrderTest.gone()
-        optionReportSymptoms.isVisible = RuntimeBehavior.isFeatureEnabled(SELF_DIAGNOSIS)
     }
 
     private fun startExposureNotifications() {
@@ -301,6 +282,14 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         unregisterReceiver(dateChangedReceiver)
     }
 
+    override fun onDestroy() {
+        // To avoid leaking the window
+        currentExposureNotificationReminderDialog?.setOnDismissListener { }
+        dismissExposureNotificationReminderDialog()
+
+        super.onDestroy()
+    }
+
     private fun handleError(message: String?) {
         Snackbar.make(statusContainer, message.toString(), Snackbar.LENGTH_SHORT).show()
     }
@@ -310,9 +299,20 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
     }
 
     private fun showExposureNotificationReminderDialog() {
-        ExposureNotificationReminderDialog(this) { duration ->
+        val dialog = ExposureNotificationReminderDialog(this) { duration ->
             exposureStatusViewModel.scheduleExposureNotificationReminder(duration)
-        }.show()
+        }
+        dialog.setOnDismissListener {
+            statusViewModel.onExposureNotificationReminderDialogDismissed()
+            currentExposureNotificationReminderDialog = null
+        }
+        currentExposureNotificationReminderDialog = dialog
+        dialog.show()
+    }
+
+    private fun dismissExposureNotificationReminderDialog() {
+        currentExposureNotificationReminderDialog?.dismiss()
+        currentExposureNotificationReminderDialog = null
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

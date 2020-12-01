@@ -4,6 +4,8 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertChecked
+import com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertUnchecked
 import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
@@ -42,6 +44,14 @@ class StatusRobot {
         clickOn(R.id.optionLinkTestResult)
     }
 
+    fun clickMoreAboutApp() {
+        clickOn(R.id.optionAboutTheApp)
+    }
+
+    fun clickEncounterDetectionSwitch() {
+        clickOn((R.id.optionContactTracing))
+    }
+
     fun checkScanQrCodeOptionIsNotDisplayed() {
         onView(withId(R.id.optionVenueCheckIn)).check(matches(not(isDisplayed())))
     }
@@ -52,5 +62,13 @@ class StatusRobot {
 
     fun checkIsolationViewIsNotDisplayed() {
         onView(withId(R.id.isolationView)).check(matches(not(isDisplayed())))
+    }
+
+    fun checkEncounterDetectionSwitchIsChecked() {
+        assertChecked(R.id.encounterDetectionSwitch)
+    }
+
+    fun checkEncounterDetectionSwitchIsNotChecked() {
+        assertUnchecked(R.id.encounterDetectionSwitch)
     }
 }

@@ -49,30 +49,42 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
     }
 
     @Test
-    fun `updates the state history when state expiration date is outdated`() = runBlocking {
+    fun `clears old test results when in default state without previous isolation`() = runBlocking {
+        every { stateStorage.state } returns Default()
+
+        testSubject.doWork()
+
+        val retentionPeriod = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
+        val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
+        verify { testResultsProvider.clearBefore(expectedDate) }
+    }
+
+    @Test
+    fun `keeps test result when state expiration date is outdated`() = runBlocking {
         every { stateStorage.state } returns getIndexCase(isOutdated = true)
 
         testSubject.doWork()
 
-        verify { testResultsProvider.clear() }
+        verify(exactly = 0) { testResultsProvider.clearBefore(any()) }
     }
 
     @Test
-    fun `keeps the state history and test result when previous state expiration date in default state is not outdated`() = runBlocking {
+    fun `keeps test result when previous state expiration date in default state is not outdated`() = runBlocking {
         every { stateStorage.state } returns getDefaultState(false)
 
         testSubject.doWork()
 
-        verify(exactly = 0) { testResultsProvider.clear() }
+        verify(exactly = 0) { testResultsProvider.clearBefore(any()) }
     }
 
     @Test
-    fun `keeps the state history and test result when  in default state and previous isolation state is outdated`() = runBlocking {
-        every { stateStorage.state } returns getDefaultState(true)
+    fun `clears test result when in default state and previous isolation state is outdated`() = runBlocking {
+        val state = getDefaultState(true)
+        every { stateStorage.state } returns state
 
         testSubject.doWork()
 
-        verify { testResultsProvider.clear() }
+        verify { testResultsProvider.clearBefore(state.previousIsolation!!.expiryDate) }
     }
 
     @Test
@@ -88,7 +100,8 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
             isolationConfiguration = DurationDays(),
             indexCase = IndexCase(
                 symptomsOnsetDate = LocalDate.now(fixedClock).minusDays(17),
-                expiryDate = LocalDate.now(fixedClock).minusDays(if (isOutdated) 15 else 7)
+                expiryDate = LocalDate.now(fixedClock).minusDays(if (isOutdated) 15 else 7),
+                selfAssessment = true
             )
         )
 

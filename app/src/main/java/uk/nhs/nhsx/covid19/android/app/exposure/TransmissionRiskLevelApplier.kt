@@ -40,9 +40,8 @@ class TransmissionRiskLevelApplier @Inject constructor(
         val latestIsolation = when (val state = stateMachine.readState()) {
             is Isolation -> state
             is Default -> state.previousIsolation
-        } ?: throw Exception("Invalid isolation state")
-        val indexCase = latestIsolation.indexCase ?: throw Exception("Could not find index case")
-        return indexCase.symptomsOnsetDate
+        }
+        return latestIsolation?.indexCase?.symptomsOnsetDate ?: LocalDate.MIN
     }
 
     private fun NHSTemporaryExposureKey.date(): LocalDate {

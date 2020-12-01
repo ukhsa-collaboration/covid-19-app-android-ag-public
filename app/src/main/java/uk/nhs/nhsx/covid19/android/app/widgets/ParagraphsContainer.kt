@@ -7,9 +7,11 @@ package uk.nhs.nhsx.covid19.android.app.widgets
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 
 class ParagraphsContainer @JvmOverloads constructor(
     context: Context,
@@ -38,13 +40,24 @@ class ParagraphsContainer @JvmOverloads constructor(
 
     fun addAllParagraphs(vararg paragraphs: String) {
         removeAllViews()
-        paragraphs.forEach { addParagraph(it) }
+        for ((index, paragraph) in paragraphs.withIndex()) {
+            addParagraph(index, paragraph)
+        }
     }
 
-    private fun addParagraph(text: String): ParagraphsContainer {
+    private fun addParagraph(index: Int, text: String): ParagraphsContainer {
         val view = inflateTextView()
         view.text = text
         addView(view)
+
+        if (index > 0) {
+            val layoutParams = LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            layoutParams.setMargins(0, 16.dpToPx.toInt(), 0, 0)
+            view.layoutParams = layoutParams
+        }
         return this
     }
 

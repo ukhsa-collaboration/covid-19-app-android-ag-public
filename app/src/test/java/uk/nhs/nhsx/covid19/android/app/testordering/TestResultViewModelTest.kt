@@ -58,7 +58,7 @@ class TestResultViewModelTest {
     private val isolationStateIndexCaseOnly = Isolation(
         isolationStart = symptomsOnsetDate.atStartOfDay(ZoneOffset.UTC).toInstant(),
         isolationConfiguration = DurationDays(),
-        indexCase = IndexCase(LocalDate.now(), expiryDate = symptomsOnsetDate.plus(7, ChronoUnit.DAYS))
+        indexCase = IndexCase(LocalDate.now(), expiryDate = symptomsOnsetDate.plus(7, ChronoUnit.DAYS), selfAssessment = false)
     )
 
     private val positiveTestResult = ReceivedTestResult(

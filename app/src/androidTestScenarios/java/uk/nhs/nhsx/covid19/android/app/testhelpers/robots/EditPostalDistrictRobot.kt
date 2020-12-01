@@ -14,12 +14,12 @@ import java.lang.Thread.sleep
 class EditPostalDistrictRobot {
 
     fun checkActivityIsDisplayed() {
-        onView(withId(R.id.savePostCode))
+        onView(withId(R.id.continuePostCode))
             .check(matches(isDisplayed()))
     }
 
     fun clickSavePostDistrictCode() {
-        clickOn(R.id.savePostCode)
+        clickOn(R.id.continuePostCode)
     }
 
     fun checkErrorContainerForNotSupportedPostCodeIsDisplayed() {

@@ -91,6 +91,10 @@ class GoogleExposureNotificationApi(context: Context) : ExposureNotificationApi 
         }
     }
 
+    override fun deviceSupportsLocationlessScanning(): Boolean {
+        return exposureNotificationClient.deviceSupportsLocationlessScanning()
+    }
+
     private fun TemporaryExposureKey.toNHSTemporaryExposureKey(): NHSTemporaryExposureKey =
         NHSTemporaryExposureKey(
             key = Base64.encodeToString(keyData, Base64.NO_WRAP),

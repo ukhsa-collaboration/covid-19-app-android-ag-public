@@ -36,7 +36,7 @@ class StateStorageSerializationTest {
         val defaultJson = DefaultJson(
             previousIsolation = PreviousIsolationJson(
                 isolationStart = Instant.now(), expiryDate = LocalDate.now(),
-                indexCase = IndexCase(LocalDate.now(), LocalDate.now()),
+                indexCase = IndexCase(LocalDate.now(), LocalDate.now(), false),
                 contactCase = ContactCase(Instant.now(), LocalDate.now()),
                 isolationConfiguration = DurationDays()
             )
@@ -56,7 +56,8 @@ class StateStorageSerializationTest {
             expiryDate,
             indexCase = IndexCaseJson(
                 LocalDate.parse("2020-08-08"),
-                expiryDate
+                expiryDate,
+                true
             ),
             contactCase = ContactCaseJson(Instant.now().minus(1, DAYS), expiryDate),
             isolationConfiguration = DurationDays()

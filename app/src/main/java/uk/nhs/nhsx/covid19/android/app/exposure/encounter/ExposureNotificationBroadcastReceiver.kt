@@ -13,6 +13,9 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver() {
     @Inject
     lateinit var exposureNotificationsTokensProvider: ExposureNotificationTokensProvider
 
+    @Inject
+    lateinit var exposureNotificationWorkerScheduler: ExposureNotificationWorkerScheduler
+
     override fun onReceive(context: Context, intent: Intent) {
         context.appComponent.inject(this)
 
@@ -22,7 +25,7 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver() {
         Timber.d("onReceive: token = $token")
         if (ExposureNotificationClient.ACTION_EXPOSURE_STATE_UPDATED == action) {
             exposureNotificationsTokensProvider.add(token)
-            ExposureNotificationWorker.schedule(context)
+            exposureNotificationWorkerScheduler.schedule(context, token)
         }
     }
 }

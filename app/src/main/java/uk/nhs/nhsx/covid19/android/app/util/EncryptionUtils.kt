@@ -18,7 +18,6 @@ import androidx.security.crypto.MasterKeys
 import timber.log.Timber
 import java.io.File
 import java.io.OutputStreamWriter
-import java.security.SecureRandom
 
 data class EncryptedFileInfo(
     val file: File,
@@ -30,7 +29,6 @@ object EncryptionUtils {
     internal const val KEYSET_PREF_NAME = "__androidx_security_crypto_encrypted_file_pref__"
     private const val STRONGBOX_KEYSET_PREF_NAME =
         "__androidx_security_crypto_encrypted_file_strongbox_pref__"
-    private val secureRandom = SecureRandom()
 
     fun createEncryptedFile(
         context: Context,
@@ -95,25 +93,6 @@ object EncryptionUtils {
     @VisibleForTesting
     internal fun hasStrongBox(context: Context) = Build.VERSION.SDK_INT >= 28 &&
         context.packageManager.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
-
-    fun <T> retryOnException(
-        times: Int = 5,
-        factor: Double = 2.0,
-        maxDelay: Long = 1_000,
-        function: () -> T
-    ): T {
-        var currentDelay = 100L
-        repeat(times - 1) {
-            try {
-                return function()
-            } catch (e: Exception) {
-                // See https://issuetracker.google.com/issues/158234058
-                Thread.sleep(currentDelay)
-                currentDelay = (currentDelay * factor + secureRandom.nextInt(100)).toLong().coerceAtMost(maxDelay)
-            }
-        }
-        return function()
-    }
 
     fun createEncryptedSharedPreferences(context: Context): SharedPreferences {
         return if (hasStrongBox(context)) {

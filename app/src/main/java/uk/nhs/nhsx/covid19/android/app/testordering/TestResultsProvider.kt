@@ -9,10 +9,12 @@ import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import java.lang.reflect.Type
 import java.time.Clock
 import java.time.Instant
+import java.time.LocalDate
 import javax.inject.Inject
 
 class TestResultsProvider(
@@ -82,8 +84,12 @@ class TestResultsProvider(
         testResults = updatedList
     }
 
-    fun clear() = synchronized(lock) {
-        testResultsStorage.value = null
+    fun clearBefore(date: LocalDate) = synchronized(lock) {
+        val updatedList = testResults.toMutableMap().filterValues {
+            testResult ->
+            testResult.acknowledgedDate?.let { !it.atZone(clock.zone).toLocalDate().isBefore(date) } ?: true
+        }
+        testResults = updatedList
     }
 
     fun acknowledge(testResult: ReceivedTestResult) = synchronized(lock) {
@@ -104,9 +110,12 @@ class TestResultsProvider(
 
     fun getLastTestResult(): ReceivedTestResult? = synchronized(lock) {
         testResults.values
-            .filter { it.acknowledgedDate != null }
-            .sortedBy { it.acknowledgedDate }
-            .lastOrNull()
+            .filter { it.acknowledgedDate != null }.maxBy { it.acknowledgedDate!! }
+    }
+
+    fun getLastNonVoidTestResult(): ReceivedTestResult? = synchronized(lock) {
+        testResults.values
+            .filter { it.acknowledgedDate != null && it.testResult != VOID }.maxBy { it.acknowledgedDate!! }
     }
 
     fun find(submissionToken: String): ReceivedTestResult? =

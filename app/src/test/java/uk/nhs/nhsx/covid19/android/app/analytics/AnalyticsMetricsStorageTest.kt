@@ -83,13 +83,21 @@ class AnalyticsMetricsStorageTest {
         receivedNegativeTestResult = 12,
         receivedPositiveTestResult = 13,
         receivedVoidTestResult = 14,
-        runningNormallyBackgroundTick = 15,
-        totalBackgroundTasks = 16
+        receivedNegativeTestResultEnteredManually = 15,
+        receivedNegativeTestResultViaPolling = 16,
+        receivedPositiveTestResultEnteredManually = 17,
+        receivedPositiveTestResultViaPolling = 18,
+        receivedVoidTestResultEnteredManually = 19,
+        receivedVoidTestResultViaPolling = 20,
+        runningNormallyBackgroundTick = 21,
+        totalBackgroundTasks = 22,
+        hasSelfDiagnosedBackgroundTick = 23,
+        hasTestedPositiveBackgroundTick = 24,
+        isIsolatingForSelfDiagnosedBackgroundTick = 25,
+        isIsolatingForTestedPositiveBackgroundTick = 26,
+        isIsolatingForHadRiskyContactBackgroundTick = 27
     )
 
     private val metricsJson =
-        """{"canceledCheckIn":1,"checkedIn":2,"completedOnboarding":3,"completedQuestionnaireAndStartedIsolation":4,"completedQuestionnaireButDidNotStartIsolation":5,"cumulativeDownloadBytes":6,"cumulativeUploadBytes":7,"encounterDetectionPausedBackgroundTick":8,"hasHadRiskyContactBackgroundTick":9,"hasSelfDiagnosedPositiveBackgroundTick":10,"isIsolatingBackgroundTick":11,"receivedNegativeTestResult":12,"receivedPositiveTestResult":13,"receivedVoidTestResult":14,"runningNormallyBackgroundTick":15,"totalBackgroundTasks":16}"""
-
-    private val resetMetricsJson =
-        """{"canceledCheckIn":0,"checkedIn":0,"completedOnboarding":0,"completedQuestionnaireAndStartedIsolation":0,"completedQuestionnaireButDidNotStartIsolation":0,"cumulativeDownloadBytes":6,"cumulativeUploadBytes":7,"encounterDetectionPausedBackgroundTick":0,"hasHadRiskyContactBackgroundTick":0,"hasSelfDiagnosedPositiveBackgroundTick":0,"isIsolatingBackgroundTick":0,"receivedNegativeTestResult":0,"receivedPositiveTestResult":0,"receivedVoidTestResult":0,"runningNormallyBackgroundTick":0,"totalBackgroundTasks":0}"""
+        """{"canceledCheckIn":1,"checkedIn":2,"completedOnboarding":3,"completedQuestionnaireAndStartedIsolation":4,"completedQuestionnaireButDidNotStartIsolation":5,"cumulativeDownloadBytes":6,"cumulativeUploadBytes":7,"encounterDetectionPausedBackgroundTick":8,"hasHadRiskyContactBackgroundTick":9,"hasSelfDiagnosedPositiveBackgroundTick":10,"isIsolatingBackgroundTick":11,"receivedNegativeTestResult":12,"receivedPositiveTestResult":13,"receivedVoidTestResult":14,"receivedVoidTestResultEnteredManually":19,"receivedPositiveTestResultEnteredManually":17,"receivedNegativeTestResultEnteredManually":15,"receivedVoidTestResultViaPolling":20,"receivedPositiveTestResultViaPolling":18,"receivedNegativeTestResultViaPolling":16,"runningNormallyBackgroundTick":21,"totalBackgroundTasks":22,"hasSelfDiagnosedBackgroundTick":23,"hasTestedPositiveBackgroundTick":24,"isIsolatingForSelfDiagnosedBackgroundTick":25,"isIsolatingForTestedPositiveBackgroundTick":26,"isIsolatingForHadRiskyContactBackgroundTick":27}"""
 }

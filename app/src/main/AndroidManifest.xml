@@ -2,13 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="uk.nhs.nhsx.covid19.android.app">
 
-    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
     <uses-feature android:name="android.hardware.bluetooth" />
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
         android:name=".ExposureApplication"
@@ -16,6 +19,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_config"
+        android:resizeableActivity="false"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Launcher"
@@ -30,8 +34,7 @@
             android:authorities="${applicationId}.workmanager-init"
             tools:node="remove" />
 
-        <activity
-            android:name=".MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -77,6 +80,9 @@
         <activity android:name=".status.IsolationPaymentActivity" />
         <activity android:name=".availability.UpdateRecommendedActivity" />
         <activity android:name=".onboarding.PolicyUpdateActivity" />
+        <activity android:name=".common.postcode.LocalAuthorityActivity" />
+        <activity android:name=".common.postcode.LocalAuthorityInformationActivity" />
+        <activity android:name=".battery.BatteryOptimizationActivity" />
 
         <!-- Receivers -->
         <receiver
@@ -91,7 +97,7 @@
 
         <receiver android:name=".receiver.ExpirationCheckReceiver" />
         <receiver android:name=".receiver.ExposureNotificationReminderReceiver" />
-        <receiver android:name=".analytics.AnalyticsAggregatorReceiver"/>
+        <receiver android:name=".analytics.AnalyticsAggregatorReceiver" />
         <receiver android:name=".receiver.AlarmRestarter">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

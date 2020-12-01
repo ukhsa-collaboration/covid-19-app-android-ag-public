@@ -13,6 +13,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.VenueVisitsUiState
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthority
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodes
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodesLoader
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -23,47 +27,50 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
 import java.time.Instant
 
 class UserDataViewModelTest {
+
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val postCodeProvider = mockk<PostCodeProvider>(relaxed = true)
+    private val localAuthorityProvider = mockk<LocalAuthorityProvider>(relaxed = true)
     private val venuesStorage = mockk<VisitedVenuesStorage>(relaxed = true)
     private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val testResultsProvider = mockk<TestResultsProvider>(relaxed = true)
+    private val localAuthorityPostCodesLoader = mockk<LocalAuthorityPostCodesLoader>(relaxed = true)
     private val sharedPreferences = mockk<SharedPreferences>()
     private val sharedPreferencesEditor = mockk<SharedPreferences.Editor>()
     private val sharedPreferencesDeletedDataEditor = mockk<SharedPreferences.Editor>(relaxed = true)
 
     private val testSubject = UserDataViewModel(
         postCodeProvider,
+        localAuthorityProvider,
         venuesStorage,
         stateMachine,
         testResultsProvider,
-        sharedPreferences
+        sharedPreferences,
+        localAuthorityPostCodesLoader
     )
 
-    private val postCodeObserver = mockk<Observer<String>>(relaxed = true)
+    private val localAuthorityTextObserver = mockk<Observer<String>>(relaxed = true)
     private val venueVisitsObserver = mockk<Observer<VenueVisitsUiState>>(relaxed = true)
     private val stateMachineStateObserver = mockk<Observer<State>>(relaxed = true)
     private val latestTestResultObserver = mockk<Observer<ReceivedTestResult>>(relaxed = true)
     private val allUserDataDeletedObserver = mockk<Observer<Unit>>(relaxed = true)
 
+    private val postCode = "CM1"
+    private val localAuthorityId = "SE00001"
+    private val postCodeLocalAuthorities = listOf(localAuthorityId)
+    private val localAuthority = LocalAuthority(name = "Something", country = "Somewhere")
+
+    private val localAuthorityPostCodes = LocalAuthorityPostCodes(
+        postcodes = mapOf(postCode to postCodeLocalAuthorities),
+        localAuthorities = mapOf(postCodeLocalAuthorities[0] to localAuthority)
+    )
+
     @Before
     fun setUp() {
         coEvery { venuesStorage.getVisits() } returns listOf()
-    }
-
-    @Test
-    fun `post code updated`() = runBlocking {
-
-        val code = "SD12"
-        coEvery { postCodeProvider.value } returns code
-
-        testSubject.getPostCode().observeForever(postCodeObserver)
-
-        testSubject.loadUserData()
-
-        verify { postCodeObserver.onChanged(code) }
+        coEvery { localAuthorityPostCodesLoader.load() } returns localAuthorityPostCodes
     }
 
     @Test
@@ -90,7 +97,7 @@ class UserDataViewModelTest {
     fun `latest test result state updated`() = runBlocking {
         val latestTestResult = ReceivedTestResult("token", Instant.now(), POSITIVE)
 
-        every { testResultsProvider.getLastTestResult() } returns latestTestResult
+        every { testResultsProvider.getLastNonVoidTestResult() } returns latestTestResult
 
         testSubject.getReceivedTestResult().observeForever(latestTestResultObserver)
 
@@ -152,5 +159,29 @@ class UserDataViewModelTest {
         testSubject.loadUserData()
 
         verify { venueVisitsObserver.onChanged(VenueVisitsUiState(listOf(), isInEditMode = true)) }
+    }
+
+    @Test
+    fun `loading user data returns local authority and main post code when local authority is stored`() {
+        testSubject.localAuthorityText().observeForever(localAuthorityTextObserver)
+
+        every { localAuthorityProvider.value } returns localAuthorityId
+        every { postCodeProvider.value } returns postCode
+
+        testSubject.loadUserData()
+
+        verify { localAuthorityTextObserver.onChanged("${localAuthority.name}\n$postCode") }
+    }
+
+    @Test
+    fun `loading user data only returns main post code when local authority is not stored`() {
+        testSubject.localAuthorityText().observeForever(localAuthorityTextObserver)
+
+        every { localAuthorityProvider.value } returns null
+        every { postCodeProvider.value } returns postCode
+
+        testSubject.loadUserData()
+
+        verify { localAuthorityTextObserver.onChanged(postCode) }
     }
 }

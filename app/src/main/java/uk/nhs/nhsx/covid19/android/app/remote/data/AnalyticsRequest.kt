@@ -40,6 +40,17 @@ data class Metrics(
     var receivedNegativeTestResult: Int = 0,
     var receivedPositiveTestResult: Int = 0,
     var receivedVoidTestResult: Int = 0,
+    var receivedVoidTestResultEnteredManually: Int = 0,
+    var receivedPositiveTestResultEnteredManually: Int = 0,
+    var receivedNegativeTestResultEnteredManually: Int = 0,
+    var receivedVoidTestResultViaPolling: Int = 0,
+    var receivedPositiveTestResultViaPolling: Int = 0,
+    var receivedNegativeTestResultViaPolling: Int = 0,
     var runningNormallyBackgroundTick: Int = 0,
-    var totalBackgroundTasks: Int = 0
+    var totalBackgroundTasks: Int = 0,
+    var hasSelfDiagnosedBackgroundTick: Int = 0,
+    var hasTestedPositiveBackgroundTick: Int = 0,
+    var isIsolatingForSelfDiagnosedBackgroundTick: Int = 0,
+    var isIsolatingForTestedPositiveBackgroundTick: Int = 0,
+    var isIsolatingForHadRiskyContactBackgroundTick: Int = 0
 )

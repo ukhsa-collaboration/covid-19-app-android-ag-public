@@ -28,7 +28,11 @@ class DataAndPrivacyActivity : BaseActivity(R.layout.activity_data_and_privacy) 
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
-        setNavigateUpToolbar(toolbar as MaterialToolbar, R.string.empty)
+        setNavigateUpToolbar(
+            toolbar as MaterialToolbar,
+            R.string.empty,
+            upIndicator = R.drawable.ic_arrow_back_primary
+        )
 
         buttonAgree.setOnClickListener {
             viewModel.markPolicyAccepted()

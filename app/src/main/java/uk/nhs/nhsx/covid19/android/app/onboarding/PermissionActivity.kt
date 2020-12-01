@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_permission.permissionContinue
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationActivity
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableExposureNotificationsActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
@@ -19,9 +20,12 @@ import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.Error
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.ResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.Success
+import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionViewModel.NavigationTarget.BATTERY_OPTIMIZATION
+import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionViewModel.NavigationTarget.STATUS_ACTIVITY
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.ExposureStatusViewModel
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
 class PermissionActivity : BaseActivity(R.layout.activity_permission) {
@@ -38,14 +42,18 @@ class PermissionActivity : BaseActivity(R.layout.activity_permission) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
-        permissionContinue.setOnClickListener {
+        permissionContinue.setOnSingleClickListener {
+            permissionContinue.isEnabled = false
             exposureStatusViewModel.startExposureNotifications()
         }
 
         startObservingExposureNotificationActivation()
 
-        permissionViewModel.onboardingCompleted().observe(this) {
-            StatusActivity.start(this)
+        permissionViewModel.onActivityNavigation().observe(this) { navigationTarget ->
+            when (navigationTarget) {
+                BATTERY_OPTIMIZATION -> startActivity<BatteryOptimizationActivity>()
+                STATUS_ACTIVITY -> StatusActivity.start(this)
+            }
         }
     }
 
@@ -57,10 +65,11 @@ class PermissionActivity : BaseActivity(R.layout.activity_permission) {
                     is ResolutionRequired ->
                         handleResolution(viewState.status)
                     Success ->
-                        permissionViewModel.setOnboardingCompleted()
+                        permissionViewModel.onExposureNotificationsActive()
                     is Error ->
                         handleError(viewState.exception)
                 }
+                permissionContinue.isEnabled = true
             }
         )
     }

@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.common
 
-import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.every
 import io.mockk.mockk
@@ -110,8 +109,6 @@ class SignatureValidationInterceptorTest {
 
     @Test
     fun analyticsSubmissionEndpointSignatureMustNotBeChecked() {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.SIGNATURE_VALIDATION)
-
         val sut = SignatureValidationInterceptor(
             Java8Base64Decoder(),
             signatureKeys,
@@ -139,8 +136,6 @@ class SignatureValidationInterceptorTest {
 
     @Test
     fun verificationPassesForCorrectHeaderForDynamicContent() {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.SIGNATURE_VALIDATION)
-
         val sut = SignatureValidationInterceptor(
             Java8Base64Decoder(),
             signatureKeys,
@@ -165,8 +160,6 @@ class SignatureValidationInterceptorTest {
 
     @Test
     fun verificationPassesForCorrectHeaderForStaticContent() {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.SIGNATURE_VALIDATION)
-
         val sut = SignatureValidationInterceptor(
             Java8Base64Decoder(),
             signatureKeys,
@@ -191,8 +184,6 @@ class SignatureValidationInterceptorTest {
 
     @Test(expected = IOException::class)
     fun verificationFailsForWrongMessage() {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.SIGNATURE_VALIDATION)
-
         val sut = SignatureValidationInterceptor(
             Java8Base64Decoder(),
             signatureKeys,
@@ -217,8 +208,6 @@ class SignatureValidationInterceptorTest {
 
     @Test(expected = IOException::class)
     fun verificationFailsIfNoHeaderIsSet() {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.SIGNATURE_VALIDATION)
-
         val request = createRequest()
 
         val response = createResponse(
@@ -234,8 +223,6 @@ class SignatureValidationInterceptorTest {
 
     @Test(expected = IOException::class)
     fun verificationFailsIfHeaderIsMalformed() {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.SIGNATURE_VALIDATION)
-
         val request = createRequest()
 
         val response = createResponse(
@@ -254,8 +241,6 @@ class SignatureValidationInterceptorTest {
 
     @Test(expected = IOException::class)
     fun verificationFailsForHeaderWithWrongKeyId() {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.SIGNATURE_VALIDATION)
-
         val request = createRequest()
 
         val response = createResponse(
@@ -274,8 +259,6 @@ class SignatureValidationInterceptorTest {
 
     @Test(expected = IOException::class)
     fun verificationFailsIfHeaderNamesWrong() {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.SIGNATURE_VALIDATION)
-
         val request = createRequest()
 
         val response = createResponse(
@@ -294,8 +277,6 @@ class SignatureValidationInterceptorTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun verificationFailsIfHeaderPartSignatureWrong() {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.SIGNATURE_VALIDATION)
-
         val request = createRequest()
 
         val response = createResponse(
@@ -310,28 +291,6 @@ class SignatureValidationInterceptorTest {
         val chain = createChainMock(request, response)
 
         sut.intercept(chain)
-    }
-
-    @Test
-    fun whenFeatureIsDisabledOriginalResponseIsReturned() {
-        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.SIGNATURE_VALIDATION)
-
-        val request = createRequest()
-
-        val response = createResponse(
-            request,
-            listOf(
-                Pair("x-amz-meta-signature", headerWithMalformedSignature),
-                Pair("x-amz-meta-signature-date", dynamicSignatureDateHeader)
-            ),
-            null
-        )
-
-        val chain = createChainMock(request, response)
-
-        val result = sut.intercept(chain)
-
-        assertEquals(response, result)
     }
 
     private fun createRequest(): Request {

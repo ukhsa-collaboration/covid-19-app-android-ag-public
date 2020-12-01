@@ -19,9 +19,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.NEUTRAL
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.RED
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.YELLOW
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.HIGH
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.LOW
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.MEDIUM
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getThemeColor
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getThemeDrawableResId
@@ -42,12 +39,6 @@ class AreaRiskView @JvmOverloads constructor(
         set(value) {
             field = value
             setAreaRiskStyle(areaRisk)
-        }
-
-    var oldAreaRisk: String? = null
-        set(value) {
-            field = value
-            setOldAreaRiskIndicator(oldAreaRisk)
         }
 
     init {
@@ -82,15 +73,6 @@ class AreaRiskView @JvmOverloads constructor(
             YELLOW -> setYellow()
             AMBER -> setAmber()
             RED -> setRed()
-        }
-    }
-
-    private fun setOldAreaRiskIndicator(areaRisk: String?) {
-        when (areaRisk) {
-            LOW.name -> setGreen()
-            MEDIUM.name -> setYellow()
-            HIGH.name -> setRed()
-            else -> areaRiskIndicator.setImageDrawable(null)
         }
     }
 

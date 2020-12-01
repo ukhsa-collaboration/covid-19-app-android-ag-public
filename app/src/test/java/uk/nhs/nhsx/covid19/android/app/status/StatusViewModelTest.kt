@@ -3,8 +3,9 @@ package uk.nhs.nhsx.covid19.android.app.status
 import android.content.SharedPreferences
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.jeroenmols.featureflag.framework.FeatureFlag.TEST_ORDERING
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -25,9 +26,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.HIGH
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.LOW
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.MEDIUM
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
@@ -35,7 +33,6 @@ import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.ExposureConsent
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.IsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.TestResult
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.VenueAlert
-import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.OldRisk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Risk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.ViewState
@@ -61,7 +58,6 @@ class StatusViewModelTest {
 
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
     private val showInformationScreenObserver = mockk<Observer<InformationScreen>>(relaxed = true)
-    private val canReceiveReminderObserver = mockk<Observer<Boolean>>(relaxed = true)
 
     private val testSubject =
         StatusViewModel(
@@ -86,7 +82,8 @@ class StatusViewModelTest {
             )
         ),
         linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-        linkUrl = Translatable(mapOf("en" to "https://a.b.c"))
+        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+        policyData = null
     )
 
     private val mediumRiskyPostCodeIndicator = RiskIndicator(
@@ -99,7 +96,8 @@ class StatusViewModelTest {
             )
         ),
         linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-        linkUrl = Translatable(mapOf("en" to "https://a.b.c"))
+        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+        policyData = null
     )
 
     private val highRiskyPostCodeIndicator = RiskIndicator(
@@ -112,28 +110,34 @@ class StatusViewModelTest {
             )
         ),
         linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-        linkUrl = Translatable(mapOf("en" to "https://a.b.c"))
+        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+        policyData = null
     )
 
     private val lowRisk = Risk(
         mainPostCode = "A1",
-        riskIndicator = lowRiskyPostCodeIndicator
+        riskIndicator = lowRiskyPostCodeIndicator,
+        riskLevelFromLocalAuthority = false
     )
 
     private val mediumRisk = Risk(
         mainPostCode = "A1",
-        riskIndicator = mediumRiskyPostCodeIndicator
+        riskIndicator = mediumRiskyPostCodeIndicator,
+        riskLevelFromLocalAuthority = false
     )
 
     private val highRisk = Risk(
         mainPostCode = "A1",
-        riskIndicator = highRiskyPostCodeIndicator
+        riskIndicator = highRiskyPostCodeIndicator,
+        riskLevelFromLocalAuthority = false
     )
 
     private val defaultViewState = ViewState(
+        currentDate = LocalDate.now(),
         areaRiskState = mediumRisk,
         isolationState = DEFAULT_ISOLATION_STATE,
-        latestAdviceUrl = DEFAULT_LATEST_ADVICE_URL_RES_ID
+        latestAdviceUrl = DEFAULT_LATEST_ADVICE_URL_RES_ID,
+        showExposureNotificationReminderDialog = false
     )
 
     @Before
@@ -145,16 +149,15 @@ class StatusViewModelTest {
         )
         every { userInbox.fetchInbox() } returns DEFAULT_INFORMATION_SCREEN_STATE
         every { isolationStateMachine.readState() } returns DEFAULT_ISOLATION_STATE
-        every { districtAreaUrlProvider.provide(any()) } returns DEFAULT_LATEST_ADVICE_URL_RES_ID
+        coEvery { districtAreaUrlProvider.provide(any()) } returns DEFAULT_LATEST_ADVICE_URL_RES_ID
 
-        testSubject.viewState().observeForever(viewStateObserver)
+        testSubject.viewState.observeForever(viewStateObserver)
         testSubject.showInformationScreen().observeForever(showInformationScreenObserver)
-        testSubject.onExposureNotificationStopped().observeForever(canReceiveReminderObserver)
     }
 
     @After
     fun tearDown() {
-        testSubject.viewState().removeObserver(viewStateObserver)
+        testSubject.viewState.removeObserver(viewStateObserver)
         FeatureFlagTestHelper.clearFeatureFlags()
     }
 
@@ -226,11 +229,11 @@ class StatusViewModelTest {
         val isolationState = Isolation(Instant.now(), DurationDays())
 
         every { isolationStateMachine.readState() } returns isolationState
-        every { districtAreaUrlProvider.provide(R.string.url_latest_advice_in_isolation) } returns 0
+        coEvery { districtAreaUrlProvider.provide(R.string.url_latest_advice_in_isolation) } returns 0
 
         testSubject.updateViewState()
 
-        verify { districtAreaUrlProvider.provide(R.string.url_latest_advice_in_isolation) }
+        coVerify { districtAreaUrlProvider.provide(R.string.url_latest_advice_in_isolation) }
 
         verify {
             viewStateObserver.onChanged(
@@ -274,12 +277,23 @@ class StatusViewModelTest {
     }
 
     @Test
-    fun `on stop exposure notification clicked check if reminder can be received`() {
+    fun `on stop exposure notification clicked show exposure notification reminder dialog if notification is allowed`() {
         every { notificationProvider.canSendNotificationToChannel(any()) } returns true
 
+        testSubject.updateViewState()
         testSubject.onStopExposureNotificationsClicked()
 
-        verify { canReceiveReminderObserver.onChanged(true) }
+        verify { viewStateObserver.onChanged(defaultViewState.copy(showExposureNotificationReminderDialog = true)) }
+    }
+
+    @Test
+    fun `on stop exposure notification clicked do show exposure notification reminder dialog if notification is not allowed`() {
+        every { notificationProvider.canSendNotificationToChannel(any()) } returns false
+
+        testSubject.updateViewState()
+        testSubject.onStopExposureNotificationsClicked()
+
+        verify { viewStateObserver.onChanged(defaultViewState) }
     }
 
     @Test
@@ -292,9 +306,9 @@ class StatusViewModelTest {
     }
 
     @Test
-    fun `risky post code indicator has neither old nor new risk set`() {
+    fun `risky post code indicator has no risk set`() {
         every { postCodeIndicatorProvider.riskyPostCodeIndicator } returns
-            RiskIndicatorWrapper("medium", null, null)
+            RiskIndicatorWrapper("medium", null)
 
         testSubject.updateViewState()
 
@@ -302,51 +316,16 @@ class StatusViewModelTest {
     }
 
     @Test
-    fun `risky post code indicator has only old risk set with risk level low`() {
-        every { postCodeIndicatorProvider.riskyPostCodeIndicator } returns
-            RiskIndicatorWrapper("low", null, LOW)
+    fun `update view state on date change`() {
+        val today = LocalDate.now()
+        val tomorrow = today.plusDays(1)
 
-        testSubject.updateViewState()
+        testSubject.updateViewState(today)
+        testSubject.updateViewState(today)
+        testSubject.updateViewState(tomorrow)
 
-        verify {
-            viewStateObserver.onChanged(
-                defaultViewState.copy(
-                    areaRiskState = OldRisk(DEFAULT_POST_CODE, 0, 0, LOW)
-                )
-            )
-        }
-    }
-
-    @Test
-    fun `risky post code indicator has only old risk set with risk level medium`() {
-        every { postCodeIndicatorProvider.riskyPostCodeIndicator } returns
-            RiskIndicatorWrapper("medium", null, MEDIUM)
-
-        testSubject.updateViewState()
-
-        verify {
-            viewStateObserver.onChanged(
-                defaultViewState.copy(
-                    areaRiskState = OldRisk(DEFAULT_POST_CODE, 0, 0, MEDIUM)
-                )
-            )
-        }
-    }
-
-    @Test
-    fun `risky post code indicator has only old risk set with risk level high`() {
-        every { postCodeIndicatorProvider.riskyPostCodeIndicator } returns
-            RiskIndicatorWrapper("high", null, HIGH)
-
-        testSubject.updateViewState()
-
-        verify {
-            viewStateObserver.onChanged(
-                defaultViewState.copy(
-                    areaRiskState = OldRisk(DEFAULT_POST_CODE, 0, 0, HIGH)
-                )
-            )
-        }
+        verify(exactly = 1) { viewStateObserver.onChanged(defaultViewState.copy(currentDate = today)) }
+        verify(exactly = 1) { viewStateObserver.onChanged(defaultViewState.copy(currentDate = tomorrow)) }
     }
 
     @Test
@@ -363,26 +342,13 @@ class StatusViewModelTest {
     }
 
     @Test
-    fun `update view state with show test result and feature flag enabled`() {
-        FeatureFlagTestHelper.enableFeatureFlag(TEST_ORDERING)
-
+    fun `update view state with show test result`() {
         every { userInbox.fetchInbox() } returns ShowTestResult
 
         testSubject.userInboxListener.invoke()
 
         verify { notificationProvider.cancelTestResult() }
         verify { showInformationScreenObserver.onChanged(TestResult) }
-    }
-
-    @Test
-    fun `update view state with show test result and feature flag disabled`() {
-        FeatureFlagTestHelper.disableFeatureFlag(TEST_ORDERING)
-
-        every { userInbox.fetchInbox() } returns ShowTestResult
-
-        testSubject.userInboxListener.invoke()
-
-        verify(exactly = 0) { showInformationScreenObserver.onChanged(any()) }
     }
 
     @Test

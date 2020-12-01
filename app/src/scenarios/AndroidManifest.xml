@@ -32,6 +32,7 @@
 
         <activity
             android:name=".featureflag.testsettings.TestSettingsActivity"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
 
         <activity

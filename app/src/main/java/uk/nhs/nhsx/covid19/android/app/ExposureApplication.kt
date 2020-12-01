@@ -9,6 +9,7 @@ import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
 import androidx.work.Configuration
+import androidx.work.ExistingPeriodicWorkPolicy.KEEP
 import androidx.work.WorkManager
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import com.jeroenmols.featureflag.framework.TestSetting
@@ -18,6 +19,7 @@ import uk.nhs.covid19.config.production
 import uk.nhs.covid19.config.qrCodesSignatureKey
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityListener
 import uk.nhs.nhsx.covid19.android.app.availability.GooglePlayUpdateProvider
+import uk.nhs.nhsx.covid19.android.app.battery.AndroidBatteryOptimizationChecker
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.di.ApplicationComponent
 import uk.nhs.nhsx.covid19.android.app.di.DaggerApplicationComponent
@@ -29,6 +31,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
 import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
+import uk.nhs.nhsx.covid19.android.app.util.RetryMechanism
 
 open class ExposureApplication : Application(), Configuration.Provider {
     lateinit var appComponent: ApplicationComponent
@@ -68,7 +71,7 @@ open class ExposureApplication : Application(), Configuration.Provider {
     }
 
     protected fun startPeriodicTasks() {
-        appComponent.providePeriodicTasks().schedule()
+        appComponent.providePeriodicTasks().schedule(policy = KEEP)
     }
 
     private fun initializeWorkManager() {
@@ -98,11 +101,11 @@ open class ExposureApplication : Application(), Configuration.Provider {
         exposureNotificationApi: ExposureNotificationApi = GoogleExposureNotificationApi(this),
         languageCode: String? = null
     ) {
-        val encryptedFile = EncryptionUtils.retryOnException {
-            EncryptionUtils.createEncryptedFile(this, "venues")
-        }
-        val sharedPreferences = EncryptionUtils.retryOnException {
+        val sharedPreferences = RetryMechanism.retryWithBackOff {
             EncryptionUtils.createEncryptedSharedPreferences(this)
+        }
+        val encryptedFile = RetryMechanism.retryWithBackOff {
+            EncryptionUtils.createEncryptedFile(this, "venues")
         }
 
         appComponent = DaggerApplicationComponent.builder()
@@ -116,7 +119,8 @@ open class ExposureApplication : Application(), Configuration.Provider {
                     encryptedFile,
                     qrCodesSignatureKey,
                     ApplicationLocaleProvider(sharedPreferences, languageCode),
-                    GooglePlayUpdateProvider(this)
+                    GooglePlayUpdateProvider(this),
+                    AndroidBatteryOptimizationChecker(this)
                 )
             )
             .networkModule(networkModule)

@@ -29,10 +29,12 @@ import androidx.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
+import androidx.test.uiautomator.UiDevice
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
+import uk.nhs.nhsx.covid19.android.app.report.config.Orientation
 
 fun getCurrentActivity(): Activity? {
     getInstrumentation().waitForIdleSync()
@@ -140,5 +142,13 @@ fun clickChildViewWithId(id: Int): ViewAction? {
             val v = view.findViewById<View>(id)
             v.performClick()
         }
+    }
+}
+
+fun setScreenOrientation(orientation: Orientation) {
+    val device = UiDevice.getInstance(getInstrumentation())
+    when (orientation) {
+        Orientation.LANDSCAPE -> device.setOrientationLeft()
+        Orientation.PORTRAIT -> device.setOrientationNatural()
     }
 }

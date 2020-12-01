@@ -38,7 +38,11 @@ class IsolationExpirationViewModelTest {
     private val isolationStateIndexCase = Isolation(
         isolationStart = symptomsOnsetDate.atStartOfDay(ZoneOffset.UTC).toInstant(),
         isolationConfiguration = DurationDays(),
-        indexCase = IndexCase(LocalDate.now(), expiryDate = TestResultViewModelTest.symptomsOnsetDate.plus(7, ChronoUnit.DAYS))
+        indexCase = IndexCase(
+            symptomsOnsetDate = LocalDate.now(),
+            expiryDate = TestResultViewModelTest.symptomsOnsetDate.plus(7, ChronoUnit.DAYS),
+            selfAssessment = true
+        )
     )
 
     private val isolationStateNotInIndexCase = Isolation(

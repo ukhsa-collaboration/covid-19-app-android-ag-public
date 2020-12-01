@@ -19,7 +19,7 @@ import uk.nhs.nhsx.covid19.android.app.common.Lce.Success
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
@@ -34,7 +34,7 @@ class TestOrderingProgressActivity : BaseActivity(R.layout.activity_progress) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
-        setNavigateUpToolbar(toolbar, R.string.empty, R.drawable.ic_close_primary)
+        setCloseToolbar(toolbar, R.string.empty, R.drawable.ic_close_primary)
 
         viewModel.loadVirologyTestOrder()
 

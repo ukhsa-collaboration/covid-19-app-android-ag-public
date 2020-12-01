@@ -26,7 +26,7 @@ class TestResultActivityTest : EspressoTest() {
     private val isolationStateIndexCaseOnly = Isolation(
         isolationStart = Instant.now(),
         isolationConfiguration = DurationDays(),
-        indexCase = IndexCase(LocalDate.now(), expiryDate = LocalDate.now().plusDays(1))
+        indexCase = IndexCase(LocalDate.now(), expiryDate = LocalDate.now().plusDays(1), selfAssessment = false)
     )
 
     private val isolationStateContactCaseOnly = Isolation(

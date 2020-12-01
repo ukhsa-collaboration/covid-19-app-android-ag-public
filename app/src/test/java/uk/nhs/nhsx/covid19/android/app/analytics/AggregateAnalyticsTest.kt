@@ -10,7 +10,6 @@ import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AggregateAnalytics
 import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AnalyticsEventsStorage
 import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AnalyticsMetricsStorage
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsPayload
 import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsWindow
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metadata
@@ -23,7 +22,7 @@ import java.time.ZoneOffset
 class AggregateAnalyticsTest {
 
     private val analyticsMetricsStorage = mockk<AnalyticsMetricsStorage>(relaxed = true)
-    private val postCodeProvider = mockk<PostCodeProvider>(relaxed = true)
+    private val metadataProvider = mockk<MetadataProvider>(relaxed = true)
     private val networkStatsStorage = mockk<NetworkTrafficStats>(relaxed = true)
     private val updateStatusStorage = mockk<UpdateStatusStorage>(relaxed = true)
     private val analyticsEventsStorage = mockk<AnalyticsEventsStorage>(relaxed = true)
@@ -35,7 +34,7 @@ class AggregateAnalyticsTest {
     private val testSubject =
         AggregateAnalytics(
             analyticsMetricsStorage,
-            postCodeProvider,
+            metadataProvider,
             networkStatsStorage,
             updateStatusStorage,
             analyticsEventsStorage,
@@ -46,6 +45,12 @@ class AggregateAnalyticsTest {
     fun setUp() {
         every { networkStatsStorage.getTotalBytesDownloaded() } returns null
         every { networkStatsStorage.getTotalBytesUploaded() } returns null
+        every { metadataProvider.getMetadata() } returns Metadata(
+            deviceModel = "null null",
+            latestApplicationVersion = BuildConfig.VERSION_NAME_SHORT,
+            operatingSystemVersion = "0",
+            postalDistrict = ""
+        )
     }
 
     @Test

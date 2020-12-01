@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
-import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import org.junit.After
 import org.junit.Test
@@ -20,8 +19,6 @@ class SymptomsAdviceIsolateActivityTest : EspressoTest() {
 
     @Test
     fun testScreenWithPositiveSymptoms() = notReported {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.TEST_ORDERING)
-
         startTestActivity<SymptomsAdviceIsolateActivity>() {
             putExtra(SymptomsAdviceIsolateActivity.EXTRA_IS_POSITIVE_SYMPTOMS, true)
             putExtra(SymptomsAdviceIsolateActivity.EXTRA_ISOLATION_DURATION, 14)
@@ -36,8 +33,6 @@ class SymptomsAdviceIsolateActivityTest : EspressoTest() {
 
     @Test
     fun testScreenWithNegativeSymptoms() = notReported {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.TEST_ORDERING)
-
         startTestActivity<SymptomsAdviceIsolateActivity>() {
             putExtra(SymptomsAdviceIsolateActivity.EXTRA_IS_POSITIVE_SYMPTOMS, false)
             putExtra(SymptomsAdviceIsolateActivity.EXTRA_ISOLATION_DURATION, 14)
@@ -52,8 +47,6 @@ class SymptomsAdviceIsolateActivityTest : EspressoTest() {
 
     @Test
     fun testOrderButtonIsShowingWhenTestOrderingFeatureFlagIsEnabled() = notReported {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.TEST_ORDERING)
-
         startTestActivity<SymptomsAdviceIsolateActivity>() {
             putExtra(SymptomsAdviceIsolateActivity.EXTRA_IS_POSITIVE_SYMPTOMS, true)
             putExtra(SymptomsAdviceIsolateActivity.EXTRA_ISOLATION_DURATION, 14)
@@ -62,22 +55,6 @@ class SymptomsAdviceIsolateActivityTest : EspressoTest() {
         symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
 
         symptomsAdviceIsolateRobot.checkBottomActionButtonIsDisplayed()
-
-        symptomsAdviceIsolateRobot.checkExposureLinkIsDisplayed()
-    }
-
-    @Test
-    fun testOrderButtonIsNotShowingWhenTestOrderingFeatureFlagIsDisabled() = notReported {
-        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.TEST_ORDERING)
-
-        startTestActivity<SymptomsAdviceIsolateActivity>() {
-            putExtra(SymptomsAdviceIsolateActivity.EXTRA_IS_POSITIVE_SYMPTOMS, true)
-            putExtra(SymptomsAdviceIsolateActivity.EXTRA_ISOLATION_DURATION, 14)
-        }
-
-        symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
-
-        symptomsAdviceIsolateRobot.checkBottomActionButtonIsNotDisplayed()
 
         symptomsAdviceIsolateRobot.checkExposureLinkIsDisplayed()
     }

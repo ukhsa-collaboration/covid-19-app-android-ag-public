@@ -180,7 +180,8 @@ class DebugViewModel @Inject constructor(
                     )
                 ),
                 linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-                linkUrl = Translatable(mapOf("en" to "https://faq.covid19.nhs.uk/article/KA-01270/en-us"))
+                linkUrl = Translatable(mapOf("en" to "https://faq.covid19.nhs.uk/article/KA-01270/en-us")),
+                policyData = null
             )
         )
     }

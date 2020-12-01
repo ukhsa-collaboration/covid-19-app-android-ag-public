@@ -101,11 +101,11 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
         coVerify { analyticsEventProcessorMock.track(BackgroundTaskCompletion) }
         verify { notificationProviderMock.getUpdatingDatabaseNotification() }
         coVerifyOrder {
+            exposureNotificationWorkMock()
             downloadAndProcessKeysMock()
             downloadVirologyTestResultWorkMock()
             downloadRiskyPostCodesWorkMock()
             downloadAndProcessRiskyVenuesMock()
-            exposureNotificationWorkMock()
         }
 
         assertEquals(Result.success(), result)

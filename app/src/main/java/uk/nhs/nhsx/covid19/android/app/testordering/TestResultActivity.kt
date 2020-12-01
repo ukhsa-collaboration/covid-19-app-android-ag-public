@@ -41,7 +41,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainStat
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
@@ -182,7 +182,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
     }
 
     private fun showContinueToSelfIsolationScreenOnVoid(remainingDaysInIsolation: Int) {
-        setNavigateUpToolbar(
+        setCloseToolbar(
             toolbar,
             R.string.empty,
             R.drawable.ic_close_primary
@@ -357,7 +357,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
     }
 
     private fun showAreNotIsolatingScreenOnVoid() {
-        setNavigateUpToolbar(toolbar, R.string.empty, R.drawable.ic_close_primary) {
+        setCloseToolbar(toolbar, R.string.empty, R.drawable.ic_close_primary) {
             viewModel.acknowledgeTestResult()
         }
 

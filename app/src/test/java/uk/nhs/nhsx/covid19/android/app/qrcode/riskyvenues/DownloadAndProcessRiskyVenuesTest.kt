@@ -1,13 +1,11 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 
-import com.jeroenmols.featureflag.framework.FeatureFlag.HIGH_RISK_VENUES
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -83,18 +81,6 @@ class DownloadAndProcessRiskyVenuesTest {
         testSubject()
 
         coVerify { riskyVenuesApi.getListOfRiskyVenues() }
-    }
-
-    @Test
-    fun `high-risk venues feature toggled off when work is invoked`() = runBlocking {
-        FeatureFlagTestHelper.disableFeatureFlag(HIGH_RISK_VENUES)
-
-        testSubject()
-
-        coVerify(exactly = 0) { visitedVenueStorage.getVisits() }
-        verify(exactly = 0) { filterOutdatedVisits.invoke(any()) }
-        coVerify(exactly = 0) { visitedVenueStorage.setVisits(any()) }
-        coVerify(exactly = 0) { riskyVenuesApi.getListOfRiskyVenues() }
     }
 
     @Test

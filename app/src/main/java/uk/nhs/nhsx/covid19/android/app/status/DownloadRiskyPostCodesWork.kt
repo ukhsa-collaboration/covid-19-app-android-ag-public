@@ -3,84 +3,87 @@ package uk.nhs.nhsx.covid19.android.app.status
 import androidx.work.ListenableWorker
 import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodesLoader
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.runSafely
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyPostDistrictsApi
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
 import uk.nhs.nhsx.covid19.android.app.util.toWorkerResult
-import javax.inject.Inject
 
 class DownloadRiskyPostCodesWork @Inject constructor(
     private val riskyPostCodeApi: RiskyPostDistrictsApi,
     private val postCodeProvider: PostCodeProvider,
     private val riskyPostCodeIndicatorProvider: RiskyPostCodeIndicatorProvider,
-    private val notificationProvider: NotificationProvider
+    private val notificationProvider: NotificationProvider,
+    private val localAuthorityProvider: LocalAuthorityProvider,
+    private val localAuthorityPostCodesLoader: LocalAuthorityPostCodesLoader
 ) {
 
     suspend operator fun invoke(): ListenableWorker.Result = withContext(Dispatchers.IO) {
-        if (!RuntimeBehavior.isFeatureEnabled(FeatureFlag.HIGH_RISK_POST_DISTRICTS)) {
-            return@withContext ListenableWorker.Result.success()
-        }
+        runSafely {
+            val response = riskyPostCodeApi.fetchRiskyPostCodeDistribution()
 
-        runCatching {
-            val riskyPostCodeDistribution = riskyPostCodeApi.fetchRiskyPostCodeDistribution()
+            if (response.postDistricts.isEmpty()) throw EmptyPostDistrictsForV2Exception()
 
-            if (riskyPostCodeDistribution.postDistricts.isEmpty()) throw EmptyPostDistrictsForV2Exception()
+            val mainPostCode = postCodeProvider.value
+                ?: return@runSafely Success(ListenableWorker.Result.success())
 
-            val mainPostCode = postCodeProvider.value ?: return@runCatching Success(ListenableWorker.Result.success())
+            val localAuthorityId: String? = localAuthorityProvider.value
 
-            val updatedMainPostCodeRiskIndicatorKey = riskyPostCodeDistribution.postDistricts[mainPostCode]
-            val updatedMainPostCodeRiskIndicator =
-                riskyPostCodeDistribution.riskLevels[updatedMainPostCodeRiskIndicatorKey]
-            updatedMainPostCodeRiskIndicator?.let {
-                val currentMainPostCodeRiskIndicator = riskyPostCodeIndicatorProvider.riskyPostCodeIndicator
+            val hasLocalAuthorityToRiskLevelMapping =
+                localAuthorityId != null && response.localAuthorities?.get(localAuthorityId) != null && RuntimeBehavior.isFeatureEnabled(
+                    FeatureFlag.LOCAL_AUTHORITY
+                )
+            val riskIndicatorId: String? = if (hasLocalAuthorityToRiskLevelMapping) {
+                response.localAuthorities!![localAuthorityId]
+            } else {
+                response.postDistricts[mainPostCode]
+            }
+
+            response.riskLevels[riskIndicatorId]?.let { riskIndicator ->
+                val currentRiskIndicator = riskyPostCodeIndicatorProvider.riskyPostCodeIndicator
 
                 val hasRiskinessChanged =
-                    currentMainPostCodeRiskIndicator?.riskLevel?.let { it != updatedMainPostCodeRiskIndicatorKey }
+                    currentRiskIndicator?.riskLevel?.let { currentRiskLevel -> currentRiskLevel != riskIndicatorId }
                         ?: false
+
+                val localAuthorityName =
+                    localAuthorityPostCodesLoader.load()?.localAuthorities?.get(localAuthorityId)?.name
+                val localAuthorityRiskTitle =
+                    if (riskIndicator.policyData != null && localAuthorityName != null) {
+                        riskIndicator.policyData.localAuthorityRiskTitle.replace(
+                            "[local authority]",
+                            localAuthorityName
+                        ).replace("[postcode]", mainPostCode)
+                    } else null
+
+                val policyData =
+                    if (localAuthorityRiskTitle != null) {
+                        riskIndicator.policyData?.copy(localAuthorityRiskTitle = localAuthorityRiskTitle)
+                    } else null
+
+                val riskIndicatorName = riskIndicator.name.replace("[postcode]", mainPostCode)
+
+                val updatedRiskIndicator =
+                    riskIndicator.copy(name = riskIndicatorName, policyData = policyData)
 
                 storeAndNotifyRiskyPostCodeIndicator(
                     RiskIndicatorWrapper(
-                        riskLevel = updatedMainPostCodeRiskIndicatorKey,
-                        riskIndicator = replaceRiskIndicatorPostCodePlaceholders(
-                            updatedMainPostCodeRiskIndicator,
-                            mainPostCode
-                        )
+                        riskLevel = riskIndicatorId,
+                        riskIndicator = updatedRiskIndicator,
+                        riskLevelFromLocalAuthority = hasLocalAuthorityToRiskLevelMapping
                     ),
                     hasRiskinessChanged
                 )
             } ?: throw PostCodeNotFoundException()
 
-            return@runCatching Success(ListenableWorker.Result.success())
-        }.getOrElse {
-            runSafely {
-                val riskyPostCodes = riskyPostCodeApi.fetchRiskyPostDistricts()
-
-                if (riskyPostCodes.postDistricts.isNullOrEmpty()) return@runSafely ListenableWorker.Result.success()
-
-                val mainPostCode = postCodeProvider.value ?: return@runSafely ListenableWorker.Result.success()
-
-                val updatedMainPostCodeRiskLevel = riskyPostCodes.postDistricts[mainPostCode]
-                updatedMainPostCodeRiskLevel?.let {
-                    val currentMainPostCodeRiskIndicator = riskyPostCodeIndicatorProvider.riskyPostCodeIndicator
-
-                    val hasRiskinessChanged = currentMainPostCodeRiskIndicator?.oldRiskLevel?.let {
-                        currentMainPostCodeRiskIndicator.oldRiskLevel != updatedMainPostCodeRiskLevel
-                    } ?: false
-
-                    storeAndNotifyRiskyPostCodeIndicator(
-                        RiskIndicatorWrapper(oldRiskLevel = it),
-                        hasRiskinessChanged
-                    )
-                }
-
-                return@runSafely ListenableWorker.Result.success()
-            }
+            return@runSafely Success(ListenableWorker.Result.success())
         }.toWorkerResult()
     }
 
@@ -93,17 +96,6 @@ class DownloadRiskyPostCodesWork @Inject constructor(
         if (hasRiskinessChanged && !StatusActivity.isVisible) {
             notificationProvider.showAreaRiskChangedNotification()
         }
-    }
-
-    private fun replaceRiskIndicatorPostCodePlaceholders(
-        riskIndicator: RiskIndicator,
-        mainPostCode: String
-    ): RiskIndicator {
-        return riskIndicator.copy(
-            name = riskIndicator.name.copy(
-                translations = riskIndicator.name.replace("[postcode]", mainPostCode)
-            )
-        )
     }
 
     private class PostCodeNotFoundException : Exception()

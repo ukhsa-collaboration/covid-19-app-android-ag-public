@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <include layout="@layout/view_toolbar_primary" />
@@ -39,12 +40,12 @@
     </ScrollView>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/savePostCode"
+        android:id="@+id/continuePostCode"
         style="@style/PrimaryButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/vertical_margin"
         android:layout_marginBottom="@dimen/vertical_margin"
-        android:text="@string/save" />
+        tools:text="@string/save" />
 
 </LinearLayout>

@@ -18,6 +18,7 @@ interface ExposureNotificationApi {
     suspend fun getDiagnosisKeysDataMapping(): DiagnosisKeysDataMapping
     fun setDiagnosisKeysDataMapping(dataMapping: DiagnosisKeysDataMapping)
     suspend fun isAvailable(): Boolean
+    fun deviceSupportsLocationlessScanning(): Boolean
 
     @Deprecated("Use getExposureWindows instead")
     suspend fun getExposureInformation(token: String): List<ExposureInformation>

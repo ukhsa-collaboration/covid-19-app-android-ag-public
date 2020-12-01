@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
-import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.coEvery
 import io.mockk.every
@@ -77,13 +76,6 @@ class ShouldShowInAppReviewTest {
                 to = Instant.parse("2020-09-10T03:30:00Z")
             )
         )
-
-        assertFalse(testSubject())
-    }
-
-    @Test
-    fun `in app review feature flag disabled returns false`() = runBlocking {
-        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.IN_APP_REVIEW)
 
         assertFalse(testSubject())
     }

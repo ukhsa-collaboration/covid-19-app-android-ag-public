@@ -29,7 +29,8 @@ class AlarmRestarterTest : FieldInjectionUnitTest() {
         isolationConfiguration = DurationDays(),
         indexCase = IndexCase(
             symptomsOnsetDate = LocalDate.now(),
-            expiryDate = LocalDate.now()
+            expiryDate = LocalDate.now(),
+            selfAssessment = true
         )
     )
 

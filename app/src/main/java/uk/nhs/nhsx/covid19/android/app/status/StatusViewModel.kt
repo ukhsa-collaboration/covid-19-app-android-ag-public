@@ -6,34 +6,29 @@ import android.os.Parcelable
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations.distinctUntilChanged
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.play.core.review.ReviewManagerFactory
-import com.jeroenmols.featureflag.framework.FeatureFlag.TEST_ORDERING
-import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.R.string
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.Companion.APP_CONFIGURATION_CHANNEL_ID
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.HIGH
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.LOW
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel.MEDIUM
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
+import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.ExposureConsent
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.IsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.TestResult
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.VenueAlert
-import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.OldRisk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Risk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
 import uk.nhs.nhsx.covid19.android.app.util.DistrictAreaStringProvider
@@ -56,13 +51,10 @@ class StatusViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val viewStateLiveData = MutableLiveData<ViewState>()
-    fun viewState(): LiveData<ViewState> = viewStateLiveData
+    val viewState = distinctUntilChanged(viewStateLiveData)
 
     private val showInformationScreen = SingleLiveEvent<InformationScreen>()
     fun showInformationScreen(): LiveData<InformationScreen> = showInformationScreen
-
-    private val canReceiveReminderLiveData = SingleLiveEvent<Boolean>()
-    fun onExposureNotificationStopped(): LiveData<Boolean> = canReceiveReminderLiveData
 
     private val postCodeRiskIndicatorChangedListener = PostCodeRiskIndicatorChangedListener {
         updateViewState()
@@ -90,25 +82,35 @@ class StatusViewModel @Inject constructor(
     }
 
     fun onStopExposureNotificationsClicked() {
-        canReceiveReminderLiveData.postValue(getCanReceiveReminder())
+        val canSendNotification =
+            notificationProvider.canSendNotificationToChannel(APP_CONFIGURATION_CHANNEL_ID)
+        val updatedState =
+            viewStateLiveData.value?.copy(showExposureNotificationReminderDialog = canSendNotification)
+        viewStateLiveData.postValue(updatedState)
     }
 
-    fun updateViewState() {
-        viewStateLiveData.postValue(
-            ViewState(
+    fun onExposureNotificationReminderDialogDismissed() {
+        val updatedState =
+            viewStateLiveData.value?.copy(showExposureNotificationReminderDialog = false)
+        viewStateLiveData.postValue(updatedState)
+    }
+
+    fun updateViewState(currentDate: LocalDate = LocalDate.now()) {
+        viewModelScope.launch {
+            val showExposureNotificationReminderDialog =
+                viewStateLiveData.value?.showExposureNotificationReminderDialog ?: false
+            val updatedViewState = ViewState(
+                currentDate = currentDate,
                 areaRiskState = getAreaRiskViewState(),
                 isolationState = isolationStateMachine.readState(),
-                latestAdviceUrl = getLatestAdviceUrl()
+                latestAdviceUrl = getLatestAdviceUrl(),
+                showExposureNotificationReminderDialog = showExposureNotificationReminderDialog
             )
-        )
+            viewStateLiveData.postValue(updatedViewState)
+        }
     }
 
-    private fun getCanReceiveReminder(): Boolean =
-        notificationProvider.canSendNotificationToChannel(
-            NotificationProvider.APP_CONFIGURATION_CHANNEL_ID
-        )
-
-    private fun getLatestAdviceUrl(): Int {
+    private suspend fun getLatestAdviceUrl(): Int {
         val isInDefaultState = isolationStateMachine.readState() is Default
         val url =
             if (isInDefaultState) R.string.url_latest_advice else R.string.url_latest_advice_in_isolation
@@ -116,22 +118,15 @@ class StatusViewModel @Inject constructor(
     }
 
     private fun getAreaRiskViewState(): RiskyPostCodeViewState {
-        val riskIndicatorWrapper =
-            postCodeIndicatorProvider.riskyPostCodeIndicator ?: return Unknown
+        val riskIndicatorWrapper = postCodeIndicatorProvider.riskyPostCodeIndicator
+            ?: return Unknown
 
         return when {
             riskIndicatorWrapper.riskIndicator != null -> {
                 Risk(
                     mainPostCode = postCodeProvider.value,
-                    riskIndicator = riskIndicatorWrapper.riskIndicator
-                )
-            }
-            riskIndicatorWrapper.oldRiskLevel != null -> {
-                OldRisk(
-                    mainPostCode = postCodeProvider.value,
-                    textResId = districtAreaStringProvider.provide(string.status_area_risk_level),
-                    areaRiskLevelResId = getAreaRiskLevelResId(riskIndicatorWrapper.oldRiskLevel),
-                    areaRisk = riskIndicatorWrapper.oldRiskLevel
+                    riskIndicator = riskIndicatorWrapper.riskIndicator,
+                    riskLevelFromLocalAuthority = riskIndicatorWrapper.riskLevelFromLocalAuthority
                 )
             }
             else -> {
@@ -148,13 +143,6 @@ class StatusViewModel @Inject constructor(
         }
     }
 
-    private fun getAreaRiskLevelResId(riskLevel: RiskLevel): Int =
-        when (riskLevel) {
-            LOW -> districtAreaStringProvider.provide(R.string.status_area_risk_level_low)
-            MEDIUM -> districtAreaStringProvider.provide(R.string.status_area_risk_level_medium)
-            HIGH -> districtAreaStringProvider.provide(R.string.status_area_risk_level_high)
-        }
-
     private fun startAppReviewFlow(activity: Activity) {
         val reviewManager = ReviewManagerFactory.create(activity)
         val reviewFlowRequest = reviewManager.requestReviewFlow()
@@ -163,7 +151,7 @@ class StatusViewModel @Inject constructor(
             if (request.isSuccessful) {
                 val reviewInfo = request.result
                 val reviewFlow = reviewManager.launchReviewFlow(activity, reviewInfo)
-                reviewFlow.addOnCompleteListener { _ ->
+                reviewFlow.addOnCompleteListener {
                     lastAppRatingStartedDateProvider.value =
                         LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()
                 }
@@ -179,17 +167,15 @@ class StatusViewModel @Inject constructor(
                     userInbox.clearItem(item)
                 }
                 is ShowTestResult -> {
-                    if (RuntimeBehavior.isFeatureEnabled(TEST_ORDERING)) {
-                        notificationProvider.cancelTestResult()
-                        showInformationScreen.postValue(TestResult)
-                    }
+                    notificationProvider.cancelTestResult()
+                    showInformationScreen.postValue(TestResult)
                 }
                 is ShowVenueAlert -> {
                     showInformationScreen.postValue(VenueAlert(item.venueId))
                     userInbox.clearItem(item)
                 }
                 is ShowEncounterDetection -> {
-                    showInformationScreen.postValue(InformationScreen.ExposureConsent)
+                    showInformationScreen.postValue(ExposureConsent)
                 }
             }
         }
@@ -199,16 +185,8 @@ class StatusViewModel @Inject constructor(
         @Parcelize
         data class Risk(
             val mainPostCode: String?,
-            val riskIndicator: RiskIndicator
-        ) :
-            RiskyPostCodeViewState()
-
-        @Parcelize
-        data class OldRisk(
-            val mainPostCode: String?,
-            val textResId: Int,
-            val areaRiskLevelResId: Int,
-            val areaRisk: RiskLevel
+            val riskIndicator: RiskIndicator,
+            val riskLevelFromLocalAuthority: Boolean
         ) :
             RiskyPostCodeViewState()
 
@@ -217,9 +195,11 @@ class StatusViewModel @Inject constructor(
     }
 
     data class ViewState(
+        val currentDate: LocalDate,
         val areaRiskState: RiskyPostCodeViewState,
         val isolationState: State,
-        val latestAdviceUrl: Int
+        val latestAdviceUrl: Int,
+        val showExposureNotificationReminderDialog: Boolean
     )
 }
 

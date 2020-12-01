@@ -19,7 +19,7 @@ class MoreAboutAppActivity : BaseActivity(R.layout.activity_more_about_app) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setNavigateUpToolbar(toolbar, R.string.about_this_app_title, R.drawable.ic_arrow_back_white)
+        setNavigateUpToolbar(toolbar, R.string.about_this_app_title, upIndicator = R.drawable.ic_arrow_back_white)
 
         textSoftwareName.setText(R.string.app_name)
         textSoftwareVersion.text = BuildConfig.VERSION_NAME
@@ -31,7 +31,7 @@ class MoreAboutAppActivity : BaseActivity(R.layout.activity_more_about_app) {
     }
 
     private fun getReleaseDate(): String {
-        return "09/2020" // TODO Implement it when get enough info
+        return "11/2020" // TODO Implement it when get enough info
     }
 
     private fun setupListeners() {

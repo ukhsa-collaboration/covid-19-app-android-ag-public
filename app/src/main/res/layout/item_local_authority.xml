@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:background="@drawable/question_not_selected_background"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="6dp"
+    android:elevation="3dp"
+    android:layout_marginBottom="12dp">
+
+    <RadioButton
+        android:id="@+id/localAuthority"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusableInTouchMode="false"
+        android:textAppearance="@style/Body1"
+        android:paddingHorizontal="8dp"
+        tools:text="Royal Borough of Windsor and Maidenhead" />
+
+</FrameLayout>

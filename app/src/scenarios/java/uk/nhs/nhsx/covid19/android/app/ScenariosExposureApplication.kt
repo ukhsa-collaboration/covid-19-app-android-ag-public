@@ -12,6 +12,7 @@ import uk.nhs.nhsx.covid19.android.app.DebugActivity.Companion.SELECTED_ENVIRONM
 import uk.nhs.nhsx.covid19.android.app.DebugActivity.Companion.SELECTED_LANGUAGE
 import uk.nhs.nhsx.covid19.android.app.DebugActivity.Companion.USE_MOCKED_EXPOSURE_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.availability.GooglePlayUpdateProvider
+import uk.nhs.nhsx.covid19.android.app.battery.AndroidBatteryOptimizationChecker
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.di.DaggerMockApplicationComponent
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
@@ -100,7 +101,8 @@ class ScenariosExposureApplication : ExposureApplication() {
                         encryptedFile,
                         qrCodesSignatureKey,
                         ApplicationLocaleProvider(sharedPreferences, languageCode),
-                        GooglePlayUpdateProvider(this)
+                        GooglePlayUpdateProvider(this),
+                        AndroidBatteryOptimizationChecker(this)
                     )
                 )
                 .mockApiModule(MockApiModule())

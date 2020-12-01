@@ -35,7 +35,7 @@ class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) 
         setNavigateUpToolbar(
             toolbar,
             R.string.status_option_link_test_result,
-            R.drawable.ic_arrow_back_white
+            upIndicator = R.drawable.ic_arrow_back_white
         )
 
         linkTestResultContinue.setOnClickListener {

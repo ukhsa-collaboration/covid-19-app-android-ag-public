@@ -4,9 +4,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.NORTHERN_IRELAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.SCOTLAND
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeUpdateState.INVALID_POST_DISTRICT
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeUpdateState.POST_DISTRICT_NOT_SUPPORTED
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeUpdateState.SUCCESS
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeUpdateState.InvalidPostDistrict
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeUpdateState.PostDistrictNotSupported
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeUpdateState.Success
 import uk.nhs.nhsx.covid19.android.app.status.RiskyPostCodeIndicatorProvider
 import java.util.Locale
 import javax.inject.Inject
@@ -23,20 +23,22 @@ class PostCodeUpdater @Inject constructor(
 
         postCodeDistrict?.let {
             if (postCodeDistrict == NORTHERN_IRELAND || postCodeDistrict == SCOTLAND) {
-                return@withContext POST_DISTRICT_NOT_SUPPORTED
+                return@withContext PostDistrictNotSupported
             }
 
             postCodeProvider.value = postCodeUpperCased
             postalDistrictProvider.storePostalDistrict(postCodeDistrict)
             riskyPostCodeIndicatorProvider.clear()
 
-            return@withContext SUCCESS
+            return@withContext Success(postCodeUpperCased)
         }
 
-        return@withContext INVALID_POST_DISTRICT
+        return@withContext InvalidPostDistrict
     }
 
-    enum class PostCodeUpdateState {
-        SUCCESS, INVALID_POST_DISTRICT, POST_DISTRICT_NOT_SUPPORTED
+    sealed class PostCodeUpdateState {
+        data class Success(val postCode: String) : PostCodeUpdateState()
+        object InvalidPostDistrict : PostCodeUpdateState()
+        object PostDistrictNotSupported : PostCodeUpdateState()
     }
 }

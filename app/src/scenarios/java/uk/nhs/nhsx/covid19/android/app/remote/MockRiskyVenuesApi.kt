@@ -7,7 +7,8 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 class MockRiskyVenuesApi : RiskyVenuesApi {
-    override suspend fun getListOfRiskyVenues() = RiskyVenuesResponse(
+
+    var riskyVenuesResponse = RiskyVenuesResponse(
         venues = listOf(
             RiskyVenue(
                 id = "ABCD1234",
@@ -18,4 +19,6 @@ class MockRiskyVenuesApi : RiskyVenuesApi {
             )
         )
     )
+
+    override suspend fun getListOfRiskyVenues() = riskyVenuesResponse
 }

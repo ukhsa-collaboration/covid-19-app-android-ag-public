@@ -28,37 +28,44 @@ class ExposureNotificationWork @Inject constructor(
     private val exposureNotificationApi: ExposureNotificationApi
 ) {
 
-    suspend operator fun invoke(): Result<Unit> = withContext(Dispatchers.IO) {
-        val potentialExposureExplanationHandler = potentialExposureExplanationHandler.get()
-        var checkingInitial = false
-        runSafely {
-            val exposureNotificationTokens = exposureNotificationTokensProvider.tokens
+    suspend operator fun invoke(tokenToCheck: String? = null): Result<Unit> =
+        withContext(Dispatchers.IO) {
+            val potentialExposureExplanationHandler = potentialExposureExplanationHandler.get()
+            var checkingInitial = false
+            runSafely {
+                val allTokens = exposureNotificationTokensProvider.tokens
+                val exposureNotificationTokens = if (tokenToCheck != null) {
+                    val tokenInfo = allTokens.firstOrNull { it.token == tokenToCheck }
+                    listOfNotNull(tokenInfo)
+                } else {
+                    allTokens
+                }
 
-            Timber.d("Number of exposure tokens to handle: ${exposureNotificationTokens.size}")
+                Timber.d("Number of exposure tokens to handle: ${exposureNotificationTokens.size}")
 
-            exposureNotificationTokens.forEach {
-                Timber.d("Exposure notification token info: $it")
-                when (it.exposureDate) {
-                    null -> {
-                        checkingInitial = true
-                        handleInitial(it.token, potentialExposureExplanationHandler)
-                    }
-                    else -> {
-                        checkingInitial = false
-                        handlePolling(it.token, it.exposureDate)
+                exposureNotificationTokens.forEach {
+                    Timber.d("Exposure notification token info: $it")
+                    when (it.exposureDate) {
+                        null -> {
+                            checkingInitial = true
+                            handleInitial(it.token, potentialExposureExplanationHandler)
+                        }
+                        else -> {
+                            checkingInitial = false
+                            handlePolling(it.token, it.exposureDate)
+                        }
                     }
                 }
             }
+                .apply {
+                    if (isLegacyExposureNotificationApiVersion()) {
+                        if (this is Failure && checkingInitial) {
+                            potentialExposureExplanationHandler.addResult(result = this)
+                        }
+                        potentialExposureExplanationHandler.showNotificationIfNeeded()
+                    }
+                }
         }
-            .apply {
-                if (isLegacyExposureNotificationApiVersion()) {
-                    if (this is Failure && checkingInitial) {
-                        potentialExposureExplanationHandler.addResult(result = this)
-                    }
-                    potentialExposureExplanationHandler.showNotificationIfNeeded()
-                }
-            }
-    }
 
     private suspend fun handleInitial(
         token: String,
@@ -116,5 +123,6 @@ class ExposureNotificationWork @Inject constructor(
         exposureNotificationTokensProvider.remove(token)
     }
 
-    private suspend fun isLegacyExposureNotificationApiVersion() = exposureNotificationApi.version() == null
+    private suspend fun isLegacyExposureNotificationApiVersion() =
+        exposureNotificationApi.version() == null
 }

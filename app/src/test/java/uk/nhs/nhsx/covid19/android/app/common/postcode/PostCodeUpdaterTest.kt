@@ -9,9 +9,9 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.NORTHERN_IRELAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.SCOTLAND
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeUpdateState.INVALID_POST_DISTRICT
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeUpdateState.POST_DISTRICT_NOT_SUPPORTED
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeUpdateState.SUCCESS
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeUpdateState.InvalidPostDistrict
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeUpdateState.PostDistrictNotSupported
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeUpdateState.Success
 import uk.nhs.nhsx.covid19.android.app.status.RiskyPostCodeIndicatorProvider
 import kotlin.test.assertEquals
 
@@ -39,7 +39,7 @@ class PostCodeUpdaterTest {
         coVerify { postCodeValidator.validate(postCodeLowerCase.toUpperCase()) }
         verify { postCodePrefs setProperty "value" value eq(postCodeLowerCase.toUpperCase()) }
         verify { riskyPostCodeIndicatorProvider.clear() }
-        assertEquals(postCodeUpdateState, SUCCESS)
+        assertEquals(postCodeUpdateState, Success(postCodeLowerCase.toUpperCase()))
     }
 
     @Test
@@ -52,7 +52,7 @@ class PostCodeUpdaterTest {
         coVerify { postCodeValidator.validate(postCode) }
         verify { postCodePrefs setProperty "value" value eq(postCode) }
         verify { riskyPostCodeIndicatorProvider.clear() }
-        assertEquals(postCodeUpdateState, SUCCESS)
+        assertEquals(postCodeUpdateState, Success(postCode))
     }
 
     @Test
@@ -65,7 +65,7 @@ class PostCodeUpdaterTest {
         coVerify { postCodeValidator.validate(postCode) }
         verify(exactly = 0) { postCodePrefs setProperty "value" value eq(postCode) }
         verify(exactly = 0) { riskyPostCodeIndicatorProvider.clear() }
-        assertEquals(postCodeUpdateState, INVALID_POST_DISTRICT)
+        assertEquals(postCodeUpdateState, InvalidPostDistrict)
     }
 
     @Test
@@ -76,7 +76,7 @@ class PostCodeUpdaterTest {
         val postCodeUpdateState = testSubject.update(postCode)
 
         coVerify { postCodeValidator.validate(postCode) }
-        assertEquals(postCodeUpdateState, POST_DISTRICT_NOT_SUPPORTED)
+        assertEquals(postCodeUpdateState, PostDistrictNotSupported)
     }
 
     @Test
@@ -87,6 +87,6 @@ class PostCodeUpdaterTest {
         val postCodeUpdateState = testSubject.update(postCode)
 
         coVerify { postCodeValidator.validate(postCode) }
-        assertEquals(postCodeUpdateState, POST_DISTRICT_NOT_SUPPORTED)
+        assertEquals(postCodeUpdateState, PostDistrictNotSupported)
     }
 }

@@ -20,7 +20,7 @@ class TestOrderingActivity : BaseActivity(R.layout.activity_test_ordering) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
-        setNavigateUpToolbar(toolbar, R.string.book_free_test, R.drawable.ic_arrow_back_white)
+        setNavigateUpToolbar(toolbar, R.string.book_free_test, upIndicator = R.drawable.ic_arrow_back_white)
 
         orderTest.setUpOpensInBrowserWarning()
 

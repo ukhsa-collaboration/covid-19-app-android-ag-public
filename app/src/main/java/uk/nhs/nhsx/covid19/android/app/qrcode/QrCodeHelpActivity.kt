@@ -11,6 +11,6 @@ class QrCodeHelpActivity : BaseActivity(R.layout.activity_qr_code_help) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setNavigateUpToolbar(toolbar, R.string.venue_check_in_title, R.drawable.ic_arrow_back_white)
+        setNavigateUpToolbar(toolbar, R.string.venue_check_in_title, upIndicator = R.drawable.ic_arrow_back_white)
     }
 }

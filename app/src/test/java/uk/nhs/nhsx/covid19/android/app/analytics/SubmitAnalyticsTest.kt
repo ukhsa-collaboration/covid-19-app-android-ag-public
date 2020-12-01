@@ -3,9 +3,8 @@ package uk.nhs.nhsx.covid19.android.app.analytics
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.verify
 import io.mockk.mockk
-import io.mockk.slot
+import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AggregateAnalytics
@@ -18,9 +17,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsWindow
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metadata
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import uk.nhs.nhsx.covid19.android.app.util.toISOSecondsFormat
-import java.time.Clock
 import java.time.Instant
-import java.time.ZoneOffset
 import kotlin.test.assertEquals
 
 class SubmitAnalyticsTest {
@@ -30,7 +27,6 @@ class SubmitAnalyticsTest {
     private val aggregateAnalytics = mockk<AggregateAnalytics>(relaxed = true)
     private val analyticsEventsStorage = mockk<AnalyticsEventsStorage>(relaxed = true)
     private val analyticsAlarm = mockk<AnalyticsAlarm>(relaxed = true)
-    private val clock = Clock.fixed(Instant.parse("2020-09-28T00:05:00.00Z"), ZoneOffset.UTC)
 
     private val testSubject = SubmitAnalytics(
         analyticsMetricsLogStorage,
@@ -38,8 +34,7 @@ class SubmitAnalyticsTest {
         groupAnalyticsEvents,
         aggregateAnalytics,
         analyticsEventsStorage,
-        analyticsAlarm,
-        clock
+        analyticsAlarm
     )
 
     @Test
@@ -48,7 +43,7 @@ class SubmitAnalyticsTest {
 
         every { analyticsEventsStorage.value } returns stubAnalyticsPayload(2).value
 
-        testSubject.invoke(isOnboardingAnalyticsEvent = false)
+        testSubject.invoke()
 
         verify(exactly = 1) { analyticsAlarm.cancel() }
 
@@ -63,12 +58,12 @@ class SubmitAnalyticsTest {
     fun `successfully submit analytics events`() = runBlocking {
         coEvery { groupAnalyticsEvents.invoke() } returns stubAnalyticsPayload(2)
 
-        testSubject.invoke(isOnboardingAnalyticsEvent = false)
+        testSubject.invoke()
 
         coVerify(exactly = 2) { analyticsApi.submitAnalytics(any()) }
         verify(exactly = 2) { analyticsMetricsLogStorage.remove(any(), any()) }
 
-        val result = testSubject.invoke(isOnboardingAnalyticsEvent = false)
+        val result = testSubject.invoke()
 
         assertEquals(Success(Unit), result)
     }
@@ -80,41 +75,11 @@ class SubmitAnalyticsTest {
 
         coEvery { analyticsApi.submitAnalytics(any()) } throws testException
 
-        val result = testSubject.invoke(isOnboardingAnalyticsEvent = false)
+        val result = testSubject.invoke()
 
         verify(exactly = 3) { analyticsMetricsLogStorage.remove(any(), any()) }
 
         assertEquals(Success(Unit), result)
-    }
-
-    @Test
-    fun `successfully submit onboarding analytics events`() = runBlocking {
-        coEvery {
-            groupAnalyticsEvents.invoke(shallIncludeCurrentWindow = true)
-        } returns stubAnalyticsPayload(1)
-
-        testSubject.invoke(isOnboardingAnalyticsEvent = true)
-
-        val slot = slot<AnalyticsPayload>()
-        coVerify(exactly = 1) { analyticsApi.submitAnalytics(capture(slot)) }
-        verify(exactly = 1) { analyticsMetricsLogStorage.remove(startDate, endDate) }
-
-        val startOfToday = Instant.parse("2020-09-28T00:00:00Z").toISOSecondsFormat()
-        val expectedAnalyticsWindow = AnalyticsWindow(startOfToday, startOfToday)
-        assertEquals(expectedAnalyticsWindow, slot.captured.analyticsWindow)
-    }
-
-    @Test
-    fun `on onboarding submission error will clear events`() = runBlocking {
-        coEvery {
-            groupAnalyticsEvents.invoke(shallIncludeCurrentWindow = true)
-        } returns stubAnalyticsPayload(1)
-
-        coEvery { analyticsApi.submitAnalytics(any()) } throws Exception()
-
-        testSubject.invoke(isOnboardingAnalyticsEvent = true)
-
-        verify(exactly = 1) { analyticsMetricsLogStorage.remove(startDate, endDate) }
     }
 
     private val startDate = Instant.parse("2020-09-25T00:00:00Z")

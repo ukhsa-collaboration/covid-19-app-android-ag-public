@@ -10,6 +10,7 @@ import io.mockk.verifyOrder
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.QrCodeCheckIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 
@@ -44,9 +45,7 @@ class QrScannerViewModelTest {
     @Test
     fun `on valid code returns Success`() = runBlocking {
         sut.getQrCodeScanResult().observeForever(qrCodeScanResult)
-        val venue = mockk<Venue>()
-        every { venue.organizationPartName } returns ORGANIZATION_NAME
-        every { qrCodeParser.parse(QR_CODE_PAYLOAD_VALID) } returns venue
+        mockValidVenue()
 
         sut.parseQrCode(QR_CODE_PAYLOAD_VALID)
 
@@ -58,13 +57,27 @@ class QrScannerViewModelTest {
 
     @Test
     fun `on valid code saves venue to venues storage`() = runBlocking {
-        val venue = mockk<Venue>()
-        every { venue.organizationPartName } returns ORGANIZATION_NAME
-        every { qrCodeParser.parse(QR_CODE_PAYLOAD_VALID) } returns venue
+        val venue = mockValidVenue()
 
         sut.parseQrCode(QR_CODE_PAYLOAD_VALID)
 
         coVerify { visitedVenuesStorage.finishLastVisitAndAddNewVenue(venue) }
+    }
+
+    @Test
+    fun `on valid code triggers checkedIn analytics event`() = runBlocking {
+        mockValidVenue()
+
+        sut.parseQrCode(QR_CODE_PAYLOAD_VALID)
+
+        coVerify { analyticsManager.track(QrCodeCheckIn) }
+    }
+
+    private fun mockValidVenue(): Venue {
+        val venue = mockk<Venue>()
+        every { venue.organizationPartName } returns ORGANIZATION_NAME
+        every { qrCodeParser.parse(QR_CODE_PAYLOAD_VALID) } returns venue
+        return venue
     }
 
     companion object {

@@ -15,8 +15,8 @@ import androidx.core.app.NotificationManagerCompat
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateRecommendedActivity
-import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import javax.inject.Inject
+import uk.nhs.nhsx.covid19.android.app.MainActivity
 
 class NotificationProvider @Inject constructor(private val context: Context) {
 
@@ -130,13 +130,14 @@ class NotificationProvider @Inject constructor(private val context: Context) {
     }
 
     fun showAreaRiskChangedNotification() {
-        val statusActivityIntent = Intent(context, StatusActivity::class.java)
-        statusActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val intent = Intent(context, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
         val pendingIntent: PendingIntent =
             PendingIntent.getActivity(
                 context,
                 REQUEST_CODE_SHOW_AREA_RISK_CHANGED_NOTIFICATION,
-                statusActivityIntent,
+                intent,
                 0
             )
 
@@ -155,19 +156,20 @@ class NotificationProvider @Inject constructor(private val context: Context) {
     }
 
     fun showRiskyVenueVisitNotification() {
-        val statusActivityIntent = Intent(context, StatusActivity::class.java)
-        statusActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val intent = Intent(context, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
         val pendingIntent: PendingIntent =
             PendingIntent.getActivity(
                 context,
                 REQUEST_CODE_SHOW_RISKY_VENUE_VISIT_NOTIFICATION,
-                statusActivityIntent,
+                intent,
                 0
             )
 
         val riskyVenueNotification = createNotification(
             RISK_CHANGED_CHANNEL_ID,
-            title = null,
+            title = R.string.app_name,
             message = R.string.notification_title_risky_venue,
             contentIntent = pendingIntent
         )
@@ -180,13 +182,14 @@ class NotificationProvider @Inject constructor(private val context: Context) {
     }
 
     fun showStateExpirationNotification() {
-        val statusActivityIntent = Intent(context, StatusActivity::class.java)
-        statusActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val intent = Intent(context, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
         val pendingIntent: PendingIntent =
             PendingIntent.getActivity(
                 context,
                 REQUEST_CODE_SHOW_STATE_EXPIRATION_NOTIFICATION,
-                statusActivityIntent,
+                intent,
                 0
             )
 
@@ -205,20 +208,21 @@ class NotificationProvider @Inject constructor(private val context: Context) {
     }
 
     fun showExposureNotification() {
-        val statusActivityIntent = Intent(context, StatusActivity::class.java)
-        statusActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val intent = Intent(context, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
         val pendingIntent: PendingIntent =
             PendingIntent.getActivity(
                 context,
                 REQUEST_CODE_SHOW_EXPOSURE_NOTIFICATION,
-                statusActivityIntent,
+                intent,
                 0
             )
 
         val exposureNotification = createNotification(
             ISOLATION_STATE_CHANNEL_ID,
-            title = null,
-            message = getStringOrNull(R.string.notification_title_state_exposure) + "\n\n" + getStringOrNull(
+            title = context.getString(R.string.app_name),
+            message = context.getString(R.string.notification_title_state_exposure) + "\n\n" + context.getString(
                 R.string.notification_text_state_exposure
             ),
             contentIntent = pendingIntent
@@ -232,7 +236,7 @@ class NotificationProvider @Inject constructor(private val context: Context) {
     }
 
     fun showExposureNotificationReminder() {
-        val contentIntentActivity = Intent(context, StatusActivity::class.java).apply {
+        val contentIntentActivity = Intent(context, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
         val contentIntent: PendingIntent =
@@ -243,7 +247,7 @@ class NotificationProvider @Inject constructor(private val context: Context) {
                 0
             )
 
-        val actionIntentActivity = Intent(context, StatusActivity::class.java).apply {
+        val actionIntentActivity = Intent(context, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             putExtra(
                 TAP_EXPOSURE_NOTIFICATION_REMINDER_FLAG,
@@ -261,7 +265,7 @@ class NotificationProvider @Inject constructor(private val context: Context) {
         val exposureReminderNotification = createNotification(
             APP_CONFIGURATION_CHANNEL_ID,
             title = R.string.notification_title_exposure_reminder,
-            message = null,
+            message = R.string.empty,
             contentIntent = contentIntent,
             actionText = R.string.notification_action_exposure_reminder,
             actionIntent = actionIntent
@@ -275,13 +279,14 @@ class NotificationProvider @Inject constructor(private val context: Context) {
     }
 
     fun showTestResultsReceivedNotification() {
-        val statusActivityIntent = Intent(context, StatusActivity::class.java)
-        statusActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val intent = Intent(context, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
         val pendingIntent: PendingIntent =
             PendingIntent.getActivity(
                 context,
                 REQUEST_CODE_SHOW_TEST_RESULTS,
-                statusActivityIntent,
+                intent,
                 0
             )
 
@@ -314,13 +319,14 @@ class NotificationProvider @Inject constructor(private val context: Context) {
     }
 
     fun showAppIsAvailable() {
-        val statusActivityIntent = Intent(context, StatusActivity::class.java)
-        statusActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val intent = Intent(context, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
         val pendingIntent: PendingIntent =
             PendingIntent.getActivity(
                 context,
                 REQUEST_CODE_APP_IS_AVAILABLE,
-                statusActivityIntent,
+                intent,
                 0
             )
 
@@ -339,13 +345,14 @@ class NotificationProvider @Inject constructor(private val context: Context) {
     }
 
     fun showAppIsNotAvailable() {
-        val appAvailabilityIntent = Intent(context, AppAvailabilityActivity::class.java)
-        appAvailabilityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val intent = Intent(context, AppAvailabilityActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
         val pendingIntent: PendingIntent =
             PendingIntent.getActivity(
                 context,
                 REQUEST_CODE_APP_IS_NOT_AVAILABLE,
-                appAvailabilityIntent,
+                intent,
                 0
             )
 
@@ -364,13 +371,14 @@ class NotificationProvider @Inject constructor(private val context: Context) {
     }
 
     fun showPotentialExposureExplanationNotification() {
-        val statusActivityIntent = Intent(context, StatusActivity::class.java)
-        statusActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val intent = Intent(context, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
         val pendingIntent: PendingIntent =
             PendingIntent.getActivity(
                 context,
                 REQUEST_CODE_POTENTIAL_EXPOSURE_EXPLANATION_NOTIFICATION,
-                statusActivityIntent,
+                intent,
                 0
             )
 
@@ -390,11 +398,17 @@ class NotificationProvider @Inject constructor(private val context: Context) {
     }
 
     fun showRecommendedAppUpdateIsAvailable() {
-        val updateRecommendedIntent = Intent(context, UpdateRecommendedActivity::class.java)
-        updateRecommendedIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        updateRecommendedIntent.putExtra(UpdateRecommendedActivity.STARTED_FROM_NOTIFICATION, true)
+        val intent = Intent(context, UpdateRecommendedActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            putExtra(UpdateRecommendedActivity.STARTED_FROM_NOTIFICATION, true)
+        }
         val pendingIntent =
-            PendingIntent.getActivity(context, REQUEST_CODE_RECOMMENDED_APP_UPDATE, updateRecommendedIntent, 0)
+            PendingIntent.getActivity(
+                context,
+                REQUEST_CODE_RECOMMENDED_APP_UPDATE,
+                intent,
+                0
+            )
 
         val recommendedAppUpdateNotification = createNotification(
             RECOMMENDED_APP_UPDATE_CHANNEL_ID,
@@ -413,13 +427,14 @@ class NotificationProvider @Inject constructor(private val context: Context) {
     }
 
     fun getUpdatingDatabaseNotification(): Notification {
-        val statusActivityIntent = Intent(context, StatusActivity::class.java)
-        statusActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val intent = Intent(context, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
         val pendingIntent: PendingIntent =
             PendingIntent.getActivity(
                 context,
                 REQUEST_CODE_UPDATING_DATABASE_NOTIFICATION,
-                statusActivityIntent,
+                intent,
                 0
             )
 
@@ -462,8 +477,8 @@ class NotificationProvider @Inject constructor(private val context: Context) {
 
     private fun createNotification(
         notificationChannel: String,
-        @StringRes title: Int?,
-        @StringRes message: Int?,
+        @StringRes title: Int,
+        @StringRes message: Int,
         contentIntent: PendingIntent,
         @StringRes actionText: Int? = null,
         actionIntent: PendingIntent? = null,
@@ -472,8 +487,8 @@ class NotificationProvider @Inject constructor(private val context: Context) {
     ): Notification {
         return createNotification(
             notificationChannel,
-            getStringOrNull(title),
-            getStringOrNull(message),
+            context.getString(title),
+            context.getString(message),
             contentIntent,
             actionText,
             actionIntent,
@@ -482,13 +497,10 @@ class NotificationProvider @Inject constructor(private val context: Context) {
         )
     }
 
-    private fun getStringOrNull(@StringRes stringId: Int?) =
-        if (stringId != null) context.getString(stringId) else null
-
     private fun createNotification(
         notificationChannel: String,
-        title: String?,
-        message: String?,
+        title: String,
+        message: String,
         contentIntent: PendingIntent,
         @StringRes actionText: Int? = null,
         actionIntent: PendingIntent? = null,
@@ -502,20 +514,9 @@ class NotificationProvider @Inject constructor(private val context: Context) {
                     setCategory(NotificationCompat.CATEGORY_ALARM) // Shows notification in DND mode
                 }
             }
-            .apply {
-                if (title != null) {
-                    setContentTitle(title)
-                }
-            }
-            .apply {
-                if (message != null) {
-                    setContentText(message)
-                    setStyle(
-                        NotificationCompat.BigTextStyle()
-                            .bigText(message)
-                    )
-                }
-            }
+            .setContentTitle(title)
+            .setContentText(message)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
             .apply {
                 actionText?.let {
                     addAction(

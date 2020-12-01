@@ -2,13 +2,13 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 
 import androidx.annotation.VisibleForTesting
 import androidx.work.ListenableWorker
-import com.jeroenmols.featureflag.framework.FeatureFlag
-import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
+import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
@@ -27,7 +27,6 @@ import javax.inject.Inject
 class DownloadVirologyTestResultWork(
     private val virologyTestingApi: VirologyTestingApi,
     private val testOrderingTokensProvider: TestOrderingTokensProvider,
-    private val latestTestResultProvider: LatestTestResultProvider,
     private val stateMachine: IsolationStateMachine,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val analyticsEventProcessor: AnalyticsEventProcessor,
@@ -38,14 +37,12 @@ class DownloadVirologyTestResultWork(
     constructor(
         virologyTestingApi: VirologyTestingApi,
         testOrderingTokensProvider: TestOrderingTokensProvider,
-        latestTestResultProvider: LatestTestResultProvider,
         stateMachine: IsolationStateMachine,
         isolationConfigurationProvider: IsolationConfigurationProvider,
         analyticsEventProcessor: AnalyticsEventProcessor
     ) : this(
         virologyTestingApi,
         testOrderingTokensProvider,
-        latestTestResultProvider,
         stateMachine,
         isolationConfigurationProvider,
         analyticsEventProcessor,
@@ -53,10 +50,6 @@ class DownloadVirologyTestResultWork(
     )
 
     suspend operator fun invoke(): ListenableWorker.Result {
-        if (!RuntimeBehavior.isFeatureEnabled(FeatureFlag.TEST_ORDERING)) {
-            return ListenableWorker.Result.success()
-        }
-
         val configs = testOrderingTokensProvider.configs
 
         configs.forEach { config ->
@@ -90,6 +83,7 @@ class DownloadVirologyTestResultWork(
             NEGATIVE -> analyticsEventProcessor.track(NegativeResultReceived)
             VOID -> analyticsEventProcessor.track(VoidResultReceived)
         }
+        analyticsEventProcessor.track(ResultReceived(result, INSIDE_APP))
     }
 
     private suspend fun fetchVirologyTestResult(pollingToken: String): VirologyTestResultResponse? {

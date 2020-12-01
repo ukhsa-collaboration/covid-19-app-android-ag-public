@@ -43,8 +43,8 @@ data class Translatable(val translations: Map<String, String>) : Parcelable {
             it == languageCode
         }
 
-    fun replace(oldValue: String, newValue: String): Map<String, String> =
-        translations.mapValues { it.value.replace(oldValue, newValue) }
+    fun replace(oldValue: String, newValue: String): Translatable =
+        Translatable(translations.mapValues { it.value.replace(oldValue, newValue) })
 
     companion object {
         private const val fallbackLanguageAndRegion = "en-GB"

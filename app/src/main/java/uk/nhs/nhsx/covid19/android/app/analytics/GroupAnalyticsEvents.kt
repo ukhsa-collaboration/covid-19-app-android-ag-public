@@ -1,17 +1,12 @@
 package uk.nhs.nhsx.covid19.android.app.analytics
 
-import android.os.Build
-import android.os.Build.VERSION
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.common.Result
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.runSafely
 import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsPayload
 import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsWindow
-import uk.nhs.nhsx.covid19.android.app.remote.data.Metadata
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import uk.nhs.nhsx.covid19.android.app.util.defaultFalse
 import uk.nhs.nhsx.covid19.android.app.util.toISOSecondsFormat
@@ -22,7 +17,7 @@ import kotlin.collections.Map.Entry
 
 class GroupAnalyticsEvents(
     private val analyticsMetricsLogStorage: AnalyticsMetricsLogStorage,
-    private val postCodeProvider: PostCodeProvider,
+    private val metadataProvider: MetadataProvider,
     private val updateStatusStorage: UpdateStatusStorage,
     private val getAnalyticsWindow: GetAnalyticsWindow,
     private val clock: Clock
@@ -31,18 +26,18 @@ class GroupAnalyticsEvents(
     @Inject
     constructor(
         analyticsMetricsLogStorage: AnalyticsMetricsLogStorage,
-        postCodeProvider: PostCodeProvider,
+        metadataProvider: MetadataProvider,
         updateStatusStorage: UpdateStatusStorage,
         getAnalyticsWindow: GetAnalyticsWindow
     ) : this(
         analyticsMetricsLogStorage,
-        postCodeProvider,
+        metadataProvider,
         updateStatusStorage,
         getAnalyticsWindow,
         Clock.systemUTC()
     )
 
-    suspend operator fun invoke(shallIncludeCurrentWindow: Boolean = false): Result<List<AnalyticsPayload>> =
+    suspend operator fun invoke(): Result<List<AnalyticsPayload>> =
         withContext(Dispatchers.IO) {
             runSafely {
 
@@ -51,11 +46,7 @@ class GroupAnalyticsEvents(
                 val groupedMetrics: List<Pair<Metrics, AnalyticsWindow>> =
                     analyticsMetricsLogStorage.value
                         .groupBy { (_, instant) -> getAnalyticsWindow(instant) }
-                        .filter { entry ->
-                            if (entry.key == getAnalyticsWindow(Instant.now(clock)))
-                                shallIncludeCurrentWindow
-                            else true
-                        }
+                        .filterNot { entry -> isToday(entry.key) }
                         .map { entry: Entry<AnalyticsWindow, List<MetricsLogEntry>> ->
                             entry.value.foldRight(Metrics()) { pair, acc -> acc + pair.metrics } to entry.key
                         }
@@ -64,12 +55,16 @@ class GroupAnalyticsEvents(
                     AnalyticsPayload(
                         analyticsWindow = analyticsWindow,
                         metrics = metrics,
-                        metadata = getMetadata(),
+                        metadata = metadataProvider.getMetadata(),
                         includesMultipleApplicationVersions = updateStatusStorage.value.defaultFalse()
                     )
                 }
             }
         }
+
+    private fun isToday(analyticsWindow: AnalyticsWindow): Boolean {
+        return analyticsWindow == getAnalyticsWindow(Instant.now(clock))
+    }
 
     private fun getAnalyticsWindow(instant: Instant): AnalyticsWindow {
         val window = getAnalyticsWindow.invoke(instant)
@@ -77,16 +72,6 @@ class GroupAnalyticsEvents(
         return AnalyticsWindow(
             startDate = window.first.toISOSecondsFormat(),
             endDate = window.second.toISOSecondsFormat()
-        )
-    }
-
-    private fun getMetadata(): Metadata {
-        val latestApplicationVersion = BuildConfig.VERSION_NAME_SHORT
-        return Metadata(
-            deviceModel = "${Build.MANUFACTURER} ${Build.MODEL}",
-            latestApplicationVersion = latestApplicationVersion,
-            postalDistrict = postCodeProvider.value.orEmpty(),
-            operatingSystemVersion = "${VERSION.SDK_INT}"
         )
     }
 
@@ -106,8 +91,19 @@ class GroupAnalyticsEvents(
             receivedNegativeTestResult += other.receivedNegativeTestResult
             receivedPositiveTestResult += other.receivedPositiveTestResult
             receivedVoidTestResult += other.receivedVoidTestResult
+            receivedVoidTestResultEnteredManually += other.receivedVoidTestResultEnteredManually
+            receivedPositiveTestResultEnteredManually += other.receivedPositiveTestResultEnteredManually
+            receivedNegativeTestResultEnteredManually += other.receivedNegativeTestResultEnteredManually
+            receivedVoidTestResultViaPolling += other.receivedVoidTestResultViaPolling
+            receivedPositiveTestResultViaPolling += other.receivedPositiveTestResultViaPolling
+            receivedNegativeTestResultViaPolling += other.receivedNegativeTestResultViaPolling
             runningNormallyBackgroundTick += other.runningNormallyBackgroundTick
             totalBackgroundTasks += other.totalBackgroundTasks
+            hasSelfDiagnosedBackgroundTick += other.hasSelfDiagnosedBackgroundTick
+            hasTestedPositiveBackgroundTick += other.hasTestedPositiveBackgroundTick
+            isIsolatingForSelfDiagnosedBackgroundTick += other.isIsolatingForSelfDiagnosedBackgroundTick
+            isIsolatingForTestedPositiveBackgroundTick += other.isIsolatingForTestedPositiveBackgroundTick
+            isIsolatingForHadRiskyContactBackgroundTick += other.isIsolatingForHadRiskyContactBackgroundTick
         }
 
     private infix fun Int?.plus(other: Int?): Int? =

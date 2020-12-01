@@ -19,7 +19,7 @@
             android:paddingHorizontal="@dimen/margin_horizontal"
             android:paddingVertical="@dimen/vertical_margin_large">
 
-            <TextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
                 android:id="@+id/titleText"
                 style="@style/Title1"
                 android:layout_width="match_parent"

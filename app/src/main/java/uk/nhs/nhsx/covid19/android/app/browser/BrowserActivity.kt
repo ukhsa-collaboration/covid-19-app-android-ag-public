@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.activity_browser.webView
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 
 class BrowserActivity : BaseActivity(R.layout.activity_browser) {
     @SuppressLint("SetJavaScriptEnabled")
@@ -29,7 +29,7 @@ class BrowserActivity : BaseActivity(R.layout.activity_browser) {
             finish()
         }
 
-        setNavigateUpToolbar(toolbar, R.string.test_ordering_title, R.drawable.ic_close_white)
+        setCloseToolbar(toolbar, R.string.test_ordering_title)
     }
 
     companion object {

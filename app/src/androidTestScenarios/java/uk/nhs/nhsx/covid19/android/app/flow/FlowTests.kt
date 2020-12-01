@@ -63,6 +63,8 @@ class FlowTests : EspressoTest() {
     fun setUp() {
         FeatureFlagTestHelper.clearFeatureFlags()
         FeatureFlagTestHelper.enableFeatureFlag(USE_WEB_VIEW_FOR_INTERNAL_BROWSER)
+
+        testAppContext.setLocalAuthority("1")
     }
 
     @After
@@ -117,7 +119,8 @@ class FlowTests : EspressoTest() {
                 isolationConfiguration = DurationDays(),
                 indexCase = IndexCase(
                     symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(7, ChronoUnit.DAYS)
+                    expiryDate = LocalDate.now().plus(7, ChronoUnit.DAYS),
+                    selfAssessment = false
                 )
             )
         )
@@ -159,7 +162,8 @@ class FlowTests : EspressoTest() {
                 isolationConfiguration = DurationDays(),
                 indexCase = IndexCase(
                     symptomsOnsetDate = dateNow.minusDays(3),
-                    expiryDate = dateNow.plus(7, ChronoUnit.DAYS)
+                    expiryDate = dateNow.plus(7, ChronoUnit.DAYS),
+                    selfAssessment = false
                 )
             )
         )
@@ -284,7 +288,8 @@ class FlowTests : EspressoTest() {
                 isolationConfiguration = DurationDays(),
                 indexCase = IndexCase(
                     symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(1, DAYS)
+                    expiryDate = LocalDate.now().plus(1, DAYS),
+                    selfAssessment = false
                 )
             )
         )
@@ -320,7 +325,8 @@ class FlowTests : EspressoTest() {
                 isolationConfiguration = DurationDays(),
                 indexCase = IndexCase(
                     symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(7, ChronoUnit.DAYS)
+                    expiryDate = LocalDate.now().plus(7, ChronoUnit.DAYS),
+                    selfAssessment = false
                 )
             )
         )

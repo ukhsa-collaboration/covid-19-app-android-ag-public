@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_toolbar_primary" />
+
+    <ScrollView
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/localAuthorityContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal_reduced"
+            android:paddingVertical="@dimen/vertical_margin_large">
+
+            <ImageView
+                style="@style/GoneInLandscape"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_onboarding_postcode" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                android:id="@+id/titleLocalAuthority"
+                style="@style/Title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                tools:text="The local authority for SL4 is Royal Borough of Windsor and Maidenhead" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                android:id="@+id/descriptionLocalAuthority"
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="21dp"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                tools:text="@string/single_local_authority_description" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                android:id="@+id/moreInfoLink"
+                style="@style/LinkTextWithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:text="@string/local_authority_link"
+                app:linkUrl="@string/url_local_authority" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ErrorView
+                android:id="@+id/errorView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:visibility="gone"
+                tools:visibility="visible"
+                tools:error_title="@string/error_title"
+                tools:error_description="@string/questionnaire_no_symptom_selected" />
+
+            <RadioGroup
+                android:id="@+id/localAuthoritiesRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="16dp"
+                android:overScrollMode="never" />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonConfirmLink"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                android:drawableTint="@color/background"
+                android:text="@string/confirm_and_start"
+                android:textAllCaps="false"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

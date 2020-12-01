@@ -1,11 +1,11 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
 import androidx.work.ListenableWorker
-import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifyAll
 import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
@@ -15,9 +15,15 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ResultReceived
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
+import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
@@ -30,6 +36,7 @@ import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import java.time.temporal.ChronoUnit.DAYS
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -38,7 +45,6 @@ class DownloadVirologyTestResultWorkTest {
 
     private val virologyTestingApi = mockk<VirologyTestingApi>(relaxed = true)
     private val testOrderTokensProvider = mockk<TestOrderingTokensProvider>(relaxed = true)
-    private val latestTestResultProvider = mockk<LatestTestResultProvider>(relaxed = true)
     private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val isolationConfigurationProvider =
         mockk<IsolationConfigurationProvider>(relaxed = true)
@@ -48,7 +54,6 @@ class DownloadVirologyTestResultWorkTest {
     val testSubject = DownloadVirologyTestResultWork(
         virologyTestingApi,
         testOrderTokensProvider,
-        latestTestResultProvider,
         stateMachine,
         isolationConfigurationProvider,
         analyticsManager,
@@ -65,19 +70,6 @@ class DownloadVirologyTestResultWorkTest {
     @After
     fun tearDown() {
         FeatureFlagTestHelper.clearFeatureFlags()
-    }
-
-    @Test
-    fun `when feature disabled return success without side effects`() = runBlocking {
-        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.TEST_ORDERING)
-
-        val actual = testSubject.invoke()
-
-        val expected = ListenableWorker.Result.success()
-
-        assertEquals(expected, actual)
-        verify(exactly = 0) { testOrderTokensProvider.configs }
-        checkNoSideEffects()
     }
 
     @Test
@@ -234,6 +226,51 @@ class DownloadVirologyTestResultWorkTest {
         assertFalse(result)
 
         verify { testOrderTokensProvider wasNot called }
+    }
+
+    @Test
+    fun `track analytics events on negative result`() = runBlocking {
+        setResult(NEGATIVE)
+
+        testSubject.invoke()
+
+        coVerifyAll {
+            analyticsManager.track(NegativeResultReceived)
+            analyticsManager.track(ResultReceived(NEGATIVE, INSIDE_APP))
+        }
+    }
+
+    @Test
+    fun `track analytics events on positive result`() = runBlocking {
+        setResult(POSITIVE)
+
+        testSubject.invoke()
+
+        coVerifyAll {
+            analyticsManager.track(PositiveResultReceived)
+            analyticsManager.track(ResultReceived(POSITIVE, INSIDE_APP))
+        }
+    }
+
+    @Test
+    fun `track analytics events on void result`() = runBlocking {
+        setResult(VOID)
+
+        testSubject.invoke()
+
+        coVerifyAll {
+            analyticsManager.track(VoidResultReceived)
+            analyticsManager.track(ResultReceived(VOID, INSIDE_APP))
+        }
+    }
+
+    private fun setResult(result: VirologyTestResult) {
+        val config = TestOrderPollingConfig(from, "token", "submission_token")
+        every { testOrderTokensProvider.configs } returns listOf(config)
+        val testResultDate = from.plus(1, DAYS)
+        coEvery { virologyTestingApi.getTestResult(VirologyTestResultRequestBody("token")) } returns Response.success(
+            VirologyTestResultResponse(testResultDate, result)
+        )
     }
 
     private fun checkNoSideEffects() {

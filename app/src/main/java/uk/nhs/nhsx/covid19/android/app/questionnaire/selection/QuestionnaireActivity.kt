@@ -33,7 +33,8 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.adapter.Questionn
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.ScrollableLayoutManager
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.smoothScrollToAndThen
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
@@ -51,7 +52,7 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setNavigateUpToolbar(toolbar, R.string.select_symptoms, R.drawable.ic_close_white)
+        setCloseToolbar(toolbar, R.string.select_symptoms)
 
         appComponent.inject(this)
 
@@ -116,8 +117,9 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
         showQuestionnaire(state.questions)
         if (state.showError) {
             errorPanel.visible()
-            nestedScrollView.smoothScrollTo(0, 0)
-            errorPanel.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+            nestedScrollView.smoothScrollToAndThen(0, 0) {
+                errorPanel.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+            }
         } else {
             errorPanel.gone()
         }

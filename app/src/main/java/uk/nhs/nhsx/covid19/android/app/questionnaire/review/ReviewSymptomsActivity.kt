@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcel
+import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -36,6 +37,7 @@ import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.invisible
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.smoothScrollToAndThen
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -58,7 +60,7 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
         setNavigateUpToolbar(
             toolbar,
             R.string.questionnaire_review_symptoms,
-            R.drawable.ic_arrow_back_white
+            upIndicator = R.drawable.ic_arrow_back_white
         )
 
         val questions = intent.getParcelableArrayListExtra<Question>(EXTRA_QUESTIONS) ?: return
@@ -103,7 +105,9 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
         if (showOnsetDateError) {
             reviewSymptomsErrorContainer.visible()
             dateSelectionErrorBar.visible()
-            scrollViewReviewSymptoms.smoothScrollTo(0, 0)
+            scrollViewReviewSymptoms.smoothScrollToAndThen(0, 0) {
+                reviewSymptomsErrorContainer.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+            }
         } else {
             reviewSymptomsErrorContainer.gone()
             dateSelectionErrorBar.invisible()

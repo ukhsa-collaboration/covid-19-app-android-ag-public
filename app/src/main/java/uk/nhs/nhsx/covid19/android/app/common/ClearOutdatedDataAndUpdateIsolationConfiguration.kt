@@ -2,9 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.common
 
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
-import uk.nhs.nhsx.covid19.android.app.state.State
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
 import java.time.Clock
@@ -40,22 +38,20 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration(
 
         val expiryDays = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
 
-        if (isOutdated(stateStorage.state, expiryDays)) {
-            testResultsProvider.clear()
+        val state = stateStorage.state
+        if (state is Default) {
+            if (state.previousIsolation == null) {
+                testResultsProvider.clearBefore(LocalDate.now(clock).minusDays(expiryDays.toLong()))
+            } else if (state.previousIsolation.expiryDate.isMoreThanDaysAgo(expiryDays)) {
+                testResultsProvider.clearBefore(state.previousIsolation.expiryDate)
+            }
         }
     }
 
     private suspend fun updateIsolationConfiguration() {
-        val response = isolationConfigurationApi.getIsolationConfiguration()
-        isolationConfigurationProvider.durationDays = response.durationDays
-    }
-
-    private fun isOutdated(state: State, expirationDuration: Int): Boolean {
-        return when (state) {
-            is Default ->
-                state.previousIsolation?.expiryDate?.isMoreThanDaysAgo(expirationDuration)
-                    ?: false
-            is Isolation -> state.expiryDate.isMoreThanDaysAgo(expirationDuration)
+        runCatching {
+            val response = isolationConfigurationApi.getIsolationConfiguration()
+            isolationConfigurationProvider.durationDays = response.durationDays
         }
     }
 

@@ -2,10 +2,12 @@ package uk.nhs.nhsx.covid19.android.app.qrcode
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CanceledCheckIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 
@@ -26,5 +28,12 @@ class VenueCheckInViewModelTest {
         sut.removeLastVisit()
 
         verify { visitRemoveResult.onChanged(RemoveVisitResult) }
+    }
+
+    @Test
+    fun `remove last visit triggers cancel qr check in analytics event`() {
+        sut.removeLastVisit()
+
+        coVerify { analyticsManager.track(CanceledCheckIn) }
     }
 }

@@ -1,7 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 
-import com.jeroenmols.featureflag.framework.FeatureFlag
-import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uk.nhs.nhsx.covid19.android.app.common.Result
@@ -39,14 +37,10 @@ class DownloadAndProcessRiskyVenues(
         Clock.systemUTC()
     )
 
-    suspend operator fun invoke(): Result<Unit> {
-        if (!RuntimeBehavior.isFeatureEnabled(FeatureFlag.HIGH_RISK_VENUES)) {
-            return Result.Success(Unit)
-        }
-
+    suspend operator fun invoke(clearOutdatedVisits: Boolean = true): Result<Unit> {
         return withContext(Dispatchers.IO) {
             runSafely {
-                clearOutDatedVisits()
+                if (clearOutdatedVisits) clearOutDatedVisits()
 
                 val riskyVenues = riskyVenuesApi.getListOfRiskyVenues().venues
 

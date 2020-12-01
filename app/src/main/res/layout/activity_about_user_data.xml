@@ -28,14 +28,15 @@
                 android:gravity="center_vertical">
 
                 <TextView
+                    android:id="@+id/localAuthorityTitle"
                     style="@style/AboutAppTitleText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/postal_district" />
+                    android:text="@string/about_local_authority" />
 
                 <TextView
-                    android:id="@+id/editPostalDistrict"
+                    android:id="@+id/editLocalAuthority"
                     style="@style/LinkText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -45,14 +46,16 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/postalDistrict"
+                android:id="@+id/localAuthority"
                 style="@style/AboutAppItemValueText"
                 android:layout_width="match_parent"
-                android:layout_height="42dp"
+                android:layout_height="wrap_content"
+                android:minHeight="42dp"
                 android:background="?attr/colorSurface"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="30dp"
-                tools:text="SW" />
+                android:paddingVertical="8dp"
+                tools:text="Wandsworth\nSW12" />
 
             <TextView
                 android:id="@+id/titleLatestResult"

@@ -1,25 +1,28 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
 import androidx.work.ListenableWorker
-import com.jeroenmols.featureflag.framework.FeatureFlag.HIGH_RISK_POST_DISTRICTS
+import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.Translatable
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthority
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodes
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodesLoader
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyPostDistrictsApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme
-import uk.nhs.nhsx.covid19.android.app.remote.data.PostDistrictsResponse
+import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyData
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskLevel
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyPostCodeDistributionResponse
 
 class DownloadRiskyPostCodesWorkTest {
@@ -29,17 +32,21 @@ class DownloadRiskyPostCodesWorkTest {
     private val riskyPostCodeIndicatorProvider =
         mockk<RiskyPostCodeIndicatorProvider>(relaxed = true)
     private val notificationProvider = mockk<NotificationProvider>(relaxed = true)
+    private val localAuthorityProvider = mockk<LocalAuthorityProvider>(relaxed = true)
+    private val localAuthorityPostCodesLoader = mockk<LocalAuthorityPostCodesLoader>(relaxed = true)
 
     private val testSubject = DownloadRiskyPostCodesWork(
         riskyPostCodeApi,
         postCodeProvider,
         riskyPostCodeIndicatorProvider,
-        notificationProvider
+        notificationProvider,
+        localAuthorityProvider,
+        localAuthorityPostCodesLoader
     )
 
     private val lowRiskyPostCodeIndicator = RiskIndicator(
         colorScheme = ColorScheme.GREEN,
-        name = Translatable(mapOf("en" to "low")),
+        name = Translatable(mapOf("en" to "[postcode] is in local COVID area level: low")),
         heading = Translatable(mapOf("en" to "Heading low")),
         content = Translatable(
             mapOf(
@@ -47,12 +54,13 @@ class DownloadRiskyPostCodesWorkTest {
             )
         ),
         linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-        linkUrl = Translatable(mapOf("en" to "https://a.b.c"))
+        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+        policyData = null
     )
 
     private val mediumRiskyPostCodeIndicator = RiskIndicator(
         colorScheme = ColorScheme.YELLOW,
-        name = Translatable(mapOf("en" to "medium")),
+        name = Translatable(mapOf("en" to "[postcode] is in local COVID area level: medium")),
         heading = Translatable(mapOf("en" to "Heading medium")),
         content = Translatable(
             mapOf(
@@ -60,12 +68,23 @@ class DownloadRiskyPostCodesWorkTest {
             )
         ),
         linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-        linkUrl = Translatable(mapOf("en" to "https://a.b.c"))
+        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+        policyData = null
+    )
+
+    private val mediumRiskyPostCodeIndicatorWithPolicyData = mediumRiskyPostCodeIndicator.copy(
+        policyData = PolicyData(
+            heading = Translatable(mapOf("en" to "")),
+            content = Translatable(mapOf("en" to "")),
+            footer = Translatable(mapOf("en" to "")),
+            localAuthorityRiskTitle = Translatable(mapOf("en" to "[local authority] ([postcode])")),
+            policies = listOf()
+        )
     )
 
     private val highRiskyPostCodeIndicator = RiskIndicator(
         colorScheme = ColorScheme.RED,
-        name = Translatable(mapOf("en" to "high")),
+        name = Translatable(mapOf("en" to "[postcode] is in local COVID area level: high")),
         heading = Translatable(mapOf("en" to "Heading high")),
         content = Translatable(
             mapOf(
@@ -73,7 +92,20 @@ class DownloadRiskyPostCodesWorkTest {
             )
         ),
         linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-        linkUrl = Translatable(mapOf("en" to "https://a.b.c"))
+        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+        policyData = null
+    )
+
+    private val riskLevels = mapOf(
+        "low" to lowRiskyPostCodeIndicator,
+        "medium" to mediumRiskyPostCodeIndicator,
+        "high" to highRiskyPostCodeIndicator
+    )
+
+    private val riskLevelsWithPolicyData = mapOf(
+        "low" to lowRiskyPostCodeIndicator,
+        "medium" to mediumRiskyPostCodeIndicatorWithPolicyData,
+        "high" to highRiskyPostCodeIndicator
     )
 
     private val fetchRiskyPostCodeDistributionResponse = RiskyPostCodeDistributionResponse(
@@ -81,14 +113,35 @@ class DownloadRiskyPostCodesWorkTest {
             "A1" to "high",
             "CM1" to "high",
             "BE3" to "medium",
-            "SE1" to "low"
+            "SE1" to "low",
+            "AL1" to "neutral",
+            "AL2" to "green"
         ),
-        riskLevels = mapOf(
-            "low" to lowRiskyPostCodeIndicator,
-            "medium" to mediumRiskyPostCodeIndicator,
-            "high" to highRiskyPostCodeIndicator
+        localAuthorities = mapOf(
+            "E07000240" to "medium",
+            "E07000241" to "low",
+            "E07000242" to "high"
+        ),
+        riskLevels = riskLevels
+    )
+
+    private val localAuthorityPostCodes = LocalAuthorityPostCodes(
+        postcodes = mapOf("SE1" to listOf("E07000241"), "BE3" to listOf("E07000240"), "A1" to listOf("E07000242")),
+        localAuthorities = mapOf(
+            "E07000241" to LocalAuthority(name = "ASd1", country = "Idnaodsna"),
+            "E07000240" to LocalAuthority(name = "ASd0", country = "Idnaodsna"),
+            "E07000242" to LocalAuthority(name = "ASd2", country = "Idnaodsna")
         )
     )
+
+    @Before
+    fun setUp() {
+        statusScreenIsNotShowing()
+        coEvery { riskyPostCodeApi.fetchRiskyPostCodeDistribution() }.returns(
+            fetchRiskyPostCodeDistributionResponse
+        )
+        coEvery { localAuthorityPostCodesLoader.load() } returns localAuthorityPostCodes
+    }
 
     @After
     fun tearDown() {
@@ -99,7 +152,6 @@ class DownloadRiskyPostCodesWorkTest {
     fun `area risk changed from low to high and status screen not showing`() = runBlocking {
         mainPostCodeLevelWasLow()
         postCodeListContainsMainPostCodeWithHighRiskLevel()
-        statusScreenIsNotShowing()
 
         val checkAreaRiskChangedResult = testSubject()
 
@@ -107,7 +159,11 @@ class DownloadRiskyPostCodesWorkTest {
 
         verify(exactly = 1) {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
-                RiskIndicatorWrapper("high", highRiskyPostCodeIndicator)
+                RiskIndicatorWrapper(
+                    "high",
+                    highRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "A1 is in local COVID area level: high"))),
+                    riskLevelFromLocalAuthority = false
+                )
         }
         verify(exactly = 1) { notificationProvider.showAreaRiskChangedNotification() }
     }
@@ -116,7 +172,6 @@ class DownloadRiskyPostCodesWorkTest {
     fun `area risk changed from medium to high and status screen not showing`() = runBlocking {
         mainPostCodeLevelWasMedium()
         postCodeListContainsMainPostCodeWithHighRiskLevel()
-        statusScreenIsNotShowing()
 
         val checkAreaRiskChangedResult = testSubject()
 
@@ -124,7 +179,11 @@ class DownloadRiskyPostCodesWorkTest {
 
         verify(exactly = 1) {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
-                RiskIndicatorWrapper("high", highRiskyPostCodeIndicator)
+                RiskIndicatorWrapper(
+                    "high",
+                    highRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "A1 is in local COVID area level: high"))),
+                    riskLevelFromLocalAuthority = false
+                )
         }
         verify(exactly = 1) { notificationProvider.showAreaRiskChangedNotification() }
     }
@@ -133,7 +192,6 @@ class DownloadRiskyPostCodesWorkTest {
     fun `area risk changed from high to low and status screen not showing`() = runBlocking {
         mainPostCodeLevelWasHigh()
         postCodeListContainsMainPostCodeWithLowRiskLevel()
-        statusScreenIsNotShowing()
 
         val checkAreaRiskChangedResult = testSubject()
 
@@ -141,7 +199,11 @@ class DownloadRiskyPostCodesWorkTest {
 
         verify(exactly = 1) {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
-                RiskIndicatorWrapper("low", lowRiskyPostCodeIndicator)
+                RiskIndicatorWrapper(
+                    "low",
+                    lowRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "SE1 is in local COVID area level: low"))),
+                    riskLevelFromLocalAuthority = false
+                )
         }
         verify(exactly = 1) { notificationProvider.showAreaRiskChangedNotification() }
     }
@@ -158,7 +220,11 @@ class DownloadRiskyPostCodesWorkTest {
 
         verify(exactly = 1) {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
-                RiskIndicatorWrapper("high", highRiskyPostCodeIndicator)
+                RiskIndicatorWrapper(
+                    "high",
+                    highRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "A1 is in local COVID area level: high"))),
+                    riskLevelFromLocalAuthority = false
+                )
         }
         verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
     }
@@ -175,7 +241,11 @@ class DownloadRiskyPostCodesWorkTest {
 
         verify(exactly = 1) {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
-                RiskIndicatorWrapper("medium", mediumRiskyPostCodeIndicator)
+                RiskIndicatorWrapper(
+                    "medium",
+                    mediumRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "BE3 is in local COVID area level: medium"))),
+                    riskLevelFromLocalAuthority = false
+                )
         }
         verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
     }
@@ -192,7 +262,11 @@ class DownloadRiskyPostCodesWorkTest {
 
         verify(exactly = 1) {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
-                RiskIndicatorWrapper("low", lowRiskyPostCodeIndicator)
+                RiskIndicatorWrapper(
+                    "low",
+                    lowRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "SE1 is in local COVID area level: low"))),
+                    riskLevelFromLocalAuthority = false
+                )
         }
         verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
     }
@@ -209,7 +283,11 @@ class DownloadRiskyPostCodesWorkTest {
 
         verify(exactly = 1) {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
-                RiskIndicatorWrapper("low", lowRiskyPostCodeIndicator)
+                RiskIndicatorWrapper(
+                    "low",
+                    lowRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "SE1 is in local COVID area level: low"))),
+                    riskLevelFromLocalAuthority = false
+                )
         }
         verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
     }
@@ -226,95 +304,11 @@ class DownloadRiskyPostCodesWorkTest {
 
         verify(exactly = 1) {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
-                RiskIndicatorWrapper("high", highRiskyPostCodeIndicator)
-        }
-        verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
-    }
-
-    @Test
-    fun `not found post code in fetching risky post code falls back to old api endpoint`() = runBlocking {
-        mainPostCodeLevelWasHigh()
-
-        coEvery { riskyPostCodeApi.fetchRiskyPostCodeDistribution() }.returns(
-            fetchRiskyPostCodeDistributionResponse
-        )
-        every { postCodeProvider.value }.returns("CF11")
-
-        coEvery { riskyPostCodeApi.fetchRiskyPostDistricts() }.returns(
-            PostDistrictsResponse(
-                mapOf("CF11" to RiskLevel.HIGH)
-            )
-        )
-
-        statusScreenIsShowing()
-
-        val checkAreaRiskChangedResult = testSubject()
-
-        assert(checkAreaRiskChangedResult == ListenableWorker.Result.success())
-
-        coVerify(exactly = 1) { riskyPostCodeApi.fetchRiskyPostDistricts() }
-
-        verify(exactly = 1) {
-            riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
-                RiskIndicatorWrapper(oldRiskLevel = RiskLevel.HIGH)
-        }
-        verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
-    }
-
-    @Test
-    fun `fetching risky post code returns empty list`() = runBlocking {
-        coEvery { riskyPostCodeApi.fetchRiskyPostDistricts() }.returns(
-            PostDistrictsResponse(
-                mapOf()
-            )
-        )
-
-        every { postCodeProvider.value }.returns("A1")
-
-        statusScreenIsShowing()
-
-        val checkAreaRiskChangedResult = testSubject()
-
-        assert(checkAreaRiskChangedResult == ListenableWorker.Result.success())
-
-        verify(exactly = 0) {
-            riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
-                RiskIndicatorWrapper("low", lowRiskyPostCodeIndicator)
-        }
-        verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
-    }
-
-    @Test
-    fun `fetching risky post code throws exception`() = runBlocking {
-        mainPostCodeLevelWasLow()
-        statusScreenIsShowing()
-
-        coEvery { riskyPostCodeApi.fetchRiskyPostDistricts() }.throws(Exception())
-
-        every { postCodeProvider.value }.returns("A1")
-
-        val checkAreaRiskChangedResult = testSubject()
-
-        assert(checkAreaRiskChangedResult == ListenableWorker.Result.failure())
-
-        verify(exactly = 0) {
-            riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
-                RiskIndicatorWrapper("low", lowRiskyPostCodeIndicator)
-        }
-        verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
-    }
-
-    @Test
-    fun `risky post districts feature toggled off when work is invoked`() = runBlocking {
-        FeatureFlagTestHelper.disableFeatureFlag(HIGH_RISK_POST_DISTRICTS)
-
-        val checkAreaRiskChangedResult = testSubject()
-
-        assert(checkAreaRiskChangedResult == ListenableWorker.Result.Success())
-
-        verify(exactly = 0) {
-            riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
-                RiskIndicatorWrapper("low", lowRiskyPostCodeIndicator)
+                RiskIndicatorWrapper(
+                    "high",
+                    highRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "A1 is in local COVID area level: high"))),
+                    riskLevelFromLocalAuthority = false
+                )
         }
         verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
     }
@@ -323,7 +317,6 @@ class DownloadRiskyPostCodesWorkTest {
     fun `does not send notification when changing risk from null`() = runBlocking {
         mainPostCodeLevelWasNull()
         postCodeListContainsMainPostCodeWithHighRiskLevel()
-        statusScreenIsNotShowing()
 
         val checkAreaRiskChangedResult = testSubject()
 
@@ -331,29 +324,110 @@ class DownloadRiskyPostCodesWorkTest {
 
         verify(exactly = 1) {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
-                RiskIndicatorWrapper("high", highRiskyPostCodeIndicator)
+                RiskIndicatorWrapper(
+                    "high",
+                    highRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "A1 is in local COVID area level: high"))),
+                    riskLevelFromLocalAuthority = false
+                )
         }
         verify(exactly = 0) { notificationProvider.showAreaRiskChangedNotification() }
     }
 
-    private fun postCodeListContainsMainPostCodeWithHighRiskLevel() {
-        coEvery { riskyPostCodeApi.fetchRiskyPostCodeDistribution() }.returns(
-            fetchRiskyPostCodeDistributionResponse
+    @Test
+    fun `area risk changed from low to medium based on local authority with no policy data`() = runBlocking {
+        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+        mainPostCodeLevelWasLow()
+
+        every { postCodeProvider.value }.returns("A1")
+        every { localAuthorityProvider.value } returns "E07000240"
+
+        val checkAreaRiskChangedResult = testSubject()
+
+        assert(checkAreaRiskChangedResult == ListenableWorker.Result.success())
+
+        verify(exactly = 1) {
+            riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
+                RiskIndicatorWrapper(
+                    "medium",
+                    mediumRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "A1 is in local COVID area level: medium"))),
+                    riskLevelFromLocalAuthority = true
+                )
+        }
+    }
+
+    @Test
+    fun `area risk changed from low to medium based on local authority with policy data`() = runBlocking {
+        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+        mainPostCodeLevelWasLow()
+
+        every { postCodeProvider.value }.returns("A1")
+        every { localAuthorityProvider.value } returns "E07000240"
+
+        coEvery { riskyPostCodeApi.fetchRiskyPostCodeDistribution() } returns
+            fetchRiskyPostCodeDistributionResponse.copy(riskLevels = riskLevelsWithPolicyData)
+
+        val checkAreaRiskChangedResult = testSubject()
+
+        assert(checkAreaRiskChangedResult == ListenableWorker.Result.success())
+
+        val expected = mediumRiskyPostCodeIndicator.copy(
+            name = Translatable(mapOf("en" to "A1 is in local COVID area level: medium")),
+            policyData = PolicyData(
+                heading = Translatable(mapOf("en" to "")),
+                content = Translatable(mapOf("en" to "")),
+                footer = Translatable(mapOf("en" to "")),
+                localAuthorityRiskTitle = Translatable(mapOf("en" to "ASd0 (A1)")),
+                policies = listOf()
+            )
         )
+
+        verify(exactly = 1) {
+            riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
+                RiskIndicatorWrapper(
+                    "medium",
+                    expected,
+                    riskLevelFromLocalAuthority = true
+                )
+        }
+    }
+
+    @Test
+    fun `no mapping from local authority to risk level returns risk level using post code without policy data`() = runBlocking {
+        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+        mainPostCodeLevelWasLow()
+
+        every { postCodeProvider.value }.returns("BE3")
+        every { localAuthorityProvider.value } returns "NOMAPPING"
+
+        coEvery { riskyPostCodeApi.fetchRiskyPostCodeDistribution() } returns
+            fetchRiskyPostCodeDistributionResponse.copy(riskLevels = riskLevelsWithPolicyData)
+
+        testSubject()
+
+        val expected = mediumRiskyPostCodeIndicatorWithPolicyData.copy(
+            name = Translatable(mapOf("en" to "BE3 is in local COVID area level: medium")),
+            policyData = null
+        )
+
+        verify(exactly = 1) {
+            riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
+                RiskIndicatorWrapper(
+                    "medium",
+                    expected,
+                    riskLevelFromLocalAuthority = false
+                )
+        }
+    }
+
+    private fun postCodeListContainsMainPostCodeWithHighRiskLevel() {
         every { postCodeProvider.value }.returns("A1")
     }
 
     private fun postCodeListContainsMainPostCodeWithLowRiskLevel() {
-        coEvery { riskyPostCodeApi.fetchRiskyPostCodeDistribution() }.returns(
-            fetchRiskyPostCodeDistributionResponse
-        )
         every { postCodeProvider.value }.returns("SE1")
     }
 
     private fun postCodeListContainsMainPostCodeWithMediumRiskLevel() {
-        coEvery { riskyPostCodeApi.fetchRiskyPostCodeDistribution() }.returns(
-            fetchRiskyPostCodeDistributionResponse
-        )
         every { postCodeProvider.value }.returns("BE3")
     }
 

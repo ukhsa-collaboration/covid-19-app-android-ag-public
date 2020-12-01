@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.ForegroundInfo
 import androidx.work.NetworkType.CONNECTED
 import androidx.work.OneTimeWorkRequestBuilder
@@ -28,8 +29,9 @@ class ExposureNotificationWorker(
         context.appComponent.inject(this)
 
         setForeground()
+        val inputToken = inputData.getString(INPUT_TOKEN) ?: ""
 
-        return exposureNotificationWork().toWorkerResult()
+        return exposureNotificationWork(inputToken).toWorkerResult()
     }
 
     private suspend fun setForeground() {
@@ -39,19 +41,25 @@ class ExposureNotificationWorker(
         setForeground(foregroundInfo)
     }
 
-    companion object {
+    companion object : ExposureNotificationWorkerScheduler {
+        const val INPUT_TOKEN = "INPUT_TOKEN"
         private const val NOTIFICATION_UPDATING_DATABASE_ID = 112
 
-        fun schedule(context: Context) {
+        override fun schedule(context: Context, token: String) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(CONNECTED)
                 .build()
 
             val exposureNotificationWork = OneTimeWorkRequestBuilder<ExposureNotificationWorker>()
                 .setConstraints(constraints)
+                .setInputData(Data.Builder().putString(INPUT_TOKEN, token).build())
                 .build()
 
             WorkManager.getInstance(context).enqueue(exposureNotificationWork)
         }
     }
+}
+
+interface ExposureNotificationWorkerScheduler {
+    fun schedule(context: Context, token: String)
 }

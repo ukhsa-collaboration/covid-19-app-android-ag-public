@@ -52,7 +52,8 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
                 isolationConfiguration = DurationDays(),
                 indexCase = IndexCase(
                     symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(7, DAYS)
+                    expiryDate = LocalDate.now().plus(7, DAYS),
+                    selfAssessment = false
                 )
             )
         )
@@ -109,7 +110,8 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
                 isolationConfiguration = DurationDays(),
                 indexCase = IndexCase(
                     symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(7, DAYS)
+                    expiryDate = LocalDate.now().plus(7, DAYS),
+                    selfAssessment = false
                 )
             )
         )
@@ -167,7 +169,8 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
                 isolationConfiguration = DurationDays(),
                 indexCase = IndexCase(
                     symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(7, DAYS)
+                    expiryDate = LocalDate.now().plus(7, DAYS),
+                    selfAssessment = false
                 )
             )
         )

@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.analytics
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
-import androidx.work.Data
 import androidx.work.ExistingWorkPolicy.REPLACE
 import androidx.work.NetworkType.CONNECTED
 import androidx.work.OneTimeWorkRequestBuilder
@@ -19,15 +18,12 @@ class SubmitOnboardingAnalyticsWorker(
 ) : CoroutineWorker(context, workerParameters) {
 
     @Inject
-    lateinit var submitAnalytics: SubmitAnalytics
+    lateinit var submitOnboardingAnalytics: SubmitOnboardingAnalytics
 
     override suspend fun doWork(): Result {
         applicationContext.appComponent.inject(this)
 
-        val isOnboardingAnalyticsEvent =
-            inputData.getBoolean(INPUT_KEY_IS_ONBOARDING_ANALYTICS_EVENT, false)
-
-        return submitAnalytics.invoke(isOnboardingAnalyticsEvent).toWorkerResult()
+        return submitOnboardingAnalytics.invoke().toWorkerResult()
     }
 
     class Scheduler @Inject constructor(val context: Context) {
@@ -39,12 +35,6 @@ class SubmitOnboardingAnalyticsWorker(
             val submitAnalyticsWorker =
                 OneTimeWorkRequestBuilder<SubmitOnboardingAnalyticsWorker>()
                     .setConstraints(constraints)
-                    .setInputData(
-                        Data.Builder().putBoolean(
-                            INPUT_KEY_IS_ONBOARDING_ANALYTICS_EVENT,
-                            true
-                        ).build()
-                    )
                     .build()
 
             WorkManager.getInstance(context)
@@ -54,9 +44,5 @@ class SubmitOnboardingAnalyticsWorker(
                     submitAnalyticsWorker
                 )
         }
-    }
-
-    companion object {
-        private const val INPUT_KEY_IS_ONBOARDING_ANALYTICS_EVENT = "IS_ONBOARDING_ANALYTICS_EVENT"
     }
 }

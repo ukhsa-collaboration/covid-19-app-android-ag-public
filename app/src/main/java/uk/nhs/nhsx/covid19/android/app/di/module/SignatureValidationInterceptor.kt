@@ -1,7 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.di.module
 
-import com.jeroenmols.featureflag.framework.FeatureFlag
-import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import okhttp3.Interceptor
 import okhttp3.Interceptor.Chain
 import okhttp3.Request
@@ -30,67 +28,62 @@ class SignatureValidationInterceptor(
         }
 
         val response = chain.proceed(request)
+        val signatureHeader = response.header("x-amz-meta-signature")
+            ?: throwIOException("Did not receive required signature header")
+        val signatureHeaderParts =
+            Regex("keyId=\"(.*)\",signature=\"(.*)\"")
+                .find(signatureHeader)
+                ?.groupValues ?: throwIOException("Could not parse signature header")
+        val keyId = signatureHeaderParts[1]
+        val signature = base64Decoder.decodeToBytes(signatureHeaderParts[2])
 
-        if (RuntimeBehavior.isFeatureEnabled(FeatureFlag.SIGNATURE_VALIDATION)) {
-            val signatureHeader = response.header("x-amz-meta-signature")
-                ?: throwIOException("Did not receive required signature header")
-            val signatureHeaderParts =
-                Regex("keyId=\"(.*)\",signature=\"(.*)\"")
-                    .find(signatureHeader)
-                    ?.groupValues ?: throwIOException("Could not parse signature header")
-            val keyId = signatureHeaderParts[1]
-            val signature = base64Decoder.decodeToBytes(signatureHeaderParts[2])
+        val publicKeyString = signatureKeys.firstOrNull { it.id == keyId }
+            ?.pemRepresentation ?: throwIOException("Unknown keyId received")
 
-            val publicKeyString = signatureKeys.firstOrNull { it.id == keyId }
-                ?.pemRepresentation ?: throwIOException("Unknown keyId received")
+        val undecoratedString = publicKeyString
+            .split("\n")
+            .filter { !(it.isEmpty() || it.startsWith("-----")) }
+            .joinToString("")
+        val publicKeyBytes: ByteArray = base64Decoder.decodeToBytes(undecoratedString)
 
-            val undecoratedString = publicKeyString
-                .split("\n")
-                .filter { !(it.isEmpty() || it.startsWith("-----")) }
-                .joinToString("")
-            val publicKeyBytes: ByteArray = base64Decoder.decodeToBytes(undecoratedString)
+        val keySpec = X509EncodedKeySpec(publicKeyBytes)
+        val keyFactory = KeyFactory.getInstance("EC")
+        val key = keyFactory.generatePublic(keySpec)
+        val responseBody = response.body
+        val message = responseBody?.bytes()
 
-            val keySpec = X509EncodedKeySpec(publicKeyBytes)
-            val keyFactory = KeyFactory.getInstance("EC")
-            val key = keyFactory.generatePublic(keySpec)
-            val responseBody = response.body
-            val message = responseBody?.bytes()
+        val dateHeader = response.header("x-amz-meta-signature-date")
+            ?: throwIOException("Did not receive required date header: ${request.url}")
 
-            val dateHeader = response.header("x-amz-meta-signature-date")
-                ?: throwIOException("Did not receive required date header: ${request.url}")
-
-            val s = Signature.getInstance("SHA256withECDSA")
-                .apply {
-                    initVerify(key)
-                    when (dynamicContent) {
-                        true -> update(
-                            getDynamicContentSignatureData(
-                                request = request,
-                                dateHeader = dateHeader,
-                                message = message
-                            )
+        val s = Signature.getInstance("SHA256withECDSA")
+            .apply {
+                initVerify(key)
+                when (dynamicContent) {
+                    true -> update(
+                        getDynamicContentSignatureData(
+                            request = request,
+                            dateHeader = dateHeader,
+                            message = message
                         )
-                        false -> update(
-                            getStaticContentSignatureData(
-                                dateHeader = dateHeader,
-                                message = message
-                            )
+                    )
+                    false -> update(
+                        getStaticContentSignatureData(
+                            dateHeader = dateHeader,
+                            message = message
                         )
-                    }
+                    )
                 }
-
-            val valid: Boolean = s.verify(signature)
-
-            if (!valid) {
-                throwIOException("Signature validation failed for request: ${request.url.encodedPath}")
             }
 
-            return response.newBuilder()
-                .body(message?.toResponseBody()) // Needed because the responseBody can only be read once
-                .build()
+        val valid: Boolean = s.verify(signature)
+
+        if (!valid) {
+            throwIOException("Signature validation failed for request: ${request.url.encodedPath}")
         }
 
-        return response
+        return response.newBuilder()
+            .body(message?.toResponseBody()) // Needed because the responseBody can only be read once
+            .build()
     }
 
     private fun getDynamicContentSignatureData(

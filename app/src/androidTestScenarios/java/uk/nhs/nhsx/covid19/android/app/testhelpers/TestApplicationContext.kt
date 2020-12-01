@@ -18,9 +18,11 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.work.WorkManager
+import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import uk.nhs.covid19.config.Configurations
 import uk.nhs.covid19.config.qrCodesSignatureKey
 import uk.nhs.nhsx.covid19.android.app.ExposureApplication
+import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationChecker
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
@@ -33,6 +35,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.MockQuestionnaireApi
+import uk.nhs.nhsx.covid19.android.app.remote.MockRiskyVenuesApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
 import uk.nhs.nhsx.covid19.android.app.remote.data.AppAvailabilityResponse
@@ -54,6 +57,8 @@ class TestApplicationContext {
 
     val app: ExposureApplication = ApplicationProvider.getApplicationContext()
 
+    val riskyVenuesApi = MockRiskyVenuesApi()
+
     val virologyTestingApi = MockVirologyTestingApi()
 
     val questionnaireApi = MockQuestionnaireApi()
@@ -67,6 +72,8 @@ class TestApplicationContext {
     private val bluetoothStateProvider = TestBluetoothStateProvider()
 
     private val locationStateProvider = TestLocationStateProvider()
+
+    private val batteryOptimizationChecker = TestBatteryOptimizationChecker()
 
     private val sharedPreferences: SharedPreferences =
         EncryptionUtils.createEncryptedSharedPreferences(
@@ -94,11 +101,23 @@ class TestApplicationContext {
                 encryptedFile,
                 qrCodesSignatureKey,
                 applicationLocaleProvider,
-                updateManager
+                updateManager,
+                batteryOptimizationChecker
             )
         )
-        .networkModule(NetworkModule(Configurations.qa, additionalInterceptors))
-        .managedApiModule(ManagedApiModule(virologyTestingApi, questionnaireApi))
+        .networkModule(
+            NetworkModule(
+                Configurations.qa,
+                additionalInterceptors
+            )
+        )
+        .managedApiModule(
+            ManagedApiModule(
+                riskyVenuesApi,
+                virologyTestingApi,
+                questionnaireApi
+            )
+        )
         .build()
 
     init {
@@ -116,11 +135,12 @@ class TestApplicationContext {
         sharedPreferences.edit { clear() }
 
         setExposureNotificationsEnabled(true)
+        exposureNotificationApi.setDeviceSupportsLocationlessScanning(false)
         setOnboardingCompleted(true)
         setBluetoothEnabled(true)
         setLocationEnabled(true)
         setPolicyUpdateAccepted(true)
-
+        FeatureFlagTestHelper.clearFeatureFlags()
         closeNotificationPanel()
 
         component.provideIsolationStateMachine().reset()
@@ -138,8 +158,16 @@ class TestApplicationContext {
         exposureNotificationApi.setEnabled(isEnabled)
     }
 
+    fun getExposureNotificationApi(): MockExposureNotificationApi {
+        return exposureNotificationApi
+    }
+
     fun setPostCode(postCode: String?) {
         component.getPostCodeProvider().value = postCode
+    }
+
+    fun setLocalAuthority(localAuthority: String?) {
+        component.getLocalAuthorityProvider().value = localAuthority
     }
 
     fun getUserInbox() = component.getUserInbox()
@@ -215,6 +243,10 @@ class TestApplicationContext {
     fun setAppAvailability(appAvailability: AppAvailabilityResponse) {
         component.getAppAvailabilityProvider().appAvailability = appAvailability
     }
+
+    fun setIgnoringBatteryOptimizations(ignoringBatteryOptimizations: Boolean) {
+        batteryOptimizationChecker.ignoringBatteryOptimizations = ignoringBatteryOptimizations
+    }
 }
 
 fun stringFromResId(@StringRes stringRes: Int): String {
@@ -246,4 +278,12 @@ class TestLocationStateProvider : AvailabilityStateProvider {
 
     override fun stop(context: Context) {
     }
+}
+
+class TestBatteryOptimizationChecker : BatteryOptimizationChecker {
+
+    var ignoringBatteryOptimizations = false
+
+    override fun isIgnoringBatteryOptimizations(): Boolean =
+        ignoringBatteryOptimizations
 }

@@ -3,15 +3,17 @@ package uk.nhs.nhsx.covid19.android.app.util
 import androidx.annotation.StringRes
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostalDistrictProvider
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostalDistrictProviderWrapper
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DistrictAreaStringProvider @Inject constructor(private val postalDistrictProvider: PostalDistrictProvider) {
+class DistrictAreaStringProvider @Inject constructor(
+    private val postalDistrictProviderWrapper: PostalDistrictProviderWrapper
+) {
 
-    fun provide(@StringRes stringResId: Int): Int {
-        return when (postalDistrictProvider.toPostalDistrict()) {
+    suspend fun provide(@StringRes stringResId: Int): Int {
+        return when (postalDistrictProviderWrapper.getPostCodeDistrict()) {
             WALES -> welshMapping[stringResId] ?: stringResId
             else -> stringResId
         }

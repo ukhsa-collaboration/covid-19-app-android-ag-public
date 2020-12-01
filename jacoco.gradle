@@ -114,6 +114,7 @@ project.afterEvaluate {
                     '**/fieldtests/**/*.*',
                     '**/FieldTestConfiguration.class',
                     '**/featureflag/testsettings/*.*',
+                    '**/GoogleExposureNotificationApi.class',
                     '**/ScenariosExposureApplication*.*',
                     '**/LanguageAdapter.class',
                     '**/EnvironmentAdapter.class',

@@ -7,6 +7,7 @@
     <string name="url_privacy_notice">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_terms_of_use">https://covid19.nhs.uk/our-policies.html</string>
     <string name="url_nhs_tablet_device">https://faq.covid19.nhs.uk/article/KA-01123/en-us</string>
+    <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/article/KA-01337</string>
     <string name="url_nhs_111_online">https://111.nhs.uk/</string>
     <string name="url_accessibility_statement">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info">https://faq.covid19.nhs.uk/article/KA-01101/en-us</string>
@@ -17,6 +18,7 @@
     <string name="url_order_test_privacy">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information/testing-for-coronavirus-privacy-information</string>
     <string name="url_order_test_for_someone_else">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="url_provide_feedback">https://covid19.nhs.uk/contact-us.html</string>
+    <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
 
     <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_terms_of_use_wls">https://covid19.nhs.uk/our-policies.html</string>
@@ -64,6 +66,8 @@
     <string name="privacy_notice">Privacy Notice</string>
     <string name="tablet_information_url">Information on the use of tablets</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
+    <string name="exposure_faqs">Click here to find out more</string>
+    <string name="exposure_faqs_title">If you are outside of England and Wales, you need to follow the guidance for the country you are in.</string>
     <string name="post_code_title">Enter the first part of your postcode (postcode district)</string>
     <string name="post_code_rationale">The postcode district helps with learning about the spread of coronavirus in different areas. This makes sure we can give the best possible public health advice for your area.\n\nDon’t worry. Your postcode district won’t be used to track your location.</string>
     <string name="post_code_invalid_title">Invalid postcode district code</string>
@@ -222,7 +226,8 @@
     <string name="for_further_advice_visit">For further advice, please contact:</string>
     <string name="test_result_your_test_result">Your test result</string>
     <string name="test_result_positive_continue_self_isolation_title_1">Continue to self-isolate for</string>
-    <string name="test_result_positive_continue_self_isolate_explanation">Your test result shows that you had the virus at the time of the test. You have been sent more information by email, text or phone. If you are under 18, you are advised to show this message to a trusted adult.</string>
+    <string name="test_result_positive_continue_self_isolate_explanation_1">Your test result shows that you had the virus at the time of the test. You have been sent an email or text with more information.</string>
+    <string name="test_result_positive_continue_self_isolate_explanation_2">Don’t worry - for most people symptoms are quite mild. However, if your symptoms do worsen then you should call 111 or visit nhs.uk for more advice.</string>
     <string name="test_result_negative_no_self_isolation_subtitle_text">Your coronavirus test result is negative</string>
     <string name="test_result_void_continue_self_isolate_explanation">We could not tell if you had coronavirus when the test was done and you should take the test again. If you are under 18, you are advised to show this message to a trusted adult.</string>
     <string name="test_result_negative_already_not_in_isolation_subtitle">Your coronavirus test result is negative</string>
@@ -236,6 +241,7 @@
     <string name="about_my_data_symptoms_date">Date</string>
     <string name="about_manage_my_data">Manage my data</string>
     <string name="postal_district">Postal district</string>
+    <string name="about_local_authority">Local authority</string>
     <string name="edit">Edit</string>
     <string name="title_last_test_result_taken">Last test result taken</string>
     <string name="title_venue_history">Venue history</string>
@@ -378,24 +384,22 @@
     <string name="update_in_play_store">Update your app now</string>
     <string name="updated_privacy_title">Changes to our policies</string>
     <string name="updated_privacy_control_text">We have made some changes to the app to help it work more efficiently when you travel. Several countries are working together so contact tracing continues to work as people cross borders into different countries. \n\nOfficial contact tracing apps from England, Wales, Scotland, Northern Ireland, Jersey and Gibraltar will be able to share data whilst preserving user anonymity. \n\nIf you test positive for coronavirus, you can choose to share your data with the NHS so we can send notifications to other app users who need to be alerted in these countries.</string>
-    <string name="about_local_authority">Local authority</string>
-    <string name="confirm_and_start">Confirm and start</string>
-    <string name="exposure_faqs">Click here to find out more</string>
-    <string name="exposure_faqs_title">If you are outside of England and Wales, you need to follow the guidance for the country you are in.</string>
-    <string name="local_authority_error_authority_not_supported_description">Unfortunately this app is not supported in your region. Please download the app for your region or country.</string>
-    <string name="local_authority_error_authority_not_supported_title">Local authority not accepted</string>
-    <string name="local_authority_error_no_authority_selected_description">You need to select a local authority to  proceed.</string>
-    <string name="local_authority_error_no_authority_selected_title">Please select a local authority</string>
-    <string name="local_authority_information_description">You need to select a local authority so that the app can give you more accurate information and guidance</string>
-    <string name="local_authority_information_title">Select your local authority</string>
-    <string name="local_authority_link">Visit GOV.UK if you’re not sure</string>
+    <string name="test_result_positive_continue_self_isolate_explanation">Your test result shows that you had the virus at the time of the test. You have been sent more information by email, text or phone. If you are under 18, you are advised to show this message to a trusted adult.</string>
     <string name="local_authority_title">Your local authority</string>
-    <string name="multiple_local_authorities_description">As your postcode district (%1$s) is in more than one local authority, you need to select the one you are in. This is so the app can give you more accurate information and guidance.</string>
-    <string name="multiple_local_authorities_title">Select your local authority</string>
-    <string name="single_local_authority_description">The app will use your local authority to give you accurate information and guidance.</string>
+    <string name="single_local_authority_description">Great news! The app is going to be more accurate at giving information and guidance for the level of coronavirus risk in your area.\n\nDon‘t worry, your privacy is still protected. The app will never track your identity or location.</string>
+    <string name="confirm_and_start">Confirm</string>
     <string name="single_local_authority_title">The local authority for %1$s is %2$s</string>
-    <string name="test_result_positive_continue_self_isolate_explanation_1">Your test result shows that you had the virus at the time of the test. You have been sent an email or text with more information.</string>
-    <string name="test_result_positive_continue_self_isolate_explanation_2">Don’t worry - for most people symptoms are quite mild. However, if your symptoms do worsen then you should call 111.</string>
-    <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/article/KA-01337</string>
-    <string name="url_local_authority">https://www.gov.uk/</string>
+    <string name="multiple_local_authorities_title">Select your local authority</string>
+    <string name="multiple_local_authorities_description">As your postcode district (%s) is in more than one local authority, you need to select the one you are in. This is so the app can give you more accurate information and guidance.\n\nVisit GOV.UK if you do not know your local authority.</string>
+    <string name="local_authority_link">Find your local authority</string>
+    <string name="local_authority_error_no_authority_selected_title">Please select a local authority</string>
+    <string name="local_authority_error_no_authority_selected_description">You need choose a local authority to continue</string>
+    <string name="local_authority_error_authority_not_supported_title">You need choose a local authority to continue</string>
+    <string name="local_authority_error_authority_not_supported_description">Unfortunately this app is not supported in your region. Please download the app for your region or country.</string>
+    <string name="local_authority_information_title">Select your local authority</string>
+    <string name="local_authority_information_description">Please select a local authority. This is so the app can give you more accurate information and guidance.</string>
+    <string name="checkin_information_title_new">More info about venue check-in</string>
+    <string name="battery_optimization_title">For this app to work better, please allow it to run in the background</string>
+    <string name="battery_optimization_description">Allowing the app to run in the background means the app can send you up-to-date alerts to have the latest information and guidance.\n\nWe do not expect this to cause a significant decrease in your device’s battery life.\n\nYou can always change this later by going to Prioritised Background Activity in settings.\n\nIf you do not allow, we recommend you to open the app manually at least once every 24 hours.</string>
+    <string name="battery_optimization_allow">Allow</string>
 </resources>

@@ -18,7 +18,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
@@ -36,7 +36,7 @@ class SubmitKeysProgressActivity : BaseActivity(R.layout.activity_progress) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
-        setNavigateUpToolbar(toolbar, R.string.empty, R.drawable.ic_close_primary)
+        setCloseToolbar(toolbar, R.string.empty, R.drawable.ic_close_primary)
 
         exposureKeys = intent.getParcelableArrayListExtra(EXPOSURE_KEYS_TO_SUBMIT) ?: return
         diagnosisKeySubmissionToken = intent.getStringExtra(ShareKeysInformationActivity.SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN) ?: return

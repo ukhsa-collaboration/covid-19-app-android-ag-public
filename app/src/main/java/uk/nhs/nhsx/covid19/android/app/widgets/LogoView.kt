@@ -7,25 +7,35 @@ import android.widget.FrameLayout
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import kotlinx.android.synthetic.main.view_logo.view.daLogo
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostalDistrictProvider
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostalDistrictProviderWrapper
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 class LogoView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr) {
+) : FrameLayout(context, attrs, defStyleAttr), CoroutineScope {
+
+    lateinit var job: Job
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
     private var isAccessibilityHeadingCompat = filterTouchesWhenObscured
 
     @Inject
-    lateinit var postalDistrictProvider: PostalDistrictProvider
+    lateinit var postalDistrictProviderWrapper: PostalDistrictProviderWrapper
 
     init {
         context.applicationContext.appComponent.inject(this)
@@ -33,12 +43,14 @@ class LogoView @JvmOverloads constructor(
         getAttributes(attrs)
     }
 
-    private fun getAttributes(attrs: AttributeSet?) {
-        context.theme.obtainStyledAttributes(attrs, R.styleable.LogoView, 0, 0).apply {
-            isAccessibilityHeadingCompat =
-                getBoolean(R.styleable.LogoView_isAccessibilityHeadingCompat, false)
-            recycle()
-        }
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        job = Job()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        job.cancel()
     }
 
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
@@ -48,9 +60,10 @@ class LogoView @JvmOverloads constructor(
         }
     }
 
-    private fun setLogo() {
-        val logoWithDescription =
-            LogoWithDescription.forDistrict(postalDistrictProvider.toPostalDistrict())
+    private fun setLogo() = launch {
+        val postCodeDistrict = postalDistrictProviderWrapper.getPostCodeDistrict()
+
+        val logoWithDescription = LogoWithDescription.forDistrict(postCodeDistrict)
         daLogo.setImageResource(logoWithDescription.logoImage)
 
         val description = logoWithDescription.description
@@ -61,6 +74,14 @@ class LogoView @JvmOverloads constructor(
         } else {
             daLogo.contentDescription = null
             daLogo.isFocusable = false
+        }
+    }
+
+    private fun getAttributes(attrs: AttributeSet?) {
+        context.theme.obtainStyledAttributes(attrs, R.styleable.LogoView, 0, 0).apply {
+            isAccessibilityHeadingCompat =
+                getBoolean(R.styleable.LogoView_isAccessibilityHeadingCompat, false)
+            recycle()
         }
     }
 }

@@ -13,6 +13,7 @@ import java.util.Date
 
 class MockExposureNotificationApi : ExposureNotificationApi {
 
+    private var supportsLocationlessScanning = false
     private var isEnabled = false
     private var temporaryExposureKeyHistoryWasCalled = false
 
@@ -97,5 +98,13 @@ class MockExposureNotificationApi : ExposureNotificationApi {
 
     override suspend fun isAvailable(): Boolean {
         return true
+    }
+
+    fun setDeviceSupportsLocationlessScanning(supportsLocationlessScanning: Boolean) {
+        this.supportsLocationlessScanning = supportsLocationlessScanning
+    }
+
+    override fun deviceSupportsLocationlessScanning(): Boolean {
+        return supportsLocationlessScanning
     }
 }

@@ -1,14 +1,19 @@
 package uk.nhs.nhsx.covid19.android.app.onboarding
 
+import com.jeroenmols.featureflag.framework.FeatureFlag
+import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep
+import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
 import uk.nhs.nhsx.covid19.android.app.report.Reporter
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.report.reporter
-import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BatteryOptimizationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.DataAndPrivacyRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PermissionRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PostCodeRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
@@ -19,18 +24,145 @@ class OnboardingScenarioTest : EspressoTest() {
 
     private val welcomeRobot = WelcomeRobot()
     private val postCodeRobot = PostCodeRobot()
+    private val localAuthorityRobot = LocalAuthorityRobot()
     private val permissionRobot = PermissionRobot()
     private val statusRobot = StatusRobot()
     private val dataAndPrivacyRobot = DataAndPrivacyRobot()
     private val ageRestrictionRobot = AgeRestrictionRobot()
+    private val batteryOptimizationRobot = BatteryOptimizationRobot()
+
+    @After
+    fun tearDown() {
+        FeatureFlagTestHelper.clearFeatureFlags()
+    }
 
     @Test
-    fun onboardingSuccessful_navigateToStatusScreen() = reporter(
+    fun onboardingSuccessful_localAuthorityFeatureEnabled_batteryOptimizationFeatureDisabled_navigateToStatusScreen() = reporter(
         "Onboarding",
-        "Happy path",
+        "Happy path with local authority feature flag enabled and battery optimization feature disabled",
         "Complete onboarding flow",
         Reporter.Kind.FLOW
     ) {
+        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.BATTERY_OPTIMIZATION)
+
+        performOnboardingWorkflow()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        step(
+            "Home screen",
+            "The user is presented with the home screen."
+        )
+    }
+
+    @Test
+    fun onboardingSuccessful_localAuthorityFeatureEnabled_batteryOptimizationFeatureEnabled_navigateToStatusScreen() = reporter(
+        "Onboarding",
+        "Happy path with local authority feature flag enabled and battery optimization feature enabled",
+        "Complete onboarding flow",
+        Reporter.Kind.FLOW
+    ) {
+        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.BATTERY_OPTIMIZATION)
+
+        performOnboardingWorkflow()
+
+        batteryOptimizationRobot.checkActivityIsDisplayed()
+
+        batteryOptimizationRobot.clickCloseButton()
+
+        step(
+            "Battery optimization screen",
+            "The user is presented with the battery optimization screen."
+        )
+
+        statusRobot.checkActivityIsDisplayed()
+
+        step(
+            "Home screen",
+            "The user is presented with the home screen."
+        )
+    }
+
+    private fun Reporter.performOnboardingWorkflow() {
+        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+
+        startTestActivity<WelcomeActivity>()
+
+        welcomeRobot.checkActivityIsDisplayed()
+
+        sleep(100)
+
+        step(
+            "Start",
+            "The user is presented a screen with information on what this app can do. The user continues."
+        )
+
+        welcomeRobot.clickConfirmOnboarding()
+
+        welcomeRobot.checkAgeConfirmationDialogIsDisplayed()
+
+        step(
+            "Confirm age",
+            "The user is asked to confirm they are older than 16 years. The user confirms to be older than 16."
+        )
+
+        welcomeRobot.clickConfirmAgePositive()
+
+        waitFor { dataAndPrivacyRobot.checkActivityIsDisplayed() }
+
+        step(
+            "Data and privacy",
+            "The user is presented a screen with information on data and privacy notes. The user continues."
+        )
+
+        dataAndPrivacyRobot.clickConfirmOnboarding()
+
+        postCodeRobot.checkActivityIsDisplayed()
+
+        step(
+            "Enter postcode",
+            "The user is asked to enter their partial postcode before they can proceed."
+        )
+
+        postCodeRobot.enterPostCode("N12")
+
+        step(
+            "Postcode entered",
+            "The user enters a valid postcode and continues."
+        )
+
+        waitFor { postCodeRobot.checkContinueButtonIsDisplayed() }
+
+        postCodeRobot.clickContinue()
+
+        waitFor { localAuthorityRobot.checkActivityIsDisplayed() }
+
+        step(
+            "Local authority confirmed",
+            "The user confirms a valid local authority."
+        )
+
+        localAuthorityRobot.clickConfirm()
+
+        waitFor { permissionRobot.checkActivityIsDisplayed() }
+
+        step(
+            "Permissions",
+            "The user is presented with information on which permissions are necessary for the app. The user continues."
+        )
+
+        permissionRobot.clickEnablePermissions()
+    }
+
+    @Test
+    fun onboardingSuccessfulAndLocalAuthorityFeatureFlagDisabled_navigateToStatusScreen() = reporter(
+        "Onboarding",
+        "Happy path with local authority feature flag disabled",
+        "Complete onboarding flow",
+        Reporter.Kind.FLOW
+    ) {
+        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+
         startTestActivity<WelcomeActivity>()
 
         welcomeRobot.checkActivityIsDisplayed()
@@ -174,6 +306,8 @@ class OnboardingScenarioTest : EspressoTest() {
 
     @Test
     fun validPostcodeEnteredAndContinueClicked_navigateToPermissionScreen() = notReported {
+        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+
         startTestActivity<PostCodeActivity>()
 
         postCodeRobot.checkActivityIsDisplayed()

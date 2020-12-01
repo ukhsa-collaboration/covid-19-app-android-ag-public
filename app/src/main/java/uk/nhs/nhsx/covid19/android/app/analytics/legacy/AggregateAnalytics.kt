@@ -1,20 +1,16 @@
 package uk.nhs.nhsx.covid19.android.app.analytics.legacy
 
-import android.os.Build
-import android.os.Build.VERSION
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.analytics.GetAnalyticsWindow
+import uk.nhs.nhsx.covid19.android.app.analytics.MetadataProvider
 import uk.nhs.nhsx.covid19.android.app.analytics.NetworkTrafficStats
 import uk.nhs.nhsx.covid19.android.app.analytics.UpdateStatusStorage
 import uk.nhs.nhsx.covid19.android.app.common.Result
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.runSafely
 import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsPayload
 import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsWindow
-import uk.nhs.nhsx.covid19.android.app.remote.data.Metadata
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import uk.nhs.nhsx.covid19.android.app.util.defaultFalse
 import uk.nhs.nhsx.covid19.android.app.util.toISOSecondsFormat
@@ -23,7 +19,7 @@ import javax.inject.Inject
 @Deprecated("Use GroupAnalyticsEvents, this is only for migration")
 class AggregateAnalytics @Inject constructor(
     private val analyticsMetricsStorage: AnalyticsMetricsStorage,
-    private val postCodeProvider: PostCodeProvider,
+    private val metadataProvider: MetadataProvider,
     private val networkTrafficStats: NetworkTrafficStats,
     private val updateStatusStorage: UpdateStatusStorage,
     private val analyticsEventsStorage: AnalyticsEventsStorage,
@@ -38,7 +34,7 @@ class AggregateAnalytics @Inject constructor(
                 val analyticsPayload = AnalyticsPayload(
                     analyticsWindow = getAnalyticsWindow(),
                     metrics = updateMetrics(it),
-                    metadata = getMetadata(),
+                    metadata = metadataProvider.getMetadata(),
                     includesMultipleApplicationVersions = updateStatusStorage.value.defaultFalse()
                 )
 
@@ -68,14 +64,4 @@ class AggregateAnalytics @Inject constructor(
         }.also {
             analyticsMetricsStorage.metrics = it
         }
-
-    private fun getMetadata(): Metadata {
-        val latestApplicationVersion = BuildConfig.VERSION_NAME_SHORT
-        return Metadata(
-            deviceModel = "${Build.MANUFACTURER} ${Build.MODEL}",
-            latestApplicationVersion = latestApplicationVersion,
-            postalDistrict = postCodeProvider.value.orEmpty(),
-            operatingSystemVersion = "${VERSION.SDK_INT}"
-        )
-    }
 }

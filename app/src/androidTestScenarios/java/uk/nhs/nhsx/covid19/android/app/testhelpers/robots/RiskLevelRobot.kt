@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -16,6 +17,10 @@ class RiskLevelRobot {
         ColorScheme.RED to "Content high"
     )
 
+    private val riskLocalAuthorityToContent = mapOf(
+        ColorScheme.RED to "Local Authority content high"
+    )
+
     fun checkActivityIsDisplayed() {
         onView(withId(R.id.riskLevelContainer))
             .check(matches(isDisplayed()))
@@ -26,19 +31,12 @@ class RiskLevelRobot {
             .check(matches(withText(title)))
     }
 
-    fun checkContentForLowRiskDisplayed() {
-        onView(withText(riskToContent[ColorScheme.GREEN]))
-            .check(matches(isDisplayed()))
+    fun checkContentFromPostDistrictIsDisplayed(text: String) {
+        onView(withText(text)).check(matches(isDisplayed()))
     }
 
-    fun checkContentForMediumRiskDisplayed() {
-        onView(withText(riskToContent[ColorScheme.YELLOW]))
-            .check(matches(isDisplayed()))
-    }
-
-    fun checkContentForHighRiskDisplayed() {
-        onView(withText(riskToContent[ColorScheme.RED]))
-            .check(matches(isDisplayed()))
+    fun checkContentFromLocalAuthorityIsDisplayed(text: String) {
+        onView(withText(text)).check(matches(isDisplayed()))
     }
 
     fun checkImageForLowRiskDisplayed() {
@@ -57,5 +55,10 @@ class RiskLevelRobot {
         onView(withId(R.id.imageRiskLevel)).check(
             matches(withDrawable(R.drawable.ic_map_risk_red))
         )
+    }
+
+    fun checkForFooter() {
+        onView(withId(R.id.riskLevelFooter))
+            .perform(ViewActions.scrollTo()).check(matches(isDisplayed()))
     }
 }

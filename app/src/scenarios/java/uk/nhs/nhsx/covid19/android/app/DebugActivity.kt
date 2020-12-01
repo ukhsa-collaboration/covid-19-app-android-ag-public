@@ -27,6 +27,7 @@ import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
 import uk.nhs.nhsx.covid19.android.app.about.MoreAboutAppActivity
 import uk.nhs.nhsx.covid19.android.app.about.UserDataActivity
+import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableExposureNotificationsActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableLocationActivity
@@ -62,6 +63,9 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
 import java.time.LocalDate
+import uk.nhs.nhsx.covid19.android.app.remote.data.Policy
+import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyData
+import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyIcon.MEETING_PEOPLE
 
 class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
@@ -279,25 +283,54 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             startActivity<ShareKeysInformationActivity>()
         }
 
-        addScreenButton("Risk level") {
+        val riskIndicatorWithEmptyPolicyData = RiskIndicator(
+            colorScheme = GREEN,
+            name = Translatable(mapOf("en" to "Tier1 from post code")),
+            heading = Translatable(mapOf("en" to "Data from the NHS shows that the spread of coronavirus in your area is low.")),
+            content = Translatable(
+                mapOf(
+                    "en" to "Your local authority has normal measures for coronavirus in place. It’s important that you continue to follow the latest official government guidance to help control the virus.\n" +
+                        "\n" +
+                        "Find out the restrictions for your local area to help reduce the spread of coronavirus."
+                )
+            ),
+            linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
+            linkUrl = Translatable(mapOf("en" to "https://faq.covid19.nhs.uk/article/KA-01270/en-us")),
+            policyData = null
+        )
+
+        addScreenButton("Risk level from post code") {
             RiskLevelActivity.start(
                 this,
                 RiskyPostCodeViewState.Risk(
                     "CM2",
-                    RiskIndicator(
-                        colorScheme = GREEN,
-                        name = Translatable(mapOf("en" to "Tier1")),
-                        heading = Translatable(mapOf("en" to "Data from the NHS shows that the spread of coronavirus in your area is low.")),
-                        content = Translatable(
-                            mapOf(
-                                "en" to "Your local authority has normal measures for coronavirus in place. It’s important that you continue to follow the latest official government guidance to help control the virus.\n" +
-                                    "\n" +
-                                    "Find out the restrictions for your local area to help reduce the spread of coronavirus."
-                            )
-                        ),
-                        linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-                        linkUrl = Translatable(mapOf("en" to "https://faq.covid19.nhs.uk/article/KA-01270/en-us"))
-                    )
+                    riskIndicatorWithEmptyPolicyData,
+                    riskLevelFromLocalAuthority = false
+                )
+            )
+        }
+
+        addScreenButton("Risk level from local authority") {
+            RiskLevelActivity.start(
+                this,
+                RiskyPostCodeViewState.Risk(
+                    "CM2",
+                    riskIndicatorWithEmptyPolicyData.copy(
+                        policyData = PolicyData(
+                            heading = Translatable(mapOf("en" to "Coronavirus cases are very high in your area")),
+                            content = Translatable(mapOf("en" to "Local Authority content high")),
+                            footer = Translatable(mapOf("en" to "Find out what rules apply in your area to help reduce the spread of coronavirus.")),
+                            policies = listOf(
+                                Policy(
+                                    policyIcon = MEETING_PEOPLE,
+                                    policyHeading = Translatable(mapOf("en" to "Meeting people")),
+                                    policyContent = Translatable(mapOf("en" to "Rule of six indoors and outdoors, in all settings."))
+                                )
+                            ),
+                            localAuthorityRiskTitle = Translatable(mapOf("en" to "Local Authority is in local COVID alert level: high"))
+                        )
+                    ),
+                    riskLevelFromLocalAuthority = true
                 )
             )
         }
@@ -335,6 +368,9 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             } else {
                 Timber.d("Can't start market app")
             }
+        }
+        addScreenButton("Battery optimization") {
+            startActivity<BatteryOptimizationActivity>()
         }
     }
 
