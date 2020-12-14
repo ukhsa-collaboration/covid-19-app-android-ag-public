@@ -5,6 +5,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadKeysParams.
 import uk.nhs.nhsx.covid19.android.app.util.daysUntilToday
 import uk.nhs.nhsx.covid19.android.app.util.hoursUntilNow
 import uk.nhs.nhsx.covid19.android.app.util.keysQueryFormat
+import uk.nhs.nhsx.covid19.android.app.util.selectNewest
 import java.time.Clock
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -21,11 +22,15 @@ class DownloadKeysParams(
         Clock.systemUTC()
     )
 
-    private lateinit var latestDownloadTime: LocalDateTime
+    private lateinit var relevantTime: LocalDateTime
 
     fun getNextQueries(): List<Intervals> = mutableListOf<Intervals>().apply {
 
-        latestDownloadTime = lastDownloadedKeyTimeProvider.getLatestStoredTime()
+        val latestDownloadTime = lastDownloadedKeyTimeProvider.getLatestStoredTime()
+
+        val oldestRelevant = LocalDateTime.now(clock).minusDays(14).truncatedTo(ChronoUnit.DAYS)
+
+        relevantTime = selectNewest(latestDownloadTime, oldestRelevant)
 
         addAll(getHourlyIntervalsPriorDaily())
 
@@ -35,28 +40,28 @@ class DownloadKeysParams(
     }
 
     private fun getHourlyIntervalsPriorDaily(): List<Hourly> =
-        with(latestDownloadTime) {
+        with(relevantTime) {
             if (isBeforeToday(clock) && hoursUntilEndOfDay() != 24) {
                 handleHourlyIntervals(hoursUntilEndOfDay() / 2)
             } else listOf()
         }
 
     private fun dailyIntervals(): List<Daily> =
-        with(latestDownloadTime) {
+        with(relevantTime) {
             if (isMoreThanTwoDaysAgo(clock)) {
                 handleDailyIntervals(daysUntilToday(clock))
             } else listOf()
         }
 
     private fun hourIntervalsLeftUntilNow(): List<Hourly> =
-        handleHourlyIntervals(latestDownloadTime.hoursUntilNow(clock) / 2)
+        handleHourlyIntervals(relevantTime.hoursUntilNow(clock) / 2)
 
     private fun handleHourlyIntervals(
         intervals: Int
     ): List<Hourly> = mutableListOf<Hourly>().apply {
         repeat(intervals) {
-            latestDownloadTime = latestDownloadTime.plusHours(TWO_HOURS)
-            add(Hourly(latestDownloadTime.keysQueryFormat()))
+            relevantTime = relevantTime.plusHours(TWO_HOURS)
+            add(Hourly(relevantTime.keysQueryFormat()))
         }
     }.toList()
 
@@ -64,8 +69,8 @@ class DownloadKeysParams(
         intervals: Int
     ): List<Daily> = mutableListOf<Daily>().apply {
         repeat(intervals) {
-            latestDownloadTime = latestDownloadTime.plusDays(ONE_DAY).withHour(0)
-            add(Daily(latestDownloadTime.keysQueryFormat()))
+            relevantTime = relevantTime.plusDays(ONE_DAY).withHour(0)
+            add(Daily(relevantTime.keysQueryFormat()))
         }
     }.toList()
 

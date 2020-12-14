@@ -7,8 +7,6 @@ import androidx.work.ExistingPeriodicWorkPolicy.REPLACE
 import androidx.work.NetworkType.CONNECTED
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import uk.nhs.nhsx.covid19.android.app.common.PeriodicTask.CLEAR_OUTDATED_DATA
-import java.util.concurrent.TimeUnit.DAYS
 import java.util.concurrent.TimeUnit.HOURS
 import javax.inject.Inject
 
@@ -26,21 +24,11 @@ class PeriodicTasks @Inject constructor(private val context: Context) {
                 .setConstraints(constraints)
                 .build()
 
-        val clearOutdatedData =
-            PeriodicWorkRequestBuilder<ClearOutdatedDataWorker>(1, DAYS)
-                .setConstraints(constraints)
-                .build()
-
         WorkManager.getInstance(context).apply {
             enqueueUniquePeriodicWork(
                 PeriodicTask.PERIODIC_TASKS.workName,
                 policy,
                 downloadTasksWorkRequest
-            )
-            enqueueUniquePeriodicWork(
-                CLEAR_OUTDATED_DATA.workName,
-                policy,
-                clearOutdatedData
             )
         }
     }
@@ -55,10 +43,10 @@ class PeriodicTasks @Inject constructor(private val context: Context) {
         workManager.cancelUniqueWork("RiskyVenuePolling")
         workManager.cancelUniqueWork("SubmitAnalyticsWorker")
         workManager.cancelUniqueWork("AppAvailabilityWorker")
+        workManager.cancelUniqueWork("clearOutdatedData")
     }
 }
 
 enum class PeriodicTask(val workName: String) {
-    PERIODIC_TASKS("periodicTasks"),
-    CLEAR_OUTDATED_DATA("clearOutdatedData")
+    PERIODIC_TASKS("periodicTasks")
 }

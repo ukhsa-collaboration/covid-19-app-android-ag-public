@@ -52,6 +52,18 @@ fun LocalDateTime.uiFormat(context: Context): String =
     DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm", context.getResourcesLocale())
         .format(this)
 
+fun Instant.isBeforeOrEqual(instant: Instant) =
+    !this.isAfter(instant)
+
+fun Instant.isEqualOrAfter(instant: Instant) =
+    !this.isBefore(instant)
+
+fun LocalDate.isBeforeOrEqual(date: LocalDate) =
+    !this.isAfter(date)
+
+fun LocalDate.isEqualOrAfter(date: LocalDate) =
+    !this.isBefore(date)
+
 private enum class MinuteIntervals(val range: IntRange) {
     FIRST_QUARTER(0..14),
     SECOND_QUARTER(15..29),
@@ -106,3 +118,25 @@ fun Context.getResourcesLocale(): Locale =
             resources.configuration.locale
         }
     }
+
+fun selectEarliest(
+    localDate1: LocalDate,
+    localDate2: LocalDate
+): LocalDate {
+    return if (localDate1.isBefore(localDate2)) {
+        localDate1
+    } else {
+        localDate2
+    }
+}
+
+fun selectNewest(
+    localDateTime1: LocalDateTime?,
+    localDateTime2: LocalDateTime
+): LocalDateTime {
+    return if (localDateTime1?.isAfter(localDateTime2) == true) {
+        localDateTime1
+    } else {
+        localDateTime2
+    }
+}

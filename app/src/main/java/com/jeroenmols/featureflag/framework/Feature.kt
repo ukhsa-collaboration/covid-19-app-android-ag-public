@@ -39,7 +39,13 @@ enum class FeatureFlag(
         "Battery optimization",
         "Enable in-app battery optimization request",
         defaultValue = false
-    )
+    ),
+    STORE_EXPOSURE_WINDOWS(
+        "feature.storeExposureWindows",
+        "Store exposure windows",
+        "Enable storage of exposure windows",
+        defaultValue = false
+    ),
 }
 
 /**
@@ -64,6 +70,12 @@ enum class TestSetting(
         "testsetting.usewebview",
         "Use WebView for internal browser",
         "Appium tests has problem connecting to CustomTabs tabs, so we need to provide alternative option",
+        defaultValue = false
+    ),
+    USE_WEB_VIEW_FOR_EXTERNAL_BROWSER(
+        "testsetting.usewebview_for_external_browser",
+        "Use WebView for external browser",
+        "We are seeing some problems with UI tests running on emulator, that test flag should help with that",
         defaultValue = false
     )
 }

@@ -21,6 +21,10 @@ import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.Companion.APP_CONFIGURATION_CHANNEL_ID
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
+import uk.nhs.nhsx.covid19.android.app.payment.CanClaimIsolationPayment
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State
@@ -47,7 +51,9 @@ class StatusViewModel @Inject constructor(
     private val notificationProvider: NotificationProvider,
     private val districtAreaStringProvider: DistrictAreaStringProvider,
     private val shouldShowInAppReview: ShouldShowInAppReview,
-    private val lastAppRatingStartedDateProvider: LastAppRatingStartedDateProvider
+    private val lastAppRatingStartedDateProvider: LastAppRatingStartedDateProvider,
+    private val canClaimIsolationPayment: CanClaimIsolationPayment,
+    private val isolationPaymentTokenStateProvider: IsolationPaymentTokenStateProvider
 ) : ViewModel() {
 
     private val viewStateLiveData = MutableLiveData<ViewState>()
@@ -58,6 +64,12 @@ class StatusViewModel @Inject constructor(
 
     private val postCodeRiskIndicatorChangedListener = PostCodeRiskIndicatorChangedListener {
         updateViewState()
+    }
+
+    private val isolationPaymentTokenStateListener: (IsolationPaymentTokenState) -> Unit = {
+        val updatedState =
+            viewStateLiveData.value?.copy(showIsolationPaymentButton = mustShowIsolationPaymentButton())
+        viewStateLiveData.postValue(updatedState)
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -71,6 +83,7 @@ class StatusViewModel @Inject constructor(
         sharedPreferences.registerOnSharedPreferenceChangeListener(
             postCodeRiskIndicatorChangedListener
         )
+        isolationPaymentTokenStateProvider.addTokenStateListener(isolationPaymentTokenStateListener)
         userInbox.registerListener(userInboxListener)
     }
 
@@ -78,6 +91,7 @@ class StatusViewModel @Inject constructor(
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(
             postCodeRiskIndicatorChangedListener
         )
+        isolationPaymentTokenStateProvider.removeTokenStateListener(isolationPaymentTokenStateListener)
         userInbox.unregisterListener(userInboxListener)
     }
 
@@ -104,7 +118,8 @@ class StatusViewModel @Inject constructor(
                 areaRiskState = getAreaRiskViewState(),
                 isolationState = isolationStateMachine.readState(),
                 latestAdviceUrl = getLatestAdviceUrl(),
-                showExposureNotificationReminderDialog = showExposureNotificationReminderDialog
+                showExposureNotificationReminderDialog = showExposureNotificationReminderDialog,
+                showIsolationPaymentButton = mustShowIsolationPaymentButton()
             )
             viewStateLiveData.postValue(updatedViewState)
         }
@@ -134,6 +149,9 @@ class StatusViewModel @Inject constructor(
             }
         }
     }
+
+    private fun mustShowIsolationPaymentButton(): Boolean =
+        canClaimIsolationPayment() && isolationPaymentTokenStateProvider.tokenState is Token
 
     fun attemptToStartAppReviewFlow(activity: Activity) {
         viewModelScope.launch {
@@ -199,7 +217,8 @@ class StatusViewModel @Inject constructor(
         val areaRiskState: RiskyPostCodeViewState,
         val isolationState: State,
         val latestAdviceUrl: Int,
-        val showExposureNotificationReminderDialog: Boolean
+        val showExposureNotificationReminderDialog: Boolean,
+        val showIsolationPaymentButton: Boolean
     )
 }
 

@@ -9,7 +9,6 @@ import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
 import androidx.work.Configuration
-import androidx.work.ExistingPeriodicWorkPolicy.KEEP
 import androidx.work.WorkManager
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import com.jeroenmols.featureflag.framework.TestSetting
@@ -27,6 +26,8 @@ import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.GoogleExposureNotificationApi
+import uk.nhs.nhsx.covid19.android.app.packagemanager.AndroidPackageManager
+import uk.nhs.nhsx.covid19.android.app.permissions.AndroidPermissionsManager
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
@@ -71,7 +72,7 @@ open class ExposureApplication : Application(), Configuration.Provider {
     }
 
     protected fun startPeriodicTasks() {
-        appComponent.providePeriodicTasks().schedule(policy = KEEP)
+        appComponent.providePeriodicTasks().schedule()
     }
 
     private fun initializeWorkManager() {
@@ -120,7 +121,9 @@ open class ExposureApplication : Application(), Configuration.Provider {
                     qrCodesSignatureKey,
                     ApplicationLocaleProvider(sharedPreferences, languageCode),
                     GooglePlayUpdateProvider(this),
-                    AndroidBatteryOptimizationChecker(this)
+                    AndroidBatteryOptimizationChecker(this),
+                    AndroidPermissionsManager(),
+                    AndroidPackageManager()
                 )
             )
             .networkModule(networkModule)

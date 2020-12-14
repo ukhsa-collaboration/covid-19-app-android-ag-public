@@ -26,7 +26,8 @@ class ExposureInformationRiskManagerTest {
     private val expectedDayRisk =
         DayRisk(
             startOfDayMillis = 0,
-            calculatedRisk = 0.0
+            calculatedRisk = 0.0,
+            riskCalculationVersion = 1
         )
 
     @Before

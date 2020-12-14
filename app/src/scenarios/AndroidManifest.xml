@@ -39,6 +39,9 @@
             android:name=".browser.BrowserActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".exposure.MockExposureNotificationActivationActivity" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="uk.nhs.covid19.scenarios.fileprovider"

@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.about
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -14,6 +15,9 @@ import kotlinx.android.synthetic.main.activity_about_user_data.actionDeleteAllDa
 import kotlinx.android.synthetic.main.activity_about_user_data.editLocalAuthority
 import kotlinx.android.synthetic.main.activity_about_user_data.editVenueVisits
 import kotlinx.android.synthetic.main.activity_about_user_data.encounterDataSection
+import kotlinx.android.synthetic.main.activity_about_user_data.exposureNotificationDataSection
+import kotlinx.android.synthetic.main.activity_about_user_data.lastDayOfIsolationDate
+import kotlinx.android.synthetic.main.activity_about_user_data.lastDayOfIsolationSection
 import kotlinx.android.synthetic.main.activity_about_user_data.lastResultDate
 import kotlinx.android.synthetic.main.activity_about_user_data.lastResultValue
 import kotlinx.android.synthetic.main.activity_about_user_data.latestResultContainer
@@ -21,8 +25,10 @@ import kotlinx.android.synthetic.main.activity_about_user_data.localAuthority
 import kotlinx.android.synthetic.main.activity_about_user_data.localAuthorityTitle
 import kotlinx.android.synthetic.main.activity_about_user_data.symptomsDataSection
 import kotlinx.android.synthetic.main.activity_about_user_data.textEncounterDate
+import kotlinx.android.synthetic.main.activity_about_user_data.textExposureNotificationDate
 import kotlinx.android.synthetic.main.activity_about_user_data.textViewSymptomsDate
-import kotlinx.android.synthetic.main.activity_about_user_data.titleEncounter
+import kotlinx.android.synthetic.main.activity_about_user_data.titleExposureNotification
+import kotlinx.android.synthetic.main.activity_about_user_data.titleLastDayOfIsolation
 import kotlinx.android.synthetic.main.activity_about_user_data.titleLatestResult
 import kotlinx.android.synthetic.main.activity_about_user_data.titleSymptoms
 import kotlinx.android.synthetic.main.activity_about_user_data.venueHistoryList
@@ -30,6 +36,9 @@ import kotlinx.android.synthetic.main.activity_about_user_data.venueVisitsTitle
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.DialogType
+import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.DialogType.ConfirmDeleteAllData
+import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.DialogType.ConfirmDeleteVenueVisit
 import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.VenueVisitsUiState
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
@@ -47,6 +56,7 @@ import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -60,6 +70,11 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
     private val viewModel: UserDataViewModel by viewModels { factory }
 
     private lateinit var venueVisitsViewAdapter: VenueVisitsViewAdapter
+
+    /**
+     * Dialog currently displayed, or null if none are displayed
+     */
+    private var currentDialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,7 +104,7 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
 
     private fun setupOnClickListeners() {
         actionDeleteAllData.setOnClickListener {
-            showConfirmDeletingAllDataDialog()
+            viewModel.onDeleteAllUserDataClicked()
         }
 
         editVenueVisits.setOnClickListener {
@@ -121,6 +136,10 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
         viewModel.getAllUserDataDeleted().observe(this) {
             handleAllUserDataDeleted()
         }
+
+        viewModel.getShowDialog().observe(this) { dialogType ->
+            handleShowDialog(dialogType)
+        }
     }
 
     private fun handleShowingLatestTestResult(receivedTestResult: ReceivedTestResult?) {
@@ -128,10 +147,8 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
             titleLatestResult.gone()
             latestResultContainer.gone()
         } else {
-            val latestTestResultDate: LocalDate =
-                LocalDateTime.ofInstant(receivedTestResult.testEndDate, ZoneId.systemDefault()).toLocalDate()
             lastResultValue.text = getTestResultText(receivedTestResult)
-            lastResultDate.text = latestTestResultDate.uiFormat(this)
+            lastResultDate.text = uiFormat(receivedTestResult.testEndDate)
 
             titleLatestResult.visible()
             latestResultContainer.visible()
@@ -161,7 +178,19 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
             dialog.dismiss()
         }
 
-        builder.show()
+        builder.setOnDismissListener {
+            currentDialog = null
+            viewModel.onDialogDismissed()
+        }
+
+        currentDialog = builder.show()
+    }
+
+    private fun handleShowDialog(dialogType: DialogType) {
+        when (dialogType) {
+            ConfirmDeleteAllData -> showConfirmDeletingAllDataDialog()
+            is ConfirmDeleteVenueVisit -> showDeleteVenueVisitConfirmationDialog(dialogType.venueVisitPosition)
+        }
     }
 
     private fun handleAllUserDataDeleted() {
@@ -179,17 +208,28 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
     }
 
     private fun handleIsolation(isolation: Isolation) {
+        lastDayOfIsolationDate.text = isolation.expiryDate.uiFormat(this)
+        titleLastDayOfIsolation.visible()
+        lastDayOfIsolationSection.visible()
+
         if (isolation.contactCase != null) {
-            titleEncounter.visible()
+            titleExposureNotification.visible()
+
+            textEncounterDate.text = uiFormat(isolation.contactCase.startDate)
             encounterDataSection.visible()
 
-            val encounterDate: LocalDate =
-                LocalDateTime.ofInstant(isolation.contactCase.startDate, ZoneId.systemDefault()).toLocalDate()
-            textEncounterDate.text = encounterDate.uiFormat(this)
+            if (isolation.contactCase.notificationDate != null) {
+                textExposureNotificationDate.text = uiFormat(isolation.contactCase.notificationDate)
+                exposureNotificationDataSection.visible()
+            } else {
+                exposureNotificationDataSection.gone()
+            }
         } else {
-            titleEncounter.gone()
+            titleExposureNotification.gone()
             encounterDataSection.gone()
+            exposureNotificationDataSection.gone()
         }
+
         if (isolation.indexCase != null) {
             titleSymptoms.visible()
             symptomsDataSection.visible()
@@ -202,11 +242,15 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
     }
 
     private fun handleStateMachineEmptyStates() {
+        titleLastDayOfIsolation.gone()
+        lastDayOfIsolationSection.gone()
+
         titleSymptoms.gone()
         symptomsDataSection.gone()
 
-        titleEncounter.gone()
+        titleExposureNotification.gone()
         encounterDataSection.gone()
+        exposureNotificationDataSection.gone()
     }
 
     private fun updateVenueVisitsContainer(venueVisitsUiState: VenueVisitsUiState) {
@@ -229,8 +273,8 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
     }
 
     private fun setUpVenueVisitsAdapter(venueVisits: List<VenueVisit>, showDeleteIcon: Boolean) {
-        venueVisitsViewAdapter = VenueVisitsViewAdapter(venueVisits, showDeleteIcon) {
-            showDeleteVenueVisitConfirmationDialog(it)
+        venueVisitsViewAdapter = VenueVisitsViewAdapter(venueVisits, showDeleteIcon) { position ->
+            viewModel.onVenueVisitDataClicked(position)
         }
         venueHistoryList.layoutManager = LinearLayoutManager(this)
         venueHistoryList.adapter = venueVisitsViewAdapter
@@ -253,7 +297,27 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
             dialog.dismiss()
         }
 
-        builder.show()
+        builder.setOnDismissListener {
+            currentDialog = null
+            viewModel.onDialogDismissed()
+        }
+
+        currentDialog = builder.show()
+    }
+
+    override fun onDestroy() {
+        currentDialog?.setOnDismissListener { }
+        // To avoid leaking the window
+        currentDialog?.dismiss()
+        currentDialog = null
+
+        super.onDestroy()
+    }
+
+    private fun uiFormat(instant: Instant): String {
+        val localDate: LocalDate =
+            LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate()
+        return localDate.uiFormat(this)
     }
 
     companion object {

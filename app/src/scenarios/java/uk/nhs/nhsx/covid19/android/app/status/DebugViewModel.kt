@@ -29,6 +29,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.GREEN
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
@@ -38,7 +39,6 @@ import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingTokensProvider
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import java.io.File
 import java.time.Instant
@@ -49,7 +49,6 @@ import javax.inject.Inject
 class DebugViewModel @Inject constructor(
     private val isolationStateMachine: IsolationStateMachine,
     private val periodicTasks: PeriodicTasks,
-    private val testResultProvider: TestResultsProvider,
     private val testOrderingTokensProvider: TestOrderingTokensProvider,
     private val venueStorage: VisitedVenuesStorage,
     private val userInbox: UserInbox,
@@ -66,52 +65,18 @@ class DebugViewModel @Inject constructor(
     }
 
     fun sendPositiveTestResult(context: Context) {
-        val config = testOrderingTokensProvider.configs.firstOrNull()
-        if (config == null) {
-            Toast.makeText(context, "Order a test first!", LENGTH_LONG).show()
-            return
-        }
-        viewModelScope.launch {
-            delay(3_000)
-            testOrderingTokensProvider.remove(config)
-
-            val receivedTestResult = ReceivedTestResult(
-                config.diagnosisKeySubmissionToken,
-                Instant.now(),
-                POSITIVE
-            )
-
-            testResultProvider.add(receivedTestResult)
-            isolationStateMachine.processEvent(
-                OnTestResult(receivedTestResult)
-            )
-        }
+        sendTestResult(context, POSITIVE)
     }
 
     fun sendNegativeTestResult(context: Context) {
-        val config = testOrderingTokensProvider.configs.firstOrNull()
-        if (config == null) {
-            Toast.makeText(context, "Order a test first!", LENGTH_LONG).show()
-            return
-        }
-        viewModelScope.launch {
-            delay(3_000)
-            testOrderingTokensProvider.remove(config)
-
-            val receivedTestResult = ReceivedTestResult(
-                config.diagnosisKeySubmissionToken,
-                Instant.now(),
-                NEGATIVE
-            )
-
-            testResultProvider.add(receivedTestResult)
-            isolationStateMachine.processEvent(
-                OnTestResult(receivedTestResult)
-            )
-        }
+        sendTestResult(context, NEGATIVE)
     }
 
     fun sendVoidTestResult(context: Context) {
+        sendTestResult(context, VOID)
+    }
+
+    private fun sendTestResult(context: Context, virologyTestResult: VirologyTestResult) {
         val config = testOrderingTokensProvider.configs.firstOrNull()
         if (config == null) {
             Toast.makeText(context, "Order a test first!", LENGTH_LONG).show()
@@ -124,10 +89,9 @@ class DebugViewModel @Inject constructor(
             val receivedTestResult = ReceivedTestResult(
                 config.diagnosisKeySubmissionToken,
                 Instant.now(),
-                VOID
+                virologyTestResult
             )
 
-            testResultProvider.add(receivedTestResult)
             isolationStateMachine.processEvent(
                 OnTestResult(receivedTestResult)
             )

@@ -16,7 +16,7 @@
     <string name="post_code_rationale_title">ما الداعي وراء الحاجة إلى الرمز البريدي لمقاطعتك؟</string>
     <string name="postcode_entry_information_description_2">لا داعي للقلق. لن يُستخدم الرمز البريدي لمقاطعتك في تتبع موقعك.</string>
     <string name="post_code_invalid_title">الرمز البريدي للمقاطعة غير صالح</string>
-    <string name="valid_post_code_is_required">يرجى إدخال الرمز البريدي لمقاطعتك. يتمثل هذا الرمز في الجزء الأول من الرمز البريدي. على سبيل المثال: E2 أو L36 أو PO30</string>
+    <string name="valid_post_code_is_required">يرجى إدخال الرمز البريدي لمقاطعتك. يتمثل هذا الرمز في الجزء الأول من الرمز البريدي. على سبيل المثال: E2 أو L36 أو PO30.</string>
     <string name="permission_title">تتبع الاتصال</string>
     <string name="exposure_notifications_rationale_title">تساعد خاصية \"تتبع الاتصال\" في منع انتشار فيروس كورونا (كوفيد-19)</string>
     <string name="onboarding_privacy_title">حماية خصوصيتك</string>
@@ -36,7 +36,7 @@
     <string name="low_risk_level_text">منخفض: جرى تقييم المنطقة المحلية التي تعيش فيها بأنها \"منخفضة الخطورة\" في الوقت الحالي حيث تماثل مستويات الإصابة فيها مستويات الإصابة في معظم الأنحاء الأخرى في البلاد.</string>
     <string name="medium_risk_level_text">متوسط - تشتمل المنطقة المحلية التي تعيش فيها أو إحدى المناطق المجاورة لها على مستويات أعلى أو متزايدة من العدوى. يُرجى اتباع التوجيهات الوطنية.</string>
     <string name="high_risk_level_text">مرتفع: تُطبِّق المنطقة المحلية التي تعيش فيها أو إحدى المناطق المجاورة لها تدابير إضافية بخلاف التدابير الأخرى المُطبَّقة في باقي أنحاء إنجلترا و ويلز (على سبيل المثال: حظر التجول) للحدِّ من انتشار العدوى بسبب ارتفاع مستويات الإصابة في المنطقة المحلية ارتفاعًا بالغًا. ويجري تطبيق خطة إجراءات تفصيلية واتخاذ الترتيبات اللازمة لزيادة الموارد المحلية والحصول على الدعم الوطني.</string>
-    <string name="risk_level_title">مستوى الخطورة</string>
+    <string name="risk_level_title">في منطقتي</string>
     <string name="qr_code_permission_denied_action">السماح باستلام أذونات الكاميرا</string>
     <string name="qr_code_permission_denied_subtitle">يستخدم هذا التطبيق كاميرا الهاتف لتسجيل الدخول في الأماكن مثل الحانات والمطاعم.\n\nيرجى السماح باستلام أذونات الكاميرا لإجراء مسح ضوئي لرمز NHS QR الرسمي.</string>
     <string name="qr_code_unsupported_description">يرجى البحث عن طريقة أخرى لتسجيل الدخول. تحدّث مع أحد الموظفين للحصول على المساعدة.</string>
@@ -50,10 +50,10 @@
     <string name="qr_code_help_how_it_works_text">يستخدم هذا التطبيق رموز NHS QR الرسمية لمساعدتك في تسجيل دخولك على نحو سريع وسهل إلى الأماكن التي تزورها - مثل المطاعم أو الحانات. إذا كنت تستخدم هذا التطبيق، فيمكننا إعلامك إذا كنت قد تعرّضت للفيروس في مكانٍ ما من الأماكن التي سبق لك زيارتها.</string>
     <string name="qr_code_help_how_it_helps_title">فائدة التطبيق</string>
     <string name="qr_code_help_how_it_helps_text">تساعد خاصية التطبيق هذه في تمكين الشركات من دعم خدمة تتبع الاتصال، وتساعدنا جميعًا في الحفاظ على سلامتنا مع حماية خصوصيتنا.</string>
-    <string name="venue_alert_title">لقد زرت مؤخرًا أحد الأماكن التي يُحتمل تعرّضك فيها لفيروس كورونا</string>
-    <string name="venue_alert_explanation">نودّ إعلامك أنه من المُحتمل أنك قد تعرّضت لفيروس كورونا أثناء وجودك خارج المنزل.\n\nوعلى الرغم من أن احتمال إصابتك بفيروس كورونا احتمال ضئيل، إلا أنه ينبغي لك اتباع أحدث النصائح المتعلقة بالتباعد الجسدي.\n\nإذا ظهرت عليك أيٌّ من أعراض الإصابة بفيروس كورونا، فإنه يجب عليك تطبيق العزل الذاتي في الحال، مما يعني بقاءك في المنزل وعدم استقبال أي زائرين. يرجى استخدام خاصية التحقق من الأعراض الموجودة في التطبيق وحجز اختبار مجاني إذا أُسديت إليك نصيحة بذلك، أو الاتصال على رقم الهاتف: 119 إذا كان لديك أي أسئلة.\n\nقم بإجراء اختبار الكشف عن فيروس كورونا إذا كنت تعاني من أعراض الفيروس فقط.</string>
-    <string name="notification_title_post_code_risk_changed">لقد تغير مستوى الخطورة في منطقتك.</string>
-    <string name="notification_title_test_results">لقد وصلت نتائج اختبارك.</string>
+    <string name="venue_alert_title">لقد زرت مؤخرًا أحد الأماكن في نفس اليوم الذي زاره فيه أشخاصٌ آخرون سجَّلوا نتيجة إيجابية في اختبار الكشف عن الإصابة بفيروس كورونا (كوفيد-19).</string>
+    <string name="venue_alert_explanation">هناك احتمالٌ ضئيلٌ فقط بأنك قد تعرّضت للإصابة بعدوى فيروس كورونا أثناء زيارتك. ينبغي لك الاستمرار في اتباع أحدث الإرشادات ذات الصلة بالتباعد الجسدي.\n\nيجب عليك الخضوع للعزل الذاتي على الفور في حال ظهور أعراض الإصابة بفيروس كورونا لديك، وهو ما يعني البقاء في المنزل وعدم استقبال أي زائرين. استخدم خاصية التحقق من الأعراض المتوفرة في التطبيق وحجزٍ اختبارٍ مجانيٍّ إذا طُلب منك ذلك. اتصل على الرقم: 119 إذا كان لديك أي أسئلة.\n\nقم بإجراء اختبار الكشف عن فيروس كورونا إذا كنت تعاني من أعراض الفيروس فقط.</string>
+    <string name="notification_title_post_code_risk_changed">لقد حدث تغييرٌ في منطقتك</string>
+    <string name="notification_title_test_results">لقد وصلت نتائج اختبارك</string>
     <string name="select_symptoms">تحديد الأعراض</string>
     <string name="loading">جارٍ التحميل...</string>
     <string name="test_ordering_failure_action">حاول مرة أخرى</string>
@@ -103,24 +103,24 @@
     <string name="about_my_data_symptoms_date">التاريخ</string>
     <string name="about_positive">إيجابية</string>
     <string name="about_negative">سلبية</string>
-    <string name="about_delete_your_data_title">يؤدي حذف بياناتك إلى إعادة تعيين التطبيق.</string>
+    <string name="about_delete_your_data_title">يؤدي حذف بياناتك إلى إعادة تعيين التطبيق</string>
     <string name="delete_data_explanation">يقتصر الغرض من استخدام أي معلومات تشاركها عبر هذا التطبيق على خدمة أهداف الصحة العامة فقط. وستُحذف البيانات المُحتفظ بها بمجرد النقر فوق \"حذف البيانات\". ويندرج ضمن هذا الحذف جميع فترات العزل الذاتي السارية والوقت المتبقي لانتهاء فترة العزل الذاتي. يرجى العلم بأن هاتفك سيحتفظ ببعض المعلومات، مثل البيانات التي يجمعها الهاتف لتسجيل مُستخدمي التطبيق الآخرين؛ إذ لا يتحكم التطبيق في هذه البيانات ولكنها تخضع للتحكم بواسطة نظام تشغيل هاتفك. ستحتاج إلى إعداد التطبيق مرة أخرى إذا كنت ترغب في استخدامه مُجددًا بعد حذف البيانات.</string>
     <string name="about_delete_positive_text">حذف البيانات</string>
     <string name="url_privacy_notice">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_latest_advice">https://www.gov.uk/coronavirus</string>
     <string name="cancel">إلغاء</string>
     <string name="notification_action_exposure_reminder">تشغيل خاصية تتبع الاتصال</string>
-    <string name="notification_title_exposure_reminder">حان وقت تشغيل خاصية تتبع الاتصال.</string>
+    <string name="notification_title_exposure_reminder">حان وقت تشغيل خاصية تتبع الاتصال</string>
     <string name="resume_contact_tracing_title">خاصية تتبع الاتصال قيد الإيقاف الآن</string>
     <string name="resume_contact_tracing_subtitle">حدد الموعد الذي يقوم فيه التطبيق بتذكيرك بتشغيل خاصية تتبع الاتصال</string>
     <string name="contact_tracing_notification_reminder_dialog_message">يؤدي إيقاف خاصية تتبع الاتصال إلى التأثير على كفاءة عمل التطبيق.</string>
     <string name="edit_postcode_district_title">تعديل الرمز البريدي للمقاطعة</string>
     <string name="onboarding_age_confirmation_title">هل عمرك 16 عامًا أو أكثر؟</string>
     <string name="onboarding_age_confirmation_text">يجب عليك التأكيد بأن عمرك 16 عامًا أو أكثر لكي يتسنى لك استخدام هذا التطبيق.</string>
-    <string name="onboarding_age_confirmation_positive">يزيد عمري عن 16 عامًا</string>
+    <string name="onboarding_age_confirmation_positive">عمري 16 عامًا أو أكثر</string>
     <string name="onboarding_age_confirmation_negative">يقل عمري عن 16 عامًا</string>
-    <string name="onboarding_age_restriction_title">شكرًا لك على اهتمامك. للأسف، هذا التطبيق مُخصصٌ فقط لاستخدامه من قِبل الأشخاص الذين تبلغ أعمارهم 16 عامًا فما فوق.</string>
-    <string name="onboarding_age_restriction_text">هذا التطبيق مُخصصٌ للأشخاص الذين تبلغ أعمارهم 16 عامًا فما فوق.</string>
+    <string name="onboarding_age_restriction_title">للأسف، هذا التطبيق مُخصصٌ فقط لاستخدامه من قِبل الأشخاص الذين تبلغ أعمارهم 16 عامًا فما فوق.</string>
+    <string name="onboarding_age_restriction_text">شكرًا لك على اهتمامك. هذا التطبيق مُخصصٌ للأشخاص الذين تبلغ أعمارهم 16 عامًا فما فوق.</string>
     <string name="url_terms_of_use">https://covid19.nhs.uk/terms-of-use-arabic.html</string>
     <string name="url_nhs_tablet_device">https://faq.covid19.nhs.uk/article/KA-01246/en-us</string>
     <string name="url_nhs_111_online">https://111.nhs.uk/</string>
@@ -138,12 +138,12 @@
         <item quantity="other">غير ذلك</item>
     </plurals>
     <plurals name="isolation_days_to_go" tools:ignore="MissingQuantity">
-        <item quantity="zero">يوم واحد للخروج</item>
-        <item quantity="one">يوم واحد للخروج</item>
-        <item quantity="two">يوم واحد للخروج</item>
-        <item quantity="few">يوم واحد للخروج</item>
-        <item quantity="many">يوم واحد للخروج</item>
-        <item quantity="other">يوم واحد للخروج</item>
+        <item quantity="zero">يمكنك الخروج الآن</item>
+        <item quantity="one">تبقى يوم واحد للخروج</item>
+        <item quantity="two">تبقى يومين للخروج</item>
+        <item quantity="few">أيام للخروج</item>
+        <item quantity="many">أيام للخروج</item>
+        <item quantity="other">أيام للخروج</item>
     </plurals>
     <plurals name="isolation_view_accessibility_description" tools:ignore="MissingQuantity">
         <item quantity="zero">تحتاج إلى عزل نفسك ذاتيًا حتى %1$s في تمام الساعة 23:59. يتبقى لك %2$s يوم للخروج حتى ذلك الحين.</item>
@@ -166,8 +166,8 @@
     <string name="close">إغلاق</string>
     <string name="go_back">رجوع</string>
     <string name="remove">تأكيد</string>
-    <string name="empty" translatable="false" />
-    <string name="onboarding_exposure_notifications_description">سيُرسل التطبيق تحذيرًا إليك في حالة التواصل الوثيق مع شخصٍ ما سجَّل نتيجة إيجابية في اختبار الكشف عن الإصابة بالفيروس.\n\nلتمكين خاصية \"تتبع الاتصال\" في هذا التطبيق، يجب عليك السماح باستلام \"إشعارات التعرّض\".\n\nفي حال تغيير قرارك، يمكنك تغيير الأذونات الممنوحة في الإعدادات متى شئت.</string>
+    <string name="empty" translatable="false"/>
+    <string name="onboarding_exposure_notifications_description">سيُرسل التطبيق تحذيرًا إليك في حالة التواصل الوثيق مع شخصٍ ما سجَّل نتيجة إيجابية في اختبار الكشف عن الإصابة بالفيروس.\n\n لتمكين خاصية \"تتبع الاتصال\" في هذا التطبيق، يجب عليك السماح باستلام \"إشعارات التعرّض\".\n\n في حال تغيير قرارك، يمكنك تغيير الأذونات الممنوحة في الإعدادات متى شئت.</string>
     <string name="privacy_notice">إشعار الخصوصية</string>
     <string name="tablet_information_url">معلومات حول استخدام الحواسب اللوحية</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
@@ -184,7 +184,7 @@
     <string name="test_ordering_app_privacy_notice">إشعار خصوصية التطبيق</string>
     <string name="test_ordering_book_test_for_someone_else">حجز اختبار لشخصٍ آخر</string>
     <string name="error_title">توجد مشكلة ما</string>
-    <string name="enable_exposure_notifications_title">للسماح بتشغيل التطبيق، يجب عليك الموافقة على تشغيله في جهازك</string>
+    <string name="enable_exposure_notifications_title">يجب عليك السماح بتشغيل \"إشعارات التعرّض\" لضمان عمل التطبيق</string>
     <string name="enable_exposure_notifications_rationale">يستخدم هذا التطبيق خاصية \"إشعارات التعرّض\" لإعلامك عمّا إذا كنت قد تواصلت مع أيٍّ من مُستخدمي التطبيق الذين أبلغوا عن تسجيل نتيجة إيجابية في اختبار الكشف عن الإصابة بفيروس كورونا لديهم.\n\nقد يُطلق على هذه الإشعارات في هاتفك \"إشعارات التعرّض\" أو \"تسجيل التعرّض\".</string>
     <string name="enable_exposure_notifications">تمكين إشعارات التعرّض</string>
     <string name="scan_qr_code_to_check_in">تسجيل الدخول إلى مكان بإجراء مسح ضوئي لرمز رسمي من رموز NHS QR</string>
@@ -193,7 +193,7 @@
     <string name="something_went_wrong">حدث خطأ ما</string>
     <string name="test_ordering_failure_title">حدث خطأ ما</string>
     <string name="test_ordering_failure_description">قبل المحاولة مرة أخرى، يرجى التحقق من تشغيلك لإعدادات البيانات المتنقلة في هاتفك والتحقق من وجود شبكة واي فاي (حال استخدامها) والتأكد من إيقاف تشغيل وضع الطيران.</string>
-    <string name="notification_title_risky_venue">من المُحتمل أنك قد تعرّضت للإصابة بفيروس كورونا في أحد الأماكن التي زرتها مؤخرًا. انقر للاطلاع على التفاصيل.</string>
+    <string name="notification_title_risky_venue">لقد زرت مؤخرًا أحد الأماكن في نفس اليوم الذي زاره فيه أشخاصٌ آخرون سجَّلوا نتيجة إيجابية في اختبار الكشف عن الإصابة بفيروس كورونا (كوفيد-19).</string>
     <string name="notification_text_post_code_risk_changed">انقر هنا للاطلاع على المزيد التفاصيل.</string>
     <string name="status_area_risk_level">مستوى الخطورة في المنطقة %s هو %s</string>
     <string name="notification_channel_area_risk_changed_name">تغير مستوى الخطورة في المنطقة</string>
@@ -206,14 +206,14 @@
     <string name="notification_channel_app_availability_description">تساعد هذه الإشعارات في إعلامك بمدى توافر التطبيق.</string>
     <string name="notification_channel_app_configuration_name">تهيئة التطبيق</string>
     <string name="notification_channel_app_configuration_description">تساعد هذه الإشعارات في إعلامك بالتهيئة المتوفرة للتطبيق.</string>
-    <string name="notification_title_state_expiration">لقد تغيرت توجيهاتنا المُقدمة لك.</string>
-    <string name="notification_text_state_expiration">انقر للاطلاع على التفاصيل.</string>
-    <string name="notification_title_state_exposure">لقد اكتشف التطبيق أنك كنت على اتصالٍ مع أحد الأشخاص المُصابين بفيروس كورونا. ينبغي لك البقاء في المنزل وعزل نفسك عزلاً ذاتيًا للمحافظة على سلامتك وسلامة الأشخاص الآخرين.</string>
+    <string name="notification_title_state_expiration">لقد تغيرت التوجيهات المقدمة إليك</string>
+    <string name="notification_text_state_expiration">انقر للاطلاع على التفاصيل</string>
+    <string name="notification_title_state_exposure">لقد اكتشف التطبيق أنك كنت على اتصالٍ مع أحد الأشخاص المُصابين بفيروس كورونا. ينبغي لك البقاء في المنزل وعزل نفسك عزلاً ذاتيًا للمحافظة على سلامتك وسلامة الأشخاص الآخرين</string>
     <string name="notification_text_state_exposure">انقر هنا للاطلاع على المزيد التفاصيل.</string>
-    <string name="notification_text_test_results">انقر للاطلاع على التفاصيل.</string>
+    <string name="notification_text_test_results">انقر للاطلاع على التفاصيل</string>
     <string name="notification_title_app_available">التطبيق متوفر</string>
     <string name="notification_title_app_not_available">التطبيق غير متوفر حاليًا</string>
-    <string name="notification_text_app_availability">انقر للاطلاع على التفاصيل.</string>
+    <string name="notification_text_app_availability">انقر للاطلاع على التفاصيل</string>
     <string name="qr_code_permission_denied_title">تسجيل الدخول إلى مكان بإجراء مسح ضوئي لرمز رسمي من رموز NHS QR</string>
     <string name="book_free_test">حجز اختبار مجاني</string>
     <string name="status_option_scan_qr_codes">تسجيل الدخول إلى المكان</string>
@@ -223,15 +223,15 @@
     <string name="questionnaire_description">إذا كنت لا تعاني من أيٍّ من هذه الأعراض، فلست بحاجة إلى اتخاذ أي إجراءٍ في الوقت الحالي. وفي حال ظهور أيٍّ من هذه الأعراض عليك، فيجب التأشير عليها في التطبيق وحجز اختبار مجاني على الفور.</string>
     <string name="questionnaire_error_description">قبل المحاولة مرة أخرى، يرجى التحقق من تشغيلك لإعدادات البيانات المتنقلة في هاتفك والتحقق من وجود شبكة واي فاي (حال استخدامها) والتأكد من إيقاف تشغيل وضع الطيران.</string>
     <string name="questionnaire_no_symptoms">لا أعاني من أيٍّ من هذه الأعراض</string>
-    <string name="notification_text_risky_venue">انقر للاطلاع على التفاصيل.</string>
+    <string name="notification_text_risky_venue">انقر للاطلاع على التفاصيل</string>
     <string name="message_no_coronavirus_symptoms">في حال ظهور أيٍّ من هذه الأعراض لديك، يرجى الإبلاغ عنها في التطبيق وحجز اختبار مجاني.اعمل اختبار فيروس الكورونا فقط إذا كان عندك أعراض كورونا\n\nللحصول على المزيد من النصائح، التواصل مع:</string>
     <string name="questionnaire_change_announcement">تغيير العَرَض %1$s</string>
     <string name="state_index_take_coronavirus_test">إجراء اختبار فيروس كورونا مجانًا</string>
-    <string name="state_test_negative_info">نتيجة اختبار الكشف عن إصابتك بفيروس كورونا سلبية إلا أنه يُحتمل ظهور الأعراض لديك؛ ولذا يجب عليك الاستمرار في العزل الذاتي لنفسك.</string>
+    <string name="state_test_negative_info">نتيجة اختبار الكشف عن إصابتك بفيروس كورونا سلبية إلا أنه يُحتمل ظهور الأعراض لديك؛ ولذا يجب عليك الاستمرار في العزل الذاتي لنفسك</string>
     <string name="test_result_negative_continue_self_isolate_explanation">تُظهر نتيجة الاختبار الذي أجريته أنك لم تكن مُصابًا بالفيروس في وقت إجراء الاختبار. لقد أرسلنا إليك المزيد من المعلومات عبر البريد الإلكتروني أو رسالة نصية أو الهاتف. إذا كان عمرك يقل عن 18 عامًا، فإننا نوصيك بعرض هذه الرسالة على شخصٍ بالغٍ محل ثقة لديك.</string>
     <string name="isolation_until_date">حتى %1$s في تمام الساعة 23:59</string>
     <string name="questionnaire_review_one_of_two">الخطوة 1 من 2</string>
-    <string name="expiration_notification_title">أخبار جيدة</string>
+    <string name="expiration_notification_title">أخبار جيدة!</string>
     <string name="expiration_notification_description_passed">لقد انتهت مدة عزلك منذ %s في تمام الساعة 23:59</string>
     <string name="expiration_notification_recommendation">للحصول على المزيد من النصائح، التواصل مع:</string>
     <string name="expiration_temperature_hint">مع ذلك، إذا كنت تعاني من ارتفاع درجة الحرارة، فيجب عليك الاستمرار في العزل الذاتي لنفسك حتى تعود درجة حرارتك إلى الوضع الطبيعي</string>
@@ -281,7 +281,7 @@
     <string name="delete_single_venue_visit_text">يؤدي تأكيد أحد الأماكن إلى تقليل كفاءة خدمة تتبع الاتصال.\n\nبعد الانتهاء من الحذف، لن يصبح بإمكانك استلام التنبيهات ذات الصلة بهذا المكان.</string>
     <string name="confirm">تأكيد</string>
     <string name="delete_button_text">إلغاء</string>
-    <string name="contact_tracing_notification_reminder_dialog_title">ضبط رسالة التذكير لتشغيل خاصية تتبع الاتصال مرة أخرى خلال %1$s ساعات.</string>
+    <string name="contact_tracing_notification_reminder_dialog_title">ضبط رسالة التذكير لتشغيل خاصية تتبع الاتصال مرة أخرى خلال %1$s ساعات</string>
     <string name="okay">موافق</string>
     <string name="template_hours">%d ساعة/ساعات</string>
     <string name="resume_contact_tracing_don_t_remind_me">عدم تذكيري</string>
@@ -353,7 +353,7 @@
     <string name="qr_code_help_poster_title_welsh">ملصق لرمز الاستجابة السريعة QR الويلزي من NHS:</string>
     <string name="questionnaire_no_i_dont_have_symptom">لا، لست أعاني من %s</string>
     <string name="questionnaire_yes_i_have_symptom">نعم، أعاني من %s</string>
-    <string name="state_test_positive_then_negative_info">نتيجة اختبار الكشف عن إصابتك بفيروس كورونا سلبية. ومع ذلك، يجب عليك الاستمرار في العزل الذاتي لنفسك لأن نتيجة اختبارك السابق كانت إيجابية.</string>
+    <string name="state_test_positive_then_negative_info">نتيجة اختبار الكشف عن إصابتك بفيروس كورونا سلبية. ومع ذلك، يجب عليك الاستمرار في العزل الذاتي لنفسك لأن نتيجة اختبارك السابق كانت إيجابية</string>
     <string name="status_area_risk_level_high_wls">مرتفع</string>
     <string name="status_area_risk_level_low_wls">منخفض</string>
     <string name="status_area_risk_level_medium_wls">متوسط</string>
@@ -373,7 +373,7 @@
     <string name="qr_code_intro_text">يجب استخدام هذا التطبيق عند دخولك إلى مكانٍ ما (حانة أو مطعم على سبيل المثال) يشتمل على أحد ملصقات الاستجابة السريعة المُقدمة من هيئة الخدمات الصحية الوطنية \"NHS QR\" لإجراء مسح ضوئي للملصق؛ علمًا بأن التطبيق يقوم بعد ذلك بتسجيل وقت دخولك إلى المكان.\n\nعند استخدامك لخاصية تسجيل الدخول إلى مكانٍ ما، سيكون بمقدورك استلام إخطارٍ إذا كان هناك أشخاصٌ مصابون بفيروس كورونا يرتادون هذا المكان في نفس الوقت. وسيتضمن الإخطار النصائح ذات الصلة، مثل التحقق من الأعراض المصاحبة للإصابة بفيروس كورونا.</string>
     <string name="venue_check_in_title">المزيد من المعلومات حول تسجيل الدخول إلى الأماكن</string>
     <string name="ask_me_later">السؤال لاحقًا</string>
-    <string name="notification_text_recommended_app_update">انقر للاطلاع على التفاصيل.</string>
+    <string name="notification_text_recommended_app_update">انقر للاطلاع على التفاصيل</string>
     <string name="notification_title_recommended_app_update">يرجى تحديث تطبيق مكافحة فيروس كورونا (كوفيد-19) المُقدَّم من هيئة الخدمات الصحية الوطنية (NHS) للحصول على أحدث نسخة من التطبيق</string>
     <string name="test_ordering_getting_tested_description">يؤدي تحديد الخيار \"حجز اختبارٍ لنفسك\" إلى انتقالك للموقع الإلكتروني الحكومي المُخصص لإجراء اختبارات الكشف عن الإصابة بفيروس كورونا؛ حيث يُطلب منك تعبئة بعض التفاصيل الشخصية (على سبيل المثال: عنوان سكنك) للحصول على الاختبار؛ علمًا بأنه لا يجري مشاركة أيٍّ من البيانات المُدخلة على الموقع الإلكتروني.\n\nسيتم إنشاء \"رمز\" رقمي لمساعدتنا في إرسال نتائج اختبارك إلى التطبيق.</string>
     <string name="update_in_play_store">تحديث التطبيق الآن</string>
@@ -388,7 +388,7 @@
     <string name="local_authority_error_no_authority_selected_description">تحتاج إلى تحديد إحدى السلطات المحلية للمتابعة.</string>
     <string name="local_authority_error_no_authority_selected_title">يرجى تحديد إحدى السلطات المحلية.</string>
     <string name="local_authority_information_title">تحديد السلطة المحلية التابع لها</string>
-    <string name="local_authority_link">البحث على السلطة المحلية التابع لها</string>
+    <string name="local_authority_link">البحث عن السلطة المحلية التابع لها</string>
     <string name="local_authority_title">السلطة المحلية التابع لها</string>
     <string name="multiple_local_authorities_description">تحتاج إلى تحديد السلطة المحلية التي تتبعها لأن المقاطعة التي تنتمي لرمزك البريدي (%s) تقع ضمن أكثر من سلطة محلية واحدة. ويتمثل الغرض من ذلك في تمكين التطبيق من تزويدك بمعلومات وإرشادات أكثر دقة.\n\nيرجى زيارة الموقع الإلكتروني GOV.UK في حال عدم معرفتك للسلطة المحلية التي تتبعها.</string>
     <string name="multiple_local_authorities_title">تحديد السلطة المحلية التابع لها</string>
@@ -402,4 +402,23 @@
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
     <string name="local_authority_error_authority_not_supported_title">تحتاج إلى تحديد إحدى السلطات المحلية للمتابعة.</string>
     <string name="local_authority_information_description">يرجى تحديد إحدى السلطات المحلية. ويتمثل الغرض من ذلك في تمكين التطبيق من تزويدك بمعلومات وإرشادات أكثر دقة.</string>
+<string name="about_encounter_date">تاريخ المقابلة</string>
+<string name="about_my_data_date">التاريخ</string>
+<string name="about_notification_date">تاريخ الإشعار</string>
+<string name="isolation_payment_action_button">التحقق من مدى استحقاقك</string>
+<string name="isolation_payment_heading">الدعم المالي</string>
+<string name="isolation_payment_help_england_link_text">المساعدة في تقديم طلبٍ للحصول على مبالغ الدعم من برنامج الاختبار والتتبع</string>
+<string name="isolation_payment_help_england_link_url">https://sip.test-and-trace.nhs.uk/help-support</string>
+<string name="isolation_payment_help_england_title">إذا كنت تعيش في إنجلترا وتواجه صعوبةً في تقديم الطلب، يُرجى زيارة:</string>
+<string name="isolation_payment_help_wales_link_text">المساعدة في تقديم طلبٍ للانضمام إلى منظومة دعم الأشخاص الخاضعين للعزل الذاتي</string>
+<string name="isolation_payment_help_wales_link_url">https://gov.wales/self-isolation-support-scheme</string>
+<string name="isolation_payment_help_wales_title">إذا كنت تعيش في ويلز وتواجه صعوبةً في تقديم الطلب، يُرجى زيارة:</string>
+<string name="isolation_payment_privacy_notice_link_text">إشعار خصوصية تتبع الاتصال</string>
+<string name="isolation_payment_privacy_notice_link_url">https://sip.test-and-trace.nhs.uk/privacy-policy</string>
+<string name="isolation_payment_privacy_notice_title">أوصاف البيانات المُستخدمة في عمليات التطبيق تكون مذكورة ضمن إشعار الخصوصية:</string>
+<string name="isolation_payment_text">لقد اكتشف التطبيق أنك قد خالطت شخصًا ما سجَّل نتيجة إيجابية في اختبار الكشف عن الإصابة بفيروس كورونا. نوصيك بالخضوع للعزل الذاتي.\n\nفي أثناء خضوعك للعزل الذاتي، يجوز لك المطالبة بالحصول على دعمٍ ماليٍّ اعتمادًا على ظروفك. تحقق من مدى استحقاقك للدعم في أقرب وقتٍ ممكنٍ باستخدام الزرِّ أدناه.\n\nسيؤدي بك ذلك إلى الانتقال إلى أحد المواقع الإلكترونية حيث يُطلب منك إدخال بعض التفاصيل الشخصية. لن تُخزَّن هذه التفاصيل الشخصية في أي موقعٍ آخر في هذا التطبيق.</string>
+<string name="onboarding_before_activating_app_announcement">ملاحظة مُهمة: قبل تنشيط هذا التطبيق، يرجى قراءة إشعار الخصوصية والموافقة على شروط الاستخدام.</string>
+<string name="status_option_isolation_payment">الدعم المالي</string>
+<string name="title_exposure_notification">إشعار التعرّض</string>
+<string name="title_last_day_of_isolation">اليوم الأخير في العزل الذاتي</string>
 </resources>

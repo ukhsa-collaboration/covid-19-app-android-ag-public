@@ -1,20 +1,26 @@
 package uk.nhs.nhsx.covid19.android.app.common
 
+import com.jeroenmols.featureflag.framework.FeatureFlag
+import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationTokensProvider
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.TokenInfo
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationConfigurationResponse
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
-import uk.nhs.nhsx.covid19.android.app.state.StateStorage
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
 import java.time.Clock
 import java.time.Instant
@@ -23,18 +29,22 @@ import java.time.ZoneOffset
 
 class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
-    private val stateStorage = mockk<StateStorage>(relaxed = true)
+    private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val testResultsProvider = mockk<TestResultsProvider>(relaxed = true)
     private val isolationConfigurationProvider =
         mockk<IsolationConfigurationProvider>(relaxed = true)
     private val isolationConfigurationApi = mockk<IsolationConfigurationApi>(relaxed = true)
+    private val exposureNotificationTokensProvider = mockk<ExposureNotificationTokensProvider>()
+    private val epidemiologyEventProvider = mockk<EpidemiologyEventProvider>()
     private val fixedClock = Clock.fixed(Instant.parse("2020-07-28T01:00:00.00Z"), ZoneOffset.UTC)
 
     private val testSubject = ClearOutdatedDataAndUpdateIsolationConfiguration(
-        stateStorage,
+        isolationStateMachine,
         testResultsProvider,
         isolationConfigurationProvider,
         isolationConfigurationApi,
+        exposureNotificationTokensProvider,
+        epidemiologyEventProvider,
         fixedClock
     )
 
@@ -48,48 +58,109 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
         )
     }
 
+    @After
+    fun tearDown() {
+        FeatureFlagTestHelper.clearFeatureFlags()
+    }
+
     @Test
     fun `clears old test results when in default state without previous isolation`() = runBlocking {
-        every { stateStorage.state } returns Default()
+        every { isolationStateMachine.readState() } returns Default()
 
-        testSubject.doWork()
+        testSubject()
 
         val retentionPeriod = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
         val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
         verify { testResultsProvider.clearBefore(expectedDate) }
+        verify(exactly = 0) { isolationStateMachine.clearPreviousIsolation() }
     }
 
     @Test
     fun `keeps test result when state expiration date is outdated`() = runBlocking {
-        every { stateStorage.state } returns getIndexCase(isOutdated = true)
+        every { isolationStateMachine.readState() } returns getIndexCase(isOutdated = true)
 
-        testSubject.doWork()
+        testSubject()
 
         verify(exactly = 0) { testResultsProvider.clearBefore(any()) }
+        verify(exactly = 0) { isolationStateMachine.clearPreviousIsolation() }
     }
 
     @Test
     fun `keeps test result when previous state expiration date in default state is not outdated`() = runBlocking {
-        every { stateStorage.state } returns getDefaultState(false)
+        every { isolationStateMachine.readState() } returns getDefaultState(false)
 
-        testSubject.doWork()
+        testSubject()
 
         verify(exactly = 0) { testResultsProvider.clearBefore(any()) }
+        verify(exactly = 0) { isolationStateMachine.clearPreviousIsolation() }
     }
 
     @Test
     fun `clears test result when in default state and previous isolation state is outdated`() = runBlocking {
         val state = getDefaultState(true)
-        every { stateStorage.state } returns state
+        every { isolationStateMachine.readState() } returns state
 
-        testSubject.doWork()
+        testSubject()
 
         verify { testResultsProvider.clearBefore(state.previousIsolation!!.expiryDate) }
+        verify { isolationStateMachine.clearPreviousIsolation() }
     }
 
     @Test
+    fun `clears old epidemiology exposure windows when in default state and circuit breaker queue is empty with feature flag enabled`() =
+        runBlocking {
+            FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.STORE_EXPOSURE_WINDOWS)
+
+            every { isolationStateMachine.readState() } returns Default()
+            every { exposureNotificationTokensProvider.tokens } returns emptyList()
+
+            testSubject()
+
+            verify { epidemiologyEventProvider.clear() }
+        }
+
+    @Test
+    fun `keeps epidemiology exposure windows when in default state and circuit breaker queue filled with feature flag enabled`() =
+        runBlocking {
+            FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.STORE_EXPOSURE_WINDOWS)
+
+            every { isolationStateMachine.readState() } returns Default()
+            every { exposureNotificationTokensProvider.tokens } returns listOf(
+                TokenInfo("token1", startedAt = Instant.now().toEpochMilli())
+            )
+
+            testSubject()
+
+            verify(exactly = 0) { epidemiologyEventProvider.clear() }
+        }
+
+    @Test
+    fun `keeps epidemiology exposure windows when in isolation with feature flag enabled`() = runBlocking {
+        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.STORE_EXPOSURE_WINDOWS)
+
+        every { isolationStateMachine.readState() } returns getIndexCase(isOutdated = false)
+
+        testSubject()
+
+        verify(exactly = 0) { epidemiologyEventProvider.clear() }
+    }
+
+    @Test
+    fun `keeps epidemiology exposure windows when in default state and circuit breaker queue is empty with feature flag disabled`() =
+        runBlocking {
+            FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.STORE_EXPOSURE_WINDOWS)
+
+            every { isolationStateMachine.readState() } returns Default()
+            every { exposureNotificationTokensProvider.tokens } returns emptyList()
+
+            testSubject()
+
+            verify(exactly = 0) { epidemiologyEventProvider.clear() }
+        }
+
+    @Test
     fun `verify isolation configuration is updated`() = runBlocking {
-        testSubject.doWork()
+        testSubject()
 
         verify { isolationConfigurationProvider.durationDays = DurationDays() }
     }

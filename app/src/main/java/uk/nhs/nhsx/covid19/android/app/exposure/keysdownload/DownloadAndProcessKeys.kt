@@ -35,7 +35,8 @@ class DownloadAndProcessKeys @Inject constructor(
             if (exposureApi.isEnabled()) {
                 Timber.d("Last downloaded keys time=${lastDownloadedKeyTimeProvider.getLatestStoredTime()}")
 
-                if (lastDownloadedKeyTimeProvider.getLatestStoredTime().hoursUntilNow(clock) < 4) {
+                val latestStoredTime = lastDownloadedKeyTimeProvider.getLatestStoredTime()
+                if (latestStoredTime != null && latestStoredTime.hoursUntilNow(clock) < 4) {
                     Timber.d("Skipping because last downloaded keys less than 4 hours")
                     return@runSafely
                 }

@@ -30,8 +30,18 @@ class LinkTestResultRobot {
         onView(withId(R.id.linkTestResultContinue)).perform(click())
     }
 
-    fun checkErrorIsDisplayed() {
+    fun checkErrorInvalidTokenIsDisplayed() {
         onView(withText(R.string.valid_auth_code_is_required))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkErrorNoConnectionIsDisplayed() {
+        onView(withText(R.string.link_test_result_error_no_connection))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkErrorUnexpectedIsDisplayed() {
+        onView(withText(R.string.link_test_result_error_unknown))
             .check(matches(isDisplayed()))
     }
 }

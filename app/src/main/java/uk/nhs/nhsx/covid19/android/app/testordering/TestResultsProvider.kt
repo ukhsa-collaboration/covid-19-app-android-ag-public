@@ -1,16 +1,20 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
 import android.content.SharedPreferences
+import android.os.Parcelable
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import kotlinx.android.parcel.Parcelize
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
+import uk.nhs.nhsx.covid19.android.app.util.isBeforeOrEqual
+import uk.nhs.nhsx.covid19.android.app.util.isEqualOrAfter
 import java.lang.reflect.Type
 import java.time.Clock
 import java.time.Instant
@@ -85,9 +89,8 @@ class TestResultsProvider(
     }
 
     fun clearBefore(date: LocalDate) = synchronized(lock) {
-        val updatedList = testResults.toMutableMap().filterValues {
-            testResult ->
-            testResult.acknowledgedDate?.let { !it.atZone(clock.zone).toLocalDate().isBefore(date) } ?: true
+        val updatedList = testResults.toMutableMap().filterValues { testResult ->
+            testResult.testEndDate.atZone(clock.zone).toLocalDate().isEqualOrAfter(date)
         }
         testResults = updatedList
     }
@@ -102,15 +105,17 @@ class TestResultsProvider(
         testResults = updatedList
     }
 
-    fun isLastTestResultPositive(): Boolean =
-        getLastTestResult()?.testResult == POSITIVE
+    fun isLastRelevantTestResultPositive(): Boolean =
+        testResults
+            .filter { it.value.acknowledgedDate != null }
+            .any { it.value.testResult == POSITIVE }
 
-    fun isLastTestResultNegative() =
-        getLastTestResult()?.testResult == NEGATIVE
+    fun isLastRelevantTestResultNegative(): Boolean {
+        val acknowledgedTestResults = testResults.filter { it.value.acknowledgedDate != null }
+        val noAcknowledgedPositiveTestResults = acknowledgedTestResults.none { it.value.testResult == POSITIVE }
+        val hasAcknowledgedNegativeTestResult = acknowledgedTestResults.any { it.value.testResult == NEGATIVE }
 
-    fun getLastTestResult(): ReceivedTestResult? = synchronized(lock) {
-        testResults.values
-            .filter { it.acknowledgedDate != null }.maxBy { it.acknowledgedDate!! }
+        return noAcknowledgedPositiveTestResults && hasAcknowledgedNegativeTestResult
     }
 
     fun getLastNonVoidTestResult(): ReceivedTestResult? = synchronized(lock) {
@@ -120,6 +125,11 @@ class TestResultsProvider(
 
     fun find(submissionToken: String): ReceivedTestResult? =
         testResults[submissionToken]
+
+    fun hasHadPositiveTestSince(date: Instant): Boolean =
+        testResults.values.any {
+            it.testResult == POSITIVE && date.isBeforeOrEqual(it.testEndDate)
+        }
 
     companion object {
         val listOfReceivedTestResultPairType: Type = Types.newParameterizedType(
@@ -143,10 +153,11 @@ class TestResultsStorage @Inject constructor(
     }
 }
 
+@Parcelize
 @JsonClass(generateAdapter = true)
 data class ReceivedTestResult(
     val diagnosisKeySubmissionToken: String,
     val testEndDate: Instant,
     val testResult: VirologyTestResult,
     val acknowledgedDate: Instant? = null
-)
+) : Parcelable

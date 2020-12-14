@@ -2,6 +2,7 @@ package com.jeroenmols.featureflag.framework
 
 import com.jeroenmols.featureflag.framework.FeatureFlag.BATTERY_OPTIMIZATION
 import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_AUTHORITY
+import com.jeroenmols.featureflag.framework.FeatureFlag.STORE_EXPOSURE_WINDOWS
 
 class StoreFeatureFlagProvider : FeatureFlagProvider {
 
@@ -13,6 +14,7 @@ class StoreFeatureFlagProvider : FeatureFlagProvider {
             when (feature) {
                 LOCAL_AUTHORITY -> true
                 BATTERY_OPTIMIZATION -> false
+                STORE_EXPOSURE_WINDOWS -> false
             }
         } else {
             // TestSettings should never be shipped to users

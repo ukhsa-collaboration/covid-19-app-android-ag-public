@@ -22,6 +22,10 @@ import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateProvider
 import uk.nhs.nhsx.covid19.android.app.util.defaultFalse
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.DeviceDetection
 import javax.inject.Inject
+import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.PostCodeToLocalAuthorityMissing
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Invalid
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 
 class MainViewModel @Inject constructor(
     private val deviceDetection: DeviceDetection,
@@ -29,7 +33,9 @@ class MainViewModel @Inject constructor(
     private val onboardingCompletedProvider: OnboardingCompletedProvider,
     private val policyUpdateProvider: PolicyUpdateProvider,
     private val localAuthorityProvider: LocalAuthorityProvider,
-    private val batteryOptimizationRequired: BatteryOptimizationRequired
+    private val batteryOptimizationRequired: BatteryOptimizationRequired,
+    private val postCodeProvider: PostCodeProvider,
+    private val localAuthorityPostCodeValidator: LocalAuthorityPostCodeValidator
 ) : ViewModel() {
 
     private val mainViewStateLiveData = MutableLiveData<MainViewState>()
@@ -45,6 +51,11 @@ class MainViewModel @Inject constructor(
                 onboardingCompletedProvider.value.defaultFalse() && !policyUpdateProvider.isPolicyAccepted() -> PolicyUpdated
                 onboardingCompletedProvider.value.defaultFalse() && policyUpdateProvider.isPolicyAccepted() ->
                     if (RuntimeBehavior.isFeatureEnabled(FeatureFlag.LOCAL_AUTHORITY) &&
+                        postCodeProvider.value != null &&
+                        localAuthorityPostCodeValidator.validate(postCodeProvider.value!!) is Invalid
+                    ) {
+                        PostCodeToLocalAuthorityMissing
+                    } else if (RuntimeBehavior.isFeatureEnabled(FeatureFlag.LOCAL_AUTHORITY) &&
                         localAuthorityProvider.value == null
                     ) {
                         LocalAuthorityMissing
@@ -64,6 +75,7 @@ class MainViewModel @Inject constructor(
         object ExposureNotificationsNotAvailable : MainViewState()
         object OnboardingStarted : MainViewState()
         object PolicyUpdated : MainViewState()
+        object PostCodeToLocalAuthorityMissing : MainViewState()
         object LocalAuthorityMissing : MainViewState()
         object BatteryOptimizationNotAcknowledged : MainViewState()
         object Completed : MainViewState()

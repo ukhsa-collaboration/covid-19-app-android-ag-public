@@ -1,13 +1,11 @@
-package uk.nhs.nhsx.covid19.android.app.exposure
+package uk.nhs.nhsx.covid19.android.app.exposure.keysdownload
 
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadKeysParams
 import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadKeysParams.Intervals
 import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadKeysParams.Intervals.Daily
 import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadKeysParams.Intervals.Hourly
-import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.LastDownloadedKeyTimeProvider
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDateTime
@@ -20,11 +18,7 @@ class DownloadKeysParamsTest {
 
     private val lastDownloadedKeyProvider = mockk<LastDownloadedKeyTimeProvider>(relaxed = true)
 
-    private val testSubject =
-        DownloadKeysParams(
-            lastDownloadedKeyProvider,
-            clock
-        )
+    private val testSubject = DownloadKeysParams(lastDownloadedKeyProvider, clock)
 
     @Test
     fun `last keys downloaded less than 2 hours ago`() {
@@ -34,7 +28,39 @@ class DownloadKeysParamsTest {
 
         val nextQueries = testSubject.getNextQueries()
 
-        assertEquals(listOf<Intervals>(), nextQueries)
+        assertEquals(listOf(), nextQueries)
+    }
+
+    @Test
+    fun `last keys downloaded three months ago should return query parameters for keys of last two weeks`() {
+
+        every { lastDownloadedKeyProvider.getLatestStoredTime() } returns LocalDateTime.now(clock).minusMonths(3)
+
+        val nextQueries = testSubject.getNextQueries()
+
+        val expectedDateTimeList = listOf(
+            Daily("2014120800"),
+            Daily("2014120900"),
+            Daily("2014121000"),
+            Daily("2014121100"),
+            Daily("2014121200"),
+            Daily("2014121300"),
+            Daily("2014121400"),
+            Daily("2014121500"),
+            Daily("2014121600"),
+            Daily("2014121700"),
+            Daily("2014121800"),
+            Daily("2014121900"),
+            Daily("2014122000"),
+            Daily("2014122100"),
+            Hourly("2014122102"),
+            Hourly("2014122104"),
+            Hourly("2014122106"),
+            Hourly("2014122108"),
+            Hourly("2014122110")
+        )
+
+        assertEquals(expectedDateTimeList, nextQueries)
     }
 
     @Test

@@ -34,8 +34,6 @@ class ExposureWindowRiskManager @Inject constructor(
         return exposureWindowRiskCalculator(exposureWindows, riskCalculation, riskScoreCalculatorConfig)
     }
 
-    override suspend fun getRiskCalculationVersion(): Int = 2
-
     private suspend fun setDiagnosisKeysDataMappingIfNecessary(riskCalculationConfiguration: V2RiskCalculation) {
         val dataMapping = riskCalculationConfiguration.dataMapping()
         if (exposureNotificationApi.getDiagnosisKeysDataMapping() != dataMapping) {

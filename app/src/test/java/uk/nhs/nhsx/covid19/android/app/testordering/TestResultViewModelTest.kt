@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -43,12 +44,21 @@ class TestResultViewModelTest {
     private val testResultsProvider = mockk<TestResultsProvider>(relaxed = true)
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>(relaxed = true)
     private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
+    private val submitFakeKeys = mockk<SubmitFakeKeys>(relaxed = true)
     private val fixedClock = Clock.fixed(symptomsOnsetDate.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC)
 
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
 
+    private val navigateToShareKeysObserver = mockk<Observer<ReceivedTestResult>>(relaxed = true)
+
     private val testSubject =
-        TestResultViewModel(testResultsProvider, isolationConfigurationProvider, stateMachine, fixedClock)
+        TestResultViewModel(
+            testResultsProvider,
+            isolationConfigurationProvider,
+            stateMachine,
+            submitFakeKeys,
+            fixedClock
+        )
 
     private val isolationState = Isolation(
         isolationStart = symptomsOnsetDate.atStartOfDay(ZoneOffset.UTC).toInstant(),
@@ -58,7 +68,11 @@ class TestResultViewModelTest {
     private val isolationStateIndexCaseOnly = Isolation(
         isolationStart = symptomsOnsetDate.atStartOfDay(ZoneOffset.UTC).toInstant(),
         isolationConfiguration = DurationDays(),
-        indexCase = IndexCase(LocalDate.now(), expiryDate = symptomsOnsetDate.plus(7, ChronoUnit.DAYS), selfAssessment = false)
+        indexCase = IndexCase(
+            LocalDate.now(),
+            expiryDate = symptomsOnsetDate.plus(7, ChronoUnit.DAYS),
+            selfAssessment = false
+        )
     )
 
     private val positiveTestResult = ReceivedTestResult(
@@ -94,8 +108,9 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(Ignore, 0)) }
         }
 
+    // Case C
     @Test
-    fun `latest test result positive and next in isolation should return PositiveWillBeInIsolation`() =
+    fun `last relevant test result positive and next in isolation should return PositiveContinueIsolation`() =
         runBlocking {
             every { testResultsProvider.testResults } returns mapOf(
                 positiveTestResultAcknowledged.diagnosisKeySubmissionToken to positiveTestResultAcknowledged,
@@ -114,8 +129,9 @@ class TestResultViewModelTest {
             }
         }
 
+    // Case G
     @Test
-    fun `latest test result positive and next not in isolation should return PositiveWontBeInIsolation`() =
+    fun `last relevant test result is positive and next not in isolation should return PositiveWontBeInIsolation`() =
         runBlocking {
             every { testResultsProvider.testResults } returns mapOf(
                 positiveTestResultAcknowledged.diagnosisKeySubmissionToken to positiveTestResultAcknowledged,
@@ -134,8 +150,9 @@ class TestResultViewModelTest {
             }
         }
 
+    // Case E
     @Test
-    fun `latest test result negative and currently not in isolation should return NegativeInIsolation`() =
+    fun `last relevant test result negative and currently not in isolation should return NegativeNotInIsolation`() =
         runBlocking {
             every { testResultsProvider.testResults } returns mapOf(
                 negativeTestResultAcknowledged.diagnosisKeySubmissionToken to negativeTestResultAcknowledged,
@@ -150,8 +167,9 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(NegativeNotInIsolation, 0)) }
         }
 
+    // Case ?
     @Test
-    fun `latest test result negative and next in isolation should return NegativeWillBeInIsolation`() =
+    fun `last relevant test result negative and next in isolation should return NegativeWillBeInIsolation`() =
         runBlocking {
             every { testResultsProvider.testResults } returns mapOf(
                 negativeTestResultAcknowledged.diagnosisKeySubmissionToken to negativeTestResultAcknowledged,
@@ -166,8 +184,9 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(NegativeWillBeInIsolation, 0)) }
         }
 
+    // Case A
     @Test
-    fun `latest test result negative and next not in isolation should return NegativeWontBeInIsolation`() =
+    fun `last relevant test result negative and next not in isolation should return NegativeWontBeInIsolation`() =
         runBlocking {
             every { testResultsProvider.testResults } returns mapOf(
                 negativeTestResultAcknowledged.diagnosisKeySubmissionToken to negativeTestResultAcknowledged,
@@ -182,12 +201,13 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(NegativeWontBeInIsolation, 0)) }
         }
 
+    // Case D
     @Test
-    fun `latest test result positive and then negative and next in isolation should return PositiveThenNegativeWillBeInIsolation`() =
+    fun `last relevant test result positive and then negative and next in isolation should return PositiveThenNegativeWillBeInIsolation`() =
         runBlocking {
             every { testResultsProvider.testResults } returns mapOf(negativeTestResult.diagnosisKeySubmissionToken to negativeTestResult)
             every { stateMachine.readState() } returns isolationState
-            every { testResultsProvider.isLastTestResultPositive() } returns true
+            every { testResultsProvider.isLastRelevantTestResultPositive() } returns true
 
             testSubject.viewState().observeForever(viewStateObserver)
 
@@ -196,8 +216,9 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(PositiveThenNegativeWillBeInIsolation, 0)) }
         }
 
+    // Case F
     @Test
-    fun `latest test result void and currently not in isolation should return VoidInIsolation`() =
+    fun `last relevant test result void and currently not in isolation should return VoidNotInIsolation`() =
         runBlocking {
             every { testResultsProvider.testResults } returns mapOf(
                 voidTestResultAcknowledged.diagnosisKeySubmissionToken to voidTestResultAcknowledged,
@@ -212,8 +233,9 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(VoidNotInIsolation, 0)) }
         }
 
+    // Case B
     @Test
-    fun `latest test result void and next in isolation should return VoidWillBeInIsolation`() =
+    fun `last relevant test result void and next in isolation should return VoidWillBeInIsolation`() =
         runBlocking {
             every { testResultsProvider.testResults } returns mapOf(
                 voidTestResultAcknowledged.diagnosisKeySubmissionToken to voidTestResultAcknowledged,
@@ -228,8 +250,9 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(VoidWillBeInIsolation, 0)) }
         }
 
+    // Case G
     @Test
-    fun `latest test results positive and void and next not in isolation should return PositiveWontBeInIsolation`() =
+    fun `last relevant test result positive and then void and next not in isolation should return PositiveWontBeInIsolation`() =
         runBlocking {
             every { testResultsProvider.testResults } returns mapOf(
                 voidTestResult.diagnosisKeySubmissionToken to voidTestResult,
@@ -248,8 +271,9 @@ class TestResultViewModelTest {
             }
         }
 
+    // Case H
     @Test
-    fun `latest test results positive and void and next in isolation should return PositiveWillBeInIsolation`() =
+    fun `last relevant test result positive and then void and next in isolation should return PositiveWillBeInIsolation`() =
         runBlocking {
             every { testResultsProvider.testResults } returns mapOf(
                 voidTestResult.diagnosisKeySubmissionToken to voidTestResult,
@@ -268,8 +292,9 @@ class TestResultViewModelTest {
             }
         }
 
+    // Case G
     @Test
-    fun `latest test results positive and negative and next not in isolation should return PositiveWontBeInIsolation`() =
+    fun `last relevant test result positive and then negative and next not in isolation should return PositiveWontBeInIsolation`() =
         runBlocking {
             every { testResultsProvider.testResults } returns mapOf(
                 negativeTestResult.diagnosisKeySubmissionToken to negativeTestResult,
@@ -288,8 +313,9 @@ class TestResultViewModelTest {
             }
         }
 
+    // Case H
     @Test
-    fun `latest test results positive and negative and next in isolation should return PositiveWillBeInIsolation`() =
+    fun `last relevant test result positive and then negative and next in isolation should return PositiveWillBeInIsolation`() =
         runBlocking {
             every { testResultsProvider.testResults } returns mapOf(
                 negativeTestResult.diagnosisKeySubmissionToken to negativeTestResult,
@@ -309,20 +335,49 @@ class TestResultViewModelTest {
         }
 
     @Test
-    fun `acknowledge test result should deliver event to state machine with remove flag`() {
+    fun `acknowledge negative test result with previous positive test result should deliver event to state machine with remove flag`() {
         every { testResultsProvider.testResults } returns mapOf(negativeTestResult.diagnosisKeySubmissionToken to negativeTestResult)
         every { stateMachine.readState() } returns isolationState
-        every { testResultsProvider.isLastTestResultPositive() } returns true
+        every { testResultsProvider.isLastRelevantTestResultPositive() } returns true
 
         testSubject.onCreate()
 
         testSubject.acknowledgeTestResult()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(negativeTestResult, true)) }
+        coVerify { submitFakeKeys.invoke() }
     }
 
     @Test
-    fun `acknowledge test result should deliver event to state machine without remove flag`() {
+    fun `acknowledge negative test result without previous positive test result should deliver event to state machine without remove flag`() {
+        every { testResultsProvider.testResults } returns mapOf(negativeTestResult.diagnosisKeySubmissionToken to negativeTestResult)
+        every { stateMachine.readState() } returns isolationState
+        every { testResultsProvider.isLastRelevantTestResultPositive() } returns false
+
+        testSubject.onCreate()
+
+        testSubject.acknowledgeTestResult()
+
+        verify { stateMachine.processEvent(OnTestResultAcknowledge(negativeTestResult, false)) }
+        coVerify { submitFakeKeys.invoke() }
+    }
+
+    @Test
+    fun `acknowledge void test result should deliver event to state machine without remove flag`() {
+        every { testResultsProvider.testResults } returns mapOf(negativeTestResult.diagnosisKeySubmissionToken to voidTestResult)
+        every { stateMachine.readState() } returns isolationState
+        every { testResultsProvider.isLastRelevantTestResultPositive() } returns true
+
+        testSubject.onCreate()
+
+        testSubject.acknowledgeTestResult()
+
+        verify { stateMachine.processEvent(OnTestResultAcknowledge(voidTestResult, false)) }
+        coVerify { submitFakeKeys.invoke() }
+    }
+
+    @Test
+    fun `acknowledge positive test result should do nothing`() {
         every { stateMachine.readState() } returns Default()
         every { testResultsProvider.testResults } returns mapOf(positiveTestResult.diagnosisKeySubmissionToken to positiveTestResult)
 
@@ -330,7 +385,8 @@ class TestResultViewModelTest {
 
         testSubject.acknowledgeTestResult()
 
-        verify { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResult, false)) }
+        verify(exactly = 0) { stateMachine.processEvent(any()) }
+        coVerify(exactly = 0) { submitFakeKeys.invoke() }
     }
 
     @Test
@@ -350,6 +406,16 @@ class TestResultViewModelTest {
                 ViewState(PositiveWontBeInIsolation(expiredPositiveTestResult.diagnosisKeySubmissionToken), 0)
             )
         }
+    }
+
+    @Test
+    fun `clicking action button for positive test result triggers navigation event`() {
+        testSubject.testResult = positiveTestResult
+        testSubject.navigateToShareKeys().observeForever(navigateToShareKeysObserver)
+
+        testSubject.onActionButtonForPositiveTestResultClicked()
+
+        verify { navigateToShareKeysObserver.onChanged(positiveTestResult) }
     }
 
     companion object {

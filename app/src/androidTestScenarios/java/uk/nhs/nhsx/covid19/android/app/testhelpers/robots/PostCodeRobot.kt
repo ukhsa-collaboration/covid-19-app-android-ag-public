@@ -49,11 +49,12 @@ class PostCodeRobot {
     }
 
     fun checkErrorTitleIsDisplayed() {
-        onView(withText(R.string.post_code_invalid_title)).check(matches(isDisplayed()))
+        onView(withText(R.string.post_code_invalid_title))
+            .perform(scrollTo()).check(matches(isDisplayed()))
     }
 
     fun checkErrorContainerForNotSupportedPostCodeIsDisplayed() {
-        onView(withId(R.id.errorTextTitle)).perform(scrollTo())
+        onView(withId(R.id.errorText)).perform(scrollTo())
             .check(matches(withText(R.string.postcode_not_supported)))
     }
 

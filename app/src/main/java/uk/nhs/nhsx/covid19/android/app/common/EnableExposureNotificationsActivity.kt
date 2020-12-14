@@ -8,10 +8,10 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.google.android.gms.common.api.Status
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_edge_case.edgeCaseContainer
 import kotlinx.android.synthetic.main.activity_edge_case.edgeCaseText
 import kotlinx.android.synthetic.main.activity_edge_case.edgeCaseTitle
 import kotlinx.android.synthetic.main.activity_edge_case.takeActionButton
-import kotlinx.android.synthetic.main.activity_status.statusContainer
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.Error
@@ -62,7 +62,7 @@ class EnableExposureNotificationsActivity : BaseActivity(R.layout.activity_edge_
     }
 
     private fun handleError(exception: Exception) {
-        Snackbar.make(statusContainer, exception.message.toString(), Snackbar.LENGTH_SHORT)
+        Snackbar.make(edgeCaseContainer, exception.message.toString(), Snackbar.LENGTH_SHORT)
             .show()
     }
 

@@ -27,6 +27,8 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeU
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import javax.inject.Inject
+import uk.nhs.nhsx.covid19.android.app.MainActivity
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setToolbar
 
 class PostCodeActivity : BaseActivity(R.layout.activity_post_code) {
 
@@ -35,15 +37,26 @@ class PostCodeActivity : BaseActivity(R.layout.activity_post_code) {
 
     private val viewModel by viewModels<PostCodeViewModel> { factory }
 
+    private var missingLocalAuthorityMapping: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
-        setNavigateUpToolbar(
-            toolbar as MaterialToolbar,
-            R.string.empty,
-            upIndicator = R.drawable.ic_arrow_back_primary
-        )
+        missingLocalAuthorityMapping = intent.getBooleanExtra(EXTRA_MISSING_LOCAL_AUTHORITY_MAPPING, false)
+
+        if (missingLocalAuthorityMapping) {
+            setToolbar(
+                toolbar as MaterialToolbar,
+                R.string.empty
+            )
+        } else {
+            setNavigateUpToolbar(
+                toolbar as MaterialToolbar,
+                R.string.empty,
+                upIndicator = R.drawable.ic_arrow_back_primary
+            )
+        }
 
         postCodeContinue.setOnClickListener {
             if (RuntimeBehavior.isFeatureEnabled(FeatureFlag.LOCAL_AUTHORITY)) {
@@ -78,14 +91,24 @@ class PostCodeActivity : BaseActivity(R.layout.activity_post_code) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == LOCAL_AUTHORITY_REQUEST && resultCode == RESULT_OK) {
-            PermissionActivity.start(this)
+            if (missingLocalAuthorityMapping) {
+                MainActivity.start(this)
+                finish()
+            } else {
+                PermissionActivity.start(this)
+            }
         }
     }
 
     companion object {
         private const val LOCAL_AUTHORITY_REQUEST = 1338
+        private const val EXTRA_MISSING_LOCAL_AUTHORITY_MAPPING = "EXTRA_MISSING_LOCAL_AUTHORITY_MAPPING"
 
-        fun start(context: Context) = context.startActivity(getIntent(context))
+        fun start(context: Context, missingLocalAuthorityMapping: Boolean = false) =
+            context.startActivity(
+                getIntent(context)
+                    .putExtra(EXTRA_MISSING_LOCAL_AUTHORITY_MAPPING, missingLocalAuthorityMapping)
+            )
 
         private fun getIntent(context: Context) = Intent(context, PostCodeActivity::class.java)
     }

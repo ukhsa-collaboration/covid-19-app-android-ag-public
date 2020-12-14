@@ -46,6 +46,7 @@ class EncounterDetectionViewModelTest {
             isolationConfiguration = DurationDays(),
             contactCase = ContactCase(
                 startDate = Instant.now(),
+                notificationDate = Instant.now(),
                 expiryDate = LocalDate.now().plusDays(14)
             )
         )

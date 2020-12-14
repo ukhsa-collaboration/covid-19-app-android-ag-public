@@ -281,14 +281,15 @@ class FlowTests : EspressoTest() {
 
     @RetryFlakyTest
     @Test
-    fun startIndexCase_endDefaultStateDueToExpiration() {
+    fun startIndexCase_endDefaultStateDueToExpiration() = notReported {
+        val expiryDate = LocalDate.now().plus(1, DAYS)
         testAppContext.setState(
             state = Isolation(
                 isolationStart = Instant.now(),
                 isolationConfiguration = DurationDays(),
                 indexCase = IndexCase(
                     symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(1, DAYS),
+                    expiryDate = expiryDate,
                     selfAssessment = false
                 )
             )
@@ -306,7 +307,7 @@ class FlowTests : EspressoTest() {
 
         isolationExpirationRobot.checkActivityIsDisplayed()
 
-        waitFor { isolationExpirationRobot.checkIsolationWillFinish() }
+        waitFor { isolationExpirationRobot.checkIsolationWillFinish(expiryDate) }
 
         val from = Instant.now().plus(1, ChronoUnit.DAYS)
 

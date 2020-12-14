@@ -77,6 +77,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/vertical_margin"
                 android:text="@string/onboarding_before_activating_app"
+                android:contentDescription="@string/onboarding_before_activating_app_announcement"
                 android:textStyle="bold" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView

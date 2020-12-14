@@ -55,4 +55,6 @@
     <color name="risk_yellow_background">#FFF5DD</color>
     <color name="risk_amber_background">#FFE2CE</color>
     <color name="risk_red_background">#F9E4E3</color>
+
+    <color name="item_user_data_border">#DDDDDD</color>
 </resources>

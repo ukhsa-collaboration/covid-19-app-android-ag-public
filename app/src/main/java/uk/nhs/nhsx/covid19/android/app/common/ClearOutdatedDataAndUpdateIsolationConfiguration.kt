@@ -1,9 +1,13 @@
 package uk.nhs.nhsx.covid19.android.app.common
 
+import com.jeroenmols.featureflag.framework.FeatureFlag.STORE_EXPOSURE_WINDOWS
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationTokensProvider
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.StateStorage
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
 import java.time.Clock
 import java.time.LocalDate
@@ -11,39 +15,52 @@ import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 class ClearOutdatedDataAndUpdateIsolationConfiguration(
-    private val stateStorage: StateStorage,
+    private val isolationStateMachine: IsolationStateMachine,
     private val testResultsProvider: TestResultsProvider,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val isolationConfigurationApi: IsolationConfigurationApi,
+    private val exposureNotificationTokensProvider: ExposureNotificationTokensProvider,
+    private val epidemiologyEventProvider: EpidemiologyEventProvider,
     private val clock: Clock
 ) {
 
     @Inject
     constructor(
-        stateStorage: StateStorage,
+        isolationStateMachine: IsolationStateMachine,
         testResultsProvider: TestResultsProvider,
         isolationConfigurationProvider: IsolationConfigurationProvider,
-        isolationConfigurationApi: IsolationConfigurationApi
+        isolationConfigurationApi: IsolationConfigurationApi,
+        exposureNotificationTokensProvider: ExposureNotificationTokensProvider,
+        epidemiologyEventProvider: EpidemiologyEventProvider
     ) : this(
-        stateStorage,
+        isolationStateMachine,
         testResultsProvider,
         isolationConfigurationProvider,
         isolationConfigurationApi,
+        exposureNotificationTokensProvider,
+        epidemiologyEventProvider,
         Clock.systemDefaultZone()
     )
 
-    suspend fun doWork(): Result<Unit> = runSafely {
+    suspend operator fun invoke(): Result<Unit> = runSafely {
 
         updateIsolationConfiguration()
 
         val expiryDays = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
 
-        val state = stateStorage.state
+        val state = isolationStateMachine.readState()
         if (state is Default) {
             if (state.previousIsolation == null) {
                 testResultsProvider.clearBefore(LocalDate.now(clock).minusDays(expiryDays.toLong()))
-            } else if (state.previousIsolation.expiryDate.isMoreThanDaysAgo(expiryDays)) {
+            } else if (state.previousIsolation.expiryDate.isMoreThanOrExactlyDaysAgo(expiryDays)) {
                 testResultsProvider.clearBefore(state.previousIsolation.expiryDate)
+                isolationStateMachine.clearPreviousIsolation()
+            }
+
+            if (RuntimeBehavior.isFeatureEnabled(STORE_EXPOSURE_WINDOWS)) {
+                if (exposureNotificationTokensProvider.tokens.isEmpty()) {
+                    epidemiologyEventProvider.clear()
+                }
             }
         }
     }
@@ -55,7 +72,7 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration(
         }
     }
 
-    private fun LocalDate.isMoreThanDaysAgo(days: Int) =
+    private fun LocalDate.isMoreThanOrExactlyDaysAgo(days: Int) =
         until(
             LocalDate.now(clock),
             ChronoUnit.DAYS

@@ -19,7 +19,7 @@ class SymptomsAdviceIsolateActivityTest : EspressoTest() {
 
     @Test
     fun testScreenWithPositiveSymptoms() = notReported {
-        startTestActivity<SymptomsAdviceIsolateActivity>() {
+        startTestActivity<SymptomsAdviceIsolateActivity> {
             putExtra(SymptomsAdviceIsolateActivity.EXTRA_IS_POSITIVE_SYMPTOMS, true)
             putExtra(SymptomsAdviceIsolateActivity.EXTRA_ISOLATION_DURATION, 14)
         }
@@ -33,7 +33,7 @@ class SymptomsAdviceIsolateActivityTest : EspressoTest() {
 
     @Test
     fun testScreenWithNegativeSymptoms() = notReported {
-        startTestActivity<SymptomsAdviceIsolateActivity>() {
+        startTestActivity<SymptomsAdviceIsolateActivity> {
             putExtra(SymptomsAdviceIsolateActivity.EXTRA_IS_POSITIVE_SYMPTOMS, false)
             putExtra(SymptomsAdviceIsolateActivity.EXTRA_ISOLATION_DURATION, 14)
         }
@@ -47,7 +47,7 @@ class SymptomsAdviceIsolateActivityTest : EspressoTest() {
 
     @Test
     fun testOrderButtonIsShowingWhenTestOrderingFeatureFlagIsEnabled() = notReported {
-        startTestActivity<SymptomsAdviceIsolateActivity>() {
+        startTestActivity<SymptomsAdviceIsolateActivity> {
             putExtra(SymptomsAdviceIsolateActivity.EXTRA_IS_POSITIVE_SYMPTOMS, true)
             putExtra(SymptomsAdviceIsolateActivity.EXTRA_ISOLATION_DURATION, 14)
         }

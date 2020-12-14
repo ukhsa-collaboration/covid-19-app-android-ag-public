@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import kotlinx.android.synthetic.main.activity_test_result.goodNewsContainer
 import kotlinx.android.synthetic.main.activity_test_result.isolationRequestContainer
 import kotlinx.android.synthetic.main.view_good_news.goodNewsActionButton
@@ -28,7 +29,6 @@ import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.inPortraitMode
-import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.Ignore
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeNotInIsolation
@@ -62,6 +62,10 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
     }
 
     private fun startViewModelListeners() {
+        viewModel.navigateToShareKeys().observe(this) { testResult ->
+            ShareKeysInformationActivity.start(this, testResult)
+        }
+
         viewModel.viewState().observe(
             this,
             Observer { viewState ->
@@ -69,35 +73,21 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
                     NegativeNotInIsolation ->
                         showAreNotIsolatingScreenOnNegative()
                     NegativeWillBeInIsolation ->
-                        showContinueToSelfIsolationScreenOnNegative(
-                            viewState.remainingDaysInIsolation
-                        )
+                        showContinueToSelfIsolationScreenOnNegative(viewState.remainingDaysInIsolation)
                     NegativeWontBeInIsolation ->
                         showDoNotHaveToSelfIsolateScreenOnNegative()
                     is PositiveContinueIsolation ->
-                        showContinueToSelfIsolationScreenOnPositive(
-                            viewState.remainingDaysInIsolation,
-                            viewState.mainState.diagnosisKeySubmissionToken
-                        )
+                        showContinueToSelfIsolationScreenOnPositive(viewState.remainingDaysInIsolation)
                     is PositiveWillBeInIsolation ->
-                        showSelfIsolateScreenOnPositive(
-                            viewState.remainingDaysInIsolation,
-                            viewState.mainState.diagnosisKeySubmissionToken
-                        )
+                        showSelfIsolateScreenOnPositive(viewState.remainingDaysInIsolation)
                     is PositiveWontBeInIsolation ->
-                        showDoNotHaveToSelfIsolateScreenOnPositive(
-                            viewState.mainState.diagnosisKeySubmissionToken
-                        )
+                        showDoNotHaveToSelfIsolateScreenOnPositive()
                     PositiveThenNegativeWillBeInIsolation ->
-                        showContinueToSelfIsolationScreenOnPositiveThenNegative(
-                            viewState.remainingDaysInIsolation
-                        )
+                        showContinueToSelfIsolationScreenOnPositiveThenNegative(viewState.remainingDaysInIsolation)
                     VoidNotInIsolation ->
                         showAreNotIsolatingScreenOnVoid()
                     VoidWillBeInIsolation ->
-                        showContinueToSelfIsolationScreenOnVoid(
-                            viewState.remainingDaysInIsolation
-                        )
+                        showContinueToSelfIsolationScreenOnVoid(viewState.remainingDaysInIsolation)
                     Ignore -> finish()
                 }
             }
@@ -119,10 +109,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         finish()
     }
 
-    private fun showContinueToSelfIsolationScreenOnPositive(
-        remainingDaysInIsolation: Int,
-        diagnosisKeySubmissionToken: String
-    ) {
+    private fun showContinueToSelfIsolationScreenOnPositive(remainingDaysInIsolation: Int) {
         goodNewsContainer.gone()
         isolationRequestContainer.visible()
         exposureFaqsLink.visible()
@@ -145,13 +132,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
         isolationRequestActionButton.text = getString(R.string.continue_button)
         isolationRequestActionButton.setOnClickListener {
-            viewModel.acknowledgeTestResult()
-            startActivity<ShareKeysInformationActivity> {
-                putExtra(
-                    ShareKeysInformationActivity.SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN,
-                    diagnosisKeySubmissionToken
-                )
-            }
+            viewModel.onActionButtonForPositiveTestResultClicked()
         }
     }
 
@@ -223,7 +204,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         viewModel.acknowledgeTestResult()
     }
 
-    private fun showDoNotHaveToSelfIsolateScreenOnPositive(diagnosisKeySubmissionToken: String) {
+    private fun showDoNotHaveToSelfIsolateScreenOnPositive() {
         goodNewsContainer.visible()
         isolationRequestContainer.gone()
 
@@ -240,13 +221,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
         goodNewsActionButton.text = getString(R.string.continue_button)
         goodNewsActionButton.setOnClickListener {
-            viewModel.acknowledgeTestResult()
-            startActivity<ShareKeysInformationActivity> {
-                putExtra(
-                    ShareKeysInformationActivity.SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN,
-                    diagnosisKeySubmissionToken
-                )
-            }
+            viewModel.onActionButtonForPositiveTestResultClicked()
         }
     }
 
@@ -322,10 +297,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         }
     }
 
-    private fun showSelfIsolateScreenOnPositive(
-        remainingDaysInIsolation: Int,
-        diagnosisKeySubmissionToken: String
-    ) {
+    private fun showSelfIsolateScreenOnPositive(remainingDaysInIsolation: Int) {
         goodNewsContainer.gone()
         isolationRequestContainer.visible()
         exposureFaqsLink.visible()
@@ -346,13 +318,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
         isolationRequestActionButton.text = getString(R.string.continue_button)
         isolationRequestActionButton.setOnClickListener {
-            viewModel.acknowledgeTestResult()
-            startActivity<ShareKeysInformationActivity> {
-                putExtra(
-                    ShareKeysInformationActivity.SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN,
-                    diagnosisKeySubmissionToken
-                )
-            }
+            viewModel.onActionButtonForPositiveTestResultClicked()
         }
     }
 

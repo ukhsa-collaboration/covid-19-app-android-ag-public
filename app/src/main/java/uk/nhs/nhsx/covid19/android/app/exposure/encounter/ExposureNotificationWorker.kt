@@ -6,6 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.ForegroundInfo
 import androidx.work.NetworkType.CONNECTED
+import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -29,9 +30,15 @@ class ExposureNotificationWorker(
         context.appComponent.inject(this)
 
         setForeground()
-        val inputToken = inputData.getString(INPUT_TOKEN) ?: ""
+        val matchesFound = inputData.getBoolean(INPUT_MATCHES_FOUND, true)
 
-        return exposureNotificationWork(inputToken).toWorkerResult()
+        val result = if (matchesFound) {
+            val inputToken = inputData.getString(INPUT_TOKEN) ?: ""
+            exposureNotificationWork.handleMatchesFound(inputToken)
+        } else {
+            exposureNotificationWork.handleNoMatchesFound()
+        }
+        return result.toWorkerResult()
     }
 
     private suspend fun setForeground() {
@@ -43,16 +50,39 @@ class ExposureNotificationWorker(
 
     companion object : ExposureNotificationWorkerScheduler {
         const val INPUT_TOKEN = "INPUT_TOKEN"
+        const val INPUT_MATCHES_FOUND = "INPUT_MATCHES_FOUND"
         private const val NOTIFICATION_UPDATING_DATABASE_ID = 112
 
-        override fun schedule(context: Context, token: String) {
+        override fun scheduleMatchesFound(context: Context, token: String) {
+            schedule(context) {
+                it.setInputData(
+                    Data.Builder()
+                        .putBoolean(INPUT_MATCHES_FOUND, true)
+                        .putString(INPUT_TOKEN, token)
+                        .build()
+                )
+            }
+        }
+
+        override fun scheduleNoMatchesFound(context: Context) {
+            schedule(context) {
+                it.setInputData(Data.Builder().putBoolean(INPUT_MATCHES_FOUND, false).build())
+            }
+        }
+
+        private fun schedule(
+            context: Context,
+            inputConfigurator: (OneTimeWorkRequest.Builder) -> OneTimeWorkRequest.Builder
+        ) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(CONNECTED)
                 .build()
 
             val exposureNotificationWork = OneTimeWorkRequestBuilder<ExposureNotificationWorker>()
                 .setConstraints(constraints)
-                .setInputData(Data.Builder().putString(INPUT_TOKEN, token).build())
+                .apply {
+                    inputConfigurator(this)
+                }
                 .build()
 
             WorkManager.getInstance(context).enqueue(exposureNotificationWork)
@@ -61,5 +91,6 @@ class ExposureNotificationWorker(
 }
 
 interface ExposureNotificationWorkerScheduler {
-    fun schedule(context: Context, token: String)
+    fun scheduleMatchesFound(context: Context, token: String)
+    fun scheduleNoMatchesFound(context: Context)
 }

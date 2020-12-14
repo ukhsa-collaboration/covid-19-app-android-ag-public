@@ -30,6 +30,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
+import uk.nhs.nhsx.covid19.android.app.util.isEqualOrAfter
 
 @Singleton
 class AnalyticsEventProcessor(
@@ -102,14 +103,14 @@ class AnalyticsEventProcessor(
                 if (currentState is Isolation) {
                     isIsolatingBackgroundTick = 1
                     if (currentState.isContactCase()) isIsolatingForHadRiskyContactBackgroundTick = 1
-                    if (currentState.isIndexCaseOnly()) hasSelfDiagnosedPositiveBackgroundTick = 1
+                    if (currentState.isIndexCase()) hasSelfDiagnosedPositiveBackgroundTick = 1
                     if (currentState.isSelfAssessmentIndexCase()) isIsolatingForSelfDiagnosedBackgroundTick = 1
 
                     val lastAcknowledgePositiveTestResult = lastAcknowledgedPositiveTestResult()
                     if (lastAcknowledgePositiveTestResult != null) {
                         val isolationStartDate = currentState.isolationStart.truncatedTo(ChronoUnit.DAYS)
                         val testResultAcknowledgeDate = lastAcknowledgePositiveTestResult.acknowledgedDate!!.truncatedTo(ChronoUnit.DAYS)
-                        if (!testResultAcknowledgeDate.isBefore(isolationStartDate)) {
+                        if (testResultAcknowledgeDate.isEqualOrAfter(isolationStartDate)) {
                             isIsolatingForTestedPositiveBackgroundTick = 1
                         }
                     }

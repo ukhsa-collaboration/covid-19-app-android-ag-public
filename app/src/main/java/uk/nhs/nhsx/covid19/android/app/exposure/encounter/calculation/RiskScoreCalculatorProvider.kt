@@ -6,4 +6,6 @@ import javax.inject.Inject
 
 class RiskScoreCalculatorProvider @Inject constructor() {
     fun riskScoreCalculator(config: RiskScoreCalculatorConfiguration) = RiskScoreCalculator(config)
+
+    fun getRiskCalculationVersion(): Int = 2
 }

@@ -13,6 +13,8 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class TestResultsProviderTest {
 
@@ -81,7 +83,7 @@ class TestResultsProviderTest {
         every { testResultsStorage.value } returns MULTIPLE_TEST_RESULTS_LAST_IS_VOID_JSON
 
         val testSubject = TestResultsProvider(latestResultsProvider, testResultsStorage, moshi, clock)
-        testSubject.clearBefore(LocalDate.of(2020, 7, 25))
+        testSubject.clearBefore(LocalDate.of(1970, 1, 1))
 
         verify { testResultsStorage.value = MULTIPLE_TEST_RESULTS_LAST_IS_VOID_JSON.replace("\n", "") }
     }
@@ -91,11 +93,11 @@ class TestResultsProviderTest {
         every { testResultsStorage.value } returns MULTIPLE_TEST_RESULTS_LAST_IS_VOID_JSON
 
         val testSubject = TestResultsProvider(latestResultsProvider, testResultsStorage, moshi, clock)
-        testSubject.clearBefore(LocalDate.of(2020, 12, 27))
+        testSubject.clearBefore(LocalDate.of(1975, 1, 1))
 
         verify {
             testResultsStorage.value =
-                """{"token":{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"VOID","acknowledgedDate":"2020-12-27T10:00:00Z"}}""".trimIndent()
+                """{"token3":{"diagnosisKeySubmissionToken":"token3","testEndDate":"1975-01-01T00:00:00Z","testResult":"POSITIVE","acknowledgedDate":"2020-07-25T10:00:00Z"}}""".trimIndent()
         }
     }
 
@@ -140,54 +142,48 @@ class TestResultsProviderTest {
     }
 
     @Test
-    fun `last test result is positive`() {
-        every { testResultsStorage.value } returns MULTIPLE_TEST_RESULTS_LAST_IS_POSITIVE_JSON
+    fun `isLastRelevantTestResultPositive returns false for single unacknowledged test result`() {
+        every { testResultsStorage.value } returns SINGLE_TEST_RESULT_JSON
 
         val testSubject = TestResultsProvider(latestResultsProvider, testResultsStorage, moshi, clock)
 
-        assertEquals(true, testSubject.isLastTestResultPositive())
+        assertFalse { testSubject.isLastRelevantTestResultPositive() }
     }
 
     @Test
-    fun `last test result is not positive`() {
-        every { testResultsStorage.value } returns MULTIPLE_TEST_RESULTS_LAST_IS_NOT_POSITIVE_JSON
+    fun `isLastRelevantTestResultNegative returns false for single unacknowledged test result`() {
+        every { testResultsStorage.value } returns SINGLE_TEST_RESULT_JSON
 
         val testSubject = TestResultsProvider(latestResultsProvider, testResultsStorage, moshi, clock)
 
-        assertEquals(false, testSubject.isLastTestResultPositive())
+        assertFalse { testSubject.isLastRelevantTestResultNegative() }
     }
 
     @Test
-    fun `last test result is negative`() {
-        every { testResultsStorage.value } returns MULTIPLE_TEST_RESULTS_LAST_IS_NEGATIVE_JSON
+    fun `isLastRelevantTestResultPositive returns true for single acknowledged positive test result`() {
+        every { testResultsStorage.value } returns SINGLE_TEST_RESULT_JSON_ACKNOWLEDGED
 
         val testSubject = TestResultsProvider(latestResultsProvider, testResultsStorage, moshi, clock)
 
-        assertEquals(true, testSubject.isLastTestResultNegative())
+        assertTrue { testSubject.isLastRelevantTestResultPositive() }
     }
 
     @Test
-    fun `last test result is not negative`() {
-        every { testResultsStorage.value } returns MULTIPLE_TEST_RESULTS_LAST_IS_POSITIVE_JSON
+    fun `isLastRelevantTestResultNegative returns true for single acknowledged negative test result`() {
+        every { testResultsStorage.value } returns SINGLE_TEST_RESULT_NEGATIVE_JSON_ACKNOWLEDGED
 
         val testSubject = TestResultsProvider(latestResultsProvider, testResultsStorage, moshi, clock)
 
-        assertEquals(false, testSubject.isLastTestResultNegative())
+        assertTrue { testSubject.isLastRelevantTestResultNegative() }
     }
 
     @Test
-    fun `get last test result`() {
-        every { testResultsStorage.value } returns MULTIPLE_TEST_RESULTS_LAST_IS_POSITIVE_JSON
+    fun `isLastRelevantTestResultNegative returns false when containing positive and negative acknowledged test results`() {
+        every { testResultsStorage.value } returns MULTIPLE_TEST_RESULTS_LAST_IS_VOID_JSON
 
         val testSubject = TestResultsProvider(latestResultsProvider, testResultsStorage, moshi, clock)
 
-        val expectedResult = ReceivedTestResult(
-            "token",
-            Instant.ofEpochMilli(0),
-            POSITIVE,
-            Instant.parse("2020-12-27T10:00:00Z")
-        )
-        assertEquals(expectedResult, testSubject.getLastTestResult())
+        assertFalse { testSubject.isLastRelevantTestResultNegative() }
     }
 
     @Test
@@ -205,6 +201,46 @@ class TestResultsProviderTest {
         assertEquals(expectedResult, testSubject.getLastNonVoidTestResult())
     }
 
+    @Test
+    fun `has had positive test result since returns true if positive test result after date`() {
+        every { testResultsStorage.value } returns SINGLE_TEST_RESULT_JSON
+
+        val testSubject = TestResultsProvider(latestResultsProvider, testResultsStorage, moshi, clock)
+
+        val date = Instant.parse("1969-12-31T00:00:00Z")
+        assertTrue(testSubject.hasHadPositiveTestSince(date))
+    }
+
+    @Test
+    fun `has had positive test result since returns true if positive test result on date`() {
+        every { testResultsStorage.value } returns SINGLE_TEST_RESULT_JSON
+
+        val testSubject = TestResultsProvider(latestResultsProvider, testResultsStorage, moshi, clock)
+
+        val date = Instant.parse("1970-01-01T00:00:00Z")
+        assertTrue(testSubject.hasHadPositiveTestSince(date))
+    }
+
+    @Test
+    fun `has had positive test result since returns false if positive test result before date`() {
+        every { testResultsStorage.value } returns SINGLE_TEST_RESULT_JSON
+
+        val testSubject = TestResultsProvider(latestResultsProvider, testResultsStorage, moshi, clock)
+
+        val date = Instant.parse("1970-01-02T00:00:00Z")
+        assertFalse(testSubject.hasHadPositiveTestSince(date))
+    }
+
+    @Test
+    fun `has had positive test result since returns false if only negative or void test results`() {
+        every { testResultsStorage.value } returns MULTIPLE_TEST_RESULTS_NONE_ARE_POSITIVE_JSON
+
+        val testSubject = TestResultsProvider(latestResultsProvider, testResultsStorage, moshi, clock)
+
+        val date = Instant.parse("1969-12-31T00:00:00Z")
+        assertFalse(testSubject.hasHadPositiveTestSince(date))
+    }
+
     companion object {
         val SINGLE_TEST_RESULT_JSON =
             """
@@ -216,29 +252,16 @@ class TestResultsProviderTest {
             {"token":{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","acknowledgedDate":"2020-07-26T10:00:00Z"}}
             """.trimIndent()
 
+        val SINGLE_TEST_RESULT_NEGATIVE_JSON_ACKNOWLEDGED =
+            """
+            {"token":{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"NEGATIVE","acknowledgedDate":"2020-07-26T10:00:00Z"}}
+            """.trimIndent()
+
         val MULTIPLE_TEST_RESULTS_JSON =
             """
             {
             "token":{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE"},
             "token2":{"diagnosisKeySubmissionToken":"token2","testEndDate":"1975-01-01T00:00:00Z","testResult":"VOID","acknowledgedDate":"2020-07-26T10:00:00Z"}
-            }
-            """.trimIndent()
-
-        val MULTIPLE_TEST_RESULTS_LAST_IS_POSITIVE_JSON =
-            """
-            {
-            "token":{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","acknowledgedDate":"2020-12-27T10:00:00Z"},
-            "token2":{"diagnosisKeySubmissionToken":"token2","testEndDate":"1975-01-01T00:00:00Z","testResult":"VOID","acknowledgedDate":"2020-07-26T10:00:00Z"},
-            "token3":{"diagnosisKeySubmissionToken":"token3","testEndDate":"1975-01-01T00:00:00Z","testResult":"NEGATIVE","acknowledgedDate":"2020-07-26T10:00:00Z"}
-            }
-            """.trimIndent()
-
-        val MULTIPLE_TEST_RESULTS_LAST_IS_NEGATIVE_JSON =
-            """
-            {
-            "token":{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"NEGATIVE","acknowledgedDate":"2020-12-27T10:00:00Z"},
-            "token2":{"diagnosisKeySubmissionToken":"token2","testEndDate":"1975-01-01T00:00:00Z","testResult":"VOID","acknowledgedDate":"2020-07-26T10:00:00Z"},
-            "token3":{"diagnosisKeySubmissionToken":"token3","testEndDate":"1975-01-01T00:00:00Z","testResult":"POSITIVE","acknowledgedDate":"2020-07-26T10:00:00Z"}
             }
             """.trimIndent()
 
@@ -251,10 +274,10 @@ class TestResultsProviderTest {
             }
             """.trimIndent()
 
-        val MULTIPLE_TEST_RESULTS_LAST_IS_NOT_POSITIVE_JSON =
+        val MULTIPLE_TEST_RESULTS_NONE_ARE_POSITIVE_JSON =
             """
             {
-            "token":{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE"},
+            "token":{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"NEGATIVE"},
             "token2":{"diagnosisKeySubmissionToken":"token2","testEndDate":"1975-01-01T00:00:00Z","testResult":"VOID","acknowledgedDate":"2020-07-26T10:00:00Z"}
             }
             """.trimIndent()

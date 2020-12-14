@@ -28,12 +28,17 @@ import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi
+import uk.nhs.nhsx.covid19.android.app.packagemanager.MockPackageManager
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
+import uk.nhs.nhsx.covid19.android.app.permissions.MockPermissionsManager
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenues
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
+import uk.nhs.nhsx.covid19.android.app.remote.MockIsolationPaymentApi
+import uk.nhs.nhsx.covid19.android.app.remote.MockKeysSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockQuestionnaireApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockRiskyVenuesApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
@@ -61,9 +66,17 @@ class TestApplicationContext {
 
     val virologyTestingApi = MockVirologyTestingApi()
 
+    val isolationPaymentApi = MockIsolationPaymentApi()
+
     val questionnaireApi = MockQuestionnaireApi()
 
+    val keysSubmissionApi = MockKeysSubmissionApi()
+
     val updateManager = TestUpdateManager()
+
+    val permissionsManager = MockPermissionsManager()
+
+    val packageManager = MockPackageManager()
 
     internal val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
@@ -102,7 +115,9 @@ class TestApplicationContext {
                 qrCodesSignatureKey,
                 applicationLocaleProvider,
                 updateManager,
-                batteryOptimizationChecker
+                batteryOptimizationChecker,
+                permissionsManager,
+                packageManager
             )
         )
         .networkModule(
@@ -115,7 +130,9 @@ class TestApplicationContext {
             ManagedApiModule(
                 riskyVenuesApi,
                 virologyTestingApi,
-                questionnaireApi
+                questionnaireApi,
+                keysSubmissionApi,
+                isolationPaymentApi
             )
         )
         .build()
@@ -168,6 +185,14 @@ class TestApplicationContext {
 
     fun setLocalAuthority(localAuthority: String?) {
         component.getLocalAuthorityProvider().value = localAuthority
+    }
+
+    fun setIsolationPaymentToken(token: String?) {
+        component.getIsolationPaymentTokenStateProvider().tokenState = if (token != null) {
+            IsolationPaymentTokenState.Token(token)
+        } else {
+            IsolationPaymentTokenState.Unresolved
+        }
     }
 
     fun getUserInbox() = component.getUserInbox()
@@ -244,9 +269,16 @@ class TestApplicationContext {
         component.getAppAvailabilityProvider().appAvailability = appAvailability
     }
 
+    fun setKeysSubmissionApiShouldSucceed(shouldSucceed: Boolean) {
+        keysSubmissionApi.shouldSucceed = shouldSucceed
+    }
+
     fun setIgnoringBatteryOptimizations(ignoringBatteryOptimizations: Boolean) {
         batteryOptimizationChecker.ignoringBatteryOptimizations = ignoringBatteryOptimizations
     }
+
+    fun getIsolationPaymentTokenStateProvider() =
+        component.getIsolationPaymentTokenStateProvider()
 }
 
 fun stringFromResId(@StringRes stringRes: Int): String {

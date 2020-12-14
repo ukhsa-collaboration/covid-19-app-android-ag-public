@@ -23,13 +23,13 @@ class ScreenshotTakingRule : TestWatcher() {
     private fun reportViewHierarchy(description: Description) {
         val viewHierarchy = Radiography.scan()
 
-        val outputFolder = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-            "covid19/failures/${description.className}"
-        )
-        val file = File(outputFolder, "${description.methodName}.txt")
-
         try {
+            val outputFolder = File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                "covid19/failures/${description.className}"
+            )
+            val file = File(outputFolder, "${description.methodName}.txt")
+
             file.writeText(viewHierarchy)
         } catch (e: Exception) {
             Log.e("ScreenshotTakingRule", "Unable to store view hierarchy", e)

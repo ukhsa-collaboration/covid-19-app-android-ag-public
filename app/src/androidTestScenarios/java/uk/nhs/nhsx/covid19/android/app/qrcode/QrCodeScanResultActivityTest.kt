@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode
 
-import org.junit.Ignore
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.InvalidContent
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.Scanning
@@ -15,7 +14,7 @@ class QrCodeScanResultActivityTest : EspressoTest() {
     private val robot = QrCodeScanResultRobot()
 
     @Test
-    fun showSuccess() {
+    fun showSuccess() = notReported {
         val venueName = "Sample Venue"
 
         startTestActivity<QrCodeScanResultActivity> {
@@ -82,29 +81,6 @@ class QrCodeScanResultActivityTest : EspressoTest() {
         step(
             stepName = "Start",
             stepDescription = "User is presented a screen that informs them their phone does not support venue check-in"
-        )
-    }
-
-    @Ignore
-    @Test
-    fun showPermissionsNotGranted() = reporter(
-        scenario = "Venue check-in",
-        title = "Permissions not granted",
-        description = "The user did not grant the app camera permissions",
-        kind = SCREEN
-    ) {
-        startTestActivity<QrCodeScanResultActivity> {
-            putExtra(
-                QrCodeScanResultActivity.SCAN_RESULT,
-                QrCodeScanResult.CameraPermissionNotGranted
-            )
-        }
-
-        robot.checkPermissionDeniedTitleIsDisplayed()
-
-        step(
-            stepName = "After scan attempt",
-            stepDescription = "User is presented a screen that informs them they have to grant camera permissions to use this feature"
         )
     }
 }

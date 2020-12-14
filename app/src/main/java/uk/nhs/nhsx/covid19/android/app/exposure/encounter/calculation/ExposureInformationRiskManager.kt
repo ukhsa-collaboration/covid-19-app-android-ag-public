@@ -33,6 +33,4 @@ class ExposureInformationRiskManager(
             Timber.d("calculatedRisk: $calculatedRisk threshold: $threshold")
         }
     }
-
-    override suspend fun getRiskCalculationVersion(): Int = 1
 }

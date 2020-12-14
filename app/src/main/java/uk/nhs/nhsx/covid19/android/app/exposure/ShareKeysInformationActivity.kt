@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.exposure
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -24,6 +25,7 @@ import uk.nhs.nhsx.covid19.android.app.status.ExposureStatusViewModel
 import uk.nhs.nhsx.covid19.android.app.status.ExposureStatusViewModel.Companion.REQUEST_CODE_SUBMIT_KEYS_PERMISSION
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.Companion.REQUEST_CODE_START_EXPOSURE_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitKeysProgressActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import javax.inject.Inject
@@ -38,8 +40,6 @@ class ShareKeysInformationActivity : BaseActivity(R.layout.activity_share_keys_i
     lateinit var exposureStatusViewModelFactory: ViewModelFactory<ExposureStatusViewModel>
     private val exposureStatusViewModel: ExposureStatusViewModel by viewModels { exposureStatusViewModelFactory }
 
-    private var diagnosisKeySubmissionToken: String? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
@@ -50,13 +50,14 @@ class ShareKeysInformationActivity : BaseActivity(R.layout.activity_share_keys_i
             upIndicator = R.drawable.ic_arrow_back_white
         )
 
-        diagnosisKeySubmissionToken = intent.getStringExtra(SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN)
+        intent.getParcelableExtra<ReceivedTestResult>(EXTRA_TEST_RESULT)?.let {
+            shareKeysInformationViewModel.testResult = it
 
-        shareKeysConfirm.setOnClickListener {
-            shareKeysInformationViewModel.fetchKeys()
-        }
-
-        setupViewModelListeners()
+            shareKeysConfirm.setOnClickListener {
+                shareKeysInformationViewModel.fetchKeys()
+            }
+            setupViewModelListeners()
+        } ?: finish()
     }
 
     private fun setupViewModelListeners() {
@@ -66,10 +67,11 @@ class ShareKeysInformationActivity : BaseActivity(R.layout.activity_share_keys_i
                 when (result) {
                     is Success -> {
                         disableExposureNotificationsAgainIfWasInitiallyDisabled()
-                        SubmitKeysProgressActivity.start(
+                        SubmitKeysProgressActivity.startForResult(
                             this,
                             result.temporaryExposureKeys,
-                            diagnosisKeySubmissionToken
+                            shareKeysInformationViewModel.testResult.diagnosisKeySubmissionToken,
+                            REQUEST_CODE_SUBMIT_KEYS
                         )
                     }
                     is Failure -> {
@@ -120,11 +122,19 @@ class ShareKeysInformationActivity : BaseActivity(R.layout.activity_share_keys_i
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_SUBMIT_KEYS_PERMISSION) {
-            shareKeysInformationViewModel.fetchKeys()
+        if (requestCode == REQUEST_CODE_SUBMIT_KEYS_PERMISSION) {
+            if (resultCode == Activity.RESULT_OK) {
+                shareKeysInformationViewModel.fetchKeys()
+            } else {
+                shareKeysInformationViewModel.acknowledgeTestResult()
+                shareKeysInformationViewModel.onKeysNotSubmitted()
+                disableExposureNotificationsAgainIfWasInitiallyDisabled()
+                StatusActivity.start(this)
+            }
         } else if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_START_EXPOSURE_NOTIFICATION) {
             exposureStatusViewModel.startExposureNotifications()
-        } else if (requestCode == REQUEST_CODE_SUBMIT_KEYS_PERMISSION) {
+        } else if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_SUBMIT_KEYS) {
+            shareKeysInformationViewModel.acknowledgeTestResult()
             disableExposureNotificationsAgainIfWasInitiallyDisabled()
             StatusActivity.start(this)
         }
@@ -137,6 +147,23 @@ class ShareKeysInformationActivity : BaseActivity(R.layout.activity_share_keys_i
     }
 
     companion object {
-        const val SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN = "SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN"
+        private const val EXTRA_TEST_RESULT = "EXTRA_TEST_RESULT"
+        private const val REQUEST_CODE_SUBMIT_KEYS = 1403
+
+        fun start(
+            context: Context,
+            testResult: ReceivedTestResult
+        ) =
+            context.startActivity(getIntent(context, testResult))
+
+        private fun getIntent(
+            context: Context,
+            testResult: ReceivedTestResult
+        ) =
+            Intent(context, ShareKeysInformationActivity::class.java)
+                .putExtra(
+                    EXTRA_TEST_RESULT,
+                    testResult
+                )
     }
 }

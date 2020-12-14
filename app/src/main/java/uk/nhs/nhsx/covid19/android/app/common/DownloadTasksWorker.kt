@@ -49,6 +49,9 @@ class DownloadTasksWorker(
     lateinit var downloadAndProcessKeys: DownloadAndProcessKeys
 
     @Inject
+    lateinit var clearOutdatedDataAndUpdateIsolationConfiguration: ClearOutdatedDataAndUpdateIsolationConfiguration
+
+    @Inject
     lateinit var exposureNotificationWork: ExposureNotificationWork
 
     @Inject
@@ -77,7 +80,8 @@ class DownloadTasksWorker(
             return Result.failure()
         }
 
-        exposureNotificationWork()
+        clearOutdatedDataAndUpdateIsolationConfiguration()
+        exposureNotificationWork.handleMatchesFound()
         downloadAndProcessKeys()
         downloadVirologyTestResultWork()
         downloadRiskyPostCodesWork()

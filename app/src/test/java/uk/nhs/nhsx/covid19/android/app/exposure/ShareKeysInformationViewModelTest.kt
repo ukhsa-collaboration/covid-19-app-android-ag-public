@@ -12,6 +12,12 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.FetchTemporaryExposureKeys.TemporaryExposureKeysFetchResult
 import uk.nhs.nhsx.covid19.android.app.exposure.FetchTemporaryExposureKeys.TemporaryExposureKeysFetchResult.Success
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
+import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
+import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.SubmitFakeKeys
+import java.time.Instant
 
 class ShareKeysInformationViewModelTest {
 
@@ -19,8 +25,11 @@ class ShareKeysInformationViewModelTest {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val fetchTemporaryExposureKeys = mockk<FetchTemporaryExposureKeys>(relaxed = true)
+    private val submitFakeKeys = mockk<SubmitFakeKeys>(relaxed = true)
+    private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
 
-    private val testSubject = ShareKeysInformationViewModel(fetchTemporaryExposureKeys)
+    private val testSubject =
+        ShareKeysInformationViewModel(fetchTemporaryExposureKeys, submitFakeKeys, stateMachine)
 
     private val fetchExposureKeysObserver = mockk<Observer<TemporaryExposureKeysFetchResult>>(relaxed = true)
 
@@ -39,5 +48,30 @@ class ShareKeysInformationViewModelTest {
 
         coVerify { fetchTemporaryExposureKeys.invoke() }
         verify { fetchExposureKeysObserver.onChanged(Success(exposureKeys)) }
+    }
+
+    @Test
+    fun `invoke fake key submission when keys are not submitted`() = runBlocking {
+        testSubject.onKeysNotSubmitted()
+
+        coVerify { submitFakeKeys.invoke() }
+    }
+
+    @Test
+    fun `acknowledging test results triggers state machine acknowledge event`() {
+        testSubject.testResult = ReceivedTestResult(
+            diagnosisKeySubmissionToken = "a",
+            testEndDate = Instant.now(),
+            testResult = POSITIVE,
+            acknowledgedDate = Instant.now()
+        )
+
+        testSubject.acknowledgeTestResult()
+
+        coVerify {
+            stateMachine.processEvent(
+                OnTestResultAcknowledge(testSubject.testResult, removeTestResult = false)
+            )
+        }
     }
 }

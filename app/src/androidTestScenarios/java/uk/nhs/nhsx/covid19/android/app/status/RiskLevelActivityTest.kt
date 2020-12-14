@@ -13,8 +13,10 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity.Companion.EXTRA_RISK_LEVEL
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Risk
+import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.RiskLevelRobot
+import kotlin.test.assertTrue
 
 class RiskLevelActivityTest : EspressoTest() {
 
@@ -159,5 +161,17 @@ class RiskLevelActivityTest : EspressoTest() {
         riskLevelRobot.checkImageForHighRiskDisplayed()
 
         riskLevelRobot.checkForFooter()
+    }
+
+    @Test
+    fun testRiskLevelUnknown() = notReported {
+        val activity = startTestActivity<RiskLevelActivity> {
+            putExtra(
+                EXTRA_RISK_LEVEL,
+                Unknown
+            )
+        }
+
+        waitFor { assertTrue(activity!!.isDestroyed) }
     }
 }

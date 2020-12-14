@@ -42,6 +42,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
     private val downloadAndProcessRiskyVenuesMock =
         mockk<DownloadAndProcessRiskyVenues>(relaxed = true)
     private val downloadAndProcessKeysMock = mockk<DownloadAndProcessKeys>(relaxed = true)
+    private val clearOutdatedDataAndUpdateIsolationConfigurationMock = mockk<ClearOutdatedDataAndUpdateIsolationConfiguration>(relaxed = true)
     private val exposureNotificationWorkMock = mockk<ExposureNotificationWork>(relaxed = true)
     private val notificationProviderMock = mockk<NotificationProvider>(relaxed = true)
     private val submitAnalyticsMock = mockk<SubmitAnalytics>(relaxed = true)
@@ -56,6 +57,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
             downloadRiskyPostCodesWork = downloadRiskyPostCodesWorkMock
             downloadAndProcessRiskyVenues = downloadAndProcessRiskyVenuesMock
             downloadAndProcessKeys = downloadAndProcessKeysMock
+            clearOutdatedDataAndUpdateIsolationConfiguration = clearOutdatedDataAndUpdateIsolationConfigurationMock
             exposureNotificationWork = exposureNotificationWorkMock
             notificationProvider = notificationProviderMock
             submitAnalytics = submitAnalyticsMock
@@ -93,7 +95,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
     }
 
     @Test
-    fun `app is available calls downloadAndProcessRiskyVenues invoke and tracking`() = runBlocking {
+    fun `app is available calls cleanup, tracking and download tasks`() = runBlocking {
         every { appAvailabilityProviderMock.isAppAvailable() } returns true
 
         val result = testSubject.doWork()
@@ -101,7 +103,8 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
         coVerify { analyticsEventProcessorMock.track(BackgroundTaskCompletion) }
         verify { notificationProviderMock.getUpdatingDatabaseNotification() }
         coVerifyOrder {
-            exposureNotificationWorkMock()
+            clearOutdatedDataAndUpdateIsolationConfigurationMock()
+            exposureNotificationWorkMock.handleMatchesFound()
             downloadAndProcessKeysMock()
             downloadVirologyTestResultWorkMock()
             downloadRiskyPostCodesWorkMock()

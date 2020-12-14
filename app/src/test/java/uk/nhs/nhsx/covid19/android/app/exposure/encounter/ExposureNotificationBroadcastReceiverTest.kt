@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
 import android.content.Intent
+import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient.ACTION_EXPOSURE_NOT_FOUND
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient.ACTION_EXPOSURE_STATE_UPDATED
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient.EXTRA_TOKEN
 import io.mockk.every
@@ -26,28 +27,41 @@ class ExposureNotificationBroadcastReceiverTest : FieldInjectionUnitTest() {
     @Before
     override fun setUp() {
         super.setUp()
-        every { testSubject.exposureNotificationWorkerScheduler.schedule(context, any()) } returns Unit
+        every { testSubject.exposureNotificationWorkerScheduler.scheduleMatchesFound(context, any()) } returns Unit
+        every { testSubject.exposureNotificationWorkerScheduler.scheduleNoMatchesFound(context) } returns Unit
     }
 
     @Test
-    fun scheduleExposureCircuitBreakerInitialCalled() = runBlocking {
+    fun scheduleExposureMatchesFoundCalled() = runBlocking {
         every { intent.action } returns ACTION_EXPOSURE_STATE_UPDATED
         every { intent.getStringExtra(EXTRA_TOKEN) } returns testToken
 
         testSubject.onReceive(context, intent)
 
         verify { testSubject.exposureNotificationsTokensProvider.add(testToken) }
-        verify { testSubject.exposureNotificationWorkerScheduler.schedule(context, testToken) }
+        verify { testSubject.exposureNotificationWorkerScheduler.scheduleMatchesFound(context, testToken) }
     }
 
     @Test
-    fun wrongActionScheduleExposureCircuitBreakerInitialNotCalled() {
+    fun wrongActionScheduleNoMatchesFoundCalled() {
+        every { intent.action } returns ACTION_EXPOSURE_NOT_FOUND
+        every { intent.getStringExtra(EXTRA_TOKEN) } returns testToken
+
+        testSubject.onReceive(context, intent)
+
+        verify(exactly = 0) { testSubject.exposureNotificationsTokensProvider.add(testToken) }
+        verify { testSubject.exposureNotificationWorkerScheduler.scheduleNoMatchesFound(context) }
+    }
+
+    @Test
+    fun wrongActionNothingCalled() {
         every { intent.action } returns any()
         every { intent.getStringExtra(EXTRA_TOKEN) } returns testToken
 
         testSubject.onReceive(context, intent)
 
         verify(exactly = 0) { testSubject.exposureNotificationsTokensProvider.add(testToken) }
-        verify(exactly = 0) { testSubject.exposureNotificationWorkerScheduler.schedule(context, testToken) }
+        verify(exactly = 0) { testSubject.exposureNotificationWorkerScheduler.scheduleMatchesFound(context, testToken) }
+        verify(exactly = 0) { testSubject.exposureNotificationWorkerScheduler.scheduleNoMatchesFound(context) }
     }
 }

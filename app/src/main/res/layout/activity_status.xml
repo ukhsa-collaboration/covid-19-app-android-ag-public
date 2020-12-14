@@ -135,6 +135,18 @@
                     app:optionText="@string/status_option_read_latest_advice" />
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
+                    android:id="@+id/optionIsolationPayment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:visibility="gone"
+                    app:optionExternalLink="false"
+                    app:optionIcon="@drawable/ic_isolation_payment"
+                    app:optionIconBackgroundColor="@color/light_green"
+                    app:optionText="@string/status_option_isolation_payment"
+                    tools:visibility="visible" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
                     android:id="@+id/optionAboutTheApp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

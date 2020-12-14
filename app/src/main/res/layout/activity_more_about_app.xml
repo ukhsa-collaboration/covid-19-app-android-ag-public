@@ -138,7 +138,7 @@
                     android:id="@+id/line_our_policies"
                     android:layout_width="4dp"
                     android:layout_height="0dp"
-                    android:background="@color/style_light_blue"
+                    android:background="@color/style_pink"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -399,7 +399,7 @@
                 <View
                     android:layout_width="4dp"
                     android:layout_height="match_parent"
-                    android:background="@color/nhs_blue" />
+                    android:background="@color/style_purple" />
 
                 <LinearLayout
                     android:layout_width="0dp"

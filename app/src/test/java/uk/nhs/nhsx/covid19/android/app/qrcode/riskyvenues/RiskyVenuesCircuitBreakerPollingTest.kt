@@ -145,7 +145,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
     @Test
     fun `triggers notification if circuit breaker approves`() = runBlocking {
-        coEvery { riskyVenuesCircuitBreakerApi.submitInitialVenueIdForApproval(any()) } returns
+        coEvery { riskyVenuesCircuitBreakerApi.getApproval(any()) } returns
             RiskyVenuesCircuitBreakerResponse(
                 approvalToken = approvalToken,
                 approval = YES
@@ -163,7 +163,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
     @Test
     fun `does not trigger notification if circuit breaker doesn't approve`() = runBlocking {
-        coEvery { riskyVenuesCircuitBreakerApi.submitInitialVenueIdForApproval(any()) } returns RiskyVenuesCircuitBreakerResponse(
+        coEvery { riskyVenuesCircuitBreakerApi.getApproval(any()) } returns RiskyVenuesCircuitBreakerResponse(
             approvalToken = approvalToken,
             approval = NO
         )
@@ -180,7 +180,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
     @Test
     fun `will start polling if circuit breaker response pending`() = runBlocking {
-        coEvery { riskyVenuesCircuitBreakerApi.submitInitialVenueIdForApproval(any()) } returns
+        coEvery { riskyVenuesCircuitBreakerApi.getApproval(any()) } returns
             RiskyVenuesCircuitBreakerResponse(
                 approvalToken = approvalToken,
                 approval = PENDING

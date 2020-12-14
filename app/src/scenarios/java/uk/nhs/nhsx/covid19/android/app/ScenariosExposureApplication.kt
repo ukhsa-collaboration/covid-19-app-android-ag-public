@@ -20,6 +20,8 @@ import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
 import uk.nhs.nhsx.covid19.android.app.exposure.GoogleExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi
+import uk.nhs.nhsx.covid19.android.app.packagemanager.AndroidPackageManager
+import uk.nhs.nhsx.covid19.android.app.permissions.AndroidPermissionsManager
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
@@ -102,7 +104,9 @@ class ScenariosExposureApplication : ExposureApplication() {
                         qrCodesSignatureKey,
                         ApplicationLocaleProvider(sharedPreferences, languageCode),
                         GooglePlayUpdateProvider(this),
-                        AndroidBatteryOptimizationChecker(this)
+                        AndroidBatteryOptimizationChecker(this),
+                        AndroidPermissionsManager(),
+                        AndroidPackageManager()
                     )
                 )
                 .mockApiModule(MockApiModule())

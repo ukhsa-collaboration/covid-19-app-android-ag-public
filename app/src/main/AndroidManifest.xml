@@ -77,12 +77,13 @@
         <activity android:name=".edgecases.TabletNotSupportedActivity" />
         <activity android:name=".exposure.ShareKeysInformationActivity" />
         <activity android:name=".testordering.linktestresult.LinkTestResultActivity" />
-        <activity android:name=".status.IsolationPaymentActivity" />
+        <activity android:name=".payment.IsolationPaymentActivity" />
         <activity android:name=".availability.UpdateRecommendedActivity" />
         <activity android:name=".onboarding.PolicyUpdateActivity" />
         <activity android:name=".common.postcode.LocalAuthorityActivity" />
         <activity android:name=".common.postcode.LocalAuthorityInformationActivity" />
         <activity android:name=".battery.BatteryOptimizationActivity" />
+        <activity android:name=".payment.RedirectToIsolationPaymentWebsiteActivity" />
 
         <!-- Receivers -->
         <receiver

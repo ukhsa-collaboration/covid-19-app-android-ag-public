@@ -106,7 +106,11 @@ class AnalyticsEventProcessorTest {
             Isolation(
                 isolationStart = Instant.now(fixedClock),
                 isolationConfiguration = DurationDays(),
-                contactCase = ContactCase(Instant.now(fixedClock), expiryDate = LocalDate.of(2018, 10, 10))
+                contactCase = ContactCase(
+                    startDate = Instant.now(fixedClock),
+                    notificationDate = Instant.now(fixedClock),
+                    expiryDate = LocalDate.of(2018, 10, 10)
+                )
             )
 
         testSubject.track(BackgroundTaskCompletion)
@@ -134,7 +138,11 @@ class AnalyticsEventProcessorTest {
                 previousIsolation = Isolation(
                     isolationStart = Instant.now(fixedClock),
                     isolationConfiguration = DurationDays(),
-                    contactCase = ContactCase(Instant.now(fixedClock), expiryDate = LocalDate.of(2018, 10, 10))
+                    contactCase = ContactCase(
+                        startDate = Instant.now(fixedClock),
+                        notificationDate = Instant.now(fixedClock),
+                        expiryDate = LocalDate.of(2018, 10, 10)
+                    )
                 )
             )
 
@@ -194,7 +202,11 @@ class AnalyticsEventProcessorTest {
                 Isolation(
                     isolationStart = Instant.now(fixedClock),
                     isolationConfiguration = DurationDays(),
-                    contactCase = ContactCase(Instant.now(fixedClock), expiryDate = LocalDate.of(2018, 10, 10)),
+                    contactCase = ContactCase(
+                        startDate = Instant.now(fixedClock),
+                        notificationDate = Instant.now(fixedClock),
+                        expiryDate = LocalDate.of(2018, 10, 10)
+                    ),
                     indexCase = IndexCase(
                         symptomsOnsetDate = LocalDate.of(2018, 10, 1),
                         expiryDate = LocalDate.of(2018, 10, 10),
@@ -211,8 +223,9 @@ class AnalyticsEventProcessorTest {
                             runningNormallyBackgroundTick = 1
                             isIsolatingBackgroundTick = 1
                             isIsolatingForHadRiskyContactBackgroundTick = 1
-                            isIsolatingForSelfDiagnosedBackgroundTick = 1
                             hasHadRiskyContactBackgroundTick = 1
+                            isIsolatingForSelfDiagnosedBackgroundTick = 1
+                            hasSelfDiagnosedPositiveBackgroundTick = 1
                             hasSelfDiagnosedBackgroundTick = 1
                             totalBackgroundTasks = 1
                         },

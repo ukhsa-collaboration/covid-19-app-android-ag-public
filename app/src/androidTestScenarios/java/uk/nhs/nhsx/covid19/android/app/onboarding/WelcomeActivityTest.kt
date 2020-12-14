@@ -4,10 +4,13 @@ import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
+import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
+import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.WelcomeRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 
 class WelcomeActivityTest : EspressoTest() {
 
@@ -47,6 +50,14 @@ class WelcomeActivityTest : EspressoTest() {
 
         welcomeRobot.clickConfirmOnboarding()
 
-        welcomeRobot.checkAgeConfirmationDialogIsDisplayed()
+        waitFor { welcomeRobot.checkAgeConfirmationDialogIsDisplayed() }
+
+        setScreenOrientation(LANDSCAPE)
+
+        waitFor { welcomeRobot.checkAgeConfirmationDialogIsDisplayed() }
+
+        setScreenOrientation(PORTRAIT)
+
+        waitFor { welcomeRobot.checkAgeConfirmationDialogIsDisplayed() }
     }
 }

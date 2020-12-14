@@ -189,8 +189,8 @@ class IsolationStateMachineTest {
             POSITIVE
         )
         every { testResultProvider.find(testResult.diagnosisKeySubmissionToken) } returns testResult
-        every { testResultProvider.isLastTestResultPositive() } returns true
-        every { testResultProvider.isLastTestResultNegative() } returns false
+        every { testResultProvider.isLastRelevantTestResultPositive() } returns true
+        every { testResultProvider.isLastRelevantTestResultNegative() } returns false
         every { stateProvider.state } returns Default(previousIsolation = isolationStateWithIndexCase(3, false))
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -220,8 +220,8 @@ class IsolationStateMachineTest {
             POSITIVE
         )
         every { testResultProvider.find(testResult.diagnosisKeySubmissionToken) } returns testResult
-        every { testResultProvider.isLastTestResultPositive() } returns true
-        every { testResultProvider.isLastTestResultNegative() } returns false
+        every { testResultProvider.isLastRelevantTestResultPositive() } returns true
+        every { testResultProvider.isLastRelevantTestResultNegative() } returns false
         every { stateProvider.state } returns Default()
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -322,8 +322,15 @@ class IsolationStateMachineTest {
         val isolationStartDate = Instant.now(today)
         val expiryDate = exposureDate.atZone(ZoneOffset.UTC).toLocalDate()
             .plusDays(durationDays.contactCase.toLong())
-        val expected =
-            Isolation(isolationStartDate, durationDays, contactCase = ContactCase(exposureDate, expiryDate))
+        val expected = Isolation(
+            isolationStart = isolationStartDate,
+            isolationConfiguration = durationDays,
+            contactCase = ContactCase(
+                startDate = exposureDate,
+                notificationDate = Instant.now(today),
+                expiryDate = expiryDate
+            )
+        )
 
         val sideEffect = (transition as Transition.Valid).sideEffect
 
@@ -401,7 +408,8 @@ class IsolationStateMachineTest {
         assertEquals(
             case.copy(
                 contactCase = ContactCase(
-                    Instant.now(fixedClock),
+                    startDate = Instant.now(fixedClock),
+                    notificationDate = Instant.now(fixedClock),
                     expiryDate = LocalDate.now(fixedClock)
                         .plusDays(durationDays.contactCase.toLong())
                 )
@@ -511,8 +519,8 @@ class IsolationStateMachineTest {
             Instant.now(fixedClock),
             durationDays
         )
-        every { testResultProvider.isLastTestResultPositive() } returns true
-        every { testResultProvider.isLastTestResultNegative() } returns false
+        every { testResultProvider.isLastRelevantTestResultPositive() } returns true
+        every { testResultProvider.isLastRelevantTestResultNegative() } returns false
 
         val testSubject = createIsolationStateMachine(fixedClock)
 
@@ -546,8 +554,8 @@ class IsolationStateMachineTest {
         )
 
         every { stateProvider.state } returns Default()
-        every { testResultProvider.isLastTestResultPositive() } returns false
-        every { testResultProvider.isLastTestResultNegative() } returns true
+        every { testResultProvider.isLastRelevantTestResultPositive() } returns false
+        every { testResultProvider.isLastRelevantTestResultNegative() } returns true
 
         val testSubject = createIsolationStateMachine(fixedClock)
 
@@ -718,7 +726,7 @@ class IsolationStateMachineTest {
         val state = Isolation(
             Instant.now(fixedClock),
             durationDays,
-            contactCase = ContactCase(Instant.now(fixedClock), LocalDate.parse("2020-05-22")),
+            contactCase = ContactCase(Instant.now(fixedClock), null, LocalDate.parse("2020-05-22")),
             indexCase = IndexCase(LocalDate.parse("2020-05-20"), LocalDate.parse("2020-05-22"), false)
         )
         every { stateProvider.state } returns state
@@ -752,7 +760,7 @@ class IsolationStateMachineTest {
         val state = Isolation(
             Instant.now(fixedClock),
             durationDays,
-            contactCase = ContactCase(Instant.now(fixedClock), LocalDate.parse("2020-05-21")),
+            contactCase = ContactCase(Instant.now(fixedClock), null, LocalDate.parse("2020-05-21")),
             indexCase = IndexCase(LocalDate.parse("2020-05-20"), LocalDate.parse("2020-05-22"), false)
         )
         every { stateProvider.state } returns state
@@ -780,7 +788,7 @@ class IsolationStateMachineTest {
     fun `from contact case to index case on positive self assessment and contact case finishes later than index`() {
         val contactCaseStartDate = Instant.now(fixedClock)
         val contactCaseExpiryDate = LocalDate.now(fixedClock).plusDays(365)
-        val contactCase = ContactCase(contactCaseStartDate, contactCaseExpiryDate)
+        val contactCase = ContactCase(contactCaseStartDate, null, contactCaseExpiryDate)
         every { stateProvider.state } returns Isolation(
             contactCaseStartDate,
             durationDays,
@@ -817,7 +825,7 @@ class IsolationStateMachineTest {
     fun `from contact case to index case on positive self assessment and user cannot remember onset date`() {
         val startDate = Instant.now(fixedClock)
         val expiryDate = LocalDate.now(fixedClock).plusDays(3)
-        val contactCase = ContactCase(startDate, expiryDate)
+        val contactCase = ContactCase(startDate, null, expiryDate)
         every { stateProvider.state } returns Isolation(
             startDate,
             durationDays,
@@ -865,7 +873,7 @@ class IsolationStateMachineTest {
         every { stateProvider.state } returns Isolation(
             startDate,
             durationDays,
-            contactCase = ContactCase(startDate, expiryDate)
+            contactCase = ContactCase(startDate, null, expiryDate)
         )
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -881,7 +889,7 @@ class IsolationStateMachineTest {
         val expected = Isolation(
             startDateExpected,
             durationDays,
-            contactCase = ContactCase(startDateExpected, expiryDateExpected)
+            contactCase = ContactCase(startDateExpected, null, expiryDateExpected)
         )
 
         val sideEffect = (transition as Transition.Valid).sideEffect
@@ -908,7 +916,7 @@ class IsolationStateMachineTest {
         every { stateProvider.state } returns Isolation(
             startDate,
             durationDays,
-            contactCase = ContactCase(startDate, expiryDate)
+            contactCase = ContactCase(startDate, null, expiryDate)
         )
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -924,7 +932,7 @@ class IsolationStateMachineTest {
         val expected = Isolation(
             startDateExpected,
             durationDays,
-            contactCase = ContactCase(startDateExpected, expiryDateExpected)
+            contactCase = ContactCase(startDateExpected, null, expiryDateExpected)
         )
 
         val sideEffect = (transition as Transition.Valid).sideEffect
@@ -949,7 +957,7 @@ class IsolationStateMachineTest {
         val expiryDate = LocalDate.now(fixedClock).plusDays(6)
 
         every { stateProvider.state } returns
-            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, expiryDate))
+            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, null, expiryDate))
 
         val testSubject = createIsolationStateMachine(fixedClock)
 
@@ -963,7 +971,7 @@ class IsolationStateMachineTest {
         val expiryDateExpected = LocalDate.now(fixedClock).plusDays(6)
         val expected = Isolation(
             startDateExpected, durationDays,
-            contactCase = ContactCase(startDateExpected, expiryDateExpected)
+            contactCase = ContactCase(startDateExpected, null, expiryDateExpected)
         )
 
         val sideEffect = (transition as Transition.Valid).sideEffect
@@ -988,7 +996,7 @@ class IsolationStateMachineTest {
         val expiryDate = LocalDate.now(fixedClock).plusDays(6)
 
         every { stateProvider.state } returns
-            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, expiryDate))
+            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, null, expiryDate))
 
         val testSubject = createIsolationStateMachine(fixedClock)
 
@@ -1002,7 +1010,7 @@ class IsolationStateMachineTest {
         val expiryDateExpected = LocalDate.now(fixedClock).plusDays(6)
         val expected = Isolation(
             startDateExpected, durationDays,
-            contactCase = ContactCase(startDateExpected, expiryDateExpected)
+            contactCase = ContactCase(startDateExpected, null, expiryDateExpected)
         )
 
         val sideEffect = (transition as Transition.Valid).sideEffect
@@ -1027,7 +1035,7 @@ class IsolationStateMachineTest {
         val expiryDate = LocalDate.now(fixedClock).plusDays(6)
 
         every { stateProvider.state } returns
-            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, expiryDate))
+            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, null, expiryDate))
 
         val testSubject = createIsolationStateMachine(fixedClock)
 
@@ -1041,7 +1049,7 @@ class IsolationStateMachineTest {
         val expiryDateExpected = LocalDate.now(fixedClock).plusDays(6)
         val expected = Isolation(
             startDateExpected, durationDays,
-            contactCase = ContactCase(startDateExpected, expiryDateExpected)
+            contactCase = ContactCase(startDateExpected, null, expiryDateExpected)
         )
 
         val sideEffect = (transition as Transition.Valid).sideEffect
@@ -1066,7 +1074,7 @@ class IsolationStateMachineTest {
         val expiryDate = LocalDate.now(fixedClock).plusDays(6)
 
         every { stateProvider.state } returns
-            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, expiryDate))
+            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, null, expiryDate))
 
         val testSubject = createIsolationStateMachine(fixedClock)
 
@@ -1080,7 +1088,7 @@ class IsolationStateMachineTest {
         val expiryDateExpected = LocalDate.now(fixedClock).plusDays(6)
         val expected = Isolation(
             startDateExpected, durationDays,
-            contactCase = ContactCase(startDateExpected, expiryDateExpected)
+            contactCase = ContactCase(startDateExpected, null, expiryDateExpected)
         )
 
         val sideEffect = (transition as Transition.Valid).sideEffect
@@ -1126,7 +1134,7 @@ class IsolationStateMachineTest {
         val startDate = Instant.now(fixedClock).minus(Duration.ofDays(15))
         val expiryDate = LocalDate.now(fixedClock).minusDays(1)
         val contactCase =
-            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, expiryDate))
+            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, null, expiryDate))
 
         every { stateProvider.state } returns contactCase
 
@@ -1208,6 +1216,7 @@ class IsolationStateMachineTest {
             isolationConfiguration = DurationDays(),
             contactCase = ContactCase(
                 startDate = Instant.now(fixedClock),
+                notificationDate = null,
                 expiryDate = LocalDate.now(fixedClock).minusDays(2)
             )
         )
@@ -1217,6 +1226,7 @@ class IsolationStateMachineTest {
             isolationConfiguration = DurationDays(),
             contactCase = ContactCase(
                 startDate = Instant.now(fixedClock),
+                notificationDate = null,
                 expiryDate = LocalDate.now(fixedClock).minusDays(1)
             )
         )
@@ -1226,6 +1236,7 @@ class IsolationStateMachineTest {
             isolationConfiguration = DurationDays(),
             contactCase = ContactCase(
                 startDate = Instant.now(fixedClock),
+                notificationDate = null,
                 expiryDate = LocalDate.now(fixedClock)
             )
         )

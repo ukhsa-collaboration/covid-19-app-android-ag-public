@@ -42,5 +42,9 @@ private fun Activity.openInInternalBrowser(url: String) {
 }
 
 private fun Activity.openInExternalBrowser(url: String) {
-    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+    if (RuntimeBehavior.isFeatureEnabled(TestSetting.USE_WEB_VIEW_FOR_EXTERNAL_BROWSER)) {
+        BrowserActivity.start(this, url)
+    } else {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+    }
 }

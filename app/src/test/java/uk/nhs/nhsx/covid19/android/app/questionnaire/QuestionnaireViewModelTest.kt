@@ -62,7 +62,8 @@ class QuestionnaireViewModelTest {
                         listOf(),
                         riskThreshold = 100.0f,
                         symptomsOnsetWindowDays = 14,
-                        showError = false
+                        showError = false,
+                        showDialog = false
                     )
                 )
             )
@@ -93,7 +94,8 @@ class QuestionnaireViewModelTest {
                         listOf(),
                         riskThreshold = 100.0f,
                         symptomsOnsetWindowDays = 14,
-                        showError = false
+                        showError = false,
+                        showDialog = false
                     )
                 )
             )
@@ -129,7 +131,8 @@ class QuestionnaireViewModelTest {
                     initialQuestions,
                     1.0f,
                     14,
-                    true
+                    showError = true,
+                    showDialog = false
                 )
             )
         )
@@ -148,7 +151,8 @@ class QuestionnaireViewModelTest {
                         updatedQuestions,
                         1.0f,
                         14,
-                        false
+                        showError = false,
+                        showDialog = false
                     )
                 )
             )
@@ -167,7 +171,8 @@ class QuestionnaireViewModelTest {
                     questions,
                     1.0f,
                     14,
-                    false
+                    showError = false,
+                    showDialog = false
                 )
             )
         )
@@ -183,7 +188,8 @@ class QuestionnaireViewModelTest {
                         questions,
                         1.0f,
                         14,
-                        true
+                        showError = true,
+                        showDialog = false
                     )
                 )
             )
@@ -198,7 +204,13 @@ class QuestionnaireViewModelTest {
             question("S1", true),
             question("S2", true)
         )
-        val viewState = QuestionnaireState(questions, 1.0f, 14, false)
+        val viewState = QuestionnaireState(
+            questions,
+            1.0f,
+            14,
+            showError = false,
+            showDialog = false
+        )
         val response = Lce.Success(viewState)
 
         testSubject.viewState.postValue(response)

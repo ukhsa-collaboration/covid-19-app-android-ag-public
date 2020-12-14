@@ -40,7 +40,8 @@ class QuestionnaireViewModel @Inject constructor(
                         questions,
                         result.value.riskThreshold,
                         result.value.symptomsOnsetWindowDays,
-                        showError = false
+                        showError = false,
+                        showDialog = false
                     )
                     viewState.postValue(Lce.Success(state))
                 }
@@ -76,11 +77,26 @@ class QuestionnaireViewModel @Inject constructor(
             viewState.postValue(Lce.Success(currentViewState.copy(showError = true)))
         }
     }
+
+    fun onNoSymptomsClicked() {
+        updateShowDialogState(true)
+    }
+
+    fun onDialogDismissed() {
+        updateShowDialogState(false)
+    }
+
+    private fun updateShowDialogState(showDialog: Boolean) {
+        val currentViewState = viewState.value!!.data!!
+        val updatedViewState = currentViewState.copy(showDialog = showDialog)
+        viewState.postValue(Lce.Success(updatedViewState))
+    }
 }
 
 data class QuestionnaireState(
     val questions: List<Question>,
     val riskThreshold: Float,
     val symptomsOnsetWindowDays: Int,
-    val showError: Boolean
+    val showError: Boolean,
+    val showDialog: Boolean
 )

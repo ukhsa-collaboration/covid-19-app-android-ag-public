@@ -6,13 +6,15 @@ import retrofit2.Retrofit
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule.Companion.API_REMOTE
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule.Companion.DISTRIBUTION_REMOTE
 import uk.nhs.nhsx.covid19.android.app.remote.AnalyticsApi
+import uk.nhs.nhsx.covid19.android.app.remote.AppAvailabilityApi
+import uk.nhs.nhsx.covid19.android.app.remote.EmptyApi
+import uk.nhs.nhsx.covid19.android.app.remote.EpidemiologyDataApi
 import uk.nhs.nhsx.covid19.android.app.remote.ExposureCircuitBreakerApi
 import uk.nhs.nhsx.covid19.android.app.remote.ExposureConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationConfigurationApi
+import uk.nhs.nhsx.covid19.android.app.remote.IsolationPaymentApi
 import uk.nhs.nhsx.covid19.android.app.remote.KeysDistributionApi
 import uk.nhs.nhsx.covid19.android.app.remote.KeysSubmissionApi
-import uk.nhs.nhsx.covid19.android.app.remote.AppAvailabilityApi
-import uk.nhs.nhsx.covid19.android.app.remote.EpidemiologyDataApi
 import uk.nhs.nhsx.covid19.android.app.remote.QuestionnaireApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyPostDistrictsApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesApi
@@ -90,4 +92,14 @@ class ApiModule {
     @Singleton
     fun provideEpidemiologyDataApi(@Named(API_REMOTE) retrofit: Retrofit): EpidemiologyDataApi =
         retrofit.create(EpidemiologyDataApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideEmptyApi(@Named(API_REMOTE) retrofit: Retrofit): EmptyApi =
+        retrofit.create(EmptyApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideIsolationPaymentApi(@Named(API_REMOTE) retrofit: Retrofit): IsolationPaymentApi =
+        retrofit.create(IsolationPaymentApi::class.java)
 }

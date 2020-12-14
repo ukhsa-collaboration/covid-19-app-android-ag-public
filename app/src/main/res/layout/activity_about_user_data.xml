@@ -122,7 +122,7 @@
                     android:gravity="center_vertical"
                     android:paddingStart="30dp"
                     android:paddingEnd="10dp"
-                    android:text="@string/about_my_data_symptoms_date" />
+                    android:text="@string/about_my_data_date" />
 
                 <TextView
                     android:id="@+id/textViewSymptomsDate"
@@ -131,21 +131,87 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical|end"
                     android:paddingEnd="30dp"
-                    tools:text="@string/about_my_data_symptoms_date" />
+                    tools:text="@string/about_my_data_date" />
             </LinearLayout>
 
             <TextView
-                android:id="@+id/titleEncounter"
+                android:id="@+id/titleExposureNotification"
                 style="@style/AboutAppTitleText"
                 android:layout_width="wrap_content"
                 android:layout_height="42dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="9dp"
                 android:gravity="center_vertical"
-                android:text="@string/title_encounter" />
+                android:text="@string/title_exposure_notification" />
 
             <LinearLayout
                 android:id="@+id/encounterDataSection"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:background="@drawable/user_data_item_background"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    style="@style/AboutAppItemValueText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/about_encounter_date" />
+
+                <TextView
+                    android:id="@+id/textEncounterDate"
+                    style="@style/Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|end"
+                    android:paddingEnd="30dp"
+                    tools:text="@string/about_my_data_date" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/exposureNotificationDataSection"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:background="@drawable/user_data_item_background"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    style="@style/AboutAppItemValueText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/about_notification_date" />
+
+                <TextView
+                    android:id="@+id/textExposureNotificationDate"
+                    style="@style/Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|end"
+                    android:paddingEnd="30dp"
+                    tools:text="@string/about_my_data_date" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/titleLastDayOfIsolation"
+                style="@style/AboutAppTitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="9dp"
+                android:gravity="center_vertical"
+                android:text="@string/title_last_day_of_isolation" />
+
+            <LinearLayout
+                android:id="@+id/lastDayOfIsolationSection"
                 android:layout_width="match_parent"
                 android:layout_height="42dp"
                 android:background="?attr/colorSurface"
@@ -160,16 +226,16 @@
                     android:gravity="center_vertical"
                     android:paddingStart="30dp"
                     android:paddingEnd="10dp"
-                    android:text="@string/about_my_data_symptoms_date" />
+                    android:text="@string/about_my_data_date" />
 
                 <TextView
-                    android:id="@+id/textEncounterDate"
+                    android:id="@+id/lastDayOfIsolationDate"
                     style="@style/Body1"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical|end"
                     android:paddingEnd="30dp"
-                    tools:text="@string/about_my_data_symptoms_date" />
+                    tools:text="@string/about_my_data_date" />
             </LinearLayout>
 
             <LinearLayout

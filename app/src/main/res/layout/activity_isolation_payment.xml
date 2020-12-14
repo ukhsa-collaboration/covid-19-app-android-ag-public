@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -10,44 +11,85 @@
         android:id="@+id/isolationPaymentContent"
         style="@style/ScrollContainer"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginHorizontal="@dimen/margin_horizontal"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/vertical_margin_large">
 
             <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
                 android:id="@+id/isolationPaymentTitle"
                 style="@style/Title1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="32dp"
-                android:layout_marginTop="32dp"
-                android:text="@string/isolation_payment_title" />
+                android:text="@string/isolation_payment_heading" />
 
-            <TextView
-                android:id="@+id/isolationPaymentDescription"
+            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="32dp"
-                android:layout_marginTop="32dp"
-                android:text="@string/isolation_payment_description" />
+                android:layout_marginTop="@dimen/vertical_margin"
+                app:rawText="@string/isolation_payment_text" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                style="@style/Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/isolation_payment_privacy_notice_title" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                style="@style/LinkTextWithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/isolation_payment_privacy_notice_link_text"
+                app:linkUrl="@string/isolation_payment_privacy_notice_link_url" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                style="@style/Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/isolation_payment_help_england_title" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                style="@style/LinkTextWithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/isolation_payment_help_england_link_text"
+                app:linkUrl="@string/isolation_payment_help_england_link_url" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                style="@style/Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/isolation_payment_help_wales_title" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                style="@style/LinkTextWithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/isolation_payment_help_wales_link_text"
+                app:linkUrl="@string/isolation_payment_help_wales_link_url" />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/isolationPaymentButton"
+                style="@style/PrimaryButtonWithIcon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:layout_marginBottom="@dimen/vertical_margin_large"
+                android:text="@string/isolation_payment_action_button" />
 
         </LinearLayout>
-
     </ScrollView>
-
-    <Button
-        android:id="@+id/orderTest"
-        style="@style/PrimaryButtonWithIcon"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="@dimen/vertical_margin"
-        android:layout_marginBottom="@dimen/vertical_margin_large"
-        android:text="@string/apply_now" />
-
-
 </LinearLayout>

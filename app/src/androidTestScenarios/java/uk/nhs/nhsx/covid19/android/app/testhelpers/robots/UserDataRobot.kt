@@ -14,6 +14,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
+import org.hamcrest.Matchers.not
 import org.hamcrest.core.AllOf.allOf
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.testhelpers.clickChildViewWithId
@@ -29,8 +30,14 @@ class UserDataRobot {
         clickOn(R.id.actionDeleteAllData)
     }
 
+    fun checkDeleteDataConfirmationDialogIsDisplayed() {
+        onView(withText(R.string.about_delete_positive_text))
+            .check(matches(isDisplayed()))
+    }
+
     fun userClicksDeleteDataOnDialog() {
-        onView(withText(R.string.about_delete_positive_text)).perform(click())
+        onView(withText(R.string.about_delete_positive_text))
+            .perform(click())
     }
 
     fun userClicksEditVenueVisits() {
@@ -86,5 +93,53 @@ class UserDataRobot {
     fun editVenueVisitsIsDisplayed() {
         onView(withId(R.id.editVenueVisits))
             .check(matches(withText(R.string.edit)))
+    }
+
+    fun checkLastTestResultIsDisplayed() {
+        onView(withId(R.id.titleLatestResult))
+            .check(matches(isDisplayed()))
+        onView(withId(R.id.latestResultContainer))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkExposureNotificationIsDisplayed() {
+        onView(withId(R.id.titleExposureNotification))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkEncounterIsDisplayed() {
+        onView(withId(R.id.encounterDataSection))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkExposureNotificationDateIsDisplayed() {
+        onView(withId(R.id.exposureNotificationDataSection))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkExposureNotificationDateIsNotDisplayed() {
+        onView(withId(R.id.exposureNotificationDataSection))
+            .check(matches(not(isDisplayed())))
+    }
+
+    fun checkLastDayOfIsolationIsDisplayed() {
+        onView(withId(R.id.titleLastDayOfIsolation))
+            .check(matches(isDisplayed()))
+        onView(withId(R.id.lastDayOfIsolationSection))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkLastDayOfIsolationIsNotDisplayed() {
+        onView(withId(R.id.titleLastDayOfIsolation))
+            .check(matches(not(isDisplayed())))
+        onView(withId(R.id.lastDayOfIsolationSection))
+            .check(matches(not(isDisplayed())))
+    }
+
+    fun checkSymptomsAreDisplayed() {
+        onView(withId(R.id.titleSymptoms))
+            .check(matches(isDisplayed()))
+        onView(withId(R.id.symptomsDataSection))
+            .check(matches(isDisplayed()))
     }
 }

@@ -11,7 +11,6 @@ import uk.nhs.nhsx.covid19.android.app.availability.UpdateRecommendedActivity
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationActivity
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationChecker
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
-import uk.nhs.nhsx.covid19.android.app.common.ClearOutdatedDataWorker
 import uk.nhs.nhsx.covid19.android.app.common.DownloadTasksWorker
 import uk.nhs.nhsx.covid19.android.app.common.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableExposureNotificationsActivity
@@ -30,7 +29,9 @@ import uk.nhs.nhsx.covid19.android.app.onboarding.DataAndPrivacyActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateActivity
+import uk.nhs.nhsx.covid19.android.app.onboarding.WelcomeActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
+import uk.nhs.nhsx.covid19.android.app.payment.RedirectToIsolationPaymentWebsiteActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResultActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertActivity
@@ -94,7 +95,6 @@ interface ApplicationComponent {
     fun inject(exposureNotificationBroadcastReceiver: ExposureNotificationBroadcastReceiver)
     fun inject(userDataActivity: UserDataActivity)
     fun inject(editPostalCodeActivity: EditPostalDistrictActivity)
-    fun inject(clearOutdatedDataWorker: ClearOutdatedDataWorker)
     fun inject(testOrderingProgressActivity: TestOrderingProgressActivity)
     fun inject(appAvailabilityActivity: AppAvailabilityActivity)
     fun inject(updateReceiver: UpdateReceiver)
@@ -111,6 +111,8 @@ interface ApplicationComponent {
     fun inject(policyUpdateActivity: PolicyUpdateActivity)
     fun inject(localAuthorityActivity: LocalAuthorityActivity)
     fun inject(batteryOptimizationActivity: BatteryOptimizationActivity)
+    fun inject(welcomeActivity: WelcomeActivity)
+    fun inject(redirectToIsolationPaymentWebsiteActivity: RedirectToIsolationPaymentWebsiteActivity)
 
     fun provideAppAvailabilityListener(): AppAvailabilityListener
     fun providePeriodicTasks(): PeriodicTasks

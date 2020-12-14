@@ -81,8 +81,15 @@ private fun updateRegularStrings(
             if (updatedValue == null) {
                 println("No new value for string name: $name")
             } else {
+                val prevValue = element.textContent
                 element.textContent = updatedValue
                 updatedStrings.remove(name)
+
+                if (prevValue != updatedValue && (prevValue.contains("%") || updatedValue.contains("%"))) {
+                    println("Template string was changed $name")
+                    println("prev: $prevValue")
+                    println("new : $updatedValue")
+                }
             }
         }
     }
@@ -95,6 +102,10 @@ private fun updateRegularStrings(
             newElement.setAttribute("name", name)
             newElement.textContent = value
             resources.appendChild(newElement)
+
+            if (value.contains("%")) {
+                println("Template string was added $name: value: $value")
+            }
         }
     }
 }
@@ -120,8 +131,15 @@ private fun updatePlurals(
                 val quantity = element.getAttribute("quantity")
                 val updatedValue = updatedPlurals["$pluralName|$quantity"]
                 if (updatedValue != null) {
+                    val prevValue = element.textContent
                     element.textContent = updatedValue
                     updatedPlurals.remove("$pluralName|$quantity")
+
+                    if (prevValue != updatedValue && (prevValue.contains("%") || updatedValue.contains("%"))) {
+                        println("Template string was changed $pluralName|$quantity")
+                        println("prev: $prevValue")
+                        println("new : $updatedValue")
+                    }
                 } else {
                     println("No new value for plural name: $pluralName and quantity: $quantity")
                 }
@@ -164,6 +182,10 @@ private fun addQuantityToExistingPlural(
                 newElement.textContent = value
                 pluralElement.appendChild(newElement)
                 foundParent = true
+
+                if (value.contains("%")) {
+                    println("New template string $pluralName|$quantity: $value")
+                }
             }
         }
     }

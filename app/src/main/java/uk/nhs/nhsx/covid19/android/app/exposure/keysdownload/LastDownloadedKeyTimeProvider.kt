@@ -12,18 +12,17 @@ class LastDownloadedKeyTimeProvider @Inject constructor(sharedPreferences: Share
 
     private var timestamp by sharedPreferences.with<Long>(LAST_DOWNLOADED_KEY)
 
-    fun getLatestStoredTime(): LocalDateTime =
-        timestamp.toLocalDateTime()
+    fun getLatestStoredTime(): LocalDateTime? = timestamp.toLocalDateTime()
 
     fun saveLastStoredTime(dateTime: String) {
         timestamp = LocalDateTime.parse(dateTime, lastDateFormatter).toMillis()
     }
 
-    private fun Long?.toLocalDateTime(): LocalDateTime =
+    private fun Long?.toLocalDateTime(): LocalDateTime? =
         this?.let {
             val instant: Instant = Instant.ofEpochMilli(this)
             instant.atZone(ZoneOffset.UTC).toLocalDateTime()
-        } ?: LocalDateTime.now(ZoneOffset.UTC).minusDays(14).withHour(0)
+        }
 
     private fun LocalDateTime.toMillis(): Long =
         this.toInstant(ZoneOffset.UTC).toEpochMilli()

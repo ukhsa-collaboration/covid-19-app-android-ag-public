@@ -14,7 +14,6 @@ import kotlinx.android.synthetic.main.view_post_code.view.errorTextTitle
 import kotlinx.android.synthetic.main.view_post_code.view.postCodeEditText
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 
 class PostCodeView @JvmOverloads constructor(
@@ -49,15 +48,15 @@ class PostCodeView @JvmOverloads constructor(
                 getString(R.string.post_code_invalid_title)
             )
         }
-        errorText.visible()
+        errorText.text = context.getString(R.string.valid_post_code_is_required)
     }
 
     fun showPostCodeNotSupportedErrorState() {
         updateErrorStateView(
-            context.getString(R.string.postcode_not_supported),
-            context.getString(R.string.postcode_not_supported)
+            "${context.getString(R.string.post_code_invalid_title)}. ${context.getString(R.string.postcode_not_supported)}",
+            context.getString(R.string.post_code_invalid_title)
         )
-        errorText.gone()
+        errorText.text = context.getString(R.string.postcode_not_supported)
     }
 
     private fun updateErrorStateView(

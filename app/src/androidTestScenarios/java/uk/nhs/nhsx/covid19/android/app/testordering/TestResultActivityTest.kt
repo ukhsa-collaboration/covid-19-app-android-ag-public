@@ -1,6 +1,13 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
+import android.app.Activity
+import android.app.Instrumentation
+import android.content.Intent
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intending
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.exposure.setTemporaryExposureKeyHistoryResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -14,6 +21,8 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import java.time.Instant
 import java.time.LocalDate
@@ -22,6 +31,8 @@ import kotlin.test.assertTrue
 class TestResultActivityTest : EspressoTest() {
 
     private val testResultRobot = TestResultRobot()
+    private val statusRobot = StatusRobot()
+    private val shareKeysInformationRobot = ShareKeysInformationRobot()
 
     private val isolationStateIndexCaseOnly = Isolation(
         isolationStart = Instant.now(),
@@ -32,7 +43,7 @@ class TestResultActivityTest : EspressoTest() {
     private val isolationStateContactCaseOnly = Isolation(
         isolationStart = Instant.now(),
         isolationConfiguration = DurationDays(),
-        contactCase = ContactCase(Instant.now(), LocalDate.now().plusDays(1))
+        contactCase = ContactCase(Instant.now(), null, LocalDate.now().plusDays(1))
     )
 
     @Test
@@ -169,7 +180,7 @@ class TestResultActivityTest : EspressoTest() {
 
     @RetryFlakyTest
     @Test
-    fun showIsolationScreenWhenReceivingNegativeAndThenPositiveTestResult() = notReported {
+    fun showIsolationScreenWhenReceivingNegativeAndThenPositiveTestResultAndSharingKeys() = notReported {
         testAppContext.setState(Default())
 
         testAppContext.getTestResultsProvider().add(
@@ -198,6 +209,51 @@ class TestResultActivityTest : EspressoTest() {
         testResultRobot.checkIsolationActionButtonShowsContinue()
 
         testResultRobot.clickIsolationActionButton()
+
+        shareKeysInformationRobot.checkActivityIsDisplayed()
+
+        shareKeysInformationRobot.clickIUnderstandButton()
+
+        assertTrue { testAppContext.getCurrentState() is Isolation }
+    }
+
+    @RetryFlakyTest
+    @Test
+    fun showIsolationScreenWhenReceivingNegativeAndThenPositiveTestResultAndRefusingToShareKeys() = notReported {
+        testAppContext.setTemporaryExposureKeyHistoryResolutionRequired(testAppContext.app, false)
+
+        testAppContext.setState(Default())
+
+        testAppContext.getTestResultsProvider().add(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "a",
+                testEndDate = Instant.now(),
+                testResult = NEGATIVE,
+                acknowledgedDate = Instant.now()
+            )
+        )
+
+        testAppContext.getTestResultsProvider().add(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "a2",
+                testEndDate = Instant.now(),
+                testResult = POSITIVE
+            )
+        )
+
+        startTestActivity<TestResultActivity>()
+
+        testResultRobot.checkActivityDisplaysPositiveAndSelfIsolate()
+
+        testResultRobot.checkExposureLinkIsDisplayed()
+
+        testResultRobot.checkIsolationActionButtonShowsContinue()
+
+        testResultRobot.clickIsolationActionButton()
+
+        shareKeysInformationRobot.checkActivityIsDisplayed()
+
+        shareKeysInformationRobot.clickIUnderstandButton()
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
     }
@@ -320,5 +376,72 @@ class TestResultActivityTest : EspressoTest() {
         testResultRobot.clickGoodNewsActionButton()
 
         assertTrue { testAppContext.getCurrentState() is Default }
+    }
+
+    @Test
+    fun onActivityResultTestOrderingOk_navigateToStatus() = notReported {
+        Intents.init()
+        testAppContext.setState(isolationStateContactCaseOnly)
+
+        testAppContext.getTestResultsProvider().add(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "a",
+                testEndDate = Instant.now(),
+                testResult = VOID
+            )
+        )
+
+        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, Intent())
+        intending(hasComponent(TestOrderingActivity::class.qualifiedName))
+            .respondWith(result)
+
+        startTestActivity<TestResultActivity>()
+        testResultRobot.clickIsolationActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+        Intents.release()
+    }
+
+    @Test
+    fun onActivityResultTestOrderingNotOk_finish() = notReported {
+        Intents.init()
+        testAppContext.setState(isolationStateContactCaseOnly)
+
+        testAppContext.getTestResultsProvider().add(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "a",
+                testEndDate = Instant.now(),
+                testResult = VOID
+            )
+        )
+
+        val result = Instrumentation.ActivityResult(Activity.RESULT_CANCELED, Intent())
+        intending(hasComponent(TestOrderingActivity::class.qualifiedName))
+            .respondWith(result)
+
+        val activity = startTestActivity<TestResultActivity>()
+        testResultRobot.clickIsolationActionButton()
+
+        waitFor { assertTrue(activity!!.isDestroyed) }
+        Intents.release()
+    }
+
+    @Test
+    fun onBackPressed_navigate() = notReported {
+        testAppContext.setState(isolationStateContactCaseOnly)
+
+        testAppContext.getTestResultsProvider().add(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "a",
+                testEndDate = Instant.now(),
+                testResult = VOID
+            )
+        )
+
+        val activity = startTestActivity<TestResultActivity>()
+
+        testAppContext.device.pressBack()
+
+        waitFor { assertTrue(activity!!.isDestroyed) }
     }
 }

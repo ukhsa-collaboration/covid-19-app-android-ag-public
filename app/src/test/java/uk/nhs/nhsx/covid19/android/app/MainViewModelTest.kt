@@ -14,7 +14,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationRequired
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Invalid
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Valid
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateProvider
@@ -39,14 +43,22 @@ class MainViewModelTest {
 
     private val batteryOptimizationRequired = mockk<BatteryOptimizationRequired>()
 
+    private val postCodeProvider = mockk<PostCodeProvider>()
+
+    private val localAuthorityPostCodeValidator = mockk<LocalAuthorityPostCodeValidator>()
+
     private val testSubject = MainViewModel(
         deviceDetection,
         exposureNotificationApi,
         onboardingCompletedProvider,
         policyUpdateProvider,
         localAuthorityProvider,
-        batteryOptimizationRequired
+        batteryOptimizationRequired,
+        postCodeProvider,
+        localAuthorityPostCodeValidator
     )
+
+    private val postCode = "A1"
 
     @Before
     fun setUp() {
@@ -60,6 +72,48 @@ class MainViewModelTest {
     }
 
     @Test
+    fun `policy accepted and post code to local authority missing with local authority feature flag enabled`() = runBlocking {
+        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+
+        every { deviceDetection.isTablet() } returns false
+
+        coEvery { onboardingCompletedProvider.value } returns true
+
+        every { policyUpdateProvider.isPolicyAccepted() } returns true
+
+        every { postCodeProvider.value } returns postCode
+
+        coEvery { localAuthorityPostCodeValidator.validate(postCode) } returns Invalid
+
+        testSubject.viewState().observeForever(mainViewState)
+
+        testSubject.start()
+
+        verify { mainViewState.onChanged(MainViewModel.MainViewState.PostCodeToLocalAuthorityMissing) }
+    }
+
+    @Test
+    fun `policy accepted and post code to local authority missing with local authority feature flag disabled`() = runBlocking {
+        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+
+        every { deviceDetection.isTablet() } returns false
+
+        coEvery { onboardingCompletedProvider.value } returns true
+
+        every { policyUpdateProvider.isPolicyAccepted() } returns true
+
+        every { postCodeProvider.value } returns postCode
+
+        coEvery { localAuthorityPostCodeValidator.validate(postCode) } returns Invalid
+
+        testSubject.viewState().observeForever(mainViewState)
+
+        testSubject.start()
+
+        verify { mainViewState.onChanged(MainViewModel.MainViewState.Completed) }
+    }
+
+    @Test
     fun `policy accepted and local authority missing with local authority feature flag enabled`() = runBlocking {
         FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
 
@@ -68,6 +122,10 @@ class MainViewModelTest {
         coEvery { onboardingCompletedProvider.value } returns true
 
         every { policyUpdateProvider.isPolicyAccepted() } returns true
+
+        every { postCodeProvider.value } returns postCode
+
+        coEvery { localAuthorityPostCodeValidator.validate(postCode) } returns Valid(postCode, emptyList())
 
         every { localAuthorityProvider.value } returns null
 
@@ -105,6 +163,10 @@ class MainViewModelTest {
 
         every { policyUpdateProvider.isPolicyAccepted() } returns true
 
+        every { postCodeProvider.value } returns postCode
+
+        coEvery { localAuthorityPostCodeValidator.validate(postCode) } returns Valid(postCode, emptyList())
+
         every { localAuthorityProvider.value } returns "1"
 
         every { batteryOptimizationRequired() } returns true
@@ -123,6 +185,10 @@ class MainViewModelTest {
         coEvery { onboardingCompletedProvider.value } returns true
 
         every { policyUpdateProvider.isPolicyAccepted() } returns true
+
+        every { postCodeProvider.value } returns postCode
+
+        coEvery { localAuthorityPostCodeValidator.validate(postCode) } returns Valid(postCode, emptyList())
 
         every { localAuthorityProvider.value } returns "1"
 

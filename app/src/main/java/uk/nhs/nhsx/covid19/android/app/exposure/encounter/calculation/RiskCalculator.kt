@@ -25,8 +25,9 @@ class RiskCalculator(
                     )
                 }.max() ?: 0.0
                 DayRisk(
-                    startOfDayMillis,
-                    maxRisk
+                    startOfDayMillis = startOfDayMillis,
+                    calculatedRisk = maxRisk,
+                    riskCalculationVersion = 1
                 )
             }.firstOrNull { it.calculatedRisk >= riskCalculation.riskThreshold }
     }
@@ -59,4 +60,4 @@ class RiskCalculator(
     private fun minutesToSeconds(minutes: Int) = minutes * 60.0
 }
 
-data class DayRisk(val startOfDayMillis: Long, val calculatedRisk: Double)
+data class DayRisk(val startOfDayMillis: Long, val calculatedRisk: Double, val riskCalculationVersion: Int)

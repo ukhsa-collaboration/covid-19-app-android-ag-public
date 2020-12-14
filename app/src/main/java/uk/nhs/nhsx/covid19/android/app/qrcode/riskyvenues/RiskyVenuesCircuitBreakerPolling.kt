@@ -7,7 +7,6 @@ import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVe
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesCircuitBreakerApi
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesCircuitBreakerRequest
 import javax.inject.Inject
 
 class RiskyVenuesCircuitBreakerPolling @Inject constructor(
@@ -28,9 +27,7 @@ class RiskyVenuesCircuitBreakerPolling @Inject constructor(
                 val (approval, approvalToken) = if (config.isPolling) {
                     Pair(riskyVenuesCircuitBreakerApi.getRiskyVenuesBreakerResolution(config.approvalToken!!).approval, config.approvalToken)
                 } else {
-                    val response = riskyVenuesCircuitBreakerApi.submitInitialVenueIdForApproval(
-                        RiskyVenuesCircuitBreakerRequest(config.venueId)
-                    )
+                    val response = riskyVenuesCircuitBreakerApi.getApproval()
                     Pair(response.approval, response.approvalToken)
                 }
 

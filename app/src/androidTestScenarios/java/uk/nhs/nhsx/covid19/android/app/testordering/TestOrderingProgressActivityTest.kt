@@ -4,11 +4,11 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.assertBrowserIsOpened
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingProgressRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ProgressRobot
 
 class TestOrderingProgressActivityTest : EspressoTest() {
 
-    private val testOrderingProgressRobot = TestOrderingProgressRobot()
+    private val testOrderingProgressRobot = ProgressRobot()
 
     @Test
     fun opensBrowser() = notReported {

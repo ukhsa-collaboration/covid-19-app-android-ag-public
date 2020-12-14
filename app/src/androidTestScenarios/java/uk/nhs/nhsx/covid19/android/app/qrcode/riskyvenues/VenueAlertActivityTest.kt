@@ -1,18 +1,15 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 
 import kotlinx.coroutines.runBlocking
-import org.awaitility.kotlin.await
-import org.awaitility.kotlin.until
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.report.notReported
-import uk.nhs.nhsx.covid19.android.app.testhelpers.AWAIT_AT_MOST_SECONDS
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.VenueAlertRobot
 import java.time.Instant
-import java.util.concurrent.TimeUnit.SECONDS
+import kotlin.test.assertTrue
 
 class VenueAlertActivityTest : EspressoTest() {
 
@@ -56,6 +53,25 @@ class VenueAlertActivityTest : EspressoTest() {
             )
         }
 
-        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until { activity?.isDestroyed ?: false }
+        waitFor { assertTrue(activity!!.isDestroyed) }
+    }
+
+    @Test
+    fun venueScreenFinishesIfVenueIsNull() = notReported {
+        val activity = startTestActivity<VenueAlertActivity>()
+
+        waitFor { assertTrue(activity!!.isDestroyed) }
+    }
+
+    @Test
+    fun venueScreenFinishesIfVenueIsEmpty() = notReported {
+        val activity = startTestActivity<VenueAlertActivity> {
+            putExtra(
+                VenueAlertActivity.EXTRA_VENUE_ID,
+                ""
+            )
+        }
+
+        waitFor { assertTrue(activity!!.isDestroyed) }
     }
 }

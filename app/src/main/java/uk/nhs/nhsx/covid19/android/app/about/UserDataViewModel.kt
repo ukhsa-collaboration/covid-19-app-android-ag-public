@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.DialogType.ConfirmDeleteAllData
+import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.DialogType.ConfirmDeleteVenueVisit
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodesLoader
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
@@ -46,18 +48,25 @@ class UserDataViewModel @Inject constructor(
     private val allUserDataDeletedLiveData: MutableLiveData<Unit> = SingleLiveEvent()
     fun getAllUserDataDeleted(): LiveData<Unit> = allUserDataDeletedLiveData
 
+    private val showDialogLiveData: MutableLiveData<DialogType> = MutableLiveData()
+    fun getShowDialog(): LiveData<DialogType> = showDialogLiveData
+
     fun loadUserData() {
         viewModelScope.launch {
             loadLocalAuthorityText()
 
             val isEditModeActive = venueVisitsUiStateLiveData.value?.isInEditMode ?: false
             venueVisitsUiStateLiveData.postValue(
-                VenueVisitsUiState(venuesStorage.getVisits(), isInEditMode = isEditModeActive)
+                VenueVisitsUiState(venuesStorage.getVisits().map { it.copy(to = it.to.minusSeconds(1L)) }, isInEditMode = isEditModeActive)
             )
             statusMachineLiveData.postValue(stateMachine.readState())
 
             receivedTestResultLiveData.postValue(testResultsProvider.getLastNonVoidTestResult())
         }
+    }
+
+    fun onDeleteAllUserDataClicked() {
+        showDialogLiveData.postValue(ConfirmDeleteAllData)
     }
 
     fun deleteAllUserData() {
@@ -67,6 +76,10 @@ class UserDataViewModel @Inject constructor(
         allUserDataDeletedLiveData.postValue(Unit)
     }
 
+    fun onVenueVisitDataClicked(position: Int) {
+        showDialogLiveData.postValue(ConfirmDeleteVenueVisit(position))
+    }
+
     fun deleteVenueVisit(position: Int) {
         viewModelScope.launch {
             venuesStorage.removeVenueVisit(position)
@@ -74,6 +87,10 @@ class UserDataViewModel @Inject constructor(
                 VenueVisitsUiState(venuesStorage.getVisits(), isInEditMode = true)
             )
         }
+    }
+
+    fun onDialogDismissed() {
+        showDialogLiveData.postValue(null)
     }
 
     fun onEditVenueVisitClicked() {
@@ -94,4 +111,9 @@ class UserDataViewModel @Inject constructor(
     }
 
     data class VenueVisitsUiState(val venueVisits: List<VenueVisit>, val isInEditMode: Boolean)
+
+    sealed class DialogType {
+        object ConfirmDeleteAllData : DialogType()
+        data class ConfirmDeleteVenueVisit(val venueVisitPosition: Int) : DialogType()
+    }
 }

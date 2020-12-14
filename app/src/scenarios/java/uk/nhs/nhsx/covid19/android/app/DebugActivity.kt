@@ -55,7 +55,7 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActi
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.GREEN
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
-import uk.nhs.nhsx.covid19.android.app.status.IsolationPaymentActivity
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentActivity
 import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState
@@ -355,6 +355,11 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             notifications.showStateExpirationNotification()
             notifications.showTestResultsReceivedNotification()
             notifications.showRecommendedAppUpdateIsAvailable()
+        }
+
+        addScreenButton("Trigger background tasks") {
+            val periodicTasks = app.appComponent.providePeriodicTasks()
+            periodicTasks.schedule()
         }
 
         addScreenButton("Open market") {

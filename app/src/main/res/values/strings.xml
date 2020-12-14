@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright © 2020 NHSX. All rights reserved.
-  -->
-<resources xmlns:tools="http://schemas.android.com/tools">
+  --><resources xmlns:tools="http://schemas.android.com/tools">
     <string name="locale">en</string>
     <!-- URLs -->
     <string name="url_privacy_notice">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
@@ -39,8 +39,8 @@
         <item quantity="other">%1$d days</item>
     </plurals>
     <plurals name="isolation_days_to_go">
-        <item quantity="one">Day to go</item>
-        <item quantity="other">Days to go</item>
+        <item quantity="one">day to go</item>
+        <item quantity="other">days to go</item>
     </plurals>
     <plurals name="isolation_view_accessibility_description">
         <item quantity="one">You need to self isolate until %1$s at 23:59. There is %2$s day to go until then.</item>
@@ -59,11 +59,11 @@
     <string name="go_back">Go back</string>
     <string name="loading">Loading…</string>
     <string name="remove">Remove</string>
-    <string name="empty" translatable="false" />
-    <string name="onboarding_exposure_notifications_description">The app will send you an alert if you have been in close contact with someone who has tested positive for the virus.\n\nTo enable Contact Tracing for this app you need to allow ‘Exposure Notifications’\n\nIf you change your mind, you can change your permissions in settings at any time.</string>
+    <string name="empty" translatable="false"/>
+    <string name="onboarding_exposure_notifications_description">The app will send you an alert if you have been in close contact with someone who has tested positive for the virus.\n\nTo enable contact tracing for this app you need to allow ‘Exposure Notifications’.\n\nIf you change your mind, you can change your permissions in settings at any time.</string>
     <string name="permission_title">Contact tracing</string>
     <string name="exposure_notifications_rationale_title">Contact tracing helps prevent the spread of coronavirus (COVID-19)</string>
-    <string name="privacy_notice">Privacy Notice</string>
+    <string name="privacy_notice">Privacy notice</string>
     <string name="tablet_information_url">Information on the use of tablets</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
     <string name="exposure_faqs">Click here to find out more</string>
@@ -71,31 +71,31 @@
     <string name="post_code_title">Enter the first part of your postcode (postcode district)</string>
     <string name="post_code_rationale">The postcode district helps with learning about the spread of coronavirus in different areas. This makes sure we can give the best possible public health advice for your area.\n\nDon’t worry. Your postcode district won’t be used to track your location.</string>
     <string name="post_code_invalid_title">Invalid postcode district code</string>
-    <string name="valid_post_code_is_required">Please enter your postcode district code. This is the first part of a postcode. For example: E2, L36, PO30</string>
+    <string name="valid_post_code_is_required">Please enter your postcode district code. This is the first part of a postcode. For example: E2, L36, PO30.</string>
     <string name="enable_bluetooth_title">For this app to work, you must have Bluetooth on</string>
-    <string name="enable_bluetooth_rationale">This app uses Bluetooth to know when it is near another phone with this app installed. If you have Bluetooth turned off, this app will not work.\n\nThis app uses ‘Bluetooth Low Energy’ - a battery saving technology.\n\nPlease go to settings and turn on Bluetooth</string>
+    <string name="enable_bluetooth_rationale">This app uses Bluetooth to know when it is near another phone with this app installed. If you have Bluetooth turned off, this app will not work.\n\nThis app uses ‘Bluetooth Low Energy’ - a battery saving technology.\n\nPlease go to settings and turn on Bluetooth.</string>
     <string name="enable_bluetooth_error_hint">Please activate Bluetooth in your device settings.</string>
-    <string name="go_to_your_settings">Go to your Settings</string>
+    <string name="go_to_your_settings">Go to your settings</string>
     <string name="enable_location_service_title">You need to enable location services on your phone</string>
-    <string name="enable_location_service_rationale">To make Bluetooth work, we need you to turn on location services on your phone.\n\nThis app is not using Bluetooth or your location to track you. Your personal identity will remain protected at all times.\n\nIf you do not enable location services on your phone this app will not work.\n\nTo enable this app to work, please go to Settings and enable location services.</string>
+    <string name="enable_location_service_rationale">To make Bluetooth work, we need you to turn on location services on your phone.\n\nThis app is not using Bluetooth or your location to track you. Your personal identity will remain protected at all times.\n\nIf you do not enable location services on your phone this app will not work.\n\nTo enable this app to work, please go to settings and enable location services.</string>
     <string name="post_code_example">You need an English or Welsh postcode district to use this app.\n\nExamples: If your postcode is CE1B 2PQ, please enter ‘CE1B‘. If it is CR0 3RL, please enter ‘CR0’. If it is L4 0RE, please enter ‘L4’.</string>
     <string name="post_code_rationale_title">Why do we need your postcode district?</string>
     <string name="tablet_support_title">This app is made for mobile smartphones</string>
     <string name="tablet_support_description">Your device seems to be a tablet. This app is only available for smartphones because the app is only effective if you have it on a device that is with you all the time when you go out. Please install the app on your smartphone.</string>
     <string name="test_ordering_title">Getting tested</string>
-    <string name="test_ordering_getting_tested_description">Choosing ‘Book a test for yourself’ will take you to the government’s coronavirus testing website where you will be asked to fill in some personal details (like your address) to get a test. Nothing you enter on the website will be shared.\n\nA digital ‘token‘ will be created which to help us get your results back to the app.</string>
+    <string name="test_ordering_getting_tested_description">Choosing ‘Book a test for yourself’ will take you to the government’s coronavirus testing website where you will be asked to fill in some personal details (like your address) to get a test. Nothing you enter on the website will be shared.\n\nA digital ‘token‘ will be created to help us get your results back to the app.</string>
     <string name="test_ordering_description_1">Choosing ‘Book a free test nowʼ will redirect you from this app to the governmentʼs coronavirus testing website.</string>
     <string name="test_ordering_description_2">Once there, you will be asked to fill in some personal details (like your address) so you can get a test, but nothing you enter on the app or website will be shared.</string>
     <string name="test_ordering_description_3">The only information shared between app and website is a digital ‘tokenʼ which helps us get your test results back to the app.</string>
-    <string name="test_ordering_description_4">Any data used in the testing process is described in the Privacy Notice:</string>
+    <string name="test_ordering_description_4">Any data used in the testing process is described in the privacy notice:</string>
     <string name="test_ordering_description_5">To find out about how this app uses your data, please visit:</string>
     <string name="test_ordering_description_6">You can only use this app to get a test for yourself. To get a test for someone else, use the Government’s coronavirus testing website:</string>
-    <string name="test_ordering_testing_privacy_notice">Testing Privacy Notice</string>
-    <string name="test_ordering_app_privacy_notice">App Privacy Notice</string>
+    <string name="test_ordering_testing_privacy_notice">Testing privacy notice</string>
+    <string name="test_ordering_app_privacy_notice">App privacy notice</string>
     <string name="test_ordering_book_test_for_someone_else">Book a test for someone else</string>
     <string name="error_title">There is a problem</string>
-    <string name="enable_exposure_notifications_title">For this app to work, you must allow Exposure Notifications</string>
-    <string name="enable_exposure_notifications_rationale">This app uses ‘Exposure Notifications’ to let you know if you have come into contact with other app users who have reported a positive test for Coronavirus.\n\nYour phone might refer to these as ‘Exposure Notifications’ or ‘Exposure Logging’</string>
+    <string name="enable_exposure_notifications_title">For this app to work, you must allow ‘Exposure Notifications’</string>
+    <string name="enable_exposure_notifications_rationale">This app uses ‘Exposure Notifications’ to let you know if you have come into contact with other app users who have reported a positive test for Coronavirus.\n\nYour phone might refer to these as ‘Exposure Notifications’ or ‘Exposure Logging’.</string>
     <string name="enable_exposure_notifications">Enable exposure notifications</string>
     <string name="scan_qr_code_to_check_in">Check in to a venue by scanning an official NHS QR code</string>
     <string name="how_to_scan_qr_code">How to scan an official NHS QR code</string>
@@ -109,8 +109,8 @@
     <string name="test_ordering_failure_title">Something went wrong</string>
     <string name="test_ordering_failure_description">Before trying again, please check that your phone’s mobile data settings are on, check your Wi-Fi connection (if you’re using one) and make sure that Airplane Mode is off.</string>
     <string name="test_ordering_failure_action">Try again</string>
-    <string name="notification_title_post_code_risk_changed">The risk level in your area has changed.</string>
-    <string name="notification_title_risky_venue">You may have been exposed to coronavirus at a venue you recently visited. Tap to see the details.</string>
+    <string name="notification_title_post_code_risk_changed">There has been a change in your area</string>
+    <string name="notification_title_risky_venue">You recently visited a venue on the same day as others who have tested positive for coronavirus (COVID-19).</string>
     <string name="notification_text_post_code_risk_changed">Tap here for more details.</string>
     <string name="status_area_risk_level_low">LOW</string>
     <string name="status_area_risk_level_low_wls">LOW</string>
@@ -134,18 +134,18 @@
     <string name="notification_channel_app_configuration_description">These notifications inform about your app configuration</string>
     <string name="notification_channel_background_work_name">Background activities</string>
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
-    <string name="notification_title_state_expiration">Our guidance to you has changed.</string>
-    <string name="notification_text_state_expiration">Tap to see the details.</string>
-    <string name="notification_title_state_exposure">The app has detected that you have been in contact with someone who has coronavirus. Please stay at home and self-isolate to keep yourself and others safe.</string>
+    <string name="notification_title_state_expiration">Our guidance to you has changed</string>
+    <string name="notification_text_state_expiration">Tap to see the details</string>
+    <string name="notification_title_state_exposure">The app has detected that you have been in contact with someone who has coronavirus. Please stay at home and self-isolate to keep yourself and others safe</string>
     <string name="notification_text_state_exposure">Tap here for more details.</string>
-    <string name="notification_title_test_results">Your test results have arrived.</string>
-    <string name="notification_text_test_results">Tap to see the details.</string>
+    <string name="notification_title_test_results">Your test results have arrived</string>
+    <string name="notification_text_test_results">Tap to see the details</string>
     <string name="notification_title_app_available">The app is available</string>
     <string name="notification_title_app_not_available">The app is not currently available</string>
-    <string name="notification_text_app_availability">Tap to see the details.</string>
+    <string name="notification_text_app_availability">Tap to see the details</string>
     <string name="notification_title_recommended_app_update">Please update your NHS COVID-19 app to the latest version</string>
-    <string name="notification_text_recommended_app_update">Tap to see the details.</string>
-    <string name="notification_title_exposure_reminder">Time to turn contact tracing back on.</string>
+    <string name="notification_text_recommended_app_update">Tap to see the details</string>
+    <string name="notification_title_exposure_reminder">Time to turn contact tracing back on</string>
     <string name="notification_action_exposure_reminder">Turn on contact tracing</string>
     <string name="qr_code_permission_denied_title">Check in to a venue by scanning an official NHS QR code</string>
     <string name="qr_code_permission_denied_subtitle">This app uses your camera to check in to venues like bars and restaurants.\n\nPlease allow camera permissions to scan the official NHS QR code.</string>
@@ -155,6 +155,7 @@
     <string name="book_free_test_now">Book a test for yourself</string>
     <string name="status_option_report_symptoms">Check symptoms</string>
     <string name="status_option_read_latest_advice">Read latest advice</string>
+    <string name="status_option_isolation_payment">Financial support</string>
     <string name="status_option_read_self_isolation_advice">Read self-isolation advice</string>
     <string name="status_option_scan_qr_codes">Venue check-in</string>
     <string name="status_option_contact_tracing">Contact tracing</string>
@@ -175,9 +176,9 @@
     <string name="questionnaire_discard_symptoms_dialog_title">Confirm you do not have any symptoms</string>
     <string name="questionnaire_discard_symptoms_dialog_message">Any selected symptoms will be unselected.</string>
     <string name="select_symptoms">Select symptoms</string>
-    <string name="notification_text_risky_venue">Tap to see the details.</string>
-    <string name="venue_alert_title">You recently visited a venue where you may have been exposed to coronavirus</string>
-    <string name="venue_alert_explanation">We are letting you know that you may have been exposed to coronavirus when you were out.\n\nAlthough there is only a small risk that you have been infected during your visit, please continue to follow the latest advice on social distancing.\n\nIf you have symptoms of coronavirus you need to self-isolate immediately. That means staying at home with no visitors. Please use the symptom checker on the app and book a free test if advised to do so. Call 119 if you have questions.\n\nOnly get a test if you have coronavirus symptoms.</string>
+    <string name="notification_text_risky_venue">Tap to see the details</string>
+    <string name="venue_alert_title">You recently visited a venue on the same day as others who have tested positive for coronavirus (COVID-19).</string>
+    <string name="venue_alert_explanation">There is only a small risk that you have been infected with coronavirus during your visit. You should continue to follow the latest advice on social distancing.\n\nIf you have symptoms of coronavirus you must self-isolate immediately. This means you should stay at home with no visitors. Use the symptom checker on the app and book a free test if advised to do so. Call 119 if you have questions.\n\nOnly get a test if you have coronavirus symptoms.</string>
     <string name="questionnaire_no_symptom_selected">You need to either choose your symptoms or select “I donʼt have any of these symptoms”</string>
     <string name="title_no_coronavirus_symptoms">You are unlikely to have coronavirus</string>
     <string name="message_no_coronavirus_symptoms">If you develop any of these symptoms, report them on this app and book a free test. Only get a test if you have coronavirus symptoms.\n\nFor further advice, please contact:</string>
@@ -197,24 +198,24 @@
     <string name="state_index_info">You may have coronavirus</string>
     <string name="you_do_not_appear_to_have_symptoms">You do not appear to have coronavirus symptoms</string>
     <string name="state_test_positive_info">Your coronavirus test result is positive</string>
-    <string name="state_test_negative_info">Your coronavirus test result is negative but you may still develop symptoms, so you should stay in isolation.</string>
+    <string name="state_test_negative_info">Your coronavirus test result is negative but you may still develop symptoms, so you should stay in isolation</string>
     <string name="state_test_void_info">We could not tell if you had coronavirus</string>
     <string name="test_result_negative_continue_self_isolate_explanation">Your test result shows that you did not have the virus when the test was done. You have been sent more information by email, text or phone. If you are under 18, you are advised to show this message to a trusted adult.</string>
     <string name="isolation_until_date">until %1$s at 23:59</string>
     <string name="questionnaire_review_one_of_two">Step 1 of 2</string>
-    <string name="expiration_notification_title">Good News</string>
+    <string name="expiration_notification_title">Good News!</string>
     <string name="expiration_notification_description_passed">You have been released from isolation since the %s at 23:59</string>
     <string name="expiration_notification_recommendation">For further advice, please contact:</string>
     <string name="expiration_temperature_hint">However, if you have a high temperature, continue to self-isolate until it returns to normal</string>
     <string name="button_agree">I agree</string>
-    <string name="terms_of_use_onboarding">Terms of Use</string>
+    <string name="terms_of_use_onboarding">Terms of use</string>
     <string name="about_this_app_title">About this app</string>
     <string name="about_common_questions_title">Common questions</string>
     <string name="about_common_questions_text">Visit our common questions page to learn more about the NHS COVID-19 app and the wider programme.</string>
     <string name="about_common_questions_link">Common questions</string>
     <string name="about_our_policies_title">Our policies</string>
     <string name="about_our_policies_text">Our policies tells you important information about using the app, how we use your data, and how the app is designed to be usable by everyone.</string>
-    <string name="about_accessibility_statement">Accessibility Statement</string>
+    <string name="about_accessibility_statement">Accessibility statement</string>
     <string name="about_software_information_title">Software information</string>
     <string name="about_software_information_text_app_name">App name</string>
     <string name="about_software_information_text_app_version">App version</string>
@@ -238,7 +239,7 @@
     <string name="submit_keys_information_description_text">The app creates IDs (a random series of numbers, letters and symbols) which your device shares regularly in order to keep your Exposure Notifications up to date. Exposure Notifications help the app work out who over the last 14 days should be notified that they may have been exposed to coronavirus. \n\nBy selecting continue we will be able to send notifications to other app users who need to be alerted across England, Wales, Scotland, Northern Ireland, Jersey and Gibraltar. \n\nYour personal details or identity will not be shared.</string>
     <string name="back_to_home">Back to home</string>
     <string name="about_delete_all_data">Delete all my data</string>
-    <string name="about_my_data_symptoms_date">Date</string>
+    <string name="about_my_data_date">Date</string>
     <string name="about_manage_my_data">Manage my data</string>
     <string name="postal_district">Postal district</string>
     <string name="about_local_authority">Local authority</string>
@@ -252,8 +253,11 @@
     <string name="about_how_this_app_works_link">How the app works</string>
     <string name="about_your_data_title">About your data</string>
     <string name="about_your_data_text">The app has access to the postcode district you added in the registration, a history of the places you’ve checked into in the last 14 days, your last test result and the start date of your symptoms. When you use QR codes to check into venues, venue data is stored for 21 days. You can delete the stored data whenever you want.</string>
-    <string name="title_encounter">Encounter date</string>
-    <string name="about_delete_your_data_title">Deleting your data will reset the app.</string>
+    <string name="title_exposure_notification">Exposure notification</string>
+    <string name="about_encounter_date">Encounter date</string>
+    <string name="about_notification_date">Notification date</string>
+    <string name="title_last_day_of_isolation">Last day of self-isolation</string>
+    <string name="about_delete_your_data_title">Deleting your data will reset the app</string>
     <string name="about_delete_positive_text">Delete data</string>
     <string name="about_positive">Positive</string>
     <string name="about_negative">Negative</string>
@@ -286,17 +290,18 @@
     <string name="onboarding_isolation_countdown_text">If you are isolating, the app will count down the days and give you the right information.</string>
     <string name="onboarding_age_confirmation_title">Are you 16 years or over?</string>
     <string name="onboarding_age_confirmation_text">You must confirm that you are 16 years or over to be able to use this app.</string>
-    <string name="onboarding_age_confirmation_positive">I am over 16</string>
+    <string name="onboarding_age_confirmation_positive">I am 16 or over</string>
     <string name="onboarding_age_confirmation_negative">I am under 16</string>
-    <string name="onboarding_age_restriction_title">Thank you for your interest. Unfortunately, this app is only for people aged 16 years or over.</string>
-    <string name="onboarding_age_restriction_text">This app is only for people aged 16 years or over.</string>
+    <string name="onboarding_age_restriction_title">Unfortunately, this app is only for people aged 16 years or over</string>
+    <string name="onboarding_age_restriction_text">Thank you for your interest. This app is only for people aged 16 years or over.</string>
     <string name="onboarding_privacy_title">Protecting your privacy</string>
     <string name="onboarding_privacy_control_title">You are in control</string>
     <string name="onboarding_privacy_control_text">The NHS values your privacy, meaning the app cannot tell who you are, where you are or who is with you.\n\nIf you test positive for coronavirus, you can choose to share your data with the NHS so we can alert other app users in England, Wales, Scotland, Northern Ireland, Jersey and Gibraltar. By selecting continue we will be able to send notifications to other app users who need to be alerted across these locations.\n\nWe use automated decision making to help determine which other users need to be anonymously alerted.</string>
     <string name="onboarding_privacy_your_data_title">Your data</string>
     <string name="onboarding_privacy_your_data_text1">The app securely and anonymously stores data for 14 days after it has been recorded. When you use QR codes to check into venues, venue data is stored for 21 days. You can delete the data from the app at anytime in your app settings, or by uninstalling the app. Your phone may keep some basic data – this is controlled by your phone’s operating system.</string>
     <string name="onboarding_privacy_your_data_text2">When you use the app you will be helping your community stay healthy and save lives.  Anonymous information from the app helps us know where the virus is and how to control it.</string>
-    <string name="onboarding_before_activating_app">Before you activate this app, please read the Privacy Notice and agree to the Terms of Use.</string>
+    <string name="onboarding_before_activating_app">Before you activate this app, please read the privacy notice and agree to the terms of use.</string>
+    <string name="onboarding_before_activating_app_announcement">Important: Before you activate this app, please read the privacy notice and agree to the terms of use.</string>
     <string name="onboarding_no_thanks">No, thanks</string>
     <string name="onboarding_no_thanks_announcement">No thanks, I do not agree</string>
     <string name="title_how_app_works">How this app works</string>
@@ -321,10 +326,10 @@
     <string name="i_understand">I understand</string>
     <string name="exposure_notification_hint">The app has detected that you have been in contact with someone who has coronavirus. Please stay at home and self-isolate to keep yourself and others safe.</string>
     <string name="exposure_notification_recommendation">You are at high risk of having and spreading the virus even if you don’t have any symptoms. If you are under 18, you are advised to show this message to a trusted adult.\n\nYour isolation countdown has started and you should self-isolate for the full period identified. Only get a test if you have coronavirus symptoms.\n\nFor further advice, please contact:</string>
-    <string name="risk_level_title">Local COVID alert level</string>
+    <string name="risk_level_title">In my area</string>
     <string name="risk_level_link_text">Definitions of area risk levels</string>
-    <string name="low_risk_level_text">Low - your local authority is currently assessed as ‘low risk’, with levels of infection similar to most other parts of the country</string>
-    <string name="low_risk_level_text_wls">Low - your local authority is currently assessed as ‘low risk’, with levels of infection similar to most other parts of the country</string>
+    <string name="low_risk_level_text">Low - your local authority is currently assessed as ‘low risk’, with levels of infection similar to most other parts of the country.</string>
+    <string name="low_risk_level_text_wls">Low - your local authority is currently assessed as ‘low risk’, with levels of infection similar to most other parts of the country.</string>
     <string name="medium_risk_level_text">Medium - your local authority, or a neighbouring local authority, has high or rising levels of infection. Please follow national guidance.</string>
     <string name="medium_risk_level_text_wls">Medium - your local authority, or a neighbouring local authority, has high or rising levels of infection. Please follow national guidance.</string>
     <string name="high_risk_level_text">High - Your local authority, or a neighbouring local authority, is using additional measures to those in place in the rest of England and Wales (e.g. lockdown) to reduce transmission of infection because of high levels of infection in the local area. A detailed action plan is in place and local resources are being augmented with national support.</string>
@@ -336,7 +341,7 @@
     <string name="delete_single_venue_visit_text">Removing a venue will reduce the effectiveness of contact tracing.\n\nOnce deleted, you will no longer receive alerts about this venue.</string>
     <string name="confirm">Confirm</string>
     <string name="delete_button_text">Delete</string>
-    <string name="contact_tracing_notification_reminder_dialog_title">Setting reminder to turn contact tracing back on in %1$s hours.</string>
+    <string name="contact_tracing_notification_reminder_dialog_title">Setting reminder to turn contact tracing back on in %1$s hours</string>
     <string name="contact_tracing_notification_reminder_dialog_message">Turning off contact tracing will impact the effectiveness of the app.</string>
     <string name="okay">OK</string>
     <string name="resume_contact_tracing_title">Contact tracing is now off</string>
@@ -351,7 +356,7 @@
     <string name="about_feedback_information_title">Feedback information</string>
     <string name="about_feedback_information_text">If you have feedback about the app, a question that’s not answered in our common questions, or you have a technical problem, you can contact us using our online form.</string>
     <string name="about_provide_feedback_link">Feedback information</string>
-    <string name="state_test_positive_then_negative_info">Your coronavirus test result is negative. However, continue to self-isolate as you had a previous positive test result.</string>
+    <string name="state_test_positive_then_negative_info">Your coronavirus test result is negative. However, continue to self-isolate as you had a previous positive test result</string>
     <string name="test_result_positive_then_negative_explanation">Your current test result shows that you did not have the virus at the time of testing. If you develop symptoms report them on this app. If you are under 18, you are advised to show this message to a trusted adult.</string>
     <string name="test_result_negative_then_positive_continue_explanation">Your test result shows that you had the virus at the time of the test. You have been sent more information by email, text or phone. If you are under 18, you are advised to show this message to a trusted adult.</string>
 
@@ -373,10 +378,20 @@
     <string name="test_result_negative_no_self_isolation_explanation">The test result shows that at the time of testing, you did not have the virus. If you do develop symptoms, report them on this app. If you are under 18, you are advised to show this message to a trusted adult.</string>
     <string name="test_result_negative_no_self_isolation_subtitle">Your self-isolation has now finished</string>
     <string name="test_result_positive_no_self_isolation_description">However, if you have a high temperature, continue to self-isolate until it returns to normal</string>
-    <string name="isolation_payment">Isolation payment</string>
-    <string name="apply_now">Apply now</string>
-    <string name="isolation_payment_description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
     <string name="isolation_payment_title">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</string>
+    <string name="isolation_payment_description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+    <string name="isolation_payment_privacy_notice_title">Any data used in the application process is described in the privacy notice:</string>
+    <string name="isolation_payment_privacy_notice_link_text">Contact tracing privacy notice</string>
+    <string name="isolation_payment_privacy_notice_link_url">https://sip.test-and-trace.nhs.uk/privacy-policy</string>
+    <string name="isolation_payment_heading">Financial support</string>
+    <string name="isolation_payment_text">The app has detected that you have been in contact with a person who has tested positive for coronavirus. You are advised to self-isolate.\n\nWhile you’re self-isolating, you may be able to claim financial support depending on your circumstances. Check if you are eligible as soon as possible by using the button below.\n\nThis will take you to a website where you may need to enter some personal details. These personal details will not be stored anywhere in this app.</string>
+    <string name="isolation_payment_help_england_title">If you live in England and you are having trouble applying, visit:</string>
+    <string name="isolation_payment_help_england_link_text">Help to apply for the Test and Trace Support Payment</string>
+    <string name="isolation_payment_help_england_link_url">https://sip.test-and-trace.nhs.uk/help-support</string>
+    <string name="isolation_payment_help_wales_title">If you live in Wales and are having trouble applying, visit:</string>
+    <string name="isolation_payment_help_wales_link_text">Help to apply for the Self-Isolation Support Scheme</string>
+    <string name="isolation_payment_help_wales_link_url">https://gov.wales/self-isolation-support-scheme</string>
+    <string name="isolation_payment_action_button">Check your eligibility</string>
     <string name="notification_title_potential_exposure_explanation">COVID-19 Exposure Check Complete</string>
     <string name="notification_text_potential_exposure_explanation">Don’t worry, we have assessed your risk and there is no need to take action at this time. Please continue to stay alert and follow the latest advice on social distancing.</string>
     <string name="qr_code_intro_text">If you are entering a venue (for example, a bar or a restaurant) that has an official NHS QR code poster, use this app to scan it. The app then registers the time you check in to a venue.\n\nBy using the venue check-in, you will be able to get a notification if people with coronavirus visit the same venue at a similar time as you. The notification will include relevant advice, such as to look out for coronavirus symptoms.</string>
@@ -393,8 +408,8 @@
     <string name="multiple_local_authorities_description">As your postcode district (%s) is in more than one local authority, you need to select the one you are in. This is so the app can give you more accurate information and guidance.\n\nVisit GOV.UK if you do not know your local authority.</string>
     <string name="local_authority_link">Find your local authority</string>
     <string name="local_authority_error_no_authority_selected_title">Please select a local authority</string>
-    <string name="local_authority_error_no_authority_selected_description">You need choose a local authority to continue</string>
-    <string name="local_authority_error_authority_not_supported_title">You need choose a local authority to continue</string>
+    <string name="local_authority_error_no_authority_selected_description">You need to choose a local authority to continue</string>
+    <string name="local_authority_error_authority_not_supported_title">You need to choose a local authority to continue</string>
     <string name="local_authority_error_authority_not_supported_description">Unfortunately this app is not supported in your region. Please download the app for your region or country.</string>
     <string name="local_authority_information_title">Select your local authority</string>
     <string name="local_authority_information_description">Please select a local authority. This is so the app can give you more accurate information and guidance.</string>
@@ -402,4 +417,8 @@
     <string name="battery_optimization_title">For this app to work better, please allow it to run in the background</string>
     <string name="battery_optimization_description">Allowing the app to run in the background means the app can send you up-to-date alerts to have the latest information and guidance.\n\nWe do not expect this to cause a significant decrease in your device’s battery life.\n\nYou can always change this later by going to Prioritised Background Activity in settings.\n\nIf you do not allow, we recommend you to open the app manually at least once every 24 hours.</string>
     <string name="battery_optimization_allow">Allow</string>
+    <string name="about_my_data_symptoms_date">Date</string>
+    <string name="apply_now">Apply now</string>
+    <string name="isolation_payment">Isolation payment</string>
+    <string name="title_encounter">Encounter date</string>
 </resources>

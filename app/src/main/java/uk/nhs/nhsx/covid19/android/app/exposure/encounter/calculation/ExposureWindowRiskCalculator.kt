@@ -1,12 +1,16 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation
 
 import com.google.android.gms.nearby.exposurenotification.ExposureWindow
+import com.jeroenmols.featureflag.framework.FeatureFlag.STORE_EXPOSURE_WINDOWS
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.SubmitEpidemiologyData
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.SubmitEpidemiologyData.ExposureWindowWithRisk
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.convert
+import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType
 import uk.nhs.nhsx.covid19.android.app.remote.data.V2RiskCalculation
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.riskscore.RiskScoreCalculatorConfiguration
@@ -24,6 +28,7 @@ class ExposureWindowRiskCalculator(
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val riskScoreCalculatorProvider: RiskScoreCalculatorProvider,
     private val submitEpidemiologyData: SubmitEpidemiologyData,
+    private val epidemiologyEventProvider: EpidemiologyEventProvider,
     private val submitEpidemiologyDataScope: CoroutineScope
 ) {
 
@@ -32,12 +37,14 @@ class ExposureWindowRiskCalculator(
         clock: Clock,
         isolationConfigurationProvider: IsolationConfigurationProvider,
         riskScoreCalculatorProvider: RiskScoreCalculatorProvider,
-        submitEpidemiologyData: SubmitEpidemiologyData
+        submitEpidemiologyData: SubmitEpidemiologyData,
+        epidemiologyEventProvider: EpidemiologyEventProvider
     ) : this(
         clock,
         isolationConfigurationProvider,
         riskScoreCalculatorProvider,
         submitEpidemiologyData,
+        epidemiologyEventProvider,
         submitEpidemiologyDataScope = GlobalScope
     )
 
@@ -52,7 +59,8 @@ class ExposureWindowRiskCalculator(
             ExposureWindowWithRisk(
                 dayRisk = DayRisk(
                     startOfDayMillis = window.dateMillisSinceEpoch,
-                    calculatedRisk = window.riskScore(config, riskCalculation)
+                    calculatedRisk = window.riskScore(config, riskCalculation),
+                    riskCalculationVersion = riskScoreCalculatorProvider.getRiskCalculationVersion()
                 ),
                 exposureWindow = window
             )
@@ -70,6 +78,12 @@ class ExposureWindowRiskCalculator(
                 )
             }
             .filter { it.dayRisk.calculatedRisk >= riskCalculation.riskThreshold }
+            .also { list ->
+                if (RuntimeBehavior.isFeatureEnabled(STORE_EXPOSURE_WINDOWS)) {
+                    list.map { it.convert(EpidemiologyEventType.EXPOSURE_WINDOW) }
+                        .apply { epidemiologyEventProvider.add(this) }
+                }
+            }
             .also {
                 submitEpidemiologyDataScope.launch {
                     runCatching {

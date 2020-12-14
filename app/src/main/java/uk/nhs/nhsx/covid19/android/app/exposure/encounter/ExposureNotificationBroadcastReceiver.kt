@@ -21,11 +21,17 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver() {
 
         val action = intent.action
         Timber.d("onReceive: action = $action")
-        val token = intent.getStringExtra(ExposureNotificationClient.EXTRA_TOKEN) ?: "empty"
+        val token = intent.getStringExtra(ExposureNotificationClient.EXTRA_TOKEN) ?: emptyToken
         Timber.d("onReceive: token = $token")
         if (ExposureNotificationClient.ACTION_EXPOSURE_STATE_UPDATED == action) {
             exposureNotificationsTokensProvider.add(token)
-            exposureNotificationWorkerScheduler.schedule(context, token)
+            exposureNotificationWorkerScheduler.scheduleMatchesFound(context, token)
+        } else if (ExposureNotificationClient.ACTION_EXPOSURE_NOT_FOUND == action) {
+            exposureNotificationWorkerScheduler.scheduleNoMatchesFound(context)
         }
+    }
+
+    companion object {
+        private const val emptyToken = "empty"
     }
 }

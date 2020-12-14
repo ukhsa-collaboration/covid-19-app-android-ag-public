@@ -14,6 +14,8 @@ import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWorker
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWorkerScheduler
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
+import uk.nhs.nhsx.covid19.android.app.packagemanager.PackageManager
+import uk.nhs.nhsx.covid19.android.app.permissions.PermissionsManager
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.util.AndroidBase64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
@@ -34,7 +36,9 @@ class AppModule(
     private val qrCodesSignatureKey: SignatureKey,
     private val applicationLocaleProvider: ApplicationLocaleProvider,
     private val updateManager: UpdateManager,
-    private val batteryOptimizationChecker: BatteryOptimizationChecker
+    private val batteryOptimizationChecker: BatteryOptimizationChecker,
+    private val permissionsManager: PermissionsManager,
+    private val packageManager: PackageManager
 ) {
     @Provides
     fun provideContext() = applicationContext
@@ -92,6 +96,16 @@ class AppModule(
     @Singleton
     fun provideApplicationLocaleProvider(): ApplicationLocaleProvider =
         applicationLocaleProvider
+
+    @Provides
+    @Singleton
+    fun providePermissionsManager(): PermissionsManager =
+        permissionsManager
+
+    @Provides
+    @Singleton
+    fun providePackageManager(): PackageManager =
+        packageManager
 
     @Provides
     @Singleton

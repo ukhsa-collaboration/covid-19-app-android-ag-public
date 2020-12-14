@@ -1,9 +1,11 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
 import kotlinx.android.synthetic.main.activity_progress.buttonTryAgain
 import kotlinx.android.synthetic.main.activity_progress.errorStateContainer
@@ -14,9 +16,7 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.Result
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
-import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
-import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
@@ -29,7 +29,7 @@ class SubmitKeysProgressActivity : BaseActivity(R.layout.activity_progress) {
 
     private val viewModel: SubmitKeysProgressViewModel by viewModels { factory }
 
-    private var exposureKeys: List<NHSTemporaryExposureKey> = listOf()
+    private lateinit var exposureKeys: List<NHSTemporaryExposureKey>
     private lateinit var diagnosisKeySubmissionToken: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,8 +38,16 @@ class SubmitKeysProgressActivity : BaseActivity(R.layout.activity_progress) {
 
         setCloseToolbar(toolbar, R.string.empty, R.drawable.ic_close_primary)
 
-        exposureKeys = intent.getParcelableArrayListExtra(EXPOSURE_KEYS_TO_SUBMIT) ?: return
-        diagnosisKeySubmissionToken = intent.getStringExtra(ShareKeysInformationActivity.SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN) ?: return
+        val exposureKeys = intent.getParcelableArrayListExtra<NHSTemporaryExposureKey>(EXPOSURE_KEYS_TO_SUBMIT)
+        val diagnosisKeySubmissionToken = intent.getStringExtra(SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN)
+
+        if (exposureKeys == null || diagnosisKeySubmissionToken == null) {
+            finish()
+            return
+        }
+
+        this.exposureKeys = exposureKeys
+        this.diagnosisKeySubmissionToken = diagnosisKeySubmissionToken
 
         setupListeners()
         startViewModelListeners()
@@ -61,7 +69,10 @@ class SubmitKeysProgressActivity : BaseActivity(R.layout.activity_progress) {
     private fun startViewModelListeners() {
         viewModel.submitKeysResult().observe(this) { submissionResult ->
             when (submissionResult) {
-                is Result.Success -> StatusActivity.start(this)
+                is Result.Success -> {
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                }
                 is Result.Failure -> showErrorState()
             }
         }
@@ -78,17 +89,26 @@ class SubmitKeysProgressActivity : BaseActivity(R.layout.activity_progress) {
     }
 
     companion object {
+        private const val SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN = "SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN"
         private const val EXPOSURE_KEYS_TO_SUBMIT = "EXPOSURE_KEYS_TO_SUBMIT"
 
-        fun start(
-            context: Context,
+        fun startForResult(
+            context: AppCompatActivity,
             exposureKeys: List<NHSTemporaryExposureKey>,
-            diagnosisKeySubmissionToken: String?
+            diagnosisKeySubmissionToken: String?,
+            requestCode: Int
         ) =
-            context.startActivity(
+            context.startActivityForResult(
                 getIntent(context)
-                    .putParcelableArrayListExtra(EXPOSURE_KEYS_TO_SUBMIT, ArrayList(exposureKeys))
-                    .putExtra(ShareKeysInformationActivity.SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN, diagnosisKeySubmissionToken)
+                    .putParcelableArrayListExtra(
+                        EXPOSURE_KEYS_TO_SUBMIT,
+                        ArrayList(exposureKeys)
+                    )
+                    .putExtra(
+                        SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN,
+                        diagnosisKeySubmissionToken
+                    ),
+                requestCode
             )
 
         fun getIntent(context: Context): Intent {

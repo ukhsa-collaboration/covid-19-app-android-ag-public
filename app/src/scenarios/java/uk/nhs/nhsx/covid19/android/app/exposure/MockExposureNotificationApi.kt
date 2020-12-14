@@ -1,5 +1,9 @@
 package uk.nhs.nhsx.covid19.android.app.exposure
 
+import android.app.PendingIntent
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.Status
 import com.google.android.gms.nearby.exposurenotification.DiagnosisKeysDataMapping
 import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
 import com.google.android.gms.nearby.exposurenotification.ExposureInformation
@@ -7,6 +11,9 @@ import com.google.android.gms.nearby.exposurenotification.ExposureWindow
 import com.google.android.gms.nearby.exposurenotification.Infectiousness
 import com.google.android.gms.nearby.exposurenotification.ReportType
 import com.google.android.gms.nearby.exposurenotification.ScanInstance
+import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result.Error
+import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result.ResolutionRequired
+import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result.Success
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import java.io.File
 import java.util.Date
@@ -16,13 +23,27 @@ class MockExposureNotificationApi : ExposureNotificationApi {
     private var supportsLocationlessScanning = false
     private var isEnabled = false
     private var temporaryExposureKeyHistoryWasCalled = false
+    var activationResult: Result = Success()
+    var temporaryExposureKeyHistoryResult: Result = Success()
 
     override suspend fun isEnabled(): Boolean {
         return isEnabled
     }
 
     override suspend fun start() {
-        isEnabled = true
+        val result = this.activationResult
+        result.nextResult?.let {
+            this.activationResult = it
+        }
+
+        when (result) {
+            is Success -> isEnabled = true
+            is ResolutionRequired -> {
+                isEnabled = result.nextResult is Success
+                throw ApiException(Status(ConnectionResult.RESOLUTION_REQUIRED, "ResolutionRequired", result.pendingIntent))
+            }
+            is Error -> throw ApiException(result.status)
+        }
     }
 
     override suspend fun stop() {
@@ -37,14 +58,28 @@ class MockExposureNotificationApi : ExposureNotificationApi {
 
     override suspend fun temporaryExposureKeyHistory(): List<NHSTemporaryExposureKey> {
         temporaryExposureKeyHistoryWasCalled = true
-        return listOf(
-            NHSTemporaryExposureKey(
-                key = "key",
-                rollingPeriod = 2,
-                rollingStartNumber = 144,
-                daysSinceOnsetOfSymptoms = 5
+
+        val result = this.temporaryExposureKeyHistoryResult
+        result.nextResult?.let {
+            this.temporaryExposureKeyHistoryResult = it
+        }
+
+        when (result) {
+            is Success -> return listOf(
+                NHSTemporaryExposureKey(
+                    key = "key",
+                    rollingPeriod = 2,
+                    rollingStartNumber = 144,
+                    daysSinceOnsetOfSymptoms = 5
+                )
             )
-        )
+
+            is ResolutionRequired -> {
+                throw ApiException(Status(ConnectionResult.RESOLUTION_REQUIRED, "ResolutionRequired", result.pendingIntent))
+            }
+
+            is Error -> throw ApiException(result.status)
+        }
     }
 
     fun temporaryExposureKeyHistoryWasCalled() = temporaryExposureKeyHistoryWasCalled
@@ -106,5 +141,23 @@ class MockExposureNotificationApi : ExposureNotificationApi {
 
     override fun deviceSupportsLocationlessScanning(): Boolean {
         return supportsLocationlessScanning
+    }
+
+    sealed class Result {
+        abstract val nextResult: Result?
+
+        data class Success(
+            override val nextResult: Result? = null
+        ) : Result()
+
+        data class ResolutionRequired(
+            val pendingIntent: PendingIntent,
+            override val nextResult: Result
+        ) : Result()
+
+        data class Error(
+            val status: Status = Status(ConnectionResult.SERVICE_MISSING),
+            override val nextResult: Result? = null
+        ) : Result()
     }
 }

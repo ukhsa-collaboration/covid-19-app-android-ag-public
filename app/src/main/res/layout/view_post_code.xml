@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:lineSpacingMultiplier="1.18"
                 android:paddingBottom="12dp"
-                android:text="@string/valid_post_code_is_required" />
+                tools:text="@string/valid_post_code_is_required" />
         </LinearLayout>
 
         <EditText

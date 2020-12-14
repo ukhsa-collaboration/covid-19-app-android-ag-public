@@ -8,6 +8,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import org.junit.After
 import org.junit.Before
@@ -22,6 +23,12 @@ import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVe
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
+import uk.nhs.nhsx.covid19.android.app.payment.CanClaimIsolationPayment
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Disabled
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Unresolved
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
@@ -55,6 +62,8 @@ class StatusViewModelTest {
     private val startAppReviewFlowConstraint = mockk<ShouldShowInAppReview>(relaxed = true)
     private val lastReviewFlowStartedDateProvider =
         mockk<LastAppRatingStartedDateProvider>(relaxed = true)
+    private val canClaimIsolationPayment = mockk<CanClaimIsolationPayment>(relaxed = true)
+    private val isolationPaymentTokenStateProvider = mockk<IsolationPaymentTokenStateProvider>(relaxed = true)
 
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
     private val showInformationScreenObserver = mockk<Observer<InformationScreen>>(relaxed = true)
@@ -69,7 +78,9 @@ class StatusViewModelTest {
             notificationProvider,
             districtAreaUrlProvider,
             startAppReviewFlowConstraint,
-            lastReviewFlowStartedDateProvider
+            lastReviewFlowStartedDateProvider,
+            canClaimIsolationPayment,
+            isolationPaymentTokenStateProvider
         )
 
     private val lowRiskyPostCodeIndicator = RiskIndicator(
@@ -137,7 +148,8 @@ class StatusViewModelTest {
         areaRiskState = mediumRisk,
         isolationState = DEFAULT_ISOLATION_STATE,
         latestAdviceUrl = DEFAULT_LATEST_ADVICE_URL_RES_ID,
-        showExposureNotificationReminderDialog = false
+        showExposureNotificationReminderDialog = false,
+        showIsolationPaymentButton = false
     )
 
     @Before
@@ -265,6 +277,7 @@ class StatusViewModelTest {
 
         verify { viewStateObserver.onChanged(defaultViewState) }
         verify { sharedPreferences.registerOnSharedPreferenceChangeListener(any()) }
+        verify { isolationPaymentTokenStateProvider.addTokenStateListener(any()) }
         verify { userInbox.registerListener(any()) }
     }
 
@@ -273,6 +286,7 @@ class StatusViewModelTest {
         testSubject.onPause()
 
         verify { sharedPreferences.unregisterOnSharedPreferenceChangeListener(any()) }
+        verify { isolationPaymentTokenStateProvider.removeTokenStateListener(any()) }
         verify { userInbox.unregisterListener(any()) }
     }
 
@@ -313,6 +327,87 @@ class StatusViewModelTest {
         testSubject.updateViewState()
 
         verify { viewStateObserver.onChanged(defaultViewState.copy(areaRiskState = Unknown)) }
+    }
+
+    @Test
+    fun `on update view state should not show isolation payment button if cannot claim isolation payment and token is unresolved`() {
+        every { canClaimIsolationPayment() } returns false
+        every { isolationPaymentTokenStateProvider.tokenState } returns Unresolved
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(showIsolationPaymentButton = false)) }
+    }
+
+    @Test
+    fun `on update view state should not show isolation payment button if cannot claim isolation payment and token is disabled`() {
+        every { canClaimIsolationPayment() } returns false
+        every { isolationPaymentTokenStateProvider.tokenState } returns Disabled
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(showIsolationPaymentButton = false)) }
+    }
+
+    @Test
+    fun `on update view state should not show isolation payment button if cannot claim isolation payment and there is a token`() {
+        every { canClaimIsolationPayment() } returns false
+        every { isolationPaymentTokenStateProvider.tokenState } returns Token("token")
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(showIsolationPaymentButton = false)) }
+    }
+
+    @Test
+    fun `on update view state should not show isolation payment button if can claim isolation payment and token is unresolved`() {
+        every { canClaimIsolationPayment() } returns true
+        every { isolationPaymentTokenStateProvider.tokenState } returns Unresolved
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(showIsolationPaymentButton = false)) }
+    }
+
+    @Test
+    fun `on update view state should not show isolation payment button if can claim isolation payment and token is disabled`() {
+        every { canClaimIsolationPayment() } returns true
+        every { isolationPaymentTokenStateProvider.tokenState } returns Disabled
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(showIsolationPaymentButton = false)) }
+    }
+
+    @Test
+    fun `on update view state should show isolation payment button if can claim isolation payment and there is a token`() {
+        every { canClaimIsolationPayment() } returns true
+        every { isolationPaymentTokenStateProvider.tokenState } returns Token("token")
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(showIsolationPaymentButton = true)) }
+    }
+
+    @Test
+    fun `visibility of isolation payment button should update when isolation payment token status changes`() {
+        testSubject.onResume()
+
+        val tokenStateListenerSlot = slot<(IsolationPaymentTokenState) -> Unit>()
+        verify { isolationPaymentTokenStateProvider.addTokenStateListener(capture(tokenStateListenerSlot)) }
+
+        every { canClaimIsolationPayment() } returns true
+        every { isolationPaymentTokenStateProvider.tokenState } returns Unresolved
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(showIsolationPaymentButton = false)) }
+
+        val newState = Token("token")
+        every { isolationPaymentTokenStateProvider.tokenState } returns newState
+        tokenStateListenerSlot.captured(newState)
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(showIsolationPaymentButton = true)) }
     }
 
     @Test

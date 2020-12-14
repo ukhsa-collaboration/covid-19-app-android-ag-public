@@ -1,4 +1,4 @@
-package uk.nhs.nhsx.covid19.android.app.exposure
+package uk.nhs.nhsx.covid19.android.app.exposure.keysdownload
 
 import io.mockk.called
 import io.mockk.coEvery
@@ -17,12 +17,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.Result
-import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadAndProcessKeys
-import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadKeysParams
+import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadKeysParams.Intervals.Daily
 import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadKeysParams.Intervals.Hourly
-import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.KeyFilesCache
-import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.LastDownloadedKeyTimeProvider
 import uk.nhs.nhsx.covid19.android.app.remote.ExposureConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.KeysDistributionApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.ExposureConfigurationResponse
@@ -65,6 +62,29 @@ class DownloadAndProcessKeysTest {
 
     @Test
     fun `success process of Daily keys from network call`() = runBlocking {
+
+        coEvery { downloadKeysParam.getNextQueries() } returns listOf(Daily("2014122110"))
+
+        coEvery { keysDistributionApi.fetchDailyKeys("2014122110.zip") } returns ""
+            .toResponseBody("binary/octet-stream".toMediaType())
+
+        every { keyFileCache.createFile("2014122110", any()) } returns mockk()
+
+        every { keyFileCache.getFile(any()) } returns null
+
+        val result = testSubject.invoke()
+
+        coVerify { exposureNotificationApi.provideDiagnosisKeys(any()) }
+
+        verify(exactly = 1) { lastDownloadedKeyProvider.saveLastStoredTime("2014122110") }
+
+        assertEquals(Result.Success(Unit), result)
+    }
+
+    @Test
+    fun `success process of Daily keys from network call when last downloaded keys timestamp is null`() = runBlocking {
+
+        every { lastDownloadedKeyProvider.getLatestStoredTime() } returns null
 
         coEvery { downloadKeysParam.getNextQueries() } returns listOf(Daily("2014122110"))
 

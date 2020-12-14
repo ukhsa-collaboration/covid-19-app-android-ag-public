@@ -1,17 +1,22 @@
 package uk.nhs.nhsx.covid19.android.app.questionnaire.selection
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_questionnaire.buttonTryAgain
 import kotlinx.android.synthetic.main.activity_questionnaire.errorStateContainer
 import kotlinx.android.synthetic.main.activity_questionnaire.loadingContainer
+import kotlinx.android.synthetic.main.activity_questionnaire.loadingText
 import kotlinx.android.synthetic.main.activity_questionnaire.questionListContainer
+import kotlinx.android.synthetic.main.activity_questionnaire.textErrorMessage
+import kotlinx.android.synthetic.main.activity_questionnaire.textErrorTitle
 import kotlinx.android.synthetic.main.include_show_questionnaire.buttonReviewSymptoms
 import kotlinx.android.synthetic.main.include_show_questionnaire.errorPanel
 import kotlinx.android.synthetic.main.include_show_questionnaire.questionsRecyclerView
@@ -48,6 +53,11 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
     private val viewModel: QuestionnaireViewModel by viewModels { factory }
 
     private lateinit var nestedScrollView: NestedScrollView
+
+    /**
+     * Dialog currently displayed, or null if none are displayed
+     */
+    private var currentDialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,12 +119,15 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
 
             val index = question?.let { questionnaireViewAdapter.currentList.indexOf(question) } ?: -1
 
-            (questionsRecyclerView.layoutManager as ScrollableLayoutManager).scrollToIndex(index)
+            if (index >= 0) {
+                (questionsRecyclerView.layoutManager as ScrollableLayoutManager).scrollToIndex(index)
+            }
         }
     }
 
     private fun handleSuccess(state: QuestionnaireState) {
         showQuestionnaire(state.questions)
+
         if (state.showError) {
             errorPanel.visible()
             nestedScrollView.smoothScrollToAndThen(0, 0) {
@@ -122,6 +135,10 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
             }
         } else {
             errorPanel.gone()
+        }
+
+        if (state.showDialog) {
+            showNoSymptomsConfirmationDialog()
         }
     }
 
@@ -131,17 +148,7 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
         }
 
         textNoSymptoms.setOnClickListener {
-            AlertDialog.Builder(this)
-                .setTitle(R.string.questionnaire_discard_symptoms_dialog_title)
-                .setMessage(R.string.questionnaire_discard_symptoms_dialog_message)
-                .setNegativeButton(R.string.cancel) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .setPositiveButton(R.string.confirm) { _, _ ->
-                    finish()
-                    startActivity<NoSymptomsActivity>()
-                }
-                .show()
+            viewModel.onNoSymptomsClicked()
         }
 
         buttonReviewSymptoms.setOnClickListener {
@@ -153,23 +160,61 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
         loadingContainer.visible()
         errorStateContainer.gone()
         questionListContainer.gone()
+
+        val announcementText = loadingText.text
+        loadingContainer.announceForAccessibility(announcementText)
+        loadingContainer.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
     }
 
     private fun showErrorState() {
         errorStateContainer.visible()
         loadingContainer.gone()
         questionListContainer.gone()
+
+        val announcementText = "${textErrorTitle.text}. ${textErrorMessage.text}"
+        errorStateContainer.announceForAccessibility(announcementText)
+        errorStateContainer.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
     }
 
     private fun showQuestionnaire(questions: List<Question>) {
+        val questionnaireWasVisible = questionListContainer.isVisible
+
         questionListContainer.visible()
         loadingContainer.gone()
         errorStateContainer.gone()
         submitQuestions(questions)
+
+        if (!questionnaireWasVisible) {
+            questionListContainer.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+        }
     }
 
     private fun submitQuestions(questions: List<Question>) {
         questionnaireViewAdapter.submitList(questions)
+    }
+
+    private fun showNoSymptomsConfirmationDialog() {
+        // To ensure that we don't display the dialog multiple times, we dismiss the current one, if any
+        currentDialog?.let { dialog ->
+            dialog.setOnDismissListener { }
+            dialog.dismiss()
+        }
+
+        currentDialog = AlertDialog.Builder(this)
+            .setTitle(R.string.questionnaire_discard_symptoms_dialog_title)
+            .setMessage(R.string.questionnaire_discard_symptoms_dialog_message)
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(R.string.confirm) { _, _ ->
+                finish()
+                startActivity<NoSymptomsActivity>()
+            }
+            .setOnDismissListener {
+                currentDialog = null
+                viewModel.onDialogDismissed()
+            }
+            .show()
     }
 
     private fun setupAdapter() {
@@ -183,6 +228,15 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
                 questionsRecyclerView
             )
         questionsRecyclerView.adapter = questionnaireViewAdapter
+    }
+
+    override fun onDestroy() {
+        currentDialog?.setOnDismissListener { }
+        // To avoid leaking the window
+        currentDialog?.dismiss()
+        currentDialog = null
+
+        super.onDestroy()
     }
 
     companion object {

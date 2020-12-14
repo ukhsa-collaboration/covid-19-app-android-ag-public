@@ -9,15 +9,19 @@ import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BatteryOptimizationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityInformationRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PolicyUpdateRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PostCodeRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 
 class MainActivityFlowTest : EspressoTest() {
 
     private val policyUpdateRobot = PolicyUpdateRobot()
     private val localAuthorityInformationRobot = LocalAuthorityInformationRobot()
+    private val localAuthorityRobot = LocalAuthorityRobot()
     private val statusRobot = StatusRobot()
     private val batteryOptimizationRobot = BatteryOptimizationRobot()
+    private val postCodeRobot = PostCodeRobot()
 
     @After
     fun tearDown() {
@@ -79,6 +83,29 @@ class MainActivityFlowTest : EspressoTest() {
         testAppContext.setLocalAuthority("1")
 
         startTestActivity<MainActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    fun startingAppWithOnboardingCompletedAndPolicyAcceptedWithLocalAuthorityMappingMissing_shouldCompleteFlow() = notReported {
+        testAppContext.setOnboardingCompleted(true)
+        testAppContext.setPolicyUpdateAccepted(true)
+        testAppContext.setPostCode("BE22")
+
+        startTestActivity<MainActivity>()
+
+        waitFor { postCodeRobot.checkActivityIsDisplayed() }
+
+        postCodeRobot.enterPostCode("N12")
+
+        postCodeRobot.clickContinue()
+
+        localAuthorityRobot.checkActivityIsDisplayed()
+
+        waitFor { localAuthorityRobot.checkSingleAuthorityIsDisplayed("N12", "Barnet") }
+
+        localAuthorityRobot.clickConfirm()
 
         statusRobot.checkActivityIsDisplayed()
     }

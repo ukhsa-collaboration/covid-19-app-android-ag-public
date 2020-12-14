@@ -10,8 +10,7 @@
     <ScrollView
         style="@style/ScrollContainer"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:fillViewport="true">
 
         <LinearLayout
@@ -69,18 +68,22 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
                 android:visibility="gone" />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonRiskLevelLink"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:drawableEnd="@drawable/ic_link"
+                android:drawableTint="@color/background"
+                tools:text="@string/risk_level_link_text"
+                android:textAllCaps="false" />
         </LinearLayout>
     </ScrollView>
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonRiskLevelLink"
-        style="@style/PrimaryButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="@dimen/vertical_margin"
-        android:layout_marginBottom="@dimen/vertical_margin_large"
-        android:drawableEnd="@drawable/ic_link"
-        android:drawableTint="@color/background"
-        tools:text="@string/risk_level_link_text"
-        android:textAllCaps="false" />
 </LinearLayout>

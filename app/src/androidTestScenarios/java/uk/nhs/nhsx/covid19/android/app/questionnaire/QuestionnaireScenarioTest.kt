@@ -1,5 +1,10 @@
 package uk.nhs.nhsx.covid19.android.app.questionnaire
 
+import android.app.Activity
+import android.app.Instrumentation
+import android.content.Intent
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers
 import com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep
 import org.junit.Before
 import org.junit.Test
@@ -11,6 +16,8 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.FLOW
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
+import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
+import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
@@ -23,6 +30,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QuestionnaireRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ReviewSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 import java.time.Instant
 import java.time.LocalDate
 
@@ -190,16 +198,22 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
         questionnaireRobot.selectNoSymptoms()
 
-        sleep(100)
-
-        questionnaireRobot.discardSymptomsDialogIsDisplayed()
+        waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
 
         step(
             stepName = "Confirmation dialog",
             stepDescription = "The user does not select any symptoms and taps 'I don't have any of these symptoms'. A dialog is shown. The user taps 'remove'."
         )
 
-        questionnaireRobot.continueOnDiscardSymptomsDialog()
+        setScreenOrientation(LANDSCAPE)
+
+        waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
+
+        setScreenOrientation(PORTRAIT)
+
+        waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
+
+        waitFor { questionnaireRobot.continueOnDiscardSymptomsDialog() }
 
         noSymptomsRobot.confirmNoSymptomsScreenIsDisplayed()
 
@@ -233,6 +247,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
                 DurationDays(),
                 contactCase = ContactCase(
                     Instant.parse("2020-05-19T12:00:00Z"),
+                    null,
                     LocalDate.now().plusDays(5)
                 )
             )
@@ -374,6 +389,37 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
         questionnaireRobot.clickTryAgainButton()
 
-        questionnaireRobot.checkQuestionnaireIsDisplayed()
+        waitFor { questionnaireRobot.checkQuestionnaireIsDisplayed() }
+    }
+
+    @Test
+    fun successfullySelectSymptoms_ReviewAndCancel_NothingHappens() = notReported {
+        Intents.init()
+        val result = Instrumentation.ActivityResult(Activity.RESULT_CANCELED, Intent())
+        Intents.intending(IntentMatchers.hasComponent(ReviewSymptomsActivity::class.qualifiedName))
+            .respondWith(result)
+
+        startTestActivity<QuestionnaireActivity>()
+        questionnaireRobot.selectSymptomsAtPositions(0)
+        questionnaireRobot.reviewSymptoms()
+        Intents.release()
+    }
+
+    @Test
+    fun successfullySelectSymptoms_ReviewAndDoNotReturnData_NothingHappens() = notReported {
+        Intents.init()
+        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, null)
+        Intents.intending(IntentMatchers.hasComponent(ReviewSymptomsActivity::class.qualifiedName))
+            .respondWith(result)
+
+        startTestActivity<QuestionnaireActivity>()
+        questionnaireRobot.selectSymptomsAtPositions(0)
+        questionnaireRobot.reviewSymptoms()
+        Intents.release()
+    }
+
+    @Test
+    fun startReviewSymptomsActivityWithoutQuestions_NothingHappens() = notReported {
+        startTestActivity<ReviewSymptomsActivity>()
     }
 }

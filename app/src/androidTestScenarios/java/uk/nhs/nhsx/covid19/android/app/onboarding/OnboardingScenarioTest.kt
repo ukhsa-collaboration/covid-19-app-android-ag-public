@@ -296,7 +296,7 @@ class OnboardingScenarioTest : EspressoTest() {
 
         postCodeRobot.clickContinue()
 
-        postCodeRobot.checkErrorTitleIsDisplayed()
+        waitFor { postCodeRobot.checkErrorTitleIsDisplayed() }
 
         step(
             "Postcode invalid",
@@ -319,17 +319,6 @@ class OnboardingScenarioTest : EspressoTest() {
         postCodeRobot.clickContinue()
 
         permissionRobot.checkActivityIsDisplayed()
-    }
-
-    @Test
-    fun grantExposureNotificationPermissions_shouldEventuallyShowStatusScreen() = notReported {
-        startTestActivity<PermissionActivity>()
-
-        permissionRobot.checkActivityIsDisplayed()
-
-        permissionRobot.clickEnablePermissions()
-
-        statusRobot.checkActivityIsDisplayed()
     }
 
     @Test
@@ -358,6 +347,8 @@ class OnboardingScenarioTest : EspressoTest() {
         waitFor { postCodeRobot.checkContinueButtonIsDisplayed() }
 
         postCodeRobot.clickContinue()
+
+        waitFor { postCodeRobot.checkErrorTitleIsDisplayed() }
 
         waitFor { postCodeRobot.checkErrorContainerForNotSupportedPostCodeIsDisplayed() }
 

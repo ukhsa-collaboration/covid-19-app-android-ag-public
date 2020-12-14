@@ -10,6 +10,7 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import java.time.Clock
 import java.time.LocalDate
 import javax.inject.Inject
+import uk.nhs.nhsx.covid19.android.app.util.isBeforeOrEqual
 
 class DisplayStateExpirationNotification(
     private val isolationStateMachine: IsolationStateMachine,
@@ -53,6 +54,6 @@ class DisplayStateExpirationNotification(
 
     private fun isPast(expiryDate: LocalDate): Boolean {
         val today = LocalDate.now(clock)
-        return !expiryDate.isAfter(today)
+        return expiryDate.isBeforeOrEqual(today)
     }
 }

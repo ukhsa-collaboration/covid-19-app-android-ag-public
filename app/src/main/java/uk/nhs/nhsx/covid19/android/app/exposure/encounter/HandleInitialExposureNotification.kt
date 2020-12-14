@@ -33,7 +33,7 @@ class HandleInitialExposureNotification @Inject constructor(
                             daysSinceLastExposure = Instant.ofEpochMilli(riskyExposureInfo.startOfDayMillis)
                                 .until(Instant.now(), ChronoUnit.DAYS).toInt(),
                             matchedKeyCount = 1,
-                            riskCalculationVersion = riskManager.getRiskCalculationVersion()
+                            riskCalculationVersion = riskyExposureInfo.riskCalculationVersion
                         )
                     )
 
@@ -44,7 +44,7 @@ class HandleInitialExposureNotification @Inject constructor(
                 }
             } ?: run {
                 Timber.d("Not risky encounter with token: $token")
-                InitialCircuitBreakerResult.No
+                InitialCircuitBreakerResult.Skipped
             }
         }
 
@@ -52,5 +52,6 @@ class HandleInitialExposureNotification @Inject constructor(
         data class Yes(val exposureDate: Long) : InitialCircuitBreakerResult()
         object No : InitialCircuitBreakerResult()
         data class Pending(val exposureDate: Long) : InitialCircuitBreakerResult()
+        object Skipped : InitialCircuitBreakerResult()
     }
 }

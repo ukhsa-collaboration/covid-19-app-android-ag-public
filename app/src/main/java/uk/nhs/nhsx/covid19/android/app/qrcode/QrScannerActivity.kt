@@ -23,8 +23,6 @@ import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.util.forEach
 import androidx.core.util.isEmpty
 import androidx.lifecycle.Observer
@@ -46,6 +44,7 @@ import uk.nhs.nhsx.covid19.android.app.R.string
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.permissions.PermissionsManager
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.Scanning
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
@@ -57,6 +56,9 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
 
     @Inject
     lateinit var factory: ViewModelFactory<QrScannerViewModel>
+
+    @Inject
+    lateinit var permissionsManager: PermissionsManager
 
     private val viewModel: QrScannerViewModel by viewModels { factory }
 
@@ -174,11 +176,11 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
     }
 
     private fun requestCameraPermission() {
-        ActivityCompat.requestPermissions(this, arrayOf(CAMERA), CAMERA_PERMISSION_REQUEST_CODE)
+        permissionsManager.requestPermissions(this, arrayOf(CAMERA), CAMERA_PERMISSION_REQUEST_CODE)
     }
 
     private fun hasCameraPermission(): Boolean {
-        return ContextCompat.checkSelfPermission(this, CAMERA) == PERMISSION_GRANTED
+        return permissionsManager.checkSelfPermission(this, CAMERA) == PERMISSION_GRANTED
     }
 
     companion object {

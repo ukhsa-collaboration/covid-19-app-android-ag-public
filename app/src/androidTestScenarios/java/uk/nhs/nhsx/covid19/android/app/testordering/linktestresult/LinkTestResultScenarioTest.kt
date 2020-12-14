@@ -117,7 +117,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.clickContinue()
 
-        linkTestResultRobot.checkErrorIsDisplayed()
+        linkTestResultRobot.checkErrorInvalidTokenIsDisplayed()
     }
 
     @Test
@@ -140,12 +140,38 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.clickContinue()
 
-        linkTestResultRobot.checkErrorIsDisplayed()
+        linkTestResultRobot.checkErrorInvalidTokenIsDisplayed()
 
         step(
             stepName = "Invalid code",
             stepDescription = "An error message is displayed to the user"
         )
+    }
+
+    @Test
+    fun noConnection_showErrorMessage() = notReported {
+        startTestActivity<LinkTestResultActivity>()
+
+        linkTestResultRobot.checkActivityIsDisplayed()
+
+        linkTestResultRobot.enterCtaToken("n0c0-nneb")
+
+        linkTestResultRobot.clickContinue()
+
+        waitFor { linkTestResultRobot.checkErrorNoConnectionIsDisplayed() }
+    }
+
+    @Test
+    fun unexpectedError_showErrorMessage() = notReported {
+        startTestActivity<LinkTestResultActivity>()
+
+        linkTestResultRobot.checkActivityIsDisplayed()
+
+        linkTestResultRobot.enterCtaToken("nexp-ectn")
+
+        linkTestResultRobot.clickContinue()
+
+        waitFor { linkTestResultRobot.checkErrorUnexpectedIsDisplayed() }
     }
 
     private fun enterLinkTestResultFromStatusActivity() {

@@ -16,12 +16,12 @@
     <string name="post_code_rationale_title">Neden posta kodu bölgenizi bilmemiz gerekiyor?</string>
     <string name="postcode_entry_information_description_2">Endişelenmenize gerek yok. Posta kodu bölgeniz, konumunuzu takip etmek için kullanılmayacaktır.</string>
     <string name="post_code_invalid_title">Geçersiz posta kodu bölgesi kodu</string>
-    <string name="valid_post_code_is_required">Lütfen posta kodu bölge kodunuzu girin. Bu, bir posta kodunun ilk bölümüdür. Örneğin: E2, L36, PO30</string>
+    <string name="valid_post_code_is_required">Lütfen posta kodu bölge kodunuzu girin. Bu, bir posta kodunun ilk bölümüdür. Örneğin: E2, L36, PO30.</string>
     <string name="permission_title">Temas takip</string>
     <string name="exposure_notifications_rationale_title">Temas takip koronavirüsün (COVID-19) yayılmasını önlemeye yardımcı olmaktadır</string>
     <string name="onboarding_privacy_title">Gizliliğinizin korunması</string>
     <string name="onboarding_privacy_your_data_text2">Uygulamayı kullandığınızda toplumunuzun sağlıklı kalmasına yardımcı olacaksınız ve hayatlar kurtaracaksınız. Uygulamadan gelecek olan anonim bilgiler virüsün nerede olduğunu ve onu nasıl kontrol etmemiz gerektiğini bilmemize yardımcı olacaktır.</string>
-    <string name="onboarding_before_activating_app">Bu uygulamayı etkinleştirmeden önce lütfen Gizlilik Bildirimini okuyun ve Kullanım Şartlarını kabul edin.</string>
+    <string name="onboarding_before_activating_app">Bu uygulamayı etkinleştirmeden önce lütfen gizlilik bildirimini okuyun ve kullanım şartlarını kabul edin.</string>
     <string name="onboarding_no_thanks_announcement">Hayır, teşekkürler. Kabul etmiyorum</string>
     <string name="onboarding_privacy_control_title">Kontrol sizde</string>
     <string name="onboarding_privacy_your_data_title">Verileriniz</string>
@@ -33,10 +33,10 @@
     <string name="status_area_risk_level_low">DÜŞÜK</string>
     <string name="status_area_risk_level_medium">ORTA</string>
     <string name="status_area_risk_level_high">YÜKSEK</string>
-    <string name="low_risk_level_text">Düşük - yerel idareniz mevcut durumda bölgenizi \'düşük riskli\' olarak tanımlamaktadır; enfeksiyon seviyeleri ülkenin birçok diğer bölgesine benzerdir</string>
+    <string name="low_risk_level_text">Düşük - yerel idareniz mevcut durumda bölgenizi \'düşük riskli\' olarak tanımlamaktadır; enfeksiyon seviyeleri ülkenin birçok diğer bölgesine benzerdir.</string>
     <string name="medium_risk_level_text">Orta - yerel idareniz veya komşu bir yerel idare, yüksek veya artan enfeksiyon seviyelerine sahiptir. Lütfen ulusal yönergeleri takip edin.</string>
     <string name="high_risk_level_text">Yüksek - yerel idareniz veya komşunuz olan bir bölgenin idaresi, yerel bölgede enfeksiyon seviyelerinin yüksek olması nedeniyle enfeksiyon yayılımını azaltmak üzere İngiltere ve Galler geri kalanında uygulanandan daha fazla tedbir (ör. sokağa çıkma yasakları) uygulamaktadır. Ayrıntılı bir eylem planı uygulamaya konulmuştur ve ulusal çaplı destekle birlikte yerel kaynaklar artırılmaktadır.</string>
-    <string name="risk_level_title">Yerel COVID uyarı seviyesi</string>
+    <string name="risk_level_title">Bölgemde</string>
     <string name="qr_code_permission_denied_action">Kamera izinlerini etkinleştir</string>
     <string name="qr_code_permission_denied_subtitle">Bu uygulama, barlar ve restoranlar gibi yerlere giriş yapmak için kameranızı kullanır.\n\nResmi NHS QR kodunun taranması için lütfen kamera izinlerini etkinleştirin.</string>
     <string name="qr_code_unsupported_description">Lütfen giriş yapmanın başka bir yolunu bulun. Yardım için personelle görüşün.</string>
@@ -50,10 +50,10 @@
     <string name="qr_code_help_how_it_works_text">Bu uygulama, restoran veya barlar gibi ziyaret ettiğiniz yerlerde hızlı ve kolayca giriş yapabilmenize yardımcı olmak üzere resmi NHS QR kodlarını kullanmaktadır. Uygulamayı kullanmanız halinde, ziyaret ettiğiniz bir yerde virüse maruz kalma olasılığınızın olup olmadığını size bildirebiliriz.</string>
     <string name="qr_code_help_how_it_helps_title">Nasıl bir fayda sağlar?</string>
     <string name="qr_code_help_how_it_helps_text">Bu uygulama özelliği, işletmelerin temas takibini desteklemesini kolaylaştırır. Gizliliğinizi korurken hepimiz güvende tutar.</string>
-    <string name="venue_alert_title">Kısa  bir süre önce koronavirüse maruz kalmış olabileceğiniz bir yeri ziyaret ettiniz</string>
-    <string name="venue_alert_explanation">Dışarıda olduğunuz  bir süre içerisinde koronavirüse maruz kalmış olabileceğiniz konusunda sizi bilgilendirmek isteriz.\n\nEnfekte olmuş olma riskiniz düşük olsa da lütfen sosyal mesafe ile ilgili olarak son verilen tavsiyeleri izleyin.\n\nKoronavirüs belirtileriniz varsa derhal kendinizi karantinaya alın.  Bu hiçbir ziyaretçi olmadan evde kalmak anlamına gelir. Lütfen bu uygulama üzerindeki belirti kontrolörünü kullanın ve tavsiye edildiyse ücretsiz bir test rezervasyonu yaptırın, ya da herhangi bir sorunuz varsa 119’u arayın.\n\nSadece koronavirüs belirtileriniz varsa bir test yaptırın.</string>
-    <string name="notification_title_post_code_risk_changed">Bölgenizdeki risk seviyesinde bir değişiklik oldu.</string>
-    <string name="notification_title_test_results">Test sonuçlarınız hazır.</string>
+    <string name="venue_alert_title">Yakın zaman önce bir mekanı, koronavirüs (COVID-19) testi pozitif çıkan bazı kişilerle aynı gün içerisinde ziyaret ettiniz.</string>
+    <string name="venue_alert_explanation">Ziyaretiniz sırasında koronavirüsle enfekte olmuş olma riskiniz düşüktür. Sosyal mesafe konusundaki en son tavsiyelere uymaya devam etmelisiniz.\n\nKoronavirüs belirtileriniz varsa, derhal kendinizi karantinaya almalısınız. Bu, herhangi bir ziyaretçi kabul etmeden evde kalmanız gerektiği anlamına gelir. Uygulamada yer alan belirtilerinizi kontrol etme bölümünü kullanın ve tavsiye ediliyorsa ücretsiz bir test için rezervasyon yaptırın. Herhangi bir sorunuz varsa, 119\'u arayın. \n\nSadece koronavirüs belirtileriniz varsa bir test yaptırın.</string>
+    <string name="notification_title_post_code_risk_changed">Bölgenizde bir değişiklik oldu</string>
+    <string name="notification_title_test_results">Test sonuçlarınız hazır</string>
     <string name="select_symptoms">Belirtileri seç</string>
     <string name="loading">Yükleniyor…</string>
     <string name="test_ordering_failure_action">Tekrar deneyin</string>
@@ -84,7 +84,7 @@
     <string name="test_ordering_description_1">‘Hemen şimdi ücretsiz test rezervasyonu yaptırın\' seçeneğinin seçilmesi sizi bu uygulamadan devletin koronavirüs testi web sitesine yönlendirecektir.</string>
     <string name="test_ordering_description_2">Burada test yaptırmak için bazı kişisel bilgilerinizi (adresiniz gibi) girmeniz gerekecektir ancak uygulamaya ya da web sitesine girdiğiniz hiçbir bilgi paylaşılmayacaktır.</string>
     <string name="test_ordering_description_3">Uygulama ve web sitesi arasında yalnızca test sonuçlarınızın uygulamaya geri aktarılması için bir dijital \'jeton\' paylaşılır.</string>
-    <string name="test_ordering_description_4">Test sürecinde kullanılan tüm veriler Gizlilik Bildiriminde açıklanmaktadır:</string>
+    <string name="test_ordering_description_4">Test sürecinde kullanılan tüm veriler gizlilik bildiriminde açıklanmaktadır:</string>
     <string name="test_ordering_description_5">Bu uygulamanın verilerinizi nasıl kullandığını öğrenmek için şu adresi ziyaret edin:</string>
     <string name="test_ordering_description_6">Bu uygulamayı yalnızca kendiniz için test talep etmek amacıyla kullanabilirsiniz. Başka birisi için test talebinde bulunmak isterseniz, Devletin resmi koronavirüs testi web sitesini kullanın:</string>
     <string name="book_free_test_now">Kendiniz için bir test ayarlayın</string>
@@ -103,24 +103,24 @@
     <string name="about_my_data_symptoms_date">Tarih</string>
     <string name="about_positive">Pozitif</string>
     <string name="about_negative">Negatif</string>
-    <string name="about_delete_your_data_title">Verilerinizin silinmesi, uygulamayı sıfırlayacaktır.</string>
+    <string name="about_delete_your_data_title">Verilerinizin silinmesi, uygulamayı sıfırlayacaktır</string>
     <string name="delete_data_explanation">Bu uygulama aracılığıyla paylaştığınız tüm bilgiler yalnızca halk sağlığı amaçlı olarak kullanılacaktır. Siz \"Verileri sil\" seçeneğine tıkladığınızda, saklanan veriler kaldırılacaktır. Bu silme işlemi, her türlü etkin kişisel karantina döneminiz ile karantinada kalmanız için kalan süreyi içermektedir. Telefonunuzun verilerin diğer uygulama kullanıcılarını kaydetmek için topladığı veriler gibi bazı bilgileri saklamaya devam edeceğini lütfen dikkate alın. Bu veriler, uygulama değil, telefonunuzun işletim sistemi tarafından kontrol edilir. Silme işlemi sonrasında uygulamayı tekrar kullanmak istemeniz halinde, kurulumu yeniden yapmanız gerekecektir.</string>
     <string name="about_delete_positive_text">Verileri sil</string>
     <string name="url_privacy_notice">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_latest_advice">https://www.gov.uk/coronavirus</string>
     <string name="cancel">İptal</string>
     <string name="notification_action_exposure_reminder">Temas takibini aç</string>
-    <string name="notification_title_exposure_reminder">Temas takibini tekrar açma zamanı.</string>
+    <string name="notification_title_exposure_reminder">Temas takibini tekrar açma zamanı</string>
     <string name="resume_contact_tracing_title">Temas takibi şu anda kapalı</string>
     <string name="resume_contact_tracing_subtitle">Uygulamanın size temas takibini tekrar açmanızı ne zaman hatırlatacağını seçin</string>
     <string name="contact_tracing_notification_reminder_dialog_message">Temas takibinin kapatılması, uygulamanın etkinliğini etkileyecektir.</string>
     <string name="edit_postcode_district_title">Posta kodu bölgesini düzenle</string>
     <string name="onboarding_age_confirmation_title">16 yaş veya üstü müsünüz?</string>
     <string name="onboarding_age_confirmation_text">Bu uygulamayı kullanabilmek için 16 yaş ve üstünde olduğunuzu teyit etmelisiniz.</string>
-    <string name="onboarding_age_confirmation_positive">16 yaşın üstündeyim</string>
+    <string name="onboarding_age_confirmation_positive">16 yaşında ya da üstündeyim</string>
     <string name="onboarding_age_confirmation_negative">16 yaşından küçüğüm</string>
-    <string name="onboarding_age_restriction_title">İlgi gösterdiğiniz için teşekkür ederiz. Ne yazık ki bu uygulamayı kullanamazsınız. Bu uygulama yalnızca 16 yaşında veya daha büyük olan kişiler tarafından kullanılabilir.</string>
-    <string name="onboarding_age_restriction_text">Bu uygulama yalnızca 16 yaş ve üstü olan kişiler içindir.</string>
+    <string name="onboarding_age_restriction_title">Ne yazık ki bu uygulamayı kullanamazsınız. Bu uygulama yalnızca 16 yaşında veya daha büyük olan kişiler tarafından kullanılabilir.</string>
+    <string name="onboarding_age_restriction_text">İlgi gösterdiğiniz için teşekkür ederiz. Bu uygulama yalnızca 16 yaş ve üstü olan kişiler içindir.</string>
     <string name="url_terms_of_use">https://covid19.nhs.uk/terms-of-use-turkish.html</string>
     <string name="url_nhs_tablet_device">https://faq.covid19.nhs.uk/article/KA-01220/en-us</string>
     <string name="url_nhs_111_online">https://111.nhs.uk/</string>
@@ -134,8 +134,8 @@
         <item quantity="other">%1$d gün</item>
     </plurals>
     <plurals name="isolation_days_to_go" tools:ignore="MissingQuantity">
-        <item quantity="one">Kalan gün</item>
-        <item quantity="other">Kalan günler</item>
+        <item quantity="one">kalan gün</item>
+        <item quantity="other">kalan günler</item>
     </plurals>
     <plurals name="isolation_view_accessibility_description" tools:ignore="MissingQuantity">
         <item quantity="one">Kişisel karantinanızın sona ereceği zaman: %1$s, 23:59. Bu tarihe kadar daha %2$s gün var.</item>
@@ -150,17 +150,17 @@
     <string name="close">Kapat</string>
     <string name="go_back">Geri git</string>
     <string name="remove">Kaldır</string>
-    <string name="empty" translatable="false" />
-    <string name="onboarding_exposure_notifications_description">Eğer koronavirüs testi pozitif çıkmış olan birisi ile yakın bir temasınız olmuş ise, uygulama size bir uyarı gönderecektir.\n\nBu uygulamada Temas Takip olanağını etkinleştirmek için şunlara izin vermeniz gerekmektedir: Maruz Kalma Bildirimleri.\n\nEğer fikrinizi değiştirirseniz, ayarlardan izinlerinizi istediğiniz zaman değiştirebilirsiniz.</string>
-    <string name="privacy_notice">Gizlilik Bildirimi</string>
+    <string name="empty" translatable="false"/>
+    <string name="onboarding_exposure_notifications_description">Eğer koronavirüs testi pozitif çıkmış olan birisi ile yakın bir temasınız olmuş ise, uygulama size bir uyarı gönderecektir.\n\nBu uygulamada temas takip olanağını etkinleştirmek için şunlara izin vermeniz gerekmektedir: Maruz Kalma Bildirimleri.\n\nEğer fikrinizi değiştirirseniz, ayarlardan izinlerinizi istediğiniz zaman değiştirebilirsiniz.</string>
+    <string name="privacy_notice">Gizlilik bildirimi</string>
     <string name="tablet_information_url">Tabletlerin kullanılmasıyla ilgili bilgiler</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
     <string name="post_code_rationale">Posta kodu bölgesi, farklı bölgelerde koronavirüsün yayılması hakkında bilgi edinmemize yardımcı olur. Bu, bulunduğunuz bölge için mümkün olan en iyi halk sağlığı tavsiyelerini size iletmemizi mümkün kılar.\n\nEndişelenmeyin. Posta kodu bölgeniz, konumunuzu takip etmek için kullanılmayacaktır.</string>
-    <string name="enable_bluetooth_rationale">Bu uygulama, bu uygulamanın yüklü olduğu başka bir telefonun yakınında olduğunu bilmek için Bluetooth kullanır. Bluetooth’u kapattıysanız, bu uygulama çalışmayacaktır.\n\nBu uygulama ‘Bluetooth Düşük Enerji’ kullanmaktadır - bir pil tasarrufu teknolojisi.\n\nLütfen ayarlara gidin ve Bluetooth’u açın</string>
+    <string name="enable_bluetooth_rationale">Bu uygulama, bu uygulamanın yüklü olduğu başka bir telefonun yakınında olduğunu bilmek için Bluetooth kullanır. Bluetooth’u kapattıysanız, bu uygulama çalışmayacaktır.\n\nBu uygulama ‘Bluetooth Düşük Enerji’ kullanmaktadır - bir pil tasarrufu teknolojisi.\n\nLütfen ayarlara gidin ve Bluetooth’u açın.</string>
     <string name="enable_bluetooth_error_hint">Lütfen cihaz ayarlarınızda Bluetooth özelliğini etkinleştirin.</string>
-    <string name="go_to_your_settings">Ayarlarınıza Gidin</string>
+    <string name="go_to_your_settings">Ayarlarınıza gidin</string>
     <string name="enable_location_service_title">Telefonunuzda konum hizmetlerini etkinleştirmeniz gerekmektedir</string>
-    <string name="enable_location_service_rationale">Bluetooth\'un çalışması için telefonunuzda konum hizmetlerini açmanız gerekmektedir.\n\nBu uygulama sizi takip etmek için Bluetooth özelliğini veya konumunuzu kullanmaz. Kimliğiniz her zaman korunacaktır.\n\nTelefonunuzda konum hizmetlerini etkinleştirmemeniz halinde, bu uygulama çalışmayacaktır.\n\nBu uygulamanın çalışması için lütfen Ayarlar kısmına gidin ve konum hizmetlerini etkinleştirin.</string>
+    <string name="enable_location_service_rationale">Bluetooth\'un çalışması için telefonunuzda konum hizmetlerini açmanız gerekmektedir.\n\nBu uygulama sizi takip etmek için Bluetooth özelliğini veya konumunuzu kullanmaz. Kimliğiniz her zaman korunacaktır.\n\nTelefonunuzda konum hizmetlerini etkinleştirmemeniz halinde, bu uygulama çalışmayacaktır.\n\nBu uygulamanın çalışması için lütfen ayarlar kısmına gidin ve konum hizmetlerini etkinleştirin.</string>
     <string name="post_code_example">Bu uygulamayı kullanmak için İngiltere veya Galler posta kodu girin.\n\nÖrnekler: Posta kodunuz CE1B 2PQ iste lütfen \"CE1B\" yazın. CR0 3RL ise lütfen \"CR0\" yazın. L4 0RE ise lütfen \"L4\" yazın.</string>
     <string name="tablet_support_title">Bu uygulama, mobil akıllı telefonlar için geliştirilmiştir</string>
     <string name="tablet_support_description">Cihazınızın tablet olduğu görülüyor. Bu uygulama yalnızca dışarı çıktığınız her zaman yanınızda bulunan bir cihaz üzerinde kullanılması halinde etki göstereceğinden yalnızca akıllı telefonlar için sunulmaktadır. Lütfen uygulamayı akıllı telefonunuza yükleyin.</string>
@@ -168,7 +168,7 @@
     <string name="test_ordering_app_privacy_notice">Uygulama gizlilik bildirimi</string>
     <string name="test_ordering_book_test_for_someone_else">Başkası için test rezervasyonu yaptırın</string>
     <string name="error_title">Bir sorun var</string>
-    <string name="enable_exposure_notifications_title">Uygulamanın çalışması için cihazınızda gerekli izinlere izin vermelisiniz</string>
+    <string name="enable_exposure_notifications_title">Bu uygulamanın çalışması için \'Maruz Kalma Bildirimleri\'ne izin vermelisiniz</string>
     <string name="enable_exposure_notifications_rationale">Bu uygulama, pozitif bir koronavirüs test sonucu bildirmiş olan diğer uygulama kullanıcıları ile yakın temasınız olmuş olup olmadığını size bildirmek için ‘Maruz Kalma Bildirimleri’ olanağını kullanmaktadır.\n\nTelefonunuzda bunlar ‘Maruz Kalma Bildirimleri’ ya da ‘Maruz Kalma Günlüğü’ olarak görülebilir.</string>
     <string name="enable_exposure_notifications">Maruz kalma bildirimlerini etkinleştir</string>
     <string name="scan_qr_code_to_check_in">Bir resmi NHS QR kodunu tarayarak bir mekana giriş yapın</string>
@@ -177,7 +177,7 @@
     <string name="something_went_wrong">Bir sorun yaşandı</string>
     <string name="test_ordering_failure_title">Bir sorun yaşandı</string>
     <string name="test_ordering_failure_description">Tekrar denemeden önce lütfen telefonunuzun mobil veri ayarlarının açık olduğunu teyit edin, Wi-Fi bağlantınızı kontrol edin (kullanıyorsanız) ve Uçak Modunun kapalı olduğundan emin olun.</string>
-    <string name="notification_title_risky_venue">Yakın zamanda ziyaret etmiş olduğunuz bir yerde koronavirüse maruz kalmış olabilirsiniz.</string>
+    <string name="notification_title_risky_venue">Yakın zaman önce bir mekanı, koronavirüs (COVID-19) testi pozitif çıkan bazı kişilerle aynı gün içerisinde ziyaret ettiniz.</string>
     <string name="notification_text_post_code_risk_changed">Daha fazla ayrıntı için buraya dokunun.</string>
     <string name="status_area_risk_level">%s bölgesinde risk seviyesi: %s</string>
     <string name="notification_channel_area_risk_changed_name">Bölge risk seviyesinde değişiklik</string>
@@ -191,13 +191,13 @@
     <string name="notification_channel_app_configuration_name">Uygulama yapılandırması</string>
     <string name="notification_channel_app_configuration_description">Bu bildirimler size uygulama yapılandırması hakkında bilgi verir</string>
     <string name="notification_title_state_expiration">Size yönelik olarak sunulan rehberlikte bir değişiklik oldu</string>
-    <string name="notification_text_state_expiration">Ayrıntıları görüntülemek için dokunun.</string>
-    <string name="notification_title_state_exposure">Uygulama, koronavirüsle enfekte olmuş bir kişi ile temasta bulunduğunuzu tespit etti. Kendinizi ve diğer kişileri güvende tutmak için lütfen evde kalın ve kendinizi karantina altına alın.</string>
+    <string name="notification_text_state_expiration">Ayrıntıları görüntülemek için dokunun</string>
+    <string name="notification_title_state_exposure">Uygulama, koronavirüsle enfekte olmuş bir kişi ile temasta bulunduğunuzu tespit etti. Kendinizi ve diğer kişileri güvende tutmak için lütfen evde kalın ve kendinizi karantina altına alın</string>
     <string name="notification_text_state_exposure">Daha fazla ayrıntı için buraya dokunun.</string>
-    <string name="notification_text_test_results">Ayrıntıları görüntülemek için dokunun.</string>
+    <string name="notification_text_test_results">Ayrıntıları görüntülemek için dokunun</string>
     <string name="notification_title_app_available">Uygulama kullanılabilir</string>
     <string name="notification_title_app_not_available">Uygulama şu anda kullanılamaz</string>
-    <string name="notification_text_app_availability">Ayrıntıları görüntülemek için dokunun.</string>
+    <string name="notification_text_app_availability">Ayrıntıları görüntülemek için dokunun</string>
     <string name="qr_code_permission_denied_title">Bir resmi NHS QR kodunu tarayarak bir mekana giriş yapın</string>
     <string name="book_free_test">Ücretsiz test rezervasyonu yaptırın</string>
     <string name="status_option_scan_qr_codes">Mekanlara giriş yapma</string>
@@ -207,15 +207,15 @@
     <string name="questionnaire_description">Bu belirtilerden herhangi birini sergilemiyorsanız şu anda yapmanız gereken herhangi bir şey bulunmamaktadır. Bu belirtilerden herhangi birini geliştirirseniz, bu uygulamadan bunları işaretleyerek vakit geçirmeden ücretsiz test talebinde bulunun.</string>
     <string name="questionnaire_error_description">Tekrar denemeden önce lütfen telefonunuzun mobil veri ayarlarının açık olduğunu teyit edin, Wi-Fi bağlantınızı kontrol edin (kullanıyorsanız) ve Uçak Modunun kapalı olduğundan emin olun.</string>
     <string name="questionnaire_no_symptoms">Bu belirtilerden herhangi biri bende yok</string>
-    <string name="notification_text_risky_venue">Ayrıntıları görüntülemek için dokunun.</string>
+    <string name="notification_text_risky_venue">Ayrıntıları görüntülemek için dokunun</string>
     <string name="message_no_coronavirus_symptoms">Bu belirtilerden herhangi birini geliştirirseniz, bu uygulamadan bunları bildirerek ücretsiz test talebinde bulunun. Sadece koronavirüs belirtileriniz varsa bir test yaptırın.\n\nDaha fazla bilgi için iletişim bilgileri:</string>
     <string name="questionnaire_change_announcement">%1$s belirtisini değiştir</string>
     <string name="state_index_take_coronavirus_test">Ücretsiz bir koronavirüs testi yaptırın</string>
-    <string name="state_test_negative_info">Koronavirüs test sonucunuz negatif ancak yine de belirti geliştirmeniz mümkün. Dolayısıyla karantinada kalmalısınız.</string>
+    <string name="state_test_negative_info">Koronavirüs test sonucunuz negatif ancak yine de belirti geliştirmeniz mümkün. Dolayısıyla karantinada kalmalısınız</string>
     <string name="test_result_negative_continue_self_isolate_explanation">Test sonucunuz testin yapıldığı anda sizde virüs olmadığını göstermektedir. E-posta, SMS mesajı ya da telefon yoluyla size daha fazla bilgi gönderildi. Eğer 18 yaşın altındaysanız bu mesajı  güvendiğiniz bir yetişkine göstermeniz tavsiye edilir.</string>
     <string name="isolation_until_date">şu zamana kadar: %1$s, 23:59</string>
     <string name="questionnaire_review_one_of_two">Adım 1 / 2</string>
-    <string name="expiration_notification_title">İyi haberlerimiz var</string>
+    <string name="expiration_notification_title">İyi haberlerimiz var!</string>
     <string name="expiration_notification_description_passed">%s, 23:59 itibarıyla kişisel karantina süreniz doldu</string>
     <string name="expiration_notification_recommendation">Daha fazla bilgi için iletişim bilgileri:</string>
     <string name="expiration_temperature_hint">Ancak ateşiniz yüksekse, normale dönene kadar kişisel karantinanıza devam edin</string>
@@ -223,7 +223,7 @@
     <string name="terms_of_use_onboarding">Kullanım şartları</string>
     <string name="about_common_questions_title">Sık sorulan sorular</string>
     <string name="about_common_questions_link">Sık sorulan sorular</string>
-    <string name="about_accessibility_statement">Erişilebilirlik Beyanı</string>
+    <string name="about_accessibility_statement">Erişilebilirlik beyanı</string>
     <string name="test_result_no_self_isolation_description">Ancak ateşiniz yüksekse, normale dönene kadar kişisel karantinanıza devam edin</string>
     <string name="for_further_advice_visit">Daha fazla bilgi için iletişim bilgileri:</string>
     <string name="test_result_positive_continue_self_isolation_title_1">Kişisel karantinaya devam edilecek süre:</string>
@@ -265,7 +265,7 @@
     <string name="delete_single_venue_visit_text">Bir mekanın kaldırılması, temas takibinin etkinliğini azaltacaktır.\n\nSilindikten sonra bu mekan hakkında uyarı almayacaksınız.</string>
     <string name="confirm">Onayla</string>
     <string name="delete_button_text">Sil</string>
-    <string name="contact_tracing_notification_reminder_dialog_title">Temas takibini %1$s saat içinde yeniden açmak için hatırlatma ayarlama.</string>
+    <string name="contact_tracing_notification_reminder_dialog_title">Temas takibini %1$s saat içinde yeniden açmak için hatırlatma ayarlama</string>
     <string name="okay">Tamam</string>
     <string name="template_hours">%d saat</string>
     <string name="resume_contact_tracing_don_t_remind_me">Bana hatırlatma</string>
@@ -326,7 +326,7 @@
     <string name="logo_nhs_england_description">NHS Test ve Takip</string>
     <string name="logo_nhs_generic_description">NHS Covid 19</string>
     <string name="logo_nhs_wales_description">NHS Galler Test Takip Koru</string>
-    <string name="low_risk_level_text_wls">Düşük - yerel idareniz mevcut durumda bölgenizi \'düşük riskli\' olarak tanımlamaktadır; enfeksiyon seviyeleri ülkenin birçok diğer bölgesine benzerdir</string>
+    <string name="low_risk_level_text_wls">Düşük - yerel idareniz mevcut durumda bölgenizi \'düşük riskli\' olarak tanımlamaktadır; enfeksiyon seviyeleri ülkenin birçok diğer bölgesine benzerdir.</string>
     <string name="medium_risk_level_text_wls">Orta - yerel idareniz veya komşu bir yerel idare, yüksek veya artan enfeksiyon seviyelerine sahiptir. Lütfen ulusal yönergeleri takip edin.</string>
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
     <string name="notification_channel_background_work_name">Background activities</string>
@@ -337,7 +337,7 @@
     <string name="qr_code_help_poster_title_welsh">Galce NHS QR kodu posteri:</string>
     <string name="questionnaire_no_i_dont_have_symptom">Hayır bende %s yok</string>
     <string name="questionnaire_yes_i_have_symptom">Evet bende %s var</string>
-    <string name="state_test_positive_then_negative_info">Koronavirüs test sonucunuz negatif çıkmıştır.  Ancak, daha önce bir testinizin sonucu pozitif çıktıysa, kendinizi karantinada tutmaya devam etmelisiniz.</string>
+    <string name="state_test_positive_then_negative_info">Koronavirüs test sonucunuz negatif çıkmıştır.  Ancak, daha önce bir testinizin sonucu pozitif çıktıysa, kendinizi karantinada tutmaya devam etmelisiniz</string>
     <string name="status_area_risk_level_high_wls">YÜKSEK</string>
     <string name="status_area_risk_level_low_wls">DÜŞÜK</string>
     <string name="status_area_risk_level_medium_wls">ORTA</string>
@@ -359,7 +359,7 @@
     <string name="ask_me_later">Daha sonra sor</string>
     <string name="notification_channel_recommended_app_update_name">Tavsiye edilen uygulama güncellemeleri</string>
     <string name="notification_channel_recommended_app_update_name_description">Bu bildirimler size tavsiye edilen uygulama güncellemeleri hakkında bilgi verir</string>
-    <string name="notification_text_recommended_app_update">Ayrıntıları görüntülemek için dokunun.</string>
+    <string name="notification_text_recommended_app_update">Ayrıntıları görüntülemek için dokunun</string>
     <string name="notification_title_recommended_app_update">Lütfen NHS COVID-19 uygulamanızı en son sürüme güncelleyin</string>
     <string name="test_ordering_getting_tested_description">Kendiniz için bir test randevusu alın\' seçeneğini seçmeniz, sizi, test yaptırabilmeniz için bazı kişisel bilgilerinizi (adresiniz gibi) girmenizin isteneceği, hükümetin koronavirüs testi web sitesine götürecektir. Web sitesine girdiğiniz hiçbir bilgi paylaşılmayacaktır.\n\nSonuçlarınızı uygulamaya geri getirmemize yardımcı olması için dijital bir \"jeton\" oluşturulacaktır.</string>
     <string name="update_in_play_store">Uygulamanızı şimdi güncelleyin</string>
@@ -384,6 +384,25 @@
     <string name="test_result_positive_continue_self_isolate_explanation_2">Endişelenmeyin; çoğu kişi hastalığı hafif belirtilerle atlatmaktadır. Ancak belirtilerinizde kötüleşme olursa daha fazla tavsiye için 111 numarasını aramalı ya da nhs.uk adresini ziyaret etmelisiniz.</string>
     <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/article/KA-01337</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
-    <string name="local_authority_error_authority_not_supported_title">Devam etmek için bir yerel yönetim seçmeniz gerekiyor</string>
-    <string name="local_authority_information_description">Lütfen bir yerel yönetim seçin. Bu, uygulamanın size daha doğru bilgi ve yönerge sağlaması içindir.</string>
+<string name="local_authority_error_authority_not_supported_title">Devam etmek için bir yerel yönetim seçmeniz gerekiyor</string>
+<string name="local_authority_information_description">Lütfen bir yerel yönetim seçin. Bu, uygulamanın size daha doğru bilgi ve yönerge sağlaması içindir.</string>
+<string name="about_encounter_date">TEMAS TARİHİ</string>
+<string name="about_my_data_date">Tarih</string>
+<string name="about_notification_date">Bildirim tarihi</string>
+<string name="isolation_payment_action_button">Uygunluğunuzu kontrol ediniz</string>
+<string name="isolation_payment_heading">Finansal destek</string>
+<string name="isolation_payment_help_england_link_text">Test ve Takip Destek Ödemesi\'ne başvurmak için yardım</string>
+<string name="isolation_payment_help_england_link_url">https://sip.test-and-trace.nhs.uk/help-support</string>
+<string name="isolation_payment_help_england_title">İngiltere\'de yaşıyorsanız ve başvurmada zorluk çekiyorsanız, şu adresi ziyarete edin:</string>
+<string name="isolation_payment_help_wales_link_text">Kişisel Karantina Destek Programı\'na başvurmak için yardım</string>
+<string name="isolation_payment_help_wales_link_url">https://gov.wales/self-isolation-support-scheme</string>
+<string name="isolation_payment_help_wales_title">Galler\'de yaşıyorsanız ve başvurmada zorluk çekiyorsanız, şu adresi ziyarete edin:</string>
+<string name="isolation_payment_privacy_notice_link_text">Temas takip gizlilik bildirimi</string>
+<string name="isolation_payment_privacy_notice_link_url">https://sip.test-and-trace.nhs.uk/privacy-policy</string>
+<string name="isolation_payment_privacy_notice_title">Başvuru sürecinde kullanılan bütün veriler gizlilik bildiriminde tanımlanmıştır:</string>
+<string name="isolation_payment_text">Uygulama, koronavirüs testinin sonucu pozitif olarak teyit edilmiş birisiyle temas ettiğinizi belirlemiştir. Kendinizi karantinaya almanız tavsiye edilmektedir.\n\nKarantinada bulunduğunuz süre içerisinde koşullarınıza bağlı olarak finansal destek talep etmeniz mümkün olabilir. Finansal desteğe başvuru için uygunluğunuzu aşağıdaki butona tıklayarak en kısa zamanda kontrol ediniz.\n\nBu buton sizi, kişisel bilgilerinizi girmenizin gerekebileceği bir web sitesine yönlendirecektir. Bu kişisel bilgiler uygulamanın hiçbir bölümünde saklanmayacaktır.</string>
+<string name="onboarding_before_activating_app_announcement">Önemli: Bu uygulamayı etkinleştirmeden önce lütfen gizlilik bildirimini okuyun ve kullanım şartlarını kabul edin.</string>
+<string name="status_option_isolation_payment">Finansal destek</string>
+<string name="title_exposure_notification">Maruz kalma bildirimi</string>
+<string name="title_last_day_of_isolation">Kişisel karantinanın son günü</string>
 </resources>

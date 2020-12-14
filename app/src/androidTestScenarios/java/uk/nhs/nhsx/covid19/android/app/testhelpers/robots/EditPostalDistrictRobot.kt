@@ -22,8 +22,12 @@ class EditPostalDistrictRobot {
         clickOn(R.id.continuePostCode)
     }
 
+    fun checkErrorTitleForNotSupportedPostCodeIsDisplayed() {
+        assertDisplayed(R.id.errorTextTitle, R.string.post_code_invalid_title)
+    }
+
     fun checkErrorContainerForNotSupportedPostCodeIsDisplayed() {
-        assertDisplayed(R.id.errorTextTitle, R.string.postcode_not_supported)
+        assertDisplayed(R.id.errorText, R.string.postcode_not_supported)
     }
 
     fun checkInvalidPostDistrictErrorIsDisplayed() {

@@ -11,13 +11,20 @@ import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandleInitialExposureNotification.InitialCircuitBreakerResult
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandleInitialExposureNotification.InitialCircuitBreakerResult.No
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandleInitialExposureNotification.InitialCircuitBreakerResult.Pending
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandleInitialExposureNotification.InitialCircuitBreakerResult.Skipped
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandleInitialExposureNotification.InitialCircuitBreakerResult.Yes
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandlePollingExposureNotification.PollingCircuitBreakerResult
+import uk.nhs.nhsx.covid19.android.app.remote.EmptyApi
+import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionRequest
+import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.CIRCUIT_BREAKER
+import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnExposedNotification
+import uk.nhs.nhsx.covid19.android.app.testordering.SubmitFakeExposureWindows
 import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Provider
+import uk.nhs.nhsx.covid19.android.app.payment.CheckIsolationPaymentToken
 
 class ExposureNotificationWork @Inject constructor(
     private val exposureNotificationTokensProvider: ExposureNotificationTokensProvider,
@@ -25,10 +32,19 @@ class ExposureNotificationWork @Inject constructor(
     private val handlePollingExposureNotification: HandlePollingExposureNotification,
     private val stateMachine: IsolationStateMachine,
     private val potentialExposureExplanationHandler: Provider<PotentialExposureExplanationHandler>,
-    private val exposureNotificationApi: ExposureNotificationApi
+    private val exposureNotificationApi: ExposureNotificationApi,
+    private val emptyApi: EmptyApi,
+    private val submitFakeExposureWindows: SubmitFakeExposureWindows,
+    private val checkIsolationPaymentToken: CheckIsolationPaymentToken
 ) {
 
-    suspend operator fun invoke(tokenToCheck: String? = null): Result<Unit> =
+    suspend fun handleNoMatchesFound(): Result<Unit> {
+        submitEmptyCircuitBreaker()
+        submitEmptyExposureWindows()
+        return Success(Unit)
+    }
+
+    suspend fun handleMatchesFound(tokenToCheck: String? = null): Result<Unit> =
         withContext(Dispatchers.IO) {
             val potentialExposureExplanationHandler = potentialExposureExplanationHandler.get()
             var checkingInitial = false
@@ -58,6 +74,9 @@ class ExposureNotificationWork @Inject constructor(
                 }
             }
                 .apply {
+                    checkIsolationPaymentToken()
+                }
+                .apply {
                     if (isLegacyExposureNotificationApiVersion()) {
                         if (this is Failure && checkingInitial) {
                             potentialExposureExplanationHandler.addResult(result = this)
@@ -71,7 +90,7 @@ class ExposureNotificationWork @Inject constructor(
         token: String,
         potentialExposureExplanationHandler: PotentialExposureExplanationHandler
     ) {
-        val result = handleInitialExposureNotification.invoke(token)
+        val result = handleInitialExposureNotification(token)
         Timber.d("Handle initial circuit breaker result: $result for token $token")
         handleInitialResult(result, token)
         if (isLegacyExposureNotificationApiVersion()) {
@@ -79,7 +98,7 @@ class ExposureNotificationWork @Inject constructor(
         }
     }
 
-    private fun handleInitialResult(
+    private suspend fun handleInitialResult(
         result: Result<InitialCircuitBreakerResult>,
         token: String
     ) {
@@ -91,8 +110,28 @@ class ExposureNotificationWork @Inject constructor(
                     token,
                     result.value.exposureDate
                 )
+                Skipped -> {
+                    clearToken(token)
+                    submitEmptyCircuitBreaker()
+                }
             }
             is Failure -> Timber.e(result.throwable)
+        }
+    }
+
+    private suspend fun submitEmptyCircuitBreaker() {
+        withContext(Dispatchers.IO) {
+            runSafely {
+                emptyApi.submit(EmptySubmissionRequest(CIRCUIT_BREAKER))
+            }
+        }
+    }
+
+    private suspend fun submitEmptyExposureWindows() {
+        withContext(Dispatchers.IO) {
+            runSafely {
+                submitFakeExposureWindows(EXPOSURE_WINDOW, 0)
+            }
         }
     }
 

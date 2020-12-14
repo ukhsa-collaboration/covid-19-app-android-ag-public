@@ -6,12 +6,14 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
+import javax.inject.Inject
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.BatteryOptimizationNotAcknowledged
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.Completed
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.ExposureNotificationsNotAvailable
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.LocalAuthorityMissing
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.OnboardingStarted
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.PolicyUpdated
+import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.PostCodeToLocalAuthorityMissing
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.TabletNotSupported
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
@@ -20,8 +22,8 @@ import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.edgecases.TabletNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.WelcomeActivity
+import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
-import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,6 +42,7 @@ class MainActivity : AppCompatActivity() {
                 TabletNotSupported -> TabletNotSupportedActivity.start(this)
                 OnboardingStarted -> WelcomeActivity.start(this)
                 PolicyUpdated -> PolicyUpdateActivity.start(this)
+                PostCodeToLocalAuthorityMissing -> PostCodeActivity.start(this, missingLocalAuthorityMapping = true)
                 LocalAuthorityMissing -> startActivity<LocalAuthorityInformationActivity>()
                 Completed -> StatusActivity.start(this)
                 ExposureNotificationsNotAvailable -> startActivity<DeviceNotSupportedActivity>()

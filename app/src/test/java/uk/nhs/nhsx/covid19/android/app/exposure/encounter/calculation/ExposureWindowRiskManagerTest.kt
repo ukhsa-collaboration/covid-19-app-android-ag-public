@@ -30,7 +30,7 @@ class ExposureWindowRiskManagerTest {
     private val riskCalculator = mockk<ExposureWindowRiskCalculator>()
 
     private val token = "some-token"
-    private val expectedRisk = DayRisk(startOfDayMillis = 0, calculatedRisk = 0.0)
+    private val expectedRisk = DayRisk(startOfDayMillis = 0, calculatedRisk = 0.0, riskCalculationVersion = 2)
     private val expectedExposureWindows = listOf(mockk<ExposureWindow>())
     private val v2RiskCalculation = V2RiskCalculation(
         daysSinceOnsetToInfectiousness = listOf(

@@ -13,11 +13,13 @@ import uk.nhs.nhsx.covid19.android.app.R
 class StatusRobot {
 
     fun checkActivityIsDisplayed() {
-        onView(withId(R.id.statusContainer)).check(matches(isDisplayed()))
+        onView(withId(R.id.statusContainer))
+            .check(matches(isDisplayed()))
     }
 
     fun checkReportSymptomsIsNotDisplayed() {
-        onView(withId(R.id.optionReportSymptoms)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.optionReportSymptoms))
+            .check(matches(not(isDisplayed())))
     }
 
     fun clickAreaRiskView() {
@@ -25,7 +27,8 @@ class StatusRobot {
     }
 
     fun checkAreaRiskViewIsDisplayed() {
-        onView(withId(R.id.riskAreaView)).check(matches(isDisplayed()))
+        onView(withId(R.id.riskAreaView))
+            .check(matches(isDisplayed()))
     }
 
     fun clickVenueCheckIn() {
@@ -38,6 +41,10 @@ class StatusRobot {
 
     fun clickOrderTest() {
         clickOn(R.id.optionOrderTest)
+    }
+
+    fun clickFinancialSupport() {
+        clickOn(R.id.optionIsolationPayment)
     }
 
     fun clickLinkTestResult() {
@@ -53,15 +60,18 @@ class StatusRobot {
     }
 
     fun checkScanQrCodeOptionIsNotDisplayed() {
-        onView(withId(R.id.optionVenueCheckIn)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.optionVenueCheckIn))
+            .check(matches(not(isDisplayed())))
     }
 
     fun checkIsolationViewIsDisplayed() {
-        onView(withId(R.id.isolationView)).check(matches(isDisplayed()))
+        onView(withId(R.id.isolationView))
+            .check(matches(isDisplayed()))
     }
 
     fun checkIsolationViewIsNotDisplayed() {
-        onView(withId(R.id.isolationView)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.isolationView))
+            .check(matches(not(isDisplayed())))
     }
 
     fun checkEncounterDetectionSwitchIsChecked() {
@@ -70,5 +80,20 @@ class StatusRobot {
 
     fun checkEncounterDetectionSwitchIsNotChecked() {
         assertUnchecked(R.id.encounterDetectionSwitch)
+    }
+
+    fun checkIsolationPaymentButtonIsDisplayed() {
+        onView(withId(R.id.optionIsolationPayment))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkIsolationPaymentButtonIsNotDisplayed() {
+        onView(withId(R.id.optionIsolationPayment))
+            .check(matches(not(isDisplayed())))
+    }
+
+    fun checkErrorIsDisplayed() {
+        onView(withId(com.google.android.material.R.id.snackbar_text))
+            .check(matches(isDisplayed()))
     }
 }

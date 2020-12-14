@@ -72,7 +72,7 @@ class StateStorageTest {
                 previousIsolation = Isolation(
                     startDate,
                     durationDays,
-                    contactCase = ContactCase(startDate, expiryDate)
+                    contactCase = ContactCase(startDate, null, expiryDate)
                 )
             ),
             parsedState
@@ -81,6 +81,18 @@ class StateStorageTest {
 
     @Test
     fun `parses index case properly`() {
+        every { statusStringStorage.prefsValue } returns """[$INDEX_CASE_V4]"""
+
+        val parsedState = testSubject.state
+
+        assertEquals(
+            Isolation(startDate, durationDays, indexCase = IndexCase(onsetDate, expiryDate, true)),
+            parsedState
+        )
+    }
+
+    @Test
+    fun `parses index case v3 migration properly`() {
         every { statusStringStorage.prefsValue } returns """[$INDEX_CASE_V3]"""
 
         val parsedState = testSubject.state
@@ -117,12 +129,24 @@ class StateStorageTest {
 
     @Test
     fun `parses contact case properly`() {
+        every { statusStringStorage.prefsValue } returns """[$CONTACT_CASE_V4]"""
+
+        val parsedState = testSubject.state
+
+        assertEquals(
+            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, notificationDate, expiryDate)),
+            parsedState
+        )
+    }
+
+    @Test
+    fun `parses contact v3 case properly`() {
         every { statusStringStorage.prefsValue } returns """[$CONTACT_CASE_V3]"""
 
         val parsedState = testSubject.state
 
         assertEquals(
-            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, expiryDate)),
+            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, null, expiryDate)),
             parsedState
         )
     }
@@ -134,7 +158,7 @@ class StateStorageTest {
         val parsedState = testSubject.state
 
         assertEquals(
-            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, expiryDate)),
+            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, null, expiryDate)),
             parsedState
         )
     }
@@ -146,7 +170,7 @@ class StateStorageTest {
         val parsedState = testSubject.state
 
         assertEquals(
-            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, expiryDate)),
+            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, null, expiryDate)),
             parsedState
         )
     }
@@ -185,7 +209,7 @@ class StateStorageTest {
             previousIsolation = Isolation(
                 startDate,
                 durationDays,
-                contactCase = ContactCase(startDate, expiryDate)
+                contactCase = ContactCase(startDate, null, expiryDate)
             )
         )
 
@@ -197,11 +221,11 @@ class StateStorageTest {
 
     @Test
     fun `test storing contact case`() {
-        testSubject.state = Isolation(startDate, durationDays, contactCase = ContactCase(startDate, expiryDate))
+        testSubject.state = Isolation(startDate, durationDays, contactCase = ContactCase(startDate, notificationDate, expiryDate))
 
         verify {
             statusStringStorage.prefsValue =
-                """[$CONTACT_CASE_V3]"""
+                """[$CONTACT_CASE_V4]"""
         }
     }
 
@@ -211,13 +235,14 @@ class StateStorageTest {
 
         verify {
             statusStringStorage.prefsValue =
-                """[$INDEX_CASE_V3]"""
+                """[$INDEX_CASE_V4]"""
         }
     }
 
     companion object {
         private val startDate = Instant.parse("2020-05-21T10:00:00Z")
         private val expiryDate = LocalDate.of(2020, 7, 22)
+        private val notificationDate = Instant.parse("2020-05-22T10:00:00Z")
         private val onsetDate = LocalDate.parse("2020-05-21")
 
         const val DEFAULT_V1 =
@@ -233,6 +258,8 @@ class StateStorageTest {
             """{"type":"Isolation","isolationStart":"2020-05-21T10:00:00Z","expiryDate":"2020-06-11","indexCase":{"symptomsOnsetDate":"2020-05-21","expiryDate":"2020-07-22"},"isolationConfiguration":{"contactCase":14,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21,"pendingTasksRetentionPeriod":14},"version":2}"""
         const val INDEX_CASE_V3 =
             """{"type":"Isolation","isolationStart":"2020-05-21T10:00:00Z","expiryDate":"2020-06-11","indexCase":{"symptomsOnsetDate":"2020-05-21","expiryDate":"2020-07-22","selfAssessment":true},"isolationConfiguration":{"contactCase":14,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21,"pendingTasksRetentionPeriod":14},"version":3}"""
+        const val INDEX_CASE_V4 =
+            """{"type":"Isolation","isolationStart":"2020-05-21T10:00:00Z","expiryDate":"2020-06-11","indexCase":{"symptomsOnsetDate":"2020-05-21","expiryDate":"2020-07-22","selfAssessment":true},"isolationConfiguration":{"contactCase":14,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21,"pendingTasksRetentionPeriod":14},"version":4}"""
 
         const val CONTACT_CASE_V1 =
             """{"type":"Isolation","isolationStart":"2020-05-21T10:00:00Z","expiryDate":"2020-07-22","contactCase":{"startDate":"2020-05-21T10:00:00Z"},"version":1}"""
@@ -240,6 +267,8 @@ class StateStorageTest {
             """{"type":"Isolation","isolationStart":"2020-05-21T10:00:00Z","expiryDate":"2020-06-11","contactCase":{"startDate":"2020-05-21T10:00:00Z","expiryDate":"2020-07-22"},"isolationConfiguration":{"contactCase":14,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21,"pendingTasksRetentionPeriod":14},"version":2}"""
         const val CONTACT_CASE_V3 =
             """{"type":"Isolation","isolationStart":"2020-05-21T10:00:00Z","expiryDate":"2020-06-11","contactCase":{"startDate":"2020-05-21T10:00:00Z","expiryDate":"2020-07-22"},"isolationConfiguration":{"contactCase":14,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21,"pendingTasksRetentionPeriod":14},"version":3}"""
+        const val CONTACT_CASE_V4 =
+            """{"type":"Isolation","isolationStart":"2020-05-21T10:00:00Z","expiryDate":"2020-06-11","contactCase":{"startDate":"2020-05-21T10:00:00Z","notificationDate":"2020-05-22T10:00:00Z","expiryDate":"2020-07-22"},"isolationConfiguration":{"contactCase":14,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21,"pendingTasksRetentionPeriod":14},"version":4}"""
 
         const val INVALID_CASE =
             """{"type":"UnknownCase","testDate":1594733801229,"expiryDate":1595338601229,"version":1}"""

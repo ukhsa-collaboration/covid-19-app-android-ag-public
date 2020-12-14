@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.common.postcode
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
 import androidx.core.view.children
 import androidx.lifecycle.observe
@@ -18,14 +19,14 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityViewModel.ErrorState.NOT_SELECTED
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityViewModel.ErrorState.NOT_SUPPORTED
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityViewModel.ErrorState.NO_ERROR
-import javax.inject.Inject
-import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityViewModel.ErrorState.NOT_SELECTED
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
+import javax.inject.Inject
 
 class LocalAuthorityActivity : BaseActivity(R.layout.activity_local_authority) {
 
@@ -149,18 +150,26 @@ class LocalAuthorityActivity : BaseActivity(R.layout.activity_local_authority) {
     }
 
     private fun handleNoLocalAuthoritySelected() {
-        errorView.errorTitle = getString(R.string.local_authority_error_no_authority_selected_title)
-        errorView.errorDescription =
+        val title = getString(R.string.local_authority_error_no_authority_selected_title)
+        val description =
             getString(R.string.local_authority_error_no_authority_selected_description)
-        errorView.visible()
+        showErrorView(title, description)
     }
 
     private fun handleLocalAuthorityNotSupported() {
-        errorView.errorTitle =
-            getString(R.string.local_authority_error_authority_not_supported_title)
-        errorView.errorDescription =
+        val title = getString(R.string.local_authority_error_authority_not_supported_title)
+        val description =
             getString(R.string.local_authority_error_authority_not_supported_description)
+        showErrorView(title, description)
+    }
+
+    private fun showErrorView(title: String, description: String) {
+        errorView.errorTitle = title
+        errorView.errorDescription = description
         errorView.visible()
+        val announcementText = "$title. $description"
+        errorView.announceForAccessibility(announcementText)
+        errorView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
     }
 
     private fun isBackAllowed(): Boolean =

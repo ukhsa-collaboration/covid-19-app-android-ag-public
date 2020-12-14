@@ -46,9 +46,11 @@ class AndroidReporter internal constructor(
     private lateinit var currentTestConfiguration: TestConfiguration
 
     fun runWithConfigurations(builderAction: Reporter.() -> Unit) {
+        Log.d("Reporter", "Start run for scenario: $scenario $name")
         val failedConfigurations = mutableListOf<Pair<TestConfiguration, Exception>>()
 
         testConfigurations.forEach { configuration ->
+            Log.d("Reporter", "Use configuration: $configuration for scenario: $scenario $name")
             applyConfiguration(configuration)
             for (i in 0..4) {
                 try {

@@ -86,44 +86,22 @@ project.afterEvaluate {
                 xml.enabled = true
             }
 
-            def excludes = [
-                    'jdk.internal.*',
-                    '**/R.class',
-                    '**/R$*.class',
-                    '**/BuildConfig.*',
-                    '**/Manifest*.*',
-                    '**/*Test.*',
-                    'android/**/*.*',
-                    '**/databinding/**/*.*',
-                    '**/android/databinding/*Binding.*',
-                    '**/BR.*',
-                    '**/*Mock*.*',
-                    '**/*JsonAdapter.*',
-                    '**/*Debug*.*',
-                    '**/*_MembersInjector.*',
-                    '**/Dagger*Component.*',
-                    '**/Dagger*Component$Builder.*',
-                    '**/*Module_*Factory.*',
-                    '**/*_Factory.*',
-                    '**/*$Lambda$*.*',
-                    '**/*Creator.class',
-                    '**/*Module*.*',
-                    '**/fieldtests/*.*',
-                    '**/widgets/*.*',
-                    '**/remote/**',
-                    '**/fieldtests/**/*.*',
-                    '**/FieldTestConfiguration.class',
-                    '**/featureflag/testsettings/*.*',
-                    '**/GoogleExposureNotificationApi.class',
-                    '**/ScenariosExposureApplication*.*',
-                    '**/LanguageAdapter.class',
-                    '**/EnvironmentAdapter.class',
-                    '**/SignatureValidationInterceptor.class',
-                    '**/qrcode/QrCodeParser.class',
+            def includes = [
+                    '**/*Activity.class',
+                    '**/*Dialog.class',
+//                    '**/widgets/*.*'
             ]
 
-            def javaClasses = fileTree(dir: scenariosDebugVariant.javaCompiler.destinationDir, excludes: excludes)
-            def kotlinClasses = fileTree(dir: "${buildDir}/tmp/kotlin-classes/${variantName}", excludes: excludes)
+            def excludes = [
+                    '**/BaseActivity.class',
+                    '**/TestSettingsActivity.class',
+                    '**/Mock*Activity.class',
+                    '**/DebugActivity.class',
+                    '**/CircularProgressBar.class'
+            ]
+
+            def javaClasses = fileTree(dir: scenariosDebugVariant.javaCompiler.destinationDir, includes: includes, excludes: excludes)
+            def kotlinClasses = fileTree(dir: "${buildDir}/tmp/kotlin-classes/${variantName}", includes: includes, excludes: excludes)
             classDirectories.from = files([javaClasses, kotlinClasses])
 
             sourceDirectories.from = files([

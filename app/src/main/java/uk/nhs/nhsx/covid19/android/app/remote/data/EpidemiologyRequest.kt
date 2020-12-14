@@ -23,7 +23,7 @@ data class EpidemiologyEventPayload(
     val infectiousness: Infectiousness,
     val scanInstances: List<EpidemiologyEventPayloadScanInstance>,
     val riskScore: Double,
-    val riskCalculationVersion: Int = 2
+    val riskCalculationVersion: Int
 )
 
 @JsonClass(generateAdapter = true)

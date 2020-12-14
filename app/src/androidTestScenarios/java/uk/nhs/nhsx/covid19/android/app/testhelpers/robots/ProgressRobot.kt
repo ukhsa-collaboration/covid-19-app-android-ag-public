@@ -8,15 +8,15 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R.id
 
-class TestOrderingProgressRobot {
+class ProgressRobot {
 
     fun checkActivityIsDisplayed() {
-        onView(withId(id.testOrderingProgressContainer))
+        onView(withId(id.progressContainer))
             .check(matches(isDisplayed()))
     }
 
     fun checkActivityNotIsDisplayed() {
-        onView(withId(id.testOrderingProgressContainer))
+        onView(withId(id.progressContainer))
             .check(matches(not(isDisplayed())))
     }
 

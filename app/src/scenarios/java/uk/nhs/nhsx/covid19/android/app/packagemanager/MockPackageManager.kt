@@ -1,0 +1,17 @@
+package uk.nhs.nhsx.covid19.android.app.packagemanager
+
+import android.content.Context
+import android.content.Intent
+import android.content.pm.ResolveInfo
+
+class MockPackageManager : PackageManager {
+
+    val resolutionsByAction = mutableMapOf<String, ResolveInfo?>()
+
+    override fun resolveActivity(context: Context, intent: Intent, flags: Int): ResolveInfo? =
+        resolutionsByAction[intent.action]
+
+    fun clear() {
+        resolutionsByAction.clear()
+    }
+}

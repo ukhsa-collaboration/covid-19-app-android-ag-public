@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_status.encounterDetectionSwitch
 import kotlinx.android.synthetic.main.activity_status.isolationView
 import kotlinx.android.synthetic.main.activity_status.optionAboutTheApp
 import kotlinx.android.synthetic.main.activity_status.optionContactTracing
+import kotlinx.android.synthetic.main.activity_status.optionIsolationPayment
 import kotlinx.android.synthetic.main.activity_status.optionLinkTestResult
 import kotlinx.android.synthetic.main.activity_status.optionOrderTest
 import kotlinx.android.synthetic.main.activity_status.optionReadAdvice
@@ -36,6 +37,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationRe
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.Success
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
@@ -130,6 +132,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
             handleIsolationState(viewState.isolationState)
             handleRiskyPostCodeViewState(viewState.areaRiskState)
             handleReminderDialogState(viewState.showExposureNotificationReminderDialog)
+            handleIsolationPaymentState(viewState.showIsolationPaymentButton)
         }
     }
 
@@ -139,6 +142,10 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         } else {
             dismissExposureNotificationReminderDialog()
         }
+    }
+
+    private fun handleIsolationPaymentState(showIsolationPaymentButton: Boolean) {
+        optionIsolationPayment.isVisible = showIsolationPaymentButton
     }
 
     private fun checkIfInAppReviewShouldBeDisplayed() {
@@ -169,6 +176,10 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
 
         optionAboutTheApp.setOnClickListener {
             MoreAboutAppActivity.start(this)
+        }
+
+        optionIsolationPayment.setOnClickListener {
+            startActivity<IsolationPaymentActivity>()
         }
 
         optionLinkTestResult.setOnClickListener {
@@ -242,7 +253,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         exposureStatusViewModel.exposureNotificationActivationResult().observe(this) { viewState ->
             when (viewState) {
                 Success -> Timber.d("Exposure notifications successfully started")
-                is Error -> handleError(viewState.exception.message)
+                is Error -> handleExposureNotificationActivationError(viewState.exception.message)
                 is ResolutionRequired -> handleResolution(
                     viewState.status,
                     REQUEST_CODE_START_EXPOSURE_NOTIFICATION
@@ -290,7 +301,8 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         super.onDestroy()
     }
 
-    private fun handleError(message: String?) {
+    private fun handleExposureNotificationActivationError(message: String?) {
+        encounterDetectionSwitch.isChecked = false
         Snackbar.make(statusContainer, message.toString(), Snackbar.LENGTH_SHORT).show()
     }
 
@@ -318,10 +330,12 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_START_EXPOSURE_NOTIFICATION) {
-            exposureStatusViewModel.startExposureNotifications()
-        } else {
-            encounterDetectionSwitch.isChecked = false
+        if (requestCode == REQUEST_CODE_START_EXPOSURE_NOTIFICATION) {
+            if (resultCode == Activity.RESULT_OK) {
+                exposureStatusViewModel.startExposureNotifications()
+            } else {
+                encounterDetectionSwitch.isChecked = false
+            }
         }
     }
 

@@ -30,7 +30,6 @@ class HandleInitialExposureNotificationTest {
     @Before
     fun setUp() {
         coEvery { exposureRiskManagerProvider.riskManager() } returns exposureRiskManager
-        coEvery { exposureRiskManager.getRiskCalculationVersion() } returns 2
     }
 
     @Test
@@ -39,7 +38,8 @@ class HandleInitialExposureNotificationTest {
         val exposureDateTimestamp = 0L
         coEvery { exposureRiskManager.getRisk(any()) } returns DayRisk(
             exposureDateTimestamp,
-            1000.00
+            1000.00,
+            2
         )
 
         coEvery {
@@ -59,7 +59,8 @@ class HandleInitialExposureNotificationTest {
 
         coEvery { exposureRiskManager.getRisk(any()) } returns DayRisk(
             0L,
-            1000.00
+            1000.00,
+            2
         )
 
         coEvery {
@@ -79,7 +80,8 @@ class HandleInitialExposureNotificationTest {
         val exposureDateTimestamp = 0L
         coEvery { exposureRiskManager.getRisk(any()) } returns DayRisk(
             exposureDateTimestamp,
-            1000.00
+            1000.00,
+            2
         )
 
         coEvery {
@@ -100,7 +102,8 @@ class HandleInitialExposureNotificationTest {
         val testException = Exception()
         coEvery { exposureRiskManager.getRisk(any()) } returns DayRisk(
             0L,
-            1000.00
+            1000.00,
+            2
         )
 
         coEvery {
@@ -116,7 +119,7 @@ class HandleInitialExposureNotificationTest {
     }
 
     @Test
-    fun `when maximum score is below threshold returns success without making any network calls`() =
+    fun `when maximum score is below threshold returns skipped without making any network calls`() =
         runBlocking {
             coEvery { exposureRiskManager.getRisk(any()) } returns null
             coVerify(exactly = 0) { exposureCircuitBreakerApi.submitExposureInfo(any()) }
@@ -124,7 +127,7 @@ class HandleInitialExposureNotificationTest {
             val result = testSubject.invoke("approval_token")
 
             assertEquals(
-                Success(InitialCircuitBreakerResult.No),
+                Success(InitialCircuitBreakerResult.Skipped),
                 result
             )
         }

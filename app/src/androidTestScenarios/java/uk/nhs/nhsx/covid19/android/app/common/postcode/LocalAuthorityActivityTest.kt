@@ -2,9 +2,11 @@ package uk.nhs.nhsx.covid19.android.app.common.postcode
 
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.report.Reporter
+import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
+import kotlin.test.assertTrue
 
 class LocalAuthorityActivityTest : EspressoTest() {
 
@@ -49,6 +51,7 @@ class LocalAuthorityActivityTest : EspressoTest() {
         }
 
         localAuthorityRobot.checkActivityIsDisplayed()
+
         waitFor { localAuthorityRobot.checkMultipleAuthoritiesAreDisplayed("TD12") }
         localAuthorityRobot.checkErrorIsNotDisplayed()
 
@@ -85,5 +88,61 @@ class LocalAuthorityActivityTest : EspressoTest() {
             stepName = "Select supported local authority",
             stepDescription = "User selects a supported local authority. Any previous error disappears."
         )
+    }
+
+    @Test
+    fun clickBackWhenBackAllowedIsNotDefined_nothingHappens() = notReported {
+        startTestActivity<LocalAuthorityActivity> {
+            putExtra(
+                LocalAuthorityActivity.EXTRA_POST_CODE,
+                "TD12"
+            )
+        }
+
+        localAuthorityRobot.checkActivityIsDisplayed()
+
+        testAppContext.device.pressBack()
+
+        localAuthorityRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    fun clickBackWhenBackAllowedIsFalse_nothingHappens() = notReported {
+        startTestActivity<LocalAuthorityActivity> {
+            putExtra(
+                LocalAuthorityActivity.EXTRA_POST_CODE,
+                "TD12"
+            )
+            putExtra(
+                LocalAuthorityActivity.EXTRA_BACK_ALLOWED,
+                false
+            )
+        }
+
+        localAuthorityRobot.checkActivityIsDisplayed()
+
+        testAppContext.device.pressBack()
+
+        localAuthorityRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    fun clickBackWhenBackAllowedIsTrue_goesBack() = notReported {
+        val activity = startTestActivity<LocalAuthorityActivity> {
+            putExtra(
+                LocalAuthorityActivity.EXTRA_POST_CODE,
+                "TD12"
+            )
+            putExtra(
+                LocalAuthorityActivity.EXTRA_BACK_ALLOWED,
+                true
+            )
+        }
+
+        localAuthorityRobot.checkActivityIsDisplayed()
+
+        testAppContext.device.pressBack()
+
+        waitFor { assertTrue(activity!!.isDestroyed) }
     }
 }

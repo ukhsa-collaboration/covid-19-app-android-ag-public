@@ -257,7 +257,11 @@ class ReviewSymptomsViewModelTest {
         every { isolationStateMachine.readState() } returns Isolation(
             Instant.now(),
             DurationDays(),
-            contactCase = ContactCase(Instant.parse("2020-05-19T12:00:00Z"), LocalDate.parse("2020-05-24"))
+            contactCase = ContactCase(
+                startDate = Instant.parse("2020-05-19T12:00:00Z"),
+                notificationDate = null,
+                expiryDate = LocalDate.parse("2020-05-24")
+            )
         )
 
         testSubject.onButtonConfirmedClicked()

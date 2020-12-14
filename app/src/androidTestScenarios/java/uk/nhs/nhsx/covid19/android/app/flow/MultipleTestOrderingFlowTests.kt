@@ -9,6 +9,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
@@ -21,9 +22,11 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRo
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit.DAYS
+import java.time.temporal.ChronoUnit.HOURS
 import kotlin.test.assertTrue
 
 class MultipleTestOrderingFlowTests : EspressoTest() {
@@ -45,7 +48,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCase_receiveNegativeAndPositiveTestResultsSequentially() = notReported {
+    fun startIndexCase_receiveNegativeAndPositiveTestResultsSequentially_shouldIsolate() = notReported {
         testAppContext.setState(
             state = Isolation(
                 isolationStart = Instant.now(),
@@ -53,7 +56,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
                 indexCase = IndexCase(
                     symptomsOnsetDate = LocalDate.now().minusDays(3),
                     expiryDate = LocalDate.now().plus(7, DAYS),
-                    selfAssessment = false
+                    selfAssessment = true
                 )
             )
         )
@@ -95,15 +98,19 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveAndFinishIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveAndSelfIsolate() }
 
-        testResultRobot.clickGoodNewsActionButton()
+        testResultRobot.clickIsolationActionButton()
 
-        assertTrue { testAppContext.getCurrentState() is Default }
+        shareKeysInformationRobot.checkActivityIsDisplayed()
+
+        shareKeysInformationRobot.clickIUnderstandButton()
+
+        assertTrue { testAppContext.getCurrentState() is Isolation }
     }
 
     @Test
-    fun startIndexCase_receiveNegativeAndNegativeTestResultsSequentially() = notReported {
+    fun startIndexCase_receiveNegativeAndNegativeTestResultsSequentially_shouldEndIsolationOnFirstNegativeTestResult() = notReported {
         testAppContext.setState(
             state = Isolation(
                 isolationStart = Instant.now(),
@@ -111,7 +118,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
                 indexCase = IndexCase(
                     symptomsOnsetDate = LocalDate.now().minusDays(3),
                     expiryDate = LocalDate.now().plus(7, DAYS),
-                    selfAssessment = false
+                    selfAssessment = true
                 )
             )
         )
@@ -162,7 +169,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
     @RetryFlakyTest
     @Test
-    fun startIndexCase_receiveMultipleTestResultsAtTheSameTime() = notReported {
+    fun startIndexCase_receiveMultipleTestResultsAtTheSameTime_firstPositive_thenNegative_shouldIsolate() = notReported {
         testAppContext.setState(
             state = Isolation(
                 isolationStart = Instant.now(),
@@ -170,7 +177,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
                 indexCase = IndexCase(
                     symptomsOnsetDate = LocalDate.now().minusDays(3),
                     expiryDate = LocalDate.now().plus(7, DAYS),
-                    selfAssessment = false
+                    selfAssessment = true
                 )
             )
         )
@@ -217,6 +224,140 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
         testResultRobot.clickIsolationActionButton()
 
         assertTrue { testAppContext.temporaryExposureKeyHistoryWasCalled() }
+
+        assertTrue { testAppContext.getCurrentState() is Isolation }
+    }
+
+    @Test
+    fun startIndexCaseWithPositiveTestResult_receiveNegativeTestResult_shouldStayInIsolation() = notReported {
+        val now = Instant.now()
+        testAppContext.setState(
+            state = Isolation(
+                isolationStart = now.minus(1, DAYS),
+                isolationConfiguration = DurationDays(),
+                indexCase = IndexCase(
+                    symptomsOnsetDate = LocalDate.now().minusDays(3),
+                    expiryDate = LocalDate.now().plus(7, DAYS),
+                    selfAssessment = true
+                )
+            )
+        )
+
+        testAppContext.getTestResultsProvider().add(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "token",
+                testEndDate = now.minus(1, HOURS),
+                testResult = POSITIVE,
+                acknowledgedDate = now.minus(1, HOURS)
+            )
+        )
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
+
+        testAppContext.virologyTestingApi.pollingToken = "newToken"
+
+        orderTest()
+
+        testAppContext.virologyTestingApi.testResultForPollingToken =
+            mutableMapOf("newToken" to NEGATIVE)
+
+        runBlocking {
+            testAppContext.getDownloadVirologyTestResultWork().invoke()
+        }
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveThenNegativeAndStayInIsolation() }
+
+        testResultRobot.clickIsolationActionButton()
+
+        assertTrue { testAppContext.getCurrentState() is Isolation }
+    }
+
+    @Test
+    fun startIndexCase_receivePositiveTestResult_thenVoidTestResult_thenNegativeTestResult_shouldStayInIsolation() = notReported {
+        testAppContext.setState(
+            state = Isolation(
+                isolationStart = Instant.now(),
+                isolationConfiguration = DurationDays(),
+                indexCase = IndexCase(
+                    symptomsOnsetDate = LocalDate.now().minusDays(3),
+                    expiryDate = LocalDate.now().plus(7, DAYS),
+                    selfAssessment = true
+                )
+            )
+        )
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
+
+        val positiveTestResultToken = "positiveTestResultToken"
+        val voidTestResultToken = "voidTestResultToken"
+        val negativeTestResultToken = "negativeTestResultToken"
+
+        testAppContext.virologyTestingApi.pollingToken = positiveTestResultToken
+
+        orderTest()
+
+        testAppContext.virologyTestingApi.pollingToken = voidTestResultToken
+
+        orderTest()
+
+        testAppContext.virologyTestingApi.testResultForPollingToken =
+            mutableMapOf(positiveTestResultToken to POSITIVE)
+
+        runBlocking {
+            testAppContext.getDownloadVirologyTestResultWork().invoke()
+        }
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveAndContinueSelfIsolation() }
+
+        testResultRobot.clickIsolationActionButton()
+
+        shareKeysInformationRobot.checkActivityIsDisplayed()
+
+        shareKeysInformationRobot.clickIUnderstandButton()
+
+        assertTrue { testAppContext.getCurrentState() is Isolation }
+
+        testAppContext.virologyTestingApi.testResultForPollingToken =
+            mutableMapOf(voidTestResultToken to VOID)
+
+        runBlocking {
+            testAppContext.getDownloadVirologyTestResultWork().invoke()
+        }
+
+        waitFor { testResultRobot.checkActivityDisplaysVoidAndContinueSelfIsolation() }
+
+        testResultRobot.clickIsolationActionButton()
+
+        testOrderingRobot.checkActivityIsDisplayed()
+
+        testAppContext.virologyTestingApi.pollingToken = negativeTestResultToken
+
+        testOrderingRobot.clickOrderTestButton()
+
+        waitFor { browserRobot.checkActivityIsDisplayed() }
+
+        browserRobot.clickCloseButton()
+
+        assertTrue { testAppContext.getCurrentState() is Isolation }
+
+        testAppContext.virologyTestingApi.testResultForPollingToken =
+            mutableMapOf(negativeTestResultToken to NEGATIVE)
+
+        runBlocking {
+            testAppContext.getDownloadVirologyTestResultWork().invoke()
+        }
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveThenNegativeAndStayInIsolation() }
+
+        testResultRobot.clickIsolationActionButton()
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
     }

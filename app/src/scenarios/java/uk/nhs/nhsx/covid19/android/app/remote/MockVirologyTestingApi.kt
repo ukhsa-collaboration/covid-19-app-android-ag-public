@@ -15,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultResponse
 import java.io.IOException
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import java.util.UUID
 
 class MockVirologyTestingApi : VirologyTestingApi {
 
@@ -22,16 +23,18 @@ class MockVirologyTestingApi : VirologyTestingApi {
     var pollingTestResultHttpStatusCode = 200
     var pollingToken = "1234"
     var testResultForPollingToken = mutableMapOf(pollingToken to POSITIVE)
-    var diagnosisKeySubmissionToken = "g"
+    var diagnosisKeySubmissionToken: String? = null
 
     override suspend fun getHomeKitOrder(emptyBodyObject: Any): VirologyTestOrderResponse {
         if (!shouldPass) throw IOException()
+
+        val token = diagnosisKeySubmissionToken ?: UUID.randomUUID().toString()
 
         return VirologyTestOrderResponse(
             websiteUrlWithQuery = "about:blank",
             tokenParameterValue = "e",
             testResultPollingToken = pollingToken,
-            diagnosisKeySubmissionToken = diagnosisKeySubmissionToken
+            diagnosisKeySubmissionToken = token
         )
     }
 
@@ -93,6 +96,12 @@ class MockVirologyTestingApi : VirologyTestingApi {
                         testResult = VOID
                     )
                 )
+            }
+            "n0c0nneb" -> {
+                throw IOException("No connection")
+            }
+            "nexpectn" -> {
+                throw Exception("Unexpected error")
             }
             else -> {
                 Response.error(
