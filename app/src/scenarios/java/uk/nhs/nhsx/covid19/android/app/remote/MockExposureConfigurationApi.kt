@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.remote
 
 import uk.nhs.nhsx.covid19.android.app.remote.data.ExposureConfigurationResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.ExposureNotification
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskCalculation
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskScore
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskScore.InitialData
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskScore.ObservationType.log
@@ -26,10 +25,6 @@ class MockExposureConfigurationApi : ExposureConfigurationApi {
                 daysSinceLastExposureWeight = 20,
                 durationWeight = 50.0,
                 transmissionRiskWeight = 50.0
-            ),
-            riskCalculation = RiskCalculation(
-                durationBucketWeights = listOf(1.0, 0.5, 0.0),
-                riskThreshold = 900
             ),
             v2RiskCalculation = V2RiskCalculation(
                 daysSinceOnsetToInfectiousness = listOf(

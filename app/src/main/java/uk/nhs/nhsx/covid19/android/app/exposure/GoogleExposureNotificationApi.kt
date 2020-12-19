@@ -5,8 +5,6 @@ import android.util.Base64
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.exposurenotification.DiagnosisKeysDataMapping
-import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
-import com.google.android.gms.nearby.exposurenotification.ExposureInformation
 import com.google.android.gms.nearby.exposurenotification.ExposureWindow
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import kotlinx.coroutines.tasks.await
@@ -55,20 +53,9 @@ class GoogleExposureNotificationApi(context: Context) : ExposureNotificationApi 
                 Timber.d("Initial keys: $this")
             }
 
-    override suspend fun provideDiagnosisKeys(
-        files: List<File>,
-        exposureConfiguration: ExposureConfiguration,
-        token: String
-    ) {
-        exposureNotificationClient.provideDiagnosisKeys(files, exposureConfiguration, token).await()
-    }
-
     override suspend fun provideDiagnosisKeys(files: List<File>) {
         exposureNotificationClient.provideDiagnosisKeys(files).await()
     }
-
-    override suspend fun getExposureInformation(token: String): List<ExposureInformation> =
-        exposureNotificationClient.getExposureInformation(token).await()
 
     override suspend fun getExposureWindows(): List<ExposureWindow> =
         exposureNotificationClient.exposureWindows.await()

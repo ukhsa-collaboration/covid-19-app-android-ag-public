@@ -55,6 +55,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import java.time.Instant
 import java.time.LocalDate
@@ -103,15 +104,15 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
     }
 
     private fun setupOnClickListeners() {
-        actionDeleteAllData.setOnClickListener {
+        actionDeleteAllData.setOnSingleClickListener {
             viewModel.onDeleteAllUserDataClicked()
         }
 
-        editVenueVisits.setOnClickListener {
+        editVenueVisits.setOnSingleClickListener {
             viewModel.onEditVenueVisitClicked()
         }
 
-        editLocalAuthority.setOnClickListener {
+        editLocalAuthority.setOnSingleClickListener {
             EditPostalDistrictActivity.start(this)
         }
     }
@@ -208,7 +209,7 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
     }
 
     private fun handleIsolation(isolation: Isolation) {
-        lastDayOfIsolationDate.text = isolation.expiryDate.uiFormat(this)
+        lastDayOfIsolationDate.text = isolation.lastDayOfIsolation.uiFormat(this)
         titleLastDayOfIsolation.visible()
         lastDayOfIsolationSection.visible()
 

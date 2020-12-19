@@ -42,6 +42,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainStat
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
@@ -131,7 +132,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         )
 
         isolationRequestActionButton.text = getString(R.string.continue_button)
-        isolationRequestActionButton.setOnClickListener {
+        isolationRequestActionButton.setOnSingleClickListener {
             viewModel.onActionButtonForPositiveTestResultClicked()
         }
     }
@@ -156,7 +157,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         )
 
         isolationRequestActionButton.text = getString(R.string.back_to_home)
-        isolationRequestActionButton.setOnClickListener {
+        isolationRequestActionButton.setOnSingleClickListener {
             viewModel.acknowledgeTestResult()
             finish()
         }
@@ -190,7 +191,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         )
 
         isolationRequestActionButton.text = getString(R.string.book_free_test)
-        isolationRequestActionButton.setOnClickListener {
+        isolationRequestActionButton.setOnSingleClickListener {
             viewModel.acknowledgeTestResult()
             startActivityForResult(
                 TestOrderingActivity.getIntent(this),
@@ -220,7 +221,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         goodNewsParagraphContainer.addAllParagraphs(getString(R.string.for_further_advice_visit))
 
         goodNewsActionButton.text = getString(R.string.continue_button)
-        goodNewsActionButton.setOnClickListener {
+        goodNewsActionButton.setOnSingleClickListener {
             viewModel.onActionButtonForPositiveTestResultClicked()
         }
     }
@@ -242,7 +243,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         )
 
         goodNewsActionButton.text = getString(R.string.continue_button)
-        goodNewsActionButton.setOnClickListener {
+        goodNewsActionButton.setOnSingleClickListener {
             viewModel.acknowledgeTestResult()
             finish()
         }
@@ -264,7 +265,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         goodNewsParagraphContainer.addAllParagraphs(getString(R.string.for_further_advice_visit))
 
         goodNewsActionButton.text = getString(R.string.continue_button)
-        goodNewsActionButton.setOnClickListener {
+        goodNewsActionButton.setOnSingleClickListener {
             viewModel.acknowledgeTestResult()
             finish()
         }
@@ -291,7 +292,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         )
 
         isolationRequestActionButton.text = getString(R.string.continue_button)
-        isolationRequestActionButton.setOnClickListener {
+        isolationRequestActionButton.setOnSingleClickListener {
             viewModel.acknowledgeTestResult()
             finish()
         }
@@ -317,7 +318,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         )
 
         isolationRequestActionButton.text = getString(R.string.continue_button)
-        isolationRequestActionButton.setOnClickListener {
+        isolationRequestActionButton.setOnSingleClickListener {
             viewModel.onActionButtonForPositiveTestResultClicked()
         }
     }
@@ -343,7 +344,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         goodNewsParagraphContainer.addAllParagraphs(getString(R.string.for_further_advice_visit))
 
         goodNewsActionButton.text = getString(R.string.book_free_test)
-        goodNewsActionButton.setOnClickListener {
+        goodNewsActionButton.setOnSingleClickListener {
             viewModel.acknowledgeTestResult()
             startActivityForResult(
                 TestOrderingActivity.getIntent(this),

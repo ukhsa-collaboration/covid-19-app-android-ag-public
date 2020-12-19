@@ -12,9 +12,10 @@ import java.lang.reflect.Type
 import java.time.Instant
 import javax.inject.Inject
 
+@Deprecated(message = "That class is deprecated and will be removed in the future")
 class AnalyticsMetricsLogStorage @Inject constructor(
     private val analyticsMetricsLogJsonStorage: AnalyticsMetricsLogJsonStorage,
-    moshi: Moshi
+    private val moshi: Moshi
 ) {
 
     private val analyticsMetricsLogSerializationAdapter: JsonAdapter<List<MetricsLogEntry>> =

@@ -129,6 +129,11 @@ class UserDataRobot {
             .check(matches(isDisplayed()))
     }
 
+    fun checkLastDayOfIsolationDisplaysText(expected: String) {
+        onView(withId(R.id.lastDayOfIsolationDate))
+            .check(matches(withText(expected)))
+    }
+
     fun checkLastDayOfIsolationIsNotDisplayed() {
         onView(withId(R.id.titleLastDayOfIsolation))
             .check(matches(not(isDisplayed())))

@@ -112,8 +112,6 @@ class QrCodeScanScenarioTest : EspressoTest() {
 
         startTestActivity<QrScannerActivity>()
 
-        qrScannerRobot.checkActivityIsDisplayed()
-
         waitFor { qrCodeScanResultRobot.checkPermissionDeniedTitleIsDisplayed() }
     }
 }

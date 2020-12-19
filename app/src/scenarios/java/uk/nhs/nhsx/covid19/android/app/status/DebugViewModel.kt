@@ -16,7 +16,6 @@ import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
-import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.toExposureConfiguration
 import uk.nhs.nhsx.covid19.android.app.fieldtests.utils.KeyFileWriter
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
@@ -24,7 +23,6 @@ import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
-import uk.nhs.nhsx.covid19.android.app.remote.ExposureConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.GREEN
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
@@ -43,7 +41,6 @@ import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import java.io.File
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.UUID
 import javax.inject.Inject
 
 class DebugViewModel @Inject constructor(
@@ -54,13 +51,12 @@ class DebugViewModel @Inject constructor(
     private val userInbox: UserInbox,
     private val notificationProvider: NotificationProvider,
     private val riskyPostCodeIndicatorProvider: RiskyPostCodeIndicatorProvider,
-    private val exposureNotificationApi: ExposureNotificationApi,
-    private val exposureConfigurationApi: ExposureConfigurationApi
+    private val exposureNotificationApi: ExposureNotificationApi
 ) : ViewModel() {
 
     val exposureKeysResult = SingleLiveEvent<ExportToFileResult>()
 
-    fun startDownloadTask(context: Context) {
+    fun startDownloadTask() {
         periodicTasks.schedule()
     }
 
@@ -152,18 +148,7 @@ class DebugViewModel @Inject constructor(
 
     fun importKeys(file: File) {
         viewModelScope.launch {
-            val version = exposureNotificationApi.version()
-            if (version != null) {
-                exposureNotificationApi.provideDiagnosisKeys(listOf(file))
-            } else {
-                val configuration =
-                    exposureConfigurationApi.getExposureConfiguration().toExposureConfiguration()
-                exposureNotificationApi.provideDiagnosisKeys(
-                    listOf(file),
-                    configuration,
-                    "manual_import_" + UUID.randomUUID().toString()
-                )
-            }
+            exposureNotificationApi.provideDiagnosisKeys(listOf(file))
         }
     }
 

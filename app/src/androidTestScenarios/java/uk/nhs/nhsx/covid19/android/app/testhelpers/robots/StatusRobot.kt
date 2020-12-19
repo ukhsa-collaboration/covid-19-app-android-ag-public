@@ -1,9 +1,12 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
+import android.content.Context
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.isEnabled
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertChecked
 import com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertUnchecked
 import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
@@ -35,6 +38,10 @@ class StatusRobot {
         clickOn(R.id.optionVenueCheckIn)
     }
 
+    fun clickReadAdvice() {
+        clickOn(R.id.optionReadAdvice)
+    }
+
     fun clickReportSymptoms() {
         clickOn(R.id.optionReportSymptoms)
     }
@@ -59,6 +66,51 @@ class StatusRobot {
         clickOn((R.id.optionContactTracing))
     }
 
+    fun checkReadAdviceIsEnabled() {
+        onView(withId(R.id.optionReadAdvice))
+            .check(matches(isEnabled()))
+    }
+
+    fun checkVenueCheckInIsEnabled() {
+        onView(withId(R.id.optionVenueCheckIn))
+            .check(matches(isEnabled()))
+    }
+
+    fun checkReportSymptomsIsEnabled() {
+        onView(withId(R.id.optionReportSymptoms))
+            .check(matches(isEnabled()))
+    }
+
+    fun checkOrderTestIsEnabled() {
+        onView(withId(R.id.optionOrderTest))
+            .check(matches(isEnabled()))
+    }
+
+    fun checkFinancialSupportIsEnabled() {
+        onView(withId(R.id.optionIsolationPayment))
+            .check(matches(isEnabled()))
+    }
+
+    fun checkLinkTestResultIsEnabled() {
+        onView(withId(R.id.optionLinkTestResult))
+            .check(matches(isEnabled()))
+    }
+
+    fun checkMoreAboutAppIsEnabled() {
+        onView(withId(R.id.optionAboutTheApp))
+            .check(matches(isEnabled()))
+    }
+
+    fun checkEncounterDetectionSwitchIsEnabled() {
+        onView(withId(R.id.optionContactTracing))
+            .check(matches(isEnabled()))
+    }
+
+    fun checkAreaRiskViewIsEnabled() {
+        onView(withId(R.id.riskAreaView))
+            .check(matches(isEnabled()))
+    }
+
     fun checkScanQrCodeOptionIsNotDisplayed() {
         onView(withId(R.id.optionVenueCheckIn))
             .check(matches(not(isDisplayed())))
@@ -72,6 +124,11 @@ class StatusRobot {
     fun checkIsolationViewIsNotDisplayed() {
         onView(withId(R.id.isolationView))
             .check(matches(not(isDisplayed())))
+    }
+
+    fun checkIsolationSubtitleIsDisplayedWithText(context: Context, expected: String) {
+        onView(withId(R.id.subTitleIsolationCountdown))
+            .check(matches(withText(context.getString(R.string.isolation_until_date, expected))))
     }
 
     fun checkEncounterDetectionSwitchIsChecked() {

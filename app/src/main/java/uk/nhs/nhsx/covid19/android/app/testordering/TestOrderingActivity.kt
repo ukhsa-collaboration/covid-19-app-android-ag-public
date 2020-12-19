@@ -11,6 +11,7 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpOpensInBrowserWarning
 import uk.nhs.nhsx.covid19.android.app.widgets.setRawText
 
@@ -30,7 +31,7 @@ class TestOrderingActivity : BaseActivity(R.layout.activity_test_ordering) {
     }
 
     private fun setupListeners() {
-        orderTest.setOnClickListener {
+        orderTest.setOnSingleClickListener {
             startActivityForResult(
                 TestOrderingProgressActivity.getIntent(this),
                 REQUEST_CODE_ORDER_A_TEST

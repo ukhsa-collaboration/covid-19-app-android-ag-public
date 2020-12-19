@@ -6,13 +6,14 @@ import kotlinx.android.synthetic.main.activity_local_authority_information.butto
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 
 class LocalAuthorityInformationActivity : BaseActivity(R.layout.activity_local_authority_information) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        buttonContinue.setOnClickListener {
+        buttonContinue.setOnSingleClickListener {
             val intent = LocalAuthorityActivity.getIntent(this, backAllowed = false)
             startActivityForResult(intent, LOCAL_AUTHORITY_REQUEST)
         }

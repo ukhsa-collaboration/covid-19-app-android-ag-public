@@ -1,10 +1,16 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
-import androidx.annotation.VisibleForTesting
 import com.squareup.moshi.JsonClass
 import com.tinder.StateMachine
 import com.tinder.StateMachine.Transition
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyContactNotification
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
@@ -25,6 +31,7 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
+import uk.nhs.nhsx.covid19.android.app.util.isBeforeOrEqual
 import uk.nhs.nhsx.covid19.android.app.util.selectEarliest
 import java.lang.Long.max
 import java.time.Clock
@@ -36,10 +43,9 @@ import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
-import uk.nhs.nhsx.covid19.android.app.util.isBeforeOrEqual
 
-private const val indexCaseOnsetDateBeforeTestResultDate: Long = 3
-private const val indexCaseExpiryDateAfterTestResultDate: Long = 10
+const val indexCaseOnsetDateBeforeTestResultDate: Long = 3
+private const val indexCaseExpiryDateAfterTestResultDate: Long = 11
 
 sealed class State {
     data class Default(val previousIsolation: Isolation? = null) : State()
@@ -82,8 +88,12 @@ sealed class State {
         fun isSelfAssessmentIndexCase(): Boolean =
             indexCase != null && indexCase.selfAssessment
 
-        fun hasExpired(clock: Clock, daysAgo: Int = 0): Boolean =
-            expiryDate.isBeforeOrEqual(LocalDate.now(clock).minusDays(daysAgo.toLong()))
+        fun hasExpired(clock: Clock, daysAgo: Int = 0): Boolean {
+            val today = LocalDate.now(clock)
+            return expiryDate.isBeforeOrEqual(today.minusDays(daysAgo.toLong()))
+        }
+
+        val lastDayOfIsolation: LocalDate = expiryDate.minusDays(1)
 
         val expiryDate: LocalDate
             get() {
@@ -172,7 +182,7 @@ private fun tryCreateIndexCaseWhenOnsetDataIsNotProvided(
     testResultEndDate: Instant,
     clock: Clock
 ): State {
-    val testResultDate = LocalDateTime.ofInstant(testResultEndDate, ZoneId.systemDefault()).toLocalDate()
+    val testResultDate = LocalDateTime.ofInstant(testResultEndDate, clock.zone).toLocalDate()
     val isolation = Isolation(
         isolationStart = testResultEndDate,
         isolationConfiguration = isolationConfigurationProvider.durationDays,
@@ -225,30 +235,23 @@ sealed class SideEffect {
     ) : SideEffect()
 }
 
-fun IsolationStateMachine.remainingDaysInIsolation(state: State = readState(validateExpiry = true)): Long {
-    return when (state) {
-        is Default -> 0
-        is Isolation -> daysUntil(state.expiryDate)
-    }
-}
-
 val State.canOrderTest
     get() = if (this is Isolation) isIndexCase() else false
 
 val State.canReportSymptoms
     get() = if (this is Isolation) isContactCaseOnly() else true
 
-private fun daysUntil(date: LocalDate) = max(0, ChronoUnit.DAYS.between(LocalDate.now(), date))
-
 @Singleton
 class IsolationStateMachine(
     private val stateStorage: StateStorage,
     private val notificationProvider: NotificationProvider,
-    private var clock: Clock,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val testResultsProvider: TestResultsProvider,
     private val userInbox: UserInbox,
-    private val isolationExpirationAlarmController: IsolationExpirationAlarmController
+    private val isolationExpirationAlarmController: IsolationExpirationAlarmController,
+    private val clock: Clock,
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
+    private val analyticsEventScope: CoroutineScope
 ) {
 
     @Inject
@@ -258,15 +261,19 @@ class IsolationStateMachine(
         isolationConfigurationProvider: IsolationConfigurationProvider,
         testResultsProvider: TestResultsProvider,
         userInbox: UserInbox,
-        isolationExpirationAlarmController: IsolationExpirationAlarmController
+        isolationExpirationAlarmController: IsolationExpirationAlarmController,
+        clock: Clock,
+        analyticsEventProcessor: AnalyticsEventProcessor
     ) : this(
         stateStorage,
         notificationProvider,
-        Clock.systemDefaultZone(),
         isolationConfigurationProvider,
         testResultsProvider,
         userInbox,
-        isolationExpirationAlarmController
+        isolationExpirationAlarmController,
+        clock,
+        analyticsEventProcessor,
+        analyticsEventScope = GlobalScope
     )
 
     fun readState(validateExpiry: Boolean = true): State = synchronized(this) {
@@ -303,15 +310,21 @@ class IsolationStateMachine(
         stateMachine.transition(OnPreviousIsolationOutdated)
     }
 
-    @VisibleForTesting
-    fun setClock(testClock: Clock) {
-        clock = testClock
+    fun remainingDaysInIsolation(state: State = readState(validateExpiry = true)): Long {
+        return when (state) {
+            is Default -> 0
+            is Isolation -> daysUntil(state.expiryDate)
+        }
     }
+
+    private fun daysUntil(date: LocalDate) = max(0, ChronoUnit.DAYS.between(LocalDate.now(clock), date))
 
     internal val stateMachine = StateMachine.create<State, Event, SideEffect> {
         initialState(stateStorage.state)
         state<Default> {
             on<OnExposedNotification> {
+                trackAnalyticsEvent(ReceivedRiskyContactNotification)
+
                 val contactCaseIsolationDays =
                     getConfigurationDurations().contactCase
                 val until = it.exposureDate.atZone(ZoneOffset.UTC).toLocalDate()
@@ -366,7 +379,7 @@ class IsolationStateMachine(
         }
         state<Isolation> {
             on<OnExposedNotification> {
-                if (isIndexCaseOnly() && !hasPositiveResultAfter(this.indexCase!!.symptomsOnsetDate)) {
+                if (isIndexCaseOnly() && !hasPositiveResultAfter(this.indexCase!!.symptomsOnsetDate, clock.zone)) {
                     val expiryDateBasedOnExposure = it.exposureDate.plus(
                         getConfigurationDurations().contactCase.toLong(),
                         ChronoUnit.DAYS
@@ -438,6 +451,9 @@ class IsolationStateMachine(
                 Timber.d("no transition $currentState")
             } else {
                 Timber.d("transition from $currentState to $newState")
+                if (currentState is Default && newState is Isolation) {
+                    trackAnalyticsEvent(StartedIsolation)
+                }
             }
 
             stateStorage.state = newState
@@ -474,11 +490,11 @@ class IsolationStateMachine(
         }
     }
 
-    private fun hasPositiveResultAfter(symptomsOnsetDate: LocalDate): Boolean {
+    private fun hasPositiveResultAfter(symptomsOnsetDate: LocalDate, zoneId: ZoneId): Boolean {
         return testResultsProvider.testResults.values
             .filter {
                 it.testEndDate.isAfter(
-                    symptomsOnsetDate.atStartOfDay(ZoneId.systemDefault()).toInstant()
+                    symptomsOnsetDate.atStartOfDay(zoneId).toInstant()
                 )
             }
             .any { it.testResult == POSITIVE }
@@ -567,4 +583,10 @@ class IsolationStateMachine(
     }
 
     private fun getConfigurationDurations() = isolationConfigurationProvider.durationDays
+
+    private fun trackAnalyticsEvent(event: AnalyticsEvent) {
+        analyticsEventScope.launch {
+            analyticsEventProcessor.track(event)
+        }
+    }
 }

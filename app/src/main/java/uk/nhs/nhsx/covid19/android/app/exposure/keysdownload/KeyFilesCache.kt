@@ -5,12 +5,15 @@ import okhttp3.ResponseBody
 import uk.nhs.nhsx.covid19.android.app.util.lastDateFormatter
 import java.io.File
 import java.io.InputStream
+import java.time.Clock
 import java.time.LocalDateTime
 import javax.inject.Inject
 
 class KeyFilesCache @Inject constructor(
-    private val applicationContext: Context
+    private val applicationContext: Context,
+    private val clock: Clock
 ) {
+
     fun createFile(timestamp: String, responseBody: ResponseBody): File {
         val filePath = getFilePath(timestamp)
         responseBody.byteStream().saveToFile(filePath)
@@ -41,7 +44,7 @@ class KeyFilesCache @Inject constructor(
     }
 
     fun clearOutdatedFiles() {
-        val threshold = LocalDateTime.now().minusDays(1)
+        val threshold = LocalDateTime.now(clock).minusDays(1)
 
         val cacheDir = File(createDirPath())
 

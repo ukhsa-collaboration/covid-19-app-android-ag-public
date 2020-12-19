@@ -21,6 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.payment.RedirectToIsolationPaymentWebsite
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
@@ -44,7 +45,7 @@ class RedirectToIsolationPaymentWebsiteActivity : BaseActivity(R.layout.activity
     }
 
     private fun setupListeners() {
-        buttonTryAgain.setOnClickListener {
+        buttonTryAgain.setOnSingleClickListener {
             viewModel.loadIsolationPaymentUrl()
         }
     }

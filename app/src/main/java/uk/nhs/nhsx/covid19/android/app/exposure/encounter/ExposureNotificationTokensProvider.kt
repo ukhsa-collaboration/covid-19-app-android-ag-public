@@ -12,17 +12,11 @@ import java.time.Clock
 import java.time.Instant
 import javax.inject.Inject
 
-class ExposureNotificationTokensProvider constructor(
+class ExposureNotificationTokensProvider @Inject constructor(
     private val exposureNotificationTokensStorage: ExposureNotificationTokensStorage,
     moshi: Moshi,
     private val clock: Clock
 ) {
-
-    @Inject
-    constructor(
-        exposureNotificationTokensStorage: ExposureNotificationTokensStorage,
-        moshi: Moshi
-    ) : this(exposureNotificationTokensStorage, moshi, Clock.systemUTC())
 
     private val exposureNotificationTokensAdapter: JsonAdapter<List<TokenInfo>> =
         moshi.adapter(exposureNotificationTokenType)

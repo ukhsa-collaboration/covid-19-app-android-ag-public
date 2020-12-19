@@ -21,7 +21,8 @@ import javax.inject.Inject
 
 class VisitedVenuesStorage @Inject constructor(
     moshi: Moshi,
-    encryptedFileInfo: EncryptedFileInfo
+    encryptedFileInfo: EncryptedFileInfo,
+    private val clock: Clock
 ) {
     private val context = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
@@ -34,7 +35,7 @@ class VisitedVenuesStorage @Inject constructor(
     )
     private val adapter: JsonAdapter<List<VenueVisit>> = moshi.adapter(type)
 
-    suspend fun finishLastVisitAndAddNewVenue(venue: Venue, clock: Clock = Clock.systemDefaultZone()) =
+    suspend fun finishLastVisitAndAddNewVenue(venue: Venue) =
         withContext(context) {
             val now = Instant.now(clock)
             val visitedVenues = getVisitedVenuesMutable()

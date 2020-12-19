@@ -4,14 +4,11 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
-import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.Result
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
-import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandleInitialExposureNotification.InitialCircuitBreakerResult
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandlePollingExposureNotification.PollingCircuitBreakerResult
 import uk.nhs.nhsx.covid19.android.app.remote.EmptyApi
@@ -21,7 +18,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSUR
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitFakeExposureWindows
 import java.time.Instant
-import javax.inject.Provider
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import uk.nhs.nhsx.covid19.android.app.payment.CheckIsolationPaymentToken
@@ -32,9 +28,6 @@ class ExposureNotificationWorkTest {
     private val handleInitialExposureNotification = mockk<HandleInitialExposureNotification>()
     private val handlePollingExposureNotification = mockk<HandlePollingExposureNotification>()
     private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
-    private val potentialExposureExplanationHandlerProvider = mockk<Provider<PotentialExposureExplanationHandler>>()
-    private val potentialExposureExplanationHandler = mockk<PotentialExposureExplanationHandler>(relaxUnitFun = true)
-    private val exposureNotificationApi = mockk<ExposureNotificationApi>(relaxed = true)
     private val emptyApi = mockk<EmptyApi>(relaxed = true)
     private val submitFakeExposureWindows = mockk<SubmitFakeExposureWindows>(relaxed = true)
     private val checkIsolationPaymentToken = mockk<CheckIsolationPaymentToken>(relaxed = true)
@@ -44,18 +37,10 @@ class ExposureNotificationWorkTest {
         handleInitialExposureNotification,
         handlePollingExposureNotification,
         stateMachine,
-        potentialExposureExplanationHandlerProvider,
-        exposureNotificationApi,
         emptyApi,
         submitFakeExposureWindows,
         checkIsolationPaymentToken
     )
-
-    @Before
-    fun setUp() {
-        every { potentialExposureExplanationHandlerProvider.get() } returns potentialExposureExplanationHandler
-        coEvery { exposureNotificationApi.version() } returns null
-    }
 
     @Test
     fun `no tokens return success`() = runBlocking {
@@ -67,29 +52,9 @@ class ExposureNotificationWorkTest {
         coVerify(exactly = 0) { handlePollingExposureNotification.invoke(any()) }
         verify(exactly = 0) { stateMachine.processEvent(any()) }
         coVerify(exactly = 1) { checkIsolationPaymentToken.invoke() }
-        verify(exactly = 0) { potentialExposureExplanationHandler.addResult(any()) }
-        verify(exactly = 1) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
         verify(exactly = 0) { submitFakeExposureWindows(any(), any()) }
 
-        assertEquals(Result.Success(Unit), result)
-    }
-
-    @Test
-    fun `no tokens return success for EN version higher than 1,6`() = runBlocking {
-        every { exposureNotificationTokensProvider.tokens } returns emptyList()
-        coEvery { exposureNotificationApi.version() } returns 170345
-
-        val result = testSubject.handleMatchesFound()
-
-        coVerify(exactly = 0) { handleInitialExposureNotification.invoke(any()) }
-        coVerify(exactly = 0) { handlePollingExposureNotification.invoke(any()) }
-        verify(exactly = 0) { stateMachine.processEvent(any()) }
-        coVerify(exactly = 1) { checkIsolationPaymentToken.invoke() }
-        verify(exactly = 0) { potentialExposureExplanationHandler.addResult(any()) }
-        verify(exactly = 0) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
-        verify(exactly = 0) { submitFakeExposureWindows(any(), any()) }
-
-        assertEquals(Result.Success(Unit), result)
+        assertEquals(Success(Unit), result)
     }
 
     @Test
@@ -99,7 +64,7 @@ class ExposureNotificationWorkTest {
             TokenInfo("token2", startedAt = Instant.now().toEpochMilli())
         )
 
-        coEvery { handleInitialExposureNotification.invoke(any()) } returns Result.Success(
+        coEvery { handleInitialExposureNotification.invoke(any()) } returns Success(
             InitialCircuitBreakerResult.Yes(123)
         )
 
@@ -111,11 +76,9 @@ class ExposureNotificationWorkTest {
         coVerify(exactly = 0) { handlePollingExposureNotification.invoke(any()) }
         verify(exactly = 2) { exposureNotificationTokensProvider.remove(any()) }
         verify(exactly = 0) { exposureNotificationTokensProvider.updateToPolling(any(), any()) }
-        verify(exactly = 2) { potentialExposureExplanationHandler.addResult(any()) }
-        verify(exactly = 1) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
         verify(exactly = 0) { submitFakeExposureWindows(any(), any()) }
 
-        assertEquals(Result.Success(Unit), result)
+        assertEquals(Success(Unit), result)
     }
 
     @Test
@@ -125,7 +88,7 @@ class ExposureNotificationWorkTest {
                 TokenInfo("token1", startedAt = Instant.now().toEpochMilli())
             )
 
-            val pendingResult = Result.Success(
+            val pendingResult = Success(
                 InitialCircuitBreakerResult.Pending(123)
             )
             coEvery { handleInitialExposureNotification.invoke(any()) } returns pendingResult
@@ -143,13 +106,9 @@ class ExposureNotificationWorkTest {
             verify(exactly = 0) { stateMachine.processEvent(any()) }
             coVerify(exactly = 1) { checkIsolationPaymentToken.invoke() }
             verify(exactly = 0) { exposureNotificationTokensProvider.remove("token1") }
-            val slot = slot<Result<InitialCircuitBreakerResult>>()
-            verify(exactly = 1) { potentialExposureExplanationHandler.addResult(capture(slot)) }
-            assertEquals(pendingResult, slot.captured)
-            verify(exactly = 1) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
             verify(exactly = 0) { submitFakeExposureWindows(any(), any()) }
 
-            assertEquals(Result.Success(Unit), result)
+            assertEquals(Success(Unit), result)
         }
 
     @Test
@@ -159,7 +118,7 @@ class ExposureNotificationWorkTest {
                 TokenInfo("token1", startedAt = Instant.now().toEpochMilli())
             )
 
-            val noResult = Result.Success(
+            val noResult = Success(
                 InitialCircuitBreakerResult.No
             )
             coEvery { handleInitialExposureNotification.invoke(any()) } returns noResult
@@ -172,41 +131,9 @@ class ExposureNotificationWorkTest {
             coVerify(exactly = 0) { handlePollingExposureNotification.invoke(any()) }
             verify(exactly = 0) { stateMachine.processEvent(any()) }
             coVerify(exactly = 1) { checkIsolationPaymentToken.invoke() }
-            val slot = slot<Result<InitialCircuitBreakerResult>>()
-            verify(exactly = 1) { potentialExposureExplanationHandler.addResult(capture(slot)) }
-            assertEquals(noResult, slot.captured)
-            verify(exactly = 1) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
             verify(exactly = 0) { submitFakeExposureWindows(any(), any()) }
 
-            assertEquals(Result.Success(Unit), result)
-        }
-
-    @Test
-    fun `one token for initial circuit breaker with no response returns success for EN version higher that 1,6`() =
-        runBlocking {
-            every { exposureNotificationTokensProvider.tokens } returns listOf(
-                TokenInfo("token1", startedAt = Instant.now().toEpochMilli())
-            )
-            coEvery { exposureNotificationApi.version() } returns 17837
-
-            val noResult = Result.Success(
-                InitialCircuitBreakerResult.No
-            )
-            coEvery { handleInitialExposureNotification.invoke(any()) } returns noResult
-
-            val result = testSubject.handleMatchesFound()
-
-            coVerify(exactly = 1) { handleInitialExposureNotification.invoke(any()) }
-            verify(exactly = 1) { exposureNotificationTokensProvider.remove("token1") }
-            verify(exactly = 0) { exposureNotificationTokensProvider.updateToPolling(any(), any()) }
-            coVerify(exactly = 0) { handlePollingExposureNotification.invoke(any()) }
-            verify(exactly = 0) { stateMachine.processEvent(any()) }
-            coVerify(exactly = 1) { checkIsolationPaymentToken.invoke() }
-            verify(exactly = 0) { potentialExposureExplanationHandler.addResult(any()) }
-            verify(exactly = 0) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
-            verify(exactly = 0) { submitFakeExposureWindows(any(), any()) }
-
-            assertEquals(Result.Success(Unit), result)
+            assertEquals(Success(Unit), result)
         }
 
     @Test
@@ -216,7 +143,7 @@ class ExposureNotificationWorkTest {
                 TokenInfo("token1", startedAt = Instant.now().toEpochMilli())
             )
 
-            val noResult = Result.Success(
+            val noResult = Success(
                 InitialCircuitBreakerResult.Skipped
             )
             coEvery { handleInitialExposureNotification.invoke(any()) } returns noResult
@@ -230,42 +157,9 @@ class ExposureNotificationWorkTest {
             coVerify(exactly = 0) { handlePollingExposureNotification.invoke(any()) }
             verify(exactly = 0) { stateMachine.processEvent(any()) }
             coVerify(exactly = 1) { checkIsolationPaymentToken.invoke() }
-            val slot = slot<Result<InitialCircuitBreakerResult>>()
-            verify(exactly = 1) { potentialExposureExplanationHandler.addResult(capture(slot)) }
-            assertEquals(noResult, slot.captured)
-            verify(exactly = 1) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
             verify(exactly = 0) { submitFakeExposureWindows(any(), any()) }
 
-            assertEquals(Result.Success(Unit), result)
-        }
-
-    @Test
-    fun `one token for initial circuit breaker with skipped response returns success for EN version higher that 1,6`() =
-        runBlocking {
-            every { exposureNotificationTokensProvider.tokens } returns listOf(
-                TokenInfo("token1", startedAt = Instant.now().toEpochMilli())
-            )
-            coEvery { exposureNotificationApi.version() } returns 17837
-
-            val noResult = Result.Success(
-                InitialCircuitBreakerResult.Skipped
-            )
-            coEvery { handleInitialExposureNotification.invoke(any()) } returns noResult
-
-            val result = testSubject.handleMatchesFound()
-
-            coVerify(exactly = 1) { handleInitialExposureNotification.invoke(any()) }
-            verify(exactly = 1) { exposureNotificationTokensProvider.remove("token1") }
-            coVerify(exactly = 1) { emptyApi.submit(EmptySubmissionRequest(CIRCUIT_BREAKER)) }
-            verify(exactly = 0) { exposureNotificationTokensProvider.updateToPolling(any(), any()) }
-            coVerify(exactly = 0) { handlePollingExposureNotification.invoke(any()) }
-            verify(exactly = 0) { stateMachine.processEvent(any()) }
-            coVerify(exactly = 1) { checkIsolationPaymentToken.invoke() }
-            verify(exactly = 0) { potentialExposureExplanationHandler.addResult(any()) }
-            verify(exactly = 0) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
-            verify(exactly = 0) { submitFakeExposureWindows(any(), any()) }
-
-            assertEquals(Result.Success(Unit), result)
+            assertEquals(Success(Unit), result)
         }
 
     @Test
@@ -274,7 +168,7 @@ class ExposureNotificationWorkTest {
             TokenInfo("token1", 123, startedAt = Instant.now().toEpochMilli())
         )
 
-        coEvery { handlePollingExposureNotification.invoke(any()) } returns Result.Success(
+        coEvery { handlePollingExposureNotification.invoke(any()) } returns Success(
             PollingCircuitBreakerResult.Yes
         )
 
@@ -286,11 +180,9 @@ class ExposureNotificationWorkTest {
         verify(exactly = 1) { exposureNotificationTokensProvider.remove(any()) }
         verify(exactly = 0) { exposureNotificationTokensProvider.updateToPolling(any(), any()) }
         coVerify(exactly = 1) { checkIsolationPaymentToken.invoke() }
-        verify(exactly = 0) { potentialExposureExplanationHandler.addResult(any()) }
-        verify(exactly = 1) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
         verify(exactly = 0) { submitFakeExposureWindows(any(), any()) }
 
-        assertEquals(Result.Success(Unit), result)
+        assertEquals(Success(Unit), result)
     }
 
     @Test
@@ -300,7 +192,7 @@ class ExposureNotificationWorkTest {
                 TokenInfo("token1", 123, startedAt = Instant.now().toEpochMilli())
             )
 
-            coEvery { handlePollingExposureNotification.invoke(any()) } returns Result.Success(
+            coEvery { handlePollingExposureNotification.invoke(any()) } returns Success(
                 PollingCircuitBreakerResult.Pending
             )
 
@@ -312,11 +204,9 @@ class ExposureNotificationWorkTest {
             verify(exactly = 0) { exposureNotificationTokensProvider.remove(any()) }
             verify(exactly = 0) { exposureNotificationTokensProvider.updateToPolling(any(), any()) }
             coVerify(exactly = 1) { checkIsolationPaymentToken.invoke() }
-            verify(exactly = 0) { potentialExposureExplanationHandler.addResult(any()) }
-            verify(exactly = 1) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
             verify(exactly = 0) { submitFakeExposureWindows(any(), any()) }
 
-            assertEquals(Result.Success(Unit), result)
+            assertEquals(Success(Unit), result)
         }
 
     @Test
@@ -325,7 +215,7 @@ class ExposureNotificationWorkTest {
             TokenInfo("token1", 123, startedAt = Instant.now().toEpochMilli())
         )
 
-        coEvery { handlePollingExposureNotification.invoke(any()) } returns Result.Success(
+        coEvery { handlePollingExposureNotification.invoke(any()) } returns Success(
             PollingCircuitBreakerResult.No
         )
 
@@ -337,11 +227,9 @@ class ExposureNotificationWorkTest {
         verify(exactly = 1) { exposureNotificationTokensProvider.remove(any()) }
         verify(exactly = 0) { exposureNotificationTokensProvider.updateToPolling(any(), any()) }
         coVerify(exactly = 1) { checkIsolationPaymentToken.invoke() }
-        verify(exactly = 0) { potentialExposureExplanationHandler.addResult(any()) }
-        verify(exactly = 1) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
         verify(exactly = 0) { submitFakeExposureWindows(any(), any()) }
 
-        assertEquals(Result.Success(Unit), result)
+        assertEquals(Success(Unit), result)
     }
 
     @Test
@@ -361,8 +249,6 @@ class ExposureNotificationWorkTest {
         verify(exactly = 0) { exposureNotificationTokensProvider.remove(any()) }
         verify(exactly = 0) { exposureNotificationTokensProvider.updateToPolling(any(), any()) }
         coVerify(exactly = 1) { checkIsolationPaymentToken.invoke() }
-        verify(exactly = 0) { potentialExposureExplanationHandler.addResult(any()) }
-        verify(exactly = 1) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
         verify(exactly = 0) { submitFakeExposureWindows(any(), any()) }
 
         assertTrue { result is Result.Failure }
@@ -385,33 +271,6 @@ class ExposureNotificationWorkTest {
         verify(exactly = 0) { exposureNotificationTokensProvider.remove(any()) }
         verify(exactly = 0) { exposureNotificationTokensProvider.updateToPolling(any(), any()) }
         coVerify(exactly = 1) { checkIsolationPaymentToken.invoke() }
-        verify(exactly = 1) { potentialExposureExplanationHandler.addResult(any()) }
-        verify(exactly = 1) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
-        verify(exactly = 0) { submitFakeExposureWindows(any(), any()) }
-
-        assertTrue { result is Result.Failure }
-    }
-
-    @Test
-    fun `failure on initial circuit breaker return failure for EN version higher than 1,6`() = runBlocking {
-        val testException = Exception()
-        every { exposureNotificationTokensProvider.tokens } returns listOf(
-            TokenInfo("token1", startedAt = Instant.now().toEpochMilli())
-        )
-        coEvery { exposureNotificationApi.version() } returns 17823
-
-        coEvery { handleInitialExposureNotification.invoke(any()) } throws testException
-
-        val result = testSubject.handleMatchesFound()
-
-        coVerify(exactly = 1) { handleInitialExposureNotification.invoke("token1") }
-        coVerify(exactly = 0) { handlePollingExposureNotification.invoke(any()) }
-        verify(exactly = 0) { stateMachine.processEvent(any()) }
-        verify(exactly = 0) { exposureNotificationTokensProvider.remove(any()) }
-        verify(exactly = 0) { exposureNotificationTokensProvider.updateToPolling(any(), any()) }
-        coVerify(exactly = 1) { checkIsolationPaymentToken.invoke() }
-        verify(exactly = 0) { potentialExposureExplanationHandler.addResult(any()) }
-        verify(exactly = 0) { potentialExposureExplanationHandler.showNotificationIfNeeded() }
         verify(exactly = 0) { submitFakeExposureWindows(any(), any()) }
 
         assertTrue { result is Result.Failure }

@@ -14,6 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.edgecases.AgeRestrictionActivity
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
 class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
@@ -39,7 +40,7 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
             }
         }
 
-        confirmOnboarding.setOnClickListener {
+        confirmOnboarding.setOnSingleClickListener {
             viewModel.onConfirmOnboardingClicked()
         }
     }

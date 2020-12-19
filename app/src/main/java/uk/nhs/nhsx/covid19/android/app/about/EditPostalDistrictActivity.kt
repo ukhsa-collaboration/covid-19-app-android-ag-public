@@ -26,6 +26,7 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeU
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeUpdateState.PostDistrictNotSupported
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeUpdateState.Success
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
 class EditPostalDistrictActivity : BaseActivity(R.layout.activity_edit_postal_district) {
@@ -45,7 +46,7 @@ class EditPostalDistrictActivity : BaseActivity(R.layout.activity_edit_postal_di
             upIndicator = R.drawable.ic_arrow_back_white
         )
 
-        continuePostCode.setOnClickListener {
+        continuePostCode.setOnSingleClickListener {
             if (RuntimeBehavior.isFeatureEnabled(LOCAL_AUTHORITY)) {
                 viewModel.validatePostCode(postCodeView.postCodeDistrict)
             } else {

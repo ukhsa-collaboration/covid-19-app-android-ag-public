@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.scenarios.fragment_test_settings.textViewTestSettingsFeatureToggle
 import kotlinx.android.synthetic.scenarios.fragment_test_settings.textViewTestSettingsTestSettings
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 
 class TestSettingsFragment : Fragment(R.layout.fragment_test_settings) {
 
@@ -27,8 +28,8 @@ class TestSettingsFragment : Fragment(R.layout.fragment_test_settings) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        textViewTestSettingsFeatureToggle.setOnClickListener { testSettingListener?.onFeatureToggleClicked() }
-        textViewTestSettingsTestSettings.setOnClickListener { testSettingListener?.onTestSettingClicked() }
+        textViewTestSettingsFeatureToggle.setOnSingleClickListener { testSettingListener?.onFeatureToggleClicked() }
+        textViewTestSettingsTestSettings.setOnSingleClickListener { testSettingListener?.onTestSettingClicked() }
     }
 
     override fun onResume() {

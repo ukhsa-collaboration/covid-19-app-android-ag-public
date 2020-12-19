@@ -44,7 +44,7 @@ enum class FeatureFlag(
         "feature.storeExposureWindows",
         "Store exposure windows",
         "Enable storage of exposure windows",
-        defaultValue = false
+        defaultValue = true
     ),
 }
 

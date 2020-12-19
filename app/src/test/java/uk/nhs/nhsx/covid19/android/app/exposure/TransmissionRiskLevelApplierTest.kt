@@ -18,6 +18,7 @@ import kotlin.test.assertEquals
 class TransmissionRiskLevelApplierTest {
     private val stateMachine = mockk<IsolationStateMachine>()
     private lateinit var transmissionRiskLevelApplier: TransmissionRiskLevelApplier
+    private val fakeOnsetDate = LocalDate.parse("2020-07-12")
 
     @Before
     fun setup() {
@@ -32,7 +33,7 @@ class TransmissionRiskLevelApplierTest {
         setOnsetDate(LocalDate.of(2020, 7, 12))
 
         // When
-        val keys = transmissionRiskLevelApplier.applyTransmissionRiskLevels(filteredKeys)
+        val keys = transmissionRiskLevelApplier.applyTransmissionRiskLevels(filteredKeys, fakeOnsetDate)
 
         // Then
         val expectedRiskLevels = mutableListOf(5, 6, 7, 6)
@@ -50,7 +51,7 @@ class TransmissionRiskLevelApplierTest {
         setOnsetDate(LocalDate.of(2020, 7, 4))
 
         // When
-        val keys = transmissionRiskLevelApplier.applyTransmissionRiskLevels(filteredKeys)
+        val keys = transmissionRiskLevelApplier.applyTransmissionRiskLevels(filteredKeys, fakeOnsetDate)
 
         // Then
         val expectedRiskLevels = mutableListOf(5, 6, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0)
@@ -68,7 +69,7 @@ class TransmissionRiskLevelApplierTest {
         setOnsetDate(LocalDate.of(2020, 7, 8))
 
         // When
-        val keys = transmissionRiskLevelApplier.applyTransmissionRiskLevels(generatedKeys)
+        val keys = transmissionRiskLevelApplier.applyTransmissionRiskLevels(generatedKeys, fakeOnsetDate)
 
         // Then
         //                                     1  2  3  4  5  6  7  8  9  10 11 12 13 14
@@ -86,7 +87,7 @@ class TransmissionRiskLevelApplierTest {
         every { stateMachine.readState(any()) } returns isolationWithoutIndexCase()
 
         // When
-        val keys = transmissionRiskLevelApplier.applyTransmissionRiskLevels(generateKeys(from = 1, to = 5))
+        val keys = transmissionRiskLevelApplier.applyTransmissionRiskLevels(generateKeys(from = 1, to = 5), fakeOnsetDate)
 
         // Then
         keys.forEach { key ->

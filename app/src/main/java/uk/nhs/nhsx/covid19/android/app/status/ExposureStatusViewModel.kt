@@ -10,34 +10,18 @@ import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationRe
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.Success
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationReminderAlarmController
-import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
 import javax.inject.Inject
 
-class ExposureStatusViewModel(
+class ExposureStatusViewModel @Inject constructor(
     private val exposureNotificationManager: ExposureNotificationManager,
     private val exposureNotificationReminderAlarmController: ExposureNotificationReminderAlarmController,
-    private val notificationProvider: NotificationProvider,
     private val resumeContactTracingNotificationTimeProvider: ResumeContactTracingNotificationTimeProvider,
     private val clock: Clock
 ) : ViewModel() {
-
-    @Inject
-    constructor(
-        exposureNotificationManager: ExposureNotificationManager,
-        exposureNotificationReminderAlarmController: ExposureNotificationReminderAlarmController,
-        notificationProvider: NotificationProvider,
-        resumeContactTracingNotificationTimeProvider: ResumeContactTracingNotificationTimeProvider
-    ) : this(
-        exposureNotificationManager,
-        exposureNotificationReminderAlarmController,
-        notificationProvider,
-        resumeContactTracingNotificationTimeProvider,
-        clock = Clock.systemUTC()
-    )
 
     private val exposureNotificationActivationResult =
         SingleLiveEvent<ExposureNotificationActivationResult>()

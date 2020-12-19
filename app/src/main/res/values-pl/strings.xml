@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright © 2020 NHSX. All rights reserved.
-  --><resources xmlns:tools="http://schemas.android.com/tools">
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="locale">pl</string>
     <!-- URLs -->
     <string name="url_privacy_notice">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
@@ -64,7 +64,7 @@
     <string name="go_back">Wróć</string>
     <string name="loading">Ładowanie...</string>
     <string name="remove">Usuń</string>
-    <string name="empty" translatable="false"/>
+    <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">Aplikacja wyśle Ci ostrzeżenie, jeżeli miałeś/aś kontakt z innymi użytkownikami, którzy zgłosili pozytywny wynik testu na koronawirusa.\n\nAby umożliwić śledzenie kontaktów, należy wyrazić zgodę na powiadomienia o narażeniu.\n\nJeżeli zmienisz zdanie, możesz w każdej chwili wycofać zgodę w ustawieniach telefonu.</string>
     <string name="permission_title">Śledzenie kontaktów</string>
     <string name="exposure_notifications_rationale_title">Śledzenie kontaktów pomaga w zapobieganiu rozprzestrzeniania się koronawirusa (COVID-19)</string>
@@ -197,7 +197,7 @@
     <string name="state_test_positive_info">Wynik Twojego testu na koronawirusa jest pozytywny.</string>
     <string name="state_test_negative_info">Wynik Twojego testu na koronawirusa jest negatywny, jednak objawy mogą nadal wystąpić. Kontynuuj izolację</string>
     <string name="state_test_void_info">Nie można było potwierdzić, czy doszło u Ciebie do zakażenia koronawirusem.</string>
-    <string name="test_result_negative_continue_self_isolate_explanation">Wynik Twojego testu wskazuje, że w momencie, kiedy test został przeprowadzony, nie doszło do zakażenia koronawirusem. Wysłano do Ciebie wiadomość e-mail lub wiadomość tekstową z dalszymi informacjami. Jeżeli masz poniżej 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.</string>
+    <string name="test_result_negative_continue_self_isolate_explanation">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, zapoznaj się z najczęściej zadawanymi pytaniami (FAQ).\n\nWynik Twojego testu wskazuje, że w momencie, kiedy test został przeprowadzony, nie doszło do zakażenia koronawirusem. Wysłano do Ciebie wiadomość e-mail lub wiadomość tekstową z dalszymi informacjami. Jeżeli masz poniżej 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.</string>
     <string name="isolation_until_date">do %1$s do godz. 23:59</string>
     <string name="questionnaire_review_one_of_two">Krok 1 z 2</string>
     <string name="expiration_notification_title">Dobra wiadomość!</string>
@@ -224,11 +224,11 @@
     <string name="for_further_advice_visit">Aby uzyskać dalsze informacje, prosimy o kontakt:</string>
     <string name="test_result_your_test_result">Twój wynik testu</string>
     <string name="test_result_positive_continue_self_isolation_title_1">Kontynuuj izolację przez</string>
-    <string name="test_result_positive_continue_self_isolate_explanation">Wynik Twojego testu wskazuje, że w momencie, kiedy test został przeprowadzony, byłeś/-aś zakażony/-a koronawirusem. Wysłano do Ciebie wiadomość e-mail lub wiadomość tekstową z dalszymi informacjami. Jeżeli masz poniżej 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.</string>
+    <string name="test_result_positive_continue_self_isolate_explanation">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, kliknij w poniższy link do listy najczęściej zadawanych pytań (FAQ).\n\nWynik Twojego testu wskazuje, że w momencie, kiedy test został przeprowadzony, byłeś/-aś zakażony/-a koronawirusem. Wysłano do Ciebie wiadomość e-mail lub wiadomość tekstową z dalszymi informacjami. Jeżeli masz poniżej 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.</string>
     <string name="test_result_negative_no_self_isolation_subtitle_text">Wynik Twojego testu na koronawirusa jest negatywny.</string>
-    <string name="test_result_void_continue_self_isolate_explanation">W momencie testu nie można było potwierdzić, czy doszło u Ciebie do zakażenia koronawirusem. Wykonaj test ponownie. Wysłano do Ciebie wiadomość e-mail lub wiadomość tekstową z dalszymi informacjami.Jeżeli masz poniżej 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.</string>
+    <string name="test_result_void_continue_self_isolate_explanation">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, zapoznaj się z najczęściej zadawanymi pytaniami (FAQ).\n\nW momencie testu nie można było potwierdzić, czy doszło u Ciebie do zakażenia koronawirusem. Wykonaj test ponownie. Wysłano do Ciebie wiadomość e-mail lub wiadomość tekstową z dalszymi informacjami.Jeżeli masz poniżej 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.</string>
     <string name="test_result_negative_already_not_in_isolation_subtitle">Wynik Twojego testu na koronawirusa jest negatywny.</string>
-    <string name="test_result_void_already_not_in_isolation_subtitle">Nie mogliśmy stwierdzić, czy w momencie wykonywania testu byłeś/aś zakażony/a koronawirusem, dlatego powinieneś/aś ponownie wykonać test. Jeśli masz mniej niż 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.</string>
+    <string name="test_result_void_already_not_in_isolation_subtitle">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, zapoznaj się z najczęściej zadawanymi pytaniami (FAQ).\n\nNie mogliśmy stwierdzić, czy w momencie wykonywania testu byłeś/aś zakażony/a koronawirusem, dlatego powinieneś/aś ponownie wykonać test. Jeśli masz mniej niż 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.</string>
     <string name="submit_keys_information_title">Losowe identyfikatory urządzenia</string>
     <string name="submit_keys_information_text">Poinformujemy innych użytkowników aplikacji, że znaleźli się blisko osoby, która uzyskała pozytywny wynik testu na koronawirusa</string>
     <string name="submit_keys_information_description_title">Udostępnij losowe identyfikatory urządzenia</string>
@@ -305,8 +305,8 @@
     <string name="update_app_title">Zaktualizuj tę aplikację</string>
     <string name="valid_auth_code_is_required">Kod nie został rozpoznany. Proszę sprawdzić prawidłowość kodu.</string>
     <string name="self_isolate_for">Proszę izolować się przez</string>
-    <string name="isolate_after_corona_virus_symptoms">Twoje objawy wskazują, że mogłeś(-aś) zostać zakażony(-a) koronawirusem. Proszę rozpocząć izolację własną i całego gospodarstwa domowego. Oznacza to pozostanie w domu i nie przyjmowanie żadnych gości. Należy również niezwłocznie zamówić bezpłatny test. Jeżeli nie masz ukończonych 18 lat, radzimy aby pokazać tę wiadomość zaufanej osobie dorosłej.\n\nProszę pozostań w domu, aby chronić siebie i innych.</string>
-    <string name="isolate_after_no_corona_virus_symptoms">Na chwilę obecną nie wystąpiły u Ciebie objawy koronawirusa, jednak należy pamiętać, że objawy mogą wystąpić nawet po 14 dniach. Jeżeli nie masz ukończonych 18 lat, radzimy aby pokazać tę wiadomość zaufanej osobie dorosłej.\n\nProszę zostać w domu, aby zadbać o bezpieczeństwo własne i innych osób. Zamów test jedynie wtedy, gdy masz objawy koronawirusa.</string>
+    <string name="isolate_after_corona_virus_symptoms">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, zapoznaj się z najczęściej zadawanymi pytaniami (FAQ).\n\nTwoje objawy wskazują, że mogłeś(-aś) zostać zakażony(-a) koronawirusem. Proszę rozpocząć izolację własną i całego gospodarstwa domowego. Oznacza to pozostanie w domu i nie przyjmowanie żadnych gości. Należy również niezwłocznie zamówić bezpłatny test. Jeżeli nie masz ukończonych 18 lat, radzimy aby pokazać tę wiadomość zaufanej osobie dorosłej.\n\nProszę pozostań w domu, aby chronić siebie i innych.</string>
+    <string name="isolate_after_no_corona_virus_symptoms">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, zapoznaj się z najczęściej zadawanymi pytaniami (FAQ).\n\nNa chwilę obecną nie wystąpiły u Ciebie objawy koronawirusa, jednak należy pamiętać, że objawy mogą wystąpić nawet po 14 dniach. Jeżeli nie masz ukończonych 18 lat, radzimy aby pokazać tę wiadomość zaufanej osobie dorosłej.\n\nProszę zostać w domu, aby zadbać o bezpieczeństwo własne i innych osób. Zamów test jedynie wtedy, gdy masz objawy koronawirusa.</string>
     <string name="you_need_to_self_isolate">Musisz rozpocząć izolację</string>
     <string name="your_isolation_will_finish">Twoja izolacja zakończy się %1$s o godz. 23:59</string>
     <string name="qr_code_unsupported_title">Przepraszamy, Twój telefon nie obsługuje funkcji meldowania się w lokalach</string>
@@ -315,7 +315,7 @@
     <string name="unsupported_device">Ograniczenie w ustawieniach (na przykład, jeśli jest to telefon firmowy)\n\nInna aplikacja w telefonie używa tej samej technologii i blokuje możliwość uruchomienia tej aplikacji.</string>
     <string name="i_understand">Rozumiem</string>
     <string name="exposure_notification_hint">Mogłeś(-aś) przebywać w pobliżu osoby, która była zakażona koronawirusem. Proszę pozostać w domu i odizolować się, aby chronić siebie i innych.</string>
-    <string name="exposure_notification_recommendation">Ryzyko zakażenia i przenoszenia wirusa jest wysokie, nawet jeżeli nie wystąpiły u Ciebie żadne objawy. Jeżeli masz poniżej 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.\n\nOkres izolacji właśnie się rozpoczął. Izolacja powinna trwać przez cały wskazany okres. Zamów test jedynie wtedy, gdy masz objawy koronawirusa.\n\nAby uzyskać dalsze informacje, prosimy o kontakt:</string>
+    <string name="exposure_notification_recommendation">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, kliknij w poniższy link do listy najczęściej zadawanych pytań (FAQ).\n\nRyzyko zakażenia i przenoszenia wirusa jest wysokie, nawet jeżeli nie wystąpiły u Ciebie żadne objawy. Jeżeli masz poniżej 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.\n\nOkres izolacji właśnie się rozpoczął. Izolacja powinna trwać przez cały wskazany okres. Zamów test jedynie wtedy, gdy masz objawy koronawirusa.\n\nAby uzyskać dalsze informacje, prosimy o kontakt:</string>
     <string name="risk_level_title">W mojej okolicy</string>
     <string name="risk_level_link_text">Definicje poziomów ryzyka</string>
     <string name="low_risk_level_text">Niski – władze lokalne oceniły poziom ryzyka jako niski, co oznacza, że liczba zakażeń utrzymuje się na tym samym poziomie, jak w większości kraju.</string>
@@ -347,8 +347,8 @@
     <string name="about_feedback_information_text">Jeśli masz opinię o niniejszej aplikacji, pytanie, na które nie ma odpowiedzi w naszych częstych pytaniach lub masz problem techniczny, możesz skontaktować się z nami za pomocą naszego formularza online.</string>
     <string name="about_provide_feedback_link">Informacje zwrotne</string>
     <string name="state_test_positive_then_negative_info">Wynik Twojego testu na koronawirusa jest negatywny. Należy jednak kontynuować samoizolację, ponieważ poprzedni wynik testu był pozytywny</string>
-    <string name="test_result_positive_then_negative_explanation">Aktualny wynik testu wskazuje, że w czasie testowania nie byłeś/aś zakażony/a wirusem. Jeśli zaczniesz odczuwać objawy, zgłoś je w tej aplikacji. Jeśli masz mniej niż 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.</string>
-    <string name="test_result_negative_then_positive_continue_explanation">Wynik Twojego testu wskazuje, że w momencie, kiedy test został przeprowadzony, byłeś/-aś zakażony/-a koronawirusem. Wysłano do Ciebie wiadomość e-mail lub wiadomość tekstową z dalszymi informacjami. Jeżeli masz poniżej 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.</string>
+    <string name="test_result_positive_then_negative_explanation">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, zapoznaj się z najczęściej zadawanymi pytaniami (FAQ).\n\nAktualny wynik testu wskazuje, że w czasie testowania nie byłeś/aś zakażony/a wirusem. Jeśli zaczniesz odczuwać objawy, zgłoś je w tej aplikacji. Jeśli masz mniej niż 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.</string>
+    <string name="test_result_negative_then_positive_continue_explanation">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, kliknij w poniższy link do listy najczęściej zadawanych pytań (FAQ).\n\nWynik Twojego testu wskazuje, że w momencie, kiedy test został przeprowadzony, byłeś/-aś zakażony/-a koronawirusem. Wysłano do Ciebie wiadomość e-mail lub wiadomość tekstową z dalszymi informacjami. Jeżeli masz poniżej 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.</string>
 
     <string name="logo_nhs_generic_description">NHS Covid 19</string>
     <string name="logo_nhs_england_description">NHS Test and Trace</string>
@@ -396,29 +396,29 @@
     <string name="notification_channel_recommended_app_update_name_description">Te powiadomienia informują o zalecanych aktualizacjach aplikacji</string>
     <string name="single_local_authority_description">Świetna wiadomość! Aplikacja będzie udzielać bardziej dokładnych informacji i wskazówek dotyczących poziomu ryzyka zakażenia koronawirusem w Twojej okolicy.\n\nNie obawiaj się, Twoja prywatność jest nadal chroniona. Aplikacja nigdy nie zapisuje Twojej tożsamości ani lokalizacji.</string>
     <string name="single_local_authority_title">Władze lokalne dla %1$s to %2$s</string>
-    <string name="test_result_positive_continue_self_isolate_explanation_1">Oznacza to, że kiedy test został przeprowadzony, doszło do zakażenia wirusem. Wysłano do Ciebie wiadomość e-mail lub wiadomość tekstową z dalszymi informacjami.</string>
+    <string name="test_result_positive_continue_self_isolate_explanation_1">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, kliknij w poniższy link do listy najczęściej zadawanych pytań (FAQ).\n\nOznacza to, że kiedy test został przeprowadzony, doszło do zakażenia wirusem. Wysłano do Ciebie wiadomość e-mail lub wiadomość tekstową z dalszymi informacjami.</string>
     <string name="test_result_positive_continue_self_isolate_explanation_2">Nie martw się – u większości osób objawy są dość łagodne. Jeżeli jednak dojdzie do pogorszenia objawów, zadzwoń pod numer 111 lub odwiedź stronę internetową, aby uzyskać więcej informacji.</string>
-    <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/article/KA-01337</string>
+    <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
     <string name="local_authority_error_authority_not_supported_title">Aby kontynuować, należy wybrać z listy władze lokalne</string>
     <string name="local_authority_information_description">Proszę wybrać z listy władze lokalne. W ten sposób aplikacja będzie mogła podać Ci bardziej dokładne informacje i wskazówki.</string>
-<string name="about_encounter_date">Data kontaktu</string>
-<string name="about_my_data_date">Data</string>
-<string name="about_notification_date">Data powiadomienia</string>
-<string name="isolation_payment_action_button">Sprawdź, czy się kwalifikujesz</string>
-<string name="isolation_payment_heading">Pomoc finansowa</string>
-<string name="isolation_payment_help_england_link_text">Pomoc w składaniu wniosków o zasiłek Test and Trace Support Payment</string>
-<string name="isolation_payment_help_england_link_url">https://sip.test-and-trace.nhs.uk/help-support</string>
-<string name="isolation_payment_help_england_title">Jeżeli mieszkasz na terytorium Anglii i masz problemy ze złożeniem wniosku, wejdź na:</string>
-<string name="isolation_payment_help_wales_link_text">Pomoc w składaniu wniosków o zasiłek Self-Isolation Support Scheme</string>
-<string name="isolation_payment_help_wales_link_url">https://gov.wales/self-isolation-support-scheme</string>
-<string name="isolation_payment_help_wales_title">Jeżeli mieszkasz na terytorium Walii i masz problemy ze złożeniem wniosku, wejdź na:</string>
-<string name="isolation_payment_privacy_notice_link_text">Informacja o ochronie prywatności dotycząca śledzenia kontaktów</string>
-<string name="isolation_payment_privacy_notice_link_url">https://sip.test-and-trace.nhs.uk/privacy-policy</string>
-<string name="isolation_payment_privacy_notice_title">Wszelkie dane wykorzystane w obrębie aplikacji zostały wymienione w Informacji o ochronie prywatności:</string>
-<string name="isolation_payment_text">Aplikacja wykryła, że byłeś(-aś) w bliskim kontakcie z osobą, która uzyskała dodatni wynik testu na obecność koronawirusa. Zaleca się, abyś poddał(-a) się samoizolacji.\n\nPodczas przebywania w izolacji można ubiegać się wsparcie finansowe, w zależności od Twoich okoliczności. Jak najszybciej sprawdź, czy należy Ci się pomoc, klikając poniżej.\n\nPo kliknięciu przejdziesz do strony, na której może być konieczne podanie pewnych danych osobowych. Podane dane osobowe nie będą przechowywane w obrębie tej aplikacji.</string>
-<string name="onboarding_before_activating_app_announcement">Ważne: Przed aktywowaniem tej aplikacji należy zapoznać się z informacją o ochronie prywatności i wyrazić zgodę na regulamin użytkowania.</string>
-<string name="status_option_isolation_payment">Pomoc finansowa</string>
-<string name="title_exposure_notification">Powiadomienie o narażeniu</string>
-<string name="title_last_day_of_isolation">Ostatni dzień izolacji</string>
+    <string name="about_encounter_date">Data kontaktu</string>
+    <string name="about_my_data_date">Data</string>
+    <string name="about_notification_date">Data powiadomienia</string>
+    <string name="isolation_payment_action_button">Sprawdź, czy się kwalifikujesz</string>
+    <string name="isolation_payment_heading">Pomoc finansowa</string>
+    <string name="isolation_payment_help_england_link_text">Pomoc w składaniu wniosków o zasiłek Test and Trace Support Payment</string>
+    <string name="isolation_payment_help_england_link_url">https://sip.test-and-trace.nhs.uk/help-support</string>
+    <string name="isolation_payment_help_england_title">Jeżeli mieszkasz na terytorium Anglii i masz problemy ze złożeniem wniosku, wejdź na:</string>
+    <string name="isolation_payment_help_wales_link_text">Pomoc w składaniu wniosków o zasiłek Self-Isolation Support Scheme</string>
+    <string name="isolation_payment_help_wales_link_url">https://gov.wales/self-isolation-support-scheme</string>
+    <string name="isolation_payment_help_wales_title">Jeżeli mieszkasz na terytorium Walii i masz problemy ze złożeniem wniosku, wejdź na:</string>
+    <string name="isolation_payment_privacy_notice_link_text">Informacja o ochronie prywatności dotycząca śledzenia kontaktów</string>
+    <string name="isolation_payment_privacy_notice_link_url">https://sip.test-and-trace.nhs.uk/privacy-policy</string>
+    <string name="isolation_payment_privacy_notice_title">Wszelkie dane wykorzystane w obrębie aplikacji zostały wymienione w Informacji o ochronie prywatności:</string>
+    <string name="isolation_payment_text">Aplikacja wykryła, że byłeś(-aś) w bliskim kontakcie z osobą, która uzyskała dodatni wynik testu na obecność koronawirusa. Zaleca się, abyś poddał(-a) się samoizolacji.\n\nPodczas przebywania w izolacji można ubiegać się o wsparcie finansowe, w zależności od Twoich okoliczności. Jak najszybciej sprawdź, czy należy Ci się pomoc, klikając poniżej.\n\nPo kliknięciu przejdziesz do strony, na której może być konieczne podanie pewnych danych osobowych. Podane dane osobowe nie będą przechowywane w obrębie tej aplikacji.</string>
+    <string name="onboarding_before_activating_app_announcement">Ważne: Przed aktywowaniem tej aplikacji należy zapoznać się z informacją o ochronie prywatności i wyrazić zgodę na regulamin użytkowania.</string>
+    <string name="status_option_isolation_payment">Pomoc finansowa</string>
+    <string name="title_exposure_notification">Powiadomienie o narażeniu</string>
+    <string name="title_last_day_of_isolation">Ostatni dzień izolacji</string>
 </resources>

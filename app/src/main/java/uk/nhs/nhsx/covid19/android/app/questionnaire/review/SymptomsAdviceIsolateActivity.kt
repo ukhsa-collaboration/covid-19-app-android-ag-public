@@ -21,6 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 
@@ -87,7 +88,7 @@ class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_ad
         )
 
         stateActionButton.text = getString(R.string.book_free_test)
-        stateActionButton.setOnClickListener {
+        stateActionButton.setOnSingleClickListener {
             startActivityForResult(
                 TestOrderingActivity.getIntent(this),
                 REQUEST_CODE_ORDER_A_TEST
@@ -116,7 +117,7 @@ class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_ad
         )
 
         stateActionButton.text = getString(R.string.back_to_home)
-        stateActionButton.setOnClickListener {
+        stateActionButton.setOnSingleClickListener {
             navigateToStatusActivity()
         }
     }

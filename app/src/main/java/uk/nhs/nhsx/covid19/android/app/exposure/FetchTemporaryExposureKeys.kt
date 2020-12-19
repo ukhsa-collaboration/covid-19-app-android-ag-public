@@ -17,13 +17,13 @@ class FetchTemporaryExposureKeys @Inject constructor(
     private val transmissionRiskLevelApplier: TransmissionRiskLevelApplier
 ) {
 
-    suspend operator fun invoke(): TemporaryExposureKeysFetchResult =
+    suspend operator fun invoke(onsetDateBasedOnTestEndDate: LocalDate): TemporaryExposureKeysFetchResult =
         withContext(Dispatchers.IO) {
             runCatching {
                 val keys: List<NHSTemporaryExposureKey> =
                     exposureNotificationApi.temporaryExposureKeyHistory()
 
-                transmissionRiskLevelApplier.applyTransmissionRiskLevels(keys)
+                transmissionRiskLevelApplier.applyTransmissionRiskLevels(keys, onsetDateBasedOnTestEndDate)
                     .filter {
                         it.transmissionRiskLevel != null && it.transmissionRiskLevel > 0 &&
                             it.rollingPeriod == 144

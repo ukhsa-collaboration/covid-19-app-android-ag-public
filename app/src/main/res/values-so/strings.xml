@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright © 2020 NHSX. All rights reserved.
-  --><resources>
+  -->
+<resources>
     <string name="locale">so</string>
     <plurals name="isolation_days_to_go">
         <item quantity="one">maalin ayaa ka hartay</item>
@@ -93,7 +93,7 @@
     <string name="expiration_notification_title">War wanaagsan!</string>
     <string name="expiration_temperature_hint">Si kastaba ha noqotee, haddii aad leedahay heerkul sarreeya, sii wad inaad gooni isu-go’doomisid ilaa uu caadi ku soo noqdo</string>
     <string name="exposure_notification_hint">App-ka wuxuu ogaadey inaad la kulantay qof qaba coronavirus. Fadlan guriga iska joog oo gooni isu go\'doomi si aad u ilaaliso naftaada iyo dadka kaleba.</string>
-    <string name="exposure_notification_recommendation">Waxaad halis ugu jirtaa inaad qabtid oo aad faafiso fayraska xitaa haddii aadan lahayn astaamo. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.\n\nTirinta go\'doomintaada ayaa bilaabatay waana inaad is-go\'doomisaa muddada dhan ee la cadeeyay.Kaliya baaritaan iskaga qaad haddii aad leedahay astaamaha coronavirus.\n\nWixii talo dheeri ah, fadlan la xiriir:</string>
+    <string name="exposure_notification_recommendation">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo marrinka hoose ee su\'aalaha badana la isweydiiya.\n\nWaxaad halis ugu jirtaa inaad qabtid oo aad faafiso fayraska xitaa haddii aadan lahayn astaamo. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.\n\nTirinta go\'doomintaada ayaa bilaabatay waana inaad is-go\'doomisaa muddada dhan ee la cadeeyay.Kaliya baaritaan iskaga qaad haddii aad leedahay astaamaha coronavirus.\n\nWixii talo dheeri ah, fadlan la xiriir:</string>
     <string name="exposure_notifications_rationale_title">Raad-raacista shakhsiga waxay gacan ka geysaneysaa kahortagga faafitaanka cudurka coronavirus (COVID-19)</string>
     <string name="for_further_advice_visit">Wixii talo dheeri ah, fadlan la xiriir:</string>
     <string name="go_back">Dib u laabo</string>
@@ -103,8 +103,8 @@
     <string name="high_risk_level_text_wls">Sare - Maamulka deegaankaaga, ama maamulka deegaanka ee jaarka ah, ayaa u isticmaalaya talaabooyin dheeri ah kuwaaso kaashanayaa kuwa u degsan England intiisa kale iyo Wales (tusaale ahaan xiritaan) si loo yareeyo faafitaanka cudurka sababta la xiriira heerarka sare ee caabuqa aagga. Qorshe waxqabad ah oo faahfaahsan ayaa jira isla markaana kheyraadka maxalliga ah waxaa lagu buuxinayaa taageero qaran.</string>
     <string name="how_to_scan_qr_code">Sida loo iskaan gareeyo koodhka rasmiga ah ee NHS QR ah</string>
     <string name="i_understand">Waan fahmay</string>
-    <string name="isolate_after_corona_virus_symptoms">Astaamahaagu waxay muujinayaan inaad yeelan karto coronavirus. Fadlan go\'doomi naftaada iyo qof kasta oo kale oo qoyskaaga ka tirsan. Taas micnaheedu waa inaad guriga joogto adigoon aan lagu soo booqan. Sidoo kale waa inaad isla markiiba ballansataa shaybaar bilaash ah.\n\nFadlan guriga joog si aad u ilaaliso amaanka naftaada iyo dadka kaleba.</string>
-    <string name="isolate_after_no_corona_virus_symptoms">Uma muuqato inaad weli qabtid wax astaamo ah cudurka \'coronavirus\', laakiin xusuusnow inay qaadan karto ilaa 14 maalmood in astaamaho ay ku soo baxaan. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.\n\nFadlan guriga joog si aad u ilaaliso amaanka naftaada iyo dadka kaleba. Kaliya baaritaanka ha lagaga qaado haddii aad leedahay astaamaha coronavirus.</string>
+    <string name="isolate_after_corona_virus_symptoms">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo su\'aalaha badana la isweydiiya.\n\nAstaamahaagu waxay muujinayaan inaad yeelan karto coronavirus. Fadlan go\'doomi naftaada iyo qof kasta oo kale oo qoyskaaga ka tirsan. Taas micnaheedu waa inaad guriga joogto adigoon aan lagu soo booqan. Sidoo kale waa inaad isla markiiba ballansataa shaybaar bilaash ah.\n\nFadlan guriga joog si aad u ilaaliso amaanka naftaada iyo dadka kaleba.</string>
+    <string name="isolate_after_no_corona_virus_symptoms">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo su\'aalaha badana la isweydiiya.\n\nUma muuqato inaad weli qabtid wax astaamo ah cudurka \'coronavirus\', laakiin xusuusnow inay qaadan karto ilaa 14 maalmood in astaamaho ay ku soo baxaan. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.\n\nFadlan guriga joog si aad u ilaaliso amaanka naftaada iyo dadka kaleba. Kaliya baaritaanka ha lagaga qaado haddii aad leedahay astaamaha coronavirus.</string>
     <string name="isolation_until_date">ilaa %1$s markay tahay 23:59</string>
     <string name="link_test_result_enter_code_example">Tusaale: 7g8s3stn</string>
     <string name="link_test_result_enter_code_title">Gali koodhka baaritaankaga</string>
@@ -295,20 +295,20 @@
     <string name="test_ordering_testing_privacy_notice">Tijaabinta ogeysiiska asturnaanta</string>
     <string name="test_ordering_title">Is baarista</string>
     <string name="test_result_negative_already_not_in_isolation_subtitle">Natiijada baaritaankaaga coronavirus waxay caddaynaysaa in aadan qabin cudurka</string>
-    <string name="test_result_negative_continue_self_isolate_explanation">Natiijada baaritaankaaga waxay muujineysaa inaadan qabin fayras wakhtiga baaritaanka. Waxaa maclumaad dheeraad ah laguu soo diray iimayl, qoraal ama telefoonka. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.</string>
+    <string name="test_result_negative_continue_self_isolate_explanation">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo su\'aalaha badana la isweydiiya.\n\nNatiijada baaritaankaaga waxay muujineysaa inaadan qabin fayras wakhtiga baaritaanka. Waxaa maclumaad dheeraad ah laguu soo diray iimayl, qoraal ama telefoonka. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.</string>
     <string name="test_result_negative_no_self_isolation_description">Natiijada baaritaankaaga coronavirus waxay caddaynaysaa in aadan qabin cudurka</string>
     <string name="test_result_negative_no_self_isolation_explanation">Natiijada baaritaanka waxay muujineysaa in wakhtiga baaritaanka, aadan qabin fayruuska. Haddii aad isku aragto astaamaha ka sheeg barnaamijkan (app). Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.</string>
     <string name="test_result_negative_no_self_isolation_subtitle">Is-go\'doomintaada ayaa hadda dhammaatay</string>
     <string name="test_result_negative_no_self_isolation_subtitle_text">Natiijada baaritaankaaga coronavirus waxay caddaynaysaa in aadan qabin cudurka</string>
-    <string name="test_result_negative_then_positive_continue_explanation">Natiijada baaritaankaaga waxay muujineysaa inaad qabtid fayras wakhtiga baaritaanka. Waxaa maclumaad dheeraad ah laguu soo diray iimayl, qoraal ama telefoonka. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.</string>
+    <string name="test_result_negative_then_positive_continue_explanation">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo marrinka hoose ee su\'aalaha badana la isweydiiya.\n\nNatiijada baaritaankaaga waxay muujineysaa inaad qabtid fayras wakhtiga baaritaanka. Waxaa maclumaad dheeraad ah laguu soo diray iimayl, qoraal ama telefoonka. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.</string>
     <string name="test_result_no_self_isolation_description">Si kastaba ha noqotee, haddii aad leedahay heerkul sarreeya, sii wad inaad gooni is-go\'doomi ilaa uu caadi ku soo noqdo</string>
-    <string name="test_result_positive_continue_self_isolate_explanation">Natiijada baaritaankaaga waxay muujineysaa inaad qabtid fayras wakhtiga baaritaanka. Waxaa maclumaad dheeraad ah laguu soo diray iimayl, qoraal ama telefoonka. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay..</string>
+    <string name="test_result_positive_continue_self_isolate_explanation">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo marrinka hoose ee su\'aalaha badana la isweydiiya.\n\nNatiijada baaritaankaaga waxay muujineysaa inaad qabtid fayras wakhtiga baaritaanka. Waxaa maclumaad dheeraad ah laguu soo diray iimayl, qoraal ama telefoonka. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay..</string>
     <string name="test_result_positive_continue_self_isolation_title_1">Sii wad inaad is-go\'doomiso ilaa</string>
     <string name="test_result_positive_no_self_isolation_description">Si kastaba ha noqotee, haddii aad leedahay heerkul sarreeya, sii wad inaad gooni isu-go’doomisid ilaa uu caadi ku soo noqdo</string>
     <string name="test_result_positive_no_self_isolation_subtitle">In kasta oo cudurka laga helay, muddadii go\'doomintaada ayaa dhammaatay</string>
-    <string name="test_result_positive_then_negative_explanation">Natiijadaada baaritaanka hadda waxay muujineysaa inaadan qabin fayraska wakhtiga baaritaanka. Haddii aad isku aragto astaamo ku soo sheeg barnaamijkan. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad farriintan u tuustid qof weyn oo aad ku kalsoon tahay.</string>
-    <string name="test_result_void_already_not_in_isolation_subtitle">Ma ogaan karno inaad qabtay coronavirus markii baaritaanka la sameeyay waana inaad mar labaad baaritaanka martaa. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.</string>
-    <string name="test_result_void_continue_self_isolate_explanation">Ma ogaan karno inaad qabtay coronavirus markii baaritaanka la sameeyay waana inaad mar labaad baaritaanka martaa. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.</string>
+    <string name="test_result_positive_then_negative_explanation">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo su\'aalaha badana la isweydiiya.\n\nNatiijadaada baaritaanka hadda waxay muujineysaa inaadan qabin fayraska wakhtiga baaritaanka. Haddii aad isku aragto astaamo ku soo sheeg barnaamijkan. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad farriintan u tuustid qof weyn oo aad ku kalsoon tahay.</string>
+    <string name="test_result_void_already_not_in_isolation_subtitle">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo su\'aalaha badana la isweydiiya.\n\nMa ogaan karno inaad qabtay coronavirus markii baaritaanka la sameeyay waana inaad mar labaad baaritaanka martaa. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.</string>
+    <string name="test_result_void_continue_self_isolate_explanation">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo su\'aalaha badana la isweydiiya.\n\nMa ogaan karno inaad qabtay coronavirus markii baaritaanka la sameeyay waana inaad mar labaad baaritaanka martaa. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.</string>
     <string name="test_result_void_no_self_isolation_subtitle">Waan garan kari waynay in aad qabtay cudurka coronavirus.</string>
     <string name="test_result_your_test_result">Natiijada baaritaanka</string>
     <string name="title_encounter">Taariikhda kulanka</string>
@@ -381,29 +381,29 @@
     <string name="notification_channel_recommended_app_update_name_description">Ogeysiisyadani waxay kuu sheegayaan wax ku saabsan cusbooneysiinta app-ka ee lagu taliyay</string>
     <string name="single_local_authority_description">War wanaagsan! App-ka wuxuu noqon doonaa mid sax ah marka la bixinayo macluumaad iyo hagitaan ee heerka halista coronavirus ee deegaankaaga.\n\nHa welwelin, asturnaantaada wali waa la ilaalinayaa. App-ka waligiis ma raad raaci doono aqoonsigaaga ama goobta aad joogto.</string>
     <string name="single_local_authority_title">Maamulka deegaankaaga ah ee loogu talagalay %1$s waa %2$s</string>
-    <string name="test_result_positive_continue_self_isolate_explanation_1">Natiijada baaritaankaaga waxay muujineysaa inaad qabtid fayras waqtiga baaritaanka. Waxaa laguu soo diray emayl ama qoraal leh macluumaad dheeri ah.</string>
+    <string name="test_result_positive_continue_self_isolate_explanation_1">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo marrinka hoose ee su\'aalaha badana la isweydiiya.\n\nNatiijada baaritaankaaga waxay muujineysaa inaad qabtid fayras waqtiga baaritaanka. Waxaa laguu soo diray emayl ama qoraal leh macluumaad dheeri ah.</string>
     <string name="test_result_positive_continue_self_isolate_explanation_2">Ha welwelin - dadka badankood astaamahoodu waa kuwo fudud. Si kastaba ha noqotee, haddii calaamadahaagu ka sii darayaan markaa waa inaad wacdaa 111 ama booqo nhs.uk si aad u hesho talo dheeraad ah.</string>
-    <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/article/KA-01337</string>
+    <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
     <string name="local_authority_error_authority_not_supported_title">Waxaad ubaahantahay inaad dooratid maamul deegaan si aad usii wado</string>
     <string name="local_authority_information_description">Fadlan xulo maamul deegaan ah. Tani waxay tahay si u app-ka ku siiyo macluumaad dheeri ah ee sax ah iyo hagitaan.</string>
-<string name="about_encounter_date">Taariikhda kulanka</string>
-<string name="about_my_data_date">Taariikh</string>
-<string name="about_notification_date">Taariikhda ogeysiiska</string>
-<string name="isolation_payment_action_button">Hubi u-qalmitaankaaga</string>
-<string name="isolation_payment_heading">Taageero dhaqaale</string>
-<string name="isolation_payment_help_england_link_text">Caawinta codsashada Lacag-bixinta Taageerada Baaritaanka iyo Raad-raacinta</string>
-<string name="isolation_payment_help_england_link_url">https://sip.test-and-trace.nhs.uk/help-support</string>
-<string name="isolation_payment_help_england_title">Haddii aad ku nooshahay England oo aad dhibaato kala kulanto codsashada, booqo:</string>
-<string name="isolation_payment_help_wales_link_text">Caawinta codsashada si loo codsado Qorshaha Taageerada Is-go\'doominta</string>
-<string name="isolation_payment_help_wales_link_url">https://gov.wales/self-isolation-support-scheme</string>
-<string name="isolation_payment_help_wales_title">Haddii aad ku nooshahay Wales oo aad dhibaato kala kulanto codsashada, booqo:</string>
-<string name="isolation_payment_privacy_notice_link_text">Ogeysiiska astuurnaanta raad-raacista shakhsiyeed</string>
-<string name="isolation_payment_privacy_notice_link_url">https://sip.test-and-trace.nhs.uk/privacy-policy</string>
-<string name="isolation_payment_privacy_notice_title">Xog kasta ee loo isticmaalo habka codsiga waxaa lagu qeexay ogeysiiska astuurnaanta:</string>
-<string name="isolation_payment_text">App-ka ayaa ogaaday in aad la xiriirtay qofka laga helay coronavirus. Waxaa lagula talinayaa in aad is-go\'doomisid.\n\nInta aad is-go\'doominaysid, waxaad dalban karto taageero dhaqaale iyadoo ay ku xiran xaaladahaaga. Hubi in aad u qalantid sida ugu dhaqsaha badan adigoo isticmaalaya badhanka hoose.\n\nTani waxay kuu geynaysaa degel halkaas oo laga yaabaa in loo baahdo qaar ka mid ah faahfaahintaada shakhsi ahaaneed. Faahfaahinaadan shakhsiyeed laguma kaydin doono app-kan.</string>
-<string name="onboarding_before_activating_app_announcement">Muhiim ah: Kahor intaadan kicinin barnaamijkan, fadlan akhri ogeysiiska astuurnaanta oo oggolow shuruudaha adeegsiga.</string>
-<string name="status_option_isolation_payment">Taageero dhaqaale</string>
-<string name="title_exposure_notification">Ogeysiiska gaadhista</string>
-<string name="title_last_day_of_isolation">Maalintii ugu dambaysay ee is-go\'doominta</string>
+    <string name="about_encounter_date">Taariikhda kulanka</string>
+    <string name="about_my_data_date">Taariikh</string>
+    <string name="about_notification_date">Taariikhda ogeysiiska</string>
+    <string name="isolation_payment_action_button">Hubi u-qalmitaankaaga</string>
+    <string name="isolation_payment_heading">Taageero dhaqaale</string>
+    <string name="isolation_payment_help_england_link_text">Caawinta codsashada Lacag-bixinta Taageerada Baaritaanka iyo Raad-raacinta</string>
+    <string name="isolation_payment_help_england_link_url">https://sip.test-and-trace.nhs.uk/help-support</string>
+    <string name="isolation_payment_help_england_title">Haddii aad ku nooshahay England oo aad dhibaato kala kulanto codsashada, booqo:</string>
+    <string name="isolation_payment_help_wales_link_text">Caawinta codsashada si loo codsado Qorshaha Taageerada Is-go\'doominta</string>
+    <string name="isolation_payment_help_wales_link_url">https://gov.wales/self-isolation-support-scheme</string>
+    <string name="isolation_payment_help_wales_title">Haddii aad ku nooshahay Wales oo aad dhibaato kala kulanto codsashada, booqo:</string>
+    <string name="isolation_payment_privacy_notice_link_text">Ogeysiiska astuurnaanta raad-raacista shakhsiyeed</string>
+    <string name="isolation_payment_privacy_notice_link_url">https://sip.test-and-trace.nhs.uk/privacy-policy</string>
+    <string name="isolation_payment_privacy_notice_title">Xog kasta ee loo isticmaalo habka codsiga waxaa lagu qeexay ogeysiiska astuurnaanta:</string>
+    <string name="isolation_payment_text">App-ka ayaa ogaaday in aad la xiriirtay qofka laga helay coronavirus. Waxaa lagula talinayaa in aad is-go\'doomisid.\n\nInta aad is-go\'doominaysid, waxaad dalban karto taageero dhaqaale iyadoo ay ku xiran xaaladahaaga. Hubi in aad u qalantid sida ugu dhaqsaha badan adigoo isticmaalaya badhanka hoose.\n\nTani waxay kuu geynaysaa degel halkaas oo laga yaabaa in loo baahdo qaar ka mid ah faahfaahintaada shakhsi ahaaneed. Faahfaahinaadan shakhsiyeed laguma kaydin doono app-kan.</string>
+    <string name="onboarding_before_activating_app_announcement">Muhiim ah: Kahor intaadan kicinin barnaamijkan, fadlan akhri ogeysiiska astuurnaanta oo oggolow shuruudaha adeegsiga.</string>
+    <string name="status_option_isolation_payment">Taageero dhaqaale</string>
+    <string name="title_exposure_notification">Ogeysiiska gaadhista</string>
+    <string name="title_last_day_of_isolation">Maalintii ugu dambaysay ee is-go\'doominta</string>
 </resources>

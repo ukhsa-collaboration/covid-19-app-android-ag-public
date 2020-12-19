@@ -5,8 +5,6 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.nearby.exposurenotification.DiagnosisKeysDataMapping
-import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
-import com.google.android.gms.nearby.exposurenotification.ExposureInformation
 import com.google.android.gms.nearby.exposurenotification.ExposureWindow
 import com.google.android.gms.nearby.exposurenotification.Infectiousness
 import com.google.android.gms.nearby.exposurenotification.ReportType
@@ -84,24 +82,7 @@ class MockExposureNotificationApi : ExposureNotificationApi {
 
     fun temporaryExposureKeyHistoryWasCalled() = temporaryExposureKeyHistoryWasCalled
 
-    override suspend fun provideDiagnosisKeys(
-        files: List<File>,
-        exposureConfiguration: ExposureConfiguration,
-        token: String
-    ) = Unit
-
     override suspend fun provideDiagnosisKeys(files: List<File>) = Unit
-
-    override suspend fun getExposureInformation(token: String): List<ExposureInformation> {
-        return listOf(
-            ExposureInformation
-                .ExposureInformationBuilder()
-                .setAttenuationDurations(intArrayOf(1000))
-                .setTotalRiskScore(1000)
-                .setDateMillisSinceEpoch(Date().time)
-                .build()
-        )
-    }
 
     override suspend fun getExposureWindows(): List<ExposureWindow> {
         return listOf(

@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 
 class BrowserActivity : BaseActivity(R.layout.activity_browser) {
     @SuppressLint("SetJavaScriptEnabled")
@@ -25,7 +26,7 @@ class BrowserActivity : BaseActivity(R.layout.activity_browser) {
             webView.loadUrl(url)
         }
 
-        browserCloseButton.setOnClickListener {
+        browserCloseButton.setOnSingleClickListener {
             finish()
         }
 

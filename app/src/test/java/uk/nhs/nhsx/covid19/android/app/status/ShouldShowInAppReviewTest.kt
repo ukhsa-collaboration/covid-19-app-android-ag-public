@@ -10,7 +10,9 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
+import java.time.Clock
 import java.time.Instant
+import java.time.ZoneId
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -19,9 +21,10 @@ class ShouldShowInAppReviewTest {
     private val visitedVenuesStorage = mockk<VisitedVenuesStorage>(relaxed = true)
     private val lastAppRatingStartedDateProvider =
         mockk<LastAppRatingStartedDateProvider>(relaxed = true)
+    private val clock = Clock.fixed(Instant.parse("2020-11-21T06:23:00Z"), ZoneId.of("Europe/London"))
 
     private val testSubject =
-        ShouldShowInAppReview(visitedVenuesStorage, lastAppRatingStartedDateProvider)
+        ShouldShowInAppReview(visitedVenuesStorage, lastAppRatingStartedDateProvider, clock)
 
     private val venue = Venue("test", "test")
 

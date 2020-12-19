@@ -20,7 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.util.writeText
 import java.io.File
 import java.time.Clock
 import java.time.Instant
-import java.time.ZoneOffset
+import java.time.ZoneId
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -28,6 +28,7 @@ class VisitedVenuesStorageTest {
     private val file = mockk<File>(relaxed = true)
     private val encryptedFile = mockk<EncryptedFile>(relaxed = true)
     private val encryptedFileInfo = EncryptedFileInfo(file, encryptedFile)
+    private val clock = mockk<Clock>(relaxed = true)
 
     private val moshi = Builder()
         .add(StateJson.stateMoshiAdapter)
@@ -35,11 +36,14 @@ class VisitedVenuesStorageTest {
         .add(InstantAdapter())
         .build()
 
-    val testSubject = VisitedVenuesStorage(moshi, encryptedFileInfo)
+    lateinit var testSubject: VisitedVenuesStorage
 
     @Before
     fun setUp() {
         mockkStatic("uk.nhs.nhsx.covid19.android.app.util.EncryptionUtilsKt")
+        every { clock.zone } returns ZoneId.systemDefault()
+        every { clock.withZone(any()) } returns clock
+        testSubject = VisitedVenuesStorage(moshi, encryptedFileInfo, clock)
     }
 
     @Test
@@ -182,9 +186,9 @@ class VisitedVenuesStorageTest {
     fun `end visit and start new one`() = runBlocking {
         every { encryptedFile.readText() } returns createJson()
 
+        every { clock.instant() } returns Instant.parse(AFTERNOON)
         testSubject.finishLastVisitAndAddNewVenue(
-            Venue("3", "opn"),
-            Clock.fixed(Instant.parse(AFTERNOON), ZoneOffset.UTC)
+            Venue("3", "opn")
         )
 
         val expectedJson =
@@ -199,9 +203,9 @@ class VisitedVenuesStorageTest {
     fun `end visit and start new one with empty list`() = runBlocking {
         every { encryptedFile.readText() } returns "[]"
 
+        every { clock.instant() } returns Instant.parse(AFTERNOON)
         testSubject.finishLastVisitAndAddNewVenue(
-            Venue("3", "opn"),
-            Clock.fixed(Instant.parse(AFTERNOON), ZoneOffset.UTC)
+            Venue("3", "opn")
         )
 
         val expectedJson =
@@ -219,9 +223,9 @@ class VisitedVenuesStorageTest {
             end = AFTERNOON_ROUNDED_UP
         )
 
+        every { clock.instant() } returns Instant.parse(EVENING)
         testSubject.finishLastVisitAndAddNewVenue(
-            Venue("3", "opn"),
-            Clock.fixed(Instant.parse(EVENING), ZoneOffset.UTC)
+            Venue("3", "opn")
         )
 
         val expectedJson =

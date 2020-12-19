@@ -12,6 +12,7 @@ import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityButton
 
 class MoreAboutAppActivity : BaseActivity(R.layout.activity_more_about_app) {
@@ -35,7 +36,7 @@ class MoreAboutAppActivity : BaseActivity(R.layout.activity_more_about_app) {
     }
 
     private fun setupListeners() {
-        linkManageData.setOnClickListener {
+        linkManageData.setOnSingleClickListener {
             UserDataActivity.start(this)
         }
     }

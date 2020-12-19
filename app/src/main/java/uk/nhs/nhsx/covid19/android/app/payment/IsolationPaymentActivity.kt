@@ -7,6 +7,7 @@ import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 
 class IsolationPaymentActivity : BaseActivity(R.layout.activity_isolation_payment) {
 
@@ -19,7 +20,7 @@ class IsolationPaymentActivity : BaseActivity(R.layout.activity_isolation_paymen
             upIndicator = R.drawable.ic_arrow_back_white
         )
 
-        isolationPaymentButton.setOnClickListener {
+        isolationPaymentButton.setOnSingleClickListener {
             startActivityForResult(
                 Intent(this, RedirectToIsolationPaymentWebsiteActivity::class.java),
                 REQUEST_CODE_URL_FETCHED

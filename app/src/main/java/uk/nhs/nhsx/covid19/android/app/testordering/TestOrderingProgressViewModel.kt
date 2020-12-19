@@ -12,17 +12,11 @@ import java.time.Clock
 import java.time.Instant
 import javax.inject.Inject
 
-class TestOrderingProgressViewModel(
+class TestOrderingProgressViewModel @Inject constructor(
     private val loadVirologyTestOrder: LoadVirologyTestOrder,
     private val testOrderingTokensProvider: TestOrderingTokensProvider,
     private val clock: Clock
 ) : ViewModel() {
-
-    @Inject
-    constructor(
-        loadVirologyTestOrder: LoadVirologyTestOrder,
-        testOrderingTokensProvider: TestOrderingTokensProvider
-    ) : this(loadVirologyTestOrder, testOrderingTokensProvider, clock = Clock.systemUTC())
 
     private var websiteUrlWithQuery = MutableLiveData<Lce<String>>()
     fun websiteUrlWithQuery(): LiveData<Lce<String>> = websiteUrlWithQuery

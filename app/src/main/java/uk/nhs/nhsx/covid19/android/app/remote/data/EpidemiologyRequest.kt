@@ -5,13 +5,13 @@ import com.squareup.moshi.JsonClass
 import java.time.Instant
 
 @JsonClass(generateAdapter = true)
-data class EpidemiologyData(
+data class EpidemiologyRequest(
     val metadata: Metadata,
-    val events: List<EpidemiologyEvent>
+    val events: List<EpidemiologyEventWithType>
 )
 
 @JsonClass(generateAdapter = true)
-data class EpidemiologyEvent(
+data class EpidemiologyEventWithType(
     val type: EpidemiologyEventType,
     val version: Int,
     val payload: EpidemiologyEventPayload

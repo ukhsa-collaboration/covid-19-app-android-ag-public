@@ -15,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.about.VenueVisitsViewAdapter.VenueVisitVi
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import java.time.ZoneId
 
@@ -66,7 +67,7 @@ class VenueVisitsViewAdapter(
                     context.resources.getDimension(R.dimen.margin_horizontal_list_item).toInt()
             }
 
-            imageDeleteVenueVisit.setOnClickListener {
+            imageDeleteVenueVisit.setOnSingleClickListener {
                 listener(position)
             }
         }

@@ -33,6 +33,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
 import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
 import uk.nhs.nhsx.covid19.android.app.util.RetryMechanism
+import java.time.Clock
 
 open class ExposureApplication : Application(), Configuration.Provider {
     lateinit var appComponent: ApplicationComponent
@@ -123,7 +124,8 @@ open class ExposureApplication : Application(), Configuration.Provider {
                     GooglePlayUpdateProvider(this),
                     AndroidBatteryOptimizationChecker(this),
                     AndroidPermissionsManager(),
-                    AndroidPackageManager()
+                    AndroidPackageManager(),
+                    Clock.systemDefaultZone()
                 )
             )
             .networkModule(networkModule)

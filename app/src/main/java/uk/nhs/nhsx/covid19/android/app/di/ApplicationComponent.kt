@@ -53,6 +53,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingProgressActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
+import uk.nhs.nhsx.covid19.android.app.widgets.IsolationStatusView
 import uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
 import uk.nhs.nhsx.covid19.android.app.widgets.LogoView
 
@@ -104,6 +105,7 @@ interface ApplicationComponent {
     fun inject(updateRecommendedActivity: UpdateRecommendedActivity)
     fun inject(logoView: LogoView)
     fun inject(linkTextView: LinkTextView)
+    fun inject(isolationStatusView: IsolationStatusView)
     fun inject(downloadTasksWorker: DownloadTasksWorker)
     fun inject(submitOnboardingAnalyticsWorker: SubmitOnboardingAnalyticsWorker)
     fun inject(exposureNotificationWorker: ExposureNotificationWorker)

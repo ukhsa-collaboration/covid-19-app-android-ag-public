@@ -12,6 +12,7 @@ import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertViewModel.ViewState.UnknownVisit
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
 class VenueAlertActivity : BaseActivity(R.layout.activity_venue_alert) {
@@ -36,7 +37,7 @@ class VenueAlertActivity : BaseActivity(R.layout.activity_venue_alert) {
             }
         )
 
-        buttonReturnToHomeScreen.setOnClickListener {
+        buttonReturnToHomeScreen.setOnSingleClickListener {
             StatusActivity.start(this)
         }
 

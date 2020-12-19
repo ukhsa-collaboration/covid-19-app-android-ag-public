@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.dont
 import uk.nhs.nhsx.covid19.android.app.ExposureApplication
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.R.plurals
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import java.time.Duration
 
 class ExposureNotificationReminderDialog(
@@ -32,7 +33,7 @@ class ExposureNotificationReminderDialog(
 
     private fun initializeView() {
         minute_1.isVisible = ExposureApplication.isTestBuild
-        minute_1.setOnClickListener {
+        minute_1.setOnSingleClickListener {
             showNotificationReminderConfirmationDialog(Duration.ofMinutes(1))
             dismiss()
         }
@@ -41,7 +42,7 @@ class ExposureNotificationReminderDialog(
         updateResumeRadioButton(hours_8, 8)
         updateResumeRadioButton(hours_12, 12)
 
-        dont_remind.setOnClickListener { dismiss() }
+        dont_remind.setOnSingleClickListener { dismiss() }
     }
 
     private fun updateResumeRadioButton(
@@ -50,7 +51,7 @@ class ExposureNotificationReminderDialog(
     ) {
         radioButton.text =
             context.resources.getQuantityString(plurals.resume_contact_tracing_hours, hours, hours)
-        radioButton.setOnClickListener {
+        radioButton.setOnSingleClickListener {
             showNotificationReminderConfirmationDialog(Duration.ofHours(hours.toLong()))
             dismiss()
         }

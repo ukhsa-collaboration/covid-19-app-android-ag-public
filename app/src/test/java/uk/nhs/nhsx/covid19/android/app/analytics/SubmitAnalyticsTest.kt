@@ -2,14 +2,15 @@ package uk.nhs.nhsx.covid19.android.app.analytics
 
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
+import io.mockk.coVerifyOrder
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineScope
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AggregateAnalytics
-import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AnalyticsAlarm
-import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AnalyticsEventsStorage
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
 import uk.nhs.nhsx.covid19.android.app.remote.AnalyticsApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsPayload
@@ -21,66 +22,99 @@ import java.time.Instant
 import kotlin.test.assertEquals
 
 class SubmitAnalyticsTest {
-    private val analyticsMetricsLogStorage = mockk<AnalyticsMetricsLogStorage>(relaxed = true)
+
+    private val analyticsLogStorage = mockk<AnalyticsLogStorage>(relaxed = true)
     private val analyticsApi = mockk<AnalyticsApi>(relaxed = true)
     private val groupAnalyticsEvents = mockk<GroupAnalyticsEvents>(relaxed = true)
-    private val aggregateAnalytics = mockk<AggregateAnalytics>(relaxed = true)
-    private val analyticsEventsStorage = mockk<AnalyticsEventsStorage>(relaxed = true)
-    private val analyticsAlarm = mockk<AnalyticsAlarm>(relaxed = true)
+    private val migrateMetricsLogStorageToLogStorage =
+        mockk<MigrateMetricsLogStorageToLogStorage>(relaxed = true)
 
     private val testSubject = SubmitAnalytics(
-        analyticsMetricsLogStorage,
+        analyticsLogStorage,
         analyticsApi,
         groupAnalyticsEvents,
-        aggregateAnalytics,
-        analyticsEventsStorage,
-        analyticsAlarm
+        migrateMetricsLogStorageToLogStorage
     )
 
     @Test
-    fun `migration test will successfully send events from previous verions`() = runBlocking {
-        coEvery { groupAnalyticsEvents.invoke() } returns stubAnalyticsPayload(0)
+    fun `when grouping analytics events throws an exception then data should not be submitted`() =
+        runBlocking {
+            coEvery { groupAnalyticsEvents.invoke() } throws Exception()
 
-        every { analyticsEventsStorage.value } returns stubAnalyticsPayload(2).value
+            testSubject.invoke()
 
-        testSubject.invoke()
+            verify { migrateMetricsLogStorageToLogStorage.invoke() }
 
-        verify(exactly = 1) { analyticsAlarm.cancel() }
-
-        coVerify(exactly = 1) { aggregateAnalytics.invoke() }
-
-        coVerify(exactly = 2) { analyticsApi.submitAnalytics(any()) }
-
-        coVerify(exactly = 1) { analyticsEventsStorage.value = null }
-    }
+            coVerify(exactly = 0) { analyticsApi.submitAnalytics(any()) }
+        }
 
     @Test
-    fun `successfully submit analytics events`() = runBlocking {
-        coEvery { groupAnalyticsEvents.invoke() } returns stubAnalyticsPayload(2)
+    fun `when grouping analytics events returns an empty list then data should not be submitted`() =
+        runBlocking {
+            coEvery { groupAnalyticsEvents.invoke() } returns Success(listOf())
 
-        testSubject.invoke()
+            testSubject.invoke()
 
-        coVerify(exactly = 2) { analyticsApi.submitAnalytics(any()) }
-        verify(exactly = 2) { analyticsMetricsLogStorage.remove(any(), any()) }
+            verify { migrateMetricsLogStorageToLogStorage.invoke() }
 
-        val result = testSubject.invoke()
+            coVerify(exactly = 0) { analyticsApi.submitAnalytics(any()) }
+        }
 
-        assertEquals(Success(Unit), result)
-    }
+    @ExperimentalCoroutinesApi
+    @Test
+    fun `cancelling task should not prevent it from sending all the analytics data`() =
+        runBlocking {
+            coEvery { groupAnalyticsEvents.invoke() } returns stubAnalyticsPayload(2)
+
+            val testCoroutineScope = TestCoroutineScope()
+            val job = testCoroutineScope.launch {
+                testSubject.invoke(
+                    onAfterSubmission = {
+                        delay(100)
+                    }
+                )
+            }
+            job.cancel()
+            testCoroutineScope.advanceTimeBy(300)
+
+            coVerifyOrder {
+                analyticsLogStorage.remove(any(), any())
+                analyticsApi.submitAnalytics(any())
+                analyticsLogStorage.remove(any(), any())
+                analyticsApi.submitAnalytics(any())
+            }
+        }
 
     @Test
-    fun `on submission error will clear events`() = runBlocking {
-        val testException = Exception()
-        coEvery { groupAnalyticsEvents.invoke() } returns stubAnalyticsPayload(3)
+    fun `when grouping analytics events returns multiple payloads then payloads should be submitted`() =
+        runBlocking {
+            coEvery { groupAnalyticsEvents.invoke() } returns stubAnalyticsPayload(2)
 
-        coEvery { analyticsApi.submitAnalytics(any()) } throws testException
+            val result = testSubject.invoke()
 
-        val result = testSubject.invoke()
+            assertEquals(Success(Unit), result)
 
-        verify(exactly = 3) { analyticsMetricsLogStorage.remove(any(), any()) }
+            verify { migrateMetricsLogStorageToLogStorage.invoke() }
 
-        assertEquals(Success(Unit), result)
-    }
+            coVerify(exactly = 2) { analyticsApi.submitAnalytics(any()) }
+
+            coVerify(exactly = 2) { analyticsLogStorage.remove(startDate, endDate) }
+        }
+
+    @Test
+    fun `when grouping analytics events returns payloads but data submission throws an exception then analytics logs are removed anyway`() =
+        runBlocking {
+            val testException = Exception()
+            coEvery { groupAnalyticsEvents.invoke() } returns stubAnalyticsPayload(3)
+
+            coEvery { analyticsApi.submitAnalytics(any()) } throws testException
+
+            val result = testSubject.invoke()
+
+            assertEquals(Success(Unit), result)
+
+            verify(exactly = 3) { analyticsLogStorage.remove(startDate, endDate) }
+        }
 
     private val startDate = Instant.parse("2020-09-25T00:00:00Z")
 

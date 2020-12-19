@@ -16,6 +16,7 @@ import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.util.startActivityForResultSafely
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
 class BatteryOptimizationActivity : BaseActivity(R.layout.activity_battery_optimization) {
@@ -36,7 +37,7 @@ class BatteryOptimizationActivity : BaseActivity(R.layout.activity_battery_optim
             viewModel.onIgnoreBatteryOptimizationAcknowledged()
         }
 
-        batteryOptimizationAllowButton.setOnClickListener {
+        batteryOptimizationAllowButton.setOnSingleClickListener {
             val intent = Intent(
                 Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
                 Uri.parse("package:${this.packageName}")

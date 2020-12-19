@@ -14,6 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.FetchTemporaryExposureKeys.Tempo
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import java.time.Duration
 import java.time.Instant
+import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -24,6 +25,7 @@ class FetchTemporaryExposureKeysTest {
 
     private val testSubject =
         FetchTemporaryExposureKeys(exposureNotificationApi, transmissionRiskLevelApplier)
+    private val fakeOnsetDate = LocalDate.parse("2014-12-25")
 
     // From COV-3645:
     // Change the key upload window key to include all days with transmissionRiskLevel above 0
@@ -40,10 +42,10 @@ class FetchTemporaryExposureKeysTest {
 
         coEvery { exposureNotificationApi.temporaryExposureKeyHistory() } returns exposureKeys
 
-        every { transmissionRiskLevelApplier.applyTransmissionRiskLevels(any()) } returns
+        every { transmissionRiskLevelApplier.applyTransmissionRiskLevels(any(), any()) } returns
             exposureKeys.map { if (it.key == "1") it.copy(transmissionRiskLevel = 0) else it.copy(transmissionRiskLevel = 1) }
 
-        val result = testSubject()
+        val result = testSubject(fakeOnsetDate)
 
         val expected = Success(
             listOf(
@@ -61,11 +63,11 @@ class FetchTemporaryExposureKeysTest {
         coEvery { exposureNotificationApi.temporaryExposureKeyHistory() } returns listOf()
 
         val expectedMessage = "Something went wrong"
-        every { transmissionRiskLevelApplier.applyTransmissionRiskLevels(any()) } throws Exception(
+        every { transmissionRiskLevelApplier.applyTransmissionRiskLevels(any(), any()) } throws Exception(
             expectedMessage
         )
 
-        val result = testSubject()
+        val result = testSubject(fakeOnsetDate)
 
         assertTrue { result is Failure }
         assertTrue { (result as Failure).throwable.message == expectedMessage }
@@ -79,7 +81,7 @@ class FetchTemporaryExposureKeysTest {
 
             coEvery { exposureNotificationApi.temporaryExposureKeyHistory() } throws exception
 
-            val result = testSubject()
+            val result = testSubject(fakeOnsetDate)
 
             assertEquals(ResolutionRequired(expectedStatus), result)
         }
@@ -92,7 +94,7 @@ class FetchTemporaryExposureKeysTest {
 
             coEvery { exposureNotificationApi.temporaryExposureKeyHistory() } throws exception
 
-            val result = testSubject()
+            val result = testSubject(fakeOnsetDate)
 
             assertEquals(Failure(exception), result)
         }
@@ -103,7 +105,7 @@ class FetchTemporaryExposureKeysTest {
 
         coEvery { exposureNotificationApi.temporaryExposureKeyHistory() } throws exception
 
-        val result = testSubject()
+        val result = testSubject(fakeOnsetDate)
 
         assertEquals(Failure(exception), result)
     }
@@ -114,7 +116,7 @@ class FetchTemporaryExposureKeysTest {
 
         coEvery { exposureNotificationApi.temporaryExposureKeyHistory() } throws exception
 
-        val result = testSubject()
+        val result = testSubject(fakeOnsetDate)
 
         assertEquals(Failure(exception), result)
     }

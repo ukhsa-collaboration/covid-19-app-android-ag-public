@@ -46,7 +46,6 @@ class NotificationProvider @Inject constructor(private val context: Context) {
         const val APP_AVAILABLE_NOTIFICATION_ID = 5
         const val APP_NOT_AVAILABLE_NOTIFICATION_ID = 6
         const val EXPOSURE_REMINDER_NOTIFICATION_ID = 7
-        const val POTENTIAL_EXPOSURE_EXPLANATION_NOTIFICATION_ID = 8
         const val RECOMMENDED_APP_UPDATE_NOTIFICATION_ID = 9
 
         const val REQUEST_CODE_APP_IS_NOT_AVAILABLE = 1
@@ -59,7 +58,6 @@ class NotificationProvider @Inject constructor(private val context: Context) {
         const val REQUEST_CODE_SHOW_RISKY_VENUE_VISIT_NOTIFICATION = 8
         const val REQUEST_CODE_SHOW_AREA_RISK_CHANGED_NOTIFICATION = 9
         const val REQUEST_CODE_UPDATING_DATABASE_NOTIFICATION = 10
-        const val REQUEST_CODE_POTENTIAL_EXPOSURE_EXPLANATION_NOTIFICATION = 11
         const val REQUEST_CODE_RECOMMENDED_APP_UPDATE = 12
 
         // TODO ?maybe move to StatusActivity
@@ -370,33 +368,6 @@ class NotificationProvider @Inject constructor(private val context: Context) {
             )
     }
 
-    fun showPotentialExposureExplanationNotification() {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        }
-        val pendingIntent: PendingIntent =
-            PendingIntent.getActivity(
-                context,
-                REQUEST_CODE_POTENTIAL_EXPOSURE_EXPLANATION_NOTIFICATION,
-                intent,
-                0
-            )
-
-        val notification = createNotification(
-            ISOLATION_STATE_CHANNEL_ID,
-            R.string.notification_title_potential_exposure_explanation,
-            R.string.notification_text_potential_exposure_explanation,
-            pendingIntent,
-            useCategoryAlarm = false
-        )
-
-        NotificationManagerCompat.from(context)
-            .notify(
-                POTENTIAL_EXPOSURE_EXPLANATION_NOTIFICATION_ID,
-                notification
-            )
-    }
-
     fun showRecommendedAppUpdateIsAvailable() {
         val intent = Intent(context, UpdateRecommendedActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -419,11 +390,6 @@ class NotificationProvider @Inject constructor(private val context: Context) {
 
         NotificationManagerCompat.from(context)
             .notify(RECOMMENDED_APP_UPDATE_NOTIFICATION_ID, recommendedAppUpdateNotification)
-    }
-
-    fun hidePotentialExposureExplanationNotification() {
-        NotificationManagerCompat.from(context)
-            .cancel(POTENTIAL_EXPOSURE_EXPLANATION_NOTIFICATION_ID)
     }
 
     fun getUpdatingDatabaseNotification(): Notification {

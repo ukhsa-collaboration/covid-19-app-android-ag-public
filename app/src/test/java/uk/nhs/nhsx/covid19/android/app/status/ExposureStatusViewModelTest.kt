@@ -15,7 +15,6 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationReminderAlarmController
-import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
@@ -30,8 +29,6 @@ class ExposureStatusViewModelTest {
     private val exposureNotificationReminderAlarmController =
         mockk<ExposureNotificationReminderAlarmController>(relaxed = true)
 
-    private val notificationProvider = mockk<NotificationProvider>(relaxed = true)
-
     private val resumeContactTracingNotificationTimeProvider =
         mockk<ResumeContactTracingNotificationTimeProvider>(relaxed = true)
 
@@ -40,7 +37,6 @@ class ExposureStatusViewModelTest {
     private val testSubject = ExposureStatusViewModel(
         exposureNotificationService,
         exposureNotificationReminderAlarmController,
-        notificationProvider,
         resumeContactTracingNotificationTimeProvider,
         fixedClock
     )

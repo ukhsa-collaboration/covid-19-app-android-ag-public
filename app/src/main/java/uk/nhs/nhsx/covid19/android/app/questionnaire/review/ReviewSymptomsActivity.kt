@@ -7,6 +7,7 @@ import android.os.Parcel
 import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.datepicker.CalendarConstraints
@@ -37,10 +38,9 @@ import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.invisible
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.smoothScrollToAndThen
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -73,15 +73,12 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
     }
 
     private fun setupViewModelListeners() {
-        viewModel.viewState().observe(
-            this,
-            Observer { viewState ->
-                updateSymptoms(viewState.reviewSymptomItems)
-                updateOnsetDate(viewState.onsetDate)
-                setOnsetErrorVisibility(viewState.showOnsetDateError)
-                calendarConstraints = setupCalendarConstraints(viewState.symptomsOnsetWindowDays)
-            }
-        )
+        viewModel.viewState().observe(this) { viewState ->
+            updateSymptoms(viewState.reviewSymptomItems)
+            updateOnsetDate(viewState.onsetDate)
+            setOnsetErrorVisibility(viewState.showOnsetDateError)
+            calendarConstraints = setupCalendarConstraints(viewState.symptomsOnsetWindowDays)
+        }
 
         viewModel.navigateToSymptomAdviceScreen().observe(
             this,
@@ -93,7 +90,11 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
                         }
                     }
                     is Isolate -> {
-                        SymptomsAdviceIsolateActivity.start(this, symptomAdvice.isPositiveSymptoms, symptomAdvice.isolationDurationDays)
+                        SymptomsAdviceIsolateActivity.start(
+                            this,
+                            symptomAdvice.isPositiveSymptoms,
+                            symptomAdvice.isolationDurationDays
+                        )
                         finish()
                     }
                 }
@@ -126,7 +127,7 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
     }
 
     private fun setupListeners() {
-        selectDateContainer.setOnClickListener {
+        selectDateContainer.setOnSingleClickListener {
             val datePicker = Builder
                 .datePicker()
                 .setCalendarConstraints(calendarConstraints)
@@ -145,7 +146,7 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
             }
         }
 
-        buttonConfirmSymptoms.setOnClickListener {
+        buttonConfirmSymptoms.setOnSingleClickListener {
             viewModel.onButtonConfirmedClicked()
         }
     }
@@ -180,13 +181,7 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
     private fun setupCalendarConstraints(symptomsOnsetWindowDays: Int): CalendarConstraints {
 
         val maxDateValidator = object : CalendarConstraints.DateValidator {
-            override fun isValid(date: Long) = isTodayOrDefinedPeriodBefore(date)
-            private fun isTodayOrDefinedPeriodBefore(date: Long): Boolean =
-                date <= LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli() &&
-                    date > LocalDateTime.now()
-                    .minusDays(symptomsOnsetWindowDays.toLong())
-                    .toInstant(ZoneOffset.UTC)
-                    .toEpochMilli()
+            override fun isValid(date: Long) = viewModel.isOnsetDateValid(date, symptomsOnsetWindowDays)
 
             override fun writeToParcel(dest: Parcel?, flags: Int) = Unit
 

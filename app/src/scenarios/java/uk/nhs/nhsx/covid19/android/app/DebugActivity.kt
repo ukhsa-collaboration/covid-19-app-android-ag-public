@@ -66,6 +66,7 @@ import java.time.LocalDate
 import uk.nhs.nhsx.covid19.android.app.remote.data.Policy
 import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyData
 import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyIcon.MEETING_PEOPLE
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 
 class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
@@ -160,21 +161,21 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
     }
 
     private fun setupFeatureFlagButton() {
-        buttonFeatureFlags.setOnClickListener {
+        buttonFeatureFlags.setOnSingleClickListener {
             startActivity(Intent(this, TestSettingsActivity::class.java))
         }
     }
 
     private fun setupScenariosButtons() {
-        scenario_main.setOnClickListener {
+        scenario_main.setOnSingleClickListener {
             MainActivity.start(this)
         }
 
-        scenarioOnboarding.setOnClickListener {
+        scenarioOnboarding.setOnSingleClickListener {
             WelcomeActivity.start(this)
         }
 
-        statusScreen.setOnClickListener {
+        statusScreen.setOnSingleClickListener {
             startActivity<StatusActivity>()
         }
     }
@@ -345,7 +346,6 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
         addScreenButton("Show all notifications") {
             val notifications = app.appComponent.provideNotificationProvider()
-            notifications.showPotentialExposureExplanationNotification()
             notifications.showAppIsAvailable()
             notifications.showAppIsNotAvailable()
             notifications.showAreaRiskChangedNotification()
@@ -385,7 +385,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
     ) {
         val button = Button(ContextThemeWrapper(this, R.style.PrimaryButton))
         button.text = title
-        button.setOnClickListener { action() }
+        button.setOnSingleClickListener { action() }
         screenButtonContainer.addView(button)
     }
 

@@ -1,103 +1,108 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
-import com.google.android.gms.nearby.exposurenotification.ExposureWindow
-import com.google.android.gms.nearby.exposurenotification.Infectiousness
-import com.google.android.gms.nearby.exposurenotification.ScanInstance
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.runBlocking
+import java.time.Instant
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.MetadataProvider
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.DayRisk
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEvent
 import uk.nhs.nhsx.covid19.android.app.remote.EpidemiologyDataApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW
-import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEvent
+import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW_AFTER_POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventPayload
-import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventPayloadScanInstance
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType
+import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyRequest
+import uk.nhs.nhsx.covid19.android.app.remote.data.Infectiousness.HIGH
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metadata
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitFakeExposureWindows
-import java.time.Instant
-import kotlin.test.assertEquals
 
 class SubmitEpidemiologyDataTest {
 
     private val mockEpidemiologyDataApi = mockk<EpidemiologyDataApi>(relaxed = true)
     private val mockMetadataProvider = mockk<MetadataProvider>()
     private val submitFakeExposureWindows = mockk<SubmitFakeExposureWindows>(relaxed = true)
+    private val testCoroutineScope = TestCoroutineScope()
+    private val testCoroutineDispatcher = TestCoroutineDispatcher()
 
     private val testSubject =
-        SubmitEpidemiologyData(mockMetadataProvider, mockEpidemiologyDataApi, submitFakeExposureWindows)
+        SubmitEpidemiologyData(
+            mockMetadataProvider,
+            mockEpidemiologyDataApi,
+            submitFakeExposureWindows,
+            testCoroutineScope,
+            testCoroutineDispatcher
+        )
 
-    private val dayRisk = DayRisk(startOfDayMillis = 123L, calculatedRisk = 10.0, riskCalculationVersion = 2)
-    private val exposureWindow = ExposureWindow.Builder().setInfectiousness(Infectiousness.HIGH).build()
-    private val exposureWindowWithRisk = SubmitEpidemiologyData.ExposureWindowWithRisk(dayRisk, exposureWindow)
+    private val epidemiologyEvent = EpidemiologyEvent(
+        version = 1,
+        payload = EpidemiologyEventPayload(
+            date = Instant.now(),
+            infectiousness = HIGH,
+            scanInstances = listOf(),
+            riskScore = 10.0,
+            riskCalculationVersion = 2
+        )
+    )
+
+    private val metaData = Metadata("", "", "", "")
+
+    private val epidemiologyRequest = EpidemiologyRequest(
+        metadata = metaData,
+        events = listOf(epidemiologyEvent.toEpidemiologyEventWithType(EpidemiologyEventType.EXPOSURE_WINDOW))
+    )
 
     @Before
     fun setUp() {
         coEvery { mockEpidemiologyDataApi.submitEpidemiologyData(any()) } returns Unit
-        every { mockMetadataProvider.getMetadata() } returns Metadata("", "", "", "")
+        every { mockMetadataProvider.getMetadata() } returns metaData
     }
 
     @Test
-    fun `when given a list of exposure windows and associated risk api is called`() = runBlocking {
-        val exposureWindowsWithRisk = listOf(exposureWindowWithRisk)
+    fun `when given a list of exposure events and event type api is called`() =
+        testCoroutineScope.runBlockingTest {
+            val epidemiologyEvents = listOf(epidemiologyEvent)
 
-        testSubject.invoke(exposureWindowsWithRisk)
+            testSubject.invoke(epidemiologyEvents, epidemiologyEventType = EpidemiologyEventType.EXPOSURE_WINDOW)
 
-        coVerify(timeout = 1000) { mockEpidemiologyDataApi.submitEpidemiologyData(any()) }
-        verify { submitFakeExposureWindows(EXPOSURE_WINDOW, exposureWindowsWithRisk.size) }
-    }
-
-    @Test
-    fun `when given an empty list api is not called but fake submission is called`() = runBlocking {
-        testSubject.invoke(listOf())
-
-        coVerify(exactly = 0, timeout = 1000) { mockEpidemiologyDataApi.submitEpidemiologyData(any()) }
-        verify { submitFakeExposureWindows(EXPOSURE_WINDOW, 0) }
-    }
+            coVerify(exactly = 1) { mockEpidemiologyDataApi.submitEpidemiologyData(epidemiologyRequest) }
+            verify(exactly = 1) { submitFakeExposureWindows(EXPOSURE_WINDOW, epidemiologyEvents.size) }
+        }
 
     @Test
-    fun `when call to empty api throws exception fake exposure window submission is still performed`() = runBlocking {
-        coEvery { mockEpidemiologyDataApi.submitEpidemiologyData(any()) } throws Exception()
+    fun `when given an empty list api is not called but fake submission is called`() =
+        testCoroutineScope.runBlockingTest {
+            testSubject.invoke(listOf(), epidemiologyEventType = EpidemiologyEventType.EXPOSURE_WINDOW)
 
-        val exposureWindowsWithRisk = listOf(exposureWindowWithRisk)
-
-        testSubject.invoke(exposureWindowsWithRisk)
-
-        verify { submitFakeExposureWindows(EXPOSURE_WINDOW, exposureWindowsWithRisk.size) }
-    }
+            coVerify(exactly = 0) { mockEpidemiologyDataApi.submitEpidemiologyData(any()) }
+            verify { submitFakeExposureWindows(EXPOSURE_WINDOW, 0) }
+        }
 
     @Test
-    fun `can convert exposure window to epidemiology event`() {
-        val dayRisk =
-            DayRisk(
-                startOfDayMillis = Instant.parse("2020-11-18T13:20:36.875Z").toEpochMilli(),
-                calculatedRisk = 10.0,
-                riskCalculationVersion = 2
-            )
-        val scanInstance =
-            ScanInstance.Builder().setSecondsSinceLastScan(0).setMinAttenuationDb(1).setTypicalAttenuationDb(1).build()
-        val exposureWindow =
-            ExposureWindow.Builder().setInfectiousness(Infectiousness.HIGH).setScanInstances(listOf(scanInstance))
-                .build()
-        val exposureWindowWithRisk = SubmitEpidemiologyData.ExposureWindowWithRisk(dayRisk, exposureWindow)
+    fun `when call to empty api throws exception fake exposure window submission is still performed`() =
+        testCoroutineScope.runBlockingTest {
+            coEvery { mockEpidemiologyDataApi.submitEpidemiologyData(any()) } throws Exception()
 
-        val event = EpidemiologyEvent(
-            EpidemiologyEventType.EXPOSURE_WINDOW, 1,
-            EpidemiologyEventPayload(
-                Instant.parse("2020-11-18T13:20:36.875Z"),
-                uk.nhs.nhsx.covid19.android.app.remote.data.Infectiousness.fromInt(2),
-                listOf(EpidemiologyEventPayloadScanInstance(1, 0, 1)),
-                10.0,
-                2
-            )
-        )
+            val exposureWindowsWithRisk = listOf(epidemiologyEvent)
 
-        assertEquals(event, exposureWindowWithRisk.convert(EpidemiologyEventType.EXPOSURE_WINDOW))
-    }
+            testSubject.invoke(exposureWindowsWithRisk, epidemiologyEventType = EpidemiologyEventType.EXPOSURE_WINDOW)
+
+            coVerify(exactly = 1) { mockEpidemiologyDataApi.submitEpidemiologyData(any()) }
+            verify { submitFakeExposureWindows(EXPOSURE_WINDOW, exposureWindowsWithRisk.size) }
+        }
+
+    @Test
+    fun `when test positive correct fake call is made with exposure window after positive`() =
+        testCoroutineScope.runBlockingTest {
+            testSubject.invoke(listOf(), epidemiologyEventType = EpidemiologyEventType.EXPOSURE_WINDOW_POSITIVE_TEST)
+
+            coVerify(exactly = 0) { mockEpidemiologyDataApi.submitEpidemiologyData(any()) }
+            verify { submitFakeExposureWindows(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+        }
 }

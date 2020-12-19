@@ -1,9 +1,14 @@
 apply plugin: 'jacoco'
+apply plugin: 'com.kncept.junit.reporter'
 
 jacoco {
     toolVersion = "0.8.6"
     // Custom reports directory can be specified like this:
     // reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+junitHtmlReport {
+    testResultsDir = 'outputs/androidTest-results/connected/flavors/scenariosDebugAndroidTest'
 }
 
 tasks.withType(Test) {
@@ -80,6 +85,11 @@ project.afterEvaluate {
         tasks.create(name: "uiTestCoverage", type: JacocoReport, dependsOn: "connected${variantName.capitalize()}AndroidTest") {
             group = "Reporting"
             description = "Generate Jacoco UI test coverage reports for the ${variantName.capitalize()} build."
+        }
+
+        tasks.create(name: "uiTestCoverageReport", type: JacocoReport) {
+            group = "Reporting"
+            description = "Generate Jacoco UI test coverage reports for the ${variantName.capitalize()} build based on coverage.ac file."
 
             reports {
                 html.enabled = true
@@ -116,5 +126,7 @@ project.afterEvaluate {
                     "outputs/code_coverage/${variantTestExecFolder}/connected/*coverage.ec"
             ])
         }
+
+        uiTestCoverage.dependsOn uiTestCoverageReport
     }
 }

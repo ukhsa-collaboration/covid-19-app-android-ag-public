@@ -13,6 +13,7 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule.Companion.LOCATION_STATE_NAME
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -39,7 +40,7 @@ class EnableLocationActivity : BaseActivity(R.layout.activity_edge_case) {
         edgeCaseText.setText(R.string.enable_location_service_rationale)
 
         takeActionButton.setText(R.string.go_to_your_settings)
-        takeActionButton.setOnClickListener {
+        takeActionButton.setOnSingleClickListener {
             startActivity(
                 Intent(ACTION_LOCATION_SOURCE_SETTINGS).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or

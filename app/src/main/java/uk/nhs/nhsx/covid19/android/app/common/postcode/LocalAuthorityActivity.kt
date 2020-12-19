@@ -24,6 +24,7 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityViewModel.E
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityViewModel.ErrorState.NO_ERROR
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
@@ -60,7 +61,7 @@ class LocalAuthorityActivity : BaseActivity(R.layout.activity_local_authority) {
             return
         }
 
-        buttonConfirmLink.setOnClickListener {
+        buttonConfirmLink.setOnSingleClickListener {
             viewModel.confirmLocalAuthority()
         }
 

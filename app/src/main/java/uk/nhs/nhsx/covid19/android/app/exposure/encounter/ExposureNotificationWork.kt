@@ -7,7 +7,6 @@ import uk.nhs.nhsx.covid19.android.app.common.Result
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
 import uk.nhs.nhsx.covid19.android.app.common.runSafely
-import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandleInitialExposureNotification.InitialCircuitBreakerResult
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandleInitialExposureNotification.InitialCircuitBreakerResult.No
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandleInitialExposureNotification.InitialCircuitBreakerResult.Pending
@@ -23,7 +22,6 @@ import uk.nhs.nhsx.covid19.android.app.state.OnExposedNotification
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitFakeExposureWindows
 import java.time.Instant
 import javax.inject.Inject
-import javax.inject.Provider
 import uk.nhs.nhsx.covid19.android.app.payment.CheckIsolationPaymentToken
 
 class ExposureNotificationWork @Inject constructor(
@@ -31,8 +29,6 @@ class ExposureNotificationWork @Inject constructor(
     private val handleInitialExposureNotification: HandleInitialExposureNotification,
     private val handlePollingExposureNotification: HandlePollingExposureNotification,
     private val stateMachine: IsolationStateMachine,
-    private val potentialExposureExplanationHandler: Provider<PotentialExposureExplanationHandler>,
-    private val exposureNotificationApi: ExposureNotificationApi,
     private val emptyApi: EmptyApi,
     private val submitFakeExposureWindows: SubmitFakeExposureWindows,
     private val checkIsolationPaymentToken: CheckIsolationPaymentToken
@@ -46,8 +42,6 @@ class ExposureNotificationWork @Inject constructor(
 
     suspend fun handleMatchesFound(tokenToCheck: String? = null): Result<Unit> =
         withContext(Dispatchers.IO) {
-            val potentialExposureExplanationHandler = potentialExposureExplanationHandler.get()
-            var checkingInitial = false
             runSafely {
                 val allTokens = exposureNotificationTokensProvider.tokens
                 val exposureNotificationTokens = if (tokenToCheck != null) {
@@ -63,11 +57,9 @@ class ExposureNotificationWork @Inject constructor(
                     Timber.d("Exposure notification token info: $it")
                     when (it.exposureDate) {
                         null -> {
-                            checkingInitial = true
-                            handleInitial(it.token, potentialExposureExplanationHandler)
+                            handleInitial(it.token)
                         }
                         else -> {
-                            checkingInitial = false
                             handlePolling(it.token, it.exposureDate)
                         }
                     }
@@ -76,26 +68,14 @@ class ExposureNotificationWork @Inject constructor(
                 .apply {
                     checkIsolationPaymentToken()
                 }
-                .apply {
-                    if (isLegacyExposureNotificationApiVersion()) {
-                        if (this is Failure && checkingInitial) {
-                            potentialExposureExplanationHandler.addResult(result = this)
-                        }
-                        potentialExposureExplanationHandler.showNotificationIfNeeded()
-                    }
-                }
         }
 
     private suspend fun handleInitial(
-        token: String,
-        potentialExposureExplanationHandler: PotentialExposureExplanationHandler
+        token: String
     ) {
         val result = handleInitialExposureNotification(token)
         Timber.d("Handle initial circuit breaker result: $result for token $token")
         handleInitialResult(result, token)
-        if (isLegacyExposureNotificationApiVersion()) {
-            potentialExposureExplanationHandler.addResult(result)
-        }
     }
 
     private suspend fun handleInitialResult(
@@ -161,7 +141,4 @@ class ExposureNotificationWork @Inject constructor(
         Timber.d("Circuit breaker answered YES or NO, remove exposure notification token: $token")
         exposureNotificationTokensProvider.remove(token)
     }
-
-    private suspend fun isLegacyExposureNotificationApiVersion() =
-        exposureNotificationApi.version() == null
 }

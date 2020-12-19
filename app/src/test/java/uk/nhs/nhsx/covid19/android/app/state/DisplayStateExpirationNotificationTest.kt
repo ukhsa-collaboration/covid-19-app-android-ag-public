@@ -32,9 +32,9 @@ class DisplayStateExpirationNotificationTest {
 
         val testSubject = DisplayStateExpirationNotification(
             isolationStateMachine,
-            fixedClock,
             notificationProvider,
-            userInbox
+            userInbox,
+            fixedClock
         )
 
         val result = testSubject.doWork()
@@ -62,9 +62,9 @@ class DisplayStateExpirationNotificationTest {
 
             val testSubject = DisplayStateExpirationNotification(
                 isolationStateMachine,
-                fixedClock,
                 notificationProvider,
-                userInbox
+                userInbox,
+                fixedClock
             )
 
             val result = testSubject.doWork()
@@ -92,9 +92,9 @@ class DisplayStateExpirationNotificationTest {
 
             val testSubject = DisplayStateExpirationNotification(
                 isolationStateMachine,
-                fixedClock,
                 notificationProvider,
-                userInbox
+                userInbox,
+                fixedClock
             )
 
             val result = testSubject.doWork()

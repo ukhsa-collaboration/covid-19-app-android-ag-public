@@ -19,6 +19,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.work.WorkManager
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
+import com.tinder.StateMachine
 import uk.nhs.covid19.config.Configurations
 import uk.nhs.covid19.config.qrCodesSignatureKey
 import uk.nhs.nhsx.covid19.android.app.ExposureApplication
@@ -53,6 +54,9 @@ import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import uk.nhs.nhsx.covid19.android.app.util.getPrivateProperty
 import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicReference
 
@@ -77,6 +81,8 @@ class TestApplicationContext {
     val permissionsManager = MockPermissionsManager()
 
     val packageManager = MockPackageManager()
+
+    val clock = MockClock()
 
     internal val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
@@ -117,7 +123,8 @@ class TestApplicationContext {
                 updateManager,
                 batteryOptimizationChecker,
                 permissionsManager,
-                packageManager
+                packageManager,
+                clock
             )
         )
         .networkModule(
@@ -202,7 +209,7 @@ class TestApplicationContext {
     fun setState(state: State) {
         val ref = component.provideIsolationStateMachine()
             .stateMachine
-            .getPrivateProperty<com.tinder.StateMachine<State, Event, SideEffect>, AtomicReference<State>>(
+            .getPrivateProperty<StateMachine<State, Event, SideEffect>, AtomicReference<State>>(
                 "stateRef"
             )
         ref?.set(state)
@@ -210,10 +217,6 @@ class TestApplicationContext {
 
     fun getCurrentState(): State =
         component.provideIsolationStateMachine().readState()
-
-    fun setStateMachineClock(clock: Clock) {
-        component.provideIsolationStateMachine().setClock(clock)
-    }
 
     fun getExposureNotificationTokenProvider() =
         component.getExposureNotificationsTokenProvider()
@@ -279,6 +282,17 @@ class TestApplicationContext {
 
     fun getIsolationPaymentTokenStateProvider() =
         component.getIsolationPaymentTokenStateProvider()
+}
+
+class MockClock(var currentInstant: Instant? = null) : Clock() {
+
+    override fun instant(): Instant = currentInstant ?: Instant.now()
+
+    override fun withZone(zone: ZoneId?): Clock = this
+
+    override fun getZone(): ZoneId = ZoneOffset.UTC
+
+    fun reset() { currentInstant = null }
 }
 
 fun stringFromResId(@StringRes stringRes: Int): String {

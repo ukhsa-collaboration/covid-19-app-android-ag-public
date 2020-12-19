@@ -12,6 +12,7 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
 class UpdateRecommendedActivity : BaseActivity(R.layout.activity_update_recommended) {
@@ -25,11 +26,11 @@ class UpdateRecommendedActivity : BaseActivity(R.layout.activity_update_recommen
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
-        updateInStore.setOnClickListener {
+        updateInStore.setOnSingleClickListener {
             openAppStore()
         }
 
-        askMeLater.setOnClickListener {
+        askMeLater.setOnSingleClickListener {
             finishAndNavigate()
         }
 

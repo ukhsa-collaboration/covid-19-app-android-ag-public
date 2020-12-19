@@ -38,7 +38,8 @@ class AppModule(
     private val updateManager: UpdateManager,
     private val batteryOptimizationChecker: BatteryOptimizationChecker,
     private val permissionsManager: PermissionsManager,
-    private val packageManager: PackageManager
+    private val packageManager: PackageManager,
+    private val clock: Clock
 ) {
     @Provides
     fun provideContext() = applicationContext
@@ -109,7 +110,7 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun provideUtcClock(): Clock = Clock.systemUTC()
+    fun provideClock(): Clock = clock
 
     @Provides
     fun provideExposureNotificationWorkerScheduler(): ExposureNotificationWorkerScheduler =

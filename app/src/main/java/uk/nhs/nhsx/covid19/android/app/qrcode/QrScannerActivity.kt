@@ -48,6 +48,7 @@ import uk.nhs.nhsx.covid19.android.app.permissions.PermissionsManager
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.Scanning
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityButton
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
@@ -81,8 +82,8 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
                 }
             }
         )
-        closeButton.setOnClickListener { finish() }
-        textMoreInfo.setOnClickListener {
+        closeButton.setOnSingleClickListener { finish() }
+        textMoreInfo.setOnSingleClickListener {
             startActivity<QrCodeHelpActivity>()
         }
         textMoreInfo.setUpAccessibilityButton()
@@ -92,6 +93,7 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
         super.onResume()
         textHold.text = getString(string.how_to_scan_qr_code)
         howToUseScannerHint.visible()
+        tryResumeCamera()
     }
 
     override fun onRequestPermissionsResult(
@@ -111,8 +113,7 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
+    private fun tryResumeCamera() {
         if (!hasCameraPermission()) {
             scannerSurfaceView.visibility = View.INVISIBLE
             requestCameraPermission()
@@ -130,6 +131,11 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
     override fun onDestroy() {
         super.onDestroy()
         scannerSurfaceView.release()
+
+        // We only want to remember that we have requested camera permissions past destruction if
+        // the activity is being destroyed because of a change in configuration => in that case it's
+        // going to be re-created and we shouldn't request permissions again
+        viewModel.hasRequestedCameraPermission = viewModel.hasRequestedCameraPermission && isChangingConfigurations
     }
 
     private fun resumeCamera() {
@@ -176,7 +182,10 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
     }
 
     private fun requestCameraPermission() {
-        permissionsManager.requestPermissions(this, arrayOf(CAMERA), CAMERA_PERMISSION_REQUEST_CODE)
+        if (!viewModel.hasRequestedCameraPermission) {
+            viewModel.hasRequestedCameraPermission = true
+            permissionsManager.requestPermissions(this, arrayOf(CAMERA), CAMERA_PERMISSION_REQUEST_CODE)
+        }
     }
 
     private fun hasCameraPermission(): Boolean {

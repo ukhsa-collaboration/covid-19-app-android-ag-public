@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright © 2020 NHSX. All rights reserved.
-  --><resources xmlns:tools="http://schemas.android.com/tools">
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="locale">en</string>
     <!-- URLs -->
     <string name="url_privacy_notice">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_terms_of_use">https://covid19.nhs.uk/our-policies.html</string>
     <string name="url_nhs_tablet_device">https://faq.covid19.nhs.uk/article/KA-01123/en-us</string>
-    <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/article/KA-01337</string>
+    <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/</string>
     <string name="url_nhs_111_online">https://111.nhs.uk/</string>
     <string name="url_accessibility_statement">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info">https://faq.covid19.nhs.uk/article/KA-01101/en-us</string>
@@ -59,7 +59,7 @@
     <string name="go_back">Go back</string>
     <string name="loading">Loading…</string>
     <string name="remove">Remove</string>
-    <string name="empty" translatable="false"/>
+    <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">The app will send you an alert if you have been in close contact with someone who has tested positive for the virus.\n\nTo enable contact tracing for this app you need to allow ‘Exposure Notifications’.\n\nIf you change your mind, you can change your permissions in settings at any time.</string>
     <string name="permission_title">Contact tracing</string>
     <string name="exposure_notifications_rationale_title">Contact tracing helps prevent the spread of coronavirus (COVID-19)</string>
@@ -200,7 +200,7 @@
     <string name="state_test_positive_info">Your coronavirus test result is positive</string>
     <string name="state_test_negative_info">Your coronavirus test result is negative but you may still develop symptoms, so you should stay in isolation</string>
     <string name="state_test_void_info">We could not tell if you had coronavirus</string>
-    <string name="test_result_negative_continue_self_isolate_explanation">Your test result shows that you did not have the virus when the test was done. You have been sent more information by email, text or phone. If you are under 18, you are advised to show this message to a trusted adult.</string>
+    <string name="test_result_negative_continue_self_isolate_explanation">To understand how the app calculates self-isolation days, visit the FAQs.\n\nYour test result shows that you did not have the virus when the test was done. You have been sent more information by email, text or phone. If you are under 18, you are advised to show this message to a trusted adult.</string>
     <string name="isolation_until_date">until %1$s at 23:59</string>
     <string name="questionnaire_review_one_of_two">Step 1 of 2</string>
     <string name="expiration_notification_title">Good News!</string>
@@ -227,12 +227,12 @@
     <string name="for_further_advice_visit">For further advice, please contact:</string>
     <string name="test_result_your_test_result">Your test result</string>
     <string name="test_result_positive_continue_self_isolation_title_1">Continue to self-isolate for</string>
-    <string name="test_result_positive_continue_self_isolate_explanation_1">Your test result shows that you had the virus at the time of the test. You have been sent an email or text with more information.</string>
+    <string name="test_result_positive_continue_self_isolate_explanation_1">To understand how the app calculates self-isolation days, visit the link to the FAQs below.\n\nYour test result shows that you had the virus at the time of the test. You have been sent an email or text with more information.</string>
     <string name="test_result_positive_continue_self_isolate_explanation_2">Don’t worry - for most people symptoms are quite mild. However, if your symptoms do worsen then you should call 111 or visit nhs.uk for more advice.</string>
     <string name="test_result_negative_no_self_isolation_subtitle_text">Your coronavirus test result is negative</string>
-    <string name="test_result_void_continue_self_isolate_explanation">We could not tell if you had coronavirus when the test was done and you should take the test again. If you are under 18, you are advised to show this message to a trusted adult.</string>
+    <string name="test_result_void_continue_self_isolate_explanation">To understand how the app calculates self-isolation days, visit the FAQs.\n\nWe could not tell if you had coronavirus when the test was done and you should take the test again. If you are under 18, you are advised to show this message to a trusted adult.</string>
     <string name="test_result_negative_already_not_in_isolation_subtitle">Your coronavirus test result is negative</string>
-    <string name="test_result_void_already_not_in_isolation_subtitle">We could not tell if you had coronavirus when the test was done and you should take the test again. If you are under 18, you are advised to show this message to a trusted adult.</string>
+    <string name="test_result_void_already_not_in_isolation_subtitle">To understand how the app calculates self-isolation days, visit the FAQs.\n\nWe could not tell if you had coronavirus when the test was done and you should take the test again. If you are under 18, you are advised to show this message to a trusted adult.</string>
     <string name="submit_keys_information_title">Device’s random IDs</string>
     <string name="submit_keys_information_text">We will let other app users know they have been near to someone who has tested positive for coronavirus</string>
     <string name="submit_keys_information_description_title">Share device’s random IDs</string>
@@ -315,8 +315,8 @@
     <string name="update_app_title">Update this app</string>
     <string name="valid_auth_code_is_required">Your code wasn’t recognised. Please make sure you are using a valid code.</string>
     <string name="self_isolate_for">Self-isolate for</string>
-    <string name="isolate_after_corona_virus_symptoms">Your symptoms suggest you may have coronavirus. Please isolate yourself and anyone else in your household. That means staying at home with no visitors. You should also book a free test immediately. If you are under 18, you are advised to show this message to a trusted adult.\n\nPlease stay at home to keep yourself and others safe.</string>
-    <string name="isolate_after_no_corona_virus_symptoms">You don’t appear to have any coronavirus symptoms yet, but remember that it can take up to 14 days for symptoms to develop. If you are under 18, you are advised to show this message to a trusted adult.\n\nPlease stay at home to keep yourself and others safe. Only get a test if you have coronavirus symptoms.</string>
+    <string name="isolate_after_corona_virus_symptoms">To understand how the app calculates self-isolation days, visit the FAQs.\n\nYour symptoms suggest you may have coronavirus. Please isolate yourself and anyone else in your household. That means staying at home with no visitors. You should also book a free test immediately. If you are under 18, you are advised to show this message to a trusted adult.\n\nPlease stay at home to keep yourself and others safe.</string>
+    <string name="isolate_after_no_corona_virus_symptoms">To understand how the app calculates self-isolation days, visit the FAQs.\n\nYou don’t appear to have any coronavirus symptoms yet, but remember that it can take up to 14 days for symptoms to develop. If you are under 18, you are advised to show this message to a trusted adult.\n\nPlease stay at home to keep yourself and others safe. Only get a test if you have coronavirus symptoms.</string>
     <string name="you_need_to_self_isolate">You need to self-isolate</string>
     <string name="your_isolation_will_finish">Your self-isolation will finish on %1$s at 23:59</string>
     <string name="qr_code_unsupported_title">Sorry, your phone doesn’t support venue check-in</string>
@@ -325,7 +325,7 @@
     <string name="unsupported_device">A restriction in your settings (for example, if this is a company phone).\n\nAnother app on your phone is using the same technology and stopping this app from working.</string>
     <string name="i_understand">I understand</string>
     <string name="exposure_notification_hint">The app has detected that you have been in contact with someone who has coronavirus. Please stay at home and self-isolate to keep yourself and others safe.</string>
-    <string name="exposure_notification_recommendation">You are at high risk of having and spreading the virus even if you don’t have any symptoms. If you are under 18, you are advised to show this message to a trusted adult.\n\nYour isolation countdown has started and you should self-isolate for the full period identified. Only get a test if you have coronavirus symptoms.\n\nFor further advice, please contact:</string>
+    <string name="exposure_notification_recommendation">To understand how the app calculates self-isolation days, visit the link to the FAQs below.\n\nYou are at high risk of having and spreading the virus even if you don’t have any symptoms. If you are under 18, you are advised to show this message to a trusted adult.\n\nYour isolation countdown has started and you should self-isolate for the full period identified. Only get a test if you have coronavirus symptoms.\n\nFor further advice, please contact:</string>
     <string name="risk_level_title">In my area</string>
     <string name="risk_level_link_text">Definitions of area risk levels</string>
     <string name="low_risk_level_text">Low - your local authority is currently assessed as ‘low risk’, with levels of infection similar to most other parts of the country.</string>
@@ -357,8 +357,8 @@
     <string name="about_feedback_information_text">If you have feedback about the app, a question that’s not answered in our common questions, or you have a technical problem, you can contact us using our online form.</string>
     <string name="about_provide_feedback_link">Feedback information</string>
     <string name="state_test_positive_then_negative_info">Your coronavirus test result is negative. However, continue to self-isolate as you had a previous positive test result</string>
-    <string name="test_result_positive_then_negative_explanation">Your current test result shows that you did not have the virus at the time of testing. If you develop symptoms report them on this app. If you are under 18, you are advised to show this message to a trusted adult.</string>
-    <string name="test_result_negative_then_positive_continue_explanation">Your test result shows that you had the virus at the time of the test. You have been sent more information by email, text or phone. If you are under 18, you are advised to show this message to a trusted adult.</string>
+    <string name="test_result_positive_then_negative_explanation">To understand how the app calculates self-isolation days, visit the FAQs.\n\nYour current test result shows that you did not have the virus at the time of testing. If you develop symptoms report them on this app. If you are under 18, you are advised to show this message to a trusted adult.</string>
+    <string name="test_result_negative_then_positive_continue_explanation">To understand how the app calculates self-isolation days, visit the link to the FAQs below.\n\nYour test result shows that you had the virus at the time of the test. You have been sent more information by email, text or phone. If you are under 18, you are advised to show this message to a trusted adult.</string>
 
     <string name="logo_nhs_generic_description">NHS Covid 19</string>
     <string name="logo_nhs_england_description">NHS Test and Trace</string>
@@ -392,14 +392,12 @@
     <string name="isolation_payment_help_wales_link_text">Help to apply for the Self-Isolation Support Scheme</string>
     <string name="isolation_payment_help_wales_link_url">https://gov.wales/self-isolation-support-scheme</string>
     <string name="isolation_payment_action_button">Check your eligibility</string>
-    <string name="notification_title_potential_exposure_explanation">COVID-19 Exposure Check Complete</string>
-    <string name="notification_text_potential_exposure_explanation">Don’t worry, we have assessed your risk and there is no need to take action at this time. Please continue to stay alert and follow the latest advice on social distancing.</string>
     <string name="qr_code_intro_text">If you are entering a venue (for example, a bar or a restaurant) that has an official NHS QR code poster, use this app to scan it. The app then registers the time you check in to a venue.\n\nBy using the venue check-in, you will be able to get a notification if people with coronavirus visit the same venue at a similar time as you. The notification will include relevant advice, such as to look out for coronavirus symptoms.</string>
     <string name="ask_me_later">Ask me later</string>
     <string name="update_in_play_store">Update your app now</string>
     <string name="updated_privacy_title">Changes to our policies</string>
     <string name="updated_privacy_control_text">We have made some changes to the app to help it work more efficiently when you travel. Several countries are working together so contact tracing continues to work as people cross borders into different countries. \n\nOfficial contact tracing apps from England, Wales, Scotland, Northern Ireland, Jersey and Gibraltar will be able to share data whilst preserving user anonymity. \n\nIf you test positive for coronavirus, you can choose to share your data with the NHS so we can send notifications to other app users who need to be alerted in these countries.</string>
-    <string name="test_result_positive_continue_self_isolate_explanation">Your test result shows that you had the virus at the time of the test. You have been sent more information by email, text or phone. If you are under 18, you are advised to show this message to a trusted adult.</string>
+    <string name="test_result_positive_continue_self_isolate_explanation">To understand how the app calculates self-isolation days, visit the link to the FAQs below.\n\nYour test result shows that you had the virus at the time of the test. You have been sent more information by email, text or phone. If you are under 18, you are advised to show this message to a trusted adult.</string>
     <string name="local_authority_title">Your local authority</string>
     <string name="single_local_authority_description">Great news! The app is going to be more accurate at giving information and guidance for the level of coronavirus risk in your area.\n\nDon‘t worry, your privacy is still protected. The app will never track your identity or location.</string>
     <string name="confirm_and_start">Confirm</string>
@@ -421,4 +419,6 @@
     <string name="apply_now">Apply now</string>
     <string name="isolation_payment">Isolation payment</string>
     <string name="title_encounter">Encounter date</string>
+    <string name="notification_text_potential_exposure_explanation">Don’t worry, we have assessed your risk and there is no need to take action at this time. Please continue to stay alert and follow the latest advice on social distancing.</string>
+    <string name="notification_title_potential_exposure_explanation">COVID-19 Exposure Check Complete</string>
 </resources>

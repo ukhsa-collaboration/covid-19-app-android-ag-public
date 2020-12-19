@@ -19,10 +19,8 @@ import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.SubmitEpidemiologyData
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.SubmitEpidemiologyData.ExposureWindowWithRisk
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.convert
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEvent
-import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType
+import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType.EXPOSURE_WINDOW
 import uk.nhs.nhsx.covid19.android.app.remote.data.V2RiskCalculation
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.riskscore.RiskScoreCalculator
@@ -63,8 +61,7 @@ class ExposureWindowRiskCalculatorTest {
         isolationConfigurationProvider,
         riskScoreCalculatorProvider,
         submitEpidemiologyData,
-        epidemiologyEventProvider,
-        testScope
+        epidemiologyEventProvider
     )
 
     @Before
@@ -104,8 +101,9 @@ class ExposureWindowRiskCalculatorTest {
                                 2
                             ),
                             exposureWindows[0]
-                        )
-                    )
+                        ).toEpidemiologyEvent()
+                    ),
+                    epidemiologyEventType = EXPOSURE_WINDOW
                 )
             }
 
@@ -140,8 +138,9 @@ class ExposureWindowRiskCalculatorTest {
                                 2
                             ),
                             exposureWindows[0]
-                        )
-                    )
+                        ).toEpidemiologyEvent()
+                    ),
+                    epidemiologyEventType = EXPOSURE_WINDOW
                 )
             }
 
@@ -160,7 +159,7 @@ class ExposureWindowRiskCalculatorTest {
 
         val risk = riskCalculator(exposureWindows, riskCalculation, someRiskScoreCalculatorConfig)
 
-        coVerify { submitEpidemiologyData.invoke(listOf()) }
+        coVerify { submitEpidemiologyData.invoke(listOf(), epidemiologyEventType = EXPOSURE_WINDOW) }
         verify(exactly = 0) { epidemiologyEventProvider.add(any()) }
 
         assertNull(risk)
@@ -185,8 +184,9 @@ class ExposureWindowRiskCalculatorTest {
                         ExposureWindowWithRisk(
                             expectedRisk,
                             exposureWindows[0]
-                        )
-                    )
+                        ).toEpidemiologyEvent()
+                    ),
+                    epidemiologyEventType = EXPOSURE_WINDOW
                 )
             }
             verify(exactly = 1) { epidemiologyEventProvider.add(any()) }
@@ -213,8 +213,9 @@ class ExposureWindowRiskCalculatorTest {
                         ExposureWindowWithRisk(
                             expectedRisk,
                             exposureWindows[0]
-                        )
-                    )
+                        ).toEpidemiologyEvent()
+                    ),
+                    epidemiologyEventType = EXPOSURE_WINDOW
                 )
             }
             verify(exactly = 0) { epidemiologyEventProvider.add(any()) }
@@ -243,8 +244,9 @@ class ExposureWindowRiskCalculatorTest {
                         ExposureWindowWithRisk(
                             expectedRisk,
                             exposureWindows[0]
-                        )
-                    )
+                        ).toEpidemiologyEvent()
+                    ),
+                    epidemiologyEventType = EXPOSURE_WINDOW
                 )
             }
             verify(exactly = 1) { epidemiologyEventProvider.add(any()) }
@@ -273,8 +275,9 @@ class ExposureWindowRiskCalculatorTest {
                         ExposureWindowWithRisk(
                             expectedRisk,
                             exposureWindows[0]
-                        )
-                    )
+                        ).toEpidemiologyEvent()
+                    ),
+                    epidemiologyEventType = EXPOSURE_WINDOW
                 )
             }
             verify(exactly = 0) { epidemiologyEventProvider.add(any()) }
@@ -307,12 +310,13 @@ class ExposureWindowRiskCalculatorTest {
                         ExposureWindowWithRisk(
                             DayRisk(olderDate.toStartOfDayEpochMillis(), expectedRiskScore * 60, 2),
                             exposureWindows[0]
-                        ),
+                        ).toEpidemiologyEvent(),
                         ExposureWindowWithRisk(
                             DayRisk(newerDate.toStartOfDayEpochMillis(), expectedRiskScore * 60, 2),
                             exposureWindows[1]
-                        )
-                    )
+                        ).toEpidemiologyEvent()
+                    ),
+                    epidemiologyEventType = EXPOSURE_WINDOW
                 )
             }
 
@@ -355,12 +359,13 @@ class ExposureWindowRiskCalculatorTest {
                         ExposureWindowWithRisk(
                             DayRisk(olderDate.toStartOfDayEpochMillis(), expectedRiskScore * 60, 2),
                             exposureWindows[0]
-                        ),
+                        ).toEpidemiologyEvent(),
                         ExposureWindowWithRisk(
                             DayRisk(newerDate.toStartOfDayEpochMillis(), expectedRiskScore * 60, 2),
                             exposureWindows[1]
-                        )
-                    )
+                        ).toEpidemiologyEvent()
+                    ),
+                    epidemiologyEventType = EXPOSURE_WINDOW
                 )
             }
 
@@ -404,11 +409,12 @@ class ExposureWindowRiskCalculatorTest {
                     listOf(
                         ExposureWindowWithRisk(
                             DayRisk(millisSinceEpoch, lowerRiskScore * 60, 2), exposureWindows[0]
-                        ),
+                        ).toEpidemiologyEvent(),
                         ExposureWindowWithRisk(
                             DayRisk(millisSinceEpoch, higherRiskScore * 60, 2), exposureWindows[1]
-                        )
-                    )
+                        ).toEpidemiologyEvent()
+                    ),
+                    epidemiologyEventType = EXPOSURE_WINDOW
                 )
             }
 
@@ -450,11 +456,12 @@ class ExposureWindowRiskCalculatorTest {
                     listOf(
                         ExposureWindowWithRisk(
                             DayRisk(millisSinceEpoch, lowerRiskScore * 60, 2), exposureWindows[0]
-                        ),
+                        ).toEpidemiologyEvent(),
                         ExposureWindowWithRisk(
                             DayRisk(millisSinceEpoch, higherRiskScore * 60, 2), exposureWindows[1]
-                        )
-                    )
+                        ).toEpidemiologyEvent()
+                    ),
+                    epidemiologyEventType = EXPOSURE_WINDOW
                 )
             }
 
@@ -494,8 +501,9 @@ class ExposureWindowRiskCalculatorTest {
                         ExposureWindowWithRisk(
                             DayRisk(exposureWindows[0].dateMillisSinceEpoch, expectedRiskScore, 2),
                             exposureWindows[0]
-                        )
-                    )
+                        ).toEpidemiologyEvent()
+                    ),
+                    epidemiologyEventType = EXPOSURE_WINDOW
                 )
             }
             verify(exactly = 1) {
@@ -504,7 +512,7 @@ class ExposureWindowRiskCalculatorTest {
                         ExposureWindowWithRisk(
                             DayRisk(exposureWindows[0].dateMillisSinceEpoch, expectedRiskScore, 2),
                             exposureWindows[0]
-                        ).convert(EpidemiologyEventType.EXPOSURE_WINDOW)
+                        ).toEpidemiologyEvent()
                     )
                 )
             }
@@ -537,8 +545,9 @@ class ExposureWindowRiskCalculatorTest {
                         ExposureWindowWithRisk(
                             DayRisk(exposureWindows[0].dateMillisSinceEpoch, expectedRiskScore, 2),
                             exposureWindows[0]
-                        )
-                    )
+                        ).toEpidemiologyEvent()
+                    ),
+                    epidemiologyEventType = EXPOSURE_WINDOW
                 )
             }
             verify(exactly = 0) {
@@ -560,7 +569,7 @@ class ExposureWindowRiskCalculatorTest {
             val risk =
                 riskCalculator(exposureWindows, someRiskCalculation, someRiskScoreCalculatorConfig)
 
-            coVerify { submitEpidemiologyData.invoke(listOf()) }
+            coVerify { submitEpidemiologyData.invoke(listOf(), epidemiologyEventType = EXPOSURE_WINDOW) }
             verify(exactly = 0) { epidemiologyEventProvider.add(any()) }
 
             assertNull(risk)

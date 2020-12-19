@@ -20,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.di.module.AppModule.Companion.BLUETOOTH_S
 import uk.nhs.nhsx.covid19.android.app.packagemanager.PackageManager
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -40,7 +41,7 @@ class EnableBluetoothActivity : BaseActivity(R.layout.activity_edge_case) {
         edgeCaseText.text = getString(R.string.enable_bluetooth_rationale)
 
         takeActionButton.text = getString(R.string.allow_bluetooth)
-        takeActionButton.setOnClickListener {
+        takeActionButton.setOnSingleClickListener {
             navigateToBluetoothSettings()
         }
 

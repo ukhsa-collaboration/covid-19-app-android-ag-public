@@ -6,10 +6,7 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
-class FilterOutdatedVisits(private val clock: Clock) : (List<VenueVisit>) -> List<VenueVisit> {
-
-    @Inject
-    constructor() : this(Clock.systemUTC())
+class FilterOutdatedVisits @Inject constructor(private val clock: Clock) : (List<VenueVisit>) -> List<VenueVisit> {
 
     override fun invoke(p1: List<VenueVisit>): List<VenueVisit> =
         p1.filter {

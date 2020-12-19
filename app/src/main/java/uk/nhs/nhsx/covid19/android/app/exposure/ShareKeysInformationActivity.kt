@@ -28,6 +28,7 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.Companion.REQUEST_C
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitKeysProgressActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
 class ShareKeysInformationActivity : BaseActivity(R.layout.activity_share_keys_information) {
@@ -53,7 +54,7 @@ class ShareKeysInformationActivity : BaseActivity(R.layout.activity_share_keys_i
         intent.getParcelableExtra<ReceivedTestResult>(EXTRA_TEST_RESULT)?.let {
             shareKeysInformationViewModel.testResult = it
 
-            shareKeysConfirm.setOnClickListener {
+            shareKeysConfirm.setOnSingleClickListener {
                 shareKeysInformationViewModel.fetchKeys()
             }
             setupViewModelListeners()
@@ -126,15 +127,14 @@ class ShareKeysInformationActivity : BaseActivity(R.layout.activity_share_keys_i
             if (resultCode == Activity.RESULT_OK) {
                 shareKeysInformationViewModel.fetchKeys()
             } else {
-                shareKeysInformationViewModel.acknowledgeTestResult()
-                shareKeysInformationViewModel.onKeysNotSubmitted()
+                shareKeysInformationViewModel.onSubmitKeysDenied()
                 disableExposureNotificationsAgainIfWasInitiallyDisabled()
                 StatusActivity.start(this)
             }
         } else if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_START_EXPOSURE_NOTIFICATION) {
             exposureStatusViewModel.startExposureNotifications()
         } else if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_SUBMIT_KEYS) {
-            shareKeysInformationViewModel.acknowledgeTestResult()
+            shareKeysInformationViewModel.onSubmitKeysSuccess()
             disableExposureNotificationsAgainIfWasInitiallyDisabled()
             StatusActivity.start(this)
         }

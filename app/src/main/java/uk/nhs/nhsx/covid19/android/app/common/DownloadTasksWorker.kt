@@ -69,13 +69,8 @@ class DownloadTasksWorker(
 
         setForeground()
 
-        val isOnboardingCompleted = onboardingCompletedProvider.value.defaultFalse()
-        if (isOnboardingCompleted) {
-            submitAnalytics()
-        }
-
         getAvailabilityStatus()
-
+        val isOnboardingCompleted = onboardingCompletedProvider.value.defaultFalse()
         if (!appAvailabilityProvider.isAppAvailable() || !isOnboardingCompleted) {
             return Result.failure()
         }
@@ -87,6 +82,7 @@ class DownloadTasksWorker(
         downloadRiskyPostCodesWork()
         downloadAndProcessRiskyVenues()
 
+        submitAnalytics()
         analyticsEventProcessor.track(BackgroundTaskCompletion)
 
         Timber.d("Finishing DownloadTasksWorker")

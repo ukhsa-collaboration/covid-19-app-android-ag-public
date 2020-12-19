@@ -30,11 +30,8 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
-import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneOffset
-import java.time.temporal.ChronoUnit
 import java.time.temporal.ChronoUnit.DAYS
 import java.util.concurrent.TimeUnit.SECONDS
 import kotlin.test.assertEquals
@@ -57,6 +54,7 @@ class FlowTests : EspressoTest() {
     private val linkTestResultRobot = LinkTestResultRobot()
 
     private val encounterDetectionRobot = EncounterDetectionRobot()
+
     private val browserRobot = BrowserRobot()
 
     @Before
@@ -70,6 +68,7 @@ class FlowTests : EspressoTest() {
     @After
     fun tearDown() {
         FeatureFlagTestHelper.clearFeatureFlags()
+        testAppContext.clock.reset()
     }
 
     private val isolationExpirationRobot = IsolationExpirationRobot()
@@ -119,7 +118,7 @@ class FlowTests : EspressoTest() {
                 isolationConfiguration = DurationDays(),
                 indexCase = IndexCase(
                     symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(7, ChronoUnit.DAYS),
+                    expiryDate = LocalDate.now().plus(7, DAYS),
                     selfAssessment = false
                 )
             )
@@ -162,7 +161,7 @@ class FlowTests : EspressoTest() {
                 isolationConfiguration = DurationDays(),
                 indexCase = IndexCase(
                     symptomsOnsetDate = dateNow.minusDays(3),
-                    expiryDate = dateNow.plus(7, ChronoUnit.DAYS),
+                    expiryDate = dateNow.plus(7, DAYS),
                     selfAssessment = false
                 )
             )
@@ -185,7 +184,7 @@ class FlowTests : EspressoTest() {
 
         val contactCaseDays =
             testAppContext.getIsolationConfigurationProvider().durationDays.contactCase
-        val expectedExpiryDate = dateNow.plus(contactCaseDays.toLong(), ChronoUnit.DAYS)
+        val expectedExpiryDate = dateNow.plus(contactCaseDays.toLong(), DAYS)
         val actualExpiryDate = (testAppContext.getCurrentState() as Isolation).expiryDate
 
         assertEquals(expectedExpiryDate, actualExpiryDate)
@@ -309,11 +308,9 @@ class FlowTests : EspressoTest() {
 
         waitFor { isolationExpirationRobot.checkIsolationWillFinish(expiryDate) }
 
-        val from = Instant.now().plus(1, ChronoUnit.DAYS)
+        val from = Instant.now().plus(1, DAYS)
 
-        val fromClock = Clock.fixed(from, ZoneOffset.UTC)
-
-        testAppContext.setStateMachineClock(fromClock)
+        testAppContext.clock.currentInstant = from
 
         await.atMost(10, SECONDS) until { testAppContext.getCurrentState() is Default }
     }
@@ -326,7 +323,7 @@ class FlowTests : EspressoTest() {
                 isolationConfiguration = DurationDays(),
                 indexCase = IndexCase(
                     symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(7, ChronoUnit.DAYS),
+                    expiryDate = LocalDate.now().plus(7, DAYS),
                     selfAssessment = false
                 )
             )

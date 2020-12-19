@@ -19,6 +19,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationRe
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.Success
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
 import uk.nhs.nhsx.covid19.android.app.status.ExposureStatusViewModel
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
 class EnableExposureNotificationsActivity : BaseActivity(R.layout.activity_edge_case) {
@@ -38,7 +39,8 @@ class EnableExposureNotificationsActivity : BaseActivity(R.layout.activity_edge_
 
         startObservingExposureNotificationActivation()
 
-        takeActionButton.setOnClickListener {
+        takeActionButton.setOnSingleClickListener {
+            takeActionButton.isEnabled = false
             viewModel.startExposureNotifications()
         }
     }
@@ -64,6 +66,7 @@ class EnableExposureNotificationsActivity : BaseActivity(R.layout.activity_edge_
     private fun handleError(exception: Exception) {
         Snackbar.make(edgeCaseContainer, exception.message.toString(), Snackbar.LENGTH_SHORT)
             .show()
+        takeActionButton.isEnabled = true
     }
 
     private fun handleResolution(status: Status) {
@@ -75,10 +78,12 @@ class EnableExposureNotificationsActivity : BaseActivity(R.layout.activity_edge_
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PermissionActivity.REQUEST_CODE_START_EXPOSURE_NOTIFICATION &&
-            resultCode == Activity.RESULT_OK
-        ) {
-            viewModel.startExposureNotifications()
+        if (requestCode == PermissionActivity.REQUEST_CODE_START_EXPOSURE_NOTIFICATION) {
+            if (resultCode == Activity.RESULT_OK) {
+                viewModel.startExposureNotifications()
+            } else {
+                takeActionButton.isEnabled = true
+            }
         }
     }
 

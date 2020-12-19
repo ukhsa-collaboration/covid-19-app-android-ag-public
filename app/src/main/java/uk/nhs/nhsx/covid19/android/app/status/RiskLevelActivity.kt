@@ -29,6 +29,7 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpOpensInBrowserWarning
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import uk.nhs.nhsx.covid19.android.app.widgets.PolicyItemView
@@ -70,7 +71,7 @@ class RiskLevelActivity : BaseActivity(R.layout.activity_risk_level) {
 
         buttonRiskLevelLink.text = risk.riskIndicator.linkTitle.translate()
 
-        buttonRiskLevelLink.setOnClickListener {
+        buttonRiskLevelLink.setOnSingleClickListener {
             openUrl(risk.riskIndicator.linkUrl.translate())
         }
 

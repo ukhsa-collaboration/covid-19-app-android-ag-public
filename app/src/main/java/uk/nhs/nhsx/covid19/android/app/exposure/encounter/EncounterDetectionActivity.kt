@@ -17,6 +17,7 @@ import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionViewModel.ExposedNotificationResult.ConsentConfirmation
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionViewModel.ExposedNotificationResult.IsolationDurationDays
 import uk.nhs.nhsx.covid19.android.app.startActivity
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 
 class EncounterDetectionActivity : BaseActivity(R.layout.activity_exposed_notification) {
 
@@ -36,7 +37,7 @@ class EncounterDetectionActivity : BaseActivity(R.layout.activity_exposed_notifi
             }
         }
 
-        understandButton.setOnClickListener {
+        understandButton.setOnSingleClickListener {
             viewModel.confirmConsent()
         }
 

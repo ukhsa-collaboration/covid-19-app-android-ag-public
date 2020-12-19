@@ -52,5 +52,7 @@ data class Metrics(
     var hasTestedPositiveBackgroundTick: Int = 0,
     var isIsolatingForSelfDiagnosedBackgroundTick: Int = 0,
     var isIsolatingForTestedPositiveBackgroundTick: Int = 0,
-    var isIsolatingForHadRiskyContactBackgroundTick: Int = 0
+    var isIsolatingForHadRiskyContactBackgroundTick: Int = 0,
+    var receivedRiskyContactNotification: Int = 0,
+    var startedIsolation: Int = 0
 )

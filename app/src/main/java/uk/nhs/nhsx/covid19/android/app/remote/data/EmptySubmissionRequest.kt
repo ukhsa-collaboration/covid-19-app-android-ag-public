@@ -19,5 +19,8 @@ enum class EmptySubmissionSource : Parcelable {
     KEY_SUBMISSION,
 
     @Json(name = "exposureWindow")
-    EXPOSURE_WINDOW
+    EXPOSURE_WINDOW,
+
+    @Json(name = "exposureWindowAfterPositive")
+    EXPOSURE_WINDOW_AFTER_POSITIVE
 }

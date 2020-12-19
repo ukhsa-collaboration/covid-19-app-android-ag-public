@@ -6,10 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.Before
 import org.junit.Test
 import java.time.Clock
 import java.time.Instant
-import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import kotlin.test.assertEquals
 
@@ -21,10 +21,18 @@ class AppAvailabilityListenerTest {
     private val context = mockk<Context>(relaxed = true)
     private val fixedInstant = Instant.parse("2020-05-21T10:00:00Z")
 
+    private val clock = mockk<Clock>()
+
     private val testSubject =
         AppAvailabilityListener(
-            appAvailabilityProvider
+            appAvailabilityProvider,
+            clock
         )
+
+    @Before
+    fun setUp() {
+        every { clock.instant() } returns fixedInstant
+    }
 
     @Test
     fun `trigger show availability screen when the current version is not supported`() {
@@ -96,9 +104,9 @@ class AppAvailabilityListenerTest {
     fun `should start UpdateRecommendedActivity when over 5 minutes outside app`() {
         every { appAvailabilityProvider.isAppAvailable() } returns true
         every { appAvailabilityProvider.isUpdateRecommended() } returns true
-        testSubject.setClock(Clock.fixed(fixedInstant, ZoneOffset.UTC))
         testSubject.onActivityPaused(appCompatActivity)
-        testSubject.setClock(Clock.fixed(fixedInstant.plus(8, ChronoUnit.MINUTES), ZoneOffset.UTC))
+
+        every { clock.instant() } returns fixedInstant.plus(8, ChronoUnit.MINUTES)
         testSubject.onActivityResumed(appCompatActivity)
 
         verify { appCompatActivity.startActivity(any()) }
@@ -108,9 +116,9 @@ class AppAvailabilityListenerTest {
     fun `should not start UpdateRecommendedActivity when less than 5 minutes outside app`() {
         every { appAvailabilityProvider.isAppAvailable() } returns true
         every { appAvailabilityProvider.isUpdateRecommended() } returns true
-        testSubject.setClock(Clock.fixed(fixedInstant, ZoneOffset.UTC))
         testSubject.onActivityPaused(appCompatActivity)
-        testSubject.setClock(Clock.fixed(fixedInstant.plus(2, ChronoUnit.MINUTES), ZoneOffset.UTC))
+
+        every { clock.instant() } returns fixedInstant.plus(2, ChronoUnit.MINUTES)
         testSubject.onActivityResumed(appCompatActivity)
 
         verify(exactly = 0) { appCompatActivity.startActivity(any()) }

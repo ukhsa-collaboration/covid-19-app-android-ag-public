@@ -28,8 +28,13 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
+import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class ReviewSymptomsViewModelTest {
 
@@ -41,8 +46,9 @@ class ReviewSymptomsViewModelTest {
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
     private val navigateToIsolationScreenObserver = mockk<Observer<SymptomAdvice>>(relaxed = true)
     private val analyticsManager = mockk<AnalyticsEventProcessor>(relaxed = true)
+    private val fixedClock = Clock.fixed(Instant.parse("2020-12-24T20:00:00Z"), ZoneOffset.UTC)
     private val testSubject =
-        ReviewSymptomsViewModel(isolationStateMachine, riskCalculator, analyticsManager)
+        ReviewSymptomsViewModel(isolationStateMachine, riskCalculator, analyticsManager, fixedClock)
 
     @Test
     fun `setup outputs correct viewState`() {
@@ -267,6 +273,21 @@ class ReviewSymptomsViewModelTest {
         testSubject.onButtonConfirmedClicked()
 
         verify { navigateToIsolationScreenObserver.onChanged(Isolate(false, 0)) }
+    }
+
+    @Test
+    fun `onset date in future is invalid`() {
+        assertFalse(testSubject.isOnsetDateValid(fixedClock.instant().plusSeconds(10).toEpochMilli(), 14))
+    }
+
+    @Test
+    fun `onset date outside symptoms onset window is invalid`() {
+        assertFalse(testSubject.isOnsetDateValid(fixedClock.instant().minus(14, ChronoUnit.DAYS).toEpochMilli(), 14))
+    }
+
+    @Test
+    fun `onset date in the past and within symptoms onset window is valid`() {
+        assertTrue(testSubject.isOnsetDateValid(fixedClock.instant().minus(13, ChronoUnit.DAYS).toEpochMilli(), 14))
     }
 
     private fun setupStateWithSelectedOnsetDate(onsetDate: SelectedDate = CannotRememberDate) {

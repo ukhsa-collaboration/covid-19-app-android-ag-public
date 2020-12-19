@@ -9,32 +9,38 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultRe
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.QrCodeCheckIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ResultReceived
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyContactNotification
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.UpdateNetworkStats
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
-import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.OUTSIDE_APP
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.Event
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_RESULT_RECEIVED
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CODE_CHECK_IN
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_CONTACT_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.STARTED_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.VOID_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
-import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage
+import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
+import uk.nhs.nhsx.covid19.android.app.util.isEqualOrAfter
 import java.time.Clock
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
-import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
-import uk.nhs.nhsx.covid19.android.app.util.isEqualOrAfter
 
 @Singleton
-class AnalyticsEventProcessor(
-    private val analyticsMetricsLogStorage: AnalyticsMetricsLogStorage,
+class AnalyticsEventProcessor @Inject constructor(
+    private val analyticsLogStorage: AnalyticsLogStorage,
     private val stateStorage: StateStorage,
     private val exposureNotificationApi: ExposureNotificationApi,
     private val appAvailabilityProvider: AppAvailabilityProvider,
@@ -43,107 +49,73 @@ class AnalyticsEventProcessor(
     private val clock: Clock
 ) {
 
-    @Inject
-    constructor(
-        analyticsMetricsLogStorage: AnalyticsMetricsLogStorage,
-        stateStorage: StateStorage,
-        exposureNotificationApi: ExposureNotificationApi,
-        appAvailabilityProvider: AppAvailabilityProvider,
-        networkTrafficStats: NetworkTrafficStats,
-        testResultsProvider: TestResultsProvider
-    ) : this(
-        analyticsMetricsLogStorage,
-        stateStorage,
-        exposureNotificationApi,
-        appAvailabilityProvider,
-        networkTrafficStats,
-        testResultsProvider,
-        Clock.systemUTC()
-    )
-
     suspend fun track(analyticsEvent: AnalyticsEvent) {
         Timber.d("processing event: $analyticsEvent")
-        val metrics = Metrics().apply {
-            when (analyticsEvent) {
-                QrCodeCheckIn -> checkedIn = 1
-                CanceledCheckIn -> canceledCheckIn = 1
-                CompletedQuestionnaireAndStartedIsolation ->
-                    completedQuestionnaireAndStartedIsolation =
-                        1
-                CompletedQuestionnaireButDidNotStartIsolation ->
-                    completedQuestionnaireButDidNotStartIsolation =
-                        1
-                BackgroundTaskCompletion -> backgroundTasksCount()
-                PositiveResultReceived -> receivedPositiveTestResult = 1
-                NegativeResultReceived -> receivedNegativeTestResult = 1
-                VoidResultReceived -> receivedVoidTestResult = 1
-                is ResultReceived -> updateTestResults(analyticsEvent.result, analyticsEvent.testOrderType)
-                UpdateNetworkStats -> updateNetworkStats()
+
+        val logItem = analyticsEvent.toAnalyticsLogItem()
+
+        analyticsLogStorage.add(AnalyticsLogEntry(Instant.now(clock), logItem))
+    }
+
+    private suspend fun AnalyticsEvent.toAnalyticsLogItem() = when (this) {
+        QrCodeCheckIn -> Event(QR_CODE_CHECK_IN)
+        CanceledCheckIn -> Event(CANCELED_CHECK_IN)
+        CompletedQuestionnaireAndStartedIsolation -> Event(COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION)
+        CompletedQuestionnaireButDidNotStartIsolation -> Event(COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION)
+        BackgroundTaskCompletion -> AnalyticsLogItem.BackgroundTaskCompletion(getBackgroundTaskTicks())
+        PositiveResultReceived -> Event(POSITIVE_RESULT_RECEIVED)
+        NegativeResultReceived -> Event(NEGATIVE_RESULT_RECEIVED)
+        VoidResultReceived -> Event(VOID_RESULT_RECEIVED)
+        ReceivedRiskyContactNotification -> Event(RECEIVED_RISKY_CONTACT_NOTIFICATION)
+        StartedIsolation -> Event(STARTED_ISOLATION)
+        is ResultReceived -> AnalyticsLogItem.ResultReceived(result, testOrderType)
+        UpdateNetworkStats -> updateNetworkStats()
+    }
+
+    private fun updateNetworkStats() = AnalyticsLogItem.UpdateNetworkStats(
+        downloadedBytes = networkTrafficStats.getTotalBytesDownloaded(),
+        uploadedBytes = networkTrafficStats.getTotalBytesUploaded()
+    )
+
+    private suspend fun getBackgroundTaskTicks() =
+        BackgroundTaskTicks().apply {
+            if (!appAvailabilityProvider.isAppAvailable()) {
+                return this
             }
-        }
 
-        analyticsMetricsLogStorage.add(MetricsLogEntry(metrics, Instant.now(clock)))
-    }
+            runningNormallyBackgroundTick = true
 
-    private fun Metrics.updateNetworkStats() {
-        apply {
-            cumulativeDownloadBytes = networkTrafficStats.getTotalBytesDownloaded()
-            cumulativeUploadBytes = networkTrafficStats.getTotalBytesUploaded()
-        }
-    }
+            val currentState = stateStorage.state
 
-    private suspend fun Metrics.backgroundTasksCount() {
-        apply {
-            if (appAvailabilityProvider.isAppAvailable()) {
+            if (currentState is Isolation) {
+                isIsolatingBackgroundTick = true
+                isIsolatingForHadRiskyContactBackgroundTick = currentState.isContactCase()
+                hasSelfDiagnosedPositiveBackgroundTick = currentState.isIndexCase()
+                isIsolatingForSelfDiagnosedBackgroundTick = currentState.isSelfAssessmentIndexCase()
 
-                runningNormallyBackgroundTick = 1
-
-                val currentState = stateStorage.state
-
-                if (currentState is Isolation) {
-                    isIsolatingBackgroundTick = 1
-                    if (currentState.isContactCase()) isIsolatingForHadRiskyContactBackgroundTick = 1
-                    if (currentState.isIndexCase()) hasSelfDiagnosedPositiveBackgroundTick = 1
-                    if (currentState.isSelfAssessmentIndexCase()) isIsolatingForSelfDiagnosedBackgroundTick = 1
-
-                    val lastAcknowledgePositiveTestResult = lastAcknowledgedPositiveTestResult()
-                    if (lastAcknowledgePositiveTestResult != null) {
-                        val isolationStartDate = currentState.isolationStart.truncatedTo(ChronoUnit.DAYS)
-                        val testResultAcknowledgeDate = lastAcknowledgePositiveTestResult.acknowledgedDate!!.truncatedTo(ChronoUnit.DAYS)
-                        if (testResultAcknowledgeDate.isEqualOrAfter(isolationStartDate)) {
-                            isIsolatingForTestedPositiveBackgroundTick = 1
-                        }
-                    }
+                val lastAcknowledgePositiveTestResult = lastAcknowledgedPositiveTestResult()
+                if (lastAcknowledgePositiveTestResult != null) {
+                    val isolationStartDate = currentState.isolationStart.truncatedTo(ChronoUnit.DAYS)
+                    val testResultAcknowledgeDate =
+                        lastAcknowledgePositiveTestResult.acknowledgedDate!!.truncatedTo(ChronoUnit.DAYS)
+                    isIsolatingForTestedPositiveBackgroundTick =
+                        testResultAcknowledgeDate.isEqualOrAfter(isolationStartDate)
                 }
-
-                val recentIsolation = when (currentState) {
-                    is Isolation -> currentState
-                    is Default -> currentState.previousIsolation
-                }
-                recentIsolation?.let {
-                    if (it.isContactCase()) hasHadRiskyContactBackgroundTick = 1
-                    if (it.isSelfAssessmentIndexCase()) hasSelfDiagnosedBackgroundTick = 1
-                    if (lastAcknowledgedPositiveTestResult() != null) hasTestedPositiveBackgroundTick = 1
-                }
-
-                if (!exposureNotificationApi.isEnabled()) encounterDetectionPausedBackgroundTick = 1
             }
-            totalBackgroundTasks = 1
-        }
-    }
 
-    private fun Metrics.updateTestResults(result: VirologyTestResult, testOrderType: TestOrderType) {
-        apply {
-            when {
-                result == VOID && testOrderType == INSIDE_APP -> receivedVoidTestResultViaPolling = 1
-                result == VOID && testOrderType == OUTSIDE_APP -> receivedVoidTestResultEnteredManually = 1
-                result == POSITIVE && testOrderType == INSIDE_APP -> receivedPositiveTestResultViaPolling = 1
-                result == POSITIVE && testOrderType == OUTSIDE_APP -> receivedPositiveTestResultEnteredManually = 1
-                result == NEGATIVE && testOrderType == INSIDE_APP -> receivedNegativeTestResultViaPolling = 1
-                result == NEGATIVE && testOrderType == OUTSIDE_APP -> receivedNegativeTestResultEnteredManually = 1
+            val recentIsolation = when (currentState) {
+                is Isolation -> currentState
+                is Default -> currentState.previousIsolation
             }
+
+            recentIsolation?.let {
+                hasHadRiskyContactBackgroundTick = it.isContactCase()
+                hasSelfDiagnosedBackgroundTick = it.isSelfAssessmentIndexCase()
+                hasTestedPositiveBackgroundTick = lastAcknowledgedPositiveTestResult() != null
+            }
+
+            encounterDetectionPausedBackgroundTick = !exposureNotificationApi.isEnabled()
         }
-    }
 
     private fun lastAcknowledgedPositiveTestResult(): ReceivedTestResult? =
         testResultsProvider.testResults.values

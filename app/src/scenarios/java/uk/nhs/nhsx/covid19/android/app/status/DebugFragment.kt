@@ -33,6 +33,7 @@ import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.Error
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.ResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.Success
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import java.io.File
 import javax.inject.Inject
 
@@ -81,53 +82,53 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
     }
 
     private fun showDebugOptions() {
-        submitKeys.setOnClickListener {
+        submitKeys.setOnSingleClickListener {
             activity?.startActivity<ShareKeysInformationActivity> {}
         }
 
-        exportKeys.setOnClickListener {
+        exportKeys.setOnSingleClickListener {
             debugViewModel.exportKeys(requireContext())
         }
 
-        importKeys.setOnClickListener {
+        importKeys.setOnSingleClickListener {
             val keysIntent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             keysIntent.type = "*/*"
             startActivityForResult(keysIntent, IMPORT_KEYS)
         }
 
-        startDownloadTask.setOnClickListener {
-            debugViewModel.startDownloadTask(requireContext())
+        startDownloadTask.setOnSingleClickListener {
+            debugViewModel.startDownloadTask()
         }
 
-        sendPositiveTestResult.setOnClickListener {
+        sendPositiveTestResult.setOnSingleClickListener {
             debugViewModel.sendPositiveTestResult(requireContext())
         }
 
-        sendNegativeTestResult.setOnClickListener {
+        sendNegativeTestResult.setOnSingleClickListener {
             debugViewModel.sendNegativeTestResult(requireContext())
         }
 
-        sendVoidTestResult.setOnClickListener {
+        sendVoidTestResult.setOnSingleClickListener {
             debugViewModel.sendVoidTestResult(requireContext())
         }
 
-        defaultState.setOnClickListener {
+        defaultState.setOnSingleClickListener {
             debugViewModel.setDefaultState()
         }
 
-        indexState.setOnClickListener {
+        indexState.setOnSingleClickListener {
             debugViewModel.setIndexState()
         }
 
-        contactState.setOnClickListener {
+        contactState.setOnSingleClickListener {
             debugViewModel.setContactState()
         }
 
-        riskyVenue.setOnClickListener {
+        riskyVenue.setOnSingleClickListener {
             debugViewModel.setRiskyVenue()
         }
 
-        riskyPostCode.setOnClickListener {
+        riskyPostCode.setOnSingleClickListener {
             debugViewModel.setRiskyPostCode()
         }
     }

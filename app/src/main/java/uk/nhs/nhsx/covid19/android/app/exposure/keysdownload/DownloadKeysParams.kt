@@ -11,16 +11,10 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
-class DownloadKeysParams(
+class DownloadKeysParams @Inject constructor(
     private val lastDownloadedKeyTimeProvider: LastDownloadedKeyTimeProvider,
     private val clock: Clock
 ) {
-
-    @Inject
-    constructor(lastDownloadedKeyTimeProvider: LastDownloadedKeyTimeProvider) : this(
-        lastDownloadedKeyTimeProvider,
-        Clock.systemUTC()
-    )
 
     private lateinit var relevantTime: LocalDateTime
 

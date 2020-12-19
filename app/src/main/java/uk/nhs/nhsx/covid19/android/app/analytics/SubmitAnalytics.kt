@@ -1,10 +1,9 @@
 package uk.nhs.nhsx.covid19.android.app.analytics
 
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AggregateAnalytics
-import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AnalyticsAlarm
-import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AnalyticsEventsStorage
+import kotlinx.coroutines.withContext
 import uk.nhs.nhsx.covid19.android.app.common.Result
 import uk.nhs.nhsx.covid19.android.app.common.runSafely
 import uk.nhs.nhsx.covid19.android.app.remote.AnalyticsApi
@@ -14,46 +13,36 @@ import javax.inject.Singleton
 
 @Singleton
 class SubmitAnalytics @Inject constructor(
-    private val analyticsMetricsLogStorage: AnalyticsMetricsLogStorage,
+    private val analyticsLogStorage: AnalyticsLogStorage,
     private val analyticsApi: AnalyticsApi,
     private val groupAnalyticsEvents: GroupAnalyticsEvents,
-    private val aggregateAnalytics: AggregateAnalytics,
-    private val analyticsEventsStorage: AnalyticsEventsStorage,
-    private val analyticsAlarm: AnalyticsAlarm
+    private val migrateMetricsLogStorageToLogStorage: MigrateMetricsLogStorageToLogStorage
 ) {
     private val mutex = Mutex()
 
-    suspend operator fun invoke(): Result<Unit> =
+    suspend operator fun invoke(onAfterSubmission: suspend () -> Unit = {}): Result<Unit> =
         runSafely {
             mutex.withLock {
-                handleMigration()
+                withContext(NonCancellable) {
+                    migrateMetricsLogStorageToLogStorage()
 
-                val analyticsEvents = groupAnalyticsEvents
-                    .invoke()
-                    .getOrThrow()
+                    val analyticsPayloads = groupAnalyticsEvents
+                        .invoke()
+                        .getOrThrow()
 
-                analyticsEvents.forEach {
-                    runCatching {
-                        analyticsApi.submitAnalytics(it)
+                    analyticsPayloads.forEach { payload ->
+                        analyticsLogStorage.remove(
+                            startInclusive = Instant.parse(payload.analyticsWindow.startDate),
+                            endExclusive = Instant.parse(payload.analyticsWindow.endDate)
+                        )
+
+                        runCatching {
+                            analyticsApi.submitAnalytics(payload)
+                        }
+
+                        onAfterSubmission()
                     }
-                    analyticsMetricsLogStorage.remove(
-                        startInclusive = Instant.parse(it.analyticsWindow.startDate),
-                        endExclusive = Instant.parse(it.analyticsWindow.endDate)
-                    )
                 }
             }
         }
-
-    private suspend fun handleMigration() {
-        analyticsAlarm.cancel()
-        aggregateAnalytics.invoke()
-        analyticsEventsStorage.value?.let {
-            it.forEach {
-                runCatching {
-                    analyticsApi.submitAnalytics(it)
-                }
-            }
-            analyticsEventsStorage.value = null
-        }
-    }
 }

@@ -19,6 +19,7 @@ import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
@@ -61,7 +62,7 @@ class SubmitKeysProgressActivity : BaseActivity(R.layout.activity_progress) {
     }
 
     private fun setupListeners() {
-        buttonTryAgain.setOnClickListener {
+        buttonTryAgain.setOnSingleClickListener {
             submitKeys()
         }
     }

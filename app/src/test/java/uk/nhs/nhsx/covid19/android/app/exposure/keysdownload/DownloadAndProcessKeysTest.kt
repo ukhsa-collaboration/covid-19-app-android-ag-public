@@ -20,11 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.common.Result
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadKeysParams.Intervals.Daily
 import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadKeysParams.Intervals.Hourly
-import uk.nhs.nhsx.covid19.android.app.remote.ExposureConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.KeysDistributionApi
-import uk.nhs.nhsx.covid19.android.app.remote.data.ExposureConfigurationResponse
-import uk.nhs.nhsx.covid19.android.app.remote.data.ExposureNotification
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskCalculation
 import java.io.File
 import java.time.Clock
 import java.time.Instant
@@ -35,7 +31,6 @@ class DownloadAndProcessKeysTest {
 
     private val keysDistributionApi = mockk<KeysDistributionApi>(relaxed = true)
     private val exposureNotificationApi = mockk<ExposureNotificationApi>(relaxed = true)
-    private val exposureConfigurationApi = mockk<ExposureConfigurationApi>(relaxed = true)
     private val keyFileCache = mockk<KeyFilesCache>(relaxed = true)
     private val downloadKeysParam = mockk<DownloadKeysParams>()
     private val lastDownloadedKeyProvider = mockk<LastDownloadedKeyTimeProvider>(relaxed = true)
@@ -44,7 +39,6 @@ class DownloadAndProcessKeysTest {
     private val testSubject =
         DownloadAndProcessKeys(
             keysDistributionApi,
-            exposureConfigurationApi,
             exposureNotificationApi,
             keyFileCache,
             downloadKeysParam,
@@ -56,7 +50,6 @@ class DownloadAndProcessKeysTest {
     fun setUp() {
         coEvery { exposureNotificationApi.isEnabled() } returns true
         coEvery { exposureNotificationApi.version() } returns 2L
-        coEvery { exposureConfigurationApi.getExposureConfiguration() } returns getConfigurationWithThreshold()
         every { lastDownloadedKeyProvider.getLatestStoredTime() } returns LocalDateTime.now(clock).minusHours(5)
     }
 
@@ -229,26 +222,4 @@ class DownloadAndProcessKeysTest {
         verify { downloadKeysParam wasNot called }
         verify { keyFileCache.createFile(any(), any()) wasNot called }
     }
-
-    private fun getConfigurationWithThreshold(threshold: Int = 900) =
-        ExposureConfigurationResponse(
-            exposureNotification = ExposureNotification(
-                minimumRiskScore = 11,
-                attenuationDurationThresholds = listOf(55, 63),
-                attenuationLevelValues = listOf(0, 1, 1, 1, 1, 1, 1, 1),
-                daysSinceLastExposureLevelValues = listOf(5, 5, 5, 5, 5, 5, 5, 5),
-                durationLevelValues = listOf(0, 0, 0, 1, 1, 1, 1, 0),
-                transmissionRiskLevelValues = listOf(1, 3, 4, 5, 6, 7, 8, 6),
-                attenuationWeight = 50.0,
-                daysSinceLastExposureWeight = 20,
-                durationWeight = 50.0,
-                transmissionRiskWeight = 50.0
-            ),
-            riskCalculation = RiskCalculation(
-                durationBucketWeights = listOf(1.0, 0.5, 0.0),
-                riskThreshold = threshold
-            ),
-            v2RiskCalculation = mockk(),
-            riskScore = mockk()
-        )
 }

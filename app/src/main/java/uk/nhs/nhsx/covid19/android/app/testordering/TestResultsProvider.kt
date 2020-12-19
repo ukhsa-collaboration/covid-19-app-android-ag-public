@@ -21,18 +21,12 @@ import java.time.Instant
 import java.time.LocalDate
 import javax.inject.Inject
 
-class TestResultsProvider(
+class TestResultsProvider @Inject constructor(
     private val latestTestResultProvider: LatestTestResultProvider,
     private val testResultsStorage: TestResultsStorage,
     moshi: Moshi,
     private val clock: Clock
 ) {
-    @Inject
-    constructor(
-        latestTestResultProvider: LatestTestResultProvider,
-        testResultsStorage: TestResultsStorage,
-        moshi: Moshi
-    ) : this(latestTestResultProvider, testResultsStorage, moshi, clock = Clock.systemUTC())
 
     private val testResultsSerializationAdapter: JsonAdapter<Map<String, ReceivedTestResult>> =
         moshi.adapter(listOfReceivedTestResultPairType)

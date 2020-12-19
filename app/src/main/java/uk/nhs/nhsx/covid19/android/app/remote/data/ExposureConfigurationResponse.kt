@@ -5,7 +5,6 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class ExposureConfigurationResponse(
     val exposureNotification: ExposureNotification,
-    val riskCalculation: RiskCalculation,
     val v2RiskCalculation: V2RiskCalculation,
     val riskScore: RiskScore
 )
@@ -22,12 +21,6 @@ data class ExposureNotification(
     val minimumRiskScore: Int,
     val transmissionRiskLevelValues: List<Int>,
     val transmissionRiskWeight: Double
-)
-
-@JsonClass(generateAdapter = true)
-data class RiskCalculation(
-    val durationBucketWeights: List<Double>,
-    val riskThreshold: Int
 )
 
 @JsonClass(generateAdapter = true)

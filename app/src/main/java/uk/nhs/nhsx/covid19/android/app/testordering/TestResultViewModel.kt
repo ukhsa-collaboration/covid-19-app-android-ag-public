@@ -4,6 +4,9 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import java.time.Clock
+import javax.inject.Inject
+import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW_AFTER_POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
@@ -14,7 +17,6 @@ import uk.nhs.nhsx.covid19.android.app.state.State
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.newStateWithTestResult
-import uk.nhs.nhsx.covid19.android.app.state.remainingDaysInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.Ignore
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeWillBeInIsolation
@@ -26,30 +28,15 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainStat
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
-import java.time.Clock
-import javax.inject.Inject
 
-class TestResultViewModel constructor(
+class TestResultViewModel @Inject constructor(
     private val testResultsProvider: TestResultsProvider,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val stateMachine: IsolationStateMachine,
     private val submitFakeKeys: SubmitFakeKeys,
+    private val submitFakeExposureWindows: SubmitFakeExposureWindows,
     private val clock: Clock
 ) : ViewModel() {
-
-    @Inject
-    constructor(
-        testResultsProvider: TestResultsProvider,
-        isolationConfigurationProvider: IsolationConfigurationProvider,
-        stateMachine: IsolationStateMachine,
-        submitFakeKeys: SubmitFakeKeys
-    ) : this(
-        testResultsProvider,
-        isolationConfigurationProvider,
-        stateMachine,
-        submitFakeKeys,
-        Clock.systemDefaultZone()
-    )
 
     private val viewState = MutableLiveData<ViewState>()
     fun viewState(): LiveData<ViewState> = viewState
@@ -158,7 +145,7 @@ class TestResultViewModel constructor(
                     )
             }
         }
-
+        submitFakeExposureWindows(EXPOSURE_WINDOW_AFTER_POSITIVE, 0)
         submitFakeKeys()
     }
 

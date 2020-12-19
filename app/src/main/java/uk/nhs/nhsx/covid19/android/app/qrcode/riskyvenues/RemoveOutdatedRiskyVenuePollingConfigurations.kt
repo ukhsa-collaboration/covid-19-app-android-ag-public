@@ -7,21 +7,11 @@ import java.time.temporal.ChronoUnit.DAYS
 import javax.inject.Inject
 import uk.nhs.nhsx.covid19.android.app.util.isBeforeOrEqual
 
-class RemoveOutdatedRiskyVenuePollingConfigurations(
+class RemoveOutdatedRiskyVenuePollingConfigurations @Inject constructor(
     private val riskyVenueCircuitBreakerConfigurationProvider: RiskyVenueCircuitBreakerConfigurationProvider,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val clock: Clock
 ) {
-
-    @Inject
-    constructor(
-        riskyVenueCircuitBreakerConfigurationProvider: RiskyVenueCircuitBreakerConfigurationProvider,
-        isolationConfigurationProvider: IsolationConfigurationProvider
-    ) : this(
-        riskyVenueCircuitBreakerConfigurationProvider,
-        isolationConfigurationProvider,
-        clock = Clock.systemUTC()
-    )
 
     fun invoke() {
         val maxDaysUntilExpiry =

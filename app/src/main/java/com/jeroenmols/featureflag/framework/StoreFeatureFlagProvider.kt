@@ -14,7 +14,7 @@ class StoreFeatureFlagProvider : FeatureFlagProvider {
             when (feature) {
                 LOCAL_AUTHORITY -> true
                 BATTERY_OPTIMIZATION -> false
-                STORE_EXPOSURE_WINDOWS -> false
+                STORE_EXPOSURE_WINDOWS -> true
             }
         } else {
             // TestSettings should never be shipped to users

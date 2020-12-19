@@ -5,13 +5,14 @@ import kotlinx.android.synthetic.main.activity_no_symptoms.buttonReturnToHomeScr
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 
 class NoSymptomsActivity : BaseActivity(R.layout.activity_no_symptoms) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        buttonReturnToHomeScreen.setOnClickListener {
+        buttonReturnToHomeScreen.setOnSingleClickListener {
             finish()
             StatusActivity.start(this)
         }

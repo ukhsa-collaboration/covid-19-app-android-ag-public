@@ -12,18 +12,11 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
-class SubmitOnboardingAnalytics(
+class SubmitOnboardingAnalytics @Inject constructor(
     private val analyticsApi: AnalyticsApi,
     private val metadataProvider: MetadataProvider,
     private val clock: Clock
 ) {
-
-    @Inject
-    constructor(analyticsApi: AnalyticsApi, metadataProvider: MetadataProvider) : this(
-        analyticsApi,
-        metadataProvider,
-        Clock.systemUTC()
-    )
 
     suspend operator fun invoke(): Result<Unit> =
         runSafely {

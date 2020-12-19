@@ -16,11 +16,16 @@ import kotlin.math.abs
 class TransmissionRiskLevelApplier @Inject constructor(
     private val stateMachine: IsolationStateMachine
 ) {
-    fun applyTransmissionRiskLevels(keys: List<NHSTemporaryExposureKey>): List<NHSTemporaryExposureKey> {
+    fun applyTransmissionRiskLevels(
+        keys: List<NHSTemporaryExposureKey>,
+        onsetDateBasedOnTestEndDate: LocalDate
+    ): List<NHSTemporaryExposureKey> {
         return keys
             .sortedByDescending { it.rollingStartNumber }
             .map { key ->
-                val daysFromOnset = ChronoUnit.DAYS.between(getOnsetDate(), key.date()).toInt()
+                val daysFromOnset =
+                    ChronoUnit.DAYS.between(getOnsetDate(onsetDateBasedOnTestEndDate), key.date())
+                        .toInt()
                 key.copy(
                     transmissionRiskLevel = calculateTransmissionRiskLevel(daysFromOnset),
                     daysSinceOnsetOfSymptoms = daysFromOnset
@@ -36,12 +41,12 @@ class TransmissionRiskLevelApplier @Inject constructor(
         return max(MIN_TRANSMISSION_RISK_LEVEL, transmissionRiskLevel)
     }
 
-    private fun getOnsetDate(): LocalDate {
+    private fun getOnsetDate(onsetDateBasedOnTestEndDate: LocalDate): LocalDate {
         val latestIsolation = when (val state = stateMachine.readState()) {
             is Isolation -> state
             is Default -> state.previousIsolation
         }
-        return latestIsolation?.indexCase?.symptomsOnsetDate ?: LocalDate.MIN
+        return latestIsolation?.indexCase?.symptomsOnsetDate ?: onsetDateBasedOnTestEndDate
     }
 
     private fun NHSTemporaryExposureKey.date(): LocalDate {

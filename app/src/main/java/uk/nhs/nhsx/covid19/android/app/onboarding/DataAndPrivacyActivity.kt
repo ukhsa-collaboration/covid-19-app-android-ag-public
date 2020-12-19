@@ -14,6 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityButton
 import javax.inject.Inject
 
@@ -34,13 +35,13 @@ class DataAndPrivacyActivity : BaseActivity(R.layout.activity_data_and_privacy) 
             upIndicator = R.drawable.ic_arrow_back_primary
         )
 
-        buttonAgree.setOnClickListener {
+        buttonAgree.setOnSingleClickListener {
             viewModel.markPolicyAccepted()
             PostCodeActivity.start(this)
         }
 
         textNoThanks.setUpAccessibilityButton()
-        textNoThanks.setOnClickListener { finish() }
+        textNoThanks.setOnSingleClickListener { finish() }
     }
 
     companion object {

@@ -26,6 +26,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
 import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
+import java.time.Clock
 
 class ScenariosExposureApplication : ExposureApplication() {
 
@@ -106,7 +107,8 @@ class ScenariosExposureApplication : ExposureApplication() {
                         GooglePlayUpdateProvider(this),
                         AndroidBatteryOptimizationChecker(this),
                         AndroidPermissionsManager(),
-                        AndroidPackageManager()
+                        AndroidPackageManager(),
+                        Clock.systemUTC()
                     )
                 )
                 .mockApiModule(MockApiModule())

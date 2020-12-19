@@ -60,6 +60,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
@@ -158,45 +159,55 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
     }
 
     private fun setClickListeners() {
-        optionReadAdvice.setOnClickListener {
+        optionReadAdvice.setOnSingleClickListener {
+            optionReadAdvice.isEnabled = false
             openUrl(readAdviceUrl, useInternalBrowser = true)
         }
 
-        optionReportSymptoms.setOnClickListener {
+        optionReportSymptoms.setOnSingleClickListener {
+            optionReportSymptoms.isEnabled = false
             startActivity<QuestionnaireActivity>()
         }
 
-        optionOrderTest.setOnClickListener {
+        optionOrderTest.setOnSingleClickListener {
+            optionOrderTest.isEnabled = false
             startActivity<TestOrderingActivity>()
         }
 
-        optionVenueCheckIn.setOnClickListener {
+        optionVenueCheckIn.setOnSingleClickListener {
+            optionVenueCheckIn.isEnabled = false
             QrScannerActivity.start(this)
         }
 
-        optionAboutTheApp.setOnClickListener {
+        optionAboutTheApp.setOnSingleClickListener {
+            optionAboutTheApp.isEnabled = false
             MoreAboutAppActivity.start(this)
         }
 
-        optionIsolationPayment.setOnClickListener {
+        optionIsolationPayment.setOnSingleClickListener {
+            optionIsolationPayment.isEnabled = false
             startActivity<IsolationPaymentActivity>()
         }
 
-        optionLinkTestResult.setOnClickListener {
+        optionLinkTestResult.setOnSingleClickListener {
+            optionLinkTestResult.isEnabled = false
             startActivity<LinkTestResultActivity>()
         }
 
-        optionContactTracing.setOnClickListener {
+        optionContactTracing.setOnSingleClickListener {
+            optionContactTracing.isEnabled = false
             encounterDetectionSwitch.isChecked = !encounterDetectionSwitch.isChecked
             if (encounterDetectionSwitch.isChecked) {
                 exposureStatusViewModel.startExposureNotifications()
             } else {
                 exposureStatusViewModel.stopExposureNotifications()
                 statusViewModel.onStopExposureNotificationsClicked()
+                optionContactTracing.isEnabled = true
             }
         }
 
-        riskAreaView.setOnClickListener {
+        riskAreaView.setOnSingleClickListener {
+            riskAreaView.isEnabled = false
             statusViewModel.viewState.value?.let {
                 RiskLevelActivity.start(this, it.areaRiskState)
             }
@@ -209,7 +220,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
                 showDefaultView()
             }
             is Isolation -> {
-                isolationView.initialize(isolationState.isolationStart, isolationState.expiryDate)
+                isolationView.initialize(isolationState)
                 optionOrderTest.isVisible = isolationState.canOrderTest
                 optionReportSymptoms.isVisible = isolationState.canReportSymptoms
                 showIsolationView()
@@ -252,8 +263,14 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
 
         exposureStatusViewModel.exposureNotificationActivationResult().observe(this) { viewState ->
             when (viewState) {
-                Success -> Timber.d("Exposure notifications successfully started")
-                is Error -> handleExposureNotificationActivationError(viewState.exception.message)
+                Success -> {
+                    Timber.d("Exposure notifications successfully started")
+                    optionContactTracing.isEnabled = true
+                }
+                is Error -> {
+                    handleExposureNotificationActivationError(viewState.exception.message)
+                    optionContactTracing.isEnabled = true
+                }
                 is ResolutionRequired -> handleResolution(
                     viewState.status,
                     REQUEST_CODE_START_EXPOSURE_NOTIFICATION
@@ -277,12 +294,25 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
 
     override fun onResume() {
         super.onResume()
+        resetButtonEnabling()
         isVisible = true
         statusViewModel.onResume()
         exposureStatusViewModel.checkExposureNotificationsEnabled()
         exposureStatusViewModel.checkExposureNotificationsChanged()
 
         registerReceiver(dateChangedReceiver, IntentFilter(Intent.ACTION_DATE_CHANGED))
+    }
+
+    private fun resetButtonEnabling() {
+        optionReadAdvice.isEnabled = true
+        optionReportSymptoms.isEnabled = true
+        optionOrderTest.isEnabled = true
+        optionVenueCheckIn.isEnabled = true
+        optionAboutTheApp.isEnabled = true
+        optionIsolationPayment.isEnabled = true
+        optionLinkTestResult.isEnabled = true
+        optionContactTracing.isEnabled = true
+        riskAreaView.isEnabled = true
     }
 
     override fun onPause() {
@@ -336,6 +366,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
             } else {
                 encounterDetectionSwitch.isChecked = false
             }
+            optionContactTracing.isEnabled = true
         }
     }
 

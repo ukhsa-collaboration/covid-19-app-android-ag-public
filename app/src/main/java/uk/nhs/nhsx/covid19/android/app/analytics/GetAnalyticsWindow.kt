@@ -5,10 +5,7 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
-class GetAnalyticsWindow(private val clock: Clock) {
-
-    @Inject
-    constructor() : this(Clock.systemUTC())
+class GetAnalyticsWindow @Inject constructor(private val clock: Clock) {
 
     operator fun invoke(instant: Instant = Instant.now(clock)): Pair<Instant, Instant> =
         getWindowStart(instant) to getWindowEnd(instant)

@@ -32,10 +32,10 @@ class SubmitFakeExposureWindows(
 
     operator fun invoke(emptySubmissionSource: EmptySubmissionSource, exposureWindowCount: Int) {
         emptyEpidemiologyEventSubmissionScope.launch(emptyEpidemiologyEventSubmissionDispatcher) {
-            runSafely {
-                val totalCallCount = random.nextInt(MAX_CALLS - MIN_CALLS) + MIN_CALLS
-                val fakeCallCount = totalCallCount - exposureWindowCount
-                for (callIndex in 1..fakeCallCount) {
+            val totalCallCount = random.nextInt(MAX_CALLS - MIN_CALLS) + MIN_CALLS
+            val fakeCallCount = totalCallCount - exposureWindowCount
+            for (callIndex in 1..fakeCallCount) {
+                runSafely {
                     Timber.d("Fake temporary epidemiology event submission [$callIndex]")
                     emptyApi.submit(EmptySubmissionRequest(emptySubmissionSource))
                 }

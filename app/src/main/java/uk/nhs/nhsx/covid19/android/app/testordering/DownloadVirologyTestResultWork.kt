@@ -24,7 +24,7 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit.DAYS
 import javax.inject.Inject
 
-class DownloadVirologyTestResultWork(
+class DownloadVirologyTestResultWork @Inject constructor(
     private val virologyTestingApi: VirologyTestingApi,
     private val testOrderingTokensProvider: TestOrderingTokensProvider,
     private val stateMachine: IsolationStateMachine,
@@ -32,22 +32,6 @@ class DownloadVirologyTestResultWork(
     private val analyticsEventProcessor: AnalyticsEventProcessor,
     private val clock: Clock
 ) {
-
-    @Inject
-    constructor(
-        virologyTestingApi: VirologyTestingApi,
-        testOrderingTokensProvider: TestOrderingTokensProvider,
-        stateMachine: IsolationStateMachine,
-        isolationConfigurationProvider: IsolationConfigurationProvider,
-        analyticsEventProcessor: AnalyticsEventProcessor
-    ) : this(
-        virologyTestingApi,
-        testOrderingTokensProvider,
-        stateMachine,
-        isolationConfigurationProvider,
-        analyticsEventProcessor,
-        clock = Clock.systemUTC()
-    )
 
     suspend operator fun invoke(): ListenableWorker.Result {
         val configs = testOrderingTokensProvider.configs

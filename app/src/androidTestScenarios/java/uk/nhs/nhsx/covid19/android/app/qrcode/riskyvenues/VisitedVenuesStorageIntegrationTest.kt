@@ -12,14 +12,13 @@ import org.junit.runner.RunWith
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.state.StateJson
+import uk.nhs.nhsx.covid19.android.app.testhelpers.MockClock
 import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
 import uk.nhs.nhsx.covid19.android.app.util.roundDownToNearestQuarter
 import uk.nhs.nhsx.covid19.android.app.util.roundUpToNearestQuarter
-import java.time.Clock
 import java.time.Instant
-import java.time.ZoneOffset
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -37,31 +36,33 @@ class VisitedVenuesStorageIntegrationTest {
 
     private val from = Instant.parse("2014-12-21T10:23:00Z")
     private val fromRounded = from.roundDownToNearestQuarter()
-    private val fromClock = Clock.fixed(from, ZoneOffset.UTC)
+    private val clock = MockClock(currentInstant = from)
 
     private val encryptedFileInfo = EncryptionUtils.createEncryptedFile(context, "venues")
     private val file = encryptedFileInfo.file
 
     private val testSubject = VisitedVenuesStorage(
         moshi,
-        encryptedFileInfo
+        encryptedFileInfo,
+        clock
     )
 
     @Before
     fun setUp() {
         file.delete()
+        clock.currentInstant = from
     }
 
     @Test
     fun addingVenueCreatesVenuesFile() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1, clock = fromClock)
+        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
 
         assertTrue(file.exists())
     }
 
     @Test
     fun addedVenueCanBeReadBack() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1, clock = fromClock)
+        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
 
         val visits = testSubject.getVisits()
         assertEquals(1, visits.size)
@@ -71,7 +72,7 @@ class VisitedVenuesStorageIntegrationTest {
 
     @Test
     fun deletingFileClearsVenuesStorage() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1, clock = fromClock)
+        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
 
         file.delete()
 
@@ -81,8 +82,8 @@ class VisitedVenuesStorageIntegrationTest {
 
     @Test
     fun addingVenueToExistingFileUpdatesEncryptedFile() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1, clock = fromClock)
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_2, clock = fromClock)
+        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
+        testSubject.finishLastVisitAndAddNewVenue(VENUE_2)
 
         val visits = testSubject.getVisits()
         assertEquals(2, visits.size)
@@ -94,7 +95,7 @@ class VisitedVenuesStorageIntegrationTest {
 
     @Test
     fun addingVenueSetsToDateToTomorrowMidnight() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1, clock = fromClock)
+        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
         val nextMidnight = Instant.parse("2014-12-22T00:00:00Z")
 
         val visits = testSubject.getVisits()
@@ -103,12 +104,11 @@ class VisitedVenuesStorageIntegrationTest {
 
     @Test
     fun addingVenueUpdatesLastVenueToTimestamp() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1, clock = fromClock)
+        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
 
         val nextCheckInTime = Instant.parse("2014-12-21T10:01:00Z")
-        val nextCheckInClock = Clock.fixed(nextCheckInTime, ZoneOffset.UTC)
-
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_2, nextCheckInClock)
+        clock.currentInstant = nextCheckInTime
+        testSubject.finishLastVisitAndAddNewVenue(VENUE_2)
 
         val visits = testSubject.getVisits()
         val checkOutTime = nextCheckInTime.roundUpToNearestQuarter()
@@ -207,7 +207,7 @@ class VisitedVenuesStorageIntegrationTest {
 
     @Test
     fun callingRemoveAllVenueVisitsRemovesVisitsFile() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1, clock = fromClock)
+        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
 
         testSubject.removeAllVenueVisits()
 
@@ -217,7 +217,7 @@ class VisitedVenuesStorageIntegrationTest {
 
     @Test
     fun getVisitByVenueIdReturnsCorrectVenueVisit() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1, clock = fromClock)
+        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
 
         val venueVisit = testSubject.getVisitByVenueId(VENUE_1.id)
 

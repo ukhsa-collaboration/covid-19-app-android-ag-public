@@ -8,6 +8,7 @@ import kotlinx.android.synthetic.main.item_review_symptom.view.textChange
 import kotlinx.android.synthetic.main.item_review_symptom.view.textReviewSymptom
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 
 class ReviewSymptomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     companion object {
@@ -22,7 +23,7 @@ class ReviewSymptomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView
     fun bind(question: Question, listener: (Question) -> Unit) = with(itemView) {
         val symptomName = question.symptom.title.translate()
         textReviewSymptom.text = symptomName
-        textChange.setOnClickListener { listener(question) }
+        textChange.setOnSingleClickListener { listener(question) }
         textChange.contentDescription =
             context.getString(
                 R.string.questionnaire_change_announcement,

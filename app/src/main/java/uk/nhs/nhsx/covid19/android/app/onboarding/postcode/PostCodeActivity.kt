@@ -26,6 +26,7 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeU
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeUpdater.PostCodeUpdateState.Success
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setToolbar
@@ -58,7 +59,7 @@ class PostCodeActivity : BaseActivity(R.layout.activity_post_code) {
             )
         }
 
-        postCodeContinue.setOnClickListener {
+        postCodeContinue.setOnSingleClickListener {
             if (RuntimeBehavior.isFeatureEnabled(FeatureFlag.LOCAL_AUTHORITY)) {
                 viewModel.validateMainPostCode(postCodeView.postCodeDistrict)
             } else {

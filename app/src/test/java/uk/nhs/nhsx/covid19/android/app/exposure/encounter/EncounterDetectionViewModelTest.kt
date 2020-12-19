@@ -40,7 +40,6 @@ class EncounterDetectionViewModelTest {
 
     @Test
     fun `provide the days of isolation left when in contact case`() {
-
         every { isolationStateMachine.readState() } returns Isolation(
             isolationStart = Instant.now(),
             isolationConfiguration = DurationDays(),
@@ -50,6 +49,7 @@ class EncounterDetectionViewModelTest {
                 expiryDate = LocalDate.now().plusDays(14)
             )
         )
+        every { isolationStateMachine.remainingDaysInIsolation(any()) } returns 14
 
         testSubject.getIsolationDays()
 

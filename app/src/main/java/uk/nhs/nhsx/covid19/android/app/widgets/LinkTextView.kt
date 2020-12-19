@@ -12,6 +12,7 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.util.DistrictAreaStringProvider
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpOpensInBrowserWarning
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -51,7 +52,7 @@ class LinkTextView @JvmOverloads constructor(
 
     private fun afterJobInitialized() = launch {
         val linkUrl = districtAreaStringProvider.provide(linkUrl)
-        setOnClickListener {
+        setOnSingleClickListener {
             getActivity()?.openUrl(linkUrl)
         }
     }

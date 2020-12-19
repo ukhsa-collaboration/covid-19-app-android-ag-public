@@ -19,6 +19,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResul
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultViewState.Progress
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultViewState.Valid
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
 class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) {
@@ -38,7 +39,7 @@ class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) 
             upIndicator = R.drawable.ic_arrow_back_white
         )
 
-        linkTestResultContinue.setOnClickListener {
+        linkTestResultContinue.setOnSingleClickListener {
             viewModel.validate(enterCodeEditText.text.toString())
         }
 

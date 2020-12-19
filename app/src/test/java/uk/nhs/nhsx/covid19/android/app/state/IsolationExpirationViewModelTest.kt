@@ -31,8 +31,8 @@ class IsolationExpirationViewModelTest {
     private val viewStateObserver = mockk<Observer<IsolationExpirationViewModel.ViewState>>(relaxed = true)
 
     private val testSubject = IsolationExpirationViewModel(
-        fixedClock,
-        stateMachine
+        stateMachine,
+        fixedClock
     )
 
     private val isolationStateIndexCase = Isolation(

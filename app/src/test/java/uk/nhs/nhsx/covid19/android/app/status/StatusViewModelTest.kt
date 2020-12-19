@@ -44,6 +44,7 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewS
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.ViewState
 import uk.nhs.nhsx.covid19.android.app.util.DistrictAreaStringProvider
+import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 
@@ -67,6 +68,7 @@ class StatusViewModelTest {
 
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
     private val showInformationScreenObserver = mockk<Observer<InformationScreen>>(relaxed = true)
+    private val clock = mockk<Clock>(relaxed = true)
 
     private val testSubject =
         StatusViewModel(
@@ -80,7 +82,8 @@ class StatusViewModelTest {
             startAppReviewFlowConstraint,
             lastReviewFlowStartedDateProvider,
             canClaimIsolationPayment,
-            isolationPaymentTokenStateProvider
+            isolationPaymentTokenStateProvider,
+            clock
         )
 
     private val lowRiskyPostCodeIndicator = RiskIndicator(

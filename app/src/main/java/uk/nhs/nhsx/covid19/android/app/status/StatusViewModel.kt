@@ -37,9 +37,9 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewS
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
 import uk.nhs.nhsx.covid19.android.app.util.DistrictAreaStringProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
+import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import javax.inject.Inject
 
 class StatusViewModel @Inject constructor(
@@ -53,7 +53,8 @@ class StatusViewModel @Inject constructor(
     private val shouldShowInAppReview: ShouldShowInAppReview,
     private val lastAppRatingStartedDateProvider: LastAppRatingStartedDateProvider,
     private val canClaimIsolationPayment: CanClaimIsolationPayment,
-    private val isolationPaymentTokenStateProvider: IsolationPaymentTokenStateProvider
+    private val isolationPaymentTokenStateProvider: IsolationPaymentTokenStateProvider,
+    private val clock: Clock
 ) : ViewModel() {
 
     private val viewStateLiveData = MutableLiveData<ViewState>()
@@ -69,7 +70,9 @@ class StatusViewModel @Inject constructor(
     private val isolationPaymentTokenStateListener: (IsolationPaymentTokenState) -> Unit = {
         val updatedState =
             viewStateLiveData.value?.copy(showIsolationPaymentButton = mustShowIsolationPaymentButton())
-        viewStateLiveData.postValue(updatedState)
+        if (updatedState != null) {
+            viewStateLiveData.postValue(updatedState)
+        }
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -100,13 +103,17 @@ class StatusViewModel @Inject constructor(
             notificationProvider.canSendNotificationToChannel(APP_CONFIGURATION_CHANNEL_ID)
         val updatedState =
             viewStateLiveData.value?.copy(showExposureNotificationReminderDialog = canSendNotification)
-        viewStateLiveData.postValue(updatedState)
+        if (updatedState != null) {
+            viewStateLiveData.postValue(updatedState)
+        }
     }
 
     fun onExposureNotificationReminderDialogDismissed() {
         val updatedState =
             viewStateLiveData.value?.copy(showExposureNotificationReminderDialog = false)
-        viewStateLiveData.postValue(updatedState)
+        if (updatedState != null) {
+            viewStateLiveData.postValue(updatedState)
+        }
     }
 
     fun updateViewState(currentDate: LocalDate = LocalDate.now()) {
@@ -170,8 +177,7 @@ class StatusViewModel @Inject constructor(
                 val reviewInfo = request.result
                 val reviewFlow = reviewManager.launchReviewFlow(activity, reviewInfo)
                 reviewFlow.addOnCompleteListener {
-                    lastAppRatingStartedDateProvider.value =
-                        LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()
+                    lastAppRatingStartedDateProvider.value = Instant.now(clock).toEpochMilli()
                 }
             }
         }

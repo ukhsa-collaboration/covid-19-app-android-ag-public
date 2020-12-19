@@ -22,11 +22,12 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.remainingDaysInIsolation
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
+import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 sealed class SymptomAdvice {
@@ -34,13 +35,15 @@ sealed class SymptomAdvice {
         val isPositiveSymptoms: Boolean,
         val isolationDurationDays: Int
     ) : SymptomAdvice()
+
     object DoNotIsolate : SymptomAdvice()
 }
 
 class ReviewSymptomsViewModel @Inject constructor(
     private val isolationStateMachine: IsolationStateMachine,
     private val riskCalculator: RiskCalculator,
-    private val analyticsEventProcessor: AnalyticsEventProcessor
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
+    private val clock: Clock
 ) : ViewModel() {
 
     @VisibleForTesting
@@ -159,6 +162,10 @@ class ReviewSymptomsViewModel @Inject constructor(
             OnPositiveSelfAssessment(symptomsOnsetDate)
         )
     }
+
+    fun isOnsetDateValid(date: Long, symptomsOnsetWindowDays: Int): Boolean =
+        date <= Instant.now(clock).toEpochMilli() &&
+            date > Instant.now(clock).minus(symptomsOnsetWindowDays.toLong(), ChronoUnit.DAYS).toEpochMilli()
 
     data class ViewState(
         val reviewSymptomItems: List<ReviewSymptomItem>,

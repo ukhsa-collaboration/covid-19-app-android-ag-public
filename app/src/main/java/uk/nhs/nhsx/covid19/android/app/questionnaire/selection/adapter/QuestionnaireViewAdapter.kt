@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.item_question.view.textQuestionDescription
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.adapter.QuestionnaireViewAdapter.QuestionnaireViewHolder
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 
 class QuestionnaireViewAdapter(
@@ -39,7 +40,7 @@ class QuestionnaireViewAdapter(
             }
             questionContainer.background = context.getDrawable(background)
 
-            questionContainer.setOnClickListener {
+            questionContainer.setOnSingleClickListener {
                 listener(question)
             }
 

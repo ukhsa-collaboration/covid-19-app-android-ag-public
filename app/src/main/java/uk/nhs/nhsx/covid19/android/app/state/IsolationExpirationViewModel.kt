@@ -7,15 +7,13 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import javax.inject.Inject
 
-class IsolationExpirationViewModel(
-    private val clock: Clock,
-    private val stateMachine: IsolationStateMachine
+class IsolationExpirationViewModel @Inject constructor(
+    private val stateMachine: IsolationStateMachine,
+    private val clock: Clock
 ) : ViewModel() {
-
-    @Inject
-    constructor(stateMachine: IsolationStateMachine) : this(Clock.systemDefaultZone(), stateMachine)
 
     val viewState = MutableLiveData<ViewState>()
     fun viewState(): LiveData<ViewState> = viewState
@@ -23,7 +21,7 @@ class IsolationExpirationViewModel(
     fun checkState(isolationExpiryDateString: String) {
         runCatching {
             val isolationExpiryDate = LocalDate.parse(isolationExpiryDateString)
-            val expiry = isolationExpiryDate.atStartOfDay(clock.zone).toInstant()
+            val expiry = isolationExpiryDate.atStartOfDay(ZoneId.systemDefault()).toInstant()
             val expired = Instant.now(clock).isAfter(expiry)
 
             val state = stateMachine.readState() as? Isolation

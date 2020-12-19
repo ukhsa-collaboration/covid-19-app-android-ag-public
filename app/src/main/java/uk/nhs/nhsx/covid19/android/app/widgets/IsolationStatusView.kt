@@ -11,13 +11,15 @@ import kotlinx.android.synthetic.main.view_isolation_status.view.isolationDaysTo
 import kotlinx.android.synthetic.main.view_isolation_status.view.subTitleIsolationCountdown
 import kotlinx.android.synthetic.main.view_isolation_status.view.titleDaysToGo
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
-import java.time.Instant
-import java.time.LocalDate
+import java.time.Clock
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import javax.inject.Inject
 
 class IsolationStatusView @JvmOverloads constructor(
     context: Context,
@@ -25,6 +27,9 @@ class IsolationStatusView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr),
     PulseAnimationView {
+
+    @Inject
+    lateinit var clock: Clock
 
     private var daysToGo = 0
 
@@ -40,21 +45,23 @@ class IsolationStatusView @JvmOverloads constructor(
         }
 
     init {
+        context.applicationContext.appComponent.inject(this)
+        clock = clock.withZone(ZoneId.systemDefault())
         LayoutInflater.from(context).inflate(R.layout.view_isolation_status, this, true)
     }
 
-    fun initialize(startDate: Instant, endDate: LocalDate) {
+    fun initialize(isolation: Isolation) {
         setUpAccessibilityHeading()
 
         val totalDurationInDays = ChronoUnit.DAYS.between(
-            startDate.truncatedTo(ChronoUnit.DAYS),
-            endDate.atStartOfDay(
+            isolation.isolationStart.truncatedTo(ChronoUnit.DAYS),
+            isolation.expiryDate.atStartOfDay(
                 ZoneId.systemDefault()
             )
         )
         daysToGo = ChronoUnit.DAYS.between(
-            LocalDateTime.now().truncatedTo(ChronoUnit.DAYS),
-            endDate.atStartOfDay()
+            LocalDateTime.now(clock).truncatedTo(ChronoUnit.DAYS),
+            isolation.expiryDate.atStartOfDay()
         ).toInt()
 
         titleDaysToGo.text =
@@ -63,9 +70,9 @@ class IsolationStatusView @JvmOverloads constructor(
         isolationCountdownView.progress = daysToGo.toFloat()
         isolationCountdownView.progressMax = totalDurationInDays.toFloat()
 
-        val lastIsolationDate = endDate.minusDays(1)
+        val lastDayOfIsolation = isolation.lastDayOfIsolation
         subTitleIsolationCountdown.text = context.getString(
-            R.string.isolation_until_date, lastIsolationDate.uiFormat(context)
+            R.string.isolation_until_date, lastDayOfIsolation.uiFormat(context)
         )
 
         isolationDaysToGo.text = daysToGo.toString()
@@ -73,7 +80,7 @@ class IsolationStatusView @JvmOverloads constructor(
         contentDescription = context.resources.getQuantityString(
             R.plurals.isolation_view_accessibility_description,
             daysToGo,
-            lastIsolationDate.uiFormat(context),
+            lastDayOfIsolation.uiFormat(context),
             daysToGo
         )
     }

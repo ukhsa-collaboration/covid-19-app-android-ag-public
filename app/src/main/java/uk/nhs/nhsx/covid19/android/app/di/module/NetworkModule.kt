@@ -14,6 +14,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import uk.nhs.covid19.config.EnvironmentConfiguration
 import uk.nhs.covid19.config.Remote
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogStorage
 import uk.nhs.nhsx.covid19.android.app.analytics.NetworkStatsInterceptor
 import uk.nhs.nhsx.covid19.android.app.di.module.SignatureValidationInterceptor.Companion.HEADER_REQUEST_ID
 import uk.nhs.nhsx.covid19.android.app.network.TrafficLengthObfuscationInterceptor
@@ -181,6 +182,7 @@ class NetworkModule(
                 ObservationType::class.java,
                 EnumJsonAdapter.create(ObservationType::class.java).withUnknownFallback(gen)
             )
+            .add(AnalyticsLogStorage.analyticsLogItemAdapter)
             .build()
     }
 

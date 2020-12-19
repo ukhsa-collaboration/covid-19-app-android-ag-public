@@ -1,11 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneOffset
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
@@ -15,6 +11,9 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyWindow
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import java.time.Instant
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class DownloadAndProcessRiskyVenuesFlowTest : EspressoTest() {
 
@@ -83,6 +82,11 @@ class DownloadAndProcessRiskyVenuesFlowTest : EspressoTest() {
         )
     )
 
+    @After
+    fun tearDown() {
+        testAppContext.clock.reset()
+    }
+
     @Test
     fun visitAndMarkRiskyMultipleVenues() = notReported {
         runBlocking {
@@ -92,17 +96,21 @@ class DownloadAndProcessRiskyVenuesFlowTest : EspressoTest() {
 
             visitedVenuesStorage.removeAllVenueVisits()
 
+            testAppContext.clock.currentInstant = venue1Instant
             visitedVenuesStorage
-                .finishLastVisitAndAddNewVenue(venue1, Clock.fixed(venue1Instant, ZoneOffset.UTC))
+                .finishLastVisitAndAddNewVenue(venue1)
 
+            testAppContext.clock.currentInstant = venue2Instant
             visitedVenuesStorage
-                .finishLastVisitAndAddNewVenue(venue2, Clock.fixed(venue2Instant, ZoneOffset.UTC))
+                .finishLastVisitAndAddNewVenue(venue2)
 
+            testAppContext.clock.currentInstant = venue3Instant
             visitedVenuesStorage
-                .finishLastVisitAndAddNewVenue(venue3, Clock.fixed(venue3Instant, ZoneOffset.UTC))
+                .finishLastVisitAndAddNewVenue(venue3)
 
+            testAppContext.clock.currentInstant = venue4Instant
             visitedVenuesStorage
-                .finishLastVisitAndAddNewVenue(venue4, Clock.fixed(venue4Instant, ZoneOffset.UTC))
+                .finishLastVisitAndAddNewVenue(venue4)
 
             testAppContext.riskyVenuesApi.riskyVenuesResponse =
                 RiskyVenuesResponse(venues = riskyVenues1to2)

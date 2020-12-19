@@ -6,10 +6,9 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import org.jetbrains.annotations.TestOnly
-import uk.nhs.nhsx.covid19.android.app.availability.AppState.Starting
 import uk.nhs.nhsx.covid19.android.app.availability.AppState.InBackground
 import uk.nhs.nhsx.covid19.android.app.availability.AppState.InForeground
+import uk.nhs.nhsx.covid19.android.app.availability.AppState.Starting
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.util.minutesUntilNow
 import java.time.Clock
@@ -17,12 +16,11 @@ import java.time.Instant
 import javax.inject.Inject
 
 class AppAvailabilityListener @Inject constructor(
-    private val appAvailabilityProvider: AppAvailabilityProvider
+    private val appAvailabilityProvider: AppAvailabilityProvider,
+    private val clock: Clock
 ) : ActivityLifecycleCallbacks {
 
     private var appState: AppState = Starting
-
-    private var clock = Clock.systemUTC()
 
     override fun onActivityPaused(activity: Activity) {
         appState = InBackground(start = Instant.now(clock))
@@ -56,11 +54,6 @@ class AppAvailabilityListener @Inject constructor(
                 InForeground -> false
             }
         } else false
-    }
-
-    @TestOnly
-    fun setClock(newClock: Clock) {
-        clock = newClock
     }
 }
 

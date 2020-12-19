@@ -11,6 +11,7 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.widgets.setRawText
 import javax.inject.Inject
 
@@ -27,7 +28,7 @@ class PolicyUpdateActivity : BaseActivity(R.layout.activity_policy_update) {
 
         changedPolicyParagraph.setRawText(getString(R.string.updated_privacy_control_text))
 
-        policyUpdateContinueButton.setOnClickListener {
+        policyUpdateContinueButton.setOnSingleClickListener {
             viewModel.markPolicyAccepted()
             finish()
             StatusActivity.start(this)

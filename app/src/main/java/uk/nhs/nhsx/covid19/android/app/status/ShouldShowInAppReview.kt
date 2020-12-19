@@ -1,13 +1,14 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
-import java.time.ZoneId
+import java.time.Clock
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 class ShouldShowInAppReview @Inject constructor(
     private val visitedVenuesStorage: VisitedVenuesStorage,
-    private val lastAppRatingStartedDateProvider: LastAppRatingStartedDateProvider
+    private val lastAppRatingStartedDateProvider: LastAppRatingStartedDateProvider,
+    private val clock: Clock
 ) {
 
     suspend operator fun invoke(): Boolean {
@@ -18,9 +19,9 @@ class ShouldShowInAppReview @Inject constructor(
         }
 
         val earliestVisit =
-            visits.minBy { it.from.atZone(ZoneId.systemDefault()).truncatedTo(ChronoUnit.DAYS) }
+            visits.minBy { it.from.atZone(clock.zone).truncatedTo(ChronoUnit.DAYS) }
         val latestVisit =
-            visits.maxBy { it.from.atZone(ZoneId.systemDefault()).truncatedTo(ChronoUnit.DAYS) }
+            visits.maxBy { it.from.atZone(clock.zone).truncatedTo(ChronoUnit.DAYS) }
 
         val daysBetween = ChronoUnit.DAYS.between(earliestVisit!!.from, latestVisit!!.from)
 

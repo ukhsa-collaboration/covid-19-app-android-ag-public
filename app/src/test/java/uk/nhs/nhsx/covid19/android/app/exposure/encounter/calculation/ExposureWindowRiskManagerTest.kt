@@ -141,7 +141,6 @@ class ExposureWindowRiskManagerTest {
 
     private fun mockConfig() = ExposureConfigurationResponse(
         exposureNotification = mockk(),
-        riskCalculation = mockk(),
         v2RiskCalculation = v2RiskCalculation,
         riskScore = RiskScore(
             sampleResolution = 0.0,

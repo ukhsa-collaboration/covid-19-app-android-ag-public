@@ -19,6 +19,8 @@ class QrScannerViewModel(
     private val analyticsEventProcessor: AnalyticsEventProcessor
 ) : ViewModel() {
 
+    var hasRequestedCameraPermission = false
+
     @Inject
     constructor(
         qrCodeParser: QrCodeParser,

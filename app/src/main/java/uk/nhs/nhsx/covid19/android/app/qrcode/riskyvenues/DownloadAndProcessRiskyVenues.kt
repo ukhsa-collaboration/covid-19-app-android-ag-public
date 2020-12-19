@@ -9,7 +9,7 @@ import java.time.Clock
 import java.time.Instant
 import javax.inject.Inject
 
-class DownloadAndProcessRiskyVenues(
+class DownloadAndProcessRiskyVenues @Inject constructor(
     private val riskyVenuesApi: RiskyVenuesApi,
     private val venueMatchFinder: VenueMatchFinder,
     private val visitedVenuesStorage: VisitedVenuesStorage,
@@ -18,24 +18,6 @@ class DownloadAndProcessRiskyVenues(
     private val riskyVenueCircuitBreakerConfigurationProvider: RiskyVenueCircuitBreakerConfigurationProvider,
     private val clock: Clock
 ) {
-
-    @Inject
-    constructor(
-        riskyVenuesApi: RiskyVenuesApi,
-        venueMatchFinder: VenueMatchFinder,
-        visitedVenuesStorage: VisitedVenuesStorage,
-        filterOutdatedVisits: FilterOutdatedVisits,
-        riskyVenuesCircuitBreakerPolling: RiskyVenuesCircuitBreakerPolling,
-        riskyVenueCircuitBreakerConfigurationProvider: RiskyVenueCircuitBreakerConfigurationProvider
-    ) : this(
-        riskyVenuesApi,
-        venueMatchFinder,
-        visitedVenuesStorage,
-        filterOutdatedVisits,
-        riskyVenuesCircuitBreakerPolling,
-        riskyVenueCircuitBreakerConfigurationProvider,
-        Clock.systemUTC()
-    )
 
     suspend operator fun invoke(clearOutdatedVisits: Boolean = true): Result<Unit> {
         return withContext(Dispatchers.IO) {

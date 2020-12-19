@@ -15,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -29,7 +30,7 @@ class IsolationExpirationActivity : BaseActivity(R.layout.activity_isolation_exp
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
-        buttonReturnToHomeScreen.setOnClickListener {
+        buttonReturnToHomeScreen.setOnSingleClickListener {
             StatusActivity.start(this)
         }
 

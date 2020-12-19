@@ -39,6 +39,7 @@ import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.ScrollableLayoutManager
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.smoothScrollToAndThen
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
@@ -143,15 +144,15 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
     }
 
     private fun setupListeners() {
-        buttonTryAgain.setOnClickListener {
+        buttonTryAgain.setOnSingleClickListener {
             viewModel.loadQuestionnaire()
         }
 
-        textNoSymptoms.setOnClickListener {
+        textNoSymptoms.setOnSingleClickListener {
             viewModel.onNoSymptomsClicked()
         }
 
-        buttonReviewSymptoms.setOnClickListener {
+        buttonReviewSymptoms.setOnSingleClickListener {
             viewModel.onButtonReviewSymptomsClicked()
         }
     }
