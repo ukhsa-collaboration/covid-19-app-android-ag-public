@@ -45,7 +45,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 const val indexCaseOnsetDateBeforeTestResultDate: Long = 3
-private const val indexCaseExpiryDateAfterTestResultDate: Long = 11
+private const val indexCaseExpiryDateAfterTestResultDate: Long = 10
 
 sealed class State {
     data class Default(val previousIsolation: Isolation? = null) : State()

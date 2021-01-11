@@ -252,7 +252,7 @@ class IsolationStateMachineTest {
             durationDays,
             indexCase = IndexCase(
                 symptomsOnsetDate = LocalDate.now(fixedClock).minusDays(3),
-                expiryDate = LocalDate.now(fixedClock).plusDays(11),
+                expiryDate = LocalDate.now(fixedClock).plusDays(10),
                 selfAssessment = false
             )
         )
@@ -596,7 +596,7 @@ class IsolationStateMachineTest {
 
         val newState = testSubject.readState()
 
-        val expected = isolationStateWithIndexCase(11, false)
+        val expected = isolationStateWithIndexCase(10, false)
 
         val sideEffect = (transition as Transition.Valid).sideEffect
 
@@ -1151,7 +1151,7 @@ class IsolationStateMachineTest {
     fun `stay in default state when isolation triggered by positive test result expired`() = testScope.runBlockingTest {
         val oldTestResult = ReceivedTestResult(
             "123",
-            Instant.now(fixedClock).minus(11, ChronoUnit.DAYS),
+            Instant.now(fixedClock).minus(10, ChronoUnit.DAYS),
             POSITIVE
         )
         every { testResultProvider.find(oldTestResult.diagnosisKeySubmissionToken) } returns oldTestResult
