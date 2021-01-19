@@ -12,6 +12,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
+import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -28,7 +29,6 @@ import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenues
 import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWork
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
-import kotlin.test.assertEquals
 
 class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
 
@@ -104,7 +104,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
         verify { notificationProviderMock.getUpdatingDatabaseNotification() }
         coVerifyOrder {
             clearOutdatedDataAndUpdateIsolationConfigurationMock()
-            exposureNotificationWorkMock.handleMatchesFound()
+            exposureNotificationWorkMock.handleUnprocessedRequests()
             downloadAndProcessKeysMock()
             downloadVirologyTestResultWorkMock()
             downloadRiskyPostCodesWorkMock()

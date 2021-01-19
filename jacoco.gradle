@@ -1,14 +1,9 @@
 apply plugin: 'jacoco'
-apply plugin: 'com.kncept.junit.reporter'
 
 jacoco {
     toolVersion = "0.8.6"
     // Custom reports directory can be specified like this:
     // reportsDir = file("$buildDir/customJacocoReportDir")
-}
-
-junitHtmlReport {
-    testResultsDir = 'outputs/androidTest-results/connected/flavors/scenariosDebugAndroidTest'
 }
 
 tasks.withType(Test) {

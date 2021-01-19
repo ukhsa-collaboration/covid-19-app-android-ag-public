@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright © 2020 NHSX. All rights reserved.
-  -->
-<resources xmlns:tools="http://schemas.android.com/tools">
+  --><resources xmlns:tools="http://schemas.android.com/tools">
     <string name="locale">pl</string>
     <!-- URLs -->
     <string name="url_privacy_notice">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
@@ -64,7 +64,7 @@
     <string name="go_back">Wróć</string>
     <string name="loading">Ładowanie...</string>
     <string name="remove">Usuń</string>
-    <string name="empty" translatable="false" />
+    <string name="empty" translatable="false"/>
     <string name="onboarding_exposure_notifications_description">Aplikacja wyśle Ci ostrzeżenie, jeżeli miałeś/aś kontakt z innymi użytkownikami, którzy zgłosili pozytywny wynik testu na koronawirusa.\n\nAby umożliwić śledzenie kontaktów, należy wyrazić zgodę na powiadomienia o narażeniu.\n\nJeżeli zmienisz zdanie, możesz w każdej chwili wycofać zgodę w ustawieniach telefonu.</string>
     <string name="permission_title">Śledzenie kontaktów</string>
     <string name="exposure_notifications_rationale_title">Śledzenie kontaktów pomaga w zapobieganiu rozprzestrzeniania się koronawirusa (COVID-19)</string>
@@ -305,7 +305,7 @@
     <string name="update_app_title">Zaktualizuj tę aplikację</string>
     <string name="valid_auth_code_is_required">Kod nie został rozpoznany. Proszę sprawdzić prawidłowość kodu.</string>
     <string name="self_isolate_for">Proszę izolować się przez</string>
-    <string name="isolate_after_corona_virus_symptoms">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, zapoznaj się z najczęściej zadawanymi pytaniami (FAQ).\n\nTwoje objawy wskazują, że mogłeś(-aś) zostać zakażony(-a) koronawirusem. Proszę rozpocząć izolację własną i całego gospodarstwa domowego. Oznacza to pozostanie w domu i nie przyjmowanie żadnych gości. Należy również niezwłocznie zamówić bezpłatny test. Jeżeli nie masz ukończonych 18 lat, radzimy aby pokazać tę wiadomość zaufanej osobie dorosłej.\n\nProszę pozostań w domu, aby chronić siebie i innych.</string>
+    <string name="isolate_after_corona_virus_symptoms">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, kliknij w poniższy link do listy najczęściej zadawanych pytań (FAQ).\n\nTwoje objawy wskazują, że mogłeś(-aś) zostać zakażony(-a) koronawirusem. Proszę rozpocząć izolację własną i całego gospodarstwa domowego. Oznacza to pozostanie w domu i nie przyjmowanie żadnych gości. Należy również niezwłocznie zamówić bezpłatny test. Jeżeli nie masz ukończonych 18 lat, radzimy aby pokazać tę wiadomość zaufanej osobie dorosłej.\n\nProszę pozostań w domu, aby chronić siebie i innych.</string>
     <string name="isolate_after_no_corona_virus_symptoms">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, zapoznaj się z najczęściej zadawanymi pytaniami (FAQ).\n\nNa chwilę obecną nie wystąpiły u Ciebie objawy koronawirusa, jednak należy pamiętać, że objawy mogą wystąpić nawet po 14 dniach. Jeżeli nie masz ukończonych 18 lat, radzimy aby pokazać tę wiadomość zaufanej osobie dorosłej.\n\nProszę zostać w domu, aby zadbać o bezpieczeństwo własne i innych osób. Zamów test jedynie wtedy, gdy masz objawy koronawirusa.</string>
     <string name="you_need_to_self_isolate">Musisz rozpocząć izolację</string>
     <string name="your_isolation_will_finish">Twoja izolacja zakończy się %1$s o godz. 23:59</string>
@@ -400,7 +400,7 @@
     <string name="test_result_positive_continue_self_isolate_explanation_2">Nie martw się – u większości osób objawy są dość łagodne. Jeżeli jednak dojdzie do pogorszenia objawów, zadzwoń pod numer 111 lub odwiedź stronę internetową, aby uzyskać więcej informacji.</string>
     <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
-    <string name="local_authority_error_authority_not_supported_title">Aby kontynuować, należy wybrać z listy władze lokalne</string>
+    <string name="local_authority_error_authority_not_supported_title">Aplikacja nie obsługuje tych władz lokalnych.</string>
     <string name="local_authority_information_description">Proszę wybrać z listy władze lokalne. W ten sposób aplikacja będzie mogła podać Ci bardziej dokładne informacje i wskazówki.</string>
     <string name="about_encounter_date">Data kontaktu</string>
     <string name="about_my_data_date">Data</string>
@@ -421,4 +421,25 @@
     <string name="status_option_isolation_payment">Pomoc finansowa</string>
     <string name="title_exposure_notification">Powiadomienie o narażeniu</string>
     <string name="title_last_day_of_isolation">Ostatni dzień izolacji</string>
+    <string name="arabic">Arabski</string>
+    <string name="bengali">Bengali</string>
+    <string name="change_language_dialog">Zmień język aplikacji na %s?</string>
+    <string name="chinese">Chiński (uproszczony)</string>
+    <string name="english">Angielski</string>
+    <string name="gujarati">Gudżarati</string>
+    <string name="language">Język</string>
+    <string name="language_title">Język</string>
+    <string name="local_authority_edit">Edytuj</string>
+    <string name="other_languages">Języki</string>
+    <string name="polish">Polski</string>
+    <string name="punjabi">Pendżabi</string>
+    <string name="romanian">Rumuński</string>
+    <string name="settings_title">Ustawienia</string>
+    <string name="somali">Somalijski</string>
+    <string name="system_language">Język systemu</string>
+    <string name="turkish">Turecki</string>
+    <string name="urdu">Urdu</string>
+    <string name="venue_history_edit">Edytuj</string>
+    <string name="venue_history_editing_done">Gotowe</string>
+    <string name="welsh">Walijski</string>
 </resources>

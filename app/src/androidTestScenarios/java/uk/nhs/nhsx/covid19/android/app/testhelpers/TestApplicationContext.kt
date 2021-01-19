@@ -21,10 +21,9 @@ import androidx.work.WorkManager
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.tinder.StateMachine
 import uk.nhs.covid19.config.Configurations
-import uk.nhs.covid19.config.qrCodesSignatureKey
+import uk.nhs.covid19.config.SignatureKey
 import uk.nhs.nhsx.covid19.android.app.ExposureApplication
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationChecker
-import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
@@ -32,12 +31,14 @@ import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.packagemanager.MockPackageManager
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
 import uk.nhs.nhsx.covid19.android.app.permissions.MockPermissionsManager
+import uk.nhs.nhsx.covid19.android.app.qrcode.MockBarcodeDetectorBuilder
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenues
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
+import uk.nhs.nhsx.covid19.android.app.remote.MockAnalyticsApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockIsolationPaymentApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockKeysSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockQuestionnaireApi
@@ -76,17 +77,21 @@ class TestApplicationContext {
 
     val keysSubmissionApi = MockKeysSubmissionApi()
 
+    val analyticsApi = MockAnalyticsApi()
+
     val updateManager = TestUpdateManager()
 
     val permissionsManager = MockPermissionsManager()
 
     val packageManager = MockPackageManager()
 
+    val barcodeDetectorProvider = MockBarcodeDetectorBuilder()
+
     val clock = MockClock()
 
     internal val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-    private val exposureNotificationApi = MockExposureNotificationApi()
+    private val exposureNotificationApi = MockExposureNotificationApi(clock)
 
     private val bluetoothStateProvider = TestBluetoothStateProvider()
 
@@ -107,7 +112,16 @@ class TestApplicationContext {
             "venues"
         )
 
-    private val applicationLocaleProvider = ApplicationLocaleProvider(sharedPreferences)
+    private val signatureKey = SignatureKey(
+        id = "3",
+        pemRepresentation =
+            """
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEVs/o5+uQbTjL3chynL4wXgUg2R9
+            q9UU8I5mEovUf86QZ7kOBIjJwqnzD1omageEHWwHdBO6B+dFabmdT9POxg==
+            -----END PUBLIC KEY-----
+            """.trimIndent()
+    )
 
     private val component: TestAppComponent = DaggerTestAppComponent.builder()
         .appModule(
@@ -118,12 +132,12 @@ class TestApplicationContext {
                 locationStateProvider,
                 sharedPreferences,
                 encryptedFile,
-                qrCodesSignatureKey,
-                applicationLocaleProvider,
+                signatureKey,
                 updateManager,
                 batteryOptimizationChecker,
                 permissionsManager,
                 packageManager,
+                barcodeDetectorProvider,
                 clock
             )
         )
@@ -138,8 +152,9 @@ class TestApplicationContext {
                 riskyVenuesApi,
                 virologyTestingApi,
                 questionnaireApi,
+                isolationPaymentApi,
                 keysSubmissionApi,
-                isolationPaymentApi
+                analyticsApi
             )
         )
         .build()
@@ -218,8 +233,8 @@ class TestApplicationContext {
     fun getCurrentState(): State =
         component.provideIsolationStateMachine().readState()
 
-    fun getExposureNotificationTokenProvider() =
-        component.getExposureNotificationsTokenProvider()
+    fun getExposureCircuitBreakerInfoProvider() =
+        component.getExposureCircuitBreakerInfoProvider()
 
     fun getVisitedVenuesStorage(): VisitedVenuesStorage {
         return component.provideVisitedVenuesStorage()
@@ -250,13 +265,13 @@ class TestApplicationContext {
         component.getPolicyUpdateStorage().value = if (accepted) Int.MAX_VALUE.toString() else null
     }
 
-    fun setLocale(languageName: String?) {
-        applicationLocaleProvider.language = languageName
+    fun setLocale(languageCode: String?) {
+        component.provideApplicationLocaleProvider().languageCode = languageCode
         updateResources()
     }
 
     private fun updateResources() {
-        val locale = applicationLocaleProvider.getLocale()
+        val locale = component.provideApplicationLocaleProvider().getLocale()
         Locale.setDefault(locale)
         val res: Resources = app.baseContext.resources
         val config = Configuration(res.configuration)

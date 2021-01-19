@@ -37,6 +37,7 @@ class UpdateRecommendedActivity : BaseActivity(R.layout.activity_update_recommen
         viewModel.observeRecommendationInfo().observe(this) {
             updateRecommendationDescription.text = it.description
             updateRecommendationTitle.text = it.title
+            title = it.title
         }
 
         viewModel.fetchRecommendationInfo()

@@ -9,6 +9,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityInformationRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
 import kotlin.test.assertTrue
 
 class LocalAuthorityInformationActivityTest : EspressoTest() {
@@ -28,30 +29,27 @@ class LocalAuthorityInformationActivityTest : EspressoTest() {
 
     @Test
     fun onActivityResultLocalAuthorityOk_finished() = notReported {
-        Intents.init()
-        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, Intent())
-        Intents.intending(hasComponent(LocalAuthorityActivity::class.qualifiedName)).respondWith(result)
+        runWithIntents {
+            val result = Instrumentation.ActivityResult(Activity.RESULT_OK, Intent())
+            Intents.intending(hasComponent(LocalAuthorityActivity::class.qualifiedName)).respondWith(result)
 
-        val activity = startTestActivity<LocalAuthorityInformationActivity>()
-        localAuthorityInformationRobot.clickContinue()
+            val activity = startTestActivity<LocalAuthorityInformationActivity>()
+            localAuthorityInformationRobot.clickContinue()
 
-        waitFor { assertTrue(activity!!.isDestroyed) }
-
-        Intents.release()
+            waitFor { assertTrue(activity!!.isDestroyed) }
+        }
     }
 
     @Test
     fun onActivityResultLocalAuthorityOk_nothingHappens() = notReported {
-        Intents.init()
+        runWithIntents {
+            val result = Instrumentation.ActivityResult(Activity.RESULT_CANCELED, Intent())
+            Intents.intending(hasComponent(LocalAuthorityActivity::class.qualifiedName)).respondWith(result)
 
-        val result = Instrumentation.ActivityResult(Activity.RESULT_CANCELED, Intent())
-        Intents.intending(hasComponent(LocalAuthorityActivity::class.qualifiedName)).respondWith(result)
+            startTestActivity<LocalAuthorityInformationActivity>()
+            localAuthorityInformationRobot.clickContinue()
 
-        startTestActivity<LocalAuthorityInformationActivity>()
-        localAuthorityInformationRobot.clickContinue()
-
-        localAuthorityInformationRobot.checkActivityIsDisplayed()
-
-        Intents.release()
+            localAuthorityInformationRobot.checkActivityIsDisplayed()
+        }
     }
 }

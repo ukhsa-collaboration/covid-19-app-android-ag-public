@@ -1,17 +1,23 @@
 package uk.nhs.nhsx.covid19.android.app
 
-enum class SupportedLanguage(val displayName: String, val code: String? = null) {
-    DEFAULT("Default"),
-    ENGLISH("English", "en"),
-    BANGLA("Bangla", "bn"),
-    URDU("Urdu", "ur"),
-    PUNJABI("Punjabi", "pa"),
-    GUJARATI("Gujarati", "gu"),
-    WELSH("Welsh", "cy"),
-    ARABIC("Arabic", "ar"),
-    CHINESE("Chinese", "zh"),
-    ROMANIAN("Romanian", "ro"),
-    TURKISH("Turkish", "tr"),
-    POLISH("Polish", "pl"),
-    SOMALI("Somali", "so"),
+import androidx.annotation.StringRes
+
+enum class SupportedLanguage(
+    @StringRes val languageName: Int,
+    val nativeLanguageName: String,
+    val code: String? = null
+) {
+    DEFAULT(R.string.default_language, "Default"),
+    ENGLISH(R.string.english, "English (UK)", "en"),
+    BENGALI(R.string.bengali, "বাংলা", "bn"),
+    URDU(R.string.urdu, "اردو", "ur"),
+    PUNJABI(R.string.punjabi, "ਪੰਜਾਬੀ", "pa"),
+    GUJARATI(R.string.gujarati, "ગુજરાતી", "gu"),
+    WELSH(R.string.welsh, "Cymraeg", "cy"),
+    ARABIC(R.string.arabic, "العربية", "ar"),
+    CHINESE(R.string.chinese, "中文（简体）", "zh"),
+    ROMANIAN(R.string.romanian, "Română", "ro"),
+    TURKISH(R.string.turkish, "Türkçe", "tr"),
+    POLISH(R.string.polish, "Polski", "pl"),
+    SOMALI(R.string.somali, "Soomaali", "so"),
 }

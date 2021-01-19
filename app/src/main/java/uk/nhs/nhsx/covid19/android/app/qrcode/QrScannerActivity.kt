@@ -27,11 +27,10 @@ import androidx.core.util.forEach
 import androidx.core.util.isEmpty
 import androidx.lifecycle.Observer
 import com.google.android.gms.vision.CameraSource
+import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.Detector.Detections
 import com.google.android.gms.vision.Detector.Processor
 import com.google.android.gms.vision.barcode.Barcode
-import com.google.android.gms.vision.barcode.BarcodeDetector
-import com.google.android.gms.vision.barcode.BarcodeDetector.Builder
 import kotlinx.android.synthetic.main.activity_qr_code_scanner.closeButton
 import kotlinx.android.synthetic.main.activity_qr_code_scanner.howToUseScannerHint
 import kotlinx.android.synthetic.main.activity_qr_code_scanner.scannerSurfaceView
@@ -61,9 +60,12 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
     @Inject
     lateinit var permissionsManager: PermissionsManager
 
+    @Inject
+    lateinit var barcodeDetectorBuilder: BarcodeDetectorBuilder
+
     private val viewModel: QrScannerViewModel by viewModels { factory }
 
-    private var barcodeDetector: BarcodeDetector? = null
+    private var barcodeDetector: Detector<Barcode>? = null
     private var cameraSource: CameraSource? = null
 
     public override fun onCreate(bundle: Bundle?) {
@@ -139,7 +141,7 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
     }
 
     private fun resumeCamera() {
-        barcodeDetector = Builder(this).setBarcodeFormats(Barcode.QR_CODE).build()
+        barcodeDetector = barcodeDetectorBuilder.build()
         val detector = barcodeDetector ?: return
 
         if (!detector.isOperational) {

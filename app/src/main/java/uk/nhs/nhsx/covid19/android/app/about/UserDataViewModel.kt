@@ -40,6 +40,9 @@ class UserDataViewModel @Inject constructor(
         VenueVisitsUiState(listOf(), isInEditMode = false)
     )
 
+    private val venueVisitsEditModeChangedLiveData: MutableLiveData<Boolean> = SingleLiveEvent()
+    fun venueVisitsEditModeChanged(): LiveData<Boolean> = venueVisitsEditModeChangedLiveData
+
     fun getVenueVisitsUiState(): LiveData<VenueVisitsUiState> = venueVisitsUiStateLiveData
 
     private val receivedTestResultLiveData: MutableLiveData<ReceivedTestResult> = MutableLiveData()
@@ -99,6 +102,7 @@ class UserDataViewModel @Inject constructor(
             val updatedVenueVisitsState =
                 previousVenueVisitsState.copy(isInEditMode = !previousVenueVisitsState.isInEditMode)
             venueVisitsUiStateLiveData.postValue(updatedVenueVisitsState)
+            venueVisitsEditModeChangedLiveData.postValue(updatedVenueVisitsState.isInEditMode)
         }
     }
 

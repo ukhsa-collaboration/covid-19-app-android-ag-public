@@ -4,20 +4,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
+import javax.inject.Inject
 import kotlinx.coroutines.launch
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedIsolationPaymentsApplication
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
 import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationPaymentUrlRequest
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import java.time.ZoneOffset
-import java.time.temporal.ChronoUnit
-import javax.inject.Inject
 
 class RedirectToIsolationPaymentWebsiteViewModel @Inject constructor(
     private val requestIsolationPaymentUrl: RequestIsolationPaymentUrl,
     private val isolationPaymentTokenProvider: IsolationPaymentTokenStateProvider,
-    private val isolationStateMachine: IsolationStateMachine
+    private val isolationStateMachine: IsolationStateMachine,
+    private val analyticsEventProcessor: AnalyticsEventProcessor
 ) : ViewModel() {
 
     private val fetchWebsiteUrlLiveData = MutableLiveData<ViewState>()
@@ -50,6 +53,9 @@ class RedirectToIsolationPaymentWebsiteViewModel @Inject constructor(
                     )
             ) {
                 is Success -> {
+                    viewModelScope.launch {
+                        analyticsEventProcessor.track(LaunchedIsolationPaymentsApplication)
+                    }
                     fetchWebsiteUrlLiveData.postValue(ViewState.Success(result.value.websiteUrlWithQuery))
                 }
                 is Failure -> fetchWebsiteUrlLiveData.postValue(ViewState.Error)

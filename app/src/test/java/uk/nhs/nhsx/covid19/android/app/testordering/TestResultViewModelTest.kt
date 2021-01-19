@@ -6,16 +6,13 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
-import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.common.SubmitEmptyData
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW_AFTER_POSITIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.KEY_SUBMISSION
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
@@ -36,6 +33,11 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainStat
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.ViewState
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 
 class TestResultViewModelTest {
 
@@ -45,7 +47,7 @@ class TestResultViewModelTest {
     private val testResultsProvider = mockk<TestResultsProvider>(relaxed = true)
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>(relaxed = true)
     private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
-    private val submitFakeKeys = mockk<SubmitFakeKeys>(relaxed = true)
+    private val submitEmptyData = mockk<SubmitEmptyData>(relaxed = true)
     private val submitFakeExposureWindows = mockk<SubmitFakeExposureWindows>(relaxed = true)
     private val fixedClock = Clock.fixed(symptomsOnsetDate.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC)
 
@@ -58,7 +60,7 @@ class TestResultViewModelTest {
             testResultsProvider,
             isolationConfigurationProvider,
             stateMachine,
-            submitFakeKeys,
+            submitEmptyData,
             submitFakeExposureWindows,
             fixedClock
         )
@@ -349,7 +351,7 @@ class TestResultViewModelTest {
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(negativeTestResult, true)) }
         coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
-        coVerify { submitFakeKeys.invoke() }
+        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
     }
 
     @Test
@@ -363,7 +365,7 @@ class TestResultViewModelTest {
         testSubject.acknowledgeTestResult()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(negativeTestResult, false)) }
-        coVerify { submitFakeKeys.invoke() }
+        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
         coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
     }
 
@@ -378,7 +380,7 @@ class TestResultViewModelTest {
         testSubject.acknowledgeTestResult()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(voidTestResult, false)) }
-        coVerify { submitFakeKeys.invoke() }
+        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
         coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
     }
 
@@ -392,7 +394,7 @@ class TestResultViewModelTest {
         testSubject.acknowledgeTestResult()
 
         verify(exactly = 0) { stateMachine.processEvent(any()) }
-        coVerify(exactly = 0) { submitFakeKeys.invoke() }
+        coVerify(exactly = 0) { submitEmptyData.invoke(any()) }
         coVerify(exactly = 0) { submitFakeExposureWindows.invoke(any(), any()) }
     }
 

@@ -24,6 +24,16 @@ class MockVirologyTestingApi : VirologyTestingApi {
     var pollingToken = "1234"
     var testResultForPollingToken = mutableMapOf(pollingToken to POSITIVE)
     var diagnosisKeySubmissionToken: String? = null
+    var testEndDate: Instant? = null
+
+    fun reset() {
+        shouldPass = true
+        pollingTestResultHttpStatusCode = 200
+        pollingToken = "1234"
+        testResultForPollingToken = mutableMapOf(pollingToken to POSITIVE)
+        diagnosisKeySubmissionToken = "g"
+        testEndDate = null
+    }
 
     override suspend fun getHomeKitOrder(emptyBodyObject: Any): VirologyTestOrderResponse {
         if (!shouldPass) throw IOException()
@@ -49,7 +59,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                     ?: throw IOException("No test result for token")
 
             VirologyTestResultResponse(
-                testEndDate = Instant.now(),
+                testEndDate = testEndDate ?: Instant.now(),
                 testResult = testResult
             )
         } else {
@@ -74,7 +84,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = "diagnosis_submission_token",
-                        testEndDate = Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
                         testResult = POSITIVE
                     )
                 )
@@ -83,7 +93,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = "diagnosis_submission_token",
-                        testEndDate = Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
                         testResult = NEGATIVE
                     )
                 )
@@ -92,7 +102,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = "diagnosis_submission_token",
-                        testEndDate = Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
                         testResult = VOID
                     )
                 )

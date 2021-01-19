@@ -26,7 +26,10 @@ enum class RegularAnalyticsEventType {
     NEGATIVE_RESULT_RECEIVED,
     VOID_RESULT_RECEIVED,
     RECEIVED_RISKY_CONTACT_NOTIFICATION,
-    STARTED_ISOLATION
+    STARTED_ISOLATION,
+    RECEIVED_ACTIVE_IPC_TOKEN,
+    SELECTED_ISOLATION_PAYMENTS_BUTTON,
+    LAUNCHED_ISOLATION_PAYMENTS_APPLICATION
 }
 
 @JsonClass(generateAdapter = true)
@@ -40,5 +43,6 @@ data class BackgroundTaskTicks(
     var hasHadRiskyContactBackgroundTick: Boolean = false,
     var hasSelfDiagnosedBackgroundTick: Boolean = false,
     var hasTestedPositiveBackgroundTick: Boolean = false,
-    var encounterDetectionPausedBackgroundTick: Boolean = false
+    var encounterDetectionPausedBackgroundTick: Boolean = false,
+    var haveActiveIpcTokenBackgroundTick: Boolean = false
 )

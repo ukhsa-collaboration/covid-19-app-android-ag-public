@@ -69,7 +69,7 @@
     <string name="test_result_positive_no_self_isolation_subtitle">尽管您的测试结果呈阳性，但是您的自我隔离期已经结束</string>
     <string name="state_test_positive_info">您的冠状病毒测试结果为阳性</string>
     <string name="state_test_void_info">尽管在测试时我们无法确定您是否带有冠状病毒</string>
-    <string name="test_result_void_continue_self_isolate_explanation">若要了解应用程序如何计算自我隔离天数，请访问\'常见问题解答\'\n\n本次检测后我们尚无法确定您是否感染上冠状病毒，因此您应该再检测一次。有关部门已通过电子邮件、短信或电话向您发送了更多的信息。如果您还未满 18 岁，建议您将此消息提供给您信任的成年人。</string>
+    <string name="test_result_void_continue_self_isolate_explanation">若要了解应用程序如何计算自我隔离天数，请访问\'常见问题解答\'。\n\n本次检测后我们尚无法确定您是否感染上冠状病毒，因此您应该再检测一次。有关部门已通过电子邮件、短信或电话向您发送了更多的信息。如果您还未满 18 岁，建议您将此消息提供给您信任的成年人。</string>
     <string name="questionnaire_review_symptoms">查看症状</string>
     <string name="questionnaire_review_symptoms_title">查看您的答案</string>
     <string name="questionnaire_positive_symptoms_review_message">您对这些症状回答“有”：</string>
@@ -146,7 +146,7 @@
     <string name="close">关闭</string>
     <string name="go_back">返回</string>
     <string name="remove">清除</string>
-    <string name="empty" translatable="false" />
+    <string name="empty" translatable="false"/>
     <string name="onboarding_exposure_notifications_description">如果您与冠状病毒检查呈阳性的人员有过密切接触，本应用程序将向您发送警报。\n\n为了启用本应用程序“对接触者进行跟踪”的功能，您需要允许 “暴露通知”。\n\n如果您改变主意，则可以随时更改设置的权限。</string>
     <string name="privacy_notice">隐私声明</string>
     <string name="tablet_information_url">使用平板电脑的信息</string>
@@ -208,7 +208,7 @@
     <string name="questionnaire_change_announcement">更改症状 %1$s</string>
     <string name="state_index_take_coronavirus_test">安排免费冠状病毒测试</string>
     <string name="state_test_negative_info">您的冠状病毒测试结果为阴性，但您仍可能出现症状，因此应保持隔离</string>
-    <string name="test_result_negative_continue_self_isolate_explanation">若要了解应用程序如何计算自我隔离天数，请访问\'常见问题解答\'\n\n检测结果表明，您在做检测时没有感染病毒。有关部门已通过电子邮件、短信或电话向您发送了更多的信息。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。</string>
+    <string name="test_result_negative_continue_self_isolate_explanation">若要了解应用程序如何计算自我隔离天数，请访问\'常见问题解答\'。\n\n检测结果表明，您在做检测时没有感染病毒。有关部门已通过电子邮件、短信或电话向您发送了更多的信息。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。</string>
     <string name="isolation_until_date">直到 %1$s 的 23:59</string>
     <string name="questionnaire_review_one_of_two">第1个步骤总2个</string>
     <string name="expiration_notification_title">好消息！</string>
@@ -223,7 +223,7 @@
     <string name="test_result_no_self_isolation_description">但是，如果您体温较高，请继续自我隔离，直到温度恢复正常为止。</string>
     <string name="for_further_advice_visit">如需更多建议，请联系：</string>
     <string name="test_result_positive_continue_self_isolation_title_1">继续自我隔离</string>
-    <string name="test_result_positive_continue_self_isolate_explanation">若要了解应用程序如何计算自我隔离天数，请点击以下\'常见问题解答\'链接\n\n检测结果表明，在做检测时您已经感染上了病毒。有关部门已通过电子邮件、短信或电话向您发送了更多的信息。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。</string>
+    <string name="test_result_positive_continue_self_isolate_explanation">若要了解应用程序如何计算自我隔离天数，请点击以下\'常见问题解答\'链接。\n\n检测结果表明，在做检测时您已经感染上了病毒。有关部门已通过电子邮件、短信或电话向您发送了更多的信息。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。</string>
     <string name="back_to_home">返回首页</string>
     <string name="about_delete_all_data">删除我的所有数据</string>
     <string name="about_manage_my_data">管理我的数据</string>
@@ -246,14 +246,14 @@
     <string name="update_app_title">更新应用程序</string>
     <string name="valid_auth_code_is_required">无法识别您的代码。 请确保您使用的是有效代码。</string>
     <string name="self_isolate_for">自我隔离</string>
-    <string name="isolate_after_corona_virus_symptoms">若要了解应用程序如何计算自我隔离天数，请访问\'常见问题解答\'\n\n您的症状表明您可能有冠状病毒。请您自己和家庭成员进行自我隔离。 这意味着呆在家里，不能接待访客。您还应该立即预订免费测试。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。请呆在家里以确保自己和他人的安全。\n\n请呆在家里以确保自己和他人的安全。</string>
-    <string name="isolate_after_no_corona_virus_symptoms">若要了解应用程序如何计算自我隔离天数，请访问\'常见问题解答\'\n\n您似乎还没有任何冠状病毒症状，但是请记住，症状可能需要长达14天的时间才会出现。如果您还未满 18 岁，建议您将此消息提供给您信任的成年人。\n\n请呆在家里以确保自己和他人的安全。请仅在您确实出现了新冠病毒感染症状的情况下才要求测试。</string>
+    <string name="isolate_after_corona_virus_symptoms">若要了解应用程序如何计算自我隔离天数，请点击以下\'常见问题解答\'链接。\n\n您的症状表明您可能有冠状病毒。请您自己和家庭成员进行自我隔离。 这意味着呆在家里，不能接待访客。您还应该立即预订免费测试。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。请呆在家里以确保自己和他人的安全。\n\n请呆在家里以确保自己和他人的安全。</string>
+    <string name="isolate_after_no_corona_virus_symptoms">若要了解应用程序如何计算自我隔离天数，请访问\'常见问题解答\'。\n\n您似乎还没有任何冠状病毒症状，但是请记住，症状可能需要长达14天的时间才会出现。如果您还未满 18 岁，建议您将此消息提供给您信任的成年人。\n\n请呆在家里以确保自己和他人的安全。请仅在您确实出现了新冠病毒感染症状的情况下才要求测试。</string>
     <string name="your_isolation_will_finish">您的自我隔离将在%1$s 23:59结束</string>
     <string name="qr_code_unsupported_title">抱歉，您的手机不支持场所签到</string>
     <string name="qr_code_scanning">扫描NHS官方QR码</string>
     <string name="i_understand">我懂得</string>
     <string name="exposure_notification_hint">该应用程序检测到，您已经与冠状病毒感染者接触了。 请留在家中并自我隔离，以确保自己和他人的安全。</string>
-    <string name="exposure_notification_recommendation">若要了解应用程序如何计算自我隔离天数，请点击以下\'常见问题解答\'链接\n\n即使没有任何症状，您也极有可能感染和传播该病毒。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。\n\n您的隔离倒计时已经开始，您应该在确定的整个期间进行自我隔离。请仅在您确实出现了新冠病毒感染症状的情况下才要求测试。\n\n如需更多建议，请联系：</string>
+    <string name="exposure_notification_recommendation">若要了解应用程序如何计算自我隔离天数，请点击以下\'常见问题解答\'链接。\n\n即使没有任何症状，您也极有可能感染和传播该病毒。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。\n\n您的隔离倒计时已经开始，您应该在确定的整个期间进行自我隔离。请仅在您确实出现了新冠病毒感染症状的情况下才要求测试。\n\n如需更多建议，请联系：</string>
     <string name="risk_level_link_text">区域风险等级的定义</string>
     <string name="open_in_browser_warning">在浏览器中打开</string>
     <string name="done_button_text">完成</string>
@@ -338,9 +338,9 @@
     <string name="status_area_risk_level_low_wls">低</string>
     <string name="status_area_risk_level_medium_wls">中</string>
     <string name="status_area_risk_level_wls">%s 区域的危险水平为 %s</string>
-    <string name="test_result_negative_then_positive_continue_explanation">若要了解应用程序如何计算自我隔离天数，请点击以下\'常见问题解答\'链接\n\n检测结果表明，在做检测时您已经感染上了病毒。有关部门已通过电子邮件、短信或电话向您发送了更多的信息。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。</string>
-    <string name="test_result_positive_then_negative_explanation">若要了解应用程序如何计算自我隔离天数，请访问\'常见问题解答\'\n\n最新检测结果表明，在做检测时您没有感染病毒。如果您确实出现症状，请在本应用程序上进行报告。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。</string>
-    <string name="test_result_void_already_not_in_isolation_subtitle">若要了解应用程序如何计算自我隔离天数，请访问\'常见问题解答\'\n\n本次检测后我们尚无法确定您是否感染上冠状病毒，因此您应该再检测一次。有关部门已通过电子邮件、短信或电话向您发送了更多的信息。如果您还未满 18 岁，建议您将此消息提供给您信任的成年人。</string>
+    <string name="test_result_negative_then_positive_continue_explanation">若要了解应用程序如何计算自我隔离天数，请点击以下\'常见问题解答\'链接。\n\n检测结果表明，在做检测时您已经感染上了病毒。有关部门已通过电子邮件、短信或电话向您发送了更多的信息。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。</string>
+    <string name="test_result_positive_then_negative_explanation">若要了解应用程序如何计算自我隔离天数，请访问\'常见问题解答\'。\n\n最新检测结果表明，在做检测时您没有感染病毒。如果您确实出现症状，请在本应用程序上进行报告。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。</string>
+    <string name="test_result_void_already_not_in_isolation_subtitle">若要了解应用程序如何计算自我隔离天数，请访问\'常见问题解答\'。\n\n本次检测后我们尚无法确定您是否感染上冠状病毒，因此您应该再检测一次。有关部门已通过电子邮件、短信或电话向您发送了更多的信息。如果您还未满 18 岁，建议您将此消息提供给您信任的成年人。</string>
     <string name="test_result_void_no_self_isolation_subtitle">尽管在测试时我们无法确定您是否带有冠状病毒</string>
     <string name="test_result_your_test_result">您的检测结果</string>
     <string name="test_result_negative_no_self_isolation_description">您的冠状病毒测试结果为阴性</string>
@@ -377,11 +377,11 @@
     <string name="notification_channel_recommended_app_update_name_description">这些通知告诉您推荐的应用程序更新</string>
     <string name="single_local_authority_description">好消息！该应用程序将提供更准确的信息和指导，助您了解您所在地区的冠状病毒风险水平。\n\n别担心，您的隐私仍然受到保护。该应用程序永远不会跟踪您的身份或位置。</string>
     <string name="single_local_authority_title">%1$s的地方当局是%2$s</string>
-    <string name="test_result_positive_continue_self_isolate_explanation_1">若要了解应用程序如何计算自我隔离天数，请点击以下\'常见问题解答\'链接\n\n测试结果表明您在测试时已感染病毒。 已经发送给您包含更多信息的电子邮件或短信。</string>
+    <string name="test_result_positive_continue_self_isolate_explanation_1">若要了解应用程序如何计算自我隔离天数，请点击以下\'常见问题解答\'链接。\n\n测试结果表明您在测试时已感染病毒。 已经发送给您包含更多信息的电子邮件或短信。</string>
     <string name="test_result_positive_continue_self_isolate_explanation_2">请放心—大多数人的症状都很轻微。 但是，如果您的症状确实恶化，则应致电111或访问nhs.uk以获取更多建议。</string>
     <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
-    <string name="local_authority_error_authority_not_supported_title">您需要选择一个地方当局以继续</string>
+    <string name="local_authority_error_authority_not_supported_title">本地授权不受支援。</string>
     <string name="about_encounter_date">遭遇日期</string>
     <string name="about_my_data_date">日期</string>
     <string name="about_notification_date">通知日期</string>
@@ -401,4 +401,25 @@
     <string name="status_option_isolation_payment">经济支持</string>
     <string name="title_exposure_notification">暴露通知</string>
     <string name="title_last_day_of_isolation">自我隔离的最后一天</string>
+    <string name="arabic">阿拉伯语</string>
+    <string name="bengali">孟加拉语</string>
+    <string name="change_language_dialog">将 APP 语言更改为 %s？</string>
+    <string name="chinese">中文（简体）</string>
+    <string name="english">英语</string>
+    <string name="gujarati">古吉拉特语</string>
+    <string name="language">语言</string>
+    <string name="language_title">语言</string>
+    <string name="local_authority_edit">编辑</string>
+    <string name="other_languages">语言</string>
+    <string name="polish">波兰语</string>
+    <string name="punjabi">旁遮普语</string>
+    <string name="romanian">罗马尼亚语</string>
+    <string name="settings_title">设置</string>
+    <string name="somali">索马里语</string>
+    <string name="system_language">系统语言</string>
+    <string name="turkish">土耳其语</string>
+    <string name="urdu">乌尔都语</string>
+    <string name="venue_history_edit">编辑</string>
+    <string name="venue_history_editing_done">完成</string>
+    <string name="welsh">威尔士语</string>
 </resources>

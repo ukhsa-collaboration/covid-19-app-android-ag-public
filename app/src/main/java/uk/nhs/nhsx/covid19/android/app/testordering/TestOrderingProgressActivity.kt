@@ -6,9 +6,11 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_progress.buttonTryAgain
 import kotlinx.android.synthetic.main.activity_progress.errorStateContainer
 import kotlinx.android.synthetic.main.activity_progress.loadingProgress
+import kotlinx.android.synthetic.main.activity_progress.textErrorTitle
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
@@ -22,7 +24,6 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
-import javax.inject.Inject
 
 class TestOrderingProgressActivity : BaseActivity(R.layout.activity_progress) {
 
@@ -45,6 +46,7 @@ class TestOrderingProgressActivity : BaseActivity(R.layout.activity_progress) {
 
     private fun setupListeners() {
         buttonTryAgain.setOnSingleClickListener {
+            title = getString(R.string.loading)
             viewModel.loadVirologyTestOrder()
         }
     }
@@ -73,6 +75,7 @@ class TestOrderingProgressActivity : BaseActivity(R.layout.activity_progress) {
 
     private fun showErrorState() {
         errorStateContainer.visible()
+        title = textErrorTitle.text
         loadingProgress.gone()
     }
 

@@ -21,7 +21,8 @@ data class Metadata(
     val deviceModel: String,
     val latestApplicationVersion: String,
     val operatingSystemVersion: String,
-    val postalDistrict: String
+    val postalDistrict: String,
+    val localAuthority: String?
 )
 
 @JsonClass(generateAdapter = true)
@@ -54,5 +55,9 @@ data class Metrics(
     var isIsolatingForTestedPositiveBackgroundTick: Int = 0,
     var isIsolatingForHadRiskyContactBackgroundTick: Int = 0,
     var receivedRiskyContactNotification: Int = 0,
-    var startedIsolation: Int = 0
+    var startedIsolation: Int = 0,
+    var receivedActiveIpcToken: Int = 0,
+    var haveActiveIpcTokenBackgroundTick: Int = 0,
+    var selectedIsolationPaymentsButton: Int = 0,
+    var launchedIsolationPaymentsApplication: Int = 0
 )

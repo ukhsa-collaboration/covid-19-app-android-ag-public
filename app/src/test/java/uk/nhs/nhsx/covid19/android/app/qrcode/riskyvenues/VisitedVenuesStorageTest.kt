@@ -41,7 +41,7 @@ class VisitedVenuesStorageTest {
     @Before
     fun setUp() {
         mockkStatic("uk.nhs.nhsx.covid19.android.app.util.EncryptionUtilsKt")
-        every { clock.zone } returns ZoneId.systemDefault()
+        every { clock.zone } returns ZoneId.of("UTC+01:00")
         every { clock.withZone(any()) } returns clock
         testSubject = VisitedVenuesStorage(moshi, encryptedFileInfo, clock)
     }
@@ -250,7 +250,7 @@ class VisitedVenuesStorageTest {
         private const val AFTERNOON = "2014-12-21T15:15:00Z"
         private const val AFTERNOON_ROUNDED_UP = "2014-12-21T15:15:00Z"
         private const val EVENING = "2014-12-21T20:15:00Z"
-        private const val END_OF_DAY = "2014-12-22T00:00:00Z"
+        private const val END_OF_DAY = "2014-12-21T23:00:00Z"
 
         private val VENUE_VISIT = VenueVisit(
             Venue("2", "organizationPartName"),

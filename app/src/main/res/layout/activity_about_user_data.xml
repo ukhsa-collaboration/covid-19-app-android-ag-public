@@ -42,7 +42,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="30dp"
-                    android:text="@string/edit" />
+                    android:text="@string/edit"
+                    android:contentDescription="@string/local_authority_edit"/>
             </LinearLayout>
 
             <TextView
@@ -261,7 +262,8 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical|end"
                     android:paddingHorizontal="30dp"
-                    android:text="@string/edit" />
+                    android:text="@string/edit"
+                    android:contentDescription="@string/venue_history_edit"/>
 
             </LinearLayout>
 

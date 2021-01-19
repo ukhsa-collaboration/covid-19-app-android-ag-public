@@ -124,8 +124,8 @@ class ReviewSymptomsViewModel @Inject constructor(
                 val newState = currentState.copy(showOnsetDateError = true)
                 viewState.postValue(newState)
             } else {
-                val userHaveCoronavirusSymptoms = doesUserHaveCoronavirusSymptoms()
-                if (userHaveCoronavirusSymptoms) {
+                val userHasCoronavirusSymptoms = doesUserHaveCoronavirusSymptoms()
+                if (userHasCoronavirusSymptoms) {
                     transitionToIndexedCase()
                     analyticsEventProcessor.track(CompletedQuestionnaireAndStartedIsolation)
                 } else {

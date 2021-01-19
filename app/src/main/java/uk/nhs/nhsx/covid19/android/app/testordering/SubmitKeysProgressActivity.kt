@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
+import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_progress.buttonTryAgain
 import kotlinx.android.synthetic.main.activity_progress.errorStateContainer
 import kotlinx.android.synthetic.main.activity_progress.loadingProgress
@@ -21,7 +22,6 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
-import javax.inject.Inject
 
 class SubmitKeysProgressActivity : BaseActivity(R.layout.activity_progress) {
 
@@ -63,6 +63,7 @@ class SubmitKeysProgressActivity : BaseActivity(R.layout.activity_progress) {
 
     private fun setupListeners() {
         buttonTryAgain.setOnSingleClickListener {
+            title = getString(R.string.loading)
             submitKeys()
         }
     }
@@ -85,6 +86,7 @@ class SubmitKeysProgressActivity : BaseActivity(R.layout.activity_progress) {
     }
 
     private fun showErrorState() {
+        title = getString(R.string.something_went_wrong)
         errorStateContainer.visible()
         loadingProgress.gone()
     }

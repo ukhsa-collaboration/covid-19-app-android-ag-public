@@ -14,9 +14,10 @@ import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Resu
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result.Success
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import java.io.File
-import java.util.Date
+import java.time.Clock
+import java.time.Instant
 
-class MockExposureNotificationApi : ExposureNotificationApi {
+class MockExposureNotificationApi(private val clock: Clock = Clock.systemUTC()) : ExposureNotificationApi {
 
     private var supportsLocationlessScanning = false
     private var isEnabled = false
@@ -87,7 +88,7 @@ class MockExposureNotificationApi : ExposureNotificationApi {
     override suspend fun getExposureWindows(): List<ExposureWindow> {
         return listOf(
             ExposureWindow.Builder()
-                .setDateMillisSinceEpoch(Date().time)
+                .setDateMillisSinceEpoch(Instant.now(clock).toEpochMilli())
                 .setInfectiousness(Infectiousness.HIGH)
                 .setScanInstances(
                     listOf(

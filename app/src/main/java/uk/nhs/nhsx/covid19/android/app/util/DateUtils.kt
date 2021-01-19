@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.SupportedLanguage
 import uk.nhs.nhsx.covid19.android.app.util.MinuteIntervals.FIRST_QUARTER
 import uk.nhs.nhsx.covid19.android.app.util.MinuteIntervals.SECOND_QUARTER
 import uk.nhs.nhsx.covid19.android.app.util.MinuteIntervals.THIRD_QUARTER
@@ -14,6 +15,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle.MEDIUM
 import java.time.temporal.ChronoUnit
 import java.util.Locale
 
@@ -42,15 +44,30 @@ fun LocalDateTime.keysQueryFormat(): String {
 
 private val uiTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
-fun LocalDate.uiFormat(context: Context): String =
-    DateTimeFormatter.ofPattern("dd MMM yyyy", context.getResourcesLocale())
-        .format(this)
+fun LocalDate.uiFormat(context: Context): String {
+    return if (context.getResourcesLocale().language == SupportedLanguage.CHINESE.code) {
+        DateTimeFormatter.ofLocalizedDate(MEDIUM).withLocale(context.getResourcesLocale())
+            .format(this)
+    } else {
+        DateTimeFormatter.ofPattern("dd MMM yyyy", context.getResourcesLocale())
+            .format(this)
+    }
+}
 
 fun LocalTime.uiFormat(): String = uiTimeFormatter.format(this)
 
-fun LocalDateTime.uiFormat(context: Context): String =
-    DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm", context.getResourcesLocale())
-        .format(this)
+fun LocalDateTime.uiFormat(context: Context): String {
+    return if (context.getResourcesLocale().language == SupportedLanguage.CHINESE.code) {
+        val date =
+            DateTimeFormatter.ofLocalizedDate(MEDIUM).withLocale(context.getResourcesLocale())
+                .format(this)
+        val time = uiTimeFormatter.withLocale(context.getResourcesLocale()).format(this)
+        "$date $time"
+    } else {
+        DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm", context.getResourcesLocale())
+            .format(this)
+    }
+}
 
 fun Instant.isBeforeOrEqual(instant: Instant) =
     !this.isAfter(instant)

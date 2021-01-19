@@ -9,11 +9,9 @@ import uk.nhs.covid19.config.Remote
 import uk.nhs.covid19.config.production
 import uk.nhs.covid19.config.qrCodesSignatureKey
 import uk.nhs.nhsx.covid19.android.app.DebugActivity.Companion.SELECTED_ENVIRONMENT
-import uk.nhs.nhsx.covid19.android.app.DebugActivity.Companion.SELECTED_LANGUAGE
 import uk.nhs.nhsx.covid19.android.app.DebugActivity.Companion.USE_MOCKED_EXPOSURE_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.availability.GooglePlayUpdateProvider
 import uk.nhs.nhsx.covid19.android.app.battery.AndroidBatteryOptimizationChecker
-import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.di.DaggerMockApplicationComponent
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
@@ -22,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.GoogleExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.packagemanager.AndroidPackageManager
 import uk.nhs.nhsx.covid19.android.app.permissions.AndroidPermissionsManager
+import uk.nhs.nhsx.covid19.android.app.qrcode.AndroidBarcodeDetectorBuilder
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
@@ -78,20 +77,13 @@ class ScenariosExposureApplication : ExposureApplication() {
     private fun useRegularApplicationComponent(useMockExposureApi: Boolean) {
         buildAndUseAppComponent(
             NetworkModule(getConfiguration(), additionalInterceptors),
-            getExposureNotificationApi(useMockExposureApi),
-            languageCode = debugSharedPreferences.getString(SELECTED_LANGUAGE, null)
+            getExposureNotificationApi(useMockExposureApi)
         )
     }
 
     private fun useMockApplicationComponent(useMockExposureApi: Boolean) {
-        val sharedPreferences = EncryptionUtils
-            .createEncryptedSharedPreferences(
-                this,
-                EncryptionUtils.getDefaultMasterKey(),
-                "mockedEncryptedSharedPreferences"
-            )
+        val sharedPreferences = EncryptionUtils.createEncryptedSharedPreferences(this)
         val encryptedFile = EncryptionUtils.createEncryptedFile(this, "venues")
-        val languageCode = debugSharedPreferences.getString(SELECTED_LANGUAGE, null)
         appComponent =
             DaggerMockApplicationComponent.builder()
                 .appModule(
@@ -103,12 +95,12 @@ class ScenariosExposureApplication : ExposureApplication() {
                         sharedPreferences,
                         encryptedFile,
                         qrCodesSignatureKey,
-                        ApplicationLocaleProvider(sharedPreferences, languageCode),
                         GooglePlayUpdateProvider(this),
                         AndroidBatteryOptimizationChecker(this),
                         AndroidPermissionsManager(),
                         AndroidPackageManager(),
-                        Clock.systemUTC()
+                        AndroidBarcodeDetectorBuilder(this),
+                        Clock.systemDefaultZone()
                     )
                 )
                 .mockApiModule(MockApiModule())

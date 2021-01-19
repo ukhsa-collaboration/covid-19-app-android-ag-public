@@ -38,7 +38,7 @@ class WelcomeActivityTest : EspressoTest() {
 
         startTestActivity<MainActivity>()
 
-        welcomeRobot.checkActivityIsDisplayed()
+        waitFor { welcomeRobot.checkActivityIsDisplayed() }
     }
 
     @RetryFlakyTest

@@ -22,13 +22,14 @@ class UserDataFlowTest : EspressoTest() {
     @Test
     fun startContactCase_checkLastDayOfIsolationInStatusScreen_confirmLastDayOfIsolationInUserDataScreen() =
         notReported {
+            testAppContext.clock.currentInstant = startDate
             testAppContext.setState(contactCaseIsolation)
 
             startTestActivity<StatusActivity>()
 
             statusRobot.checkActivityIsDisplayed()
 
-            statusRobot.checkIsolationViewIsDisplayed()
+            waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
             val expectedExpiryDate = "24 Dec 2020"
 
@@ -50,7 +51,7 @@ class UserDataFlowTest : EspressoTest() {
     companion object {
         private val startDate = Instant.parse("2020-12-11T13:00:00Z")
         private val contactCaseIsolation = Isolation(
-            isolationStart = Instant.now(),
+            isolationStart = startDate,
             isolationConfiguration = DurationDays(),
             contactCase = ContactCase(
                 startDate = startDate,

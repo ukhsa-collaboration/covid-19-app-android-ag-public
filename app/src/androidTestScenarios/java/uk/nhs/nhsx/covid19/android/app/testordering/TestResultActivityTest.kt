@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.Intent
-import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import org.junit.Test
@@ -24,6 +23,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
 import java.time.Instant
 import java.time.LocalDate
 import kotlin.test.assertTrue
@@ -380,50 +380,50 @@ class TestResultActivityTest : EspressoTest() {
 
     @Test
     fun onActivityResultTestOrderingOk_navigateToStatus() = notReported {
-        Intents.init()
-        testAppContext.setState(isolationStateContactCaseOnly)
+        runWithIntents {
+            testAppContext.setState(isolationStateContactCaseOnly)
 
-        testAppContext.getTestResultsProvider().add(
-            ReceivedTestResult(
-                diagnosisKeySubmissionToken = "a",
-                testEndDate = Instant.now(),
-                testResult = VOID
+            testAppContext.getTestResultsProvider().add(
+                ReceivedTestResult(
+                    diagnosisKeySubmissionToken = "a",
+                    testEndDate = Instant.now(),
+                    testResult = VOID
+                )
             )
-        )
 
-        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, Intent())
-        intending(hasComponent(TestOrderingActivity::class.qualifiedName))
-            .respondWith(result)
+            val result = Instrumentation.ActivityResult(Activity.RESULT_OK, Intent())
+            intending(hasComponent(TestOrderingActivity::class.qualifiedName))
+                .respondWith(result)
 
-        startTestActivity<TestResultActivity>()
-        testResultRobot.clickIsolationActionButton()
+            startTestActivity<TestResultActivity>()
+            testResultRobot.clickIsolationActionButton()
 
-        waitFor { statusRobot.checkActivityIsDisplayed() }
-        Intents.release()
+            waitFor { statusRobot.checkActivityIsDisplayed() }
+        }
     }
 
     @Test
     fun onActivityResultTestOrderingNotOk_finish() = notReported {
-        Intents.init()
-        testAppContext.setState(isolationStateContactCaseOnly)
+        runWithIntents {
+            testAppContext.setState(isolationStateContactCaseOnly)
 
-        testAppContext.getTestResultsProvider().add(
-            ReceivedTestResult(
-                diagnosisKeySubmissionToken = "a",
-                testEndDate = Instant.now(),
-                testResult = VOID
+            testAppContext.getTestResultsProvider().add(
+                ReceivedTestResult(
+                    diagnosisKeySubmissionToken = "a",
+                    testEndDate = Instant.now(),
+                    testResult = VOID
+                )
             )
-        )
 
-        val result = Instrumentation.ActivityResult(Activity.RESULT_CANCELED, Intent())
-        intending(hasComponent(TestOrderingActivity::class.qualifiedName))
-            .respondWith(result)
+            val result = Instrumentation.ActivityResult(Activity.RESULT_CANCELED, Intent())
+            intending(hasComponent(TestOrderingActivity::class.qualifiedName))
+                .respondWith(result)
 
-        val activity = startTestActivity<TestResultActivity>()
-        testResultRobot.clickIsolationActionButton()
+            val activity = startTestActivity<TestResultActivity>()
+            testResultRobot.clickIsolationActionButton()
 
-        waitFor { assertTrue(activity!!.isDestroyed) }
-        Intents.release()
+            waitFor { assertTrue(activity!!.isDestroyed) }
+        }
     }
 
     @Test

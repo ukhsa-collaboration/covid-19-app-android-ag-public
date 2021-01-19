@@ -16,6 +16,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import androidx.test.espresso.EspressoException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewInteraction
@@ -30,11 +32,17 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
 import androidx.test.uiautomator.UiDevice
+import com.schibsted.spain.barista.internal.failurehandler.BaristaException
+import org.awaitility.kotlin.await
+import org.awaitility.kotlin.ignoreExceptionsMatching
+import org.awaitility.kotlin.untilAsserted
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Description
 import org.hamcrest.Matcher
+import org.hamcrest.Matchers.allOf
 import org.hamcrest.TypeSafeMatcher
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation
+import java.util.concurrent.TimeUnit.SECONDS
 
 fun getCurrentActivity(): Activity? {
     getInstrumentation().waitForIdleSync()
@@ -51,16 +59,22 @@ fun getCurrentActivity(): Activity? {
 }
 
 fun assertBrowserIsOpened(url: String, block: () -> Unit) {
-    Intents.init()
-    val expectedIntent = CoreMatchers.allOf(
-        IntentMatchers.hasAction(Intent.ACTION_VIEW),
-        IntentMatchers.hasData(url)
-    )
-    Intents.intending(expectedIntent).respondWith(Instrumentation.ActivityResult(0, null))
+    runWithIntents {
+        val expectedIntent = CoreMatchers.allOf(
+            IntentMatchers.hasAction(Intent.ACTION_VIEW),
+            IntentMatchers.hasData(url)
+        )
+        Intents.intending(expectedIntent).respondWith(Instrumentation.ActivityResult(0, null))
 
-    block()
-    try {
+        block()
         Intents.intended(expectedIntent)
+    }
+}
+
+fun runWithIntents(block: () -> Unit) {
+    Intents.init()
+    try {
+        block()
     } finally {
         Intents.release()
     }
@@ -77,6 +91,23 @@ class NestedScrollViewScrollToAction(
         ),
         original.constraints
     )
+}
+
+fun compose(vararg actions: ViewAction): ViewAction {
+    return object : ViewAction {
+        override fun getConstraints(): Matcher<View> =
+            allOf(actions.map { it.constraints })
+
+        override fun getDescription(): String =
+            actions.joinToString(separator = " and ")
+
+        override fun perform(
+            uiController: UiController,
+            view: View
+        ) {
+            actions.forEach { it.perform(uiController, view) }
+        }
+    }
 }
 
 fun ViewInteraction.isDisplayed(): Boolean =
@@ -121,7 +152,7 @@ fun withViewAtPosition(position: Int, itemMatcher: Matcher<View?>): Matcher<View
         }
 
         override fun matchesSafely(recyclerView: RecyclerView?): Boolean {
-            val viewHolder: RecyclerView.ViewHolder? =
+            val viewHolder: ViewHolder? =
                 recyclerView?.findViewHolderForAdapterPosition(position)
             return viewHolder != null && itemMatcher.matches(viewHolder.itemView)
         }
@@ -151,4 +182,80 @@ fun setScreenOrientation(orientation: Orientation) {
         Orientation.LANDSCAPE -> device.setOrientationLeft()
         Orientation.PORTRAIT -> device.setOrientationNatural()
     }
+}
+
+fun allRecyclerViewItemsMatch(matcher: Matcher<View>): Matcher<View> {
+    return object : BoundedMatcher<View, RecyclerView>(RecyclerView::class.java) {
+
+        override fun describeTo(description: Description?) {
+            description?.appendText("all items match: ")
+            matcher.describeTo(description)
+        }
+
+        override fun matchesSafely(recyclerView: RecyclerView?): Boolean {
+            if (recyclerView == null) {
+                return true
+            }
+            val itemCount = recyclerView.adapter?.itemCount ?: 0
+            for (itemPosition in 0 until itemCount) {
+                val viewHolder = recyclerView.findViewHolderForAdapterPosition(itemPosition)
+                val matches = matcher.matches(viewHolder?.itemView)
+                if (!matches) {
+                    return false
+                }
+            }
+            return true
+        }
+    }
+}
+
+/**
+ * Returns a matcher that applies [itemMatcher] to each item a the recycler view and:
+ * <ul>
+ *     <li>If [itemMatcher] returns true, applies [matcherIfTrue] to the item</li>
+ *     <li>If [itemMatcher] returns false, applies [matcherIfFalse] to the item</li>
+ * </ul>
+ */
+fun recyclerViewItemDiscriminatorMatcher(
+    itemMatcher: Matcher<View>,
+    matcherIfTrue: Matcher<View>,
+    matcherIfFalse: Matcher<View>
+): Matcher<View> {
+    return object : BoundedMatcher<View, RecyclerView>(RecyclerView::class.java) {
+
+        override fun describeTo(description: Description?) {
+            description?.let { desc ->
+                desc.appendText("items matching: ")
+                itemMatcher.describeTo(desc)
+                desc.appendText(" match: ")
+                matcherIfTrue.describeTo(desc)
+                desc.appendText(" and all others match: ")
+                matcherIfFalse.describeTo(desc)
+            }
+        }
+
+        override fun matchesSafely(recyclerView: RecyclerView?): Boolean {
+            if (recyclerView == null) {
+                return false
+            }
+            val itemCount = recyclerView.adapter?.itemCount ?: 0
+            for (itemPosition in 0 until itemCount) {
+                recyclerView.findViewHolderForAdapterPosition(itemPosition)?.let { viewHolder ->
+                    val matcher = if (itemMatcher.matches(viewHolder.itemView)) matcherIfTrue else matcherIfFalse
+                    if (!matcher.matches(viewHolder.itemView)) {
+                        return false
+                    }
+                }
+            }
+            return true
+        }
+    }
+}
+
+fun waitFor(idleTime: Long = AWAIT_AT_MOST_SECONDS, assertion: () -> Unit) {
+    await.atMost(
+        idleTime, SECONDS
+    ) ignoreExceptionsMatching {
+        it is BaristaException || it is EspressoException
+    } untilAsserted assertion
 }

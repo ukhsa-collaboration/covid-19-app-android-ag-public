@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.scenarios.fragment_debug.importKeys
 import kotlinx.android.synthetic.scenarios.fragment_debug.indexState
 import kotlinx.android.synthetic.scenarios.fragment_debug.riskyPostCode
 import kotlinx.android.synthetic.scenarios.fragment_debug.riskyVenue
+import kotlinx.android.synthetic.scenarios.fragment_debug.sendExposureNotification
 import kotlinx.android.synthetic.scenarios.fragment_debug.sendNegativeTestResult
 import kotlinx.android.synthetic.scenarios.fragment_debug.sendPositiveTestResult
 import kotlinx.android.synthetic.scenarios.fragment_debug.sendVoidTestResult
@@ -122,6 +123,10 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
 
         contactState.setOnSingleClickListener {
             debugViewModel.setContactState()
+        }
+
+        sendExposureNotification.setOnSingleClickListener {
+            debugViewModel.sendExposureNotification()
         }
 
         riskyVenue.setOnSingleClickListener {

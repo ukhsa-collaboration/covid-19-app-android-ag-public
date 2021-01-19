@@ -9,6 +9,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R.plurals
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfo
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -89,7 +90,7 @@ class FlowTests : EspressoTest() {
 
         completeTestOrdering()
 
-        statusRobot.checkIsolationViewIsDisplayed()
+        waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
         testAppContext.virologyTestingApi.setDefaultTestResult(NEGATIVE)
 
@@ -136,6 +137,8 @@ class FlowTests : EspressoTest() {
 
         testOrderingRobot.clickOrderTestButton()
 
+        waitFor { browserRobot.checkActivityIsDisplayed() }
+
         testAppContext.device.pressBack()
 
         testAppContext.virologyTestingApi.setDefaultTestResult(POSITIVE)
@@ -173,7 +176,7 @@ class FlowTests : EspressoTest() {
 
         assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
 
-        testAppContext.getExposureNotificationTokenProvider().add("test")
+        testAppContext.getExposureCircuitBreakerInfoProvider().add(exposureCircuitBreakerInfo)
         testAppContext.getPeriodicTasks().schedule()
 
         await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
@@ -204,7 +207,7 @@ class FlowTests : EspressoTest() {
 
         statusRobot.checkActivityIsDisplayed()
 
-        testAppContext.getExposureNotificationTokenProvider().add("test")
+        testAppContext.getExposureCircuitBreakerInfoProvider().add(exposureCircuitBreakerInfo)
         testAppContext.getPeriodicTasks().schedule()
 
         await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
@@ -224,7 +227,7 @@ class FlowTests : EspressoTest() {
 
         completeTestOrdering()
 
-        statusRobot.checkIsolationViewIsDisplayed()
+        waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
         testAppContext.virologyTestingApi.setDefaultTestResult(NEGATIVE)
 
@@ -245,7 +248,7 @@ class FlowTests : EspressoTest() {
 
         statusRobot.checkActivityIsDisplayed()
 
-        testAppContext.getExposureNotificationTokenProvider().add("test")
+        testAppContext.getExposureCircuitBreakerInfoProvider().add(exposureCircuitBreakerInfo)
         testAppContext.getPeriodicTasks().schedule()
 
         await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
@@ -263,7 +266,7 @@ class FlowTests : EspressoTest() {
 
         completeTestOrdering()
 
-        statusRobot.checkIsolationViewIsDisplayed()
+        waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
         testAppContext.virologyTestingApi.setDefaultTestResult(POSITIVE)
 
@@ -333,7 +336,7 @@ class FlowTests : EspressoTest() {
 
         statusRobot.checkActivityIsDisplayed()
 
-        statusRobot.checkIsolationViewIsDisplayed()
+        waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
         assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
 
@@ -382,5 +385,15 @@ class FlowTests : EspressoTest() {
         reviewSymptomsRobot.selectCannotRememberDate()
 
         reviewSymptomsRobot.confirmSelection()
+    }
+
+    companion object {
+        private val exposureCircuitBreakerInfo = ExposureCircuitBreakerInfo(
+            maximumRiskScore = 10.0,
+            startOfDayMillis = Instant.now().toEpochMilli(),
+            matchedKeyCount = 1,
+            riskCalculationVersion = 2,
+            exposureNotificationDate = Instant.now().toEpochMilli()
+        )
     }
 }

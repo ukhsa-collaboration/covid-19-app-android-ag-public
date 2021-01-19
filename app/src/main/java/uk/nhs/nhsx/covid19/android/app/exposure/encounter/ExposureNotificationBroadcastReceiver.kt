@@ -6,32 +6,32 @@ import android.content.Intent
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import javax.inject.Inject
 
 class ExposureNotificationBroadcastReceiver : BroadcastReceiver() {
 
     @Inject
-    lateinit var exposureNotificationsTokensProvider: ExposureNotificationTokensProvider
+    lateinit var exposureNotificationWorkerScheduler: ExposureNotificationWorkerScheduler
 
     @Inject
-    lateinit var exposureNotificationWorkerScheduler: ExposureNotificationWorkerScheduler
+    lateinit var isolationStateMachine: IsolationStateMachine
 
     override fun onReceive(context: Context, intent: Intent) {
         context.appComponent.inject(this)
 
         val action = intent.action
         Timber.d("onReceive: action = $action")
-        val token = intent.getStringExtra(ExposureNotificationClient.EXTRA_TOKEN) ?: emptyToken
-        Timber.d("onReceive: token = $token")
-        if (ExposureNotificationClient.ACTION_EXPOSURE_STATE_UPDATED == action) {
-            exposureNotificationsTokensProvider.add(token)
-            exposureNotificationWorkerScheduler.scheduleMatchesFound(context, token)
-        } else if (ExposureNotificationClient.ACTION_EXPOSURE_NOT_FOUND == action) {
+        val interestedInExposureNotifications =
+            isolationStateMachine.isInterestedInExposureNotifications()
+        if (action == ExposureNotificationClient.ACTION_EXPOSURE_STATE_UPDATED) {
+            if (interestedInExposureNotifications) {
+                exposureNotificationWorkerScheduler.scheduleProcessNewExposure(context)
+            } else {
+                exposureNotificationWorkerScheduler.scheduleNoMatchesFound(context)
+            }
+        } else if (action == ExposureNotificationClient.ACTION_EXPOSURE_NOT_FOUND) {
             exposureNotificationWorkerScheduler.scheduleNoMatchesFound(context)
         }
-    }
-
-    companion object {
-        private const val emptyToken = "empty"
     }
 }

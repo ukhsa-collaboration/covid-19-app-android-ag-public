@@ -154,7 +154,7 @@
     <string name="close">Închidere</string>
     <string name="go_back">Mers înapoi</string>
     <string name="remove">Eliminare</string>
-    <string name="empty" translatable="false" />
+    <string name="empty" translatable="false"/>
     <string name="onboarding_exposure_notifications_description">Aplicația vă va trimite o alertă dacă v-ați aflat în apropierea unei persoane care a fost testată pozitiv pentru virus.\n\nPentru a activa urmărirea contactelor pentru această aplicație, trebuie să permiteți notificări de expunere.\n\nDacă vă răzgândiți, puteți modifica permisiunile din setări în orice moment.</string>
     <string name="privacy_notice">Notificare de confidențialitate</string>
     <string name="tablet_information_url">Informații despre utilizarea tabletelor</string>
@@ -254,7 +254,7 @@
     <string name="update_app_title">Actualizați aplicația</string>
     <string name="valid_auth_code_is_required">Codul dvs. nu a fost recunoscut. Vă rugăm să vă asigurați că folosiți un cod valid.</string>
     <string name="self_isolate_for">Auto-izolare pentru</string>
-    <string name="isolate_after_corona_virus_symptoms">Pentru a înțelege modul în care aplicația calculează zilele de autoizolare, accesați întrebările frecvente.\n\nSimptomele dvs. sugerează că este posibil să aveți coronavirus. Vă rugăm să vă izolați împreună cu toate persoanele din locuința dvs. Aceasta înseamnă să stați în casă fără vizitatori. Ar trebui să vă și rezervați imediat un test gratuit. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere.\n\nVă rugăm să stați acasă și să vă auto-izolați pentru a vă păstra pe dvs. și pe ceilalți în siguranță</string>
+    <string name="isolate_after_corona_virus_symptoms">Pentru a înțelege modul în care aplicația calculează zilele de autoizolare, accesați linkul de mai jos la întrebările frecvente.\n\nSimptomele dvs. sugerează că este posibil să aveți coronavirus. Vă rugăm să vă izolați împreună cu toate persoanele din locuința dvs. Aceasta înseamnă să stați în casă fără vizitatori. Ar trebui să vă și rezervați imediat un test gratuit. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere.\n\nVă rugăm să stați acasă și să vă auto-izolați pentru a vă păstra pe dvs. și pe ceilalți în siguranță</string>
     <string name="isolate_after_no_corona_virus_symptoms">Pentru a înțelege modul în care aplicația calculează zilele de autoizolare, accesați întrebările frecvente.\n\nSe pare că încă nu aveți niciun simptom de coronavirus, dar amintiți-vă că poate dura până la 14 zile pentru ca simptomele să se dezvolte. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere. Faceți un test numai dacă aveți simptome coronavirus.\n\nVă rugăm să stați acasă și să vă auto-izolați pentru a vă păstra pe dvs. și pe ceilalți în siguranță. Faceți un test numai dacă aveți simptome coronavirus.</string>
     <string name="your_isolation_will_finish">Auto-izolarea dvs. va lua sfârșit pe %1$s la 23:59</string>
     <string name="qr_code_unsupported_title">Ne pare rău, telefonul dvs. nu acceptă check-in-ul în locație</string>
@@ -388,7 +388,7 @@
     <string name="test_result_positive_continue_self_isolate_explanation_2">Nu vă faceți griji - pentru majoritatea oamenilor simptomele sunt destul de ușoare. Cu toate acestea, dacă simptomele dvs. se agravează, atunci trebuie să sunați la 111 sau să vizitați nhs.uk pentru mai multe sfaturi.</string>
     <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
-    <string name="local_authority_error_authority_not_supported_title">Trebuie să selectați o autoritate locală pentru a continua</string>
+    <string name="local_authority_error_authority_not_supported_title">Autoritate locală neacceptată.</string>
     <string name="local_authority_information_description">Vă rugăm să selectați o autoritate locală. Astfel, aplicația vă va putea oferi informații și instrucțiuni mai precise.</string>
     <string name="about_encounter_date">Data întâlnirii</string>
     <string name="about_my_data_date">Data</string>
@@ -409,4 +409,25 @@
     <string name="status_option_isolation_payment">Sprijin financiar</string>
     <string name="title_exposure_notification">Notificare de expunere</string>
     <string name="title_last_day_of_isolation">Ultima zi de auto-izolare</string>
+    <string name="arabic">Arabă</string>
+    <string name="bengali">Bengaleză</string>
+    <string name="change_language_dialog">Modificați limba în %s?</string>
+    <string name="chinese">Chineză simplificată</string>
+    <string name="english">Engleză</string>
+    <string name="gujarati">Gujarati</string>
+    <string name="language">Limbă</string>
+    <string name="language_title">Limbă</string>
+    <string name="local_authority_edit">Editare</string>
+    <string name="other_languages">Limbi</string>
+    <string name="polish">Poloneză</string>
+    <string name="punjabi">Punjabă</string>
+    <string name="romanian">Română</string>
+    <string name="settings_title">Setări</string>
+    <string name="somali">Somaleză</string>
+    <string name="system_language">Limba sistemului de operare</string>
+    <string name="turkish">Turcă</string>
+    <string name="urdu">Urdu</string>
+    <string name="venue_history_edit">Editare</string>
+    <string name="venue_history_editing_done">Terminat</string>
+    <string name="welsh">Galeză</string>
 </resources>

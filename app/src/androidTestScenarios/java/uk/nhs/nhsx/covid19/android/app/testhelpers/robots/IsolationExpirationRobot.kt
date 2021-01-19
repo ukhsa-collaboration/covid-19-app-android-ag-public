@@ -42,4 +42,15 @@ class IsolationExpirationRobot {
             .check(matches(isDisplayed()))
             .check(matches(withText(hasFinishedText)))
     }
+
+    fun checkDateFormat(date: String) {
+        val hasFinishedText = context.getString(
+            R.string.expiration_notification_description_passed, date
+        )
+
+        onView(withId(R.id.expirationDescription))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+            .check(matches(withText(hasFinishedText)))
+    }
 }

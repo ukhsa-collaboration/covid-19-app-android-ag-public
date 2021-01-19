@@ -36,8 +36,9 @@ class ManagedApiModule(
     private val riskyVenuesApi: RiskyVenuesApi,
     private val virologyTestingApi: VirologyTestingApi,
     private val questionnaireApi: MockQuestionnaireApi,
+    private val isolationPaymentApi: IsolationPaymentApi,
     private val keysSubmissionApi: MockKeysSubmissionApi,
-    private val isolationPaymentApi: IsolationPaymentApi
+    private val analyticsApi: MockAnalyticsApi
 ) {
 
     @Provides
@@ -93,8 +94,7 @@ class ManagedApiModule(
 
     @Provides
     @Singleton
-    fun provideAnalyticsApi(): AnalyticsApi =
-        MockAnalyticsApi()
+    fun provideAnalyticsApi(): AnalyticsApi = analyticsApi
 
     @Provides
     @Singleton

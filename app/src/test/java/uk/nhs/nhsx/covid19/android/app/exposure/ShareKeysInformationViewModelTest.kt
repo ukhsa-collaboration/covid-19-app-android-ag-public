@@ -13,11 +13,13 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.common.SubmitEmptyData
 import uk.nhs.nhsx.covid19.android.app.exposure.FetchTemporaryExposureKeys.TemporaryExposureKeysFetchResult
 import uk.nhs.nhsx.covid19.android.app.exposure.FetchTemporaryExposureKeys.TemporaryExposureKeysFetchResult.Success
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.SubmitEpidemiologyData
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW_AFTER_POSITIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.KEY_SUBMISSION
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType.EXPOSURE_WINDOW_POSITIVE_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -25,7 +27,6 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitFakeExposureWindows
-import uk.nhs.nhsx.covid19.android.app.testordering.SubmitFakeKeys
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -37,7 +38,7 @@ class ShareKeysInformationViewModelTest {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val fetchTemporaryExposureKeys = mockk<FetchTemporaryExposureKeys>(relaxed = true)
-    private val submitFakeKeys = mockk<SubmitFakeKeys>(relaxed = true)
+    private val submitEmptyData = mockk<SubmitEmptyData>(relaxed = true)
     private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val epidemiologyEventProvider = mockk<EpidemiologyEventProvider>(relaxed = true)
     private val submitEpidemiologyData = mockk<SubmitEpidemiologyData>(relaxed = true)
@@ -48,7 +49,7 @@ class ShareKeysInformationViewModelTest {
     private val testSubject =
         ShareKeysInformationViewModel(
             fetchTemporaryExposureKeys,
-            submitFakeKeys,
+            submitEmptyData,
             stateMachine,
             epidemiologyEventProvider,
             submitEpidemiologyData,
@@ -87,7 +88,7 @@ class ShareKeysInformationViewModelTest {
 
         testSubject.onSubmitKeysDenied()
 
-        coVerify { submitFakeKeys.invoke() }
+        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
         coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
         verify {
             stateMachine.processEvent(

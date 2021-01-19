@@ -150,7 +150,7 @@
     <string name="close">બંધ કરો</string>
     <string name="go_back">પાછા જાઓ</string>
     <string name="remove">હટાવો</string>
-    <string name="empty" translatable="false" />
+    <string name="empty" translatable="false"/>
     <string name="onboarding_exposure_notifications_description">જો તમે વાયરસ માટે સકારાત્મક પરીક્ષણ ધરાવનાર કોઈની સાથે ગાઢ સંપર્કમાં રહેલા હો તો, એપ્લિકેશન તમને ચેતવણી મોકલશે.\n\nઆ એપ્લિકેશન માટે કોંટેક્ટ ટ્રેસીંગને સક્ષમ કરવા માટે તમારે આની મંજૂરી આપવાની જરૂર છે એક્સપોઝર નોટિફિકેશન.\n\nજો તમે તમારો વિચાર બદલો છો, તો તમે કોઈપણ સમયે સેટિંગ્સમાં તમારી મંજૂરી બદલી શકો છો.</string>
     <string name="privacy_notice">ગોપનીયતા નોટિસ</string>
     <string name="tablet_information_url">ટેબ્લેટના ઉપયોગ માટેની માહિતી</string>
@@ -249,7 +249,7 @@
     <string name="update_app_title">એપ અપડેટ કરો</string>
     <string name="valid_auth_code_is_required">કોડ ઓળખી શકાયો નહીં. કૃપા કરી ખાતરી કરો કે તમે માન્ય કોડનો ઉપયોગ કરી રહ્યા છો.</string>
     <string name="self_isolate_for">માટે સેલ્ફ-આઇસોલેટ થાવ</string>
-    <string name="isolate_after_corona_virus_symptoms">સેલ્ફ આયસોલેશનનાં દિવસોનો એપ કેવી રીતે સરવાળો કરે છે એ જાણવા માટે પૂછાતા પ્રશ્નો જૂઓ.\n\nતમારા લક્ષણો સૂચવે છે કે તમને કોરોનાવાયરસ હોય શકે છે. કૃપા કરી તમારી જાતને અને તમારા ઘરની અન્ય કોઈ વ્યક્તિને આઇસોલેટ કરો. તેનો અર્થ કે મુલાકાતીઓ વિના ઘરે જ રહેવું. તમારે તરત જ નિ:શુલ્ક ટેસ્ટ પણ બુક કરાવવી જોઈએ.જો તમારી ઉંમર 18 વર્ષથી ઓછી છે, તો તમને કોઈ વિશ્વાસપાત્ર વયસ્ક વ્યક્તિને આ સંદેશ બતાવવાની સલાહ આપવામાં આવે છે.\n\nકૃપા કૃપા કરી તમારી જાતને અને અન્યોને સલામત રાખવા માટે ઘરે રહો</string>
+    <string name="isolate_after_corona_virus_symptoms">સેલ્ફ આયસોલેશનનાં દિવસોનો એપ કેવી રીતે સરવાળો કરે છે એ જાણવા માટે પૂછાતા પ્રશ્નોની નીચે લિંક જૂઓ.\n\nતમારા લક્ષણો સૂચવે છે કે તમને કોરોનાવાયરસ હોય શકે છે. કૃપા કરી તમારી જાતને અને તમારા ઘરની અન્ય કોઈ વ્યક્તિને આઇસોલેટ કરો. તેનો અર્થ કે મુલાકાતીઓ વિના ઘરે જ રહેવું. તમારે તરત જ નિ:શુલ્ક ટેસ્ટ પણ બુક કરાવવી જોઈએ.જો તમારી ઉંમર 18 વર્ષથી ઓછી છે, તો તમને કોઈ વિશ્વાસપાત્ર વયસ્ક વ્યક્તિને આ સંદેશ બતાવવાની સલાહ આપવામાં આવે છે.\n\nકૃપા કૃપા કરી તમારી જાતને અને અન્યોને સલામત રાખવા માટે ઘરે રહો</string>
     <string name="isolate_after_no_corona_virus_symptoms">સેલ્ફ આયસોલેશનનાં દિવસોનો એપ કેવી રીતે સરવાળો કરે છે એ જાણવા માટે પૂછાતા પ્રશ્નો જૂઓ.\n\nહજુ તમને કોરોનાવાયરસના કોઈ લક્ષણો દેખાતા નથી, પણ યાદ રાખો કે લક્ષણો વિકસિત થવા માટે 14 દિવસ લઈ શકે છે. જો તમારી ઉંમર 18 વર્ષથી ઓછી છે, તો તમને કોઈ વિશ્વાસપાત્ર વયસ્ક વ્યક્તિને આ સંદેશ બતાવવાની સલાહ આપવામાં આવે છે.\n\nકૃપા કરી તમારી જાતને અને અન્યોને સલામત રાખવા માટે ઘરે રહો. જો તમને કોરોનાવાઈરસ રોગના લક્ષણો હોય તોજ ફકત કસોટી કરાવો.</string>
     <string name="your_isolation_will_finish">તમારું સેલ્ફ-આઇસોલેશન %1$s પર 23:59 એ સમાપ્ત થશે</string>
     <string name="qr_code_unsupported_title">માફ કરશો, તમારો ફોન વેન્યુ ચેક-ઇનને સપોર્ટ કરતો નથી</string>
@@ -384,7 +384,7 @@
     <string name="test_result_positive_continue_self_isolate_explanation_2">ચિંતા કરશો નહીં - મોટાભાગના લોકો માટે લક્ષણો ખૂબ જ હળવા હોય છે. તેમ છતાં, જો તમારા લક્ષણો વધુ ખરાબ થાય થાય જ તો તમારે વધુ સલાહ માટે 111 પર કૉલ કરવો જોઈએ અથવા nhs.uk ની મુલાકાત લેવી જોઈએ.</string>
     <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
-    <string name="local_authority_error_authority_not_supported_title">ચાલું રાખવા માટે તમારે લૉકલ ઓથોરિટી સિલેક્ટ કરવી પડશે</string>
+    <string name="local_authority_error_authority_not_supported_title">સ્થાનિક તંત્ર સમર્થિત નથી.</string>
     <string name="local_authority_information_description">મહેરબાની કરીને તમારી લૉકલ ઓથોરિટી સિલેક્ટ કરો. આ એટલા માટે જેથી એપ તમને વધારે ચોક્કસ માહિતી અને માર્ગદર્શન આપે.</string>
     <string name="about_encounter_date">એન્કાઉન્ટરની તારીખ</string>
     <string name="about_my_data_date">તારીખ</string>
@@ -405,4 +405,25 @@
     <string name="status_option_isolation_payment">પૈસાનો ટેકો</string>
     <string name="title_exposure_notification">એક્સપોઝર નોટિફિકેશન</string>
     <string name="title_last_day_of_isolation">સેલ્ફ-આયસોલેશનનો છેલ્લો દિવસ</string>
+    <string name="arabic">અરબી</string>
+    <string name="bengali">બંગાળી</string>
+    <string name="change_language_dialog">એપની ભાષા બદલીને %s કરવી છે?</string>
+    <string name="chinese">સાદુ ચાઇનિઝ</string>
+    <string name="english">અંગ્રેજી</string>
+    <string name="gujarati">ગુજરાતી</string>
+    <string name="language">ભાષા</string>
+    <string name="language_title">ભાષા</string>
+    <string name="local_authority_edit">સંપાદિત કરો</string>
+    <string name="other_languages">ભાષાઓ</string>
+    <string name="polish">પોલિશ</string>
+    <string name="punjabi">પંજાબી</string>
+    <string name="romanian">રોમેનિયન</string>
+    <string name="settings_title">સેટિંગસ</string>
+    <string name="somali">સોમાલી</string>
+    <string name="system_language">સિસ્ટમની ભાષા</string>
+    <string name="turkish">તૂર્કી</string>
+    <string name="urdu">ઉર્દૂ</string>
+    <string name="venue_history_edit">સંપાદિત કરો</string>
+    <string name="venue_history_editing_done">થઈ ગયું</string>
+    <string name="welsh">વેલ્શ</string>
 </resources>

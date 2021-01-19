@@ -15,4 +15,7 @@ sealed class AnalyticsEvent {
     object StartedIsolation : AnalyticsEvent()
     data class ResultReceived(val result: VirologyTestResult, val testOrderType: TestOrderType) : AnalyticsEvent()
     object UpdateNetworkStats : AnalyticsEvent()
+    object ReceivedActiveIpcToken : AnalyticsEvent()
+    object SelectedIsolationPaymentsButton : AnalyticsEvent()
+    object LaunchedIsolationPaymentsApplication : AnalyticsEvent()
 }

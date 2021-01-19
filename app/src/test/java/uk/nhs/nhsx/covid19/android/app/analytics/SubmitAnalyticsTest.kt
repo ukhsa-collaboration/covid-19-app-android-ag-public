@@ -135,7 +135,8 @@ class SubmitAnalyticsTest {
                                 deviceModel = "",
                                 latestApplicationVersion = "",
                                 operatingSystemVersion = "",
-                                postalDistrict = ""
+                                postalDistrict = "",
+                                localAuthority = ""
                             ),
                             metrics = Metrics()
                         )

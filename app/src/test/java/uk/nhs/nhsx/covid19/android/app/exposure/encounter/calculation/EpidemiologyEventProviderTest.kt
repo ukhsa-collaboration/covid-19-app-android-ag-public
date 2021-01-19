@@ -8,7 +8,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.SubmitEpidemiologyData
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventPayload
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventPayloadScanInstance
 import uk.nhs.nhsx.covid19.android.app.remote.data.Infectiousness.HIGH
@@ -54,12 +53,6 @@ class EpidemiologyEventProviderTest {
 
     @Test
     fun `can convert exposure window to epidemiology event`() {
-        val dayRisk =
-            DayRisk(
-                startOfDayMillis = Instant.parse("2020-11-18T13:20:36.875Z").toEpochMilli(),
-                calculatedRisk = 10.0,
-                riskCalculationVersion = 2
-            )
         val scanInstance =
             ScanInstance.Builder()
                 .setSecondsSinceLastScan(0)
@@ -73,7 +66,14 @@ class EpidemiologyEventProviderTest {
                 .setScanInstances(listOf(scanInstance))
                 .build()
 
-        val exposureWindowWithRisk = SubmitEpidemiologyData.ExposureWindowWithRisk(dayRisk, exposureWindow)
+        val dayRisk =
+            DayRisk(
+                startOfDayMillis = Instant.parse("2020-11-18T13:20:36.875Z").toEpochMilli(),
+                calculatedRisk = 10.0,
+                riskCalculationVersion = 2,
+                matchedKeyCount = 1,
+                listOf(exposureWindow)
+            )
 
         val event = EpidemiologyEvent(
             version = 1,
@@ -86,7 +86,7 @@ class EpidemiologyEventProviderTest {
             )
         )
 
-        assertEquals(event, exposureWindowWithRisk.toEpidemiologyEvent())
+        assertEquals(event, dayRisk.toEpidemiologyEvents().first())
     }
 
     companion object {

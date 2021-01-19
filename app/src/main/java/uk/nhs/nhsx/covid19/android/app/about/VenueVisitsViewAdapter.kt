@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.about
 
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -15,6 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.about.VenueVisitsViewAdapter.VenueVisitVi
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.inflate
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import java.time.ZoneId
@@ -72,8 +72,4 @@ class VenueVisitsViewAdapter(
             }
         }
     }
-}
-
-fun ViewGroup.inflate(layoutRes: Int): View {
-    return LayoutInflater.from(context).inflate(layoutRes, this, false)
 }

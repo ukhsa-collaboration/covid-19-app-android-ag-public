@@ -9,9 +9,9 @@ data class IsolationConfigurationResponse(
 
 @JsonClass(generateAdapter = true)
 data class DurationDays(
-    val contactCase: Int = 14,
-    val indexCaseSinceSelfDiagnosisOnset: Int = 7,
-    val indexCaseSinceSelfDiagnosisUnknownOnset: Int = 5,
+    val contactCase: Int = 11,
+    val indexCaseSinceSelfDiagnosisOnset: Int = 11,
+    val indexCaseSinceSelfDiagnosisUnknownOnset: Int = 9,
     val maxIsolation: Int = 21,
     val pendingTasksRetentionPeriod: Int = 14
 )

@@ -29,8 +29,8 @@ class ExposureWindowRiskManagerTest {
     private val exposureConfigurationApi = mockk<ExposureConfigurationApi>()
     private val riskCalculator = mockk<ExposureWindowRiskCalculator>()
 
-    private val token = "some-token"
-    private val expectedRisk = DayRisk(startOfDayMillis = 0, calculatedRisk = 0.0, riskCalculationVersion = 2)
+    private val expectedRisk =
+        DayRisk(startOfDayMillis = 0, calculatedRisk = 0.0, riskCalculationVersion = 2, matchedKeyCount = 1, emptyList())
     private val expectedExposureWindows = listOf(mockk<ExposureWindow>())
     private val v2RiskCalculation = V2RiskCalculation(
         daysSinceOnsetToInfectiousness = listOf(
@@ -63,21 +63,21 @@ class ExposureWindowRiskManagerTest {
 
     @Test
     fun `calls get exposure windows with token`() = runBlocking {
-        exposureWindowRiskManager.getRisk(token)
+        exposureWindowRiskManager.getRisk()
 
         coVerify { exposureNotificationApi.getExposureWindows() }
     }
 
     @Test
     fun `calls get configuration`() = runBlocking {
-        exposureWindowRiskManager.getRisk(token)
+        exposureWindowRiskManager.getRisk()
 
         coVerify { exposureConfigurationApi.getExposureConfiguration() }
     }
 
     @Test
     fun `calls risk calculator with exposure windows and threshold`() = runBlocking {
-        val risk = exposureWindowRiskManager.getRisk(token)
+        val risk = exposureWindowRiskManager.getRisk()
 
         coVerify { riskCalculator(expectedExposureWindows, v2RiskCalculation, any()) }
         assertEquals(expectedRisk, risk)
@@ -88,7 +88,7 @@ class ExposureWindowRiskManagerTest {
         val expectedDataMapping = getDataMapping()
         coEvery { exposureNotificationApi.getDiagnosisKeysDataMapping() } returns someOtherDataMapping()
 
-        exposureWindowRiskManager.getRisk(token)
+        exposureWindowRiskManager.getRisk()
 
         coVerify { exposureNotificationApi.setDiagnosisKeysDataMapping(expectedDataMapping) }
     }
@@ -97,7 +97,7 @@ class ExposureWindowRiskManagerTest {
     fun `does not set diagnosis keys data mapping if data mapping is unchanged`() = runBlocking {
         coEvery { exposureNotificationApi.getDiagnosisKeysDataMapping() } returns getDataMapping()
 
-        exposureWindowRiskManager.getRisk(token)
+        exposureWindowRiskManager.getRisk()
 
         coVerify(exactly = 0) { exposureNotificationApi.setDiagnosisKeysDataMapping(any()) }
     }
@@ -108,7 +108,7 @@ class ExposureWindowRiskManagerTest {
             every { exposureNotificationApi.setDiagnosisKeysDataMapping(any()) } throws Exception("RATE_LIMIT_EXCEEDED")
 
             try {
-                exposureWindowRiskManager.getRisk(token)
+                exposureWindowRiskManager.getRisk()
             } catch (e: Exception) {
                 fail("Exception should have been caught")
             }

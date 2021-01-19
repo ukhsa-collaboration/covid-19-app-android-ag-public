@@ -35,7 +35,7 @@ class MainActivityFlowTest : EspressoTest() {
 
         startTestActivity<MainActivity>()
 
-        policyUpdateRobot.checkActivityIsDisplayed()
+        waitFor { policyUpdateRobot.checkActivityIsDisplayed() }
     }
 
     @Test
@@ -48,7 +48,7 @@ class MainActivityFlowTest : EspressoTest() {
 
         startTestActivity<MainActivity>()
 
-        localAuthorityInformationRobot.checkActivityIsDisplayed()
+        waitFor { localAuthorityInformationRobot.checkActivityIsDisplayed() }
     }
 
     @Test
@@ -60,7 +60,7 @@ class MainActivityFlowTest : EspressoTest() {
 
         startTestActivity<MainActivity>()
 
-        statusRobot.checkActivityIsDisplayed()
+        waitFor { statusRobot.checkActivityIsDisplayed() }
     }
 
     @Test
@@ -73,7 +73,7 @@ class MainActivityFlowTest : EspressoTest() {
 
         startTestActivity<MainActivity>()
 
-        batteryOptimizationRobot.checkActivityIsDisplayed()
+        waitFor { batteryOptimizationRobot.checkActivityIsDisplayed() }
     }
 
     @Test
@@ -84,7 +84,7 @@ class MainActivityFlowTest : EspressoTest() {
 
         startTestActivity<MainActivity>()
 
-        statusRobot.checkActivityIsDisplayed()
+        waitFor { statusRobot.checkActivityIsDisplayed() }
     }
 
     @Test

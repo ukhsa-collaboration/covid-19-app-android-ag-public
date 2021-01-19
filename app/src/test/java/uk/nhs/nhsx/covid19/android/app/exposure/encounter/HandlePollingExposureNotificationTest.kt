@@ -4,6 +4,9 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.NO
+import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.PENDING
+import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.YES
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandlePollingExposureNotification.PollingCircuitBreakerResult
@@ -15,66 +18,45 @@ class HandlePollingExposureNotificationTest {
 
     private val exposureCircuitBreakerApi = mockk<ExposureCircuitBreakerApi>()
 
-    private val testSubject = HandlePollingExposureNotification(
-        exposureCircuitBreakerApi
-    )
+    private val testSubject = HandlePollingExposureNotification(exposureCircuitBreakerApi)
 
     @Test
     fun `on approval response yes will return yes`() = runBlocking {
-
-        coEvery { exposureCircuitBreakerApi.getExposureCircuitBreakerResolution(approvalToken = "token") } returns ExposureCircuitBreakerPollingResponse(
-            "yes"
-        )
+        coEvery { exposureCircuitBreakerApi.getExposureCircuitBreakerResolution(approvalToken = "token") } returns
+            ExposureCircuitBreakerPollingResponse(YES)
 
         val result = testSubject.invoke("token")
 
-        assertEquals(
-            Success(PollingCircuitBreakerResult.Yes),
-            result
-        )
+        assertEquals(Success(PollingCircuitBreakerResult.Yes), result)
     }
 
     @Test
     fun `on approval response pending  will return pending`() = runBlocking {
-
-        coEvery { exposureCircuitBreakerApi.getExposureCircuitBreakerResolution(approvalToken = "token") } returns ExposureCircuitBreakerPollingResponse(
-            "pending"
-        )
+        coEvery { exposureCircuitBreakerApi.getExposureCircuitBreakerResolution(approvalToken = "token") } returns
+            ExposureCircuitBreakerPollingResponse(PENDING)
 
         val result = testSubject.invoke("token")
 
-        assertEquals(
-            Success(PollingCircuitBreakerResult.Pending),
-            result
-        )
+        assertEquals(Success(PollingCircuitBreakerResult.Pending), result)
     }
 
     @Test
     fun `on approval response no will return no`() = runBlocking {
-
-        coEvery { exposureCircuitBreakerApi.getExposureCircuitBreakerResolution(approvalToken = "token") } returns ExposureCircuitBreakerPollingResponse(
-            "no"
-        )
+        coEvery { exposureCircuitBreakerApi.getExposureCircuitBreakerResolution(approvalToken = "token") } returns
+            ExposureCircuitBreakerPollingResponse(NO)
 
         val result = testSubject.invoke("token")
 
-        assertEquals(
-            Success(PollingCircuitBreakerResult.No),
-            result
-        )
+        assertEquals(Success(PollingCircuitBreakerResult.No), result)
     }
 
     @Test
     fun `on exception will return failure`() = runBlocking {
-
         val testException = Exception()
         coEvery { exposureCircuitBreakerApi.getExposureCircuitBreakerResolution(approvalToken = "token") } throws testException
 
         val result = testSubject.invoke("token")
 
-        assertEquals(
-            Failure(testException),
-            result
-        )
+        assertEquals(Failure(testException), result)
     }
 }

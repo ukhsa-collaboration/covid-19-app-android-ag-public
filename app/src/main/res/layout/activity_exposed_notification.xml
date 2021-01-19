@@ -29,6 +29,7 @@
                 android:src="@drawable/ic_isolation_contact" />
 
             <TextView
+                android:id="@+id/isolationTitle"
                 style="@style/TitleIsolation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

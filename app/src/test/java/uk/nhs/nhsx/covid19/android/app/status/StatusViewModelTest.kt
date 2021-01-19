@@ -10,11 +10,16 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolationPaymentsButton
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
@@ -44,9 +49,6 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewS
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.ViewState
 import uk.nhs.nhsx.covid19.android.app.util.DistrictAreaStringProvider
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
 
 class StatusViewModelTest {
 
@@ -68,6 +70,7 @@ class StatusViewModelTest {
 
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
     private val showInformationScreenObserver = mockk<Observer<InformationScreen>>(relaxed = true)
+    private val analyticsEventProcessorMock = mockk<AnalyticsEventProcessor>(relaxed = true)
     private val clock = mockk<Clock>(relaxed = true)
 
     private val testSubject =
@@ -83,6 +86,7 @@ class StatusViewModelTest {
             lastReviewFlowStartedDateProvider,
             canClaimIsolationPayment,
             isolationPaymentTokenStateProvider,
+            analyticsEventProcessorMock,
             clock
         )
 
@@ -468,6 +472,12 @@ class StatusViewModelTest {
         testSubject.userInboxListener.invoke()
 
         verify { showInformationScreenObserver.onChanged(ExposureConsent) }
+    }
+
+    @Test
+    fun `when isolation payment button tapped selectedIsolationPaymentsButton analytics event added`() {
+        testSubject.optionIsolationPaymentClicked()
+        coVerify { analyticsEventProcessorMock.track(SelectedIsolationPaymentsButton) }
     }
 
     companion object {

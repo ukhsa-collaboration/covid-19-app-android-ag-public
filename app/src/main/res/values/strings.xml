@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright © 2020 NHSX. All rights reserved.
-  -->
-<resources xmlns:tools="http://schemas.android.com/tools">
+  --><resources xmlns:tools="http://schemas.android.com/tools">
     <string name="locale">en</string>
     <!-- URLs -->
     <string name="url_privacy_notice">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
@@ -59,7 +59,7 @@
     <string name="go_back">Go back</string>
     <string name="loading">Loading…</string>
     <string name="remove">Remove</string>
-    <string name="empty" translatable="false" />
+    <string name="empty" translatable="false"/>
     <string name="onboarding_exposure_notifications_description">The app will send you an alert if you have been in close contact with someone who has tested positive for the virus.\n\nTo enable contact tracing for this app you need to allow ‘Exposure Notifications’.\n\nIf you change your mind, you can change your permissions in settings at any time.</string>
     <string name="permission_title">Contact tracing</string>
     <string name="exposure_notifications_rationale_title">Contact tracing helps prevent the spread of coronavirus (COVID-19)</string>
@@ -243,9 +243,12 @@
     <string name="about_manage_my_data">Manage my data</string>
     <string name="postal_district">Postal district</string>
     <string name="about_local_authority">Local authority</string>
+    <string name="local_authority_edit">Edit your local authority</string>
     <string name="edit">Edit</string>
     <string name="title_last_test_result_taken">Last test result taken</string>
     <string name="title_venue_history">Venue history</string>
+    <string name="venue_history_edit">Edit your venue history</string>
+    <string name="venue_history_editing_done">Done editing venue history</string>
     <string name="title_symptoms">Symptoms onset date</string>
     <string name="edit_postcode_district_title">Edit postcode district</string>
     <string name="save">Save</string>
@@ -315,7 +318,7 @@
     <string name="update_app_title">Update this app</string>
     <string name="valid_auth_code_is_required">Your code wasn’t recognised. Please make sure you are using a valid code.</string>
     <string name="self_isolate_for">Self-isolate for</string>
-    <string name="isolate_after_corona_virus_symptoms">To understand how the app calculates self-isolation days, visit the FAQs.\n\nYour symptoms suggest you may have coronavirus. Please isolate yourself and anyone else in your household. That means staying at home with no visitors. You should also book a free test immediately. If you are under 18, you are advised to show this message to a trusted adult.\n\nPlease stay at home to keep yourself and others safe.</string>
+    <string name="isolate_after_corona_virus_symptoms">To understand how the app calculates self-isolation days, visit the link to the FAQs below.\n\nYour symptoms suggest you may have coronavirus. Please isolate yourself and anyone else in your household. That means staying at home with no visitors. You should also book a free test immediately. If you are under 18, you are advised to show this message to a trusted adult.\n\nPlease stay at home to keep yourself and others safe.</string>
     <string name="isolate_after_no_corona_virus_symptoms">To understand how the app calculates self-isolation days, visit the FAQs.\n\nYou don’t appear to have any coronavirus symptoms yet, but remember that it can take up to 14 days for symptoms to develop. If you are under 18, you are advised to show this message to a trusted adult.\n\nPlease stay at home to keep yourself and others safe. Only get a test if you have coronavirus symptoms.</string>
     <string name="you_need_to_self_isolate">You need to self-isolate</string>
     <string name="your_isolation_will_finish">Your self-isolation will finish on %1$s at 23:59</string>
@@ -407,7 +410,7 @@
     <string name="local_authority_link">Find your local authority</string>
     <string name="local_authority_error_no_authority_selected_title">Please select a local authority</string>
     <string name="local_authority_error_no_authority_selected_description">You need to choose a local authority to continue</string>
-    <string name="local_authority_error_authority_not_supported_title">You need to choose a local authority to continue</string>
+    <string name="local_authority_error_authority_not_supported_title">Local authority not supported.</string>
     <string name="local_authority_error_authority_not_supported_description">Unfortunately this app is not supported in your region. Please download the app for your region or country.</string>
     <string name="local_authority_information_title">Select your local authority</string>
     <string name="local_authority_information_description">Please select a local authority. This is so the app can give you more accurate information and guidance.</string>
@@ -421,4 +424,24 @@
     <string name="title_encounter">Encounter date</string>
     <string name="notification_text_potential_exposure_explanation">Don’t worry, we have assessed your risk and there is no need to take action at this time. Please continue to stay alert and follow the latest advice on social distancing.</string>
     <string name="notification_title_potential_exposure_explanation">COVID-19 Exposure Check Complete</string>
+    <string name="settings_title">Settings</string>
+    <string name="language">Language</string>
+    <string name="language_title">Language</string>
+    <string name="other_languages">Languages</string>
+    <string name="system_language">System Language</string>
+
+    <string name="default_language" translatable="false">Default</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
+    <string name="bengali">Bengali</string>
+    <string name="chinese">Chinese (Simplified)</string>
+    <string name="gujarati">Gujarati</string>
+    <string name="polish">Polish</string>
+    <string name="punjabi">Punjabi</string>
+    <string name="romanian">Romanian</string>
+    <string name="somali">Somali</string>
+    <string name="turkish">Turkish</string>
+    <string name="urdu">Urdu</string>
+    <string name="welsh">Welsh</string>
+    <string name="change_language_dialog">Change app language to %s?</string>
 </resources>

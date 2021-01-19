@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright © 2020 NHSX. All rights reserved.
-  -->
-<resources>
+  --><resources>
     <string name="locale">so</string>
     <plurals name="isolation_days_to_go">
         <item quantity="one">maalin ayaa ka hartay</item>
@@ -103,7 +103,7 @@
     <string name="high_risk_level_text_wls">Sare - Maamulka deegaankaaga, ama maamulka deegaanka ee jaarka ah, ayaa u isticmaalaya talaabooyin dheeri ah kuwaaso kaashanayaa kuwa u degsan England intiisa kale iyo Wales (tusaale ahaan xiritaan) si loo yareeyo faafitaanka cudurka sababta la xiriira heerarka sare ee caabuqa aagga. Qorshe waxqabad ah oo faahfaahsan ayaa jira isla markaana kheyraadka maxalliga ah waxaa lagu buuxinayaa taageero qaran.</string>
     <string name="how_to_scan_qr_code">Sida loo iskaan gareeyo koodhka rasmiga ah ee NHS QR ah</string>
     <string name="i_understand">Waan fahmay</string>
-    <string name="isolate_after_corona_virus_symptoms">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo su\'aalaha badana la isweydiiya.\n\nAstaamahaagu waxay muujinayaan inaad yeelan karto coronavirus. Fadlan go\'doomi naftaada iyo qof kasta oo kale oo qoyskaaga ka tirsan. Taas micnaheedu waa inaad guriga joogto adigoon aan lagu soo booqan. Sidoo kale waa inaad isla markiiba ballansataa shaybaar bilaash ah.\n\nFadlan guriga joog si aad u ilaaliso amaanka naftaada iyo dadka kaleba.</string>
+    <string name="isolate_after_corona_virus_symptoms">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo marrinka hoose ee su\'aalaha badana la isweydiiya.\n\nAstaamahaagu waxay muujinayaan inaad yeelan karto coronavirus. Fadlan go\'doomi naftaada iyo qof kasta oo kale oo qoyskaaga ka tirsan. Taas micnaheedu waa inaad guriga joogto adigoon aan lagu soo booqan. Sidoo kale waa inaad isla markiiba ballansataa shaybaar bilaash ah.\n\nFadlan guriga joog si aad u ilaaliso amaanka naftaada iyo dadka kaleba.</string>
     <string name="isolate_after_no_corona_virus_symptoms">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo su\'aalaha badana la isweydiiya.\n\nUma muuqato inaad weli qabtid wax astaamo ah cudurka \'coronavirus\', laakiin xusuusnow inay qaadan karto ilaa 14 maalmood in astaamaho ay ku soo baxaan. Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad tusto fariintan qof weyn oo aad ku kalsoon tahay.\n\nFadlan guriga joog si aad u ilaaliso amaanka naftaada iyo dadka kaleba. Kaliya baaritaanka ha lagaga qaado haddii aad leedahay astaamaha coronavirus.</string>
     <string name="isolation_until_date">ilaa %1$s markay tahay 23:59</string>
     <string name="link_test_result_enter_code_example">Tusaale: 7g8s3stn</string>
@@ -385,7 +385,7 @@
     <string name="test_result_positive_continue_self_isolate_explanation_2">Ha welwelin - dadka badankood astaamahoodu waa kuwo fudud. Si kastaba ha noqotee, haddii calaamadahaagu ka sii darayaan markaa waa inaad wacdaa 111 ama booqo nhs.uk si aad u hesho talo dheeraad ah.</string>
     <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
-    <string name="local_authority_error_authority_not_supported_title">Waxaad ubaahantahay inaad dooratid maamul deegaan si aad usii wado</string>
+    <string name="local_authority_error_authority_not_supported_title">Maamulka deegaanka lama taageerin.</string>
     <string name="local_authority_information_description">Fadlan xulo maamul deegaan ah. Tani waxay tahay si u app-ka ku siiyo macluumaad dheeri ah ee sax ah iyo hagitaan.</string>
     <string name="about_encounter_date">Taariikhda kulanka</string>
     <string name="about_my_data_date">Taariikh</string>
@@ -406,4 +406,25 @@
     <string name="status_option_isolation_payment">Taageero dhaqaale</string>
     <string name="title_exposure_notification">Ogeysiiska gaadhista</string>
     <string name="title_last_day_of_isolation">Maalintii ugu dambaysay ee is-go\'doominta</string>
+    <string name="arabic">Carabi</string>
+    <string name="bengali">Bengaali</string>
+    <string name="change_language_dialog">Luuqada app-ka ugu bedel %s?</string>
+    <string name="chinese">Shinees (Fudud)</string>
+    <string name="english">Ingiriis</string>
+    <string name="gujarati">Gujurati</string>
+    <string name="language">Luuqad</string>
+    <string name="language_title">Luuqad</string>
+    <string name="local_authority_edit">Tafatir</string>
+    <string name="other_languages">Luuqaddaha</string>
+    <string name="polish">Boolish</string>
+    <string name="punjabi">Bunjaabi</string>
+    <string name="romanian">Romaaniyaan</string>
+    <string name="settings_title">Isku-hagaajinta</string>
+    <string name="somali">Soomaali</string>
+    <string name="system_language">Luuqadda Nidaamka</string>
+    <string name="turkish">Turki</string>
+    <string name="urdu">Urdu</string>
+    <string name="venue_history_edit">Tafatir</string>
+    <string name="venue_history_editing_done">La sameeyay</string>
+    <string name="welsh">Welsh</string>
 </resources>

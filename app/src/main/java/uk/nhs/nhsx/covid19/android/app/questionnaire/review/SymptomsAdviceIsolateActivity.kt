@@ -66,6 +66,9 @@ class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_ad
         finish()
     }
 
+    private fun setAccessibilityTitle(title: String) =
+        setTitle(title)
+
     private fun setupPositiveSymptomsUi(daysUntilExpiration: Int) {
         exposureFaqsLinkTextView.visible()
 
@@ -78,6 +81,7 @@ class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_ad
             daysUntilExpiration
         )
         postDaysTextView.text = getString(R.string.state_and_book_a_test)
+        setAccessibilityTitle("${preDaysTextView.text} ${daysUntilExpirationTextView.text} ${ postDaysTextView.text }")
 
         stateInfoView.stateText = getString(R.string.state_index_info)
         stateInfoView.stateColor = getColor(R.color.amber)
@@ -109,6 +113,7 @@ class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_ad
         )
         postDaysTextView.gone()
 
+        setAccessibilityTitle("${preDaysTextView.text} ${daysUntilExpirationTextView.text}")
         stateInfoView.stateText = getString(R.string.you_do_not_appear_to_have_symptoms)
         stateInfoView.stateColor = getColor(R.color.nhs_button_green)
 

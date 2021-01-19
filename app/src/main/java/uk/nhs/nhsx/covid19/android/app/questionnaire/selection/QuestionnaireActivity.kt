@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_questionnaire.buttonTryAgain
@@ -99,7 +98,6 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
                         ReviewSymptomsActivity.EXTRA_QUESTIONS,
                         extraQuestions
                     )
-                }.apply {
                     putExtra(EXTRA_RISK_THRESHOLD, viewState.riskThreshold)
                     putExtra(
                         EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS,
@@ -118,7 +116,8 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
         if (resultCode == Activity.RESULT_OK && requestCode == CHANGE_QUESTION_REQUEST_CODE) {
             val question = data?.getParcelableExtra<Question>(QUESTION_TO_CHANGE_KEY)
 
-            val index = question?.let { questionnaireViewAdapter.currentList.indexOf(question) } ?: -1
+            val index =
+                question?.let { questionnaireViewAdapter.currentList.indexOf(question) } ?: -1
 
             if (index >= 0) {
                 (questionsRecyclerView.layoutManager as ScrollableLayoutManager).scrollToIndex(index)
@@ -162,9 +161,7 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
         errorStateContainer.gone()
         questionListContainer.gone()
 
-        val announcementText = loadingText.text
-        loadingContainer.announceForAccessibility(announcementText)
-        loadingContainer.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+        setAccessibilityTitle(loadingText.text.toString())
     }
 
     private fun showErrorState() {
@@ -172,22 +169,20 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
         loadingContainer.gone()
         questionListContainer.gone()
 
-        val announcementText = "${textErrorTitle.text}. ${textErrorMessage.text}"
-        errorStateContainer.announceForAccessibility(announcementText)
-        errorStateContainer.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+        setAccessibilityTitle("${textErrorTitle.text}. ${textErrorMessage.text}")
     }
 
     private fun showQuestionnaire(questions: List<Question>) {
-        val questionnaireWasVisible = questionListContainer.isVisible
+        setAccessibilityTitle(getString(R.string.select_symptoms))
 
         questionListContainer.visible()
         loadingContainer.gone()
         errorStateContainer.gone()
         submitQuestions(questions)
+    }
 
-        if (!questionnaireWasVisible) {
-            questionListContainer.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
-        }
+    private fun setAccessibilityTitle(text: String) {
+        title = text
     }
 
     private fun submitQuestions(questions: List<Question>) {

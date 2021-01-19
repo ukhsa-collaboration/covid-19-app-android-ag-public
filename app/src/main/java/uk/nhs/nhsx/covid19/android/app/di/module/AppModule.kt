@@ -9,13 +9,13 @@ import uk.nhs.covid19.config.SignatureKey
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationChecker
 import uk.nhs.nhsx.covid19.android.app.common.AppInfo
-import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWorker
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWorkerScheduler
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.packagemanager.PackageManager
 import uk.nhs.nhsx.covid19.android.app.permissions.PermissionsManager
+import uk.nhs.nhsx.covid19.android.app.qrcode.BarcodeDetectorBuilder
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.util.AndroidBase64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
@@ -34,11 +34,11 @@ class AppModule(
     private val encryptedSharedPreferences: SharedPreferences,
     private val encryptedFileInfo: EncryptedFileInfo,
     private val qrCodesSignatureKey: SignatureKey,
-    private val applicationLocaleProvider: ApplicationLocaleProvider,
     private val updateManager: UpdateManager,
     private val batteryOptimizationChecker: BatteryOptimizationChecker,
     private val permissionsManager: PermissionsManager,
     private val packageManager: PackageManager,
+    private val barcodeDetectorBuilder: BarcodeDetectorBuilder,
     private val clock: Clock
 ) {
     @Provides
@@ -95,13 +95,13 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun provideApplicationLocaleProvider(): ApplicationLocaleProvider =
-        applicationLocaleProvider
+    fun providePermissionsManager(): PermissionsManager =
+        permissionsManager
 
     @Provides
     @Singleton
-    fun providePermissionsManager(): PermissionsManager =
-        permissionsManager
+    fun provideBarcodeDetectorProvider(): BarcodeDetectorBuilder =
+        barcodeDetectorBuilder
 
     @Provides
     @Singleton

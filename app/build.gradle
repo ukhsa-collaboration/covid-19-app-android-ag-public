@@ -7,6 +7,7 @@ apply plugin: 'kotlin-kapt'
 apply from: "$rootDir/ktlint.gradle"
 apply plugin: 'com.google.protobuf'
 apply plugin: "com.github.triplet.play"
+apply plugin: 'com.kncept.junit.reporter'
 
 if (jacocoEnabled.toBoolean()) {
     apply from: rootProject.file("jacoco.gradle")
@@ -125,6 +126,10 @@ android {
     }
 }
 
+junitHtmlReport {
+    testResultsDir = 'outputs/androidTest-results/connected/flavors/scenariosDebugAndroidTest'
+}
+
 play {
     serviceAccountCredentials = file(System.getenv('PLAY_SERVICES_PUBLISH') ?: 'non-existing.json')
     defaultToAppBundles = true
@@ -207,6 +212,7 @@ dependencies {
 
     kaptAndroidTest 'com.google.dagger:dagger-compiler:2.27'
 
+    androidTestImplementation 'androidx.arch.core:core-testing:2.1.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test:rules:1.2.0'
     androidTestImplementation 'androidx.test:runner:1.2.0'

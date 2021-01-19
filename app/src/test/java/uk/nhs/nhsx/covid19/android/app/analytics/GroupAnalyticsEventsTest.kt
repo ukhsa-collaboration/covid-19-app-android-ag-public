@@ -2,6 +2,10 @@ package uk.nhs.nhsx.covid19.android.app.analytics
 
 import io.mockk.every
 import io.mockk.mockk
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneOffset
+import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -13,10 +17,13 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.UpdateNetworkS
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_ISOLATION_PAYMENTS_APPLICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CODE_CHECK_IN
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_ACTIVE_IPC_TOKEN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_CONTACT_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_ISOLATION_PAYMENTS_BUTTON
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.VOID_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
@@ -31,12 +38,9 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.util.toISOSecondsFormat
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneOffset
-import kotlin.test.assertEquals
 
 class GroupAnalyticsEventsTest {
+    private val expectedLogEventCount = 9
 
     private val analyticsLogStorage = mockk<AnalyticsLogStorage>(relaxed = true)
     private val metadataProvider = mockk<MetadataProvider>(relaxed = true)
@@ -50,6 +54,9 @@ class GroupAnalyticsEventsTest {
         GetAnalyticsWindow(fixedClock),
         fixedClock
     )
+
+    private val totalBackgroundTasksMetric =
+        Metrics().copy(totalBackgroundTasks = expectedLogEventCount)
 
     @Before
     fun setUp() {
@@ -99,7 +106,11 @@ class GroupAnalyticsEventsTest {
     fun `group events in two analytics windows`() =
         runBlocking {
             every { analyticsLogStorage.value } returns
-                listOf(currentWindowLogEntries, listOf(lastWindowLogEntry), listOf(oldWindowLogEntry)).flatten()
+                listOf(
+                    currentWindowLogEntries,
+                    listOf(lastWindowLogEntry),
+                    listOf(oldWindowLogEntry)
+                ).flatten()
 
             val actual = testSubject.invoke()
 
@@ -135,123 +146,222 @@ class GroupAnalyticsEventsTest {
 
     @Test
     fun `add canceledCheckIn for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(Event(CANCELED_CHECK_IN))
+        `test aggregation of analytics metrics`(
+            Event(CANCELED_CHECK_IN),
+            Metrics().copy(canceledCheckIn = expectedLogEventCount)
+        )
     }
 
     @Test
     fun `add checkedIn for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(Event(QR_CODE_CHECK_IN))
+        `test aggregation of analytics metrics`(
+            Event(QR_CODE_CHECK_IN),
+            Metrics().copy(checkedIn = expectedLogEventCount)
+        )
     }
 
     @Test
-    fun `add completedQuestionnaireAndStartedIsolation for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(Event(COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION))
-    }
+    fun `add completedQuestionnaireAndStartedIsolation for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                Event(COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION),
+                Metrics().copy(completedQuestionnaireAndStartedIsolation = expectedLogEventCount)
+            )
+        }
 
     @Test
-    fun `add completedQuestionnaireButDidNotStartIsolation for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(Event(COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION))
-    }
+    fun `add completedQuestionnaireButDidNotStartIsolation for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                Event(COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION),
+                Metrics().copy(completedQuestionnaireButDidNotStartIsolation = expectedLogEventCount)
+            )
+        }
 
     @Test
     fun `add cumulativeDownloadBytes for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(UpdateNetworkStats(downloadedBytes = 25, uploadedBytes = null))
+        `test aggregation of analytics metrics`(
+            UpdateNetworkStats(downloadedBytes = 25, uploadedBytes = null),
+            Metrics().copy(cumulativeDownloadBytes = 225)
+        )
     }
 
     @Test
     fun `add cumulativeUploadBytes for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(UpdateNetworkStats(downloadedBytes = null, uploadedBytes = 15))
+        `test aggregation of analytics metrics`(
+            UpdateNetworkStats(downloadedBytes = null, uploadedBytes = 15),
+            Metrics().copy(cumulativeUploadBytes = 135)
+        )
     }
 
     @Test
-    fun `add encounterDetectionPausedBackgroundTick for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            BackgroundTaskCompletion(
-                BackgroundTaskTicks(encounterDetectionPausedBackgroundTick = true)
+    fun `add encounterDetectionPausedBackgroundTick for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                BackgroundTaskCompletion(
+                    BackgroundTaskTicks(encounterDetectionPausedBackgroundTick = true)
+                ),
+                totalBackgroundTasksMetric.copy(encounterDetectionPausedBackgroundTick = expectedLogEventCount)
             )
-        )
-    }
+        }
+
+    @Test
+    fun `add haveActiveIpcTokenBackgroundTick for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                BackgroundTaskCompletion(
+                    BackgroundTaskTicks(haveActiveIpcTokenBackgroundTick = true)
+                ),
+                totalBackgroundTasksMetric.copy(haveActiveIpcTokenBackgroundTick = expectedLogEventCount)
+            )
+        }
 
     @Test
     fun `add hasHadRiskyContactBackgroundTick for events in same analytics window`() = runBlocking {
         `test aggregation of analytics metrics`(
             BackgroundTaskCompletion(
                 BackgroundTaskTicks(hasHadRiskyContactBackgroundTick = true)
-            )
+            ),
+            totalBackgroundTasksMetric.copy(hasHadRiskyContactBackgroundTick = expectedLogEventCount)
         )
     }
 
     @Test
-    fun `add hasSelfDiagnosedPositiveBackgroundTick for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            BackgroundTaskCompletion(
-                BackgroundTaskTicks(hasSelfDiagnosedPositiveBackgroundTick = true)
+    fun `add hasSelfDiagnosedPositiveBackgroundTick for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                BackgroundTaskCompletion(
+                    BackgroundTaskTicks(hasSelfDiagnosedPositiveBackgroundTick = true)
+                ),
+                totalBackgroundTasksMetric.copy(hasSelfDiagnosedPositiveBackgroundTick = 9)
             )
-        )
-    }
+        }
 
     @Test
     fun `add isIsolatingBackgroundTick for events in same analytics window`() = runBlocking {
         `test aggregation of analytics metrics`(
             BackgroundTaskCompletion(
                 BackgroundTaskTicks(isIsolatingBackgroundTick = true)
-            )
+            ),
+            totalBackgroundTasksMetric.copy(isIsolatingBackgroundTick = expectedLogEventCount)
         )
     }
 
     @Test
     fun `add receivedNegativeTestResult for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(Event(NEGATIVE_RESULT_RECEIVED))
+        `test aggregation of analytics metrics`(
+            Event(NEGATIVE_RESULT_RECEIVED),
+            Metrics().copy(receivedNegativeTestResult = expectedLogEventCount)
+        )
     }
 
     @Test
     fun `add receivedPositiveTestResult for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(Event(POSITIVE_RESULT_RECEIVED))
+        `test aggregation of analytics metrics`(
+            Event(POSITIVE_RESULT_RECEIVED),
+            Metrics().copy(receivedPositiveTestResult = expectedLogEventCount)
+        )
     }
 
     @Test
     fun `add receivedVoidTestResult for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(Event(VOID_RESULT_RECEIVED))
+        `test aggregation of analytics metrics`(
+            Event(VOID_RESULT_RECEIVED),
+            Metrics().copy(receivedVoidTestResult = expectedLogEventCount)
+        )
     }
 
     @Test
     fun `add receivedRiskyContactNotification for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(Event(RECEIVED_RISKY_CONTACT_NOTIFICATION))
+        `test aggregation of analytics metrics`(
+            Event(RECEIVED_RISKY_CONTACT_NOTIFICATION),
+            Metrics().copy(receivedRiskyContactNotification = 1)
+        )
     }
 
     @Test
     fun `add startedIsolation for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(Event(STARTED_ISOLATION))
+        `test aggregation of analytics metrics`(
+            Event(STARTED_ISOLATION),
+            Metrics().copy(startedIsolation = expectedLogEventCount)
+        )
     }
+
+    @Test
+    fun `add receivedVoidTestResultViaPolling for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                ResultReceived(VOID, INSIDE_APP),
+                Metrics().copy(receivedVoidTestResultViaPolling = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add receivedPositiveTestResultViaPolling for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                ResultReceived(POSITIVE, INSIDE_APP),
+                Metrics().copy(receivedPositiveTestResultViaPolling = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add receivedNegativeTestResultViaPolling for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                ResultReceived(NEGATIVE, INSIDE_APP),
+                Metrics().copy(receivedNegativeTestResultViaPolling = expectedLogEventCount)
+            )
+        }
 
     @Test
     fun `add receivedVoidTestResultEnteredManually for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(ResultReceived(VOID, INSIDE_APP))
+        `test aggregation of analytics metrics`(
+            ResultReceived(VOID, OUTSIDE_APP),
+            Metrics().copy(receivedVoidTestResultEnteredManually = expectedLogEventCount)
+        )
     }
 
     @Test
-    fun `add receivedPositiveTestResultEnteredManually for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(ResultReceived(POSITIVE, INSIDE_APP))
+    fun `add receivedPositiveTestResultEnteredManually for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                ResultReceived(POSITIVE, OUTSIDE_APP),
+                Metrics().copy(receivedPositiveTestResultEnteredManually = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add receivedNegativeTestResultEnteredManually for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                ResultReceived(NEGATIVE, OUTSIDE_APP),
+                Metrics().copy(receivedNegativeTestResultEnteredManually = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add receivedActiveIpcToken for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(RECEIVED_ACTIVE_IPC_TOKEN),
+            Metrics().copy(receivedActiveIpcToken = expectedLogEventCount)
+        )
     }
 
     @Test
-    fun `add receivedNegativeTestResultEnteredManually for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(ResultReceived(NEGATIVE, INSIDE_APP))
+    fun `add selectedIsolationPaymentsButton for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(SELECTED_ISOLATION_PAYMENTS_BUTTON),
+            Metrics().copy(selectedIsolationPaymentsButton = expectedLogEventCount)
+        )
     }
 
     @Test
-    fun `add receivedVoidTestResultViaPolling for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(ResultReceived(VOID, OUTSIDE_APP))
-    }
-
-    @Test
-    fun `add receivedPositiveTestResultViaPolling for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(ResultReceived(POSITIVE, OUTSIDE_APP))
-    }
-
-    @Test
-    fun `add receivedNegativeTestResultViaPolling for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(ResultReceived(NEGATIVE, OUTSIDE_APP))
+    fun `add launchedIsolationPaymentsApplication for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(LAUNCHED_ISOLATION_PAYMENTS_APPLICATION),
+            Metrics().copy(launchedIsolationPaymentsApplication = expectedLogEventCount)
+        )
     }
 
     @Test
@@ -259,7 +369,8 @@ class GroupAnalyticsEventsTest {
         `test aggregation of analytics metrics`(
             BackgroundTaskCompletion(
                 BackgroundTaskTicks(runningNormallyBackgroundTick = true)
-            )
+            ),
+            totalBackgroundTasksMetric.copy(runningNormallyBackgroundTick = expectedLogEventCount)
         )
     }
 
@@ -268,7 +379,8 @@ class GroupAnalyticsEventsTest {
         `test aggregation of analytics metrics`(
             BackgroundTaskCompletion(
                 BackgroundTaskTicks()
-            )
+            ),
+            totalBackgroundTasksMetric.copy()
         )
     }
 
@@ -277,7 +389,8 @@ class GroupAnalyticsEventsTest {
         `test aggregation of analytics metrics`(
             BackgroundTaskCompletion(
                 BackgroundTaskTicks(hasSelfDiagnosedBackgroundTick = true)
-            )
+            ),
+            totalBackgroundTasksMetric.copy(hasSelfDiagnosedBackgroundTick = expectedLogEventCount)
         )
     }
 
@@ -286,40 +399,50 @@ class GroupAnalyticsEventsTest {
         `test aggregation of analytics metrics`(
             BackgroundTaskCompletion(
                 BackgroundTaskTicks(hasTestedPositiveBackgroundTick = true)
-            )
+            ),
+            totalBackgroundTasksMetric.copy(hasTestedPositiveBackgroundTick = expectedLogEventCount)
         )
     }
 
     @Test
-    fun `add isIsolatingForSelfDiagnosedBackgroundTick for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            BackgroundTaskCompletion(
-                BackgroundTaskTicks(isIsolatingForSelfDiagnosedBackgroundTick = true)
+    fun `add isIsolatingForSelfDiagnosedBackgroundTick for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                BackgroundTaskCompletion(
+                    BackgroundTaskTicks(isIsolatingForSelfDiagnosedBackgroundTick = true)
+                ),
+                totalBackgroundTasksMetric.copy(isIsolatingForSelfDiagnosedBackgroundTick = expectedLogEventCount)
             )
-        )
-    }
+        }
 
     @Test
-    fun `add isIsolatingForTestedPositiveBackgroundTick for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            BackgroundTaskCompletion(
-                BackgroundTaskTicks(isIsolatingForTestedPositiveBackgroundTick = true)
+    fun `add isIsolatingForTestedPositiveBackgroundTick for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                BackgroundTaskCompletion(
+                    BackgroundTaskTicks(isIsolatingForTestedPositiveBackgroundTick = true)
+                ),
+                totalBackgroundTasksMetric.copy(isIsolatingForTestedPositiveBackgroundTick = expectedLogEventCount)
             )
-        )
-    }
+        }
 
     @Test
-    fun `add isIsolatingForHadRiskyContactBackgroundTick for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            BackgroundTaskCompletion(
-                BackgroundTaskTicks(
-                    isIsolatingForHadRiskyContactBackgroundTick = true
-                )
+    fun `add isIsolatingForHadRiskyContactBackgroundTick for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                BackgroundTaskCompletion(
+                    BackgroundTaskTicks(
+                        isIsolatingForHadRiskyContactBackgroundTick = true
+                    )
+                ),
+                totalBackgroundTasksMetric.copy(isIsolatingForHadRiskyContactBackgroundTick = expectedLogEventCount)
             )
-        )
-    }
+        }
 
-    private fun `test aggregation of analytics metrics`(analyticsLogItem: AnalyticsLogItem) = runBlocking {
+    private fun `test aggregation of analytics metrics`(
+        analyticsLogItem: AnalyticsLogItem,
+        expectedMetrics: Metrics
+    ) = runBlocking {
 
         val logEntry1 = AnalyticsLogEntry(
             instant = Instant.parse("2020-09-28T00:00:00Z"),
@@ -338,7 +461,6 @@ class GroupAnalyticsEventsTest {
         every { analyticsLogStorage.value } returns analyticsLog
 
         val actual = testSubject.invoke()
-
         val analyticsLogAsMetrics = analyticsLog.toMetrics()
 
         val expected = Success(
@@ -354,8 +476,8 @@ class GroupAnalyticsEventsTest {
                 )
             )
         )
-
         assertEquals(expected, actual)
+        assertEquals(expectedMetrics, analyticsLogAsMetrics)
     }
 
     private val currentWindowLogEntries = listOf(
@@ -383,6 +505,7 @@ class GroupAnalyticsEventsTest {
         deviceModel = "null null",
         latestApplicationVersion = BuildConfig.VERSION_NAME_SHORT,
         operatingSystemVersion = "0",
-        postalDistrict = ""
+        postalDistrict = "",
+        localAuthority = ""
     )
 }

@@ -6,12 +6,16 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfoProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationTokensProvider
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.TokenInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
@@ -22,20 +26,16 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
 
 class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val testResultsProvider = mockk<TestResultsProvider>(relaxed = true)
-    private val isolationConfigurationProvider =
-        mockk<IsolationConfigurationProvider>(relaxed = true)
+    private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>(relaxed = true)
     private val isolationConfigurationApi = mockk<IsolationConfigurationApi>(relaxed = true)
-    private val exposureNotificationTokensProvider = mockk<ExposureNotificationTokensProvider>()
-    private val epidemiologyEventProvider = mockk<EpidemiologyEventProvider>()
+    private val exposureNotificationTokensProvider = mockk<ExposureNotificationTokensProvider>(relaxed = true)
+    private val exposureCircuitBreakerInfoProvider = mockk<ExposureCircuitBreakerInfoProvider>(relaxed = true)
+    private val epidemiologyEventProvider = mockk<EpidemiologyEventProvider>(relaxed = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-07-28T01:00:00.00Z"), ZoneOffset.UTC)
 
     private val testSubject = ClearOutdatedDataAndUpdateIsolationConfiguration(
@@ -44,6 +44,7 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
         isolationConfigurationProvider,
         isolationConfigurationApi,
         exposureNotificationTokensProvider,
+        exposureCircuitBreakerInfoProvider,
         epidemiologyEventProvider,
         fixedClock
     )
@@ -73,6 +74,7 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
         val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
         verify { testResultsProvider.clearBefore(expectedDate) }
         verify(exactly = 0) { isolationStateMachine.clearPreviousIsolation() }
+        verify { exposureNotificationTokensProvider.clear() }
     }
 
     @Test
@@ -83,6 +85,7 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
         verify(exactly = 0) { testResultsProvider.clearBefore(any()) }
         verify(exactly = 0) { isolationStateMachine.clearPreviousIsolation() }
+        verify { exposureNotificationTokensProvider.clear() }
     }
 
     @Test
@@ -93,6 +96,7 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
         verify(exactly = 0) { testResultsProvider.clearBefore(any()) }
         verify(exactly = 0) { isolationStateMachine.clearPreviousIsolation() }
+        verify { exposureNotificationTokensProvider.clear() }
     }
 
     @Test
@@ -104,6 +108,7 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
         verify { testResultsProvider.clearBefore(state.previousIsolation!!.expiryDate) }
         verify { isolationStateMachine.clearPreviousIsolation() }
+        verify { exposureNotificationTokensProvider.clear() }
     }
 
     @Test
@@ -112,11 +117,12 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
             FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.STORE_EXPOSURE_WINDOWS)
 
             every { isolationStateMachine.readState() } returns Default()
-            every { exposureNotificationTokensProvider.tokens } returns emptyList()
+            every { exposureCircuitBreakerInfoProvider.info.isEmpty() } returns true
 
             testSubject()
 
             verify { epidemiologyEventProvider.clear() }
+            verify { exposureNotificationTokensProvider.clear() }
         }
 
     @Test
@@ -125,13 +131,12 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
             FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.STORE_EXPOSURE_WINDOWS)
 
             every { isolationStateMachine.readState() } returns Default()
-            every { exposureNotificationTokensProvider.tokens } returns listOf(
-                TokenInfo("token1", startedAt = Instant.now().toEpochMilli())
-            )
+            every { exposureCircuitBreakerInfoProvider.info.isEmpty() } returns false
 
             testSubject()
 
             verify(exactly = 0) { epidemiologyEventProvider.clear() }
+            verify { exposureNotificationTokensProvider.clear() }
         }
 
     @Test
@@ -143,6 +148,7 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
         testSubject()
 
         verify(exactly = 0) { epidemiologyEventProvider.clear() }
+        verify { exposureNotificationTokensProvider.clear() }
     }
 
     @Test
@@ -151,11 +157,12 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
             FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.STORE_EXPOSURE_WINDOWS)
 
             every { isolationStateMachine.readState() } returns Default()
-            every { exposureNotificationTokensProvider.tokens } returns emptyList()
+            every { exposureCircuitBreakerInfoProvider.info.isEmpty() } returns true
 
             testSubject()
 
             verify(exactly = 0) { epidemiologyEventProvider.clear() }
+            verify { exposureNotificationTokensProvider.clear() }
         }
 
     @Test
@@ -163,6 +170,7 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
         testSubject()
 
         verify { isolationConfigurationProvider.durationDays = DurationDays() }
+        verify { exposureNotificationTokensProvider.clear() }
     }
 
     private fun getIndexCase(isOutdated: Boolean): Isolation =

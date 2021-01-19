@@ -63,7 +63,7 @@
     <string name="questionnaire_discard_symptoms_dialog_message">Seçilen tüm belirtilerin seçimi kaldırılacaktır.</string>
     <string name="title_no_coronavirus_symptoms">Koronavirüsle enfekte olmuş olma olasılığınız düşük</string>
     <string name="you_do_not_appear_to_have_symptoms">Koronavirüs belirtileri göstermediğiniz görünüyor</string>
-    <string name="state_and_book_a_test">ve bir test yaptırın</string>
+    <string name="state_and_book_a_test">karantinaya alın ve bir test yaptırın</string>
     <string name="state_index_info">Koronavirüsle enfekte olmuş olabilirsiniz</string>
     <string name="you_need_to_self_isolate">Kendinizi karantinaya almalısınız</string>
     <string name="test_result_positive_no_self_isolation_subtitle">Her ne kadar test sonucunuz pozitif olsa da kişisel karantina süreniz sona erdi</string>
@@ -150,7 +150,7 @@
     <string name="close">Kapat</string>
     <string name="go_back">Geri git</string>
     <string name="remove">Kaldır</string>
-    <string name="empty" translatable="false" />
+    <string name="empty" translatable="false"/>
     <string name="onboarding_exposure_notifications_description">Eğer koronavirüs testi pozitif çıkmış olan birisi ile yakın bir temasınız olmuş ise, uygulama size bir uyarı gönderecektir.\n\nBu uygulamada temas takip olanağını etkinleştirmek için şunlara izin vermeniz gerekmektedir: Maruz Kalma Bildirimleri.\n\nEğer fikrinizi değiştirirseniz, ayarlardan izinlerinizi istediğiniz zaman değiştirebilirsiniz.</string>
     <string name="privacy_notice">Gizlilik bildirimi</string>
     <string name="tablet_information_url">Tabletlerin kullanılmasıyla ilgili bilgiler</string>
@@ -250,7 +250,7 @@
     <string name="update_app_title">Uygulamayı güncelle</string>
     <string name="valid_auth_code_is_required">Kodunuz tanınamadı. Lütfen geçerli bir kod kullandığınızdan emin olun.</string>
     <string name="self_isolate_for">Kişisel karantina süresi</string>
-    <string name="isolate_after_corona_virus_symptoms">Uygulamanın kişisel karantina günlerini nasıl hesapladığını anlamak için SSS (sıkça sorulan sorular) bölümünü ziyaret edin\n\nBelirtileriniz koronavirüsle enfekte olmuş olabileceğinizi gösteriyor. Lütfen kendinizi ve hanenizde yaşayan diğer kişileri karantinaya alın. Başka bir deyişle evde kalmalı ve herhangi bir ziyaretçi kabul etmemelisiniz. Ayrıca, zaman geçirmeden ücretsiz test rezervasyonu yaptırmalısınız. Eğer 18 yaşın altındaysanız bu mesajı  güvendiğiniz bir yetişkine göstermeniz tavsiye edilir.\n\nKendinizi ve diğer kişileri güvende tutmak için lütfen evde kalın.</string>
+    <string name="isolate_after_corona_virus_symptoms">Uygulamanın kişisel karantina günlerini nasıl hesapladığını anlamak için aşağıdaki SSS (sıkça sorulan sorular) bağlantısını ziyaret edin.\n\nBelirtileriniz koronavirüsle enfekte olmuş olabileceğinizi gösteriyor. Lütfen kendinizi ve hanenizde yaşayan diğer kişileri karantinaya alın. Başka bir deyişle evde kalmalı ve herhangi bir ziyaretçi kabul etmemelisiniz. Ayrıca, zaman geçirmeden ücretsiz test rezervasyonu yaptırmalısınız. Eğer 18 yaşın altındaysanız bu mesajı  güvendiğiniz bir yetişkine göstermeniz tavsiye edilir.\n\nKendinizi ve diğer kişileri güvende tutmak için lütfen evde kalın.</string>
     <string name="isolate_after_no_corona_virus_symptoms">Uygulamanın kişisel karantina günlerini nasıl hesapladığını anlamak için SSS (sıkça sorulan sorular) bölümünü ziyaret edin\n\nHenüz koronavirüs belirtileri göstermediğiniz görünüyor ancak lütfen belirtilerin gelişmesinin 14 günü bulabileceğini dikkate alın. Eğer 18 yaşın altındaysanız bu mesajı  güvendiğiniz bir yetişkine göstermeniz tavsiye edilir.\n\nKendinizi ve diğer kişileri güvende tutmak için lütfen evde kalın. Sadece koronavirüs belirtileriniz varsa bir test yaptırın.</string>
     <string name="your_isolation_will_finish">Kişisel karantinanızın sona ereceği zaman: %1$s, 23:59</string>
     <string name="qr_code_unsupported_title">Üzgünüz, telefonunuz yerlere giriş yapılmasını desteklemiyor</string>
@@ -384,7 +384,7 @@
     <string name="test_result_positive_continue_self_isolate_explanation_2">Endişelenmeyin; çoğu kişi hastalığı hafif belirtilerle atlatmaktadır. Ancak belirtilerinizde kötüleşme olursa daha fazla tavsiye için 111 numarasını aramalı ya da nhs.uk adresini ziyaret etmelisiniz.</string>
     <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
-    <string name="local_authority_error_authority_not_supported_title">Devam etmek için bir yerel yönetim seçmeniz gerekiyor</string>
+    <string name="local_authority_error_authority_not_supported_title">Seçtiğiniz yerel yönetim desteklenmiyor.</string>
     <string name="local_authority_information_description">Lütfen bir yerel yönetim seçin. Bu, uygulamanın size daha doğru bilgi ve yönerge sağlaması içindir.</string>
     <string name="about_encounter_date">TEMAS TARİHİ</string>
     <string name="about_my_data_date">Tarih</string>
@@ -405,4 +405,25 @@
     <string name="status_option_isolation_payment">Finansal destek</string>
     <string name="title_exposure_notification">Maruz kalma bildirimi</string>
     <string name="title_last_day_of_isolation">Kişisel karantinanın son günü</string>
+    <string name="arabic">Arapça</string>
+    <string name="bengali">Bengalce</string>
+    <string name="change_language_dialog">Uygulamanın dilini %s olarak değiştir?</string>
+    <string name="chinese">Basitleştirilmiş Çince</string>
+    <string name="english">İngilizce</string>
+    <string name="gujarati">Guceratça</string>
+    <string name="language">Dil</string>
+    <string name="language_title">Dil</string>
+    <string name="local_authority_edit">Düzenle</string>
+    <string name="other_languages">Diller</string>
+    <string name="polish">Lehçe</string>
+    <string name="punjabi">Pencapça</string>
+    <string name="romanian">Romence</string>
+    <string name="settings_title">Ayarlar</string>
+    <string name="somali">Somalice</string>
+    <string name="system_language">Sistem Dili</string>
+    <string name="turkish">Türkçe</string>
+    <string name="urdu">Urduca</string>
+    <string name="venue_history_edit">Düzenle</string>
+    <string name="venue_history_editing_done">Bitti</string>
+    <string name="welsh">Galce</string>
 </resources>

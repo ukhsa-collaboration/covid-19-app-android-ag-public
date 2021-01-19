@@ -10,9 +10,15 @@ import androidx.lifecycle.Transformations.distinctUntilChanged
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.play.core.review.ReviewManagerFactory
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import javax.inject.Inject
 import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolationPaymentsButton
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowIsolationExpiration
@@ -37,10 +43,6 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewS
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
 import uk.nhs.nhsx.covid19.android.app.util.DistrictAreaStringProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import javax.inject.Inject
 
 class StatusViewModel @Inject constructor(
     private val postCodeProvider: PostCodeProvider,
@@ -54,6 +56,7 @@ class StatusViewModel @Inject constructor(
     private val lastAppRatingStartedDateProvider: LastAppRatingStartedDateProvider,
     private val canClaimIsolationPayment: CanClaimIsolationPayment,
     private val isolationPaymentTokenStateProvider: IsolationPaymentTokenStateProvider,
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
     private val clock: Clock
 ) : ViewModel() {
 
@@ -202,6 +205,12 @@ class StatusViewModel @Inject constructor(
                     showInformationScreen.postValue(ExposureConsent)
                 }
             }
+        }
+    }
+
+    fun optionIsolationPaymentClicked() {
+        viewModelScope.launch {
+            analyticsEventProcessor.track(SelectedIsolationPaymentsButton)
         }
     }
 

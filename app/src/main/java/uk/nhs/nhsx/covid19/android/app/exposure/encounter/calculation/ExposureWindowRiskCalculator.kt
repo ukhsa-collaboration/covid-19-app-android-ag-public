@@ -1,12 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation
 
 import com.google.android.gms.nearby.exposurenotification.ExposureWindow
-import com.jeroenmols.featureflag.framework.FeatureFlag.STORE_EXPOSURE_WINDOWS
-import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.SubmitEpidemiologyData
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.SubmitEpidemiologyData.ExposureWindowWithRisk
-import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType.EXPOSURE_WINDOW
 import uk.nhs.nhsx.covid19.android.app.remote.data.V2RiskCalculation
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.riskscore.RiskScoreCalculatorConfiguration
@@ -22,9 +17,7 @@ import uk.nhs.riskscore.ScanInstance as NHSScanInstance
 class ExposureWindowRiskCalculator @Inject constructor(
     private val clock: Clock,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
-    private val riskScoreCalculatorProvider: RiskScoreCalculatorProvider,
-    private val submitEpidemiologyData: SubmitEpidemiologyData,
-    private val epidemiologyEventProvider: EpidemiologyEventProvider
+    private val riskScoreCalculatorProvider: RiskScoreCalculatorProvider
 ) {
 
     operator fun invoke(
@@ -36,60 +29,46 @@ class ExposureWindowRiskCalculator @Inject constructor(
 
         return exposureWindows.map { window ->
             ExposureWindowWithRisk(
-                dayRisk = DayRisk(
-                    startOfDayMillis = window.dateMillisSinceEpoch,
-                    calculatedRisk = window.riskScore(config, riskCalculation),
-                    riskCalculationVersion = riskScoreCalculatorProvider.getRiskCalculationVersion()
-                ),
-                exposureWindow = window
+                exposureWindow = window,
+                startOfDayMillis = window.dateMillisSinceEpoch,
+                calculatedRisk = window.riskScore(config, riskCalculation),
+                riskCalculationVersion = riskScoreCalculatorProvider.getRiskCalculationVersion(),
+                matchedKeyCount = 1
             )
         }
-            .also { exposureWindowsWithRisk ->
-                exposureWindowsWithRisk.forEach {
-                    Timber.d("DayRisk: ${it.dayRisk} for window: ${it.exposureWindow} isRecentExposure: ${it.dayRisk.isRecentExposure()}")
-                }
+            .onEach {
+                Timber.d("ExposureWindowWithRisk: $it isRecentExposure: ${it.isRecentExposure()}")
             }
-            .filter { it.dayRisk.isRecentExposure() }
-            .also { exposureWindowsWithRisk ->
+            .filter { it.isRecentExposure() }
+            .also { listOfExposureWindowsWithRisk ->
                 logHighestRisk(
-                    exposureWindowsWithRisk.map { it.dayRisk },
+                    listOfExposureWindowsWithRisk.map { it.calculatedRisk },
                     riskCalculation
                 )
             }
-            .filter { it.dayRisk.calculatedRisk >= riskCalculation.riskThreshold }
-            .also { exposureWindowsWithRisk ->
-                exposureWindowsWithRisk
-                    .map { it.toEpidemiologyEvent() }
-                    .apply {
-                        storeEpidemiologyEvents(this)
-                        submitEpidemiologyEvents(this)
+            .filter { it.calculatedRisk >= riskCalculation.riskThreshold }
+            .let { listOfExposureWindowsWithRisk ->
+                listOfExposureWindowsWithRisk
+                    .maxWithOrNull(compareBy({ it.startOfDayMillis }, { it.calculatedRisk }))
+                    ?.let { exposureWindowWithRisk ->
+                        DayRisk(
+                            startOfDayMillis = exposureWindowWithRisk.startOfDayMillis,
+                            calculatedRisk = exposureWindowWithRisk.calculatedRisk,
+                            riskCalculationVersion = exposureWindowWithRisk.riskCalculationVersion,
+                            matchedKeyCount = exposureWindowWithRisk.matchedKeyCount,
+                            exposureWindows = listOfExposureWindowsWithRisk.map { it.exposureWindow }
+                        )
                     }
             }
-            .map { it.dayRisk }
-            .maxWith(compareBy({ it.startOfDayMillis }, { it.calculatedRisk }))
-    }
-
-    private fun storeEpidemiologyEvents(epidemiologyEvents: List<EpidemiologyEvent>) {
-        if (RuntimeBehavior.isFeatureEnabled(STORE_EXPOSURE_WINDOWS) && epidemiologyEvents.isNotEmpty()) {
-            epidemiologyEventProvider.add(epidemiologyEvents)
-        }
-    }
-
-    private fun submitEpidemiologyEvents(epidemiologyEvents: List<EpidemiologyEvent>) {
-        runCatching {
-            submitEpidemiologyData(epidemiologyEvents, epidemiologyEventType = EXPOSURE_WINDOW)
-        }.getOrElse {
-            Timber.e(it, "Epidemiology submission failed")
-        }
     }
 
     private fun logHighestRisk(
-        risks: List<DayRisk>,
+        calculatedRisks: List<Double>,
         riskCalculation: V2RiskCalculation
     ) {
-        risks.maxBy { it.calculatedRisk }
+        calculatedRisks.maxOrNull()
             ?.let {
-                Timber.d("Calculated risk: ${it.calculatedRisk} threshold: ${riskCalculation.riskThreshold}")
+                Timber.d("Calculated risk: $it threshold: ${riskCalculation.riskThreshold}")
             }
     }
 
@@ -108,7 +87,7 @@ class ExposureWindowRiskCalculator @Inject constructor(
         riskCalculation.infectiousnessWeights.getOrNull(infectiousness)
             ?: riskCalculation.infectiousnessWeights[0]
 
-    private fun DayRisk.isRecentExposure(): Boolean {
+    private fun ExposureWindowWithRisk.isRecentExposure(): Boolean {
         val isolationPeriodAgo = LocalDate.now(clock).minusDays(isolationLength()).atStartOfDay()
         return encounterDate()
             .isBefore(isolationPeriodAgo)
@@ -117,8 +96,16 @@ class ExposureWindowRiskCalculator @Inject constructor(
 
     private fun isolationLength() = isolationConfigurationProvider.durationDays.contactCase.toLong()
 
-    private fun DayRisk.encounterDate() =
+    private fun ExposureWindowWithRisk.encounterDate() =
         LocalDateTime.ofInstant(Instant.ofEpochMilli(startOfDayMillis), ZoneOffset.UTC)
+
+    data class ExposureWindowWithRisk(
+        val exposureWindow: ExposureWindow,
+        val startOfDayMillis: Long,
+        val calculatedRisk: Double,
+        val riskCalculationVersion: Int,
+        val matchedKeyCount: Int
+    )
 }
 
 private fun GoogleScanInstance.toNHSScanInstance() =

@@ -190,6 +190,10 @@ class DebugViewModel @Inject constructor(
             .setTransmissionRiskLevel(temporaryTracingKey.transmissionRiskLevel ?: 0)
             .build()
     }
+
+    fun sendExposureNotification() {
+        isolationStateMachine.processEvent(OnExposedNotification(Instant.now()))
+    }
 }
 
 sealed class ExportToFileResult {

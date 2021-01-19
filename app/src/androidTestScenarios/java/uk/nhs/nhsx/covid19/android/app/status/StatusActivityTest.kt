@@ -17,6 +17,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationReminderRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MoreAboutAppRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QrScannerRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SettingsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 import java.time.Instant
@@ -28,6 +29,7 @@ class StatusActivityTest : EspressoTest() {
     private val statusRobot = StatusRobot()
     private val moreAboutAppRobot = MoreAboutAppRobot()
     private val qrScannerRobot = QrScannerRobot()
+    private val settingsRobot = SettingsRobot()
     private val exposureNotificationReminderRobot = ExposureNotificationReminderRobot()
 
     @Test
@@ -50,6 +52,23 @@ class StatusActivityTest : EspressoTest() {
         statusRobot.clickVenueCheckIn()
 
         qrScannerRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    fun clickSettings_whenBackPressed_settingsButtonShouldBeEnabled() = notReported {
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        statusRobot.clickSettings()
+
+        settingsRobot.checkActivityIsDisplayed()
+
+        testAppContext.device.pressBack()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        statusRobot.checkSettingsIsEnabled()
     }
 
     @Test

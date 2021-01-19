@@ -14,14 +14,19 @@ import uk.nhs.nhsx.covid19.android.app.remote.IsolationPaymentApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationPaymentCountry
 import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationPaymentCreateTokenRequest
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedActiveIpcToken
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 
+@Singleton
 class CheckIsolationPaymentToken @Inject constructor(
     private val canClaimIsolationPayment: CanClaimIsolationPayment,
     private val isolationPaymentTokenStateProvider: IsolationPaymentTokenStateProvider,
     private val isolationPaymentApi: IsolationPaymentApi,
-    private val postalDistrictProviderWrapper: PostalDistrictProviderWrapper
+    private val postalDistrictProviderWrapper: PostalDistrictProviderWrapper,
+    private val analyticsEventProcessor: AnalyticsEventProcessor
 ) {
 
     private val mutex = Mutex()
@@ -49,6 +54,7 @@ class CheckIsolationPaymentToken @Inject constructor(
                 isolationPaymentTokenStateProvider.tokenState =
                     if (response.isEnabled) {
                         if (response.ipcToken != null) {
+                            analyticsEventProcessor.track(ReceivedActiveIpcToken)
                             Token(response.ipcToken)
                         } else {
                             Timber.e("Unexpected null token in response with isEnabled=true: $response")

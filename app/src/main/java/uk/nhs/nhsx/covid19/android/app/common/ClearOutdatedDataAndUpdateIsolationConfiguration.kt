@@ -2,10 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.common
 
 import com.jeroenmols.featureflag.framework.FeatureFlag.STORE_EXPOSURE_WINDOWS
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
-import java.time.Clock
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
-import javax.inject.Inject
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationTokensProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationConfigurationApi
@@ -13,6 +9,11 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
+import java.time.Clock
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+import javax.inject.Inject
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfoProvider
 
 class ClearOutdatedDataAndUpdateIsolationConfiguration @Inject constructor(
     private val isolationStateMachine: IsolationStateMachine,
@@ -20,6 +21,7 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration @Inject constructor(
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val isolationConfigurationApi: IsolationConfigurationApi,
     private val exposureNotificationTokensProvider: ExposureNotificationTokensProvider,
+    private val exposureCircuitBreakerInfoProvider: ExposureCircuitBreakerInfoProvider,
     private val epidemiologyEventProvider: EpidemiologyEventProvider,
     private val clock: Clock
 ) {
@@ -41,11 +43,13 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration @Inject constructor(
             }
 
             if (RuntimeBehavior.isFeatureEnabled(STORE_EXPOSURE_WINDOWS)) {
-                if (exposureNotificationTokensProvider.tokens.isEmpty()) {
+                if (exposureCircuitBreakerInfoProvider.info.isEmpty()) {
                     epidemiologyEventProvider.clear()
                 }
             }
         }
+
+        clearLegacyData()
     }
 
     private suspend fun updateIsolationConfiguration() {
@@ -53,6 +57,10 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration @Inject constructor(
             val response = isolationConfigurationApi.getIsolationConfiguration()
             isolationConfigurationProvider.durationDays = response.durationDays
         }
+    }
+
+    private fun clearLegacyData() {
+        exposureNotificationTokensProvider.clear()
     }
 
     private fun LocalDate.isMoreThanOrExactlyDaysAgo(days: Int) =

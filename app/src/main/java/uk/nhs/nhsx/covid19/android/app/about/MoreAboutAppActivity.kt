@@ -32,7 +32,7 @@ class MoreAboutAppActivity : BaseActivity(R.layout.activity_more_about_app) {
     }
 
     private fun getReleaseDate(): String {
-        return "12/2020" // TODO Implement it when get enough info
+        return "01/2021" // TODO Implement it when get enough info
     }
 
     private fun setupListeners() {

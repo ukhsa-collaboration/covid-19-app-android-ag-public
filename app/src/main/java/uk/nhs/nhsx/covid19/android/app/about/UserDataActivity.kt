@@ -130,6 +130,10 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
             updateVenueVisitsContainer(venueVisitsUiState)
         }
 
+        viewModel.venueVisitsEditModeChanged().observe(this) { isInEditMode ->
+            onVenueVisitsEditModeChanged(isInEditMode)
+        }
+
         viewModel.getReceivedTestResult().observe(this) { latestTestResult ->
             handleShowingLatestTestResult(latestTestResult)
         }
@@ -266,12 +270,23 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
 
             setUpVenueVisitsAdapter(venueVisitsUiState.venueVisits, venueVisitsUiState.isInEditMode)
 
-            editVenueVisits.text =
-                if (venueVisitsUiState.isInEditMode) getString(R.string.done_button_text) else getString(
-                    R.string.edit
-                )
+            editVenueVisits.text = getEditVenueVisitsText(venueVisitsUiState.isInEditMode)
+            editVenueVisits.contentDescription = getEditVenueVisitsContentDescription(venueVisitsUiState.isInEditMode)
         }
     }
+
+    private fun onVenueVisitsEditModeChanged(isInEditMode: Boolean) {
+        val announcement = getEditVenueVisitsContentDescription(isInEditMode)
+        editVenueVisits.announceForAccessibility(announcement)
+    }
+
+    private fun getEditVenueVisitsText(isInEditMode: Boolean): String =
+        if (isInEditMode) getString(R.string.done_button_text)
+        else getString(R.string.edit)
+
+    private fun getEditVenueVisitsContentDescription(isInEditMode: Boolean): String =
+        if (isInEditMode) getString(R.string.venue_history_editing_done)
+        else getString(R.string.venue_history_edit)
 
     private fun setUpVenueVisitsAdapter(venueVisits: List<VenueVisit>, showDeleteIcon: Boolean) {
         venueVisitsViewAdapter = VenueVisitsViewAdapter(venueVisits, showDeleteIcon) { position ->

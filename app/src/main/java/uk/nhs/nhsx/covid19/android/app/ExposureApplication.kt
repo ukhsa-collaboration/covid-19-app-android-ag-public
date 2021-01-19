@@ -19,7 +19,6 @@ import uk.nhs.covid19.config.qrCodesSignatureKey
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityListener
 import uk.nhs.nhsx.covid19.android.app.availability.GooglePlayUpdateProvider
 import uk.nhs.nhsx.covid19.android.app.battery.AndroidBatteryOptimizationChecker
-import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.di.ApplicationComponent
 import uk.nhs.nhsx.covid19.android.app.di.DaggerApplicationComponent
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
@@ -28,6 +27,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.GoogleExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.packagemanager.AndroidPackageManager
 import uk.nhs.nhsx.covid19.android.app.permissions.AndroidPermissionsManager
+import uk.nhs.nhsx.covid19.android.app.qrcode.AndroidBarcodeDetectorBuilder
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
@@ -100,8 +100,7 @@ open class ExposureApplication : Application(), Configuration.Provider {
 
     fun buildAndUseAppComponent(
         networkModule: NetworkModule,
-        exposureNotificationApi: ExposureNotificationApi = GoogleExposureNotificationApi(this),
-        languageCode: String? = null
+        exposureNotificationApi: ExposureNotificationApi = GoogleExposureNotificationApi(this)
     ) {
         val sharedPreferences = RetryMechanism.retryWithBackOff {
             EncryptionUtils.createEncryptedSharedPreferences(this)
@@ -120,11 +119,11 @@ open class ExposureApplication : Application(), Configuration.Provider {
                     sharedPreferences,
                     encryptedFile,
                     qrCodesSignatureKey,
-                    ApplicationLocaleProvider(sharedPreferences, languageCode),
                     GooglePlayUpdateProvider(this),
                     AndroidBatteryOptimizationChecker(this),
                     AndroidPermissionsManager(),
                     AndroidPackageManager(),
+                    AndroidBarcodeDetectorBuilder(this),
                     Clock.systemDefaultZone()
                 )
             )

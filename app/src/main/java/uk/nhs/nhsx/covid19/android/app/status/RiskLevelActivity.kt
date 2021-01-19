@@ -28,7 +28,7 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewS
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpOpensInBrowserWarning
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
@@ -41,10 +41,9 @@ class RiskLevelActivity : BaseActivity(R.layout.activity_risk_level) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
-        setNavigateUpToolbar(
+        setCloseToolbar(
             toolbar,
-            R.string.risk_level_title,
-            upIndicator = R.drawable.ic_close_white
+            R.string.risk_level_title
         )
 
         val riskyPostCodeViewState =

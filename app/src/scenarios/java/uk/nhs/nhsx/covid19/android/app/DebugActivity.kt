@@ -24,14 +24,20 @@ import kotlinx.android.synthetic.scenarios.activity_debug.scenario_main
 import kotlinx.android.synthetic.scenarios.activity_debug.screenButtonContainer
 import kotlinx.android.synthetic.scenarios.activity_debug.statusScreen
 import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.SupportedLanguage.DEFAULT
 import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
 import uk.nhs.nhsx.covid19.android.app.about.MoreAboutAppActivity
 import uk.nhs.nhsx.covid19.android.app.about.UserDataActivity
+import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
+import uk.nhs.nhsx.covid19.android.app.availability.UpdateRecommendedActivity
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationActivity
+import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.common.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableExposureNotificationsActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableLocationActivity
 import uk.nhs.nhsx.covid19.android.app.common.Translatable
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityActivity
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityInformationActivity
 import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.edgecases.TabletNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
@@ -39,8 +45,11 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActi
 import uk.nhs.nhsx.covid19.android.app.featureflag.testsettings.TestSettingsActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.DataAndPrivacyActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
+import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.WelcomeActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentActivity
+import uk.nhs.nhsx.covid19.android.app.payment.RedirectToIsolationPaymentWebsiteActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeHelpActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.CameraPermissionNotGranted
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.InvalidContent
@@ -50,31 +59,45 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResultActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoSymptomsActivity
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.GREEN
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
-import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
-import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentActivity
-import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity
-import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
-import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState
-import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
-import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
-import java.time.LocalDate
+import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.remote.data.Policy
 import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyData
 import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyIcon.MEETING_PEOPLE
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
+import uk.nhs.nhsx.covid19.android.app.settings.languages.LanguagesActivity
+import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
+import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
+import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState
+import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.SubmitKeysProgressActivity
+import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
+import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingProgressActivity
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
+import java.time.Instant
+import java.time.LocalDate
 
 class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
     private lateinit var debugSharedPreferences: SharedPreferences
 
+    private lateinit var appLocaleProvider: ApplicationLocaleProvider
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
+
+        appLocaleProvider = applicationContext.appComponent.provideApplicationLocaleProvider()
 
         setSupportActionBar(toolbar)
 
@@ -136,9 +159,8 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
         languageSpinner.adapter = languageAdapter
 
-        val previouslySelectedLanguage = debugSharedPreferences.getString(SELECTED_LANGUAGE, null)
-        val indexOfPreviouslySelectedLanguage =
-            supportedLanguages.map { it.code }.indexOf(previouslySelectedLanguage)
+        val previouslySelectedLanguage = appLocaleProvider.getUserSelectedLanguage() ?: DEFAULT
+        val indexOfPreviouslySelectedLanguage = supportedLanguages.indexOf(previouslySelectedLanguage)
         languageSpinner.setSelection(indexOfPreviouslySelectedLanguage)
 
         languageSpinner.onItemSelectedListener = object : OnItemSelectedListener {
@@ -152,10 +174,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
                 id: Long
             ) {
                 val selectedLanguage = supportedLanguages[position]
-                debugSharedPreferences.edit()
-                    .putString(SELECTED_LANGUAGE, selectedLanguage.code).apply()
-
-                scenariosApp.updateDependencyGraph()
+                appLocaleProvider.languageCode = selectedLanguage.code
             }
         }
     }
@@ -244,6 +263,10 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             startActivity<NoSymptomsActivity>()
         }
 
+        addScreenButton("Questionnaire Review Symptoms") {
+            startActivity(reviewSymptomsIntent)
+        }
+
         addScreenButton("Questionnaire Isolation Advice") {
             SymptomsAdviceIsolateActivity.start(this, true, 14)
         }
@@ -268,8 +291,20 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             MoreAboutAppActivity.start(this)
         }
 
+        addScreenButton("Submit Keys Progress") {
+            startActivity(submitKeysIntent)
+        }
+
         addScreenButton("User Data") {
             UserDataActivity.start(this)
+        }
+
+        addScreenButton("Test Ordering Progress") {
+            startActivity<TestOrderingProgressActivity>()
+        }
+
+        addScreenButton("App Availability") {
+            startActivity<AppAvailabilityActivity>()
         }
 
         addScreenButton("Device not supported") {
@@ -281,7 +316,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
 
         addScreenButton("Share keys information") {
-            startActivity<ShareKeysInformationActivity>()
+            startActivity(shareKeysIntent)
         }
 
         val riskIndicatorWithEmptyPolicyData = RiskIndicator(
@@ -309,6 +344,31 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
                     riskLevelFromLocalAuthority = false
                 )
             )
+        }
+
+        addScreenButton("Update Recommended") {
+            startActivity<UpdateRecommendedActivity>()
+        }
+
+        addScreenButton("Policy Update") {
+            startActivity<PolicyUpdateActivity>()
+        }
+
+        addScreenButton("Local Authority") {
+            startActivity<LocalAuthorityActivity> {
+                putExtra(
+                    LocalAuthorityActivity.EXTRA_POST_CODE,
+                    "TD12"
+                )
+                putExtra(
+                    LocalAuthorityActivity.EXTRA_BACK_ALLOWED,
+                    false
+                )
+            }
+        }
+
+        addScreenButton("Local Authority Information") {
+            startActivity<LocalAuthorityInformationActivity>()
         }
 
         addScreenButton("Risk level from local authority") {
@@ -374,8 +434,21 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
                 Timber.d("Can't start market app")
             }
         }
+
         addScreenButton("Battery optimization") {
             startActivity<BatteryOptimizationActivity>()
+        }
+
+        addScreenButton("Redirect To Isolation Payment Web") {
+            startActivity<RedirectToIsolationPaymentWebsiteActivity>()
+        }
+
+        addScreenButton("Settings") {
+            startActivity<SettingsActivity>()
+        }
+
+        addScreenButton("Languages") {
+            startActivity<LanguagesActivity>()
         }
     }
 
@@ -404,10 +477,47 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
     }
 
+    private val shareKeysIntent: Intent by lazy {
+        Intent(this, ShareKeysInformationActivity::class.java).apply {
+            putExtra(
+                "EXTRA_TEST_RESULT",
+                ReceivedTestResult(
+                    diagnosisKeySubmissionToken = "token1",
+                    testEndDate = Instant.now(),
+                    acknowledgedDate = null,
+                    testResult = POSITIVE
+                )
+            )
+        }
+    }
+
+    private val submitKeysIntent: Intent by lazy {
+        Intent(this, SubmitKeysProgressActivity::class.java).apply {
+            putParcelableArrayListExtra("EXPOSURE_KEYS_TO_SUBMIT", ArrayList<NHSTemporaryExposureKey>())
+            putExtra("SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN", "test")
+        }
+    }
+
+    private val reviewSymptomsIntent: Intent by lazy {
+        val strings = Translatable(mapOf("en" to "Test"))
+        Intent(this, ReviewSymptomsActivity::class.java).apply {
+            putParcelableArrayListExtra(
+                ReviewSymptomsActivity.EXTRA_QUESTIONS,
+                ArrayList<Question>().apply {
+                    add(
+                        Question(
+                            symptom = Symptom(strings, strings, 0.0),
+                            isChecked = true
+                        )
+                    )
+                }
+            )
+        }
+    }
+
     companion object {
         const val DEBUG_PREFERENCES_NAME = "debugPreferences"
         const val SELECTED_ENVIRONMENT = "SELECTED_ENVIRONMENT"
-        const val SELECTED_LANGUAGE = "SELECTED_LANGUAGE"
         const val USE_MOCKED_EXPOSURE_NOTIFICATION = "USE_MOCKED_EXPOSURE_NOTIFICATION"
 
         fun start(context: Context) = context.startActivity(getIntent(context))

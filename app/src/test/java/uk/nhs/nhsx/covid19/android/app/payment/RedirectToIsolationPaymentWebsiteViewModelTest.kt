@@ -3,12 +3,17 @@ package uk.nhs.nhsx.covid19.android.app.payment
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verifyOrder
+import java.time.Instant
+import java.time.LocalDate
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedIsolationPaymentsApplication
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
 import uk.nhs.nhsx.covid19.android.app.payment.RedirectToIsolationPaymentWebsiteViewModel.ViewState
@@ -18,8 +23,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationPaymentUrlResponse
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
-import java.time.Instant
-import java.time.LocalDate
 
 class RedirectToIsolationPaymentWebsiteViewModelTest {
 
@@ -30,11 +33,13 @@ class RedirectToIsolationPaymentWebsiteViewModelTest {
     private val isolationPaymentTokenStateProvider = mockk<IsolationPaymentTokenStateProvider>(relaxed = true)
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val loadPaymentUrlResultObserver = mockk<Observer<ViewState>>(relaxed = true)
+    private val analyticsEventProcessorMock = mockk<AnalyticsEventProcessor>(relaxed = true)
 
     private val testSubject = RedirectToIsolationPaymentWebsiteViewModel(
         requestIsolationPaymentUrl,
         isolationPaymentTokenStateProvider,
-        isolationStateMachine
+        isolationStateMachine,
+        analyticsEventProcessorMock
     )
 
     private val isolationStateContactCase = State.Isolation(
@@ -67,6 +72,7 @@ class RedirectToIsolationPaymentWebsiteViewModelTest {
 
         testSubject.loadIsolationPaymentUrl()
 
+        coVerify { analyticsEventProcessorMock.track(LaunchedIsolationPaymentsApplication) }
         verifyOrder {
             loadPaymentUrlResultObserver.onChanged(ViewState.Loading)
             loadPaymentUrlResultObserver.onChanged(

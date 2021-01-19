@@ -7,6 +7,7 @@ import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
 import androidx.core.view.children
 import androidx.lifecycle.observe
+import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_local_authority.buttonConfirmLink
 import kotlinx.android.synthetic.main.activity_local_authority.descriptionLocalAuthority
 import kotlinx.android.synthetic.main.activity_local_authority.errorView
@@ -25,9 +26,8 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityViewModel.E
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.setToolbar
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setToolbarNoNavigation
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
-import javax.inject.Inject
 
 class LocalAuthorityActivity : BaseActivity(R.layout.activity_local_authority) {
 
@@ -47,7 +47,7 @@ class LocalAuthorityActivity : BaseActivity(R.layout.activity_local_authority) {
                 upIndicator = R.drawable.ic_arrow_back_white
             )
         } else {
-            setToolbar(
+            setToolbarNoNavigation(
                 toolbar,
                 R.string.local_authority_title
             )

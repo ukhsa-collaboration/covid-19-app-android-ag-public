@@ -147,6 +147,16 @@
                     tools:visibility="visible" />
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
+                    android:id="@+id/optionSettings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    app:optionExternalLink="false"
+                    app:optionIcon="@drawable/ic_clarity_cog_line"
+                    app:optionIconBackgroundColor="@color/amber"
+                    app:optionText="@string/settings_title" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
                     android:id="@+id/optionAboutTheApp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

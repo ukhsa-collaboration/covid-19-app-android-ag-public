@@ -14,22 +14,19 @@ class LanguageAdapter(
     languages: List<SupportedLanguage>
 ) : ArrayAdapter<SupportedLanguage>(context, android.R.layout.simple_spinner_item, languages) {
 
-    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup) =
+        getLanguageView(position, convertView, parent)
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View =
+        getLanguageView(position, convertView, parent)
+
+    private fun getLanguageView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = convertView
             ?: LayoutInflater.from(context).inflate(layout.item_language, parent, false)
 
         val nameTextView = view.findViewById<TextView>(id.languageName)
-        nameTextView.text = getItem(position)?.displayName ?: ""
-
-        return view
-    }
-
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view = convertView
-            ?: LayoutInflater.from(context).inflate(layout.item_language, parent, false)
-
-        val nameTextView = view.findViewById<TextView>(id.languageName)
-        nameTextView.text = getItem(position)?.displayName ?: ""
+        val language: Int = getItem(position)?.languageName ?: R.string.empty
+        nameTextView.text = context.getString(language)
 
         return view
     }

@@ -2,23 +2,17 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers.base
 
 import android.app.Activity
 import android.content.Intent
-import androidx.test.espresso.EspressoException
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.WorkManager
-import com.schibsted.spain.barista.internal.failurehandler.BaristaException
-import org.awaitility.kotlin.await
-import org.awaitility.kotlin.ignoreExceptionsMatching
-import org.awaitility.kotlin.untilAsserted
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
-import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryRule
-import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testhelpers.AWAIT_AT_MOST_SECONDS
+import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
+import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryRule
 import uk.nhs.nhsx.covid19.android.app.util.ScreenshotTakingRule
-import java.util.concurrent.TimeUnit.SECONDS
 
 @RunWith(AndroidJUnit4::class)
 abstract class EspressoTest {
@@ -54,11 +48,7 @@ abstract class EspressoTest {
             .startActivitySync(intent)
     }
 
-    protected fun waitFor(idleTime: Long = AWAIT_AT_MOST_SECONDS, assertion: () -> Unit) {
-        await.atMost(
-            idleTime, SECONDS
-        ) ignoreExceptionsMatching {
-            it is BaristaException || it is EspressoException
-        } untilAsserted assertion
+    fun waitFor(idleTime: Long = AWAIT_AT_MOST_SECONDS, assertion: () -> Unit) {
+        uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor(idleTime, assertion)
     }
 }

@@ -30,6 +30,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QuestionnaireRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ReviewSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 import java.time.Instant
 import java.time.LocalDate
@@ -394,28 +395,28 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
     @Test
     fun successfullySelectSymptoms_ReviewAndCancel_NothingHappens() = notReported {
-        Intents.init()
-        val result = Instrumentation.ActivityResult(Activity.RESULT_CANCELED, Intent())
-        Intents.intending(IntentMatchers.hasComponent(ReviewSymptomsActivity::class.qualifiedName))
-            .respondWith(result)
+        runWithIntents {
+            val result = Instrumentation.ActivityResult(Activity.RESULT_CANCELED, Intent())
+            Intents.intending(IntentMatchers.hasComponent(ReviewSymptomsActivity::class.qualifiedName))
+                .respondWith(result)
 
-        startTestActivity<QuestionnaireActivity>()
-        questionnaireRobot.selectSymptomsAtPositions(0)
-        questionnaireRobot.reviewSymptoms()
-        Intents.release()
+            startTestActivity<QuestionnaireActivity>()
+            questionnaireRobot.selectSymptomsAtPositions(0)
+            questionnaireRobot.reviewSymptoms()
+        }
     }
 
     @Test
     fun successfullySelectSymptoms_ReviewAndDoNotReturnData_NothingHappens() = notReported {
-        Intents.init()
-        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, null)
-        Intents.intending(IntentMatchers.hasComponent(ReviewSymptomsActivity::class.qualifiedName))
-            .respondWith(result)
+        runWithIntents {
+            val result = Instrumentation.ActivityResult(Activity.RESULT_OK, null)
+            Intents.intending(IntentMatchers.hasComponent(ReviewSymptomsActivity::class.qualifiedName))
+                .respondWith(result)
 
-        startTestActivity<QuestionnaireActivity>()
-        questionnaireRobot.selectSymptomsAtPositions(0)
-        questionnaireRobot.reviewSymptoms()
-        Intents.release()
+            startTestActivity<QuestionnaireActivity>()
+            questionnaireRobot.selectSymptomsAtPositions(0)
+            questionnaireRobot.reviewSymptoms()
+        }
     }
 
     @Test

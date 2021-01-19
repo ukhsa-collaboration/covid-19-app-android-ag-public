@@ -7,10 +7,13 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.UpdateNetworkS
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_ISOLATION_PAYMENTS_APPLICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CODE_CHECK_IN
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_ACTIVE_IPC_TOKEN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_CONTACT_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_ISOLATION_PAYMENTS_BUTTON
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.VOID_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
@@ -46,6 +49,9 @@ private fun Metrics.updateRegularEvent(eventType: RegularAnalyticsEventType) {
         VOID_RESULT_RECEIVED -> receivedVoidTestResult++
         RECEIVED_RISKY_CONTACT_NOTIFICATION -> receivedRiskyContactNotification = 1
         STARTED_ISOLATION -> startedIsolation++
+        RECEIVED_ACTIVE_IPC_TOKEN -> receivedActiveIpcToken++
+        SELECTED_ISOLATION_PAYMENTS_BUTTON -> selectedIsolationPaymentsButton++
+        LAUNCHED_ISOLATION_PAYMENTS_APPLICATION -> launchedIsolationPaymentsApplication++
     }
 }
 
@@ -77,6 +83,7 @@ private fun Metrics.updateBackgroundTaskTicks(backgroundTaskTicks: BackgroundTas
     hasSelfDiagnosedBackgroundTick += backgroundTaskTicks.hasSelfDiagnosedBackgroundTick.toInt()
     hasTestedPositiveBackgroundTick += backgroundTaskTicks.hasTestedPositiveBackgroundTick.toInt()
     encounterDetectionPausedBackgroundTick += backgroundTaskTicks.encounterDetectionPausedBackgroundTick.toInt()
+    haveActiveIpcTokenBackgroundTick += backgroundTaskTicks.haveActiveIpcTokenBackgroundTick.toInt()
 }
 
 private infix fun Int?.plus(other: Int?): Int? =

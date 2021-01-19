@@ -51,7 +51,7 @@ class SubmitEpidemiologyDataTest {
         )
     )
 
-    private val metaData = Metadata("", "", "", "")
+    private val metaData = Metadata("", "", "", "", "")
 
     private val epidemiologyRequest = EpidemiologyRequest(
         metadata = metaData,

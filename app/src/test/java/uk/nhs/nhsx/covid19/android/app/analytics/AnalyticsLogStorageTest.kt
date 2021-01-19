@@ -4,6 +4,8 @@ import com.squareup.moshi.Moshi
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.Instant
+import kotlin.test.assertEquals
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.BackgroundTaskCompletion
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.Event
@@ -14,8 +16,6 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CO
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.OUTSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
-import java.time.Instant
-import kotlin.test.assertEquals
 
 class AnalyticsLogStorageTest {
 
@@ -88,9 +88,10 @@ class AnalyticsLogStorageTest {
         )
 
         val updatedAnalyticsLogEntriesJson =
-            """[{"instant":"2020-11-18T13:29:56.385Z","logItem":{"type":"BackgroundTaskCompletion","backgroundTaskTicks":{"runningNormallyBackgroundTick":true,"isIsolatingBackgroundTick":true,"isIsolatingForHadRiskyContactBackgroundTick":true,"hasSelfDiagnosedPositiveBackgroundTick":false,"isIsolatingForSelfDiagnosedBackgroundTick":false,"isIsolatingForTestedPositiveBackgroundTick":false,"hasHadRiskyContactBackgroundTick":false,"hasSelfDiagnosedBackgroundTick":false,"hasTestedPositiveBackgroundTick":false,"encounterDetectionPausedBackgroundTick":false}}},{"instant":"2020-11-18T13:33:32.123Z","logItem":{"type":"UpdateNetworkStats","downloadedBytes":25,"uploadedBytes":15}}]"""
-
-        verify { analyticsLogEntryJsonStorage setProperty "value" value eq(updatedAnalyticsLogEntriesJson) }
+            """[{"instant":"2020-11-18T13:29:56.385Z","logItem":{"type":"BackgroundTaskCompletion","backgroundTaskTicks":{"runningNormallyBackgroundTick":true,"isIsolatingBackgroundTick":true,"isIsolatingForHadRiskyContactBackgroundTick":true,"hasSelfDiagnosedPositiveBackgroundTick":false,"isIsolatingForSelfDiagnosedBackgroundTick":false,"isIsolatingForTestedPositiveBackgroundTick":false,"hasHadRiskyContactBackgroundTick":false,"hasSelfDiagnosedBackgroundTick":false,"hasTestedPositiveBackgroundTick":false,"encounterDetectionPausedBackgroundTick":false,"haveActiveIpcTokenBackgroundTick":false}}},{"instant":"2020-11-18T13:33:32.123Z","logItem":{"type":"UpdateNetworkStats","downloadedBytes":25,"uploadedBytes":15}}]"""
+        verify {
+            analyticsLogEntryJsonStorage setProperty "value" value eq(updatedAnalyticsLogEntriesJson)
+        }
     }
 
     @Test
@@ -131,5 +132,5 @@ class AnalyticsLogStorageTest {
     )
 
     private val analyticsLogEntriesJson =
-        """[{"instant":"2020-11-18T13:29:56.385Z","logItem":{"type":"BackgroundTaskCompletion","backgroundTaskTicks":{"runningNormallyBackgroundTick":true,"isIsolatingBackgroundTick":true,"isIsolatingForHadRiskyContactBackgroundTick":true,"hasSelfDiagnosedPositiveBackgroundTick":false,"isIsolatingForSelfDiagnosedBackgroundTick":false,"isIsolatingForTestedPositiveBackgroundTick":false,"hasHadRiskyContactBackgroundTick":false,"hasSelfDiagnosedBackgroundTick":false,"hasTestedPositiveBackgroundTick":false,"encounterDetectionPausedBackgroundTick":false}}},{"instant":"2020-11-18T13:30:15.120Z","logItem":{"type":"Event","eventType":"QR_CODE_CHECK_IN"}},{"instant":"2020-11-18T13:31:32.527Z","logItem":{"type":"ResultReceived","result":"POSITIVE","testOrderType":"OUTSIDE_APP"}},{"instant":"2020-11-18T13:33:32.123Z","logItem":{"type":"UpdateNetworkStats","downloadedBytes":25,"uploadedBytes":15}}]"""
+        """[{"instant":"2020-11-18T13:29:56.385Z","logItem":{"type":"BackgroundTaskCompletion","backgroundTaskTicks":{"runningNormallyBackgroundTick":true,"isIsolatingBackgroundTick":true,"isIsolatingForHadRiskyContactBackgroundTick":true,"hasSelfDiagnosedPositiveBackgroundTick":false,"isIsolatingForSelfDiagnosedBackgroundTick":false,"isIsolatingForTestedPositiveBackgroundTick":false,"hasHadRiskyContactBackgroundTick":false,"hasSelfDiagnosedBackgroundTick":false,"hasTestedPositiveBackgroundTick":false,"encounterDetectionPausedBackgroundTick":false,"haveActiveIpcTokenBackgroundTick":false}}},{"instant":"2020-11-18T13:30:15.120Z","logItem":{"type":"Event","eventType":"QR_CODE_CHECK_IN"}},{"instant":"2020-11-18T13:31:32.527Z","logItem":{"type":"ResultReceived","result":"POSITIVE","testOrderType":"OUTSIDE_APP"}},{"instant":"2020-11-18T13:33:32.123Z","logItem":{"type":"UpdateNetworkStats","downloadedBytes":25,"uploadedBytes":15}}]"""
 }

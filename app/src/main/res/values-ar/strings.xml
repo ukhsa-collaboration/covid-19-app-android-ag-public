@@ -166,8 +166,8 @@
     <string name="close">إغلاق</string>
     <string name="go_back">رجوع</string>
     <string name="remove">تأكيد</string>
-    <string name="empty" translatable="false" />
-    <string name="onboarding_exposure_notifications_description">سيُرسل التطبيق تحذيرًا إليك في حالة التواصل الوثيق مع شخصٍ ما سجَّل نتيجة إيجابية في اختبار الكشف عن الإصابة بالفيروس.\n\n لتمكين خاصية \"تتبع الاتصال\" في هذا التطبيق، يجب عليك السماح باستلام \"إشعارات التعرّض\".\n\n في حال تغيير قرارك، يمكنك تغيير الأذونات الممنوحة في الإعدادات متى شئت.</string>
+    <string name="empty" translatable="false"/>
+    <string name="onboarding_exposure_notifications_description">سيُرسل التطبيق تحذيرًا إليك في حالة التواصل الوثيق مع شخصٍ ما سجَّل نتيجة إيجابية في اختبار الكشف عن الإصابة بالفيروس.\n\nلتمكين خاصية \"تتبع الاتصال\" في هذا التطبيق، يجب عليك السماح باستلام \"إشعارات التعرّض\".\n\nفي حال تغيير قرارك، يمكنك تغيير الأذونات الممنوحة في الإعدادات متى شئت.</string>
     <string name="privacy_notice">إشعار الخصوصية</string>
     <string name="tablet_information_url">معلومات حول استخدام الحواسب اللوحية</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
@@ -224,7 +224,7 @@
     <string name="questionnaire_error_description">قبل المحاولة مرة أخرى، يرجى التحقق من تشغيلك لإعدادات البيانات المتنقلة في هاتفك والتحقق من وجود شبكة واي فاي (حال استخدامها) والتأكد من إيقاف تشغيل وضع الطيران.</string>
     <string name="questionnaire_no_symptoms">لا أعاني من أيٍّ من هذه الأعراض</string>
     <string name="notification_text_risky_venue">انقر للاطلاع على التفاصيل</string>
-    <string name="message_no_coronavirus_symptoms">في حال ظهور أيٍّ من هذه الأعراض لديك، يرجى الإبلاغ عنها في التطبيق وحجز اختبار مجاني.اعمل اختبار فيروس الكورونا فقط إذا كان عندك أعراض كورونا\n\nللحصول على المزيد من النصائح، التواصل مع:</string>
+    <string name="message_no_coronavirus_symptoms">في حال ظهور أيٍّ من هذه الأعراض لديك، يرجى الإبلاغ عنها في التطبيق وحجز اختبار مجاني.قم بإجراء اختبار الكشف عن فيروس كورونا إذا كنت تعاني من أعراض الفيروس فقط.\n\nللحصول على المزيد من النصائح، التواصل مع:v</string>
     <string name="questionnaire_change_announcement">تغيير العَرَض %1$s</string>
     <string name="state_index_take_coronavirus_test">إجراء اختبار فيروس كورونا مجانًا</string>
     <string name="state_test_negative_info">نتيجة اختبار الكشف عن إصابتك بفيروس كورونا سلبية إلا أنه يُحتمل ظهور الأعراض لديك؛ ولذا يجب عليك الاستمرار في العزل الذاتي لنفسك</string>
@@ -266,14 +266,14 @@
     <string name="update_app_title">تحديث التطبيق</string>
     <string name="valid_auth_code_is_required">لم يتم التعرّف على رمزك. يرجى التأكد من استخدامك لرمزٍ صالحٍ.</string>
     <string name="self_isolate_for">تطبيق العزل الذاتي لمدة</string>
-    <string name="isolate_after_corona_virus_symptoms">لفهم الطريقة التي يحسب بها التطبيق عدد أيام العزل الذاتي، يُرجى زيارة الأسئلة الشائعة.\n\nتشير الأعراض التي لديك إلى احتمال إصابتك بفيروس كورونا. ينبغي لك تطبيق العزل الذاتي على نفسك وجميع الأشخاص الآخرين الموجودين في منزلك، مما يعني بقاءك في المنزل وعدم استقبال أي زائرين. ينبغي لك أيضًا حجز موعدٍ لإجراء اختبار مجاني على الفور.  إذا كان عمرك يقل عن 18 عامًا، فإننا نوصيك بعرض هذه الرسالة على شخصٍ بالغٍ محل ثقة لديك.\n\nينبغي لك البقاء في المنزل للحفاظ على سلامتك وسلامة الأشخاص</string>
-    <string name="isolate_after_no_corona_virus_symptoms">لفهم الطريقة التي يحسب بها التطبيق عدد أيام العزل الذاتي، يُرجى زيارة الأسئلة الشائعة.\n\nلا يبدو لديك أعراض الإصابة بفيروس كورونا حتى الآن، ولكن تذكر أن بعض الأعراض قد تستغرق مدة تصل إلى 14 يومًا قبل ظهورها. إذا كان عمرك يقل عن 18 عامًا، فإننا نوصيك بعرض هذه الرسالة على شخصٍ بالغٍ محل ثقة لديك.\n\nينبغي لك البقاء في المنزل للحفاظ على سلامتك وسلامة الأشخاص الآخرين.اعمل اختبار فيروس الكورونا فقط إذا كان عندك أعراض كورونا</string>
+    <string name="isolate_after_corona_virus_symptoms">لفهم الطريقة التي يحسب بها التطبيق عدد أيام العزل الذاتي، يُرجى زيارة الرابط أدناه المؤدي إلى الأسئلة الشائعة.\n\nتشير الأعراض التي لديك إلى احتمال إصابتك بفيروس كورونا. ينبغي لك تطبيق العزل الذاتي على نفسك وجميع الأشخاص الآخرين الموجودين في منزلك، مما يعني بقاءك في المنزل وعدم استقبال أي زائرين. ينبغي لك أيضًا حجز موعدٍ لإجراء اختبار مجاني على الفور.  إذا كان عمرك يقل عن 18 عامًا، فإننا نوصيك بعرض هذه الرسالة على شخصٍ بالغٍ محل ثقة لديك.\n\nينبغي لك البقاء في المنزل للحفاظ على سلامتك وسلامة الأشخاص</string>
+    <string name="isolate_after_no_corona_virus_symptoms">لفهم الطريقة التي يحسب بها التطبيق عدد أيام العزل الذاتي، يُرجى زيارة الأسئلة الشائعة.\n\nلا يبدو لديك أعراض الإصابة بفيروس كورونا حتى الآن، ولكن تذكر أن بعض الأعراض قد تستغرق مدة تصل إلى 14 يومًا قبل ظهورها. إذا كان عمرك يقل عن 18 عامًا، فإننا نوصيك بعرض هذه الرسالة على شخصٍ بالغٍ محل ثقة لديك.\n\nينبغي لك البقاء في المنزل للحفاظ على سلامتك وسلامة الأشخاص الآخرين.قم بإجراء اختبار الكشف عن فيروس كورونا إذا كنت تعاني من أعراض الفيروس فقط.</string>
     <string name="your_isolation_will_finish">ستنتهي مدة العزل الذاتي لك في %1$s في تمام الساعة 23:59</string>
     <string name="qr_code_unsupported_title">للأسف، لا يدعم هاتفك خاصية تسجيل الدخول إلى الأماكن</string>
     <string name="qr_code_scanning">المسح الضوئي لرمز رسمي من رموز NHS QR قيد التنفيذ</string>
     <string name="i_understand">أفهم ذلك</string>
     <string name="exposure_notification_hint">لقد اكتشف التطبيق أنك كنت على اتصالٍ مع أحد الأشخاص المُصابين بفيروس كورونا. ينبغي لك البقاء في المنزل وعزل نفسك عزلاً ذاتيًا للمحافظة على سلامتك وسلامة الأشخاص الآخرين.</string>
-    <string name="exposure_notification_recommendation">لفهم الطريقة التي يحسب بها التطبيق عدد أيام العزل الذاتي، يُرجى زيارة الرابط أدناه المؤدي إلى الأسئلة الشائعة.\n\nأنت مُعرَّضٌ بدرجة كبيرة للإصابة بالفيروس والمساعدة في انتشاره حتى إذا لم تظهر عليك أيٌّ من أعراض الإصابة. إذا كان عمرك يقل عن 18 عامًا، فإننا نوصيك بعرض هذه الرسالة على شخصٍ بالغٍ محل ثقة لديك.\n\nلقد بدأ العدّ التنازلي لأيام عزلك وينبغي لك عزل نفسك ذاتيًا طوال المدة الزمنية المُحددة لك. اعمل اختبار فيروس الكورونا فقط إذا كان عندك أعراض كورونا\n\nللحصول على المزيد من النصائح، التواصل مع:</string>
+    <string name="exposure_notification_recommendation">لفهم الطريقة التي يحسب بها التطبيق عدد أيام العزل الذاتي، يُرجى زيارة الرابط أدناه المؤدي إلى الأسئلة الشائعة.\n\nأنت مُعرَّضٌ بدرجة كبيرة للإصابة بالفيروس والمساعدة في انتشاره حتى إذا لم تظهر عليك أيٌّ من أعراض الإصابة. إذا كان عمرك يقل عن 18 عامًا، فإننا نوصيك بعرض هذه الرسالة على شخصٍ بالغٍ محل ثقة لديك.\n\nلقد بدأ العدّ التنازلي لأيام عزلك وينبغي لك عزل نفسك ذاتيًا طوال المدة الزمنية المُحددة لك. قم بإجراء اختبار الكشف عن فيروس كورونا إذا كنت تعاني من أعراض الفيروس فقط.\n\nللحصول على المزيد من النصائح، التواصل مع:</string>
     <string name="risk_level_link_text">تعريفات مستويات الخطورة في منطقة ما</string>
     <string name="open_in_browser_warning">افتح التطبيق في المتصفح لديك</string>
     <string name="done_button_text">تم</string>
@@ -400,7 +400,7 @@
     <string name="test_result_positive_continue_self_isolate_explanation_2">لا داعي للقلق - إذ يُصاب معظم الأشخاص بأعراض طفيفة. وعلى الرغم من ذلك، يجب عليك الاتصال على رقم الهاتف 111 أو زيارة الموقع الالكتروني: nhs.uk للاطلاع على المزيد من النصائح في حال زيادة حدة الأعراض لديك.</string>
     <string name="url_exposure_faqs">https://faq.covid19.nhs.uk</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
-    <string name="local_authority_error_authority_not_supported_title">تحتاج إلى تحديد إحدى السلطات المحلية للمتابعة.</string>
+    <string name="local_authority_error_authority_not_supported_title">السلطة المحلية غير مدعومة.</string>
     <string name="local_authority_information_description">يرجى تحديد إحدى السلطات المحلية. ويتمثل الغرض من ذلك في تمكين التطبيق من تزويدك بمعلومات وإرشادات أكثر دقة.</string>
     <string name="about_encounter_date">تاريخ المقابلة</string>
     <string name="about_my_data_date">التاريخ</string>
@@ -421,4 +421,25 @@
     <string name="status_option_isolation_payment">الدعم المالي</string>
     <string name="title_exposure_notification">إشعار التعرّض</string>
     <string name="title_last_day_of_isolation">اليوم الأخير في العزل الذاتي</string>
+    <string name="arabic">العربية</string>
+    <string name="bengali">البنغالية</string>
+    <string name="change_language_dialog">تغيير لغة التطبيق إلى %s؟</string>
+    <string name="chinese">الصينية (المبسطة)</string>
+    <string name="english">الإنجليزية</string>
+    <string name="gujarati">الجوجاراتية</string>
+    <string name="language">اللغة</string>
+    <string name="language_title">اللغة</string>
+    <string name="local_authority_edit">تعديل</string>
+    <string name="other_languages">اللغات</string>
+    <string name="polish">البولندية</string>
+    <string name="punjabi">البنجابية</string>
+    <string name="romanian">الرومانية</string>
+    <string name="settings_title">الإعدادات</string>
+    <string name="somali">الصومالية</string>
+    <string name="system_language">لغة النظام</string>
+    <string name="turkish">التركية</string>
+    <string name="urdu">الأردية</string>
+    <string name="venue_history_edit">تعديل</string>
+    <string name="venue_history_editing_done">تم</string>
+    <string name="welsh">الويلزية</string>
 </resources>

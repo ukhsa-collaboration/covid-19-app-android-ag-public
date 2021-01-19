@@ -150,7 +150,7 @@
     <string name="close">ਬੰਦ ਕਰੋ</string>
     <string name="go_back">ਵਾਪਸ ਜਾਓ</string>
     <string name="remove">ਹਟਾਓ</string>
-    <string name="empty" translatable="false" />
+    <string name="empty" translatable="false"/>
     <string name="onboarding_exposure_notifications_description">ਜੇ ਤੁਸੀਂ ਕਿਸੇ ਅਜਿਹੇ ਵਿਅਕਤੀ ਦੇ ਨਜ਼ਦੀਕੀ ਸੰਪਰਕ ਵਿੱਚ ਆਏ ਹੋ ਜਿਸ ਦਾ ਵਾਇਰਸ ਲਈ ਟੈਸਟ ਪਾਜ਼ਿਟਿਵ ਆਇਆ ਹੈ ਤਾਂ ਐਪ ਤੁਹਾਨੂੰ ਇੱਕ ਸਾਵਧਾਨੀ-ਸੰਦੇਸ਼ ਭੇਜੇਗੀ।\n\nਇਸ ਐਪ ਲਈ ਕੰਟੈਕਟ ਟਰੇਸਿੰਗ ਨੂੰ ਸਮਰੱਥ ਬਣਾਉਣ ਲਈ ਤੁਹਾਨੂੰ ‘ਐਕਸਪੋਜ਼ਰ ਸੂਚਨਾਵਾਂ’ ਦੀ ਇਜਾਜ਼ਤ ਦੇਣੀ ਹੋਵੇਗੀ। \n\nਜੇ ਤੁਸੀਂ ਆਪਣਾ ਮਨ ਬਦਲਦੇ ਹੋ, ਤਾਂ ਤੁਸੀਂ ਕਿਸੇ ਵੀ ਸਮੇਂ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਆਪਣੀਆਂ ਇਜਾਜ਼ਤਾਂ ਨੂੰ ਬਦਲ ਸਕਦੇ ਹੋ।</string>
     <string name="privacy_notice">ਗੁਪਤਤਾ ਸੰਬੰਧੀ ਨੋਟਿਸ</string>
     <string name="tablet_information_url">ਟੈਬਲੇਟਸ ਵਰਤਣ ਬਾਰੇ ਜਾਣਕਾਰੀ</string>
@@ -250,7 +250,7 @@
     <string name="update_app_title">ਐਪ ਨੂੰ ਅਪਡੇਟ ਕਰੋ</string>
     <string name="valid_auth_code_is_required">ਕੋਡ ਪਛਾਣਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਇਹ ਯਕੀਨੀ ਬਣਾਓ ਕਿ ਤੁਸੀਂ ਇੱਕ ਵੈਧ ਕੋਡ ਵਰਤ ਰਹੇ ਹੋ।</string>
     <string name="self_isolate_for">ਇਸ ਸਮੇਂ ਲਈ ਸੈਲਫ-ਆਈਸੋਲੇਟ ਕਰੋ</string>
-    <string name="isolate_after_corona_virus_symptoms">ਇਹ ਸਮਝਣ ਲਈ ਕਿ ਐਪ ਸਵੈ-ਇਕਾਂਤਵਾਸ ਦੇ ਦਿਨਾਂ ਦੀ ਗਣਨਾ ਕਿਵੇਂ ਕਰਦੀ ਹੈ, ਅਕਸਰ ਪੁੱਛੇ ਜਾਂਦੇ ਪ੍ਰਸ਼ਨਾਂ \'ਤੇ ਜਾਓ।\n\nਤੁਹਾਡੇ ਲੱਛਣਾਂ ਤੋਂ ਪਤਾ ਲੱਗਦਾ ਹੈ ਕਿ ਤੁਹਾਨੂੰ ਕੋਰੋਨਾਵਾਇਰਸ ਹੋ ਸਕਦਾ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਆਪ ਨੂੰ ਅਤੇ ਆਪਣੇ ਪਰਿਵਾਰ ਨੂੰ ਆਈਸੋਲੇਟ ਕਰੋ। ਇਸਦਾ ਅਰਥ ਹੈ ਕਿ ਬਿਨਾਂ ਮੁਲਾਕਾਤੀਆਂ ਦੇ ਘਰ ਵਿੱਚ ਹੀ ਰਹਿਣਾ। ਤੁਹਾਨੂੰ ਤੁਰੰਤ ਮੁਫਤ ਟੈਸਟ ਵੀ ਬੁੱਕ ਕਰਵਾਉਣਾ ਚਾਹੀਦਾ ਹੈ। ਜੇ ਤੁਹਾਡੀ ਉਮਰ 18 ਸਾਲ ਤੋਂ ਘੱਟ ਹੈ ਤਾਂ ਤੁਹਾਨੂੰ ਇੱਕ ਭਰੋਸੇਮੰਦ ਬਾਲਗ ਨੂੰ ਇਹ ਸੰਦੇਸ਼ ਦਿਖਾਉਣ ਦੀ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ।\n\nਆਪਣੇ ਆਪ ਨੂੰ ਅਤੇ ਹੋਰਾਂ ਨੂੰ ਸੁਰੱਖਿਅਤ ਰੱਖਣ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਘਰ ਦੇ ਅੰਦਰ ਹੀ ਰਹੋ।</string>
+    <string name="isolate_after_corona_virus_symptoms">ਇਹ ਸਮਝਣ ਲਈ ਕਿ ਐਪ ਸਵੈ-ਇਕਾਂਤਵਾਸ ਦੇ ਦਿਨਾਂ ਦੀ ਗਣਨਾ ਕਿਵੇਂ ਕਰਦੀ ਹੈ, ਹੇਠ ਦਿੱਤੇ ਅਕਸਰ ਪੁੱਛੇ ਜਾਂਦੇ ਪ੍ਰਸ਼ਨਾਂ ਦੇ ਲਿੰਕ \'ਤੇ ਜਾਓ।\n\nਤੁਹਾਡੇ ਲੱਛਣਾਂ ਤੋਂ ਪਤਾ ਲੱਗਦਾ ਹੈ ਕਿ ਤੁਹਾਨੂੰ ਕੋਰੋਨਾਵਾਇਰਸ ਹੋ ਸਕਦਾ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਆਪ ਨੂੰ ਅਤੇ ਆਪਣੇ ਪਰਿਵਾਰ ਨੂੰ ਆਈਸੋਲੇਟ ਕਰੋ। ਇਸਦਾ ਅਰਥ ਹੈ ਕਿ ਬਿਨਾਂ ਮੁਲਾਕਾਤੀਆਂ ਦੇ ਘਰ ਵਿੱਚ ਹੀ ਰਹਿਣਾ। ਤੁਹਾਨੂੰ ਤੁਰੰਤ ਮੁਫਤ ਟੈਸਟ ਵੀ ਬੁੱਕ ਕਰਵਾਉਣਾ ਚਾਹੀਦਾ ਹੈ। ਜੇ ਤੁਹਾਡੀ ਉਮਰ 18 ਸਾਲ ਤੋਂ ਘੱਟ ਹੈ ਤਾਂ ਤੁਹਾਨੂੰ ਇੱਕ ਭਰੋਸੇਮੰਦ ਬਾਲਗ ਨੂੰ ਇਹ ਸੰਦੇਸ਼ ਦਿਖਾਉਣ ਦੀ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ।\n\nਆਪਣੇ ਆਪ ਨੂੰ ਅਤੇ ਹੋਰਾਂ ਨੂੰ ਸੁਰੱਖਿਅਤ ਰੱਖਣ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਘਰ ਦੇ ਅੰਦਰ ਹੀ ਰਹੋ।</string>
     <string name="isolate_after_no_corona_virus_symptoms">ਇਹ ਸਮਝਣ ਲਈ ਕਿ ਐਪ ਸਵੈ-ਇਕਾਂਤਵਾਸ ਦੇ ਦਿਨਾਂ ਦੀ ਗਣਨਾ ਕਿਵੇਂ ਕਰਦੀ ਹੈ, ਅਕਸਰ ਪੁੱਛੇ ਜਾਂਦੇ ਪ੍ਰਸ਼ਨਾਂ \'ਤੇ ਜਾਓ।\n\nਇੰਝ ਨਹੀਂ ਲੱਗਦਾ ਹੈ ਕਿ ਤੁਹਾਡੇ ਅੰਦਰ ਅਜੇ ਤੱਕ ਕੋਰੋਨਾਵਾਇਰਸ ਦੇ ਲੱਛਣ ਹਨ, ਪਰ ਯਾਦ ਰੱਖੋ ਕਿ ਲੱਛਣ ਵਿਕਸਤ ਹੋਣ ਵਿੱਚ 14 ਦਿਨ ਦਾ ਸਮਾਂ ਲੱਗ ਸਕਦਾ ਹੈ। ਜੇ ਤੁਹਾਡੀ ਉਮਰ 18 ਸਾਲ ਤੋਂ ਘੱਟ ਹੈ ਤਾਂ ਤੁਹਾਨੂੰ ਇੱਕ ਭਰੋਸੇਮੰਦ ਬਾਲਗ ਨੂੰ ਇਹ ਸੰਦੇਸ਼ ਦਿਖਾਉਣ ਦੀ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ।\n\nਆਪਣੇ ਆਪ ਨੂੰ ਅਤੇ ਹੋਰਾਂ ਨੂੰ ਸੁਰੱਖਿਅਤ ਰੱਖਣ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਘਰ ਦੇ ਅੰਦਰ ਹੀ ਰਹੋ। ਆਪਣੇ ਆਪ ਨੂੰ ਅਤੇ ਹੋਰਾਂ ਨੂੰ ਸੁਰੱਖਿਅਤ ਰੱਖਣ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਘਰ ਦੇ ਅੰਦਰ ਹੀ ਰਹੋਸਿਰਫ ਤਾਂ ਹੀ ਟੈਸਟ ਕਰਵਾਓ ਜੇ ਤੁਹਾਨੂੰ ਕੋਰੋਨਾਵਾਇਰਸ ਦੇ ਲੱਛਣ ਹਨ।</string>
     <string name="your_isolation_will_finish">ਤੁਹਾਡਾ ਸੈਲਫ-ਆਈਸੋਲੇਸ਼ਨ ਸਮਾਂ %1$s ਨੂੰ 23:59 ਵਜੇ ਖਤਮ ਹੋਵੇਗਾ</string>
     <string name="qr_code_unsupported_title">ਮੁਆਫ ਕਰਨਾ, ਤੁਹਾਡਾ ਫੋਨ ਸਥਾਨ ਚੈੱਕ-ਇਨ ਦਾ ਸਮਰਥਨ ਨਹੀਂ ਕਰਦਾ</string>
@@ -384,7 +384,7 @@
     <string name="test_result_positive_continue_self_isolate_explanation_2">ਚਿੰਤਾ ਨਾ ਕਰੋ - ਜ਼ਿਆਦਾਤਰ ਲੋਕਾਂ ਦੇ ਲੱਛਣ ਕਾਫ਼ੀ ਹਲਕੇ ਹੁੰਦੇ ਹਨ। ਹਾਲਾਂਕਿ, ਜੇ ਤੁਹਾਡੇ ਲੱਛਣ ਵਿਗੜ ਜਾਂਦੇ ਹਨ ਤਾਂ ਤੁਹਾਨੂੰ ਵਧੇਰੇ ਸਲਾਹ ਲਈ 111 ‘ਤੇ ਕਾਲ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ ਜਾਂ nhs.uk ਤੇ ਜਾਣਾ ਚਾਹੀਦਾ ਹੈ।</string>
     <string name="url_exposure_faqs">https://faq.covid19.nhs.uk</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
-    <string name="local_authority_error_authority_not_supported_title">ਤੁਹਾਨੂੰ ਜਾਰੀ ਰੱਖਣ ਲਈ ਸਥਾਨਕ ਅਥਾਰਟੀ ਦੀ ਚੋਣ ਕਰਨ ਦੀ ਜ਼ਰੂਰਤ ਹੈ</string>
+    <string name="local_authority_error_authority_not_supported_title">ਸਥਾਨਕ ਅਥਾਰਟੀ ਸਮਰਥਿਤ ਨਹੀਂ ਹੈ।</string>
     <string name="local_authority_information_description">ਕਿਰਪਾ ਕਰਕੇ ਸਥਾਨਕ ਅਥਾਰਟੀ ਚੁਣੋ। ਇਹ ਇਸ ਲਈ ਹੈ ਤਾਂ ਜੋ ਐਪ ਤੁਹਾਨੂੰ ਵਧੇਰੇ ਸਹੀ ਜਾਣਕਾਰੀ ਅਤੇ ਮਾਰਗ ਦਰਸ਼ਨ ਦੇ ਸਕੇ।</string>
     <string name="about_encounter_date">ਪਤਾ ਲੱਗਣ ਦੀ ਮਿਤੀ</string>
     <string name="about_my_data_date">ਮਿਤੀ</string>
@@ -405,4 +405,25 @@
     <string name="status_option_isolation_payment">ਵਿੱਤੀ ਸਹਾਇਤਾ</string>
     <string name="title_exposure_notification">ਐਕਸਪੋਜ਼ਰ ਸੂਚਨਾਵਾਂ</string>
     <string name="title_last_day_of_isolation">ਸਵੈ-ਇਕਾਂਤ ਦਾ ਆਖਰੀ ਦਿਨ</string>
+    <string name="arabic">ਅਰਬੀ</string>
+    <string name="bengali">ਬੰਗਾਲੀ</string>
+    <string name="change_language_dialog">ਐਪ ਦੀ ਭਾਸ਼ਾ %s ਵਿੱਚ ਬਦਲੋ?</string>
+    <string name="chinese">ਚੀਨੀ (ਸਰਲੀਕ੍ਰਿਤ)</string>
+    <string name="english">ਅੰਗਰੇਜ਼ੀ</string>
+    <string name="gujarati">ਗੁਜਰਾਤੀ</string>
+    <string name="language">ਭਾਸ਼ਾ</string>
+    <string name="language_title">ਭਾਸ਼ਾ</string>
+    <string name="local_authority_edit">ਸੰਪਾਦਿਤ ਕਰੋ</string>
+    <string name="other_languages">ਭਾਸ਼ਾਵਾਂ</string>
+    <string name="polish">ਪੋਲਿਸ਼</string>
+    <string name="punjabi">ਪੰਜਾਬੀ</string>
+    <string name="romanian">ਰੋਮਾਨੀਅਨ</string>
+    <string name="settings_title">ਸੈਟਿੰਗਜ਼</string>
+    <string name="somali">ਸੋਮਾਲੀ</string>
+    <string name="system_language">ਸਿਸਟਮ ਦੀ ਭਾਸ਼ਾ</string>
+    <string name="turkish">ਤੁਰਕੀ</string>
+    <string name="urdu">ਉਰਦੂ</string>
+    <string name="venue_history_edit">ਸੰਪਾਦਿਤ ਕਰੋ</string>
+    <string name="venue_history_editing_done">ਹੋ ਗਿਆ</string>
+    <string name="welsh">ਵੈਲਸ਼</string>
 </resources>

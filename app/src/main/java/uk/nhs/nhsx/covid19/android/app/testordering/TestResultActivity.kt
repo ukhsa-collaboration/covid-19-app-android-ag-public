@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
+import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_test_result.goodNewsContainer
 import kotlinx.android.synthetic.main.activity_test_result.isolationRequestContainer
 import kotlinx.android.synthetic.main.view_good_news.goodNewsActionButton
@@ -44,7 +45,6 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
-import javax.inject.Inject
 
 class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
@@ -116,12 +116,13 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         exposureFaqsLink.visible()
 
         isolationRequestImage.setImageResource(R.drawable.ic_isolation_continue)
-        isolationRequestTitle1.text =
-            getString(R.string.test_result_positive_continue_self_isolation_title_1)
-        isolationRequestTitle2.text = resources.getQuantityString(
-            R.plurals.state_isolation_days,
-            remainingDaysInIsolation,
-            remainingDaysInIsolation
+        setSelfIsolateTitles(
+            getString(R.string.test_result_positive_continue_self_isolation_title_1),
+            resources.getQuantityString(
+                R.plurals.state_isolation_days,
+                remainingDaysInIsolation,
+                remainingDaysInIsolation
+            )
         )
         isolationRequestInfoView.stateText = getString(R.string.state_test_positive_info)
         isolationRequestInfoView.stateColor = getColor(R.color.error_red)
@@ -143,13 +144,15 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         exposureFaqsLink.gone()
 
         isolationRequestImage.setImageResource(R.drawable.ic_isolation_continue)
-        isolationRequestTitle1.text =
-            getString(R.string.test_result_positive_continue_self_isolation_title_1)
-        isolationRequestTitle2.text = resources.getQuantityString(
-            R.plurals.state_isolation_days,
-            remainingDaysInIsolation,
-            remainingDaysInIsolation
+        setSelfIsolateTitles(
+            getString(R.string.test_result_positive_continue_self_isolation_title_1),
+            resources.getQuantityString(
+                R.plurals.state_isolation_days,
+                remainingDaysInIsolation,
+                remainingDaysInIsolation
+            )
         )
+
         isolationRequestInfoView.stateText = getString(R.string.state_test_negative_info)
         isolationRequestInfoView.stateColor = getColor(R.color.amber)
         isolationRequestParagraphContainer.addAllParagraphs(
@@ -177,12 +180,14 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         exposureFaqsLink.gone()
 
         isolationRequestImage.setImageResource(R.drawable.ic_isolation_book_test)
-        isolationRequestTitle1.text =
-            getString(R.string.test_result_positive_continue_self_isolation_title_1)
-        isolationRequestTitle2.text = resources.getQuantityString(
-            R.plurals.state_isolation_days,
-            remainingDaysInIsolation,
-            remainingDaysInIsolation
+
+        setSelfIsolateTitles(
+            getString(R.string.test_result_positive_continue_self_isolation_title_1),
+            resources.getQuantityString(
+                R.plurals.state_isolation_days,
+                remainingDaysInIsolation,
+                remainingDaysInIsolation
+            )
         )
         isolationRequestInfoView.stateText = getString(R.string.state_test_void_info)
         isolationRequestInfoView.stateColor = getColor(R.color.error_red)
@@ -212,6 +217,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         goodNewsIcon.setImageResource(R.drawable.ic_isolation_expired_or_over)
         goodNewsIcon.isVisible = inPortraitMode()
         goodNewsTitle.text = getString(R.string.test_result_your_test_result)
+        title = goodNewsTitle.text
         goodNewsTitle.visible()
 
         goodNewsSubtitle.text = getString(R.string.test_result_positive_no_self_isolation_subtitle)
@@ -233,8 +239,10 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         goodNewsIcon.setImageResource(R.drawable.ic_isolation_negative_or_finished)
         goodNewsIcon.isVisible = inPortraitMode()
         goodNewsTitle.visible()
+        title = goodNewsTitle.text
 
-        goodNewsSubtitle.text = getString(R.string.test_result_negative_no_self_isolation_subtitle_text)
+        goodNewsSubtitle.text =
+            getString(R.string.test_result_negative_no_self_isolation_subtitle_text)
         goodNewsInfoView.stateText =
             getString(R.string.test_result_no_self_isolation_description)
         goodNewsInfoView.stateColor = getColor(R.color.amber)
@@ -251,11 +259,13 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
     private fun showAreNotIsolatingScreenOnNegative() {
         goodNewsContainer.visible()
+
         isolationRequestContainer.gone()
 
         goodNewsIcon.setImageResource(R.drawable.ic_isolation_expired_or_over)
         goodNewsIcon.isVisible = inPortraitMode()
         goodNewsTitle.visible()
+        title = goodNewsTitle.text
 
         goodNewsSubtitle.text =
             getString(R.string.test_result_negative_already_not_in_isolation_subtitle)
@@ -271,19 +281,31 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         }
     }
 
+    private fun setSelfIsolateTitles(
+        title1: String,
+        title2: String
+    ) {
+        isolationRequestTitle1.text = title1
+        isolationRequestTitle2.text = title2
+        title = "$title1 $title2"
+    }
+
     private fun showContinueToSelfIsolationScreenOnPositiveThenNegative(remainingDaysInIsolation: Int) {
         goodNewsContainer.gone()
         isolationRequestContainer.visible()
+
         exposureFaqsLink.gone()
 
         isolationRequestImage.setImageResource(R.drawable.ic_isolation_continue)
-        isolationRequestTitle1.text =
-            getString(R.string.test_result_positive_continue_self_isolation_title_1)
-        isolationRequestTitle2.text = resources.getQuantityString(
-            R.plurals.state_isolation_days,
-            remainingDaysInIsolation,
-            remainingDaysInIsolation
+        setSelfIsolateTitles(
+            getString(R.string.test_result_positive_continue_self_isolation_title_1),
+            resources.getQuantityString(
+                R.plurals.state_isolation_days,
+                remainingDaysInIsolation,
+                remainingDaysInIsolation
+            )
         )
+
         isolationRequestInfoView.stateText =
             getString(R.string.state_test_positive_then_negative_info)
         isolationRequestInfoView.stateColor = getColor(R.color.error_red)
@@ -304,11 +326,13 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         exposureFaqsLink.visible()
 
         isolationRequestImage.setImageResource(R.drawable.ic_isolation_continue)
-        isolationRequestTitle1.text = getString(R.string.self_isolate_for)
-        isolationRequestTitle2.text = resources.getQuantityString(
-            R.plurals.state_isolation_days,
-            remainingDaysInIsolation,
-            remainingDaysInIsolation
+        setSelfIsolateTitles(
+            getString(R.string.self_isolate_for),
+            resources.getQuantityString(
+                R.plurals.state_isolation_days,
+                remainingDaysInIsolation,
+                remainingDaysInIsolation
+            )
         )
         isolationRequestInfoView.stateText = getString(R.string.state_test_positive_info)
         isolationRequestInfoView.stateColor = getColor(R.color.error_red)
@@ -334,6 +358,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         goodNewsIcon.setImageResource(R.drawable.ic_isolation_expired_or_over)
         goodNewsIcon.isVisible = inPortraitMode()
         goodNewsTitle.text = getString(R.string.test_result_your_test_result)
+        title = getString(R.string.test_result_your_test_result)
         goodNewsTitle.visible()
 
         goodNewsSubtitle.text =

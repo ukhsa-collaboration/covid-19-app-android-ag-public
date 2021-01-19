@@ -21,6 +21,6 @@ class TestOrderingActivityTest : EspressoTest() {
 
         testOrderingRobot.clickOrderTestButton()
 
-        testOrderingProgressRobot.checkActivityIsDisplayed()
+        waitFor { testOrderingProgressRobot.checkActivityIsDisplayed() }
     }
 }

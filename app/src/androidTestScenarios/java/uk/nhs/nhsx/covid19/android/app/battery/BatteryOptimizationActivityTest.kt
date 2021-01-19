@@ -15,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BatteryOptimizationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
 
 class BatteryOptimizationActivityTest : EspressoTest() {
 
@@ -79,16 +80,16 @@ class BatteryOptimizationActivityTest : EspressoTest() {
 
     @Test
     fun clickAllowAndOk_shouldStartStatusActivity() = notReported {
-        Intents.init()
-        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, Intent())
-        val packageUri = Uri.parse("package:${testAppContext.app.packageName}")
-        Intents.intending(IntentMatchers.hasData(packageUri)).respondWith(result)
+        runWithIntents {
+            val result = Instrumentation.ActivityResult(Activity.RESULT_OK, Intent())
+            val packageUri = Uri.parse("package:${testAppContext.app.packageName}")
+            Intents.intending(IntentMatchers.hasData(packageUri)).respondWith(result)
 
-        startTestActivity<BatteryOptimizationActivity>()
+            startTestActivity<BatteryOptimizationActivity>()
 
-        batteryOptimizationRobot.clickAllowButton()
+            batteryOptimizationRobot.clickAllowButton()
 
-        waitFor { statusRobot.checkActivityIsDisplayed() }
-        Intents.release()
+            waitFor { statusRobot.checkActivityIsDisplayed() }
+        }
     }
 }

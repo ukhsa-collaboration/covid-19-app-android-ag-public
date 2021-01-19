@@ -74,6 +74,13 @@
         android:text="Contact" />
 
     <Button
+        android:id="@+id/sendExposureNotification"
+        style="@style/PrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send Exposure Notification" />
+
+    <Button
         android:id="@+id/riskyVenue"
         style="@style/PrimaryButton"
         android:layout_width="match_parent"

@@ -22,6 +22,10 @@
         <attr name="optionText" format="string" />
         <attr name="optionExternalLink" format="boolean" />
     </declare-styleable>
+    <declare-styleable name="SettingsOptionsView">
+        <attr name="settingName" format="string" />
+        <attr name="settingValue" format="string" />
+    </declare-styleable>
     <declare-styleable name="StateInfoView">
         <attr name="stateColor" format="reference" />
         <attr name="stateText" format="string" />

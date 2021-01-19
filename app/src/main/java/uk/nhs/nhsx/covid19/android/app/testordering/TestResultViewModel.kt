@@ -4,9 +4,9 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import java.time.Clock
-import javax.inject.Inject
+import uk.nhs.nhsx.covid19.android.app.common.SubmitEmptyData
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW_AFTER_POSITIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.KEY_SUBMISSION
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
@@ -28,12 +28,14 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainStat
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
+import java.time.Clock
+import javax.inject.Inject
 
 class TestResultViewModel @Inject constructor(
     private val testResultsProvider: TestResultsProvider,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val stateMachine: IsolationStateMachine,
-    private val submitFakeKeys: SubmitFakeKeys,
+    private val submitEmptyData: SubmitEmptyData,
     private val submitFakeExposureWindows: SubmitFakeExposureWindows,
     private val clock: Clock
 ) : ViewModel() {
@@ -145,8 +147,8 @@ class TestResultViewModel @Inject constructor(
                     )
             }
         }
-        submitFakeExposureWindows(EXPOSURE_WINDOW_AFTER_POSITIVE, 0)
-        submitFakeKeys()
+        submitFakeExposureWindows(EXPOSURE_WINDOW_AFTER_POSITIVE)
+        submitEmptyData(KEY_SUBMISSION)
     }
 
     private fun getHighestPriorityTestResult(): ReceivedTestResult? {

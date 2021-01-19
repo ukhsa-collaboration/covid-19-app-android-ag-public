@@ -44,23 +44,28 @@ class AppAvailabilityActivity : BaseActivity(R.layout.activity_app_availability)
         viewModel.checkAvailability()
     }
 
+    private fun setTitleForAccessibility(text: String) {
+        titleText.text = text
+        title = text
+    }
+
     private fun setUpLayoutAppNotSupported(message: String) {
         goToPlayStore.gone()
-        titleText.text = getString(R.string.cant_run_app)
+        setTitleForAccessibility(getString(R.string.cant_run_app))
         subTitle.gone()
         description.text = message
     }
 
     private fun setUpLayoutDeviceSdkIsNotSupported(message: String) {
         goToPlayStore.gone()
-        titleText.text = getString(R.string.update_os)
+        setTitleForAccessibility(getString(R.string.update_os))
         subTitle.gone()
         description.text = message
     }
 
     private fun setUpLayoutStoreUpdateAvailable(message: String) {
         goToPlayStore.visible()
-        titleText.text = getString(R.string.update_app_title)
+        setTitleForAccessibility(getString(R.string.update_app_title))
         subTitle.gone()
         description.text = message
     }

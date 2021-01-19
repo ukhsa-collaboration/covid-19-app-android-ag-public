@@ -89,6 +89,13 @@ class TestResultsProvider @Inject constructor(
         testResults = updatedList
     }
 
+    fun clearAcknowledged() = synchronized(lock) {
+        val updatedList = testResults.toMutableMap().filterValues { testResult ->
+            testResult.acknowledgedDate == null
+        }
+        testResults = updatedList
+    }
+
     fun acknowledge(testResult: ReceivedTestResult) = synchronized(lock) {
         val updatedList = testResults.toMutableMap().apply {
             put(

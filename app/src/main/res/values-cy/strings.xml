@@ -166,7 +166,7 @@
     <string name="close">Cau</string>
     <string name="go_back">Mynd yn ôl</string>
     <string name="remove">Dileu</string>
-    <string name="empty" translatable="false" />
+    <string name="empty" translatable="false"/>
     <string name="onboarding_exposure_notifications_description">Bydd yr ap yn anfon rhybudd atoch os ydych wedi bod mewn cysylltiad agos â rhywun sydd wedi profi\'n bositif am y feirws.\n\nEr mwyn galluogi olrhain cysylltiadau ar gyfer yr ap hwn mae angen i chi ganiatáu Hysbysiadau Cysylltiad.\n\nOs byddwch yn newid eich meddwl, gallwch newid y caniatâd yn Gosodiadau ar unrhyw adeg.</string>
     <string name="privacy_notice">Hysbysiad preifatrwydd</string>
     <string name="tablet_information_url">Gwybodaeth am ddefnyddio llechen</string>
@@ -266,7 +266,7 @@
     <string name="update_app_title">Diweddarwch yr ap hwn</string>
     <string name="valid_auth_code_is_required">Cod heb ei gydnabod. Gwnewch yn siŵr eich bod yn defnyddio cod dilys.</string>
     <string name="self_isolate_for">Hunanynyswch am</string>
-    <string name="isolate_after_corona_virus_symptoms">Er mwyn deall sut mae\'r ap yn cyfrifo diwrnodau hunan-ynysu, ewch i\'r rhestr o gwestiynau a ofynnir yn aml.\n\nMae eich symptomau\'n awgrymu y gallai\'r coronafeirws fod arnoch. Ynyswch eich hun a phawb yn eich cartref. Mae hynny\'n golygu aros gartref heb gael ymwelwyr. Dylech hefyd archebu prawf am ddim ar unwaith. Os ydych chi o dan 18 oed, fe\'ch cynghorir i ddangos y neges hon i oedolyn dibynadwy.\n\nArhoswch gartref i gadw\'ch hun ac eraill yn ddiogel.</string>
+    <string name="isolate_after_corona_virus_symptoms">Er mwyn deall sut mae\'r ap yn cyfrifo diwrnodau hunan-ynysu, defnyddiwch y ddolen i\'r cwestiynau isod.\n\nMae eich symptomau\'n awgrymu y gallai\'r coronafeirws fod arnoch. Ynyswch eich hun a phawb yn eich cartref. Mae hynny\'n golygu aros gartref heb gael ymwelwyr. Dylech hefyd archebu prawf am ddim ar unwaith. Os ydych chi o dan 18 oed, fe\'ch cynghorir i ddangos y neges hon i oedolyn dibynadwy.\n\nArhoswch gartref i gadw\'ch hun ac eraill yn ddiogel.</string>
     <string name="isolate_after_no_corona_virus_symptoms">Er mwyn deall sut mae\'r ap yn cyfrifo diwrnodau hunan-ynysu, ewch i\'r rhestr o gwestiynau a ofynnir yn aml.\n\nNid yw\'n ymddangos bod gennych symptomau coronafeirws eto, ond cofiwch y gall gymryd hyd at 14 diwrnod i symptomau ddatblygu. Os ydych chi o dan 18 oed, fe\'ch cynghorir i ddangos y neges hon i oedolyn dibynadwy.\n\nArhoswch gartref i gadw\'ch hun ac eraill yn ddiogel. Dim ond os oes gennych symptomau coronafeirws y dylech chi gael prawf.</string>
     <string name="your_isolation_will_finish">Bydd eich hunanynysu yn dod i ben ar %1$s am 23:59</string>
     <string name="qr_code_unsupported_title">Mae\'n ddrwg gennym, nid yw\'ch ffôn yn cefnogi mewngofnodi i leoliad</string>
@@ -400,7 +400,7 @@
     <string name="test_result_positive_continue_self_isolate_explanation_2">Peidiwch â phoeni - i\'r rhan fwyaf o bobl mae\'r symptomau\'n eithaf ysgafn. Fodd bynnag, os bydd eich symptomau\'n gwaethygu, ffoniwch 111 neu ewch i nhs.uk i gael rhagor o gyngor.</string>
     <string name="url_exposure_faqs">https://faq.covid19.nhs.uk/</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
-    <string name="local_authority_error_authority_not_supported_title">Mae angen i chi ddewis awdurdod lleol i allu parhau</string>
+    <string name="local_authority_error_authority_not_supported_title">Awdurdod Lleol heb ei gefnogi.</string>
     <string name="local_authority_information_description">Dewiswch awdurdod lleol. Diben hyn yw galluogi\'r ap i roi gwybodaeth ac arweiniad cywirach i chi.</string>
     <string name="about_encounter_date">Dyddiad cyfarfod</string>
     <string name="about_my_data_date">Dyddiad</string>
@@ -421,4 +421,25 @@
     <string name="status_option_isolation_payment">Cymorth ariannol</string>
     <string name="title_exposure_notification">Hysbysiad Amlygu</string>
     <string name="title_last_day_of_isolation">Diwrnod olaf hunan-ynysu</string>
+    <string name="welsh">Cymraeg</string>
+    <string name="arabic">Arabeg</string>
+    <string name="bengali">Bengaleg</string>
+    <string name="change_language_dialog">Newid iaith yr ap i %s ?</string>
+    <string name="chinese">Tsieinëeg (wedi\'i symleiddio)</string>
+    <string name="english">Saesneg</string>
+    <string name="gujarati">Gwjarati</string>
+    <string name="language">Laith</string>
+    <string name="language_title">Laith</string>
+    <string name="local_authority_edit">Golygu</string>
+    <string name="other_languages">Leithoedd</string>
+    <string name="polish">Pwyleg</string>
+    <string name="punjabi">Pwnjabeg</string>
+    <string name="romanian">Rwmaneg</string>
+    <string name="settings_title">Gosodiadau</string>
+    <string name="somali">Somalieg</string>
+    <string name="system_language">Laith y System</string>
+    <string name="turkish">Tyrceg</string>
+    <string name="urdu">Wrdw</string>
+    <string name="venue_history_edit">Golygu</string>
+    <string name="venue_history_editing_done">Wedi\'i wneud</string>
 </resources>

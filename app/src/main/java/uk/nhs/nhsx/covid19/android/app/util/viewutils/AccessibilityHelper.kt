@@ -87,6 +87,22 @@ fun AppCompatActivity.setToolbar(
     }
 }
 
+fun AppCompatActivity.setToolbarNoNavigation(
+    toolbar: MaterialToolbar,
+    @StringRes titleResId: Int
+) {
+    setSupportActionBar(toolbar)
+    supportActionBar?.setDisplayHomeAsUpEnabled(false)
+    supportActionBar?.setHomeAsUpIndicator(android.R.color.transparent)
+    supportActionBar?.title = getString(titleResId)
+
+    toolbar.getChildAt(0)?.let {
+        if (it is TextView) {
+            it.setUpAccessibilityHeading()
+        }
+    }
+}
+
 /**
  * Reads headings for devices with api 19+.
  * This is handling accessibility headings in a better way

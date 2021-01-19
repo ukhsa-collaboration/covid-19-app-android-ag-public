@@ -150,7 +150,7 @@
     <string name="close">بند کریں</string>
     <string name="go_back">واپس جائیں</string>
     <string name="remove">مٹائیں</string>
-    <string name="empty" translatable="false" />
+    <string name="empty" translatable="false"/>
     <string name="onboarding_exposure_notifications_description">اگر آپ کسی ایسے شخص سے قریبی رابطے میں رہے ہیں جس کا وائرس کا ٹیسٹ مثبت آیا ہو تو ایپ آپ کو اس کی اطلاع کرے گی۔ \n\nاس ایپ کے لئے کنٹیکٹ ٹریسنگ یعنی رابطوں کا پتہ لگانے کے لئے آپ کو درج ذیل کی اجازت دینے کی ضرورت ہےایکسپوژر نوٹیفیکیشنز۔ \n\nاگر آپ اپنا ارادہ تبدیل کرتے ہیں تو، آپ کسی بھی وقت ترتیبات یعنی سیٹنگز میں اپنی اجازتیں تبدیل کرسکتے ہیں۔</string>
     <string name="privacy_notice">رازداری کا نوٹس</string>
     <string name="tablet_information_url">ٹیبلیٹس پر استعمال کی معلومات</string>
@@ -241,7 +241,7 @@
     <string name="title_encounter">سامنا ہونے کی تاریخ</string>
     <string name="allow_bluetooth">بلیو ٹوتھ کی اجازت دیں</string>
     <string name="onboarding_subtitle">جب آپ ایپ کو استعمال کریں گے تو آپ ایک گمنام طریقے سے اپنے علاقے میں وائرس کے بارے میں معلومات کا اشتراک کرکے کوویڈ-19 کو مات دینے میں ہماری اور عوامی صحت کی مدد کریں گے۔</string>
-    <string name="onboarding_privacy_control_text">NHS آپ کی رازداری کی قدر کرتا ہے، یعنی ایپ یہ نہیں بتا سکتی کہ آپ کون ہیں، آپ کہاں ہیں یا آپ کے ساتھ کون ہے۔\n\nاگر آپ  کی جانچ کرونا وائرس کے لیے مثبت ہوتی ہے  تو، آپ اپنے ڈیٹا کا این ایچ ایس کے ساتھ اشتراک کرنے کا انتخاب کرسکتے ہیں تاکہ ہم انگلینڈ، ویلز، سکاٹ لینڈ، شمالی آئرلینڈ، جرزی اور جبرالٹر میں ایپ کا استعمال کرنے والے دوسرے لوگوں کو آگاہ کرسکیں۔ جاری رکھنے  (continue)کا انتخاب کرنے پر ہم آپ کی اطلاعات ایپ کا استعمال کرنے والے اُن دوسرے لوگوں کو دستیاب کردیں گے جن کو ان تمام مقامات پر باخبر کرنے کی ضرورت ہو گی۔\n\nہم یہ فیصلہ کرنے میں مدد کے لئے خود کار فیصلے کا استعمال کرتے ہیں کہ کون سے دوسرے صارفین کو گمنام طور پر متنبہہ  ہونا ضروری ہے۔</string>
+    <string name="onboarding_privacy_control_text">سکتی کہ آپ کون ہیں NHS آپ کی رازداری کی قدر کرتا ہے، یعنی یہ منائیں بتا \n\nاگر آپ  کی جانچ کرونا وائرس کے لیے مثبت ہوتی ہے  تو، آپ اپنے ڈیٹا کا این ایچ ایس کے ساتھ اشتراک کرنے کا انتخاب کرسکتے ہیں تاکہ ہم انگلینڈ، ویلز، سکاٹ لینڈ، شمالی آئرلینڈ، جرزی اور جبرالٹر میں ایپ کا استعمال کرنے والے دوسرے لوگوں کو آگاہ کرسکیں۔ جاری رکھنے  (continue)کا انتخاب کرنے پر ہم آپ کی اطلاعات ایپ کا استعمال کرنے والے اُن دوسرے لوگوں کو دستیاب کردیں گے جن کو ان تمام مقامات پر باخبر کرنے کی ضرورت ہو گی۔\n\nہم یہ فیصلہ کرنے میں مدد کے لئے خود کار فیصلے کا استعمال کرتے ہیں کہ کون سے دوسرے صارفین کو گمنام طور پر متنبہہ  ہونا ضروری ہے۔</string>
     <string name="onboarding_privacy_your_data_text1">یہ ایپ ڈیٹا کو ریکارڈ کرنے کے بعد 14 دنوں کے لئے اسے محفوظ اور گمنام طریقے سے محفوظ کرتی ہے۔ جب آپ مقامات میں داخِلے یعنی چیک ان کے لئے کیو آر کوڈز کا استعمال کرتے ہیں تو مقامات کا یہ ڈیٹا 21 دن کے لئے محفوظ کیا جاتا ہے۔ آپ کسی بھی وقت اپنی ایپ کی ترتیبات یعنی سیٹنگز میں جا کر، یا ایپ کو ان انسٹال کرکے ایپ سے کوائف یعنی ڈیٹا کو حذف کرسکتے ہیں۔ آپ کا فون کچھ بنیادی ڈیٹا رکھ سکتا ہے - یہ آپ کے فون کے آپریٹنگ سسٹم کے ذریعے کنٹرول کیا جاتا ہے۔</string>
     <string name="onboarding_no_thanks">نہیں، شکریہ</string>
     <string name="go_to_play_store">پلے اسٹور پر جائیں</string>
@@ -250,7 +250,7 @@
     <string name="update_app_title">ایپ اپ ڈیٹ کریں</string>
     <string name="valid_auth_code_is_required">آپ کا کوڈ نہیں پہچانا گیا۔ براہ کرم یقینی بنائیں کہ آپ درست کوڈ استعمال کر رہے ہوں۔</string>
     <string name="self_isolate_for">ذیل کے لئے خود کو علیحدہ کریں</string>
-    <string name="isolate_after_corona_virus_symptoms">یہ سمجھنے کے لئے کہ ایپ خود کو تنہائی میں رکھنے  کے دنوں کا حساب کیسے دیتی ہے ، عمومی سوالنامہ دیکھیں۔\n\nآپ کی علامات سے ظاہر ہوتا ہے کہ آپ کو کوروناوائرس ہونے کا امکان ہے۔ براہ کرم خود کو اور اپنے گھرانے کو علیحدہ کر لیں۔ اس کا مطلب ہے کہ کسی زائرین کے بغیر گھر پر رہنا۔ اور نیز فورا مفت ٹیسٹ بک کروانا چاہئے۔ اگر آپ کی عمر 18 سال سے کم ہے تو آپ کو مشورہ دیا جاتا ہے کہ یہ پیغام کسی قابل اعتماد بالغ کو دکھائیں۔\n\nبراہ کرم خود کو اور دیگر افراد کو محفوظ رکھنے کے لئے گھر پر رہیں۔</string>
+    <string name="isolate_after_corona_virus_symptoms">یہ سمجھنے کے لئے کہ ایپ خود کو تنہائی  میں رکھنے  کے دنوں کا حساب کیسے دیتی ہے ، نیچے دیئے گئے عمومی سوالنامہ کے لنک پر جائیں۔\n\nآپ کی علامات سے ظاہر ہوتا ہے کہ آپ کو کوروناوائرس ہونے کا امکان ہے۔ براہ کرم خود کو اور اپنے گھرانے کو علیحدہ کر لیں۔ اس کا مطلب ہے کہ کسی زائرین کے بغیر گھر پر رہنا۔ اور نیز فورا مفت ٹیسٹ بک کروانا چاہئے۔ اگر آپ کی عمر 18 سال سے کم ہے تو آپ کو مشورہ دیا جاتا ہے کہ یہ پیغام کسی قابل اعتماد بالغ کو دکھائیں۔\n\nبراہ کرم خود کو اور دیگر افراد کو محفوظ رکھنے کے لئے گھر پر رہیں۔</string>
     <string name="isolate_after_no_corona_virus_symptoms">یہ سمجھنے کے لئے کہ ایپ خود کو تنہائی میں رکھنے  کے دنوں کا حساب کیسے دیتی ہے ، عمومی سوالنامہ دیکھیں۔\n\nابھی تک بظاہر آپ میں کوروناوائرس کی علامات موجود نہیں ہیں، لیکن یاد رکھیں علامات ظاہر ہونے میں 14 دن تک کا وقت لگ سکتا ہے۔ اگر آپ کی عمر 18 سال سے کم ہے تو آپ کو مشورہ دیا جاتا ہے کہ یہ پیغام کسی قابل اعتماد بالغ کو دکھائیں۔\n\nبراہ کرم خود کو اور دیگر افراد کو محفوظ رکھنے کے لئے گھر پر رہیں۔صرف تب ٹیسٹ کروائیں اگرآپ کورونا وائرس کی علامات رکھتےہیں۔</string>
     <string name="your_isolation_will_finish">آپ کی ذاتی علیحدگی %1$s کو 23:59 بجے ختم ہو جائے گی۔</string>
     <string name="qr_code_unsupported_title">معاف کیجیے گا، آپ کا فون مقام پر چیک ان کو سپورٹ نہیں کرتا</string>
@@ -384,7 +384,7 @@
     <string name="test_result_positive_continue_self_isolate_explanation_2">فکر مت کریں - زیادہ تر لوگوں کے لئے علامات کافی ہلکی ہوتی ہیں۔ تاہم، اگر آپ کی علامات خراب ہوگئی ہیں تو آپ کو 111 پر فون کرنا چاہئے یا مزید مشوروں کے لئے nhs.uk دیکھنا چاہئے۔</string>
     <string name="url_exposure_faqs">https://faq.covid19.nhs.uk</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
-    <string name="local_authority_error_authority_not_supported_title">جاری رکھنے کے لیےآپ کو ایک مقامی اتھارٹی کا انتخاب کرنا ہوگا</string>
+    <string name="local_authority_error_authority_not_supported_title">مقامی اتھارٹی معاون نہیں ہے۔</string>
     <string name="local_authority_information_description">براہ کرم ایک مقامی اتھارٹی منتخب کریں۔ یہ اس لیے ہے کہ ایپ آپ کو زیادہ درست معلومات اور رہنمائی دے سکے۔</string>
     <string name="about_encounter_date">سامنا ہونے کی تاریخ</string>
     <string name="about_my_data_date">تاریخ</string>
@@ -405,4 +405,25 @@
     <string name="status_option_isolation_payment">مالی تعاون</string>
     <string name="title_exposure_notification">اَفشا کی اطلاع</string>
     <string name="title_last_day_of_isolation">خود کو تنہا رکھنے کا آخری دن</string>
+    <string name="arabic">عربی</string>
+    <string name="bengali">بنگالی</string>
+    <string name="change_language_dialog">ایپ کی زبان %s میں تبدیل کریں؟</string>
+    <string name="chinese">چائنیز (عام فہم )</string>
+    <string name="english">انگریزی</string>
+    <string name="gujarati">گجراتی</string>
+    <string name="language">زبان</string>
+    <string name="language_title">زبان</string>
+    <string name="local_authority_edit">ترمیم</string>
+    <string name="other_languages">زبانیں</string>
+    <string name="polish">پولش</string>
+    <string name="punjabi">پنجابی</string>
+    <string name="romanian">رومینین</string>
+    <string name="settings_title">ترتیبات</string>
+    <string name="somali">صومالی</string>
+    <string name="system_language">سسٹم کی زبان</string>
+    <string name="turkish">ترکش</string>
+    <string name="urdu">اردو</string>
+    <string name="venue_history_edit">ترمیم</string>
+    <string name="venue_history_editing_done">ہوگیا</string>
+    <string name="welsh">ویلش</string>
 </resources>

@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.observe
 import com.google.android.gms.common.api.Status
 import com.google.android.material.snackbar.Snackbar
+import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_status.contactTracingActiveView
 import kotlinx.android.synthetic.main.activity_status.contactTracingStoppedView
 import kotlinx.android.synthetic.main.activity_status.contactTracingView
@@ -24,6 +25,7 @@ import kotlinx.android.synthetic.main.activity_status.optionLinkTestResult
 import kotlinx.android.synthetic.main.activity_status.optionOrderTest
 import kotlinx.android.synthetic.main.activity_status.optionReadAdvice
 import kotlinx.android.synthetic.main.activity_status.optionReportSymptoms
+import kotlinx.android.synthetic.main.activity_status.optionSettings
 import kotlinx.android.synthetic.main.activity_status.optionVenueCheckIn
 import kotlinx.android.synthetic.main.activity_status.riskAreaView
 import kotlinx.android.synthetic.main.activity_status.statusContainer
@@ -41,6 +43,7 @@ import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
+import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
 import uk.nhs.nhsx.covid19.android.app.state.State
@@ -62,7 +65,6 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
-import javax.inject.Inject
 
 class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
 
@@ -186,6 +188,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
 
         optionIsolationPayment.setOnSingleClickListener {
             optionIsolationPayment.isEnabled = false
+            statusViewModel.optionIsolationPaymentClicked()
             startActivity<IsolationPaymentActivity>()
         }
 
@@ -204,6 +207,11 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
                 statusViewModel.onStopExposureNotificationsClicked()
                 optionContactTracing.isEnabled = true
             }
+        }
+
+        optionSettings.setOnSingleClickListener {
+            optionSettings.isEnabled = false
+            startActivity<SettingsActivity>()
         }
 
         riskAreaView.setOnSingleClickListener {
@@ -312,6 +320,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         optionIsolationPayment.isEnabled = true
         optionLinkTestResult.isEnabled = true
         optionContactTracing.isEnabled = true
+        optionSettings.isEnabled = true
         riskAreaView.isEnabled = true
     }
 

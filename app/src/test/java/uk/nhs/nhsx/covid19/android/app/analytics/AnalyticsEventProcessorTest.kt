@@ -4,6 +4,11 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -11,10 +16,13 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.BackgroundTaskCo
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CanceledCheckIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireAndStartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireButDidNotStartIsolation
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedIsolationPaymentsApplication
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.QrCodeCheckIn
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedActiveIpcToken
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyContactNotification
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolationPaymentsButton
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.UpdateNetworkStats
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
@@ -22,14 +30,21 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.Event
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_ISOLATION_PAYMENTS_APPLICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CODE_CHECK_IN
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_ACTIVE_IPC_TOKEN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_CONTACT_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_ISOLATION_PAYMENTS_BUTTON
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.VOID_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Disabled
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Unresolved
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -40,11 +55,6 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
-import java.time.temporal.ChronoUnit
 
 class AnalyticsEventProcessorTest {
 
@@ -54,6 +64,7 @@ class AnalyticsEventProcessorTest {
     private val appAvailabilityProvider = mockk<AppAvailabilityProvider>()
     private val networkTrafficStats = mockk<NetworkTrafficStats>()
     private val testResultsProvider = mockk<TestResultsProvider>()
+    private val isolationPaymentTokenStateProvider = mockk<IsolationPaymentTokenStateProvider>()
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
 
     private val testSubject = AnalyticsEventProcessor(
@@ -63,6 +74,7 @@ class AnalyticsEventProcessorTest {
         appAvailabilityProvider,
         networkTrafficStats,
         testResultsProvider,
+        isolationPaymentTokenStateProvider,
         fixedClock
     )
 
@@ -72,6 +84,7 @@ class AnalyticsEventProcessorTest {
         every { stateStorage.state } returns Default()
         every { testResultsProvider.testResults.values } returns emptyList()
         coEvery { exposureNotificationApi.isEnabled() } returns true
+        every { isolationPaymentTokenStateProvider.tokenState } returns Unresolved
     }
 
     @Test
@@ -597,6 +610,69 @@ class AnalyticsEventProcessorTest {
         }
 
     @Test
+    fun `on background completed updates haveActiveIpcTokenBackgroundTick with active token`() =
+        runBlocking {
+            every { isolationPaymentTokenStateProvider.tokenState } returns Token("validToken")
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                haveActiveIpcTokenBackgroundTick = true
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed updates haveActiveIpcTokenBackgroundTick when token is disabled`() =
+        runBlocking {
+            every { isolationPaymentTokenStateProvider.tokenState } returns Disabled
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                haveActiveIpcTokenBackgroundTick = false
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed updates haveActiveIpcTokenBackgroundTick when token is unresolved`() =
+        runBlocking {
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                haveActiveIpcTokenBackgroundTick = false
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
     fun `track qr code check in`() = runBlocking {
         verifyTrackRegularAnalyticsEvent(QrCodeCheckIn, QR_CODE_CHECK_IN)
     }
@@ -663,11 +739,24 @@ class AnalyticsEventProcessorTest {
     }
 
     @Test
+    fun `track received active Ipc token today`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(ReceivedActiveIpcToken, RECEIVED_ACTIVE_IPC_TOKEN)
+    }
+
+    @Test
     fun `track risky contact notification today`() = runBlocking {
         verifyTrackRegularAnalyticsEvent(
             ReceivedRiskyContactNotification,
             RECEIVED_RISKY_CONTACT_NOTIFICATION
         )
+    }
+
+    fun `track selected isolation payments button`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(SelectedIsolationPaymentsButton, SELECTED_ISOLATION_PAYMENTS_BUTTON)
+    }
+
+    fun `track launched isolation payments application`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(LaunchedIsolationPaymentsApplication, LAUNCHED_ISOLATION_PAYMENTS_APPLICATION)
     }
 
     private suspend fun verifyTrackRegularAnalyticsEvent(event: AnalyticsEvent, eventType: RegularAnalyticsEventType) {

@@ -53,6 +53,7 @@ class UserDataViewModelTest {
 
     private val localAuthorityTextObserver = mockk<Observer<String>>(relaxed = true)
     private val venueVisitsObserver = mockk<Observer<VenueVisitsUiState>>(relaxed = true)
+    private val venueVisitsEditModeChangedObserver = mockk<Observer<Boolean>>(relaxed = true)
     private val stateMachineStateObserver = mockk<Observer<State>>(relaxed = true)
     private val latestTestResultObserver = mockk<Observer<ReceivedTestResult>>(relaxed = true)
     private val allUserDataDeletedObserver = mockk<Observer<Unit>>(relaxed = true)
@@ -76,10 +77,12 @@ class UserDataViewModelTest {
     @Test
     fun `venue visits updated`() = runBlocking {
         testSubject.getVenueVisitsUiState().observeForever(venueVisitsObserver)
+        testSubject.venueVisitsEditModeChanged().observeForever(venueVisitsEditModeChangedObserver)
 
         testSubject.loadUserData()
 
         verify { venueVisitsObserver.onChanged(VenueVisitsUiState(listOf(), isInEditMode = false)) }
+        verify(exactly = 0) { venueVisitsEditModeChangedObserver.onChanged(any()) }
     }
 
     @Test
@@ -124,29 +127,35 @@ class UserDataViewModelTest {
     @Test
     fun `delete single venue visit removes it from storage`() = runBlocking {
         testSubject.getVenueVisitsUiState().observeForever(venueVisitsObserver)
+        testSubject.venueVisitsEditModeChanged().observeForever(venueVisitsEditModeChangedObserver)
 
         testSubject.deleteVenueVisit(0)
 
         coVerify { venuesStorage.removeVenueVisit(0) }
         verify { venueVisitsObserver.onChanged(VenueVisitsUiState(listOf(), isInEditMode = false)) }
+        verify(exactly = 0) { venueVisitsEditModeChangedObserver.onChanged(any()) }
     }
 
     @Test
     fun `clicking edit and done changes delete state`() {
         testSubject.getVenueVisitsUiState().observeForever(venueVisitsObserver)
+        testSubject.venueVisitsEditModeChanged().observeForever(venueVisitsEditModeChangedObserver)
 
         testSubject.onEditVenueVisitClicked()
 
         verify { venueVisitsObserver.onChanged(VenueVisitsUiState(listOf(), isInEditMode = true)) }
+        verify { venueVisitsEditModeChangedObserver.onChanged(true) }
 
         testSubject.onEditVenueVisitClicked()
 
         verify { venueVisitsObserver.onChanged(VenueVisitsUiState(listOf(), isInEditMode = false)) }
+        verify { venueVisitsEditModeChangedObserver.onChanged(false) }
     }
 
     @Test
     fun `loading user data doesn't change edit mode state`() {
         testSubject.getVenueVisitsUiState().observeForever(venueVisitsObserver)
+        testSubject.venueVisitsEditModeChanged().observeForever(venueVisitsEditModeChangedObserver)
 
         testSubject.loadUserData()
 
@@ -159,6 +168,8 @@ class UserDataViewModelTest {
         testSubject.loadUserData()
 
         verify { venueVisitsObserver.onChanged(VenueVisitsUiState(listOf(), isInEditMode = true)) }
+
+        verify(exactly = 1) { venueVisitsEditModeChangedObserver.onChanged(true) }
     }
 
     @Test

@@ -54,7 +54,7 @@ class PermissionActivityTest : EspressoTest() {
 
         permissionRobot.clickEnablePermissions()
 
-        statusRobot.checkActivityIsDisplayed()
+        waitFor { statusRobot.checkActivityIsDisplayed() }
     }
 
     @Test

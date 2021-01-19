@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 import android.content.Context
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isEnabled
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -10,8 +11,10 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertChecked
 import com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertUnchecked
 import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.R.id
 
 class StatusRobot {
 
@@ -36,6 +39,10 @@ class StatusRobot {
 
     fun clickVenueCheckIn() {
         clickOn(R.id.optionVenueCheckIn)
+    }
+
+    fun clickSettings() {
+        clickOn(R.id.optionSettings)
     }
 
     fun clickReadAdvice() {
@@ -106,6 +113,11 @@ class StatusRobot {
             .check(matches(isEnabled()))
     }
 
+    fun checkSettingsIsEnabled() {
+        onView(withId(R.id.optionSettings))
+            .check(matches(isEnabled()))
+    }
+
     fun checkAreaRiskViewIsEnabled() {
         onView(withId(R.id.riskAreaView))
             .check(matches(isEnabled()))
@@ -152,5 +164,14 @@ class StatusRobot {
     fun checkErrorIsDisplayed() {
         onView(withId(com.google.android.material.R.id.snackbar_text))
             .check(matches(isDisplayed()))
+    }
+
+    fun checkVenueOptionIsTranslatedTo(translatedWord: String) {
+        onView(
+            Matchers.allOf(
+                withId(id.mainActionsContainer),
+                ViewMatchers.hasDescendant(withText(translatedWord))
+            )
+        ).check(matches(isDisplayed()))
     }
 }

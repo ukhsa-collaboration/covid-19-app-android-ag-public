@@ -7,6 +7,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedActiveIpcToken
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostalDistrictProviderWrapper
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Disabled
@@ -24,12 +26,13 @@ class CheckIsolationPaymentTokenTest {
     private val isolationPaymentTokenProvider = mockk<IsolationPaymentTokenStateProvider>(relaxed = true)
     private val isolationPaymentApi = mockk<IsolationPaymentApi>(relaxed = true)
     private val postalDistrictProviderWrapper = mockk<PostalDistrictProviderWrapper>(relaxed = true)
-
+    private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxed = true)
     private val testSubject = CheckIsolationPaymentToken(
         canClaimIsolationPayment,
         isolationPaymentTokenProvider,
         isolationPaymentApi,
-        postalDistrictProviderWrapper
+        postalDistrictProviderWrapper,
+        analyticsEventProcessor
     )
 
     @Test
@@ -40,6 +43,22 @@ class CheckIsolationPaymentTokenTest {
 
         verify { isolationPaymentTokenProvider setProperty "tokenState" value eq(Unresolved) }
         coVerify(exactly = 0) { isolationPaymentApi.createToken(any()) }
+    }
+
+    @Test
+    fun `creates analytics event for active ipc token only when receiving token from back end`() = runBlocking {
+
+        every { canClaimIsolationPayment() } returns true
+        every { isolationPaymentTokenProvider.tokenState } returns Unresolved
+        coEvery { postalDistrictProviderWrapper.getPostCodeDistrict() } returns PostCodeDistrict.ENGLAND
+        coEvery { isolationPaymentApi.createToken(any()) } returns IsolationPaymentCreateTokenResponse(
+            true,
+            "validToken"
+        )
+
+        testSubject()
+
+        coVerify { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
     }
 
     @Test
@@ -58,6 +77,7 @@ class CheckIsolationPaymentTokenTest {
 
         coVerify { isolationPaymentApi.createToken(IsolationPaymentCreateTokenRequest(ENGLAND)) }
         verify { isolationPaymentTokenProvider setProperty "tokenState" value eq(Unresolved) }
+        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
     }
 
     @Test
@@ -75,6 +95,7 @@ class CheckIsolationPaymentTokenTest {
 
         coVerify { isolationPaymentApi.createToken(IsolationPaymentCreateTokenRequest(ENGLAND)) }
         verify { isolationPaymentTokenProvider setProperty "tokenState" value eq(Token(token)) }
+        coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
     }
 
     @Test
@@ -92,6 +113,7 @@ class CheckIsolationPaymentTokenTest {
 
         coVerify { isolationPaymentApi.createToken(IsolationPaymentCreateTokenRequest(WALES)) }
         verify { isolationPaymentTokenProvider setProperty "tokenState" value eq(Token(token)) }
+        coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
     }
 
     @Test
@@ -109,6 +131,7 @@ class CheckIsolationPaymentTokenTest {
 
         coVerify { isolationPaymentApi.createToken(IsolationPaymentCreateTokenRequest(ENGLAND)) }
         verify { isolationPaymentTokenProvider setProperty "tokenState" value eq(Disabled) }
+        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
     }
 
     @Test
@@ -121,6 +144,7 @@ class CheckIsolationPaymentTokenTest {
 
         coVerify(exactly = 0) { isolationPaymentApi.createToken(any()) }
         verify(exactly = 0) { isolationPaymentTokenProvider setProperty "tokenState" value any<IsolationPaymentTokenState>() }
+        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
     }
 
     @Test
@@ -132,6 +156,7 @@ class CheckIsolationPaymentTokenTest {
 
         coVerify(exactly = 0) { isolationPaymentApi.createToken(any()) }
         verify(exactly = 0) { isolationPaymentTokenProvider setProperty "tokenState" value any<IsolationPaymentTokenState>() }
+        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
     }
 
     @Test
@@ -143,6 +168,7 @@ class CheckIsolationPaymentTokenTest {
 
         coVerify(exactly = 0) { isolationPaymentApi.createToken(any()) }
         verify(exactly = 0) { isolationPaymentTokenProvider setProperty "tokenState" value any<IsolationPaymentTokenState>() }
+        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
     }
 
     @Test

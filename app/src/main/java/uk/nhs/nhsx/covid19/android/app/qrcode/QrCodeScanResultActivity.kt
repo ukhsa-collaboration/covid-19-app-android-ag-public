@@ -9,7 +9,10 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.addCallback
 import androidx.activity.viewModels
+import androidx.annotation.StringRes
 import androidx.lifecycle.observe
+import java.time.LocalDateTime
+import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.actionButton
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.qrCodeHelpContainer
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.qrScanHelpLink
@@ -32,8 +35,6 @@ import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
-import java.time.LocalDateTime
-import javax.inject.Inject
 
 class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_result) {
 
@@ -73,9 +74,14 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
         viewModel.onResume()
     }
 
+    private fun setTitleForAccessibility(@StringRes id: Int) {
+        titleTextView.setText(id)
+        setTitle(id)
+    }
+
     private fun handleSuccess(venueName: String, currentDateTime: LocalDateTime) {
         resultIcon.setImageResource(R.drawable.ic_qr_code_success)
-        titleTextView.setText(R.string.qr_code_success_title)
+        setTitleForAccessibility(R.string.qr_code_success_title)
         successVenueName.text = venueName
         successVenueDateTime.text = currentDateTime.uiFormat(this@QrCodeScanResultActivity)
         subtitleTextView.setText(R.string.qr_code_success_subtitle)
@@ -101,7 +107,7 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
 
     private fun handleCameraPermissionNotGrantedState() {
         resultIcon.setImageResource(R.drawable.ic_camera)
-        titleTextView.setText(R.string.qr_code_permission_denied_title)
+        setTitleForAccessibility(R.string.qr_code_permission_denied_title)
         subtitleTextView.setText(R.string.qr_code_permission_denied_subtitle)
         actionButton.setText(R.string.qr_code_permission_denied_action)
         actionButton.setOnSingleClickListener {
@@ -127,7 +133,7 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
     private fun handleInvalidContentState() {
         qrScanHelpLink.visible()
         resultIcon.setImageResource(R.drawable.ic_qr_code_failure)
-        titleTextView.setText(R.string.qr_code_failure_title)
+        setTitleForAccessibility(R.string.qr_code_failure_title)
         subtitleTextView.setText(R.string.qr_code_failure_subtitle)
         actionButton.setText(R.string.back_to_home)
         actionButton.setOnSingleClickListener {
@@ -144,7 +150,7 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
 
     private fun handleScanningNotSupportedState() {
         resultIcon.setImageResource(R.drawable.ic_qr_code_failure)
-        titleTextView.setText(R.string.qr_code_unsupported_title)
+        setTitleForAccessibility(R.string.qr_code_unsupported_title)
         subtitleTextView.setText(R.string.qr_code_unsupported_description)
         actionButton.setText(R.string.back_to_home)
         actionButton.setOnSingleClickListener {

@@ -8,6 +8,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityInformationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
@@ -27,6 +28,7 @@ class ExistingUserLocalAuthorityFlowTest : EspressoTest() {
     }
 
     @Test
+    @RetryFlakyTest
     fun setLocalAuthorityWithFeatureFlagEnabled() = notReported {
         FeatureFlagTestHelper.enableFeatureFlag(LOCAL_AUTHORITY)
 
@@ -37,7 +39,7 @@ class ExistingUserLocalAuthorityFlowTest : EspressoTest() {
 
         startTestActivity<MainActivity>()
 
-        localAuthorityInformationRobot.checkActivityIsDisplayed()
+        waitFor { localAuthorityInformationRobot.checkActivityIsDisplayed() }
 
         localAuthorityInformationRobot.clickContinue()
 
@@ -61,7 +63,7 @@ class ExistingUserLocalAuthorityFlowTest : EspressoTest() {
 
         startTestActivity<MainActivity>()
 
-        statusRobot.checkActivityIsDisplayed()
+        waitFor { statusRobot.checkActivityIsDisplayed() }
     }
 
     @Test
@@ -74,6 +76,6 @@ class ExistingUserLocalAuthorityFlowTest : EspressoTest() {
 
         startTestActivity<MainActivity>()
 
-        statusRobot.checkActivityIsDisplayed()
+        waitFor { statusRobot.checkActivityIsDisplayed() }
     }
 }

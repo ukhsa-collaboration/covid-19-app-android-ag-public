@@ -112,6 +112,16 @@ class TestResultsProviderTest {
     }
 
     @Test
+    fun `clear acknowledged test results`() {
+        every { testResultsStorage.value } returns MULTIPLE_TEST_RESULTS_JSON
+
+        val testSubject = TestResultsProvider(latestResultsProvider, testResultsStorage, moshi, clock)
+        testSubject.clearAcknowledged()
+
+        verify { testResultsStorage.value = SINGLE_TEST_RESULT_JSON }
+    }
+
+    @Test
     fun `acknowledging test result`() {
         every { testResultsStorage.value } returns SINGLE_TEST_RESULT_JSON
 

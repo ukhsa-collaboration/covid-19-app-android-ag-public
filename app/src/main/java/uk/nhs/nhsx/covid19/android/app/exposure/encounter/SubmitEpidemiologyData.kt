@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
 import androidx.annotation.VisibleForTesting
-import com.google.android.gms.nearby.exposurenotification.ExposureWindow
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -10,7 +9,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.analytics.MetadataProvider
 import uk.nhs.nhsx.covid19.android.app.common.runSafely
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.DayRisk
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEvent
 import uk.nhs.nhsx.covid19.android.app.remote.EpidemiologyDataApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource
@@ -57,8 +55,6 @@ class SubmitEpidemiologyData constructor(
             submitFakeExposureWindows(epidemiologyEventType.toEmptySubmissionSource(), epidemiologyEventList.size)
         }
     }
-
-    data class ExposureWindowWithRisk(val dayRisk: DayRisk, val exposureWindow: ExposureWindow)
 }
 
 @VisibleForTesting

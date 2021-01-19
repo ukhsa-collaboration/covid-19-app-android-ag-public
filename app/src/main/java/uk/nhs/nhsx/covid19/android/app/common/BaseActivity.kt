@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import java.util.Locale
@@ -14,19 +13,17 @@ abstract class BaseActivity(contentView: Int) : AppCompatActivity(contentView) {
 
     @Inject
     lateinit var applicationLocaleProvider: ApplicationLocaleProvider
+    private var currentLanguageCode: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
+        currentLanguageCode = applicationLocaleProvider.languageCode
     }
 
     override fun attachBaseContext(baseContext: Context) {
         baseContext.applicationContext.appComponent.inject(this)
-        if (BuildConfig.FLAVOR == "scenarios") {
-            super.attachBaseContext(updateBaseContextLocale(baseContext))
-        } else {
-            super.attachBaseContext(baseContext)
-        }
+        super.attachBaseContext(updateBaseContextLocale(baseContext))
     }
 
     override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
@@ -36,6 +33,16 @@ abstract class BaseActivity(contentView: Int) : AppCompatActivity(contentView) {
             overrideConfiguration.uiMode = uiMode
         }
         super.applyOverrideConfiguration(overrideConfiguration)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val updatedLanguage = applicationLocaleProvider.languageCode
+
+        if (currentLanguageCode != updatedLanguage) {
+            finish()
+            startActivity(intent)
+        }
     }
 
     private fun updateBaseContextLocale(context: Context): Context {

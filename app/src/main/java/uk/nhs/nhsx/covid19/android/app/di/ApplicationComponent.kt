@@ -10,6 +10,7 @@ import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityListener
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateRecommendedActivity
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationActivity
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationChecker
+import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.DownloadTasksWorker
 import uk.nhs.nhsx.covid19.android.app.common.EnableBluetoothActivity
@@ -42,6 +43,8 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AlarmRestarter
 import uk.nhs.nhsx.covid19.android.app.receiver.ExpirationCheckReceiver
 import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationReminderReceiver
 import uk.nhs.nhsx.covid19.android.app.receiver.UpdateReceiver
+import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
+import uk.nhs.nhsx.covid19.android.app.settings.languages.LanguagesActivity
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
 import uk.nhs.nhsx.covid19.android.app.status.DebugFragment
 import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWorker
@@ -98,6 +101,8 @@ interface ApplicationComponent {
     fun inject(editPostalCodeActivity: EditPostalDistrictActivity)
     fun inject(testOrderingProgressActivity: TestOrderingProgressActivity)
     fun inject(appAvailabilityActivity: AppAvailabilityActivity)
+    fun inject(settingsActivity: SettingsActivity)
+    fun inject(languagesActivity: LanguagesActivity)
     fun inject(updateReceiver: UpdateReceiver)
     fun inject(venueAlertActivity: VenueAlertActivity)
     fun inject(debugFragment: DebugFragment)
@@ -121,4 +126,5 @@ interface ApplicationComponent {
     fun provideOnboardingCompleted(): OnboardingCompletedProvider
     fun provideNotificationProvider(): NotificationProvider
     fun provideBatteryOptimizationChecker(): BatteryOptimizationChecker
+    fun provideApplicationLocaleProvider(): ApplicationLocaleProvider
 }

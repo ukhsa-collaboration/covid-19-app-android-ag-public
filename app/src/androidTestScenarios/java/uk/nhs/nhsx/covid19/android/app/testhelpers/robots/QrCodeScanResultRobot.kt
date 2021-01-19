@@ -6,6 +6,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
 import uk.nhs.nhsx.covid19.android.app.R
 
 class QrCodeScanResultRobot {
@@ -33,6 +34,15 @@ class QrCodeScanResultRobot {
     fun checkNotSupportedTitleIsDisplayed() {
         onView(withText(R.string.qr_code_unsupported_title))
             .check(matches(isDisplayed()))
+    }
+
+    fun checkDateTimeFormat(successVenueDateTime: String) {
+        onView(withId(R.id.successVenueDateTime))
+            .check(matches(withText(successVenueDateTime)))
+    }
+
+    fun cancelCheckIn() {
+        clickOn(R.id.textCancelCheckIn)
     }
 
     fun clickBackToHomeButton() {
