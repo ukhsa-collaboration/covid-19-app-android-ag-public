@@ -150,7 +150,7 @@ protobuf {
 
 def timber_version = "4.7.1"
 def lifecycle_version = "2.2.0"
-def work_version = "2.4.0"
+def work_version = "2.5.0-beta02"
 def coroutines_version = "1.3.7"
 def retrofit_version = "2.9.0"
 def moshi_version = "1.9.2"
