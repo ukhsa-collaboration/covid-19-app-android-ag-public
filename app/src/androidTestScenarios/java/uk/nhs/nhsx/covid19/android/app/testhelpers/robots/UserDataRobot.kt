@@ -95,11 +95,31 @@ class UserDataRobot {
             .check(matches(withText(R.string.edit)))
     }
 
-    fun checkLastTestResultIsDisplayed() {
+    fun checkLastTestResultIsDisplayed(shouldKitTypeBeVisible: Boolean = true) {
         onView(withId(R.id.titleLatestResult))
             .check(matches(isDisplayed()))
-        onView(withId(R.id.latestResultContainer))
+        onView(withId(R.id.latestResultDateContainer))
             .check(matches(isDisplayed()))
+        onView(withId(R.id.latestResultValueContainer))
+            .check(matches(isDisplayed()))
+        if (shouldKitTypeBeVisible) {
+            onView(withId(R.id.latestResultKitTypeContainer))
+                .check(matches(isDisplayed()))
+        } else {
+            onView(withId(R.id.latestResultKitTypeContainer))
+                .check(matches(not(isDisplayed())))
+        }
+    }
+
+    fun checkLastTestResultIsNotDisplayed() {
+        onView(withId(R.id.titleLatestResult))
+            .check(matches(not(isDisplayed())))
+        onView(withId(R.id.latestResultDateContainer))
+            .check(matches(not(isDisplayed())))
+        onView(withId(R.id.latestResultValueContainer))
+            .check(matches(not(isDisplayed())))
+        onView(withId(R.id.latestResultKitTypeContainer))
+            .check(matches(not(isDisplayed())))
     }
 
     fun checkExposureNotificationIsDisplayed() {

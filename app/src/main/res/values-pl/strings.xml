@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright © 2020 NHSX. All rights reserved.
-  --><resources xmlns:tools="http://schemas.android.com/tools">
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="locale">pl</string>
     <!-- URLs -->
     <string name="url_privacy_notice">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
@@ -64,7 +64,7 @@
     <string name="go_back">Wróć</string>
     <string name="loading">Ładowanie...</string>
     <string name="remove">Usuń</string>
-    <string name="empty" translatable="false"/>
+    <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">Aplikacja wyśle Ci ostrzeżenie, jeżeli miałeś/aś kontakt z innymi użytkownikami, którzy zgłosili pozytywny wynik testu na koronawirusa.\n\nAby umożliwić śledzenie kontaktów, należy wyrazić zgodę na powiadomienia o narażeniu.\n\nJeżeli zmienisz zdanie, możesz w każdej chwili wycofać zgodę w ustawieniach telefonu.</string>
     <string name="permission_title">Śledzenie kontaktów</string>
     <string name="exposure_notifications_rationale_title">Śledzenie kontaktów pomaga w zapobieganiu rozprzestrzeniania się koronawirusa (COVID-19)</string>
@@ -136,7 +136,7 @@
     <string name="notification_channel_background_work_description">Powiadomienia te informują o działaniach aplikacji w tle</string>
     <string name="notification_title_state_expiration">Wytyczne dla Ciebie uległy zmianie</string>
     <string name="notification_text_state_expiration">Dotknij tutaj, aby zapoznać się ze szczegółowymi informacjami</string>
-    <string name="notification_title_state_exposure">Mogłeś(-aś) przebywać w pobliżu osoby, która była zakażona koronawirusem. Proszę pozostać w domu i odizolować się, aby chronić siebie i innych</string>
+    <string name="notification_title_state_exposure">Musisz natychmiast rozpocząć izolację. Nastąpił bliski kontakt z osobą zakażoną koronawirusem (COVID-19).</string>
     <string name="notification_text_state_exposure">Dotknij tutaj, aby zapoznać się ze szczegółowymi informacjami.</string>
     <string name="notification_title_test_results">Wyniki Twojego testu są już dostępne</string>
     <string name="notification_text_test_results">Dotknij tutaj, aby zapoznać się ze szczegółowymi informacjami</string>
@@ -239,7 +239,7 @@
     <string name="about_manage_my_data">Zarządzaj danymi</string>
     <string name="postal_district">Okręg pocztowy</string>
     <string name="edit">Edytuj</string>
-    <string name="title_last_test_result_taken">Wynik ostatniego wykonanego testu</string>
+    <string name="title_last_test_result_taken">Ostatni stosowny wynik testu</string>
     <string name="title_venue_history">Lista odwiedzonych miejsc</string>
     <string name="title_symptoms">Data wystąpienia objawów</string>
     <string name="edit_postcode_district_title">Edytuj okręg pocztowy</string>
@@ -442,4 +442,8 @@
     <string name="venue_history_edit">Edytuj</string>
     <string name="venue_history_editing_done">Gotowe</string>
     <string name="welsh">Walijski</string>
+    <string name="about_lfd">RAPID_RESULT</string>
+    <string name="about_pcr">LAB_RESULT</string>
+    <string name="about_test_kit_type">Typ zestawu testowego</string>
+    <string name="about_test_result">Wynik</string>
 </resources>

@@ -19,8 +19,11 @@ import kotlinx.android.synthetic.main.activity_about_user_data.exposureNotificat
 import kotlinx.android.synthetic.main.activity_about_user_data.lastDayOfIsolationDate
 import kotlinx.android.synthetic.main.activity_about_user_data.lastDayOfIsolationSection
 import kotlinx.android.synthetic.main.activity_about_user_data.lastResultDate
+import kotlinx.android.synthetic.main.activity_about_user_data.lastResultKitType
 import kotlinx.android.synthetic.main.activity_about_user_data.lastResultValue
-import kotlinx.android.synthetic.main.activity_about_user_data.latestResultContainer
+import kotlinx.android.synthetic.main.activity_about_user_data.latestResultDateContainer
+import kotlinx.android.synthetic.main.activity_about_user_data.latestResultKitTypeContainer
+import kotlinx.android.synthetic.main.activity_about_user_data.latestResultValueContainer
 import kotlinx.android.synthetic.main.activity_about_user_data.localAuthority
 import kotlinx.android.synthetic.main.activity_about_user_data.localAuthorityTitle
 import kotlinx.android.synthetic.main.activity_about_user_data.symptomsDataSection
@@ -44,14 +47,17 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.state.State
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.NEGATIVE
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
@@ -134,7 +140,7 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
             onVenueVisitsEditModeChanged(isInEditMode)
         }
 
-        viewModel.getReceivedTestResult().observe(this) { latestTestResult ->
+        viewModel.getAcknowledgedTestResult().observe(this) { latestTestResult ->
             handleShowingLatestTestResult(latestTestResult)
         }
 
@@ -147,24 +153,39 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
         }
     }
 
-    private fun handleShowingLatestTestResult(receivedTestResult: ReceivedTestResult?) {
-        if (receivedTestResult == null) {
+    private fun handleShowingLatestTestResult(acknowledgedTestResult: AcknowledgedTestResult?) {
+        if (acknowledgedTestResult == null) {
             titleLatestResult.gone()
-            latestResultContainer.gone()
+            latestResultDateContainer.gone()
+            latestResultValueContainer.gone()
+            latestResultKitTypeContainer.gone()
         } else {
-            lastResultValue.text = getTestResultText(receivedTestResult)
-            lastResultDate.text = uiFormat(receivedTestResult.testEndDate)
+            lastResultDate.text = uiFormat(acknowledgedTestResult.testEndDate)
+            lastResultValue.text = getTestResultText(acknowledgedTestResult)
+            if (acknowledgedTestResult.testKitType != null) {
+                lastResultKitType.text = getTestResultKitTypeText(acknowledgedTestResult.testKitType)
+                latestResultKitTypeContainer.visible()
+            } else {
+                latestResultKitTypeContainer.gone()
+            }
 
             titleLatestResult.visible()
-            latestResultContainer.visible()
+            latestResultDateContainer.visible()
+            latestResultValueContainer.visible()
         }
     }
 
-    private fun getTestResultText(receivedTestResult: ReceivedTestResult) =
-        when (receivedTestResult.testResult) {
+    private fun getTestResultText(acknowledgedTestResult: AcknowledgedTestResult) =
+        when (acknowledgedTestResult.testResult) {
             POSITIVE -> getString(R.string.about_positive)
             NEGATIVE -> getString(R.string.about_negative)
-            VOID -> getString(R.string.about_void)
+        }
+
+    private fun getTestResultKitTypeText(testKitType: VirologyTestKitType) =
+        when (testKitType) {
+            LAB_RESULT -> getString(R.string.about_pcr)
+            RAPID_RESULT -> getString(R.string.about_lfd)
+            RAPID_SELF_REPORTED -> getString(R.string.about_lfd_self_reported)
         }
 
     private fun showConfirmDeletingAllDataDialog() {

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright © 2020 NHSX. All rights reserved.
-  --><resources xmlns:tools="http://schemas.android.com/tools">
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="locale">en</string>
     <!-- URLs -->
     <string name="url_privacy_notice">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
@@ -59,7 +59,7 @@
     <string name="go_back">Go back</string>
     <string name="loading">Loading…</string>
     <string name="remove">Remove</string>
-    <string name="empty" translatable="false"/>
+    <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">The app will send you an alert if you have been in close contact with someone who has tested positive for the virus.\n\nTo enable contact tracing for this app you need to allow ‘Exposure Notifications’.\n\nIf you change your mind, you can change your permissions in settings at any time.</string>
     <string name="permission_title">Contact tracing</string>
     <string name="exposure_notifications_rationale_title">Contact tracing helps prevent the spread of coronavirus (COVID-19)</string>
@@ -136,7 +136,7 @@
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
     <string name="notification_title_state_expiration">Our guidance to you has changed</string>
     <string name="notification_text_state_expiration">Tap to see the details</string>
-    <string name="notification_title_state_exposure">The app has detected that you have been in contact with someone who has coronavirus. Please stay at home and self-isolate to keep yourself and others safe</string>
+    <string name="notification_title_state_exposure">You need to self-isolate immediately. You have been in close contact with someone who has coronavirus (COVID-19).</string>
     <string name="notification_text_state_exposure">Tap here for more details.</string>
     <string name="notification_title_test_results">Your test results have arrived</string>
     <string name="notification_text_test_results">Tap to see the details</string>
@@ -245,7 +245,7 @@
     <string name="about_local_authority">Local authority</string>
     <string name="local_authority_edit">Edit your local authority</string>
     <string name="edit">Edit</string>
-    <string name="title_last_test_result_taken">Last test result taken</string>
+    <string name="title_last_test_result_taken">Last applicable test result</string>
     <string name="title_venue_history">Venue history</string>
     <string name="venue_history_edit">Edit your venue history</string>
     <string name="venue_history_editing_done">Done editing venue history</string>
@@ -264,7 +264,12 @@
     <string name="about_delete_positive_text">Delete data</string>
     <string name="about_positive">Positive</string>
     <string name="about_negative">Negative</string>
+    <string name="about_pcr">LAB_RESULT</string>
+    <string name="about_lfd">RAPID_RESULT</string>
+    <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
     <string name="about_void">Void</string>
+    <string name="about_test_result">Result</string>
+    <string name="about_test_kit_type">Test kit type</string>
     <string name="qr_code_more_info">More info about venue check-in</string>
     <string name="qr_code_scan_explanation">Hold your phone so that the official NHS QR code appears in the box above. When your phone recognises the QR code, it will show that you have successfully checked in.</string>
     <string name="qr_code_help_title">Help scanning a QR code</string>

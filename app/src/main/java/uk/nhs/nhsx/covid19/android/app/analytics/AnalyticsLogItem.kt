@@ -1,6 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.analytics
 
 import com.squareup.moshi.JsonClass
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 
 sealed class AnalyticsLogItem {
@@ -11,10 +13,17 @@ sealed class AnalyticsLogItem {
     data class BackgroundTaskCompletion(val backgroundTaskTicks: BackgroundTaskTicks) : AnalyticsLogItem()
 
     @JsonClass(generateAdapter = true)
-    data class ResultReceived(val result: VirologyTestResult, val testOrderType: TestOrderType) : AnalyticsLogItem()
+    data class ResultReceived(
+        val result: VirologyTestResult,
+        val testKitType: VirologyTestKitType = LAB_RESULT,
+        val testOrderType: TestOrderType
+    ) : AnalyticsLogItem()
 
     @JsonClass(generateAdapter = true)
     data class UpdateNetworkStats(val downloadedBytes: Int?, val uploadedBytes: Int?) : AnalyticsLogItem()
+
+    @JsonClass(generateAdapter = true)
+    data class ExposureWindowMatched(val totalRiskyExposures: Int, val totalNonRiskyExposures: Int) : AnalyticsLogItem()
 }
 
 enum class RegularAnalyticsEventType {
@@ -40,9 +49,11 @@ data class BackgroundTaskTicks(
     var hasSelfDiagnosedPositiveBackgroundTick: Boolean = false,
     var isIsolatingForSelfDiagnosedBackgroundTick: Boolean = false,
     var isIsolatingForTestedPositiveBackgroundTick: Boolean = false,
+    var isIsolatingForTestedLFDPositiveBackgroundTick: Boolean = false,
     var hasHadRiskyContactBackgroundTick: Boolean = false,
     var hasSelfDiagnosedBackgroundTick: Boolean = false,
     var hasTestedPositiveBackgroundTick: Boolean = false,
+    var hasTestedLFDPositiveBackgroundTick: Boolean = false,
     var encounterDetectionPausedBackgroundTick: Boolean = false,
     var haveActiveIpcTokenBackgroundTick: Boolean = false
 )

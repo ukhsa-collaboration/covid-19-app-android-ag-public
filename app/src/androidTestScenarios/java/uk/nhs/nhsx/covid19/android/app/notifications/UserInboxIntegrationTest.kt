@@ -9,6 +9,7 @@ import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEn
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -61,11 +62,17 @@ class UserInboxIntegrationTest : EspressoTest() {
     fun testOrderOfUserInboxItems() = notReported {
         val expirationDate = LocalDate.of(2020, AUGUST, 6)
         val venueId = "venue-id"
-        val testResult = ReceivedTestResult("abc", Instant.now(), POSITIVE)
+        val testResult = ReceivedTestResult(
+            "abc",
+            Instant.now(),
+            POSITIVE,
+            LAB_RESULT,
+            diagnosisKeySubmissionSupported = true
+        )
 
         testSubject.addUserInboxItem(ShowVenueAlert(venueId))
         testSubject.addUserInboxItem(ShowIsolationExpiration(expirationDate))
-        testAppContext.getTestResultsProvider().add(testResult)
+        testAppContext.getUnacknowledgedTestResultsProvider().add(testResult)
         testSubject.addUserInboxItem(ShowEncounterDetection)
 
         val firstInboxItem = testSubject.fetchInbox()
@@ -75,7 +82,7 @@ class UserInboxIntegrationTest : EspressoTest() {
 
         val secondInboxItem = testSubject.fetchInbox()
         assertThat(secondInboxItem).isInstanceOf(ShowTestResult::class.java)
-        testAppContext.getTestResultsProvider().acknowledge(testResult)
+        testAppContext.getTestResultHandler().acknowledge(testResult)
 
         val thirdInboxItem = testSubject.fetchInbox()
         assertThat(thirdInboxItem).isInstanceOf(ShowEncounterDetection::class.java)

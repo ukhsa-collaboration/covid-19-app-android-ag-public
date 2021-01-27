@@ -5,7 +5,7 @@ import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEn
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import java.time.LocalDate
 import javax.inject.Inject
@@ -26,7 +26,7 @@ class UserInbox @Inject constructor(
     private val isolationExpirationDateProvider: IsolationExpirationDateProvider,
     private val riskyVenueIdProvider: RiskyVenueIdProvider,
     private val shouldShowEncounterDetectionActivityProvider: ShouldShowEncounterDetectionActivityProvider,
-    private val testResultsProvider: TestResultsProvider
+    private val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider
 ) {
 
     internal var listeners = mutableListOf<() -> Unit>()
@@ -59,7 +59,7 @@ class UserInbox @Inject constructor(
         if (isolationExpirationDateProvider.value != null) {
             return ShowIsolationExpiration(LocalDate.parse(isolationExpirationDateProvider.value))
         }
-        if (testResultsProvider.testResults.values.any { it.acknowledgedDate == null }) {
+        if (unacknowledgedTestResultsProvider.testResults.isNotEmpty()) {
             return ShowTestResult
         }
         if (shouldShowEncounterDetectionActivityProvider.value != null &&

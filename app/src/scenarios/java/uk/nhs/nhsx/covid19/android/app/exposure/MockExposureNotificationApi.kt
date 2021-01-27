@@ -117,6 +117,10 @@ class MockExposureNotificationApi(private val clock: Clock = Clock.systemUTC()) 
         return true
     }
 
+    override suspend fun isRunningNormally(): Boolean {
+        return isEnabled()
+    }
+
     fun setDeviceSupportsLocationlessScanning(supportsLocationlessScanning: Boolean) {
         this.supportsLocationlessScanning = supportsLocationlessScanning
     }

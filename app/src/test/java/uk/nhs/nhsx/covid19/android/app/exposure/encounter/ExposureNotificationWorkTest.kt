@@ -12,11 +12,6 @@ import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneOffset
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Test
@@ -34,10 +29,14 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.CIRCUIT
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventPayload
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventPayloadScanInstance
-import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnExposedNotification
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitFakeExposureWindows
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneOffset
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ExposureNotificationWorkTest {
 
@@ -309,7 +308,7 @@ class ExposureNotificationWorkTest {
             coVerifyOrder {
                 exposureCircuitBreakerInfoProvider.add(expectedInfo)
                 epidemiologyEventProvider.add(expectedEpidemiologyEvents)
-                submitEpidemiologyData(expectedEpidemiologyEvents, epidemiologyEventType = EpidemiologyEventType.EXPOSURE_WINDOW)
+                submitEpidemiologyData.submit(expectedEpidemiologyEvents)
                 handleInitialExposureNotification(expectedInfo)
                 stateMachine.processEvent(OnExposedNotification(Instant.ofEpochMilli(expectedInfo.startOfDayMillis)))
                 exposureCircuitBreakerInfoProvider.remove(expectedInfo)
@@ -343,7 +342,7 @@ class ExposureNotificationWorkTest {
 
             coVerifyOrder {
                 exposureCircuitBreakerInfoProvider.add(expectedInfo)
-                submitEpidemiologyData(expectedEpidemiologyEvents, epidemiologyEventType = EpidemiologyEventType.EXPOSURE_WINDOW)
+                submitEpidemiologyData.submit(expectedEpidemiologyEvents)
                 handleInitialExposureNotification(expectedInfo)
                 stateMachine.processEvent(OnExposedNotification(Instant.ofEpochMilli(expectedInfo.startOfDayMillis)))
                 exposureCircuitBreakerInfoProvider.remove(expectedInfo)

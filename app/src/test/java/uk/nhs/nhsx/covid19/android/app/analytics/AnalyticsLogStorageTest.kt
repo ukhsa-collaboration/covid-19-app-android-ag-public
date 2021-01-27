@@ -4,18 +4,20 @@ import com.squareup.moshi.Moshi
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.Instant
-import kotlin.test.assertEquals
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.BackgroundTaskCompletion
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.Event
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.ExposureWindowMatched
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.UpdateNetworkStats
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CODE_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.OUTSIDE_APP
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
+import java.time.Instant
+import kotlin.test.assertEquals
 
 class AnalyticsLogStorageTest {
 
@@ -47,23 +49,43 @@ class AnalyticsLogStorageTest {
 
     @Test
     fun `verify serialization`() {
-        every { analyticsLogEntryJsonStorage.value } returns analyticsLogEntriesJson
+        every { analyticsLogEntryJsonStorage.value } returns ANALYTICS_LOG_ENTRIES_JSON
 
         val parsedAnalyticsLogEntries = testSubject.value
 
-        assertEquals(expected = analyticsLogEntries, actual = parsedAnalyticsLogEntries)
+        assertEquals(expected = ANALYTICS_LOG_ENTRIES, actual = parsedAnalyticsLogEntries)
     }
 
     @Test
     fun `verify deserialization`() {
-        testSubject.value = analyticsLogEntries
+        testSubject.value = ANALYTICS_LOG_ENTRIES
 
-        verify { analyticsLogEntryJsonStorage.value = analyticsLogEntriesJson }
+        verify { analyticsLogEntryJsonStorage.value = ANALYTICS_LOG_ENTRIES_JSON }
+    }
+
+    @Test
+    fun `verify migration of test result received with no test kit type`() {
+        every { analyticsLogEntryJsonStorage.value } returns RESULT_RECEIVED_NO_TEST_KIT_TYPE_JSON
+
+        val parsedAnalyticsLogEntries = testSubject.value
+
+        val expectedAnalyticsLogEntries = listOf(
+            AnalyticsLogEntry(
+                instant = Instant.parse("2020-11-18T13:31:32.527Z"),
+                logItem = ResultReceived(
+                    result = POSITIVE,
+                    testKitType = LAB_RESULT,
+                    testOrderType = OUTSIDE_APP
+                )
+            )
+        )
+
+        assertEquals(expected = expectedAnalyticsLogEntries, actual = parsedAnalyticsLogEntries)
     }
 
     @Test
     fun `verify adding new log entry`() {
-        testSubject.value = analyticsLogEntries
+        testSubject.value = ANALYTICS_LOG_ENTRIES
 
         val newLogEntry = AnalyticsLogEntry(
             instant = Instant.parse("2020-11-18T13:40:56.333Z"),
@@ -80,7 +102,7 @@ class AnalyticsLogStorageTest {
 
     @Test
     fun `verify removal of analytics events that are within the given window`() {
-        every { analyticsLogEntryJsonStorage.value } returns analyticsLogEntriesJson
+        every { analyticsLogEntryJsonStorage.value } returns ANALYTICS_LOG_ENTRIES_JSON
 
         testSubject.remove(
             startInclusive = Instant.parse("2020-11-18T13:30:00.000Z"),
@@ -88,7 +110,7 @@ class AnalyticsLogStorageTest {
         )
 
         val updatedAnalyticsLogEntriesJson =
-            """[{"instant":"2020-11-18T13:29:56.385Z","logItem":{"type":"BackgroundTaskCompletion","backgroundTaskTicks":{"runningNormallyBackgroundTick":true,"isIsolatingBackgroundTick":true,"isIsolatingForHadRiskyContactBackgroundTick":true,"hasSelfDiagnosedPositiveBackgroundTick":false,"isIsolatingForSelfDiagnosedBackgroundTick":false,"isIsolatingForTestedPositiveBackgroundTick":false,"hasHadRiskyContactBackgroundTick":false,"hasSelfDiagnosedBackgroundTick":false,"hasTestedPositiveBackgroundTick":false,"encounterDetectionPausedBackgroundTick":false,"haveActiveIpcTokenBackgroundTick":false}}},{"instant":"2020-11-18T13:33:32.123Z","logItem":{"type":"UpdateNetworkStats","downloadedBytes":25,"uploadedBytes":15}}]"""
+            """[{"instant":"2020-11-18T13:29:56.385Z","logItem":{"type":"BackgroundTaskCompletion","backgroundTaskTicks":{"runningNormallyBackgroundTick":true,"isIsolatingBackgroundTick":true,"isIsolatingForHadRiskyContactBackgroundTick":true,"hasSelfDiagnosedPositiveBackgroundTick":false,"isIsolatingForSelfDiagnosedBackgroundTick":false,"isIsolatingForTestedPositiveBackgroundTick":false,"isIsolatingForTestedLFDPositiveBackgroundTick":false,"hasHadRiskyContactBackgroundTick":false,"hasSelfDiagnosedBackgroundTick":false,"hasTestedPositiveBackgroundTick":false,"hasTestedLFDPositiveBackgroundTick":false,"encounterDetectionPausedBackgroundTick":false,"haveActiveIpcTokenBackgroundTick":false}}},{"instant":"2020-11-18T13:33:32.123Z","logItem":{"type":"UpdateNetworkStats","downloadedBytes":25,"uploadedBytes":15}},{"instant":"2020-11-18T13:33:33.123Z","logItem":{"type":"ExposureWindowMatched","totalRiskyExposures":1,"totalNonRiskyExposures":2}}]"""
         verify {
             analyticsLogEntryJsonStorage setProperty "value" value eq(updatedAnalyticsLogEntriesJson)
         }
@@ -96,41 +118,49 @@ class AnalyticsLogStorageTest {
 
     @Test
     fun `verify no events are removed when none match the specified window`() {
-        every { analyticsLogEntryJsonStorage.value } returns analyticsLogEntriesJson
+        every { analyticsLogEntryJsonStorage.value } returns ANALYTICS_LOG_ENTRIES_JSON
 
         testSubject.remove(
             startInclusive = Instant.parse("2020-11-18T13:28:00.000Z"),
             endExclusive = Instant.parse("2020-11-18T13:29:00.000Z")
         )
 
-        verify { analyticsLogEntryJsonStorage setProperty "value" value eq(analyticsLogEntriesJson) }
+        verify { analyticsLogEntryJsonStorage setProperty "value" value eq(ANALYTICS_LOG_ENTRIES_JSON) }
     }
 
-    private val analyticsLogEntries = listOf(
-        AnalyticsLogEntry(
-            instant = Instant.parse("2020-11-18T13:29:56.385Z"),
-            logItem = BackgroundTaskCompletion(
-                BackgroundTaskTicks(
-                    runningNormallyBackgroundTick = true,
-                    isIsolatingBackgroundTick = true,
-                    isIsolatingForHadRiskyContactBackgroundTick = true
+    companion object {
+        private val ANALYTICS_LOG_ENTRIES = listOf(
+            AnalyticsLogEntry(
+                instant = Instant.parse("2020-11-18T13:29:56.385Z"),
+                logItem = BackgroundTaskCompletion(
+                    BackgroundTaskTicks(
+                        runningNormallyBackgroundTick = true,
+                        isIsolatingBackgroundTick = true,
+                        isIsolatingForHadRiskyContactBackgroundTick = true
+                    )
                 )
+            ),
+            AnalyticsLogEntry(
+                instant = Instant.parse("2020-11-18T13:30:15.120Z"),
+                logItem = Event(QR_CODE_CHECK_IN)
+            ),
+            AnalyticsLogEntry(
+                instant = Instant.parse("2020-11-18T13:31:32.527Z"),
+                logItem = ResultReceived(result = POSITIVE, testKitType = LAB_RESULT, testOrderType = OUTSIDE_APP)
+            ),
+            AnalyticsLogEntry(
+                instant = Instant.parse("2020-11-18T13:33:32.123Z"),
+                logItem = UpdateNetworkStats(downloadedBytes = 25, uploadedBytes = 15)
+            ),
+            AnalyticsLogEntry(
+                instant = Instant.parse("2020-11-18T13:33:33.123Z"),
+                logItem = ExposureWindowMatched(totalRiskyExposures = 1, totalNonRiskyExposures = 2)
             )
-        ),
-        AnalyticsLogEntry(
-            instant = Instant.parse("2020-11-18T13:30:15.120Z"),
-            logItem = Event(QR_CODE_CHECK_IN)
-        ),
-        AnalyticsLogEntry(
-            instant = Instant.parse("2020-11-18T13:31:32.527Z"),
-            logItem = ResultReceived(result = POSITIVE, testOrderType = OUTSIDE_APP)
-        ),
-        AnalyticsLogEntry(
-            instant = Instant.parse("2020-11-18T13:33:32.123Z"),
-            logItem = UpdateNetworkStats(downloadedBytes = 25, uploadedBytes = 15)
         )
-    )
 
-    private val analyticsLogEntriesJson =
-        """[{"instant":"2020-11-18T13:29:56.385Z","logItem":{"type":"BackgroundTaskCompletion","backgroundTaskTicks":{"runningNormallyBackgroundTick":true,"isIsolatingBackgroundTick":true,"isIsolatingForHadRiskyContactBackgroundTick":true,"hasSelfDiagnosedPositiveBackgroundTick":false,"isIsolatingForSelfDiagnosedBackgroundTick":false,"isIsolatingForTestedPositiveBackgroundTick":false,"hasHadRiskyContactBackgroundTick":false,"hasSelfDiagnosedBackgroundTick":false,"hasTestedPositiveBackgroundTick":false,"encounterDetectionPausedBackgroundTick":false,"haveActiveIpcTokenBackgroundTick":false}}},{"instant":"2020-11-18T13:30:15.120Z","logItem":{"type":"Event","eventType":"QR_CODE_CHECK_IN"}},{"instant":"2020-11-18T13:31:32.527Z","logItem":{"type":"ResultReceived","result":"POSITIVE","testOrderType":"OUTSIDE_APP"}},{"instant":"2020-11-18T13:33:32.123Z","logItem":{"type":"UpdateNetworkStats","downloadedBytes":25,"uploadedBytes":15}}]"""
+        private const val ANALYTICS_LOG_ENTRIES_JSON =
+            """[{"instant":"2020-11-18T13:29:56.385Z","logItem":{"type":"BackgroundTaskCompletion","backgroundTaskTicks":{"runningNormallyBackgroundTick":true,"isIsolatingBackgroundTick":true,"isIsolatingForHadRiskyContactBackgroundTick":true,"hasSelfDiagnosedPositiveBackgroundTick":false,"isIsolatingForSelfDiagnosedBackgroundTick":false,"isIsolatingForTestedPositiveBackgroundTick":false,"isIsolatingForTestedLFDPositiveBackgroundTick":false,"hasHadRiskyContactBackgroundTick":false,"hasSelfDiagnosedBackgroundTick":false,"hasTestedPositiveBackgroundTick":false,"hasTestedLFDPositiveBackgroundTick":false,"encounterDetectionPausedBackgroundTick":false,"haveActiveIpcTokenBackgroundTick":false}}},{"instant":"2020-11-18T13:30:15.120Z","logItem":{"type":"Event","eventType":"QR_CODE_CHECK_IN"}},{"instant":"2020-11-18T13:31:32.527Z","logItem":{"type":"ResultReceived","result":"POSITIVE","testKitType":"LAB_RESULT","testOrderType":"OUTSIDE_APP"}},{"instant":"2020-11-18T13:33:32.123Z","logItem":{"type":"UpdateNetworkStats","downloadedBytes":25,"uploadedBytes":15}},{"instant":"2020-11-18T13:33:33.123Z","logItem":{"type":"ExposureWindowMatched","totalRiskyExposures":1,"totalNonRiskyExposures":2}}]"""
+        private const val RESULT_RECEIVED_NO_TEST_KIT_TYPE_JSON =
+            """[{"instant":"2020-11-18T13:31:32.527Z","logItem":{"type":"ResultReceived","result":"POSITIVE","testOrderType":"OUTSIDE_APP"}}]"""
+    }
 }

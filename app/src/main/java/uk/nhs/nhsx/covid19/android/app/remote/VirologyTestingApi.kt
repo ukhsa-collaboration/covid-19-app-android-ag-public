@@ -10,15 +10,15 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultRequestBody
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultResponse
 
 interface VirologyTestingApi {
-    @POST("virology-test/home-kit/order")
+    @POST("virology-test/v2/order")
     suspend fun getHomeKitOrder(@Body emptyBodyObject: Any = Object()): VirologyTestOrderResponse
 
-    @POST("virology-test/results")
+    @POST("virology-test/v2/results")
     suspend fun getTestResult(
         @Body virologyTestResultRequestBody: VirologyTestResultRequestBody
     ): Response<VirologyTestResultResponse>
 
-    @POST("virology-test/cta-exchange")
+    @POST("virology-test/v2/cta-exchange")
     suspend fun getTestResultForCtaToken(
         @Body virologyCtaExchangeRequest: VirologyCtaExchangeRequest
     ): Response<VirologyCtaExchangeResponse>

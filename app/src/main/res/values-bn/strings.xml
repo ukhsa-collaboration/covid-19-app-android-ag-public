@@ -152,7 +152,7 @@
     <string name="close">বন্ধ করুন</string>
     <string name="go_back">ফিরে যান</string>
     <string name="remove">সরিয়ে ফেলুন</string>
-    <string name="empty" translatable="false"/>
+    <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">যদি আপনি ভাইরাস টেস্টে পজিটিভ হওয়া এমন কারো সাথে ঘনিষ্ঠ যোগাযোগ করে থাকেন তাহলে অ্যাপটি আপনাকে একটি সতর্কতা প্রেরণ করবে। \n\nএই অ্যাপের জন্য কন্ট্যাক্ট ট্রেসিং সক্ষম করার জন্য আপনাকে এই অনুমতিগুলি দিতে হবে: ‘এক্সপোজার নোটিফিকেশন্স’। \n\nআপনি যদি নিজের মতামত পরিবর্তন করেন তবে আপনি যে কোন সময় সেটিংসে আপনার অনুমতিগুলো পরিবর্তন করতে পারবেন।</string>
     <string name="privacy_notice">গোপনীয়তার বিজ্ঞপ্তি</string>
     <string name="tablet_information_url">ট্যাবলেটের ব্যবহার সম্পর্কিত তথ্য</string>
@@ -194,7 +194,7 @@
     <string name="notification_channel_app_configuration_description">এই বিজ্ঞপ্তিগুলি আপনার আপ কনফিগারেশন সম্পর্কে অবহিত করে</string>
     <string name="notification_title_state_expiration">আপনার জন্য আমাদের নির্দেশে পরিবর্তন হয়েছে</string>
     <string name="notification_text_state_expiration">বিস্তারিত দেখতে ট্যাপ করুন</string>
-    <string name="notification_title_state_exposure">আপনি হয়তো এমন একজন অ্যাপ ব্যবহারকারীর সংস্পর্শে এসেছেন যিনি করোনাভাইরাসে আক্রান্ত। অনুগ্রহ করে বাসায় স্ব-বিচ্ছিন্ন থাকুন নিজেকে এবং অন্যদের নিরাপদ রাখার জন্য</string>
+    <string name="notification_title_state_exposure">অবিলম্বে আপনার স্ববিচ্ছিন্ন হওয়া প্রয়োজন। করোনাভাইরাস (কোভিড-১৯) রয়েছে এমন কারো ঘনিষ্ঠ সংস্পর্শে আপনি এসেছিলেন।</string>
     <string name="notification_text_state_exposure">আরও বিস্তারিত জানতে এখানে ট্যাপ করুন।</string>
     <string name="notification_text_test_results">বিস্তারিত দেখতে ট্যাপ করুন</string>
     <string name="notification_title_app_available">এই অ্যাপটি পাওয়া যাবে</string>
@@ -236,7 +236,7 @@
     <string name="about_manage_my_data">আমার তথ্য নিয়ন্ত্রণ করা</string>
     <string name="postal_district">পোস্টাল ডিস্ট্রিক্ট</string>
     <string name="edit">সম্পাদনা করুন</string>
-    <string name="title_last_test_result_taken">সর্বশেষ পরীক্ষার ফলাফল</string>
+    <string name="title_last_test_result_taken">শেষ প্রযোজ্য পরীক্ষার ফলাফল</string>
     <string name="title_venue_history">স্থানসমূহের ইতিহাস</string>
     <string name="title_symptoms">উপসর্গ শুরু হওয়ার তারিখ</string>
     <string name="save">সংরক্ষণ</string>
@@ -426,4 +426,8 @@
     <string name="venue_history_edit">সম্পাদনা করুন</string>
     <string name="venue_history_editing_done">সম্পন্ন</string>
     <string name="welsh">ওয়েলস</string>
+    <string name="about_lfd">RAPID_RESULT</string>
+    <string name="about_pcr">LAB_RESULT</string>
+    <string name="about_test_kit_type">পরীক্ষা কিটের ধরন</string>
+    <string name="about_test_result">ফলাফল</string>
 </resources>

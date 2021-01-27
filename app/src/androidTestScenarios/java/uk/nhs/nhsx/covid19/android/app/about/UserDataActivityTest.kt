@@ -2,6 +2,8 @@ package uk.nhs.nhsx.covid19.android.app.about
 
 import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
+import java.time.Instant
+import java.time.LocalDate
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -9,6 +11,11 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
@@ -30,8 +37,6 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.UserDataRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.WelcomeRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import java.time.Instant
-import java.time.LocalDate
 
 class UserDataActivityTest : EspressoTest() {
     private val moreAboutAppRobot = MoreAboutAppRobot()
@@ -214,31 +219,143 @@ class UserDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun displayLastPositiveAcknowledgedTestResult() = notReported {
-        testAppContext.getTestResultsProvider().add(
-            ReceivedTestResult(
-                diagnosisKeySubmissionToken = "a",
-                testEndDate = Instant.now(),
-                testResult = POSITIVE,
-                acknowledgedDate = Instant.now()
-            )
-        )
-
+    fun doNotDisplayTestResultSectionIfNoTestResults() = notReported {
         startTestActivity<UserDataActivity>()
 
         userDataRobot.checkActivityIsDisplayed()
 
-        waitFor { userDataRobot.checkLastTestResultIsDisplayed() }
+        userDataRobot.checkLastTestResultIsNotDisplayed()
     }
 
     @Test
-    fun displayLastNegativeAcknowledgedTestResult() = notReported {
-        testAppContext.getTestResultsProvider().add(
+    fun displayLastPositivePcrAcknowledgedTestResultWithKeySubmissionSupported() = notReported {
+        displayLastAcknowledgedTestResult(
+            POSITIVE,
+            LAB_RESULT,
+            diagnosisKeySubmissionSupported = true
+        )
+    }
+
+    @Test
+    fun displayLastPositivePcrAcknowledgedTestResultWithKeySubmissionNotSupported() = notReported {
+        displayLastAcknowledgedTestResult(
+            POSITIVE,
+            LAB_RESULT,
+            diagnosisKeySubmissionSupported = false
+        )
+    }
+
+    @Test
+    fun displayLastPositiveAssistedLfdAcknowledgedTestResultWithKeySubmissionSupported() = notReported {
+        displayLastAcknowledgedTestResult(
+            POSITIVE,
+            RAPID_RESULT,
+            diagnosisKeySubmissionSupported = true
+        )
+    }
+
+    @Test
+    fun displayLastPositiveAssistedLfdAcknowledgedTestResultWithKeySubmissionNotSupported() = notReported {
+        displayLastAcknowledgedTestResult(
+            POSITIVE,
+            RAPID_RESULT,
+            diagnosisKeySubmissionSupported = false
+        )
+    }
+
+    @Test
+    fun displayLastPositiveUnassistedLfdAcknowledgedTestResultWithKeySubmissionSupported() = notReported {
+        displayLastAcknowledgedTestResult(
+            POSITIVE,
+            RAPID_SELF_REPORTED,
+            diagnosisKeySubmissionSupported = true
+        )
+    }
+
+    @Test
+    fun displayLastPositiveUnassistedLfdAcknowledgedTestResultWithKeySubmissionNotSupported() = notReported {
+        displayLastAcknowledgedTestResult(
+            POSITIVE,
+            RAPID_SELF_REPORTED,
+            diagnosisKeySubmissionSupported = false
+        )
+    }
+
+    @Test
+    fun displayLastNegativePcrAcknowledgedTestResultWithKeySubmissionSupported() = notReported {
+        displayLastAcknowledgedTestResult(
+            NEGATIVE,
+            LAB_RESULT,
+            diagnosisKeySubmissionSupported = true
+        )
+    }
+
+    @Test
+    fun displayLastNegativePcrAcknowledgedTestResultWithKeySubmissionNotSupported() = notReported {
+        displayLastAcknowledgedTestResult(
+            NEGATIVE,
+            LAB_RESULT,
+            diagnosisKeySubmissionSupported = false
+        )
+    }
+
+    @Test
+    fun displayLastNegativeAssistedLfdAcknowledgedTestResultWithKeySubmissionSupported() = notReported {
+        displayLastAcknowledgedTestResult(
+            NEGATIVE,
+            RAPID_RESULT,
+            diagnosisKeySubmissionSupported = true
+        )
+    }
+
+    @Test
+    fun displayLastNegativeAssistedLfdAcknowledgedTestResultWithKeySubmissionNotSupported() = notReported {
+        displayLastAcknowledgedTestResult(
+            NEGATIVE,
+            RAPID_RESULT,
+            diagnosisKeySubmissionSupported = false
+        )
+    }
+
+    @Test
+    fun displayLastNegativeUnassistedLfdAcknowledgedTestResultWithKeySubmissionSupported() = notReported {
+        displayLastAcknowledgedTestResult(
+            NEGATIVE,
+            RAPID_SELF_REPORTED,
+            diagnosisKeySubmissionSupported = true
+        )
+    }
+
+    @Test
+    fun displayLastNegativeUnassistedLfdAcknowledgedTestResultWithKeySubmissionNotSupported() = notReported {
+        displayLastAcknowledgedTestResult(
+            NEGATIVE,
+            RAPID_SELF_REPORTED,
+            diagnosisKeySubmissionSupported = false
+        )
+    }
+
+    @Test
+    fun displayLastPositiveAcknowledgedTestResultOfUnknownTypeWithKeySubmissionSupported() = notReported {
+        displayLastAcknowledgedTestResult(
+            POSITIVE,
+            testKitType = null, // UNKNOWN
+            diagnosisKeySubmissionSupported = true
+        )
+    }
+
+    private fun displayLastAcknowledgedTestResult(
+        testResult: VirologyTestResult,
+        testKitType: VirologyTestKitType?,
+        diagnosisKeySubmissionSupported: Boolean
+    ) {
+        testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "a",
                 testEndDate = Instant.now(),
-                testResult = NEGATIVE,
-                acknowledgedDate = Instant.now()
+                testResult = testResult,
+                testKitType = testKitType,
+                diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported
             )
         )
 
@@ -246,7 +363,8 @@ class UserDataActivityTest : EspressoTest() {
 
         userDataRobot.checkActivityIsDisplayed()
 
-        waitFor { userDataRobot.checkLastTestResultIsDisplayed() }
+        val shouldKitTypeBeVisible = testKitType != null
+        waitFor { userDataRobot.checkLastTestResultIsDisplayed(shouldKitTypeBeVisible) }
     }
 
     @Test

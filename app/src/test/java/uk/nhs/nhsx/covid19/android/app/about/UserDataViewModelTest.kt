@@ -13,17 +13,19 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.VenueVisitsUiState
+import uk.nhs.nhsx.covid19.android.app.analytics.SubmittedOnboardingAnalyticsProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthority
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodes
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodesLoader
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State
-import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import java.time.Instant
 
 class UserDataViewModelTest {
@@ -35,27 +37,29 @@ class UserDataViewModelTest {
     private val localAuthorityProvider = mockk<LocalAuthorityProvider>(relaxed = true)
     private val venuesStorage = mockk<VisitedVenuesStorage>(relaxed = true)
     private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
-    private val testResultsProvider = mockk<TestResultsProvider>(relaxed = true)
+    private val relevantTestResultProvider = mockk<RelevantTestResultProvider>(relaxed = true)
     private val localAuthorityPostCodesLoader = mockk<LocalAuthorityPostCodesLoader>(relaxed = true)
     private val sharedPreferences = mockk<SharedPreferences>()
     private val sharedPreferencesEditor = mockk<SharedPreferences.Editor>()
     private val sharedPreferencesDeletedDataEditor = mockk<SharedPreferences.Editor>(relaxed = true)
+    private val submittedOnboardingAnalyticsProvider = mockk<SubmittedOnboardingAnalyticsProvider>(relaxed = true)
 
     private val testSubject = UserDataViewModel(
         postCodeProvider,
         localAuthorityProvider,
         venuesStorage,
         stateMachine,
-        testResultsProvider,
+        relevantTestResultProvider,
         sharedPreferences,
-        localAuthorityPostCodesLoader
+        localAuthorityPostCodesLoader,
+        submittedOnboardingAnalyticsProvider
     )
 
     private val localAuthorityTextObserver = mockk<Observer<String>>(relaxed = true)
     private val venueVisitsObserver = mockk<Observer<VenueVisitsUiState>>(relaxed = true)
     private val venueVisitsEditModeChangedObserver = mockk<Observer<Boolean>>(relaxed = true)
     private val stateMachineStateObserver = mockk<Observer<State>>(relaxed = true)
-    private val latestTestResultObserver = mockk<Observer<ReceivedTestResult>>(relaxed = true)
+    private val latestTestResultObserver = mockk<Observer<AcknowledgedTestResult>>(relaxed = true)
     private val allUserDataDeletedObserver = mockk<Observer<Unit>>(relaxed = true)
 
     private val postCode = "CM1"
@@ -98,11 +102,17 @@ class UserDataViewModelTest {
 
     @Test
     fun `latest test result state updated`() = runBlocking {
-        val latestTestResult = ReceivedTestResult("token", Instant.now(), POSITIVE)
+        val latestTestResult = AcknowledgedTestResult(
+            diagnosisKeySubmissionToken = "token",
+            testEndDate = Instant.now(),
+            testResult = POSITIVE,
+            acknowledgedDate = Instant.now(),
+            testKitType = LAB_RESULT
+        )
 
-        every { testResultsProvider.getLastNonVoidTestResult() } returns latestTestResult
+        every { relevantTestResultProvider.testResult } returns latestTestResult
 
-        testSubject.getReceivedTestResult().observeForever(latestTestResultObserver)
+        testSubject.getAcknowledgedTestResult().observeForever(latestTestResultObserver)
 
         testSubject.loadUserData()
 
@@ -115,12 +125,14 @@ class UserDataViewModelTest {
 
         every { sharedPreferences.edit() } returns sharedPreferencesEditor
         every { sharedPreferencesEditor.clear() } returns sharedPreferencesDeletedDataEditor
+        every { submittedOnboardingAnalyticsProvider.value } returns true
 
         testSubject.deleteAllUserData()
 
         verify { venuesStorage.removeAllVenueVisits() }
         verify { sharedPreferencesEditor.clear() }
         verify { sharedPreferencesDeletedDataEditor.apply() }
+        verify { submittedOnboardingAnalyticsProvider setProperty "value" value eq(true) }
         verify { allUserDataDeletedObserver.onChanged(Unit) }
     }
 

@@ -20,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.OUTSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AnalyticsAlarm
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
@@ -93,12 +94,12 @@ class MigrateMetricsLogStorageToLogStorageTest {
             analyticsLogStorage.add(AnalyticsLogEntry(instant, Event(POSITIVE_RESULT_RECEIVED)))
             analyticsLogStorage.add(AnalyticsLogEntry(instant, Event(NEGATIVE_RESULT_RECEIVED)))
             analyticsLogStorage.add(AnalyticsLogEntry(instant, Event(VOID_RESULT_RECEIVED)))
-            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(NEGATIVE, INSIDE_APP)))
-            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(NEGATIVE, OUTSIDE_APP)))
-            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(POSITIVE, INSIDE_APP)))
-            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(POSITIVE, OUTSIDE_APP)))
-            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(VOID, INSIDE_APP)))
-            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(VOID, OUTSIDE_APP)))
+            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(NEGATIVE, LAB_RESULT, INSIDE_APP)))
+            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(NEGATIVE, LAB_RESULT, OUTSIDE_APP)))
+            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(POSITIVE, LAB_RESULT, INSIDE_APP)))
+            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(POSITIVE, LAB_RESULT, OUTSIDE_APP)))
+            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(VOID, LAB_RESULT, INSIDE_APP)))
+            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(VOID, LAB_RESULT, OUTSIDE_APP)))
             analyticsLogStorage.add(
                 AnalyticsLogEntry(
                     instant,

@@ -4,11 +4,6 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
-import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -46,15 +41,22 @@ import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Unresolved
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage
-import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 
 class AnalyticsEventProcessorTest {
 
@@ -63,7 +65,7 @@ class AnalyticsEventProcessorTest {
     private val exposureNotificationApi = mockk<ExposureNotificationApi>()
     private val appAvailabilityProvider = mockk<AppAvailabilityProvider>()
     private val networkTrafficStats = mockk<NetworkTrafficStats>()
-    private val testResultsProvider = mockk<TestResultsProvider>()
+    private val relevantTestResultProvider = mockk<RelevantTestResultProvider>()
     private val isolationPaymentTokenStateProvider = mockk<IsolationPaymentTokenStateProvider>()
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
 
@@ -73,7 +75,7 @@ class AnalyticsEventProcessorTest {
         exposureNotificationApi,
         appAvailabilityProvider,
         networkTrafficStats,
-        testResultsProvider,
+        relevantTestResultProvider,
         isolationPaymentTokenStateProvider,
         fixedClock
     )
@@ -82,8 +84,9 @@ class AnalyticsEventProcessorTest {
     fun setUp() {
         every { appAvailabilityProvider.isAppAvailable() } returns true
         every { stateStorage.state } returns Default()
-        every { testResultsProvider.testResults.values } returns emptyList()
+        every { relevantTestResultProvider.getTestResultIfPositive() } returns null
         coEvery { exposureNotificationApi.isEnabled() } returns true
+        coEvery { exposureNotificationApi.isRunningNormally() } returns true
         every { isolationPaymentTokenStateProvider.tokenState } returns Unresolved
     }
 
@@ -296,7 +299,7 @@ class AnalyticsEventProcessorTest {
         }
 
     @Test
-    fun `on background completed when user is isolating due to self assessment and last test result is positive and acknowledged during current isolation`() =
+    fun `on background completed when user is isolating due to self assessment and last test result is positive, PCR, and acknowledged during current isolation`() =
         runBlocking {
             every { stateStorage.state } returns
                 Isolation(
@@ -308,14 +311,14 @@ class AnalyticsEventProcessorTest {
                         selfAssessment = true
                     )
                 )
-            every { testResultsProvider.testResults.values } returns listOf(
-                ReceivedTestResult(
+            every { relevantTestResultProvider.getTestResultIfPositive() } returns
+                AcknowledgedTestResult(
                     diagnosisKeySubmissionToken = "token1",
                     testEndDate = Instant.now(fixedClock),
                     acknowledgedDate = Instant.now(fixedClock).minus(1, ChronoUnit.DAYS),
-                    testResult = POSITIVE
+                    testResult = POSITIVE,
+                    testKitType = LAB_RESULT
                 )
-            )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -340,7 +343,95 @@ class AnalyticsEventProcessorTest {
         }
 
     @Test
-    fun `on background completed when user is isolating due to self assessment and last test result is positive and acknowledged on isolation start date`() =
+    fun `on background completed when user is isolating due to self assessment and last test result is positive, assisted LFD, and acknowledged during current isolation`() =
+        runBlocking {
+            every { stateStorage.state } returns
+                Isolation(
+                    isolationStart = Instant.now(fixedClock).minus(2, ChronoUnit.DAYS),
+                    isolationConfiguration = DurationDays(),
+                    indexCase = IndexCase(
+                        symptomsOnsetDate = LocalDate.of(2018, 10, 1),
+                        expiryDate = LocalDate.of(2018, 10, 10),
+                        selfAssessment = true
+                    )
+                )
+            every { relevantTestResultProvider.getTestResultIfPositive() } returns
+                AcknowledgedTestResult(
+                    diagnosisKeySubmissionToken = "token1",
+                    testEndDate = Instant.now(fixedClock),
+                    acknowledgedDate = Instant.now(fixedClock).minus(1, ChronoUnit.DAYS),
+                    testResult = POSITIVE,
+                    testKitType = RAPID_RESULT
+                )
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                isIsolatingBackgroundTick = true,
+                                hasSelfDiagnosedPositiveBackgroundTick = true,
+                                isIsolatingForSelfDiagnosedBackgroundTick = true,
+                                isIsolatingForTestedLFDPositiveBackgroundTick = true,
+                                hasSelfDiagnosedBackgroundTick = true,
+                                hasTestedLFDPositiveBackgroundTick = true
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed when user is isolating due to self assessment and last test result is positive, unassisted LFD, and acknowledged during current isolation`() =
+        runBlocking {
+            every { stateStorage.state } returns
+                Isolation(
+                    isolationStart = Instant.now(fixedClock).minus(2, ChronoUnit.DAYS),
+                    isolationConfiguration = DurationDays(),
+                    indexCase = IndexCase(
+                        symptomsOnsetDate = LocalDate.of(2018, 10, 1),
+                        expiryDate = LocalDate.of(2018, 10, 10),
+                        selfAssessment = true
+                    )
+                )
+            every { relevantTestResultProvider.getTestResultIfPositive() } returns
+                AcknowledgedTestResult(
+                    diagnosisKeySubmissionToken = "token1",
+                    testEndDate = Instant.now(fixedClock),
+                    acknowledgedDate = Instant.now(fixedClock).minus(1, ChronoUnit.DAYS),
+                    testResult = POSITIVE,
+                    testKitType = RAPID_SELF_REPORTED
+                )
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                isIsolatingBackgroundTick = true,
+                                hasSelfDiagnosedPositiveBackgroundTick = true,
+                                isIsolatingForSelfDiagnosedBackgroundTick = true,
+                                isIsolatingForTestedLFDPositiveBackgroundTick = true,
+                                hasSelfDiagnosedBackgroundTick = true,
+                                hasTestedLFDPositiveBackgroundTick = true
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed when user is isolating due to self assessment and last test result is positive, PCR, and acknowledged on isolation start date`() =
         runBlocking {
             every { stateStorage.state } returns
                 Isolation(
@@ -352,14 +443,14 @@ class AnalyticsEventProcessorTest {
                         selfAssessment = true
                     )
                 )
-            every { testResultsProvider.testResults.values } returns listOf(
-                ReceivedTestResult(
+            every { relevantTestResultProvider.getTestResultIfPositive() } returns
+                AcknowledgedTestResult(
                     diagnosisKeySubmissionToken = "token1",
                     testEndDate = Instant.now(fixedClock),
                     acknowledgedDate = Instant.now(fixedClock),
-                    testResult = POSITIVE
+                    testResult = POSITIVE,
+                    testKitType = LAB_RESULT
                 )
-            )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -376,6 +467,94 @@ class AnalyticsEventProcessorTest {
                                 isIsolatingForTestedPositiveBackgroundTick = true,
                                 hasSelfDiagnosedBackgroundTick = true,
                                 hasTestedPositiveBackgroundTick = true
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed when user is isolating due to self assessment and last test result is positive, assisted LFD, and acknowledged on isolation start date`() =
+        runBlocking {
+            every { stateStorage.state } returns
+                Isolation(
+                    isolationStart = Instant.now(fixedClock),
+                    isolationConfiguration = DurationDays(),
+                    indexCase = IndexCase(
+                        symptomsOnsetDate = LocalDate.of(2018, 10, 1),
+                        expiryDate = LocalDate.of(2018, 10, 10),
+                        selfAssessment = true
+                    )
+                )
+            every { relevantTestResultProvider.getTestResultIfPositive() } returns
+                AcknowledgedTestResult(
+                    diagnosisKeySubmissionToken = "token1",
+                    testEndDate = Instant.now(fixedClock),
+                    acknowledgedDate = Instant.now(fixedClock),
+                    testResult = POSITIVE,
+                    testKitType = RAPID_RESULT
+                )
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                isIsolatingBackgroundTick = true,
+                                hasSelfDiagnosedPositiveBackgroundTick = true,
+                                isIsolatingForSelfDiagnosedBackgroundTick = true,
+                                isIsolatingForTestedLFDPositiveBackgroundTick = true,
+                                hasSelfDiagnosedBackgroundTick = true,
+                                hasTestedLFDPositiveBackgroundTick = true
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed when user is isolating due to self assessment and last test result is positive, unassisted LFD, and acknowledged on isolation start date`() =
+        runBlocking {
+            every { stateStorage.state } returns
+                Isolation(
+                    isolationStart = Instant.now(fixedClock),
+                    isolationConfiguration = DurationDays(),
+                    indexCase = IndexCase(
+                        symptomsOnsetDate = LocalDate.of(2018, 10, 1),
+                        expiryDate = LocalDate.of(2018, 10, 10),
+                        selfAssessment = true
+                    )
+                )
+            every { relevantTestResultProvider.getTestResultIfPositive() } returns
+                AcknowledgedTestResult(
+                    diagnosisKeySubmissionToken = "token1",
+                    testEndDate = Instant.now(fixedClock),
+                    acknowledgedDate = Instant.now(fixedClock),
+                    testResult = POSITIVE,
+                    testKitType = RAPID_SELF_REPORTED
+                )
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                isIsolatingBackgroundTick = true,
+                                hasSelfDiagnosedPositiveBackgroundTick = true,
+                                isIsolatingForSelfDiagnosedBackgroundTick = true,
+                                isIsolatingForTestedLFDPositiveBackgroundTick = true,
+                                hasSelfDiagnosedBackgroundTick = true,
+                                hasTestedLFDPositiveBackgroundTick = true
                             )
                         )
                     )
@@ -396,14 +575,14 @@ class AnalyticsEventProcessorTest {
                         selfAssessment = true
                     )
                 )
-            every { testResultsProvider.testResults.values } returns listOf(
-                ReceivedTestResult(
+            every { relevantTestResultProvider.getTestResultIfPositive() } returns
+                AcknowledgedTestResult(
                     diagnosisKeySubmissionToken = "token1",
                     testEndDate = Instant.now(fixedClock),
                     acknowledgedDate = Instant.now(fixedClock).minus(2, ChronoUnit.DAYS),
-                    testResult = POSITIVE
+                    testResult = POSITIVE,
+                    testKitType = LAB_RESULT
                 )
-            )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -441,14 +620,14 @@ class AnalyticsEventProcessorTest {
                         )
                     )
                 )
-            every { testResultsProvider.testResults.values } returns listOf(
-                ReceivedTestResult(
+            every { relevantTestResultProvider.getTestResultIfPositive() } returns
+                AcknowledgedTestResult(
                     diagnosisKeySubmissionToken = "token1",
                     testEndDate = Instant.now(fixedClock),
                     acknowledgedDate = Instant.now(fixedClock),
-                    testResult = POSITIVE
+                    testResult = POSITIVE,
+                    testKitType = LAB_RESULT
                 )
-            )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -469,7 +648,7 @@ class AnalyticsEventProcessorTest {
         }
 
     @Test
-    fun `on background completed when user is isolating without self assessment and last test result is positive`() =
+    fun `on background completed when user is isolating without self assessment and last test result is positive and PCR`() =
         runBlocking {
             every { stateStorage.state } returns
                 Isolation(
@@ -481,32 +660,14 @@ class AnalyticsEventProcessorTest {
                         selfAssessment = false
                     )
                 )
-            every { testResultsProvider.testResults.values } returns listOf(
-                ReceivedTestResult(
+            every { relevantTestResultProvider.getTestResultIfPositive() } returns
+                AcknowledgedTestResult(
                     diagnosisKeySubmissionToken = "token1",
                     testEndDate = Instant.now(fixedClock),
                     acknowledgedDate = Instant.now(fixedClock),
-                    testResult = POSITIVE
-                ),
-                ReceivedTestResult(
-                    diagnosisKeySubmissionToken = "token1",
-                    testEndDate = Instant.now(fixedClock),
-                    acknowledgedDate = Instant.now(fixedClock),
-                    testResult = NEGATIVE
-                ),
-                ReceivedTestResult(
-                    diagnosisKeySubmissionToken = "token1",
-                    testEndDate = Instant.now(fixedClock),
-                    acknowledgedDate = null,
-                    testResult = POSITIVE
-                ),
-                ReceivedTestResult(
-                    diagnosisKeySubmissionToken = "token1",
-                    testEndDate = Instant.now(fixedClock),
-                    acknowledgedDate = Instant.now(fixedClock).minus(30, ChronoUnit.DAYS),
-                    testResult = POSITIVE
+                    testResult = POSITIVE,
+                    testKitType = LAB_RESULT
                 )
-            )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -529,6 +690,90 @@ class AnalyticsEventProcessorTest {
         }
 
     @Test
+    fun `on background completed when user is isolating without self assessment and last test result is positive and assisted LFD`() =
+        runBlocking {
+            every { stateStorage.state } returns
+                Isolation(
+                    isolationStart = Instant.now(fixedClock),
+                    isolationConfiguration = DurationDays(),
+                    indexCase = IndexCase(
+                        symptomsOnsetDate = LocalDate.of(2018, 10, 1),
+                        expiryDate = LocalDate.of(2018, 10, 10),
+                        selfAssessment = false
+                    )
+                )
+            every { relevantTestResultProvider.getTestResultIfPositive() } returns
+                AcknowledgedTestResult(
+                    diagnosisKeySubmissionToken = "token1",
+                    testEndDate = Instant.now(fixedClock),
+                    acknowledgedDate = Instant.now(fixedClock),
+                    testResult = POSITIVE,
+                    testKitType = RAPID_RESULT
+                )
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                isIsolatingBackgroundTick = true,
+                                hasSelfDiagnosedPositiveBackgroundTick = true,
+                                isIsolatingForTestedLFDPositiveBackgroundTick = true,
+                                hasTestedLFDPositiveBackgroundTick = true
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed when user is isolating without self assessment and last test result is positive and unassisted LFD`() =
+        runBlocking {
+            every { stateStorage.state } returns
+                Isolation(
+                    isolationStart = Instant.now(fixedClock),
+                    isolationConfiguration = DurationDays(),
+                    indexCase = IndexCase(
+                        symptomsOnsetDate = LocalDate.of(2018, 10, 1),
+                        expiryDate = LocalDate.of(2018, 10, 10),
+                        selfAssessment = false
+                    )
+                )
+            every { relevantTestResultProvider.getTestResultIfPositive() } returns
+                AcknowledgedTestResult(
+                    diagnosisKeySubmissionToken = "token1",
+                    testEndDate = Instant.now(fixedClock),
+                    acknowledgedDate = Instant.now(fixedClock),
+                    testResult = POSITIVE,
+                    testKitType = RAPID_SELF_REPORTED
+                )
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                isIsolatingBackgroundTick = true,
+                                hasSelfDiagnosedPositiveBackgroundTick = true,
+                                isIsolatingForTestedLFDPositiveBackgroundTick = true,
+                                hasTestedLFDPositiveBackgroundTick = true
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
     fun `on background completed when user was isolating without self assessment and last test result is positive`() =
         runBlocking {
             every { stateStorage.state } returns
@@ -543,14 +788,14 @@ class AnalyticsEventProcessorTest {
                         )
                     )
                 )
-            every { testResultsProvider.testResults.values } returns listOf(
-                ReceivedTestResult(
+            every { relevantTestResultProvider.getTestResultIfPositive() } returns
+                AcknowledgedTestResult(
                     diagnosisKeySubmissionToken = "token1",
                     testEndDate = Instant.now(fixedClock),
                     acknowledgedDate = Instant.now(fixedClock),
-                    testResult = POSITIVE
+                    testResult = POSITIVE,
+                    testKitType = LAB_RESULT
                 )
-            )
             testSubject.track(BackgroundTaskCompletion)
 
             verify {
@@ -591,6 +836,7 @@ class AnalyticsEventProcessorTest {
     fun `on background completed updates encounter detection pause when exposure notification is disabled`() =
         runBlocking {
             coEvery { exposureNotificationApi.isEnabled() } returns false
+            coEvery { exposureNotificationApi.isRunningNormally() } returns false
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -600,7 +846,7 @@ class AnalyticsEventProcessorTest {
                         instant = Instant.now(fixedClock),
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
-                                runningNormallyBackgroundTick = true,
+                                runningNormallyBackgroundTick = false,
                                 encounterDetectionPausedBackgroundTick = true
                             )
                         )
@@ -751,10 +997,12 @@ class AnalyticsEventProcessorTest {
         )
     }
 
+    @Test
     fun `track selected isolation payments button`() = runBlocking {
         verifyTrackRegularAnalyticsEvent(SelectedIsolationPaymentsButton, SELECTED_ISOLATION_PAYMENTS_BUTTON)
     }
 
+    @Test
     fun `track launched isolation payments application`() = runBlocking {
         verifyTrackRegularAnalyticsEvent(LaunchedIsolationPaymentsApplication, LAUNCHED_ISOLATION_PAYMENTS_APPLICATION)
     }

@@ -10,6 +10,7 @@ import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R.plurals
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfo
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -19,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.AWAIT_AT_MOST_SECONDS
+import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
@@ -63,7 +65,7 @@ class FlowTests : EspressoTest() {
         FeatureFlagTestHelper.clearFeatureFlags()
         FeatureFlagTestHelper.enableFeatureFlag(USE_WEB_VIEW_FOR_INTERNAL_BROWSER)
 
-        testAppContext.setLocalAuthority("1")
+        testAppContext.setLocalAuthority(ENGLISH_LOCAL_AUTHORITY)
     }
 
     @After
@@ -92,13 +94,13 @@ class FlowTests : EspressoTest() {
 
         waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
-        testAppContext.virologyTestingApi.setDefaultTestResult(NEGATIVE)
+        testAppContext.virologyTestingApi.setDefaultTestResponse(NEGATIVE)
 
         runBlocking {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAndFinishIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -141,13 +143,13 @@ class FlowTests : EspressoTest() {
 
         testAppContext.device.pressBack()
 
-        testAppContext.virologyTestingApi.setDefaultTestResult(POSITIVE)
+        testAppContext.virologyTestingApi.setDefaultTestResponse(POSITIVE)
 
         runBlocking {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveAndContinueSelfIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -229,17 +231,17 @@ class FlowTests : EspressoTest() {
 
         waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
-        testAppContext.virologyTestingApi.setDefaultTestResult(NEGATIVE)
+        testAppContext.virologyTestingApi.setDefaultTestResponse(NEGATIVE)
 
         testAppContext.getPeriodicTasks().schedule()
 
         await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
-            testAppContext.getTestResultsProvider().testResults.values.any { it.testResult == NEGATIVE }
+            testAppContext.getUnacknowledgedTestResultsProvider().testResults.any { it.testResult == NEGATIVE }
         }
 
         assertTrue { (testAppContext.getCurrentState() as Isolation).isBothCases() }
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAndContinueSelfIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeWillBeInIsolation() }
     }
 
     @Test
@@ -268,17 +270,17 @@ class FlowTests : EspressoTest() {
 
         waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
-        testAppContext.virologyTestingApi.setDefaultTestResult(POSITIVE)
+        testAppContext.virologyTestingApi.setDefaultTestResponse(POSITIVE)
 
         testAppContext.getPeriodicTasks().schedule()
 
         await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
-            testAppContext.getTestResultsProvider().testResults.values.any { it.testResult == POSITIVE }
+            testAppContext.getUnacknowledgedTestResultsProvider().testResults.any { it.testResult == POSITIVE }
         }
 
         assertTrue { (testAppContext.getCurrentState() as Isolation).isBothCases() }
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveAndContinueSelfIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
     }
 
     @RetryFlakyTest
@@ -344,11 +346,11 @@ class FlowTests : EspressoTest() {
 
         linkTestResultRobot.checkActivityIsDisplayed()
 
-        linkTestResultRobot.enterCtaToken("f3dz-cfdt")
+        linkTestResultRobot.enterCtaToken(NEGATIVE_PCR_TOKEN)
 
         linkTestResultRobot.clickContinue()
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAndAlreadyFinishedIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 

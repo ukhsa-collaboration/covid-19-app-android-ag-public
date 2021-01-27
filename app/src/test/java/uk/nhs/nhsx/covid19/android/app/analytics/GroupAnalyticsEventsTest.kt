@@ -34,6 +34,9 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsPayload
 import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsWindow
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metadata
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
@@ -291,7 +294,7 @@ class GroupAnalyticsEventsTest {
     fun `add receivedVoidTestResultViaPolling for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
-                ResultReceived(VOID, INSIDE_APP),
+                ResultReceived(VOID, LAB_RESULT, INSIDE_APP),
                 Metrics().copy(receivedVoidTestResultViaPolling = expectedLogEventCount)
             )
         }
@@ -300,7 +303,7 @@ class GroupAnalyticsEventsTest {
     fun `add receivedPositiveTestResultViaPolling for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
-                ResultReceived(POSITIVE, INSIDE_APP),
+                ResultReceived(POSITIVE, LAB_RESULT, INSIDE_APP),
                 Metrics().copy(receivedPositiveTestResultViaPolling = expectedLogEventCount)
             )
         }
@@ -309,7 +312,7 @@ class GroupAnalyticsEventsTest {
     fun `add receivedNegativeTestResultViaPolling for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
-                ResultReceived(NEGATIVE, INSIDE_APP),
+                ResultReceived(NEGATIVE, LAB_RESULT, INSIDE_APP),
                 Metrics().copy(receivedNegativeTestResultViaPolling = expectedLogEventCount)
             )
         }
@@ -317,7 +320,7 @@ class GroupAnalyticsEventsTest {
     @Test
     fun `add receivedVoidTestResultEnteredManually for events in same analytics window`() = runBlocking {
         `test aggregation of analytics metrics`(
-            ResultReceived(VOID, OUTSIDE_APP),
+            ResultReceived(VOID, LAB_RESULT, OUTSIDE_APP),
             Metrics().copy(receivedVoidTestResultEnteredManually = expectedLogEventCount)
         )
     }
@@ -326,7 +329,7 @@ class GroupAnalyticsEventsTest {
     fun `add receivedPositiveTestResultEnteredManually for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
-                ResultReceived(POSITIVE, OUTSIDE_APP),
+                ResultReceived(POSITIVE, LAB_RESULT, OUTSIDE_APP),
                 Metrics().copy(receivedPositiveTestResultEnteredManually = expectedLogEventCount)
             )
         }
@@ -335,8 +338,114 @@ class GroupAnalyticsEventsTest {
     fun `add receivedNegativeTestResultEnteredManually for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
-                ResultReceived(NEGATIVE, OUTSIDE_APP),
+                ResultReceived(NEGATIVE, LAB_RESULT, OUTSIDE_APP),
                 Metrics().copy(receivedNegativeTestResultEnteredManually = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add receivedVoidAssistedLFDTestResultViaPolling for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                ResultReceived(VOID, RAPID_RESULT, INSIDE_APP),
+                Metrics().copy(receivedVoidLFDTestResultViaPolling = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add receivedVoidUnassistedLFDTestResultViaPolling for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                ResultReceived(VOID, RAPID_SELF_REPORTED, INSIDE_APP),
+                Metrics().copy(receivedVoidLFDTestResultViaPolling = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add receivedPositiveAssistedLFDTestResultViaPolling for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                ResultReceived(POSITIVE, RAPID_RESULT, INSIDE_APP),
+                Metrics().copy(receivedPositiveLFDTestResultViaPolling = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add receivedPositiveUnassistedLFDTestResultViaPolling for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                ResultReceived(POSITIVE, RAPID_SELF_REPORTED, INSIDE_APP),
+                Metrics().copy(receivedPositiveLFDTestResultViaPolling = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add receivedNegativeAssistedLFDTestResultViaPolling for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                ResultReceived(NEGATIVE, RAPID_RESULT, INSIDE_APP),
+                Metrics().copy(receivedNegativeLFDTestResultViaPolling = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add receivedNegativeUnassistedLFDTestResultViaPolling for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                ResultReceived(NEGATIVE, RAPID_SELF_REPORTED, INSIDE_APP),
+                Metrics().copy(receivedNegativeLFDTestResultViaPolling = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add receivedVoidAssistedLFDTestResultEnteredManually for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            ResultReceived(VOID, RAPID_RESULT, OUTSIDE_APP),
+            Metrics().copy(receivedVoidLFDTestResultEnteredManually = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add receivedVoidUnassistedLFDTestResultEnteredManually for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            ResultReceived(VOID, RAPID_SELF_REPORTED, OUTSIDE_APP),
+            Metrics().copy(receivedVoidLFDTestResultEnteredManually = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add receivedPositiveAssistedLFDTestResultEnteredManually for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                ResultReceived(POSITIVE, RAPID_RESULT, OUTSIDE_APP),
+                Metrics().copy(receivedPositiveLFDTestResultEnteredManually = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add receivedPositiveUnassistedLFDTestResultEnteredManually for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                ResultReceived(POSITIVE, RAPID_SELF_REPORTED, OUTSIDE_APP),
+                Metrics().copy(receivedPositiveLFDTestResultEnteredManually = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add receivedNegativeAssistedLFDTestResultEnteredManually for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                ResultReceived(NEGATIVE, RAPID_RESULT, OUTSIDE_APP),
+                Metrics().copy(receivedNegativeLFDTestResultEnteredManually = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add receivedNegativeUnassistedLFDTestResultEnteredManually for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                ResultReceived(NEGATIVE, RAPID_SELF_REPORTED, OUTSIDE_APP),
+                Metrics().copy(receivedNegativeLFDTestResultEnteredManually = expectedLogEventCount)
             )
         }
 
@@ -405,6 +514,16 @@ class GroupAnalyticsEventsTest {
     }
 
     @Test
+    fun `add hasTestedLFDPositiveBackgroundTick for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            BackgroundTaskCompletion(
+                BackgroundTaskTicks(hasTestedLFDPositiveBackgroundTick = true)
+            ),
+            totalBackgroundTasksMetric.copy(hasTestedLFDPositiveBackgroundTick = expectedLogEventCount)
+        )
+    }
+
+    @Test
     fun `add isIsolatingForSelfDiagnosedBackgroundTick for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
@@ -423,6 +542,17 @@ class GroupAnalyticsEventsTest {
                     BackgroundTaskTicks(isIsolatingForTestedPositiveBackgroundTick = true)
                 ),
                 totalBackgroundTasksMetric.copy(isIsolatingForTestedPositiveBackgroundTick = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add isIsolatingForTestedLFDPositiveBackgroundTick for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                BackgroundTaskCompletion(
+                    BackgroundTaskTicks(isIsolatingForTestedLFDPositiveBackgroundTick = true)
+                ),
+                totalBackgroundTasksMetric.copy(isIsolatingForTestedLFDPositiveBackgroundTick = expectedLogEventCount)
             )
         }
 

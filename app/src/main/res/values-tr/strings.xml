@@ -150,7 +150,7 @@
     <string name="close">Kapat</string>
     <string name="go_back">Geri git</string>
     <string name="remove">Kaldır</string>
-    <string name="empty" translatable="false"/>
+    <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">Eğer koronavirüs testi pozitif çıkmış olan birisi ile yakın bir temasınız olmuş ise, uygulama size bir uyarı gönderecektir.\n\nBu uygulamada temas takip olanağını etkinleştirmek için şunlara izin vermeniz gerekmektedir: Maruz Kalma Bildirimleri.\n\nEğer fikrinizi değiştirirseniz, ayarlardan izinlerinizi istediğiniz zaman değiştirebilirsiniz.</string>
     <string name="privacy_notice">Gizlilik bildirimi</string>
     <string name="tablet_information_url">Tabletlerin kullanılmasıyla ilgili bilgiler</string>
@@ -192,7 +192,7 @@
     <string name="notification_channel_app_configuration_description">Bu bildirimler size uygulama yapılandırması hakkında bilgi verir</string>
     <string name="notification_title_state_expiration">Size yönelik olarak sunulan rehberlikte bir değişiklik oldu</string>
     <string name="notification_text_state_expiration">Ayrıntıları görüntülemek için dokunun</string>
-    <string name="notification_title_state_exposure">Uygulama, koronavirüsle enfekte olmuş bir kişi ile temasta bulunduğunuzu tespit etti. Kendinizi ve diğer kişileri güvende tutmak için lütfen evde kalın ve kendinizi karantina altına alın</string>
+    <string name="notification_title_state_exposure">Hemen kendinizi karantinaya almanız gerekmektedir. Koronavirüsle (COVID-19) enfekte birisiyle yakın temas içerisinde bulundunuz.</string>
     <string name="notification_text_state_exposure">Daha fazla ayrıntı için buraya dokunun.</string>
     <string name="notification_text_test_results">Ayrıntıları görüntülemek için dokunun</string>
     <string name="notification_title_app_available">Uygulama kullanılabilir</string>
@@ -233,7 +233,7 @@
     <string name="about_manage_my_data">Verilerimi yönet</string>
     <string name="postal_district">Posta bölgesi</string>
     <string name="edit">Düzenle</string>
-    <string name="title_last_test_result_taken">Yapılan son testin sonucu</string>
+    <string name="title_last_test_result_taken">Son geçerli testin sonucu</string>
     <string name="title_venue_history">Yer geçmişi</string>
     <string name="title_symptoms">Belirtilerin başlama tarihi</string>
     <string name="save">Kaydet</string>
@@ -426,4 +426,8 @@
     <string name="venue_history_edit">Düzenle</string>
     <string name="venue_history_editing_done">Bitti</string>
     <string name="welsh">Galce</string>
+    <string name="about_lfd">RAPID_RESULT</string>
+    <string name="about_pcr">LAB_RESULT</string>
+    <string name="about_test_kit_type">Test kiti tipi</string>
+    <string name="about_test_result">Sonuç</string>
 </resources>

@@ -15,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.OUTSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.analytics.legacy.AnalyticsAlarm
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
@@ -68,22 +69,22 @@ class MigrateMetricsLogStorageToLogStorage @Inject constructor(
 
     private fun migrateTestResultMetrics(metrics: Metrics, instant: Instant) {
         if (metrics.receivedPositiveTestResultEnteredManually > 0) {
-            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(POSITIVE, OUTSIDE_APP)))
+            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(POSITIVE, LAB_RESULT, OUTSIDE_APP)))
         }
         if (metrics.receivedPositiveTestResultViaPolling > 0) {
-            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(POSITIVE, INSIDE_APP)))
+            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(POSITIVE, LAB_RESULT, INSIDE_APP)))
         }
         if (metrics.receivedNegativeTestResultEnteredManually > 0) {
-            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(NEGATIVE, OUTSIDE_APP)))
+            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(NEGATIVE, LAB_RESULT, OUTSIDE_APP)))
         }
         if (metrics.receivedNegativeTestResultViaPolling > 0) {
-            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(NEGATIVE, INSIDE_APP)))
+            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(NEGATIVE, LAB_RESULT, INSIDE_APP)))
         }
         if (metrics.receivedVoidTestResultEnteredManually > 0) {
-            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(VOID, OUTSIDE_APP)))
+            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(VOID, LAB_RESULT, OUTSIDE_APP)))
         }
         if (metrics.receivedVoidTestResultViaPolling > 0) {
-            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(VOID, INSIDE_APP)))
+            analyticsLogStorage.add(AnalyticsLogEntry(instant, ResultReceived(VOID, LAB_RESULT, INSIDE_APP)))
         }
     }
 
@@ -107,16 +108,16 @@ class MigrateMetricsLogStorageToLogStorage @Inject constructor(
         instant = instant,
         logItem = BackgroundTaskCompletion(
             BackgroundTaskTicks(
-                runningNormallyBackgroundTick.toBoolean(),
-                isIsolatingBackgroundTick.toBoolean(),
-                isIsolatingForHadRiskyContactBackgroundTick.toBoolean(),
-                hasSelfDiagnosedPositiveBackgroundTick.toBoolean(),
-                isIsolatingForSelfDiagnosedBackgroundTick.toBoolean(),
-                isIsolatingForTestedPositiveBackgroundTick.toBoolean(),
-                hasHadRiskyContactBackgroundTick.toBoolean(),
-                hasSelfDiagnosedBackgroundTick.toBoolean(),
-                hasTestedPositiveBackgroundTick.toBoolean(),
-                encounterDetectionPausedBackgroundTick.toBoolean()
+                runningNormallyBackgroundTick = runningNormallyBackgroundTick.toBoolean(),
+                isIsolatingBackgroundTick = isIsolatingBackgroundTick.toBoolean(),
+                isIsolatingForHadRiskyContactBackgroundTick = isIsolatingForHadRiskyContactBackgroundTick.toBoolean(),
+                hasSelfDiagnosedPositiveBackgroundTick = hasSelfDiagnosedPositiveBackgroundTick.toBoolean(),
+                isIsolatingForSelfDiagnosedBackgroundTick = isIsolatingForSelfDiagnosedBackgroundTick.toBoolean(),
+                isIsolatingForTestedPositiveBackgroundTick = isIsolatingForTestedPositiveBackgroundTick.toBoolean(),
+                hasHadRiskyContactBackgroundTick = hasHadRiskyContactBackgroundTick.toBoolean(),
+                hasSelfDiagnosedBackgroundTick = hasSelfDiagnosedBackgroundTick.toBoolean(),
+                hasTestedPositiveBackgroundTick = hasTestedPositiveBackgroundTick.toBoolean(),
+                encounterDetectionPausedBackgroundTick = encounterDetectionPausedBackgroundTick.toBoolean()
             )
         )
     )

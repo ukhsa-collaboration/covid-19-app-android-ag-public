@@ -27,6 +27,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.GREEN
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -60,19 +61,23 @@ class DebugViewModel @Inject constructor(
         periodicTasks.schedule()
     }
 
-    fun sendPositiveTestResult(context: Context) {
-        sendTestResult(context, POSITIVE)
+    fun sendPositiveTestResult(context: Context, testKitType: VirologyTestKitType) {
+        sendTestResult(context, POSITIVE, testKitType)
     }
 
-    fun sendNegativeTestResult(context: Context) {
-        sendTestResult(context, NEGATIVE)
+    fun sendNegativeTestResult(context: Context, testKitType: VirologyTestKitType) {
+        sendTestResult(context, NEGATIVE, testKitType)
     }
 
-    fun sendVoidTestResult(context: Context) {
-        sendTestResult(context, VOID)
+    fun sendVoidTestResult(context: Context, testKitType: VirologyTestKitType) {
+        sendTestResult(context, VOID, testKitType)
     }
 
-    private fun sendTestResult(context: Context, virologyTestResult: VirologyTestResult) {
+    private fun sendTestResult(
+        context: Context,
+        virologyTestResult: VirologyTestResult,
+        testKitType: VirologyTestKitType
+    ) {
         val config = testOrderingTokensProvider.configs.firstOrNull()
         if (config == null) {
             Toast.makeText(context, "Order a test first!", LENGTH_LONG).show()
@@ -85,7 +90,9 @@ class DebugViewModel @Inject constructor(
             val receivedTestResult = ReceivedTestResult(
                 config.diagnosisKeySubmissionToken,
                 Instant.now(),
-                virologyTestResult
+                virologyTestResult,
+                testKitType,
+                diagnosisKeySubmissionSupported = true
             )
 
             isolationStateMachine.processEvent(

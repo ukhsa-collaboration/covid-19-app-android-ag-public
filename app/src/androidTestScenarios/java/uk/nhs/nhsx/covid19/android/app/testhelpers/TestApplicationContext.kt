@@ -219,7 +219,11 @@ class TestApplicationContext {
 
     fun getUserInbox() = component.getUserInbox()
 
-    fun getTestResultsProvider() = component.getTestResultsProvider()
+    fun getUnacknowledgedTestResultsProvider() = component.getUnacknowledgedTestResultsProvider()
+
+    fun getRelevantTestResultProvider() = component.getRelevantTestResultProvider()
+
+    fun getTestResultHandler() = component.getTestResultHandler()
 
     fun setState(state: State) {
         val ref = component.provideIsolationStateMachine()
@@ -297,6 +301,10 @@ class TestApplicationContext {
 
     fun getIsolationPaymentTokenStateProvider() =
         component.getIsolationPaymentTokenStateProvider()
+
+    companion object {
+        const val ENGLISH_LOCAL_AUTHORITY = "E07000063"
+    }
 }
 
 class MockClock(var currentInstant: Instant? = null) : Clock() {

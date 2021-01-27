@@ -67,6 +67,10 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
             ShareKeysInformationActivity.start(this, testResult)
         }
 
+        viewModel.finishActivity().observe(this) {
+            finish()
+        }
+
         viewModel.viewState().observe(
             this,
             Observer { viewState ->
@@ -161,7 +165,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
         isolationRequestActionButton.text = getString(R.string.back_to_home)
         isolationRequestActionButton.setOnSingleClickListener {
-            viewModel.acknowledgeTestResult()
+            viewModel.acknowledgeTestResultIfNecessary()
             finish()
         }
     }
@@ -172,7 +176,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
             R.string.empty,
             R.drawable.ic_close_primary
         ) {
-            viewModel.acknowledgeTestResult()
+            viewModel.acknowledgeTestResultIfNecessary()
         }
 
         goodNewsContainer.gone()
@@ -197,7 +201,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
         isolationRequestActionButton.text = getString(R.string.book_free_test)
         isolationRequestActionButton.setOnSingleClickListener {
-            viewModel.acknowledgeTestResult()
+            viewModel.acknowledgeTestResultIfNecessary()
             startActivityForResult(
                 TestOrderingActivity.getIntent(this),
                 REQUEST_CODE_ORDER_A_TEST
@@ -207,7 +211,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        viewModel.acknowledgeTestResult()
+        viewModel.acknowledgeTestResultIfNecessary()
     }
 
     private fun showDoNotHaveToSelfIsolateScreenOnPositive() {
@@ -252,7 +256,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
         goodNewsActionButton.text = getString(R.string.continue_button)
         goodNewsActionButton.setOnSingleClickListener {
-            viewModel.acknowledgeTestResult()
+            viewModel.acknowledgeTestResultIfNecessary()
             finish()
         }
     }
@@ -276,7 +280,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
         goodNewsActionButton.text = getString(R.string.continue_button)
         goodNewsActionButton.setOnSingleClickListener {
-            viewModel.acknowledgeTestResult()
+            viewModel.acknowledgeTestResultIfNecessary()
             finish()
         }
     }
@@ -315,7 +319,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
         isolationRequestActionButton.text = getString(R.string.continue_button)
         isolationRequestActionButton.setOnSingleClickListener {
-            viewModel.acknowledgeTestResult()
+            viewModel.acknowledgeTestResultIfNecessary()
             finish()
         }
     }
@@ -349,7 +353,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
     private fun showAreNotIsolatingScreenOnVoid() {
         setCloseToolbar(toolbar, R.string.empty, R.drawable.ic_close_primary) {
-            viewModel.acknowledgeTestResult()
+            viewModel.acknowledgeTestResultIfNecessary()
         }
 
         goodNewsContainer.visible()
@@ -370,7 +374,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
         goodNewsActionButton.text = getString(R.string.book_free_test)
         goodNewsActionButton.setOnSingleClickListener {
-            viewModel.acknowledgeTestResult()
+            viewModel.acknowledgeTestResultIfNecessary()
             startActivityForResult(
                 TestOrderingActivity.getIntent(this),
                 REQUEST_CODE_ORDER_A_TEST

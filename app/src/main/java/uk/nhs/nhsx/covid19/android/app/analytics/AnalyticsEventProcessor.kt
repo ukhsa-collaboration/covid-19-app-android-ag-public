@@ -1,10 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.analytics
 
-import java.time.Clock
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import javax.inject.Inject
-import javax.inject.Singleton
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.BackgroundTaskCompletion
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CanceledCheckIn
@@ -19,6 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyCon
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolationPaymentsButton
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ExposureWindowsMatched
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.UpdateNetworkStats
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.Event
@@ -38,13 +34,19 @@ import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage
-import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
 import uk.nhs.nhsx.covid19.android.app.util.isEqualOrAfter
+import java.time.Clock
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import javax.inject.Inject
+import javax.inject.Singleton
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 
 @Singleton
 class AnalyticsEventProcessor @Inject constructor(
@@ -53,7 +55,7 @@ class AnalyticsEventProcessor @Inject constructor(
     private val exposureNotificationApi: ExposureNotificationApi,
     private val appAvailabilityProvider: AppAvailabilityProvider,
     private val networkTrafficStats: NetworkTrafficStats,
-    private val testResultsProvider: TestResultsProvider,
+    private val relevantTestResultProvider: RelevantTestResultProvider,
     private val isolationPaymentTokenStateProvider: IsolationPaymentTokenStateProvider,
     private val clock: Clock
 ) {
@@ -81,11 +83,12 @@ class AnalyticsEventProcessor @Inject constructor(
         VoidResultReceived -> Event(VOID_RESULT_RECEIVED)
         ReceivedRiskyContactNotification -> Event(RECEIVED_RISKY_CONTACT_NOTIFICATION)
         StartedIsolation -> Event(STARTED_ISOLATION)
-        is ResultReceived -> AnalyticsLogItem.ResultReceived(result, testOrderType)
+        is ResultReceived -> AnalyticsLogItem.ResultReceived(result, testKitType, testOrderType)
         UpdateNetworkStats -> updateNetworkStats()
         ReceivedActiveIpcToken -> Event(RECEIVED_ACTIVE_IPC_TOKEN)
         SelectedIsolationPaymentsButton -> Event(SELECTED_ISOLATION_PAYMENTS_BUTTON)
         LaunchedIsolationPaymentsApplication -> Event(LAUNCHED_ISOLATION_PAYMENTS_APPLICATION)
+        is ExposureWindowsMatched -> AnalyticsLogItem.ExposureWindowMatched(totalRiskyExposures, totalNonRiskyExposures)
     }
 
     private fun updateNetworkStats() = AnalyticsLogItem.UpdateNetworkStats(
@@ -99,7 +102,7 @@ class AnalyticsEventProcessor @Inject constructor(
                 return this
             }
 
-            runningNormallyBackgroundTick = true
+            runningNormallyBackgroundTick = exposureNotificationApi.isRunningNormally()
 
             val currentState = stateStorage.state
 
@@ -109,14 +112,18 @@ class AnalyticsEventProcessor @Inject constructor(
                 hasSelfDiagnosedPositiveBackgroundTick = currentState.isIndexCase()
                 isIsolatingForSelfDiagnosedBackgroundTick = currentState.isSelfAssessmentIndexCase()
 
-                val lastAcknowledgePositiveTestResult = lastAcknowledgedPositiveTestResult()
-                if (lastAcknowledgePositiveTestResult != null) {
+                relevantTestResultProvider.getTestResultIfPositive()?.let { acknowledgedPositiveTestResult ->
                     val isolationStartDate =
                         currentState.isolationStart.truncatedTo(ChronoUnit.DAYS)
                     val testResultAcknowledgeDate =
-                        lastAcknowledgePositiveTestResult.acknowledgedDate!!.truncatedTo(ChronoUnit.DAYS)
-                    isIsolatingForTestedPositiveBackgroundTick =
-                        testResultAcknowledgeDate.isEqualOrAfter(isolationStartDate)
+                        acknowledgedPositiveTestResult.acknowledgedDate.truncatedTo(ChronoUnit.DAYS)
+
+                    if (testResultAcknowledgeDate.isEqualOrAfter(isolationStartDate)) {
+                        val testKitType = acknowledgedPositiveTestResult.testKitType
+                        isIsolatingForTestedPositiveBackgroundTick = testKitType == LAB_RESULT
+                        isIsolatingForTestedLFDPositiveBackgroundTick = testKitType == RAPID_RESULT ||
+                            testKitType == RAPID_SELF_REPORTED
+                    }
                 }
             }
 
@@ -128,16 +135,16 @@ class AnalyticsEventProcessor @Inject constructor(
             recentIsolation?.let {
                 hasHadRiskyContactBackgroundTick = it.isContactCase()
                 hasSelfDiagnosedBackgroundTick = it.isSelfAssessmentIndexCase()
-                hasTestedPositiveBackgroundTick = lastAcknowledgedPositiveTestResult() != null
+                relevantTestResultProvider.getTestResultIfPositive()?.let { acknowledgedPositiveTestResult ->
+                    val testKitType = acknowledgedPositiveTestResult.testKitType
+                    hasTestedPositiveBackgroundTick = testKitType == LAB_RESULT
+                    hasTestedLFDPositiveBackgroundTick = testKitType == RAPID_RESULT ||
+                        testKitType == RAPID_SELF_REPORTED
+                }
             }
 
             haveActiveIpcTokenBackgroundTick = isolationPaymentTokenStateProvider.tokenState is IsolationPaymentTokenState.Token
 
             encounterDetectionPausedBackgroundTick = !exposureNotificationApi.isEnabled()
         }
-
-    private fun lastAcknowledgedPositiveTestResult(): ReceivedTestResult? =
-        testResultsProvider.testResults.values
-            .filter { it.testResult == POSITIVE && it.acknowledgedDate != null }
-            .maxBy { it.acknowledgedDate!! }
 }

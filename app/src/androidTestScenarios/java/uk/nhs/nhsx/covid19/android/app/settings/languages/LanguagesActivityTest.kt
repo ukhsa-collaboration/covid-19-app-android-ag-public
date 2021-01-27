@@ -90,7 +90,7 @@ class LanguagesActivityTest : EspressoTest() {
     }
 
     @Test
-    fun changeLanguage_canReloadCurrentActivityWithNewLanguageSet() {
+    fun changeLanguage_canReloadCurrentActivityWithNewLanguageSet() = notReported {
         testAppContext.setLocale("en")
 
         startTestActivity<LanguagesActivity>()
@@ -103,7 +103,7 @@ class LanguagesActivityTest : EspressoTest() {
     }
 
     @Test
-    fun changeLanguage_canReloadAllActivityInBackstackWithNewLanguageSet() {
+    fun changeLanguage_canReloadAllActivityInBackstackWithNewLanguageSet() = notReported {
         testAppContext.setLocale("en")
 
         startTestActivity<StatusActivity>()

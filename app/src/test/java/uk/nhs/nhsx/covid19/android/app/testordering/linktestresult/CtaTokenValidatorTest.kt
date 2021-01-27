@@ -9,10 +9,19 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostalDistrictProviderWrapper
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeRequest
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeResponse
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Failure
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Success
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultErrorType.INVALID
@@ -21,16 +30,19 @@ import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResul
 import java.io.IOException
 import java.time.Instant
 import kotlin.test.assertEquals
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 
 class CtaTokenValidatorTest {
 
     private val virologyTestingApi = mockk<VirologyTestingApi>()
+    private val postalDistrictProviderWrapper = mockk<PostalDistrictProviderWrapper>()
     private val crockfordDammValidator = mockk<CrockfordDammValidator>()
 
-    private val testSubject = CtaTokenValidator(virologyTestingApi, crockfordDammValidator)
+    private val testSubject = CtaTokenValidator(virologyTestingApi, postalDistrictProviderWrapper, crockfordDammValidator)
 
     @Before
     fun setUp() {
+        coEvery { postalDistrictProviderWrapper.getPostCodeDistrict() } returns PostCodeDistrict.ENGLAND
         every { crockfordDammValidator.validate(any()) } returns true
     }
 
@@ -55,21 +67,93 @@ class CtaTokenValidatorTest {
     }
 
     @Test
-    fun `cta token valid returns success`() = runBlocking {
+    fun `cta token valid for positive PCR test returns success`() = runBlocking {
         val ctaToken = "12345678"
-
-        val response = Response.success(
-            VirologyCtaExchangeResponse(
-                "submissionToken",
-                Instant.now(),
-                NEGATIVE
-            )
-        )
-        coEvery { virologyTestingApi.getTestResultForCtaToken(VirologyCtaExchangeRequest(ctaToken)) } returns response
+        val response = setUpValidTokenResponse(ctaToken, POSITIVE, LAB_RESULT)
 
         val result = testSubject.validate(ctaToken)
 
         assertEquals(Success(response.body()!!), result)
+    }
+
+    @Test
+    fun `cta token valid for negative PCR test returns success`() = runBlocking {
+        val ctaToken = "12345678"
+        val response = setUpValidTokenResponse(ctaToken, NEGATIVE, LAB_RESULT)
+
+        val result = testSubject.validate(ctaToken)
+
+        assertEquals(Success(response.body()!!), result)
+    }
+
+    @Test
+    fun `cta token valid for void PCR test returns success`() = runBlocking {
+        val ctaToken = "12345678"
+        val response = setUpValidTokenResponse(ctaToken, VOID, LAB_RESULT)
+
+        val result = testSubject.validate(ctaToken)
+
+        assertEquals(Success(response.body()!!), result)
+    }
+
+    @Test
+    fun `cta token valid for positive assisted LFD test returns success`() = runBlocking {
+        val ctaToken = "12345678"
+        val response = setUpValidTokenResponse(ctaToken, POSITIVE, RAPID_RESULT)
+
+        val result = testSubject.validate(ctaToken)
+
+        assertEquals(Success(response.body()!!), result)
+    }
+
+    @Test
+    fun `cta token valid for positive unassisted LFD test returns success`() = runBlocking {
+        val ctaToken = "12345678"
+        val response = setUpValidTokenResponse(ctaToken, POSITIVE, RAPID_SELF_REPORTED)
+
+        val result = testSubject.validate(ctaToken)
+
+        assertEquals(Success(response.body()!!), result)
+    }
+
+    @Test
+    fun `cta token valid for negative assisted LFD test results in unexpected error state`() = runBlocking {
+        val ctaToken = "12345678"
+        setUpValidTokenResponse(ctaToken, NEGATIVE, RAPID_RESULT)
+
+        val result = testSubject.validate(ctaToken)
+
+        assertEquals(Failure(UNEXPECTED), result)
+    }
+
+    @Test
+    fun `cta token valid for negative unassisted LFD test results in unexpected error state`() = runBlocking {
+        val ctaToken = "12345678"
+        setUpValidTokenResponse(ctaToken, NEGATIVE, RAPID_SELF_REPORTED)
+
+        val result = testSubject.validate(ctaToken)
+
+        assertEquals(Failure(UNEXPECTED), result)
+    }
+
+    @Test
+    fun `cta token valid for void assisted LFD test results in unexpected error state`() = runBlocking {
+        val ctaToken = "12345678"
+        setUpValidTokenResponse(ctaToken, VOID, RAPID_RESULT)
+
+        val result = testSubject.validate(ctaToken)
+
+        assertEquals(Failure(UNEXPECTED), result)
+    }
+
+    @Test
+    fun `cta token valid for void unassisted LFD test results in unexpected error state`() = runBlocking {
+        val ctaToken = "12345678"
+        setUpValidTokenResponse(ctaToken, VOID, RAPID_SELF_REPORTED)
+
+        val result = testSubject.validate(ctaToken)
+
+        assertEquals(Failure(UNEXPECTED), result)
     }
 
     @Test
@@ -83,9 +167,7 @@ class CtaTokenValidatorTest {
 
         coEvery {
             virologyTestingApi.getTestResultForCtaToken(
-                VirologyCtaExchangeRequest(
-                    ctaToken
-                )
+                VirologyCtaExchangeRequest(ctaToken, ENGLAND)
             )
         } returns response
 
@@ -105,9 +187,7 @@ class CtaTokenValidatorTest {
 
         coEvery {
             virologyTestingApi.getTestResultForCtaToken(
-                VirologyCtaExchangeRequest(
-                    ctaToken
-                )
+                VirologyCtaExchangeRequest(ctaToken, ENGLAND)
             )
         } returns response
 
@@ -127,9 +207,7 @@ class CtaTokenValidatorTest {
 
         coEvery {
             virologyTestingApi.getTestResultForCtaToken(
-                VirologyCtaExchangeRequest(
-                    ctaToken
-                )
+                VirologyCtaExchangeRequest(ctaToken, ENGLAND)
             )
         } returns response
 
@@ -144,7 +222,9 @@ class CtaTokenValidatorTest {
             val ctaToken = "12345678"
 
             coEvery {
-                virologyTestingApi.getTestResultForCtaToken(VirologyCtaExchangeRequest(ctaToken))
+                virologyTestingApi.getTestResultForCtaToken(
+                    VirologyCtaExchangeRequest(ctaToken, ENGLAND)
+                )
             } throws IOException()
 
             val result = testSubject.validate(ctaToken)
@@ -158,11 +238,49 @@ class CtaTokenValidatorTest {
             val ctaToken = "12345678"
 
             coEvery {
-                virologyTestingApi.getTestResultForCtaToken(VirologyCtaExchangeRequest(ctaToken))
+                virologyTestingApi.getTestResultForCtaToken(
+                    VirologyCtaExchangeRequest(ctaToken, ENGLAND)
+                )
             } throws Exception()
 
             val result = testSubject.validate(ctaToken)
 
             assertEquals(Failure(UNEXPECTED), result)
         }
+
+    @Test
+    fun `no supported country results in unexpected error state`() =
+        runBlocking {
+            val ctaToken = "12345678"
+
+            coEvery { postalDistrictProviderWrapper.getPostCodeDistrict() } returns null
+
+            val result = testSubject.validate(ctaToken)
+
+            assertEquals(Failure(UNEXPECTED), result)
+        }
+
+    private fun setUpValidTokenResponse(
+        ctaToken: String,
+        testResult: VirologyTestResult,
+        testKitType: VirologyTestKitType
+    ): Response<VirologyCtaExchangeResponse> {
+        val response = Response.success(
+            VirologyCtaExchangeResponse(
+                "submissionToken",
+                Instant.now(),
+                testResult,
+                testKitType,
+                diagnosisKeySubmissionSupported = true
+            )
+        )
+
+        coEvery {
+            virologyTestingApi.getTestResultForCtaToken(
+                VirologyCtaExchangeRequest(ctaToken, ENGLAND)
+            )
+        } returns response
+
+        return response
+    }
 }

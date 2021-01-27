@@ -16,5 +16,6 @@ interface ExposureNotificationApi {
     suspend fun getDiagnosisKeysDataMapping(): DiagnosisKeysDataMapping
     fun setDiagnosisKeysDataMapping(dataMapping: DiagnosisKeysDataMapping)
     suspend fun isAvailable(): Boolean
+    suspend fun isRunningNormally(): Boolean
     fun deviceSupportsLocationlessScanning(): Boolean
 }

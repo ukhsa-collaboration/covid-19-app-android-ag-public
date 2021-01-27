@@ -1,19 +1,18 @@
 package uk.nhs.nhsx.covid19.android.app.exposure
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jeroenmols.featureflag.framework.FeatureFlag.STORE_EXPOSURE_WINDOWS
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.common.SubmitEmptyData
 import uk.nhs.nhsx.covid19.android.app.exposure.FetchTemporaryExposureKeys.TemporaryExposureKeysFetchResult
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.SubmitEpidemiologyData
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW_AFTER_POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.KEY_SUBMISSION
-import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType.EXPOSURE_WINDOW_POSITIVE_TEST
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
 import uk.nhs.nhsx.covid19.android.app.state.indexCaseOnsetDateBeforeTestResultDate
@@ -46,7 +45,7 @@ class ShareKeysInformationViewModel @Inject constructor(
             val testResultDate = LocalDateTime.ofInstant(testResult.testEndDate, clock.zone).toLocalDate()
             val onsetDateBasedOnTestEndDate = testResultDate.minusDays(indexCaseOnsetDateBeforeTestResultDate)
             val exposureKeysFetchResult = fetchTemporaryExposureKeys(onsetDateBasedOnTestEndDate)
-            Log.d("ShareKeys", exposureKeysFetchResult.toString())
+            Timber.d("Fetched keys: $exposureKeysFetchResult")
             fetchKeysLiveData.postValue(exposureKeysFetchResult)
         }
     }
@@ -60,14 +59,16 @@ class ShareKeysInformationViewModel @Inject constructor(
     fun onSubmitKeysSuccess() {
         acknowledgeTestResult()
         if (RuntimeBehavior.isFeatureEnabled(STORE_EXPOSURE_WINDOWS)) {
-            submitEpidemiologyData(
+            submitEpidemiologyData.submitAfterPositiveTest(
                 epidemiologyEventProvider.epidemiologyEvents,
-                epidemiologyEventType = EXPOSURE_WINDOW_POSITIVE_TEST
+                testKitType = testResult.testKitType
             )
         }
     }
 
     private fun acknowledgeTestResult() {
-        stateMachine.processEvent(OnTestResultAcknowledge(testResult, removeTestResult = false))
+        stateMachine.processEvent(
+            OnTestResultAcknowledge(testResult)
+        )
     }
 }

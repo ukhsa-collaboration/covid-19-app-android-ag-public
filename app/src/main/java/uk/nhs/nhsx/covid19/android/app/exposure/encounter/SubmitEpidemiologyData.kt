@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
 import androidx.annotation.VisibleForTesting
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +17,9 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType.EXPOSUR
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType.EXPOSURE_WINDOW_POSITIVE_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventWithType
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyRequest
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitFakeExposureWindows
+import javax.inject.Inject
 
 class SubmitEpidemiologyData constructor(
     private val metadataProvider: MetadataProvider,
@@ -37,9 +38,29 @@ class SubmitEpidemiologyData constructor(
         metadataProvider, epidemiologyDataApi, submitFakeExposureWindows, GlobalScope, Dispatchers.IO
     )
 
-    operator fun invoke(
+    fun submit(epidemiologyEventList: List<EpidemiologyEvent>) {
+        submit(
+            epidemiologyEventList,
+            EXPOSURE_WINDOW,
+            null
+        )
+    }
+
+    fun submitAfterPositiveTest(
         epidemiologyEventList: List<EpidemiologyEvent>,
-        epidemiologyEventType: EpidemiologyEventType
+        testKitType: VirologyTestKitType?
+    ) {
+        submit(
+            epidemiologyEventList,
+            EXPOSURE_WINDOW_POSITIVE_TEST,
+            testKitType
+        )
+    }
+
+    private fun submit(
+        epidemiologyEventList: List<EpidemiologyEvent>,
+        epidemiologyEventType: EpidemiologyEventType,
+        testKitType: VirologyTestKitType?
     ) {
         submitEpidemiologyDataScope.launch(submitEpidemiologyDataDispatcher) {
             epidemiologyEventList.forEach { epidemiologyEvent ->
@@ -47,7 +68,12 @@ class SubmitEpidemiologyData constructor(
                     epidemiologyDataApi.submitEpidemiologyData(
                         EpidemiologyRequest(
                             metadata = metadataProvider.getMetadata(),
-                            events = listOf(epidemiologyEvent.toEpidemiologyEventWithType(epidemiologyEventType))
+                            events = listOf(
+                                epidemiologyEvent.toEpidemiologyEventWithType(
+                                    epidemiologyEventType,
+                                    testKitType
+                                )
+                            )
                         )
                     )
                 }
@@ -58,11 +84,14 @@ class SubmitEpidemiologyData constructor(
 }
 
 @VisibleForTesting
-internal fun EpidemiologyEvent.toEpidemiologyEventWithType(type: EpidemiologyEventType): EpidemiologyEventWithType =
+internal fun EpidemiologyEvent.toEpidemiologyEventWithType(
+    eventType: EpidemiologyEventType,
+    testKitType: VirologyTestKitType?
+): EpidemiologyEventWithType =
     EpidemiologyEventWithType(
-        type = type,
+        type = eventType,
         version = this.version,
-        payload = this.payload
+        payload = this.payload.copy(testType = testKitType)
     )
 
 private fun EpidemiologyEventType.toEmptySubmissionSource(): EmptySubmissionSource =

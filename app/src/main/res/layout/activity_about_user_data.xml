@@ -40,10 +40,10 @@
                     style="@style/LinkText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/local_authority_edit"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="30dp"
-                    android:text="@string/edit"
-                    android:contentDescription="@string/local_authority_edit"/>
+                    android:text="@string/edit" />
             </LinearLayout>
 
             <TextView
@@ -51,9 +51,9 @@
                 style="@style/AboutAppItemValueText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="42dp"
                 android:background="?attr/colorSurface"
                 android:gravity="center_vertical"
+                android:minHeight="42dp"
                 android:paddingHorizontal="30dp"
                 android:paddingVertical="8dp"
                 tools:text="Wandsworth\nSW12" />
@@ -62,22 +62,25 @@
                 android:id="@+id/titleLatestResult"
                 style="@style/AboutAppTitleText"
                 android:layout_width="wrap_content"
-                android:layout_height="42dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="9dp"
                 android:gravity="center_vertical"
+                android:minHeight="42dp"
+                android:paddingVertical="8dp"
                 android:text="@string/title_last_test_result_taken" />
 
             <LinearLayout
-                android:id="@+id/latestResultContainer"
+                android:id="@+id/latestResultDateContainer"
                 android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:background="?attr/colorSurface"
+                android:layout_height="wrap_content"
+                android:background="@drawable/user_data_item_background"
+                android:minHeight="42dp"
                 android:orientation="horizontal"
+                android:paddingVertical="8dp"
                 android:weightSum="1">
 
                 <TextView
-                    android:id="@+id/lastResultValue"
                     style="@style/AboutAppItemValueText"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -85,7 +88,7 @@
                     android:gravity="center_vertical"
                     android:paddingStart="30dp"
                     android:paddingEnd="10dp"
-                    tools:text="Value" />
+                    android:text="@string/about_my_data_date" />
 
                 <TextView
                     android:id="@+id/lastResultDate"
@@ -97,22 +100,86 @@
                     tools:text="Date" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/latestResultValueContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/user_data_item_background"
+                android:minHeight="42dp"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:weightSum="1">
+
+                <TextView
+                    style="@style/AboutAppItemValueText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/about_test_result" />
+
+                <TextView
+                    android:id="@+id/lastResultValue"
+                    style="@style/Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|end"
+                    android:paddingEnd="30dp"
+                    tools:text="Value" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/latestResultKitTypeContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/user_data_item_background"
+                android:minHeight="42dp"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:weightSum="1">
+
+                <TextView
+                    style="@style/AboutAppItemValueText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/about_test_kit_type" />
+
+                <TextView
+                    android:id="@+id/lastResultKitType"
+                    style="@style/Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|end"
+                    android:paddingEnd="30dp"
+                    tools:text="Value" />
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/titleSymptoms"
                 style="@style/AboutAppTitleText"
                 android:layout_width="wrap_content"
-                android:layout_height="42dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="9dp"
                 android:gravity="center_vertical"
+                android:minHeight="42dp"
+                android:paddingVertical="8dp"
                 android:text="@string/title_symptoms" />
 
             <LinearLayout
                 android:id="@+id/symptomsDataSection"
                 android:layout_width="match_parent"
-                android:layout_height="42dp"
+                android:layout_height="wrap_content"
                 android:background="?attr/colorSurface"
+                android:minHeight="42dp"
                 android:orientation="horizontal"
+                android:paddingVertical="8dp"
                 android:weightSum="1">
 
                 <TextView
@@ -139,18 +206,22 @@
                 android:id="@+id/titleExposureNotification"
                 style="@style/AboutAppTitleText"
                 android:layout_width="wrap_content"
-                android:layout_height="42dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="9dp"
                 android:gravity="center_vertical"
+                android:minHeight="42dp"
+                android:paddingVertical="8dp"
                 android:text="@string/title_exposure_notification" />
 
             <LinearLayout
                 android:id="@+id/encounterDataSection"
                 android:layout_width="match_parent"
-                android:layout_height="42dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/user_data_item_background"
+                android:minHeight="42dp"
                 android:orientation="horizontal"
+                android:paddingVertical="8dp"
                 android:weightSum="1">
 
                 <TextView
@@ -176,9 +247,11 @@
             <LinearLayout
                 android:id="@+id/exposureNotificationDataSection"
                 android:layout_width="match_parent"
-                android:layout_height="42dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/user_data_item_background"
+                android:minHeight="42dp"
                 android:orientation="horizontal"
+                android:paddingVertical="8dp"
                 android:weightSum="1">
 
                 <TextView
@@ -205,18 +278,22 @@
                 android:id="@+id/titleLastDayOfIsolation"
                 style="@style/AboutAppTitleText"
                 android:layout_width="wrap_content"
-                android:layout_height="42dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="9dp"
                 android:gravity="center_vertical"
+                android:minHeight="42dp"
+                android:paddingVertical="8dp"
                 android:text="@string/title_last_day_of_isolation" />
 
             <LinearLayout
                 android:id="@+id/lastDayOfIsolationSection"
                 android:layout_width="match_parent"
-                android:layout_height="42dp"
+                android:layout_height="wrap_content"
                 android:background="?attr/colorSurface"
+                android:minHeight="42dp"
                 android:orientation="horizontal"
+                android:paddingVertical="8dp"
                 android:weightSum="1">
 
                 <TextView
@@ -260,10 +337,10 @@
                     style="@style/LinkText"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:contentDescription="@string/venue_history_edit"
                     android:gravity="center_vertical|end"
                     android:paddingHorizontal="30dp"
-                    android:text="@string/edit"
-                    android:contentDescription="@string/venue_history_edit"/>
+                    android:text="@string/edit" />
 
             </LinearLayout>
 

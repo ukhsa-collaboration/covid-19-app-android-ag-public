@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.analytics
 
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.BackgroundTaskCompletion
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.Event
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.ExposureWindowMatched
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.UpdateNetworkStats
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
@@ -19,6 +20,10 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.VOID_
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.OUTSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -31,8 +36,9 @@ fun List<AnalyticsLogEntry>.toMetrics(): Metrics {
             when (val log = entry.logItem) {
                 is Event -> updateRegularEvent(log.eventType)
                 is BackgroundTaskCompletion -> updateBackgroundTaskTicks(log.backgroundTaskTicks)
-                is ResultReceived -> updateTestResults(log.result, log.testOrderType)
+                is ResultReceived -> updateTestResults(log.result, log.testKitType, log.testOrderType)
                 is UpdateNetworkStats -> updateNetworkStats(log.downloadedBytes, log.uploadedBytes)
+                is ExposureWindowMatched -> updateTotalExposureWindows(log.totalRiskyExposures, log.totalNonRiskyExposures)
             }
         }
     }
@@ -55,20 +61,53 @@ private fun Metrics.updateRegularEvent(eventType: RegularAnalyticsEventType) {
     }
 }
 
-private fun Metrics.updateTestResults(result: VirologyTestResult, testOrderType: TestOrderType) {
-    when {
-        result == VOID && testOrderType == INSIDE_APP -> receivedVoidTestResultViaPolling++
-        result == VOID && testOrderType == OUTSIDE_APP -> receivedVoidTestResultEnteredManually++
-        result == POSITIVE && testOrderType == INSIDE_APP -> receivedPositiveTestResultViaPolling++
-        result == POSITIVE && testOrderType == OUTSIDE_APP -> receivedPositiveTestResultEnteredManually++
-        result == NEGATIVE && testOrderType == INSIDE_APP -> receivedNegativeTestResultViaPolling++
-        result == NEGATIVE && testOrderType == OUTSIDE_APP -> receivedNegativeTestResultEnteredManually++
+private fun Metrics.updateTestResults(
+    result: VirologyTestResult,
+    testKitType: VirologyTestKitType,
+    testOrderType: TestOrderType
+) {
+    when (result) {
+        VOID -> when (testKitType) {
+            LAB_RESULT -> when (testOrderType) {
+                INSIDE_APP -> receivedVoidTestResultViaPolling++
+                OUTSIDE_APP -> receivedVoidTestResultEnteredManually++
+            }
+            RAPID_RESULT, RAPID_SELF_REPORTED -> when (testOrderType) {
+                INSIDE_APP -> receivedVoidLFDTestResultViaPolling++
+                OUTSIDE_APP -> receivedVoidLFDTestResultEnteredManually++
+            }
+        }
+        POSITIVE -> when (testKitType) {
+            LAB_RESULT -> when (testOrderType) {
+                INSIDE_APP -> receivedPositiveTestResultViaPolling++
+                OUTSIDE_APP -> receivedPositiveTestResultEnteredManually++
+            }
+            RAPID_RESULT, RAPID_SELF_REPORTED -> when (testOrderType) {
+                INSIDE_APP -> receivedPositiveLFDTestResultViaPolling++
+                OUTSIDE_APP -> receivedPositiveLFDTestResultEnteredManually++
+            }
+        }
+        NEGATIVE -> when (testKitType) {
+            LAB_RESULT -> when (testOrderType) {
+                INSIDE_APP -> receivedNegativeTestResultViaPolling++
+                OUTSIDE_APP -> receivedNegativeTestResultEnteredManually++
+            }
+            RAPID_RESULT, RAPID_SELF_REPORTED -> when (testOrderType) {
+                INSIDE_APP -> receivedNegativeLFDTestResultViaPolling++
+                OUTSIDE_APP -> receivedNegativeLFDTestResultEnteredManually++
+            }
+        }
     }
 }
 
 private fun Metrics.updateNetworkStats(downloadedBytes: Int?, uploadedBytes: Int?) {
     cumulativeDownloadBytes = cumulativeDownloadBytes plus downloadedBytes
     cumulativeUploadBytes = cumulativeUploadBytes plus uploadedBytes
+}
+
+private fun Metrics.updateTotalExposureWindows(totalRiskyExposures: Int, totalNonRiskyExposures: Int) {
+    totalExposureWindowsNotConsideredRisky += totalNonRiskyExposures
+    totalExposureWindowsConsideredRisky += totalRiskyExposures
 }
 
 private fun Metrics.updateBackgroundTaskTicks(backgroundTaskTicks: BackgroundTaskTicks) {
@@ -79,9 +118,11 @@ private fun Metrics.updateBackgroundTaskTicks(backgroundTaskTicks: BackgroundTas
     hasSelfDiagnosedPositiveBackgroundTick += backgroundTaskTicks.hasSelfDiagnosedPositiveBackgroundTick.toInt()
     isIsolatingForSelfDiagnosedBackgroundTick += backgroundTaskTicks.isIsolatingForSelfDiagnosedBackgroundTick.toInt()
     isIsolatingForTestedPositiveBackgroundTick += backgroundTaskTicks.isIsolatingForTestedPositiveBackgroundTick.toInt()
+    isIsolatingForTestedLFDPositiveBackgroundTick += backgroundTaskTicks.isIsolatingForTestedLFDPositiveBackgroundTick.toInt()
     hasHadRiskyContactBackgroundTick += backgroundTaskTicks.hasHadRiskyContactBackgroundTick.toInt()
     hasSelfDiagnosedBackgroundTick += backgroundTaskTicks.hasSelfDiagnosedBackgroundTick.toInt()
     hasTestedPositiveBackgroundTick += backgroundTaskTicks.hasTestedPositiveBackgroundTick.toInt()
+    hasTestedLFDPositiveBackgroundTick += backgroundTaskTicks.hasTestedLFDPositiveBackgroundTick.toInt()
     encounterDetectionPausedBackgroundTick += backgroundTaskTicks.encounterDetectionPausedBackgroundTick.toInt()
     haveActiveIpcTokenBackgroundTick += backgroundTaskTicks.haveActiveIpcTokenBackgroundTick.toInt()
 }

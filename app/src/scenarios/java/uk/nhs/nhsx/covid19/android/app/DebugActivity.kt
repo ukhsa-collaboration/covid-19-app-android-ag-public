@@ -70,6 +70,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.Policy
 import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyData
 import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyIcon.MEETING_PEOPLE
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.settings.languages.LanguagesActivity
@@ -484,8 +485,9 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
                 ReceivedTestResult(
                     diagnosisKeySubmissionToken = "token1",
                     testEndDate = Instant.now(),
-                    acknowledgedDate = null,
-                    testResult = POSITIVE
+                    testResult = POSITIVE,
+                    testKitType = LAB_RESULT,
+                    diagnosisKeySubmissionSupported = true
                 )
             )
         }

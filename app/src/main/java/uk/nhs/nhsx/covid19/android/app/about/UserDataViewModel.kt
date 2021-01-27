@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.DialogType.ConfirmDeleteAllData
 import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.DialogType.ConfirmDeleteVenueVisit
+import uk.nhs.nhsx.covid19.android.app.analytics.SubmittedOnboardingAnalyticsProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodesLoader
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
@@ -15,8 +16,8 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State
-import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import javax.inject.Inject
 
@@ -25,9 +26,10 @@ class UserDataViewModel @Inject constructor(
     private val localAuthorityProvider: LocalAuthorityProvider,
     private val venuesStorage: VisitedVenuesStorage,
     private val stateMachine: IsolationStateMachine,
-    private val testResultsProvider: TestResultsProvider,
+    private val relevantTestResultProvider: RelevantTestResultProvider,
     private val sharedPreferences: SharedPreferences,
-    private val localAuthorityPostCodesLoader: LocalAuthorityPostCodesLoader
+    private val localAuthorityPostCodesLoader: LocalAuthorityPostCodesLoader,
+    private val submittedOnboardingAnalyticsProvider: SubmittedOnboardingAnalyticsProvider
 ) : ViewModel() {
 
     private val localAuthorityText = MutableLiveData<String>()
@@ -45,8 +47,8 @@ class UserDataViewModel @Inject constructor(
 
     fun getVenueVisitsUiState(): LiveData<VenueVisitsUiState> = venueVisitsUiStateLiveData
 
-    private val receivedTestResultLiveData: MutableLiveData<ReceivedTestResult> = MutableLiveData()
-    fun getReceivedTestResult(): LiveData<ReceivedTestResult> = receivedTestResultLiveData
+    private val acknowledgedTestResultLiveData: MutableLiveData<AcknowledgedTestResult> = MutableLiveData()
+    fun getAcknowledgedTestResult(): LiveData<AcknowledgedTestResult> = acknowledgedTestResultLiveData
 
     private val allUserDataDeletedLiveData: MutableLiveData<Unit> = SingleLiveEvent()
     fun getAllUserDataDeleted(): LiveData<Unit> = allUserDataDeletedLiveData
@@ -64,7 +66,7 @@ class UserDataViewModel @Inject constructor(
             )
             statusMachineLiveData.postValue(stateMachine.readState())
 
-            receivedTestResultLiveData.postValue(testResultsProvider.getLastNonVoidTestResult())
+            acknowledgedTestResultLiveData.postValue(relevantTestResultProvider.testResult)
         }
     }
 
@@ -73,7 +75,9 @@ class UserDataViewModel @Inject constructor(
     }
 
     fun deleteAllUserData() {
+        val submittedOnboardingAnalytics = submittedOnboardingAnalyticsProvider.value
         sharedPreferences.edit().clear().apply()
+        submittedOnboardingAnalyticsProvider.value = submittedOnboardingAnalytics
         stateMachine.reset()
         venuesStorage.removeAllVenueVisits()
         allUserDataDeletedLiveData.postValue(Unit)

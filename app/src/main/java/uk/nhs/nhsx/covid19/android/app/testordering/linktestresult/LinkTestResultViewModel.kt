@@ -12,6 +12,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceiv
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.OUTSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeResponse
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -52,22 +53,27 @@ class LinkTestResultViewModel @Inject constructor(
                 testResult = ReceivedTestResult(
                     testResultResponse.diagnosisKeySubmissionToken,
                     testResultResponse.testEndDate,
-                    testResultResponse.testResult
+                    testResultResponse.testResult,
+                    testResultResponse.testKit,
+                    testResultResponse.diagnosisKeySubmissionSupported
                 ),
                 showNotification = false
             )
         )
-        logAnalytics(testResultResponse.testResult)
+        logAnalytics(testResultResponse.testResult, testResultResponse.testKit)
         linkTestResultLiveData.postValue(Valid)
     }
 
-    private suspend fun logAnalytics(result: VirologyTestResult) {
+    private suspend fun logAnalytics(
+        result: VirologyTestResult,
+        testKitType: VirologyTestKitType
+    ) {
         when (result) {
             POSITIVE -> analyticsEventProcessor.track(PositiveResultReceived)
             NEGATIVE -> analyticsEventProcessor.track(NegativeResultReceived)
             VOID -> analyticsEventProcessor.track(VoidResultReceived)
         }
-        analyticsEventProcessor.track(ResultReceived(result, OUTSIDE_APP))
+        analyticsEventProcessor.track(ResultReceived(result, testKitType, OUTSIDE_APP))
     }
 
     sealed class LinkTestResultViewState {

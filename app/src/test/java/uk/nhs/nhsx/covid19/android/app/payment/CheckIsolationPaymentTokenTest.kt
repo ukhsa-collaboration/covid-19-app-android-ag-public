@@ -15,10 +15,10 @@ import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Disabl
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Unresolved
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationPaymentApi
-import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationPaymentCountry.ENGLAND
-import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationPaymentCountry.WALES
 import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationPaymentCreateTokenRequest
 import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationPaymentCreateTokenResponse
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
 
 class CheckIsolationPaymentTokenTest {
 

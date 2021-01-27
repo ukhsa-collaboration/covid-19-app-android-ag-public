@@ -1,34 +1,42 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation
 
-import com.google.android.gms.nearby.exposurenotification.ScanInstance as GoogleScanInstance
-import uk.nhs.riskscore.ScanInstance as NHSScanInstance
 import com.google.android.gms.nearby.exposurenotification.ExposureWindow
 import com.google.android.gms.nearby.exposurenotification.ExposureWindow.Builder
 import com.google.android.gms.nearby.exposurenotification.Infectiousness
 import com.google.android.gms.nearby.exposurenotification.ReportType
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Before
+import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ExposureWindowsMatched
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
+import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.remote.data.V2RiskCalculation
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.riskscore.RiskScoreCalculator
+import uk.nhs.riskscore.RiskScoreCalculatorConfiguration
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import org.junit.Before
-import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.remote.data.V2RiskCalculation
-import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
-import uk.nhs.riskscore.RiskScoreCalculator
-import uk.nhs.riskscore.RiskScoreCalculatorConfiguration
+import com.google.android.gms.nearby.exposurenotification.ScanInstance as GoogleScanInstance
+import uk.nhs.riskscore.ScanInstance as NHSScanInstance
 
+@ExperimentalCoroutinesApi
 class ExposureWindowRiskCalculatorTest {
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
 
     private val baseDate = Instant.parse("2020-07-20T00:00:00Z")
     private val clock = Clock.fixed(baseDate, ZoneOffset.UTC)
     private val riskScoreCalculatorProvider = mockk<RiskScoreCalculatorProvider>()
+    private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxed = true)
 
     private val riskScoreCalculator = mockk<RiskScoreCalculator>()
 
@@ -41,11 +49,14 @@ class ExposureWindowRiskCalculatorTest {
     )
     private val someScanInstance = getGoogleScanInstance(50)
     private val expectedRiskScore = 100.0
+    private val testScope = TestCoroutineScope()
 
     private val riskCalculator = ExposureWindowRiskCalculator(
         clock,
         isolationConfigurationProvider,
-        riskScoreCalculatorProvider
+        riskScoreCalculatorProvider,
+        analyticsEventProcessor,
+        testScope
     )
 
     @Before
@@ -57,7 +68,7 @@ class ExposureWindowRiskCalculatorTest {
     }
 
     @Test
-    fun `calls risk score calculator with mapped scan instances for each exposure window`() {
+    fun `calls risk score calculator with mapped scan instances for each exposure window`() = testScope.runBlockingTest {
         val expectedAttenuationValue = 55
         val expectedSecondsSinceLastScan = 180
         val scanInstances = listOf(
@@ -70,22 +81,25 @@ class ExposureWindowRiskCalculatorTest {
         val expectedInstances = listOf(
             NHSScanInstance(expectedAttenuationValue, expectedSecondsSinceLastScan)
         )
+        coVerify(exactly = 1) { analyticsEventProcessor.track(ExposureWindowsMatched(1, 0)) }
         verify { riskScoreCalculator.calculate(expectedInstances) }
     }
 
     @Test
-    fun `returns null if no risk score exceeds threshold`() {
+    fun `returns null if no risk score exceeds threshold`() = testScope.runBlockingTest {
         val riskCalculation = someRiskCalculation.copy(riskThreshold = 900.0)
         val exposureWindows = listOf(getExposureWindow(listOf()))
         every { riskScoreCalculator.calculate(any()) } returns 2.0
 
         val risk = riskCalculator(exposureWindows, riskCalculation, someRiskScoreCalculatorConfig)
 
+        coVerify(exactly = 1) { analyticsEventProcessor.track(ExposureWindowsMatched(0, 1)) }
+
         assertNull(risk)
     }
 
     @Test
-    fun `returns day risk when risk score exceeds threshold`() {
+    fun `returns day risk when risk score exceeds threshold`() = testScope.runBlockingTest {
         val riskCalculation = someRiskCalculation.copy(riskThreshold = 50.0)
         val exposureWindows = listOf(getExposureWindow(scanInstances = listOf()))
 
@@ -100,11 +114,13 @@ class ExposureWindowRiskCalculatorTest {
             exposureWindows
         )
 
+        coVerify(exactly = 1) { analyticsEventProcessor.track(ExposureWindowsMatched(1, 0)) }
+
         assertEquals(expectedRisk, risk)
     }
 
     @Test
-    fun `returns day risk when risk score exceeds threshold with only recent exposure window`() {
+    fun `returns day risk when risk score exceeds threshold with only recent exposure window`() = testScope.runBlockingTest {
         val riskCalculation = someRiskCalculation.copy(riskThreshold = 50.0)
         val recentExposureWindow = getExposureWindow(scanInstances = listOf())
         val exposureWindows = listOf(
@@ -123,11 +139,13 @@ class ExposureWindowRiskCalculatorTest {
             listOf(recentExposureWindow)
         )
 
+        coVerify(exactly = 1) { analyticsEventProcessor.track(ExposureWindowsMatched(1, 1)) }
+
         assertEquals(expectedRisk, risk)
     }
 
     @Test
-    fun `returns risk for most recent day which exceeds threshold`() {
+    fun `returns risk for most recent day which exceeds threshold`() = testScope.runBlockingTest {
         val olderDate = todayMinusDays(3)
         val newerDate = todayMinusDays(2)
         val exposureWindows = listOf(
@@ -149,8 +167,11 @@ class ExposureWindowRiskCalculatorTest {
                 calculatedRisk = expectedRiskScore * 60,
                 riskCalculationVersion = 2,
                 matchedKeyCount = 1,
-                exposureWindows
+                exposureWindows = exposureWindows
             )
+
+        coVerify(exactly = 1) { analyticsEventProcessor.track(ExposureWindowsMatched(2, 0)) }
+
         assertEquals(expectedRisk, risk)
     }
 
@@ -158,7 +179,7 @@ class ExposureWindowRiskCalculatorTest {
         baseDate.atZone(ZoneOffset.UTC).minusDays(days).toLocalDate()
 
     @Test
-    fun `returns risk item with highest score when there are multiple from the same day`() {
+    fun `returns risk item with highest score when there are multiple from the same day`() = testScope.runBlockingTest {
         val millisSinceEpoch = baseDate.toEpochMilli()
         val higherRiskScanInstance = getGoogleScanInstance(30)
         val lowerRiskScanInstance = getGoogleScanInstance(50)
@@ -180,13 +201,14 @@ class ExposureWindowRiskCalculatorTest {
                 calculatedRisk = higherRiskScore * 60,
                 riskCalculationVersion = 2,
                 matchedKeyCount = 1,
-                exposureWindows
+                exposureWindows = exposureWindows
             )
+        coVerify(exactly = 1) { analyticsEventProcessor.track(ExposureWindowsMatched(2, 0)) }
         assertEquals(expectedRisk, risk)
     }
 
     @Test
-    fun `multiplies calculated risk score by infectiousness factor`() {
+    fun `multiplies calculated risk score by infectiousness factor`() = testScope.runBlockingTest {
         val expectedInfectiousness = Infectiousness.STANDARD
         val exposureWindows = listOf(
             getExposureWindow(listOf(someScanInstance), infectiousness = expectedInfectiousness)
@@ -201,11 +223,13 @@ class ExposureWindowRiskCalculatorTest {
 
         val expectedRiskScore = expectedInfectiousnessFactor * expectedRiskScore * 60
 
+        coVerify(exactly = 1) { analyticsEventProcessor.track(ExposureWindowsMatched(1, 0)) }
+
         assertEquals(expectedRiskScore, risk?.calculatedRisk)
     }
 
     @Test
-    fun `disregards exposure from longer than one isolation period ago`() {
+    fun `disregards exposure from longer than one isolation period ago`() = testScope.runBlockingTest {
         val oldDate = baseDate.atZone(ZoneOffset.UTC).toLocalDate().minusDays(11)
         val exposureWindows = listOf(
             getExposureWindow(millisSinceEpoch = oldDate.toStartOfDayEpochMillis())
@@ -214,6 +238,8 @@ class ExposureWindowRiskCalculatorTest {
 
         val risk =
             riskCalculator(exposureWindows, someRiskCalculation, someRiskScoreCalculatorConfig)
+
+        coVerify(exactly = 1) { analyticsEventProcessor.track(ExposureWindowsMatched(0, 1)) }
 
         assertNull(risk)
     }

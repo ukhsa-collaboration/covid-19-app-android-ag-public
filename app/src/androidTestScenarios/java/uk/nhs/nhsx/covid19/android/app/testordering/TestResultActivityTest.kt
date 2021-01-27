@@ -8,6 +8,7 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.setTemporaryExposureKeyHistoryResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
@@ -55,17 +56,19 @@ class TestResultActivityTest : EspressoTest() {
     ) {
         testAppContext.setState(isolationStateContactCaseOnly)
 
-        testAppContext.getTestResultsProvider().add(
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "a",
                 testEndDate = Instant.now(),
-                testResult = POSITIVE
+                testResult = POSITIVE,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysPositiveAndContinueSelfIsolation()
+        testResultRobot.checkActivityDisplaysPositiveContinueIsolation()
         testResultRobot.checkExposureLinkIsDisplayed()
         testResultRobot.checkIsolationActionButtonShowsContinue()
 
@@ -88,17 +91,19 @@ class TestResultActivityTest : EspressoTest() {
     ) {
         testAppContext.setState(isolationStateContactCaseOnly)
 
-        testAppContext.getTestResultsProvider().add(
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "a",
                 testEndDate = Instant.now(),
-                testResult = NEGATIVE
+                testResult = NEGATIVE,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysNegativeAndContinueSelfIsolation()
+        testResultRobot.checkActivityDisplaysNegativeWillBeInIsolation()
         testResultRobot.checkExposureLinkIsNotDisplayed()
         testResultRobot.checkIsolationActionButtonShowsBackHome()
 
@@ -121,17 +126,19 @@ class TestResultActivityTest : EspressoTest() {
     ) {
         testAppContext.setState(isolationStateIndexCaseOnly)
 
-        testAppContext.getTestResultsProvider().add(
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "a",
                 testEndDate = Instant.now(),
-                testResult = NEGATIVE
+                testResult = NEGATIVE,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysNegativeAndFinishIsolation()
+        testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation()
         testResultRobot.checkGoodNewsActionButtonShowsContinue()
 
         testResultRobot.clickGoodNewsActionButton()
@@ -148,26 +155,29 @@ class TestResultActivityTest : EspressoTest() {
     fun showIsolationScreenWhenReceivingPositiveAndThenNegativeTestResult() = notReported {
         testAppContext.setState(isolationStateIndexCaseOnly)
 
-        testAppContext.getTestResultsProvider().add(
+        testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "a",
                 testEndDate = Instant.now(),
                 testResult = POSITIVE,
-                acknowledgedDate = Instant.now()
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
-        testAppContext.getTestResultsProvider().add(
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "a2",
                 testEndDate = Instant.now(),
-                testResult = NEGATIVE
+                testResult = NEGATIVE,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysPositiveThenNegativeAndStayInIsolation()
+        testResultRobot.checkActivityDisplaysPositiveThenNegativeWillBeInIsolation()
 
         testResultRobot.checkExposureLinkIsNotDisplayed()
 
@@ -183,26 +193,29 @@ class TestResultActivityTest : EspressoTest() {
     fun showIsolationScreenWhenReceivingNegativeAndThenPositiveTestResultAndSharingKeys() = notReported {
         testAppContext.setState(Default())
 
-        testAppContext.getTestResultsProvider().add(
+        testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "a",
                 testEndDate = Instant.now(),
                 testResult = NEGATIVE,
-                acknowledgedDate = Instant.now()
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
-        testAppContext.getTestResultsProvider().add(
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "a2",
                 testEndDate = Instant.now(),
-                testResult = POSITIVE
+                testResult = POSITIVE,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysPositiveAndSelfIsolate()
+        testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation()
 
         testResultRobot.checkExposureLinkIsDisplayed()
 
@@ -224,26 +237,29 @@ class TestResultActivityTest : EspressoTest() {
 
         testAppContext.setState(Default())
 
-        testAppContext.getTestResultsProvider().add(
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "a",
                 testEndDate = Instant.now(),
                 testResult = NEGATIVE,
-                acknowledgedDate = Instant.now()
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
-        testAppContext.getTestResultsProvider().add(
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "a2",
                 testEndDate = Instant.now(),
-                testResult = POSITIVE
+                testResult = POSITIVE,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysPositiveAndSelfIsolate()
+        testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation()
 
         testResultRobot.checkExposureLinkIsDisplayed()
 
@@ -262,17 +278,19 @@ class TestResultActivityTest : EspressoTest() {
     fun showDoNotHaveToSelfIsolateScreenOnPositive() = notReported {
         testAppContext.setState(Default(previousIsolation = isolationStateIndexCaseOnly))
 
-        testAppContext.getTestResultsProvider().add(
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "a",
                 testEndDate = Instant.now(),
-                testResult = POSITIVE
+                testResult = POSITIVE,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysPositiveAndFinishIsolation()
+        testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation()
 
         testResultRobot.checkGoodNewsActionButtonShowsContinue()
 
@@ -285,17 +303,19 @@ class TestResultActivityTest : EspressoTest() {
     fun showDoNotHaveToSelfIsolateScreenOnNegative() = notReported {
         testAppContext.setState(Default())
 
-        testAppContext.getTestResultsProvider().add(
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "a",
                 testEndDate = Instant.now(),
-                testResult = NEGATIVE
+                testResult = NEGATIVE,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysNegativeAndAlreadyFinishedIsolation()
+        testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation()
 
         testResultRobot.checkGoodNewsActionButtonShowsContinue()
 
@@ -313,17 +333,19 @@ class TestResultActivityTest : EspressoTest() {
     ) {
         testAppContext.setState(isolationStateContactCaseOnly)
 
-        testAppContext.getTestResultsProvider().add(
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "a",
                 testEndDate = Instant.now(),
-                testResult = VOID
+                testResult = VOID,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysVoidAndContinueSelfIsolation()
+        testResultRobot.checkActivityDisplaysVoidWillBeInIsolation()
         testResultRobot.checkExposureLinkIsNotDisplayed()
         testResultRobot.checkIsolationActionButtonShowsBookFreeTest()
 
@@ -341,17 +363,19 @@ class TestResultActivityTest : EspressoTest() {
     fun showAreNotIsolatingScreenOnNegative() = notReported {
         testAppContext.setState(Default())
 
-        testAppContext.getTestResultsProvider().add(
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "a",
                 testEndDate = Instant.now(),
-                testResult = NEGATIVE
+                testResult = NEGATIVE,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysNegativeAndAlreadyFinishedIsolation()
+        testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation()
         testResultRobot.checkGoodNewsActionButtonShowsContinue()
     }
 
@@ -359,17 +383,19 @@ class TestResultActivityTest : EspressoTest() {
     fun showAreNotIsolatingScreenOnVoid() = notReported {
         testAppContext.setState(Default())
 
-        testAppContext.getTestResultsProvider().add(
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "a",
                 testEndDate = Instant.now(),
-                testResult = VOID
+                testResult = VOID,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysVoidAndNoIsolate()
+        testResultRobot.checkActivityDisplaysVoidNotInIsolation()
 
         testResultRobot.checkGoodNewsActionButtonShowsBookFreeTest()
 
@@ -383,11 +409,13 @@ class TestResultActivityTest : EspressoTest() {
         runWithIntents {
             testAppContext.setState(isolationStateContactCaseOnly)
 
-            testAppContext.getTestResultsProvider().add(
+            testAppContext.getUnacknowledgedTestResultsProvider().add(
                 ReceivedTestResult(
                     diagnosisKeySubmissionToken = "a",
                     testEndDate = Instant.now(),
-                    testResult = VOID
+                    testResult = VOID,
+                    testKitType = LAB_RESULT,
+                    diagnosisKeySubmissionSupported = true
                 )
             )
 
@@ -407,11 +435,13 @@ class TestResultActivityTest : EspressoTest() {
         runWithIntents {
             testAppContext.setState(isolationStateContactCaseOnly)
 
-            testAppContext.getTestResultsProvider().add(
+            testAppContext.getUnacknowledgedTestResultsProvider().add(
                 ReceivedTestResult(
                     diagnosisKeySubmissionToken = "a",
                     testEndDate = Instant.now(),
-                    testResult = VOID
+                    testResult = VOID,
+                    testKitType = LAB_RESULT,
+                    diagnosisKeySubmissionSupported = true
                 )
             )
 
@@ -430,11 +460,13 @@ class TestResultActivityTest : EspressoTest() {
     fun onBackPressed_navigate() = notReported {
         testAppContext.setState(isolationStateContactCaseOnly)
 
-        testAppContext.getTestResultsProvider().add(
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "a",
                 testEndDate = Instant.now(),
-                testResult = VOID
+                testResult = VOID,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 

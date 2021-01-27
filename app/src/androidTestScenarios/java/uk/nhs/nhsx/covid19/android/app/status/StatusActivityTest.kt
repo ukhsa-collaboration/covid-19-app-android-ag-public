@@ -288,7 +288,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickReadAdvice_whenBackPressed_readAdviceButtonShouldBeEnabled() {
+    fun clickReadAdvice_whenBackPressed_readAdviceButtonShouldBeEnabled() = notReported {
         startTestActivity<StatusActivity>()
 
         statusRobot.clickReadAdvice()

@@ -6,7 +6,9 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.remote.TestResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
@@ -15,6 +17,7 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
+import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
@@ -40,6 +43,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
     @Before
     fun setUp() {
         FeatureFlagTestHelper.enableFeatureFlag(USE_WEB_VIEW_FOR_INTERNAL_BROWSER)
+        testAppContext.setLocalAuthority(ENGLISH_LOCAL_AUTHORITY)
     }
 
     @After
@@ -78,33 +82,35 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         orderTest()
 
-        testAppContext.virologyTestingApi.testResultForPollingToken =
-            mutableMapOf(firstToken to NEGATIVE)
+        testAppContext.virologyTestingApi.testResponseForPollingToken =
+            mutableMapOf(firstToken to TestResponse(NEGATIVE, LAB_RESULT))
 
         runBlocking {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAndFinishIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 
         assertTrue { testAppContext.getCurrentState() is Default }
 
-        testAppContext.virologyTestingApi.testResultForPollingToken =
-            mutableMapOf(secondToken to POSITIVE)
+        testAppContext.virologyTestingApi.testResponseForPollingToken =
+            mutableMapOf(secondToken to TestResponse(POSITIVE, LAB_RESULT))
 
         runBlocking {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveAndSelfIsolate() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
 
         shareKeysInformationRobot.checkActivityIsDisplayed()
 
         shareKeysInformationRobot.clickIUnderstandButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
     }
@@ -140,27 +146,27 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         orderTest()
 
-        testAppContext.virologyTestingApi.testResultForPollingToken =
-            mutableMapOf(firstToken to NEGATIVE)
+        testAppContext.virologyTestingApi.testResponseForPollingToken =
+            mutableMapOf(firstToken to TestResponse(NEGATIVE, LAB_RESULT))
 
         runBlocking {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAndFinishIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 
         assertTrue { testAppContext.getCurrentState() is Default }
 
-        testAppContext.virologyTestingApi.testResultForPollingToken =
-            mutableMapOf(secondToken to NEGATIVE)
+        testAppContext.virologyTestingApi.testResponseForPollingToken =
+            mutableMapOf(secondToken to TestResponse(NEGATIVE, LAB_RESULT))
 
         runBlocking {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAndAlreadyFinishedIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -201,17 +207,17 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         orderTest()
 
-        testAppContext.virologyTestingApi.testResultForPollingToken =
+        testAppContext.virologyTestingApi.testResponseForPollingToken =
             mutableMapOf(
-                firstToken to NEGATIVE,
-                secondToken to POSITIVE
+                firstToken to TestResponse(NEGATIVE, LAB_RESULT),
+                secondToken to TestResponse(POSITIVE, LAB_RESULT)
             )
 
         runBlocking {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveAndContinueSelfIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -219,7 +225,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         shareKeysInformationRobot.clickIUnderstandButton()
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveThenNegativeAndStayInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveThenNegativeWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -243,12 +249,13 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
             )
         )
 
-        testAppContext.getTestResultsProvider().add(
+        testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = "token",
                 testEndDate = now.minus(1, HOURS),
                 testResult = POSITIVE,
-                acknowledgedDate = now.minus(1, HOURS)
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
@@ -262,14 +269,14 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         orderTest()
 
-        testAppContext.virologyTestingApi.testResultForPollingToken =
-            mutableMapOf("newToken" to NEGATIVE)
+        testAppContext.virologyTestingApi.testResponseForPollingToken =
+            mutableMapOf("newToken" to TestResponse(NEGATIVE, LAB_RESULT))
 
         runBlocking {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveThenNegativeAndStayInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveThenNegativeWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -308,14 +315,14 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         orderTest()
 
-        testAppContext.virologyTestingApi.testResultForPollingToken =
-            mutableMapOf(positiveTestResultToken to POSITIVE)
+        testAppContext.virologyTestingApi.testResponseForPollingToken =
+            mutableMapOf(positiveTestResultToken to TestResponse(POSITIVE, LAB_RESULT))
 
         runBlocking {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveAndContinueSelfIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -325,14 +332,14 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
 
-        testAppContext.virologyTestingApi.testResultForPollingToken =
-            mutableMapOf(voidTestResultToken to VOID)
+        testAppContext.virologyTestingApi.testResponseForPollingToken =
+            mutableMapOf(voidTestResultToken to TestResponse(VOID, LAB_RESULT))
 
         runBlocking {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysVoidAndContinueSelfIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysVoidWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -348,14 +355,14 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
 
-        testAppContext.virologyTestingApi.testResultForPollingToken =
-            mutableMapOf(negativeTestResultToken to NEGATIVE)
+        testAppContext.virologyTestingApi.testResponseForPollingToken =
+            mutableMapOf(negativeTestResultToken to TestResponse(NEGATIVE, LAB_RESULT))
 
         runBlocking {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveThenNegativeAndStayInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveThenNegativeWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
 

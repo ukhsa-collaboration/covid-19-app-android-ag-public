@@ -17,6 +17,9 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceiv
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.OUTSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeResponse
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -34,6 +37,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResul
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultViewState.Progress
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultViewState.Valid
 import java.time.Instant
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 
 class LinkTestResultViewModelTest {
 
@@ -53,7 +57,7 @@ class LinkTestResultViewModelTest {
     @Test
     fun `successful cta token validation`() = runBlocking {
         testSubject.viewState().observeForever(linkTestResultObserver)
-        val testResultResponse = setResult(NEGATIVE)
+        val testResultResponse = setResult(NEGATIVE, LAB_RESULT)
 
         testSubject.validate("ctaToken")
 
@@ -61,7 +65,9 @@ class LinkTestResultViewModelTest {
             testResult = ReceivedTestResult(
                 testResultResponse.diagnosisKeySubmissionToken,
                 testResultResponse.testEndDate,
-                testResultResponse.testResult
+                testResultResponse.testResult,
+                testResultResponse.testKit,
+                testResultResponse.diagnosisKeySubmissionSupported
             ),
             showNotification = false
         )
@@ -123,48 +129,128 @@ class LinkTestResultViewModelTest {
     }
 
     @Test
-    fun `track analytics events on negative result`() = runBlocking {
-        setResult(NEGATIVE)
+    fun `track analytics events on negative PCR result`() = runBlocking {
+        setResult(NEGATIVE, LAB_RESULT)
 
         testSubject.validate("ctaToken")
 
         coVerifyAll {
             analyticsEventProcessor.track(NegativeResultReceived)
-            analyticsEventProcessor.track(ResultReceived(NEGATIVE, OUTSIDE_APP))
+            analyticsEventProcessor.track(ResultReceived(NEGATIVE, LAB_RESULT, OUTSIDE_APP))
         }
     }
 
     @Test
-    fun `track analytics events on positive result`() = runBlocking {
-        setResult(POSITIVE)
+    fun `track analytics events on positive PCR result`() = runBlocking {
+        setResult(POSITIVE, LAB_RESULT)
 
         testSubject.validate("ctaToken")
 
         coVerifyAll {
             analyticsEventProcessor.track(PositiveResultReceived)
-            analyticsEventProcessor.track(ResultReceived(POSITIVE, OUTSIDE_APP))
+            analyticsEventProcessor.track(ResultReceived(POSITIVE, LAB_RESULT, OUTSIDE_APP))
         }
     }
 
     @Test
-    fun `track analytics events on void result`() = runBlocking {
-        setResult(VOID)
+    fun `track analytics events on void PCR result`() = runBlocking {
+        setResult(VOID, LAB_RESULT)
 
         testSubject.validate("ctaToken")
 
         coVerifyAll {
             analyticsEventProcessor.track(VoidResultReceived)
-            analyticsEventProcessor.track(ResultReceived(VOID, OUTSIDE_APP))
+            analyticsEventProcessor.track(ResultReceived(VOID, LAB_RESULT, OUTSIDE_APP))
+        }
+    }
+
+    @Test
+    fun `track analytics events on negative assisted LFD result`() = runBlocking {
+        setResult(NEGATIVE, RAPID_RESULT)
+
+        testSubject.validate("ctaToken")
+
+        coVerifyAll {
+            analyticsEventProcessor.track(NegativeResultReceived)
+            analyticsEventProcessor.track(ResultReceived(NEGATIVE, RAPID_RESULT, OUTSIDE_APP))
+        }
+    }
+
+    @Test
+    fun `track analytics events on negative unassisted LFD result`() = runBlocking {
+        setResult(NEGATIVE, RAPID_SELF_REPORTED)
+
+        testSubject.validate("ctaToken")
+
+        coVerifyAll {
+            analyticsEventProcessor.track(NegativeResultReceived)
+            analyticsEventProcessor.track(ResultReceived(NEGATIVE, RAPID_SELF_REPORTED, OUTSIDE_APP))
+        }
+    }
+
+    @Test
+    fun `track analytics events on positive assisted LFD result`() = runBlocking {
+        setResult(POSITIVE, RAPID_RESULT)
+
+        testSubject.validate("ctaToken")
+
+        coVerifyAll {
+            analyticsEventProcessor.track(PositiveResultReceived)
+            analyticsEventProcessor.track(ResultReceived(POSITIVE, RAPID_RESULT, OUTSIDE_APP))
+        }
+    }
+
+    @Test
+    fun `track analytics events on positive unassisted LFD result`() = runBlocking {
+        setResult(POSITIVE, RAPID_SELF_REPORTED)
+
+        testSubject.validate("ctaToken")
+
+        coVerifyAll {
+            analyticsEventProcessor.track(PositiveResultReceived)
+            analyticsEventProcessor.track(ResultReceived(POSITIVE, RAPID_SELF_REPORTED, OUTSIDE_APP))
+        }
+    }
+
+    @Test
+    fun `track analytics events on void assisted LFD result`() = runBlocking {
+        setResult(VOID, RAPID_RESULT)
+
+        testSubject.validate("ctaToken")
+
+        coVerifyAll {
+            analyticsEventProcessor.track(VoidResultReceived)
+            analyticsEventProcessor.track(ResultReceived(VOID, RAPID_RESULT, OUTSIDE_APP))
+        }
+    }
+
+    @Test
+    fun `track analytics events on void unassisted LFD result`() = runBlocking {
+        setResult(VOID, RAPID_SELF_REPORTED)
+
+        testSubject.validate("ctaToken")
+
+        coVerifyAll {
+            analyticsEventProcessor.track(VoidResultReceived)
+            analyticsEventProcessor.track(ResultReceived(VOID, RAPID_SELF_REPORTED, OUTSIDE_APP))
         }
     }
 
     private fun setResult(
         result: VirologyTestResult,
+        testKitType: VirologyTestKitType,
         diagnosisKeySubmissionToken: String = "submissionToken",
-        testEndDate: Instant = Instant.now()
+        testEndDate: Instant = Instant.now(),
+        diagnosisKeySubmissionSupported: Boolean = true
     ): VirologyCtaExchangeResponse {
         val testResultResponse =
-            VirologyCtaExchangeResponse(diagnosisKeySubmissionToken, testEndDate, result)
+            VirologyCtaExchangeResponse(
+                diagnosisKeySubmissionToken,
+                testEndDate,
+                result,
+                testKitType,
+                diagnosisKeySubmissionSupported
+            )
         coEvery { ctaTokenValidator.validate(any()) } returns Success(testResultResponse)
         return testResultResponse
     }

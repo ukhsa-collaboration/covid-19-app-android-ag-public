@@ -9,7 +9,9 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostalDistrictProviderWrapper
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -29,6 +31,7 @@ class DownloadVirologyTestResultWork @Inject constructor(
     private val testOrderingTokensProvider: TestOrderingTokensProvider,
     private val stateMachine: IsolationStateMachine,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
+    private val postalDistrictProviderWrapper: PostalDistrictProviderWrapper,
     private val analyticsEventProcessor: AnalyticsEventProcessor,
     private val clock: Clock
 ) {
@@ -48,9 +51,11 @@ class DownloadVirologyTestResultWork @Inject constructor(
                 val receivedTestResult = ReceivedTestResult(
                     config.diagnosisKeySubmissionToken,
                     testResultResponse.testEndDate,
-                    testResultResponse.testResult
+                    testResultResponse.testResult,
+                    testResultResponse.testKit,
+                    testResultResponse.diagnosisKeySubmissionSupported
                 )
-                logAnalytics(receivedTestResult.testResult)
+                logAnalytics(testResultResponse.testResult, testResultResponse.testKit)
                 stateMachine.processEvent(OnTestResult(receivedTestResult))
                 testOrderingTokensProvider.remove(config)
             } catch (exception: Exception) {
@@ -61,25 +66,29 @@ class DownloadVirologyTestResultWork @Inject constructor(
         return ListenableWorker.Result.success()
     }
 
-    private suspend fun logAnalytics(result: VirologyTestResult) {
+    private suspend fun logAnalytics(
+        result: VirologyTestResult,
+        testKitType: VirologyTestKitType
+    ) {
         when (result) {
             POSITIVE -> analyticsEventProcessor.track(PositiveResultReceived)
             NEGATIVE -> analyticsEventProcessor.track(NegativeResultReceived)
             VOID -> analyticsEventProcessor.track(VoidResultReceived)
         }
-        analyticsEventProcessor.track(ResultReceived(result, INSIDE_APP))
+        analyticsEventProcessor.track(ResultReceived(result, testKitType, INSIDE_APP))
     }
 
-    private suspend fun fetchVirologyTestResult(pollingToken: String): VirologyTestResultResponse? {
-        val testResultResponse =
-            virologyTestingApi.getTestResult(VirologyTestResultRequestBody(pollingToken))
+    private suspend fun fetchVirologyTestResult(pollingToken: String): VirologyTestResultResponse? =
+        postalDistrictProviderWrapper.getPostCodeDistrict()?.supportedCountry?.let { country ->
+            val testResultResponse =
+                virologyTestingApi.getTestResult(VirologyTestResultRequestBody(pollingToken, country))
 
-        if (testResultResponse.code() != 200) {
-            Timber.e("Test result polling returned error status code ${testResultResponse.code()}")
+            if (testResultResponse.code() != 200) {
+                Timber.e("Test result polling returned error status code ${testResultResponse.code()}")
+            }
+
+            testResultResponse.body()
         }
-
-        return testResultResponse.body()
-    }
 
     @VisibleForTesting
     fun removeIfOld(config: TestOrderPollingConfig): Boolean {

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitOnboardingAnalyticsWorker
+import uk.nhs.nhsx.covid19.android.app.analytics.SubmittedOnboardingAnalyticsProvider
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationRequired
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionViewModel.NavigationTarget.BATTERY_OPTIMIZATION
@@ -16,7 +17,8 @@ class PermissionViewModel @Inject constructor(
     private val onboardingCompletedProvider: OnboardingCompletedProvider,
     private val submitOnboardingAnalyticsWorkerScheduler: SubmitOnboardingAnalyticsWorker.Scheduler,
     private val periodicTasks: PeriodicTasks,
-    private val batteryOptimizationRequired: BatteryOptimizationRequired
+    private val batteryOptimizationRequired: BatteryOptimizationRequired,
+    private val submittedOnboardingAnalyticsProvider: SubmittedOnboardingAnalyticsProvider
 ) : ViewModel() {
 
     private val activityNavigationLiveData = SingleLiveEvent<NavigationTarget>()
@@ -25,7 +27,10 @@ class PermissionViewModel @Inject constructor(
     fun onExposureNotificationsActive() {
         viewModelScope.launch {
             onboardingCompletedProvider.value = true
-            submitOnboardingAnalyticsWorkerScheduler.scheduleOnboardingAnalyticsEvent()
+            if (submittedOnboardingAnalyticsProvider.value != true) {
+                submitOnboardingAnalyticsWorkerScheduler.scheduleOnboardingAnalyticsEvent()
+                submittedOnboardingAnalyticsProvider.value = true
+            }
             periodicTasks.schedule()
 
             if (batteryOptimizationRequired()) {

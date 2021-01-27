@@ -154,7 +154,7 @@
     <string name="close">Închidere</string>
     <string name="go_back">Mers înapoi</string>
     <string name="remove">Eliminare</string>
-    <string name="empty" translatable="false"/>
+    <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">Aplicația vă va trimite o alertă dacă v-ați aflat în apropierea unei persoane care a fost testată pozitiv pentru virus.\n\nPentru a activa urmărirea contactelor pentru această aplicație, trebuie să permiteți notificări de expunere.\n\nDacă vă răzgândiți, puteți modifica permisiunile din setări în orice moment.</string>
     <string name="privacy_notice">Notificare de confidențialitate</string>
     <string name="tablet_information_url">Informații despre utilizarea tabletelor</string>
@@ -196,7 +196,7 @@
     <string name="notification_channel_app_configuration_description">Aceste notificări informează despre configurarea aplicației dvs.</string>
     <string name="notification_title_state_expiration">Îndrumările pe care vi le oferim s-au schimbat</string>
     <string name="notification_text_state_expiration">Apăsați pentru detalii</string>
-    <string name="notification_title_state_exposure">Aplicația a detectat că ați fost în contact cu cineva care are coronavirus. Vă rugăm să stați acasă și să vă auto-izolați pentru a vă păstra pe dvs. și pe ceilalți în siguranță</string>
+    <string name="notification_title_state_exposure">Trebuie să vă autoizolezați imediat. Ați fost în contact cu cineva care are coronavirus (COVID-19).</string>
     <string name="notification_text_state_exposure">Apăsați aici pentru mai multe detalii.</string>
     <string name="notification_text_test_results">Apăsați pentru detalii</string>
     <string name="notification_title_app_available">Aplicația este disponibilă</string>
@@ -237,7 +237,7 @@
     <string name="about_manage_my_data">Gestionarea datelor mele</string>
     <string name="postal_district">Cod poștal de district</string>
     <string name="edit">Editare</string>
-    <string name="title_last_test_result_taken">Rezultatele ultimului test făcut</string>
+    <string name="title_last_test_result_taken">Ultimul rezultat aplicabil al testului</string>
     <string name="title_venue_history">Istoric locații</string>
     <string name="title_symptoms">Data de începere a simptomelor</string>
     <string name="save">Salvare</string>
@@ -415,7 +415,7 @@
     <string name="chinese">Chineză simplificată</string>
     <string name="english">Engleză</string>
     <string name="gujarati">Gujarati</string>
-    <string name="language">Limbă</string>
+    <string name="language">Limba</string>
     <string name="language_title">Limbă</string>
     <string name="local_authority_edit">Editare</string>
     <string name="other_languages">Limbi</string>
@@ -430,4 +430,8 @@
     <string name="venue_history_edit">Editare</string>
     <string name="venue_history_editing_done">Terminat</string>
     <string name="welsh">Galeză</string>
+    <string name="about_lfd">RAPID_RESULT</string>
+    <string name="about_pcr">LAB_RESULT</string>
+    <string name="about_test_kit_type">Tip kit de testare</string>
+    <string name="about_test_result">Rezultat</string>
 </resources>

@@ -9,7 +9,7 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultHandler
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -21,12 +21,12 @@ import kotlin.test.assertTrue
 class CanClaimIsolationPaymentTest {
 
     private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
-    private val testResultsProvider = mockk<TestResultsProvider>(relaxed = true)
+    private val testResultHandler = mockk<TestResultHandler>(relaxed = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-09-01T10:00:00Z"), ZoneOffset.UTC)
 
     private val testSubject = CanClaimIsolationPayment(
         stateMachine,
-        testResultsProvider,
+        testResultHandler,
         fixedClock
     )
 
@@ -70,7 +70,7 @@ class CanClaimIsolationPaymentTest {
             )
         )
 
-        every { testResultsProvider.hasHadPositiveTestSince(any()) } returns true
+        every { testResultHandler.hasPositiveTestResultAfterOrEqual(any()) } returns true
 
         val result = testSubject()
 
@@ -89,7 +89,7 @@ class CanClaimIsolationPaymentTest {
             )
         )
 
-        every { testResultsProvider.hasHadPositiveTestSince(any()) } returns false
+        every { testResultHandler.hasPositiveTestResultAfterOrEqual(any()) } returns false
 
         val result = testSubject()
 
@@ -108,7 +108,7 @@ class CanClaimIsolationPaymentTest {
             )
         )
 
-        every { testResultsProvider.hasHadPositiveTestSince(any()) } returns false
+        every { testResultHandler.hasPositiveTestResultAfterOrEqual(any()) } returns false
 
         val result = testSubject()
 
@@ -132,7 +132,7 @@ class CanClaimIsolationPaymentTest {
             )
         )
 
-        every { testResultsProvider.hasHadPositiveTestSince(any()) } returns false
+        every { testResultHandler.hasPositiveTestResultAfterOrEqual(any()) } returns false
 
         val result = testSubject()
 
@@ -156,7 +156,7 @@ class CanClaimIsolationPaymentTest {
             )
         )
 
-        every { testResultsProvider.hasHadPositiveTestSince(any()) } returns false
+        every { testResultHandler.hasPositiveTestResultAfterOrEqual(any()) } returns false
 
         val result = testSubject()
 

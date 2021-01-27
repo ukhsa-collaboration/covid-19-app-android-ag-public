@@ -1,5 +1,14 @@
 package uk.nhs.nhsx.covid19.android.app.flow.functionalities
 
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_PCR_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_LFD_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_PCR_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_RAPID_SELF_REPORTED_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.VOID_PCR_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
@@ -13,10 +22,16 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
     private val testResultRobot = TestResultRobot()
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
 
-    fun enterPositive() {
-        manuallyEnterTestResult(positiveResultToken)
+    fun enterPositive(virologyTestKitType: VirologyTestKitType) {
+        val token = when (virologyTestKitType) {
+            LAB_RESULT -> POSITIVE_PCR_TOKEN
+            RAPID_RESULT -> POSITIVE_LFD_TOKEN
+            RAPID_SELF_REPORTED -> POSITIVE_RAPID_SELF_REPORTED_TOKEN
+        }
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveAndSelfIsolate() }
+        manuallyEnterTestResult(token)
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -26,11 +41,11 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
     }
 
     fun enterNegative() {
-        manuallyEnterTestResult(negativeResultToken)
+        manuallyEnterTestResult(NEGATIVE_PCR_TOKEN)
     }
 
     fun enterVoid() {
-        manuallyEnterTestResult(voidResultToken)
+        manuallyEnterTestResult(VOID_PCR_TOKEN)
     }
 
     private fun manuallyEnterTestResult(token: String) {
@@ -45,11 +60,5 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
         linkTestResultRobot.enterCtaToken(token)
 
         linkTestResultRobot.clickContinue()
-    }
-
-    companion object {
-        private const val positiveResultToken = "pstv-pstv"
-        private const val negativeResultToken = "f3dz-cfdt"
-        private const val voidResultToken = "8vb7-xehg"
     }
 }

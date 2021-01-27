@@ -9,7 +9,6 @@ import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
 import androidx.work.Configuration
-import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.WorkManager
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import com.jeroenmols.featureflag.framework.TestSetting
@@ -74,7 +73,7 @@ open class ExposureApplication : Application(), Configuration.Provider {
     }
 
     protected fun startPeriodicTasks() {
-        appComponent.providePeriodicTasks().schedule(policy = ExistingPeriodicWorkPolicy.KEEP)
+        appComponent.providePeriodicTasks().schedule()
     }
 
     private fun initializeWorkManager() {

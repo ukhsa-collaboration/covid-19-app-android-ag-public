@@ -9,9 +9,13 @@ import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEn
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
 import java.time.Instant
 import java.time.LocalDate
 import kotlin.test.assertEquals
@@ -19,7 +23,8 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class UserInboxTest {
-    private val testResultsProvider = mockk<TestResultsProvider>(relaxed = true)
+    private val unacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>(relaxed = true)
+    private val relevantTestResultProvider = mockk<RelevantTestResultProvider>(relaxed = true)
 
     private val isolationExpirationDateProvider =
         mockk<IsolationExpirationDateProvider>(relaxed = true)
@@ -31,7 +36,7 @@ class UserInboxTest {
         isolationExpirationDateProvider,
         riskyVenueIdProvider,
         shouldShowEncounterDetectionActivityProvider,
-        testResultsProvider
+        unacknowledgedTestResultsProvider
     )
 
     @Before
@@ -42,16 +47,18 @@ class UserInboxTest {
     }
 
     @Test
-    fun `return ShowTestResult if there is unacknowledged result in testResultsProvider`() {
+    fun `return ShowTestResult if there is unacknowledged result`() {
         val receivedTestResult = ReceivedTestResult(
             "abc",
             Instant.now(),
-            POSITIVE
+            POSITIVE,
+            LAB_RESULT,
+            diagnosisKeySubmissionSupported = true
         )
-        every { testResultsProvider.testResults } returns mapOf(receivedTestResult.diagnosisKeySubmissionToken to receivedTestResult)
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf(receivedTestResult)
 
         val receivedItem = testSubject.fetchInbox()
-        verify { testResultsProvider.testResults }
+        verify { unacknowledgedTestResultsProvider.testResults }
 
         assertTrue(receivedItem is ShowTestResult)
     }
@@ -70,9 +77,9 @@ class UserInboxTest {
     }
 
     @Test
-    fun `return ShowEncounterDetection if there is no isolationExpirationDate and there is no unacknowledged result in testResultsProvider`() {
+    fun `return ShowEncounterDetection if there is no isolationExpirationDate and there is no unacknowledged result`() {
         every { isolationExpirationDateProvider.value } returns null
-        every { testResultsProvider.testResults } returns mapOf()
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf()
         every { shouldShowEncounterDetectionActivityProvider.value } returns true
 
         val receivedItem = testSubject.fetchInbox()
@@ -85,7 +92,7 @@ class UserInboxTest {
         val venueId = "ID1"
 
         every { isolationExpirationDateProvider.value } returns null
-        every { testResultsProvider.testResults } returns mapOf()
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf()
         every { shouldShowEncounterDetectionActivityProvider.value } returns false
         every { riskyVenueIdProvider.value } returns venueId
 
@@ -95,18 +102,20 @@ class UserInboxTest {
     }
 
     @Test
-    fun `return nothing if there is only an acknowledged result in testResultsProvider`() {
-        val receivedTestResult = ReceivedTestResult(
+    fun `return nothing if there is only an acknowledged result`() {
+        val acknowledgedTestResult = AcknowledgedTestResult(
             "abc",
             Instant.now(),
-            POSITIVE,
+            RelevantVirologyTestResult.POSITIVE,
+            LAB_RESULT,
             Instant.now()
         )
-        every { testResultsProvider.testResults } returns mapOf(receivedTestResult.diagnosisKeySubmissionToken to receivedTestResult)
+        every { unacknowledgedTestResultsProvider.testResults } returns emptyList()
+        every { relevantTestResultProvider.testResult } returns acknowledgedTestResult
 
         val receivedItem = testSubject.fetchInbox()
 
-        verify { testResultsProvider.testResults }
+        verify { unacknowledgedTestResultsProvider.testResults }
 
         assertNull(receivedItem)
     }

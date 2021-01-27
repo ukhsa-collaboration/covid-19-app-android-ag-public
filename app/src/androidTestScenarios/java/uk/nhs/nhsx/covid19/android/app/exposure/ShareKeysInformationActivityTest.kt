@@ -7,6 +7,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result.Error
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result.ResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result.Success
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -24,8 +25,9 @@ class ShareKeysInformationActivityTest : EspressoTest() {
     private val positiveTestResult = ReceivedTestResult(
         diagnosisKeySubmissionToken = "token1",
         testEndDate = Instant.now(),
-        acknowledgedDate = null,
-        testResult = POSITIVE
+        testResult = POSITIVE,
+        testKitType = LAB_RESULT,
+        diagnosisKeySubmissionSupported = true
     )
 
     @Before

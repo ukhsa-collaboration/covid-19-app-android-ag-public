@@ -19,11 +19,10 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotR
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.ExplicitDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.NotStated
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.AcknowledgeTestResult
-import uk.nhs.nhsx.covid19.android.app.state.SideEffect.ClearAcknowledgedTestResults
+import uk.nhs.nhsx.covid19.android.app.state.SideEffect.ClearAcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.HandleTestResult
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.SendExposedNotification
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
@@ -31,7 +30,8 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultHandler
 import uk.nhs.nhsx.covid19.android.app.util.isBeforeOrEqual
 import uk.nhs.nhsx.covid19.android.app.util.selectEarliest
 import java.lang.Long.max
@@ -46,7 +46,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 const val indexCaseOnsetDateBeforeTestResultDate: Long = 3
-private const val indexCaseExpiryDateAfterTestResultDate: Long = 11
 
 sealed class State {
     data class Default(val previousIsolation: Isolation? = null) : State()
@@ -139,14 +138,14 @@ sealed class State {
 }
 
 fun State.newStateWithTestResult(
-    testResultsProvider: TestResultsProvider,
+    relevantTestResultProvider: RelevantTestResultProvider,
     isolationConfigurationProvider: IsolationConfigurationProvider,
     testResult: ReceivedTestResult,
     clock: Clock
 ): State {
     return if (this is Isolation && testResult.testResult == NEGATIVE) {
         when {
-            testResultsProvider.isLastRelevantTestResultPositive() -> this
+            relevantTestResultProvider.isTestResultPositive() -> this
             this.isIndexCaseOnly() -> Default(previousIsolation = this)
             this.isBothCases() -> this.copy(indexCase = null)
             else -> this
@@ -160,13 +159,12 @@ fun State.newStateWithTestResult(
         )
     } else if (this is Default && testResult.testResult == POSITIVE) {
         when {
-            testResultsProvider.isLastRelevantTestResultNegative() ->
-                tryCreateIndexCaseWhenOnsetDataIsNotProvided(
-                    this,
-                    isolationConfigurationProvider,
-                    testResult.testEndDate,
-                    clock
-                )
+            relevantTestResultProvider.isTestResultNegative() -> tryCreateIndexCaseWhenOnsetDataIsNotProvided(
+                this,
+                isolationConfigurationProvider,
+                testResult.testEndDate,
+                clock
+            )
             previousIsolationIsIndexCase() -> this
             else ->
                 tryCreateIndexCaseWhenOnsetDataIsNotProvided(
@@ -191,12 +189,13 @@ private fun tryCreateIndexCaseWhenOnsetDataIsNotProvided(
     clock: Clock
 ): State {
     val testResultDate = LocalDateTime.ofInstant(testResultEndDate, clock.zone).toLocalDate()
+    val durationDays = isolationConfigurationProvider.durationDays
     val isolation = Isolation(
         isolationStart = testResultEndDate,
-        isolationConfiguration = isolationConfigurationProvider.durationDays,
+        isolationConfiguration = durationDays,
         indexCase = IndexCase(
             symptomsOnsetDate = testResultDate.minusDays(indexCaseOnsetDateBeforeTestResultDate),
-            expiryDate = testResultDate.plusDays(indexCaseExpiryDateAfterTestResultDate),
+            expiryDate = testResultDate.plusDays(durationDays.indexCaseSinceTestResultEndDate.toLong()),
             selfAssessment = false
         )
     )
@@ -210,12 +209,6 @@ private fun tryCreateIndexCaseWhenOnsetDataIsNotProvided(
     }
 }
 
-@JsonClass(generateAdapter = true)
-data class TestResult(
-    val testEndDate: Instant,
-    val result: VirologyTestResult
-)
-
 sealed class Event
 data class OnExposedNotification(val exposureDate: Instant) : Event()
 data class OnPositiveSelfAssessment(val onsetDate: SelectedDate) : Event()
@@ -225,8 +218,7 @@ data class OnTestResult(
 ) : Event()
 
 data class OnTestResultAcknowledge(
-    val testResult: ReceivedTestResult,
-    val removeTestResult: Boolean = false
+    val testResult: ReceivedTestResult
 ) : Event()
 
 private object OnExpired : Event()
@@ -242,11 +234,10 @@ sealed class SideEffect {
     ) : SideEffect()
 
     data class AcknowledgeTestResult(
-        val testResult: ReceivedTestResult,
-        val removeTestResult: Boolean = false
+        val testResult: ReceivedTestResult
     ) : SideEffect()
 
-    object ClearAcknowledgedTestResults : SideEffect()
+    object ClearAcknowledgedTestResult : SideEffect()
 }
 
 val State.canOrderTest
@@ -260,7 +251,8 @@ class IsolationStateMachine(
     private val stateStorage: StateStorage,
     private val notificationProvider: NotificationProvider,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
-    private val testResultsProvider: TestResultsProvider,
+    private val relevantTestResultProvider: RelevantTestResultProvider,
+    private val testResultHandler: TestResultHandler,
     private val userInbox: UserInbox,
     private val isolationExpirationAlarmController: IsolationExpirationAlarmController,
     private val clock: Clock,
@@ -273,7 +265,8 @@ class IsolationStateMachine(
         stateStorage: StateStorage,
         notificationProvider: NotificationProvider,
         isolationConfigurationProvider: IsolationConfigurationProvider,
-        testResultsProvider: TestResultsProvider,
+        relevantTestResultProvider: RelevantTestResultProvider,
+        testResultHandler: TestResultHandler,
         userInbox: UserInbox,
         isolationExpirationAlarmController: IsolationExpirationAlarmController,
         clock: Clock,
@@ -282,7 +275,8 @@ class IsolationStateMachine(
         stateStorage,
         notificationProvider,
         isolationConfigurationProvider,
-        testResultsProvider,
+        relevantTestResultProvider,
+        testResultHandler,
         userInbox,
         isolationExpirationAlarmController,
         clock,
@@ -380,7 +374,7 @@ class IsolationStateMachine(
             on<OnPositiveSelfAssessment> {
                 val nextState = handlePositiveSelfAssessment(it.onsetDate, currentIsolation = null)
                 if (nextState != null) {
-                    transitionTo(nextState, ClearAcknowledgedTestResults)
+                    transitionTo(nextState, ClearAcknowledgedTestResult)
                 } else {
                     dontTransition()
                 }
@@ -390,14 +384,14 @@ class IsolationStateMachine(
             }
             on<OnTestResultAcknowledge> {
                 val updatedDefaultState = this.newStateWithTestResult(
-                    testResultsProvider,
+                    relevantTestResultProvider,
                     isolationConfigurationProvider,
                     it.testResult,
                     clock
                 )
                 transitionTo(
                     updatedDefaultState,
-                    AcknowledgeTestResult(it.testResult, it.removeTestResult)
+                    AcknowledgeTestResult(it.testResult)
                 )
             }
             on<OnReset> {
@@ -440,7 +434,7 @@ class IsolationStateMachine(
                 if (isContactCaseOnly()) {
                     val nextState = handlePositiveSelfAssessment(it.onsetDate, currentIsolation = this)
                     if (nextState != null) {
-                        transitionTo(nextState, ClearAcknowledgedTestResults)
+                        transitionTo(nextState, ClearAcknowledgedTestResult)
                     } else {
                         dontTransition()
                     }
@@ -456,14 +450,14 @@ class IsolationStateMachine(
             }
             on<OnTestResultAcknowledge> {
                 val updatedDefaultState = this.newStateWithTestResult(
-                    testResultsProvider,
+                    relevantTestResultProvider,
                     isolationConfigurationProvider,
                     it.testResult,
                     clock
                 )
                 transitionTo(
                     updatedDefaultState,
-                    AcknowledgeTestResult(it.testResult, it.removeTestResult)
+                    AcknowledgeTestResult(it.testResult)
                 )
             }
             on<OnExpired> {
@@ -495,20 +489,17 @@ class IsolationStateMachine(
                     userInbox.addUserInboxItem(ShowEncounterDetection)
                 }
                 is HandleTestResult -> {
-                    testResultsProvider.add(sideEffect.testResult)
+                    testResultHandler.onTestResultReceived(sideEffect.testResult)
                     if (sideEffect.showNotification) {
                         notificationProvider.showTestResultsReceivedNotification()
                     }
                     userInbox.notifyChanges()
                 }
                 is AcknowledgeTestResult -> {
-                    when (sideEffect.removeTestResult) {
-                        true -> testResultsProvider.remove(sideEffect.testResult)
-                        false -> testResultsProvider.acknowledge(sideEffect.testResult)
-                    }
+                    testResultHandler.acknowledge(sideEffect.testResult)
                 }
-                ClearAcknowledgedTestResults -> {
-                    testResultsProvider.clearAcknowledged()
+                ClearAcknowledgedTestResult -> {
+                    relevantTestResultProvider.clear()
                 }
             }
 
@@ -524,15 +515,10 @@ class IsolationStateMachine(
         }
     }
 
-    private fun hasPositiveResultAfter(symptomsOnsetDate: LocalDate, zoneId: ZoneId): Boolean {
-        return testResultsProvider.testResults.values
-            .filter {
-                it.testEndDate.isAfter(
-                    symptomsOnsetDate.atStartOfDay(zoneId).toInstant()
-                )
-            }
-            .any { it.testResult == POSITIVE }
-    }
+    private fun hasPositiveResultAfter(symptomsOnsetDate: LocalDate, zoneId: ZoneId): Boolean =
+        testResultHandler.hasPositiveTestResultAfter(
+            symptomsOnsetDate.atStartOfDay(zoneId).toInstant()
+        )
 
     private fun handlePositiveSelfAssessment(
         selectedDate: SelectedDate,
@@ -591,9 +577,6 @@ class IsolationStateMachine(
                 isolationConfiguration = getConfigurationDurations()
             )
     }
-
-    private fun selectEarliest(first: Instant, second: Instant): Instant =
-        if (first.isBefore(second)) first else second
 
     private fun selectLatest(
         calculatedExpiryDate: LocalDate,

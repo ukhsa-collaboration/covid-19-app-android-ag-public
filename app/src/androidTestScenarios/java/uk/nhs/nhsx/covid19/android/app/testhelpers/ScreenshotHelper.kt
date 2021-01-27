@@ -13,7 +13,7 @@ fun takeScreenshot(
     parentFolderPath: String = "",
     failure: Boolean = false
 ): String? {
-    Log.d("Screenshots", "Taking screenshot of '$screenshotName'")
+    Log.d("Screenshots", "Taking screenshot of '$screenshotName' for `$parentFolderPath`")
     getCurrentActivity()?.let {
         val screenCapture = Screenshot.capture(it)
         val rootFolderName = if (failure) "covid19/failures" else "covid19"

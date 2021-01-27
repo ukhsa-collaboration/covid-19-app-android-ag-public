@@ -21,8 +21,14 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostalDistrictProviderWrapper
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -35,11 +41,11 @@ import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
-import java.time.temporal.ChronoUnit
 import java.time.temporal.ChronoUnit.DAYS
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 
 class DownloadVirologyTestResultWorkTest {
 
@@ -48,6 +54,7 @@ class DownloadVirologyTestResultWorkTest {
     private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val isolationConfigurationProvider =
         mockk<IsolationConfigurationProvider>(relaxed = true)
+    private val postalDistrictProviderWrapper = mockk<PostalDistrictProviderWrapper>(relaxed = true)
     private val analyticsManager = mockk<AnalyticsEventProcessor>(relaxed = true)
     private val clock = Clock.fixed(from, ZoneId.systemDefault())
 
@@ -56,6 +63,7 @@ class DownloadVirologyTestResultWorkTest {
         testOrderTokensProvider,
         stateMachine,
         isolationConfigurationProvider,
+        postalDistrictProviderWrapper,
         analyticsManager,
         clock
     )
@@ -65,6 +73,7 @@ class DownloadVirologyTestResultWorkTest {
     @Before
     fun setUp() {
         every { isolationConfigurationProvider.durationDays } returns DurationDays()
+        coEvery { postalDistrictProviderWrapper.getPostCodeDistrict() } returns ENGLAND
     }
 
     @After
@@ -85,6 +94,21 @@ class DownloadVirologyTestResultWorkTest {
     }
 
     @Test
+    fun `when no supported country return success without side effects`() = runBlocking {
+        val config1 = TestOrderPollingConfig(from, "token1", "submission_token1")
+        val config2 = TestOrderPollingConfig(from, "token2", "submission_token2")
+        every { testOrderTokensProvider.configs } returns listOf(config1, config2)
+        coEvery { postalDistrictProviderWrapper.getPostCodeDistrict() } returns null
+
+        val actual = testSubject.invoke()
+
+        val expected = ListenableWorker.Result.success()
+
+        assertEquals(expected, actual)
+        checkNoSideEffects()
+    }
+
+    @Test
     fun `calls virologyTestingApi for each configuration`() = runBlocking {
         val config1 = TestOrderPollingConfig(from, "token1", "submission_token1")
         val config2 = TestOrderPollingConfig(from, "token2", "submission_token2")
@@ -93,8 +117,8 @@ class DownloadVirologyTestResultWorkTest {
         testSubject.invoke()
 
         coVerifyOrder {
-            virologyTestingApi.getTestResult(VirologyTestResultRequestBody("token1"))
-            virologyTestingApi.getTestResult(VirologyTestResultRequestBody("token2"))
+            virologyTestingApi.getTestResult(VirologyTestResultRequestBody("token1", SupportedCountry.ENGLAND))
+            virologyTestingApi.getTestResult(VirologyTestResultRequestBody("token2", SupportedCountry.ENGLAND))
         }
     }
 
@@ -102,10 +126,20 @@ class DownloadVirologyTestResultWorkTest {
     fun `on positive notify isolation state machine`() = runBlocking {
         val config = TestOrderPollingConfig(from, "token", "submission_token")
         every { testOrderTokensProvider.configs } returns listOf(config)
-        val testResultDate = from.plus(1, ChronoUnit.DAYS)
-        coEvery { virologyTestingApi.getTestResult(VirologyTestResultRequestBody("token")) } returns Response.success(
+        val testResultDate = from.plus(1, DAYS)
+        coEvery {
+            virologyTestingApi.getTestResult(
+                VirologyTestResultRequestBody(
+                    "token",
+                    SupportedCountry.ENGLAND
+                )
+            )
+        } returns Response.success(
             VirologyTestResultResponse(
-                testResultDate, POSITIVE
+                testResultDate,
+                POSITIVE,
+                LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
@@ -114,7 +148,9 @@ class DownloadVirologyTestResultWorkTest {
         val testResult = ReceivedTestResult(
             config.diagnosisKeySubmissionToken,
             testResultDate,
-            POSITIVE
+            POSITIVE,
+            LAB_RESULT,
+            diagnosisKeySubmissionSupported = true
         )
         verify { stateMachine.processEvent(OnTestResult(testResult)) }
 
@@ -125,10 +161,20 @@ class DownloadVirologyTestResultWorkTest {
     fun `on negative notify isolation state machine`() = runBlocking {
         val config = TestOrderPollingConfig(from, "token", "submission_token")
         every { testOrderTokensProvider.configs } returns listOf(config)
-        val testResultDate = from.plus(1, ChronoUnit.DAYS)
-        coEvery { virologyTestingApi.getTestResult(VirologyTestResultRequestBody("token")) } returns Response.success(
+        val testResultDate = from.plus(1, DAYS)
+        coEvery {
+            virologyTestingApi.getTestResult(
+                VirologyTestResultRequestBody(
+                    "token",
+                    SupportedCountry.ENGLAND
+                )
+            )
+        } returns Response.success(
             VirologyTestResultResponse(
-                testResultDate, NEGATIVE
+                testResultDate,
+                NEGATIVE,
+                LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
@@ -137,7 +183,9 @@ class DownloadVirologyTestResultWorkTest {
         val testResult = ReceivedTestResult(
             config.diagnosisKeySubmissionToken,
             testResultDate,
-            NEGATIVE
+            NEGATIVE,
+            LAB_RESULT,
+            diagnosisKeySubmissionSupported = true
         )
         verify { stateMachine.processEvent(OnTestResult(testResult)) }
 
@@ -148,10 +196,20 @@ class DownloadVirologyTestResultWorkTest {
     fun `on void notify isolation state machine`() = runBlocking {
         val config = TestOrderPollingConfig(from, "token", "submission_token")
         every { testOrderTokensProvider.configs } returns listOf(config)
-        val testResultDate = from.plus(1, ChronoUnit.DAYS)
-        coEvery { virologyTestingApi.getTestResult(VirologyTestResultRequestBody("token")) } returns Response.success(
+        val testResultDate = from.plus(1, DAYS)
+        coEvery {
+            virologyTestingApi.getTestResult(
+                VirologyTestResultRequestBody(
+                    "token",
+                    SupportedCountry.ENGLAND
+                )
+            )
+        } returns Response.success(
             VirologyTestResultResponse(
-                testResultDate, VOID
+                testResultDate,
+                VOID,
+                LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
@@ -160,7 +218,9 @@ class DownloadVirologyTestResultWorkTest {
         val testResult = ReceivedTestResult(
             config.diagnosisKeySubmissionToken,
             testResultDate,
-            VOID
+            VOID,
+            LAB_RESULT,
+            diagnosisKeySubmissionSupported = true
         )
         verify { stateMachine.processEvent(OnTestResult(testResult)) }
 
@@ -170,16 +230,36 @@ class DownloadVirologyTestResultWorkTest {
     @Test
     fun `notify about all test results`() = runBlocking {
         every { testOrderTokensProvider.configs } returns listOf(config1, config2)
-        val testResultDate1 = from.plus(1, ChronoUnit.DAYS)
-        val testResultDate2 = from.plus(2, ChronoUnit.DAYS)
-        coEvery { virologyTestingApi.getTestResult(VirologyTestResultRequestBody("token1")) } returns Response.success(
+        val testResultDate1 = from.plus(1, DAYS)
+        val testResultDate2 = from.plus(2, DAYS)
+        coEvery {
+            virologyTestingApi.getTestResult(
+                VirologyTestResultRequestBody(
+                    "token1",
+                    SupportedCountry.ENGLAND
+                )
+            )
+        } returns Response.success(
             VirologyTestResultResponse(
-                testResultDate1, NEGATIVE
+                testResultDate1,
+                NEGATIVE,
+                LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
-        coEvery { virologyTestingApi.getTestResult(VirologyTestResultRequestBody("token2")) } returns Response.success(
+        coEvery {
+            virologyTestingApi.getTestResult(
+                VirologyTestResultRequestBody(
+                    "token2",
+                    SupportedCountry.ENGLAND
+                )
+            )
+        } returns Response.success(
             VirologyTestResultResponse(
-                testResultDate2, POSITIVE
+                testResultDate2,
+                POSITIVE,
+                LAB_RESULT,
+                diagnosisKeySubmissionSupported = true
             )
         )
 
@@ -187,12 +267,16 @@ class DownloadVirologyTestResultWorkTest {
         val testResult1 = ReceivedTestResult(
             config1.diagnosisKeySubmissionToken,
             testResultDate1,
-            NEGATIVE
+            NEGATIVE,
+            LAB_RESULT,
+            diagnosisKeySubmissionSupported = true
         )
         val testResult2 = ReceivedTestResult(
             config2.diagnosisKeySubmissionToken,
             testResultDate2,
-            POSITIVE
+            POSITIVE,
+            LAB_RESULT,
+            diagnosisKeySubmissionSupported = true
         )
         verify { stateMachine.processEvent(OnTestResult(testResult2)) }
         verify { stateMachine.processEvent(OnTestResult(testResult1)) }
@@ -204,7 +288,7 @@ class DownloadVirologyTestResultWorkTest {
             pendingTasksRetentionPeriod = 7
         )
         val config =
-            TestOrderPollingConfig(from.minus(8, ChronoUnit.DAYS), "token", "submission_token")
+            TestOrderPollingConfig(from.minus(8, DAYS), "token", "submission_token")
 
         val result = testSubject.removeIfOld(config)
 
@@ -219,7 +303,7 @@ class DownloadVirologyTestResultWorkTest {
             pendingTasksRetentionPeriod = 7
         )
         val config =
-            TestOrderPollingConfig(from.minus(6, ChronoUnit.DAYS), "token", "submission_token")
+            TestOrderPollingConfig(from.minus(6, DAYS), "token", "submission_token")
 
         val result = testSubject.removeIfOld(config)
 
@@ -229,47 +313,134 @@ class DownloadVirologyTestResultWorkTest {
     }
 
     @Test
-    fun `track analytics events on negative result`() = runBlocking {
-        setResult(NEGATIVE)
+    fun `track analytics events on PCR negative result`() = runBlocking {
+        setResult(NEGATIVE, LAB_RESULT)
 
         testSubject.invoke()
 
         coVerifyAll {
             analyticsManager.track(NegativeResultReceived)
-            analyticsManager.track(ResultReceived(NEGATIVE, INSIDE_APP))
+            analyticsManager.track(ResultReceived(NEGATIVE, LAB_RESULT, INSIDE_APP))
         }
     }
 
     @Test
-    fun `track analytics events on positive result`() = runBlocking {
-        setResult(POSITIVE)
+    fun `track analytics events on PCR positive result`() = runBlocking {
+        setResult(POSITIVE, LAB_RESULT)
 
         testSubject.invoke()
 
         coVerifyAll {
             analyticsManager.track(PositiveResultReceived)
-            analyticsManager.track(ResultReceived(POSITIVE, INSIDE_APP))
+            analyticsManager.track(ResultReceived(POSITIVE, LAB_RESULT, INSIDE_APP))
         }
     }
 
     @Test
-    fun `track analytics events on void result`() = runBlocking {
-        setResult(VOID)
+    fun `track analytics events on PCR void result`() = runBlocking {
+        setResult(VOID, LAB_RESULT)
 
         testSubject.invoke()
 
         coVerifyAll {
             analyticsManager.track(VoidResultReceived)
-            analyticsManager.track(ResultReceived(VOID, INSIDE_APP))
+            analyticsManager.track(ResultReceived(VOID, LAB_RESULT, INSIDE_APP))
         }
     }
 
-    private fun setResult(result: VirologyTestResult) {
+    @Test
+    fun `track analytics events on assisted LFD negative result`() = runBlocking {
+        setResult(NEGATIVE, RAPID_RESULT)
+
+        testSubject.invoke()
+
+        coVerifyAll {
+            analyticsManager.track(NegativeResultReceived)
+            analyticsManager.track(ResultReceived(NEGATIVE, RAPID_RESULT, INSIDE_APP))
+        }
+    }
+
+    @Test
+    fun `track analytics events on unassisted LFD negative result`() = runBlocking {
+        setResult(NEGATIVE, RAPID_SELF_REPORTED)
+
+        testSubject.invoke()
+
+        coVerifyAll {
+            analyticsManager.track(NegativeResultReceived)
+            analyticsManager.track(ResultReceived(NEGATIVE, RAPID_SELF_REPORTED, INSIDE_APP))
+        }
+    }
+
+    @Test
+    fun `track analytics events on assisted LFD positive result`() = runBlocking {
+        setResult(POSITIVE, RAPID_RESULT)
+
+        testSubject.invoke()
+
+        coVerifyAll {
+            analyticsManager.track(PositiveResultReceived)
+            analyticsManager.track(ResultReceived(POSITIVE, RAPID_RESULT, INSIDE_APP))
+        }
+    }
+
+    @Test
+    fun `track analytics events on unassisted LFD positive result`() = runBlocking {
+        setResult(POSITIVE, RAPID_SELF_REPORTED)
+
+        testSubject.invoke()
+
+        coVerifyAll {
+            analyticsManager.track(PositiveResultReceived)
+            analyticsManager.track(ResultReceived(POSITIVE, RAPID_SELF_REPORTED, INSIDE_APP))
+        }
+    }
+
+    @Test
+    fun `track analytics events on assisted LFD void result`() = runBlocking {
+        setResult(VOID, RAPID_RESULT)
+
+        testSubject.invoke()
+
+        coVerifyAll {
+            analyticsManager.track(VoidResultReceived)
+            analyticsManager.track(ResultReceived(VOID, RAPID_RESULT, INSIDE_APP))
+        }
+    }
+
+    @Test
+    fun `track analytics events on unassisted LFD void result`() = runBlocking {
+        setResult(VOID, RAPID_SELF_REPORTED)
+
+        testSubject.invoke()
+
+        coVerifyAll {
+            analyticsManager.track(VoidResultReceived)
+            analyticsManager.track(ResultReceived(VOID, RAPID_SELF_REPORTED, INSIDE_APP))
+        }
+    }
+
+    private fun setResult(
+        result: VirologyTestResult,
+        testKitType: VirologyTestKitType
+    ) {
         val config = TestOrderPollingConfig(from, "token", "submission_token")
         every { testOrderTokensProvider.configs } returns listOf(config)
         val testResultDate = from.plus(1, DAYS)
-        coEvery { virologyTestingApi.getTestResult(VirologyTestResultRequestBody("token")) } returns Response.success(
-            VirologyTestResultResponse(testResultDate, result)
+        coEvery {
+            virologyTestingApi.getTestResult(
+                VirologyTestResultRequestBody(
+                    "token",
+                    SupportedCountry.ENGLAND
+                )
+            )
+        } returns Response.success(
+            VirologyTestResultResponse(
+                testResultDate,
+                result,
+                testKitType,
+                diagnosisKeySubmissionSupported = true
+            )
         )
     }
 

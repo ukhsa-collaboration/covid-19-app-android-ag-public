@@ -72,17 +72,17 @@ class EpidemiologyEventProviderTest {
                 calculatedRisk = 10.0,
                 riskCalculationVersion = 2,
                 matchedKeyCount = 1,
-                listOf(exposureWindow)
+                exposureWindows = listOf(exposureWindow)
             )
 
         val event = EpidemiologyEvent(
             version = 1,
             payload = EpidemiologyEventPayload(
-                Instant.parse("2020-11-18T13:20:36.875Z"),
-                uk.nhs.nhsx.covid19.android.app.remote.data.Infectiousness.fromInt(2),
-                listOf(EpidemiologyEventPayloadScanInstance(1, 0, 1)),
-                10.0,
-                2
+                date = Instant.parse("2020-11-18T13:20:36.875Z"),
+                infectiousness = uk.nhs.nhsx.covid19.android.app.remote.data.Infectiousness.fromInt(2),
+                scanInstances = listOf(EpidemiologyEventPayloadScanInstance(1, 0, 1)),
+                riskScore = 10.0,
+                riskCalculationVersion = 2
             )
         )
 

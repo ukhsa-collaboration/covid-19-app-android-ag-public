@@ -30,6 +30,7 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.Error
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.ResolutionRequired
@@ -102,15 +103,15 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
         }
 
         sendPositiveTestResult.setOnSingleClickListener {
-            debugViewModel.sendPositiveTestResult(requireContext())
+            debugViewModel.sendPositiveTestResult(requireContext(), LAB_RESULT)
         }
 
         sendNegativeTestResult.setOnSingleClickListener {
-            debugViewModel.sendNegativeTestResult(requireContext())
+            debugViewModel.sendNegativeTestResult(requireContext(), LAB_RESULT)
         }
 
         sendVoidTestResult.setOnSingleClickListener {
-            debugViewModel.sendVoidTestResult(requireContext())
+            debugViewModel.sendVoidTestResult(requireContext(), LAB_RESULT)
         }
 
         defaultState.setOnSingleClickListener {

@@ -20,8 +20,8 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.SubmitEpidemiologyData
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW_AFTER_POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.KEY_SUBMISSION
-import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType.EXPOSURE_WINDOW_POSITIVE_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
@@ -92,7 +92,7 @@ class ShareKeysInformationViewModelTest {
         coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
         verify {
             stateMachine.processEvent(
-                OnTestResultAcknowledge(testSubject.testResult, removeTestResult = false)
+                OnTestResultAcknowledge(testSubject.testResult)
             )
         }
     }
@@ -106,10 +106,11 @@ class ShareKeysInformationViewModelTest {
 
         verify {
             stateMachine.processEvent(
-                OnTestResultAcknowledge(testSubject.testResult, removeTestResult = false)
+                OnTestResultAcknowledge(testSubject.testResult)
             )
         }
-        verify(exactly = 0) { submitEpidemiologyData.invoke(any(), any()) }
+        verify(exactly = 0) { submitEpidemiologyData.submit(any()) }
+        verify(exactly = 0) { submitEpidemiologyData.submitAfterPositiveTest(any(), any()) }
     }
 
     @Test
@@ -124,16 +125,17 @@ class ShareKeysInformationViewModelTest {
 
         verify {
             stateMachine.processEvent(
-                OnTestResultAcknowledge(testSubject.testResult, removeTestResult = false)
+                OnTestResultAcknowledge(testSubject.testResult)
             )
         }
-        verify { submitEpidemiologyData.invoke(listOf(), epidemiologyEventType = EXPOSURE_WINDOW_POSITIVE_TEST) }
+        verify { submitEpidemiologyData.submitAfterPositiveTest(listOf(), testKitType = LAB_RESULT) }
     }
 
     private val receivedTestResult = ReceivedTestResult(
         diagnosisKeySubmissionToken = "a",
         testEndDate = fixedClock.instant(),
         testResult = POSITIVE,
-        acknowledgedDate = fixedClock.instant()
+        testKitType = LAB_RESULT,
+        diagnosisKeySubmissionSupported = true
     )
 }

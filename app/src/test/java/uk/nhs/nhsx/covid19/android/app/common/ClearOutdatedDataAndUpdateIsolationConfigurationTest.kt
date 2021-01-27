@@ -6,10 +6,6 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -25,12 +21,18 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
+    private val relevantTestResultProvider = mockk<RelevantTestResultProvider>(relaxed = true)
+    private val unacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>(relaxed = true)
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
-    private val testResultsProvider = mockk<TestResultsProvider>(relaxed = true)
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>(relaxed = true)
     private val isolationConfigurationApi = mockk<IsolationConfigurationApi>(relaxed = true)
     private val exposureNotificationTokensProvider = mockk<ExposureNotificationTokensProvider>(relaxed = true)
@@ -40,7 +42,8 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
     private val testSubject = ClearOutdatedDataAndUpdateIsolationConfiguration(
         isolationStateMachine,
-        testResultsProvider,
+        relevantTestResultProvider,
+        unacknowledgedTestResultsProvider,
         isolationConfigurationProvider,
         isolationConfigurationApi,
         exposureNotificationTokensProvider,
@@ -65,14 +68,15 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
     }
 
     @Test
-    fun `clears old test results when in default state without previous isolation`() = runBlocking {
+    fun `clears test results when in default state without previous isolation`() = runBlocking {
         every { isolationStateMachine.readState() } returns Default()
 
         testSubject()
 
         val retentionPeriod = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
         val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
-        verify { testResultsProvider.clearBefore(expectedDate) }
+        verify { relevantTestResultProvider.clear() }
+        verify { unacknowledgedTestResultsProvider.clearBefore(expectedDate) }
         verify(exactly = 0) { isolationStateMachine.clearPreviousIsolation() }
         verify { exposureNotificationTokensProvider.clear() }
     }
@@ -83,7 +87,8 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
         testSubject()
 
-        verify(exactly = 0) { testResultsProvider.clearBefore(any()) }
+        verify(exactly = 0) { relevantTestResultProvider.clear() }
+        verify(exactly = 0) { unacknowledgedTestResultsProvider.clearBefore(any()) }
         verify(exactly = 0) { isolationStateMachine.clearPreviousIsolation() }
         verify { exposureNotificationTokensProvider.clear() }
     }
@@ -94,19 +99,23 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
         testSubject()
 
-        verify(exactly = 0) { testResultsProvider.clearBefore(any()) }
+        verify(exactly = 0) { relevantTestResultProvider.clear() }
+        verify(exactly = 0) { unacknowledgedTestResultsProvider.clearBefore(any()) }
         verify(exactly = 0) { isolationStateMachine.clearPreviousIsolation() }
         verify { exposureNotificationTokensProvider.clear() }
     }
 
     @Test
-    fun `clears test result when in default state and previous isolation state is outdated`() = runBlocking {
+    fun `clears test result and previous isolation when in default state and previous isolation state is outdated`() = runBlocking {
         val state = getDefaultState(true)
         every { isolationStateMachine.readState() } returns state
 
         testSubject()
 
-        verify { testResultsProvider.clearBefore(state.previousIsolation!!.expiryDate) }
+        val retentionPeriod = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
+        val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
+        verify { relevantTestResultProvider.clear() }
+        verify { unacknowledgedTestResultsProvider.clearBefore(expectedDate) }
         verify { isolationStateMachine.clearPreviousIsolation() }
         verify { exposureNotificationTokensProvider.clear() }
     }

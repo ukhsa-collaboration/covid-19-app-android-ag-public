@@ -5,6 +5,7 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.NORTHERN_IRELAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.SCOTLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -35,9 +36,13 @@ class PostalDistrictProvider @Inject constructor(sharedPreferences: SharedPrefer
     }
 }
 
-enum class PostCodeDistrict(val value: String, val supported: Boolean) {
-    ENGLAND("England", true),
-    WALES("Wales", true),
+enum class PostCodeDistrict(
+    val value: String,
+    val supported: Boolean,
+    val supportedCountry: SupportedCountry? = null
+) {
+    ENGLAND("England", true, SupportedCountry.ENGLAND),
+    WALES("Wales", true, SupportedCountry.WALES),
     SCOTLAND("Scotland", false),
     NORTHERN_IRELAND("NorthernIreland", false);
 

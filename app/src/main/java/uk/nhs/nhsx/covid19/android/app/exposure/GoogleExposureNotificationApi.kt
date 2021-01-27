@@ -5,9 +5,11 @@ import android.util.Base64
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.exposurenotification.DiagnosisKeysDataMapping
+import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatus
 import com.google.android.gms.nearby.exposurenotification.ExposureWindow
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeout
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import java.io.File
@@ -43,6 +45,19 @@ class GoogleExposureNotificationApi(context: Context) : ExposureNotificationApi 
         } catch (exception: Exception) {
             Timber.e(exception, "Can't get version")
             null
+        }
+    }
+
+    override suspend fun isRunningNormally(): Boolean {
+        return try {
+            withTimeout(API_TIMEOUT) {
+                val status = exposureNotificationClient.status.await()
+                Timber.d("Status: $status")
+                status.contains(ExposureNotificationStatus.ACTIVATED)
+            }
+        } catch (exception: Exception) {
+            Timber.e(exception, "Can't get status")
+            false
         }
     }
 
@@ -88,4 +103,8 @@ class GoogleExposureNotificationApi(context: Context) : ExposureNotificationApi 
             rollingStartNumber = rollingStartIntervalNumber,
             rollingPeriod = rollingPeriod
         )
+
+    companion object {
+        const val API_TIMEOUT = 10_000L
+    }
 }

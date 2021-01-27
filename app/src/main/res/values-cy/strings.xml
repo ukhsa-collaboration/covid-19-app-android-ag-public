@@ -166,7 +166,7 @@
     <string name="close">Cau</string>
     <string name="go_back">Mynd yn ôl</string>
     <string name="remove">Dileu</string>
-    <string name="empty" translatable="false"/>
+    <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">Bydd yr ap yn anfon rhybudd atoch os ydych wedi bod mewn cysylltiad agos â rhywun sydd wedi profi\'n bositif am y feirws.\n\nEr mwyn galluogi olrhain cysylltiadau ar gyfer yr ap hwn mae angen i chi ganiatáu Hysbysiadau Cysylltiad.\n\nOs byddwch yn newid eich meddwl, gallwch newid y caniatâd yn Gosodiadau ar unrhyw adeg.</string>
     <string name="privacy_notice">Hysbysiad preifatrwydd</string>
     <string name="tablet_information_url">Gwybodaeth am ddefnyddio llechen</string>
@@ -208,7 +208,7 @@
     <string name="notification_channel_app_configuration_description">Mae\'r hysbysiadau hyn yn rhoi gwybodaeth am gyfluniad eich ap</string>
     <string name="notification_title_state_expiration">Mae ein cyngor i chi wedi newid</string>
     <string name="notification_text_state_expiration">Tapiwch i weld y manylion</string>
-    <string name="notification_title_state_exposure">Mae\'r ap wedi canfod eich bod wedi bod yn agos at rywun sydd â’r coronafeirws. Arhoswch gartref a hunanynyswch i gadw\'ch hun ac eraill yn ddiogel</string>
+    <string name="notification_title_state_exposure">Mae angen i chi hunan-ynysu ar unwaith. Fe fuoch chi mewn cyswllt agos gyda rhywun sydd â coronafirws (COVID-19).</string>
     <string name="notification_text_state_exposure">Tapiwch i weld y manylion.</string>
     <string name="notification_text_test_results">Tapiwch i weld y manylion</string>
     <string name="notification_title_app_available">Mae\'r ap ar gael</string>
@@ -249,7 +249,7 @@
     <string name="about_manage_my_data">Rheoli fy nata</string>
     <string name="postal_district">Ardal cod post</string>
     <string name="edit">Golygu</string>
-    <string name="title_last_test_result_taken">Canlyniad y prawf diwethaf a gafwyd</string>
+    <string name="title_last_test_result_taken">Canlyniad prawf perthnasol diwethaf</string>
     <string name="title_venue_history">Hanes y lleoliad</string>
     <string name="title_symptoms">Dyddiad y dechreuodd y symptomau</string>
     <string name="save">Cadw</string>
@@ -428,18 +428,22 @@
     <string name="chinese">Tsieinëeg (wedi\'i symleiddio)</string>
     <string name="english">Saesneg</string>
     <string name="gujarati">Gwjarati</string>
-    <string name="language">Laith</string>
-    <string name="language_title">Laith</string>
+    <string name="language">Iaith</string>
+    <string name="language_title">Iaith</string>
     <string name="local_authority_edit">Golygu</string>
-    <string name="other_languages">Leithoedd</string>
+    <string name="other_languages">Ieithoedd</string>
     <string name="polish">Pwyleg</string>
     <string name="punjabi">Pwnjabeg</string>
     <string name="romanian">Rwmaneg</string>
     <string name="settings_title">Gosodiadau</string>
     <string name="somali">Somalieg</string>
-    <string name="system_language">Laith y System</string>
+    <string name="system_language">Iaith y System</string>
     <string name="turkish">Tyrceg</string>
     <string name="urdu">Wrdw</string>
     <string name="venue_history_edit">Golygu</string>
     <string name="venue_history_editing_done">Wedi\'i wneud</string>
+    <string name="about_lfd">RAPID_RESULT</string>
+    <string name="about_pcr">LAB_RESULT</string>
+    <string name="about_test_kit_type">Math o becyn prawf</string>
+    <string name="about_test_result">Canlyniad</string>
 </resources>

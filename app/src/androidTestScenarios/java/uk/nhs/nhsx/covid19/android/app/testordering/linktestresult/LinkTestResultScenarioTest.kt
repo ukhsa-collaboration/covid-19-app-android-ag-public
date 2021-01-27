@@ -1,11 +1,22 @@
 package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 
+import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_LFD_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_PCR_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NO_CONNECTION_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_LFD_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_PCR_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_RAPID_SELF_REPORTED_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.UNEXPECTED_ERROR_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.VOID_LFD_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.VOID_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.FLOW
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
+import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
@@ -17,8 +28,13 @@ class LinkTestResultScenarioTest : EspressoTest() {
     private val linkTestResultRobot = LinkTestResultRobot()
     private val testResultRobot = TestResultRobot()
 
+    @Before
+    fun setUp() {
+        testAppContext.setLocalAuthority(ENGLISH_LOCAL_AUTHORITY)
+    }
+
     @Test
-    fun userEntersCtaTokenForPositiveTestResult_navigateToTestResultScreen() = reporter(
+    fun userEntersCtaTokenForPcrPositiveTestResult_navigateToTestResultScreen() = reporter(
         scenario = "Enter test result",
         title = "Positive test result",
         description = "The user enters a CTA token and receives a positive test result",
@@ -33,7 +49,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
             stepDescription = "User is presented a screen where they can enter a CTA token"
         )
 
-        linkTestResultRobot.enterCtaToken("pstv-pstv")
+        linkTestResultRobot.enterCtaToken(POSITIVE_PCR_TOKEN)
 
         step(
             stepName = "Enter token",
@@ -42,7 +58,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.clickContinue()
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveAndSelfIsolate() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
 
         step(
             stepName = "Positive test result",
@@ -51,7 +67,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun userEntersCtaTokenForNegativeTestResult_navigateToTestResultScreen() = reporter(
+    fun userEntersCtaTokenForPcrNegativeTestResult_navigateToTestResultScreen() = reporter(
         scenario = "Enter test result",
         title = "Negative test result",
         description = "The user enters a CTA token and receives a negative test result",
@@ -61,7 +77,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.checkActivityIsDisplayed()
 
-        linkTestResultRobot.enterCtaToken("f3dz-cfdt")
+        linkTestResultRobot.enterCtaToken(NEGATIVE_PCR_TOKEN)
 
         step(
             stepName = "Enter token",
@@ -70,7 +86,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.clickContinue()
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAndAlreadyFinishedIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation() }
 
         step(
             stepName = "Negative test result",
@@ -79,7 +95,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun userEntersCtaTokenFoVoidTestResult_navigateToTestResultScreen() = reporter(
+    fun userEntersCtaTokenForPcrVoidTestResult_navigateToTestResultScreen() = reporter(
         scenario = "Enter test result",
         title = "Void test result",
         description = "The user enters a CTA token and receives a void test result",
@@ -90,7 +106,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.checkActivityIsDisplayed()
 
-        linkTestResultRobot.enterCtaToken("8vb7-xehg")
+        linkTestResultRobot.enterCtaToken(VOID_PCR_TOKEN)
 
         step(
             stepName = "Enter token",
@@ -99,12 +115,52 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.clickContinue()
 
-        waitFor { testResultRobot.checkActivityDisplaysVoidAndAlreadyFinishedIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation() }
 
         step(
             stepName = "Void test result",
             stepDescription = "User is informed that their test result is void"
         )
+    }
+
+    @Test
+    fun userEntersCtaTokenForAssistedLfdPositiveTestResult_navigateToTestResultScreen() = notReported {
+        enterLinkTestResultFromStatusActivity()
+        linkTestResultRobot.checkActivityIsDisplayed()
+        linkTestResultRobot.enterCtaToken(POSITIVE_LFD_TOKEN)
+        linkTestResultRobot.clickContinue()
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+    }
+
+    @Test
+    fun userEntersCtaTokenForUnassistedLfdPositiveTestResult_navigateToTestResultScreen() = notReported {
+        enterLinkTestResultFromStatusActivity()
+        linkTestResultRobot.checkActivityIsDisplayed()
+        linkTestResultRobot.enterCtaToken(POSITIVE_RAPID_SELF_REPORTED_TOKEN)
+        linkTestResultRobot.clickContinue()
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+    }
+
+    @Test
+    fun userEntersCtaTokenForLfdNegativeTestResult_showErrorMessage() = notReported {
+        enterLinkTestResultFromStatusActivity()
+        linkTestResultRobot.checkActivityIsDisplayed()
+        linkTestResultRobot.enterCtaToken(NEGATIVE_LFD_TOKEN)
+        linkTestResultRobot.clickContinue()
+
+        linkTestResultRobot.checkErrorUnexpectedIsDisplayed()
+    }
+
+    @Test
+    fun userEntersCtaTokenForLfdVoidTestResult_showErrorMessage() = notReported {
+        enterLinkTestResultFromStatusActivity()
+        linkTestResultRobot.checkActivityIsDisplayed()
+        linkTestResultRobot.enterCtaToken(VOID_LFD_TOKEN)
+        linkTestResultRobot.clickContinue()
+
+        linkTestResultRobot.checkErrorUnexpectedIsDisplayed()
     }
 
     @Test
@@ -154,7 +210,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.checkActivityIsDisplayed()
 
-        linkTestResultRobot.enterCtaToken("n0c0-nneb")
+        linkTestResultRobot.enterCtaToken(NO_CONNECTION_TOKEN)
 
         linkTestResultRobot.clickContinue()
 
@@ -167,7 +223,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.checkActivityIsDisplayed()
 
-        linkTestResultRobot.enterCtaToken("nexp-ectn")
+        linkTestResultRobot.enterCtaToken(UNEXPECTED_ERROR_TOKEN)
 
         linkTestResultRobot.clickContinue()
 

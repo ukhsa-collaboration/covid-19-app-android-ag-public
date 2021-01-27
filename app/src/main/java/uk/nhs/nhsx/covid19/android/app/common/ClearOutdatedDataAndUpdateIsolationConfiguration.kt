@@ -2,22 +2,24 @@ package uk.nhs.nhsx.covid19.android.app.common
 
 import com.jeroenmols.featureflag.framework.FeatureFlag.STORE_EXPOSURE_WINDOWS
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfoProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationTokensProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
 import java.time.Clock
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfoProvider
 
 class ClearOutdatedDataAndUpdateIsolationConfiguration @Inject constructor(
     private val isolationStateMachine: IsolationStateMachine,
-    private val testResultsProvider: TestResultsProvider,
+    private val relevantTestResultProvider: RelevantTestResultProvider,
+    private val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val isolationConfigurationApi: IsolationConfigurationApi,
     private val exposureNotificationTokensProvider: ExposureNotificationTokensProvider,
@@ -27,18 +29,17 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration @Inject constructor(
 ) {
 
     suspend operator fun invoke(): Result<Unit> = runSafely {
-
         updateIsolationConfiguration()
 
         val expiryDays = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
 
         val state = isolationStateMachine.readState()
         if (state is Default) {
-            if (state.previousIsolation == null) {
-                val today = LocalDate.now(clock)
-                testResultsProvider.clearBefore(today.minusDays(expiryDays.toLong()))
-            } else if (state.previousIsolation.expiryDate.isMoreThanOrExactlyDaysAgo(expiryDays)) {
-                testResultsProvider.clearBefore(state.previousIsolation.expiryDate)
+            val previousIsolation = state.previousIsolation
+            if (previousIsolation == null) {
+                clearOldTestResults(expiryDays)
+            } else if (previousIsolation.expiryDate.isMoreThanOrExactlyDaysAgo(expiryDays)) {
+                clearOldTestResults(expiryDays)
                 isolationStateMachine.clearPreviousIsolation()
             }
 
@@ -50,6 +51,11 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration @Inject constructor(
         }
 
         clearLegacyData()
+    }
+
+    private fun clearOldTestResults(expiryDays: Int) {
+        relevantTestResultProvider.clear()
+        unacknowledgedTestResultsProvider.clearBefore(LocalDate.now(clock).minusDays(expiryDays.toLong()))
     }
 
     private suspend fun updateIsolationConfiguration() {

@@ -6,6 +6,7 @@ configurations.create("ktlint")
 
 dependencies {
     ktlint "com.pinterest:ktlint:0.37.1"
+    ktlint project(":custom-ktlint-rules")
 }
 
 task("ktlint", type: JavaExec) {

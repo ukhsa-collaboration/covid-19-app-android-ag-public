@@ -146,7 +146,7 @@
     <string name="close">关闭</string>
     <string name="go_back">返回</string>
     <string name="remove">清除</string>
-    <string name="empty" translatable="false"/>
+    <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">如果您与冠状病毒检查呈阳性的人员有过密切接触，本应用程序将向您发送警报。\n\n为了启用本应用程序“对接触者进行跟踪”的功能，您需要允许 “暴露通知”。\n\n如果您改变主意，则可以随时更改设置的权限。</string>
     <string name="privacy_notice">隐私声明</string>
     <string name="tablet_information_url">使用平板电脑的信息</string>
@@ -188,7 +188,7 @@
     <string name="notification_channel_app_configuration_description">这些通知会通知您您的应用配置</string>
     <string name="notification_title_state_expiration">我们对您的指导已更改</string>
     <string name="notification_text_state_expiration">点击以查看详细信息</string>
-    <string name="notification_title_state_exposure">该应用程序检测到，您已经与冠状病毒感染者接触了。请留在家中并自我隔离，以确保自己和他人的安全</string>
+    <string name="notification_title_state_exposure">您需要立即自我隔离。您已与新冠肺炎 (COVID-19) 患者密切接触。</string>
     <string name="notification_text_state_exposure">点击此处获取更多详细信息。</string>
     <string name="notification_text_test_results">点击以查看详细信息</string>
     <string name="notification_title_app_available">可以使用该应用程序</string>
@@ -209,7 +209,7 @@
     <string name="state_index_take_coronavirus_test">安排免费冠状病毒测试</string>
     <string name="state_test_negative_info">您的冠状病毒测试结果为阴性，但您仍可能出现症状，因此应保持隔离</string>
     <string name="test_result_negative_continue_self_isolate_explanation">若要了解应用程序如何计算自我隔离天数，请访问\'常见问题解答\'。\n\n检测结果表明，您在做检测时没有感染病毒。有关部门已通过电子邮件、短信或电话向您发送了更多的信息。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。</string>
-    <string name="isolation_until_date">直到 %1$s 的 23:59</string>
+    <string name="isolation_until_date">直到 %1$s 日 23:59</string>
     <string name="questionnaire_review_one_of_two">第1个步骤总2个</string>
     <string name="expiration_notification_title">好消息！</string>
     <string name="expiration_notification_description_passed">从 %s的23:59起，您就不必再进行隔离</string>
@@ -229,7 +229,7 @@
     <string name="about_manage_my_data">管理我的数据</string>
     <string name="postal_district">邮编区域</string>
     <string name="edit">编辑</string>
-    <string name="title_last_test_result_taken">最后测试结果</string>
+    <string name="title_last_test_result_taken">最后适用的检测结果</string>
     <string name="title_venue_history">场所历史</string>
     <string name="title_symptoms">症状出现日期</string>
     <string name="save">储存</string>
@@ -422,4 +422,8 @@
     <string name="venue_history_edit">编辑</string>
     <string name="venue_history_editing_done">完成</string>
     <string name="welsh">威尔士语</string>
+    <string name="about_lfd">RAPID_RESULT</string>
+    <string name="about_pcr">LAB_RESULT</string>
+    <string name="about_test_kit_type">检测试剂盒类型</string>
+    <string name="about_test_result">结果</string>
 </resources>

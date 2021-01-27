@@ -68,6 +68,7 @@ class AnalyticsLogStorage @Inject constructor(
                 )
                 .withSubtype(AnalyticsLogItem.ResultReceived::class.java, "ResultReceived")
                 .withSubtype(AnalyticsLogItem.UpdateNetworkStats::class.java, "UpdateNetworkStats")
+                .withSubtype(AnalyticsLogItem.ExposureWindowMatched::class.java, "ExposureWindowMatched")
     }
 }
 

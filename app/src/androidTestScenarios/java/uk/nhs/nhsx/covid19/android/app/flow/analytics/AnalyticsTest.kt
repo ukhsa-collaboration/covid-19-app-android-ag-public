@@ -16,6 +16,7 @@ import org.junit.Before
 import org.junit.Rule
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTask.PERIODIC_TASKS
+import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -38,7 +39,7 @@ abstract class AnalyticsTest : EspressoTest() {
 
         testAppContext.clock.currentInstant =
             LocalDate.of(2020, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC)
-        testAppContext.setLocalAuthority("1")
+        testAppContext.setLocalAuthority(ENGLISH_LOCAL_AUTHORITY)
         startTestActivity<MainActivity>()
     }
 

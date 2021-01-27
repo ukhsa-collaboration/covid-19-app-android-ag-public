@@ -150,7 +150,7 @@
     <string name="close">બંધ કરો</string>
     <string name="go_back">પાછા જાઓ</string>
     <string name="remove">હટાવો</string>
-    <string name="empty" translatable="false"/>
+    <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">જો તમે વાયરસ માટે સકારાત્મક પરીક્ષણ ધરાવનાર કોઈની સાથે ગાઢ સંપર્કમાં રહેલા હો તો, એપ્લિકેશન તમને ચેતવણી મોકલશે.\n\nઆ એપ્લિકેશન માટે કોંટેક્ટ ટ્રેસીંગને સક્ષમ કરવા માટે તમારે આની મંજૂરી આપવાની જરૂર છે એક્સપોઝર નોટિફિકેશન.\n\nજો તમે તમારો વિચાર બદલો છો, તો તમે કોઈપણ સમયે સેટિંગ્સમાં તમારી મંજૂરી બદલી શકો છો.</string>
     <string name="privacy_notice">ગોપનીયતા નોટિસ</string>
     <string name="tablet_information_url">ટેબ્લેટના ઉપયોગ માટેની માહિતી</string>
@@ -192,7 +192,7 @@
     <string name="notification_channel_app_configuration_description">આ સૂચનાઓ તમારી એપ ગોઠવણી વિશે માહિતી આપે છે</string>
     <string name="notification_title_state_expiration">તમારા માટેનું અમારું માર્ગદર્શન બદલાયું છે</string>
     <string name="notification_text_state_expiration">વિગતો જોવા માટે ટેપ કરો</string>
-    <string name="notification_title_state_exposure">એપ દ્વારા શોધી કઢાયું છે કે તમે કોરોનાવાયરસ ધરાવતા કોઈ વ્યક્તિના સંપર્કમાં આવ્યા છો. કૃપા કરી ઘરે રહો અને પોતાને અને અન્ય લોકોને સુરક્ષિત રાખવા માટે સેલ્ફ-આઇસોલેટ થાવ</string>
+    <string name="notification_title_state_exposure">તમારે તરત જ સેલ્ફ-આયસોલેટ થવું પડશે જેને કોરોના વાયરસ (કોવિડ-19)  છે તેમની નજીક આવ્યા છો</string>
     <string name="notification_text_state_exposure">વધુ વિગતો માટે અહીં ટેપ કરો.</string>
     <string name="notification_text_test_results">વિગતો જોવા માટે ટેપ કરો</string>
     <string name="notification_title_app_available">એપ ઉપલબ્ધ છે</string>
@@ -232,7 +232,7 @@
     <string name="about_manage_my_data">મારો ડેટા મેનેજ કરો</string>
     <string name="postal_district">પોસ્ટલ જિલ્લો</string>
     <string name="edit">સંપાદિત કરો</string>
-    <string name="title_last_test_result_taken">અંતિમ ટેસ્ટના પરિણામો લેવાય ચૂક્યા છે</string>
+    <string name="title_last_test_result_taken">અંતિમ લાગુ ટેસ્ટ પરિણામ</string>
     <string name="title_venue_history">વેન્યુનો ઇતિહાસ</string>
     <string name="title_symptoms">લક્ષણો શરૂ થયાની તારીખ</string>
     <string name="save">સેવ કરો</string>
@@ -426,4 +426,8 @@
     <string name="venue_history_edit">સંપાદિત કરો</string>
     <string name="venue_history_editing_done">થઈ ગયું</string>
     <string name="welsh">વેલ્શ</string>
+    <string name="about_lfd">RAPID_RESULT</string>
+    <string name="about_pcr">LAB_RESULT</string>
+    <string name="about_test_kit_type">ટેસ્ટ કીટ પ્રકાર</string>
+    <string name="about_test_result">પરિણામ</string>
 </resources>

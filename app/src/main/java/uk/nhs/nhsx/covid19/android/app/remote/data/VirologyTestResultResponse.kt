@@ -6,7 +6,9 @@ import java.time.Instant
 @JsonClass(generateAdapter = true)
 data class VirologyTestResultResponse(
     val testEndDate: Instant,
-    val testResult: VirologyTestResult
+    val testResult: VirologyTestResult,
+    val testKit: VirologyTestKitType,
+    val diagnosisKeySubmissionSupported: Boolean
 )
 
 enum class VirologyTestResult {

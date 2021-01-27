@@ -13,6 +13,7 @@ import uk.nhs.nhsx.covid19.android.app.common.SubmitEmptyData
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW_AFTER_POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.KEY_SUBMISSION
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
@@ -44,7 +45,8 @@ class TestResultViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val testResultsProvider = mockk<TestResultsProvider>(relaxed = true)
+    private val unacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>(relaxed = true)
+    private val relevantTestResultProvider = mockk<RelevantTestResultProvider>(relaxed = true)
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>(relaxed = true)
     private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val submitEmptyData = mockk<SubmitEmptyData>(relaxed = true)
@@ -54,10 +56,12 @@ class TestResultViewModelTest {
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
 
     private val navigateToShareKeysObserver = mockk<Observer<ReceivedTestResult>>(relaxed = true)
+    private val finishActivityObserver = mockk<Observer<Void>>(relaxed = true)
 
     private val testSubject =
         TestResultViewModel(
-            testResultsProvider,
+            unacknowledgedTestResultsProvider,
+            relevantTestResultProvider,
             isolationConfigurationProvider,
             stateMachine,
             submitEmptyData,
@@ -81,30 +85,32 @@ class TestResultViewModelTest {
     )
 
     private val positiveTestResult = ReceivedTestResult(
-        "token1", testEndDate = testEndDate, testResult = POSITIVE
+        "token1",
+        testEndDate = testEndDate,
+        testResult = POSITIVE,
+        testKitType = LAB_RESULT,
+        diagnosisKeySubmissionSupported = true
     )
-    private val positiveTestResultAcknowledged = ReceivedTestResult(
-        "token2", testEndDate = testEndDate, testResult = POSITIVE, acknowledgedDate = Instant.now()
-    )
-
     private val negativeTestResult = ReceivedTestResult(
-        "token3", testEndDate = testEndDate, testResult = NEGATIVE
-    )
-    private val negativeTestResultAcknowledged = ReceivedTestResult(
-        "token4", testEndDate = testEndDate, testResult = NEGATIVE, acknowledgedDate = Instant.now()
+        "token3",
+        testEndDate = testEndDate,
+        testResult = NEGATIVE,
+        testKitType = LAB_RESULT,
+        diagnosisKeySubmissionSupported = true
     )
     private val voidTestResult = ReceivedTestResult(
-        "token5", testEndDate = testEndDate, testResult = VOID
-    )
-    private val voidTestResultAcknowledged = ReceivedTestResult(
-        "token6", testEndDate = testEndDate, testResult = VOID, acknowledgedDate = Instant.now()
+        "token5",
+        testEndDate = testEndDate,
+        testResult = VOID,
+        testKitType = LAB_RESULT,
+        diagnosisKeySubmissionSupported = true
     )
 
     @Test
-    fun `empty test results should return Ignore`() =
+    fun `empty unacknowledged test results should return Ignore`() =
         runBlocking {
             every { stateMachine.readState() } returns Default()
-            every { testResultsProvider.testResults } returns emptyMap()
+            every { unacknowledgedTestResultsProvider.testResults } returns emptyList()
 
             testSubject.viewState().observeForever(viewStateObserver)
 
@@ -115,12 +121,10 @@ class TestResultViewModelTest {
 
     // Case C
     @Test
-    fun `last relevant test result positive and next in isolation should return PositiveContinueIsolation`() =
+    fun `relevant test result positive, unacknowledged positive, currently in isolation and will stay in isolation should return PositiveContinueIsolation`() =
         runBlocking {
-            every { testResultsProvider.testResults } returns mapOf(
-                positiveTestResultAcknowledged.diagnosisKeySubmissionToken to positiveTestResultAcknowledged,
-                positiveTestResult.diagnosisKeySubmissionToken to positiveTestResult
-            )
+            every { relevantTestResultProvider.isTestResultPositive() } returns true
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
             every { stateMachine.readState() } returns isolationState
 
             testSubject.viewState().observeForever(viewStateObserver)
@@ -129,19 +133,17 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveContinueIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)
+                    ViewState(PositiveContinueIsolation, 0)
                 )
             }
         }
 
     // Case G
     @Test
-    fun `last relevant test result is positive and next not in isolation should return PositiveWontBeInIsolation`() =
+    fun `relevant test result positive, unacknowledged positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
         runBlocking {
-            every { testResultsProvider.testResults } returns mapOf(
-                positiveTestResultAcknowledged.diagnosisKeySubmissionToken to positiveTestResultAcknowledged,
-                positiveTestResult.diagnosisKeySubmissionToken to positiveTestResult
-            )
+            every { relevantTestResultProvider.isTestResultPositive() } returns true
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
             every { stateMachine.readState() } returns Default(previousIsolation = isolationStateIndexCaseOnly)
 
             testSubject.viewState().observeForever(viewStateObserver)
@@ -150,19 +152,17 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWontBeInIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)
+                    ViewState(PositiveWontBeInIsolation, 0)
                 )
             }
         }
 
     // Case E
     @Test
-    fun `last relevant test result negative and currently not in isolation should return NegativeNotInIsolation`() =
+    fun `relevant test result not positive, unacknowledged negative, currently not in isolation and no previous isolation should return NegativeInIsolation`() =
         runBlocking {
-            every { testResultsProvider.testResults } returns mapOf(
-                negativeTestResultAcknowledged.diagnosisKeySubmissionToken to negativeTestResultAcknowledged,
-                negativeTestResult.diagnosisKeySubmissionToken to negativeTestResult
-            )
+            every { relevantTestResultProvider.isTestResultPositive() } returns false
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
             every { stateMachine.readState() } returns Default()
 
             testSubject.viewState().observeForever(viewStateObserver)
@@ -174,12 +174,10 @@ class TestResultViewModelTest {
 
     // Case ?
     @Test
-    fun `last relevant test result negative and next in isolation should return NegativeWillBeInIsolation`() =
+    fun `relevant test result not positive, unacknowledged negative and currently in isolation should return NegativeWillBeInIsolation`() =
         runBlocking {
-            every { testResultsProvider.testResults } returns mapOf(
-                negativeTestResultAcknowledged.diagnosisKeySubmissionToken to negativeTestResultAcknowledged,
-                negativeTestResult.diagnosisKeySubmissionToken to negativeTestResult
-            )
+            every { relevantTestResultProvider.isTestResultPositive() } returns false
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
             every { stateMachine.readState() } returns isolationState
 
             testSubject.viewState().observeForever(viewStateObserver)
@@ -191,12 +189,10 @@ class TestResultViewModelTest {
 
     // Case A
     @Test
-    fun `last relevant test result negative and next not in isolation should return NegativeWontBeInIsolation`() =
+    fun `relevant test result not positive, unacknowledged negative and currently in isolation as index case only should return NegativeWontBeInIsolation`() =
         runBlocking {
-            every { testResultsProvider.testResults } returns mapOf(
-                negativeTestResultAcknowledged.diagnosisKeySubmissionToken to negativeTestResultAcknowledged,
-                negativeTestResult.diagnosisKeySubmissionToken to negativeTestResult
-            )
+            every { relevantTestResultProvider.isTestResultPositive() } returns false
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
             every { stateMachine.readState() } returns isolationStateIndexCaseOnly
 
             testSubject.viewState().observeForever(viewStateObserver)
@@ -208,11 +204,11 @@ class TestResultViewModelTest {
 
     // Case D
     @Test
-    fun `last relevant test result positive and then negative and next in isolation should return PositiveThenNegativeWillBeInIsolation`() =
+    fun `relevant test result positive, unacknowledged negative and currently in isolation should return PositiveThenNegativeWillBeInIsolation`() =
         runBlocking {
-            every { testResultsProvider.testResults } returns mapOf(negativeTestResult.diagnosisKeySubmissionToken to negativeTestResult)
+            every { relevantTestResultProvider.isTestResultPositive() } returns true
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
             every { stateMachine.readState() } returns isolationState
-            every { testResultsProvider.isLastRelevantTestResultPositive() } returns true
 
             testSubject.viewState().observeForever(viewStateObserver)
 
@@ -223,12 +219,10 @@ class TestResultViewModelTest {
 
     // Case F
     @Test
-    fun `last relevant test result void and currently not in isolation should return VoidNotInIsolation`() =
+    fun `relevant test result not positive, unacknowledged void and currently not in isolation should return VoidNotInIsolation`() =
         runBlocking {
-            every { testResultsProvider.testResults } returns mapOf(
-                voidTestResultAcknowledged.diagnosisKeySubmissionToken to voidTestResultAcknowledged,
-                voidTestResult.diagnosisKeySubmissionToken to voidTestResult
-            )
+            every { relevantTestResultProvider.isTestResultPositive() } returns false
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
             every { stateMachine.readState() } returns Default()
 
             testSubject.viewState().observeForever(viewStateObserver)
@@ -240,12 +234,10 @@ class TestResultViewModelTest {
 
     // Case B
     @Test
-    fun `last relevant test result void and next in isolation should return VoidWillBeInIsolation`() =
+    fun `relevant test result not positive, unacknowledged void and currently in isolation should return VoidWillBeInIsolation`() =
         runBlocking {
-            every { testResultsProvider.testResults } returns mapOf(
-                voidTestResultAcknowledged.diagnosisKeySubmissionToken to voidTestResultAcknowledged,
-                voidTestResult.diagnosisKeySubmissionToken to voidTestResult
-            )
+            every { relevantTestResultProvider.isTestResultPositive() } returns false
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
             every { stateMachine.readState() } returns isolationState
 
             testSubject.viewState().observeForever(viewStateObserver)
@@ -257,11 +249,12 @@ class TestResultViewModelTest {
 
     // Case G
     @Test
-    fun `last relevant test result positive and then void and next not in isolation should return PositiveWontBeInIsolation`() =
+    fun `relevant test result positive, unacknowledged void and positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
         runBlocking {
-            every { testResultsProvider.testResults } returns mapOf(
-                voidTestResult.diagnosisKeySubmissionToken to voidTestResult,
-                positiveTestResult.diagnosisKeySubmissionToken to positiveTestResult
+            every { relevantTestResultProvider.isTestResultPositive() } returns true
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
+                voidTestResult,
+                positiveTestResult
             )
             every { stateMachine.readState() } returns Default(previousIsolation = isolationStateIndexCaseOnly)
 
@@ -271,18 +264,19 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWontBeInIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)
+                    ViewState(PositiveWontBeInIsolation, 0)
                 )
             }
         }
 
     // Case H
     @Test
-    fun `last relevant test result positive and then void and next in isolation should return PositiveWillBeInIsolation`() =
+    fun `relevant test result positive, unacknowledged void and positive, currently not in isolation and no previous isolation should return PositiveWillBeInIsolation`() =
         runBlocking {
-            every { testResultsProvider.testResults } returns mapOf(
-                voidTestResult.diagnosisKeySubmissionToken to voidTestResult,
-                positiveTestResult.diagnosisKeySubmissionToken to positiveTestResult
+            every { relevantTestResultProvider.isTestResultPositive() } returns true
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
+                voidTestResult,
+                positiveTestResult
             )
             every { stateMachine.readState() } returns Default()
 
@@ -292,18 +286,19 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWillBeInIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)
+                    ViewState(PositiveWillBeInIsolation, 0)
                 )
             }
         }
 
     // Case G
     @Test
-    fun `last relevant test result positive and then negative and next not in isolation should return PositiveWontBeInIsolation`() =
+    fun `relevant test result positive, unacknowledged negative and positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
         runBlocking {
-            every { testResultsProvider.testResults } returns mapOf(
-                negativeTestResult.diagnosisKeySubmissionToken to negativeTestResult,
-                positiveTestResult.diagnosisKeySubmissionToken to positiveTestResult
+            every { relevantTestResultProvider.isTestResultPositive() } returns true
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
+                negativeTestResult,
+                positiveTestResult
             )
             every { stateMachine.readState() } returns Default(previousIsolation = isolationStateIndexCaseOnly)
 
@@ -313,18 +308,19 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWontBeInIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)
+                    ViewState(PositiveWontBeInIsolation, 0)
                 )
             }
         }
 
     // Case H
     @Test
-    fun `last relevant test result positive and then negative and next in isolation should return PositiveWillBeInIsolation`() =
+    fun `relevant test result positive, unacknowledged negative and positive, currently not in isolation and no previous isolation return PositiveWillBeInIsolation`() =
         runBlocking {
-            every { testResultsProvider.testResults } returns mapOf(
-                negativeTestResult.diagnosisKeySubmissionToken to negativeTestResult,
-                positiveTestResult.diagnosisKeySubmissionToken to positiveTestResult
+            every { relevantTestResultProvider.isTestResultPositive() } returns true
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
+                negativeTestResult,
+                positiveTestResult
             )
             every { stateMachine.readState() } returns Default()
 
@@ -334,52 +330,57 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWillBeInIsolation(positiveTestResult.diagnosisKeySubmissionToken), 0)
+                    ViewState(PositiveWillBeInIsolation, 0)
                 )
             }
         }
 
     @Test
-    fun `acknowledge negative test result with previous positive test result should deliver event to state machine with remove flag`() {
-        every { testResultsProvider.testResults } returns mapOf(negativeTestResult.diagnosisKeySubmissionToken to negativeTestResult)
+    fun `unacknowledged test result positive with expired isolation should return PositiveWontBeInIsolation`() =
+        runBlocking {
+            val expiredPositiveTestResult = positiveTestResult.copy(
+                testEndDate = symptomsOnsetDate.atStartOfDay().toInstant(ZoneOffset.UTC).minus(10, ChronoUnit.DAYS)
+            )
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(expiredPositiveTestResult)
+            every { stateMachine.readState() } returns Default()
+
+            testSubject.viewState().observeForever(viewStateObserver)
+
+            testSubject.onCreate()
+
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWontBeInIsolation, 0)
+                )
+            }
+            coVerify(exactly = 0) { submitEmptyData.invoke(KEY_SUBMISSION) }
+            coVerify(exactly = 0) { submitFakeExposureWindows.invoke(any(), any()) }
+        }
+
+    @Test
+    fun `acknowledge negative test result should deliver event to state machine`() {
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
         every { stateMachine.readState() } returns isolationState
-        every { testResultsProvider.isLastRelevantTestResultPositive() } returns true
 
         testSubject.onCreate()
 
-        testSubject.acknowledgeTestResult()
+        testSubject.acknowledgeTestResultIfNecessary()
 
-        verify { stateMachine.processEvent(OnTestResultAcknowledge(negativeTestResult, true)) }
-        coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+        verify { stateMachine.processEvent(OnTestResultAcknowledge(negativeTestResult)) }
         coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
+        coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
     }
 
     @Test
-    fun `acknowledge negative test result without previous positive test result should deliver event to state machine without remove flag`() {
-        every { testResultsProvider.testResults } returns mapOf(negativeTestResult.diagnosisKeySubmissionToken to negativeTestResult)
+    fun `acknowledge void test result should deliver event to state machine`() {
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
         every { stateMachine.readState() } returns isolationState
-        every { testResultsProvider.isLastRelevantTestResultPositive() } returns false
 
         testSubject.onCreate()
 
-        testSubject.acknowledgeTestResult()
+        testSubject.acknowledgeTestResultIfNecessary()
 
-        verify { stateMachine.processEvent(OnTestResultAcknowledge(negativeTestResult, false)) }
-        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
-        coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
-    }
-
-    @Test
-    fun `acknowledge void test result should deliver event to state machine without remove flag`() {
-        every { testResultsProvider.testResults } returns mapOf(negativeTestResult.diagnosisKeySubmissionToken to voidTestResult)
-        every { stateMachine.readState() } returns isolationState
-        every { testResultsProvider.isLastRelevantTestResultPositive() } returns true
-
-        testSubject.onCreate()
-
-        testSubject.acknowledgeTestResult()
-
-        verify { stateMachine.processEvent(OnTestResultAcknowledge(voidTestResult, false)) }
+        verify { stateMachine.processEvent(OnTestResultAcknowledge(voidTestResult)) }
         coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
         coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
     }
@@ -387,44 +388,45 @@ class TestResultViewModelTest {
     @Test
     fun `acknowledge positive test result should do nothing`() {
         every { stateMachine.readState() } returns Default()
-        every { testResultsProvider.testResults } returns mapOf(positiveTestResult.diagnosisKeySubmissionToken to positiveTestResult)
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
 
         testSubject.onCreate()
 
-        testSubject.acknowledgeTestResult()
+        testSubject.acknowledgeTestResultIfNecessary()
 
-        verify(exactly = 0) { stateMachine.processEvent(any()) }
+        verify(exactly = 0) { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResult)) }
         coVerify(exactly = 0) { submitEmptyData.invoke(any()) }
         coVerify(exactly = 0) { submitFakeExposureWindows.invoke(any(), any()) }
     }
 
     @Test
-    fun `latest test result positive with expired isolation should return PositiveWontBeInIsolation`() {
-        every { stateMachine.readState() } returns Default()
-        val expiredPositiveTestResult = positiveTestResult.copy(
-            testEndDate = symptomsOnsetDate.atStartOfDay().toInstant(ZoneOffset.UTC).minus(10, ChronoUnit.DAYS)
-        )
-        every { testResultsProvider.testResults } returns mapOf(positiveTestResult.diagnosisKeySubmissionToken to expiredPositiveTestResult)
-
-        testSubject.viewState().observeForever(viewStateObserver)
-
-        testSubject.onCreate()
-
-        verify {
-            viewStateObserver.onChanged(
-                ViewState(PositiveWontBeInIsolation(expiredPositiveTestResult.diagnosisKeySubmissionToken), 0)
-            )
-        }
-    }
-
-    @Test
-    fun `clicking action button for positive test result triggers navigation event`() {
-        testSubject.testResult = positiveTestResult
+    fun `clicking action button for positive test result when diagnosis key submission is supported triggers navigation event`() {
+        testSubject.testResult = positiveTestResult.copy(diagnosisKeySubmissionSupported = true)
         testSubject.navigateToShareKeys().observeForever(navigateToShareKeysObserver)
+        testSubject.finishActivity().observeForever(finishActivityObserver)
 
         testSubject.onActionButtonForPositiveTestResultClicked()
 
         verify { navigateToShareKeysObserver.onChanged(positiveTestResult) }
+        verify(exactly = 0) { stateMachine.processEvent(OnTestResultAcknowledge(testSubject.testResult)) }
+        coVerify(exactly = 0) { submitEmptyData.invoke(KEY_SUBMISSION) }
+        coVerify(exactly = 0) { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+        verify(exactly = 0) { finishActivityObserver.onChanged(any()) }
+    }
+
+    @Test
+    fun `clicking action button for positive test result when diagnosis key submission is not supported acknowledges test result and finishes activity`() = runBlocking {
+        testSubject.testResult = positiveTestResult.copy(diagnosisKeySubmissionSupported = false)
+        testSubject.navigateToShareKeys().observeForever(navigateToShareKeysObserver)
+        testSubject.finishActivity().observeForever(finishActivityObserver)
+
+        testSubject.onActionButtonForPositiveTestResultClicked()
+
+        verify(exactly = 0) { navigateToShareKeysObserver.onChanged(any()) }
+        verify { stateMachine.processEvent(OnTestResultAcknowledge(testSubject.testResult)) }
+        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
+        coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+        verify { finishActivityObserver.onChanged(null) }
     }
 
     companion object {

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright © 2020 NHSX. All rights reserved.
-  --><resources>
+  -->
+<resources>
     <string name="locale">so</string>
     <plurals name="isolation_days_to_go">
         <item quantity="one">maalin ayaa ka hartay</item>
@@ -148,7 +148,7 @@
     <string name="notification_title_post_code_risk_changed">Isbedel ayaa kadhacay deegaankaaga</string>
     <string name="notification_title_risky_venue">Dhowaan ayaad booqatay goob ay isla maalintii booqdeen dad kale ee laga helay coronavirus (COVID-19).</string>
     <string name="notification_title_state_expiration">Hagitaanka aan ku  siin jirnay waa isbeddelay</string>
-    <string name="notification_title_state_exposure">App-ka wuxuu ogaadey inaad la kulantay qof qaba coronavirus. Fadlan guriga iska joog oo gooni isu go\'doomi si aad u ilaaliso naftaada iyo dadka kaleba</string>
+    <string name="notification_title_state_exposure">Waa in aad si deg deg ah isu-go\'doomisaa. Waxaa xiriir dhow la yeelatay qof qaba coronavirus (COVID-19).</string>
     <string name="notification_title_test_results">Natiijooyinka baaritaankaaga ayaa yimid</string>
     <string name="okay">OK</string>
     <string name="onboarding_age_confirmation_negative">Waan ka yarahay 16</string>
@@ -313,7 +313,7 @@
     <string name="test_result_your_test_result">Natiijada baaritaanka</string>
     <string name="title_encounter">Taariikhda kulanka</string>
     <string name="title_how_app_works">Sida barnaamijkani u shaqeeyo</string>
-    <string name="title_last_test_result_taken">Natiijadi baaritaanki ugu danbeeyay ee la qaaday</string>
+    <string name="title_last_test_result_taken">Natiijadii ugu dambeeyay ee baaritaanka oo la isticmaali karo</string>
     <string name="title_no_coronavirus_symptoms">Uma badnid inaad qabtid coronavirus</string>
     <string name="title_symptoms">Taariikhda bilaawga astaamaha</string>
     <string name="title_venue_history">Taariikhda gobta</string>
@@ -427,4 +427,8 @@
     <string name="venue_history_edit">Tafatir</string>
     <string name="venue_history_editing_done">La sameeyay</string>
     <string name="welsh">Welsh</string>
+    <string name="about_lfd">RAPID_RESULT</string>
+    <string name="about_pcr">LAB_RESULT</string>
+    <string name="about_test_kit_type">Nooca qalabka baaritaanka</string>
+    <string name="about_test_result">Natiijo</string>
 </resources>

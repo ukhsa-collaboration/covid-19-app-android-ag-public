@@ -166,7 +166,7 @@
     <string name="close">إغلاق</string>
     <string name="go_back">رجوع</string>
     <string name="remove">تأكيد</string>
-    <string name="empty" translatable="false"/>
+    <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">سيُرسل التطبيق تحذيرًا إليك في حالة التواصل الوثيق مع شخصٍ ما سجَّل نتيجة إيجابية في اختبار الكشف عن الإصابة بالفيروس.\n\nلتمكين خاصية \"تتبع الاتصال\" في هذا التطبيق، يجب عليك السماح باستلام \"إشعارات التعرّض\".\n\nفي حال تغيير قرارك، يمكنك تغيير الأذونات الممنوحة في الإعدادات متى شئت.</string>
     <string name="privacy_notice">إشعار الخصوصية</string>
     <string name="tablet_information_url">معلومات حول استخدام الحواسب اللوحية</string>
@@ -208,7 +208,7 @@
     <string name="notification_channel_app_configuration_description">تساعد هذه الإشعارات في إعلامك بالتهيئة المتوفرة للتطبيق.</string>
     <string name="notification_title_state_expiration">لقد تغيرت التوجيهات المقدمة إليك</string>
     <string name="notification_text_state_expiration">انقر للاطلاع على التفاصيل</string>
-    <string name="notification_title_state_exposure">لقد اكتشف التطبيق أنك كنت على اتصالٍ مع أحد الأشخاص المُصابين بفيروس كورونا. ينبغي لك البقاء في المنزل وعزل نفسك عزلاً ذاتيًا للمحافظة على سلامتك وسلامة الأشخاص الآخرين</string>
+    <string name="notification_title_state_exposure">يجب عليك الخضوع للعزل الذاتي على الفور. لقد تعرَّضت للتواصل عن كثب مع شخصٍ مُصابٍ بفيروس كورونا (كوفيد-19).</string>
     <string name="notification_text_state_exposure">انقر هنا للاطلاع على المزيد التفاصيل.</string>
     <string name="notification_text_test_results">انقر للاطلاع على التفاصيل</string>
     <string name="notification_title_app_available">التطبيق متوفر</string>
@@ -249,7 +249,7 @@
     <string name="about_manage_my_data">إدارة بياناتي</string>
     <string name="postal_district">الرمز البريدي للمقاطعة</string>
     <string name="edit">تعديل</string>
-    <string name="title_last_test_result_taken">نتيجة آخر اختبار خضعت له</string>
+    <string name="title_last_test_result_taken">نتيجة آخر اختبار ساري المفعول</string>
     <string name="title_venue_history">تاريخ الأماكن</string>
     <string name="title_symptoms">تاريخ بداية الأعراض</string>
     <string name="save">حفظ</string>
@@ -442,4 +442,8 @@
     <string name="venue_history_edit">تعديل</string>
     <string name="venue_history_editing_done">تم</string>
     <string name="welsh">الويلزية</string>
+    <string name="about_lfd">RAPID_RESULT</string>
+    <string name="about_pcr">LAB_RESULT</string>
+    <string name="about_test_kit_type">نوع مجموعة الاختبار</string>
+    <string name="about_test_result">نتيجة</string>
 </resources>

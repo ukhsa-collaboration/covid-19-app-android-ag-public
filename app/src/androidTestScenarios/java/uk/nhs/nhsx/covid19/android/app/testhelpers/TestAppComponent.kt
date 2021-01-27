@@ -5,7 +5,6 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers
 
 import dagger.Component
-import javax.inject.Singleton
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
@@ -22,7 +21,10 @@ import uk.nhs.nhsx.covid19.android.app.state.DisplayStateExpirationNotification
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultsProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultHandler
+import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
+import javax.inject.Singleton
 
 @Singleton
 @Component(
@@ -40,7 +42,13 @@ interface TestAppComponent : ApplicationComponent {
     fun getLocalAuthorityProvider(): LocalAuthorityProvider
 
     @Singleton
-    fun getTestResultsProvider(): TestResultsProvider
+    fun getUnacknowledgedTestResultsProvider(): UnacknowledgedTestResultsProvider
+
+    @Singleton
+    fun getRelevantTestResultProvider(): RelevantTestResultProvider
+
+    @Singleton
+    fun getTestResultHandler(): TestResultHandler
 
     fun provideIsolationStateMachine(): IsolationStateMachine
 

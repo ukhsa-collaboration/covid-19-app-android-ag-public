@@ -60,11 +60,12 @@ class IsolationConfigurationProviderTest {
         indexCaseSinceSelfDiagnosisOnset = 7,
         indexCaseSinceSelfDiagnosisUnknownOnset = 5,
         maxIsolation = 21,
-        pendingTasksRetentionPeriod = 8
+        pendingTasksRetentionPeriod = 8,
+        indexCaseSinceTestResultEndDate = 11
     )
 
     private val durationDaysJson =
-        """{"contactCase":32,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21,"pendingTasksRetentionPeriod":8}"""
+        """{"contactCase":32,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21,"pendingTasksRetentionPeriod":8,"indexCaseSinceTestResultEndDate":11}"""
 
     private val durationDaysDefaultHousekeepingPeriod = DurationDays(
         contactCase = 32,

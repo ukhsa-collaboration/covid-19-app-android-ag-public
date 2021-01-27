@@ -27,7 +27,6 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.toEpidemio
 import uk.nhs.nhsx.covid19.android.app.payment.CheckIsolationPaymentToken
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.CIRCUIT_BREAKER
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW
-import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnExposedNotification
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitFakeExposureWindows
@@ -79,10 +78,7 @@ class ExposureNotificationWork @Inject constructor(
 
                 val epidemiologyEvents = exposureRisk.toEpidemiologyEvents()
                 storeEpidemiologyEvents(epidemiologyEvents)
-                submitEpidemiologyData(
-                    epidemiologyEvents,
-                    epidemiologyEventType = EpidemiologyEventType.EXPOSURE_WINDOW
-                )
+                submitEpidemiologyData.submit(epidemiologyEvents)
 
                 handleInitial(exposureCircuitBreakerInfo)
             }

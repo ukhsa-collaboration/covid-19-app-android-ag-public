@@ -4,5 +4,6 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class VirologyTestResultRequestBody(
-    val testResultPollingToken: String
+    val testResultPollingToken: String,
+    val country: SupportedCountry
 )
