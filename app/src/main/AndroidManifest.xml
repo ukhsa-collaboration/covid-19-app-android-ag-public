@@ -135,6 +135,7 @@
 
         <receiver android:name=".receiver.ExpirationCheckReceiver" />
         <receiver android:name=".receiver.ExposureNotificationReminderReceiver" />
+        <receiver android:name=".receiver.ExposureNotificationRetryReceiver" />
         <receiver android:name=".analytics.AnalyticsAggregatorReceiver" />
         <receiver android:name=".receiver.AlarmRestarter">
             <intent-filter>

@@ -61,7 +61,8 @@ class ShareKeysInformationViewModel @Inject constructor(
         if (RuntimeBehavior.isFeatureEnabled(STORE_EXPOSURE_WINDOWS)) {
             submitEpidemiologyData.submitAfterPositiveTest(
                 epidemiologyEventProvider.epidemiologyEvents,
-                testKitType = testResult.testKitType
+                testKitType = testResult.testKitType,
+                requiresConfirmatoryTest = testResult.requiresConfirmatoryTest
             )
         }
     }

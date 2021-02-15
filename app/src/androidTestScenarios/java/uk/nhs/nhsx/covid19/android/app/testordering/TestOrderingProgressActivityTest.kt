@@ -1,6 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.FAIL_SUCCEED_LOOP
+import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.assertBrowserIsOpened
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -12,8 +14,6 @@ class TestOrderingProgressActivityTest : EspressoTest() {
 
     @Test
     fun opensBrowser() = notReported {
-        testAppContext.virologyTestingApi.shouldPass = true
-
         assertBrowserIsOpened("about:blank") {
             startTestActivity<TestOrderingProgressActivity>()
         }
@@ -21,15 +21,13 @@ class TestOrderingProgressActivityTest : EspressoTest() {
 
     @Test
     fun clickTryAgainButtonOnResponseFailure() = notReported {
-        testAppContext.virologyTestingApi.shouldPass = false
+        MockApiModule.behaviour.responseType = FAIL_SUCCEED_LOOP
 
         startTestActivity<TestOrderingProgressActivity>()
 
         testOrderingProgressRobot.checkActivityIsDisplayed()
 
         testOrderingProgressRobot.checkErrorIsDisplayed()
-
-        testAppContext.virologyTestingApi.shouldPass = true
 
         assertBrowserIsOpened("about:blank") {
             testOrderingProgressRobot.clickTryAgainButton()

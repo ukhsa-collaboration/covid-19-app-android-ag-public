@@ -4,18 +4,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import javax.inject.Inject
 import kotlinx.coroutines.launch
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AcknowledgedStartOfIsolationDueToRiskyContact
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionViewModel.ExposedNotificationResult.ConsentConfirmation
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionViewModel.ExposedNotificationResult.IsolationDurationDays
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
+import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import javax.inject.Inject
 
 class EncounterDetectionViewModel @Inject constructor(
     private val isolationStateMachine: IsolationStateMachine,
-    private val inbox: UserInbox
+    private val inbox: UserInbox,
+    private val exposureNotificationRetryAlarmController: ExposureNotificationRetryAlarmController,
+    private val analyticsEventProcessor: AnalyticsEventProcessor
 ) : ViewModel() {
 
     fun getIsolationDays() {
@@ -34,7 +39,10 @@ class EncounterDetectionViewModel @Inject constructor(
 
     fun confirmConsent() {
         viewModelScope.launch {
+            exposureNotificationRetryAlarmController.cancel()
             inbox.clearItem(ShowEncounterDetection)
+            analyticsEventProcessor.track(AcknowledgedStartOfIsolationDueToRiskyContact)
+
             resultLiveData.postValue(ConsentConfirmation)
         }
     }

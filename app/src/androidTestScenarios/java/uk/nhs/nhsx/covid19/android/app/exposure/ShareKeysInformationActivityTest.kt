@@ -2,6 +2,8 @@ package uk.nhs.nhsx.covid19.android.app.exposure
 
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.Status
+import java.time.Instant
+import kotlin.test.assertTrue
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result.Error
@@ -14,8 +16,6 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import java.time.Instant
-import kotlin.test.assertTrue
 
 class ShareKeysInformationActivityTest : EspressoTest() {
 

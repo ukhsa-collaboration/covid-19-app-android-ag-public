@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -10,7 +11,7 @@ class TestResultHandler @Inject constructor(
     @Suppress("DEPRECATION") private val testResultsProvider: TestResultsProvider,
     private val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider,
     private val relevantTestResultProvider: RelevantTestResultProvider
-) {
+) : TestResultChecker {
 
     init {
         migrateLatestTestResultProvider()
@@ -25,7 +26,8 @@ class TestResultHandler @Inject constructor(
                     it.testEndDate,
                     it.testResult,
                     testKitType = null,
-                    diagnosisKeySubmissionSupported = true
+                    diagnosisKeySubmissionSupported = true,
+                    requiresConfirmatoryTest = false
                 )
             )
             latestTestResultProvider.latestTestResult = null
@@ -48,13 +50,14 @@ class TestResultHandler @Inject constructor(
                         testResult.testEndDate,
                         testResult.testResult,
                         testKitType = null,
-                        diagnosisKeySubmissionSupported = true
+                        diagnosisKeySubmissionSupported = true,
+                        requiresConfirmatoryTest = false
                     )
                 )
             }
 
         // Acknowledged test results
-        testResults
+        val mostRelevantTestResult = testResults
             .filter { it.acknowledgedDate != null && it.testResult.toRelevantVirologyTestResult() != null }
             .map {
                 AcknowledgedTestResult(
@@ -62,10 +65,17 @@ class TestResultHandler @Inject constructor(
                     it.testEndDate,
                     it.testResult.toRelevantVirologyTestResult()!!,
                     testKitType = null,
-                    it.acknowledgedDate!!
+                    acknowledgedDate = it.acknowledgedDate!!,
+                    requiresConfirmatoryTest = false,
+                    confirmedDate = null
                 )
             }
-            .forEach { relevantTestResultProvider.updateIfRelevant(it) }
+            .sortedWith(
+                compareByDescending<AcknowledgedTestResult> { it.testResult.relevance }
+                    .thenByDescending { it.testEndDate }
+            )
+            .firstOrNull()
+        relevantTestResultProvider.storeMigratedTestResult(mostRelevantTestResult)
 
         testResultsProvider.clear()
     }
@@ -74,18 +84,28 @@ class TestResultHandler @Inject constructor(
         unacknowledgedTestResultsProvider.add(testResult)
     }
 
-    fun acknowledge(testResult: ReceivedTestResult) {
+    fun acknowledge(testResult: ReceivedTestResult, testResultStorageOperation: TestResultStorageOperation) {
         unacknowledgedTestResultsProvider.remove(testResult)
-        relevantTestResultProvider.onTestResultAcknowledged(testResult)
+        relevantTestResultProvider.onTestResultAcknowledged(testResult, testResultStorageOperation)
     }
 
-    fun hasPositiveTestResultAfter(instant: Instant): Boolean {
-        return relevantTestResultProvider.hasPositiveTestResultAfter(instant) ||
-            unacknowledgedTestResultsProvider.hasPositiveTestResultAfter(instant)
-    }
+    override fun hasTestResultMatching(predicate: (TestResult) -> Boolean): Boolean =
+        relevantTestResultProvider.hasTestResultMatching(predicate) ||
+            unacknowledgedTestResultsProvider.hasTestResultMatching(predicate)
+}
 
-    fun hasPositiveTestResultAfterOrEqual(instant: Instant): Boolean {
-        return relevantTestResultProvider.hasPositiveTestResultAfterOrEqual(instant) ||
-            unacknowledgedTestResultsProvider.hasPositiveTestResultAfterOrEqual(instant)
-    }
+interface TestResult {
+    val diagnosisKeySubmissionToken: String?
+    val testEndDate: Instant
+    val testKitType: VirologyTestKitType?
+    val requiresConfirmatoryTest: Boolean
+
+    fun isPositive(): Boolean
+    fun isConfirmed(): Boolean
+}
+
+enum class TestResultStorageOperation {
+    OVERWRITE,
+    CONFIRM,
+    IGNORE
 }

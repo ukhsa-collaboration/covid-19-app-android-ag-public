@@ -70,7 +70,7 @@ class CanClaimIsolationPaymentTest {
             )
         )
 
-        every { testResultHandler.hasPositiveTestResultAfterOrEqual(any()) } returns true
+        every { testResultHandler.hasTestResultMatching(any()) } returns true
 
         val result = testSubject()
 
@@ -89,7 +89,7 @@ class CanClaimIsolationPaymentTest {
             )
         )
 
-        every { testResultHandler.hasPositiveTestResultAfterOrEqual(any()) } returns false
+        every { testResultHandler.hasTestResultMatching(any()) } returns false
 
         val result = testSubject()
 
@@ -108,7 +108,7 @@ class CanClaimIsolationPaymentTest {
             )
         )
 
-        every { testResultHandler.hasPositiveTestResultAfterOrEqual(any()) } returns false
+        every { testResultHandler.hasTestResultMatching(any()) } returns false
 
         val result = testSubject()
 
@@ -132,7 +132,7 @@ class CanClaimIsolationPaymentTest {
             )
         )
 
-        every { testResultHandler.hasPositiveTestResultAfterOrEqual(any()) } returns false
+        every { testResultHandler.hasTestResultMatching(any()) } returns false
 
         val result = testSubject()
 
@@ -156,7 +156,7 @@ class CanClaimIsolationPaymentTest {
             )
         )
 
-        every { testResultHandler.hasPositiveTestResultAfterOrEqual(any()) } returns false
+        every { testResultHandler.hasTestResultMatching(any()) } returns false
 
         val result = testSubject()
 

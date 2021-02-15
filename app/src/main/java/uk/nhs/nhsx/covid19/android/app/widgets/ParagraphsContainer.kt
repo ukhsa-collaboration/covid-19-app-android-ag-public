@@ -9,7 +9,9 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.core.view.isVisible
+import kotlinx.android.synthetic.main.view_paragraph.view.bulletPoint
+import kotlinx.android.synthetic.main.view_paragraph.view.paragraphText
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 
@@ -20,6 +22,8 @@ class ParagraphsContainer @JvmOverloads constructor(
     defStyleRes: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
 
+    private var shouldDisplayBulletPoints = false
+
     init {
         orientation = VERTICAL
         context.theme.obtainStyledAttributes(
@@ -29,6 +33,7 @@ class ParagraphsContainer @JvmOverloads constructor(
             0
         ).apply {
             val rawText = getText(R.styleable.ParagraphsContainer_rawText)
+            shouldDisplayBulletPoints = getBoolean(R.styleable.ParagraphsContainer_showBulletPoints, false)
 
             rawText?.let {
                 setRawText(it.toString())
@@ -46,8 +51,9 @@ class ParagraphsContainer @JvmOverloads constructor(
     }
 
     private fun addParagraph(index: Int, text: String): ParagraphsContainer {
-        val view = inflateTextView()
-        view.text = text
+        val view = inflateLayout()
+        view.paragraphText.text = text
+        view.bulletPoint.isVisible = shouldDisplayBulletPoints
         addView(view)
 
         if (index > 0) {
@@ -61,9 +67,9 @@ class ParagraphsContainer @JvmOverloads constructor(
         return this
     }
 
-    private fun inflateTextView(): TextView =
+    private fun inflateLayout(): LinearLayout =
         (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
-            .inflate(R.layout.view_paragraph, this, false) as TextView
+            .inflate(R.layout.view_paragraph, this, false) as LinearLayout
 }
 
 fun ParagraphsContainer.setRawText(rawText: String, separator: String = "\n\n") =

@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright © 2020 NHSX. All rights reserved.
   -->
-
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Body1"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:lineSpacingMultiplier="1.2"
-    tools:text="Some paragraph text" />
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/bulletPoint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_bullet_point"
+        android:paddingTop="8dp"
+        android:contentDescription="@null"
+        android:paddingEnd="16dp"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/paragraphText"
+        style="@style/Body1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:lineSpacingMultiplier="1.2"
+        android:layout_weight="1"
+        tools:text="Some paragraph text" />
+</LinearLayout>

@@ -59,7 +59,7 @@
     <string name="test_ordering_failure_action">Tekrar deneyin</string>
     <string name="questionnaire_title">Sizin için geçerli olan tüm belirtileri seçin</string>
     <string name="questionnaire_no_symptom_selected">Belirtilerinizi işaretlemeli ya da \"Bu belirtilerden herhangi biri bende yok\" seçeneğini seçmelisiniz</string>
-    <string name="questionnaire_discard_symptoms_dialog_title">Herhangi bir belirtinizin olmadığını teyit edin</string>
+    <string name="questionnaire_discard_symptoms_dialog_title">Bu belirtilerden herhangi birisine sahip olmadığınızı teyit edin</string>
     <string name="questionnaire_discard_symptoms_dialog_message">Seçilen tüm belirtilerin seçimi kaldırılacaktır.</string>
     <string name="title_no_coronavirus_symptoms">Koronavirüsle enfekte olmuş olma olasılığınız düşük</string>
     <string name="you_do_not_appear_to_have_symptoms">Koronavirüs belirtileri göstermediğiniz görünüyor</string>
@@ -226,7 +226,7 @@
     <string name="about_accessibility_statement">Erişilebilirlik beyanı</string>
     <string name="test_result_no_self_isolation_description">Ancak ateşiniz yüksekse, normale dönene kadar kişisel karantinanıza devam edin</string>
     <string name="for_further_advice_visit">Daha fazla bilgi için iletişim bilgileri:</string>
-    <string name="test_result_positive_continue_self_isolation_title_1">Kişisel karantinaya devam edilecek süre:</string>
+    <string name="test_result_positive_continue_self_isolation_title_1">Kişisel karantinaya devam edilecek süre</string>
     <string name="test_result_positive_continue_self_isolate_explanation">Uygulamanın kişisel karantina günlerini nasıl hesapladığını anlamak için aşağıdaki SSS (sıkça sorulan sorular) bağlantısını ziyaret edin\n\nTest sonucunuz testin yapıldığı anda sizde virüs olduğunu göstermektedir. E-posta, SMS mesajı ya da telefon yoluyla size daha fazla bilgi gönderildi. Eğer 18 yaşın altındaysanız bu mesajı  güvendiğiniz bir yetişkine göstermeniz tavsiye edilir. Daha fazla tavsiye için lütfen nhs.uk sitesini ziyaret edin.</string>
     <string name="back_to_home">Ana sayfaya dön</string>
     <string name="about_delete_all_data">Tüm verilerimi sil</string>
@@ -430,4 +430,14 @@
     <string name="about_pcr">LAB_RESULT</string>
     <string name="about_test_kit_type">Test kiti tipi</string>
     <string name="about_test_result">Sonuç</string>
+    <string name="state_test_positive_and_book_test_info">Koronavirüs test sonucunuz pozitif</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">Uygulamanın kişisel karantina günlerini nasıl hesapladığını anlamak için aşağıdaki SSS (sıkça sorulan sorular) bağlantısını ziyaret edin</string>
+    <string name="test_result_positive_self_isolate_and_book_test_explanation_1">Uygulamanın kişisel karantina günlerini nasıl hesapladığını anlamak için SSS (sıkça sorulan sorular) bölümünü ziyaret edin\n\nHızlı bir sürüntü testi yaptırdığınızdan, şimdi bu sonucun doğrulanması için laboratuvara gönderilmek üzere farklı türde test daha yaptırmalısınız.\n\nBu zaman zarfında kendinizi, birlikte yaşadığınız diğer tüm bireylerle birlikte derhal karantinaya almalısınız.</string>
+    <string name="test_result_positive_self_isolate_and_book_test_title_3">ve bir takip testi için randevu alın</string>
+    <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
+    <string name="about_test_follow_up">Takip testi</string>
+    <string name="about_test_follow_up_state_complete">Tamamlanmış</string>
+    <string name="about_test_follow_up_state_not_required">Gerekmiyor</string>
+    <string name="about_test_follow_up_state_pending">Beklemede</string>
+    <string name="book_follow_up_test">Bir takip testi için randevu alın</string>
 </resources>

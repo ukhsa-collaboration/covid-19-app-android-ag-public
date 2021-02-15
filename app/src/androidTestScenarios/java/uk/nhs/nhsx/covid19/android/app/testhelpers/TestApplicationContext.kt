@@ -20,6 +20,12 @@ import androidx.test.uiautomator.UiDevice
 import androidx.work.WorkManager
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.tinder.StateMachine
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.util.Locale
+import java.util.concurrent.atomic.AtomicReference
 import uk.nhs.covid19.config.Configurations
 import uk.nhs.covid19.config.SignatureKey
 import uk.nhs.nhsx.covid19.android.app.ExposureApplication
@@ -54,12 +60,6 @@ import uk.nhs.nhsx.covid19.android.app.util.EncryptedFileInfo
 import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import uk.nhs.nhsx.covid19.android.app.util.getPrivateProperty
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.util.Locale
-import java.util.concurrent.atomic.AtomicReference
 
 const val AWAIT_AT_MOST_SECONDS: Long = 10
 
@@ -289,10 +289,6 @@ class TestApplicationContext {
 
     fun setAppAvailability(appAvailability: AppAvailabilityResponse) {
         component.getAppAvailabilityProvider().appAvailability = appAvailability
-    }
-
-    fun setKeysSubmissionApiShouldSucceed(shouldSucceed: Boolean) {
-        keysSubmissionApi.shouldSucceed = shouldSucceed
     }
 
     fun setIgnoringBatteryOptimizations(ignoringBatteryOptimizations: Boolean) {

@@ -59,7 +59,7 @@
     <string name="test_ordering_failure_action">Ceisiwch eto</string>
     <string name="questionnaire_title">Dewiswch gynifer o’r symptomau ag sy’n berthnasol i chi</string>
     <string name="questionnaire_no_symptom_selected">Mae angen i chi ddewis symptomau neu ddewis “Nid oes gennyf unrhyw un o\'r symptomau hyn”</string>
-    <string name="questionnaire_discard_symptoms_dialog_title">Cadarnhewch nad oes gennych symptomau</string>
+    <string name="questionnaire_discard_symptoms_dialog_title">Rhaid cadarnhau nad oes yr un o\'r symptomau hyn gennych</string>
     <string name="questionnaire_discard_symptoms_dialog_message">Bydd unrhyw symptomau a ddewiswyd yn cael eu dad-ddewis.</string>
     <string name="title_no_coronavirus_symptoms">Mae’n annhebygol fod y coronafeirws arnoch</string>
     <string name="you_do_not_appear_to_have_symptoms">Nid yw’n ymddangos bod gennych symptomau coronafeirws.</string>
@@ -446,4 +446,14 @@
     <string name="about_pcr">LAB_RESULT</string>
     <string name="about_test_kit_type">Math o becyn prawf</string>
     <string name="about_test_result">Canlyniad</string>
+    <string name="state_test_positive_and_book_test_info">Mae canlyniad eich prawf coronafirws yn bositif</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">Er mwyn deall sut mae\'r ap yn cyfrifo diwrnodau hunan-ynysu, ewch i\'r rhestr o gwestiynau a ofynnir yn aml.</string>
+    <string name="test_result_positive_self_isolate_and_book_test_explanation_1">Er mwyn deall sut mae\'r ap yn cyfrifo diwrnodau hunan-ynysu, ewch i\'r rhestr o gwestiynau a ofynnir yn aml.\n\nOherwydd eich bod wedi cael prawf swab cyflym, mae angen i chi gael math arall o brawf nawr a fydd yn cael ei anfon i\'r labordy i ddilysu\'r canlyniad.\n\nYn y cyfamser rhaid i chi ac unrhyw un arall sy\'n byw gyda chi hunan-ynysu ar unwaith.</string>
+    <string name="test_result_positive_self_isolate_and_book_test_title_3">a bwcio prawf dilynol.</string>
+    <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
+    <string name="about_test_follow_up">Prawf dilynol</string>
+    <string name="about_test_follow_up_state_complete">Wedi\'i gwblhau</string>
+    <string name="about_test_follow_up_state_not_required">Nid yw\'n ofynnol</string>
+    <string name="about_test_follow_up_state_pending">I ddod</string>
+    <string name="book_follow_up_test">Archebwch brawf dilynol</string>
 </resources>

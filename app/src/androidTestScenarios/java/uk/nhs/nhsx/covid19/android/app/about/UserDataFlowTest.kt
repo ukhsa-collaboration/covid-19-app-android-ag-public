@@ -1,5 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.about
 
+import java.time.Instant
+import java.time.ZoneOffset
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.report.notReported
@@ -10,8 +12,6 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MoreAboutAppRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.UserDataRobot
-import java.time.Instant
-import java.time.ZoneOffset
 
 class UserDataFlowTest : EspressoTest() {
 

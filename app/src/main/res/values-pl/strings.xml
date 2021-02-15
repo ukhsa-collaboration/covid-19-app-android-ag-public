@@ -170,7 +170,7 @@
     <string name="questionnaire_description">Jeżeli nie wystąpiły u Ciebie żadne z poniższych objawów, nie musisz teraz nic robić. Jeżeli wystąpią u Ciebie którekolwiek z poniższych objawów, zaznacz je w aplikacji i natychmiast zamów bezpłatny test.</string>
     <string name="questionnaire_error_description">Zanim spróbujesz ponownie, sprawdź, czy ustawienia dotyczące transmisji danych w Twoim telefonie są włączone, sprawdź połączenie Wi-Fi (jeżeli z niego korzystasz) i upewnij się, że tryb samolotowy jest wyłączony.</string>
     <string name="questionnaire_no_symptoms">Nie wystąpiły u mnie żadne z podanych objawów</string>
-    <string name="questionnaire_discard_symptoms_dialog_title">Potwierdź, że nie wystąpiły u Ciebie żadne objawy.</string>
+    <string name="questionnaire_discard_symptoms_dialog_title">Proszę potwierdzić, że nie masz żadnego z tych objawów</string>
     <string name="questionnaire_discard_symptoms_dialog_message">Wszystkie zaznaczone objawy zostaną odznaczone.</string>
     <string name="select_symptoms">Wybierz objawy</string>
     <string name="notification_text_risky_venue">Dotknij tutaj, aby zapoznać się ze szczegółowymi informacjami</string>
@@ -446,4 +446,14 @@
     <string name="about_pcr">LAB_RESULT</string>
     <string name="about_test_kit_type">Typ zestawu testowego</string>
     <string name="about_test_result">Wynik</string>
+    <string name="state_test_positive_and_book_test_info">Wynik Twojego testu na koronawirusa jest pozytywny.</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, kliknij w poniższy link do listy najczęściej zadawanych pytań (FAQ).</string>
+    <string name="test_result_positive_self_isolate_and_book_test_explanation_1">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, zapoznaj się z najczęściej zadawanymi pytaniami (FAQ).\n\nPonieważ miałeś(-aś) szybki test wymazowy, musisz teraz poddać się innemu rodzajowi testu, który zostanie wysłany do laboratorium w celu weryfikacji wyniku.\n\nW międzyczasie musisz natychmiast odizolować się wraz ze swoimi domownikami.</string>
+    <string name="test_result_positive_self_isolate_and_book_test_title_3">oraz zamówić test kontrolny</string>
+    <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
+    <string name="about_test_follow_up">Test kontrolny</string>
+    <string name="about_test_follow_up_state_complete">Zakończony</string>
+    <string name="about_test_follow_up_state_not_required">Nie wymagany</string>
+    <string name="about_test_follow_up_state_pending">Oczekujący</string>
+    <string name="book_follow_up_test">Zamów test kontrolny</string>
 </resources>

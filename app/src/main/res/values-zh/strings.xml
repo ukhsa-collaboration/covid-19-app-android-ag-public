@@ -59,7 +59,7 @@
     <string name="test_ordering_failure_action">再试一次</string>
     <string name="questionnaire_title">选择适合您的所有症状</string>
     <string name="questionnaire_no_symptom_selected">您需要选择症状或选择“我没有任何这些症状”</string>
-    <string name="questionnaire_discard_symptoms_dialog_title">确认您没有任何症状</string>
+    <string name="questionnaire_discard_symptoms_dialog_title">确认您没有出现这些症状</string>
     <string name="questionnaire_discard_symptoms_dialog_message">任何选定的症状都会被取消。</string>
     <string name="title_no_coronavirus_symptoms">您不太可能有冠状病毒</string>
     <string name="you_do_not_appear_to_have_symptoms">您似乎没有冠状病毒感染症状</string>
@@ -426,4 +426,14 @@
     <string name="about_pcr">LAB_RESULT</string>
     <string name="about_test_kit_type">检测试剂盒类型</string>
     <string name="about_test_result">结果</string>
+    <string name="state_test_positive_and_book_test_info">您的冠状病毒测试结果为阳性</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">若要了解应用程序如何计算自我隔离天数，请点击以下\'常见问题解答\'链接。</string>
+    <string name="test_result_positive_self_isolate_and_book_test_explanation_1">若要了解应用程序如何计算自我隔离天数，请访问\'常见问题解答\'。\n\n您之前做的是快速拭子检测，因此，您现在需要进行另一种检测，并将检测样本送到实验室去进行化验。\n\n同时，您同与您一起生活的任何人员必须立即自行隔离。</string>
+    <string name="test_result_positive_self_isolate_and_book_test_title_3">并预约后续检测</string>
+    <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
+    <string name="about_test_follow_up">后续检测</string>
+    <string name="about_test_follow_up_state_complete">完成</string>
+    <string name="about_test_follow_up_state_not_required">不需要</string>
+    <string name="about_test_follow_up_state_pending">待定</string>
+    <string name="book_follow_up_test">预定后续检测</string>
 </resources>

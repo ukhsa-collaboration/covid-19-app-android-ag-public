@@ -1,5 +1,9 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
+import androidx.test.internal.runner.junit4.statement.UiThreadStatement
+import java.time.Instant
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit.DAYS
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result
 import uk.nhs.nhsx.covid19.android.app.exposure.setExposureNotificationResolutionRequired
@@ -20,9 +24,6 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QrScannerRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SettingsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
-import java.time.Instant
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit.DAYS
 
 class StatusActivityTest : EspressoTest() {
 
@@ -282,7 +283,9 @@ class StatusActivityTest : EspressoTest() {
 
         waitFor { statusRobot.checkIsolationPaymentButtonIsNotDisplayed() }
 
-        testAppContext.getIsolationPaymentTokenStateProvider().tokenState = Token("token")
+        UiThreadStatement.runOnUiThread {
+            testAppContext.getIsolationPaymentTokenStateProvider().tokenState = Token("token")
+        }
 
         waitFor { statusRobot.checkIsolationPaymentButtonIsDisplayed() }
     }
@@ -410,7 +413,7 @@ class StatusActivityTest : EspressoTest() {
         startTestActivity<StatusActivity>()
 
         // This is necessary because ExposureApplication does not invoke the download tasks when onboarding is not completed
-        testAppContext.getPeriodicTasks().schedule()
+        runBackgroundTasks()
 
         waitFor { statusRobot.checkAreaRiskViewIsDisplayed() }
 
@@ -421,5 +424,84 @@ class StatusActivityTest : EspressoTest() {
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
         statusRobot.checkAreaRiskViewIsEnabled()
+    }
+
+    @Test
+    fun startStatusActivity_whenUserIsContactCaseOnly_reportSymptomsButtonShouldBeDisplayed() = notReported {
+        testAppContext.setState(
+            Isolation(
+                isolationStart = Instant.now().minus(20, DAYS),
+                isolationConfiguration = DurationDays(),
+                contactCase = ContactCase(
+                    startDate = Instant.now().minus(10, DAYS),
+                    notificationDate = Instant.now().minus(2, DAYS),
+                    expiryDate = LocalDate.now().plusDays(30)
+                )
+            )
+        )
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        waitFor { statusRobot.checkReportSymptomsIsDisplayed() }
+    }
+
+    @Test
+    fun startStatusActivity_whenUserIsNotInIsolation_reportSymptomsButtonShouldBeDisplayed() = notReported {
+        testAppContext.setState(Default())
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        waitFor { statusRobot.checkReportSymptomsIsDisplayed() }
+    }
+
+    @Test
+    fun startStatusActivity_whenUserIsIndexCaseOnly_reportSymptomsButtonShouldNotBeDisplayed() = notReported {
+        testAppContext.setState(
+            state = Isolation(
+                isolationStart = Instant.now(),
+                isolationConfiguration = DurationDays(),
+                indexCase = IndexCase(
+                    symptomsOnsetDate = LocalDate.now().minusDays(3),
+                    expiryDate = LocalDate.now().plus(7, DAYS),
+                    selfAssessment = false
+                )
+            )
+        )
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        waitFor { statusRobot.checkReportSymptomsIsNotDisplayed() }
+    }
+
+    @Test
+    fun startStatusActivity_whenUserIsIndexAndContactCase_reportSymptomsButtonShouldNotBeDisplayed() = notReported {
+        testAppContext.setState(
+            state = Isolation(
+                isolationStart = Instant.now(),
+                isolationConfiguration = DurationDays(),
+                indexCase = IndexCase(
+                    symptomsOnsetDate = LocalDate.now().minusDays(3),
+                    expiryDate = LocalDate.now().plus(7, DAYS),
+                    selfAssessment = false
+                ),
+                contactCase = ContactCase(
+                    startDate = Instant.now().minus(10, DAYS),
+                    notificationDate = Instant.now().minus(2, DAYS),
+                    expiryDate = LocalDate.now().plusDays(30)
+                )
+            )
+        )
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        waitFor { statusRobot.checkReportSymptomsIsNotDisplayed() }
     }
 }

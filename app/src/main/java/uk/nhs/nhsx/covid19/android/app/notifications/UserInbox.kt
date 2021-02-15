@@ -62,9 +62,7 @@ class UserInbox @Inject constructor(
         if (unacknowledgedTestResultsProvider.testResults.isNotEmpty()) {
             return ShowTestResult
         }
-        if (shouldShowEncounterDetectionActivityProvider.value != null &&
-            shouldShowEncounterDetectionActivityProvider.value == true
-        ) {
+        if (shouldShowEncounterDetectionActivityProvider.value == true) {
             return ShowEncounterDetection
         }
         val venueId = riskyVenueIdProvider.value

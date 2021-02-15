@@ -2,6 +2,12 @@ package uk.nhs.nhsx.covid19.android.app.notifications
 
 import androidx.preference.PreferenceManager
 import androidx.test.platform.app.InstrumentationRegistry
+import java.time.Instant
+import java.time.LocalDate
+import java.time.Month.AUGUST
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -14,12 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import java.time.Instant
-import java.time.LocalDate
-import java.time.Month.AUGUST
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OVERWRITE
 
 class UserInboxIntegrationTest : EspressoTest() {
 
@@ -82,7 +83,7 @@ class UserInboxIntegrationTest : EspressoTest() {
 
         val secondInboxItem = testSubject.fetchInbox()
         assertThat(secondInboxItem).isInstanceOf(ShowTestResult::class.java)
-        testAppContext.getTestResultHandler().acknowledge(testResult)
+        testAppContext.getTestResultHandler().acknowledge(testResult, OVERWRITE)
 
         val thirdInboxItem = testSubject.fetchInbox()
         assertThat(thirdInboxItem).isInstanceOf(ShowEncounterDetection::class.java)

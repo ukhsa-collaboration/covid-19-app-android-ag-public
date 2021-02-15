@@ -1,10 +1,11 @@
 package uk.nhs.nhsx.covid19.android.app.remote
 
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenue
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyWindow
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 class MockRiskyVenuesApi : RiskyVenuesApi {
 
@@ -20,5 +21,6 @@ class MockRiskyVenuesApi : RiskyVenuesApi {
         )
     )
 
-    override suspend fun getListOfRiskyVenues() = riskyVenuesResponse
+    override suspend fun getListOfRiskyVenues(): RiskyVenuesResponse =
+        MockApiModule.behaviour.invoke { riskyVenuesResponse }
 }

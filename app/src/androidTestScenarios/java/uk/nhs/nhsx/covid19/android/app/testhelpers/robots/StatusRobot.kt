@@ -14,12 +14,16 @@ import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.R.id
 
 class StatusRobot {
 
     fun checkActivityIsDisplayed() {
         onView(withId(R.id.statusContainer))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkReportSymptomsIsDisplayed() {
+        onView(withId(R.id.optionReportSymptoms))
             .check(matches(isDisplayed()))
     }
 
@@ -169,7 +173,7 @@ class StatusRobot {
     fun checkVenueOptionIsTranslatedTo(translatedWord: String) {
         onView(
             Matchers.allOf(
-                withId(id.mainActionsContainer),
+                withId(R.id.mainActionsContainer),
                 ViewMatchers.hasDescendant(withText(translatedWord))
             )
         ).check(matches(isDisplayed()))

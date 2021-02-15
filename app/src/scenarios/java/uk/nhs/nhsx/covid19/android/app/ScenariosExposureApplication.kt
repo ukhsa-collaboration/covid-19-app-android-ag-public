@@ -46,7 +46,7 @@ class ScenariosExposureApplication : ExposureApplication() {
             .coerceIn(0, environments.size - 1)
         val useMockedExposureNotifications =
             debugSharedPreferences.getBoolean(USE_MOCKED_EXPOSURE_NOTIFICATION, false)
-        val useMockNetwork = selectedEnvironmentIndex == 0
+        val useMockNetwork = selectedEnvironmentIndex == mockEnvironmentIndex
         setApplicationComponent(useMockNetwork, useMockedExposureNotifications)
     }
 
@@ -61,6 +61,9 @@ class ScenariosExposureApplication : ExposureApplication() {
         addAll(Configurations.allConfigs)
         add(production)
     }.toList()
+
+    val mockEnvironmentIndex: Int
+        get() = environments.indexOf(environments.first { it.name == "Mock" })
 
     private fun setApplicationComponent(
         useMockNetwork: Boolean,

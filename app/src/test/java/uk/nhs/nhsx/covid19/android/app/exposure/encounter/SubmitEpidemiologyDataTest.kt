@@ -56,12 +56,26 @@ class SubmitEpidemiologyDataTest {
 
     private val exposureWindowRequest = EpidemiologyRequest(
         metadata = metaData,
-        events = listOf(epidemiologyEvent.toEpidemiologyEventWithType(EpidemiologyEventType.EXPOSURE_WINDOW, null))
+        events = listOf(
+            epidemiologyEvent.toEpidemiologyEventWithType(
+                EpidemiologyEventType.EXPOSURE_WINDOW,
+                eventVersion = 1,
+                testKitType = null,
+                requiresConfirmatoryTest = null
+            )
+        )
     )
 
     private val exposureWindowRequestWithPositiveTest = EpidemiologyRequest(
         metadata = metaData,
-        events = listOf(epidemiologyEvent.toEpidemiologyEventWithType(EpidemiologyEventType.EXPOSURE_WINDOW_POSITIVE_TEST, LAB_RESULT))
+        events = listOf(
+            epidemiologyEvent.toEpidemiologyEventWithType(
+                EpidemiologyEventType.EXPOSURE_WINDOW_POSITIVE_TEST,
+                eventVersion = 2,
+                testKitType = LAB_RESULT,
+                requiresConfirmatoryTest = true
+            )
+        )
     )
 
     @Before
@@ -77,8 +91,12 @@ class SubmitEpidemiologyDataTest {
 
             testSubject.submit(epidemiologyEvents)
 
-            coVerify(exactly = 1) { mockEpidemiologyDataApi.submitEpidemiologyData(exposureWindowRequest) }
-            verify(exactly = 1) { submitFakeExposureWindows(EXPOSURE_WINDOW, epidemiologyEvents.size) }
+            coVerify(exactly = 1) {
+                mockEpidemiologyDataApi.submitEpidemiologyData(exposureWindowRequest)
+            }
+            verify(exactly = 1) {
+                submitFakeExposureWindows(EXPOSURE_WINDOW, epidemiologyEvents.size)
+            }
         }
 
     @Test
@@ -86,10 +104,18 @@ class SubmitEpidemiologyDataTest {
         testCoroutineScope.runBlockingTest {
             val epidemiologyEvents = listOf(epidemiologyEvent)
 
-            testSubject.submitAfterPositiveTest(epidemiologyEvents, LAB_RESULT)
+            testSubject.submitAfterPositiveTest(
+                epidemiologyEvents,
+                LAB_RESULT,
+                requiresConfirmatoryTest = true
+            )
 
-            coVerify(exactly = 1) { mockEpidemiologyDataApi.submitEpidemiologyData(exposureWindowRequestWithPositiveTest) }
-            verify(exactly = 1) { submitFakeExposureWindows(EXPOSURE_WINDOW_AFTER_POSITIVE, epidemiologyEvents.size) }
+            coVerify(exactly = 1) {
+                mockEpidemiologyDataApi.submitEpidemiologyData(exposureWindowRequestWithPositiveTest)
+            }
+            verify(exactly = 1) {
+                submitFakeExposureWindows(EXPOSURE_WINDOW_AFTER_POSITIVE, epidemiologyEvents.size)
+            }
         }
 
     @Test
@@ -117,7 +143,11 @@ class SubmitEpidemiologyDataTest {
     @Test
     fun `when test positive correct fake call is made with exposure window after positive`() =
         testCoroutineScope.runBlockingTest {
-            testSubject.submitAfterPositiveTest(listOf(), testKitType = null)
+            testSubject.submitAfterPositiveTest(
+                listOf(),
+                testKitType = null,
+                requiresConfirmatoryTest = null
+            )
 
             coVerify(exactly = 0) { mockEpidemiologyDataApi.submitEpidemiologyData(any()) }
             verify { submitFakeExposureWindows(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }

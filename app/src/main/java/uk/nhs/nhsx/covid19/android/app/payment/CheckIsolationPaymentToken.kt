@@ -1,5 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.payment
 
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -15,8 +17,6 @@ import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Unreso
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationPaymentApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationPaymentCreateTokenRequest
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class CheckIsolationPaymentToken @Inject constructor(

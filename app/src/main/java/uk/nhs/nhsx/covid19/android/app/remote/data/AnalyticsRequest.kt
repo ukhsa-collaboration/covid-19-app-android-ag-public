@@ -53,6 +53,7 @@ data class Metrics(
     var receivedVoidLFDTestResultViaPolling: Int = 0,
     var receivedPositiveLFDTestResultViaPolling: Int = 0,
     var receivedNegativeLFDTestResultViaPolling: Int = 0,
+    var receivedUnconfirmedPositiveTestResult: Int = 0,
     var runningNormallyBackgroundTick: Int = 0,
     var totalBackgroundTasks: Int = 0,
     var hasSelfDiagnosedBackgroundTick: Int = 0,
@@ -61,6 +62,7 @@ data class Metrics(
     var isIsolatingForSelfDiagnosedBackgroundTick: Int = 0,
     var isIsolatingForTestedPositiveBackgroundTick: Int = 0,
     var isIsolatingForTestedLFDPositiveBackgroundTick: Int = 0,
+    var isIsolatingForUnconfirmedTestBackgroundTick: Int = 0,
     var isIsolatingForHadRiskyContactBackgroundTick: Int = 0,
     var receivedRiskyContactNotification: Int = 0,
     var startedIsolation: Int = 0,
@@ -68,6 +70,10 @@ data class Metrics(
     var haveActiveIpcTokenBackgroundTick: Int = 0,
     var selectedIsolationPaymentsButton: Int = 0,
     var launchedIsolationPaymentsApplication: Int = 0,
+    var launchedTestOrdering: Int = 0,
     var totalExposureWindowsNotConsideredRisky: Int = 0,
-    var totalExposureWindowsConsideredRisky: Int = 0
+    var totalExposureWindowsConsideredRisky: Int = 0,
+    var acknowledgedStartOfIsolationDueToRiskyContact: Int = 0,
+    var hasRiskyContactNotificationsEnabledBackgroundTick: Int = 0,
+    var totalRiskyContactReminderNotifications: Int = 0
 )

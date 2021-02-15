@@ -12,8 +12,10 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.BackgroundTaskCompletion
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.Event
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.ExposureWindowMatched
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.UpdateNetworkStats
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
@@ -23,6 +25,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSIT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CODE_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_ACTIVE_IPC_TOKEN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_CONTACT_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RISKY_CONTACT_REMINDER_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_ISOLATION_PAYMENTS_BUTTON
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.VOID_RESULT_RECEIVED
@@ -34,8 +37,8 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsPayload
 import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsWindow
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metadata
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -164,6 +167,14 @@ class GroupAnalyticsEventsTest {
     }
 
     @Test
+    fun `add acknowledgedStartOfIsolationDueToRiskyContact for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT),
+            Metrics().copy(acknowledgedStartOfIsolationDueToRiskyContact = expectedLogEventCount)
+        )
+    }
+
+    @Test
     fun `add completedQuestionnaireAndStartedIsolation for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
@@ -182,6 +193,14 @@ class GroupAnalyticsEventsTest {
         }
 
     @Test
+    fun `add totalRiskyContactReminderNotifications for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(RISKY_CONTACT_REMINDER_NOTIFICATION),
+            Metrics().copy(totalRiskyContactReminderNotifications = expectedLogEventCount)
+        )
+    }
+
+    @Test
     fun `add cumulativeDownloadBytes for events in same analytics window`() = runBlocking {
         `test aggregation of analytics metrics`(
             UpdateNetworkStats(downloadedBytes = 25, uploadedBytes = null),
@@ -194,6 +213,22 @@ class GroupAnalyticsEventsTest {
         `test aggregation of analytics metrics`(
             UpdateNetworkStats(downloadedBytes = null, uploadedBytes = 15),
             Metrics().copy(cumulativeUploadBytes = 135)
+        )
+    }
+
+    @Test
+    fun `add totalExposureWindowsConsideredRisky for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            ExposureWindowMatched(totalRiskyExposures = 4, totalNonRiskyExposures = 0),
+            Metrics().copy(totalExposureWindowsConsideredRisky = 36)
+        )
+    }
+
+    @Test
+    fun `add totalExposureWindowsNotConsideredRisky for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            ExposureWindowMatched(totalRiskyExposures = 0, totalNonRiskyExposures = 5),
+            Metrics().copy(totalExposureWindowsNotConsideredRisky = 45)
         )
     }
 
@@ -344,7 +379,7 @@ class GroupAnalyticsEventsTest {
         }
 
     @Test
-    fun `add receivedVoidAssistedLFDTestResultViaPolling for events in same analytics window`() =
+    fun `add receivedVoidLFDTestResultViaPolling on assisted test for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
                 ResultReceived(VOID, RAPID_RESULT, INSIDE_APP),
@@ -353,7 +388,7 @@ class GroupAnalyticsEventsTest {
         }
 
     @Test
-    fun `add receivedVoidUnassistedLFDTestResultViaPolling for events in same analytics window`() =
+    fun `add receivedVoidLFDTestResultViaPolling on unassisted test for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
                 ResultReceived(VOID, RAPID_SELF_REPORTED, INSIDE_APP),
@@ -362,7 +397,7 @@ class GroupAnalyticsEventsTest {
         }
 
     @Test
-    fun `add receivedPositiveAssistedLFDTestResultViaPolling for events in same analytics window`() =
+    fun `add receivedPositiveLFDTestResultViaPolling on assisted test for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
                 ResultReceived(POSITIVE, RAPID_RESULT, INSIDE_APP),
@@ -371,7 +406,7 @@ class GroupAnalyticsEventsTest {
         }
 
     @Test
-    fun `add receivedPositiveUnassistedLFDTestResultViaPolling for events in same analytics window`() =
+    fun `add receivedPositiveLFDTestResultViaPolling on unassisted test for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
                 ResultReceived(POSITIVE, RAPID_SELF_REPORTED, INSIDE_APP),
@@ -380,7 +415,7 @@ class GroupAnalyticsEventsTest {
         }
 
     @Test
-    fun `add receivedNegativeAssistedLFDTestResultViaPolling for events in same analytics window`() =
+    fun `add receivedNegativeLFDTestResultViaPolling on assisted test for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
                 ResultReceived(NEGATIVE, RAPID_RESULT, INSIDE_APP),
@@ -389,7 +424,7 @@ class GroupAnalyticsEventsTest {
         }
 
     @Test
-    fun `add receivedNegativeUnassistedLFDTestResultViaPolling for events in same analytics window`() =
+    fun `add receivedNegativeLFDTestResultViaPolling on unassisted test for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
                 ResultReceived(NEGATIVE, RAPID_SELF_REPORTED, INSIDE_APP),
@@ -398,7 +433,7 @@ class GroupAnalyticsEventsTest {
         }
 
     @Test
-    fun `add receivedVoidAssistedLFDTestResultEnteredManually for events in same analytics window`() = runBlocking {
+    fun `add receivedVoidLFDTestResultEnteredManually on assisted test for events in same analytics window`() = runBlocking {
         `test aggregation of analytics metrics`(
             ResultReceived(VOID, RAPID_RESULT, OUTSIDE_APP),
             Metrics().copy(receivedVoidLFDTestResultEnteredManually = expectedLogEventCount)
@@ -406,7 +441,7 @@ class GroupAnalyticsEventsTest {
     }
 
     @Test
-    fun `add receivedVoidUnassistedLFDTestResultEnteredManually for events in same analytics window`() = runBlocking {
+    fun `add receivedVoidLFDTestResultEnteredManually on unassisted test for events in same analytics window`() = runBlocking {
         `test aggregation of analytics metrics`(
             ResultReceived(VOID, RAPID_SELF_REPORTED, OUTSIDE_APP),
             Metrics().copy(receivedVoidLFDTestResultEnteredManually = expectedLogEventCount)
@@ -414,7 +449,7 @@ class GroupAnalyticsEventsTest {
     }
 
     @Test
-    fun `add receivedPositiveAssistedLFDTestResultEnteredManually for events in same analytics window`() =
+    fun `add receivedPositiveLFDTestResultEnteredManually on assisted test for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
                 ResultReceived(POSITIVE, RAPID_RESULT, OUTSIDE_APP),
@@ -423,7 +458,7 @@ class GroupAnalyticsEventsTest {
         }
 
     @Test
-    fun `add receivedPositiveUnassistedLFDTestResultEnteredManually for events in same analytics window`() =
+    fun `add receivedPositiveLFDTestResultEnteredManually on unassisted test for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
                 ResultReceived(POSITIVE, RAPID_SELF_REPORTED, OUTSIDE_APP),
@@ -432,7 +467,7 @@ class GroupAnalyticsEventsTest {
         }
 
     @Test
-    fun `add receivedNegativeAssistedLFDTestResultEnteredManually for events in same analytics window`() =
+    fun `add receivedNegativeLFDTestResultEnteredManually on assisted test for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
                 ResultReceived(NEGATIVE, RAPID_RESULT, OUTSIDE_APP),
@@ -441,7 +476,7 @@ class GroupAnalyticsEventsTest {
         }
 
     @Test
-    fun `add receivedNegativeUnassistedLFDTestResultEnteredManually for events in same analytics window`() =
+    fun `add receivedNegativeLFDTestResultEnteredManually on unassisted test for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
                 ResultReceived(NEGATIVE, RAPID_SELF_REPORTED, OUTSIDE_APP),
@@ -490,6 +525,16 @@ class GroupAnalyticsEventsTest {
                 BackgroundTaskTicks()
             ),
             totalBackgroundTasksMetric.copy()
+        )
+    }
+
+    @Test
+    fun `add hasRiskyContactNotificationsEnabledBackgroundTick for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            BackgroundTaskCompletion(
+                BackgroundTaskTicks(hasRiskyContactNotificationsEnabledBackgroundTick = true)
+            ),
+            totalBackgroundTasksMetric.copy(hasRiskyContactNotificationsEnabledBackgroundTick = expectedLogEventCount)
         )
     }
 

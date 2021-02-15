@@ -3,6 +3,9 @@ package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import java.io.IOException
+import java.time.Instant
+import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -16,8 +19,9 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeRequest
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -27,10 +31,6 @@ import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValid
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultErrorType.INVALID
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultErrorType.NO_CONNECTION
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultErrorType.UNEXPECTED
-import java.io.IOException
-import java.time.Instant
-import kotlin.test.assertEquals
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 
 class CtaTokenValidatorTest {
 
@@ -271,7 +271,8 @@ class CtaTokenValidatorTest {
                 Instant.now(),
                 testResult,
                 testKitType,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 

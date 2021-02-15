@@ -5,6 +5,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
+import java.time.Clock
+import javax.inject.Named
+import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import uk.nhs.covid19.config.SignatureKey
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationChecker
@@ -12,7 +17,6 @@ import uk.nhs.nhsx.covid19.android.app.common.AppInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWorker
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWorkerScheduler
-import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.packagemanager.PackageManager
 import uk.nhs.nhsx.covid19.android.app.permissions.PermissionsManager
 import uk.nhs.nhsx.covid19.android.app.qrcode.BarcodeDetectorBuilder
@@ -21,9 +25,6 @@ import uk.nhs.nhsx.covid19.android.app.util.AndroidBase64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedFileInfo
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.DeviceDetection
-import java.time.Clock
-import javax.inject.Named
-import javax.inject.Singleton
 
 @Module
 class AppModule(
@@ -70,11 +71,6 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun provideNotificationProvider(): NotificationProvider =
-        NotificationProvider(applicationContext)
-
-    @Provides
-    @Singleton
     fun provideBase64Decoder(): Base64Decoder = AndroidBase64Decoder()
 
     @Provides
@@ -113,11 +109,17 @@ class AppModule(
     fun provideClock(): Clock = clock
 
     @Provides
+    @Singleton
+    @Named(GLOBAL_SCOPE)
+    fun provideCoroutineScope(): CoroutineScope = GlobalScope
+
+    @Provides
     fun provideExposureNotificationWorkerScheduler(): ExposureNotificationWorkerScheduler =
         ExposureNotificationWorker.Companion
 
     companion object {
         const val BLUETOOTH_STATE_NAME = "BLUETOOTH_STATE"
         const val LOCATION_STATE_NAME = "LOCATION_STATE"
+        const val GLOBAL_SCOPE = "GLOBAL_SCOPE"
     }
 }

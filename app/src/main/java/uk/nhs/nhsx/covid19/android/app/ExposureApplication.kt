@@ -9,9 +9,11 @@ import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
 import androidx.work.Configuration
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.WorkManager
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import com.jeroenmols.featureflag.framework.TestSetting
+import java.time.Clock
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 import uk.nhs.covid19.config.production
@@ -33,7 +35,6 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
 import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
 import uk.nhs.nhsx.covid19.android.app.util.RetryMechanism
-import java.time.Clock
 
 open class ExposureApplication : Application(), Configuration.Provider {
     lateinit var appComponent: ApplicationComponent
@@ -53,7 +54,10 @@ open class ExposureApplication : Application(), Configuration.Provider {
         RuntimeBehavior.initialize(this, isTestBuild)
 
         initializeWorkManager()
-        startPeriodicTasks()
+        if (!isRunningTest) {
+            startPeriodicTasks()
+        }
+        appComponent.provideExposureNotificationRetryAlarmController().onAppCreated()
 
         if (RuntimeBehavior.isFeatureEnabled(TestSetting.STRICT_MODE)) {
             StrictMode.setThreadPolicy(
@@ -73,7 +77,7 @@ open class ExposureApplication : Application(), Configuration.Provider {
     }
 
     protected fun startPeriodicTasks() {
-        appComponent.providePeriodicTasks().schedule()
+        appComponent.providePeriodicTasks().schedule(policy = ExistingPeriodicWorkPolicy.KEEP)
     }
 
     private fun initializeWorkManager() {
@@ -136,6 +140,15 @@ open class ExposureApplication : Application(), Configuration.Provider {
     companion object {
         private const val WORK_MANAGER_SCHEDULER_LIMIT = 50
         val isTestBuild = BuildConfig.DEBUG || BuildConfig.FLAVOR == "scenarios"
+    }
+
+    private val isRunningTest: Boolean by lazy {
+        try {
+            Class.forName("androidx.test.espresso.Espresso")
+            true
+        } catch (e: ClassNotFoundException) {
+            false
+        }
     }
 }
 

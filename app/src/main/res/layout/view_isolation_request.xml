@@ -21,23 +21,41 @@
             android:contentDescription="@null"
             tools:src="@drawable/ic_isolation_book_test" />
 
-        <TextView
-            android:id="@+id/isolationRequestTitle1"
-            style="@style/TitleIsolation"
+        <LinearLayout
+            android:id="@+id/accessibilityContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/vertical_margin_large"
-            android:textAlignment="center"
-            tools:text="Please isolate for" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/isolationRequestTitle2"
-            style="@style/Title1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="56sp"
-            tools:text="7 days" />
+            <TextView
+                android:id="@+id/isolationRequestTitle1"
+                style="@style/TitleIsolation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                tools:text="Please isolate for" />
+
+            <TextView
+                android:id="@+id/isolationRequestTitle2"
+                style="@style/Title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="56sp"
+                tools:text="7 days" />
+
+            <TextView
+                android:id="@+id/isolationRequestTitle3"
+                style="@style/TitleIsolation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="8dp"
+                android:textAlignment="center"
+                android:visibility="gone"
+                tools:text="and book a follow-up test"
+                tools:visibility="visible" />
+        </LinearLayout>
 
         <uk.nhs.nhsx.covid19.android.app.widgets.StateInfoView
             android:id="@+id/isolationRequestInfoView"
@@ -60,7 +78,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/exposure_faqs"
-            app:linkUrl="@string/url_exposure_faqs"/>
+            app:linkUrl="@string/url_exposure_faqs" />
 
         <TextView
             style="@style/Body1"

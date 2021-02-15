@@ -109,7 +109,9 @@ class ExposureWindowRiskCalculator(
         config: RiskScoreCalculatorConfiguration,
         riskCalculation: V2RiskCalculation
     ): Double {
-        val scanInstances = scanInstances.map { it.toNHSScanInstance() }
+        val scanInstances = scanInstances
+            .filter { it.secondsSinceLastScan > 0 }
+            .map { it.toNHSScanInstance() }
         val riskScoreCalculator = riskScoreCalculatorProvider.riskScoreCalculator(config)
         return 60 * riskScoreCalculator.calculate(scanInstances) * infectiousnessFactor(
             riskCalculation

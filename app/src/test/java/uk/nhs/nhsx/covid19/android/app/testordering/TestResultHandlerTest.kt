@@ -8,6 +8,8 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESUL
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.IGNORE
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OVERWRITE
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -50,7 +52,8 @@ class TestResultHandlerTest {
                     latestTestResult.testEndDate,
                     latestTestResult.testResult,
                     testKitType = null,
-                    diagnosisKeySubmissionSupported = true
+                    diagnosisKeySubmissionSupported = true,
+                    requiresConfirmatoryTest = false
                 )
             )
         }
@@ -84,7 +87,8 @@ class TestResultHandlerTest {
                     UNACKNOWLEDGED_POSITIVE_TEST_RESULT.testEndDate,
                     UNACKNOWLEDGED_POSITIVE_TEST_RESULT.testResult,
                     testKitType = null,
-                    diagnosisKeySubmissionSupported = true
+                    diagnosisKeySubmissionSupported = true,
+                    requiresConfirmatoryTest = false
                 )
             )
             unacknowledgedTestResultsProvider.add(
@@ -93,7 +97,8 @@ class TestResultHandlerTest {
                     UNACKNOWLEDGED_POSITIVE_TEST_RESULT.testEndDate,
                     UNACKNOWLEDGED_POSITIVE_TEST_RESULT.testResult,
                     testKitType = null,
-                    diagnosisKeySubmissionSupported = true
+                    diagnosisKeySubmissionSupported = true,
+                    requiresConfirmatoryTest = false
                 )
             )
             unacknowledgedTestResultsProvider.add(
@@ -102,7 +107,8 @@ class TestResultHandlerTest {
                     UNACKNOWLEDGED_NEGATIVE_TEST_RESULT.testEndDate,
                     UNACKNOWLEDGED_NEGATIVE_TEST_RESULT.testResult,
                     testKitType = null,
-                    diagnosisKeySubmissionSupported = true
+                    diagnosisKeySubmissionSupported = true,
+                    requiresConfirmatoryTest = false
                 )
             )
             unacknowledgedTestResultsProvider.add(
@@ -111,37 +117,22 @@ class TestResultHandlerTest {
                     UNACKNOWLEDGED_VOID_TEST_RESULT.testEndDate,
                     UNACKNOWLEDGED_VOID_TEST_RESULT.testResult,
                     testKitType = null,
-                    diagnosisKeySubmissionSupported = true
+                    diagnosisKeySubmissionSupported = true,
+                    requiresConfirmatoryTest = false
                 )
             )
         }
 
         verify {
-            relevantTestResultProvider.updateIfRelevant(
-                AcknowledgedTestResult(
-                    ACKNOWLEDGED_POSITIVE_TEST_RESULT.diagnosisKeySubmissionToken,
-                    ACKNOWLEDGED_POSITIVE_TEST_RESULT.testEndDate,
-                    RelevantVirologyTestResult.POSITIVE,
-                    testKitType = null,
-                    ACKNOWLEDGED_POSITIVE_TEST_RESULT.acknowledgedDate!!
-                )
-            )
-            relevantTestResultProvider.updateIfRelevant(
+            relevantTestResultProvider.storeMigratedTestResult(
                 AcknowledgedTestResult(
                     ACKNOWLEDGED_NEWER_POSITIVE_TEST_RESULT.diagnosisKeySubmissionToken,
                     ACKNOWLEDGED_NEWER_POSITIVE_TEST_RESULT.testEndDate,
                     RelevantVirologyTestResult.POSITIVE,
                     testKitType = null,
-                    ACKNOWLEDGED_NEWER_POSITIVE_TEST_RESULT.acknowledgedDate!!
-                )
-            )
-            relevantTestResultProvider.updateIfRelevant(
-                AcknowledgedTestResult(
-                    ACKNOWLEDGED_NEWER_NEGATIVE_TEST_RESULT.diagnosisKeySubmissionToken,
-                    ACKNOWLEDGED_NEWER_NEGATIVE_TEST_RESULT.testEndDate,
-                    RelevantVirologyTestResult.NEGATIVE,
-                    testKitType = null,
-                    ACKNOWLEDGED_NEWER_NEGATIVE_TEST_RESULT.acknowledgedDate!!
+                    acknowledgedDate = ACKNOWLEDGED_NEWER_POSITIVE_TEST_RESULT.acknowledgedDate!!,
+                    requiresConfirmatoryTest = false,
+                    confirmedDate = null
                 )
             )
         }
@@ -163,7 +154,7 @@ class TestResultHandlerTest {
         verify(exactly = 0) { latestResultsProvider.latestTestResult = any() }
         verify(exactly = 0) { testResultsProvider.clear() }
         verify(exactly = 0) { unacknowledgedTestResultsProvider.add(any()) }
-        verify(exactly = 0) { relevantTestResultProvider.updateIfRelevant(any()) }
+        verify(exactly = 0) { relevantTestResultProvider.storeMigratedTestResult(any()) }
     }
 
     @Test
@@ -217,10 +208,10 @@ class TestResultHandlerTest {
             relevantTestResultProvider
         )
 
-        testSubject.acknowledge(RECEIVED_POSITIVE_TEST_RESULT)
+        testSubject.acknowledge(RECEIVED_POSITIVE_TEST_RESULT, testResultStorageOperation = IGNORE)
 
         verify { unacknowledgedTestResultsProvider.remove(RECEIVED_POSITIVE_TEST_RESULT) }
-        verify { relevantTestResultProvider.onTestResultAcknowledged(RECEIVED_POSITIVE_TEST_RESULT) }
+        verify { relevantTestResultProvider.onTestResultAcknowledged(RECEIVED_POSITIVE_TEST_RESULT, testResultStorageOperation = IGNORE) }
     }
 
     @Test
@@ -232,10 +223,10 @@ class TestResultHandlerTest {
             relevantTestResultProvider
         )
 
-        testSubject.acknowledge(RECEIVED_NEGATIVE_TEST_RESULT)
+        testSubject.acknowledge(RECEIVED_NEGATIVE_TEST_RESULT, testResultStorageOperation = IGNORE)
 
         verify { unacknowledgedTestResultsProvider.remove(RECEIVED_NEGATIVE_TEST_RESULT) }
-        verify { relevantTestResultProvider.onTestResultAcknowledged(RECEIVED_NEGATIVE_TEST_RESULT) }
+        verify { relevantTestResultProvider.onTestResultAcknowledged(RECEIVED_NEGATIVE_TEST_RESULT, testResultStorageOperation = IGNORE) }
     }
 
     @Test
@@ -247,16 +238,16 @@ class TestResultHandlerTest {
             relevantTestResultProvider
         )
 
-        testSubject.acknowledge(RECEIVED_VOID_TEST_RESULT)
+        testSubject.acknowledge(RECEIVED_VOID_TEST_RESULT, testResultStorageOperation = OVERWRITE)
 
         verify { unacknowledgedTestResultsProvider.remove(RECEIVED_VOID_TEST_RESULT) }
-        verify { relevantTestResultProvider.onTestResultAcknowledged(RECEIVED_VOID_TEST_RESULT) }
+        verify { relevantTestResultProvider.onTestResultAcknowledged(RECEIVED_VOID_TEST_RESULT, testResultStorageOperation = OVERWRITE) }
     }
 
     @Test
-    fun `hasPositiveResultAfter returns true if there is an unacknowledged test result after that date`() {
-        every { unacknowledgedTestResultsProvider.hasPositiveTestResultAfter(any()) } returns true
-        every { relevantTestResultProvider.hasPositiveTestResultAfter(any()) } returns false
+    fun `hasTestResultMatching returns true if there is an unacknowledged test result matching the predicate`() {
+        every { unacknowledgedTestResultsProvider.hasTestResultMatching(any()) } returns true
+        every { relevantTestResultProvider.hasTestResultMatching(any()) } returns false
 
         val testSubject = TestResultHandler(
             latestResultsProvider,
@@ -265,15 +256,16 @@ class TestResultHandlerTest {
             relevantTestResultProvider
         )
 
-        val result = testSubject.hasPositiveTestResultAfter(Instant.now())
+        val predicate = mockk<(TestResult) -> Boolean>(relaxed = true)
+        val result = testSubject.hasTestResultMatching(predicate)
 
         assertTrue(result)
     }
 
     @Test
-    fun `hasPositiveResultAfter returns true if there is an acknowledged test result after that date`() {
-        every { unacknowledgedTestResultsProvider.hasPositiveTestResultAfter(any()) } returns false
-        every { relevantTestResultProvider.hasPositiveTestResultAfter(any()) } returns true
+    fun `hasTestResultMatching returns true if there is an acknowledged test result matching the predicate`() {
+        every { unacknowledgedTestResultsProvider.hasTestResultMatching(any()) } returns false
+        every { relevantTestResultProvider.hasTestResultMatching(any()) } returns true
 
         val testSubject = TestResultHandler(
             latestResultsProvider,
@@ -282,15 +274,16 @@ class TestResultHandlerTest {
             relevantTestResultProvider
         )
 
-        val result = testSubject.hasPositiveTestResultAfter(Instant.now())
+        val predicate = mockk<(TestResult) -> Boolean>(relaxed = true)
+        val result = testSubject.hasTestResultMatching(predicate)
 
         assertTrue(result)
     }
 
     @Test
-    fun `hasPositiveResultAfter returns true if there are both an unacknowledged and an acknowledged test result after that date`() {
-        every { unacknowledgedTestResultsProvider.hasPositiveTestResultAfter(any()) } returns true
-        every { relevantTestResultProvider.hasPositiveTestResultAfter(any()) } returns true
+    fun `hasTestResultMatching returns true if there are both an unacknowledged and an acknowledged test result matching the predicate`() {
+        every { unacknowledgedTestResultsProvider.hasTestResultMatching(any()) } returns true
+        every { relevantTestResultProvider.hasTestResultMatching(any()) } returns true
 
         val testSubject = TestResultHandler(
             latestResultsProvider,
@@ -299,15 +292,16 @@ class TestResultHandlerTest {
             relevantTestResultProvider
         )
 
-        val result = testSubject.hasPositiveTestResultAfter(Instant.now())
+        val predicate = mockk<(TestResult) -> Boolean>(relaxed = true)
+        val result = testSubject.hasTestResultMatching(predicate)
 
         assertTrue(result)
     }
 
     @Test
-    fun `hasPositiveResultAfter returns false if there are neither unacknowledged nor acknowledged test results after that date`() {
-        every { unacknowledgedTestResultsProvider.hasPositiveTestResultAfter(any()) } returns false
-        every { relevantTestResultProvider.hasPositiveTestResultAfter(any()) } returns false
+    fun `hasTestResultMatching returns false if there are neither unacknowledged nor acknowledged test results matching the predicate`() {
+        every { unacknowledgedTestResultsProvider.hasTestResultMatching(any()) } returns false
+        every { relevantTestResultProvider.hasTestResultMatching(any()) } returns false
 
         val testSubject = TestResultHandler(
             latestResultsProvider,
@@ -316,115 +310,48 @@ class TestResultHandlerTest {
             relevantTestResultProvider
         )
 
-        val result = testSubject.hasPositiveTestResultAfter(Instant.now())
-
-        assertFalse(result)
-    }
-
-    @Test
-    fun `hasPositiveResultAfterOrEqual returns true if there is an unacknowledged test result after or on that date`() {
-        every { unacknowledgedTestResultsProvider.hasPositiveTestResultAfter(any()) } returns true
-        every { relevantTestResultProvider.hasPositiveTestResultAfter(any()) } returns false
-
-        val testSubject = TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
-
-        val result = testSubject.hasPositiveTestResultAfter(Instant.now())
-
-        assertTrue(result)
-    }
-
-    @Test
-    fun `hasPositiveResultAfterOrEqual returns true if there is an acknowledged test result after or on that date`() {
-        every { unacknowledgedTestResultsProvider.hasPositiveTestResultAfter(any()) } returns false
-        every { relevantTestResultProvider.hasPositiveTestResultAfter(any()) } returns true
-
-        val testSubject = TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
-
-        val result = testSubject.hasPositiveTestResultAfter(Instant.now())
-
-        assertTrue(result)
-    }
-
-    @Test
-    fun `hasPositiveResultAfterOrEqual returns true if there are both an unacknowledged and an acknowledged test result after or on that date`() {
-        every { unacknowledgedTestResultsProvider.hasPositiveTestResultAfter(any()) } returns true
-        every { relevantTestResultProvider.hasPositiveTestResultAfter(any()) } returns true
-
-        val testSubject = TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
-
-        val result = testSubject.hasPositiveTestResultAfter(Instant.now())
-
-        assertTrue(result)
-    }
-
-    @Test
-    fun `hasPositiveResultAfterOrEqual returns false if there are neither unacknowledged nor acknowledged test results after or on that date`() {
-        every { unacknowledgedTestResultsProvider.hasPositiveTestResultAfter(any()) } returns false
-        every { relevantTestResultProvider.hasPositiveTestResultAfter(any()) } returns false
-
-        val testSubject = TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
-
-        val result = testSubject.hasPositiveTestResultAfter(Instant.now())
+        val predicate = mockk<(TestResult) -> Boolean>(relaxed = true)
+        val result = testSubject.hasTestResultMatching(predicate)
 
         assertFalse(result)
     }
 
     @Suppress("DEPRECATION")
     companion object {
-        private val UNACKNOWLEDGED_POSITIVE_TEST_RESULT = TestResult(
+        private val UNACKNOWLEDGED_POSITIVE_TEST_RESULT = OldTestResult(
             "token1",
             Instant.now(),
             POSITIVE
         )
-        private val UNACKNOWLEDGED_NEGATIVE_TEST_RESULT = TestResult(
+        private val UNACKNOWLEDGED_NEGATIVE_TEST_RESULT = OldTestResult(
             "token2",
             Instant.now(),
             NEGATIVE
         )
-        private val UNACKNOWLEDGED_VOID_TEST_RESULT = TestResult(
+        private val UNACKNOWLEDGED_VOID_TEST_RESULT = OldTestResult(
             "token3",
             Instant.now(),
             VOID
         )
-        private val ACKNOWLEDGED_POSITIVE_TEST_RESULT = TestResult(
+        private val ACKNOWLEDGED_POSITIVE_TEST_RESULT = OldTestResult(
             "token4",
             LocalDate.of(2020, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC),
             POSITIVE,
             Instant.now()
         )
-        private val ACKNOWLEDGED_NEWER_POSITIVE_TEST_RESULT = TestResult(
+        private val ACKNOWLEDGED_NEWER_POSITIVE_TEST_RESULT = OldTestResult(
             "token5",
             LocalDate.of(2020, 2, 1).atStartOfDay().toInstant(ZoneOffset.UTC),
             POSITIVE,
             Instant.now()
         )
-        private val ACKNOWLEDGED_NEWER_NEGATIVE_TEST_RESULT = TestResult(
+        private val ACKNOWLEDGED_NEWER_NEGATIVE_TEST_RESULT = OldTestResult(
             "token6",
             LocalDate.of(2020, 3, 1).atStartOfDay().toInstant(ZoneOffset.UTC),
             NEGATIVE,
             Instant.now()
         )
-        private val ACKNOWLEDGED_NEWER_VOID_TEST_RESULT = TestResult(
+        private val ACKNOWLEDGED_NEWER_VOID_TEST_RESULT = OldTestResult(
             "token7",
             LocalDate.of(2020, 4, 1).atStartOfDay().toInstant(ZoneOffset.UTC),
             VOID,
@@ -436,21 +363,24 @@ class TestResultHandlerTest {
             Instant.now(),
             POSITIVE,
             LAB_RESULT,
-            diagnosisKeySubmissionSupported = true
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = false
         )
         private val RECEIVED_NEGATIVE_TEST_RESULT = ReceivedTestResult(
             "token2",
             Instant.now(),
             NEGATIVE,
             LAB_RESULT,
-            diagnosisKeySubmissionSupported = true
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = false
         )
         private val RECEIVED_VOID_TEST_RESULT = ReceivedTestResult(
             "token3",
             Instant.now(),
             VOID,
             LAB_RESULT,
-            diagnosisKeySubmissionSupported = true
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = false
         )
     }
 }

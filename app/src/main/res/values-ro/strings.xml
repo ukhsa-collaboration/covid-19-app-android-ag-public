@@ -59,7 +59,7 @@
     <string name="test_ordering_failure_action">Îmcercați din nou</string>
     <string name="questionnaire_title">Selectați cât mai multe dintre simptomele care vi se aplică</string>
     <string name="questionnaire_no_symptom_selected">Trebuie fie să vă alegeți simptomele, fie să selectați „Nu am niciunul dintre aceste simptome”</string>
-    <string name="questionnaire_discard_symptoms_dialog_title">Confirmați că nu aveți niciun simptom.</string>
+    <string name="questionnaire_discard_symptoms_dialog_title">Confirmați că nu aveți niciunul dintre aceste simptome</string>
     <string name="questionnaire_discard_symptoms_dialog_message">Orice simptome selectate vor fi neselectate.</string>
     <string name="title_no_coronavirus_symptoms">Este puțin probabil să aveți coronavirus</string>
     <string name="you_do_not_appear_to_have_symptoms">Nu pare să aveți simptome de coronavirus</string>
@@ -196,7 +196,7 @@
     <string name="notification_channel_app_configuration_description">Aceste notificări informează despre configurarea aplicației dvs.</string>
     <string name="notification_title_state_expiration">Îndrumările pe care vi le oferim s-au schimbat</string>
     <string name="notification_text_state_expiration">Apăsați pentru detalii</string>
-    <string name="notification_title_state_exposure">Trebuie să vă autoizolezați imediat. Ați fost în contact cu cineva care are coronavirus (COVID-19).</string>
+    <string name="notification_title_state_exposure">Trebuie să vă autoizolați imediat. Ați fost în contact cu cineva care are coronavirus (COVID-19).</string>
     <string name="notification_text_state_exposure">Apăsați aici pentru mai multe detalii.</string>
     <string name="notification_text_test_results">Apăsați pentru detalii</string>
     <string name="notification_title_app_available">Aplicația este disponibilă</string>
@@ -434,4 +434,14 @@
     <string name="about_pcr">LAB_RESULT</string>
     <string name="about_test_kit_type">Tip kit de testare</string>
     <string name="about_test_result">Rezultat</string>
+    <string name="state_test_positive_and_book_test_info">Rezultatul testului dvs. de coronavirus este pozitiv</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">Pentru a înțelege modul în care aplicația calculează zilele de autoizolare, accesați linkul de mai jos la întrebările frecvente.</string>
+    <string name="test_result_positive_self_isolate_and_book_test_explanation_1">Pentru a înțelege modul în care aplicația calculează zilele de autoizolare, accesați întrebările frecvente.\n\nPentru că ați făcut un test rapid de recoltare exudat, acum trebuie să rezervați un alt tip de test care este trimis la un laborator pentru a verifica rezultatul.\n\nÎntre timp, dvs. și persoanele cu care locuiți trebuie să vă autoizolați imediat.</string>
+    <string name="test_result_positive_self_isolate_and_book_test_title_3">și rezervați un test de control</string>
+    <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
+    <string name="about_test_follow_up">Test de control</string>
+    <string name="about_test_follow_up_state_complete">Finalizat</string>
+    <string name="about_test_follow_up_state_not_required">Nu este necesar</string>
+    <string name="about_test_follow_up_state_pending">În așteptare</string>
+    <string name="book_follow_up_test">Rezervați un test de control</string>
 </resources>

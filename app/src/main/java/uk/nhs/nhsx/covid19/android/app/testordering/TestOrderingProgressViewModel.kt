@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedTestOrdering
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.Lce
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
@@ -15,6 +17,7 @@ import javax.inject.Inject
 class TestOrderingProgressViewModel @Inject constructor(
     private val loadVirologyTestOrder: LoadVirologyTestOrder,
     private val testOrderingTokensProvider: TestOrderingTokensProvider,
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
     private val clock: Clock
 ) : ViewModel() {
 
@@ -35,9 +38,9 @@ class TestOrderingProgressViewModel @Inject constructor(
                         )
                     )
 
-                    websiteUrlWithQuery.postValue(
-                        Lce.Success(result.value.websiteUrlWithQuery)
-                    )
+                    analyticsEventProcessor.track(LaunchedTestOrdering)
+
+                    websiteUrlWithQuery.postValue(Lce.Success(result.value.websiteUrlWithQuery))
                 }
                 is Failure -> websiteUrlWithQuery.postValue(Lce.Error(result.throwable))
             }

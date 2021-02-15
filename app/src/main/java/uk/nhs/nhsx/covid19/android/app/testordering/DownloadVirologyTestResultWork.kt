@@ -2,6 +2,10 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 
 import androidx.annotation.VisibleForTesting
 import androidx.work.ListenableWorker
+import java.time.Clock
+import java.time.Instant
+import java.time.temporal.ChronoUnit.DAYS
+import javax.inject.Inject
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
@@ -21,10 +25,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultResponse
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
-import java.time.Clock
-import java.time.Instant
-import java.time.temporal.ChronoUnit.DAYS
-import javax.inject.Inject
 
 class DownloadVirologyTestResultWork @Inject constructor(
     private val virologyTestingApi: VirologyTestingApi,
@@ -53,7 +53,8 @@ class DownloadVirologyTestResultWork @Inject constructor(
                     testResultResponse.testEndDate,
                     testResultResponse.testResult,
                     testResultResponse.testKit,
-                    testResultResponse.diagnosisKeySubmissionSupported
+                    testResultResponse.diagnosisKeySubmissionSupported,
+                    testResultResponse.requiresConfirmatoryTest
                 )
                 logAnalytics(testResultResponse.testResult, testResultResponse.testKit)
                 stateMachine.processEvent(OnTestResult(receivedTestResult))

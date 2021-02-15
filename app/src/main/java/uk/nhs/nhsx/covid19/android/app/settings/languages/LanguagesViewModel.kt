@@ -8,7 +8,6 @@ import uk.nhs.nhsx.covid19.android.app.SupportedLanguage
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import java.text.Collator
 import javax.inject.Inject
-import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 
 class LanguagesViewModel @Inject constructor(
     private val applicationLocaleProvider: ApplicationLocaleProvider
@@ -17,13 +16,13 @@ class LanguagesViewModel @Inject constructor(
     private val viewState = MutableLiveData<ViewState>()
     fun viewState(): LiveData<ViewState> = viewState
 
-    private val systemLanguageSelected = SingleLiveEvent<Unit>()
+    private val systemLanguageSelected = MutableLiveData<Unit>()
     fun systemLanguageSelected(): LiveData<Unit> = systemLanguageSelected
 
-    private val supportedLanguageSelected = SingleLiveEvent<Language>()
+    private val supportedLanguageSelected = MutableLiveData<Language>()
     fun supportedLanguageSelected(): LiveData<Language> = supportedLanguageSelected
 
-    private val languageSwitchedTo = SingleLiveEvent<Unit>()
+    private val languageSwitchedTo = MutableLiveData<Unit>()
     fun languageSwitchedTo(): LiveData<Unit> = languageSwitchedTo
 
     fun loadLanguages(context: Context) {
@@ -56,7 +55,7 @@ class LanguagesViewModel @Inject constructor(
     fun selectSystemLanguage() {
         viewState.value?.let { currentViewState ->
             if (!currentViewState.isSystemLanguageSelected) {
-                systemLanguageSelected.postCall()
+                systemLanguageSelected.postValue(Unit)
             }
         }
     }
@@ -83,7 +82,7 @@ class LanguagesViewModel @Inject constructor(
 
         viewState.postValue(newViewState)
 
-        languageSwitchedTo.postCall()
+        languageSwitchedTo.postValue(Unit)
     }
 
     fun switchToSupportedLanguage(language: Language) {
@@ -100,7 +99,7 @@ class LanguagesViewModel @Inject constructor(
 
         viewState.postValue(newViewState)
 
-        languageSwitchedTo.postCall()
+        languageSwitchedTo.postValue(Unit)
     }
 
     data class Language(

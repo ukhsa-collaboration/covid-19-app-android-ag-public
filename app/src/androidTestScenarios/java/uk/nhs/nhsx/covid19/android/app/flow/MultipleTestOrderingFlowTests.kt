@@ -2,6 +2,11 @@ package uk.nhs.nhsx.covid19.android.app.flow
 
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
+import java.time.Instant
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit.DAYS
+import java.time.temporal.ChronoUnit.HOURS
+import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -26,11 +31,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import java.time.Instant
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit.DAYS
-import java.time.temporal.ChronoUnit.HOURS
-import kotlin.test.assertTrue
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OVERWRITE
 
 class MultipleTestOrderingFlowTests : EspressoTest() {
 
@@ -85,9 +86,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
         testAppContext.virologyTestingApi.testResponseForPollingToken =
             mutableMapOf(firstToken to TestResponse(NEGATIVE, LAB_RESULT))
 
-        runBlocking {
-            testAppContext.getDownloadVirologyTestResultWork().invoke()
-        }
+        runBackgroundTasks()
 
         waitFor { testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation() }
 
@@ -98,9 +97,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
         testAppContext.virologyTestingApi.testResponseForPollingToken =
             mutableMapOf(secondToken to TestResponse(POSITIVE, LAB_RESULT))
 
-        runBlocking {
-            testAppContext.getDownloadVirologyTestResultWork().invoke()
-        }
+        runBackgroundTasks()
 
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
 
@@ -256,7 +253,8 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
                 testResult = POSITIVE,
                 testKitType = LAB_RESULT,
                 diagnosisKeySubmissionSupported = true
-            )
+            ),
+            testResultStorageOperation = OVERWRITE
         )
 
         startTestActivity<StatusActivity>()

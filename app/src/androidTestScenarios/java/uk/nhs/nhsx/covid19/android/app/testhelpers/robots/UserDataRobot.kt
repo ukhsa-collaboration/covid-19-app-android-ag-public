@@ -14,6 +14,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
+import kotlinx.android.synthetic.main.activity_about_user_data.followUpTestContainer
 import org.hamcrest.Matchers.not
 import org.hamcrest.core.AllOf.allOf
 import uk.nhs.nhsx.covid19.android.app.R
@@ -95,19 +96,47 @@ class UserDataRobot {
             .check(matches(withText(R.string.edit)))
     }
 
-    fun checkLastTestResultIsDisplayed(shouldKitTypeBeVisible: Boolean = true) {
+    fun checkLastTestResultIsDisplayed(
+        shouldKitTypeBeVisible: Boolean = true,
+        requiresConfirmatoryTest: Boolean,
+        receivedFollowUpTest: String?
+    ) {
         onView(withId(R.id.titleLatestResult))
             .check(matches(isDisplayed()))
         onView(withId(R.id.latestResultDateContainer))
             .check(matches(isDisplayed()))
         onView(withId(R.id.latestResultValueContainer))
             .check(matches(isDisplayed()))
+
         if (shouldKitTypeBeVisible) {
             onView(withId(R.id.latestResultKitTypeContainer))
                 .check(matches(isDisplayed()))
         } else {
             onView(withId(R.id.latestResultKitTypeContainer))
                 .check(matches(not(isDisplayed())))
+        }
+
+        if (requiresConfirmatoryTest) {
+            if (receivedFollowUpTest != null) {
+                onView(withId(R.id.followUpState))
+                    .check(matches(withText("Complete")))
+
+                with(onView(withId(R.id.followUpDate))) {
+                    check(matches(isDisplayed()))
+                    check(matches(withText(receivedFollowUpTest)))
+                }
+            } else {
+                onView(withId(R.id.followUpState))
+                    .check(matches(withText("Pending")))
+
+                onView(withId(R.id.followUpDate))
+                    .check(matches(not(isDisplayed())))
+            }
+        } else {
+            onView(withId(R.id.followUpDate))
+                .check(matches(not(isDisplayed())))
+            onView(withId(R.id.followUpState))
+                .check(matches(withText("Not required")))
         }
     }
 
@@ -119,6 +148,8 @@ class UserDataRobot {
         onView(withId(R.id.latestResultValueContainer))
             .check(matches(not(isDisplayed())))
         onView(withId(R.id.latestResultKitTypeContainer))
+            .check(matches(not(isDisplayed())))
+        onView(withId(R.id.followUpTestContainer))
             .check(matches(not(isDisplayed())))
     }
 

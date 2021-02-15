@@ -19,12 +19,12 @@ class TestResultsProvider @Inject constructor(
     moshi: Moshi
 ) {
 
-    private val testResultsSerializationAdapter: JsonAdapter<Map<String, TestResult>> =
+    private val testResultsSerializationAdapter: JsonAdapter<Map<String, OldTestResult>> =
         moshi.adapter(listOfTestResultPairType)
 
     private val lock = Object()
 
-    val testResults: Map<String, TestResult>
+    val testResults: Map<String, OldTestResult>
         get() {
             return synchronized(lock) {
                 testResultsStorage.value?.let {
@@ -47,7 +47,7 @@ class TestResultsProvider @Inject constructor(
         val listOfTestResultPairType: Type = Types.newParameterizedType(
             Map::class.java,
             String::class.java,
-            TestResult::class.java
+            OldTestResult::class.java
         )
     }
 }
@@ -67,7 +67,7 @@ class TestResultsStorage @Inject constructor(
 
 @Deprecated("Not used anymore since 4.3. Use ReceivedTestResult/AcknowledgedTestResult instead.")
 @JsonClass(generateAdapter = true)
-data class TestResult(
+data class OldTestResult(
     val diagnosisKeySubmissionToken: String,
     val testEndDate: Instant,
     val testResult: VirologyTestResult,

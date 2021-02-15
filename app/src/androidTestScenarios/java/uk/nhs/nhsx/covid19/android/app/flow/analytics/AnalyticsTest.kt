@@ -1,23 +1,14 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import androidx.annotation.CallSuper
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.WorkInfo
 import androidx.work.WorkInfo.State.ENQUEUED
 import androidx.work.WorkInfo.State.RUNNING
-import androidx.work.WorkManager
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import uk.nhs.nhsx.covid19.android.app.MainActivity
-import uk.nhs.nhsx.covid19.android.app.common.PeriodicTask.PERIODIC_TASKS
-import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
-import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
@@ -26,11 +17,13 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.SECONDS
 import java.util.concurrent.TimeoutException
 import kotlin.test.assertNotNull
+import org.junit.After
+import org.junit.Before
+import uk.nhs.nhsx.covid19.android.app.MainActivity
+import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
+import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 
 abstract class AnalyticsTest : EspressoTest() {
-
-    @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @CallSuper
     @Before
@@ -106,13 +99,6 @@ abstract class AnalyticsTest : EspressoTest() {
             testAppContext.clock.instant().plusSeconds(secondsToAdvance)
         testAppContext.getCurrentState()
         runBackgroundTasks()
-    }
-
-    fun runBackgroundTasks() {
-        testAppContext.getPeriodicTasks().schedule()
-        WorkManager.getInstance(testAppContext.app)
-            .getWorkInfosForUniqueWorkLiveData(PERIODIC_TASKS.workName)
-            .awaitSuccess()
     }
 }
 

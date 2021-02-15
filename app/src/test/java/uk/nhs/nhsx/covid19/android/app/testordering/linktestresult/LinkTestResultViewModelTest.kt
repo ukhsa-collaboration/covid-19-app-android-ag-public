@@ -7,6 +7,7 @@ import io.mockk.coVerifyAll
 import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyOrder
+import java.time.Instant
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -18,8 +19,9 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.OUTSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -36,8 +38,6 @@ import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResul
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultViewState.Error
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultViewState.Progress
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultViewState.Valid
-import java.time.Instant
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 
 class LinkTestResultViewModelTest {
 
@@ -67,7 +67,8 @@ class LinkTestResultViewModelTest {
                 testResultResponse.testEndDate,
                 testResultResponse.testResult,
                 testResultResponse.testKit,
-                testResultResponse.diagnosisKeySubmissionSupported
+                testResultResponse.diagnosisKeySubmissionSupported,
+                requiresConfirmatoryTest = false
             ),
             showNotification = false
         )
@@ -241,7 +242,8 @@ class LinkTestResultViewModelTest {
         testKitType: VirologyTestKitType,
         diagnosisKeySubmissionToken: String = "submissionToken",
         testEndDate: Instant = Instant.now(),
-        diagnosisKeySubmissionSupported: Boolean = true
+        diagnosisKeySubmissionSupported: Boolean = true,
+        requiresConfirmatoryTest: Boolean = false
     ): VirologyCtaExchangeResponse {
         val testResultResponse =
             VirologyCtaExchangeResponse(
@@ -249,7 +251,8 @@ class LinkTestResultViewModelTest {
                 testEndDate,
                 result,
                 testKitType,
-                diagnosisKeySubmissionSupported
+                diagnosisKeySubmissionSupported,
+                requiresConfirmatoryTest
             )
         coEvery { ctaTokenValidator.validate(any()) } returns Success(testResultResponse)
         return testResultResponse

@@ -3,6 +3,11 @@ package uk.nhs.nhsx.covid19.android.app.notifications
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.Instant
+import java.time.LocalDate
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
@@ -16,11 +21,6 @@ import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
-import java.time.Instant
-import java.time.LocalDate
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class UserInboxTest {
     private val unacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>(relaxed = true)
@@ -53,7 +53,8 @@ class UserInboxTest {
             Instant.now(),
             POSITIVE,
             LAB_RESULT,
-            diagnosisKeySubmissionSupported = true
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = false
         )
         every { unacknowledgedTestResultsProvider.testResults } returns listOf(receivedTestResult)
 
@@ -108,7 +109,9 @@ class UserInboxTest {
             Instant.now(),
             RelevantVirologyTestResult.POSITIVE,
             LAB_RESULT,
-            Instant.now()
+            acknowledgedDate = Instant.now(),
+            requiresConfirmatoryTest = false,
+            confirmedDate = null
         )
         every { unacknowledgedTestResultsProvider.testResults } returns emptyList()
         every { relevantTestResultProvider.testResult } returns acknowledgedTestResult

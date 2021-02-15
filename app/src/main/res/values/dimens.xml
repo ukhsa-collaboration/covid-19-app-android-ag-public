@@ -13,4 +13,5 @@
     <dimen name="margin_horizontal_small">16dp</dimen>
     <dimen name="margin_horizontal_none">0dp</dimen>
     <dimen name="margin_horizontal_list_item">32dp</dimen>
+    <dimen name="bullet_point_size">8dp</dimen>
 </resources>

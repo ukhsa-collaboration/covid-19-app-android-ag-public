@@ -299,7 +299,7 @@ class StatusViewModelTest {
 
     @Test
     fun `on stop exposure notification clicked show exposure notification reminder dialog if notification is allowed`() {
-        every { notificationProvider.canSendNotificationToChannel(any()) } returns true
+        every { notificationProvider.isChannelEnabled(any()) } returns true
 
         testSubject.updateViewState()
         testSubject.onStopExposureNotificationsClicked()
@@ -309,7 +309,7 @@ class StatusViewModelTest {
 
     @Test
     fun `on stop exposure notification clicked do show exposure notification reminder dialog if notification is not allowed`() {
-        every { notificationProvider.canSendNotificationToChannel(any()) } returns false
+        every { notificationProvider.isChannelEnabled(any()) } returns false
 
         testSubject.updateViewState()
         testSubject.onStopExposureNotificationsClicked()

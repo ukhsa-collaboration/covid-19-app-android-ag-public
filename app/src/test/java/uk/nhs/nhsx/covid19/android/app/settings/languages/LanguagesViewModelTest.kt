@@ -104,7 +104,7 @@ class LanguagesViewModelTest {
         )
 
         verify { viewStateObserver.onChanged(expected) }
-        verify { systemLanguageSelectedObserver.onChanged(null) }
+        verify { systemLanguageSelectedObserver.onChanged(Unit) }
         verify(exactly = 0) { supportedLanguageSelectedObserver.onChanged(any()) }
         verify(exactly = 0) { applicationLocaleProvider.languageCode = null }
         verify(exactly = 0) { languageSwitchedToObserver.onChanged(any()) }
@@ -126,10 +126,10 @@ class LanguagesViewModelTest {
         )
 
         verify { viewStateObserver.onChanged(expected) }
-        verify { systemLanguageSelectedObserver.onChanged(null) }
+        verify { systemLanguageSelectedObserver.onChanged(Unit) }
         verify(exactly = 0) { supportedLanguageSelectedObserver.onChanged(any()) }
         verify { applicationLocaleProvider.languageCode = null }
-        verify { languageSwitchedToObserver.onChanged(null) }
+        verify { languageSwitchedToObserver.onChanged(Unit) }
     }
 
     @Test
@@ -210,7 +210,7 @@ class LanguagesViewModelTest {
         verify(exactly = 0) { systemLanguageSelectedObserver.onChanged(null) }
         verify { supportedLanguageSelectedObserver.onChanged(BENGALI_IN_ENGLISH_NOT_SELECTED) }
         verify { applicationLocaleProvider setProperty "languageCode" value eq(BENGALI.code!!) }
-        verify { languageSwitchedToObserver.onChanged(null) }
+        verify { languageSwitchedToObserver.onChanged(Unit) }
     }
 
     @Test

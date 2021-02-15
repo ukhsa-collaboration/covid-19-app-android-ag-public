@@ -86,6 +86,18 @@ class ExposureWindowRiskCalculatorTest {
     }
 
     @Test
+    fun `drops any scan instances with seconds since last exposure of 0`() = testScope.runBlockingTest {
+        val scanInstances = listOf(
+            getGoogleScanInstance(50, 0)
+        )
+        val exposureWindows = listOf(getExposureWindow(scanInstances))
+
+        riskCalculator(exposureWindows, someRiskCalculation, someRiskScoreCalculatorConfig)
+
+        verify { riskScoreCalculator.calculate(listOf()) }
+    }
+
+    @Test
     fun `returns null if no risk score exceeds threshold`() = testScope.runBlockingTest {
         val riskCalculation = someRiskCalculation.copy(riskThreshold = 900.0)
         val exposureWindows = listOf(getExposureWindow(listOf()))

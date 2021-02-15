@@ -34,13 +34,14 @@ class IsolationPaymentButtonAnalyticsTest : AnalyticsTest() {
         startTestActivity<StatusActivity>()
 
         assertOnFields {
-            assertEquals(0, Metrics::selectedIsolationPaymentsButton)
+            assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
         }
 
         statusRobot.clickFinancialSupport()
 
         assertOnFields {
             assertEquals(1, Metrics::selectedIsolationPaymentsButton)
+            assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
         }
     }
 }

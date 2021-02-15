@@ -12,6 +12,8 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import java.io.File
+import javax.inject.Inject
 import kotlinx.android.synthetic.scenarios.fragment_debug.contactState
 import kotlinx.android.synthetic.scenarios.fragment_debug.defaultState
 import kotlinx.android.synthetic.scenarios.fragment_debug.exportKeys
@@ -36,8 +38,6 @@ import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.Error
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.ResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.Success
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
-import java.io.File
-import javax.inject.Inject
 
 class DebugFragment : Fragment(R.layout.fragment_debug) {
 

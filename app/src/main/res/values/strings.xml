@@ -152,6 +152,7 @@
     <string name="qr_code_permission_denied_action">Allow camera permissions</string>
     <string name="qr_code_cancel_check_in">Cancel this check-in</string>
     <string name="book_free_test">Book a free test</string>
+    <string name="book_follow_up_test">Book a follow-up test</string>
     <string name="book_free_test_now">Book a test for yourself</string>
     <string name="status_option_report_symptoms">Check symptoms</string>
     <string name="status_option_read_latest_advice">Read latest advice</string>
@@ -173,7 +174,7 @@
     <string name="questionnaire_description">If you don’t have any of these symptoms, there’s no need for you to do anything right now. If you develop any of these symptoms, check them on this app and book a free test immediately.</string>
     <string name="questionnaire_error_description">Before trying again, please check that your phone’s mobile data settings are on, check your Wi-Fi connection (if you’re using one) and make sure that Airplane Mode is off.</string>
     <string name="questionnaire_no_symptoms">I don’t have any of these symptoms</string>
-    <string name="questionnaire_discard_symptoms_dialog_title">Confirm you do not have any symptoms</string>
+    <string name="questionnaire_discard_symptoms_dialog_title">Confirm you do not have any of these symptoms</string>
     <string name="questionnaire_discard_symptoms_dialog_message">Any selected symptoms will be unselected.</string>
     <string name="select_symptoms">Select symptoms</string>
     <string name="notification_text_risky_venue">Tap to see the details</string>
@@ -200,6 +201,7 @@
     <string name="state_test_positive_info">Your coronavirus test result is positive</string>
     <string name="state_test_negative_info">Your coronavirus test result is negative but you may still develop symptoms, so you should stay in isolation</string>
     <string name="state_test_void_info">We could not tell if you had coronavirus</string>
+    <string name="state_test_positive_and_book_test_info">Your coronavirus test result is positive.</string>
     <string name="test_result_negative_continue_self_isolate_explanation">To understand how the app calculates self-isolation days, visit the FAQs.\n\nYour test result shows that you did not have the virus when the test was done. You have been sent more information by email, text or phone. If you are under 18, you are advised to show this message to a trusted adult.</string>
     <string name="isolation_until_date">until %1$s at 23:59</string>
     <string name="questionnaire_review_one_of_two">Step 1 of 2</string>
@@ -229,6 +231,10 @@
     <string name="test_result_positive_continue_self_isolation_title_1">Continue to self-isolate for</string>
     <string name="test_result_positive_continue_self_isolate_explanation_1">To understand how the app calculates self-isolation days, visit the link to the FAQs below.\n\nYour test result shows that you had the virus at the time of the test. You have been sent an email or text with more information.</string>
     <string name="test_result_positive_continue_self_isolate_explanation_2">Don’t worry - for most people symptoms are quite mild. However, if your symptoms do worsen then you should call 111 or visit nhs.uk for more advice.</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">To understand how the app calculates self-isolation days, visit the FAQs.</string>
+    <string name="test_result_positive_self_isolate_and_book_test_title_3">and book a follow-up test</string>
+    <string name="test_result_positive_self_isolate_and_book_test_explanation_1">To understand how the app calculates self-isolation days, visit the FAQs.\n\nBecause you took a rapid swab test, you now need to get another type of test that is sent to a lab to verify the result.\n\nIn the meantime, you and anyone you live with must self-isolate immediately.</string>
+    <string name="test_result_positive_self_isolate_and_book_test_explanation_2">Don’t worry - for most people symptoms are quite mild. However, if your symptoms do worsen then you should call 111 or visit nhs.uk for more advice.</string>
     <string name="test_result_negative_no_self_isolation_subtitle_text">Your coronavirus test result is negative</string>
     <string name="test_result_void_continue_self_isolate_explanation">To understand how the app calculates self-isolation days, visit the FAQs.\n\nWe could not tell if you had coronavirus when the test was done and you should take the test again. If you are under 18, you are advised to show this message to a trusted adult.</string>
     <string name="test_result_negative_already_not_in_isolation_subtitle">Your coronavirus test result is negative</string>
@@ -449,4 +455,18 @@
     <string name="urdu">Urdu</string>
     <string name="welsh">Welsh</string>
     <string name="change_language_dialog">Change app language to %s?</string>
+    <string name="about_test_follow_up">Follow-up test</string>
+    <string name="about_test_follow_up_state_pending">Pending</string>
+    <string name="about_test_follow_up_state_complete">Complete</string>
+    <string name="about_test_follow_up_state_not_required">Not required</string>
+    <string name="exposure_daily_contact_testing_link_text">Find out more about daily contact testing</string>
+    <string name="exposure_daily_contact_testing_link_url">http://www.google.com</string>
+    <string name="exposure_daily_contact_testing_text">As an alternative to self-isolation, you may have the opportunity to take part in a daily contact testing programme.</string>
+    <string name="link_test_result_daily_contact_testing_description">If your daily test was positive and you have received a code by email or SMS with your test result, enter the code in the box above\n\nIf your daily test was negative, you won’t receive a code to enter in the app. You need to tell us you have a negative result and continue.</string>
+    <string name="link_test_result_daily_contact_testing_link_text">You must report your result every day, on the daily contact testing website</string>
+    <string name="link_test_result_daily_contact_testing_link_url">http://www.google.com</string>
+    <string name="link_test_result_daily_contact_testing_negative_result_confirmation">I have a negative test result from daily contact testing</string>
+    <string name="link_test_result_daily_contact_testing_title">If you are doing daily contact testing</string>
+    <string name="link_test_result_error_both_inputs_provided">You entered a test code and indicated to have a negative test result from daily contact testing. Please only provide one of these options.</string>
+    <string name="link_test_result_error_neither_input_provided">Please enter a test code or select that you have a negative test result from daily contact testing.</string>
 </resources>

@@ -223,7 +223,7 @@
     <string name="questionnaire_confirm">Gudbi</string>
     <string name="questionnaire_description">Haddii aadan qabin mid ka mid ah astaamahan, uma baahnid inaad wax sameyso haddadaan. Haddii aad yeelato mid ka mid ah astaamahan, ka sheeg barnaamijkan (app) oo dalbo shaybaar lacag la\'aan ah isla markiiba.</string>
     <string name="questionnaire_discard_symptoms_dialog_message">Astaamaha kasta oo la xushay lama dooran doono.</string>
-    <string name="questionnaire_discard_symptoms_dialog_title">Xaqiiji inaadan lahayn wax astaamo ah</string>
+    <string name="questionnaire_discard_symptoms_dialog_title">Hubi in aadan qabin mid ka mid ah astaamahan</string>
     <string name="questionnaire_error_description">Intaadan mar kale isku dayin, fadlan hubi in qaybta isku-hagaajinta khadka telefoonkaaga inuu daaran yahay, eeg khadkaaga Wi-Fi (haddii aad mid isticmaalayso) oo hubi in qaybta Airplane Mode wuu dansan yahay.</string>
     <string name="questionnaire_input_date_error">Waxaad ubaahantahay inaad qorto taariikh ama xulo \"Ma xasuusto taariikhda\"</string>
     <string name="questionnaire_negative_symptoms_review_message">Waxaad \'maya\' ka tiri astaamahan:</string>
@@ -430,5 +430,15 @@
     <string name="about_lfd">RAPID_RESULT</string>
     <string name="about_pcr">LAB_RESULT</string>
     <string name="about_test_kit_type">Nooca qalabka baaritaanka</string>
-    <string name="about_test_result">Natiijo</string>
+    <string name="about_test_result">Natiijada</string>
+    <string name="state_test_positive_and_book_test_info">Natiijada baaritaankaaga coronavirus waxay caddaynaysaa in aad qabtid cudurka</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo marrinka hoose ee su\'aalaha badana la isweydiiya.</string>
+    <string name="test_result_positive_self_isolate_and_book_test_explanation_1">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo su\'aalaha badana la isweydiiya.\n\nMaadaama lagaa qaaday baaritaan suuf oo deg deg ah, waxaad hadda u baahan tahay in lagaa qaado baaritaan nooc kale oo loo dirayo shaybaar si loo xaqiijiyo natiijada.\n\nTaas ka hor, adiga iyo qof kasta oo aad la nooshahay waa inaad isla markaaba is-go\'doomisaan.</string>
+    <string name="test_result_positive_self_isolate_and_book_test_title_3">oo ballanso baaritaan dabagal</string>
+    <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
+    <string name="about_test_follow_up">Baaritaan dabagal</string>
+    <string name="about_test_follow_up_state_complete">Dhammaystiran</string>
+    <string name="about_test_follow_up_state_not_required">Aan loo baahnayn</string>
+    <string name="about_test_follow_up_state_pending">La sugayaa</string>
+    <string name="book_follow_up_test">Ballanso baaritaan dabagal ah</string>
 </resources>

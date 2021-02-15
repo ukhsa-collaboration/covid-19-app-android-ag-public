@@ -59,7 +59,7 @@
     <string name="test_ordering_failure_action">ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ</string>
     <string name="questionnaire_title">ਜਿੰਨੇ ਵੀ ਲੱਛਣ ਤੁਹਾਡੇ \'ਤੇ ਲਾਗੂ ਹੁੰਦੇ ਹਨ, ਉਹਨਾਂ ਦੀ ਚੋਣ ਕਰੋ</string>
     <string name="questionnaire_no_symptom_selected">ਤੁਹਾਨੂੰ ਜਾਂ ਤਾਂ ਲੱਛਣਾਂ ਦੀ ਚੋਣ ਕਰਨ ਦੀ ਲੋੜ ਹੈ ਜਾਂ ਫਿਰ “ਮੇਰੇ ਵਿੱਚ ਇਨ੍ਹਾਂ ਵਿੱਚੋਂ ਕੋਈ ਵੀ ਲੱਛਣ ਨਹੀਂ ਹਨ” ਦੀ ਚੋਣ ਕਰਨ ਦੀ ਜ਼ਰੂਰਤ ਹੈ</string>
-    <string name="questionnaire_discard_symptoms_dialog_title">ਪੁਸ਼ਟੀ ਕਰੋ ਕਿ ਤੁਹਾਨੂੰ ਕੋਈ ਲੱਛਣ ਨਹੀਂ ਹਨ</string>
+    <string name="questionnaire_discard_symptoms_dialog_title">ਪੁਸ਼ਟੀ ਕਰੋ ਕਿ ਤੁਹਾਨੂੰ ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੋਈ ਵੀ ਲੱਛਣ ਨਹੀਂ ਹਨ</string>
     <string name="questionnaire_discard_symptoms_dialog_message">ਕੋਈ ਵੀ ਚੁਣੇ ਲੱਛਣਾਂ ਨੂੰ ਅਣਚੁਣਿਆ ਕਰ ਦਿੱਤਾ ਜਾਵੇਗਾ।</string>
     <string name="title_no_coronavirus_symptoms">ਤੁਹਾਨੂੰ ਕੋਰੋਨਾਵਾਇਰਸ ਹੋਣ ਦੀ ਸੰਭਾਵਨਾ ਨਹੀਂ ਹੈ</string>
     <string name="you_do_not_appear_to_have_symptoms">ਇੰਝ ਨਹੀਂ ਲੱਗਦਾ ਹੈ ਕਿ ਤੁਹਾਡੇ ਅੰਦਰ ਕੋਰੋਨਾਵਾਇਰਸ ਦੇ ਲੱਛਣ ਹਨ</string>
@@ -430,4 +430,14 @@
     <string name="about_pcr">LAB_RESULT</string>
     <string name="about_test_kit_type">ਟੈਸਟ ਕਿੱਟ ਦੀ ਕਿਸਮ</string>
     <string name="about_test_result">ਨਤੀਜਾ</string>
+    <string name="state_test_positive_and_book_test_info">ਤੁਹਾਡਾ ਕੋਰੋਨਾਵਾਇਰਸ ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਪਾਜ਼ਿਟਿਵ ਹੈ</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">ਇਹ ਸਮਝਣ ਲਈ ਕਿ ਐਪ ਸਵੈ-ਇਕਾਂਤਵਾਸ ਦੇ ਦਿਨਾਂ ਦੀ ਗਣਨਾ ਕਿਵੇਂ ਕਰਦੀ ਹੈ, ਹੇਠ ਦਿੱਤੇ ਅਕਸਰ ਪੁੱਛੇ ਜਾਂਦੇ ਪ੍ਰਸ਼ਨਾਂ ਦੇ ਲਿੰਕ \'ਤੇ ਜਾਓ।</string>
+    <string name="test_result_positive_self_isolate_and_book_test_explanation_1">ਇਹ ਸਮਝਣ ਲਈ ਕਿ ਐਪ ਸਵੈ-ਇਕਾਂਤਵਾਸ ਦੇ ਦਿਨਾਂ ਦੀ ਗਣਨਾ ਕਿਵੇਂ ਕਰਦੀ ਹੈ, ਅਕਸਰ ਪੁੱਛੇ ਜਾਂਦੇ ਪ੍ਰਸ਼ਨਾਂ \'ਤੇ ਜਾਓ।\n\nਕਿਉਂਕਿ ਤੁਸੀਂ ਇੱਕ ਰੈਪਿਡ ਸਵੈਬ ਟੈਸਟ ਕਰਵਾਇਆ ਹੈ, ਨਤੀਜਿਆਂ ਦੀ ਪੁਸ਼ਟੀ ਕਰਨ ਲਈ ਤੁਹਾਨੂੰ ਹੁਣ ਇੱਕ ਹੋਰ ਕਿਸਮ ਦਾ ਟੈਸਟ ਕਰਵਾਉਣ ਦੀ ਲੋੜ ਹੈ ਜੋ ਇੱਕ ਲੈਬ ਨੂੰ ਭੇਜਿਆ ਜਾਂਦਾ ਹੈ।\n\nਇਸ ਦੌਰਾਨ, ਤੁਹਾਨੂੰ ਅਤੇ ਤੁਹਾਡੇ ਨਾਲ ਰਹਿਣ ਵਾਲੇ ਕਿਸੇ ਵੀ ਵਿਅਕਤੀ ਨੂੰ ਤੁਰੰਤ ਲਾਜ਼ਮੀ ਸਵੈ-ਇਕੱਲਤਾ ਵਿੱਚ ਚਲੇ ਜਾਣਾ ਚਾਹੀਦਾ ਹੈ।</string>
+    <string name="test_result_positive_self_isolate_and_book_test_title_3">ਅਤੇ ਇੱਕ ਫਾਲੋ-ਅੱਪ ਟੈਸਟ ਬੁੱਕ ਕਰੋ</string>
+    <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
+    <string name="about_test_follow_up">ਫਾਲੋ-ਅੱਪ ਟੈਸਟ</string>
+    <string name="about_test_follow_up_state_complete">ਪੂਰਾ</string>
+    <string name="about_test_follow_up_state_not_required">ਲੋੜ ਨਹੀਂ</string>
+    <string name="about_test_follow_up_state_pending">ਬਕਾਇਆ</string>
+    <string name="book_follow_up_test">ਫਾਲੋਅੱਪ ਟੈਸਟ ਬੁੱਕ ਕਰੋ</string>
 </resources>

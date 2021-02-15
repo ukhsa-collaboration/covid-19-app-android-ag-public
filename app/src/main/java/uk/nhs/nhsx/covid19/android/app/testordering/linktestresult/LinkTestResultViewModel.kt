@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
@@ -25,7 +26,6 @@ import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValid
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultViewState.Error
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultViewState.Progress
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultViewState.Valid
-import javax.inject.Inject
 
 class LinkTestResultViewModel @Inject constructor(
     private val ctaTokenValidator: CtaTokenValidator,
@@ -55,7 +55,8 @@ class LinkTestResultViewModel @Inject constructor(
                     testResultResponse.testEndDate,
                     testResultResponse.testResult,
                     testResultResponse.testKit,
-                    testResultResponse.diagnosisKeySubmissionSupported
+                    testResultResponse.diagnosisKeySubmissionSupported,
+                    testResultResponse.requiresConfirmatoryTest
                 ),
                 showNotification = false
             )

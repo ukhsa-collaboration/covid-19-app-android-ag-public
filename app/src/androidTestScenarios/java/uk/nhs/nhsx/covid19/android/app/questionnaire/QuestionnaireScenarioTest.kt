@@ -6,9 +6,13 @@ import android.content.Intent
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep
-import org.junit.Before
+import java.time.Instant
+import java.time.LocalDate
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_FAIL
+import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.FAIL_SUCCEED_LOOP
 import uk.nhs.nhsx.covid19.android.app.common.Translatable
+import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
@@ -32,8 +36,6 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
-import java.time.Instant
-import java.time.LocalDate
 
 class QuestionnaireScenarioTest : EspressoTest() {
 
@@ -42,11 +44,6 @@ class QuestionnaireScenarioTest : EspressoTest() {
     private val noSymptomsRobot = NoSymptomsRobot()
     private val reviewSymptomsRobot = ReviewSymptomsRobot()
     private val symptomsAdviceIsolateRobot = SymptomsAdviceIsolateRobot()
-
-    @Before
-    fun setUp() {
-        testAppContext.questionnaireApi.shouldPass = true
-    }
 
     @Test
     fun successfullySelectSymptomsAndCannotRememberDate_GoesToIsolationState() = reporter(
@@ -371,7 +368,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
     @Test
     fun navigateToQuestionnaire_LoadingQuestionnaireFails_ShowsErrorState() = notReported {
-        testAppContext.questionnaireApi.shouldPass = false
+        MockApiModule.behaviour.responseType = ALWAYS_FAIL
 
         startTestActivity<QuestionnaireActivity>()
 
@@ -380,13 +377,11 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
     @Test
     fun navigateToQuestionnaire_LoadingQuestionnaireFailsAndTryAgainSucceeds_NavigateToQuestionnaire() = notReported {
-        testAppContext.questionnaireApi.shouldPass = false
+        MockApiModule.behaviour.responseType = FAIL_SUCCEED_LOOP
 
         startTestActivity<QuestionnaireActivity>()
 
         questionnaireRobot.checkErrorStateIsDisplayed()
-
-        testAppContext.questionnaireApi.shouldPass = true
 
         questionnaireRobot.clickTryAgainButton()
 

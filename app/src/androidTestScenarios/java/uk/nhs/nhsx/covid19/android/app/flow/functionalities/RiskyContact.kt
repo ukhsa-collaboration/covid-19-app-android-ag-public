@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.flow.functionalities
 
-import java.time.Instant
 import java.util.concurrent.TimeUnit.SECONDS
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.until
@@ -16,24 +15,24 @@ class RiskyContact(
     private val encounterDetectionRobot = EncounterDetectionRobot()
 
     fun trigger(runBackgroundTasks: () -> Unit) {
+        val exposureCircuitBreakerInfo = ExposureCircuitBreakerInfo(
+            maximumRiskScore = 10.0,
+            startOfDayMillis = espressoTest.testAppContext.clock.instant().toEpochMilli(),
+            matchedKeyCount = 1,
+            riskCalculationVersion = 2,
+            exposureNotificationDate = espressoTest.testAppContext.clock.instant().toEpochMilli()
+        )
+
         espressoTest.testAppContext.getExposureCircuitBreakerInfoProvider().add(exposureCircuitBreakerInfo)
 
         runBackgroundTasks()
+    }
 
+    fun acknowledge() {
         espressoTest.waitFor { encounterDetectionRobot.clickIUnderstandButton() }
 
         await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
             (espressoTest.testAppContext.getCurrentState() as Isolation).isContactCase()
         }
-    }
-
-    companion object {
-        private val exposureCircuitBreakerInfo = ExposureCircuitBreakerInfo(
-            maximumRiskScore = 10.0,
-            startOfDayMillis = Instant.now().toEpochMilli(),
-            matchedKeyCount = 1,
-            riskCalculationVersion = 2,
-            exposureNotificationDate = Instant.now().toEpochMilli()
-        )
     }
 }

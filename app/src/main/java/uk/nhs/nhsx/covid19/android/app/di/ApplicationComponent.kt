@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.di
 
 import dagger.Component
+import javax.inject.Singleton
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
 import uk.nhs.nhsx.covid19.android.app.about.UserDataActivity
@@ -25,6 +26,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationBroadcastReceiver
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWorker
+import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.DataAndPrivacyActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
@@ -42,6 +44,7 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActi
 import uk.nhs.nhsx.covid19.android.app.receiver.AlarmRestarter
 import uk.nhs.nhsx.covid19.android.app.receiver.ExpirationCheckReceiver
 import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationReminderReceiver
+import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationRetryReceiver
 import uk.nhs.nhsx.covid19.android.app.receiver.UpdateReceiver
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.settings.languages.LanguagesActivity
@@ -59,8 +62,6 @@ import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResul
 import uk.nhs.nhsx.covid19.android.app.widgets.IsolationStatusView
 import uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
 import uk.nhs.nhsx.covid19.android.app.widgets.LogoView
-
-import javax.inject.Singleton
 
 @Singleton
 @Component(
@@ -90,6 +91,7 @@ interface ApplicationComponent {
     fun inject(reviewSymptomsActivity: ReviewSymptomsActivity)
     fun inject(expirationCheckReceiver: ExpirationCheckReceiver)
     fun inject(exposureNotificationReminderReceiver: ExposureNotificationReminderReceiver)
+    fun inject(exposureNotificationRetryReceiver: ExposureNotificationRetryReceiver)
     fun inject(alarmRestarter: AlarmRestarter)
     fun inject(qrCodeScanResultActivity: QrCodeScanResultActivity)
     fun inject(encounterDetectionActivity: EncounterDetectionActivity)
@@ -127,4 +129,5 @@ interface ApplicationComponent {
     fun provideNotificationProvider(): NotificationProvider
     fun provideBatteryOptimizationChecker(): BatteryOptimizationChecker
     fun provideApplicationLocaleProvider(): ApplicationLocaleProvider
+    fun provideExposureNotificationRetryAlarmController(): ExposureNotificationRetryAlarmController
 }

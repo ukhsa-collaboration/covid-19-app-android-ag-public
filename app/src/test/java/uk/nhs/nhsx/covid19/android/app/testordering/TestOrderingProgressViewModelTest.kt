@@ -3,12 +3,14 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
 import io.mockk.verifyOrder
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.Lce
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
@@ -18,21 +20,19 @@ import java.time.Instant
 import java.time.ZoneId
 
 class TestOrderingProgressViewModelTest {
+
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val loadVirologyTestOrder = mockk<LoadVirologyTestOrder>()
-    private val loadVirologyTestOrderResultObserver =
-        mockk<Observer<Lce<String>>>(relaxed = true)
     private val testOrderTokensProvider = mockk<TestOrderingTokensProvider>(relaxed = true)
+    private var analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxed = true)
     private val clock = Clock.fixed(Instant.parse("2020-07-21T10:00:00Z"), ZoneId.systemDefault())
 
+    private val loadVirologyTestOrderResultObserver = mockk<Observer<Lce<String>>>(relaxed = true)
+
     private val testSubject =
-        TestOrderingProgressViewModel(
-            loadVirologyTestOrder,
-            testOrderTokensProvider,
-            clock
-        )
+        TestOrderingProgressViewModel(loadVirologyTestOrder, testOrderTokensProvider, analyticsEventProcessor, clock)
 
     @Test
     fun `load virology test order returns success`() = runBlocking {
@@ -49,7 +49,8 @@ class TestOrderingProgressViewModelTest {
 
         testSubject.loadVirologyTestOrder()
 
-        verify {
+        coVerify {
+            analyticsEventProcessor.track(AnalyticsEvent.LaunchedTestOrdering)
             testOrderTokensProvider.add(TestOrderPollingConfig(Instant.now(clock), "f", "g"))
         }
 
@@ -70,6 +71,8 @@ class TestOrderingProgressViewModelTest {
         coEvery { loadVirologyTestOrder.invoke() } returns Failure(testException)
 
         testSubject.loadVirologyTestOrder()
+
+        coVerify(exactly = 0) { analyticsEventProcessor.track(AnalyticsEvent.LaunchedTestOrdering) }
 
         verifyOrder {
             loadVirologyTestOrderResultObserver.onChanged(Lce.Loading)

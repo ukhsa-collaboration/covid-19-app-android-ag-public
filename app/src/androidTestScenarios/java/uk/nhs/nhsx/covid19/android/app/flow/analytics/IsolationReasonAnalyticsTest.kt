@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
+import kotlin.test.assertTrue
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.RiskyContact
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
@@ -7,7 +8,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import kotlin.test.assertTrue
 
 class IsolationReasonAnalyticsTest : AnalyticsTest() {
 
@@ -37,9 +37,11 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
         assertOnFields {
             // Now in isolation due to self-diagnosis
             assertEquals(1, Metrics::completedQuestionnaireAndStartedIsolation)
+            assertEquals(1, Metrics::startedIsolation)
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
         }
 
         // Dates: 4th-11th Jan -> Analytics packets for: 3rd-10th Jan
@@ -48,6 +50,7 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
         }
 
         assertTrue { testAppContext.getCurrentState() is Default }
@@ -77,14 +80,30 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
         assertOnFields {
             // Now in isolation due to risky contact
             assertEquals(1, Metrics::receivedRiskyContactNotification)
+            assertEquals(1, Metrics::receivedActiveIpcToken)
+            assertEquals(1, Metrics::startedIsolation)
+            assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
             assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
         }
 
-        // Dates: 4th-13th Jan -> Analytics packets for: 3rd-12th Jan
-        assertOnFieldsForDateRange(4..13) {
+        riskyContact.acknowledge()
+
+        // Dates: 4th Jan -> Analytics packet for: 3rd Jan
+        assertOnFields {
             // Still in isolation
+            assertEquals(1, Metrics::acknowledgedStartOfIsolationDueToRiskyContact)
+            assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
+            assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
+            assertPresent(Metrics::isIsolatingBackgroundTick)
+            assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
+        }
+
+        // Dates: 5th-13th Jan -> Analytics packets for: 4th-12th Jan
+        assertOnFieldsForDateRange(5..13) {
+            // Still in isolation
+            assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
             assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)

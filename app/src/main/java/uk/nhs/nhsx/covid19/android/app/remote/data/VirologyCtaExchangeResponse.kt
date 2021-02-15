@@ -9,5 +9,6 @@ data class VirologyCtaExchangeResponse(
     val testEndDate: Instant,
     val testResult: VirologyTestResult,
     val testKit: VirologyTestKitType,
-    val diagnosisKeySubmissionSupported: Boolean
+    val diagnosisKeySubmissionSupported: Boolean,
+    val requiresConfirmatoryTest: Boolean
 )

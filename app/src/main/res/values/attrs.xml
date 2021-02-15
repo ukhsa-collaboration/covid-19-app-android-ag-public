@@ -104,5 +104,6 @@
     </declare-styleable>
     <declare-styleable name="ParagraphsContainer">
         <attr name="rawText" format="string" />
+        <attr name="showBulletPoints" format="boolean" />
     </declare-styleable>
 </resources>

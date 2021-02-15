@@ -5,8 +5,10 @@ import androidx.lifecycle.Observer
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.SubmitEmptyData
@@ -17,24 +19,29 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESUL
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
-import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler
+import uk.nhs.nhsx.covid19.android.app.state.hasConfirmedPositiveTestResult
+import uk.nhs.nhsx.covid19.android.app.state.hasPositiveTestResult
+import uk.nhs.nhsx.covid19.android.app.state.hasUnconfirmedPositiveTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.Ignore
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeWontBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveContinueIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveContinueIsolationNoChange
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveThenNegativeWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveWillBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveWillBeInIsolationAndOrderTest
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveWontBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidWillBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.NavigationEvent
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.ViewState
-import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -47,26 +54,23 @@ class TestResultViewModelTest {
 
     private val unacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>(relaxed = true)
     private val relevantTestResultProvider = mockk<RelevantTestResultProvider>(relaxed = true)
-    private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>(relaxed = true)
+    private val testResultIsolationHandler = mockk<TestResultIsolationHandler>(relaxed = true)
     private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val submitEmptyData = mockk<SubmitEmptyData>(relaxed = true)
     private val submitFakeExposureWindows = mockk<SubmitFakeExposureWindows>(relaxed = true)
-    private val fixedClock = Clock.fixed(symptomsOnsetDate.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC)
 
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
 
-    private val navigateToShareKeysObserver = mockk<Observer<ReceivedTestResult>>(relaxed = true)
-    private val finishActivityObserver = mockk<Observer<Void>>(relaxed = true)
+    private val navigationObserver = mockk<Observer<NavigationEvent>>(relaxed = true)
 
     private val testSubject =
         TestResultViewModel(
             unacknowledgedTestResultsProvider,
             relevantTestResultProvider,
-            isolationConfigurationProvider,
+            testResultIsolationHandler,
             stateMachine,
             submitEmptyData,
-            submitFakeExposureWindows,
-            fixedClock
+            submitFakeExposureWindows
         )
 
     private val isolationState = Isolation(
@@ -84,35 +88,53 @@ class TestResultViewModelTest {
         )
     )
 
+    private val defaultWithPreviousIsolationIndexCaseOnly =
+        Default(previousIsolation = isolationStateIndexCaseOnly)
+
     private val positiveTestResult = ReceivedTestResult(
         "token1",
         testEndDate = testEndDate,
         testResult = POSITIVE,
         testKitType = LAB_RESULT,
-        diagnosisKeySubmissionSupported = true
+        diagnosisKeySubmissionSupported = true,
+        requiresConfirmatoryTest = false
+    )
+    private val positiveTestResultIndicative = ReceivedTestResult(
+        "token1",
+        testEndDate = testEndDate,
+        testResult = POSITIVE,
+        testKitType = LAB_RESULT,
+        diagnosisKeySubmissionSupported = true,
+        requiresConfirmatoryTest = true
     )
     private val negativeTestResult = ReceivedTestResult(
         "token3",
         testEndDate = testEndDate,
         testResult = NEGATIVE,
         testKitType = LAB_RESULT,
-        diagnosisKeySubmissionSupported = true
+        diagnosisKeySubmissionSupported = true,
+        requiresConfirmatoryTest = false
     )
     private val voidTestResult = ReceivedTestResult(
         "token5",
         testEndDate = testEndDate,
         testResult = VOID,
         testKitType = LAB_RESULT,
-        diagnosisKeySubmissionSupported = true
+        diagnosisKeySubmissionSupported = true,
+        requiresConfirmatoryTest = false
     )
+
+    @Before
+    fun setUp() {
+        testSubject.viewState().observeForever(viewStateObserver)
+        testSubject.navigationEvent().observeForever(navigationObserver)
+    }
 
     @Test
     fun `empty unacknowledged test results should return Ignore`() =
         runBlocking {
             every { stateMachine.readState() } returns Default()
             every { unacknowledgedTestResultsProvider.testResults } returns emptyList()
-
-            testSubject.viewState().observeForever(viewStateObserver)
 
             testSubject.onCreate()
 
@@ -121,13 +143,12 @@ class TestResultViewModelTest {
 
     // Case C
     @Test
-    fun `relevant test result positive, unacknowledged positive, currently in isolation and will stay in isolation should return PositiveContinueIsolation`() =
+    fun `relevant test result confirmed positive, unacknowledged confirmed positive, currently in isolation and will stay in isolation should return PositiveContinueIsolation`() =
         runBlocking {
-            every { relevantTestResultProvider.isTestResultPositive() } returns true
+            setPreviousTestConfirmed(RelevantVirologyTestResult.POSITIVE)
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
             every { stateMachine.readState() } returns isolationState
-
-            testSubject.viewState().observeForever(viewStateObserver)
+            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, positiveTestResult) } returns isolationState
 
             testSubject.onCreate()
 
@@ -138,15 +159,79 @@ class TestResultViewModelTest {
             }
         }
 
+    @Test
+    fun `relevant test result confirmed positive from before isolation, unacknowledged indicative positive, currently in isolation and will stay in isolation should return PositiveWillBeInIsolationAndOrderTest`() =
+        runBlocking {
+            setPreviousTestConfirmed(
+                RelevantVirologyTestResult.POSITIVE,
+                fromCurrentIsolation = false
+            )
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResultIndicative)
+            every { stateMachine.readState() } returns isolationState
+            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, positiveTestResultIndicative) } returns isolationState
+
+            testSubject.onCreate()
+
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWillBeInIsolationAndOrderTest, 0)
+                )
+            }
+        }
+
+    @Test
+    fun `relevant test result confirmed positive from current isolation, unacknowledged indicative positive, currently in isolation and will stay in isolation should return PositiveContinueIsolationNoChange`() =
+        runBlocking {
+            setPreviousTestConfirmed(RelevantVirologyTestResult.POSITIVE)
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResultIndicative)
+            every { stateMachine.readState() } returns isolationState
+            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, positiveTestResultIndicative) } returns isolationState
+
+            testSubject.onCreate()
+
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveContinueIsolationNoChange, 0)
+                )
+            }
+        }
+
     // Case G
     @Test
-    fun `relevant test result positive, unacknowledged positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
+    fun `relevant test result confirmed positive, unacknowledged confirmed positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
         runBlocking {
-            every { relevantTestResultProvider.isTestResultPositive() } returns true
+            setPreviousTestConfirmed(RelevantVirologyTestResult.POSITIVE)
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
-            every { stateMachine.readState() } returns Default(previousIsolation = isolationStateIndexCaseOnly)
+            every { stateMachine.readState() } returns defaultWithPreviousIsolationIndexCaseOnly
+            every {
+                testResultIsolationHandler.computeNextStateWithTestResult(
+                    defaultWithPreviousIsolationIndexCaseOnly,
+                    positiveTestResult
+                )
+            } returns defaultWithPreviousIsolationIndexCaseOnly
 
-            testSubject.viewState().observeForever(viewStateObserver)
+            testSubject.onCreate()
+
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWontBeInIsolation, 0)
+                )
+            }
+        }
+
+    // Case G
+    @Test
+    fun `relevant test result confirmed positive, unacknowledged indicative positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
+        runBlocking {
+            setPreviousTestConfirmed(RelevantVirologyTestResult.POSITIVE)
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResultIndicative)
+            every { stateMachine.readState() } returns defaultWithPreviousIsolationIndexCaseOnly
+            every {
+                testResultIsolationHandler.computeNextStateWithTestResult(
+                    defaultWithPreviousIsolationIndexCaseOnly,
+                    positiveTestResultIndicative
+                )
+            } returns defaultWithPreviousIsolationIndexCaseOnly
 
             testSubject.onCreate()
 
@@ -159,13 +244,13 @@ class TestResultViewModelTest {
 
     // Case E
     @Test
-    fun `relevant test result not positive, unacknowledged negative, currently not in isolation and no previous isolation should return NegativeInIsolation`() =
+    fun `no relevant test result, unacknowledged negative, currently not in isolation and no previous isolation should return NegativeNotInIsolation`() =
         runBlocking {
-            every { relevantTestResultProvider.isTestResultPositive() } returns false
+            val state = Default()
+            setNoPreviousTest()
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
-            every { stateMachine.readState() } returns Default()
-
-            testSubject.viewState().observeForever(viewStateObserver)
+            every { stateMachine.readState() } returns state
+            every { testResultIsolationHandler.computeNextStateWithTestResult(state, negativeTestResult) } returns state
 
             testSubject.onCreate()
 
@@ -174,13 +259,12 @@ class TestResultViewModelTest {
 
     // Case ?
     @Test
-    fun `relevant test result not positive, unacknowledged negative and currently in isolation should return NegativeWillBeInIsolation`() =
+    fun `no relevant test result, unacknowledged negative and currently in isolation should return NegativeWillBeInIsolation`() =
         runBlocking {
-            every { relevantTestResultProvider.isTestResultPositive() } returns false
+            setNoPreviousTest()
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
             every { stateMachine.readState() } returns isolationState
-
-            testSubject.viewState().observeForever(viewStateObserver)
+            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, negativeTestResult) } returns isolationState
 
             testSubject.onCreate()
 
@@ -189,13 +273,13 @@ class TestResultViewModelTest {
 
     // Case A
     @Test
-    fun `relevant test result not positive, unacknowledged negative and currently in isolation as index case only should return NegativeWontBeInIsolation`() =
+    fun `no relevant test result, unacknowledged negative and currently in isolation as index case only should return NegativeWontBeInIsolation`() =
         runBlocking {
-            every { relevantTestResultProvider.isTestResultPositive() } returns false
+            setNoPreviousTest()
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
             every { stateMachine.readState() } returns isolationStateIndexCaseOnly
-
-            testSubject.viewState().observeForever(viewStateObserver)
+            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationStateIndexCaseOnly, negativeTestResult) } returns
+                defaultWithPreviousIsolationIndexCaseOnly
 
             testSubject.onCreate()
 
@@ -204,28 +288,41 @@ class TestResultViewModelTest {
 
     // Case D
     @Test
-    fun `relevant test result positive, unacknowledged negative and currently in isolation should return PositiveThenNegativeWillBeInIsolation`() =
+    fun `relevant test result confirmed positive, unacknowledged negative and currently in isolation should return PositiveThenNegativeWillBeInIsolation`() =
         runBlocking {
-            every { relevantTestResultProvider.isTestResultPositive() } returns true
+            setPreviousTestConfirmed(RelevantVirologyTestResult.POSITIVE)
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
             every { stateMachine.readState() } returns isolationState
-
-            testSubject.viewState().observeForever(viewStateObserver)
+            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, negativeTestResult) } returns isolationState
 
             testSubject.onCreate()
 
             verify { viewStateObserver.onChanged(ViewState(PositiveThenNegativeWillBeInIsolation, 0)) }
         }
 
+    // Case A
+    @Test
+    fun `relevant test result indicative positive, unacknowledged negative and currently in isolation should return NegativeWontBeInIsolation`() =
+        runBlocking {
+            setPreviousTestIndicativePositive()
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
+            every { stateMachine.readState() } returns isolationState
+            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, negativeTestResult) } returns Default(previousIsolation = isolationState)
+
+            testSubject.onCreate()
+
+            verify { viewStateObserver.onChanged(ViewState(NegativeWontBeInIsolation, 0)) }
+        }
+
     // Case F
     @Test
-    fun `relevant test result not positive, unacknowledged void and currently not in isolation should return VoidNotInIsolation`() =
+    fun `no relevant test result, unacknowledged void and currently not in isolation should return VoidNotInIsolation`() =
         runBlocking {
-            every { relevantTestResultProvider.isTestResultPositive() } returns false
+            val state = Default()
+            setNoPreviousTest()
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
-            every { stateMachine.readState() } returns Default()
-
-            testSubject.viewState().observeForever(viewStateObserver)
+            every { stateMachine.readState() } returns state
+            every { testResultIsolationHandler.computeNextStateWithTestResult(state, voidTestResult) } returns state
 
             testSubject.onCreate()
 
@@ -234,13 +331,26 @@ class TestResultViewModelTest {
 
     // Case B
     @Test
-    fun `relevant test result not positive, unacknowledged void and currently in isolation should return VoidWillBeInIsolation`() =
+    fun `no relevant test result, unacknowledged void and currently in isolation should return VoidWillBeInIsolation`() =
         runBlocking {
-            every { relevantTestResultProvider.isTestResultPositive() } returns false
+            setNoPreviousTest()
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
             every { stateMachine.readState() } returns isolationState
+            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, voidTestResult) } returns isolationState
 
-            testSubject.viewState().observeForever(viewStateObserver)
+            testSubject.onCreate()
+
+            verify { viewStateObserver.onChanged(ViewState(VoidWillBeInIsolation, 0)) }
+        }
+
+    // Case B
+    @Test
+    fun `relevant test result confirmed negative, unacknowledged void and currently in isolation should return VoidWillBeInIsolation`() =
+        runBlocking {
+            setPreviousTestConfirmed(RelevantVirologyTestResult.NEGATIVE)
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
+            every { stateMachine.readState() } returns isolationState
+            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, voidTestResult) } returns isolationState
 
             testSubject.onCreate()
 
@@ -249,60 +359,141 @@ class TestResultViewModelTest {
 
     // Case G
     @Test
-    fun `relevant test result positive, unacknowledged void and positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
+    fun `relevant test result confirmed positive, unacknowledged void and confirmed positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
         runBlocking {
-            every { relevantTestResultProvider.isTestResultPositive() } returns true
+            setPreviousTestConfirmed(RelevantVirologyTestResult.POSITIVE)
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(
                 voidTestResult,
                 positiveTestResult
             )
-            every { stateMachine.readState() } returns Default(previousIsolation = isolationStateIndexCaseOnly)
-
-            testSubject.viewState().observeForever(viewStateObserver)
+            every { stateMachine.readState() } returns defaultWithPreviousIsolationIndexCaseOnly
+            every {
+                testResultIsolationHandler.computeNextStateWithTestResult(
+                    defaultWithPreviousIsolationIndexCaseOnly,
+                    positiveTestResult
+                )
+            } returns defaultWithPreviousIsolationIndexCaseOnly
 
             testSubject.onCreate()
 
             verify {
                 viewStateObserver.onChanged(
                     ViewState(PositiveWontBeInIsolation, 0)
-                )
-            }
-        }
-
-    // Case H
-    @Test
-    fun `relevant test result positive, unacknowledged void and positive, currently not in isolation and no previous isolation should return PositiveWillBeInIsolation`() =
-        runBlocking {
-            every { relevantTestResultProvider.isTestResultPositive() } returns true
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
-                voidTestResult,
-                positiveTestResult
-            )
-            every { stateMachine.readState() } returns Default()
-
-            testSubject.viewState().observeForever(viewStateObserver)
-
-            testSubject.onCreate()
-
-            verify {
-                viewStateObserver.onChanged(
-                    ViewState(PositiveWillBeInIsolation, 0)
                 )
             }
         }
 
     // Case G
     @Test
-    fun `relevant test result positive, unacknowledged negative and positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
+    fun `relevant test result confirmed positive, unacknowledged void and indicative positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
         runBlocking {
-            every { relevantTestResultProvider.isTestResultPositive() } returns true
+            setPreviousTestConfirmed(RelevantVirologyTestResult.POSITIVE)
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
+                voidTestResult,
+                positiveTestResultIndicative
+            )
+            every { stateMachine.readState() } returns defaultWithPreviousIsolationIndexCaseOnly
+            every {
+                testResultIsolationHandler.computeNextStateWithTestResult(
+                    defaultWithPreviousIsolationIndexCaseOnly,
+                    positiveTestResultIndicative
+                )
+            } returns defaultWithPreviousIsolationIndexCaseOnly
+
+            testSubject.onCreate()
+
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWontBeInIsolation, 0)
+                )
+            }
+        }
+
+    @Test
+    fun `relevant test result confirmed positive, unacknowledged void and confirmed positive, currently not in isolation and no previous isolation should return PositiveWillBeInIsolation`() =
+        runBlocking {
+            val state = Default()
+            setPreviousTestConfirmed(RelevantVirologyTestResult.POSITIVE)
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
+                voidTestResult,
+                positiveTestResult
+            )
+            every { stateMachine.readState() } returns state
+            every { testResultIsolationHandler.computeNextStateWithTestResult(state, positiveTestResult) } returns isolationStateIndexCaseOnly
+
+            testSubject.onCreate()
+
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWillBeInIsolation, 0)
+                )
+            }
+        }
+
+    @Test
+    fun `relevant test result confirmed positive, unacknowledged void and indicative positive, currently not in isolation and no previous isolation should return PositiveWillBeInIsolation`() =
+        runBlocking {
+            val state = Default()
+            setPreviousTestConfirmed(RelevantVirologyTestResult.POSITIVE)
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
+                voidTestResult,
+                positiveTestResultIndicative
+            )
+            every { stateMachine.readState() } returns state
+            every { testResultIsolationHandler.computeNextStateWithTestResult(state, positiveTestResultIndicative) } returns
+                isolationStateIndexCaseOnly
+
+            testSubject.onCreate()
+
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWillBeInIsolationAndOrderTest, 0)
+                )
+            }
+        }
+
+    // Case G
+    @Test
+    fun `relevant test result confirmed positive, unacknowledged negative and confirmed positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
+        runBlocking {
+            setPreviousTestConfirmed(RelevantVirologyTestResult.POSITIVE)
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(
                 negativeTestResult,
                 positiveTestResult
             )
-            every { stateMachine.readState() } returns Default(previousIsolation = isolationStateIndexCaseOnly)
+            every { stateMachine.readState() } returns defaultWithPreviousIsolationIndexCaseOnly
+            every {
+                testResultIsolationHandler.computeNextStateWithTestResult(
+                    defaultWithPreviousIsolationIndexCaseOnly,
+                    positiveTestResult
+                )
+            } returns defaultWithPreviousIsolationIndexCaseOnly
 
-            testSubject.viewState().observeForever(viewStateObserver)
+            testSubject.onCreate()
+
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWontBeInIsolation, 0)
+                )
+            }
+        }
+
+    // Case G
+    @Test
+    fun `relevant test result confirmed positive, unacknowledged negative and indicative positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
+        runBlocking {
+            setPreviousTestConfirmed(RelevantVirologyTestResult.POSITIVE)
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
+                negativeTestResult,
+                positiveTestResultIndicative
+            )
+            every { stateMachine.readState() } returns defaultWithPreviousIsolationIndexCaseOnly
+            every {
+                testResultIsolationHandler.computeNextStateWithTestResult(
+                    defaultWithPreviousIsolationIndexCaseOnly,
+                    positiveTestResultIndicative
+                )
+            } returns defaultWithPreviousIsolationIndexCaseOnly
 
             testSubject.onCreate()
 
@@ -315,16 +506,17 @@ class TestResultViewModelTest {
 
     // Case H
     @Test
-    fun `relevant test result positive, unacknowledged negative and positive, currently not in isolation and no previous isolation return PositiveWillBeInIsolation`() =
+    fun `relevant test result confirmed positive, unacknowledged negative and confirmed positive, currently not in isolation and no previous isolation return PositiveWillBeInIsolation`() =
         runBlocking {
-            every { relevantTestResultProvider.isTestResultPositive() } returns true
+            val state = Default()
+            setPreviousTestConfirmed(RelevantVirologyTestResult.POSITIVE)
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(
                 negativeTestResult,
                 positiveTestResult
             )
-            every { stateMachine.readState() } returns Default()
-
-            testSubject.viewState().observeForever(viewStateObserver)
+            every { stateMachine.readState() } returns state
+            every { testResultIsolationHandler.computeNextStateWithTestResult(state, positiveTestResult) } returns
+                isolationStateIndexCaseOnly
 
             testSubject.onCreate()
 
@@ -336,15 +528,37 @@ class TestResultViewModelTest {
         }
 
     @Test
-    fun `unacknowledged test result positive with expired isolation should return PositiveWontBeInIsolation`() =
+    fun `relevant test result confirmed positive, unacknowledged negative and indicative positive, currently not in isolation and no previous isolation return PositiveWillBeInIsolation`() =
         runBlocking {
+            val state = Default()
+            setPreviousTestConfirmed(RelevantVirologyTestResult.POSITIVE)
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
+                negativeTestResult,
+                positiveTestResultIndicative
+            )
+            every { stateMachine.readState() } returns state
+            every { testResultIsolationHandler.computeNextStateWithTestResult(state, positiveTestResultIndicative) } returns
+                isolationStateIndexCaseOnly
+
+            testSubject.onCreate()
+
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWillBeInIsolationAndOrderTest, 0)
+                )
+            }
+        }
+
+    @Test
+    fun `unacknowledged test result confirmed positive with expired isolation should return PositiveWontBeInIsolation`() =
+        runBlocking {
+            val state = Default()
             val expiredPositiveTestResult = positiveTestResult.copy(
                 testEndDate = symptomsOnsetDate.atStartOfDay().toInstant(ZoneOffset.UTC).minus(10, ChronoUnit.DAYS)
             )
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(expiredPositiveTestResult)
-            every { stateMachine.readState() } returns Default()
-
-            testSubject.viewState().observeForever(viewStateObserver)
+            every { stateMachine.readState() } returns state
+            every { testResultIsolationHandler.computeNextStateWithTestResult(state, expiredPositiveTestResult) } returns state
 
             testSubject.onCreate()
 
@@ -358,75 +572,248 @@ class TestResultViewModelTest {
         }
 
     @Test
-    fun `acknowledge negative test result should deliver event to state machine`() {
+    fun `unacknowledged test result indicative positive with expired isolation should return PositiveWontBeInIsolation`() =
+        runBlocking {
+            val state = Default()
+            val expiredPositiveTestResult = positiveTestResultIndicative.copy(
+                testEndDate = symptomsOnsetDate.atStartOfDay().toInstant(ZoneOffset.UTC).minus(10, ChronoUnit.DAYS)
+            )
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(expiredPositiveTestResult)
+            every { stateMachine.readState() } returns state
+            every { testResultIsolationHandler.computeNextStateWithTestResult(state, expiredPositiveTestResult) } returns state
+
+            testSubject.onCreate()
+
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWontBeInIsolation, 0)
+                )
+            }
+            coVerify(exactly = 0) { submitEmptyData.invoke(KEY_SUBMISSION) }
+            coVerify(exactly = 0) { submitFakeExposureWindows.invoke(any(), any()) }
+        }
+
+    @Test
+    fun `button click for negative test result should acknowledge test result and finish activity`() {
         every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
         every { stateMachine.readState() } returns isolationState
+        every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, negativeTestResult) } returns isolationState
 
         testSubject.onCreate()
 
-        testSubject.acknowledgeTestResultIfNecessary()
+        testSubject.onActionButtonClicked()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(negativeTestResult)) }
         coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
         coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+
+        verify { navigationObserver.onChanged(NavigationEvent.Finish) }
     }
 
     @Test
-    fun `acknowledge void test result should deliver event to state machine`() {
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
+    fun `back press for negative test result should acknowledge test result`() {
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
         every { stateMachine.readState() } returns isolationState
+        every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, negativeTestResult) } returns isolationState
 
         testSubject.onCreate()
 
-        testSubject.acknowledgeTestResultIfNecessary()
+        testSubject.onBackPressed()
+
+        verify { stateMachine.processEvent(OnTestResultAcknowledge(negativeTestResult)) }
+        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
+        coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+
+        verify(exactly = 0) { navigationObserver.onChanged(any()) }
+    }
+
+    @Test
+    fun `button click for void test result should acknowledge test result and navigate to order test`() {
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
+        every { stateMachine.readState() } returns isolationState
+        every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, voidTestResult) } returns isolationState
+
+        testSubject.onCreate()
+
+        testSubject.onActionButtonClicked()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(voidTestResult)) }
         coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
         coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+
+        verify { navigationObserver.onChanged(NavigationEvent.NavigateToOrderTest) }
     }
 
     @Test
-    fun `acknowledge positive test result should do nothing`() {
-        every { stateMachine.readState() } returns Default()
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
+    fun `back press for void test result should acknowledge test result`() {
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
+        every { stateMachine.readState() } returns isolationState
+        every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, voidTestResult) } returns isolationState
 
         testSubject.onCreate()
 
-        testSubject.acknowledgeTestResultIfNecessary()
+        testSubject.onBackPressed()
+
+        verify { stateMachine.processEvent(OnTestResultAcknowledge(voidTestResult)) }
+        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
+        coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+
+        verify(exactly = 0) { navigationObserver.onChanged(any()) }
+    }
+
+    @Test
+    fun `button click for confirmed positive test result should do nothing and navigate to share keys`() {
+        val state = Default()
+        every { stateMachine.readState() } returns state
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
+        every { testResultIsolationHandler.computeNextStateWithTestResult(state, positiveTestResult) } returns isolationStateIndexCaseOnly
+
+        testSubject.onCreate()
+
+        testSubject.onActionButtonClicked()
 
         verify(exactly = 0) { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResult)) }
         coVerify(exactly = 0) { submitEmptyData.invoke(any()) }
         coVerify(exactly = 0) { submitFakeExposureWindows.invoke(any(), any()) }
+
+        verify { navigationObserver.onChanged(NavigationEvent.NavigateToShareKeys(positiveTestResult)) }
     }
 
     @Test
-    fun `clicking action button for positive test result when diagnosis key submission is supported triggers navigation event`() {
-        testSubject.testResult = positiveTestResult.copy(diagnosisKeySubmissionSupported = true)
-        testSubject.navigateToShareKeys().observeForever(navigateToShareKeysObserver)
-        testSubject.finishActivity().observeForever(finishActivityObserver)
+    fun `back press for confirmed positive test result should do nothing`() {
+        val state = Default()
+        every { stateMachine.readState() } returns state
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
+        every { testResultIsolationHandler.computeNextStateWithTestResult(state, positiveTestResult) } returns isolationStateIndexCaseOnly
 
-        testSubject.onActionButtonForPositiveTestResultClicked()
+        testSubject.onCreate()
 
-        verify { navigateToShareKeysObserver.onChanged(positiveTestResult) }
-        verify(exactly = 0) { stateMachine.processEvent(OnTestResultAcknowledge(testSubject.testResult)) }
-        coVerify(exactly = 0) { submitEmptyData.invoke(KEY_SUBMISSION) }
-        coVerify(exactly = 0) { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
-        verify(exactly = 0) { finishActivityObserver.onChanged(any()) }
+        testSubject.onBackPressed()
+
+        verify(exactly = 0) { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResult)) }
+        coVerify(exactly = 0) { submitEmptyData.invoke(any()) }
+        coVerify(exactly = 0) { submitFakeExposureWindows.invoke(any(), any()) }
+
+        verify(exactly = 0) { navigationObserver.onChanged(any()) }
     }
 
     @Test
-    fun `clicking action button for positive test result when diagnosis key submission is not supported acknowledges test result and finishes activity`() = runBlocking {
-        testSubject.testResult = positiveTestResult.copy(diagnosisKeySubmissionSupported = false)
-        testSubject.navigateToShareKeys().observeForever(navigateToShareKeysObserver)
-        testSubject.finishActivity().observeForever(finishActivityObserver)
+    fun `button click for indicative positive test result should acknowledge test result and navigate to order test`() {
+        val state = Default()
+        every { stateMachine.readState() } returns state
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResultIndicative)
+        every { testResultIsolationHandler.computeNextStateWithTestResult(state, positiveTestResultIndicative) } returns isolationStateIndexCaseOnly
 
-        testSubject.onActionButtonForPositiveTestResultClicked()
+        testSubject.onCreate()
 
-        verify(exactly = 0) { navigateToShareKeysObserver.onChanged(any()) }
-        verify { stateMachine.processEvent(OnTestResultAcknowledge(testSubject.testResult)) }
+        testSubject.onActionButtonClicked()
+
+        verify { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResultIndicative)) }
+        coVerify { submitEmptyData.invoke(any()) }
+        coVerify { submitFakeExposureWindows.invoke(any(), any()) }
+
+        verify { navigationObserver.onChanged(NavigationEvent.NavigateToOrderTest) }
+    }
+
+    @Test
+    fun `back press for indicative positive test result should acknowledge test result`() {
+        val state = Default()
+        every { stateMachine.readState() } returns state
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResultIndicative)
+        every { testResultIsolationHandler.computeNextStateWithTestResult(state, positiveTestResultIndicative) } returns isolationStateIndexCaseOnly
+
+        testSubject.onCreate()
+
+        testSubject.onBackPressed()
+
+        verify { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResultIndicative)) }
+        coVerify { submitEmptyData.invoke(any()) }
+        coVerify { submitFakeExposureWindows.invoke(any(), any()) }
+
+        verify(exactly = 0) { navigationObserver.onChanged(any()) }
+    }
+
+    @Test
+    fun `button click for confirmed positive test result when diagnosis key submission is not supported acknowledges test result and finishes activity`() = runBlocking {
+        val state = Default()
+        val testResult = positiveTestResult.copy(diagnosisKeySubmissionSupported = false)
+        every { stateMachine.readState() } returns state
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
+        every { testResultIsolationHandler.computeNextStateWithTestResult(state, testResult) } returns isolationStateIndexCaseOnly
+
+        testSubject.onCreate()
+
+        testSubject.onActionButtonClicked()
+
+        verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
         coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
         coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
-        verify { finishActivityObserver.onChanged(null) }
+
+        verify { navigationObserver.onChanged(NavigationEvent.Finish) }
+    }
+
+    @Test
+    fun `back press for confirmed positive test result when diagnosis key submission is not supported acknowledges test result`() = runBlocking {
+        val state = Default()
+        val testResult = positiveTestResult.copy(diagnosisKeySubmissionSupported = false)
+        every { stateMachine.readState() } returns state
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
+        every { testResultIsolationHandler.computeNextStateWithTestResult(state, testResult) } returns isolationStateIndexCaseOnly
+
+        testSubject.onCreate()
+
+        testSubject.onBackPressed()
+
+        verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
+        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
+        coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+
+        verify(exactly = 0) { navigationObserver.onChanged(any()) }
+    }
+
+    @Test
+    fun `back press for indicative positive test result when diagnosis key submission is not supported acknowledges test result`() = runBlocking {
+        val state = Default()
+        val testResult = positiveTestResultIndicative.copy(diagnosisKeySubmissionSupported = false)
+        every { stateMachine.readState() } returns state
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
+        every { testResultIsolationHandler.computeNextStateWithTestResult(state, testResult) } returns isolationStateIndexCaseOnly
+
+        testSubject.onCreate()
+
+        testSubject.onBackPressed()
+
+        verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
+        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
+        coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+
+        verify(exactly = 0) { navigationObserver.onChanged(any()) }
+    }
+
+    private fun setPreviousTestIndicativePositive(fromCurrentIsolation: Boolean = true) {
+        mockkStatic("uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachineKt")
+        every { any<Isolation>().hasConfirmedPositiveTestResult(any()) } returns false
+        every { any<Isolation>().hasUnconfirmedPositiveTestResult(any()) } returns fromCurrentIsolation
+        every { any<Isolation>().hasPositiveTestResult(any()) } returns fromCurrentIsolation
+    }
+
+    private fun setPreviousTestConfirmed(
+        testResult: RelevantVirologyTestResult,
+        fromCurrentIsolation: Boolean = true
+    ) {
+        val isPositiveFromCurrentIsolation = testResult == RelevantVirologyTestResult.POSITIVE && fromCurrentIsolation
+
+        mockkStatic("uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachineKt")
+        every { any<Isolation>().hasConfirmedPositiveTestResult(any()) } returns isPositiveFromCurrentIsolation
+        every { any<Isolation>().hasUnconfirmedPositiveTestResult(any()) } returns false
+        every { any<Isolation>().hasPositiveTestResult(any()) } returns isPositiveFromCurrentIsolation
+    }
+
+    private fun setNoPreviousTest() {
+        mockkStatic("uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachineKt")
+        every { any<Isolation>().hasConfirmedPositiveTestResult(any()) } returns false
+        every { any<Isolation>().hasUnconfirmedPositiveTestResult(any()) } returns false
+        every { any<Isolation>().hasPositiveTestResult(any()) } returns false
     }
 
     companion object {

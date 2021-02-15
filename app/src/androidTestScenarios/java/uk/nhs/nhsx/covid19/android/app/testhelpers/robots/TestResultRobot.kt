@@ -5,6 +5,7 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers.not
@@ -47,6 +48,31 @@ class TestResultRobot {
             .check(matches(isDisplayed()))
 
         onView(withText(R.string.state_test_positive_info))
+            .check(matches(isDisplayed()))
+
+        onView(withText(R.string.test_result_positive_continue_self_isolate_explanation_1))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkActivityDisplaysPositiveContinueIsolationNoChange() {
+        onView(withText(R.string.test_result_positive_continue_self_isolation_title_1))
+            .check(matches(isDisplayed()))
+
+        onView(withText(R.string.state_test_positive_info))
+            .check(matches(isDisplayed()))
+
+        onView(withText(R.string.test_result_positive_continue_self_isolate_no_change_explanation_1))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() {
+        onView(withText(R.string.self_isolate_for))
+            .check(matches(isDisplayed()))
+
+        onView(withText(R.string.test_result_positive_self_isolate_and_book_test_title_3))
+            .check(matches(isDisplayed()))
+
+        onView(withText(R.string.state_test_positive_and_book_test_info))
             .check(matches(isDisplayed()))
     }
 
@@ -97,7 +123,11 @@ class TestResultRobot {
         onView(withId(R.id.goodNewsActionButton)).perform(scrollTo(), click())
     }
 
-    fun checkGoodNewsActionButtonShowsBookFreeTest() {
+    fun clickCloseButton() {
+        onView(withContentDescription(R.string.close)).perform(click())
+    }
+
+    fun checkGoodNewsActionButtonShowsOrderFreeTest() {
         onView(withId(R.id.goodNewsActionButton))
             .check(matches(withText(R.string.book_free_test)))
     }

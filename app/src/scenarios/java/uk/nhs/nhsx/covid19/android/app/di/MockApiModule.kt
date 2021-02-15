@@ -2,6 +2,8 @@ package uk.nhs.nhsx.covid19.android.app.di
 
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
+import uk.nhs.nhsx.covid19.android.app.MockApiBehaviour
 import uk.nhs.nhsx.covid19.android.app.remote.AnalyticsApi
 import uk.nhs.nhsx.covid19.android.app.remote.AppAvailabilityApi
 import uk.nhs.nhsx.covid19.android.app.remote.EmptyApi
@@ -32,10 +34,13 @@ import uk.nhs.nhsx.covid19.android.app.remote.RiskyPostDistrictsApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesCircuitBreakerApi
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
-import javax.inject.Singleton
 
 @Module
 class MockApiModule {
+    companion object {
+        var behaviour = MockApiBehaviour()
+    }
+
     @Provides
     @Singleton
     fun provideKeysSubmissionApi(): KeysSubmissionApi =

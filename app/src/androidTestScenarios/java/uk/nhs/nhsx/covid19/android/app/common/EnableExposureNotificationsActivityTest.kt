@@ -17,7 +17,8 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.EnableExposureNotifica
 class EnableExposureNotificationsActivityTest : EspressoTest() {
 
     @get:Rule
-    val activityRule = ActivityTestRule<EnableExposureNotificationsActivity>(EnableExposureNotificationsActivity::class.java)
+    val activityRule =
+        ActivityTestRule<EnableExposureNotificationsActivity>(EnableExposureNotificationsActivity::class.java)
 
     private val enableExposureNotificationsRobot = EnableExposureNotificationsRobot()
 
@@ -54,22 +55,24 @@ class EnableExposureNotificationsActivityTest : EspressoTest() {
     }
 
     @Test
-    fun grantExposureNotificationPermissions_whenResolutionNeededAndSuccessful_shouldFinishWithOk() = notReported {
-        testAppContext.setExposureNotificationResolutionRequired(activityRule.activity, true)
+    fun grantExposureNotificationPermissions_whenResolutionNeededAndSuccessful_shouldFinishWithOk() =
+        notReported {
+            testAppContext.setExposureNotificationResolutionRequired(activityRule.activity, true)
 
-        waitFor { enableExposureNotificationsRobot.checkActivityIsDisplayed() }
+            waitFor { enableExposureNotificationsRobot.checkActivityIsDisplayed() }
 
-        enableExposureNotificationsRobot.clickEnableExposureNotificationsButton()
+            enableExposureNotificationsRobot.clickEnableExposureNotificationsButton()
 
-        waitFor { assertThat(activityRule.activityResult, hasResultCode(Activity.RESULT_OK)) }
-    }
+            waitFor { assertThat(activityRule.activityResult, hasResultCode(Activity.RESULT_OK)) }
+        }
 
     @Test
-    fun grantExposureNotificationPermissions_whenResolutionNeededAndNotSuccessful_shouldDoNothing() = notReported {
-        testAppContext.setExposureNotificationResolutionRequired(activityRule.activity, false)
+    fun grantExposureNotificationPermissions_whenResolutionNeededAndNotSuccessful_shouldDoNothing() =
+        notReported {
+            testAppContext.setExposureNotificationResolutionRequired(activityRule.activity, false)
 
-        waitFor { enableExposureNotificationsRobot.checkActivityIsDisplayed() }
+            waitFor { enableExposureNotificationsRobot.checkActivityIsDisplayed() }
 
-        enableExposureNotificationsRobot.clickEnableExposureNotificationsButton()
-    }
+            enableExposureNotificationsRobot.clickEnableExposureNotificationsButton()
+        }
 }

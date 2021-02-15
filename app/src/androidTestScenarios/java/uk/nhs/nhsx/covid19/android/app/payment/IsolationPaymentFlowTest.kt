@@ -2,9 +2,14 @@ package uk.nhs.nhsx.covid19.android.app.payment
 
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_EXTERNAL_BROWSER
+import java.time.Instant
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.FAIL_SUCCEED_LOOP
+import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.State
@@ -15,9 +20,6 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationPaymentRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ProgressRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
-import java.time.Instant
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 class IsolationPaymentFlowTest : EspressoTest() {
 
@@ -39,6 +41,8 @@ class IsolationPaymentFlowTest : EspressoTest() {
     @RetryFlakyTest
     @Test
     fun whenUserInContactCaseIsolation_performIsolationPaymentFlow_retryOnce_endInStatusActivity() = notReported {
+        MockApiModule.behaviour.responseType = FAIL_SUCCEED_LOOP
+
         testAppContext.setIsolationPaymentToken("abc")
         testAppContext.setState(
             State.Isolation(
@@ -51,7 +55,6 @@ class IsolationPaymentFlowTest : EspressoTest() {
                 )
             )
         )
-        testAppContext.isolationPaymentApi.shouldPass = false
 
         startTestActivity<StatusActivity>()
 
@@ -64,8 +67,6 @@ class IsolationPaymentFlowTest : EspressoTest() {
         isolationPaymentRobot.clickEligibilityButton()
 
         isolationPaymentProgressRobot.checkErrorIsDisplayed()
-
-        testAppContext.isolationPaymentApi.shouldPass = true
 
         isolationPaymentProgressRobot.clickTryAgainButton()
 

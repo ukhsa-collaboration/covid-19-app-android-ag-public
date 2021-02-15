@@ -27,28 +27,34 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
             // Now in isolation due to self-diagnosis
             assertEquals(1, Metrics::completedQuestionnaireAndStartedIsolation)
             assertEquals(1, Metrics::startedIsolation)
-
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
-
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
         }
 
         // Has risky contact on 3nd Jan
         // Isolation end date: 14th Jan
         riskyContact.trigger(this::advanceToNextBackgroundTaskExecution)
+        riskyContact.acknowledge()
 
         // Current date: 4th Jan -> Analytics packet for: 3rd Jan
         assertOnFields {
             // Now also in isolation because of risky contact
             assertEquals(1, Metrics::receivedRiskyContactNotification)
-
+            assertEquals(1, Metrics::acknowledgedStartOfIsolationDueToRiskyContact)
+            assertEquals(1, Metrics::receivedActiveIpcToken)
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
-
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
+            assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
+            ignore(
+                // totalRiskyContactReminderNotifications is set based on AlarmManager and introduces flakiness
+                Metrics::totalRiskyContactReminderNotifications
+            )
         }
 
         // Dates: 5th-14th Jan -> Analytics packets for: 3rd-13th Jan
@@ -57,9 +63,10 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
-
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
+            assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
         }
     }
 }

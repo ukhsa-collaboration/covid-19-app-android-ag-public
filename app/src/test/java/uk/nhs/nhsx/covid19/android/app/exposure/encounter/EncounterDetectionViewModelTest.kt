@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -10,6 +11,7 @@ import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionViewModel.ExposedNotificationResult
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
+import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -18,6 +20,9 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import java.time.Instant
 import java.time.LocalDate
+import kotlinx.coroutines.runBlocking
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AcknowledgedStartOfIsolationDueToRiskyContact
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 
 class EncounterDetectionViewModelTest {
 
@@ -26,12 +31,20 @@ class EncounterDetectionViewModelTest {
 
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val userInbox = mockk<UserInbox>(relaxed = true)
+    private val exposureNotificationRetryAlarmController =
+        mockk<ExposureNotificationRetryAlarmController>(relaxed = true)
+    private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxed = true)
 
     private val resultObserver = mockk<Observer<ExposedNotificationResult>>(
         relaxed = true
     )
 
-    private val testSubject = EncounterDetectionViewModel(isolationStateMachine, userInbox)
+    private val testSubject = EncounterDetectionViewModel(
+        isolationStateMachine,
+        userInbox,
+        exposureNotificationRetryAlarmController,
+        analyticsEventProcessor
+    )
 
     @Before
     fun setUp() {
@@ -57,10 +70,12 @@ class EncounterDetectionViewModelTest {
     }
 
     @Test
-    fun `confirm consent`() {
+    fun `confirm consent`() = runBlocking {
         testSubject.confirmConsent()
 
+        verify { exposureNotificationRetryAlarmController.cancel() }
         verify { userInbox.clearItem(ShowEncounterDetection) }
+        coVerify { analyticsEventProcessor.track(AcknowledgedStartOfIsolationDueToRiskyContact) }
 
         verify { resultObserver.onChanged(ExposedNotificationResult.ConsentConfirmation) }
     }

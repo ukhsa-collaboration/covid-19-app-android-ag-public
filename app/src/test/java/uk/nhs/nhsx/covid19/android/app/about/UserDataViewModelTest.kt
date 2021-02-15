@@ -8,6 +8,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.Instant
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
@@ -26,7 +27,6 @@ import uk.nhs.nhsx.covid19.android.app.state.State
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
-import java.time.Instant
 
 class UserDataViewModelTest {
 
@@ -107,7 +107,9 @@ class UserDataViewModelTest {
             testEndDate = Instant.now(),
             testResult = POSITIVE,
             acknowledgedDate = Instant.now(),
-            testKitType = LAB_RESULT
+            testKitType = LAB_RESULT,
+            requiresConfirmatoryTest = false,
+            confirmedDate = null
         )
 
         every { relevantTestResultProvider.testResult } returns latestTestResult

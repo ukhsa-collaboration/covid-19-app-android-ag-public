@@ -32,7 +32,7 @@ class MoreAboutAppActivity : BaseActivity(R.layout.activity_more_about_app) {
     }
 
     private fun getReleaseDate(): String {
-        return "01/2021" // TODO Implement it when get enough info
+        return BuildConfig.RELEASE_DATE
     }
 
     private fun setupListeners() {

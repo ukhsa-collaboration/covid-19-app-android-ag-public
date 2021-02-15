@@ -4,6 +4,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 
 sealed class AnalyticsEvent {
+    object AcknowledgedStartOfIsolationDueToRiskyContact : AnalyticsEvent()
     object QrCodeCheckIn : AnalyticsEvent()
     object CanceledCheckIn : AnalyticsEvent()
     object CompletedQuestionnaireAndStartedIsolation : AnalyticsEvent()
@@ -13,6 +14,7 @@ sealed class AnalyticsEvent {
     object NegativeResultReceived : AnalyticsEvent()
     object VoidResultReceived : AnalyticsEvent()
     object ReceivedRiskyContactNotification : AnalyticsEvent()
+    object RiskyContactReminderNotification : AnalyticsEvent()
     object StartedIsolation : AnalyticsEvent()
     data class ResultReceived(
         val result: VirologyTestResult,
@@ -23,5 +25,7 @@ sealed class AnalyticsEvent {
     object ReceivedActiveIpcToken : AnalyticsEvent()
     object SelectedIsolationPaymentsButton : AnalyticsEvent()
     object LaunchedIsolationPaymentsApplication : AnalyticsEvent()
+    object LaunchedTestOrdering : AnalyticsEvent()
     data class ExposureWindowsMatched(val totalRiskyExposures: Int, val totalNonRiskyExposures: Int) : AnalyticsEvent()
+    object ReceivedUnconfirmedPositiveTestResult : AnalyticsEvent()
 }

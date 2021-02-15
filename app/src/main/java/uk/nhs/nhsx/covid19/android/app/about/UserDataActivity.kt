@@ -6,16 +6,25 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_AUTHORITY
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_about_user_data.actionDeleteAllData
 import kotlinx.android.synthetic.main.activity_about_user_data.editLocalAuthority
 import kotlinx.android.synthetic.main.activity_about_user_data.editVenueVisits
 import kotlinx.android.synthetic.main.activity_about_user_data.encounterDataSection
 import kotlinx.android.synthetic.main.activity_about_user_data.exposureNotificationDataSection
+import kotlinx.android.synthetic.main.activity_about_user_data.followUpDate
+import kotlinx.android.synthetic.main.activity_about_user_data.followUpState
+import kotlinx.android.synthetic.main.activity_about_user_data.followUpTestContainer
 import kotlinx.android.synthetic.main.activity_about_user_data.lastDayOfIsolationDate
 import kotlinx.android.synthetic.main.activity_about_user_data.lastDayOfIsolationSection
 import kotlinx.android.synthetic.main.activity_about_user_data.lastResultDate
@@ -63,11 +72,6 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
-import javax.inject.Inject
 
 class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
 
@@ -159,6 +163,7 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
             latestResultDateContainer.gone()
             latestResultValueContainer.gone()
             latestResultKitTypeContainer.gone()
+            followUpTestContainer.gone()
         } else {
             lastResultDate.text = uiFormat(acknowledgedTestResult.testEndDate)
             lastResultValue.text = getTestResultText(acknowledgedTestResult)
@@ -167,6 +172,19 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
                 latestResultKitTypeContainer.visible()
             } else {
                 latestResultKitTypeContainer.gone()
+            }
+
+            if (acknowledgedTestResult.requiresConfirmatoryTest) {
+                if (acknowledgedTestResult.confirmedDate == null) {
+                    followUpState.text = getString(R.string.about_test_follow_up_state_pending)
+                    followUpDate.isVisible = false
+                } else {
+                    followUpState.text = getString(R.string.about_test_follow_up_state_complete)
+                    followUpDate.text = uiFormat(acknowledgedTestResult.confirmedDate)
+                    followUpDate.isVisible = true
+                }
+            } else {
+                followUpState.text = getString(R.string.about_test_follow_up_state_not_required)
             }
 
             titleLatestResult.visible()

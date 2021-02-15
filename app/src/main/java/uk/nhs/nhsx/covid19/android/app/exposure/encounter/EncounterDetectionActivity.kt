@@ -66,7 +66,7 @@ class EncounterDetectionActivity : BaseActivity(R.layout.activity_exposed_notifi
             getIntent(context)
         )
 
-        fun getIntent(context: Context) =
+        private fun getIntent(context: Context) =
             Intent(context, EncounterDetectionActivity::class.java)
                 .apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

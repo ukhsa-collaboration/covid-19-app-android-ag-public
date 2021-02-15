@@ -25,6 +25,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRo
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OVERWRITE
 import java.time.Instant
 import java.time.LocalDate
 import kotlin.test.assertTrue
@@ -48,10 +49,10 @@ class TestResultActivityTest : EspressoTest() {
     )
 
     @Test
-    fun showContinueToSelfIsolationScreenOnPositive() = reporter(
+    fun showContinueToSelfIsolateScreenOnPositiveConfirmatory() = reporter(
         scenario = "Test result",
-        title = "Positive in isolation",
-        description = "User receives positive test result while in isolation",
+        title = "Positive confirmatory in isolation",
+        description = "User receives positive confirmatory test result while in isolation",
         kind = SCREEN
     ) {
         testAppContext.setState(isolationStateContactCaseOnly)
@@ -62,7 +63,8 @@ class TestResultActivityTest : EspressoTest() {
                 testEndDate = Instant.now(),
                 testResult = POSITIVE,
                 testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 
@@ -83,10 +85,10 @@ class TestResultActivityTest : EspressoTest() {
     }
 
     @Test
-    fun showContinueToSelfIsolationScreenOnNegativeAndNotIndexCaseOnly() = reporter(
+    fun showContinueToSelfIsolateScreenOnNegativeConfirmatoryAndNotIndexCaseOnly() = reporter(
         scenario = "Test result",
-        title = "Negative in isolation when not at index case only",
-        description = "User receives negative test result while in isolation when at index case only",
+        title = "Negative confirmatory in isolation when not at index case only",
+        description = "User receives negative confirmatory test result while in isolation when at index case only",
         kind = SCREEN
     ) {
         testAppContext.setState(isolationStateContactCaseOnly)
@@ -97,7 +99,8 @@ class TestResultActivityTest : EspressoTest() {
                 testEndDate = Instant.now(),
                 testResult = NEGATIVE,
                 testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 
@@ -112,16 +115,16 @@ class TestResultActivityTest : EspressoTest() {
         assertTrue { testAppContext.getCurrentState() is Isolation }
 
         step(
-            stepName = "Negative in isolation when not at index case only",
-            stepDescription = "User receives negative test result while in isolation"
+            stepName = "Negative confirmatory in isolation when not at index case only",
+            stepDescription = "User receives negative confirmatory test result while in isolation"
         )
     }
 
     @Test
-    fun showDoNotHaveToSelfIsolateScreenOnNegativeAndIndexCaseOnly() = reporter(
+    fun showDoNotHaveToSelfIsolateScreenOnNegativeConfirmatoryAndIndexCaseOnly() = reporter(
         scenario = "Test result",
-        title = "Negative in isolation at index case only",
-        description = "User receives negative test result while in isolation when at index case only",
+        title = "Negative confirmatory in isolation at index case only",
+        description = "User receives negative confirmatory test result while in isolation when at index case only",
         kind = SCREEN
     ) {
         testAppContext.setState(isolationStateIndexCaseOnly)
@@ -132,7 +135,8 @@ class TestResultActivityTest : EspressoTest() {
                 testEndDate = Instant.now(),
                 testResult = NEGATIVE,
                 testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 
@@ -152,7 +156,7 @@ class TestResultActivityTest : EspressoTest() {
     }
 
     @Test
-    fun showIsolationScreenWhenReceivingPositiveAndThenNegativeTestResult() = notReported {
+    fun showIsolationScreenWhenReceivingPositiveConfirmatoryAndThenNegativeConfirmatoryTestResult() = notReported {
         testAppContext.setState(isolationStateIndexCaseOnly)
 
         testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(
@@ -161,8 +165,10 @@ class TestResultActivityTest : EspressoTest() {
                 testEndDate = Instant.now(),
                 testResult = POSITIVE,
                 testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
-            )
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
+            ),
+            testResultStorageOperation = OVERWRITE
         )
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
@@ -171,7 +177,8 @@ class TestResultActivityTest : EspressoTest() {
                 testEndDate = Instant.now(),
                 testResult = NEGATIVE,
                 testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 
@@ -190,7 +197,7 @@ class TestResultActivityTest : EspressoTest() {
 
     @RetryFlakyTest
     @Test
-    fun showIsolationScreenWhenReceivingNegativeAndThenPositiveTestResultAndSharingKeys() = notReported {
+    fun showIsolationScreenWhenReceivingNegativeConfirmatoryAndThenPositiveConfirmatoryTestResultAndSharingKeys() = notReported {
         testAppContext.setState(Default())
 
         testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(
@@ -199,8 +206,10 @@ class TestResultActivityTest : EspressoTest() {
                 testEndDate = Instant.now(),
                 testResult = NEGATIVE,
                 testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
-            )
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
+            ),
+            testResultStorageOperation = OVERWRITE
         )
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
@@ -209,7 +218,8 @@ class TestResultActivityTest : EspressoTest() {
                 testEndDate = Instant.now(),
                 testResult = POSITIVE,
                 testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 
@@ -232,7 +242,7 @@ class TestResultActivityTest : EspressoTest() {
 
     @RetryFlakyTest
     @Test
-    fun showIsolationScreenWhenReceivingNegativeAndThenPositiveTestResultAndRefusingToShareKeys() = notReported {
+    fun showIsolationScreenWhenReceivingNegativeConfirmatoryAndThenPositiveConfirmatoryTestResultAndRefusingToShareKeys() = notReported {
         testAppContext.setTemporaryExposureKeyHistoryResolutionRequired(testAppContext.app, false)
 
         testAppContext.setState(Default())
@@ -243,7 +253,8 @@ class TestResultActivityTest : EspressoTest() {
                 testEndDate = Instant.now(),
                 testResult = NEGATIVE,
                 testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 
@@ -253,7 +264,8 @@ class TestResultActivityTest : EspressoTest() {
                 testEndDate = Instant.now(),
                 testResult = POSITIVE,
                 testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 
@@ -275,7 +287,7 @@ class TestResultActivityTest : EspressoTest() {
     }
 
     @Test
-    fun showDoNotHaveToSelfIsolateScreenOnPositive() = notReported {
+    fun showDoNotHaveToSelfIsolateScreenOnPositiveConfirmatory() = notReported {
         testAppContext.setState(Default(previousIsolation = isolationStateIndexCaseOnly))
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
@@ -284,7 +296,8 @@ class TestResultActivityTest : EspressoTest() {
                 testEndDate = Instant.now(),
                 testResult = POSITIVE,
                 testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 
@@ -300,7 +313,7 @@ class TestResultActivityTest : EspressoTest() {
     }
 
     @Test
-    fun showDoNotHaveToSelfIsolateScreenOnNegative() = notReported {
+    fun showDoNotHaveToSelfIsolateScreenOnNegativeConfirmatory() = notReported {
         testAppContext.setState(Default())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
@@ -309,7 +322,8 @@ class TestResultActivityTest : EspressoTest() {
                 testEndDate = Instant.now(),
                 testResult = NEGATIVE,
                 testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 
@@ -325,10 +339,10 @@ class TestResultActivityTest : EspressoTest() {
     }
 
     @Test
-    fun showContinueToSelfIsolationScreenOnVoid() = reporter(
+    fun showContinueToSelfIsolateScreenOnVoidConfirmatory() = reporter(
         scenario = "Test result",
-        title = "Void in isolation",
-        description = "User receives void test result while in isolation",
+        title = "Void confirmatory in isolation",
+        description = "User receives void confirmatory test result while in isolation",
         kind = SCREEN
     ) {
         testAppContext.setState(isolationStateContactCaseOnly)
@@ -339,7 +353,8 @@ class TestResultActivityTest : EspressoTest() {
                 testEndDate = Instant.now(),
                 testResult = VOID,
                 testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 
@@ -354,13 +369,13 @@ class TestResultActivityTest : EspressoTest() {
         assertTrue { testAppContext.getCurrentState() is Isolation }
 
         step(
-            stepName = "Void in isolation",
-            stepDescription = "User receives void test result while in isolation"
+            stepName = "Void confirmatory in isolation",
+            stepDescription = "User receives void confirmatory test result while in isolation"
         )
     }
 
     @Test
-    fun showAreNotIsolatingScreenOnNegative() = notReported {
+    fun showAreNotIsolatingScreenOnNegativeConfirmatory() = notReported {
         testAppContext.setState(Default())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
@@ -369,7 +384,8 @@ class TestResultActivityTest : EspressoTest() {
                 testEndDate = Instant.now(),
                 testResult = NEGATIVE,
                 testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 
@@ -380,7 +396,7 @@ class TestResultActivityTest : EspressoTest() {
     }
 
     @Test
-    fun showAreNotIsolatingScreenOnVoid() = notReported {
+    fun showAreNotIsolatingScreenOnVoidConfirmatory() = notReported {
         testAppContext.setState(Default())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
@@ -389,7 +405,8 @@ class TestResultActivityTest : EspressoTest() {
                 testEndDate = Instant.now(),
                 testResult = VOID,
                 testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 
@@ -397,7 +414,7 @@ class TestResultActivityTest : EspressoTest() {
 
         testResultRobot.checkActivityDisplaysVoidNotInIsolation()
 
-        testResultRobot.checkGoodNewsActionButtonShowsBookFreeTest()
+        testResultRobot.checkGoodNewsActionButtonShowsOrderFreeTest()
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -415,7 +432,8 @@ class TestResultActivityTest : EspressoTest() {
                     testEndDate = Instant.now(),
                     testResult = VOID,
                     testKitType = LAB_RESULT,
-                    diagnosisKeySubmissionSupported = true
+                    diagnosisKeySubmissionSupported = true,
+                    requiresConfirmatoryTest = false
                 )
             )
 
@@ -441,7 +459,8 @@ class TestResultActivityTest : EspressoTest() {
                     testEndDate = Instant.now(),
                     testResult = VOID,
                     testKitType = LAB_RESULT,
-                    diagnosisKeySubmissionSupported = true
+                    diagnosisKeySubmissionSupported = true,
+                    requiresConfirmatoryTest = false
                 )
             )
 
@@ -466,7 +485,8 @@ class TestResultActivityTest : EspressoTest() {
                 testEndDate = Instant.now(),
                 testResult = VOID,
                 testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 

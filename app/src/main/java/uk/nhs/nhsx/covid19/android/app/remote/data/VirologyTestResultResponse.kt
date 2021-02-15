@@ -8,7 +8,8 @@ data class VirologyTestResultResponse(
     val testEndDate: Instant,
     val testResult: VirologyTestResult,
     val testKit: VirologyTestKitType,
-    val diagnosisKeySubmissionSupported: Boolean
+    val diagnosisKeySubmissionSupported: Boolean,
+    val requiresConfirmatoryTest: Boolean
 )
 
 enum class VirologyTestResult {

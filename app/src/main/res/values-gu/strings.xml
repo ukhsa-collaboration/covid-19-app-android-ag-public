@@ -59,7 +59,7 @@
     <string name="test_ordering_failure_action">ફરીથી પ્રયત્ન કરો</string>
     <string name="questionnaire_title">તમને જેટલા લાગુ પડતાં હોય એટલા લક્ષણો પસંદ કરો</string>
     <string name="questionnaire_no_symptom_selected">તમારે કોઈ લક્ષણ પસંદ કરવું પડશે અથવા તમે પસંદ કરી શકો છો કે \"મને આમાંથી કોઈ લક્ષણો નથી\".</string>
-    <string name="questionnaire_discard_symptoms_dialog_title">તમને કોઈ પણ લક્ષણો નથી તે પુષ્ટિ કરો</string>
+    <string name="questionnaire_discard_symptoms_dialog_title">ખાતરી કરો કે તમને આમાંથી કોઈ લક્ષણો નથી</string>
     <string name="questionnaire_discard_symptoms_dialog_message">કોઈ પણ પસંદ કરવામાં આવેલ લક્ષણોની પસંદગી નીકળી જશે.</string>
     <string name="title_no_coronavirus_symptoms">તમને કોરોનાવાયરસ હોવાની સંભાવના નથી</string>
     <string name="you_do_not_appear_to_have_symptoms">તમને કોરોનાવાયરસના કોઈ લક્ષણો હોવાનું જણાતું નથી</string>
@@ -430,4 +430,14 @@
     <string name="about_pcr">LAB_RESULT</string>
     <string name="about_test_kit_type">ટેસ્ટ કીટ પ્રકાર</string>
     <string name="about_test_result">પરિણામ</string>
+    <string name="state_test_positive_and_book_test_info">તમારા કોરોનાવાયરસનું ટેસ્ટ પરિણામ સકારાત્મક છે</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">સેલ્ફ આયસોલેશનનાં દિવસોનો એપ કેવી રીતે સરવાળો કરે છે એ જાણવા માટે પૂછાતા પ્રશ્નોની નીચે લિંક જૂઓ.</string>
+    <string name="test_result_positive_self_isolate_and_book_test_explanation_1">સેલ્ફ આયસોલેશનનાં દિવસોનો એપ કેવી રીતે સરવાળો કરે છે એ જાણવા માટે પૂછાતા પ્રશ્નો જૂઓ.\n\nતમે રૅપિડ સ્વૅબ ટેસ્ટ લીધો હોવાથી તમારે હવે રિઝલ્ટ માટે લૅબમાં મોકલવામાં આવેલ અન્ય પ્રકારનો ટેસ્ટ કરાવવાની જરૂર છે.\n\nદરમિયાન, તમે અને તમે જેમની સાથે રહેતા હો એવી કોઈ પણ વ્યક્તિએ તાત્કાલિક સૅલ્ફ-આઇસોલેટ થવાનું રહેશે.</string>
+    <string name="test_result_positive_self_isolate_and_book_test_title_3">અને ફૉલો-અપ ટેસ્ટ બૂક કરાવો</string>
+    <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
+    <string name="about_test_follow_up">ફૉલો-અપ ટેસ્ટ</string>
+    <string name="about_test_follow_up_state_complete">પૂર્ણ</string>
+    <string name="about_test_follow_up_state_not_required">જરૂરી નથી</string>
+    <string name="about_test_follow_up_state_pending">બાકી</string>
+    <string name="book_follow_up_test">ફોલો-અપ ટેસ્ટ બૂક કરો</string>
 </resources>

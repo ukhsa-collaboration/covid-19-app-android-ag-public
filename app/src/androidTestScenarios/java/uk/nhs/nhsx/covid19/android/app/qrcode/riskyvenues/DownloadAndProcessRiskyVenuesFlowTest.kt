@@ -1,5 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 
+import java.time.Instant
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Test
@@ -11,9 +14,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyWindow
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
-import java.time.Instant
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 class DownloadAndProcessRiskyVenuesFlowTest : EspressoTest() {
 

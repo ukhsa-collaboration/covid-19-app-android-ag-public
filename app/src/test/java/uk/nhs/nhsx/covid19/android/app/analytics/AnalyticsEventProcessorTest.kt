@@ -4,9 +4,15 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AcknowledgedStartOfIsolationDueToRiskyContact
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.BackgroundTaskCompletion
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CanceledCheckIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireAndStartedIsolation
@@ -17,25 +23,32 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultRe
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.QrCodeCheckIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedActiveIpcToken
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyContactNotification
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.RiskyContactReminderNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolationPaymentsButton
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.UpdateNetworkStats
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedTestOrdering
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.Event
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_ISOLATION_PAYMENTS_APPLICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_TEST_ORDERING
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CODE_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_ACTIVE_IPC_TOKEN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_CONTACT_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RISKY_CONTACT_REMINDER_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_ISOLATION_PAYMENTS_BUTTON
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.VOID_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.Companion.ISOLATION_STATE_CHANNEL_ID
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Disabled
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Unresolved
@@ -43,6 +56,7 @@ import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvide
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
@@ -51,12 +65,6 @@ import uk.nhs.nhsx.covid19.android.app.state.StateStorage
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
-import java.time.temporal.ChronoUnit
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 
 class AnalyticsEventProcessorTest {
 
@@ -67,6 +75,7 @@ class AnalyticsEventProcessorTest {
     private val networkTrafficStats = mockk<NetworkTrafficStats>()
     private val relevantTestResultProvider = mockk<RelevantTestResultProvider>()
     private val isolationPaymentTokenStateProvider = mockk<IsolationPaymentTokenStateProvider>()
+    private val notificationProvider = mockk<NotificationProvider>()
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
 
     private val testSubject = AnalyticsEventProcessor(
@@ -77,6 +86,7 @@ class AnalyticsEventProcessorTest {
         networkTrafficStats,
         relevantTestResultProvider,
         isolationPaymentTokenStateProvider,
+        notificationProvider,
         fixedClock
     )
 
@@ -88,6 +98,7 @@ class AnalyticsEventProcessorTest {
         coEvery { exposureNotificationApi.isEnabled() } returns true
         coEvery { exposureNotificationApi.isRunningNormally() } returns true
         every { isolationPaymentTokenStateProvider.tokenState } returns Unresolved
+        every { notificationProvider.isChannelEnabled(ISOLATION_STATE_CHANNEL_ID) } returns false
     }
 
     @Test
@@ -110,6 +121,47 @@ class AnalyticsEventProcessorTest {
 
     @Test
     fun `on background completed when app is available`() = runBlocking {
+        testSubject.track(BackgroundTaskCompletion)
+
+        verify {
+            analyticsLogStorage.add(
+                AnalyticsLogEntry(
+                    instant = Instant.now(fixedClock),
+                    logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                        backgroundTaskTicks = BackgroundTaskTicks(
+                            runningNormallyBackgroundTick = true
+                        )
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `on background completed when notifications enabled`() = runBlocking {
+        every { notificationProvider.isChannelEnabled(ISOLATION_STATE_CHANNEL_ID) } returns true
+
+        testSubject.track(BackgroundTaskCompletion)
+
+        verify {
+            analyticsLogStorage.add(
+                AnalyticsLogEntry(
+                    instant = Instant.now(fixedClock),
+                    logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                        backgroundTaskTicks = BackgroundTaskTicks(
+                            runningNormallyBackgroundTick = true,
+                            hasRiskyContactNotificationsEnabledBackgroundTick = true
+                        )
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `on background completed when notifications disabled`() = runBlocking {
+        every { notificationProvider.isChannelEnabled(ISOLATION_STATE_CHANNEL_ID) } returns false
+
         testSubject.track(BackgroundTaskCompletion)
 
         verify {
@@ -317,7 +369,9 @@ class AnalyticsEventProcessorTest {
                     testEndDate = Instant.now(fixedClock),
                     acknowledgedDate = Instant.now(fixedClock).minus(1, ChronoUnit.DAYS),
                     testResult = POSITIVE,
-                    testKitType = LAB_RESULT
+                    testKitType = LAB_RESULT,
+                    requiresConfirmatoryTest = false,
+                    confirmedDate = null
                 )
 
             testSubject.track(BackgroundTaskCompletion)
@@ -361,7 +415,9 @@ class AnalyticsEventProcessorTest {
                     testEndDate = Instant.now(fixedClock),
                     acknowledgedDate = Instant.now(fixedClock).minus(1, ChronoUnit.DAYS),
                     testResult = POSITIVE,
-                    testKitType = RAPID_RESULT
+                    testKitType = RAPID_RESULT,
+                    requiresConfirmatoryTest = false,
+                    confirmedDate = null
                 )
 
             testSubject.track(BackgroundTaskCompletion)
@@ -449,7 +505,9 @@ class AnalyticsEventProcessorTest {
                     testEndDate = Instant.now(fixedClock),
                     acknowledgedDate = Instant.now(fixedClock),
                     testResult = POSITIVE,
-                    testKitType = LAB_RESULT
+                    testKitType = LAB_RESULT,
+                    requiresConfirmatoryTest = false,
+                    confirmedDate = null
                 )
 
             testSubject.track(BackgroundTaskCompletion)
@@ -493,7 +551,9 @@ class AnalyticsEventProcessorTest {
                     testEndDate = Instant.now(fixedClock),
                     acknowledgedDate = Instant.now(fixedClock),
                     testResult = POSITIVE,
-                    testKitType = RAPID_RESULT
+                    testKitType = RAPID_RESULT,
+                    requiresConfirmatoryTest = false,
+                    confirmedDate = null
                 )
 
             testSubject.track(BackgroundTaskCompletion)
@@ -563,11 +623,12 @@ class AnalyticsEventProcessorTest {
         }
 
     @Test
-    fun `on background completed when user is isolating due to self assessment and last test result is positive and acknowledged before current isolation`() =
+    fun `on background completed when user is isolating due to self assessment and last test result is positive, with test result date before current isolation, and acknowledged on isolation start date`() =
         runBlocking {
+            val isolationStart = Instant.now(fixedClock).minus(1, ChronoUnit.DAYS)
             every { stateStorage.state } returns
                 Isolation(
-                    isolationStart = Instant.now(fixedClock).minus(1, ChronoUnit.DAYS),
+                    isolationStart = isolationStart,
                     isolationConfiguration = DurationDays(),
                     indexCase = IndexCase(
                         symptomsOnsetDate = LocalDate.of(2018, 10, 1),
@@ -578,10 +639,59 @@ class AnalyticsEventProcessorTest {
             every { relevantTestResultProvider.getTestResultIfPositive() } returns
                 AcknowledgedTestResult(
                     diagnosisKeySubmissionToken = "token1",
-                    testEndDate = Instant.now(fixedClock),
-                    acknowledgedDate = Instant.now(fixedClock).minus(2, ChronoUnit.DAYS),
+                    testEndDate = isolationStart.minus(2, ChronoUnit.DAYS),
+                    acknowledgedDate = isolationStart,
                     testResult = POSITIVE,
-                    testKitType = LAB_RESULT
+                    testKitType = LAB_RESULT,
+                    requiresConfirmatoryTest = false,
+                    confirmedDate = null
+                )
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                isIsolatingBackgroundTick = true,
+                                hasSelfDiagnosedPositiveBackgroundTick = true,
+                                isIsolatingForSelfDiagnosedBackgroundTick = true,
+                                hasSelfDiagnosedBackgroundTick = true,
+                                hasTestedPositiveBackgroundTick = true,
+                                isIsolatingForTestedPositiveBackgroundTick = true
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed when user is isolating due to self assessment and last test result is positive, with test result date before current isolation, and acknowledged before current isolation`() =
+        runBlocking {
+            val isolationStart = Instant.now(fixedClock).minus(1, ChronoUnit.DAYS)
+            every { stateStorage.state } returns
+                Isolation(
+                    isolationStart = isolationStart,
+                    isolationConfiguration = DurationDays(),
+                    indexCase = IndexCase(
+                        symptomsOnsetDate = LocalDate.of(2018, 10, 1),
+                        expiryDate = LocalDate.of(2018, 10, 10),
+                        selfAssessment = true
+                    )
+                )
+            every { relevantTestResultProvider.getTestResultIfPositive() } returns
+                AcknowledgedTestResult(
+                    diagnosisKeySubmissionToken = "token1",
+                    testEndDate = isolationStart.minus(2, ChronoUnit.DAYS),
+                    acknowledgedDate = isolationStart.minus(2, ChronoUnit.DAYS),
+                    testResult = POSITIVE,
+                    testKitType = LAB_RESULT,
+                    requiresConfirmatoryTest = false,
+                    confirmedDate = null
                 )
 
             testSubject.track(BackgroundTaskCompletion)
@@ -626,7 +736,9 @@ class AnalyticsEventProcessorTest {
                     testEndDate = Instant.now(fixedClock),
                     acknowledgedDate = Instant.now(fixedClock),
                     testResult = POSITIVE,
-                    testKitType = LAB_RESULT
+                    testKitType = LAB_RESULT,
+                    requiresConfirmatoryTest = false,
+                    confirmedDate = null
                 )
 
             testSubject.track(BackgroundTaskCompletion)
@@ -666,7 +778,9 @@ class AnalyticsEventProcessorTest {
                     testEndDate = Instant.now(fixedClock),
                     acknowledgedDate = Instant.now(fixedClock),
                     testResult = POSITIVE,
-                    testKitType = LAB_RESULT
+                    testKitType = LAB_RESULT,
+                    requiresConfirmatoryTest = false,
+                    confirmedDate = null
                 )
 
             testSubject.track(BackgroundTaskCompletion)
@@ -708,7 +822,9 @@ class AnalyticsEventProcessorTest {
                     testEndDate = Instant.now(fixedClock),
                     acknowledgedDate = Instant.now(fixedClock),
                     testResult = POSITIVE,
-                    testKitType = RAPID_RESULT
+                    testKitType = RAPID_RESULT,
+                    requiresConfirmatoryTest = false,
+                    confirmedDate = null
                 )
 
             testSubject.track(BackgroundTaskCompletion)
@@ -794,7 +910,9 @@ class AnalyticsEventProcessorTest {
                     testEndDate = Instant.now(fixedClock),
                     acknowledgedDate = Instant.now(fixedClock),
                     testResult = POSITIVE,
-                    testKitType = LAB_RESULT
+                    testKitType = LAB_RESULT,
+                    requiresConfirmatoryTest = false,
+                    confirmedDate = null
                 )
             testSubject.track(BackgroundTaskCompletion)
 
@@ -1005,6 +1123,21 @@ class AnalyticsEventProcessorTest {
     @Test
     fun `track launched isolation payments application`() = runBlocking {
         verifyTrackRegularAnalyticsEvent(LaunchedIsolationPaymentsApplication, LAUNCHED_ISOLATION_PAYMENTS_APPLICATION)
+    }
+
+    @Test
+    fun `track launched test ordering`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(LaunchedTestOrdering, LAUNCHED_TEST_ORDERING)
+    }
+
+    @Test
+    fun `track acknowledgedStartOfIsolationDueToRiskyContact`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(AcknowledgedStartOfIsolationDueToRiskyContact, ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT)
+    }
+
+    @Test
+    fun `track totalRiskyContactReminderNotifications`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(RiskyContactReminderNotification, RISKY_CONTACT_REMINDER_NOTIFICATION)
     }
 
     private suspend fun verifyTrackRegularAnalyticsEvent(event: AnalyticsEvent, eventType: RegularAnalyticsEventType) {

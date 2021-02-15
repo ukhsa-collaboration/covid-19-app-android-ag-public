@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.ContextThemeWrapper
 import android.view.Menu
 import android.view.MenuItem
@@ -14,11 +16,16 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import java.time.Instant
+import java.time.LocalDate
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import kotlinx.android.synthetic.scenarios.activity_debug.buttonFeatureFlags
 import kotlinx.android.synthetic.scenarios.activity_debug.environmentSpinner
 import kotlinx.android.synthetic.scenarios.activity_debug.exposureNotificationMocks
 import kotlinx.android.synthetic.scenarios.activity_debug.languageSpinner
+import kotlinx.android.synthetic.scenarios.activity_debug.mockSettings
+import kotlinx.android.synthetic.scenarios.activity_debug.mockSettingsDelay
+import kotlinx.android.synthetic.scenarios.activity_debug.mockSettingsResponseType
 import kotlinx.android.synthetic.scenarios.activity_debug.scenarioOnboarding
 import kotlinx.android.synthetic.scenarios.activity_debug.scenario_main
 import kotlinx.android.synthetic.scenarios.activity_debug.screenButtonContainer
@@ -38,6 +45,7 @@ import uk.nhs.nhsx.covid19.android.app.common.EnableLocationActivity
 import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityActivity
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityInformationActivity
+import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.edgecases.TabletNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
@@ -85,8 +93,6 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingProgressActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
-import java.time.Instant
-import java.time.LocalDate
 
 class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
@@ -127,8 +133,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         environmentSpinner.setSelection(selectedEnvironment)
 
         environmentSpinner.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
 
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -138,6 +143,47 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             ) {
                 debugSharedPreferences.edit().putInt(SELECTED_ENVIRONMENT, position).apply()
                 scenariosApp.updateDependencyGraph()
+                mockSettings.visibility =
+                    if (position == scenariosApp.mockEnvironmentIndex) View.VISIBLE
+                    else View.GONE
+            }
+        }
+        setupMockBehaviour()
+    }
+
+    private fun updateMockDelay() {
+        MockApiModule.behaviour.delayMillis = try {
+            mockSettingsDelay.text.toString().toLong()
+        } catch (e: NumberFormatException) {
+            MockApiModule.behaviour.delayMillis
+        }
+    }
+
+    private fun setupMockBehaviour() {
+        mockSettingsDelay.setText("${MockApiModule.behaviour.delayMillis}")
+        mockSettingsDelay.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
+
+            override fun afterTextChanged(s: Editable?) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) =
+                updateMockDelay()
+        })
+
+        mockSettingsResponseType.apply {
+            adapter = MockApiResponseTypeAdapter(this@DebugActivity)
+            setSelection((adapter as MockApiResponseTypeAdapter).positionOf(MockApiModule.behaviour.responseType))
+            onItemSelectedListener = object : OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    MockApiModule.behaviour.responseType = MockApiResponseType.values()[position]
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) = Unit
             }
         }
     }
@@ -161,7 +207,8 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         languageSpinner.adapter = languageAdapter
 
         val previouslySelectedLanguage = appLocaleProvider.getUserSelectedLanguage() ?: DEFAULT
-        val indexOfPreviouslySelectedLanguage = supportedLanguages.indexOf(previouslySelectedLanguage)
+        val indexOfPreviouslySelectedLanguage =
+            supportedLanguages.indexOf(previouslySelectedLanguage)
         languageSpinner.setSelection(indexOfPreviouslySelectedLanguage)
 
         languageSpinner.onItemSelectedListener = object : OnItemSelectedListener {
@@ -293,7 +340,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
 
         addScreenButton("Submit Keys Progress") {
-            startActivity(submitKeysIntent)
+            startActivity(getSubmitKeysIntent())
         }
 
         addScreenButton("User Data") {
@@ -487,18 +534,21 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
                     testEndDate = Instant.now(),
                     testResult = POSITIVE,
                     testKitType = LAB_RESULT,
-                    diagnosisKeySubmissionSupported = true
+                    diagnosisKeySubmissionSupported = true,
+                    requiresConfirmatoryTest = false
                 )
             )
         }
     }
 
-    private val submitKeysIntent: Intent by lazy {
+    private fun getSubmitKeysIntent() =
         Intent(this, SubmitKeysProgressActivity::class.java).apply {
-            putParcelableArrayListExtra("EXPOSURE_KEYS_TO_SUBMIT", ArrayList<NHSTemporaryExposureKey>())
+            putParcelableArrayListExtra(
+                "EXPOSURE_KEYS_TO_SUBMIT",
+                ArrayList<NHSTemporaryExposureKey>()
+            )
             putExtra("SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN", "test")
         }
-    }
 
     private val reviewSymptomsIntent: Intent by lazy {
         val strings = Translatable(mapOf("en" to "Test"))

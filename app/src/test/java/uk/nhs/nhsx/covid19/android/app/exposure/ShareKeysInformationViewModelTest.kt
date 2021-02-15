@@ -57,7 +57,8 @@ class ShareKeysInformationViewModelTest {
             fixedClock
         )
 
-    private val fetchExposureKeysObserver = mockk<Observer<TemporaryExposureKeysFetchResult>>(relaxed = true)
+    private val fetchExposureKeysObserver =
+        mockk<Observer<TemporaryExposureKeysFetchResult>>(relaxed = true)
 
     private val exposureKeys = listOf(
         NHSTemporaryExposureKey("key1", 1),
@@ -71,7 +72,9 @@ class ShareKeysInformationViewModelTest {
 
     @Test
     fun `fetching keys returns list of exposure keys on success`() = runBlocking {
-        coEvery { fetchTemporaryExposureKeys.invoke(onsetDateBasedOnTestEndDate) } returns Success(exposureKeys)
+        coEvery { fetchTemporaryExposureKeys.invoke(onsetDateBasedOnTestEndDate) } returns Success(
+            exposureKeys
+        )
         testSubject.testResult = receivedTestResult
 
         testSubject.fetchKeysResult().observeForever(fetchExposureKeysObserver)
@@ -110,7 +113,7 @@ class ShareKeysInformationViewModelTest {
             )
         }
         verify(exactly = 0) { submitEpidemiologyData.submit(any()) }
-        verify(exactly = 0) { submitEpidemiologyData.submitAfterPositiveTest(any(), any()) }
+        verify(exactly = 0) { submitEpidemiologyData.submitAfterPositiveTest(any(), any(), any()) }
     }
 
     @Test
@@ -128,7 +131,13 @@ class ShareKeysInformationViewModelTest {
                 OnTestResultAcknowledge(testSubject.testResult)
             )
         }
-        verify { submitEpidemiologyData.submitAfterPositiveTest(listOf(), testKitType = LAB_RESULT) }
+        verify {
+            submitEpidemiologyData.submitAfterPositiveTest(
+                listOf(),
+                testKitType = receivedTestResult.testKitType,
+                requiresConfirmatoryTest = receivedTestResult.requiresConfirmatoryTest
+            )
+        }
     }
 
     private val receivedTestResult = ReceivedTestResult(
@@ -136,6 +145,7 @@ class ShareKeysInformationViewModelTest {
         testEndDate = fixedClock.instant(),
         testResult = POSITIVE,
         testKitType = LAB_RESULT,
-        diagnosisKeySubmissionSupported = true
+        diagnosisKeySubmissionSupported = true,
+        requiresConfirmatoryTest = false
     )
 }

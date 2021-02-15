@@ -23,7 +23,7 @@ class UnacknowledgedTestResultsProvider @Inject constructor(
     private val unacknowledgedTestResultsStorage: UnacknowledgedTestResultsStorage,
     private val clock: Clock,
     moshi: Moshi
-) {
+) : TestResultChecker {
 
     private val testResultsSerializationAdapter: JsonAdapter<List<ReceivedTestResult>> =
         moshi.adapter(listOfReceivedTestResultEntriesType)
@@ -72,15 +72,8 @@ class UnacknowledgedTestResultsProvider @Inject constructor(
         testResults = updatedList
     }
 
-    fun hasPositiveTestResultAfter(instant: Instant): Boolean =
-        testResults
-            .filter { it.testEndDate.isAfter(instant) }
-            .any { it.testResult == POSITIVE }
-
-    fun hasPositiveTestResultAfterOrEqual(instant: Instant): Boolean =
-        testResults
-            .filter { it.testEndDate.isEqualOrAfter(instant) }
-            .any { it.testResult == POSITIVE }
+    override fun hasTestResultMatching(predicate: (TestResult) -> Boolean): Boolean =
+        testResults.any { predicate(it) }
 
     companion object {
         val listOfReceivedTestResultEntriesType: Type = Types.newParameterizedType(
@@ -106,9 +99,17 @@ class UnacknowledgedTestResultsStorage @Inject constructor(
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class ReceivedTestResult(
-    val diagnosisKeySubmissionToken: String?,
-    val testEndDate: Instant,
+    override val diagnosisKeySubmissionToken: String?,
+    override val testEndDate: Instant,
     val testResult: VirologyTestResult,
-    val testKitType: VirologyTestKitType?,
-    val diagnosisKeySubmissionSupported: Boolean
-) : Parcelable
+    override val testKitType: VirologyTestKitType?,
+    val diagnosisKeySubmissionSupported: Boolean,
+    override val requiresConfirmatoryTest: Boolean = false
+) : TestResult, Parcelable {
+
+    override fun isPositive(): Boolean =
+        testResult == POSITIVE
+
+    override fun isConfirmed(): Boolean =
+        !requiresConfirmatoryTest
+}

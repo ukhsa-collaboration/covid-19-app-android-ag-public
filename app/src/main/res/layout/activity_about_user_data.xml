@@ -160,6 +160,54 @@
                     tools:text="Value" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/followUpTestContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/user_data_item_background"
+                android:minHeight="42dp"
+                android:orientation="vertical"
+                android:paddingVertical="8dp"
+                android:weightSum="1">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                <TextView
+                    style="@style/AboutAppItemValueText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/about_test_follow_up" />
+
+                <TextView
+                    style="@style/Body1"
+                    android:id="@+id/followUpState"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|end"
+                    android:paddingEnd="30dp"
+                    tools:text="Value" />
+                </LinearLayout>
+                <TextView
+                    style="@style/AboutAppItemValueText"
+                    android:id="@+id/followUpDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/vertical_margin"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="10dp"
+                    tools:text="18 Jul 2020"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/titleSymptoms"
                 style="@style/AboutAppTitleText"

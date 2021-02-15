@@ -10,6 +10,13 @@ import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit.DAYS
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -29,6 +36,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -38,14 +46,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultResponse
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit.DAYS
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 
 class DownloadVirologyTestResultWorkTest {
 
@@ -139,7 +139,8 @@ class DownloadVirologyTestResultWorkTest {
                 testResultDate,
                 POSITIVE,
                 LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 
@@ -150,7 +151,8 @@ class DownloadVirologyTestResultWorkTest {
             testResultDate,
             POSITIVE,
             LAB_RESULT,
-            diagnosisKeySubmissionSupported = true
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = false
         )
         verify { stateMachine.processEvent(OnTestResult(testResult)) }
 
@@ -174,7 +176,8 @@ class DownloadVirologyTestResultWorkTest {
                 testResultDate,
                 NEGATIVE,
                 LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 
@@ -185,7 +188,8 @@ class DownloadVirologyTestResultWorkTest {
             testResultDate,
             NEGATIVE,
             LAB_RESULT,
-            diagnosisKeySubmissionSupported = true
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = false
         )
         verify { stateMachine.processEvent(OnTestResult(testResult)) }
 
@@ -209,7 +213,8 @@ class DownloadVirologyTestResultWorkTest {
                 testResultDate,
                 VOID,
                 LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
 
@@ -220,7 +225,8 @@ class DownloadVirologyTestResultWorkTest {
             testResultDate,
             VOID,
             LAB_RESULT,
-            diagnosisKeySubmissionSupported = true
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = false
         )
         verify { stateMachine.processEvent(OnTestResult(testResult)) }
 
@@ -244,7 +250,8 @@ class DownloadVirologyTestResultWorkTest {
                 testResultDate1,
                 NEGATIVE,
                 LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
         coEvery {
@@ -259,7 +266,8 @@ class DownloadVirologyTestResultWorkTest {
                 testResultDate2,
                 POSITIVE,
                 LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = true
             )
         )
 
@@ -269,14 +277,16 @@ class DownloadVirologyTestResultWorkTest {
             testResultDate1,
             NEGATIVE,
             LAB_RESULT,
-            diagnosisKeySubmissionSupported = true
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = false
         )
         val testResult2 = ReceivedTestResult(
             config2.diagnosisKeySubmissionToken,
             testResultDate2,
             POSITIVE,
             LAB_RESULT,
-            diagnosisKeySubmissionSupported = true
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = true
         )
         verify { stateMachine.processEvent(OnTestResult(testResult2)) }
         verify { stateMachine.processEvent(OnTestResult(testResult1)) }
@@ -439,7 +449,8 @@ class DownloadVirologyTestResultWorkTest {
                 testResultDate,
                 result,
                 testKitType,
-                diagnosisKeySubmissionSupported = true
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
         )
     }

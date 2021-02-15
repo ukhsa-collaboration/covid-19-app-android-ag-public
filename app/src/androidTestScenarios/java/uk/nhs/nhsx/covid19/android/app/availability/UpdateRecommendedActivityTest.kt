@@ -1,10 +1,10 @@
 package uk.nhs.nhsx.covid19.android.app.availability
 
+import kotlin.test.assertTrue
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.UpdateRecommendedRobot
-import kotlin.test.assertTrue
 
 class UpdateRecommendedActivityTest : EspressoTest() {
 

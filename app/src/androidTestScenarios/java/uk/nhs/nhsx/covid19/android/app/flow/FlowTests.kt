@@ -12,6 +12,7 @@ import uk.nhs.nhsx.covid19.android.app.R.plurals
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfo
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.report.notReported
@@ -29,10 +30,13 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationExpirationRob
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QuestionnaireRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ReviewSymptomsRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OVERWRITE
 import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit.DAYS
@@ -43,22 +47,15 @@ import kotlin.test.assertTrue
 class FlowTests : EspressoTest() {
 
     private val statusRobot = StatusRobot()
-
     private val questionnaireRobot = QuestionnaireRobot()
-
     private val reviewSymptomsRobot = ReviewSymptomsRobot()
-
     private val positiveSymptomsRobot = SymptomsAdviceIsolateRobot()
-
     private val testOrderingRobot = TestOrderingRobot()
-
     private val testResultRobot = TestResultRobot()
-
     private val linkTestResultRobot = LinkTestResultRobot()
-
     private val encounterDetectionRobot = EncounterDetectionRobot()
-
     private val browserRobot = BrowserRobot()
+    private val shareKeysInformationRobot = ShareKeysInformationRobot()
 
     @Before
     fun setUp() {
@@ -179,7 +176,7 @@ class FlowTests : EspressoTest() {
         assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
 
         testAppContext.getExposureCircuitBreakerInfoProvider().add(exposureCircuitBreakerInfo)
-        testAppContext.getPeriodicTasks().schedule()
+        runBackgroundTasks()
 
         await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
             (testAppContext.getCurrentState() as Isolation).isBothCases()
@@ -204,13 +201,112 @@ class FlowTests : EspressoTest() {
     }
 
     @Test
+    fun startIndexCaseWithPositiveIndicative_endContactCase() = notReported {
+        val dateNow = LocalDate.now()
+
+        testAppContext.setState(
+            state = Isolation(
+                isolationStart = Instant.now(),
+                isolationConfiguration = DurationDays(),
+                indexCase = IndexCase(
+                    symptomsOnsetDate = dateNow.minusDays(3),
+                    expiryDate = dateNow.plus(7, DAYS),
+                    selfAssessment = false
+                )
+            )
+        )
+        testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "token",
+                testEndDate = Instant.now(),
+                testResult = POSITIVE,
+                testKitType = RAPID_RESULT,
+                diagnosisKeySubmissionSupported = false,
+                requiresConfirmatoryTest = true
+            ),
+            testResultStorageOperation = OVERWRITE
+        )
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
+
+        testAppContext.getExposureCircuitBreakerInfoProvider().add(exposureCircuitBreakerInfo)
+        runBackgroundTasks()
+
+        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
+            (testAppContext.getCurrentState() as Isolation).isBothCases()
+        }
+
+        waitFor { encounterDetectionRobot.checkActivityIsDisplayed() }
+
+        val contactCaseDays =
+            testAppContext.getIsolationConfigurationProvider().durationDays.contactCase
+        val expectedExpiryDate = dateNow.plus(contactCaseDays.toLong(), DAYS)
+        val actualExpiryDate = (testAppContext.getCurrentState() as Isolation).expiryDate
+
+        assertEquals(expectedExpiryDate, actualExpiryDate)
+
+        encounterDetectionRobot.checkNumberOfDaysTextIs(
+            testAppContext.app.resources.getQuantityString(
+                plurals.state_isolation_days,
+                contactCaseDays,
+                contactCaseDays
+            )
+        )
+    }
+
+    @Test
+    fun startIndexCaseWithPositiveConfirmed_receiveExposure_remainIndexCase() = notReported {
+        val dateNow = LocalDate.now()
+
+        testAppContext.setState(
+            state = Isolation(
+                isolationStart = Instant.now(),
+                isolationConfiguration = DurationDays(),
+                indexCase = IndexCase(
+                    symptomsOnsetDate = dateNow.minusDays(3),
+                    expiryDate = dateNow.plus(7, DAYS),
+                    selfAssessment = false
+                )
+            )
+        )
+        testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "token",
+                testEndDate = Instant.now(),
+                testResult = POSITIVE,
+                testKitType = RAPID_RESULT,
+                diagnosisKeySubmissionSupported = false,
+                requiresConfirmatoryTest = false
+            ),
+            testResultStorageOperation = OVERWRITE
+        )
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
+
+        testAppContext.getExposureCircuitBreakerInfoProvider().add(exposureCircuitBreakerInfo)
+        runBackgroundTasks()
+
+        assertTrue((testAppContext.getCurrentState() as Isolation).isIndexCaseOnly())
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    @Test
     fun startContactCase_endNegativeTestResult() = notReported {
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
 
         testAppContext.getExposureCircuitBreakerInfoProvider().add(exposureCircuitBreakerInfo)
-        testAppContext.getPeriodicTasks().schedule()
+        runBackgroundTasks()
 
         await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
             testAppContext.getCurrentState() is Isolation &&
@@ -233,7 +329,7 @@ class FlowTests : EspressoTest() {
 
         testAppContext.virologyTestingApi.setDefaultTestResponse(NEGATIVE)
 
-        testAppContext.getPeriodicTasks().schedule()
+        runBackgroundTasks()
 
         await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
             testAppContext.getUnacknowledgedTestResultsProvider().testResults.any { it.testResult == NEGATIVE }
@@ -245,13 +341,13 @@ class FlowTests : EspressoTest() {
     }
 
     @Test
-    fun startContactCase_endPositiveTestResult() = notReported {
+    fun startContactCase_endPositiveConfirmedTestResult() = notReported {
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
 
         testAppContext.getExposureCircuitBreakerInfoProvider().add(exposureCircuitBreakerInfo)
-        testAppContext.getPeriodicTasks().schedule()
+        runBackgroundTasks()
 
         await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
             testAppContext.getCurrentState() is Isolation &&
@@ -270,9 +366,56 @@ class FlowTests : EspressoTest() {
 
         waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
-        testAppContext.virologyTestingApi.setDefaultTestResponse(POSITIVE)
+        testAppContext.virologyTestingApi.setDefaultTestResponse(POSITIVE, requiresConfirmatoryTest = false)
 
-        testAppContext.getPeriodicTasks().schedule()
+        runBackgroundTasks()
+
+        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
+            testAppContext.getUnacknowledgedTestResultsProvider().testResults.any { it.testResult == POSITIVE }
+        }
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+
+        testResultRobot.clickIsolationActionButton()
+
+        waitFor { shareKeysInformationRobot.checkActivityIsDisplayed() }
+
+        shareKeysInformationRobot.clickIUnderstandButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
+    }
+
+    @Test
+    fun startContactCase_endPositiveIndicativeResult() = notReported {
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        testAppContext.getExposureCircuitBreakerInfoProvider().add(exposureCircuitBreakerInfo)
+        runBackgroundTasks()
+
+        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
+            testAppContext.getCurrentState() is Isolation &&
+                (testAppContext.getCurrentState() as Isolation).isContactCaseOnly()
+        }
+
+        waitFor { encounterDetectionRobot.clickIUnderstandButton() }
+
+        statusRobot.clickReportSymptoms()
+
+        completeQuestionnaireWithSymptoms()
+
+        assertTrue { (testAppContext.getCurrentState() as Isolation).isBothCases() }
+
+        completeTestOrdering()
+
+        waitFor { statusRobot.checkIsolationViewIsDisplayed() }
+
+        testAppContext.virologyTestingApi.setDefaultTestResponse(POSITIVE, requiresConfirmatoryTest = true)
+
+        runBackgroundTasks()
 
         await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
             testAppContext.getUnacknowledgedTestResultsProvider().testResults.any { it.testResult == POSITIVE }
@@ -280,7 +423,7 @@ class FlowTests : EspressoTest() {
 
         assertTrue { (testAppContext.getCurrentState() as Isolation).isBothCases() }
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
     }
 
     @RetryFlakyTest

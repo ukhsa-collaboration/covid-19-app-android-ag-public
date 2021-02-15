@@ -1,6 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_FAIL
+import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -24,8 +26,7 @@ class SubmitKeysProgressActivityTest : EspressoTest() {
 
     @Test
     fun startActivityWithAllExtrasAndFailingSubmissionApi_showsError() = notReported {
-        testAppContext.setKeysSubmissionApiShouldSucceed(false)
-
+        MockApiModule.behaviour.responseType = ALWAYS_FAIL
         startTestActivity<SubmitKeysProgressActivity> {
             putParcelableArrayListExtra("EXPOSURE_KEYS_TO_SUBMIT", ArrayList<NHSTemporaryExposureKey>())
             putExtra("SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN", "test")

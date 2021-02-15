@@ -2,7 +2,8 @@ package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.createType
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -14,8 +15,9 @@ class FieldAsserter {
 
     private fun setupMap(): MutableMap<MetricsProperty, MetricsAssertion> {
         val map = mutableMapOf<MetricsProperty, MetricsAssertion>()
-        Metrics::class.memberProperties.forEach {
-            if (it.returnType.javaClass == Int::class) {
+        val intType = Int::class.createType()
+        Metrics::class.declaredMemberProperties.forEach {
+            if (it.returnType == intType) {
                 map[it as MetricsProperty] = ImplicitAssertNotPresent(it)
             }
         }
@@ -48,9 +50,9 @@ class FieldAsserter {
     }
 
     private fun removeUntrackedFields(map: MutableMap<MetricsProperty, MetricsAssertion>): MutableMap<MetricsProperty, MetricsAssertion> {
-        map.remove(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
         map.remove(Metrics::runningNormallyBackgroundTick)
         map.remove(Metrics::totalBackgroundTasks)
+        map.remove(Metrics::hasRiskyContactNotificationsEnabledBackgroundTick)
         return map
     }
 
@@ -82,7 +84,11 @@ class FieldAsserter {
             assertEquals(
                 expected,
                 actual,
-                "AssertEquals failed, expected ${field.name} to have value $expected but found $actual. ${formatDateForErrorMessage(dayOfAssertion)}"
+                "AssertEquals failed, expected ${field.name} to have value $expected but found $actual. ${
+                formatDateForErrorMessage(
+                    dayOfAssertion
+                )
+                }"
             )
         }
     }
@@ -94,7 +100,11 @@ class FieldAsserter {
             val actual = field.get(metrics)
             assertTrue(
                 actual < metrics.totalBackgroundTasks,
-                "AssertLessThanTotalBackgroundTasks failed for ${field.name}, actually had value of $actual. ${formatDateForErrorMessage(dayOfAssertion)}"
+                "AssertLessThanTotalBackgroundTasks failed for ${field.name}, actually had value of $actual. ${
+                formatDateForErrorMessage(
+                    dayOfAssertion
+                )
+                }"
             )
         }
     }
@@ -105,7 +115,11 @@ class FieldAsserter {
             assertEquals(
                 0,
                 field.get(metrics),
-                "Implicit AssertNotPresent failed, $field was unexpectedly present. ${formatDateForErrorMessage(dayOfAssertion)}"
+                "Implicit AssertNotPresent failed, $field was unexpectedly present. ${
+                formatDateForErrorMessage(
+                    dayOfAssertion
+                )
+                }"
             )
         }
     }

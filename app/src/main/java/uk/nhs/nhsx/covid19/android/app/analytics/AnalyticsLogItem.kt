@@ -27,6 +27,7 @@ sealed class AnalyticsLogItem {
 }
 
 enum class RegularAnalyticsEventType {
+    ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT,
     QR_CODE_CHECK_IN,
     CANCELED_CHECK_IN,
     COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION,
@@ -35,10 +36,13 @@ enum class RegularAnalyticsEventType {
     NEGATIVE_RESULT_RECEIVED,
     VOID_RESULT_RECEIVED,
     RECEIVED_RISKY_CONTACT_NOTIFICATION,
+    RISKY_CONTACT_REMINDER_NOTIFICATION,
     STARTED_ISOLATION,
     RECEIVED_ACTIVE_IPC_TOKEN,
     SELECTED_ISOLATION_PAYMENTS_BUTTON,
-    LAUNCHED_ISOLATION_PAYMENTS_APPLICATION
+    LAUNCHED_ISOLATION_PAYMENTS_APPLICATION,
+    LAUNCHED_TEST_ORDERING,
+    RECEIVED_UNCONFIRMED_POSITIVE_TEST_RESULT,
 }
 
 @JsonClass(generateAdapter = true)
@@ -51,9 +55,11 @@ data class BackgroundTaskTicks(
     var isIsolatingForTestedPositiveBackgroundTick: Boolean = false,
     var isIsolatingForTestedLFDPositiveBackgroundTick: Boolean = false,
     var hasHadRiskyContactBackgroundTick: Boolean = false,
+    var hasRiskyContactNotificationsEnabledBackgroundTick: Boolean = false,
     var hasSelfDiagnosedBackgroundTick: Boolean = false,
     var hasTestedPositiveBackgroundTick: Boolean = false,
     var hasTestedLFDPositiveBackgroundTick: Boolean = false,
     var encounterDetectionPausedBackgroundTick: Boolean = false,
-    var haveActiveIpcTokenBackgroundTick: Boolean = false
+    var haveActiveIpcTokenBackgroundTick: Boolean = false,
+    var isIsolatingForUnconfirmedTestBackgroundTick: Boolean = false,
 )

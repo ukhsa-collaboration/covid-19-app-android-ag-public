@@ -59,7 +59,7 @@
     <string name="test_ordering_failure_action">আবার চেষ্টা করুন</string>
     <string name="questionnaire_title">আপনার জন্য যতগুলো উপসর্গ প্রযোজ্য সেগুলো নির্বাচন করুন</string>
     <string name="questionnaire_no_symptom_selected">আপনাকে উপসর্গ নির্বাচন করতে হবে অথবা “আমার এগুলোর মধ্যে কোনো উপসর্গ নেই” বেছে নিতে হবে</string>
-    <string name="questionnaire_discard_symptoms_dialog_title">সুনিশ্চিত করুন যে আপনার কোন উপসর্গ নেই</string>
+    <string name="questionnaire_discard_symptoms_dialog_title">নিশ্চিত করুন যে আপনার এসব উপসর্গের কোনোটাই নাই</string>
     <string name="questionnaire_discard_symptoms_dialog_message">কোন উপসর্গ বেছে নেওয়া হয়ে থাকলে সেই বেছে নেওয়াটা বাতিল করে দেওয়া হবে।</string>
     <string name="title_no_coronavirus_symptoms">আপনার করোনাভাইরাসে আক্রান্ত হওয়ার সম্ভাবনা কম</string>
     <string name="you_do_not_appear_to_have_symptoms">আপনার মধ্যে করোনাভাইরাসের উপসর্গ পরিলক্ষিত হয়নি</string>
@@ -430,4 +430,14 @@
     <string name="about_pcr">LAB_RESULT</string>
     <string name="about_test_kit_type">পরীক্ষা কিটের ধরন</string>
     <string name="about_test_result">ফলাফল</string>
+    <string name="state_test_positive_and_book_test_info">আপনার করোনাভাইরাস পরীক্ষার ফলাফল পজিটিভ</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">স্ব-বিচ্ছিন্ন থাকার দিন সংখ্যা এই অ্যাপ কীভাবে গণনা করে তা বুঝতে নিচে প্রদত্ত প্রায়শই জিজ্ঞাসিত প্রশ্নাবলীর লিংক দেখুন।</string>
+    <string name="test_result_positive_self_isolate_and_book_test_explanation_1">স্ব-বিচ্ছিন্ন থাকার দিন সংখ্যা এই অ্যাপ কীভাবে গণনা করে তা বুঝতে নিচে প্রদত্ত প্রায়শই জিজ্ঞাসিত প্রশ্নাবলী দেখুন।\n\nআপনি যেহেতু একটি দ্রুত সোয়্যাব পরীক্ষা করিয়েছিলেন, তাই আপনাকে এখন আরেক ধরনের পরীক্ষা করাতে হবে যার ফলাফল যাচাই করার জন্য ল্যাবে পাঠানো হয়।\n\nমধ্যবর্তী সময়ে, আপনাকে এবং আপনার সঙ্গে বসবাসকারী যে কাউকে অবিলম্বে স্ব-বিচ্ছিন্ন হতে হবে।</string>
+    <string name="test_result_positive_self_isolate_and_book_test_title_3">এবং একটি ফলো-আপ পরীক্ষা বুক করুন</string>
+    <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
+    <string name="about_test_follow_up">ফলো-আপ পরীক্ষা</string>
+    <string name="about_test_follow_up_state_complete">সম্পূর্ণ</string>
+    <string name="about_test_follow_up_state_not_required">প্রয়োজন নাই</string>
+    <string name="about_test_follow_up_state_pending">অনিষ্পন্ন</string>
+    <string name="book_follow_up_test">একটি ফলো-আপ পরীক্ষা বুক করুন</string>
 </resources>

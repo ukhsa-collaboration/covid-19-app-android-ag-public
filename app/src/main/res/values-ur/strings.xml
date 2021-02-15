@@ -59,7 +59,7 @@
     <string name="test_ordering_failure_action">دوبارہ کوشش کریں</string>
     <string name="questionnaire_title">وہ تمام علامات منتخب کریں جن کا آپ پر اطلاق ہوتا ہے</string>
     <string name="questionnaire_no_symptom_selected">درکار ہے کہ آپ علامات منتخب کریں یا \"مجھ میں ان میں سے کوئی علامات نہیں\" منتخب کریں</string>
-    <string name="questionnaire_discard_symptoms_dialog_title">تصدیق کریں کہ آپ کے اندر کوئی علامات نہیں ہیں</string>
+    <string name="questionnaire_discard_symptoms_dialog_title">تصدیق کریں کہ آپ کو ان میں سے کوئی علامت نہیں ہے</string>
     <string name="questionnaire_discard_symptoms_dialog_message">کسی مُنتخب کی گئی علامات کوغیرمُنتخب کردیا جائے گا۔</string>
     <string name="title_no_coronavirus_symptoms">آپ کو کوروناوائرس ہونے کا امکان نہیں</string>
     <string name="you_do_not_appear_to_have_symptoms">بظاہر آپ میں کوروناوائرس کی علامات موجود نہیں۔</string>
@@ -430,4 +430,14 @@
     <string name="about_pcr">LAB_RESULT</string>
     <string name="about_test_kit_type">ٹیسٹ کٹ کی قسم</string>
     <string name="about_test_result">نتیجہ</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">یہ سمجھنے کے لئے کہ ایپ خود کو تنہائی  میں رکھنے  کے دنوں کا حساب کیسے دیتی ہے ، نیچے دیئے گئے عمومی سوالنامہ کے لنک پر جائیں۔</string>
+    <string name="test_result_positive_self_isolate_and_book_test_explanation_1">یہ سمجھنے کے لئے کہ ایپ خود کو تنہائی میں رکھنے  کے دنوں کا حساب کیسے دیتی ہے ، عمومی سوالنامہ دیکھیں۔\n\nچونکہ آپ نے ایک تیز رفتار سویب ٹیسٹ کروایا ہے، لہذا اب آپ کو دوسری قسم کا ٹیسٹ کروانے کی ضرورت ہے جو نتیجے کی تصدیق کرنے کے لیے لیب میں بھیجا گیا ہے۔\n\nاس بیچ، آپ کو اور جس کے ساتھ آپ رہتے ہیں اسے فوری طور پر خود کو  تنہا  کرنا ضروری ہے۔</string>
+    <string name="test_result_positive_self_isolate_and_book_test_title_3">اور ایک فالو اپ ٹیسٹ بُک کریں</string>
+    <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
+    <string name="about_test_follow_up">فالو اپ ٹیسٹ</string>
+    <string name="about_test_follow_up_state_complete">مکمل کریں</string>
+    <string name="about_test_follow_up_state_not_required">مطلوب نہیں ہے</string>
+    <string name="about_test_follow_up_state_pending">زیر التوا</string>
+    <string name="book_follow_up_test">ایک فالو اپ ٹیسٹ بک کروائیں</string>
+    <string name="state_test_positive_and_book_test_info">آپ کے کوروناوائرس کے ٹیسٹ کا نتیجہ مثبت ہے۔</string>
 </resources>

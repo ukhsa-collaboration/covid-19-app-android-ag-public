@@ -103,7 +103,7 @@ class StatusViewModel @Inject constructor(
 
     fun onStopExposureNotificationsClicked() {
         val canSendNotification =
-            notificationProvider.canSendNotificationToChannel(APP_CONFIGURATION_CHANNEL_ID)
+            notificationProvider.isChannelEnabled(APP_CONFIGURATION_CHANNEL_ID)
         val updatedState =
             viewStateLiveData.value?.copy(showExposureNotificationReminderDialog = canSendNotification)
         if (updatedState != null) {

@@ -9,16 +9,19 @@ import android.content.Intent
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import javax.inject.Inject
+import javax.inject.Singleton
+import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateRecommendedActivity
-import javax.inject.Inject
-import uk.nhs.nhsx.covid19.android.app.MainActivity
 
-class NotificationProvider @Inject constructor(private val context: Context) {
+@Singleton
+class NotificationProvider @Inject constructor(
+    private val context: Context
+) {
 
     init {
         createAreaRiskChangedNotificationChannel()
@@ -413,16 +416,15 @@ class NotificationProvider @Inject constructor(private val context: Context) {
         )
     }
 
-    fun canSendNotificationToChannel(channelId: String): Boolean {
+    fun isChannelEnabled(channelId: String): Boolean {
+        val manager = NotificationManagerCompat.from(context)
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
-            val manager =
-                context.getSystemService(AppCompatActivity.NOTIFICATION_SERVICE) as NotificationManager
             val channel = manager.getNotificationChannel(channelId)
-            if (channel.importance == NotificationManager.IMPORTANCE_NONE) {
+            if (channel?.importance == NotificationManager.IMPORTANCE_NONE) {
                 return false
             }
         }
-        return NotificationManagerCompat.from(context).areNotificationsEnabled()
+        return manager.areNotificationsEnabled()
     }
 
     private fun createNotificationChannel(

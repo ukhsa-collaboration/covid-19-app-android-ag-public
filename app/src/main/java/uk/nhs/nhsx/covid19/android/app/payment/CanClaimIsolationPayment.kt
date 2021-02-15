@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.payment
 
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import uk.nhs.nhsx.covid19.android.app.state.testBelongsToIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultHandler
 import java.time.Clock
 import java.time.LocalDate
@@ -22,7 +23,9 @@ class CanClaimIsolationPayment @Inject constructor(
     }
 
     private fun hasHadPositiveTestSinceStartOfIsolation(isolation: Isolation): Boolean =
-        testResultsHandler.hasPositiveTestResultAfterOrEqual(isolation.isolationStart)
+        testResultsHandler.hasTestResultMatching { testResult ->
+            testResult.isPositive() && isolation.testBelongsToIsolation(testResult)
+        }
 
     private fun hasContactCaseExpired(isolation: Isolation): Boolean {
         return isolation.contactCase?.let { contactCase ->

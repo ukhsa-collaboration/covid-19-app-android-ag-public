@@ -35,32 +35,43 @@ class SubmitEpidemiologyData constructor(
         epidemiologyDataApi: EpidemiologyDataApi,
         submitFakeExposureWindows: SubmitFakeExposureWindows
     ) : this(
-        metadataProvider, epidemiologyDataApi, submitFakeExposureWindows, GlobalScope, Dispatchers.IO
+        metadataProvider,
+        epidemiologyDataApi,
+        submitFakeExposureWindows,
+        GlobalScope,
+        Dispatchers.IO
     )
 
     fun submit(epidemiologyEventList: List<EpidemiologyEvent>) {
         submit(
             epidemiologyEventList,
-            EXPOSURE_WINDOW,
-            null
+            epidemiologyEventType = EXPOSURE_WINDOW,
+            epidemiologyEventVersion = 1,
+            testKitType = null,
+            requiresConfirmatoryTest = null
         )
     }
 
     fun submitAfterPositiveTest(
         epidemiologyEventList: List<EpidemiologyEvent>,
-        testKitType: VirologyTestKitType?
+        testKitType: VirologyTestKitType?,
+        requiresConfirmatoryTest: Boolean?
     ) {
         submit(
             epidemiologyEventList,
-            EXPOSURE_WINDOW_POSITIVE_TEST,
-            testKitType
+            epidemiologyEventType = EXPOSURE_WINDOW_POSITIVE_TEST,
+            epidemiologyEventVersion = 2,
+            testKitType,
+            requiresConfirmatoryTest
         )
     }
 
     private fun submit(
         epidemiologyEventList: List<EpidemiologyEvent>,
         epidemiologyEventType: EpidemiologyEventType,
-        testKitType: VirologyTestKitType?
+        epidemiologyEventVersion: Int,
+        testKitType: VirologyTestKitType?,
+        requiresConfirmatoryTest: Boolean?
     ) {
         submitEpidemiologyDataScope.launch(submitEpidemiologyDataDispatcher) {
             epidemiologyEventList.forEach { epidemiologyEvent ->
@@ -71,14 +82,19 @@ class SubmitEpidemiologyData constructor(
                             events = listOf(
                                 epidemiologyEvent.toEpidemiologyEventWithType(
                                     epidemiologyEventType,
-                                    testKitType
+                                    epidemiologyEventVersion,
+                                    testKitType,
+                                    requiresConfirmatoryTest
                                 )
                             )
                         )
                     )
                 }
             }
-            submitFakeExposureWindows(epidemiologyEventType.toEmptySubmissionSource(), epidemiologyEventList.size)
+            submitFakeExposureWindows(
+                epidemiologyEventType.toEmptySubmissionSource(),
+                epidemiologyEventList.size
+            )
         }
     }
 }
@@ -86,12 +102,17 @@ class SubmitEpidemiologyData constructor(
 @VisibleForTesting
 internal fun EpidemiologyEvent.toEpidemiologyEventWithType(
     eventType: EpidemiologyEventType,
-    testKitType: VirologyTestKitType?
+    eventVersion: Int,
+    testKitType: VirologyTestKitType?,
+    requiresConfirmatoryTest: Boolean?
 ): EpidemiologyEventWithType =
     EpidemiologyEventWithType(
         type = eventType,
-        version = this.version,
-        payload = this.payload.copy(testType = testKitType)
+        version = eventVersion,
+        payload = this.payload.copy(
+            testType = testKitType,
+            requiresConfirmatoryTest = requiresConfirmatoryTest
+        )
     )
 
 private fun EpidemiologyEventType.toEmptySubmissionSource(): EmptySubmissionSource =

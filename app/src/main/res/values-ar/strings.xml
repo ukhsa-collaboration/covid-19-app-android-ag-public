@@ -59,7 +59,7 @@
     <string name="test_ordering_failure_action">حاول مرة أخرى</string>
     <string name="questionnaire_title">حدد جميع الأعراض التي تنطبق عليك</string>
     <string name="questionnaire_no_symptom_selected">تحتاج إمّا إلى اختيار الأعراض التي لديك أو تحديد \"لا أعاني من أي من هذه الأعراض\"</string>
-    <string name="questionnaire_discard_symptoms_dialog_title">تأكيد عدم وجود أي أعراض لديك</string>
+    <string name="questionnaire_discard_symptoms_dialog_title">تأكيد عدم وجود أيٍّ من هذه الأعراض لديك</string>
     <string name="questionnaire_discard_symptoms_dialog_message">سيتم إلغاء تحديد أي أعراض مُحددة.</string>
     <string name="title_no_coronavirus_symptoms">من غير المُرجَّح إصابتك بفيروس كورونا</string>
     <string name="you_do_not_appear_to_have_symptoms">لا يبدو لديك أعراض الإصابة بفيروس كورونا</string>
@@ -224,7 +224,7 @@
     <string name="questionnaire_error_description">قبل المحاولة مرة أخرى، يرجى التحقق من تشغيلك لإعدادات البيانات المتنقلة في هاتفك والتحقق من وجود شبكة واي فاي (حال استخدامها) والتأكد من إيقاف تشغيل وضع الطيران.</string>
     <string name="questionnaire_no_symptoms">لا أعاني من أيٍّ من هذه الأعراض</string>
     <string name="notification_text_risky_venue">انقر للاطلاع على التفاصيل</string>
-    <string name="message_no_coronavirus_symptoms">في حال ظهور أيٍّ من هذه الأعراض لديك، يرجى الإبلاغ عنها في التطبيق وحجز اختبار مجاني.قم بإجراء اختبار الكشف عن فيروس كورونا إذا كنت تعاني من أعراض الفيروس فقط.\n\nللحصول على المزيد من النصائح، التواصل مع:v</string>
+    <string name="message_no_coronavirus_symptoms">في حال ظهور أيٍّ من هذه الأعراض لديك، يرجى الإبلاغ عنها في التطبيق وحجز اختبار مجاني. قم بإجراء اختبار الكشف عن فيروس كورونا إذا كنت تعاني من أعراض الفيروس فقط.\n\nللحصول على المزيد من النصائح، التواصل مع:</string>
     <string name="questionnaire_change_announcement">تغيير العَرَض %1$s</string>
     <string name="state_index_take_coronavirus_test">إجراء اختبار فيروس كورونا مجانًا</string>
     <string name="state_test_negative_info">نتيجة اختبار الكشف عن إصابتك بفيروس كورونا سلبية إلا أنه يُحتمل ظهور الأعراض لديك؛ ولذا يجب عليك الاستمرار في العزل الذاتي لنفسك</string>
@@ -445,5 +445,15 @@
     <string name="about_lfd">RAPID_RESULT</string>
     <string name="about_pcr">LAB_RESULT</string>
     <string name="about_test_kit_type">نوع مجموعة الاختبار</string>
-    <string name="about_test_result">نتيجة</string>
+    <string name="about_test_result">النتيجة</string>
+    <string name="state_test_positive_and_book_test_info">نتيجة اختبار الكشف عن إصابتك بفيروس كورونا إيجابية</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">لفهم الطريقة التي يحسب بها التطبيق عدد أيام العزل الذاتي، يُرجى زيارة الرابط أدناه المؤدي إلى الأسئلة الشائعة.</string>
+    <string name="test_result_positive_self_isolate_and_book_test_explanation_1">لفهم الطريقة التي يحسب بها التطبيق عدد أيام العزل الذاتي، يُرجى زيارة الأسئلة الشائعة.\n\nنظرًا لإجرائك اختبار مسحة سريع، فإنك تحتاج إلى إجراء اختبارٍ من نوعٍ آخر تم إرساله إلى المُختبر للتحقق من النتيجة.\n\nفي تلك الأثناء، يتعين عليك وعلى الأشخاص الآخرين الذين تعيش معهم الخضوع للعزل الذاتي على الفور.</string>
+    <string name="test_result_positive_self_isolate_and_book_test_title_3">وحجز اختبار متابعة</string>
+    <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
+    <string name="about_test_follow_up">اختبار المتابعة</string>
+    <string name="about_test_follow_up_state_complete">مكتمل</string>
+    <string name="about_test_follow_up_state_not_required">غير مطلوب</string>
+    <string name="about_test_follow_up_state_pending">في قائمة الانتظار</string>
+    <string name="book_follow_up_test">حجز اختبار متابعة</string>
 </resources>

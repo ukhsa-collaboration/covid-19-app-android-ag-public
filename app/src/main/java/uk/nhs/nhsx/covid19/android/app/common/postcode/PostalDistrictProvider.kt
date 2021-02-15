@@ -1,14 +1,14 @@
 package uk.nhs.nhsx.covid19.android.app.common.postcode
 
 import android.content.SharedPreferences
+import javax.inject.Inject
+import javax.inject.Singleton
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.NORTHERN_IRELAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.SCOTLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class PostalDistrictProvider @Inject constructor(sharedPreferences: SharedPreferences) {

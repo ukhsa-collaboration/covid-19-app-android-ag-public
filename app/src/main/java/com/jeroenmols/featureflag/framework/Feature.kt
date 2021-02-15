@@ -46,6 +46,12 @@ enum class FeatureFlag(
         "Enable storage of exposure windows",
         defaultValue = true
     ),
+    DAILY_CONTACT_TESTING(
+        "feature.dailyContactTesting",
+        "Daily Contact Testing",
+        "Enable daily contact testing enhancements",
+        defaultValue = false
+    ),
 }
 
 /**

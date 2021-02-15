@@ -1,9 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.about
 
+import androidx.test.platform.app.InstrumentationRegistry
 import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
-import java.time.Instant
-import java.time.LocalDate
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -37,6 +36,12 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.UserDataRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.WelcomeRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.CONFIRM
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OVERWRITE
+import uk.nhs.nhsx.covid19.android.app.util.uiFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 
 class UserDataActivityTest : EspressoTest() {
     private val moreAboutAppRobot = MoreAboutAppRobot()
@@ -91,101 +96,103 @@ class UserDataActivityTest : EspressoTest() {
 
     @RetryFlakyTest
     @Test
-    fun clickOnDeleteUserDataWithLocalAuthorityFeatureFlagEnabled_opensWelcomeScreenAndShowsPermissionScreenWithoutDialog() = notReported {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+    fun clickOnDeleteUserDataWithLocalAuthorityFeatureFlagEnabled_opensWelcomeScreenAndShowsPermissionScreenWithoutDialog() =
+        notReported {
+            FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
 
-        testAppContext.setPostCode(null)
+            testAppContext.setPostCode(null)
 
-        startTestActivity<UserDataActivity>()
+            startTestActivity<UserDataActivity>()
 
-        userDataRobot.checkActivityIsDisplayed()
+            userDataRobot.checkActivityIsDisplayed()
 
-        userDataRobot.userClicksOnDeleteAllDataButton()
+            userDataRobot.userClicksOnDeleteAllDataButton()
 
-        userDataRobot.userClicksDeleteDataOnDialog()
+            userDataRobot.userClicksDeleteDataOnDialog()
 
-        waitFor { welcomeRobot.isActivityDisplayed() }
+            waitFor { welcomeRobot.isActivityDisplayed() }
 
-        welcomeRobot.checkActivityIsDisplayed()
+            welcomeRobot.checkActivityIsDisplayed()
 
-        welcomeRobot.clickConfirmOnboarding()
+            welcomeRobot.clickConfirmOnboarding()
 
-        welcomeRobot.checkAgeConfirmationDialogIsDisplayed()
+            welcomeRobot.checkAgeConfirmationDialogIsDisplayed()
 
-        welcomeRobot.clickConfirmAgePositive()
+            welcomeRobot.clickConfirmAgePositive()
 
-        dataAndPrivacyRobot.checkActivityIsDisplayed()
+            dataAndPrivacyRobot.checkActivityIsDisplayed()
 
-        dataAndPrivacyRobot.clickConfirmOnboarding()
+            dataAndPrivacyRobot.clickConfirmOnboarding()
 
-        postCodeRobot.checkActivityIsDisplayed()
+            postCodeRobot.checkActivityIsDisplayed()
 
-        postCodeRobot.enterPostCode("N12")
+            postCodeRobot.enterPostCode("N12")
 
-        postCodeRobot.clickContinue()
+            postCodeRobot.clickContinue()
 
-        waitFor { localAuthorityRobot.checkActivityIsDisplayed() }
+            waitFor { localAuthorityRobot.checkActivityIsDisplayed() }
 
-        localAuthorityRobot.clickConfirm()
+            localAuthorityRobot.clickConfirm()
 
-        waitFor { permissionRobot.checkActivityIsDisplayed() }
+            waitFor { permissionRobot.checkActivityIsDisplayed() }
 
-        permissionRobot.clickEnablePermissions()
+            permissionRobot.clickEnablePermissions()
 
-        statusRobot.checkActivityIsDisplayed()
-    }
+            statusRobot.checkActivityIsDisplayed()
+        }
 
     @RetryFlakyTest
     @Test
-    fun clickOnDeleteUserDataWithLocalAuthorityFeatureFlagDisabled_opensWelcomeScreenAndShowsPermissionScreenWithoutDialog() = notReported {
-        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+    fun clickOnDeleteUserDataWithLocalAuthorityFeatureFlagDisabled_opensWelcomeScreenAndShowsPermissionScreenWithoutDialog() =
+        notReported {
+            FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
 
-        testAppContext.setPostCode(null)
+            testAppContext.setPostCode(null)
 
-        startTestActivity<UserDataActivity>()
+            startTestActivity<UserDataActivity>()
 
-        userDataRobot.checkActivityIsDisplayed()
+            userDataRobot.checkActivityIsDisplayed()
 
-        userDataRobot.userClicksOnDeleteAllDataButton()
+            userDataRobot.userClicksOnDeleteAllDataButton()
 
-        waitFor { userDataRobot.checkDeleteDataConfirmationDialogIsDisplayed() }
+            waitFor { userDataRobot.checkDeleteDataConfirmationDialogIsDisplayed() }
 
-        setScreenOrientation(LANDSCAPE)
+            setScreenOrientation(LANDSCAPE)
 
-        waitFor { userDataRobot.checkDeleteDataConfirmationDialogIsDisplayed() }
+            waitFor { userDataRobot.checkDeleteDataConfirmationDialogIsDisplayed() }
 
-        setScreenOrientation(PORTRAIT)
+            setScreenOrientation(PORTRAIT)
 
-        waitFor { userDataRobot.checkDeleteDataConfirmationDialogIsDisplayed() }
+            waitFor { userDataRobot.checkDeleteDataConfirmationDialogIsDisplayed() }
 
-        waitFor { userDataRobot.userClicksDeleteDataOnDialog() }
+            waitFor { userDataRobot.userClicksDeleteDataOnDialog() }
 
-        waitFor { welcomeRobot.isActivityDisplayed() }
+            waitFor { welcomeRobot.isActivityDisplayed() }
 
-        welcomeRobot.checkActivityIsDisplayed()
+            welcomeRobot.checkActivityIsDisplayed()
 
-        welcomeRobot.clickConfirmOnboarding()
+            welcomeRobot.clickConfirmOnboarding()
 
-        welcomeRobot.checkAgeConfirmationDialogIsDisplayed()
+            welcomeRobot.checkAgeConfirmationDialogIsDisplayed()
 
-        welcomeRobot.clickConfirmAgePositive()
+            welcomeRobot.clickConfirmAgePositive()
 
-        dataAndPrivacyRobot.checkActivityIsDisplayed()
+            dataAndPrivacyRobot.checkActivityIsDisplayed()
 
-        dataAndPrivacyRobot.clickConfirmOnboarding()
+            dataAndPrivacyRobot.clickConfirmOnboarding()
 
-        postCodeRobot.checkActivityIsDisplayed()
+            postCodeRobot.checkActivityIsDisplayed()
 
-        postCodeRobot.enterPostCode("SE1")
+            postCodeRobot.enterPostCode("SE1")
 
-        postCodeRobot.clickContinue()
+            postCodeRobot.clickContinue()
 
-        waitFor { permissionRobot.checkActivityIsDisplayed() }
+            waitFor { permissionRobot.checkActivityIsDisplayed() }
 
-        permissionRobot.clickEnablePermissions()
+            permissionRobot.clickEnablePermissions()
 
-        statusRobot.checkActivityIsDisplayed()
-    }
+            statusRobot.checkActivityIsDisplayed()
+        }
 
     @Test
     fun deleteSingleVenueVisit() = notReported {
@@ -246,40 +253,44 @@ class UserDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun displayLastPositiveAssistedLfdAcknowledgedTestResultWithKeySubmissionSupported() = notReported {
-        displayLastAcknowledgedTestResult(
-            POSITIVE,
-            RAPID_RESULT,
-            diagnosisKeySubmissionSupported = true
-        )
-    }
+    fun displayLastPositiveAssistedLfdAcknowledgedTestResultWithKeySubmissionSupported() =
+        notReported {
+            displayLastAcknowledgedTestResult(
+                POSITIVE,
+                RAPID_RESULT,
+                diagnosisKeySubmissionSupported = true
+            )
+        }
 
     @Test
-    fun displayLastPositiveAssistedLfdAcknowledgedTestResultWithKeySubmissionNotSupported() = notReported {
-        displayLastAcknowledgedTestResult(
-            POSITIVE,
-            RAPID_RESULT,
-            diagnosisKeySubmissionSupported = false
-        )
-    }
+    fun displayLastPositiveAssistedLfdAcknowledgedTestResultWithKeySubmissionNotSupported() =
+        notReported {
+            displayLastAcknowledgedTestResult(
+                POSITIVE,
+                RAPID_RESULT,
+                diagnosisKeySubmissionSupported = false
+            )
+        }
 
     @Test
-    fun displayLastPositiveUnassistedLfdAcknowledgedTestResultWithKeySubmissionSupported() = notReported {
-        displayLastAcknowledgedTestResult(
-            POSITIVE,
-            RAPID_SELF_REPORTED,
-            diagnosisKeySubmissionSupported = true
-        )
-    }
+    fun displayLastPositiveUnassistedLfdAcknowledgedTestResultWithKeySubmissionSupported() =
+        notReported {
+            displayLastAcknowledgedTestResult(
+                POSITIVE,
+                RAPID_SELF_REPORTED,
+                diagnosisKeySubmissionSupported = true
+            )
+        }
 
     @Test
-    fun displayLastPositiveUnassistedLfdAcknowledgedTestResultWithKeySubmissionNotSupported() = notReported {
-        displayLastAcknowledgedTestResult(
-            POSITIVE,
-            RAPID_SELF_REPORTED,
-            diagnosisKeySubmissionSupported = false
-        )
-    }
+    fun displayLastPositiveUnassistedLfdAcknowledgedTestResultWithKeySubmissionNotSupported() =
+        notReported {
+            displayLastAcknowledgedTestResult(
+                POSITIVE,
+                RAPID_SELF_REPORTED,
+                diagnosisKeySubmissionSupported = false
+            )
+        }
 
     @Test
     fun displayLastNegativePcrAcknowledgedTestResultWithKeySubmissionSupported() = notReported {
@@ -300,71 +311,132 @@ class UserDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun displayLastNegativeAssistedLfdAcknowledgedTestResultWithKeySubmissionSupported() = notReported {
-        displayLastAcknowledgedTestResult(
-            NEGATIVE,
-            RAPID_RESULT,
-            diagnosisKeySubmissionSupported = true
-        )
-    }
+    fun displayLastNegativeAssistedLfdAcknowledgedTestResultWithKeySubmissionSupported() =
+        notReported {
+            displayLastAcknowledgedTestResult(
+                NEGATIVE,
+                RAPID_RESULT,
+                diagnosisKeySubmissionSupported = true
+            )
+        }
 
     @Test
-    fun displayLastNegativeAssistedLfdAcknowledgedTestResultWithKeySubmissionNotSupported() = notReported {
-        displayLastAcknowledgedTestResult(
-            NEGATIVE,
-            RAPID_RESULT,
-            diagnosisKeySubmissionSupported = false
-        )
-    }
+    fun displayLastNegativeAssistedLfdAcknowledgedTestResultWithKeySubmissionNotSupported() =
+        notReported {
+            displayLastAcknowledgedTestResult(
+                NEGATIVE,
+                RAPID_RESULT,
+                diagnosisKeySubmissionSupported = false
+            )
+        }
 
     @Test
-    fun displayLastNegativeUnassistedLfdAcknowledgedTestResultWithKeySubmissionSupported() = notReported {
+    fun displayLastNegativeUnassistedLfdAcknowledgedTestResultWithKeySubmissionSupported() =
+        notReported {
+            displayLastAcknowledgedTestResult(
+                NEGATIVE,
+                RAPID_SELF_REPORTED,
+                diagnosisKeySubmissionSupported = true
+            )
+        }
+
+    @Test
+    fun displayLastNegativeUnassistedLfdAcknowledgedTestResultWithKeySubmissionNotSupported() =
+        notReported {
+            displayLastAcknowledgedTestResult(
+                NEGATIVE,
+                RAPID_SELF_REPORTED,
+                diagnosisKeySubmissionSupported = false
+            )
+        }
+
+    @Test
+    fun requiresConfirmatoryTestNotReceivedFollowUpTestShouldBePending() = notReported {
         displayLastAcknowledgedTestResult(
             NEGATIVE,
             RAPID_SELF_REPORTED,
-            diagnosisKeySubmissionSupported = true
+            diagnosisKeySubmissionSupported = false,
+            requiresConfirmatoryTest = true
         )
     }
 
     @Test
-    fun displayLastNegativeUnassistedLfdAcknowledgedTestResultWithKeySubmissionNotSupported() = notReported {
+    fun requiresConfirmatoryTestReceivedFollowUpTestShouldBeComplete() = notReported {
         displayLastAcknowledgedTestResult(
             NEGATIVE,
             RAPID_SELF_REPORTED,
-            diagnosisKeySubmissionSupported = false
+            diagnosisKeySubmissionSupported = false,
+            requiresConfirmatoryTest = true,
+            receivedFollowUpTest = Instant.parse("2020-07-18T00:05:00.00Z")
         )
     }
 
     @Test
-    fun displayLastPositiveAcknowledgedTestResultOfUnknownTypeWithKeySubmissionSupported() = notReported {
-        displayLastAcknowledgedTestResult(
-            POSITIVE,
-            testKitType = null, // UNKNOWN
-            diagnosisKeySubmissionSupported = true
-        )
-    }
+    fun displayLastPositiveAcknowledgedTestResultOfUnknownTypeWithKeySubmissionSupported() =
+        notReported {
+            displayLastAcknowledgedTestResult(
+                POSITIVE,
+                testKitType = null, // UNKNOWN
+                diagnosisKeySubmissionSupported = true
+            )
+        }
+
+    @Test
+    fun displayLastNegativeAcknowledgedTestResultOfUnknownTypeWithKeySubmissionSupported() =
+        notReported {
+            displayLastAcknowledgedTestResult(
+                NEGATIVE,
+                testKitType = null, // UNKNOWN
+                diagnosisKeySubmissionSupported = true
+            )
+        }
 
     private fun displayLastAcknowledgedTestResult(
         testResult: VirologyTestResult,
         testKitType: VirologyTestKitType?,
-        diagnosisKeySubmissionSupported: Boolean
+        diagnosisKeySubmissionSupported: Boolean,
+        requiresConfirmatoryTest: Boolean = false,
+        receivedFollowUpTest: Instant? = null
     ) {
-        testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(
-            ReceivedTestResult(
-                diagnosisKeySubmissionToken = "a",
-                testEndDate = Instant.now(),
-                testResult = testResult,
+        val initialTestResult = ReceivedTestResult(
+            diagnosisKeySubmissionToken = "a",
+            testEndDate = Instant.now(),
+            testResult = testResult,
+            testKitType = testKitType,
+            requiresConfirmatoryTest = requiresConfirmatoryTest,
+            diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported
+        )
+
+        testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(initialTestResult, OVERWRITE)
+
+        if (receivedFollowUpTest != null) {
+            val followupTest = ReceivedTestResult(
+                diagnosisKeySubmissionToken = "b",
+                testEndDate = receivedFollowUpTest,
+                testResult = POSITIVE,
                 testKitType = testKitType,
+                requiresConfirmatoryTest = false,
                 diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported
             )
-        )
+            testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(followupTest, CONFIRM)
+        }
 
         startTestActivity<UserDataActivity>()
 
         userDataRobot.checkActivityIsDisplayed()
 
         val shouldKitTypeBeVisible = testKitType != null
-        waitFor { userDataRobot.checkLastTestResultIsDisplayed(shouldKitTypeBeVisible) }
+
+        val date: String? = receivedFollowUpTest?.atZone(ZoneId.systemDefault())?.toLocalDate()
+            ?.uiFormat(InstrumentationRegistry.getInstrumentation().targetContext)
+
+        waitFor {
+            userDataRobot.checkLastTestResultIsDisplayed(
+                shouldKitTypeBeVisible,
+                requiresConfirmatoryTest,
+                date
+            )
+        }
     }
 
     @Test
