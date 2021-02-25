@@ -14,7 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 
 class PollingTestResult(private val espressoTest: EspressoTest) {
 
-    private val testResultRobot = TestResultRobot()
+    private val testResultRobot = TestResultRobot(espressoTest.testAppContext.app)
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
     private val testOrderingRobot = TestOrderingRobot()
     private val browserRobot = BrowserRobot()

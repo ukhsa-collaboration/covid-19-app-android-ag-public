@@ -14,7 +14,9 @@ import kotlinx.android.synthetic.main.view_area_risk.view.areaRiskIndicator
 import kotlinx.android.synthetic.main.view_area_risk.view.areaRiskText
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.AMBER
+import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.BLACK
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.GREEN
+import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.MAROON
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.NEUTRAL
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.RED
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.YELLOW
@@ -67,12 +69,16 @@ class AreaRiskView @JvmOverloads constructor(
     }
 
     private fun setAreaRiskStyle(riskIndicator: RiskIndicator?) {
-        when (riskIndicator?.colorScheme) {
+        if (riskIndicator == null) return
+
+        when (riskIndicator.colorSchemeV2 ?: riskIndicator.colorScheme) {
             NEUTRAL -> setNeutral()
             GREEN -> setGreen()
             YELLOW -> setYellow()
             AMBER -> setAmber()
             RED -> setRed()
+            MAROON -> setMaroon()
+            BLACK -> setBlack()
         }
     }
 
@@ -118,6 +124,24 @@ class AreaRiskView @JvmOverloads constructor(
             R.attr.riskLevelRedPanelIconTint,
             R.attr.riskLevelRedPanelChevronColor,
             R.attr.riskLevelRedPanelBackgroundDrawable
+        )
+    }
+
+    private fun setMaroon() {
+        setColors(
+            R.attr.riskLevelMaroonPanelTextColor,
+            R.attr.riskLevelMaroonPanelIconTint,
+            R.attr.riskLevelMaroonPanelChevronColor,
+            R.attr.riskLevelMaroonPanelBackgroundDrawable
+        )
+    }
+
+    private fun setBlack() {
+        setColors(
+            R.attr.riskLevelBlackPanelTextColor,
+            R.attr.riskLevelBlackPanelIconTint,
+            R.attr.riskLevelBlackPanelChevronColor,
+            R.attr.riskLevelBlackPanelBackgroundDrawable
         )
     }
 

@@ -6,6 +6,9 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verifyOrder
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -15,9 +18,6 @@ import uk.nhs.nhsx.covid19.android.app.common.Lce
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestOrderResponse
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneId
 
 class TestOrderingProgressViewModelTest {
 

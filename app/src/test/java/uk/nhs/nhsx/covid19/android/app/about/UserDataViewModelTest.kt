@@ -3,16 +3,20 @@ package uk.nhs.nhsx.covid19.android.app.about
 import android.content.SharedPreferences
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import com.jeroenmols.featureflag.framework.FeatureFlag.DAILY_CONTACT_TESTING
+import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.coEvery
-import io.mockk.coVerify
+import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.Instant
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.IsolationState
+import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.UserDataState
 import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.VenueVisitsUiState
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmittedOnboardingAnalyticsProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthority
@@ -21,12 +25,17 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodesLo
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
+import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.State
+import uk.nhs.nhsx.covid19.android.app.state.State.Default
+import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
+import java.time.Instant
+import java.time.LocalDate
 
 class UserDataViewModelTest {
 
@@ -55,74 +64,59 @@ class UserDataViewModelTest {
         submittedOnboardingAnalyticsProvider
     )
 
-    private val localAuthorityTextObserver = mockk<Observer<String>>(relaxed = true)
-    private val venueVisitsObserver = mockk<Observer<VenueVisitsUiState>>(relaxed = true)
+    private val userDataStateObserver = mockk<Observer<UserDataState>>(relaxed = true)
     private val venueVisitsEditModeChangedObserver = mockk<Observer<Boolean>>(relaxed = true)
-    private val stateMachineStateObserver = mockk<Observer<State>>(relaxed = true)
-    private val latestTestResultObserver = mockk<Observer<AcknowledgedTestResult>>(relaxed = true)
     private val allUserDataDeletedObserver = mockk<Observer<Unit>>(relaxed = true)
-
-    private val postCode = "CM1"
-    private val localAuthorityId = "SE00001"
-    private val postCodeLocalAuthorities = listOf(localAuthorityId)
-    private val localAuthority = LocalAuthority(name = "Something", country = "Somewhere")
-
-    private val localAuthorityPostCodes = LocalAuthorityPostCodes(
-        postcodes = mapOf(postCode to postCodeLocalAuthorities),
-        localAuthorities = mapOf(postCodeLocalAuthorities[0] to localAuthority)
-    )
 
     @Before
     fun setUp() {
+        FeatureFlagTestHelper.enableFeatureFlag(DAILY_CONTACT_TESTING)
+
+        testSubject.userDataState().observeForever(userDataStateObserver)
+        testSubject.venueVisitsEditModeChanged().observeForever(venueVisitsEditModeChangedObserver)
+        testSubject.getAllUserDataDeleted().observeForever(allUserDataDeletedObserver)
+
+        every { postCodeProvider.value } returns postCode
+        every { relevantTestResultProvider.testResult } returns acknowledgedTestResult
         coEvery { venuesStorage.getVisits() } returns listOf()
+        every { localAuthorityProvider.value } returns localAuthorityId
         coEvery { localAuthorityPostCodesLoader.load() } returns localAuthorityPostCodes
     }
 
+    @After
+    fun tearDown() {
+        FeatureFlagTestHelper.clearFeatureFlags()
+    }
+
     @Test
-    fun `venue visits updated`() = runBlocking {
-        testSubject.getVenueVisitsUiState().observeForever(venueVisitsObserver)
-        testSubject.venueVisitsEditModeChanged().observeForever(venueVisitsEditModeChangedObserver)
+    fun `onResume triggers view state emission`() = runBlocking {
+        every { stateMachine.readState() } returns contactCaseOnlyIsolation
 
-        testSubject.loadUserData()
+        testSubject.onResume()
 
-        verify { venueVisitsObserver.onChanged(VenueVisitsUiState(listOf(), isInEditMode = false)) }
+        verify { userDataStateObserver.onChanged(expectedInitialUserDataState) }
         verify(exactly = 0) { venueVisitsEditModeChangedObserver.onChanged(any()) }
+        verify(exactly = 0) { allUserDataDeletedObserver.onChanged(any()) }
     }
 
     @Test
-    fun `status machine state updated`() = runBlocking {
-        coEvery { stateMachine.readState() } returns State.Default()
+    fun `onResume with no changes to view state does not trigger view state emission`() = runBlocking {
+        every { stateMachine.readState() } returns contactCaseOnlyIsolation
 
-        testSubject.getLastStatusMachineState().observeForever(stateMachineStateObserver)
+        testSubject.onResume()
+        testSubject.onResume()
 
-        testSubject.loadUserData()
-
-        verify { stateMachineStateObserver.onChanged(State.Default()) }
-    }
-
-    @Test
-    fun `latest test result state updated`() = runBlocking {
-        val latestTestResult = AcknowledgedTestResult(
-            diagnosisKeySubmissionToken = "token",
-            testEndDate = Instant.now(),
-            testResult = POSITIVE,
-            acknowledgedDate = Instant.now(),
-            testKitType = LAB_RESULT,
-            requiresConfirmatoryTest = false,
-            confirmedDate = null
-        )
-
-        every { relevantTestResultProvider.testResult } returns latestTestResult
-
-        testSubject.getAcknowledgedTestResult().observeForever(latestTestResultObserver)
-
-        testSubject.loadUserData()
-
-        verify { latestTestResultObserver.onChanged(latestTestResult) }
+        verify(exactly = 1) { userDataStateObserver.onChanged(any()) }
+        verify(exactly = 0) { venueVisitsEditModeChangedObserver.onChanged(any()) }
+        verify(exactly = 0) { allUserDataDeletedObserver.onChanged(any()) }
     }
 
     @Test
     fun `delete removes data from storage`() {
+        every { stateMachine.readState() } returns contactCaseOnlyIsolation
+
+        testSubject.onResume()
+
         testSubject.getAllUserDataDeleted().observeForever(allUserDataDeletedObserver)
 
         every { sharedPreferences.edit() } returns sharedPreferencesEditor
@@ -140,73 +134,146 @@ class UserDataViewModelTest {
 
     @Test
     fun `delete single venue visit removes it from storage`() = runBlocking {
-        testSubject.getVenueVisitsUiState().observeForever(venueVisitsObserver)
-        testSubject.venueVisitsEditModeChanged().observeForever(venueVisitsEditModeChangedObserver)
+        every { stateMachine.readState() } returns contactCaseOnlyIsolation
+
+        testSubject.onResume()
 
         testSubject.deleteVenueVisit(0)
 
-        coVerify { venuesStorage.removeVenueVisit(0) }
-        verify { venueVisitsObserver.onChanged(VenueVisitsUiState(listOf(), isInEditMode = false)) }
+        coVerifyOrder {
+            userDataStateObserver.onChanged(expectedInitialUserDataState)
+            venuesStorage.removeVenueVisit(0)
+            userDataStateObserver.onChanged(
+                expectedInitialUserDataState.copy(
+                    venueVisitsUiState = VenueVisitsUiState(listOf(), isInEditMode = true),
+                    showDialog = null
+                )
+            )
+        }
         verify(exactly = 0) { venueVisitsEditModeChangedObserver.onChanged(any()) }
+        verify(exactly = 0) { allUserDataDeletedObserver.onChanged(any()) }
     }
 
     @Test
     fun `clicking edit and done changes delete state`() {
-        testSubject.getVenueVisitsUiState().observeForever(venueVisitsObserver)
-        testSubject.venueVisitsEditModeChanged().observeForever(venueVisitsEditModeChangedObserver)
+        every { stateMachine.readState() } returns contactCaseOnlyIsolation
 
+        testSubject.onResume()
+        testSubject.onEditVenueVisitClicked()
         testSubject.onEditVenueVisitClicked()
 
-        verify { venueVisitsObserver.onChanged(VenueVisitsUiState(listOf(), isInEditMode = true)) }
-        verify { venueVisitsEditModeChangedObserver.onChanged(true) }
-
-        testSubject.onEditVenueVisitClicked()
-
-        verify { venueVisitsObserver.onChanged(VenueVisitsUiState(listOf(), isInEditMode = false)) }
-        verify { venueVisitsEditModeChangedObserver.onChanged(false) }
-    }
-
-    @Test
-    fun `loading user data doesn't change edit mode state`() {
-        testSubject.getVenueVisitsUiState().observeForever(venueVisitsObserver)
-        testSubject.venueVisitsEditModeChanged().observeForever(venueVisitsEditModeChangedObserver)
-
-        testSubject.loadUserData()
-
-        verify { venueVisitsObserver.onChanged(VenueVisitsUiState(listOf(), isInEditMode = false)) }
-
-        testSubject.onEditVenueVisitClicked()
-
-        verify { venueVisitsObserver.onChanged(VenueVisitsUiState(listOf(), isInEditMode = true)) }
-
-        testSubject.loadUserData()
-
-        verify { venueVisitsObserver.onChanged(VenueVisitsUiState(listOf(), isInEditMode = true)) }
-
-        verify(exactly = 1) { venueVisitsEditModeChangedObserver.onChanged(true) }
-    }
-
-    @Test
-    fun `loading user data returns local authority and main post code when local authority is stored`() {
-        testSubject.localAuthorityText().observeForever(localAuthorityTextObserver)
-
-        every { localAuthorityProvider.value } returns localAuthorityId
-        every { postCodeProvider.value } returns postCode
-
-        testSubject.loadUserData()
-
-        verify { localAuthorityTextObserver.onChanged("${localAuthority.name}\n$postCode") }
+        coVerifyOrder {
+            userDataStateObserver.onChanged(expectedInitialUserDataState)
+            userDataStateObserver.onChanged(
+                expectedInitialUserDataState.copy(
+                    venueVisitsUiState = VenueVisitsUiState(listOf(), isInEditMode = true),
+                    showDialog = null
+                )
+            )
+            venueVisitsEditModeChangedObserver.onChanged(true)
+            userDataStateObserver.onChanged(
+                expectedInitialUserDataState.copy(
+                    venueVisitsUiState = VenueVisitsUiState(listOf(), isInEditMode = false),
+                    showDialog = null
+                )
+            )
+            venueVisitsEditModeChangedObserver.onChanged(false)
+        }
     }
 
     @Test
     fun `loading user data only returns main post code when local authority is not stored`() {
-        testSubject.localAuthorityText().observeForever(localAuthorityTextObserver)
-
+        every { stateMachine.readState() } returns contactCaseOnlyIsolation
         every { localAuthorityProvider.value } returns null
         every { postCodeProvider.value } returns postCode
 
-        testSubject.loadUserData()
+        testSubject.onResume()
 
-        verify { localAuthorityTextObserver.onChanged(postCode) }
+        verify {
+            userDataStateObserver.onChanged(expectedInitialUserDataState.copy(localAuthority = postCode))
+        }
+        verify(exactly = 0) { venueVisitsEditModeChangedObserver.onChanged(any()) }
+        verify(exactly = 0) { allUserDataDeletedObserver.onChanged(any()) }
     }
+
+    @Test
+    fun `loading user data returns exposure notification details and dailyContactTestingOptInDate when previously in contact case`() {
+        every { stateMachine.readState() } returns Default(previousIsolation = contactCaseOnlyIsolation)
+
+        testSubject.onResume()
+
+        verify {
+            userDataStateObserver.onChanged(
+                expectedInitialUserDataState.copy(
+                    isolationState = IsolationState(
+                        contactCaseEncounterDate = contactCaseEncounterDate,
+                        contactCaseNotificationDate = contactCaseNotificationDate,
+                        dailyContactTestingOptInDate = dailyContactTestingOptInDate
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `loading user data doesn't return exposure notification details and dailyContactTestingOptInDate when previously in contact case`() {
+        every { stateMachine.readState() } returns Default()
+
+        testSubject.onResume()
+
+        verify {
+            userDataStateObserver.onChanged(expectedInitialUserDataState.copy(isolationState = null))
+        }
+    }
+
+    private val postCode = "CM1"
+    private val localAuthorityId = "SE00001"
+    private val postCodeLocalAuthorities = listOf(localAuthorityId)
+    private val localAuthority = LocalAuthority(name = "Something", country = "Somewhere")
+
+    private val localAuthorityPostCodes = LocalAuthorityPostCodes(
+        postcodes = mapOf(postCode to postCodeLocalAuthorities),
+        localAuthorities = mapOf(postCodeLocalAuthorities[0] to localAuthority)
+    )
+
+    private val acknowledgedTestResult = AcknowledgedTestResult(
+        diagnosisKeySubmissionToken = "token",
+        testEndDate = Instant.now(),
+        testResult = POSITIVE,
+        acknowledgedDate = Instant.now(),
+        testKitType = LAB_RESULT,
+        requiresConfirmatoryTest = false,
+        confirmedDate = null
+    )
+
+    private val contactCaseEncounterDate = Instant.parse("2020-05-19T12:00:00Z")
+
+    private val contactCaseNotificationDate = Instant.parse("2020-05-20T12:00:00Z")
+
+    private val dailyContactTestingOptInDate = LocalDate.now().plusDays(5)
+
+    private val contactCaseOnlyIsolation = Isolation(
+        isolationStart = Instant.now(),
+        isolationConfiguration = DurationDays(),
+        contactCase = ContactCase(
+            startDate = contactCaseEncounterDate,
+            notificationDate = contactCaseNotificationDate,
+            expiryDate = LocalDate.now().plusDays(5),
+            dailyContactTestingOptInDate = dailyContactTestingOptInDate
+        )
+    )
+
+    private val expectedInitialUserDataState = UserDataState(
+        localAuthority = "${localAuthority.name}\n$postCode",
+        isolationState = IsolationState(
+            lastDayOfIsolation = contactCaseOnlyIsolation.lastDayOfIsolation,
+            contactCaseEncounterDate = contactCaseEncounterDate,
+            contactCaseNotificationDate = contactCaseNotificationDate,
+            indexCaseSymptomOnsetDate = contactCaseOnlyIsolation.indexCase?.symptomsOnsetDate,
+            dailyContactTestingOptInDate = dailyContactTestingOptInDate
+        ),
+        venueVisitsUiState = VenueVisitsUiState(listOf(), isInEditMode = false),
+        acknowledgedTestResult = acknowledgedTestResult,
+        showDialog = null
+    )
 }

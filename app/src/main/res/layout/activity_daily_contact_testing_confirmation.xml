@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_toolbar_primary" />
+
+    <ScrollView
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingVertical="@dimen/vertical_margin">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                style="@style/Title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/daily_contact_testing_confirmation_heading" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/daily_contact_testing_confirmation_intro" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:text="@string/daily_contact_testing_confirmation_continue_paragraph_header" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                app:rawText="@string/daily_contact_testing_confirmation_continue_paragraph_text"
+                app:showBulletPoints="true" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/daily_contact_testing_confirmation_no_longer_paragraph_header" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                app:rawText="@string/daily_contact_testing_confirmation_no_longer_paragraph_text"
+                app:showBulletPoints="true" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/confirmDailyContactTesting"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:text="@string/confirm" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

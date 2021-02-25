@@ -38,7 +38,8 @@ class ManagedApiModule(
     private val questionnaireApi: MockQuestionnaireApi,
     private val isolationPaymentApi: IsolationPaymentApi,
     private val keysSubmissionApi: MockKeysSubmissionApi,
-    private val analyticsApi: MockAnalyticsApi
+    private val analyticsApi: MockAnalyticsApi,
+    private val mockEpidemiologyDataApi: MockEpidemiologyDataApi
 ) {
 
     @Provides
@@ -99,7 +100,7 @@ class ManagedApiModule(
     @Provides
     @Singleton
     fun provideEpidemiologyDataApi(): EpidemiologyDataApi =
-        MockEpidemiologyDataApi()
+        mockEpidemiologyDataApi
 
     @Provides
     @Singleton

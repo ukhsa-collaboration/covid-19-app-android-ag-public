@@ -67,7 +67,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
         // Complete questionnaire with risky symptoms and order test on 2nd Jan
         // Symptom onset date: Don't remember
         // Isolation end date: 10th Jan
-        selfDiagnosis.selfDiagnosePositiveAndOrderTest()
+        selfDiagnosis.selfDiagnosePositiveAndOrderTest(receiveResultImmediately = false)
 
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
         assertOnFields {
@@ -157,7 +157,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
         // Complete questionnaire with risky symptoms and order test on 2nd Jan
         // Symptom onset date: Don't remember
         // Isolation end date: 10th Jan
-        selfDiagnosis.selfDiagnosePositiveAndOrderTest()
+        selfDiagnosis.selfDiagnosePositiveAndOrderTest(receiveResultImmediately = false)
 
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
         assertOnFields {
@@ -227,7 +227,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
         testKitType: VirologyTestKitType,
         receivedVoidTestResultViaPollingMetric: MetricsProperty
     ) {
-        selfDiagnosis.selfDiagnosePositiveAndOrderTest()
+        selfDiagnosis.selfDiagnosePositiveAndOrderTest(receiveResultImmediately = false)
 
         assertOnFields {
             assertEquals(1, Metrics::completedQuestionnaireAndStartedIsolation)

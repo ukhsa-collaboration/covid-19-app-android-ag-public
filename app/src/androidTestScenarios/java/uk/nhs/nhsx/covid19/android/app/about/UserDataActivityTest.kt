@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.about
 
 import androidx.test.platform.app.InstrumentationRegistry
 import com.jeroenmols.featureflag.framework.FeatureFlag
+import com.jeroenmols.featureflag.framework.FeatureFlag.DAILY_CONTACT_TESTING
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -36,8 +37,8 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.UserDataRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.WelcomeRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.CONFIRM
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OVERWRITE
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Confirm
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import java.time.Instant
 import java.time.LocalDate
@@ -407,7 +408,7 @@ class UserDataActivityTest : EspressoTest() {
             diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported
         )
 
-        testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(initialTestResult, OVERWRITE)
+        testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(initialTestResult, Overwrite)
 
         if (receivedFollowUpTest != null) {
             val followupTest = ReceivedTestResult(
@@ -418,7 +419,7 @@ class UserDataActivityTest : EspressoTest() {
                 requiresConfirmatoryTest = false,
                 diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported
             )
-            testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(followupTest, CONFIRM)
+            testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(followupTest, Confirm(confirmedDate = receivedFollowUpTest))
         }
 
         startTestActivity<UserDataActivity>()
@@ -448,7 +449,8 @@ class UserDataActivityTest : EspressoTest() {
                 contactCase = ContactCase(
                     Instant.parse("2020-05-19T12:00:00Z"),
                     null,
-                    LocalDate.now().plusDays(5)
+                    LocalDate.now().plusDays(5),
+                    dailyContactTestingOptInDate = null
                 )
             )
         )
@@ -460,6 +462,7 @@ class UserDataActivityTest : EspressoTest() {
         waitFor { userDataRobot.checkEncounterIsDisplayed() }
         userDataRobot.checkExposureNotificationIsDisplayed()
         userDataRobot.checkExposureNotificationDateIsNotDisplayed()
+        waitFor { userDataRobot.checkDailyContactTestingOptInDateIsNotDisplayed() }
     }
 
     @Test
@@ -471,7 +474,8 @@ class UserDataActivityTest : EspressoTest() {
                 contactCase = ContactCase(
                     Instant.parse("2020-05-19T12:00:00Z"),
                     Instant.parse("2020-05-20T12:00:00Z"),
-                    LocalDate.now().plusDays(5)
+                    LocalDate.now().plusDays(5),
+                    dailyContactTestingOptInDate = null
                 )
             )
         )
@@ -483,6 +487,7 @@ class UserDataActivityTest : EspressoTest() {
         waitFor { userDataRobot.checkEncounterIsDisplayed() }
         userDataRobot.checkExposureNotificationIsDisplayed()
         userDataRobot.checkExposureNotificationDateIsDisplayed()
+        waitFor { userDataRobot.checkDailyContactTestingOptInDateIsNotDisplayed() }
     }
 
     @Test
@@ -504,10 +509,11 @@ class UserDataActivityTest : EspressoTest() {
         userDataRobot.checkActivityIsDisplayed()
 
         waitFor { userDataRobot.checkSymptomsAreDisplayed() }
+        waitFor { userDataRobot.checkDailyContactTestingOptInDateIsNotDisplayed() }
     }
 
     @Test
-    fun displayLastDayOfIsolationInIsolation() = notReported {
+    fun contactCaseOnly_notOptedInToDailyContactTesting_displayLastDayOfIsolationInIsolation() = notReported {
         testAppContext.setState(
             Isolation(
                 isolationStart = Instant.now(),
@@ -515,7 +521,8 @@ class UserDataActivityTest : EspressoTest() {
                 contactCase = ContactCase(
                     Instant.parse("2020-05-19T12:00:00Z"),
                     Instant.parse("2020-05-20T12:00:00Z"),
-                    LocalDate.now().plusDays(5)
+                    LocalDate.now().plusDays(5),
+                    dailyContactTestingOptInDate = null
                 )
             )
         )
@@ -525,6 +532,8 @@ class UserDataActivityTest : EspressoTest() {
         userDataRobot.checkActivityIsDisplayed()
 
         waitFor { userDataRobot.checkLastDayOfIsolationIsDisplayed() }
+        waitFor { userDataRobot.checkExposureNotificationDateIsDisplayed() }
+        waitFor { userDataRobot.checkDailyContactTestingOptInDateIsNotDisplayed() }
     }
 
     @Test
@@ -536,5 +545,35 @@ class UserDataActivityTest : EspressoTest() {
         userDataRobot.checkActivityIsDisplayed()
 
         waitFor { userDataRobot.checkLastDayOfIsolationIsNotDisplayed() }
+        waitFor { userDataRobot.checkDailyContactTestingOptInDateIsNotDisplayed() }
     }
+
+    @Test
+    fun previouslyIsolatedAsContactCaseOnly_optedInToDailyContactTesting_showDailyContactTestingOptInDate() =
+        notReported {
+            FeatureFlagTestHelper.enableFeatureFlag(DAILY_CONTACT_TESTING)
+
+            testAppContext.setState(defaultWithPreviousIsolationContactCaseOnly)
+
+            startTestActivity<UserDataActivity>()
+
+            userDataRobot.checkActivityIsDisplayed()
+
+            waitFor { userDataRobot.checkLastDayOfIsolationIsNotDisplayed() }
+            waitFor { userDataRobot.checkExposureNotificationDateIsNotDisplayed() }
+            waitFor { userDataRobot.checkDailyContactTestingOptInDateIsDisplayed() }
+        }
+
+    private val defaultWithPreviousIsolationContactCaseOnly = Default(
+        previousIsolation = Isolation(
+            isolationStart = Instant.now(),
+            isolationConfiguration = DurationDays(),
+            contactCase = ContactCase(
+                Instant.parse("2020-05-19T12:00:00Z"),
+                null,
+                LocalDate.now().plusDays(5),
+                dailyContactTestingOptInDate = LocalDate.now().plusDays(5)
+            )
+        )
+    )
 }

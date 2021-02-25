@@ -1,79 +1,30 @@
 package uk.nhs.nhsx.covid19.android.app.util
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import androidx.annotation.RequiresApi
-import androidx.annotation.VisibleForTesting
-import androidx.core.content.edit
-import androidx.security.crypto.EncryptedFile
-import androidx.security.crypto.EncryptedFile.Builder
-import androidx.security.crypto.EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB
-import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import timber.log.Timber
-import java.io.File
-import java.io.OutputStreamWriter
+import uk.nhs.nhsx.covid19.android.app.util.StrongBoxStatus.NOT_PRESENT
+import uk.nhs.nhsx.covid19.android.app.util.StrongBoxStatus.PRESENT_ALLOWED
+import uk.nhs.nhsx.covid19.android.app.util.StrongBoxStatus.PRESENT_DISALLOWED
 
-data class EncryptedFileInfo(
-    val file: File,
-    val encryptedFile: EncryptedFile
-)
+class EncryptionUtils(
+    private val strongBoxSupport: StrongBoxSupport
+) {
 
-object EncryptionUtils {
-    private const val STRONG_BOX_BACKED_MASTER_KEY = "_master_key_strongbox_"
-    internal const val KEYSET_PREF_NAME = "__androidx_security_crypto_encrypted_file_pref__"
-    private const val STRONGBOX_KEYSET_PREF_NAME =
-        "__androidx_security_crypto_encrypted_file_strongbox_pref__"
-
-    fun createEncryptedFile(
-        context: Context,
-        name: String,
-        migrationManager: StrongBoxMigrationManager = StrongBoxMigrationManager
-    ): EncryptedFileInfo {
-        val (file, encryptedFile) = if (hasStrongBox(context)) {
-            val file = File(context.filesDir, name + "_strongbox")
-            Timber.d("Has StrongBox")
-            val strongBoxMasterKeyAlias = getStrongBoxBackedMasterKey()
-            val strongBoxBackedEncryptedFile =
-                getEncryptedFile(context, file, strongBoxMasterKeyAlias, STRONGBOX_KEYSET_PREF_NAME)
-            val oldFile = File(context.filesDir, name)
-            migrationManager.migrateToNewMasterKey(context, oldFile, strongBoxBackedEncryptedFile)
-
-            file to strongBoxBackedEncryptedFile
-        } else {
-            val file = File(context.filesDir, name)
-            val masterKeyAlias = getDefaultMasterKey()
-            file to getEncryptedFile(context, file, masterKeyAlias, KEYSET_PREF_NAME)
-        }
-
-        return EncryptedFileInfo(
-            file,
-            encryptedFile
-        )
-    }
-
-    fun getEncryptedFile(
-        context: Context,
-        file: File,
-        masterKeyAlias: String,
-        keySetPrefName: String
-    ): EncryptedFile {
-        return Builder(file, context, masterKeyAlias, AES256_GCM_HKDF_4KB)
-            .setKeysetPrefName(keySetPrefName)
-            .build()
-    }
+    internal fun getStrongBoxStatus(context: Context): StrongBoxStatus =
+        strongBoxSupport.getStrongBoxStatus(context)
 
     internal fun getDefaultMasterKey(): String {
         // We can’t use UserAuthenticationRequired because that limits our background access to encrypted data
         return MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
     }
 
-    @VisibleForTesting
     @RequiresApi(VERSION_CODES.P)
     internal fun getStrongBoxBackedMasterKey(): String {
         // We can’t use UserAuthenticationRequired because that limits our background access to encrypted data
@@ -90,78 +41,58 @@ object EncryptionUtils {
         return MasterKeys.getOrCreate(keyGenParameterSpec)
     }
 
-    @VisibleForTesting
-    internal fun hasStrongBox(context: Context) = Build.VERSION.SDK_INT >= 28 &&
-        context.packageManager.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
-
-    fun createEncryptedSharedPreferences(context: Context): SharedPreferences {
-        return if (hasStrongBox(context)) {
-            Timber.d("Has StrongBox")
-            createStrongBoxBackedEncryptedSharedPreferences(context)
-        } else {
-            createEncryptedSharedPreferences(context, getDefaultMasterKey())
-        }
+    class MigrationException(exception: Exception) : Exception(exception) {
+        constructor(message: String) : this(Exception(message))
     }
 
-    @RequiresApi(VERSION_CODES.P)
-    private fun createStrongBoxBackedEncryptedSharedPreferences(context: Context): SharedPreferences {
-        val strongBoxMasterKeyAlias = getStrongBoxBackedMasterKey()
-        val strongBoxBackedPrefs = createEncryptedSharedPreferences(
-            context,
-            strongBoxMasterKeyAlias,
-            "strongBoxBackedPrefs"
-        )
-
-        migrateSharedPrefsToNewMasterKey(context, strongBoxBackedPrefs)
-        return strongBoxBackedPrefs
+    companion object {
+        private const val STRONG_BOX_BACKED_MASTER_KEY = "_master_key_strongbox_"
     }
+}
 
-    private fun migrateSharedPrefsToNewMasterKey(
-        context: Context,
-        strongBoxBackedPrefs: SharedPreferences
-    ) {
-        val oldPrefs = createEncryptedSharedPreferences(context, getDefaultMasterKey())
-        val allPrefs = oldPrefs.all
+object AndroidStrongBoxSupport : StrongBoxSupport {
 
-        strongBoxBackedPrefs.edit {
-            allPrefs.forEach { entry ->
-                val key = entry.key
-                when (val value = entry.value) {
-                    is String -> putString(key, value)
-                    is Float -> putFloat(key, value)
-                    is Long -> putLong(key, value)
-                    is Boolean -> putBoolean(key, value)
-                    is Int -> putInt(key, value)
-                    is Set<*> -> putStringSet(key, value as MutableSet<String>?)
-                    null -> remove(key)
-                }
+    private const val PIXEL_3 = "blueline"
+    private const val PIXEL_3_XL = "crosshatch"
+    private const val PIXEL_3A = "sargo"
+    private const val PIXEL_3A_XL = "bonito"
+    private const val PIXEL_4 = "flame"
+    private const val PIXEL_4_XL = "coral"
+    private const val PIXEL_4A = "sunfish"
+    private const val PIXEL_4A_5G = "bramble"
+    private const val PIXEL_5 = "redfin"
+
+    override fun getStrongBoxStatus(context: Context): StrongBoxStatus =
+        if (hasStrongBox(context)) {
+            if (hasStrongBoxDisallowed()) {
+                PRESENT_DISALLOWED
+            } else {
+                PRESENT_ALLOWED
             }
+        } else {
+            NOT_PRESENT
         }
 
-        oldPrefs.edit().clear().apply()
-        Timber.d("Migration finished")
-    }
+    private fun hasStrongBox(context: Context) =
+        Build.VERSION.SDK_INT >= 28 &&
+            context.packageManager.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
 
-    internal fun createEncryptedSharedPreferences(
-        context: Context,
-        masterKeyAlias: String,
-        fileName: String = SharedPrefsDelegate.fileName
-    ) =
-        EncryptedSharedPreferences.create(
-            fileName,
-            masterKeyAlias,
-            context,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
+    private fun hasStrongBoxDisallowed() =
+        when (Build.DEVICE) {
+            PIXEL_3, PIXEL_3_XL, PIXEL_3A, PIXEL_3A_XL, PIXEL_4, PIXEL_4_XL, PIXEL_4A, PIXEL_4A_5G, PIXEL_5 -> true
+            else -> false
+        }.also {
+            if (it) Timber.d("StrongBox disallowed device: ${Build.DEVICE}")
+        }
 }
 
-fun EncryptedFile.readText(): String {
-    val inputStream = openFileInput()
-    return inputStream.bufferedReader().use { it.readText() }
+interface StrongBoxSupport {
+
+    fun getStrongBoxStatus(context: Context): StrongBoxStatus
 }
 
-fun EncryptedFile.writeText(content: String) {
-    val writer = OutputStreamWriter(openFileOutput(), Charsets.UTF_8)
-    writer.use { it.write(content) }
+enum class StrongBoxStatus {
+    NOT_PRESENT,
+    PRESENT_ALLOWED,
+    PRESENT_DISALLOWED
 }

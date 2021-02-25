@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jeroenmols.featureflag.framework.FeatureFlag.DAILY_CONTACT_TESTING
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.DialogType.ConfirmDeleteAllData
 import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.DialogType.ConfirmDeleteVenueVisit
@@ -15,10 +17,13 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.State
+import uk.nhs.nhsx.covid19.android.app.state.State.Default
+import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
+import java.time.Instant
+import java.time.LocalDate
 import javax.inject.Inject
 
 class UserDataViewModel @Inject constructor(
@@ -32,46 +37,63 @@ class UserDataViewModel @Inject constructor(
     private val submittedOnboardingAnalyticsProvider: SubmittedOnboardingAnalyticsProvider
 ) : ViewModel() {
 
-    private val localAuthorityText = MutableLiveData<String>()
-    fun localAuthorityText(): LiveData<String> = localAuthorityText
-
-    private val statusMachineLiveData: MutableLiveData<State> = MutableLiveData()
-    fun getLastStatusMachineState(): LiveData<State> = statusMachineLiveData
-
-    private val venueVisitsUiStateLiveData: MutableLiveData<VenueVisitsUiState> = MutableLiveData(
-        VenueVisitsUiState(listOf(), isInEditMode = false)
-    )
+    private val userDataStateLiveData = MutableLiveData<UserDataState>()
+    fun userDataState(): LiveData<UserDataState> = userDataStateLiveData
 
     private val venueVisitsEditModeChangedLiveData: MutableLiveData<Boolean> = SingleLiveEvent()
     fun venueVisitsEditModeChanged(): LiveData<Boolean> = venueVisitsEditModeChangedLiveData
 
-    fun getVenueVisitsUiState(): LiveData<VenueVisitsUiState> = venueVisitsUiStateLiveData
-
-    private val acknowledgedTestResultLiveData: MutableLiveData<AcknowledgedTestResult> = MutableLiveData()
-    fun getAcknowledgedTestResult(): LiveData<AcknowledgedTestResult> = acknowledgedTestResultLiveData
-
     private val allUserDataDeletedLiveData: MutableLiveData<Unit> = SingleLiveEvent()
     fun getAllUserDataDeleted(): LiveData<Unit> = allUserDataDeletedLiveData
 
-    private val showDialogLiveData: MutableLiveData<DialogType> = MutableLiveData()
-    fun getShowDialog(): LiveData<DialogType> = showDialogLiveData
-
-    fun loadUserData() {
+    fun onResume() {
         viewModelScope.launch {
-            loadLocalAuthorityText()
-
-            val isEditModeActive = venueVisitsUiStateLiveData.value?.isInEditMode ?: false
-            venueVisitsUiStateLiveData.postValue(
-                VenueVisitsUiState(venuesStorage.getVisits().map { it.copy(to = it.to.minusSeconds(1L)) }, isInEditMode = isEditModeActive)
+            val updatedViewState = UserDataState(
+                localAuthority = getLocalAuthorityText(),
+                isolationState = getIsolationState(),
+                venueVisitsUiState = VenueVisitsUiState(
+                    venuesStorage.getVisits().map {
+                        it.copy(to = it.to.minusSeconds(1L))
+                    },
+                    isInEditMode = userDataStateLiveData.value?.venueVisitsUiState?.isInEditMode ?: false
+                ),
+                acknowledgedTestResult = relevantTestResultProvider.testResult,
+                showDialog = userDataStateLiveData.value?.showDialog
             )
-            statusMachineLiveData.postValue(stateMachine.readState())
-
-            acknowledgedTestResultLiveData.postValue(relevantTestResultProvider.testResult)
+            if (userDataStateLiveData.value != updatedViewState) {
+                userDataStateLiveData.postValue(updatedViewState)
+            }
         }
     }
 
+    private fun getIsolationState(): IsolationState? {
+        return when (val isolationState = stateMachine.readState()) {
+            is Default -> {
+                isolationState.previousIsolation?.let {
+                    IsolationState(
+                        contactCaseEncounterDate = isolationState.previousIsolation.contactCase?.startDate,
+                        contactCaseNotificationDate = isolationState.previousIsolation.contactCase?.notificationDate,
+                        dailyContactTestingOptInDate = getDailyContactTestingOptInDateForIsolation(isolationState.previousIsolation)
+                    )
+                }
+            }
+            is Isolation -> IsolationState(
+                lastDayOfIsolation = isolationState.lastDayOfIsolation,
+                contactCaseEncounterDate = isolationState.contactCase?.startDate,
+                contactCaseNotificationDate = isolationState.contactCase?.notificationDate,
+                indexCaseSymptomOnsetDate = isolationState.indexCase?.symptomsOnsetDate,
+                dailyContactTestingOptInDate = getDailyContactTestingOptInDateForIsolation(isolationState)
+            )
+        }
+    }
+
+    private fun getDailyContactTestingOptInDateForIsolation(isolation: Isolation): LocalDate? =
+        if (RuntimeBehavior.isFeatureEnabled(DAILY_CONTACT_TESTING)) {
+            isolation.contactCase?.dailyContactTestingOptInDate
+        } else null
+
     fun onDeleteAllUserDataClicked() {
-        showDialogLiveData.postValue(ConfirmDeleteAllData)
+        userDataStateLiveData.postValue(userDataStateLiveData.value!!.copy(showDialog = ConfirmDeleteAllData))
     }
 
     fun deleteAllUserData() {
@@ -80,45 +102,65 @@ class UserDataViewModel @Inject constructor(
         submittedOnboardingAnalyticsProvider.value = submittedOnboardingAnalytics
         stateMachine.reset()
         venuesStorage.removeAllVenueVisits()
+        userDataStateLiveData.postValue(userDataStateLiveData.value!!.copy(showDialog = null))
         allUserDataDeletedLiveData.postValue(Unit)
     }
 
     fun onVenueVisitDataClicked(position: Int) {
-        showDialogLiveData.postValue(ConfirmDeleteVenueVisit(position))
+        userDataStateLiveData.postValue(userDataStateLiveData.value!!.copy(showDialog = ConfirmDeleteVenueVisit(position)))
     }
 
     fun deleteVenueVisit(position: Int) {
         viewModelScope.launch {
             venuesStorage.removeVenueVisit(position)
-            venueVisitsUiStateLiveData.postValue(
-                VenueVisitsUiState(venuesStorage.getVisits(), isInEditMode = true)
+            userDataStateLiveData.postValue(
+                userDataStateLiveData.value!!.copy(
+                    venueVisitsUiState = VenueVisitsUiState(venuesStorage.getVisits(), isInEditMode = true),
+                    showDialog = null
+                )
             )
         }
     }
 
     fun onDialogDismissed() {
-        showDialogLiveData.postValue(null)
+        userDataStateLiveData.postValue(userDataStateLiveData.value!!.copy(showDialog = null))
     }
 
     fun onEditVenueVisitClicked() {
         viewModelScope.launch {
-            val previousVenueVisitsState = venueVisitsUiStateLiveData.value ?: return@launch
-            val updatedVenueVisitsState =
-                previousVenueVisitsState.copy(isInEditMode = !previousVenueVisitsState.isInEditMode)
-            venueVisitsUiStateLiveData.postValue(updatedVenueVisitsState)
-            venueVisitsEditModeChangedLiveData.postValue(updatedVenueVisitsState.isInEditMode)
+            val toggleIsInEditMode = !userDataStateLiveData.value!!.venueVisitsUiState.isInEditMode
+            userDataStateLiveData.postValue(
+                userDataStateLiveData.value!!.copy(
+                    venueVisitsUiState = userDataStateLiveData.value!!.venueVisitsUiState.copy(isInEditMode = toggleIsInEditMode)
+                )
+            )
+            venueVisitsEditModeChangedLiveData.postValue(toggleIsInEditMode)
         }
     }
 
-    private suspend fun loadLocalAuthorityText() {
-        val text = localAuthorityProvider.value?.let {
+    private suspend fun getLocalAuthorityText(): String? =
+        localAuthorityProvider.value?.let {
             val localAuthorityName = localAuthorityPostCodesLoader.load()?.localAuthorities?.get(it)?.name
             localAuthorityName?.let { name -> "$name\n${postCodePrefs.value}" }
-        }
-        localAuthorityText.postValue(text ?: postCodePrefs.value)
-    }
+        } ?: postCodePrefs.value
+
+    data class UserDataState(
+        val localAuthority: String?,
+        val isolationState: IsolationState?,
+        val venueVisitsUiState: VenueVisitsUiState,
+        val acknowledgedTestResult: AcknowledgedTestResult?,
+        val showDialog: DialogType? = null
+    )
 
     data class VenueVisitsUiState(val venueVisits: List<VenueVisit>, val isInEditMode: Boolean)
+
+    data class IsolationState(
+        val lastDayOfIsolation: LocalDate? = null,
+        val contactCaseEncounterDate: Instant? = null,
+        val contactCaseNotificationDate: Instant? = null,
+        val indexCaseSymptomOnsetDate: LocalDate? = null,
+        val dailyContactTestingOptInDate: LocalDate? = null
+    )
 
     sealed class DialogType {
         object ConfirmDeleteAllData : DialogType()

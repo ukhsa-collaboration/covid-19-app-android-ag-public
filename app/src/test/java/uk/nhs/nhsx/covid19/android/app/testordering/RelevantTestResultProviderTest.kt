@@ -11,9 +11,10 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SEL
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.CONFIRM
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.IGNORE
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OVERWRITE
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Confirm
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Ignore
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OverwriteAndConfirm
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
 import java.time.Clock
 import java.time.Instant
@@ -136,14 +137,14 @@ class RelevantTestResultProviderTest {
                 diagnosisKeySubmissionSupported = true,
                 requiresConfirmatoryTest = false
             ),
-            testResultStorageOperation = OVERWRITE
+            testResultStorageOperation = Overwrite
         )
 
         verify(exactly = 0) { relevantTestResultStorage setProperty "value" value any<String>() }
     }
 
     @Test
-    fun `onTestResultAcknowledged overrides test when operation is OVERWRITE`() {
+    fun `onTestResultAcknowledged overwrites test when operation is Overwrite`() {
         every { relevantTestResultStorage.value } returns POSITIVE_CONFIRMED_TEST_RESULT_JSON
 
         val testEndDate = Instant.parse("1970-01-02T00:00:00Z")
@@ -156,7 +157,7 @@ class RelevantTestResultProviderTest {
                 diagnosisKeySubmissionSupported = true,
                 requiresConfirmatoryTest = false
             ),
-            testResultStorageOperation = OVERWRITE
+            testResultStorageOperation = Overwrite
         )
 
         val expectedResult =
@@ -168,9 +169,10 @@ class RelevantTestResultProviderTest {
     }
 
     @Test
-    fun `onTestResultAcknowledged confirms test result when operation is CONFIRM`() {
-        every { relevantTestResultStorage.value } returns POSITIVE_INDICATIVE_UNCONFIRMED_TEST_RESULT_JSON
+    fun `onTestResultAcknowledged overwrites and confirms test when operation is OverwriteAndConfirm`() {
+        every { relevantTestResultStorage.value } returns POSITIVE_CONFIRMED_TEST_RESULT_JSON
 
+        val confirmedDate = Instant.parse("1972-01-02T00:00:00Z")
         val testEndDate = Instant.parse("1970-01-02T00:00:00Z")
         testSubject.onTestResultAcknowledged(
             ReceivedTestResult(
@@ -179,21 +181,46 @@ class RelevantTestResultProviderTest {
                 VirologyTestResult.POSITIVE,
                 RAPID_SELF_REPORTED,
                 diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+                requiresConfirmatoryTest = true
             ),
-            testResultStorageOperation = CONFIRM
+            testResultStorageOperation = OverwriteAndConfirm(confirmedDate)
         )
 
         val expectedResult =
             """
-            {"diagnosisKeySubmissionToken":"token","testEndDate":"$TEST_END_DATE","testResult":"POSITIVE","testKitType":"RAPID_RESULT","acknowledgedDate":"$ACKNOWLEDGED_DATE","requiresConfirmatoryTest":true,"confirmedDate":"$testEndDate"}
+            {"diagnosisKeySubmissionToken":"newToken","testEndDate":"$testEndDate","testResult":"POSITIVE","testKitType":"RAPID_SELF_REPORTED","acknowledgedDate":"${Instant.now(fixedClock)}","requiresConfirmatoryTest":true,"confirmedDate":"$confirmedDate"}
             """.trimIndent()
 
         verify { relevantTestResultStorage setProperty "value" value eq(expectedResult) }
     }
 
     @Test
-    fun `onTestResultAcknowledged does not override test result when operation is IGNORE`() {
+    fun `onTestResultAcknowledged confirms test result when operation is Confirm`() {
+        every { relevantTestResultStorage.value } returns POSITIVE_INDICATIVE_UNCONFIRMED_TEST_RESULT_JSON
+
+        val confirmedDate = Instant.parse("1972-01-02T00:00:00Z")
+        testSubject.onTestResultAcknowledged(
+            ReceivedTestResult(
+                "newToken",
+                Instant.parse("1970-01-02T00:00:00Z"),
+                VirologyTestResult.POSITIVE,
+                RAPID_SELF_REPORTED,
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
+            ),
+            testResultStorageOperation = Confirm(confirmedDate)
+        )
+
+        val expectedResult =
+            """
+            {"diagnosisKeySubmissionToken":"token","testEndDate":"$TEST_END_DATE","testResult":"POSITIVE","testKitType":"RAPID_RESULT","acknowledgedDate":"$ACKNOWLEDGED_DATE","requiresConfirmatoryTest":true,"confirmedDate":"$confirmedDate"}
+            """.trimIndent()
+
+        verify { relevantTestResultStorage setProperty "value" value eq(expectedResult) }
+    }
+
+    @Test
+    fun `onTestResultAcknowledged does not overwrite test result when operation is Ignore`() {
         every { relevantTestResultStorage.value } returns POSITIVE_CONFIRMED_TEST_RESULT_JSON
 
         val testEndDate = Instant.parse("1970-01-02T00:00:00Z")
@@ -206,7 +233,7 @@ class RelevantTestResultProviderTest {
                 diagnosisKeySubmissionSupported = true,
                 requiresConfirmatoryTest = false
             ),
-            testResultStorageOperation = IGNORE
+            testResultStorageOperation = Ignore
         )
 
         verify(exactly = 0) { relevantTestResultStorage setProperty "value" value any<String>() }

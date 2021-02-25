@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_BOOT_COMPLETED
 import android.content.Intent.ACTION_MY_PACKAGE_REPLACED
+import java.time.Instant
+import javax.inject.Inject
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationReminderAlarmController
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
@@ -13,8 +15,6 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.status.ResumeContactTracingNotificationTimeProvider
-import java.time.Instant
-import javax.inject.Inject
 
 class AlarmRestarter : BroadcastReceiver() {
 

@@ -53,7 +53,6 @@ class MockVirologyTestingApi : VirologyTestingApi {
     override suspend fun getTestResult(
         virologyTestResultRequestBody: VirologyTestResultRequestBody
     ): Response<VirologyTestResultResponse> = MockApiModule.behaviour.invoke {
-
         val virologyTestResultResponse = if (pollingTestResultHttpStatusCode == 200) {
             val testResponse =
                 testResponseForPollingToken[virologyTestResultRequestBody.testResultPollingToken]

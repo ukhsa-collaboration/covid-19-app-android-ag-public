@@ -6,8 +6,8 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import javax.inject.Inject
-import kotlinx.android.synthetic.main.activity_exposed_notification.isolationDays
 import kotlinx.android.synthetic.main.activity_exposed_notification.isolationTitle
+import kotlinx.android.synthetic.main.activity_exposed_notification.remainingDaysInIsolation
 import kotlinx.android.synthetic.main.activity_exposed_notification.understandButton
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.R
@@ -52,12 +52,12 @@ class EncounterDetectionActivity : BaseActivity(R.layout.activity_exposed_notifi
     }
 
     private fun displayIsolationDays(state: IsolationDurationDays) {
-        isolationDays.text = resources.getQuantityString(
+        remainingDaysInIsolation.text = resources.getQuantityString(
             plurals.state_isolation_days,
             state.days,
             state.days
         )
-        title = "${isolationTitle.text} ${isolationDays.text}"
+        title = "${isolationTitle.text} ${remainingDaysInIsolation.text}"
     }
 
     companion object {

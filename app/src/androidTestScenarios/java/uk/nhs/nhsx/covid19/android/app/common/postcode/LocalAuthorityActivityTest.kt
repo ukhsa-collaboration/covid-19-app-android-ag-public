@@ -14,7 +14,7 @@ class LocalAuthorityActivityTest : EspressoTest() {
 
     @Test
     fun showSingleLocalAuthority() = reporter(
-        "Local authority",
+        "Local Authority",
         "Single local authority",
         "User's post code corresponds to a single local authority; user is asked to confirm'",
         Reporter.Kind.FLOW
@@ -38,7 +38,7 @@ class LocalAuthorityActivityTest : EspressoTest() {
 
     @Test
     fun showMultipleLocalAuthorities() = reporter(
-        "Local authority",
+        "Local Authority",
         "Multiple local authorities",
         "User's post code corresponds to multiple local authorities; user is asked to select one",
         Reporter.Kind.SCREEN

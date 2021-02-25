@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
 import androidx.annotation.VisibleForTesting
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +20,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventWithType
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyRequest
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitFakeExposureWindows
-import javax.inject.Inject
 
 class SubmitEpidemiologyData constructor(
     private val metadataProvider: MetadataProvider,

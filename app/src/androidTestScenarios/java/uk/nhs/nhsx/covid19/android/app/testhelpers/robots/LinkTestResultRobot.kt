@@ -9,6 +9,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
 
 class LinkTestResultRobot {
@@ -16,6 +17,17 @@ class LinkTestResultRobot {
     fun checkActivityIsDisplayed() {
         onView(withId(R.id.linkTestResultContinue))
             .check(matches(isDisplayed()))
+    }
+
+    fun checkDailyContactTestingContainerIsDisplayed() {
+        onView(withId(R.id.dailyContactTestingNegativeResultConfirmationContainer))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkDailyContactTestingContainerIsNotDisplayed() {
+        onView(withId(R.id.dailyContactTestingNegativeResultConfirmationContainer))
+            .check(matches(not(isDisplayed())))
     }
 
     fun enterCtaToken(ctaToken: String) {
@@ -26,22 +38,39 @@ class LinkTestResultRobot {
         closeSoftKeyboard()
     }
 
+    fun selectDailyContactTestingOptIn() {
+        onView(withId(R.id.dailyContactTestingNegativeResultConfirmationContainer)).perform(
+            scrollTo(),
+            click()
+        )
+    }
+
     fun clickContinue() {
         onView(withId(R.id.linkTestResultContinue)).perform(click())
     }
 
-    fun checkErrorInvalidTokenIsDisplayed() {
+    fun checkValidationErrorInvalidTokenIsDisplayed() {
         onView(withText(R.string.valid_auth_code_is_required))
             .check(matches(isDisplayed()))
     }
 
-    fun checkErrorNoConnectionIsDisplayed() {
+    fun checkValidationErrorNoConnectionIsDisplayed() {
         onView(withText(R.string.link_test_result_error_no_connection))
             .check(matches(isDisplayed()))
     }
 
-    fun checkErrorUnexpectedIsDisplayed() {
+    fun checkValidationErrorUnexpectedIsDisplayed() {
         onView(withText(R.string.link_test_result_error_unknown))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkInputErrorNeitherProvidedIsDisplayed() {
+        onView(withText(R.string.link_test_result_error_neither_input_provided))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkInputErrorBothProvidedIsDisplayed() {
+        onView(withText(R.string.link_test_result_error_both_inputs_provided))
             .check(matches(isDisplayed()))
     }
 }

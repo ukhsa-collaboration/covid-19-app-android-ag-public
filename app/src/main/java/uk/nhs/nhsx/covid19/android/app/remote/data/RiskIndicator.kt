@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.remote.data
 
 import android.os.Parcelable
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.android.parcel.Parcelize
 import uk.nhs.nhsx.covid19.android.app.common.Translatable
@@ -10,6 +9,7 @@ import uk.nhs.nhsx.covid19.android.app.common.Translatable
 @JsonClass(generateAdapter = true)
 data class RiskIndicator(
     val colorScheme: ColorScheme,
+    val colorSchemeV2: ColorScheme? = null,
     val name: Translatable,
     val heading: Translatable,
     val content: Translatable,
@@ -56,7 +56,31 @@ enum class PolicyIcon(
 
     EXERCISE("exercise"),
 
-    WEDDINGS_AND_FUNERALS("weddings-and-funerals")
+    WEDDINGS_AND_FUNERALS("weddings-and-funerals"),
+
+    BUSINESSES("businesses"),
+
+    RETAIL("retail"),
+
+    ENTERTAINMENT("entertainment"),
+
+    PERSONAL_CARE("personal-care"),
+
+    LARGE_EVENTS("large-events"),
+
+    CLINICALLY_EXTREMELY_VULNERABLE("clinically-extremely-vulnerable"),
+
+    SOCIAL_DISTANCING("social-distancing"),
+
+    FACE_COVERINGS("face-coverings"),
+
+    MEETING_OUTDOORS("meeting-outdoors"),
+
+    MEETING_INDOORS("meeting-indoors"),
+
+    WORK("work"),
+
+    INTERNATIONAL_TRAVEL("international-travel"),
 }
 
 @Parcelize
@@ -68,19 +92,20 @@ data class RiskIndicatorWrapper(
 ) : Parcelable
 
 @Parcelize
-enum class ColorScheme : Parcelable {
-    @Json(name = "neutral")
-    NEUTRAL,
+enum class ColorScheme(
+    val jsonName: String
+) : Parcelable {
+    NEUTRAL(jsonName = "neutral"),
 
-    @Json(name = "green")
-    GREEN,
+    GREEN(jsonName = "green"),
 
-    @Json(name = "yellow")
-    YELLOW,
+    YELLOW(jsonName = "yellow"),
 
-    @Json(name = "amber")
-    AMBER,
+    AMBER(jsonName = "amber"),
 
-    @Json(name = "red")
-    RED
+    RED(jsonName = "red"),
+
+    MAROON(jsonName = "maroon"),
+
+    BLACK(jsonName = "black"),
 }

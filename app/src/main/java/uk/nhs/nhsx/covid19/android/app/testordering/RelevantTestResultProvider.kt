@@ -10,9 +10,10 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.CONFIRM
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.IGNORE
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OVERWRITE
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Confirm
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Ignore
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OverwriteAndConfirm
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import java.time.Clock
 import java.time.Instant
@@ -84,16 +85,17 @@ class RelevantTestResultProvider @Inject constructor(
 
     private fun store(newTestResult: AcknowledgedTestResult, testResultStorageOperation: TestResultStorageOperation) = synchronized(lock) {
         when (testResultStorageOperation) {
-            OVERWRITE -> testResult = newTestResult
-            CONFIRM -> {
+            Overwrite -> testResult = newTestResult
+            is OverwriteAndConfirm -> testResult = newTestResult.copy(confirmedDate = testResultStorageOperation.confirmedDate)
+            is Confirm -> {
                 val currentTestResult = testResult
                 if (currentTestResult != null) {
-                    testResult = currentTestResult.copy(confirmedDate = newTestResult.testEndDate)
+                    testResult = currentTestResult.copy(confirmedDate = testResultStorageOperation.confirmedDate)
                 } else {
                     Timber.e("There is no test result to confirm")
                 }
             }
-            IGNORE -> { /* nothing to do */ }
+            Ignore -> { /* nothing to do */ }
         }
     }
 

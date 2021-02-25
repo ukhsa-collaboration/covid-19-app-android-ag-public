@@ -21,6 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.network.TrafficLengthObfuscationIntercept
 import uk.nhs.nhsx.covid19.android.app.remote.UserAgentInterceptor
 import uk.nhs.nhsx.covid19.android.app.state.StateJson
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
+import uk.nhs.nhsx.covid19.android.app.util.adapters.ColorSchemeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.PolicyIconAdapter
@@ -178,6 +179,7 @@ class NetworkModule(
             .add(InstantAdapter())
             .add(TranslatableAdapter())
             .add(PolicyIconAdapter())
+            .add(ColorSchemeAdapter())
             .add(
                 ObservationType::class.java,
                 EnumJsonAdapter.create(ObservationType::class.java).withUnknownFallback(gen)

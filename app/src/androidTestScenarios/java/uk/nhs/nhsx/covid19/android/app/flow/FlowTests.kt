@@ -2,6 +2,12 @@ package uk.nhs.nhsx.covid19.android.app.flow
 
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
+import java.time.Instant
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit.DAYS
+import java.util.concurrent.TimeUnit.SECONDS
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.until
@@ -10,6 +16,8 @@ import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R.plurals
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfo
+import uk.nhs.nhsx.covid19.android.app.flow.functionalities.OrderTest
+import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
@@ -24,38 +32,24 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.AWAIT_AT_MOST_SECONDS
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.EncounterDetectionRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationExpirationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QuestionnaireRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ReviewSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OVERWRITE
-import java.time.Instant
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit.DAYS
-import java.util.concurrent.TimeUnit.SECONDS
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
 
 class FlowTests : EspressoTest() {
 
     private val statusRobot = StatusRobot()
-    private val questionnaireRobot = QuestionnaireRobot()
-    private val reviewSymptomsRobot = ReviewSymptomsRobot()
-    private val positiveSymptomsRobot = SymptomsAdviceIsolateRobot()
-    private val testOrderingRobot = TestOrderingRobot()
-    private val testResultRobot = TestResultRobot()
+    private val testResultRobot = TestResultRobot(testAppContext.app)
     private val linkTestResultRobot = LinkTestResultRobot()
     private val encounterDetectionRobot = EncounterDetectionRobot()
-    private val browserRobot = BrowserRobot()
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
+    private val orderTest = OrderTest(this)
+    private val selfDiagnosis = SelfDiagnosis(this)
 
     @Before
     fun setUp() {
@@ -81,13 +75,7 @@ class FlowTests : EspressoTest() {
 
         assertEquals(Default(), testAppContext.getCurrentState())
 
-        statusRobot.clickReportSymptoms()
-
-        completeQuestionnaireWithSymptoms()
-
-        assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
-
-        completeTestOrdering()
+        selfDiagnosis.selfDiagnosePositiveAndOrderTest(receiveResultImmediately = true)
 
         waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
@@ -132,13 +120,7 @@ class FlowTests : EspressoTest() {
 
         statusRobot.clickOrderTest()
 
-        testOrderingRobot.checkActivityIsDisplayed()
-
-        testOrderingRobot.clickOrderTestButton()
-
-        waitFor { browserRobot.checkActivityIsDisplayed() }
-
-        testAppContext.device.pressBack()
+        orderTest()
 
         testAppContext.virologyTestingApi.setDefaultTestResponse(POSITIVE)
 
@@ -224,7 +206,7 @@ class FlowTests : EspressoTest() {
                 diagnosisKeySubmissionSupported = false,
                 requiresConfirmatoryTest = true
             ),
-            testResultStorageOperation = OVERWRITE
+            testResultStorageOperation = Overwrite
         )
 
         startTestActivity<StatusActivity>()
@@ -282,7 +264,7 @@ class FlowTests : EspressoTest() {
                 diagnosisKeySubmissionSupported = false,
                 requiresConfirmatoryTest = false
             ),
-            testResultStorageOperation = OVERWRITE
+            testResultStorageOperation = Overwrite
         )
 
         startTestActivity<StatusActivity>()
@@ -317,17 +299,11 @@ class FlowTests : EspressoTest() {
 
         encounterDetectionRobot.clickIUnderstandButton()
 
-        statusRobot.clickReportSymptoms()
-
-        completeQuestionnaireWithSymptoms()
-
-        assertTrue { (testAppContext.getCurrentState() as Isolation).isBothCases() }
-
-        completeTestOrdering()
-
-        waitFor { statusRobot.checkIsolationViewIsDisplayed() }
+        selfDiagnosis.selfDiagnosePositiveAndOrderTest(receiveResultImmediately = true)
 
         testAppContext.virologyTestingApi.setDefaultTestResponse(NEGATIVE)
+
+        waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
         runBackgroundTasks()
 
@@ -356,13 +332,7 @@ class FlowTests : EspressoTest() {
 
         waitFor { encounterDetectionRobot.clickIUnderstandButton() }
 
-        statusRobot.clickReportSymptoms()
-
-        completeQuestionnaireWithSymptoms()
-
-        assertTrue { (testAppContext.getCurrentState() as Isolation).isBothCases() }
-
-        completeTestOrdering()
+        selfDiagnosis.selfDiagnosePositiveAndOrderTest(receiveResultImmediately = true)
 
         waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
@@ -403,13 +373,7 @@ class FlowTests : EspressoTest() {
 
         waitFor { encounterDetectionRobot.clickIUnderstandButton() }
 
-        statusRobot.clickReportSymptoms()
-
-        completeQuestionnaireWithSymptoms()
-
-        assertTrue { (testAppContext.getCurrentState() as Isolation).isBothCases() }
-
-        completeTestOrdering()
+        selfDiagnosis.selfDiagnosePositiveAndOrderTest(receiveResultImmediately = true)
 
         waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
@@ -502,34 +466,6 @@ class FlowTests : EspressoTest() {
         statusRobot.checkIsolationViewIsNotDisplayed()
 
         assertTrue { testAppContext.getCurrentState() is Default }
-    }
-
-    private fun completeTestOrdering() = notReported {
-        positiveSymptomsRobot.checkActivityIsDisplayed()
-
-        positiveSymptomsRobot.clickBottomActionButton()
-
-        testOrderingRobot.checkActivityIsDisplayed()
-
-        testOrderingRobot.clickOrderTestButton()
-
-        waitFor { browserRobot.checkActivityIsDisplayed() }
-
-        browserRobot.clickCloseButton()
-    }
-
-    private fun completeQuestionnaireWithSymptoms() = notReported {
-        questionnaireRobot.checkActivityIsDisplayed()
-
-        questionnaireRobot.selectSymptomsAtPositions(0, 1)
-
-        questionnaireRobot.reviewSymptoms()
-
-        reviewSymptomsRobot.confirmReviewSymptomsScreenIsDisplayed()
-
-        reviewSymptomsRobot.selectCannotRememberDate()
-
-        reviewSymptomsRobot.confirmSelection()
     }
 
     companion object {

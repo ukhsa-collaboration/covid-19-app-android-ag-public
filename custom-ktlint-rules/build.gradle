@@ -16,7 +16,7 @@ def ktlint_version = "0.37.1"
 dependencies {
     compileOnly "com.pinterest.ktlint:ktlint-core:$ktlint_version"
 
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.1'
     testImplementation 'io.mockk:mockk:1.10.0'
     testImplementation 'org.assertj:assertj-core:3.16.1'
     testImplementation "com.pinterest.ktlint:ktlint-core:$ktlint_version"

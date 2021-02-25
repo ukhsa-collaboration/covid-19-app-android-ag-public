@@ -25,21 +25,21 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRo
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OVERWRITE
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
 import java.time.Instant
 import java.time.LocalDate
 import kotlin.test.assertTrue
 
 class TestResultActivityTest : EspressoTest() {
 
-    private val testResultRobot = TestResultRobot()
+    private val testResultRobot = TestResultRobot(testAppContext.app)
     private val statusRobot = StatusRobot()
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
 
     private val isolationStateIndexCaseOnly = Isolation(
         isolationStart = Instant.now(),
         isolationConfiguration = DurationDays(),
-        indexCase = IndexCase(LocalDate.now(), expiryDate = LocalDate.now().plusDays(1), selfAssessment = false)
+        indexCase = IndexCase(LocalDate.now(), expiryDate = LocalDate.now().plusDays(1), selfAssessment = true)
     )
 
     private val isolationStateContactCaseOnly = Isolation(
@@ -168,7 +168,7 @@ class TestResultActivityTest : EspressoTest() {
                 diagnosisKeySubmissionSupported = true,
                 requiresConfirmatoryTest = false
             ),
-            testResultStorageOperation = OVERWRITE
+            testResultStorageOperation = Overwrite
         )
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
@@ -184,7 +184,7 @@ class TestResultActivityTest : EspressoTest() {
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysPositiveThenNegativeWillBeInIsolation()
+        testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation()
 
         testResultRobot.checkExposureLinkIsNotDisplayed()
 
@@ -209,7 +209,7 @@ class TestResultActivityTest : EspressoTest() {
                 diagnosisKeySubmissionSupported = true,
                 requiresConfirmatoryTest = false
             ),
-            testResultStorageOperation = OVERWRITE
+            testResultStorageOperation = Overwrite
         )
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(

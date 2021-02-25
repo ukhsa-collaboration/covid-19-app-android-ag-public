@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry
+import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.SymptomsAndOnsetFlowConfiguration
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
@@ -17,9 +18,43 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     private val selfDiagnosis = SelfDiagnosis(this)
 
     @Test
-    fun manuallyEnterPositivePCRTestAndGoIntoIsolation() = notReported {
+    fun manuallyEnterPositivePCRTest_noSymptoms_thenGoIntoIsolation() = notReported {
         manuallyEnterPositiveTestAndGoIntoIsolation(
             LAB_RESULT,
+            symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
+                didHaveSymptoms = false,
+                didRememberOnsetSymptomsDate = false
+            ),
+            requiresConfirmatoryTest = false,
+            Metrics::receivedPositiveTestResultEnteredManually,
+            Metrics::isIsolatingForTestedPositiveBackgroundTick,
+            Metrics::hasTestedPositiveBackgroundTick
+        )
+    }
+
+    @Test
+    fun manuallyEnterPositivePCRTest_confirmSymptoms_selectExplicitDate_thenGoIntoIsolation() = notReported {
+        manuallyEnterPositiveTestAndGoIntoIsolation(
+            LAB_RESULT,
+            symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
+                didHaveSymptoms = true,
+                didRememberOnsetSymptomsDate = true
+            ),
+            requiresConfirmatoryTest = false,
+            Metrics::receivedPositiveTestResultEnteredManually,
+            Metrics::isIsolatingForTestedPositiveBackgroundTick,
+            Metrics::hasTestedPositiveBackgroundTick
+        )
+    }
+
+    @Test
+    fun manuallyEnterPositivePCRTest_confirmSymptoms_cannotRememberOnsetDate_thenGoIntoIsolation() = notReported {
+        manuallyEnterPositiveTestAndGoIntoIsolation(
+            LAB_RESULT,
+            symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
+                didHaveSymptoms = true,
+                didRememberOnsetSymptomsDate = false
+            ),
             requiresConfirmatoryTest = false,
             Metrics::receivedPositiveTestResultEnteredManually,
             Metrics::isIsolatingForTestedPositiveBackgroundTick,
@@ -31,6 +66,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     fun manuallyEnterPositiveAssistedLFDTestAndGoIntoIsolation() = notReported {
         manuallyEnterPositiveTestAndGoIntoIsolation(
             RAPID_RESULT,
+            symptomsAndOnsetFlowConfiguration = null,
             requiresConfirmatoryTest = false,
             Metrics::receivedPositiveLFDTestResultEnteredManually,
             Metrics::isIsolatingForTestedLFDPositiveBackgroundTick,
@@ -42,6 +78,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     fun manuallyEnterPositiveUnassistedLFDTestAndGoIntoIsolation() = notReported {
         manuallyEnterPositiveTestAndGoIntoIsolation(
             RAPID_SELF_REPORTED,
+            symptomsAndOnsetFlowConfiguration = null,
             requiresConfirmatoryTest = false,
             Metrics::receivedPositiveLFDTestResultEnteredManually,
             Metrics::isIsolatingForTestedLFDPositiveBackgroundTick,
@@ -53,6 +90,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     fun manuallyEnterPositiveUnconfirmedLFDTestAndGoIntoIsolation() = notReported {
         manuallyEnterPositiveTestAndGoIntoIsolation(
             RAPID_RESULT,
+            symptomsAndOnsetFlowConfiguration = null,
             requiresConfirmatoryTest = true,
             Metrics::receivedPositiveLFDTestResultEnteredManually,
             Metrics::isIsolatingForTestedLFDPositiveBackgroundTick,
@@ -65,6 +103,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     // this currently happens during an isolation and for the 14 days after isolation
     private fun manuallyEnterPositiveTestAndGoIntoIsolation(
         testKitType: VirologyTestKitType,
+        symptomsAndOnsetFlowConfiguration: SymptomsAndOnsetFlowConfiguration?,
         requiresConfirmatoryTest: Boolean,
         receivedPositiveTestResultEnteredManuallyMetric: MetricsProperty,
         isIsolatingForTestedPositiveBackgroundTickMetric: MetricsProperty,
@@ -76,7 +115,11 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
 
         // Enters positive LFD test result on 2nd Jan
         // Isolation end date: 13th Jan
-        manualTestResultEntry.enterPositive(testKitType, requiresConfirmatoryTest)
+        manualTestResultEntry.enterPositive(
+            testKitType,
+            requiresConfirmatoryTest = requiresConfirmatoryTest,
+            symptomsAndOnsetFlowConfiguration = symptomsAndOnsetFlowConfiguration
+        )
 
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
         assertOnFields {
@@ -84,6 +127,17 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             assertEquals(1, Metrics::receivedPositiveTestResult)
             assertEquals(1, receivedPositiveTestResultEnteredManuallyMetric)
             assertEquals(1, Metrics::startedIsolation)
+            if (symptomsAndOnsetFlowConfiguration != null) {
+                assertEquals(1, Metrics::didAskForSymptomsOnPositiveTestEntry)
+                if (symptomsAndOnsetFlowConfiguration.didHaveSymptoms) {
+                    assertEquals(1, Metrics::didHaveSymptomsBeforeReceivedTestResult)
+                    assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+                    assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+                }
+                if (symptomsAndOnsetFlowConfiguration.didRememberOnsetSymptomsDate) {
+                    assertEquals(1, Metrics::didRememberOnsetSymptomsDateBeforeReceivedTestResult)
+                }
+            }
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
@@ -104,12 +158,19 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             if (requiresConfirmatoryTest) {
                 assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
             }
+            if (symptomsAndOnsetFlowConfiguration?.didHaveSymptoms == true) {
+                assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+                assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            }
         }
 
         // Dates: 14th-27th Jan -> Analytics packets for: 13th-26th Jan
         assertOnFieldsForDateRange(14..27) {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(hasTestedPositiveBackgroundTickMetric)
+            if (symptomsAndOnsetFlowConfiguration?.didHaveSymptoms == true) {
+                assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            }
         }
 
         // Current date: 28th Jan -> Analytics packet for: 27th Jan
@@ -122,19 +183,6 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         manuallyEnterPositiveTestAfterSelfDiagnosisAndContinueIsolation(
             LAB_RESULT,
             requiresConfirmatoryTest = false,
-            useOldTest = false,
-            Metrics::receivedPositiveTestResultEnteredManually,
-            Metrics::isIsolatingForTestedPositiveBackgroundTick,
-            Metrics::hasTestedPositiveBackgroundTick
-        )
-    }
-
-    @Test
-    fun manuallyEnterOldPositivePCRTestAfterSelfDiagnosisAndContinueIsolation() = notReported {
-        manuallyEnterPositiveTestAfterSelfDiagnosisAndContinueIsolation(
-            LAB_RESULT,
-            requiresConfirmatoryTest = false,
-            useOldTest = true,
             Metrics::receivedPositiveTestResultEnteredManually,
             Metrics::isIsolatingForTestedPositiveBackgroundTick,
             Metrics::hasTestedPositiveBackgroundTick
@@ -147,7 +195,6 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     private fun manuallyEnterPositiveTestAfterSelfDiagnosisAndContinueIsolation(
         testKitType: VirologyTestKitType,
         requiresConfirmatoryTest: Boolean,
-        useOldTest: Boolean,
         receivedPositiveTestResultEnteredManuallyMetric: MetricsProperty,
         isIsolatingForTestedPositiveBackgroundTickMetric: MetricsProperty,
         hasTestedPositiveBackgroundTickMetric: MetricsProperty
@@ -179,10 +226,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
 
         // Enters positive LFD test result on 3rd Jan
         // Isolation end date: 11th Jan
-        val testEndDate =
-            if (useOldTest) startDate.minus(2, ChronoUnit.DAYS)
-            else testAppContext.clock.instant()
-        manualTestResultEntry.enterPositive(testKitType, requiresConfirmatoryTest, testEndDate)
+        manualTestResultEntry.enterPositive(testKitType, requiresConfirmatoryTest = requiresConfirmatoryTest)
 
         // Current date: 4th Jan -> Analytics packet for: 3rd Jan
         assertOnFields {
@@ -223,6 +267,103 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         }
 
         // Current date: 26th Jan -> Analytics packet for: 25th Jan
+        // Previous isolation reason no longer stored
+        assertAnalyticsPacketIsNormal()
+    }
+
+    @Test
+    fun manuallyEnterOldPositivePCRTestAfterSelfDiagnosisAndContinueIsolation() = notReported {
+        manuallyEnterOldPositiveTestAfterSelfDiagnosisAndContinueIsolation(
+            LAB_RESULT,
+            requiresConfirmatoryTest = false,
+            Metrics::receivedPositiveTestResultEnteredManually,
+            Metrics::isIsolatingForTestedPositiveBackgroundTick,
+            Metrics::hasTestedPositiveBackgroundTick
+        )
+    }
+
+    // hasTestedPositiveBackgroundTick - Manual
+    // >0 if the app is aware that the user has received/entered a positive test
+    // this currently happens during an isolation and for the 14 days after isolation
+    private fun manuallyEnterOldPositiveTestAfterSelfDiagnosisAndContinueIsolation(
+        testKitType: VirologyTestKitType,
+        requiresConfirmatoryTest: Boolean,
+        receivedPositiveTestResultEnteredManuallyMetric: MetricsProperty,
+        isIsolatingForTestedPositiveBackgroundTickMetric: MetricsProperty,
+        hasTestedPositiveBackgroundTickMetric: MetricsProperty
+    ) {
+        val startDate = testAppContext.clock.instant()
+
+        // Current date: 1st Jan
+        // Starting state: App running normally, not in isolation
+        runBackgroundTasks()
+
+        // Current date: 2nd Jan -> Analytics packet for: 1st Jan
+        assertAnalyticsPacketIsNormal()
+
+        // Complete questionnaire with risky symptoms on 2nd Jan
+        // Symptom onset date: Don't remember
+        // Isolation end date: 11th Jan
+        selfDiagnosis.selfDiagnosePositiveAndPressBack()
+
+        // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
+        assertOnFields {
+            // Now in isolation due to self-diagnosis
+            assertEquals(1, Metrics::completedQuestionnaireAndStartedIsolation)
+            assertEquals(1, Metrics::startedIsolation)
+            assertPresent(Metrics::isIsolatingBackgroundTick)
+            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
+        }
+
+        // Enters positive LFD test result on 3rd Jan
+        // The old test deletes self-diagnosis and shortens the isolation
+        // Isolation end date: 9th Jan
+        val testEndDate = startDate.minus(2, ChronoUnit.DAYS)
+        manualTestResultEntry.enterPositive(
+            testKitType,
+            symptomsAndOnsetFlowConfiguration = null,
+            requiresConfirmatoryTest = requiresConfirmatoryTest,
+            testEndDate = testEndDate
+        )
+
+        // Current date: 4th Jan -> Analytics packet for: 3rd Jan
+        assertOnFields {
+            // Now in isolation due to positive test result
+            assertEquals(1, Metrics::receivedPositiveTestResult)
+            assertEquals(1, receivedPositiveTestResultEnteredManuallyMetric)
+            assertPresent(Metrics::isIsolatingBackgroundTick)
+            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
+            assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
+            assertPresent(hasTestedPositiveBackgroundTickMetric)
+            if (requiresConfirmatoryTest) {
+                assertEquals(1, Metrics::receivedUnconfirmedPositiveTestResult)
+                assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
+            }
+        }
+
+        // Dates: 5th-10th Jan -> Analytics packets for: 4th-9th Jan
+        assertOnFieldsForDateRange(5..10) {
+            // Still in isolation
+            assertPresent(Metrics::isIsolatingBackgroundTick)
+            assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
+            assertPresent(hasTestedPositiveBackgroundTickMetric)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
+            if (requiresConfirmatoryTest) {
+                assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
+            }
+        }
+
+        // Dates: 11th-24th Jan -> Analytics packets for: 10th-23rd Jan
+        assertOnFieldsForDateRange(11..24) {
+            // Isolation is over, but isolation reason still stored for 14 days
+            assertPresent(hasTestedPositiveBackgroundTickMetric)
+        }
+
+        // Current date: 25th Jan -> Analytics packet for: 24th Jan
         // Previous isolation reason no longer stored
         assertAnalyticsPacketIsNormal()
     }

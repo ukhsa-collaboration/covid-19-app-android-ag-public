@@ -11,12 +11,12 @@ import uk.nhs.nhsx.covid19.android.app.R.id
 class EncounterDetectionRobot {
 
     fun checkActivityIsDisplayed() {
-        onView(withId(id.isolationDays))
+        onView(withId(id.remainingDaysInIsolation))
             .check(matches(isDisplayed()))
     }
 
     fun checkNumberOfDaysTextIs(expectedValue: String) {
-        onView(withId(id.isolationDays))
+        onView(withId(id.remainingDaysInIsolation))
             .check(matches(withText(expectedValue)))
     }
 

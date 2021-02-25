@@ -1,20 +1,21 @@
 package uk.nhs.nhsx.covid19.android.app.flow
 
-import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
-import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
-import org.junit.After
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.flow.functionalities.OrderTest
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.DIAGNOSIS_KEY_SUBMISSION_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_PCR_TOKEN_NO_KEY_SUBMISSION
-import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_LFD_TOKEN_INDICATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_PCR_TOKEN_NO_KEY_SUBMISSION
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.VOID_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.VOID_PCR_TOKEN_NO_KEY_SUBMISSION
+import uk.nhs.nhsx.covid19.android.app.remote.TestResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -27,18 +28,17 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OVERWRITE
+import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderPollingConfig
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -48,25 +48,17 @@ import kotlin.test.assertTrue
 class ReceiveTestResultFlowTests : EspressoTest() {
 
     private val statusRobot = StatusRobot()
-    private val linkTestResultRobot = LinkTestResultRobot()
-    private val testResultRobot = TestResultRobot()
+    private val testResultRobot = TestResultRobot(testAppContext.app)
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
-    private val testOrderingRobot = TestOrderingRobot()
-    private val browserRobot = BrowserRobot()
+    private val orderTest = OrderTest(this)
 
     @Before
     fun setUp() {
-        FeatureFlagTestHelper.enableFeatureFlag(USE_WEB_VIEW_FOR_INTERNAL_BROWSER)
         testAppContext.setLocalAuthority(ENGLISH_LOCAL_AUTHORITY)
     }
 
-    @After
-    fun tearDown() {
-        FeatureFlagTestHelper.disableFeatureFlag(USE_WEB_VIEW_FOR_INTERNAL_BROWSER)
-    }
-
     @Test
-    fun whenIsolatingWithIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTest_showNegativeWontBeInIsolation_andEndIsolation() = notReported {
+    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTest_showNegativeWontBeInIsolation_andEndIsolation() = notReported {
         setIndexCaseIsolation()
 
         startTestActivity<StatusActivity>()
@@ -83,7 +75,29 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIsolatingWithIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedVoidTest_showVoidWillBeInIsolation_andContinueIsolation() = notReported {
+    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTestOlderThanSymptomsOnsetDate_showNegAfterPosOrSymptomaticWillBeInIsolation_andContinueIsolation() = notReported {
+        val isolation = setIndexCaseIsolation(selfAssessment = true)
+
+        startTestActivity<StatusActivity>()
+        statusRobot.checkActivityIsDisplayed()
+
+        receiveConfirmedTestResult(
+            NEGATIVE,
+            diagnosisKeySubmissionSupported = true,
+            testEndDate = isolation.indexCase!!.symptomsOnsetDate.atStartOfDay().toInstant(ZoneOffset.UTC)
+                .minus(1, ChronoUnit.DAYS)
+        )
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation() }
+
+        testResultRobot.clickIsolationActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+        assertTrue { testAppContext.getCurrentState() is Isolation }
+        checkNoRelevantTestResult()
+    }
+
+    @Test
+    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedVoidTest_showVoidWillBeInIsolation_andContinueIsolation() = notReported {
         setIndexCaseIsolation()
 
         startTestActivity<StatusActivity>()
@@ -93,14 +107,14 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysVoidWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
         checkNoRelevantTestResult()
     }
 
     @Test
-    fun whenIsolatingWithIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation_shareKeys() = notReported {
+    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation_shareKeys() = notReported {
         setIndexCaseIsolation()
 
         startTestActivity<StatusActivity>()
@@ -117,7 +131,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIsolatingWithIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation_withoutKeysSharing() = notReported {
+    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation_withoutKeysSharing() = notReported {
         setIndexCaseIsolation()
 
         startTestActivity<StatusActivity>()
@@ -134,7 +148,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIsolatingWithIndexCase_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
+    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
         setIndexCaseIsolation()
 
         startTestActivity<StatusActivity>()
@@ -144,7 +158,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
         assertTrue { testAppContext.getCurrentState() is Isolation }
@@ -152,7 +166,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIsolatingWithContactCase_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
+    fun whenContactCase_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
         setContactCaseIsolation()
 
         startTestActivity<StatusActivity>()
@@ -162,7 +176,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
         assertTrue { testAppContext.getCurrentState() is Isolation }
@@ -170,7 +184,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIsolatingWithIndexCase_withPreviousConfirmedPositiveTestFromCurrentIsolation_whenAcknowledgingConfirmedNegativeTest_showPositiveThenNegativeWillBeInIsolation_andContinueIsolation() = notReported {
+    fun whenIndexCase_withPreviousConfirmedPosTestFromCurrentIsolation_whenAcknowledgingConfirmedNegTest_showNegAfterPosOrSymptomaticWillBeInIsolation_andContinueIsolation() = notReported {
         setIndexCaseIsolation()
         val previousTestToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = true)
 
@@ -178,7 +192,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysPositiveThenNegativeWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -188,7 +202,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIsolatingWithIndexCase_withPreviousConfirmedPositiveTestFromCurrentIsolation_whenAcknowledgingConfirmedVoidTest_showVoidWillBeInIsolation_andContinueIsolation() = notReported {
+    fun whenIndexCase_withPreviousConfirmedPositiveTestFromCurrentIsolation_whenAcknowledgingConfirmedVoidTest_showVoidWillBeInIsolation_andContinueIsolation() = notReported {
         setIndexCaseIsolation()
         val previousToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = true)
 
@@ -199,14 +213,14 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysVoidWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
         checkRelevantTestResult(previousToken, RelevantVirologyTestResult.POSITIVE)
     }
 
     @Test
-    fun whenIsolatingWithIndexCase_withPreviousConfirmedPositiveTestFromBeforeCurrentIsolation_whenAcknowledgingConfirmedVoidTest_showVoidWillBeInIsolation_andContinueIsolation() = notReported {
+    fun whenIndexCase_withPreviousConfirmedPositiveTestFromBeforeCurrentIsolation_whenAcknowledgingConfirmedVoidTest_showVoidWillBeInIsolation_andContinueIsolation() = notReported {
         setIndexCaseIsolation()
         val previousToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
 
@@ -217,14 +231,14 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysVoidWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
         checkRelevantTestResult(previousToken, RelevantVirologyTestResult.POSITIVE)
     }
 
     @Test
-    fun whenIsolatingWithIndexCase_withPreviousConfirmedPositiveTestFromCurrentIsolation_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation() = notReported {
+    fun whenIndexCase_withPreviousConfirmedPositiveTestFromCurrentIsolation_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation() = notReported {
         setIndexCaseIsolation()
         val previousTestToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = true)
 
@@ -242,7 +256,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIsolatingWithIndexCase_withPreviousConfirmedPositiveTestFromBeforeCurrentIsolation_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation() = notReported {
+    fun whenIndexCase_withPreviousConfirmedPositiveTestFromBeforeCurrentIsolation_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation() = notReported {
         setIndexCaseIsolation()
         val previousToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
 
@@ -260,7 +274,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIsolatingWithIndexCase_withPreviousConfirmedPositiveTestFromCurrentIsolation_whenAcknowledgingIndicativePositiveTest_showPositiveContinueIsolationNoChange_andContinueIsolation() = notReported {
+    fun whenIndexCase_withPreviousConfirmedPositiveTestFromCurrentIsolation_whenAcknowledgingIndicativePositiveTest_showPositiveContinueIsolationNoChange_andContinueIsolation() = notReported {
         setIndexCaseIsolation()
         val previousTestToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = true)
 
@@ -278,7 +292,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIsolatingWithIndexCase_withPreviousConfirmedPositiveTestFromBeforeCurrentIsolation_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
+    fun whenIndexCase_withPrevConfirmedPosTestFromBeforeCurrentIsolation_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
         setIndexCaseIsolation()
         val previousTestToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
 
@@ -289,14 +303,14 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
         checkRelevantTestResult(previousTestToken, RelevantVirologyTestResult.POSITIVE)
     }
 
     @Test
-    fun whenIsolatingWithContactCase_withPreviousConfirmedPositiveTestFromBeforeCurrentIsolation_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
+    fun whenContactCase_withPrevConfirmedPosTestFromBeforeCurrentIsolation_onAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
         setContactCaseIsolation()
         setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
 
@@ -307,14 +321,14 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
         checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
     }
 
     @Test
-    fun whenIsolatingWithIndexCase_withPreviousIndicativePositiveTestFromCurrentIsolation_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
+    fun whenIndexCase_withPreviousIndicativePosTestFromCurrentIsolation_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
         setIndexCaseIsolation()
         val previousTestToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = true, fromCurrentIsolation = true)
 
@@ -325,14 +339,14 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
         checkRelevantTestResult(previousTestToken, RelevantVirologyTestResult.POSITIVE)
     }
 
     @Test
-    fun whenIsolatingWithIndexCase_withPreviousIndicativePositiveTestFromCurrentIsolation_whenAcknowledgingConfirmedNegativeTest_showNegativeWontBeInIsolation_andNoIsolation() = notReported {
+    fun whenIndexCase_withPreviousIndicativePositiveTestFromCurrentIsolation_whenAcknowledgingConfirmedNegativeTest_showNegativeWontBeInIsolation_andNoIsolation() = notReported {
         setIndexCaseIsolation()
         setPreviousTest(POSITIVE, requiresConfirmatoryTest = true, fromCurrentIsolation = true)
 
@@ -350,7 +364,29 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIsolatingWithIndexCase_withPreviousIndicativePositiveTestFromBeforeCurrentIsolation_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
+    fun whenIndexCase_withPrevIndicativePosTestFromCurIsolation_onAcknowledgingConfirmedNegTestOlderThanIndicative_showNegAfterPosOrSymptomaticWillBeInIsolation_andContIsolation() = notReported {
+        setIndexCaseIsolation()
+        val previousTestToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = true, fromCurrentIsolation = true)
+
+        startTestActivity<StatusActivity>()
+        statusRobot.checkActivityIsDisplayed()
+
+        receiveConfirmedTestResult(
+            NEGATIVE,
+            diagnosisKeySubmissionSupported = true,
+            testEndDate = testEndDateWithinCurrentIsolation.minus(1, ChronoUnit.DAYS)
+        )
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation() }
+
+        testResultRobot.clickIsolationActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+        assertTrue { testAppContext.getCurrentState() is Isolation }
+        checkRelevantTestResult(previousTestToken, RelevantVirologyTestResult.POSITIVE)
+    }
+
+    @Test
+    fun whenIndexCase_withPrevIndicativePosTestFromBeforeCurrentIsolation_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
         setIndexCaseIsolation()
         val previousTestToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = true, fromCurrentIsolation = false)
 
@@ -361,14 +397,14 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
         checkRelevantTestResult(previousTestToken, RelevantVirologyTestResult.POSITIVE)
     }
 
     @Test
-    fun whenIsolatingWithContactCase_withPreviousIndicativePositiveTestFromBeforeCurrentIsolation_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
+    fun whenContactCase_withPrevIndicativePosTestFromBeforeCurrentIsolation_onAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
         setContactCaseIsolation()
         setPreviousTest(POSITIVE, requiresConfirmatoryTest = true, fromCurrentIsolation = false)
 
@@ -379,7 +415,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
         checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
@@ -403,6 +439,28 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
+    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTestOlderThanSymptomsOnsetDate_showNegativeNotInIsolation_andNoIsolation() = notReported {
+        val state = setDefaultWithPreviousIndexCaseIsolation(selfAssessment = true)
+
+        startTestActivity<StatusActivity>()
+        statusRobot.checkActivityIsDisplayed()
+
+        receiveConfirmedTestResult(
+            NEGATIVE,
+            diagnosisKeySubmissionSupported = true,
+            testEndDate = state.previousIsolation!!.indexCase!!.symptomsOnsetDate.atStartOfDay().toInstant(ZoneOffset.UTC)
+                .minus(1, ChronoUnit.DAYS)
+        )
+        waitFor { testResultRobot.checkActivityDisplaysNegativeNotInIsolation() }
+
+        testResultRobot.clickGoodNewsActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+        assertTrue { testAppContext.getCurrentState() is Default }
+        checkNoRelevantTestResult()
+    }
+
+    @Test
     fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedVoidTest_showVoidNotInIsolation_andNoIsolation() = notReported {
         setDefaultWithPreviousIndexCaseIsolation()
 
@@ -413,7 +471,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         assertTrue { testAppContext.getCurrentState() is Default }
         checkNoRelevantTestResult()
@@ -421,7 +479,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
+        setDefaultWithPreviousIndexCaseIsolation(selfAssessment = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -438,7 +496,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_withoutKeysSharing() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
+        setDefaultWithPreviousIndexCaseIsolation(selfAssessment = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -464,7 +522,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
         checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
@@ -500,7 +558,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         assertTrue { testAppContext.getCurrentState() is Default }
         checkRelevantTestResult(previousToken, RelevantVirologyTestResult.POSITIVE)
@@ -579,7 +637,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPosTest_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() = notReported {
         setDefaultWithPreviousIndexCaseIsolation()
         setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
 
@@ -590,7 +648,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
         checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
@@ -626,7 +684,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         assertTrue { testAppContext.getCurrentState() is Default }
         checkRelevantTestResult(previousToken, RelevantVirologyTestResult.NEGATIVE)
@@ -651,7 +709,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegativeTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWillBeInIsolation_andStartIsolation_withoutKeysSharing() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegTest_whenAcknowledgingConfirmedPosTest_showPosWillBeInIsolation_andStartIsolation_withoutKeysSharing() = notReported {
         setDefaultWithPreviousIndexCaseIsolation()
         setPreviousTest(NEGATIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
 
@@ -669,7 +727,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegativeTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegTest_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() = notReported {
         setDefaultWithPreviousIndexCaseIsolation()
         setPreviousTest(NEGATIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
 
@@ -680,7 +738,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
         checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
@@ -731,7 +789,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
         checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
@@ -765,7 +823,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
-        orderConfirmatoryTest()
+        orderTest()
 
         assertTrue { testAppContext.getCurrentState() is Default }
         checkNoRelevantTestResult()
@@ -775,21 +833,24 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testAppContext.setState(Default())
     }
 
-    private fun setDefaultWithPreviousIndexCaseIsolation() {
-        testAppContext.setState(
-            Default(
-                previousIsolation = createIndexCaseIsolation(
-                    isolationStart = previousIsolationStart
-                )
+    private fun setDefaultWithPreviousIndexCaseIsolation(selfAssessment: Boolean = false): Default {
+        val state = Default(
+            previousIsolation = createIndexCaseIsolation(
+                previousIsolationStart,
+                selfAssessment
             )
         )
+        testAppContext.setState(state)
+        return state
     }
 
-    private fun setIndexCaseIsolation() {
-        testAppContext.setState(createIndexCaseIsolation(isolationStart = isolationStart))
+    private fun setIndexCaseIsolation(selfAssessment: Boolean = false): Isolation {
+        val state = createIndexCaseIsolation(isolationStart, selfAssessment)
+        testAppContext.setState(state)
+        return state
     }
 
-    private fun createIndexCaseIsolation(isolationStart: Instant): Isolation {
+    private fun createIndexCaseIsolation(isolationStart: Instant, selfAssessment: Boolean = false): Isolation {
         val isolationStartDate =
             LocalDateTime.ofInstant(isolationStart, ZoneId.systemDefault()).toLocalDate()
         return Isolation(
@@ -798,7 +859,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
             indexCase = IndexCase(
                 symptomsOnsetDate = isolationStartDate.minusDays(3),
                 expiryDate = isolationStartDate.plusDays(7),
-                selfAssessment = false
+                selfAssessment = selfAssessment
             )
         )
     }
@@ -837,7 +898,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
                 diagnosisKeySubmissionSupported = true,
                 requiresConfirmatoryTest = requiresConfirmatoryTest
             ),
-            testResultStorageOperation = OVERWRITE
+            testResultStorageOperation = Overwrite
         )
         return token
     }
@@ -854,42 +915,59 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     private fun receiveConfirmedTestResult(
         testResult: VirologyTestResult,
-        diagnosisKeySubmissionSupported: Boolean
+        diagnosisKeySubmissionSupported: Boolean,
+        testEndDate: Instant? = null
     ) {
-        val token = getConfirmedTestResultToken(testResult, diagnosisKeySubmissionSupported)
-        receiveTestResult(token)
+        testAppContext.virologyTestingApi.testEndDate = testEndDate
+        receiveTestResult(
+            testResult,
+            LAB_RESULT,
+            diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported,
+            requiresConfirmatoryTest = false
+        )
     }
 
     private fun receiveIndicativePositiveTestResult() {
-        receiveTestResult(POSITIVE_LFD_TOKEN_INDICATIVE)
+        receiveTestResult(
+            POSITIVE,
+            RAPID_RESULT,
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = true
+        )
     }
 
-    private fun receiveTestResult(token: String) {
-        statusRobot.clickLinkTestResult()
+    private fun receiveTestResult(
+        testResult: VirologyTestResult,
+        testKit: VirologyTestKitType,
+        diagnosisKeySubmissionSupported: Boolean,
+        requiresConfirmatoryTest: Boolean
+    ) {
+        val pollingConfig = TestOrderPollingConfig(
+            Instant.now(),
+            "pollingToken",
+            DIAGNOSIS_KEY_SUBMISSION_TOKEN
+        )
 
-        linkTestResultRobot.checkActivityIsDisplayed()
+        testAppContext.getTestOrderingTokensProvider().add(pollingConfig)
 
-        linkTestResultRobot.enterCtaToken(token)
+        testAppContext.virologyTestingApi.testResponseForPollingToken = mutableMapOf(
+            pollingConfig.testResultPollingToken to TestResponse(
+                testResult,
+                testKit,
+                diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported,
+                requiresConfirmatoryTest = requiresConfirmatoryTest
+            )
+        )
 
-        linkTestResultRobot.clickContinue()
+        runBlocking {
+            testAppContext.getDownloadVirologyTestResultWork().invoke()
+        }
     }
 
     private fun shareKeys() {
         shareKeysInformationRobot.checkActivityIsDisplayed()
 
         shareKeysInformationRobot.clickIUnderstandButton()
-
-        waitFor { statusRobot.checkActivityIsDisplayed() }
-    }
-
-    private fun orderConfirmatoryTest() {
-        testOrderingRobot.checkActivityIsDisplayed()
-
-        testOrderingRobot.clickOrderTestButton()
-
-        waitFor { browserRobot.checkActivityIsDisplayed() }
-
-        browserRobot.clickCloseButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
     }

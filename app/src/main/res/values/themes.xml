@@ -65,6 +65,16 @@
         <item name="riskLevelRedPanelTextColor">@color/dark_grey</item>
         <item name="riskLevelRedPanelChevronColor">@color/dark_grey</item>
         <item name="riskLevelRedPanelBackgroundDrawable">@drawable/area_risk_red_background</item>
+
+        <item name="riskLevelMaroonPanelIconTint">@color/risk_maroon</item>
+        <item name="riskLevelMaroonPanelTextColor">@color/dark_grey</item>
+        <item name="riskLevelMaroonPanelChevronColor">@color/dark_grey</item>
+        <item name="riskLevelMaroonPanelBackgroundDrawable">@drawable/area_risk_maroon_background</item>
+
+        <item name="riskLevelBlackPanelIconTint">@color/risk_black</item>
+        <item name="riskLevelBlackPanelTextColor">@color/white</item>
+        <item name="riskLevelBlackPanelChevronColor">@color/tertiary_text_grey</item>
+        <item name="riskLevelBlackPanelBackgroundDrawable">@drawable/area_risk_black_background</item>
     </style>
 
     <style name="ExpandedBottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">

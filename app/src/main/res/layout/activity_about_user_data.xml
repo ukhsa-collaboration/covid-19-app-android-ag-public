@@ -169,43 +169,45 @@
                 android:orientation="vertical"
                 android:paddingVertical="8dp"
                 android:weightSum="1">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                <TextView
-                    style="@style/AboutAppItemValueText"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:paddingStart="30dp"
-                    android:paddingEnd="10dp"
-                    android:text="@string/about_test_follow_up" />
+                    <TextView
+                        style="@style/AboutAppItemValueText"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:paddingStart="30dp"
+                        android:paddingEnd="10dp"
+                        android:text="@string/about_test_follow_up" />
+
+                    <TextView
+                        android:id="@+id/followUpState"
+                        style="@style/Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical|end"
+                        android:paddingEnd="30dp"
+                        tools:text="Value" />
+                </LinearLayout>
 
                 <TextView
-                    style="@style/Body1"
-                    android:id="@+id/followUpState"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical|end"
-                    android:paddingEnd="30dp"
-                    tools:text="Value" />
-                </LinearLayout>
-                <TextView
-                    style="@style/AboutAppItemValueText"
                     android:id="@+id/followUpDate"
+                    style="@style/AboutAppItemValueText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/vertical_margin"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:layout_marginTop="@dimen/vertical_margin"
                     android:paddingStart="30dp"
                     android:paddingEnd="10dp"
-                    tools:text="18 Jul 2020"
                     android:visibility="gone"
-                    tools:visibility="visible"/>
+                    tools:text="18 Jul 2020"
+                    tools:visibility="visible" />
             </LinearLayout>
 
             <TextView
@@ -314,6 +316,52 @@
 
                 <TextView
                     android:id="@+id/textExposureNotificationDate"
+                    style="@style/Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|end"
+                    android:paddingEnd="30dp"
+                    tools:text="@string/about_my_data_date" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/titleDailyContactTestingOptIn"
+                style="@style/AboutAppTitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="9dp"
+                android:gravity="center_vertical"
+                android:minHeight="42dp"
+                android:paddingVertical="8dp"
+                android:text="@string/user_data_daily_contact_testing_title"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <LinearLayout
+                android:id="@+id/dailyContactTestingSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorSurface"
+                android:minHeight="42dp"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:visibility="gone"
+                android:weightSum="1"
+                tools:visibility="visible">
+
+                <TextView
+                    style="@style/AboutAppItemValueText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/user_data_daily_contact_testing_text" />
+
+                <TextView
+                    android:id="@+id/dailyContactTestingOptInDate"
                     style="@style/Body1"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"

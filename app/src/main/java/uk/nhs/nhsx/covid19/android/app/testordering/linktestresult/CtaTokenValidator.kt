@@ -1,7 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 
-import java.io.IOException
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -14,10 +12,11 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SEL
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Failure
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Success
-import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultErrorType
-import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultErrorType.INVALID
-import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultErrorType.NO_CONNECTION
-import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultErrorType.UNEXPECTED
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType.INVALID
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType.NO_CONNECTION
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType.UNEXPECTED
+import java.io.IOException
+import javax.inject.Inject
 
 class CtaTokenValidator @Inject constructor(
     private val virologyTestingApi: VirologyTestingApi,
@@ -64,6 +63,10 @@ class CtaTokenValidator @Inject constructor(
         data class Success(val virologyCtaExchangeResponse: VirologyCtaExchangeResponse) :
             CtaTokenValidationResult()
 
-        data class Failure(val type: LinkTestResultErrorType) : CtaTokenValidationResult()
+        data class Failure(val type: ValidationErrorType) : CtaTokenValidationResult()
+    }
+
+    enum class ValidationErrorType {
+        INVALID, NO_CONNECTION, UNEXPECTED
     }
 }

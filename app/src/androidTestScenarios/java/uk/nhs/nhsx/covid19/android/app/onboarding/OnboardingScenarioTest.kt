@@ -39,7 +39,7 @@ class OnboardingScenarioTest : EspressoTest() {
     @Test
     fun onboardingSuccessful_localAuthorityFeatureEnabled_batteryOptimizationFeatureDisabled_navigateToStatusScreen() = reporter(
         "Onboarding",
-        "Happy path with local authority feature flag enabled and battery optimization feature disabled",
+        "Happy path - confirm local authority (feature flag enabled and battery optimization feature disabled)",
         "Complete onboarding flow",
         Reporter.Kind.FLOW
     ) {
@@ -58,7 +58,7 @@ class OnboardingScenarioTest : EspressoTest() {
     @Test
     fun onboardingSuccessful_localAuthorityFeatureEnabled_batteryOptimizationFeatureEnabled_navigateToStatusScreen() = reporter(
         "Onboarding",
-        "Happy path with local authority feature flag enabled and battery optimization feature enabled",
+        "Happy path - confirm local authority (feature flag enabled and battery optimization feature enabled)",
         "Complete onboarding flow",
         Reporter.Kind.FLOW
     ) {
@@ -157,7 +157,7 @@ class OnboardingScenarioTest : EspressoTest() {
     @Test
     fun onboardingSuccessfulAndLocalAuthorityFeatureFlagDisabled_navigateToStatusScreen() = reporter(
         "Onboarding",
-        "Happy path with local authority feature flag disabled",
+        "Happy path - confirm local authority (feature flag disabled)",
         "Complete onboarding flow",
         Reporter.Kind.FLOW
     ) {

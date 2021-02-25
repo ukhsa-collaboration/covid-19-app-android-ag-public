@@ -35,12 +35,18 @@
     <color name="about_app_text_color">#FAFAFA</color>
 
     <color name="risk_neutral_border">#33FFFFFF</color>
+    <color name="risk_maroon_border">#922344</color>
+    <color name="risk_black_border">#EEDD4A</color>
     <color name="risk_green">#00B06D</color>
     <color name="risk_yellow">#EDB52D</color>
     <color name="risk_amber">#F17019</color>
     <color name="risk_red">#D5281B</color>
+    <color name="risk_maroon">#922344</color>
+    <color name="risk_black">#EEDD4A</color>
     <color name="risk_green_background">#083A27</color>
     <color name="risk_yellow_background">#3B2A00</color>
     <color name="risk_amber_background">#5D2702</color>
     <color name="risk_red_background">#4A1916</color>
+    <color name="risk_maroon_background">#2E0C1E</color>
+    <color name="risk_black_background">#000000</color>
 </resources>

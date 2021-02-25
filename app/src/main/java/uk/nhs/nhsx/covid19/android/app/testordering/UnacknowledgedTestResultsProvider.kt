@@ -6,6 +6,11 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import java.lang.reflect.Type
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import javax.inject.Inject
 import kotlinx.android.parcel.Parcelize
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
@@ -13,11 +18,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import uk.nhs.nhsx.covid19.android.app.util.isEqualOrAfter
-import java.lang.reflect.Type
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import javax.inject.Inject
 
 class UnacknowledgedTestResultsProvider @Inject constructor(
     private val unacknowledgedTestResultsStorage: UnacknowledgedTestResultsStorage,
@@ -54,6 +54,13 @@ class UnacknowledgedTestResultsProvider @Inject constructor(
     fun add(testResult: ReceivedTestResult) = synchronized(lock) {
         val updatedList = testResults.toMutableList().apply {
             add(testResult)
+        }
+        testResults = updatedList
+    }
+
+    fun setSymptomsOnsetDate(testResult: ReceivedTestResult, symptomsOnsetDate: SymptomsDate) = synchronized(lock) {
+        val updatedList = testResults.map {
+            if (it == testResult) it.copy(symptomsOnsetDate = symptomsOnsetDate) else it
         }
         testResults = updatedList
     }
@@ -104,7 +111,8 @@ data class ReceivedTestResult(
     val testResult: VirologyTestResult,
     override val testKitType: VirologyTestKitType?,
     val diagnosisKeySubmissionSupported: Boolean,
-    override val requiresConfirmatoryTest: Boolean = false
+    override val requiresConfirmatoryTest: Boolean = false,
+    val symptomsOnsetDate: SymptomsDate? = null
 ) : TestResult, Parcelable {
 
     override fun isPositive(): Boolean =
@@ -113,3 +121,7 @@ data class ReceivedTestResult(
     override fun isConfirmed(): Boolean =
         !requiresConfirmatoryTest
 }
+
+@Parcelize
+@JsonClass(generateAdapter = true)
+data class SymptomsDate(val explicitDate: LocalDate?) : Parcelable

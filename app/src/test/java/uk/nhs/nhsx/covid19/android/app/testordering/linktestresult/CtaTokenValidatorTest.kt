@@ -3,9 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import java.io.IOException
-import java.time.Instant
-import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -28,9 +25,12 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Failure
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Success
-import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultErrorType.INVALID
-import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultErrorType.NO_CONNECTION
-import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultErrorType.UNEXPECTED
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType.INVALID
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType.NO_CONNECTION
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType.UNEXPECTED
+import java.io.IOException
+import java.time.Instant
+import kotlin.test.assertEquals
 
 class CtaTokenValidatorTest {
 
@@ -38,7 +38,8 @@ class CtaTokenValidatorTest {
     private val postalDistrictProviderWrapper = mockk<PostalDistrictProviderWrapper>()
     private val crockfordDammValidator = mockk<CrockfordDammValidator>()
 
-    private val testSubject = CtaTokenValidator(virologyTestingApi, postalDistrictProviderWrapper, crockfordDammValidator)
+    private val testSubject =
+        CtaTokenValidator(virologyTestingApi, postalDistrictProviderWrapper, crockfordDammValidator)
 
     @Before
     fun setUp() {

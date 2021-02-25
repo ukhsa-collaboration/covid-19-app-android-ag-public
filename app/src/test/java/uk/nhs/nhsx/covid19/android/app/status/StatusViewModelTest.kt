@@ -92,6 +92,7 @@ class StatusViewModelTest {
 
     private val lowRiskyPostCodeIndicator = RiskIndicator(
         colorScheme = ColorScheme.GREEN,
+        colorSchemeV2 = ColorScheme.GREEN,
         name = Translatable(mapOf("en" to "low")),
         heading = Translatable(mapOf("en" to "Heading low")),
         content = Translatable(
@@ -106,6 +107,7 @@ class StatusViewModelTest {
 
     private val mediumRiskyPostCodeIndicator = RiskIndicator(
         colorScheme = ColorScheme.YELLOW,
+        colorSchemeV2 = ColorScheme.YELLOW,
         name = Translatable(mapOf("en" to "medium")),
         heading = Translatable(mapOf("en" to "Heading medium")),
         content = Translatable(
@@ -120,6 +122,7 @@ class StatusViewModelTest {
 
     private val highRiskyPostCodeIndicator = RiskIndicator(
         colorScheme = ColorScheme.RED,
+        colorSchemeV2 = ColorScheme.RED,
         name = Translatable(mapOf("en" to "high")),
         heading = Translatable(mapOf("en" to "Heading high")),
         content = Translatable(

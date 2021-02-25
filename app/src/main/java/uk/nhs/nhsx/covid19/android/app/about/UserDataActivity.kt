@@ -6,18 +6,14 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isVisible
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_AUTHORITY
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
-import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_about_user_data.actionDeleteAllData
+import kotlinx.android.synthetic.main.activity_about_user_data.dailyContactTestingOptInDate
+import kotlinx.android.synthetic.main.activity_about_user_data.dailyContactTestingSection
 import kotlinx.android.synthetic.main.activity_about_user_data.editLocalAuthority
 import kotlinx.android.synthetic.main.activity_about_user_data.editVenueVisits
 import kotlinx.android.synthetic.main.activity_about_user_data.encounterDataSection
@@ -39,6 +35,7 @@ import kotlinx.android.synthetic.main.activity_about_user_data.symptomsDataSecti
 import kotlinx.android.synthetic.main.activity_about_user_data.textEncounterDate
 import kotlinx.android.synthetic.main.activity_about_user_data.textExposureNotificationDate
 import kotlinx.android.synthetic.main.activity_about_user_data.textViewSymptomsDate
+import kotlinx.android.synthetic.main.activity_about_user_data.titleDailyContactTestingOptIn
 import kotlinx.android.synthetic.main.activity_about_user_data.titleExposureNotification
 import kotlinx.android.synthetic.main.activity_about_user_data.titleLastDayOfIsolation
 import kotlinx.android.synthetic.main.activity_about_user_data.titleLatestResult
@@ -51,6 +48,8 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.DialogType
 import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.DialogType.ConfirmDeleteAllData
 import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.DialogType.ConfirmDeleteVenueVisit
+import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.IsolationState
+import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.UserDataState
 import uk.nhs.nhsx.covid19.android.app.about.UserDataViewModel.VenueVisitsUiState
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
@@ -61,9 +60,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESUL
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.startActivity
-import uk.nhs.nhsx.covid19.android.app.state.State
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
@@ -72,6 +68,11 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import javax.inject.Inject
 
 class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
 
@@ -110,7 +111,7 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadUserData()
+        viewModel.onResume()
     }
 
     private fun setupOnClickListeners() {
@@ -128,45 +129,34 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
     }
 
     private fun setupViewModelListeners() {
-        viewModel.localAuthorityText().observe(this) { localAuthorityText ->
-            localAuthority.text = localAuthorityText
-        }
-
-        viewModel.getLastStatusMachineState().observe(this) { isolationState ->
-            handleStateMachineState(isolationState)
-        }
-
-        viewModel.getVenueVisitsUiState().observe(this) { venueVisitsUiState ->
-            updateVenueVisitsContainer(venueVisitsUiState)
+        viewModel.userDataState().observe(this) {
+            renderViewState(it)
         }
 
         viewModel.venueVisitsEditModeChanged().observe(this) { isInEditMode ->
             onVenueVisitsEditModeChanged(isInEditMode)
         }
 
-        viewModel.getAcknowledgedTestResult().observe(this) { latestTestResult ->
-            handleShowingLatestTestResult(latestTestResult)
-        }
-
         viewModel.getAllUserDataDeleted().observe(this) {
             handleAllUserDataDeleted()
         }
+    }
 
-        viewModel.getShowDialog().observe(this) { dialogType ->
+    private fun renderViewState(viewState: UserDataState) {
+        localAuthority.text = viewState.localAuthority
+        handleStateMachineState(viewState.isolationState)
+        updateVenueVisitsContainer(viewState.venueVisitsUiState)
+        handleShowingLatestTestResult(viewState.acknowledgedTestResult)
+        viewState.showDialog?.let { dialogType ->
             handleShowDialog(dialogType)
         }
     }
 
     private fun handleShowingLatestTestResult(acknowledgedTestResult: AcknowledgedTestResult?) {
-        if (acknowledgedTestResult == null) {
-            titleLatestResult.gone()
-            latestResultDateContainer.gone()
-            latestResultValueContainer.gone()
-            latestResultKitTypeContainer.gone()
-            followUpTestContainer.gone()
-        } else {
+        if (acknowledgedTestResult != null) {
             lastResultDate.text = uiFormat(acknowledgedTestResult.testEndDate)
             lastResultValue.text = getTestResultText(acknowledgedTestResult)
+
             if (acknowledgedTestResult.testKitType != null) {
                 lastResultKitType.text = getTestResultKitTypeText(acknowledgedTestResult.testKitType)
                 latestResultKitTypeContainer.visible()
@@ -175,13 +165,13 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
             }
 
             if (acknowledgedTestResult.requiresConfirmatoryTest) {
-                if (acknowledgedTestResult.confirmedDate == null) {
-                    followUpState.text = getString(R.string.about_test_follow_up_state_pending)
-                    followUpDate.isVisible = false
-                } else {
+                if (acknowledgedTestResult.confirmedDate != null) {
                     followUpState.text = getString(R.string.about_test_follow_up_state_complete)
                     followUpDate.text = uiFormat(acknowledgedTestResult.confirmedDate)
-                    followUpDate.isVisible = true
+                    followUpDate.visible()
+                } else {
+                    followUpState.text = getString(R.string.about_test_follow_up_state_pending)
+                    followUpDate.gone()
                 }
             } else {
                 followUpState.text = getString(R.string.about_test_follow_up_state_not_required)
@@ -190,6 +180,12 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
             titleLatestResult.visible()
             latestResultDateContainer.visible()
             latestResultValueContainer.visible()
+        } else {
+            titleLatestResult.gone()
+            latestResultDateContainer.gone()
+            latestResultValueContainer.gone()
+            latestResultKitTypeContainer.gone()
+            followUpTestContainer.gone()
         }
     }
 
@@ -244,26 +240,27 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
         finish()
     }
 
-    private fun handleStateMachineState(it: State) {
-        when (it) {
-            is Default -> handleStateMachineEmptyStates()
-            is Isolation -> handleIsolation(it)
-        }
+    private fun handleStateMachineState(isolationState: IsolationState?) {
+        isolationState?.let { handleIsolationState(it) } ?: handleStateMachineEmptyStates()
     }
 
-    private fun handleIsolation(isolation: Isolation) {
-        lastDayOfIsolationDate.text = isolation.lastDayOfIsolation.uiFormat(this)
-        titleLastDayOfIsolation.visible()
-        lastDayOfIsolationSection.visible()
+    private fun handleIsolationState(isolationState: IsolationState) {
+        if (isolationState.lastDayOfIsolation != null) {
+            lastDayOfIsolationDate.text = isolationState.lastDayOfIsolation.uiFormat(this)
+            titleLastDayOfIsolation.visible()
+            lastDayOfIsolationSection.visible()
+        } else {
+            titleLastDayOfIsolation.gone()
+            lastDayOfIsolationSection.gone()
+        }
 
-        if (isolation.contactCase != null) {
+        if (isolationState.contactCaseEncounterDate != null) {
+            textEncounterDate.text = uiFormat(isolationState.contactCaseEncounterDate)
             titleExposureNotification.visible()
-
-            textEncounterDate.text = uiFormat(isolation.contactCase.startDate)
             encounterDataSection.visible()
 
-            if (isolation.contactCase.notificationDate != null) {
-                textExposureNotificationDate.text = uiFormat(isolation.contactCase.notificationDate)
+            if (isolationState.contactCaseNotificationDate != null) {
+                textExposureNotificationDate.text = uiFormat(isolationState.contactCaseNotificationDate)
                 exposureNotificationDataSection.visible()
             } else {
                 exposureNotificationDataSection.gone()
@@ -274,14 +271,22 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
             exposureNotificationDataSection.gone()
         }
 
-        if (isolation.indexCase != null) {
+        if (isolationState.indexCaseSymptomOnsetDate != null) {
+            textViewSymptomsDate.text = isolationState.indexCaseSymptomOnsetDate.uiFormat(this)
             titleSymptoms.visible()
             symptomsDataSection.visible()
-
-            textViewSymptomsDate.text = isolation.indexCase.symptomsOnsetDate.uiFormat(this)
         } else {
             titleSymptoms.gone()
             symptomsDataSection.gone()
+        }
+
+        if (isolationState.dailyContactTestingOptInDate != null) {
+            dailyContactTestingOptInDate.text = isolationState.dailyContactTestingOptInDate.uiFormat(this)
+            titleDailyContactTestingOptIn.visible()
+            dailyContactTestingSection.visible()
+        } else {
+            titleDailyContactTestingOptIn.gone()
+            dailyContactTestingSection.gone()
         }
     }
 
@@ -295,6 +300,9 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
         titleExposureNotification.gone()
         encounterDataSection.gone()
         exposureNotificationDataSection.gone()
+
+        titleDailyContactTestingOptIn.gone()
+        dailyContactTestingSection.gone()
     }
 
     private fun updateVenueVisitsContainer(venueVisitsUiState: VenueVisitsUiState) {

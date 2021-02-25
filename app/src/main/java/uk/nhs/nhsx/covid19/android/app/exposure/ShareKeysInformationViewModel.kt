@@ -15,12 +15,11 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSUR
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.KEY_SUBMISSION
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
-import uk.nhs.nhsx.covid19.android.app.state.indexCaseOnsetDateBeforeTestResultDate
+import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitFakeExposureWindows
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import java.time.Clock
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 class ShareKeysInformationViewModel @Inject constructor(
@@ -30,6 +29,7 @@ class ShareKeysInformationViewModel @Inject constructor(
     private val epidemiologyEventProvider: EpidemiologyEventProvider,
     private val submitEpidemiologyData: SubmitEpidemiologyData,
     private val submitFakeExposureWindows: SubmitFakeExposureWindows,
+    private val testResultIsolationHandler: TestResultIsolationHandler,
     private val clock: Clock
 ) : ViewModel() {
 
@@ -42,9 +42,8 @@ class ShareKeysInformationViewModel @Inject constructor(
 
     fun fetchKeys() {
         viewModelScope.launch {
-            val testResultDate = LocalDateTime.ofInstant(testResult.testEndDate, clock.zone).toLocalDate()
-            val onsetDateBasedOnTestEndDate = testResultDate.minusDays(indexCaseOnsetDateBeforeTestResultDate)
-            val exposureKeysFetchResult = fetchTemporaryExposureKeys(onsetDateBasedOnTestEndDate)
+            val symptomsOnsetDate = testResultIsolationHandler.symptomsOnsetDateFromTestResult(testResult)
+            val exposureKeysFetchResult = fetchTemporaryExposureKeys(symptomsOnsetDate)
             Timber.d("Fetched keys: $exposureKeysFetchResult")
             fetchKeysLiveData.postValue(exposureKeysFetchResult)
         }

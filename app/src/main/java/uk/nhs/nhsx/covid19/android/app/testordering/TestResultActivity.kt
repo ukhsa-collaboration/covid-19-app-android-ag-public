@@ -33,21 +33,21 @@ import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.inPortraitMode
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.Ignore
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeNotInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeWillBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeWontBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveContinueIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveContinueIsolationNoChange
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveThenNegativeWillBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveWillBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveWillBeInIsolationAndOrderTest
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveWontBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidNotInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidWillBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.NavigationEvent.Finish
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.NavigationEvent.NavigateToOrderTest
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.NavigationEvent.NavigateToShareKeys
+import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.Finish
+import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.NavigateToOrderTest
+import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.NavigateToShareKeys
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.Ignore
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeNotInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWillBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWontBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolationNoChange
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolationAndOrderTest
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWontBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidNotInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
@@ -57,9 +57,9 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
     @Inject
-    lateinit var factory: ViewModelFactory<TestResultViewModel>
+    lateinit var factory: ViewModelFactory<BaseTestResultViewModel>
 
-    private val viewModel: TestResultViewModel by viewModels { factory }
+    private val viewModel: BaseTestResultViewModel by viewModels { factory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,8 +103,8 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
                         showSelfIsolateScreenOnPositive(viewState.remainingDaysInIsolation)
                     PositiveWontBeInIsolation ->
                         showDoNotHaveToSelfIsolateScreenOnPositive()
-                    PositiveThenNegativeWillBeInIsolation ->
-                        showContinueToSelfIsolationScreenOnPositiveThenNegative(viewState.remainingDaysInIsolation)
+                    NegativeAfterPositiveOrSymptomaticWillBeInIsolation ->
+                        showContinueToSelfIsolationScreenOnNegativeAfterPositiveOrSymptomatic(viewState.remainingDaysInIsolation)
                     PositiveWillBeInIsolationAndOrderTest ->
                         showSelfIsolateScreenOnPositiveAndOrderTest(viewState.remainingDaysInIsolation)
                     VoidNotInIsolation ->
@@ -341,7 +341,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         }
     }
 
-    private fun showContinueToSelfIsolationScreenOnPositiveThenNegative(remainingDaysInIsolation: Int) {
+    private fun showContinueToSelfIsolationScreenOnNegativeAfterPositiveOrSymptomatic(remainingDaysInIsolation: Int) {
         goodNewsContainer.gone()
         isolationRequestContainer.visible()
 

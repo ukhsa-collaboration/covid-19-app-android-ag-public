@@ -13,7 +13,6 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.WorkManager
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import com.jeroenmols.featureflag.framework.TestSetting
-import java.time.Clock
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 import uk.nhs.covid19.config.production
@@ -25,6 +24,7 @@ import uk.nhs.nhsx.covid19.android.app.di.ApplicationComponent
 import uk.nhs.nhsx.covid19.android.app.di.DaggerApplicationComponent
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
+import uk.nhs.nhsx.covid19.android.app.di.module.ViewModelModule
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.GoogleExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.packagemanager.AndroidPackageManager
@@ -33,11 +33,19 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.AndroidBarcodeDetectorBuilder
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
+import uk.nhs.nhsx.covid19.android.app.util.AndroidStrongBoxSupport
+import uk.nhs.nhsx.covid19.android.app.util.EncryptedSharedPreferencesUtils
+import uk.nhs.nhsx.covid19.android.app.util.EncryptedStorage
 import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
-import uk.nhs.nhsx.covid19.android.app.util.RetryMechanism
+import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate
+import uk.nhs.nhsx.covid19.android.app.util.StrongBoxMigrationRetryChecker
+import uk.nhs.nhsx.covid19.android.app.util.StrongBoxMigrationRetryStorage
+import java.time.Clock
 
 open class ExposureApplication : Application(), Configuration.Provider {
     lateinit var appComponent: ApplicationComponent
+
+    lateinit var encryptionUtils: EncryptionUtils
 
     private var appAvailabilityListener: AppAvailabilityListener? = null
 
@@ -49,7 +57,9 @@ open class ExposureApplication : Application(), Configuration.Provider {
             Timber.d("onCreate")
         }
 
-        buildAndUseAppComponent(NetworkModule(production, additionalInterceptors))
+        encryptionUtils = EncryptionUtils(AndroidStrongBoxSupport)
+
+        buildAndUseAppComponent(NetworkModule(production, additionalInterceptors), ViewModelModule())
 
         RuntimeBehavior.initialize(this, isTestBuild)
 
@@ -104,14 +114,10 @@ open class ExposureApplication : Application(), Configuration.Provider {
 
     fun buildAndUseAppComponent(
         networkModule: NetworkModule,
+        viewModelModule: ViewModelModule,
         exposureNotificationApi: ExposureNotificationApi = GoogleExposureNotificationApi(this)
     ) {
-        val sharedPreferences = RetryMechanism.retryWithBackOff {
-            EncryptionUtils.createEncryptedSharedPreferences(this)
-        }
-        val encryptedFile = RetryMechanism.retryWithBackOff {
-            EncryptionUtils.createEncryptedFile(this, "venues")
-        }
+        val encryptedStorage = createEncryptedStorage()
 
         appComponent = DaggerApplicationComponent.builder()
             .appModule(
@@ -120,8 +126,8 @@ open class ExposureApplication : Application(), Configuration.Provider {
                     exposureNotificationApi,
                     AndroidBluetoothStateProvider(),
                     AndroidLocationStateProvider(),
-                    sharedPreferences,
-                    encryptedFile,
+                    encryptedStorage.sharedPreferences,
+                    encryptedStorage.encryptedFile,
                     qrCodesSignatureKey,
                     GooglePlayUpdateProvider(this),
                     AndroidBatteryOptimizationChecker(this),
@@ -132,9 +138,26 @@ open class ExposureApplication : Application(), Configuration.Provider {
                 )
             )
             .networkModule(networkModule)
+            .viewModelModule(viewModelModule)
             .build()
 
         updateLifecycleListener()
+    }
+
+    protected fun createEncryptedStorage(): EncryptedStorage {
+        val encryptedSharedPreferencesUtils = EncryptedSharedPreferencesUtils(encryptionUtils)
+        val migrationSharedPreferences = encryptedSharedPreferencesUtils.createGenericEncryptedSharedPreferences(
+            this,
+            encryptionUtils.getDefaultMasterKey(),
+            SharedPrefsDelegate.migrationSharedPreferencesFileName
+        )
+        return EncryptedStorage.from(
+            this,
+            StrongBoxMigrationRetryChecker(
+                StrongBoxMigrationRetryStorage(migrationSharedPreferences)
+            ),
+            encryptionUtils
+        )
     }
 
     companion object {

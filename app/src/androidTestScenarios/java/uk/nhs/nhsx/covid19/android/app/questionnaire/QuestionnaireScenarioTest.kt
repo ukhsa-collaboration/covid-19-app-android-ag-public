@@ -5,7 +5,6 @@ import android.app.Instrumentation
 import android.content.Intent
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
-import com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep
 import java.time.Instant
 import java.time.LocalDate
 import org.junit.Test
@@ -47,7 +46,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
     @Test
     fun successfullySelectSymptomsAndCannotRememberDate_GoesToIsolationState() = reporter(
-        scenario = "Self-diagnosis",
+        scenario = "Self Diagnosis",
         title = "Positive symptoms path",
         description = "User selects symptoms and is notified of coronavirus symptoms",
         kind = FLOW
@@ -152,7 +151,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
     @Test
     fun clickOnReviewSymptomsWithoutSelectingSymptoms_DisplaysErrorPanel() = reporter(
-        scenario = "Self-diagnosis",
+        scenario = "Self Diagnosis",
         title = "Continue no symptoms",
         description = "User attempts to continue without selecting any symptoms",
         kind = SCREEN
@@ -168,9 +167,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
         questionnaireRobot.reviewSymptoms()
 
-        sleep(100)
-
-        questionnaireRobot.confirmErrorScreenIsDisplayed()
+        waitFor { questionnaireRobot.confirmErrorScreenIsDisplayed() }
 
         step(
             stepName = "No symptoms selected",
@@ -180,7 +177,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
     @Test
     fun selectNoSymptoms_NavigatesToConfirmationScreen() = reporter(
-        scenario = "Self-diagnosis",
+        scenario = "Self Diagnosis",
         title = "No symptoms",
         description = "User has no symptoms selected and taps 'I don't have any of these symptoms'",
         kind = FLOW
@@ -270,7 +267,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
     @Test
     fun reviewSymptoms_doNotSelectDateOrTickDoNotRemember() = reporter(
-        scenario = "Self-diagnosis",
+        scenario = "Self Diagnosis",
         title = "No onset date",
         description = "User reviews symptoms and does not choose onset date or tap 'I don'r remember the date'",
         kind = FLOW
@@ -299,7 +296,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
         reviewSymptomsRobot.confirmSelection()
 
-        reviewSymptomsRobot.checkReviewSymptomsErrorIsDisplayed()
+        waitFor { reviewSymptomsRobot.checkReviewSymptomsErrorIsDisplayed() }
 
         step(
             stepName = "No onset date selected",

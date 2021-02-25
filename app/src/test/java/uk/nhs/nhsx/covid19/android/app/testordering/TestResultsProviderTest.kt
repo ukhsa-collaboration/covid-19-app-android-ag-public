@@ -3,13 +3,13 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 import com.squareup.moshi.Moshi
 import io.mockk.every
 import io.mockk.mockk
+import java.time.Instant
+import kotlin.test.assertEquals
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
-import java.time.Instant
-import kotlin.test.assertEquals
 
 @Suppress("DEPRECATION")
 class TestResultsProviderTest {

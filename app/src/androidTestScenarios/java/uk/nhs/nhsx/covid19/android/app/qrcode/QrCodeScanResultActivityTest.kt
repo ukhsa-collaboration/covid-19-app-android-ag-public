@@ -43,7 +43,7 @@ class QrCodeScanResultActivityTest : EspressoTest() {
     @Test
     fun showInvalidContentScanningResult() = reporter(
         scenario = "Venue check-in",
-        title = "Invalid code",
+        title = "Invalid QRCode",
         description = "The QR code scanned by the user is not an official NHS QR code or is defect",
         kind = SCREEN
     ) {
@@ -65,7 +65,7 @@ class QrCodeScanResultActivityTest : EspressoTest() {
     @Test
     fun showScanningNotSupported() = reporter(
         scenario = "Venue check-in",
-        title = "Not supported",
+        title = "Unsupported Phone",
         description = "The user's phone does not support venue check-in",
         kind = SCREEN
     ) {

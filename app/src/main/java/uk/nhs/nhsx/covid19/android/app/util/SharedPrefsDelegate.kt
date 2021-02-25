@@ -8,14 +8,19 @@ import kotlin.reflect.KProperty
 
 class SharedPrefsDelegate<T> @Inject constructor(
     private val sharedPref: SharedPreferences,
-    private val valueKey: String
+    private val valueKey: String,
+    private val commit: Boolean
 ) : ReadWriteProperty<Any?, T?> {
 
     companion object {
         const val fileName = "encryptedSharedPreferences"
+        const val migrationSharedPreferencesFileName = "migrationEncryptedSharedPreferences"
 
-        fun <T> SharedPreferences.with(valueKey: String): SharedPrefsDelegate<T> =
-            SharedPrefsDelegate(this, valueKey)
+        fun <T> SharedPreferences.with(
+            valueKey: String,
+            commit: Boolean = false
+        ): SharedPrefsDelegate<T> =
+            SharedPrefsDelegate(this, valueKey, commit)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -30,7 +35,7 @@ class SharedPrefsDelegate<T> @Inject constructor(
         property: KProperty<*>,
         value: T?
     ) {
-        sharedPref.edit {
+        sharedPref.edit(commit) {
             when (value) {
                 is String -> putString(valueKey, value)
                 is Float -> putFloat(valueKey, value)

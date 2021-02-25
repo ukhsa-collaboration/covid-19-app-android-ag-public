@@ -38,6 +38,6 @@ class SubmitFakeExposureWindowsTest {
 
         testSubject.invoke(EXPOSURE_WINDOW, 0)
 
-        coVerify(exactly = 15) { submitEmptyData(EXPOSURE_WINDOW) }
+        coVerify(exactly = 1) { submitEmptyData(EXPOSURE_WINDOW, 15) }
     }
 }

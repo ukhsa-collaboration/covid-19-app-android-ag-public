@@ -1,9 +1,9 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 
 @Singleton
 class TestResultHandler @Inject constructor(
@@ -104,8 +104,9 @@ interface TestResult {
     fun isConfirmed(): Boolean
 }
 
-enum class TestResultStorageOperation {
-    OVERWRITE,
-    CONFIRM,
-    IGNORE
+sealed class TestResultStorageOperation {
+    object Overwrite : TestResultStorageOperation()
+    data class Confirm(val confirmedDate: Instant) : TestResultStorageOperation()
+    data class OverwriteAndConfirm(val confirmedDate: Instant) : TestResultStorageOperation()
+    object Ignore : TestResultStorageOperation()
 }

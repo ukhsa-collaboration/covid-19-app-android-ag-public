@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_toolbar_primary" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/linkTestResultScrollView"
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal_reduced"
+            android:paddingVertical="@dimen/vertical_margin">
+
+            <LinearLayout
+                android:id="@+id/linkTestResultOnsetDateErrorContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/error_background"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    style="@style/Title4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/error_title" />
+
+                <TextView
+                    style="@style/ErrorTextBold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/questionnaire_input_date_error" />
+            </LinearLayout>
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                android:id="@+id/linkTestResultOnsetDateTitle"
+                style="@style/Title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                android:text="@string/link_test_result_onset_date_title" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                android:id="@+id/linkTestResultOnsetDateList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                app:rawText="@string/link_test_result_symptoms_list"
+                app:showBulletPoints="true" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:layout_marginEnd="@dimen/vertical_margin"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                android:orientation="horizontal">
+
+                <View
+                    android:id="@+id/dateSelectionErrorBar"
+                    android:layout_width="4dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="12dp"
+                    android:background="@color/error_red"
+                    android:visibility="invisible"
+                    tools:visibility="visible" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingVertical="8dp">
+
+                    <LinearLayout
+                        android:id="@+id/linkTestResultOnsetDateSelectDateContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/black_border_background"
+                        android:foreground="?selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:minWidth="48dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textSelectDate"
+                            style="@style/Title3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="17dp"
+                            android:layout_weight="1"
+                            android:text="@string/questionnaire_select_a_date" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_select_date" />
+                    </LinearLayout>
+
+                    <CheckBox
+                        android:id="@+id/linkTestResultOnsetDateCheckboxNoDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="-6dp"
+                        android:layout_marginTop="8dp"
+                        android:minWidth="48dp"
+                        android:minHeight="48dp"
+                        android:text="@string/questionnaire_no_date"
+                        android:textSize="16sp"
+                        android:textStyle="normal" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/linkTestResultOnsetDateContinueButton"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                android:text="@string/continue_button" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

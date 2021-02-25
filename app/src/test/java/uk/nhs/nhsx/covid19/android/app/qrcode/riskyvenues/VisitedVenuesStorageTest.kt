@@ -40,7 +40,7 @@ class VisitedVenuesStorageTest {
 
     @Before
     fun setUp() {
-        mockkStatic("uk.nhs.nhsx.covid19.android.app.util.EncryptionUtilsKt")
+        mockkStatic("uk.nhs.nhsx.covid19.android.app.util.EncryptedFileUtilsKt")
         every { clock.zone } returns ZoneId.of("UTC+01:00")
         every { clock.withZone(any()) } returns clock
         testSubject = VisitedVenuesStorage(moshi, encryptedFileInfo, clock)

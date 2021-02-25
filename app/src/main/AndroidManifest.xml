@@ -104,6 +104,10 @@
             android:label="@string/submit_keys_information_title"/>
         <activity android:name=".testordering.linktestresult.LinkTestResultActivity"
             android:label="@string/status_option_link_test_result"/>
+        <activity android:name=".testordering.linktestresult.LinkTestResultSymptomsActivity"
+            android:label="@string/link_test_result_symptoms_title"/>
+        <activity android:name=".testordering.linktestresult.LinkTestResultOnsetDateActivity"
+            android:label="@string/link_test_result_onset_date_title"/>
         <activity android:name=".payment.IsolationPaymentActivity"
             android:label="@string/isolation_payment_heading"/>
         <activity android:name=".availability.UpdateRecommendedActivity"
@@ -121,6 +125,8 @@
             android:label="@string/settings_title"/>
         <activity android:name=".settings.languages.LanguagesActivity"
             android:label="@string/language_title"/>
+        <activity android:name=".testordering.linktestresult.DailyContactTestingConfirmationActivity"
+            android:label="@string/daily_contact_testing_confirmation_title"/>
 
         <!-- Receivers -->
         <receiver

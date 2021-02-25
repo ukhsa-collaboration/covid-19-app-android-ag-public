@@ -108,11 +108,7 @@ class DebugViewModel @Inject constructor(
 
     fun setIndexState() {
         isolationStateMachine.reset()
-        isolationStateMachine.processEvent(
-            OnPositiveSelfAssessment(
-                CannotRememberDate
-            )
-        )
+        isolationStateMachine.processEvent(OnPositiveSelfAssessment(CannotRememberDate))
     }
 
     fun setContactState() {
@@ -138,6 +134,7 @@ class DebugViewModel @Inject constructor(
             "low",
             RiskIndicator(
                 colorScheme = GREEN,
+                colorSchemeV2 = GREEN,
                 name = Translatable(mapOf("en" to "Tier1")),
                 heading = Translatable(mapOf("en" to "Data from the NHS shows that the spread of coronavirus in your area is low.")),
                 content = Translatable(

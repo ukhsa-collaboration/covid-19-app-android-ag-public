@@ -4,6 +4,13 @@ import com.squareup.moshi.Moshi
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
@@ -12,19 +19,16 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
 
 class UnacknowledgedTestResultsProviderTest {
 
     private val unacknowledgedTestResultsStorage = mockk<UnacknowledgedTestResultsStorage>(relaxed = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-10-07T00:05:00.00Z"), ZoneOffset.UTC)
-    private val moshi = Moshi.Builder().add(InstantAdapter()).build()
+    private val moshi = Moshi.Builder()
+        .add(InstantAdapter())
+        .add(LocalDateAdapter())
+        .build()
 
     private val testSubject = UnacknowledgedTestResultsProvider(
         unacknowledgedTestResultsStorage,
@@ -51,6 +55,34 @@ class UnacknowledgedTestResultsProviderTest {
         testSubject.add(SINGLE_RECEIVED_RAPID_SELF_REPORTED_TEST_RESULT)
 
         verify { unacknowledgedTestResultsStorage.value = SINGLE_RAPID_SELF_REPORTED_TEST_RESULT_JSON }
+    }
+
+    @Test
+    fun `set explicit symptoms onset date`() {
+        every { unacknowledgedTestResultsStorage.value } returns SINGLE_LAB_RESULT_TEST_RESULT_JSON
+
+        testSubject.setSymptomsOnsetDate(
+            SINGLE_RECEIVED_LAB_RESULT_TEST_RESULT,
+            SymptomsDate(
+                explicitDate = LocalDate.now(fixedClock)
+            )
+        )
+
+        verify { unacknowledgedTestResultsStorage.value = SINGLE_LAB_RESULT_TEST_RESULT_WITH_EXPLICIT_ONSET_DATE_JSON }
+    }
+
+    @Test
+    fun `set cannot remember symptoms onset date`() {
+        every { unacknowledgedTestResultsStorage.value } returns SINGLE_LAB_RESULT_TEST_RESULT_JSON
+
+        testSubject.setSymptomsOnsetDate(
+            SINGLE_RECEIVED_LAB_RESULT_TEST_RESULT,
+            SymptomsDate(
+                explicitDate = null
+            )
+        )
+
+        verify { unacknowledgedTestResultsStorage.value = SINGLE_LAB_RESULT_TEST_RESULT_WITH_CANNOT_REMEMBER_ONSET_DATE_JSON }
     }
 
     @Test
@@ -188,6 +220,16 @@ class UnacknowledgedTestResultsProviderTest {
         val SINGLE_LAB_RESULT_TEST_RESULT_JSON =
             """
             [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":false}]
+            """.trimIndent()
+
+        val SINGLE_LAB_RESULT_TEST_RESULT_WITH_EXPLICIT_ONSET_DATE_JSON =
+            """
+            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":false,"symptomsOnsetDate":{"explicitDate":"2020-10-07"}}]
+            """.trimIndent()
+
+        val SINGLE_LAB_RESULT_TEST_RESULT_WITH_CANNOT_REMEMBER_ONSET_DATE_JSON =
+            """
+            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":false,"symptomsOnsetDate":{}}]
             """.trimIndent()
 
         val SINGLE_RAPID_RESULT_TEST_RESULT_JSON =

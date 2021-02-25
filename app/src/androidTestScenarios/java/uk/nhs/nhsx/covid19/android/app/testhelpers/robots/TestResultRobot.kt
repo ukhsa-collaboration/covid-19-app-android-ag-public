@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
+import android.content.Context
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.scrollTo
@@ -11,7 +12,9 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
 
-class TestResultRobot {
+class TestResultRobot(
+    private val context: Context
+) {
 
     fun checkActivityDisplaysNegativeNotInIsolation() {
         onView(withText(R.string.test_result_negative_no_self_isolation_subtitle_text))
@@ -36,6 +39,28 @@ class TestResultRobot {
     }
 
     fun checkActivityDisplaysPositiveWillBeInIsolation() {
+        onView(withText(R.string.self_isolate_for))
+            .check(matches(isDisplayed()))
+
+        onView(withText(R.string.state_test_positive_info))
+            .check(matches(isDisplayed()))
+
+        onView(withText(R.string.test_result_negative_then_positive_continue_explanation))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkActivityDisplaysPositiveWillBeInIsolation(remainingDaysInIsolation: Int) {
+        onView(withText(R.string.self_isolate_for))
+            .check(matches(isDisplayed()))
+
+        val title2 = context.resources.getQuantityString(
+            R.plurals.state_isolation_days,
+            remainingDaysInIsolation,
+            remainingDaysInIsolation
+        )
+        onView(withId(R.id.isolationRequestTitle2))
+            .check(matches(withText(title2)))
+
         onView(withText(R.string.state_test_positive_info))
             .check(matches(isDisplayed()))
 
@@ -46,6 +71,25 @@ class TestResultRobot {
     fun checkActivityDisplaysPositiveContinueIsolation() {
         onView(withText(R.string.test_result_positive_continue_self_isolation_title_1))
             .check(matches(isDisplayed()))
+
+        onView(withText(R.string.state_test_positive_info))
+            .check(matches(isDisplayed()))
+
+        onView(withText(R.string.test_result_positive_continue_self_isolate_explanation_1))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkActivityDisplaysPositiveContinueIsolation(remainingDaysInIsolation: Int) {
+        onView(withText(R.string.test_result_positive_continue_self_isolation_title_1))
+            .check(matches(isDisplayed()))
+
+        val title2 = context.resources.getQuantityString(
+            R.plurals.state_isolation_days,
+            remainingDaysInIsolation,
+            remainingDaysInIsolation
+        )
+        onView(withId(R.id.isolationRequestTitle2))
+            .check(matches(withText(title2)))
 
         onView(withText(R.string.state_test_positive_info))
             .check(matches(isDisplayed()))
@@ -90,7 +134,7 @@ class TestResultRobot {
             .check(matches(isDisplayed()))
     }
 
-    fun checkActivityDisplaysPositiveThenNegativeWillBeInIsolation() {
+    fun checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation() {
         onView(withText(R.string.test_result_positive_continue_self_isolation_title_1))
             .check(matches(isDisplayed()))
 

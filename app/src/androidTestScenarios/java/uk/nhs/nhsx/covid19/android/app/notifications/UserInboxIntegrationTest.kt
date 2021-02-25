@@ -20,7 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OVERWRITE
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
 
 class UserInboxIntegrationTest : EspressoTest() {
 
@@ -83,7 +83,7 @@ class UserInboxIntegrationTest : EspressoTest() {
 
         val secondInboxItem = testSubject.fetchInbox()
         assertThat(secondInboxItem).isInstanceOf(ShowTestResult::class.java)
-        testAppContext.getTestResultHandler().acknowledge(testResult, OVERWRITE)
+        testAppContext.getTestResultHandler().acknowledge(testResult, Overwrite)
 
         val thirdInboxItem = testSubject.fetchInbox()
         assertThat(thirdInboxItem).isInstanceOf(ShowEncounterDetection::class.java)

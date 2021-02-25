@@ -92,7 +92,7 @@ class ShareKeysInformationActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickContinueButton_whenExposureKeyHistoryResolutionRequiredAndSuccessful_shouldStartExposureNotifications_whenResolutionRequiredAndSuccessful_shouldShowStatusActivity() = notReported {
+    fun clickContinueButton_whenExpKeyHistoryResolutionRequiredAndSuccessful_shouldStartExpNotifications_whenResolutionRequiredAndSuccessful_shouldShowStatusActivity() = notReported {
         testAppContext.setTemporaryExposureKeyHistoryResolutionRequired(testAppContext.app, true)
         testAppContext.setExposureNotificationResolutionRequired(testAppContext.app, true)
 
@@ -175,7 +175,7 @@ class ShareKeysInformationActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickContinueButton_whenExposureKeyHistoryErrorWithDeveloperError_shouldStartExposureNotifications_whenResolutionRequiredAndAgainResolutionRequiredAndSuccessful_shouldStatusActivity() = notReported {
+    fun clickContinueButton_whenExposureKeyHistoryErrorWithDeveloperError_shouldStartENs_whenResolutionRequiredThenResolutionRequiredThenSuccessful_shouldStatusActivity() = notReported {
         testAppContext.getExposureNotificationApi().temporaryExposureKeyHistoryResult = Error(Status(ConnectionResult.DEVELOPER_ERROR), Success())
         testAppContext.getExposureNotificationApi().setEnabled(false)
         val resolutionIntent1 = createExposureNotificationResolutionPendingIntent(testAppContext.app, true)

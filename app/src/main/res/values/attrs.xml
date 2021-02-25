@@ -98,6 +98,16 @@
         <attr name="riskLevelRedPanelTextColor" format="color" />
         <attr name="riskLevelRedPanelChevronColor" format="color" />
         <attr name="riskLevelRedPanelBackgroundDrawable" format="reference" />
+
+        <attr name="riskLevelMaroonPanelIconTint" format="color" />
+        <attr name="riskLevelMaroonPanelTextColor" format="color" />
+        <attr name="riskLevelMaroonPanelChevronColor" format="color" />
+        <attr name="riskLevelMaroonPanelBackgroundDrawable" format="reference" />
+
+        <attr name="riskLevelBlackPanelIconTint" format="color" />
+        <attr name="riskLevelBlackPanelTextColor" format="color" />
+        <attr name="riskLevelBlackPanelChevronColor" format="color" />
+        <attr name="riskLevelBlackPanelBackgroundDrawable" format="reference" />
     </declare-styleable>
     <declare-styleable name="LogoView">
         <attr name="isAccessibilityHeadingCompat" format="boolean" />

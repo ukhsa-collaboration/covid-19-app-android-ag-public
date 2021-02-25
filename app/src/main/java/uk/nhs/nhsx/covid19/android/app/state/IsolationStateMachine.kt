@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DeclaredNegativeResultFromDct
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyContactNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
@@ -38,7 +39,6 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultChecker
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultHandler
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.IGNORE
 import uk.nhs.nhsx.covid19.android.app.util.isBeforeOrEqual
 import uk.nhs.nhsx.covid19.android.app.util.selectEarliest
 import java.lang.Long.max
@@ -50,8 +50,6 @@ import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
-
-const val indexCaseOnsetDateBeforeTestResultDate: Long = 3
 
 sealed class State {
     data class Default(val previousIsolation: Isolation? = null) : State()
@@ -73,7 +71,8 @@ sealed class State {
         data class ContactCase(
             val startDate: Instant,
             val notificationDate: Instant?,
-            val expiryDate: LocalDate
+            val expiryDate: LocalDate,
+            val dailyContactTestingOptInDate: LocalDate? = null,
         )
 
         fun isContactCaseOnly(): Boolean =
@@ -99,6 +98,14 @@ sealed class State {
             return expiryDate.isBeforeOrEqual(today.minusDays(daysAgo.toLong()))
         }
 
+        fun capExpiryDate(potentialExpiryDate: LocalDate): LocalDate {
+            val latestPossibleExpiryDate = isolationStart.plus(
+                isolationConfiguration.maxIsolation.toLong(),
+                ChronoUnit.DAYS
+            ).atZone(ZoneOffset.UTC).toLocalDate()
+            return selectEarliest(latestPossibleExpiryDate, potentialExpiryDate)
+        }
+
         val lastDayOfIsolation: LocalDate = expiryDate.minusDays(1)
 
         val expiryDate: LocalDate
@@ -118,16 +125,7 @@ sealed class State {
                         LocalDate.now().plusDays(1)
                     }
                 }
-
-                val isolationDayAtMax = isolationStart.plus(
-                    isolationConfiguration.maxIsolation.toLong(),
-                    ChronoUnit.DAYS
-                ).atZone(ZoneOffset.UTC).toLocalDate()
-
-                return selectEarliest(
-                    isolationDayAtMax,
-                    potentialExpiryDate!!
-                )
+                return capExpiryDate(potentialExpiryDate)
             }
 
         private fun latestExpiryDate(
@@ -158,6 +156,7 @@ data class OnTestResultAcknowledge(
 private object OnExpired : Event()
 private object OnReset : Event()
 private object OnPreviousIsolationOutdated : Event()
+private object OnDailyContactTestingOptIn : Event()
 
 sealed class SideEffect {
     object SendExposedNotification : SideEffect()
@@ -238,6 +237,10 @@ class IsolationStateMachine @Inject constructor(
         stateMachine.transition(OnPreviousIsolationOutdated)
     }
 
+    fun optInToDailyContactTesting() {
+        stateMachine.transition(OnDailyContactTestingOptIn)
+    }
+
     fun remainingDaysInIsolation(state: State = readState(validateExpiry = true)): Long {
         return when (state) {
             is Default -> 0
@@ -267,7 +270,8 @@ class IsolationStateMachine @Inject constructor(
                     contactCase = ContactCase(
                         startDate = it.exposureDate,
                         notificationDate = now,
-                        expiryDate = until
+                        expiryDate = until,
+                        dailyContactTestingOptInDate = null,
                     ),
                     isolationStart = now,
                     isolationConfiguration = getConfigurationDurations()
@@ -291,7 +295,10 @@ class IsolationStateMachine @Inject constructor(
                 dontTransition(HandleTestResult(it.testResult, it.showNotification))
             }
             on<OnTestResultAcknowledge> {
-                when (val transition = testResultIsolationHandler.computeTransitionWithTestResult(this, it.testResult)) {
+                when (
+                    val transition =
+                        testResultIsolationHandler.computeTransitionWithTestResult(this, it.testResult)
+                ) {
                     is TransitionDueToTestResult.TransitionAndStoreTestResult -> transitionTo(
                         transition.newState,
                         AcknowledgeTestResult(it.testResult, transition.testResultStorageOperation)
@@ -299,8 +306,8 @@ class IsolationStateMachine @Inject constructor(
                     is DoNotTransitionButStoreTestResult -> dontTransition(
                         AcknowledgeTestResult(it.testResult, transition.testResultStorageOperation)
                     )
-                    Ignore -> dontTransition(
-                        AcknowledgeTestResult(it.testResult, testResultStorageOperation = IGNORE)
+                    is Ignore -> dontTransition(
+                        AcknowledgeTestResult(it.testResult, TestResultStorageOperation.Ignore)
                     )
                 }
             }
@@ -317,23 +324,20 @@ class IsolationStateMachine @Inject constructor(
                     dontTransition()
                 } else {
                     trackAnalyticsEvent(ReceivedRiskyContactNotification)
+
                     val expiryDateBasedOnExposure = it.exposureDate.plus(
                         getConfigurationDurations().contactCase.toLong(),
                         ChronoUnit.DAYS
                     ).atZone(ZoneOffset.UTC).toLocalDate()
 
-                    val latestPossibleExpiryDate = isolationStart.plus(
-                        isolationConfiguration.maxIsolation.toLong(),
-                        ChronoUnit.DAYS
-                    ).atZone(ZoneOffset.UTC).toLocalDate()
-
-                    val expiryDate = selectEarliest(latestPossibleExpiryDate, expiryDateBasedOnExposure)
+                    val expiryDate = capExpiryDate(expiryDateBasedOnExposure)
 
                     val newState = this.copy(
                         contactCase = ContactCase(
                             startDate = it.exposureDate,
                             notificationDate = Instant.now(clock),
-                            expiryDate = expiryDate
+                            expiryDate = expiryDate,
+                            dailyContactTestingOptInDate = null
                         )
                     )
 
@@ -360,7 +364,10 @@ class IsolationStateMachine @Inject constructor(
                 dontTransition(HandleTestResult(it.testResult, it.showNotification))
             }
             on<OnTestResultAcknowledge> {
-                when (val transition = testResultIsolationHandler.computeTransitionWithTestResult(this, it.testResult)) {
+                when (
+                    val transition =
+                        testResultIsolationHandler.computeTransitionWithTestResult(this, it.testResult)
+                ) {
                     is TransitionDueToTestResult.TransitionAndStoreTestResult -> transitionTo(
                         transition.newState,
                         AcknowledgeTestResult(it.testResult, transition.testResultStorageOperation)
@@ -368,8 +375,8 @@ class IsolationStateMachine @Inject constructor(
                     is DoNotTransitionButStoreTestResult -> dontTransition(
                         AcknowledgeTestResult(it.testResult, transition.testResultStorageOperation)
                     )
-                    Ignore -> dontTransition(
-                        AcknowledgeTestResult(it.testResult, testResultStorageOperation = IGNORE)
+                    is Ignore -> dontTransition(
+                        AcknowledgeTestResult(it.testResult, TestResultStorageOperation.Ignore)
                     )
                 }
             }
@@ -378,6 +385,23 @@ class IsolationStateMachine @Inject constructor(
             }
             on<OnReset> {
                 transitionTo(Default())
+            }
+            on<OnDailyContactTestingOptIn> {
+                if (this.isContactCaseOnly()) {
+                    trackAnalyticsEvent(DeclaredNegativeResultFromDct)
+                    transitionTo(
+                        Default(
+                            previousIsolation = this.copy(
+                                contactCase = this.contactCase!!.copy(
+                                    expiryDate = LocalDate.now(clock),
+                                    dailyContactTestingOptInDate = LocalDate.now(clock)
+                                )
+                            )
+                        )
+                    )
+                } else {
+                    dontTransition()
+                }
             }
         }
         onTransition {

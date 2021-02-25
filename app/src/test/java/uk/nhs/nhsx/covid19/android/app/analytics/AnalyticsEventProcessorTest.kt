@@ -4,11 +4,6 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
-import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -17,7 +12,12 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.BackgroundTaskCo
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CanceledCheckIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireAndStartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireButDidNotStartIsolation
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DeclaredNegativeResultFromDct
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAskForSymptomsOnPositiveTestEntry
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidHaveSymptomsBeforeReceivedTestResult
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidRememberOnsetSymptomsDateBeforeReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedIsolationPaymentsApplication
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedTestOrdering
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.QrCodeCheckIn
@@ -28,12 +28,15 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolatio
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.UpdateNetworkStats
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedTestOrdering
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.Event
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DECLARED_NEGATIVE_RESULT_FROM_DCT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_ISOLATION_PAYMENTS_APPLICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_TEST_ORDERING
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
@@ -65,6 +68,11 @@ import uk.nhs.nhsx.covid19.android.app.state.StateStorage
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 
 class AnalyticsEventProcessorTest {
 
@@ -1132,12 +1140,44 @@ class AnalyticsEventProcessorTest {
 
     @Test
     fun `track acknowledgedStartOfIsolationDueToRiskyContact`() = runBlocking {
-        verifyTrackRegularAnalyticsEvent(AcknowledgedStartOfIsolationDueToRiskyContact, ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT)
+        verifyTrackRegularAnalyticsEvent(
+            AcknowledgedStartOfIsolationDueToRiskyContact,
+            ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT
+        )
     }
 
     @Test
     fun `track totalRiskyContactReminderNotifications`() = runBlocking {
         verifyTrackRegularAnalyticsEvent(RiskyContactReminderNotification, RISKY_CONTACT_REMINDER_NOTIFICATION)
+    }
+
+    @Test
+    fun `track declaredNegativeResultFromDct`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(DeclaredNegativeResultFromDct, DECLARED_NEGATIVE_RESULT_FROM_DCT)
+    }
+
+    @Test
+    fun `track didHaveSymptomsBeforeReceivedTestResult`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            DidHaveSymptomsBeforeReceivedTestResult,
+            DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT
+        )
+    }
+
+    @Test
+    fun `track didRememberOnsetSymptomsDateBeforeReceivedTestResult`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            DidRememberOnsetSymptomsDateBeforeReceivedTestResult,
+            DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT
+        )
+    }
+
+    @Test
+    fun `track didAskForSymptomsOnPositiveTestEntry`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            DidAskForSymptomsOnPositiveTestEntry,
+            DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY
+        )
     }
 
     private suspend fun verifyTrackRegularAnalyticsEvent(event: AnalyticsEvent, eventType: RegularAnalyticsEventType) {

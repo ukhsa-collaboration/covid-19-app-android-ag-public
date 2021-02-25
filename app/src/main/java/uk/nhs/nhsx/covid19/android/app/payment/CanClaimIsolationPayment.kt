@@ -1,12 +1,12 @@
 package uk.nhs.nhsx.covid19.android.app.payment
 
+import java.time.Clock
+import java.time.LocalDate
+import javax.inject.Inject
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.testBelongsToIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultHandler
-import java.time.Clock
-import java.time.LocalDate
-import javax.inject.Inject
 
 class CanClaimIsolationPayment @Inject constructor(
     private val stateMachine: IsolationStateMachine,

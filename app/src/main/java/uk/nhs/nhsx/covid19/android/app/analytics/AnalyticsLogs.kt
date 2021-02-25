@@ -9,6 +9,10 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ACKNO
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DECLARED_NEGATIVE_RESULT_FROM_DCT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_ISOLATION_PAYMENTS_APPLICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_TEST_ORDERING
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
@@ -69,6 +73,10 @@ private fun Metrics.updateRegularEvent(eventType: RegularAnalyticsEventType) {
         LAUNCHED_ISOLATION_PAYMENTS_APPLICATION -> launchedIsolationPaymentsApplication++
         LAUNCHED_TEST_ORDERING -> launchedTestOrdering++
         RECEIVED_UNCONFIRMED_POSITIVE_TEST_RESULT -> receivedUnconfirmedPositiveTestResult++
+        DECLARED_NEGATIVE_RESULT_FROM_DCT -> declaredNegativeResultFromDCT++
+        DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT -> didHaveSymptomsBeforeReceivedTestResult++
+        DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT -> didRememberOnsetSymptomsDateBeforeReceivedTestResult++
+        DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY -> didAskForSymptomsOnPositiveTestEntry++
     }
 }
 

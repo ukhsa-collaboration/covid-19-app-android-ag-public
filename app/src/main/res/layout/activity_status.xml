@@ -147,6 +147,16 @@
                     tools:visibility="visible" />
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
+                    android:id="@+id/optionLinkTestResult"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    app:optionExternalLink="false"
+                    app:optionIcon="@drawable/ic_link_test_result"
+                    app:optionIconBackgroundColor="@color/nhs_lighter_blue"
+                    app:optionText="@string/status_option_link_test_result" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
                     android:id="@+id/optionSettings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -165,16 +175,6 @@
                     app:optionIcon="@drawable/ic_info"
                     app:optionIconBackgroundColor="@color/style_teal"
                     app:optionText="@string/about_this_app_title" />
-
-                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
-                    android:id="@+id/optionLinkTestResult"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    app:optionExternalLink="false"
-                    app:optionIcon="@drawable/ic_link_test_result"
-                    app:optionIconBackgroundColor="@color/nhs_lighter_blue"
-                    app:optionText="@string/status_option_link_test_result" />
 
                 <LinearLayout
                     android:id="@+id/optionContactTracing"

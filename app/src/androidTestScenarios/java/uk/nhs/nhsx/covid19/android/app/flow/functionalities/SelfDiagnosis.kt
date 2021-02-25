@@ -1,14 +1,13 @@
 package uk.nhs.nhsx.covid19.android.app.flow.functionalities
 
-import kotlin.test.assertTrue
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QuestionnaireRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ReviewSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
+import kotlin.test.assertTrue
 
 class SelfDiagnosis(
     private val espressoTest: EspressoTest
@@ -17,15 +16,16 @@ class SelfDiagnosis(
     private val questionnaireRobot = QuestionnaireRobot()
     private val reviewSymptomsRobot = ReviewSymptomsRobot()
     private val symptomsAdviceIsolateRobot = SymptomsAdviceIsolateRobot()
-    private val testOrderingRobot = TestOrderingRobot()
-    private val browserRobot = BrowserRobot()
+    private val orderTest = OrderTest(espressoTest)
 
     private fun selfDiagnosePositive() {
         statusRobot.checkActivityIsDisplayed()
 
+        val isContactCase = (espressoTest.testAppContext.getCurrentState() as? Isolation)?.isContactCase() ?: false
+
         statusRobot.clickReportSymptoms()
 
-        questionnaireRobot.checkActivityIsDisplayed()
+        waitFor { questionnaireRobot.checkActivityIsDisplayed() }
 
         questionnaireRobot.selectSymptomsAtPositions(0, 1, 2)
 
@@ -37,7 +37,13 @@ class SelfDiagnosis(
 
         reviewSymptomsRobot.confirmSelection()
 
-        assertTrue { (espressoTest.testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
+        val newState = espressoTest.testAppContext.getCurrentState()
+        assertTrue(newState is Isolation)
+        if (isContactCase) {
+            assertTrue(newState.isBothCases())
+        } else {
+            assertTrue(newState.isIndexCaseOnly())
+        }
 
         symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
     }
@@ -47,19 +53,14 @@ class SelfDiagnosis(
         espressoTest.testAppContext.device.pressBack()
     }
 
-    fun selfDiagnosePositiveAndOrderTest() {
-        espressoTest.testAppContext.virologyTestingApi.pollingTestResultHttpStatusCode = 204
+    fun selfDiagnosePositiveAndOrderTest(receiveResultImmediately: Boolean) {
+        espressoTest.testAppContext.virologyTestingApi.pollingTestResultHttpStatusCode =
+            if (receiveResultImmediately) 200 else 204
 
         selfDiagnosePositive()
 
         symptomsAdviceIsolateRobot.clickBottomActionButton()
 
-        testOrderingRobot.checkActivityIsDisplayed()
-
-        testOrderingRobot.clickOrderTestButton()
-
-        espressoTest.waitFor { browserRobot.checkActivityIsDisplayed() }
-
-        browserRobot.clickCloseButton()
+        orderTest()
     }
 }

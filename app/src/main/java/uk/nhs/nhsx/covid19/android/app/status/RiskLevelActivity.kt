@@ -15,10 +15,13 @@ import kotlinx.android.synthetic.main.activity_risk_level.subtitleRiskLevel
 import kotlinx.android.synthetic.main.activity_risk_level.titleRiskLevel
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.R.drawable
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.AMBER
+import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.BLACK
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.GREEN
+import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.MAROON
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.NEUTRAL
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.RED
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.YELLOW
@@ -60,12 +63,14 @@ class RiskLevelActivity : BaseActivity(R.layout.activity_risk_level) {
     }
 
     private fun handleRiskLevel(risk: Risk) {
-        when (risk.riskIndicator.colorScheme) {
-            NEUTRAL -> imageRiskLevel.setImageResource(R.drawable.ic_map_risk_neutral)
-            GREEN -> imageRiskLevel.setImageResource(R.drawable.ic_map_risk_green)
-            YELLOW -> imageRiskLevel.setImageResource(R.drawable.ic_map_risk_yellow)
-            AMBER -> imageRiskLevel.setImageResource(R.drawable.ic_map_risk_amber)
-            RED -> imageRiskLevel.setImageResource(R.drawable.ic_map_risk_red)
+        when (risk.riskIndicator.colorSchemeV2 ?: risk.riskIndicator.colorScheme) {
+            NEUTRAL -> imageRiskLevel.setImageResource(drawable.ic_map_risk_neutral)
+            GREEN -> imageRiskLevel.setImageResource(drawable.ic_map_risk_green)
+            YELLOW -> imageRiskLevel.setImageResource(drawable.ic_map_risk_yellow)
+            AMBER -> imageRiskLevel.setImageResource(drawable.ic_map_risk_amber)
+            RED -> imageRiskLevel.setImageResource(drawable.ic_map_risk_red)
+            MAROON -> imageRiskLevel.setImageResource(drawable.ic_map_risk_maroon)
+            BLACK -> imageRiskLevel.setImageResource(drawable.ic_map_risk_black)
         }
 
         buttonRiskLevelLink.text = risk.riskIndicator.linkTitle.translate()

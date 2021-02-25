@@ -2,6 +2,13 @@ package uk.nhs.nhsx.covid19.android.app.payment
 
 import io.mockk.every
 import io.mockk.mockk
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit.DAYS
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -10,13 +17,6 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultHandler
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
-import java.time.temporal.ChronoUnit.DAYS
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class CanClaimIsolationPaymentTest {
 

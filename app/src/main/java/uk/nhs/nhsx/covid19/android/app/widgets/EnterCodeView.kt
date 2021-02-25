@@ -47,10 +47,17 @@ class EnterCodeView @JvmOverloads constructor(
     }
 
     fun handleProgress() {
-        showNormalState()
+        showProgressState()
     }
 
-    private fun showNormalState() {
+    fun resetState() {
+        enterCodeErrorIndicator.invisible()
+        enterCodeErrorText.gone()
+        enterCodeEditText.setBackgroundResource(drawable.edit_text_background)
+        enterCodeProgress.gone()
+    }
+
+    private fun showProgressState() {
         enterCodeErrorIndicator.invisible()
         enterCodeErrorText.gone()
         enterCodeEditText.setBackgroundResource(drawable.edit_text_background)

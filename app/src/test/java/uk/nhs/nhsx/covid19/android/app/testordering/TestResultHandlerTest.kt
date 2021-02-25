@@ -8,8 +8,8 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESUL
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.IGNORE
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OVERWRITE
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Ignore
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -208,10 +208,10 @@ class TestResultHandlerTest {
             relevantTestResultProvider
         )
 
-        testSubject.acknowledge(RECEIVED_POSITIVE_TEST_RESULT, testResultStorageOperation = IGNORE)
+        testSubject.acknowledge(RECEIVED_POSITIVE_TEST_RESULT, testResultStorageOperation = Ignore)
 
         verify { unacknowledgedTestResultsProvider.remove(RECEIVED_POSITIVE_TEST_RESULT) }
-        verify { relevantTestResultProvider.onTestResultAcknowledged(RECEIVED_POSITIVE_TEST_RESULT, testResultStorageOperation = IGNORE) }
+        verify { relevantTestResultProvider.onTestResultAcknowledged(RECEIVED_POSITIVE_TEST_RESULT, testResultStorageOperation = Ignore) }
     }
 
     @Test
@@ -223,10 +223,10 @@ class TestResultHandlerTest {
             relevantTestResultProvider
         )
 
-        testSubject.acknowledge(RECEIVED_NEGATIVE_TEST_RESULT, testResultStorageOperation = IGNORE)
+        testSubject.acknowledge(RECEIVED_NEGATIVE_TEST_RESULT, testResultStorageOperation = Ignore)
 
         verify { unacknowledgedTestResultsProvider.remove(RECEIVED_NEGATIVE_TEST_RESULT) }
-        verify { relevantTestResultProvider.onTestResultAcknowledged(RECEIVED_NEGATIVE_TEST_RESULT, testResultStorageOperation = IGNORE) }
+        verify { relevantTestResultProvider.onTestResultAcknowledged(RECEIVED_NEGATIVE_TEST_RESULT, testResultStorageOperation = Ignore) }
     }
 
     @Test
@@ -238,10 +238,10 @@ class TestResultHandlerTest {
             relevantTestResultProvider
         )
 
-        testSubject.acknowledge(RECEIVED_VOID_TEST_RESULT, testResultStorageOperation = OVERWRITE)
+        testSubject.acknowledge(RECEIVED_VOID_TEST_RESULT, testResultStorageOperation = Overwrite)
 
         verify { unacknowledgedTestResultsProvider.remove(RECEIVED_VOID_TEST_RESULT) }
-        verify { relevantTestResultProvider.onTestResultAcknowledged(RECEIVED_VOID_TEST_RESULT, testResultStorageOperation = OVERWRITE) }
+        verify { relevantTestResultProvider.onTestResultAcknowledged(RECEIVED_VOID_TEST_RESULT, testResultStorageOperation = Overwrite) }
     }
 
     @Test

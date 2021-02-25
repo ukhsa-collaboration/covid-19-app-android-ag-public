@@ -13,7 +13,7 @@ class QrCodeHelpActivityTest : EspressoTest() {
     @Test
     fun checkActivityIsDisplayed() = reporter(
         scenario = "Venue check-in",
-        title = "Help",
+        title = "Show More info",
         description = "During check-in or after a failed attempt to check-in the user can visit this screen to find help",
         kind = SCREEN
     ) {

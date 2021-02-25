@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_toolbar_primary" />
+
+    <ScrollView
+        android:id="@+id/linkTestResultScrollView"
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal_reduced"
+            android:paddingVertical="@dimen/vertical_margin">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                android:id="@+id/linkTestResultSymptomsTitle"
+                style="@style/Title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                android:text="@string/link_test_result_symptoms_title" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                android:id="@+id/linkTestResultSymptomsList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                app:rawText="@string/link_test_result_symptoms_list"
+                app:showBulletPoints="true" />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/linkTestResultSymptomsButtonYes"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                android:contentDescription="@string/link_test_result_symptoms_yes_accessibility"
+                android:text="@string/link_test_result_symptoms_yes" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/linkTestResultSymptomsButtonNo"
+                style="@style/TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                android:contentDescription="@string/link_test_result_symptoms_no_accessibility"
+                android:text="@string/link_test_result_symptoms_no" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -1,0 +1,65 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_onboarding_toolbar" />
+
+    <ScrollView
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingVertical="@dimen/vertical_margin_large">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                style="@style/Title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/cant_run_app" />
+
+            <TextView
+                style="@style/Title3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:text="@string/could_be_due_to_run_app" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                app:rawText="@string/device_not_supported_reasons"
+                app:showBulletPoints="true" />
+
+            <TextView
+                style="@style/Title3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:text="@string/device_not_supported_next_steps_title" />
+
+            <TextView
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/device_not_supported_next_steps_text" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                style="@style/LinkTextWithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/device_not_supported_next_steps_link_text"
+                app:linkUrl="@string/device_not_supported_next_steps_link_url" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -3,6 +3,11 @@ package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.squareup.moshi.Moshi.Builder
+import java.io.File
+import java.time.Instant
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import kotlin.test.fail
 import kotlinx.coroutines.runBlocking
 import org.json.JSONException
 import org.json.JSONObject
@@ -13,15 +18,17 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.state.StateJson
 import uk.nhs.nhsx.covid19.android.app.testhelpers.MockClock
+import uk.nhs.nhsx.covid19.android.app.util.AndroidStrongBoxSupport
+import uk.nhs.nhsx.covid19.android.app.util.EncryptedFileUtils
+import uk.nhs.nhsx.covid19.android.app.util.EncryptedSharedPreferencesUtils
 import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
+import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate
+import uk.nhs.nhsx.covid19.android.app.util.StrongBoxMigrationRetryChecker
+import uk.nhs.nhsx.covid19.android.app.util.StrongBoxMigrationRetryStorage
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
 import uk.nhs.nhsx.covid19.android.app.util.roundDownToNearestQuarter
 import uk.nhs.nhsx.covid19.android.app.util.roundUpToNearestQuarter
-import java.time.Instant
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
 @RunWith(AndroidJUnit4::class)
 class VisitedVenuesStorageIntegrationTest {
@@ -38,7 +45,22 @@ class VisitedVenuesStorageIntegrationTest {
     private val fromRounded = from.roundDownToNearestQuarter()
     private val clock = MockClock(currentInstant = from)
 
-    private val encryptedFileInfo = EncryptionUtils.createEncryptedFile(context, "venues")
+    private val encryptionUtils = EncryptionUtils(AndroidStrongBoxSupport)
+    private val encryptedFileUtils = EncryptedFileUtils(encryptionUtils)
+    private val encryptedSharedPreferencesUtils = EncryptedSharedPreferencesUtils(encryptionUtils)
+    private val encryptedFileInfo = encryptedFileUtils.createEncryptedFile(
+        context,
+        File(context.filesDir, "venues"),
+        StrongBoxMigrationRetryChecker(
+            StrongBoxMigrationRetryStorage(
+                encryptedSharedPreferencesUtils.createGenericEncryptedSharedPreferences(
+                    context,
+                    encryptionUtils.getDefaultMasterKey(),
+                    SharedPrefsDelegate.migrationSharedPreferencesFileName
+                )
+            )
+        )
+    )
     private val file = encryptedFileInfo.file
 
     private val testSubject = VisitedVenuesStorage(

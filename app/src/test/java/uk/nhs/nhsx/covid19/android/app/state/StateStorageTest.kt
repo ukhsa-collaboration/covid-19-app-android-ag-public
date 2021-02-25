@@ -134,7 +134,7 @@ class StateStorageTest {
         val parsedState = testSubject.state
 
         assertEquals(
-            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, notificationDate, expiryDate)),
+            Isolation(startDate, durationDays, contactCase = ContactCase(startDate, notificationDate, expiryDate, dailyContactTestingOptInDate)),
             parsedState
         )
     }
@@ -221,7 +221,7 @@ class StateStorageTest {
 
     @Test
     fun `test storing contact case`() {
-        testSubject.state = Isolation(startDate, durationDays, contactCase = ContactCase(startDate, notificationDate, expiryDate))
+        testSubject.state = Isolation(startDate, durationDays, contactCase = ContactCase(startDate, notificationDate, expiryDate, dailyContactTestingOptInDate))
 
         verify {
             statusStringStorage.prefsValue =
@@ -242,6 +242,7 @@ class StateStorageTest {
     companion object {
         private val startDate = Instant.parse("2020-05-21T10:00:00Z")
         private val expiryDate = LocalDate.of(2020, 7, 22)
+        private val dailyContactTestingOptInDate = LocalDate.of(2020, 7, 22)
         private val notificationDate = Instant.parse("2020-05-22T10:00:00Z")
         private val onsetDate = LocalDate.parse("2020-05-21")
 
@@ -268,7 +269,7 @@ class StateStorageTest {
         const val CONTACT_CASE_V3 =
             """{"type":"Isolation","isolationStart":"2020-05-21T10:00:00Z","expiryDate":"2020-06-11","contactCase":{"startDate":"2020-05-21T10:00:00Z","expiryDate":"2020-07-22"},"isolationConfiguration":{"contactCase":11,"indexCaseSinceSelfDiagnosisOnset":11,"indexCaseSinceSelfDiagnosisUnknownOnset":9,"maxIsolation":21,"pendingTasksRetentionPeriod":14},"version":3}"""
         const val CONTACT_CASE_V4 =
-            """{"type":"Isolation","isolationStart":"2020-05-21T10:00:00Z","expiryDate":"2020-06-11","contactCase":{"startDate":"2020-05-21T10:00:00Z","notificationDate":"2020-05-22T10:00:00Z","expiryDate":"2020-07-22"},"isolationConfiguration":{"contactCase":11,"indexCaseSinceSelfDiagnosisOnset":11,"indexCaseSinceSelfDiagnosisUnknownOnset":9,"maxIsolation":21,"pendingTasksRetentionPeriod":14,"indexCaseSinceTestResultEndDate":11},"version":4}"""
+            """{"type":"Isolation","isolationStart":"2020-05-21T10:00:00Z","expiryDate":"2020-06-11","contactCase":{"startDate":"2020-05-21T10:00:00Z","notificationDate":"2020-05-22T10:00:00Z","expiryDate":"2020-07-22","dailyContactTestingOptInDate":"2020-07-22"},"isolationConfiguration":{"contactCase":11,"indexCaseSinceSelfDiagnosisOnset":11,"indexCaseSinceSelfDiagnosisUnknownOnset":9,"maxIsolation":21,"pendingTasksRetentionPeriod":14,"indexCaseSinceTestResultEndDate":11},"version":4}"""
 
         const val INVALID_CASE =
             """{"type":"UnknownCase","testDate":1594733801229,"expiryDate":1595338601229,"version":1}"""

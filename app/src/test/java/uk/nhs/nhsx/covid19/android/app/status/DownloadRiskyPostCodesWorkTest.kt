@@ -46,6 +46,7 @@ class DownloadRiskyPostCodesWorkTest {
 
     private val lowRiskyPostCodeIndicator = RiskIndicator(
         colorScheme = ColorScheme.GREEN,
+        colorSchemeV2 = ColorScheme.GREEN,
         name = Translatable(mapOf("en" to "[postcode] is in local COVID area level: low")),
         heading = Translatable(mapOf("en" to "Heading low")),
         content = Translatable(
@@ -60,6 +61,7 @@ class DownloadRiskyPostCodesWorkTest {
 
     private val mediumRiskyPostCodeIndicator = RiskIndicator(
         colorScheme = ColorScheme.YELLOW,
+        colorSchemeV2 = ColorScheme.YELLOW,
         name = Translatable(mapOf("en" to "[postcode] is in local COVID area level: medium")),
         heading = Translatable(mapOf("en" to "Heading medium")),
         content = Translatable(
@@ -84,6 +86,7 @@ class DownloadRiskyPostCodesWorkTest {
 
     private val highRiskyPostCodeIndicator = RiskIndicator(
         colorScheme = ColorScheme.RED,
+        colorSchemeV2 = ColorScheme.RED,
         name = Translatable(mapOf("en" to "[postcode] is in local COVID area level: high")),
         heading = Translatable(mapOf("en" to "Heading high")),
         content = Translatable(

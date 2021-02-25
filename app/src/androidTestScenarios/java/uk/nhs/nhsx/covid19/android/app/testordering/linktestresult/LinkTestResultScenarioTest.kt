@@ -1,5 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 
+import com.jeroenmols.featureflag.framework.FeatureFlag.DAILY_CONTACT_TESTING
+import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_LFD_TOKEN
@@ -11,30 +14,48 @@ import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.P
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.UNEXPECTED_ERROR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.VOID_LFD_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.VOID_PCR_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.FLOW
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.report.reporter
+import uk.nhs.nhsx.covid19.android.app.state.State.Default
+import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.DailyContactTestingConfirmationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import java.time.Instant
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+import kotlin.test.assertTrue
 
 class LinkTestResultScenarioTest : EspressoTest() {
 
     private val statusRobot = StatusRobot()
     private val linkTestResultRobot = LinkTestResultRobot()
-    private val testResultRobot = TestResultRobot()
+    private val linkTestResultSymptomsRobot = LinkTestResultSymptomsRobot()
+    private val testResultRobot = TestResultRobot(testAppContext.app)
+    private val dailyContactTestingConfirmationRobot = DailyContactTestingConfirmationRobot()
 
     @Before
     fun setUp() {
+        FeatureFlagTestHelper.enableFeatureFlag(DAILY_CONTACT_TESTING)
         testAppContext.setLocalAuthority(ENGLISH_LOCAL_AUTHORITY)
     }
 
+    @After
+    fun tearDown() {
+        FeatureFlagTestHelper.clearFeatureFlags()
+    }
+
     @Test
-    fun userEntersCtaTokenForPcrPositiveTestResult_navigateToTestResultScreen() = reporter(
+    fun userEntersCtaTokenForPcrPositiveTestResult_noSymptoms_navigateToTestResultScreen() = reporter(
         scenario = "Enter test result",
         title = "Positive test result",
         description = "The user enters a CTA token and receives a positive test result",
@@ -58,6 +79,15 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.clickContinue()
 
+        waitFor { linkTestResultSymptomsRobot.checkActivityIsDisplayed() }
+
+        step(
+            stepName = "Symptoms",
+            stepDescription = "User is presented a screen where they can confirm symptoms"
+        )
+
+        linkTestResultSymptomsRobot.clickNo()
+
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
 
         step(
@@ -75,7 +105,9 @@ class LinkTestResultScenarioTest : EspressoTest() {
     ) {
         enterLinkTestResultFromStatusActivity()
 
-        linkTestResultRobot.checkActivityIsDisplayed()
+        waitFor { linkTestResultRobot.checkActivityIsDisplayed() }
+
+        linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
 
         linkTestResultRobot.enterCtaToken(NEGATIVE_PCR_TOKEN)
 
@@ -101,10 +133,11 @@ class LinkTestResultScenarioTest : EspressoTest() {
         description = "The user enters a CTA token and receives a void test result",
         kind = FLOW
     ) {
-
         enterLinkTestResultFromStatusActivity()
 
         linkTestResultRobot.checkActivityIsDisplayed()
+
+        linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
 
         linkTestResultRobot.enterCtaToken(VOID_PCR_TOKEN)
 
@@ -124,9 +157,31 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
+    fun userIsContactCaseOnly_entersCtaTokenForPcrPositiveTestResult_noSymptoms_navigateToTestResultScreen() = notReported {
+        testAppContext.setState(contactCaseOnlyIsolation)
+
+        enterLinkTestResultFromStatusActivity()
+
+        linkTestResultRobot.checkActivityIsDisplayed()
+
+        waitFor { linkTestResultRobot.checkDailyContactTestingContainerIsDisplayed() }
+
+        linkTestResultRobot.enterCtaToken(POSITIVE_PCR_TOKEN)
+
+        linkTestResultRobot.clickContinue()
+
+        waitFor { linkTestResultSymptomsRobot.checkActivityIsDisplayed() }
+
+        linkTestResultSymptomsRobot.clickNo()
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+    }
+
+    @Test
     fun userEntersCtaTokenForAssistedLfdPositiveTestResult_navigateToTestResultScreen() = notReported {
         enterLinkTestResultFromStatusActivity()
         linkTestResultRobot.checkActivityIsDisplayed()
+        linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
         linkTestResultRobot.enterCtaToken(POSITIVE_LFD_TOKEN)
         linkTestResultRobot.clickContinue()
 
@@ -137,6 +192,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     fun userEntersCtaTokenForUnassistedLfdPositiveTestResult_navigateToTestResultScreen() = notReported {
         enterLinkTestResultFromStatusActivity()
         linkTestResultRobot.checkActivityIsDisplayed()
+        linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
         linkTestResultRobot.enterCtaToken(POSITIVE_RAPID_SELF_REPORTED_TOKEN)
         linkTestResultRobot.clickContinue()
 
@@ -147,20 +203,22 @@ class LinkTestResultScenarioTest : EspressoTest() {
     fun userEntersCtaTokenForLfdNegativeTestResult_showErrorMessage() = notReported {
         enterLinkTestResultFromStatusActivity()
         linkTestResultRobot.checkActivityIsDisplayed()
+        linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
         linkTestResultRobot.enterCtaToken(NEGATIVE_LFD_TOKEN)
         linkTestResultRobot.clickContinue()
 
-        linkTestResultRobot.checkErrorUnexpectedIsDisplayed()
+        linkTestResultRobot.checkValidationErrorUnexpectedIsDisplayed()
     }
 
     @Test
     fun userEntersCtaTokenForLfdVoidTestResult_showErrorMessage() = notReported {
         enterLinkTestResultFromStatusActivity()
         linkTestResultRobot.checkActivityIsDisplayed()
+        linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
         linkTestResultRobot.enterCtaToken(VOID_LFD_TOKEN)
         linkTestResultRobot.clickContinue()
 
-        linkTestResultRobot.checkErrorUnexpectedIsDisplayed()
+        linkTestResultRobot.checkValidationErrorUnexpectedIsDisplayed()
     }
 
     @Test
@@ -169,11 +227,13 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.checkActivityIsDisplayed()
 
+        linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
+
         linkTestResultRobot.enterCtaToken("test")
 
         linkTestResultRobot.clickContinue()
 
-        linkTestResultRobot.checkErrorInvalidTokenIsDisplayed()
+        linkTestResultRobot.checkValidationErrorInvalidTokenIsDisplayed()
     }
 
     @Test
@@ -187,6 +247,8 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.checkActivityIsDisplayed()
 
+        linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
+
         linkTestResultRobot.enterCtaToken("aaaa-1337")
 
         step(
@@ -196,7 +258,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.clickContinue()
 
-        linkTestResultRobot.checkErrorInvalidTokenIsDisplayed()
+        linkTestResultRobot.checkValidationErrorInvalidTokenIsDisplayed()
 
         step(
             stepName = "Invalid code",
@@ -210,11 +272,13 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.checkActivityIsDisplayed()
 
+        linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
+
         linkTestResultRobot.enterCtaToken(NO_CONNECTION_TOKEN)
 
         linkTestResultRobot.clickContinue()
 
-        waitFor { linkTestResultRobot.checkErrorNoConnectionIsDisplayed() }
+        waitFor { linkTestResultRobot.checkValidationErrorNoConnectionIsDisplayed() }
     }
 
     @Test
@@ -223,12 +287,76 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         linkTestResultRobot.checkActivityIsDisplayed()
 
+        linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
+
         linkTestResultRobot.enterCtaToken(UNEXPECTED_ERROR_TOKEN)
 
         linkTestResultRobot.clickContinue()
 
-        waitFor { linkTestResultRobot.checkErrorUnexpectedIsDisplayed() }
+        waitFor { linkTestResultRobot.checkValidationErrorUnexpectedIsDisplayed() }
     }
+
+    @Test
+    fun userInContactCaseOnly_inLinkTestResultScreen_checkOptInToDailyContactTesting_confirmOptIn_transitionOutOfIsolation() =
+        reporter(
+            scenario = "Daily contact testing",
+            title = "Opt-in",
+            description = "User is in contact case only isolation and opts-in to daily contact testing.",
+            kind = FLOW
+        ) {
+            testAppContext.setState(contactCaseOnlyIsolation)
+
+            startTestActivity<StatusActivity>()
+
+            statusRobot.checkActivityIsDisplayed()
+
+            step(
+                stepName = "Contact case only isolation",
+                stepDescription = "The user is in contact case only isolation."
+            )
+
+            statusRobot.clickLinkTestResult()
+
+            linkTestResultRobot.checkActivityIsDisplayed()
+
+            waitFor { linkTestResultRobot.checkDailyContactTestingContainerIsDisplayed() }
+
+            linkTestResultRobot.selectDailyContactTestingOptIn()
+
+            step(
+                stepName = "Daily contact testing opt-in",
+                stepDescription = "The user navigates to the manual test code entry screen, selects to opt-in to daily contact testing and taps the 'Continue' button."
+            )
+
+            linkTestResultRobot.clickContinue()
+
+            dailyContactTestingConfirmationRobot.checkActivityIsDisplayed()
+
+            step(
+                stepName = "Daily contact testing confirmation",
+                stepDescription = "The user is presented with information about opting in to daily contact testing."
+            )
+
+            dailyContactTestingConfirmationRobot.clickConfirmOptInToOpenDialog()
+
+            waitFor { dailyContactTestingConfirmationRobot.checkDailyContactTestingOptInConfirmationDialogIsDisplayed() }
+
+            step(
+                stepName = "Confirmation dialog",
+                stepDescription = "The user is presented a confirmation dialog to opt-in to daily contact testing and proceeds with pressing 'Confirm'."
+            )
+
+            dailyContactTestingConfirmationRobot.clickDialogConfirmOptIn()
+
+            statusRobot.checkActivityIsDisplayed()
+
+            step(
+                stepName = "Opt-in complete",
+                stepDescription = "The user has opted in to daily contact testing and is released from isolation."
+            )
+
+            assertTrue { testAppContext.getCurrentState() is Default }
+        }
 
     private fun enterLinkTestResultFromStatusActivity() {
         startTestActivity<StatusActivity>()
@@ -237,4 +365,14 @@ class LinkTestResultScenarioTest : EspressoTest() {
 
         statusRobot.clickLinkTestResult()
     }
+
+    private val contactCaseOnlyIsolation = Isolation(
+        isolationStart = Instant.now().minus(2, ChronoUnit.DAYS),
+        isolationConfiguration = DurationDays(),
+        contactCase = ContactCase(
+            startDate = Instant.now().minus(2, ChronoUnit.DAYS),
+            notificationDate = null,
+            expiryDate = LocalDate.now().plusDays(12)
+        )
+    )
 }

@@ -9,7 +9,10 @@ import uk.nhs.nhsx.covid19.android.app.R
 class DeviceNotSupportedRobot {
 
     fun checkActivityIsDisplayed() {
-        onView(withText(R.string.unsupported_device))
+        onView(withText(R.string.cant_run_app))
+            .check(matches(isDisplayed()))
+
+        onView(withText(R.string.device_not_supported_next_steps_text))
             .check(matches(isDisplayed()))
     }
 }

@@ -53,6 +53,7 @@ class FieldAsserter {
         map.remove(Metrics::runningNormallyBackgroundTick)
         map.remove(Metrics::totalBackgroundTasks)
         map.remove(Metrics::hasRiskyContactNotificationsEnabledBackgroundTick)
+        map.remove(Metrics::totalRiskyContactReminderNotifications)
         return map
     }
 

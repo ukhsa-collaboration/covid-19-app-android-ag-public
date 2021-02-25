@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
-import kotlin.test.assertTrue
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.RiskyContact
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
@@ -8,6 +7,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import kotlin.test.assertTrue
 
 class IsolationReasonAnalyticsTest : AnalyticsTest() {
 
@@ -74,7 +74,7 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
 
         // Has risky contact on 2nd Jan
         // Isolation end date: 13th Jan
-        riskyContact.trigger(this::advanceToNextBackgroundTaskExecution)
+        riskyContact.triggerViaCircuitBreaker(this::advanceToNextBackgroundTaskExecution)
 
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
         assertOnFields {

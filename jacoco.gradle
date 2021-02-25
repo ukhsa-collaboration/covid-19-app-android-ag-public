@@ -118,7 +118,7 @@ project.afterEvaluate {
 
             def variantTestExecFolder = "${variantName}AndroidTest"
             executionData.from = fileTree(dir: project.buildDir, includes: [
-                    "outputs/code_coverage/${variantTestExecFolder}/connected/*coverage.ec"
+                    "outputs/code_coverage/${variantTestExecFolder}/connected/*.ec"
             ])
         }
 

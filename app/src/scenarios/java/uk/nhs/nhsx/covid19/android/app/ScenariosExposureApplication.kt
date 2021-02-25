@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app
 
 import android.content.Context
 import android.content.SharedPreferences
+import java.time.Clock
 import timber.log.Timber
 import uk.nhs.covid19.config.Configurations
 import uk.nhs.covid19.config.EnvironmentConfiguration
@@ -24,8 +25,7 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.AndroidBarcodeDetectorBuilder
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
-import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
-import java.time.Clock
+import uk.nhs.nhsx.covid19.android.app.di.module.ViewModelModule
 
 class ScenariosExposureApplication : ExposureApplication() {
 
@@ -80,13 +80,14 @@ class ScenariosExposureApplication : ExposureApplication() {
     private fun useRegularApplicationComponent(useMockExposureApi: Boolean) {
         buildAndUseAppComponent(
             NetworkModule(getConfiguration(), additionalInterceptors),
+            ViewModelModule(),
             getExposureNotificationApi(useMockExposureApi)
         )
     }
 
     private fun useMockApplicationComponent(useMockExposureApi: Boolean) {
-        val sharedPreferences = EncryptionUtils.createEncryptedSharedPreferences(this)
-        val encryptedFile = EncryptionUtils.createEncryptedFile(this, "venues")
+        val encryptedStorage = createEncryptedStorage()
+
         appComponent =
             DaggerMockApplicationComponent.builder()
                 .appModule(
@@ -95,8 +96,8 @@ class ScenariosExposureApplication : ExposureApplication() {
                         getExposureNotificationApi(useMockExposureApi),
                         AndroidBluetoothStateProvider(),
                         AndroidLocationStateProvider(),
-                        sharedPreferences,
-                        encryptedFile,
+                        encryptedStorage.sharedPreferences,
+                        encryptedStorage.encryptedFile,
                         qrCodesSignatureKey,
                         GooglePlayUpdateProvider(this),
                         AndroidBatteryOptimizationChecker(this),

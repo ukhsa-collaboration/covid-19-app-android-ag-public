@@ -192,6 +192,20 @@ class UserDataRobot {
             .check(matches(not(isDisplayed())))
     }
 
+    fun checkDailyContactTestingOptInDateIsDisplayed() {
+        onView(withId(R.id.titleDailyContactTestingOptIn))
+            .check(matches(isDisplayed()))
+        onView(withId(R.id.dailyContactTestingSection))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkDailyContactTestingOptInDateIsNotDisplayed() {
+        onView(withId(R.id.titleDailyContactTestingOptIn))
+            .check(matches(not(isDisplayed())))
+        onView(withId(R.id.dailyContactTestingSection))
+            .check(matches(not(isDisplayed())))
+    }
+
     fun checkSymptomsAreDisplayed() {
         onView(withId(R.id.titleSymptoms))
             .check(matches(isDisplayed()))

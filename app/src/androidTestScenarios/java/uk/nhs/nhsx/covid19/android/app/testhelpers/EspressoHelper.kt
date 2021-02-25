@@ -32,6 +32,9 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
 import androidx.test.uiautomator.UiDevice
+import com.jeroenmols.featureflag.framework.Feature
+import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import com.schibsted.spain.barista.internal.failurehandler.BaristaException
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.ignoreExceptionsMatching
@@ -58,7 +61,7 @@ fun getCurrentActivity(): Activity? {
     return currentActivity
 }
 
-fun assertBrowserIsOpened(url: String, block: () -> Unit) {
+fun assertBrowserIsOpened(url: String, action: () -> Unit) {
     runWithIntents {
         val expectedIntent = CoreMatchers.allOf(
             IntentMatchers.hasAction(Intent.ACTION_VIEW),
@@ -66,17 +69,31 @@ fun assertBrowserIsOpened(url: String, block: () -> Unit) {
         )
         Intents.intending(expectedIntent).respondWith(Instrumentation.ActivityResult(0, null))
 
-        block()
+        action()
         Intents.intended(expectedIntent)
     }
 }
 
-fun runWithIntents(block: () -> Unit) {
+fun runWithIntents(action: () -> Unit) {
     Intents.init()
     try {
-        block()
+        action()
     } finally {
         Intents.release()
+    }
+}
+
+fun runWithFeatureEnabled(feature: Feature, action: () -> Unit) {
+    val wasFeatureEnabledInitially = RuntimeBehavior.isFeatureEnabled(feature)
+    if (!wasFeatureEnabledInitially) {
+        FeatureFlagTestHelper.enableFeatureFlag(feature)
+    }
+    try {
+        action()
+    } finally {
+        if (!wasFeatureEnabledInitially) {
+            FeatureFlagTestHelper.disableFeatureFlag(feature)
+        }
     }
 }
 

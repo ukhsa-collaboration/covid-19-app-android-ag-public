@@ -1,20 +1,27 @@
 package uk.nhs.nhsx.covid19.android.app
 
+import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Point
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.ContextThemeWrapper
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
+import android.view.ViewParent
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Button
+import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import java.time.Instant
 import java.time.LocalDate
@@ -24,12 +31,15 @@ import kotlinx.android.synthetic.scenarios.activity_debug.environmentSpinner
 import kotlinx.android.synthetic.scenarios.activity_debug.exposureNotificationMocks
 import kotlinx.android.synthetic.scenarios.activity_debug.languageSpinner
 import kotlinx.android.synthetic.scenarios.activity_debug.mockSettings
-import kotlinx.android.synthetic.scenarios.activity_debug.mockSettingsDelay
-import kotlinx.android.synthetic.scenarios.activity_debug.mockSettingsResponseType
 import kotlinx.android.synthetic.scenarios.activity_debug.scenarioOnboarding
-import kotlinx.android.synthetic.scenarios.activity_debug.scenario_main
+import kotlinx.android.synthetic.scenarios.activity_debug.scenarioMain
+import kotlinx.android.synthetic.scenarios.activity_debug.scenarios
+import kotlinx.android.synthetic.scenarios.activity_debug.scenariosGroup
 import kotlinx.android.synthetic.scenarios.activity_debug.screenButtonContainer
+import kotlinx.android.synthetic.scenarios.activity_debug.screenFilter
 import kotlinx.android.synthetic.scenarios.activity_debug.statusScreen
+import kotlinx.android.synthetic.scenarios.activity_debug.titleScreens
+import kotlinx.android.synthetic.scenarios.activity_debug.titleScenarios
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.SupportedLanguage.DEFAULT
 import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
@@ -80,6 +90,8 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyIcon.MEETING_PEOPLE
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.scenariodialog.MockApiDialogFragment
+import uk.nhs.nhsx.covid19.android.app.scenariodialog.TestResultDialogFragment
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.settings.languages.LanguagesActivity
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
@@ -92,7 +104,10 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingProgressActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultOnsetDateActivity
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
+import java.time.temporal.ChronoUnit
 
 class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
@@ -121,6 +136,8 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         setupScenariosButtons()
 
         setupScreenButtons()
+
+        setupScreenFilter()
     }
 
     private fun setupEnvironmentSpinner() {
@@ -143,48 +160,27 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             ) {
                 debugSharedPreferences.edit().putInt(SELECTED_ENVIRONMENT, position).apply()
                 scenariosApp.updateDependencyGraph()
-                mockSettings.visibility =
-                    if (position == scenariosApp.mockEnvironmentIndex) View.VISIBLE
-                    else View.GONE
+                mockSettings.apply {
+                    visibility =
+                        if (position == scenariosApp.mockEnvironmentIndex) View.VISIBLE
+                        else View.GONE
+                    refreshMockSettingsLabel()
+                }
             }
         }
         setupMockBehaviour()
     }
 
-    private fun updateMockDelay() {
-        MockApiModule.behaviour.delayMillis = try {
-            mockSettingsDelay.text.toString().toLong()
-        } catch (e: NumberFormatException) {
-            MockApiModule.behaviour.delayMillis
-        }
+    @SuppressLint("SetTextI18n")
+    private fun refreshMockSettingsLabel() = with(MockApiModule.behaviour) {
+        mockSettings.text = "$responseType after ${delayMillis}ms"
     }
 
     private fun setupMockBehaviour() {
-        mockSettingsDelay.setText("${MockApiModule.behaviour.delayMillis}")
-        mockSettingsDelay.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
-                Unit
-
-            override fun afterTextChanged(s: Editable?) = Unit
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) =
-                updateMockDelay()
-        })
-
-        mockSettingsResponseType.apply {
-            adapter = MockApiResponseTypeAdapter(this@DebugActivity)
-            setSelection((adapter as MockApiResponseTypeAdapter).positionOf(MockApiModule.behaviour.responseType))
-            onItemSelectedListener = object : OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    MockApiModule.behaviour.responseType = MockApiResponseType.values()[position]
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-            }
+        mockSettings.setOnSingleClickListener {
+            MockApiDialogFragment {
+                refreshMockSettingsLabel()
+            }.show(supportFragmentManager, "MockApiDialogFragment")
         }
     }
 
@@ -234,7 +230,17 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
     }
 
     private fun setupScenariosButtons() {
-        scenario_main.setOnSingleClickListener {
+        titleScenarios.setOnSingleClickListener {
+            if (scenariosGroup.visibility == View.VISIBLE) {
+                scenariosGroup.visibility = View.GONE
+                titleScenarios.text = "Scenarios ..."
+            } else {
+                scenariosGroup.visibility = View.VISIBLE
+                titleScenarios.text = "Scenarios"
+            }
+        }
+
+        scenarioMain.setOnSingleClickListener {
             MainActivity.start(this)
         }
 
@@ -247,7 +253,34 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
     }
 
+    private fun setupScreenFilter() {
+        screenFilter.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
+
+            override fun afterTextChanged(s: Editable?) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                setupScreenButtons()
+                scenarios.scrollToChild(titleScreens)
+            }
+        })
+
+        screenFilter.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) scenarios.scrollToChild(titleScreens)
+        }
+
+        screenFilter.setOnEditorActionListener { _, actionId, event ->
+            if ((event.action == KeyEvent.ACTION_DOWN) && (actionId == KeyEvent.KEYCODE_ENTER)) {
+                (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                    .hideSoftInputFromWindow(screenFilter.windowToken, 0)
+                true
+            } else false
+        }
+    }
+
     private fun setupScreenButtons() {
+        screenButtonContainer.removeAllViews()
+
         addScreenButton("Isolation Payment") {
             startActivity<IsolationPaymentActivity>()
         }
@@ -324,7 +357,9 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
 
         addScreenButton("Test result") {
-            startActivity<TestResultActivity>()
+            TestResultDialogFragment {
+                startActivity<TestResultActivity>()
+            }.show(supportFragmentManager, "TestResultDialogFragment")
         }
 
         addScreenButton("Encounter detection") {
@@ -369,6 +404,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
         val riskIndicatorWithEmptyPolicyData = RiskIndicator(
             colorScheme = GREEN,
+            colorSchemeV2 = GREEN,
             name = Translatable(mapOf("en" to "Tier1 from post code")),
             heading = Translatable(mapOf("en" to "Data from the NHS shows that the spread of coronavirus in your area is low.")),
             content = Translatable(
@@ -452,6 +488,14 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             startActivity<LinkTestResultActivity>()
         }
 
+        addScreenButton("Link test result symptoms") {
+            startActivity(testResultSymptomsIntent)
+        }
+
+        addScreenButton("Link test result onset date") {
+            startActivity(testResultOnsetDateIntent)
+        }
+
         addScreenButton("Show all notifications") {
             val notifications = app.appComponent.provideNotificationProvider()
             notifications.showAppIsAvailable()
@@ -504,6 +548,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         title: String,
         action: () -> Unit
     ) {
+        if (!title.toLowerCase().contains(screenFilter.text.toString().toLowerCase())) return
         val button = Button(ContextThemeWrapper(this, R.style.PrimaryButton))
         button.text = title
         button.setOnSingleClickListener { action() }
@@ -541,6 +586,38 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
     }
 
+    private val testResultSymptomsIntent: Intent by lazy {
+        Intent(this, LinkTestResultSymptomsActivity::class.java).apply {
+            putExtra(
+                "EXTRA_TEST_RESULT",
+                ReceivedTestResult(
+                    diagnosisKeySubmissionToken = "token1",
+                    testEndDate = Instant.now().minus(1, ChronoUnit.DAYS),
+                    testResult = POSITIVE,
+                    testKitType = LAB_RESULT,
+                    diagnosisKeySubmissionSupported = true,
+                    requiresConfirmatoryTest = false
+                )
+            )
+        }
+    }
+
+    private val testResultOnsetDateIntent: Intent by lazy {
+        Intent(this, LinkTestResultOnsetDateActivity::class.java).apply {
+            putExtra(
+                "EXTRA_TEST_RESULT",
+                ReceivedTestResult(
+                    diagnosisKeySubmissionToken = "token1",
+                    testEndDate = Instant.now().minus(1, ChronoUnit.DAYS),
+                    testResult = POSITIVE,
+                    testKitType = LAB_RESULT,
+                    diagnosisKeySubmissionSupported = true,
+                    requiresConfirmatoryTest = false
+                )
+            )
+        }
+    }
+
     private fun getSubmitKeysIntent() =
         Intent(this, SubmitKeysProgressActivity::class.java).apply {
             putParcelableArrayListExtra(
@@ -565,6 +642,26 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
                 }
             )
         }
+    }
+
+    private fun ScrollView.scrollToChild(view: View) {
+        val childOffset = Point()
+        getDeepChildOffset(view.parent, view, childOffset)
+        smoothScrollTo(0, childOffset.y)
+    }
+
+    private fun ViewGroup.getDeepChildOffset(
+        parent: ViewParent,
+        child: View,
+        accumulatedOffset: Point
+    ) {
+        val parentGroup = parent as ViewGroup
+        accumulatedOffset.x += child.left
+        accumulatedOffset.y += child.top
+        if (parentGroup == this) {
+            return
+        }
+        getDeepChildOffset(parentGroup.parent, parentGroup, accumulatedOffset)
     }
 
     companion object {

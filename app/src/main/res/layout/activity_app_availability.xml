@@ -24,7 +24,6 @@
                 style="@style/Title1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/logoView"
                 tools:text="@string/cant_run_app" />
 
             <TextView
@@ -33,7 +32,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"
-                app:layout_constraintTop_toBottomOf="@+id/titleText"
                 tools:text="@string/could_be_due_to_run_app" />
 
             <TextView
@@ -42,8 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"
-                app:layout_constraintTop_toBottomOf="@+id/subTitle"
-                tools:text="@string/unsupported_device" />
+                tools:text="@string/device_not_supported_reasons" />
 
             <Button
                 android:id="@+id/goToPlayStore"

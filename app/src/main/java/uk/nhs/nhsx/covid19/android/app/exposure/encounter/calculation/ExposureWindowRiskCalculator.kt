@@ -9,6 +9,9 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ExposureWindowsM
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.remote.data.V2RiskCalculation
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
+import uk.nhs.nhsx.covid19.android.app.state.State.Default
+import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.riskscore.RiskScoreCalculatorConfiguration
 import java.time.Clock
 import java.time.Instant
@@ -24,20 +27,23 @@ class ExposureWindowRiskCalculator(
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val riskScoreCalculatorProvider: RiskScoreCalculatorProvider,
     private val analyticsEventProcessor: AnalyticsEventProcessor,
-    private val analyticsEventScope: CoroutineScope
+    private val analyticsEventScope: CoroutineScope,
+    private val isolationStateMachine: IsolationStateMachine,
 ) {
     @Inject
     constructor(
         clock: Clock,
         isolationConfigurationProvider: IsolationConfigurationProvider,
         riskScoreCalculatorProvider: RiskScoreCalculatorProvider,
-        analyticsEventProcessor: AnalyticsEventProcessor
+        analyticsEventProcessor: AnalyticsEventProcessor,
+        isolationStateMachine: IsolationStateMachine,
     ) : this(
         clock,
         isolationConfigurationProvider,
         riskScoreCalculatorProvider,
         analyticsEventProcessor,
-        analyticsEventScope = GlobalScope
+        analyticsEventScope = GlobalScope,
+        isolationStateMachine,
     )
 
     operator fun invoke(
@@ -60,13 +66,18 @@ class ExposureWindowRiskCalculator(
                 Timber.d("ExposureWindowWithRisk: $it isRecentExposure: ${it.isRecentExposure()}")
             }
             .also { listOfExposureWindowsWithRisk ->
-                val totalRisky = listOfExposureWindowsWithRisk.count { isAboveRiskThreshold(it, riskCalculation) && it.isRecentExposure() }
+                val totalRisky = listOfExposureWindowsWithRisk.count {
+                    isAboveRiskThreshold(
+                        it,
+                        riskCalculation
+                    ) && it.isRecentExposure() && it.isAfterPotentialDailyContactTestingOptIn()
+                }
                 val totalNonRisky = listOfExposureWindowsWithRisk.size - totalRisky
                 if (totalRisky > 0 || totalNonRisky > 0) {
                     trackExposureWindowAnalyticsEvent(totalRisky, totalNonRisky)
                 }
             }
-            .filter { it.isRecentExposure() }
+            .filter { it.isRecentExposure() && it.isAfterPotentialDailyContactTestingOptIn() }
             .also { listOfExposureWindowsWithRisk ->
                 logHighestRisk(
                     listOfExposureWindowsWithRisk.map { it.calculatedRisk },
@@ -127,6 +138,15 @@ class ExposureWindowRiskCalculator(
         return encounterDate()
             .isBefore(isolationPeriodAgo)
             .not()
+    }
+
+    private fun ExposureWindowWithRisk.isAfterPotentialDailyContactTestingOptIn(): Boolean {
+        return when (val isolationState = isolationStateMachine.readState()) {
+            is Default -> isolationState.previousIsolation?.contactCase?.dailyContactTestingOptInDate?.let { optInDate ->
+                this.startOfDayMillis >= optInDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+            } ?: true
+            is Isolation -> true
+        }
     }
 
     private fun isAboveRiskThreshold(

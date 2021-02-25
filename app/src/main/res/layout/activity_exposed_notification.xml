@@ -38,7 +38,7 @@
                 android:textAlignment="center" />
 
             <TextView
-                android:id="@+id/isolationDays"
+                android:id="@+id/remainingDaysInIsolation"
                 style="@style/Title1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

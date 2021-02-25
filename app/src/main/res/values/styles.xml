@@ -53,6 +53,7 @@
         <item name="android:drawableEnd">@drawable/ic_link</item>
         <item name="android:drawablePadding">8dp</item>
         <item name="android:gravity">center_vertical</item>
+        <item name="android:lineSpacingMultiplier">1.18</item>
     </style>
 
     <!-- Use for links that open in application  (to be used without a link out icon) -->

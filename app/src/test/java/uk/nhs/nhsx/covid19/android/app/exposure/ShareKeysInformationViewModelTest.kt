@@ -9,6 +9,10 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Rule
@@ -25,12 +29,9 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESUL
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
+import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitFakeExposureWindows
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
 
 class ShareKeysInformationViewModelTest {
 
@@ -43,6 +44,7 @@ class ShareKeysInformationViewModelTest {
     private val epidemiologyEventProvider = mockk<EpidemiologyEventProvider>(relaxed = true)
     private val submitEpidemiologyData = mockk<SubmitEpidemiologyData>(relaxed = true)
     private val submitFakeExposureWindows = mockk<SubmitFakeExposureWindows>(relaxed = true)
+    private val testResultIsolationHandler = mockk<TestResultIsolationHandler>(relaxed = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
     private val onsetDateBasedOnTestEndDate = LocalDate.parse("2020-05-18")
 
@@ -54,6 +56,7 @@ class ShareKeysInformationViewModelTest {
             epidemiologyEventProvider,
             submitEpidemiologyData,
             submitFakeExposureWindows,
+            testResultIsolationHandler,
             fixedClock
         )
 
@@ -72,6 +75,7 @@ class ShareKeysInformationViewModelTest {
 
     @Test
     fun `fetching keys returns list of exposure keys on success`() = runBlocking {
+        every { testResultIsolationHandler.symptomsOnsetDateFromTestResult(receivedTestResult) } returns onsetDateBasedOnTestEndDate
         coEvery { fetchTemporaryExposureKeys.invoke(onsetDateBasedOnTestEndDate) } returns Success(
             exposureKeys
         )
@@ -81,6 +85,7 @@ class ShareKeysInformationViewModelTest {
 
         testSubject.fetchKeys()
 
+        verify { testResultIsolationHandler.symptomsOnsetDateFromTestResult(receivedTestResult) }
         coVerify { fetchTemporaryExposureKeys.invoke(onsetDateBasedOnTestEndDate) }
         verify { fetchExposureKeysObserver.onChanged(Success(exposureKeys)) }
     }

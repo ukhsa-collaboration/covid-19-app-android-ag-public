@@ -23,27 +23,32 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler
+import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult
+import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.DoNotTransitionButStoreTestResult
+import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.TransitionAndStoreTestResult
 import uk.nhs.nhsx.covid19.android.app.state.hasConfirmedPositiveTestResult
 import uk.nhs.nhsx.covid19.android.app.state.hasPositiveTestResult
 import uk.nhs.nhsx.covid19.android.app.state.hasUnconfirmedPositiveTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.Ignore
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeNotInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeWillBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.NegativeWontBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveContinueIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveContinueIsolationNoChange
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveThenNegativeWillBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveWillBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveWillBeInIsolationAndOrderTest
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.PositiveWontBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidNotInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.MainState.VoidWillBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.NavigationEvent
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewModel.ViewState
+import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent
+import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.ViewState
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.Ignore
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeNotInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWillBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWontBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolationNoChange
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolationAndOrderTest
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWontBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidNotInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidWillBeInIsolation
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 
@@ -78,6 +83,16 @@ class TestResultViewModelTest {
         isolationConfiguration = DurationDays()
     )
 
+    private val isolationStateContactCaseOnly = Isolation(
+        isolationStart = symptomsOnsetDate.atStartOfDay(ZoneOffset.UTC).toInstant(),
+        isolationConfiguration = DurationDays(),
+        contactCase = ContactCase(
+            startDate = contactDate,
+            notificationDate = contactDate.plus(1, ChronoUnit.DAYS),
+            expiryDate = LocalDateTime.ofInstant(contactDate.plus(7, ChronoUnit.DAYS), ZoneOffset.UTC).toLocalDate()
+        )
+    )
+
     private val isolationStateIndexCaseOnly = Isolation(
         isolationStart = symptomsOnsetDate.atStartOfDay(ZoneOffset.UTC).toInstant(),
         isolationConfiguration = DurationDays(),
@@ -85,6 +100,16 @@ class TestResultViewModelTest {
             LocalDate.now(),
             expiryDate = symptomsOnsetDate.plus(7, ChronoUnit.DAYS),
             selfAssessment = false
+        )
+    )
+
+    private val isolationStateIndexCaseSymptomaticOnly = Isolation(
+        isolationStart = symptomsOnsetDate.atStartOfDay(ZoneOffset.UTC).toInstant(),
+        isolationConfiguration = DurationDays(),
+        indexCase = IndexCase(
+            LocalDate.now(),
+            expiryDate = symptomsOnsetDate.plus(7, ChronoUnit.DAYS),
+            selfAssessment = true
         )
     )
 
@@ -148,7 +173,13 @@ class TestResultViewModelTest {
             setPreviousTestConfirmed(RelevantVirologyTestResult.POSITIVE)
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
             every { stateMachine.readState() } returns isolationState
-            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, positiveTestResult) } returns isolationState
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResult(
+                    isolationState,
+                    positiveTestResult
+                )
+            } returns
+                DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
@@ -168,7 +199,13 @@ class TestResultViewModelTest {
             )
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResultIndicative)
             every { stateMachine.readState() } returns isolationState
-            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, positiveTestResultIndicative) } returns isolationState
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResult(
+                    isolationState,
+                    positiveTestResultIndicative
+                )
+            } returns
+                DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
@@ -185,7 +222,13 @@ class TestResultViewModelTest {
             setPreviousTestConfirmed(RelevantVirologyTestResult.POSITIVE)
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResultIndicative)
             every { stateMachine.readState() } returns isolationState
-            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, positiveTestResultIndicative) } returns isolationState
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResult(
+                    isolationState,
+                    positiveTestResultIndicative
+                )
+            } returns
+                DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
@@ -204,11 +247,11 @@ class TestResultViewModelTest {
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
             every { stateMachine.readState() } returns defaultWithPreviousIsolationIndexCaseOnly
             every {
-                testResultIsolationHandler.computeNextStateWithTestResult(
+                testResultIsolationHandler.computeTransitionWithTestResult(
                     defaultWithPreviousIsolationIndexCaseOnly,
                     positiveTestResult
                 )
-            } returns defaultWithPreviousIsolationIndexCaseOnly
+            } returns DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
@@ -227,11 +270,11 @@ class TestResultViewModelTest {
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResultIndicative)
             every { stateMachine.readState() } returns defaultWithPreviousIsolationIndexCaseOnly
             every {
-                testResultIsolationHandler.computeNextStateWithTestResult(
+                testResultIsolationHandler.computeTransitionWithTestResult(
                     defaultWithPreviousIsolationIndexCaseOnly,
                     positiveTestResultIndicative
                 )
-            } returns defaultWithPreviousIsolationIndexCaseOnly
+            } returns DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
@@ -250,7 +293,8 @@ class TestResultViewModelTest {
             setNoPreviousTest()
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
             every { stateMachine.readState() } returns state
-            every { testResultIsolationHandler.computeNextStateWithTestResult(state, negativeTestResult) } returns state
+            every { testResultIsolationHandler.computeTransitionWithTestResult(state, negativeTestResult) } returns
+                DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
@@ -263,8 +307,14 @@ class TestResultViewModelTest {
         runBlocking {
             setNoPreviousTest()
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
-            every { stateMachine.readState() } returns isolationState
-            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, negativeTestResult) } returns isolationState
+            every { stateMachine.readState() } returns isolationStateContactCaseOnly
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResult(
+                    isolationStateContactCaseOnly,
+                    negativeTestResult
+                )
+            } returns
+                DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
@@ -278,8 +328,16 @@ class TestResultViewModelTest {
             setNoPreviousTest()
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
             every { stateMachine.readState() } returns isolationStateIndexCaseOnly
-            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationStateIndexCaseOnly, negativeTestResult) } returns
-                defaultWithPreviousIsolationIndexCaseOnly
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResult(
+                    isolationStateIndexCaseOnly,
+                    negativeTestResult
+                )
+            } returns
+                TransitionAndStoreTestResult(
+                    newState = defaultWithPreviousIsolationIndexCaseOnly,
+                    testResultStorageOperation = TestResultStorageOperation.Ignore
+                )
 
             testSubject.onCreate()
 
@@ -288,16 +346,42 @@ class TestResultViewModelTest {
 
     // Case D
     @Test
-    fun `relevant test result confirmed positive, unacknowledged negative and currently in isolation should return PositiveThenNegativeWillBeInIsolation`() =
+    fun `relevant test result confirmed positive, unacknowledged negative and currently in isolation should return NegativeAfterPositiveOrSymptomaticWillBeInIsolation`() =
         runBlocking {
             setPreviousTestConfirmed(RelevantVirologyTestResult.POSITIVE)
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
-            every { stateMachine.readState() } returns isolationState
-            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, negativeTestResult) } returns isolationState
+            every { stateMachine.readState() } returns isolationStateIndexCaseOnly
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResult(
+                    isolationStateIndexCaseOnly,
+                    negativeTestResult
+                )
+            } returns
+                DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
-            verify { viewStateObserver.onChanged(ViewState(PositiveThenNegativeWillBeInIsolation, 0)) }
+            verify { viewStateObserver.onChanged(ViewState(NegativeAfterPositiveOrSymptomaticWillBeInIsolation, 0)) }
+        }
+
+    // Case D
+    @Test
+    fun `symptomatic, unacknowledged negative and currently in isolation should return NegativeAfterPositiveOrSymptomaticWillBeInIsolation`() =
+        runBlocking {
+            setNoPreviousTest()
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
+            every { stateMachine.readState() } returns isolationStateIndexCaseSymptomaticOnly
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResult(
+                    isolationStateIndexCaseSymptomaticOnly,
+                    negativeTestResult
+                )
+            } returns
+                DoNotTransitionButStoreTestResult(TestResultStorageOperation.Overwrite)
+
+            testSubject.onCreate()
+
+            verify { viewStateObserver.onChanged(ViewState(NegativeAfterPositiveOrSymptomaticWillBeInIsolation, 0)) }
         }
 
     // Case A
@@ -307,7 +391,16 @@ class TestResultViewModelTest {
             setPreviousTestIndicativePositive()
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
             every { stateMachine.readState() } returns isolationState
-            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, negativeTestResult) } returns Default(previousIsolation = isolationState)
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResult(
+                    isolationState,
+                    negativeTestResult
+                )
+            } returns
+                TransitionAndStoreTestResult(
+                    newState = Default(previousIsolation = isolationState),
+                    testResultStorageOperation = TestResultStorageOperation.Ignore
+                )
 
             testSubject.onCreate()
 
@@ -322,7 +415,8 @@ class TestResultViewModelTest {
             setNoPreviousTest()
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
             every { stateMachine.readState() } returns state
-            every { testResultIsolationHandler.computeNextStateWithTestResult(state, voidTestResult) } returns state
+            every { testResultIsolationHandler.computeTransitionWithTestResult(state, voidTestResult) } returns
+                DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
@@ -336,7 +430,8 @@ class TestResultViewModelTest {
             setNoPreviousTest()
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
             every { stateMachine.readState() } returns isolationState
-            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, voidTestResult) } returns isolationState
+            every { testResultIsolationHandler.computeTransitionWithTestResult(isolationState, voidTestResult) } returns
+                DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
@@ -350,7 +445,8 @@ class TestResultViewModelTest {
             setPreviousTestConfirmed(RelevantVirologyTestResult.NEGATIVE)
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
             every { stateMachine.readState() } returns isolationState
-            every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, voidTestResult) } returns isolationState
+            every { testResultIsolationHandler.computeTransitionWithTestResult(isolationState, voidTestResult) } returns
+                DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
@@ -368,11 +464,11 @@ class TestResultViewModelTest {
             )
             every { stateMachine.readState() } returns defaultWithPreviousIsolationIndexCaseOnly
             every {
-                testResultIsolationHandler.computeNextStateWithTestResult(
+                testResultIsolationHandler.computeTransitionWithTestResult(
                     defaultWithPreviousIsolationIndexCaseOnly,
                     positiveTestResult
                 )
-            } returns defaultWithPreviousIsolationIndexCaseOnly
+            } returns DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
@@ -394,11 +490,11 @@ class TestResultViewModelTest {
             )
             every { stateMachine.readState() } returns defaultWithPreviousIsolationIndexCaseOnly
             every {
-                testResultIsolationHandler.computeNextStateWithTestResult(
+                testResultIsolationHandler.computeTransitionWithTestResult(
                     defaultWithPreviousIsolationIndexCaseOnly,
                     positiveTestResultIndicative
                 )
-            } returns defaultWithPreviousIsolationIndexCaseOnly
+            } returns DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
@@ -419,7 +515,11 @@ class TestResultViewModelTest {
                 positiveTestResult
             )
             every { stateMachine.readState() } returns state
-            every { testResultIsolationHandler.computeNextStateWithTestResult(state, positiveTestResult) } returns isolationStateIndexCaseOnly
+            every { testResultIsolationHandler.computeTransitionWithTestResult(state, positiveTestResult) } returns
+                TransitionAndStoreTestResult(
+                    newState = isolationStateIndexCaseOnly,
+                    testResultStorageOperation = TestResultStorageOperation.Ignore
+                )
 
             testSubject.onCreate()
 
@@ -440,8 +540,16 @@ class TestResultViewModelTest {
                 positiveTestResultIndicative
             )
             every { stateMachine.readState() } returns state
-            every { testResultIsolationHandler.computeNextStateWithTestResult(state, positiveTestResultIndicative) } returns
-                isolationStateIndexCaseOnly
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResult(
+                    state,
+                    positiveTestResultIndicative
+                )
+            } returns
+                TransitionAndStoreTestResult(
+                    newState = isolationStateIndexCaseOnly,
+                    testResultStorageOperation = TestResultStorageOperation.Ignore
+                )
 
             testSubject.onCreate()
 
@@ -463,11 +571,11 @@ class TestResultViewModelTest {
             )
             every { stateMachine.readState() } returns defaultWithPreviousIsolationIndexCaseOnly
             every {
-                testResultIsolationHandler.computeNextStateWithTestResult(
+                testResultIsolationHandler.computeTransitionWithTestResult(
                     defaultWithPreviousIsolationIndexCaseOnly,
                     positiveTestResult
                 )
-            } returns defaultWithPreviousIsolationIndexCaseOnly
+            } returns DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
@@ -489,11 +597,11 @@ class TestResultViewModelTest {
             )
             every { stateMachine.readState() } returns defaultWithPreviousIsolationIndexCaseOnly
             every {
-                testResultIsolationHandler.computeNextStateWithTestResult(
+                testResultIsolationHandler.computeTransitionWithTestResult(
                     defaultWithPreviousIsolationIndexCaseOnly,
                     positiveTestResultIndicative
                 )
-            } returns defaultWithPreviousIsolationIndexCaseOnly
+            } returns DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
@@ -515,8 +623,11 @@ class TestResultViewModelTest {
                 positiveTestResult
             )
             every { stateMachine.readState() } returns state
-            every { testResultIsolationHandler.computeNextStateWithTestResult(state, positiveTestResult) } returns
-                isolationStateIndexCaseOnly
+            every { testResultIsolationHandler.computeTransitionWithTestResult(state, positiveTestResult) } returns
+                TransitionAndStoreTestResult(
+                    newState = isolationStateIndexCaseOnly,
+                    testResultStorageOperation = TestResultStorageOperation.Ignore
+                )
 
             testSubject.onCreate()
 
@@ -537,8 +648,16 @@ class TestResultViewModelTest {
                 positiveTestResultIndicative
             )
             every { stateMachine.readState() } returns state
-            every { testResultIsolationHandler.computeNextStateWithTestResult(state, positiveTestResultIndicative) } returns
-                isolationStateIndexCaseOnly
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResult(
+                    state,
+                    positiveTestResultIndicative
+                )
+            } returns
+                TransitionAndStoreTestResult(
+                    newState = isolationStateIndexCaseOnly,
+                    testResultStorageOperation = TestResultStorageOperation.Ignore
+                )
 
             testSubject.onCreate()
 
@@ -558,7 +677,13 @@ class TestResultViewModelTest {
             )
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(expiredPositiveTestResult)
             every { stateMachine.readState() } returns state
-            every { testResultIsolationHandler.computeNextStateWithTestResult(state, expiredPositiveTestResult) } returns state
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResult(
+                    state,
+                    expiredPositiveTestResult
+                )
+            } returns
+                DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
@@ -580,7 +705,13 @@ class TestResultViewModelTest {
             )
             every { unacknowledgedTestResultsProvider.testResults } returns listOf(expiredPositiveTestResult)
             every { stateMachine.readState() } returns state
-            every { testResultIsolationHandler.computeNextStateWithTestResult(state, expiredPositiveTestResult) } returns state
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResult(
+                    state,
+                    expiredPositiveTestResult
+                )
+            } returns
+                DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
             testSubject.onCreate()
 
@@ -597,7 +728,8 @@ class TestResultViewModelTest {
     fun `button click for negative test result should acknowledge test result and finish activity`() {
         every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
         every { stateMachine.readState() } returns isolationState
-        every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, negativeTestResult) } returns isolationState
+        every { testResultIsolationHandler.computeTransitionWithTestResult(isolationState, negativeTestResult) } returns
+            DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
         testSubject.onCreate()
 
@@ -614,7 +746,8 @@ class TestResultViewModelTest {
     fun `back press for negative test result should acknowledge test result`() {
         every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
         every { stateMachine.readState() } returns isolationState
-        every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, negativeTestResult) } returns isolationState
+        every { testResultIsolationHandler.computeTransitionWithTestResult(isolationState, negativeTestResult) } returns
+            DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
         testSubject.onCreate()
 
@@ -631,7 +764,8 @@ class TestResultViewModelTest {
     fun `button click for void test result should acknowledge test result and navigate to order test`() {
         every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
         every { stateMachine.readState() } returns isolationState
-        every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, voidTestResult) } returns isolationState
+        every { testResultIsolationHandler.computeTransitionWithTestResult(isolationState, voidTestResult) } returns
+            DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
         testSubject.onCreate()
 
@@ -648,7 +782,8 @@ class TestResultViewModelTest {
     fun `back press for void test result should acknowledge test result`() {
         every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
         every { stateMachine.readState() } returns isolationState
-        every { testResultIsolationHandler.computeNextStateWithTestResult(isolationState, voidTestResult) } returns isolationState
+        every { testResultIsolationHandler.computeTransitionWithTestResult(isolationState, voidTestResult) } returns
+            DoNotTransitionButStoreTestResult(TestResultStorageOperation.Ignore)
 
         testSubject.onCreate()
 
@@ -666,7 +801,11 @@ class TestResultViewModelTest {
         val state = Default()
         every { stateMachine.readState() } returns state
         every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
-        every { testResultIsolationHandler.computeNextStateWithTestResult(state, positiveTestResult) } returns isolationStateIndexCaseOnly
+        every { testResultIsolationHandler.computeTransitionWithTestResult(state, positiveTestResult) } returns
+            TransitionAndStoreTestResult(
+                newState = isolationStateIndexCaseOnly,
+                testResultStorageOperation = TestResultStorageOperation.Ignore
+            )
 
         testSubject.onCreate()
 
@@ -684,7 +823,11 @@ class TestResultViewModelTest {
         val state = Default()
         every { stateMachine.readState() } returns state
         every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
-        every { testResultIsolationHandler.computeNextStateWithTestResult(state, positiveTestResult) } returns isolationStateIndexCaseOnly
+        every { testResultIsolationHandler.computeTransitionWithTestResult(state, positiveTestResult) } returns
+            TransitionAndStoreTestResult(
+                newState = isolationStateIndexCaseOnly,
+                testResultStorageOperation = TestResultStorageOperation.Ignore
+            )
 
         testSubject.onCreate()
 
@@ -702,7 +845,16 @@ class TestResultViewModelTest {
         val state = Default()
         every { stateMachine.readState() } returns state
         every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResultIndicative)
-        every { testResultIsolationHandler.computeNextStateWithTestResult(state, positiveTestResultIndicative) } returns isolationStateIndexCaseOnly
+        every {
+            testResultIsolationHandler.computeTransitionWithTestResult(
+                state,
+                positiveTestResultIndicative
+            )
+        } returns
+            TransitionAndStoreTestResult(
+                newState = isolationStateIndexCaseOnly,
+                testResultStorageOperation = TestResultStorageOperation.Ignore
+            )
 
         testSubject.onCreate()
 
@@ -720,7 +872,16 @@ class TestResultViewModelTest {
         val state = Default()
         every { stateMachine.readState() } returns state
         every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResultIndicative)
-        every { testResultIsolationHandler.computeNextStateWithTestResult(state, positiveTestResultIndicative) } returns isolationStateIndexCaseOnly
+        every {
+            testResultIsolationHandler.computeTransitionWithTestResult(
+                state,
+                positiveTestResultIndicative
+            )
+        } returns
+            TransitionAndStoreTestResult(
+                newState = isolationStateIndexCaseOnly,
+                testResultStorageOperation = TestResultStorageOperation.Ignore
+            )
 
         testSubject.onCreate()
 
@@ -734,61 +895,139 @@ class TestResultViewModelTest {
     }
 
     @Test
-    fun `button click for confirmed positive test result when diagnosis key submission is not supported acknowledges test result and finishes activity`() = runBlocking {
-        val state = Default()
-        val testResult = positiveTestResult.copy(diagnosisKeySubmissionSupported = false)
-        every { stateMachine.readState() } returns state
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
-        every { testResultIsolationHandler.computeNextStateWithTestResult(state, testResult) } returns isolationStateIndexCaseOnly
+    fun `button click for confirmed positive test result when diagnosis key submission is not supported acknowledges test result and finishes activity`() =
+        runBlocking {
+            val state = Default()
+            val testResult = positiveTestResult.copy(diagnosisKeySubmissionSupported = false)
+            every { stateMachine.readState() } returns state
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
+            every { testResultIsolationHandler.computeTransitionWithTestResult(state, testResult) } returns
+                TransitionAndStoreTestResult(
+                    newState = isolationStateIndexCaseOnly,
+                    testResultStorageOperation = TestResultStorageOperation.Ignore
+                )
 
-        testSubject.onCreate()
+            testSubject.onCreate()
 
-        testSubject.onActionButtonClicked()
+            testSubject.onActionButtonClicked()
 
-        verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
-        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
-        coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+            verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
+            coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
+            coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
 
-        verify { navigationObserver.onChanged(NavigationEvent.Finish) }
-    }
-
-    @Test
-    fun `back press for confirmed positive test result when diagnosis key submission is not supported acknowledges test result`() = runBlocking {
-        val state = Default()
-        val testResult = positiveTestResult.copy(diagnosisKeySubmissionSupported = false)
-        every { stateMachine.readState() } returns state
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
-        every { testResultIsolationHandler.computeNextStateWithTestResult(state, testResult) } returns isolationStateIndexCaseOnly
-
-        testSubject.onCreate()
-
-        testSubject.onBackPressed()
-
-        verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
-        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
-        coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
-
-        verify(exactly = 0) { navigationObserver.onChanged(any()) }
-    }
+            verify { navigationObserver.onChanged(NavigationEvent.Finish) }
+        }
 
     @Test
-    fun `back press for indicative positive test result when diagnosis key submission is not supported acknowledges test result`() = runBlocking {
-        val state = Default()
-        val testResult = positiveTestResultIndicative.copy(diagnosisKeySubmissionSupported = false)
-        every { stateMachine.readState() } returns state
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
-        every { testResultIsolationHandler.computeNextStateWithTestResult(state, testResult) } returns isolationStateIndexCaseOnly
+    fun `button click for confirmed positive test result when diagnosis key submission is supported but prevented acknowledges test result and finishes activity`() =
+        runBlocking {
+            val state = Default()
+            val testResult = positiveTestResult
+            every { stateMachine.readState() } returns state
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
+            every { testResultIsolationHandler.computeTransitionWithTestResult(state, testResult) } returns
+                TransitionDueToTestResult.Ignore(preventKeySubmission = true)
 
-        testSubject.onCreate()
+            testSubject.onCreate()
 
-        testSubject.onBackPressed()
+            testSubject.onActionButtonClicked()
 
-        verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
-        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
-        coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+            verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
+            coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
+            coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
 
-        verify(exactly = 0) { navigationObserver.onChanged(any()) }
-    }
+            verify { navigationObserver.onChanged(NavigationEvent.Finish) }
+        }
+
+    @Test
+    fun `back press for confirmed positive test result when diagnosis key submission is not supported acknowledges test result`() =
+        runBlocking {
+            val state = Default()
+            val testResult = positiveTestResult.copy(diagnosisKeySubmissionSupported = false)
+            every { stateMachine.readState() } returns state
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
+            every { testResultIsolationHandler.computeTransitionWithTestResult(state, testResult) } returns
+                TransitionAndStoreTestResult(
+                    newState = isolationStateIndexCaseOnly,
+                    testResultStorageOperation = TestResultStorageOperation.Ignore
+                )
+
+            testSubject.onCreate()
+
+            testSubject.onBackPressed()
+
+            verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
+            coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
+            coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+
+            verify(exactly = 0) { navigationObserver.onChanged(any()) }
+        }
+
+    @Test
+    fun `back press for confirmed positive test result when diagnosis key submission is supported but prevented acknowledges test result`() =
+        runBlocking {
+            val state = Default()
+            val testResult = positiveTestResult
+            every { stateMachine.readState() } returns state
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
+            every { testResultIsolationHandler.computeTransitionWithTestResult(state, testResult) } returns
+                TransitionDueToTestResult.Ignore(preventKeySubmission = true)
+
+            testSubject.onCreate()
+
+            testSubject.onBackPressed()
+
+            verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
+            coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
+            coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+
+            verify(exactly = 0) { navigationObserver.onChanged(any()) }
+        }
+
+    @Test
+    fun `back press for indicative positive test result when diagnosis key submission is not supported acknowledges test result`() =
+        runBlocking {
+            val state = Default()
+            val testResult = positiveTestResultIndicative.copy(diagnosisKeySubmissionSupported = false)
+            every { stateMachine.readState() } returns state
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
+            every { testResultIsolationHandler.computeTransitionWithTestResult(state, testResult) } returns
+                TransitionAndStoreTestResult(
+                    newState = isolationStateIndexCaseOnly,
+                    testResultStorageOperation = TestResultStorageOperation.Ignore
+                )
+
+            testSubject.onCreate()
+
+            testSubject.onBackPressed()
+
+            verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
+            coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
+            coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+
+            verify(exactly = 0) { navigationObserver.onChanged(any()) }
+        }
+
+    @Test
+    fun `back press for indicative positive test result when diagnosis key submission is supported but prevented acknowledges test result`() =
+        runBlocking {
+            val state = Default()
+            val testResult = positiveTestResultIndicative.copy(diagnosisKeySubmissionSupported = false)
+            every { stateMachine.readState() } returns state
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
+            every { testResultIsolationHandler.computeTransitionWithTestResult(state, testResult) } returns
+                TransitionDueToTestResult.Ignore(preventKeySubmission = true)
+
+            testSubject.onCreate()
+
+            testSubject.onBackPressed()
+
+            verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
+            coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
+            coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+
+            verify(exactly = 0) { navigationObserver.onChanged(any()) }
+        }
 
     private fun setPreviousTestIndicativePositive(fromCurrentIsolation: Boolean = true) {
         mockkStatic("uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachineKt")
@@ -819,5 +1058,6 @@ class TestResultViewModelTest {
     companion object {
         val testEndDate = Instant.parse("2020-07-25T12:00:00Z")!!
         val symptomsOnsetDate = LocalDate.parse("2020-07-20")!!
+        val contactDate = Instant.parse("2020-07-19T01:00:00Z")!!
     }
 }

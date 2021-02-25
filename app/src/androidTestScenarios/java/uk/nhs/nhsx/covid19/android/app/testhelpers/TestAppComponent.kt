@@ -25,13 +25,16 @@ import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultHandler
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
 import javax.inject.Singleton
+import uk.nhs.nhsx.covid19.android.app.di.module.ViewModelModule
+import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingTokensProvider
 
 @Singleton
 @Component(
     modules = [
         AppModule::class,
         NetworkModule::class,
-        ManagedApiModule::class
+        ManagedApiModule::class,
+        ViewModelModule::class
     ]
 )
 interface TestAppComponent : ApplicationComponent {
@@ -49,6 +52,9 @@ interface TestAppComponent : ApplicationComponent {
 
     @Singleton
     fun getTestResultHandler(): TestResultHandler
+
+    @Singleton
+    fun getTestOrderingTokensProvider(): TestOrderingTokensProvider
 
     fun provideIsolationStateMachine(): IsolationStateMachine
 

@@ -22,64 +22,86 @@ class RiskLevelFlowTest : EspressoTest() {
     }
 
     @Test
-    fun riskLevelNeutralInStatusScreen_navigateToRiskLevelScreen() = reporter(
+    fun riskLevelNeutralLowInStatusScreen_navigateToRiskLevelScreen() = reporter(
         scenario = "Area risk level",
-        title = "Neutral risk",
-        description = "User enters home screen and realizes they are in a neutral risk area. They tap on it to get more information.",
+        title = "Neutral risk (low)",
+        description = "User enters home screen and realizes they are in a Neutral (low) risk area. They tap on it to get more information.",
         kind = FLOW
     ) {
-        riskLevelFlow("AL1", "neutral")
+        riskLevelFlow("AL1", "Neutral")
     }
 
     @Test
-    fun riskLevelLowInStatusScreen_navigateToRiskLevelScreen() = reporter(
+    fun riskLevelNeutralLowBasedOnLocalAuthority_startInStatusActivity_navigateToRiskLevelScreen() = reporter(
         scenario = "Area risk level",
-        title = "Low risk",
-        description = "User enters home screen and realizes they are in a low risk area. They tap on it to get more information.",
-        kind = FLOW
-    ) {
-        riskLevelFlow("AL2", "low")
-    }
-
-    @Test
-    fun riskLevelAmberInStatusScreen_navigateToRiskLevelScreen() = reporter(
-        scenario = "Area risk level",
-        title = "Amber risk",
-        description = "User enters home screen and realizes they are in a amber risk area. They tap on it to get more information.",
-        kind = FLOW
-    ) {
-        riskLevelFlow("AL4", "amber")
-    }
-
-    @Test
-    fun riskLevelMediumInStatusScreen_navigateToRiskLevelScreen() = reporter(
-        scenario = "Area risk level",
-        title = "Medium risk",
-        description = "User enters home screen and realizes they are in a medium risk area. They tap on it to get more information.",
-        kind = FLOW
-    ) {
-        riskLevelFlow("CM2", "medium")
-    }
-
-    @Test
-    fun riskLevelHighInStatusScreen_navigateToRiskLevelScreen() = reporter(
-        scenario = "Area risk level",
-        title = "High risk",
-        description = "User enters home screen and realizes they are in a high risk area. They tap on it to get more information.",
-        kind = FLOW
-    ) {
-        riskLevelFlow("CM1", "high")
-    }
-
-    @Test
-    fun riskLevelHighBasedOnLocalAuthority_startInStatusActivity_navigateToRiskLevelScreen() = reporter(
-        scenario = "Area risk level based on local authority",
-        title = "Neutral risk",
-        description = "User enters home screen and realizes they are in a neutral risk area. They tap on it to get more information.",
+        title = "Neutral risk (low) based on local authority",
+        description = "User enters home screen and realizes they are in a Neutral (low) risk area. They tap on it to get more information.",
         kind = FLOW
     ) {
         FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-        riskLevelFlow("AL1", "neutral", localAuthorityId = "E07000240")
+        riskLevelFlow("AL1", "Neutral", localAuthorityId = "E07000240")
+    }
+
+    @Test
+    fun riskLevelGreenLowInStatusScreen_navigateToRiskLevelScreen() = reporter(
+        scenario = "Area risk level",
+        title = "Green risk (low)",
+        description = "User enters home screen and realizes they are in a Green (low) risk area. They tap on it to get more information.",
+        kind = FLOW
+    ) {
+        riskLevelFlow("AL2", "Green")
+    }
+
+    @Test
+    fun riskLevelAmberMediumInStatusScreen_navigateToRiskLevelScreen() = reporter(
+        scenario = "Area risk level",
+        title = "Amber risk (medium)",
+        description = "User enters home screen and realizes they are in a Amber (medium) risk area. They tap on it to get more information.",
+        kind = FLOW
+    ) {
+        riskLevelFlow("AL4", "Amber")
+    }
+
+    @Test
+    fun riskLevelYellowMediumInStatusScreen_navigateToRiskLevelScreen() = reporter(
+        scenario = "Area risk level",
+        title = "Yellow risk (medium)",
+        description = "User enters home screen and realizes they are in a Yellow (medium) risk area. They tap on it to get more information.",
+        kind = FLOW
+    ) {
+        riskLevelFlow("CM2", "Yellow")
+    }
+
+    @Test
+    fun riskLevelRedHighInStatusScreen_navigateToRiskLevelScreen() = reporter(
+        scenario = "Area risk level",
+        title = "Red risk (high)",
+        description = "User enters home screen and realizes they are in a Red (high) risk area. They tap on it to get more information.",
+        kind = FLOW
+    ) {
+        riskLevelFlow("CM1", "Red")
+    }
+
+    @Test
+    fun riskLevelTierFourBasedOnLocalAuthority_startInStatusActivity_navigateToRiskLevelScreen() = reporter(
+        scenario = "Area risk level",
+        title = "Tier 4 risk (high) based on local authority",
+        description = "User enters home screen and realizes they are in a Tier 4 (high) risk area. They tap on it to get more information.",
+        kind = FLOW
+    ) {
+        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+        riskLevelFlow("SE1", "maroon", localAuthorityId = "E09000022")
+    }
+
+    @Test
+    fun riskLevelFiveBasedOnLocalAuthority_startInStatusActivity_navigateToRiskLevelScreen() = reporter(
+        scenario = "Area risk level",
+        title = "Tier 5 risk (very high) based on local authority",
+        description = "User enters home screen and realizes they are in a Tier 5 (very high) risk area. They tap on it to get more information.",
+        kind = FLOW
+    ) {
+        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+        riskLevelFlow("SE2", "black", localAuthorityId = "E09000004")
     }
 
     private fun Reporter.riskLevelFlow(postCode: String, riskLevel: String, localAuthorityId: String? = null) {

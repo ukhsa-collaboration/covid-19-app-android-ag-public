@@ -5,12 +5,12 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
-import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import java.lang.reflect.Type
 import java.time.Instant
 import javax.inject.Inject
+import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
+import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 
 @Suppress("DEPRECATION")
 @Deprecated("Not used anymore since 4.3. Use TestResultHandler/UnacknowledgedTestResultsProvider/RelevantTestResultProvider instead.")

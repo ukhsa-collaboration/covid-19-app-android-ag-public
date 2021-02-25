@@ -57,6 +57,18 @@ class RiskLevelRobot {
         )
     }
 
+    fun checkImageForTierFourRiskDisplayed() {
+        onView(withId(R.id.imageRiskLevel)).check(
+            matches(withDrawable(R.drawable.ic_map_risk_maroon))
+        )
+    }
+
+    fun checkImageForTierFiveRiskDisplayed() {
+        onView(withId(R.id.imageRiskLevel)).check(
+            matches(withDrawable(R.drawable.ic_map_risk_black))
+        )
+    }
+
     fun checkForFooter() {
         onView(withId(R.id.riskLevelFooter))
             .perform(ViewActions.scrollTo()).check(matches(isDisplayed()))

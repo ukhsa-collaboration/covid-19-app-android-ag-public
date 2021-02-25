@@ -108,7 +108,8 @@ sealed class StateJson {
     data class ContactCaseJson(
         val startDate: Instant,
         val notificationDate: Instant?,
-        val expiryDate: LocalDate?
+        val expiryDate: LocalDate?,
+        val dailyContactTestingOptInDate: LocalDate? = null,
     )
 
     @JsonClass(generateAdapter = true)
@@ -139,7 +140,9 @@ private fun State.toStateJson(): StateJson = when (this) {
         isolationStart,
         expiryDate,
         indexCase?.let { IndexCaseJson(it.symptomsOnsetDate, it.expiryDate, it.selfAssessment) },
-        contactCase?.let { ContactCaseJson(it.startDate, it.notificationDate, it.expiryDate) },
+        contactCase?.let {
+            ContactCaseJson(it.startDate, it.notificationDate, it.expiryDate, it.dailyContactTestingOptInDate)
+        },
         isolationConfiguration
     )
 }
@@ -194,7 +197,8 @@ private fun StateJson.toState(latestIsolationConfiguration: DurationDays): State
                         ContactCase(
                             it.startDate,
                             it.notificationDate,
-                            expiryDate
+                            expiryDate,
+                            it.dailyContactTestingOptInDate
                         )
                     }
                 )
@@ -214,7 +218,8 @@ private fun StateJson.toState(latestIsolationConfiguration: DurationDays): State
                         ContactCase(
                             it.startDate,
                             it.notificationDate,
-                            it.expiryDate ?: expiryDate
+                            it.expiryDate ?: expiryDate,
+                            it.dailyContactTestingOptInDate
                         )
                     }
                 )
@@ -234,7 +239,8 @@ private fun StateJson.toState(latestIsolationConfiguration: DurationDays): State
                         ContactCase(
                             it.startDate,
                             it.notificationDate,
-                            it.expiryDate ?: expiryDate
+                            it.expiryDate ?: expiryDate,
+                            it.dailyContactTestingOptInDate
                         )
                     }
                 )
@@ -254,7 +260,8 @@ private fun StateJson.toState(latestIsolationConfiguration: DurationDays): State
                         ContactCase(
                             it.startDate,
                             it.notificationDate,
-                            it.expiryDate ?: expiryDate
+                            it.expiryDate ?: expiryDate,
+                            it.dailyContactTestingOptInDate
                         )
                     }
                 )

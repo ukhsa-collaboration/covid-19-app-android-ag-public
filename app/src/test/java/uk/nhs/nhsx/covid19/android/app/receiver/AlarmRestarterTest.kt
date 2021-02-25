@@ -4,14 +4,14 @@ import android.content.Intent
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.Instant
+import java.time.LocalDate
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.FieldInjectionUnitTest
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
-import java.time.Instant
-import java.time.LocalDate
 
 class AlarmRestarterTest : FieldInjectionUnitTest() {
 

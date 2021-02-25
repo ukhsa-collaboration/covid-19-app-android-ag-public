@@ -35,7 +35,7 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
 
         // Has risky contact on 3nd Jan
         // Isolation end date: 14th Jan
-        riskyContact.trigger(this::advanceToNextBackgroundTaskExecution)
+        riskyContact.triggerViaCircuitBreaker(this::advanceToNextBackgroundTaskExecution)
         riskyContact.acknowledge()
 
         // Current date: 4th Jan -> Analytics packet for: 3rd Jan
@@ -51,10 +51,6 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
             assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
-            ignore(
-                // totalRiskyContactReminderNotifications is set based on AlarmManager and introduces flakiness
-                Metrics::totalRiskyContactReminderNotifications
-            )
         }
 
         // Dates: 5th-14th Jan -> Analytics packets for: 3rd-13th Jan

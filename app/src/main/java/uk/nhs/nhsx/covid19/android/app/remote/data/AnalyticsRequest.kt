@@ -75,5 +75,9 @@ data class Metrics(
     var totalExposureWindowsConsideredRisky: Int = 0,
     var acknowledgedStartOfIsolationDueToRiskyContact: Int = 0,
     var hasRiskyContactNotificationsEnabledBackgroundTick: Int = 0,
-    var totalRiskyContactReminderNotifications: Int = 0
+    var totalRiskyContactReminderNotifications: Int = 0,
+    var declaredNegativeResultFromDCT: Int = 0,
+    var didHaveSymptomsBeforeReceivedTestResult: Int = 0,
+    var didRememberOnsetSymptomsDateBeforeReceivedTestResult: Int = 0,
+    var didAskForSymptomsOnPositiveTestEntry: Int = 0,
 )

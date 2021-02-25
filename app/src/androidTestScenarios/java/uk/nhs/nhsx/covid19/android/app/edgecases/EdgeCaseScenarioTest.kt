@@ -81,7 +81,7 @@ class EdgeCaseScenarioTest : EspressoTest() {
     @Test
     fun openingHomeActivityWithBluetoothDisabledThenEnableBluetooth_shouldNavigateBackToHomeActivity() =
         reporter(
-            "Edge case",
+            "Edge cases",
             "Enable bluetooth from app",
             "When the user opens the app with Bluetooth disabled, a screen is shown that urges them to start Bluetooth.",
             Reporter.Kind.FLOW
@@ -145,7 +145,7 @@ class EdgeCaseScenarioTest : EspressoTest() {
     @Test
     fun openingHomeActivityWithLocationServicesDisabledThenEnableLocationServices_shouldNavigateBackToHomeActivity() =
         reporter(
-            "Edge case",
+            "Edge cases",
             "Enable location services from app",
             "When the user opens the app with location services disabled, a screen is shown that urges them to start location services.",
             Reporter.Kind.FLOW

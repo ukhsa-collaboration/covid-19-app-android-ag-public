@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.di
 
 import dagger.Component
-import javax.inject.Singleton
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
 import uk.nhs.nhsx.covid19.android.app.about.UserDataActivity
@@ -22,6 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityActivity
 import uk.nhs.nhsx.covid19.android.app.di.module.ApiModule
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
+import uk.nhs.nhsx.covid19.android.app.di.module.ViewModelModule
 import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationBroadcastReceiver
@@ -54,21 +54,27 @@ import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWorker
 import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusBaseActivity
+import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitKeysProgressActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingProgressActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.DailyContactTestingConfirmationActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultOnsetDateActivity
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.widgets.IsolationStatusView
 import uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
 import uk.nhs.nhsx.covid19.android.app.widgets.LogoView
+import javax.inject.Singleton
 
 @Singleton
 @Component(
     modules = [
         AppModule::class,
         NetworkModule::class,
-        ApiModule::class
+        ApiModule::class,
+        ViewModelModule::class
     ]
 )
 interface ApplicationComponent {
@@ -109,6 +115,8 @@ interface ApplicationComponent {
     fun inject(venueAlertActivity: VenueAlertActivity)
     fun inject(debugFragment: DebugFragment)
     fun inject(linkTestResultActivity: LinkTestResultActivity)
+    fun inject(linkTestResultActivity: LinkTestResultSymptomsActivity)
+    fun inject(linkTestResultActivity: LinkTestResultOnsetDateActivity)
     fun inject(updateRecommendedActivity: UpdateRecommendedActivity)
     fun inject(logoView: LogoView)
     fun inject(linkTextView: LinkTextView)
@@ -122,6 +130,9 @@ interface ApplicationComponent {
     fun inject(batteryOptimizationActivity: BatteryOptimizationActivity)
     fun inject(welcomeActivity: WelcomeActivity)
     fun inject(redirectToIsolationPaymentWebsiteActivity: RedirectToIsolationPaymentWebsiteActivity)
+    fun inject(dailyContactTestingConfirmationActivity: DailyContactTestingConfirmationActivity)
+
+    fun inject(testResultViewModel: BaseTestResultViewModel)
 
     fun provideAppAvailabilityListener(): AppAvailabilityListener
     fun providePeriodicTasks(): PeriodicTasks

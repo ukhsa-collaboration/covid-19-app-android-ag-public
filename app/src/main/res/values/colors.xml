@@ -47,14 +47,20 @@
     <color name="almost_white">#FAFAFA</color>
 
     <color name="risk_neutral_border">#33000000</color>
+    <color name="risk_maroon_border">#6F0C53</color>
+    <color name="risk_black_border">#000000</color>
     <color name="risk_green">#57B793</color>
     <color name="risk_yellow">#FFC029</color>
     <color name="risk_amber">#FF7E28</color>
     <color name="risk_red">#D5281B</color>
+    <color name="risk_maroon">#6A0A2C</color>
+    <color name="risk_black">#FFEB3B</color>
     <color name="risk_green_background">#E1FFF4</color>
     <color name="risk_yellow_background">#FFF5DD</color>
     <color name="risk_amber_background">#FFE2CE</color>
     <color name="risk_red_background">#F9E4E3</color>
+    <color name="risk_maroon_background">#E5D6E0</color>
+    <color name="risk_black_background">#000000</color>
 
     <color name="item_user_data_border">#DDDDDD</color>
 </resources>

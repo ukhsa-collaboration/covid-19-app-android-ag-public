@@ -6,7 +6,6 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.content.res.Resources
 import androidx.annotation.StringRes
@@ -20,12 +19,6 @@ import androidx.test.uiautomator.UiDevice
 import androidx.work.WorkManager
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.tinder.StateMachine
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.util.Locale
-import java.util.concurrent.atomic.AtomicReference
 import uk.nhs.covid19.config.Configurations
 import uk.nhs.covid19.config.SignatureKey
 import uk.nhs.nhsx.covid19.android.app.ExposureApplication
@@ -45,6 +38,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.MockAnalyticsApi
+import uk.nhs.nhsx.covid19.android.app.remote.MockEpidemiologyDataApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockIsolationPaymentApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockKeysSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockQuestionnaireApi
@@ -56,17 +50,27 @@ import uk.nhs.nhsx.covid19.android.app.state.Event
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect
 import uk.nhs.nhsx.covid19.android.app.state.State
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
-import uk.nhs.nhsx.covid19.android.app.util.EncryptedFileInfo
+import uk.nhs.nhsx.covid19.android.app.util.AndroidStrongBoxSupport
+import uk.nhs.nhsx.covid19.android.app.util.EncryptedSharedPreferencesUtils
+import uk.nhs.nhsx.covid19.android.app.util.EncryptedStorage
 import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
+import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
+import uk.nhs.nhsx.covid19.android.app.util.StrongBoxMigrationRetryChecker
+import uk.nhs.nhsx.covid19.android.app.util.StrongBoxMigrationRetryStorage
 import uk.nhs.nhsx.covid19.android.app.util.getPrivateProperty
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.util.Locale
+import java.util.concurrent.atomic.AtomicReference
 
 const val AWAIT_AT_MOST_SECONDS: Long = 10
 
 class TestApplicationContext {
 
     val app: ExposureApplication = ApplicationProvider.getApplicationContext()
-
     val riskyVenuesApi = MockRiskyVenuesApi()
 
     val virologyTestingApi = MockVirologyTestingApi()
@@ -87,6 +91,8 @@ class TestApplicationContext {
 
     val barcodeDetectorProvider = MockBarcodeDetectorBuilder()
 
+    val epidemiologyDataApi = MockEpidemiologyDataApi()
+
     val clock = MockClock()
 
     internal val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -99,18 +105,21 @@ class TestApplicationContext {
 
     private val batteryOptimizationChecker = TestBatteryOptimizationChecker()
 
-    private val sharedPreferences: SharedPreferences =
-        EncryptionUtils.createEncryptedSharedPreferences(
-            app,
-            EncryptionUtils.getDefaultMasterKey(),
-            "testEncryptedSharedPreferences"
-        )
-
-    private val encryptedFile: EncryptedFileInfo =
-        EncryptionUtils.createEncryptedFile(
-            app,
-            "venues"
-        )
+    private val encryptionUtils = EncryptionUtils(AndroidStrongBoxSupport)
+    private val encryptedSharedPreferencesUtils = EncryptedSharedPreferencesUtils(encryptionUtils)
+    private val encryptedStorage = EncryptedStorage.from(
+        app,
+        StrongBoxMigrationRetryChecker(
+            StrongBoxMigrationRetryStorage(
+                encryptedSharedPreferencesUtils.createGenericEncryptedSharedPreferences(
+                    app,
+                    encryptionUtils.getDefaultMasterKey(),
+                    SharedPrefsDelegate.migrationSharedPreferencesFileName
+                )
+            )
+        ),
+        encryptionUtils
+    )
 
     private val signatureKey = SignatureKey(
         id = "3",
@@ -130,8 +139,8 @@ class TestApplicationContext {
                 exposureNotificationApi,
                 bluetoothStateProvider,
                 locationStateProvider,
-                sharedPreferences,
-                encryptedFile,
+                encryptedStorage.sharedPreferences,
+                encryptedStorage.encryptedFile,
                 signatureKey,
                 updateManager,
                 batteryOptimizationChecker,
@@ -154,7 +163,8 @@ class TestApplicationContext {
                 questionnaireApi,
                 isolationPaymentApi,
                 keysSubmissionApi,
-                analyticsApi
+                analyticsApi,
+                epidemiologyDataApi
             )
         )
         .build()
@@ -171,7 +181,7 @@ class TestApplicationContext {
     fun reset() {
         WorkManager.getInstance(app).cancelAllWork()
 
-        sharedPreferences.edit { clear() }
+        encryptedStorage.sharedPreferences.edit { clear() }
 
         setExposureNotificationsEnabled(true)
         exposureNotificationApi.setDeviceSupportsLocationlessScanning(false)
@@ -224,6 +234,8 @@ class TestApplicationContext {
     fun getRelevantTestResultProvider() = component.getRelevantTestResultProvider()
 
     fun getTestResultHandler() = component.getTestResultHandler()
+
+    fun getTestOrderingTokensProvider() = component.getTestOrderingTokensProvider()
 
     fun setState(state: State) {
         val ref = component.provideIsolationStateMachine()

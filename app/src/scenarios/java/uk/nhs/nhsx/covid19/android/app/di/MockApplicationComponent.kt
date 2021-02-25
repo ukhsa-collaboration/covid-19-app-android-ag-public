@@ -6,5 +6,5 @@ import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AppModule::class, NetworkModule::class, MockApiModule::class])
+@Component(modules = [AppModule::class, NetworkModule::class, MockApiModule::class, MockViewModelModule::class])
 interface MockApplicationComponent : ApplicationComponent
