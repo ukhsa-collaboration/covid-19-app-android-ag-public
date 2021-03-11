@@ -1,9 +1,10 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
-import com.google.android.gms.nearby.exposurenotification.ExposureWindow
+import com.google.android.gms.nearby.exposurenotification.CalibrationConfidence
 import com.google.android.gms.nearby.exposurenotification.ExposureWindow.Builder
 import com.google.android.gms.nearby.exposurenotification.Infectiousness
 import com.google.android.gms.nearby.exposurenotification.ReportType
+import com.google.android.gms.nearby.exposurenotification.ScanInstance
 import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.coEvery
@@ -14,7 +15,10 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyContactNotification
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
 import uk.nhs.nhsx.covid19.android.app.common.SubmitEmptyData
@@ -24,6 +28,8 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.DayRisk
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEvent
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.ExposureWindowRiskManager
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.ExposureWindowWithRisk
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.RiskCalculationResult
 import uk.nhs.nhsx.covid19.android.app.payment.CheckIsolationPaymentToken
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.CIRCUIT_BREAKER
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW
@@ -50,6 +56,9 @@ class ExposureNotificationWorkTest {
     private val exposureCircuitBreakerInfoProvider = mockk<ExposureCircuitBreakerInfoProvider>(relaxed = true)
     private val exposureWindowRiskManager = mockk<ExposureWindowRiskManager>(relaxed = true)
     private val epidemiologyEventProvider = mockk<EpidemiologyEventProvider>(relaxed = true)
+    private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxed = true)
+    private val hasSuccessfullyProcessedNewExposureProvider =
+        mockk<HasSuccessfullyProcessedNewExposureProvider>(relaxUnitFun = true)
     private val clock = Clock.fixed(Instant.parse("2020-12-24T20:00:00Z"), ZoneOffset.UTC)
 
     private val testSubject = ExposureNotificationWork(
@@ -63,8 +72,15 @@ class ExposureNotificationWorkTest {
         exposureCircuitBreakerInfoProvider,
         exposureWindowRiskManager,
         epidemiologyEventProvider,
+        analyticsEventProcessor,
+        hasSuccessfullyProcessedNewExposureProvider,
         clock
     )
+
+    @Before
+    fun setUp() {
+        every { hasSuccessfullyProcessedNewExposureProvider.value } returns null
+    }
 
     @After
     fun tearDown() {
@@ -78,6 +94,7 @@ class ExposureNotificationWorkTest {
 
             verify { submitEmptyData(CIRCUIT_BREAKER) }
             verify(exactly = 1) { submitFakeExposureWindows(EXPOSURE_WINDOW) }
+            coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
 
             assertTrue { result is Success }
         }
@@ -91,6 +108,7 @@ class ExposureNotificationWorkTest {
         coVerify(exactly = 0) { handleInitialExposureNotification.invoke(any()) }
         coVerify(exactly = 0) { handlePollingExposureNotification.invoke(any()) }
         coVerify(exactly = 1) { checkIsolationPaymentToken.invoke() }
+        coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
 
         assertEquals(Success(Unit), result)
     }
@@ -109,6 +127,7 @@ class ExposureNotificationWorkTest {
                 handleInitialExposureNotification.invoke(infoWithoutToken)
                 stateMachine.processEvent(OnExposedNotification(Instant.ofEpochMilli(infoWithoutToken.startOfDayMillis)))
                 exposureCircuitBreakerInfoProvider.remove(infoWithoutToken)
+                analyticsEventProcessor.track(ReceivedRiskyContactNotification)
                 checkIsolationPaymentToken.invoke()
             }
 
@@ -130,6 +149,7 @@ class ExposureNotificationWorkTest {
                 exposureCircuitBreakerInfoProvider.remove(infoWithoutToken)
                 checkIsolationPaymentToken.invoke()
             }
+            coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
 
             assertEquals(Success(Unit), result)
         }
@@ -149,6 +169,7 @@ class ExposureNotificationWorkTest {
                 exposureCircuitBreakerInfoProvider.setApprovalToken(infoWithoutToken, "token")
                 checkIsolationPaymentToken.invoke()
             }
+            coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
 
             assertEquals(Success(Unit), result)
         }
@@ -165,6 +186,7 @@ class ExposureNotificationWorkTest {
                 handleInitialExposureNotification.invoke(infoWithoutToken)
                 checkIsolationPaymentToken.invoke()
             }
+            coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
 
             assertEquals(Success(Unit), result)
         }
@@ -183,6 +205,7 @@ class ExposureNotificationWorkTest {
                 handlePollingExposureNotification.invoke("token")
                 stateMachine.processEvent(OnExposedNotification(Instant.ofEpochMilli(infoWithToken.startOfDayMillis)))
                 exposureCircuitBreakerInfoProvider.remove(infoWithToken)
+                analyticsEventProcessor.track(ReceivedRiskyContactNotification)
                 checkIsolationPaymentToken.invoke()
             }
 
@@ -204,6 +227,7 @@ class ExposureNotificationWorkTest {
                 exposureCircuitBreakerInfoProvider.remove(infoWithToken)
                 checkIsolationPaymentToken.invoke()
             }
+            coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
 
             assertEquals(Success(Unit), result)
         }
@@ -222,6 +246,7 @@ class ExposureNotificationWorkTest {
                 handlePollingExposureNotification.invoke("token")
                 checkIsolationPaymentToken.invoke()
             }
+            coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
 
             assertEquals(Success(Unit), result)
         }
@@ -238,6 +263,7 @@ class ExposureNotificationWorkTest {
                 handlePollingExposureNotification.invoke("token")
                 checkIsolationPaymentToken.invoke()
             }
+            coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
 
             assertEquals(Success(Unit), result)
         }
@@ -259,10 +285,12 @@ class ExposureNotificationWorkTest {
                 handleInitialExposureNotification.invoke(infoWithoutToken)
                 stateMachine.processEvent(OnExposedNotification(Instant.ofEpochMilli(infoWithoutToken.startOfDayMillis)))
                 exposureCircuitBreakerInfoProvider.remove(infoWithoutToken)
+                analyticsEventProcessor.track(ReceivedRiskyContactNotification)
 
                 handlePollingExposureNotification.invoke("token")
                 stateMachine.processEvent(OnExposedNotification(Instant.ofEpochMilli(infoWithToken.startOfDayMillis)))
                 exposureCircuitBreakerInfoProvider.remove(infoWithToken)
+                analyticsEventProcessor.track(ReceivedRiskyContactNotification)
 
                 checkIsolationPaymentToken.invoke()
             }
@@ -273,12 +301,18 @@ class ExposureNotificationWorkTest {
     @Test
     fun `calling handleNewExposure with no risk should submit empty circuit breaker exposure windows`() =
         runBlocking {
-            coEvery { exposureWindowRiskManager.getRisk() } returns null
+            coEvery { exposureWindowRiskManager.getRisk() } returns RiskCalculationResult(
+                relevantRisk = null,
+                exposureWindowsWithRisk = listOf()
+            )
 
             val result = testSubject.handleNewExposure()
 
+            verify(exactly = 1) { hasSuccessfullyProcessedNewExposureProvider setProperty "value" value eq(false) }
             verify { submitEmptyData(CIRCUIT_BREAKER) }
             verify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW, numberOfExposureWindowsSent = 0) }
+            coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
+            verify(exactly = 1) { hasSuccessfullyProcessedNewExposureProvider setProperty "value" value eq(true) }
 
             assertEquals(Success(Unit), result)
         }
@@ -288,30 +322,35 @@ class ExposureNotificationWorkTest {
         runBlocking {
             FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.STORE_EXPOSURE_WINDOWS)
 
-            val dayRisk = DayRisk(
+            val relevantRisk = DayRisk(
                 123L,
                 10.0,
                 2,
-                1,
-                listOf(getExposureWindow())
+                1
             )
-            val expectedEpidemiologyEvents = getEpidemiologyEvents(dayRisk)
-            val expectedInfo = getExposureCircuitBreakerInfo(dayRisk)
+            val exposureWindowsWithRisk = getExposureWindowsWithRisk(7.0, 10.0)
 
-            coEvery { exposureWindowRiskManager.getRisk() } returns dayRisk
-            coEvery { handleInitialExposureNotification(expectedInfo) } returns Success(
-                InitialCircuitBreakerResult.Yes
+            val expectedEpidemiologyEvents = getEpidemiologyEvents(exposureWindowsWithRisk)
+            val expectedInfo = getExposureCircuitBreakerInfo(relevantRisk)
+
+            coEvery { exposureWindowRiskManager.getRisk() } returns RiskCalculationResult(
+                relevantRisk,
+                exposureWindowsWithRisk
             )
+            coEvery { handleInitialExposureNotification(expectedInfo) } returns Success(InitialCircuitBreakerResult.Yes)
 
             val result = testSubject.handleNewExposure()
 
             coVerifyOrder {
+                hasSuccessfullyProcessedNewExposureProvider setProperty "value" value eq(false)
                 exposureCircuitBreakerInfoProvider.add(expectedInfo)
+                hasSuccessfullyProcessedNewExposureProvider setProperty "value" value eq(true)
                 epidemiologyEventProvider.add(expectedEpidemiologyEvents)
                 submitEpidemiologyData.submit(expectedEpidemiologyEvents)
                 handleInitialExposureNotification(expectedInfo)
                 stateMachine.processEvent(OnExposedNotification(Instant.ofEpochMilli(expectedInfo.startOfDayMillis)))
                 exposureCircuitBreakerInfoProvider.remove(expectedInfo)
+                analyticsEventProcessor.track(ReceivedRiskyContactNotification)
                 checkIsolationPaymentToken.invoke()
             }
 
@@ -327,13 +366,16 @@ class ExposureNotificationWorkTest {
                 123L,
                 10.0,
                 2,
-                1,
-                listOf(getExposureWindow())
+                1
             )
-            val expectedEpidemiologyEvents = getEpidemiologyEvents(dayRisk)
+            val exposureWindowsWithRisk = getExposureWindowsWithRisk(8.0, 10.0)
+            val expectedEpidemiologyEvents = getEpidemiologyEvents(exposureWindowsWithRisk)
             val expectedInfo = getExposureCircuitBreakerInfo(dayRisk)
 
-            coEvery { exposureWindowRiskManager.getRisk() } returns dayRisk
+            coEvery { exposureWindowRiskManager.getRisk() } returns RiskCalculationResult(
+                dayRisk,
+                exposureWindowsWithRisk
+            )
             coEvery { handleInitialExposureNotification(expectedInfo) } returns Success(
                 InitialCircuitBreakerResult.Yes
             )
@@ -341,11 +383,14 @@ class ExposureNotificationWorkTest {
             val result = testSubject.handleNewExposure()
 
             coVerifyOrder {
+                hasSuccessfullyProcessedNewExposureProvider setProperty "value" value eq(false)
                 exposureCircuitBreakerInfoProvider.add(expectedInfo)
+                hasSuccessfullyProcessedNewExposureProvider setProperty "value" value eq(true)
                 submitEpidemiologyData.submit(expectedEpidemiologyEvents)
                 handleInitialExposureNotification(expectedInfo)
                 stateMachine.processEvent(OnExposedNotification(Instant.ofEpochMilli(expectedInfo.startOfDayMillis)))
                 exposureCircuitBreakerInfoProvider.remove(expectedInfo)
+                analyticsEventProcessor.track(ReceivedRiskyContactNotification)
                 checkIsolationPaymentToken.invoke()
             }
 
@@ -354,31 +399,67 @@ class ExposureNotificationWorkTest {
             assertEquals(Success(Unit), result)
         }
 
-    private fun getExposureWindow(): ExposureWindow =
-        Builder().apply {
-            setDateMillisSinceEpoch(123L)
-            setReportType(ReportType.CONFIRMED_TEST)
-            setInfectiousness(Infectiousness.HIGH)
-        }.build()
+    @Test
+    fun `calling handleNewExposure results in exception during risk score calculation`() =
+        runBlocking {
+            val expectedException = Exception()
 
-    private fun getEpidemiologyEvents(dayRisk: DayRisk): List<EpidemiologyEvent> =
-        dayRisk.exposureWindows.map {
+            coEvery { exposureWindowRiskManager.getRisk() } throws expectedException
+
+            val result = testSubject.handleNewExposure()
+
+            verify(exactly = 1) { hasSuccessfullyProcessedNewExposureProvider setProperty "value" value eq(false) }
+            verify(exactly = 0) { exposureCircuitBreakerInfoProvider.add(any()) }
+            verify(exactly = 0) { hasSuccessfullyProcessedNewExposureProvider setProperty "value" value eq(true) }
+
+            assertEquals(Failure(expectedException), result)
+        }
+
+    private fun getExposureWindowsWithRisk(vararg riskValues: Double): List<ExposureWindowWithRisk> {
+        return riskValues.map { risk ->
+            ExposureWindowWithRisk(
+                getExposureWindow(),
+                calculatedRisk = risk,
+                riskCalculationVersion = 2,
+                matchedKeyCount = 1
+            )
+        }
+    }
+
+    private fun getExposureWindow() =
+        Builder()
+            .setDateMillisSinceEpoch(123L)
+            .setReportType(ReportType.CONFIRMED_TEST)
+            .setInfectiousness(Infectiousness.HIGH)
+            .setCalibrationConfidence(CalibrationConfidence.HIGH)
+            .setScanInstances(
+                listOf(
+                    ScanInstance.Builder().setMinAttenuationDb(10)
+                        .setSecondsSinceLastScan(20)
+                        .setTypicalAttenuationDb(30)
+                        .build()
+                )
+            )
+            .build()
+
+    private fun getEpidemiologyEvents(exposureWindows: List<ExposureWindowWithRisk>): List<EpidemiologyEvent> =
+        exposureWindows.map {
             EpidemiologyEvent(
                 version = 1,
                 payload = EpidemiologyEventPayload(
-                    date = Instant.ofEpochMilli(dayRisk.startOfDayMillis),
+                    date = Instant.ofEpochMilli(it.startOfDayMillis),
                     infectiousness = uk.nhs.nhsx.covid19.android.app.remote.data.Infectiousness.fromInt(
-                        it.infectiousness
+                        it.exposureWindow.infectiousness
                     ),
-                    scanInstances = it.scanInstances.map { scanInstance ->
+                    scanInstances = it.exposureWindow.scanInstances.map { scanInstance ->
                         EpidemiologyEventPayloadScanInstance(
                             minimumAttenuation = scanInstance.minAttenuationDb,
                             secondsSinceLastScan = scanInstance.secondsSinceLastScan,
                             typicalAttenuation = scanInstance.typicalAttenuationDb
                         )
                     },
-                    riskScore = dayRisk.calculatedRisk,
-                    riskCalculationVersion = dayRisk.riskCalculationVersion
+                    riskScore = it.calculatedRisk,
+                    riskCalculationVersion = it.riskCalculationVersion
                 )
             )
         }

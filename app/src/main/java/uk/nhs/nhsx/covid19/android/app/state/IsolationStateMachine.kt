@@ -8,7 +8,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DeclaredNegativeResultFromDct
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyContactNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule.Companion.GLOBAL_SCOPE
@@ -174,9 +173,6 @@ sealed class SideEffect {
     object ClearAcknowledgedTestResult : SideEffect()
 }
 
-val State.canOrderTest
-    get() = if (this is Isolation) isIndexCase() else false
-
 val State.canReportSymptoms
     get() = if (this is Isolation) isContactCaseOnly() else true
 
@@ -258,8 +254,6 @@ class IsolationStateMachine @Inject constructor(
                     return@on dontTransition()
                 }
 
-                trackAnalyticsEvent(ReceivedRiskyContactNotification)
-
                 val contactCaseIsolationDays =
                     getConfigurationDurations().contactCase
                 val until = it.exposureDate.atZone(ZoneOffset.UTC).toLocalDate()
@@ -323,8 +317,6 @@ class IsolationStateMachine @Inject constructor(
                 if (!isInterestedInExposureNotifications()) {
                     dontTransition()
                 } else {
-                    trackAnalyticsEvent(ReceivedRiskyContactNotification)
-
                     val expiryDateBasedOnExposure = it.exposureDate.plus(
                         getConfigurationDurations().contactCase.toLong(),
                         ChronoUnit.DAYS

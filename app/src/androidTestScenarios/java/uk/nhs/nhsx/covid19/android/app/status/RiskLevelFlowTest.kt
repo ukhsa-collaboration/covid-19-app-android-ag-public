@@ -1,8 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
-import com.jeroenmols.featureflag.framework.FeatureFlag
-import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
-import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.report.Reporter
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.FLOW
@@ -15,11 +12,6 @@ class RiskLevelFlowTest : EspressoTest() {
 
     private val statusRobot = StatusRobot()
     private val riskLevelRobot = RiskLevelRobot()
-
-    @After
-    fun tearDown() {
-        FeatureFlagTestHelper.clearFeatureFlags()
-    }
 
     @Test
     fun riskLevelNeutralLowInStatusScreen_navigateToRiskLevelScreen() = reporter(
@@ -38,7 +30,6 @@ class RiskLevelFlowTest : EspressoTest() {
         description = "User enters home screen and realizes they are in a Neutral (low) risk area. They tap on it to get more information.",
         kind = FLOW
     ) {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
         riskLevelFlow("AL1", "Neutral", localAuthorityId = "E07000240")
     }
 
@@ -89,7 +80,6 @@ class RiskLevelFlowTest : EspressoTest() {
         description = "User enters home screen and realizes they are in a Tier 4 (high) risk area. They tap on it to get more information.",
         kind = FLOW
     ) {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
         riskLevelFlow("SE1", "maroon", localAuthorityId = "E09000022")
     }
 
@@ -100,7 +90,6 @@ class RiskLevelFlowTest : EspressoTest() {
         description = "User enters home screen and realizes they are in a Tier 5 (very high) risk area. They tap on it to get more information.",
         kind = FLOW
     ) {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
         riskLevelFlow("SE2", "black", localAuthorityId = "E09000004")
     }
 

@@ -6,6 +6,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.ExposureWindow
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.UpdateNetworkStats
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.TOTAL_ALARM_MANAGER_BACKGROUND_TASKS
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
@@ -20,6 +21,8 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSIT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CODE_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_ACTIVE_IPC_TOKEN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_CONTACT_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_VENUE_M1_WARNING
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_VENUE_M2_WARNING
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_UNCONFIRMED_POSITIVE_TEST_RESULT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RISKY_CONTACT_REMINDER_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_ISOLATION_PAYMENTS_BUTTON
@@ -38,8 +41,9 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.util.toInt
 
-fun List<AnalyticsLogEntry>.toMetrics(): Metrics {
+fun List<AnalyticsLogEntry>.toMetrics(missingSubmissionDays: Int): Metrics {
     return Metrics().apply {
+        updateMissingPacketsLast7Days(missingSubmissionDays)
         forEach { entry ->
             when (val log = entry.logItem) {
                 is Event -> updateRegularEvent(log.eventType)
@@ -53,6 +57,10 @@ fun List<AnalyticsLogEntry>.toMetrics(): Metrics {
             }
         }
     }
+}
+
+private fun Metrics.updateMissingPacketsLast7Days(missingSubmissionDays: Int) {
+    missingPacketsLast7Days = missingSubmissionDays
 }
 
 private fun Metrics.updateRegularEvent(eventType: RegularAnalyticsEventType) {
@@ -77,6 +85,9 @@ private fun Metrics.updateRegularEvent(eventType: RegularAnalyticsEventType) {
         DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT -> didHaveSymptomsBeforeReceivedTestResult++
         DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT -> didRememberOnsetSymptomsDateBeforeReceivedTestResult++
         DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY -> didAskForSymptomsOnPositiveTestEntry++
+        RECEIVED_RISKY_VENUE_M1_WARNING -> receivedRiskyVenueM1Warning++
+        RECEIVED_RISKY_VENUE_M2_WARNING -> receivedRiskyVenueM2Warning++
+        TOTAL_ALARM_MANAGER_BACKGROUND_TASKS -> totalAlarmManagerBackgroundTasks++
     }
 }
 
@@ -91,19 +102,24 @@ private fun Metrics.updateTestResults(
                 INSIDE_APP -> receivedVoidTestResultViaPolling++
                 OUTSIDE_APP -> receivedVoidTestResultEnteredManually++
             }
-            RAPID_RESULT, RAPID_SELF_REPORTED -> when (testOrderType) {
+            RAPID_RESULT -> when (testOrderType) {
                 INSIDE_APP -> receivedVoidLFDTestResultViaPolling++
                 OUTSIDE_APP -> receivedVoidLFDTestResultEnteredManually++
             }
+            RAPID_SELF_REPORTED -> {}
         }
         POSITIVE -> when (testKitType) {
             LAB_RESULT -> when (testOrderType) {
                 INSIDE_APP -> receivedPositiveTestResultViaPolling++
                 OUTSIDE_APP -> receivedPositiveTestResultEnteredManually++
             }
-            RAPID_RESULT, RAPID_SELF_REPORTED -> when (testOrderType) {
+            RAPID_RESULT -> when (testOrderType) {
                 INSIDE_APP -> receivedPositiveLFDTestResultViaPolling++
                 OUTSIDE_APP -> receivedPositiveLFDTestResultEnteredManually++
+            }
+            RAPID_SELF_REPORTED -> when (testOrderType) {
+                INSIDE_APP -> {}
+                OUTSIDE_APP -> receivedPositiveSelfRapidTestResultEnteredManually++
             }
         }
         NEGATIVE -> when (testKitType) {
@@ -111,10 +127,11 @@ private fun Metrics.updateTestResults(
                 INSIDE_APP -> receivedNegativeTestResultViaPolling++
                 OUTSIDE_APP -> receivedNegativeTestResultEnteredManually++
             }
-            RAPID_RESULT, RAPID_SELF_REPORTED -> when (testOrderType) {
+            RAPID_RESULT -> when (testOrderType) {
                 INSIDE_APP -> receivedNegativeLFDTestResultViaPolling++
                 OUTSIDE_APP -> receivedNegativeLFDTestResultEnteredManually++
             }
+            RAPID_SELF_REPORTED -> {}
         }
     }
 }
@@ -138,14 +155,17 @@ private fun Metrics.updateBackgroundTaskTicks(backgroundTaskTicks: BackgroundTas
     isIsolatingForSelfDiagnosedBackgroundTick += backgroundTaskTicks.isIsolatingForSelfDiagnosedBackgroundTick.toInt()
     isIsolatingForTestedPositiveBackgroundTick += backgroundTaskTicks.isIsolatingForTestedPositiveBackgroundTick.toInt()
     isIsolatingForTestedLFDPositiveBackgroundTick += backgroundTaskTicks.isIsolatingForTestedLFDPositiveBackgroundTick.toInt()
+    isIsolatingForTestedSelfRapidPositiveBackgroundTick += backgroundTaskTicks.isIsolatingForTestedSelfRapidPositiveBackgroundTick.toInt()
     isIsolatingForUnconfirmedTestBackgroundTick += backgroundTaskTicks.isIsolatingForUnconfirmedTestBackgroundTick.toInt()
     hasHadRiskyContactBackgroundTick += backgroundTaskTicks.hasHadRiskyContactBackgroundTick.toInt()
     hasRiskyContactNotificationsEnabledBackgroundTick += backgroundTaskTicks.hasRiskyContactNotificationsEnabledBackgroundTick.toInt()
     hasSelfDiagnosedBackgroundTick += backgroundTaskTicks.hasSelfDiagnosedBackgroundTick.toInt()
     hasTestedPositiveBackgroundTick += backgroundTaskTicks.hasTestedPositiveBackgroundTick.toInt()
     hasTestedLFDPositiveBackgroundTick += backgroundTaskTicks.hasTestedLFDPositiveBackgroundTick.toInt()
+    hasTestedSelfRapidPositiveBackgroundTick += backgroundTaskTicks.hasTestedSelfRapidPositiveBackgroundTick.toInt()
     encounterDetectionPausedBackgroundTick += backgroundTaskTicks.encounterDetectionPausedBackgroundTick.toInt()
     haveActiveIpcTokenBackgroundTick += backgroundTaskTicks.haveActiveIpcTokenBackgroundTick.toInt()
+    hasReceivedRiskyVenueM2WarningBackgroundTick += backgroundTaskTicks.hasReceivedRiskyVenueM2WarningBackgroundTick.toInt()
 }
 
 private infix fun Int?.plus(other: Int?): Int? =

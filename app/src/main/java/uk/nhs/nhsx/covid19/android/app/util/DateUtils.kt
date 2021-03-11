@@ -13,6 +13,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle.MEDIUM
@@ -81,6 +82,9 @@ fun LocalDate.isBeforeOrEqual(date: LocalDate) =
 fun LocalDate.isEqualOrAfter(date: LocalDate) =
     !this.isBefore(date)
 
+fun LocalDateTime.isEqualOrAfter(dateTime: LocalDateTime) =
+    !this.isBefore(dateTime)
+
 private enum class MinuteIntervals(val range: IntRange) {
     FIRST_QUARTER(0..14),
     SECOND_QUARTER(15..29),
@@ -121,6 +125,9 @@ fun Instant.getNextLocalMidnightTime(clock: Clock): Instant {
 
     return nextMidnight.toInstant()
 }
+
+fun Instant.toLocalDate(zoneId: ZoneId): LocalDate =
+    this.atZone(zoneId).toLocalDate()
 
 fun Instant.toISOSecondsFormat(): String =
     DateTimeFormatter.ISO_INSTANT.format(this.truncatedTo(ChronoUnit.SECONDS))

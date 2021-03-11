@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.lifecycle.observe
 import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_exposed_notification.isolationTitle
 import kotlinx.android.synthetic.main.activity_exposed_notification.remainingDaysInIsolation

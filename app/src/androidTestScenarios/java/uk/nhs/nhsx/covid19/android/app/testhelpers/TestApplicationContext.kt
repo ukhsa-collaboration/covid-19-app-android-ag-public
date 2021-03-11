@@ -107,7 +107,7 @@ class TestApplicationContext {
 
     private val encryptionUtils = EncryptionUtils(AndroidStrongBoxSupport)
     private val encryptedSharedPreferencesUtils = EncryptedSharedPreferencesUtils(encryptionUtils)
-    private val encryptedStorage = EncryptedStorage.from(
+    internal val encryptedStorage = EncryptedStorage.from(
         app,
         StrongBoxMigrationRetryChecker(
             StrongBoxMigrationRetryStorage(
@@ -181,7 +181,7 @@ class TestApplicationContext {
     fun reset() {
         WorkManager.getInstance(app).cancelAllWork()
 
-        encryptedStorage.sharedPreferences.edit { clear() }
+        encryptedStorage.sharedPreferences.edit(commit = true) { clear() }
 
         setExposureNotificationsEnabled(true)
         exposureNotificationApi.setDeviceSupportsLocationlessScanning(false)
@@ -226,6 +226,8 @@ class TestApplicationContext {
             IsolationPaymentTokenState.Unresolved
         }
     }
+
+    fun getAnalyticsSubmissionLogStorage() = component.getAnalyticsSubmissionLogStorage()
 
     fun getUserInbox() = component.getUserInbox()
 
@@ -309,6 +311,9 @@ class TestApplicationContext {
 
     fun getIsolationPaymentTokenStateProvider() =
         component.getIsolationPaymentTokenStateProvider()
+
+    fun getLastVisitedBookTestTypeVenueDateProvider() =
+        component.getLastVisitedBookTestTypeVenueDateProvider()
 
     companion object {
         const val ENGLISH_LOCAL_AUTHORITY = "E07000063"

@@ -8,8 +8,8 @@ import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.FAIL_SUCCEED_LOOP
 enum class MockApiResponseType { ALWAYS_FAIL, ALWAYS_SUCCEED, FAIL_SUCCEED_LOOP }
 
 class MockApiBehaviour {
-    var delayMillis: Long = 2000
-    var responseType: MockApiResponseType = ALWAYS_FAIL
+    var delayMillis: Long = 0
+    var responseType: MockApiResponseType = ALWAYS_SUCCEED
 
     private var previousSuccess = true
 

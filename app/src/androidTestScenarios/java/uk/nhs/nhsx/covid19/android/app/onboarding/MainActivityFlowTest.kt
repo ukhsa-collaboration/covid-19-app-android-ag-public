@@ -39,9 +39,7 @@ class MainActivityFlowTest : EspressoTest() {
     }
 
     @Test
-    fun startingAppWithOnboardingCompletedAndPolicyAcceptedWithLocalAuthorityFeatureFlagEnabled_shouldShowLocalAuthorityInformationScreen() = notReported {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-
+    fun startingAppWithOnboardingCompletedAndPolicyAccepted_shouldShowLocalAuthorityInformationScreen() = notReported {
         testAppContext.setOnboardingCompleted(true)
         testAppContext.setPolicyUpdateAccepted(true)
         testAppContext.setLocalAuthority(null)
@@ -52,63 +50,54 @@ class MainActivityFlowTest : EspressoTest() {
     }
 
     @Test
-    fun startingAppWithOnboardingCompletedAndPolicyAcceptedWithLocalAuthorityFeatureFlagDisabled_shouldShowStatusScreen() = notReported {
-        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+    fun startingAppWithOnboardingCompletedAndPolicyAcceptedWithBatteryOptimizationRequired_shouldBatteryOptimizationScreen() =
+        notReported {
+            FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.BATTERY_OPTIMIZATION)
 
-        testAppContext.setOnboardingCompleted(true)
-        testAppContext.setPolicyUpdateAccepted(true)
+            testAppContext.setOnboardingCompleted(true)
+            testAppContext.setPolicyUpdateAccepted(true)
+            testAppContext.setLocalAuthority("1")
 
-        startTestActivity<MainActivity>()
+            startTestActivity<MainActivity>()
 
-        waitFor { statusRobot.checkActivityIsDisplayed() }
-    }
-
-    @Test
-    fun startingAppWithOnboardingCompletedAndPolicyAcceptedWithLocalAuthorityFeatureFlagDisabledAndBatteryOptimizationRequired_shouldBatteryOptimizationScreen() = notReported {
-        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.BATTERY_OPTIMIZATION)
-
-        testAppContext.setOnboardingCompleted(true)
-        testAppContext.setPolicyUpdateAccepted(true)
-
-        startTestActivity<MainActivity>()
-
-        waitFor { batteryOptimizationRobot.checkActivityIsDisplayed() }
-    }
+            waitFor { batteryOptimizationRobot.checkActivityIsDisplayed() }
+        }
 
     @Test
-    fun startingAppWithOnboardingCompletedAndPolicyAcceptedWithLocalAuthoritySet_shouldShowStatusScreen() = notReported {
-        testAppContext.setOnboardingCompleted(true)
-        testAppContext.setPolicyUpdateAccepted(true)
-        testAppContext.setLocalAuthority("1")
+    fun startingAppWithOnboardingCompletedAndPolicyAcceptedWithLocalAuthoritySet_shouldShowStatusScreen() =
+        notReported {
+            testAppContext.setOnboardingCompleted(true)
+            testAppContext.setPolicyUpdateAccepted(true)
+            testAppContext.setLocalAuthority("1")
 
-        startTestActivity<MainActivity>()
+            startTestActivity<MainActivity>()
 
-        waitFor { statusRobot.checkActivityIsDisplayed() }
-    }
+            waitFor { statusRobot.checkActivityIsDisplayed() }
+        }
 
     @Test
-    fun startingAppWithOnboardingCompletedAndPolicyAcceptedWithLocalAuthorityMappingMissing_shouldCompleteFlow() = notReported {
-        testAppContext.setOnboardingCompleted(true)
-        testAppContext.setPolicyUpdateAccepted(true)
-        testAppContext.setPostCode("BE22")
+    fun startingAppWithOnboardingCompletedAndPolicyAcceptedWithLocalAuthorityMappingMissing_shouldCompleteFlow() =
+        notReported {
+            testAppContext.setOnboardingCompleted(true)
+            testAppContext.setPolicyUpdateAccepted(true)
+            testAppContext.setPostCode("BE22")
 
-        startTestActivity<MainActivity>()
+            startTestActivity<MainActivity>()
 
-        waitFor { postCodeRobot.checkActivityIsDisplayed() }
+            waitFor { postCodeRobot.checkActivityIsDisplayed() }
 
-        postCodeRobot.enterPostCode("N12")
+            postCodeRobot.enterPostCode("N12")
 
-        postCodeRobot.clickContinue()
+            postCodeRobot.clickContinue()
 
-        localAuthorityRobot.checkActivityIsDisplayed()
+            localAuthorityRobot.checkActivityIsDisplayed()
 
-        waitFor { localAuthorityRobot.checkSingleAuthorityIsDisplayed("N12", "Barnet") }
+            waitFor { localAuthorityRobot.checkSingleAuthorityIsDisplayed("N12", "Barnet") }
 
-        localAuthorityRobot.clickConfirm()
+            localAuthorityRobot.clickConfirm()
 
-        statusRobot.checkActivityIsDisplayed()
-    }
+            statusRobot.checkActivityIsDisplayed()
+        }
 
     @Test
     fun onPolicyUpdateScreen_userClicksContinueAndSeesStatusScreen() = notReported {

@@ -5,6 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_BOOT_COMPLETED
 import android.content.Intent.ACTION_MY_PACKAGE_REPLACED
+import com.jeroenmols.featureflag.framework.FeatureFlag.SUBMIT_ANALYTICS_VIA_ALARM_MANAGER
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
+import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalyticsAlarmController
 import java.time.Instant
 import javax.inject.Inject
 import uk.nhs.nhsx.covid19.android.app.appComponent
@@ -28,6 +31,9 @@ class AlarmRestarter : BroadcastReceiver() {
     lateinit var exposureNotificationReminderAlarmController: ExposureNotificationReminderAlarmController
 
     @Inject
+    lateinit var submitAnalyticsAlarmController: SubmitAnalyticsAlarmController
+
+    @Inject
     lateinit var resumeContactTracingNotificationTimeProvider: ResumeContactTracingNotificationTimeProvider
 
     @Inject
@@ -40,6 +46,9 @@ class AlarmRestarter : BroadcastReceiver() {
         if (action != ACTION_BOOT_COMPLETED && action != ACTION_MY_PACKAGE_REPLACED) return
 
         exposureNotificationRetryAlarmController.onDeviceRebooted()
+        if (RuntimeBehavior.isFeatureEnabled(SUBMIT_ANALYTICS_VIA_ALARM_MANAGER)) {
+            submitAnalyticsAlarmController.onDeviceRebooted()
+        }
 
         val expiryDate = when (val state = isolationStateMachine.readState()) {
             is Isolation -> state.expiryDate

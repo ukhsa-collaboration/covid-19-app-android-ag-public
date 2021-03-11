@@ -1,11 +1,13 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.RootMatchers.isDialog
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -14,17 +16,22 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
-import kotlinx.android.synthetic.main.activity_about_user_data.followUpTestContainer
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.not
 import org.hamcrest.core.AllOf.allOf
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.testhelpers.clickChildViewWithId
 import uk.nhs.nhsx.covid19.android.app.testhelpers.withViewAtPosition
 
 class UserDataRobot {
     fun checkActivityIsDisplayed() {
-        onView(withText(R.string.about_manage_my_data))
-            .check(matches(isDisplayed()))
+        onView(
+            Matchers.allOf(
+                Matchers.instanceOf(AppCompatTextView::class.java),
+                ViewMatchers.withParent(withId(R.id.toolbar))
+            )
+        ).check(matches(withText(R.string.about_manage_my_data)))
     }
 
     fun userClicksOnDeleteAllDataButton() {
@@ -43,6 +50,20 @@ class UserDataRobot {
 
     fun userClicksEditVenueVisits() {
         clickOn(R.id.editVenueVisits)
+    }
+
+    fun checkVisitIsDisplayedInRow(venueVisit: VenueVisit, position: Int) {
+        onView(withId(R.id.venueHistoryList))
+            .check(
+                matches(
+                    withViewAtPosition(
+                        position,
+                        hasDescendant(
+                            allOf(withId(R.id.textVenueId), withText(venueVisit.venue.id), isDisplayed())
+                        )
+                    )
+                )
+            )
     }
 
     fun userClicksEditPostalDistrict() {
@@ -151,6 +172,15 @@ class UserDataRobot {
             .check(matches(not(isDisplayed())))
         onView(withId(R.id.followUpTestContainer))
             .check(matches(not(isDisplayed())))
+    }
+
+    fun checkLastVisitedBookTestTypeVenueDateIsDisplayed(dateText: String) {
+        onView(withId(R.id.titleLastRiskyVenueVisit))
+            .check(matches(isDisplayed()))
+        onView(withId(R.id.lastRiskyVenueVisitSection))
+            .check(matches(isDisplayed()))
+        onView(withId(R.id.lastRiskyVenueVisitDate))
+            .check(matches(allOf(isDisplayed(), withText(dateText))))
     }
 
     fun checkExposureNotificationIsDisplayed() {

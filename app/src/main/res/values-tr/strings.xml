@@ -49,8 +49,8 @@
     <string name="qr_code_help_how_it_works_text">Bu uygulama, restoran veya barlar gibi ziyaret ettiğiniz yerlerde hızlı ve kolayca giriş yapabilmenize yardımcı olmak üzere resmi NHS QR kodlarını kullanmaktadır. Uygulamayı kullanmanız halinde, ziyaret ettiğiniz bir yerde virüse maruz kalma olasılığınızın olup olmadığını size bildirebiliriz.</string>
     <string name="qr_code_help_how_it_helps_title">Nasıl bir fayda sağlar?</string>
     <string name="qr_code_help_how_it_helps_text">Bu uygulama özelliği, işletmelerin temas takibini desteklemesini kolaylaştırır. Gizliliğinizi korurken hepimiz güvende tutar.</string>
-    <string name="venue_alert_title">Yakın zaman önce bir mekanı, koronavirüs (COVID-19) testi pozitif çıkan bazı kişilerle aynı gün içerisinde ziyaret ettiniz.</string>
-    <string name="venue_alert_explanation">Ziyaretiniz sırasında koronavirüsle enfekte olmuş olma riskiniz düşüktür. Sosyal mesafe konusundaki en son tavsiyelere uymaya devam etmelisiniz.\n\nKoronavirüs belirtileriniz varsa, derhal kendinizi karantinaya almalısınız. Bu, herhangi bir ziyaretçi kabul etmeden evde kalmanız gerektiği anlamına gelir. Uygulamada yer alan belirtilerinizi kontrol etme bölümünü kullanın ve tavsiye ediliyorsa ücretsiz bir test için rezervasyon yaptırın. Herhangi bir sorunuz varsa, 119\'u arayın. \n\nSadece koronavirüs belirtileriniz varsa bir test yaptırın.</string>
+    <string name="venue_alert_title">Yakın zaman önce, daha sonra yapılan koronavirüs (COVID-19) test sonuçları pozitif çıkan kişilerle aynı günde bir yeri ziyaret ettiniz</string>
+    <string name="venue_alert_explanation">Koronavirüse maruz kalmış olma riskiniz bulunmaktadır. Koronavirüsle enfekte olmuş her 3 kişiden 1\'i herhangi bir belirti göstermez, ancak yine de virüsü bulaştırabilir ve başkalarını riske atabilirler. Kendinizi karantinaya almanız gerekmemektedir, ancak sosyal mesafeyle ilgili en son yönergeleri daha fazla özen göstererek izlemelisiniz.\n\nBelirtileriniz varsa, kendinizi karantinaya almalı ve uygulamanın Belirtileri Kontrol Edin özelliğini kullanarak ücretsiz bir test için rezervasyon yaptırmalısınız. Sorularınız varsa 119\'u arayın.</string>
     <string name="notification_title_post_code_risk_changed">Bölgenizde bir değişiklik oldu</string>
     <string name="notification_title_test_results">Test sonuçlarınız hazır</string>
     <string name="select_symptoms">Belirtileri seç</string>
@@ -176,7 +176,7 @@
     <string name="something_went_wrong">Bir sorun yaşandı</string>
     <string name="test_ordering_failure_title">Bir sorun yaşandı</string>
     <string name="test_ordering_failure_description">Tekrar denemeden önce lütfen telefonunuzun mobil veri ayarlarının açık olduğunu teyit edin, Wi-Fi bağlantınızı kontrol edin (kullanıyorsanız) ve Uçak Modunun kapalı olduğundan emin olun.</string>
-    <string name="notification_title_risky_venue">Yakın zaman önce bir mekanı, koronavirüs (COVID-19) testi pozitif çıkan bazı kişilerle aynı gün içerisinde ziyaret ettiniz.</string>
+    <string name="notification_title_risky_venue">Yakın zaman önce, daha sonra yapılan koronavirüs (COVID-19) test sonuçları pozitif çıkan kişilerle aynı günde bir yeri ziyaret ettiniz</string>
     <string name="notification_text_post_code_risk_changed">Daha fazla ayrıntı için buraya dokunun.</string>
     <string name="status_area_risk_level">%s bölgesinde risk seviyesi: %s</string>
     <string name="notification_channel_area_risk_changed_name">Bölge risk seviyesinde değişiklik</string>
@@ -460,13 +460,24 @@
     <string name="unsupported_device">Ayarlarınızdaki bir kısıtlama (örneğin, bir şirket telefonu kullanıyorsanız).\n\nTelefonunuzdaki başka bir uygulamanın aynı teknolojiyi kullanması ve bu, uygulamanın çalışmasını durdurmakta.</string>
     <string name="user_data_daily_contact_testing_text">Teyitli katılım</string>
     <string name="user_data_daily_contact_testing_title">Günlük temas testi</string>
+    <string name="about_manage_my_data_settings_subtitle">Yerel yönetim, test sonuçları, yer geçmişi</string>
+    <string name="ill_do_it_later">Sonra yapacağım</string>
     <string name="link_test_result_daily_contact_testing_description">Günlük temas test programınıza bir pozitif test sonucu bildirdiyseniz, elinize geçen kodu yukarıdaki kutucuğa girin ve kendinizi karantinaya alın\n\nGünlük testinizin sonucu negatif çıktıysa, elinize uygulamaya girmek için bir kod geçmeyecektir. Sonucunuzun negatif olduğunu bize söylemeli ve programa devam etmelisiniz.</string>
     <string name="link_test_result_daily_contact_testing_description_list_header">Buna ek olarak:</string>
-    <string name="link_test_result_error_both_inputs_provided">You cannot both enter a code and have a negative result from daily contact testing.</string>
-    <string name="link_test_result_error_neither_input_provided">You need to enter a code or tell us you have a negative result from daily contact testing.</string>
+    <string name="link_test_result_error_both_inputs_provided">Hem bir test sonuç kodu girip hem de negatif bir test sonucunuzun olduğunu aynı zamanda teyit edemezsiniz.</string>
+    <string name="link_test_result_error_neither_input_provided">Ya bir kod girmeli ya da günlük temas testinden negatif test sonucu aldığınızı bize söylemelisiniz.</string>
     <string name="link_test_result_onset_date_title">Bu belirtileri ilk olarak ne zaman yaşamaya başladığınızı hatırlıyor musunuz?</string>
     <string name="link_test_result_symptoms_list">Yüksek sıcaklık (ateş)\n\nYeni ortaya çıkan ve geçmeyen öksürük\n\nKoku ya da tat alma duyunuzda bir değişiklik</string>
     <string name="link_test_result_symptoms_no">Hayır</string>
-    <string name="link_test_result_symptoms_yes">Evet</string>
+    <string name="link_test_result_symptoms_no_accessibility">Bu belirtilerden herhangi biri bende yok</string>
     <string name="link_test_result_symptoms_title">Aşağıda belirtilen herhangi bir koronavirüs belirtisini yaşadınız mı?</string>
+    <string name="link_test_result_symptoms_yes">Evet</string>
+    <string name="link_test_result_symptoms_yes_accessibility">Yes, I have symptoms.</string>
+    <string name="risk_level_mass_testing_link_text">Bir test noktası bulun</string>
+    <string name="risk_level_mass_testing_link_url">https://maps.test-and-trace.nhs.uk/</string>
+    <string name="risk_level_mass_testing_text">Yakınınızda hangi test noktalarının bulunduğunu ve rezervasyon yaptırmanız gerekip gerekmediğini öğrenin.</string>
+    <string name="risk_level_mass_testing_title">Yakınınızdaki test noktaları</string>
+    <string name="venue_alert_m2_explanation">Koronavirüse maruz kalmış olma riskiniz bulunmaktadır. Koronavirüsle enfekte olmuş her 3 kişiden 1\'i herhangi bir belirti göstermez, ancak yine de virüsü bulaştırabilir ve başkalarını riske atabilirler. Bu sebeple, lütfen şimdi bir test yaptırın.\n\nKendinizi karantinaya almanız gerekmemektedir, ancak sosyal mesafeyle ilgili en son yönergeleri izlemeye devam etmeli ve aşağıdaki bağlantıyı ziyaret ederek bir koronavirüs testi için rezervasyon yaptırmalısınız.\n\nTestinizin sonucu pozitif çıkarsa veya herhangi bir belirti ortaya çıkarsa, kendinizi hemen karantinaya almalısınız. Sorularınız varsa 119\'u arayabilirsiniz.</string>
+    <string name="venue_alert_m2_title">Yakın zaman önce koronavirüs (COVID-19) salgınının yoğun olarak görüldüğü bir yeri ziyaret ettiniz</string>
+    <string name="user_data_risky_venue_visit_date_title">RİSKLİ YERİ ZİYARET TARİHİ</string>
 </resources>

@@ -7,7 +7,6 @@ import android.os.Parcel
 import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.datepicker.CalendarConstraints

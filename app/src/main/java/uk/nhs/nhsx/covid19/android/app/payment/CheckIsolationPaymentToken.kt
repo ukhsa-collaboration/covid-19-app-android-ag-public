@@ -1,7 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.payment
 
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -9,7 +7,7 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedActiveIpcToken
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostalDistrictProviderWrapper
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.runSafely
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Disabled
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
@@ -17,13 +15,15 @@ import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Unreso
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationPaymentApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationPaymentCreateTokenRequest
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class CheckIsolationPaymentToken @Inject constructor(
     private val canClaimIsolationPayment: CanClaimIsolationPayment,
     private val isolationPaymentTokenStateProvider: IsolationPaymentTokenStateProvider,
     private val isolationPaymentApi: IsolationPaymentApi,
-    private val postalDistrictProviderWrapper: PostalDistrictProviderWrapper,
+    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider,
     private val analyticsEventProcessor: AnalyticsEventProcessor
 ) {
 
@@ -66,7 +66,7 @@ class CheckIsolationPaymentToken @Inject constructor(
     }
 
     private suspend fun getSupportedCountry(): SupportedCountry? =
-        postalDistrictProviderWrapper.getPostCodeDistrict()?.supportedCountry
+        localAuthorityPostCodeProvider.getPostCodeDistrict()?.supportedCountry
 
     private fun clearToken() {
         isolationPaymentTokenStateProvider.tokenState = Unresolved

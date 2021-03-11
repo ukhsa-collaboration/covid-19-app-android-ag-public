@@ -49,8 +49,8 @@
     <string name="qr_code_help_how_it_works_text">Această aplicație folosește coduri oficiale NHS QR pentru a vă ajuta să faceți check-in rapid și ușor în locurile pe care le vizitați, cum ar fi restaurantele sau barurile. dacă folosiți aplicația, vă putem anunța dacă este posibil să fi fost expus/ ă la virus într-un loc pe care l-ați vizitat.</string>
     <string name="qr_code_help_how_it_helps_title">Cum ajută aceasta</string>
     <string name="qr_code_help_how_it_helps_text">Această funcție a aplicației ajută afacerile în urmărirea contactelor. Ne ajută pe noi toți să fim în siguranță, în timp ce protejează intimitatea.</string>
-    <string name="venue_alert_title">Ați vizitat recent o locație în aceeași zi cu alte persoane care au testat pozitiv pentru coronavirus (COVID-19).</string>
-    <string name="venue_alert_explanation">Există doar un risc mic de a vă fi infectat/ ă cu coronavirus în timpul vizitei. Ar trebui să urmați în continuare cele mai recente sfaturi despre distanțarea socială.\n\nDacă aveți simptome de coronavirus, trebuie să vă autoizolați imediat. Asta înseamnă că ar fi necesar să rămâneți acasă fără vizitatori. Utilizați verificatorul de simptome din aplicație și rezervați un test gratuit dacă vi se recomandă acest lucru. Sunați la 119 dacă aveți întrebări.\n\nFaceți un test numai dacă aveți simptome coronavirus.</string>
+    <string name="venue_alert_title">Ați vizitat recent un loc în aceeași zi ca și persoanele care au testat pozitiv pentru coronavirus (COVID-19)</string>
+    <string name="venue_alert_explanation">Există riscul să fi fost expus la coronavirus. Aproximativ 1 din 3 persoane care au coronavirus nu au niciun simptom, însă pot să răspândească virusul, punându-i pe alții în pericol. Nu trebuie să vă autoizolați, însă ar trebui să vă asigurați să urmați cele mai noi instrucțiuni privind distanțarea socială.\n\nDacă aveți simptome, trebuie să vă autoizolați și să rezervați un test gratuit folosind verificatorul de simptome. Sunați la 119 dacă aveți întrebări.</string>
     <string name="notification_title_post_code_risk_changed">S-a produs o schimbare în zona dvs.</string>
     <string name="notification_title_test_results">Rezultatele testului dvs. au ajuns</string>
     <string name="select_symptoms">Selectare simptome</string>
@@ -180,7 +180,7 @@
     <string name="something_went_wrong">Ceva n-a mers bine</string>
     <string name="test_ordering_failure_title">Ceva n-a mers bine</string>
     <string name="test_ordering_failure_description">Înainte de a încerca din nou, vă rugăm să verificați că setările de date mobile ale telefonului dvs. sunt active, verificați-vă conexiunea Wi-Fi (dacă utilizați una) și asigurați-vă că modul Avion este oprit.</string>
-    <string name="notification_title_risky_venue">Ați vizitat recent o locație în aceeași zi cu alte persoane care au testat pozitiv pentru coronavirus (COVID-19).</string>
+    <string name="notification_title_risky_venue">Ați vizitat recent un loc în aceeași zi ca și persoanele care au testat pozitiv pentru coronavirus (COVID-19)</string>
     <string name="notification_text_post_code_risk_changed">Apăsați aici pentru mai multe detalii.</string>
     <string name="status_area_risk_level">%s nivelul de risc al zonei este %s</string>
     <string name="notification_channel_area_risk_changed_name">Modificare a riscului zonei</string>
@@ -464,13 +464,24 @@
     <string name="unsupported_device">Unei restricții în setările dvs. (de exemplu, dacă acesta este un telefon de la companie).\n\nO altă aplicație din telefonul dvs. folosește aceeași tehnologie și oprește această aplicație de a funcționa.</string>
     <string name="user_data_daily_contact_testing_text">Participare confirmată</string>
     <string name="user_data_daily_contact_testing_title">Testarea zilnică pentru contacte</string>
+    <string name="about_manage_my_data_settings_subtitle">Autoritatea locală, rezultate test, istoric locații</string>
+    <string name="ill_do_it_later">O voi face mai târziu</string>
     <string name="link_test_result_daily_contact_testing_description">Dacă ați raportat un test pozitiv în cadrul programului zilnic de testare a contactelor, introduceți codul pe care l-ați primit în căsuța de mai sus și autoizolați-vă\n\nDacă testul zilnic a fost negativ, nu veți primi un cod de introdus în aplicație. E necesar să ne anunțați că rezultatul testului a fost negativ și să continuați.</string>
     <string name="link_test_result_daily_contact_testing_description_list_header">În plus:</string>
-    <string name="link_test_result_error_both_inputs_provided">You cannot both enter a code and have a negative result from daily contact testing.</string>
-    <string name="link_test_result_error_neither_input_provided">You need to enter a code or tell us you have a negative result from daily contact testing.</string>
+    <string name="link_test_result_error_both_inputs_provided">Nu puteți introduce un cod de rezultat al testului și confirma că rezultatul este negativ în același timp.</string>
+    <string name="link_test_result_error_neither_input_provided">Trebuie fie să introduceți un cod, fie să ne spuneți că aveți un rezultat negativ în urma testării zilnice a contactelor.</string>
     <string name="link_test_result_onset_date_title">Vă amintiți prima dată când ați început să aveți oricare dintre aceste simptome?</string>
     <string name="link_test_result_symptoms_list">Temperatură ridicată (febră)\n\nTuse recentă, constantă\n\nAlterarea simțului gustului sau mirosului</string>
     <string name="link_test_result_symptoms_no">Nu</string>
-    <string name="link_test_result_symptoms_yes">Da</string>
+    <string name="link_test_result_symptoms_no_accessibility">Nu am niciunul dintre aceste simptome</string>
     <string name="link_test_result_symptoms_title">Ați avut vreunul dintre următoarele simptome de coronavirus?</string>
+    <string name="link_test_result_symptoms_yes">Da</string>
+    <string name="link_test_result_symptoms_yes_accessibility">Yes, I have symptoms.</string>
+    <string name="risk_level_mass_testing_link_text">Găsiți un centru de testare</string>
+    <string name="risk_level_mass_testing_link_url">https://maps.test-and-trace.nhs.uk/</string>
+    <string name="risk_level_mass_testing_text">Verificați dacă este disponibilă testarea în zona dvs. și dacă aveți nevoie de programare.</string>
+    <string name="risk_level_mass_testing_title">Testarea în zona dvs</string>
+    <string name="venue_alert_m2_explanation">Există riscul să fi fost expus la coronavirus. Aproximativ 1 din 3 persoane care au coronavirus nu au niciun simptom, însă pot să răspândească virusul, punându-i pe alții în pericol. Din acest motiv, vă rugăm să rezervați un test.\n\nNu trebuie să vă autoizolați, însă ar trebui să urmați în continuare cele mai noi instrucțiuni privind distanțarea socială și să rezervați un test pentru coronavirus accesând linkul de mai jos.\n\nDacă testați pozitiv sau apare orice simptom, trebuie să vă autoizolați imediat. Puteți suna la 119 dacă aveți întrebări.</string>
+    <string name="venue_alert_m2_title">Ați vizitat recent un loc unde a existat un focar de coronavirus (COVID-19)</string>
+    <string name="user_data_risky_venue_visit_date_title">DATA LA CARE AȚI VIZITAT FOCARUL</string>
 </resources>

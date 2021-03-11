@@ -17,17 +17,25 @@ import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalyticsAlarmController
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfo
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfoProvider
 import uk.nhs.nhsx.covid19.android.app.fieldtests.utils.KeyFileWriter
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDate
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.RiskyVenueConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.GREEN
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
@@ -37,12 +45,12 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.OnExposedNotification
 import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingTokensProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
+import java.time.LocalDate
 
 class DebugViewModel @Inject constructor(
     private val isolationStateMachine: IsolationStateMachine,
@@ -52,13 +60,21 @@ class DebugViewModel @Inject constructor(
     private val userInbox: UserInbox,
     private val notificationProvider: NotificationProvider,
     private val riskyPostCodeIndicatorProvider: RiskyPostCodeIndicatorProvider,
-    private val exposureNotificationApi: ExposureNotificationApi
+    private val exposureNotificationApi: ExposureNotificationApi,
+    private val lastVisitedBookTestTypeVenueDateProvider: LastVisitedBookTestTypeVenueDateProvider,
+    private val riskyVenueConfigurationProvider: RiskyVenueConfigurationProvider,
+    private val submitAnalyticsAlarmController: SubmitAnalyticsAlarmController,
+    private val exposureCircuitBreakerInfoProvider: ExposureCircuitBreakerInfoProvider
 ) : ViewModel() {
 
     val exposureKeysResult = SingleLiveEvent<ExportToFileResult>()
 
     fun startDownloadTask() {
         periodicTasks.schedule()
+    }
+
+    fun submitAnalyticsUsingAlarmManager() {
+        submitAnalyticsAlarmController.onAlarmTriggered()
     }
 
     fun sendPositiveTestResult(context: Context, testKitType: VirologyTestKitType) {
@@ -113,10 +129,10 @@ class DebugViewModel @Inject constructor(
 
     fun setContactState() {
         isolationStateMachine.reset()
-        isolationStateMachine.processEvent(OnExposedNotification(Instant.now()))
+        sendExposureNotification()
     }
 
-    fun setRiskyVenue() {
+    fun setRiskyVenue(type: MessageType) {
         viewModelScope.launch {
             venueStorage.finishLastVisitAndAddNewVenue(
                 Venue(
@@ -124,7 +140,13 @@ class DebugViewModel @Inject constructor(
                     organizationPartName = "Risky Venue Name"
                 )
             )
-            userInbox.addUserInboxItem(ShowVenueAlert("Risky Venue Id"))
+            if (type == BOOK_TEST) {
+                lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = LastVisitedBookTestTypeVenueDate(
+                    LocalDate.now(),
+                    riskyVenueConfigurationProvider.durationDays
+                )
+            }
+            userInbox.addUserInboxItem(ShowVenueAlert("Risky Venue Id", type))
             notificationProvider.showRiskyVenueVisitNotification()
         }
     }
@@ -187,6 +209,20 @@ class DebugViewModel @Inject constructor(
         }
     }
 
+    fun sendExposureNotification() {
+        exposureCircuitBreakerInfoProvider.add(
+            ExposureCircuitBreakerInfo(
+                maximumRiskScore = 101.0,
+                startOfDayMillis = Instant.now().minus(1, ChronoUnit.DAYS).toEpochMilli(),
+                matchedKeyCount = 1,
+                riskCalculationVersion = 2,
+                exposureNotificationDate = Instant.now().toEpochMilli(),
+                approvalToken = null
+            )
+        )
+        startDownloadTask()
+    }
+
     fun decodeObject(temporaryTracingKey: NHSTemporaryExposureKey): TemporaryExposureKey {
         return TemporaryExposureKeyBuilder()
             .setKeyData(Base64.decode(temporaryTracingKey.key, Base64.DEFAULT))
@@ -194,10 +230,6 @@ class DebugViewModel @Inject constructor(
             .setRollingPeriod(temporaryTracingKey.rollingPeriod)
             .setTransmissionRiskLevel(temporaryTracingKey.transmissionRiskLevel ?: 0)
             .build()
-    }
-
-    fun sendExposureNotification() {
-        isolationStateMachine.processEvent(OnExposedNotification(Instant.now()))
     }
 }
 

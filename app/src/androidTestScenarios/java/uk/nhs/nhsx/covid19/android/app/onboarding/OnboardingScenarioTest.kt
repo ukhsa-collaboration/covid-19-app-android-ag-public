@@ -7,7 +7,6 @@ import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
 import uk.nhs.nhsx.covid19.android.app.report.Reporter
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
@@ -37,9 +36,9 @@ class OnboardingScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun onboardingSuccessful_localAuthorityFeatureEnabled_batteryOptimizationFeatureDisabled_navigateToStatusScreen() = reporter(
+    fun onboardingSuccessful_batteryOptimizationFeatureDisabled_navigateToStatusScreen() = reporter(
         "Onboarding",
-        "Happy path - confirm local authority (feature flag enabled and battery optimization feature disabled)",
+        "Happy path - confirm local authority (battery optimization feature disabled)",
         "Complete onboarding flow",
         Reporter.Kind.FLOW
     ) {
@@ -56,9 +55,9 @@ class OnboardingScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun onboardingSuccessful_localAuthorityFeatureEnabled_batteryOptimizationFeatureEnabled_navigateToStatusScreen() = reporter(
+    fun onboardingSuccessful_batteryOptimizationFeatureEnabled_navigateToStatusScreen() = reporter(
         "Onboarding",
-        "Happy path - confirm local authority (feature flag enabled and battery optimization feature enabled)",
+        "Happy path - confirm local authority (battery optimization feature enabled)",
         "Complete onboarding flow",
         Reporter.Kind.FLOW
     ) {
@@ -84,8 +83,6 @@ class OnboardingScenarioTest : EspressoTest() {
     }
 
     private fun Reporter.performOnboardingWorkflow() {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-
         startTestActivity<WelcomeActivity>()
 
         welcomeRobot.checkActivityIsDisplayed()
@@ -152,81 +149,6 @@ class OnboardingScenarioTest : EspressoTest() {
         )
 
         permissionRobot.clickEnablePermissions()
-    }
-
-    @Test
-    fun onboardingSuccessfulAndLocalAuthorityFeatureFlagDisabled_navigateToStatusScreen() = reporter(
-        "Onboarding",
-        "Happy path - confirm local authority (feature flag disabled)",
-        "Complete onboarding flow",
-        Reporter.Kind.FLOW
-    ) {
-        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-
-        startTestActivity<WelcomeActivity>()
-
-        welcomeRobot.checkActivityIsDisplayed()
-
-        sleep(100)
-
-        step(
-            "Start",
-            "The user is presented a screen with information on what this app can do. The user continues."
-        )
-
-        welcomeRobot.clickConfirmOnboarding()
-
-        welcomeRobot.checkAgeConfirmationDialogIsDisplayed()
-
-        step(
-            "Confirm age",
-            "The user is asked to confirm they are older than 16 years. The user confirms to be older than 16."
-        )
-
-        welcomeRobot.clickConfirmAgePositive()
-
-        waitFor { dataAndPrivacyRobot.checkActivityIsDisplayed() }
-
-        step(
-            "Data and privacy",
-            "The user is presented a screen with information on data and privacy notes. The user continues."
-        )
-
-        dataAndPrivacyRobot.clickConfirmOnboarding()
-
-        postCodeRobot.checkActivityIsDisplayed()
-
-        step(
-            "Enter postcode",
-            "The user is asked to enter their partial postcode before they can proceed."
-        )
-
-        postCodeRobot.enterPostCode("SE1")
-
-        step(
-            "Postcode entered",
-            "The user enters a valid postcode and continues."
-        )
-
-        waitFor { postCodeRobot.checkContinueButtonIsDisplayed() }
-
-        postCodeRobot.clickContinue()
-
-        permissionRobot.checkActivityIsDisplayed()
-
-        step(
-            "Permissions",
-            "The user is presented with information on which permissions are necessary for the app. The user continues."
-        )
-
-        permissionRobot.clickEnablePermissions()
-
-        statusRobot.checkActivityIsDisplayed()
-
-        step(
-            "Home screen",
-            "The user is presented with the home screen."
-        )
     }
 
     @RetryFlakyTest
@@ -302,23 +224,6 @@ class OnboardingScenarioTest : EspressoTest() {
             "Postcode invalid",
             "The user is shown an error that the postcode they entered is invalid."
         )
-    }
-
-    @Test
-    fun validPostcodeEnteredAndContinueClicked_navigateToPermissionScreen() = notReported {
-        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-
-        startTestActivity<PostCodeActivity>()
-
-        postCodeRobot.checkActivityIsDisplayed()
-
-        postCodeRobot.enterPostCode("AL1")
-
-        waitFor { postCodeRobot.checkContinueButtonIsDisplayed() }
-
-        postCodeRobot.clickContinue()
-
-        permissionRobot.checkActivityIsDisplayed()
     }
 
     @Test

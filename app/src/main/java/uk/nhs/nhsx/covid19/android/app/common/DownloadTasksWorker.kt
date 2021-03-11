@@ -5,6 +5,8 @@ import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.ListenableWorker.Result.Success
 import androidx.work.WorkerParameters
+import com.jeroenmols.featureflag.framework.FeatureFlag.SUBMIT_ANALYTICS_VIA_ALARM_MANAGER
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import javax.inject.Inject
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.BackgroundTaskCompletion
@@ -14,6 +16,7 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
 import uk.nhs.nhsx.covid19.android.app.availability.GetAvailabilityStatus
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWork
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HasSuccessfullyProcessedNewExposureProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadAndProcessKeys
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
@@ -63,6 +66,9 @@ class DownloadTasksWorker(
     @Inject
     lateinit var onboardingCompletedProvider: OnboardingCompletedProvider
 
+    @Inject
+    lateinit var hasSuccessfullyProcessedNewExposureProvider: HasSuccessfullyProcessedNewExposureProvider
+
     override suspend fun doWork(): Result {
         applicationContext.appComponent.inject(this)
         Timber.d("Running DownloadTasksWorker")
@@ -76,13 +82,19 @@ class DownloadTasksWorker(
         }
 
         clearOutdatedDataAndUpdateIsolationConfiguration()
+
+        if (hasSuccessfullyProcessedNewExposureProvider.value == false) {
+            exposureNotificationWork.handleNewExposure()
+        }
         exposureNotificationWork.handleUnprocessedRequests()
         downloadAndProcessKeys()
         downloadVirologyTestResultWork()
         downloadRiskyPostCodesWork()
         downloadAndProcessRiskyVenues()
 
-        submitAnalytics()
+        if (!RuntimeBehavior.isFeatureEnabled(SUBMIT_ANALYTICS_VIA_ALARM_MANAGER)) {
+            submitAnalytics()
+        }
         analyticsEventProcessor.track(BackgroundTaskCompletion)
 
         Timber.d("Finishing DownloadTasksWorker")

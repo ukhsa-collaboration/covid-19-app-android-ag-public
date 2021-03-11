@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenue
 import java.time.Instant
 import javax.inject.Inject
@@ -12,29 +13,26 @@ class VenueMatchFinder @Inject constructor(private val visitedVenuesStorage: Vis
 
     suspend fun findMatches(
         riskyVenues: List<RiskyVenue>
-    ): List<VenueId> = withContext(
+    ): Map<RiskyVenue, List<VenueVisit>> = withContext(
         Dispatchers.IO
     ) {
         val venueVisits = visitedVenuesStorage.getVisits()
-        val riskyVisitsToNotify = mutableSetOf<VenueId>()
+        val riskyVisitsToNotify = mutableMapOf<RiskyVenue, List<VenueVisit>>()
 
-        if (riskyVenues.isEmpty() || venueVisits.isEmpty()) return@withContext emptyList<VenueId>()
+        if (riskyVenues.isEmpty() || venueVisits.isEmpty()) return@withContext emptyMap<RiskyVenue, List<VenueVisit>>()
 
-        venueVisits.forEach { venueVisit ->
-            val riskyWindows = riskyVenues
-                .filter { it.id == venueVisit.venue.id }
-                .map { it.riskyWindow }
-
-            val venueVisitInRiskyWindow = riskyWindows.any {
-                overlaps(venueVisit.from, venueVisit.to, it.from, it.to)
+        riskyVenues.forEach { riskyVenue ->
+            val unnotifiedVisitsInRiskyWindow = venueVisits.filter { venueVisit ->
+                !venueVisit.wasInRiskyList &&
+                    venueVisit.venue.id == riskyVenue.id &&
+                    overlaps(venueVisit.from, venueVisit.to, riskyVenue.riskyWindow.from, riskyVenue.riskyWindow.to)
             }
-
-            if (!venueVisit.wasInRiskyList && venueVisitInRiskyWindow) {
-                riskyVisitsToNotify.add(venueVisit.venue.id)
+            if (unnotifiedVisitsInRiskyWindow.isNotEmpty()) {
+                riskyVisitsToNotify[riskyVenue] = unnotifiedVisitsInRiskyWindow
             }
         }
 
-        return@withContext riskyVisitsToNotify.toList()
+        return@withContext riskyVisitsToNotify
     }
 
     private fun overlaps(

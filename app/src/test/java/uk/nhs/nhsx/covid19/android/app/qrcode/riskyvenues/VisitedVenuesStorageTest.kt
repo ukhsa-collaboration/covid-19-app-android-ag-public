@@ -105,10 +105,10 @@ class VisitedVenuesStorageTest {
     }
 
     @Test
-    fun `remove venue visit with index`() = runBlocking {
+    fun `remove venue visit`() = runBlocking {
         every { encryptedFile.readText() } returns createJson()
 
-        testSubject.removeVenueVisit(0)
+        testSubject.removeVenueVisit(VENUE_VISIT)
         verify { file.delete() }
         verify { encryptedFile.writeText("[]") }
     }
@@ -149,10 +149,10 @@ class VisitedVenuesStorageTest {
     }
 
     @Test
-    fun `mark visit as risky matching`() = runBlocking {
+    fun `mark single visit as risky matching`() = runBlocking {
         every { encryptedFile.readText() } returns createJson()
 
-        testSubject.markAsWasInRiskyList(listOf(VENUE_VISIT.venue.id))
+        testSubject.markAsWasInRiskyList(listOf(VENUE_VISIT))
         verify { file.delete() }
         verify { encryptedFile.writeText(createJson(wasInRiskyList = true)) }
     }
@@ -172,7 +172,7 @@ class VisitedVenuesStorageTest {
                 {"venue":{"id":"${venueVisit2.venue.id}","opn":"${venueVisit2.venue.organizationPartName}"},"from":"${venueVisit2.from}","to":"${venueVisit2.to}","wasInRiskyList":false}]
             """.trimIndent()
 
-        testSubject.markAsWasInRiskyList(listOf(venueVisit2.venue.id))
+        testSubject.markAsWasInRiskyList(listOf(venueVisit2))
 
         val expectedJson =
             """[{"venue":{"id":"${VENUE_VISIT.venue.id}","opn":"${VENUE_VISIT.venue.organizationPartName}"},"from":"${VENUE_VISIT.from}","to":"${VENUE_VISIT.to}","wasInRiskyList":true},""" +

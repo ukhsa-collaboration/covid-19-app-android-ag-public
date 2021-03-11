@@ -81,7 +81,7 @@ abstract class AnalyticsTest : EspressoTest() {
         advanceClock(60 * 60 * 4)
     }
 
-    private fun advanceToEndOfAnalyticsWindow(steps: Int = 4) {
+    protected fun advanceToEndOfAnalyticsWindow(steps: Int = 4) {
         val currentDate = testAppContext.clock.instant().atZone(ZoneOffset.UTC)
 
         val endOfAnalyticsWindow = currentDate.plusDays(1)

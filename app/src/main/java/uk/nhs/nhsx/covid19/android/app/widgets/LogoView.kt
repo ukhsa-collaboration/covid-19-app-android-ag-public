@@ -13,10 +13,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostalDistrictProviderWrapper
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -35,7 +35,7 @@ class LogoView @JvmOverloads constructor(
     private var isAccessibilityHeadingCompat = filterTouchesWhenObscured
 
     @Inject
-    lateinit var postalDistrictProviderWrapper: PostalDistrictProviderWrapper
+    lateinit var localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider
 
     init {
         context.applicationContext.appComponent.inject(this)
@@ -61,7 +61,7 @@ class LogoView @JvmOverloads constructor(
     }
 
     private fun setLogo() = launch {
-        val postCodeDistrict = postalDistrictProviderWrapper.getPostCodeDistrict()
+        val postCodeDistrict = localAuthorityPostCodeProvider.getPostCodeDistrict()
 
         val logoWithDescription = LogoWithDescription.forDistrict(postCodeDistrict)
         daLogo.setImageResource(logoWithDescription.logoImage)

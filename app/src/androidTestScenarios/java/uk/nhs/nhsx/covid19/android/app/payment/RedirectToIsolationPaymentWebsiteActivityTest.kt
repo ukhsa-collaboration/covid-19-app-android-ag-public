@@ -5,7 +5,8 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import org.junit.Before
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.FAIL_SUCCEED_LOOP
+import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_FAIL
+import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_SUCCEED
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.report.notReported
@@ -43,13 +44,15 @@ class RedirectToIsolationPaymentWebsiteActivityTest : EspressoTest() {
 
     @Test
     fun clickTryAgainButtonOnResponseFailure() = notReported {
-        MockApiModule.behaviour.responseType = FAIL_SUCCEED_LOOP
+        MockApiModule.behaviour.responseType = ALWAYS_FAIL
 
         startTestActivity<RedirectToIsolationPaymentWebsiteActivity>()
 
         isolationPaymentProgressRobot.checkActivityIsDisplayed()
 
         isolationPaymentProgressRobot.checkErrorIsDisplayed()
+
+        MockApiModule.behaviour.responseType = ALWAYS_SUCCEED
 
         assertBrowserIsOpened("about:blank") {
             isolationPaymentProgressRobot.clickTryAgainButton()

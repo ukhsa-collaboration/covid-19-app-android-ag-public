@@ -21,6 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation
+import uk.nhs.nhsx.covid19.android.app.util.isBeforeOrEqual
 import uk.nhs.nhsx.covid19.android.app.util.selectEarliest
 import java.time.Clock
 import java.time.Instant
@@ -75,7 +76,7 @@ class TestResultIsolationHandler @Inject constructor(
                 when {
                     // If the app knows about an existing (active or expired) isolation, and “positive test isolation end
                     // date” <= “assumed isolation start date”, then test is considered “too old”
-                    wouldTestIsolationEndBeforeStartOfExistingIsolation(receivedTestResult, currentState) -> Ignore
+                    wouldTestIsolationEndBeforeOrOnStartOfExistingIsolation(receivedTestResult, currentState) -> Ignore
 
                     // If the app knows about symptoms, and “positive test end date” < “assumed symptom onset date”, then
                     // the positive test should be used for isolation
@@ -164,7 +165,7 @@ class TestResultIsolationHandler @Inject constructor(
             previousTestResult.confirmedDate ?: previousTestResult.testEndDate
         else null
 
-    private fun wouldTestIsolationEndBeforeStartOfExistingIsolation(
+    private fun wouldTestIsolationEndBeforeOrOnStartOfExistingIsolation(
         receivedTestResult: ReceivedTestResult,
         currentState: State
     ): Boolean {
@@ -191,7 +192,7 @@ class TestResultIsolationHandler @Inject constructor(
 
         return if (startOfPreviousIsolation != null) {
             val isolationExpiryDate = getIsolationExpiryDateBasedOnTest(receivedTestResult)
-            isolationExpiryDate.isBefore(startOfPreviousIsolation)
+            isolationExpiryDate.isBeforeOrEqual(startOfPreviousIsolation)
         } else false
     }
 

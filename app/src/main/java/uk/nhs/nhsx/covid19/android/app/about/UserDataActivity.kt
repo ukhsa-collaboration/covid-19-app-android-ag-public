@@ -6,11 +6,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_AUTHORITY
-import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.android.synthetic.main.activity_about_user_data.actionDeleteAllData
 import kotlinx.android.synthetic.main.activity_about_user_data.dailyContactTestingOptInDate
 import kotlinx.android.synthetic.main.activity_about_user_data.dailyContactTestingSection
@@ -26,6 +23,8 @@ import kotlinx.android.synthetic.main.activity_about_user_data.lastDayOfIsolatio
 import kotlinx.android.synthetic.main.activity_about_user_data.lastResultDate
 import kotlinx.android.synthetic.main.activity_about_user_data.lastResultKitType
 import kotlinx.android.synthetic.main.activity_about_user_data.lastResultValue
+import kotlinx.android.synthetic.main.activity_about_user_data.lastRiskyVenueVisitDate
+import kotlinx.android.synthetic.main.activity_about_user_data.lastRiskyVenueVisitSection
 import kotlinx.android.synthetic.main.activity_about_user_data.latestResultDateContainer
 import kotlinx.android.synthetic.main.activity_about_user_data.latestResultKitTypeContainer
 import kotlinx.android.synthetic.main.activity_about_user_data.latestResultValueContainer
@@ -38,6 +37,7 @@ import kotlinx.android.synthetic.main.activity_about_user_data.textViewSymptomsD
 import kotlinx.android.synthetic.main.activity_about_user_data.titleDailyContactTestingOptIn
 import kotlinx.android.synthetic.main.activity_about_user_data.titleExposureNotification
 import kotlinx.android.synthetic.main.activity_about_user_data.titleLastDayOfIsolation
+import kotlinx.android.synthetic.main.activity_about_user_data.titleLastRiskyVenueVisit
 import kotlinx.android.synthetic.main.activity_about_user_data.titleLatestResult
 import kotlinx.android.synthetic.main.activity_about_user_data.titleSymptoms
 import kotlinx.android.synthetic.main.activity_about_user_data.venueHistoryList
@@ -100,13 +100,7 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
 
         setupOnClickListeners()
 
-        setLocalAuthorityTitle()
-    }
-
-    private fun setLocalAuthorityTitle() {
-        val localAuthorityTitleResId =
-            if (RuntimeBehavior.isFeatureEnabled(LOCAL_AUTHORITY)) R.string.about_local_authority else R.string.postal_district
-        localAuthorityTitle.text = getString(localAuthorityTitleResId)
+        localAuthorityTitle.text = getString(R.string.about_local_authority)
     }
 
     override fun onResume() {
@@ -145,6 +139,7 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
     private fun renderViewState(viewState: UserDataState) {
         localAuthority.text = viewState.localAuthority
         handleStateMachineState(viewState.isolationState)
+        updateLastRiskyVenueVisitedSegment(viewState.lastRiskyVenueVisitDate)
         updateVenueVisitsContainer(viewState.venueVisitsUiState)
         handleShowingLatestTestResult(viewState.acknowledgedTestResult)
         viewState.showDialog?.let { dialogType ->
@@ -229,7 +224,7 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
     private fun handleShowDialog(dialogType: DialogType) {
         when (dialogType) {
             ConfirmDeleteAllData -> showConfirmDeletingAllDataDialog()
-            is ConfirmDeleteVenueVisit -> showDeleteVenueVisitConfirmationDialog(dialogType.venueVisitPosition)
+            is ConfirmDeleteVenueVisit -> showDeleteVenueVisitConfirmationDialog(dialogType.venueVisit)
         }
     }
 
@@ -305,6 +300,17 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
         dailyContactTestingSection.gone()
     }
 
+    private fun updateLastRiskyVenueVisitedSegment(date: LocalDate?) {
+        if (date != null) {
+            titleLastRiskyVenueVisit.visible()
+            lastRiskyVenueVisitSection.visible()
+            lastRiskyVenueVisitDate.text = date.uiFormat(this)
+        } else {
+            titleLastRiskyVenueVisit.gone()
+            lastRiskyVenueVisitSection.gone()
+        }
+    }
+
     private fun updateVenueVisitsContainer(venueVisitsUiState: VenueVisitsUiState) {
         if (venueVisitsUiState.venueVisits.isNullOrEmpty()) {
             venueVisitsTitle.gone()
@@ -336,21 +342,21 @@ class UserDataActivity : BaseActivity(R.layout.activity_about_user_data) {
         else getString(R.string.venue_history_edit)
 
     private fun setUpVenueVisitsAdapter(venueVisits: List<VenueVisit>, showDeleteIcon: Boolean) {
-        venueVisitsViewAdapter = VenueVisitsViewAdapter(venueVisits, showDeleteIcon) { position ->
-            viewModel.onVenueVisitDataClicked(position)
+        venueVisitsViewAdapter = VenueVisitsViewAdapter(venueVisits, showDeleteIcon) { venueVisit ->
+            viewModel.onVenueVisitDataClicked(venueVisit)
         }
         venueHistoryList.layoutManager = LinearLayoutManager(this)
         venueHistoryList.adapter = venueVisitsViewAdapter
     }
 
-    private fun showDeleteVenueVisitConfirmationDialog(deletedVenueVisitPosition: Int) {
+    private fun showDeleteVenueVisitConfirmationDialog(venueVisit: VenueVisit) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.delete_single_venue_visit_title))
         builder.setMessage(R.string.delete_single_venue_visit_text)
         builder.setPositiveButton(
             R.string.confirm
         ) { dialog, _ ->
-            viewModel.deleteVenueVisit(deletedVenueVisitPosition)
+            viewModel.deleteVenueVisit(venueVisit)
             dialog.dismiss()
         }
 

@@ -10,26 +10,26 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.common.Result
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesApi
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenue
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyWindow
-import java.time.Clock
 import java.time.Instant
-import java.time.ZoneOffset
 import kotlin.test.assertEquals
 
 class DownloadAndProcessRiskyVenuesTest {
 
     private val riskyVenuesApi = mockk<RiskyVenuesApi>()
-    private val venueMatchFinder = mockk<VenueMatchFinder>(relaxed = true)
-    private val visitedVenueStorage = mockk<VisitedVenuesStorage>(relaxed = true)
+    private val venueMatchFinder = mockk<VenueMatchFinder>(relaxUnitFun = true)
+    private val visitedVenueStorage = mockk<VisitedVenuesStorage>(relaxUnitFun = true)
     private val filterOutdatedVisits = mockk<FilterOutdatedVisits>()
-    private val riskyVenuesCircuitBreakerPolling = mockk<RiskyVenuesCircuitBreakerPolling>()
-    private val riskyVenueCircuitBreakerConfigurationProvider = mockk<RiskyVenueCircuitBreakerConfigurationProvider>()
-    private val fixedClock = Clock.fixed(Instant.parse("2020-10-07T00:05:00.00Z"), ZoneOffset.UTC)
+    private val riskyVenuesCircuitBreakerPolling = mockk<RiskyVenuesCircuitBreakerPolling>(relaxUnitFun = true)
+    private val riskyVenueCircuitBreakerConfigurationProvider =
+        mockk<RiskyVenueCircuitBreakerConfigurationProvider>(relaxUnitFun = true)
 
     private val testSubject = DownloadAndProcessRiskyVenues(
         riskyVenuesApi,
@@ -37,8 +37,7 @@ class DownloadAndProcessRiskyVenuesTest {
         visitedVenueStorage,
         filterOutdatedVisits,
         riskyVenuesCircuitBreakerPolling,
-        riskyVenueCircuitBreakerConfigurationProvider,
-        fixedClock
+        riskyVenueCircuitBreakerConfigurationProvider
     )
 
     private val riskyVenues = listOf(
@@ -46,8 +45,9 @@ class DownloadAndProcessRiskyVenuesTest {
             "1",
             RiskyWindow(
                 from = Instant.parse("2020-07-08T10:00:00.00Z"),
-                to = Instant.parse("2020-07-08T12:00:00.00Z")
-            )
+                to = Instant.parse("2020-07-09T00:00:00.00Z")
+            ),
+            messageType = INFORM
         )
     )
 
@@ -58,10 +58,12 @@ class DownloadAndProcessRiskyVenuesTest {
                 "Venue1"
             ),
             from = Instant.parse("2020-07-08T10:00:00.00Z"),
-            to = Instant.parse("2020-07-08T12:00:00.00Z"),
+            to = Instant.parse("2020-07-09T00:00:00.00Z"),
             wasInRiskyList = false
         )
     )
+
+    private val riskyVenueMatches = mapOf(riskyVenues[0] to venueVisits)
 
     @Before
     fun setUp() {
@@ -75,29 +77,24 @@ class DownloadAndProcessRiskyVenuesTest {
     }
 
     @Test
-    fun `calls api endpoint`() = runBlocking {
-        coEvery { riskyVenuesApi.getListOfRiskyVenues() } returns RiskyVenuesResponse(venues = listOf())
-
-        testSubject()
-
-        coVerify { riskyVenuesApi.getListOfRiskyVenues() }
-    }
-
-    @Test
     fun `does not call findMatches if risky venues are empty`() = runBlocking {
         coEvery { riskyVenuesApi.getListOfRiskyVenues() } returns RiskyVenuesResponse(venues = listOf())
 
-        testSubject()
+        val result = testSubject()
+
+        assertEquals(Result.Success(Unit), result)
 
         coVerify(exactly = 0) { venueMatchFinder.findMatches(any()) }
     }
 
     @Test
-    fun `when no matches found circuit breaker initialization is not scheduled`() = runBlocking {
-        coEvery { riskyVenuesApi.getListOfRiskyVenues() } returns RiskyVenuesResponse(venues = riskyVenues)
-        coEvery { venueMatchFinder.findMatches(any()) } returns emptyList()
+    fun `when no matches found circuit breaker is not called`() = runBlocking {
+        coEvery { riskyVenuesApi.getListOfRiskyVenues() } returns RiskyVenuesResponse(riskyVenues)
+        coEvery { venueMatchFinder.findMatches(any()) } returns emptyMap()
 
-        testSubject()
+        val result = testSubject()
+
+        assertEquals(Result.Success(Unit), result)
 
         coVerify(exactly = 0) { visitedVenueStorage.markAsWasInRiskyList(emptyList()) }
         coVerify(exactly = 0) { riskyVenueCircuitBreakerConfigurationProvider.addAll(any()) }
@@ -105,20 +102,23 @@ class DownloadAndProcessRiskyVenuesTest {
 
     @Test
     fun `when matches found circuit breaker initialization is scheduled`() = runBlocking {
-        coEvery { riskyVenuesApi.getListOfRiskyVenues() } returns RiskyVenuesResponse(venues = riskyVenues)
-        coEvery { venueMatchFinder.findMatches(any()) } returns listOf(riskyVenues[0].id)
+        coEvery { riskyVenuesApi.getListOfRiskyVenues() } returns RiskyVenuesResponse(riskyVenues)
+        coEvery { venueMatchFinder.findMatches(riskyVenues) } returns riskyVenueMatches
 
-        testSubject()
+        val result = testSubject()
 
-        coVerify(exactly = 1) { visitedVenueStorage.markAsWasInRiskyList(listOf(riskyVenues[0].id)) }
+        assertEquals(Result.Success(Unit), result)
+
+        coVerify(exactly = 1) { visitedVenueStorage.markAsWasInRiskyList(venueVisits) }
         val slot = slot<List<RiskyVenueCircuitBreakerConfiguration>>()
         coVerify(exactly = 1) { riskyVenueCircuitBreakerConfigurationProvider.addAll(capture(slot)) }
 
         val expected = RiskyVenueCircuitBreakerConfiguration(
-            startedAt = Instant.now(fixedClock),
+            startedAt = Instant.parse("2020-07-08T23:59:59.999Z"),
             venueId = riskyVenues[0].id,
             approvalToken = null,
-            isPolling = false
+            isPolling = false,
+            messageType = INFORM
         )
 
         assertEquals(1, slot.captured.size)

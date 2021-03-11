@@ -7,7 +7,6 @@ import android.text.TextWatcher
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import androidx.lifecycle.observe
 import kotlinx.android.synthetic.main.activity_link_test_result.dailyContactTestingContainer
 import kotlinx.android.synthetic.main.activity_link_test_result.dailyContactTestingNegativeResultConfirmationCheckBox
 import kotlinx.android.synthetic.main.activity_link_test_result.dailyContactTestingNegativeResultConfirmationContainer

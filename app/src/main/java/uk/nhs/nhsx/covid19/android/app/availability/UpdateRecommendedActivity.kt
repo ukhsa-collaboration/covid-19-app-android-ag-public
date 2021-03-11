@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.availability
 
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.lifecycle.observe
 import kotlinx.android.synthetic.main.activity_update_recommended.askMeLater
 import kotlinx.android.synthetic.main.activity_update_recommended.updateInStore
 import kotlinx.android.synthetic.main.activity_update_recommended.updateRecommendationDescription

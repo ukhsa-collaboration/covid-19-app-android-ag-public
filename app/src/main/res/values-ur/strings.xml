@@ -49,8 +49,8 @@
     <string name="qr_code_help_how_it_works_text">یہ ایپ آفیشل NHS کیو آر کوڈز استعمال کرتے ہوئے آپ کو آپ کے دورہ کئے گئے بارز اور ریستورانوں جیسی جگہوں میں تیزی اور آسانی سے چیک ان کرنے میں مدد کرتی ہے۔ اس ایپ کے استعمال سے، اگر آپ کے حال میں دورہ کیے گئے کسی مقام پر وائرس سے رابطے میں آنے کا امکان ہو تو ہم آپ کو مطلع کر سکتے ہیں۔</string>
     <string name="qr_code_help_how_it_helps_title">یہ کیسے مدد کرتی ہے</string>
     <string name="qr_code_help_how_it_helps_text">ایپ کا یہ فیچر کاروباروں کے لئے رابطے کے سراغ کی سپورٹ کو آسان بناتا ہے۔ یہ آپ اور دیگر افراد کو بھی محفوظ رکھنے میں مدد دیتا ہے جبکہ آپ کی رازداری کا تحفظ برقرار رکھتا ہے۔</string>
-    <string name="venue_alert_title">آپ نے حال ہی میں دوسرے لوگوں کی طرح اسی دن  جگہ کا دورہ کیا ہے  کہ جن کی کورونا وائرس (COVID-19) کی جانچ مثبت آئی ہے۔</string>
-    <string name="venue_alert_explanation">آپ کے دورے کے دوران  آپ کورونا وائرس  سے متاثر ہوئے ہیں کا صرف معمولی خطرہ ہے ۔ آپ کو معاشرتی دوری سے متعلق تازہ ترین مشوروں پر عمل جاری رکھنا چاہئے۔\n\nاگر آپ میں کورونا وائرس کی علامات ہیں تو آپ کو فوری طور پر خود کو الگ تھلگ کرنا ہوگا۔ اس کا مطلب ہے کہ آپ کو گھر میں رہنا چاہیے کسی  ملاقاتی  کے بغیر ۔ ایپ پر علامات چیکر کا استعمال کریں اور اگر ایسا کرنے کا مشورہ دیا گیا ہے تو مفت ٹیسٹ بک کروائیں۔ اگر آپ کے پاس  سوالات ہیں تو 119 پر کال کریں۔\n\nصرف تب ٹیسٹ کروائیں اگرآپ کورونا وائرس کی علامات رکھتےہیں۔</string>
+    <string name="venue_alert_title">آپ حال ہی میں ان دوسرے لوگوں کی طرح ایک ہی دن ایک مقام پر تشریف لے گئے جن کی اس کے بعد سے کورونا وائرس (COVID-19) کی جانچ مثبت آئی ہے</string>
+    <string name="venue_alert_explanation">اس بات کا خطرہ ہے کہ آپ کورونا وائرس کی زد میں آئے ہوں ۔ کورونا وائرس میں مبتلا 3 افراد  میں سے 1 فرد  میں کوئی علامت نہیں ہوتی ہے ، لیکن وہ پھر بھی اسے دوسروں تک منتقل  کر سکتے ہیں اور دوسروں کو بھی خطرے  میں ڈال سکتے ہیں۔ آپ کو خود کوتنہا  کرنے کی ضرورت نہیں ہے، لیکن آپ کو سماجی دوری قائم رکھنے سے متعلق تازہ ترین رہنمائی پر عمل کرنے میں اضافی احتیاط برتنی چاہیے۔\n\nاگر آپ میں علامات ہیں تو، آپ پر خود کو تنہا  کرنا اور علامت چیکر کا استعمال کر کے ایک مفت جانچ بُک کرانا لازم ہے۔ اگر آپ کے پاس  سوالات ہوں تو 119 پر کال کریں۔</string>
     <string name="notification_title_post_code_risk_changed">آپ کے علاقے میں ایک تبدیلی آئی ہے</string>
     <string name="notification_title_test_results">آپ کے ٹیسٹ کے نتائج آ گئے ہیں</string>
     <string name="select_symptoms">علامات منتخب کریں</string>
@@ -176,7 +176,7 @@
     <string name="something_went_wrong">کچھ گڑبڑ ہے</string>
     <string name="test_ordering_failure_title">کچھ گڑبڑ ہے</string>
     <string name="test_ordering_failure_description">دوبارہ کوشش کرنے سے پہلے براہ کرم چیک کریں کہ آپ کے فون کی موبائل ڈیٹا سیٹنگز آن ہوں، اپنا وائی فائی کنکشن چیک کریں (اگر استعمال میں ہو) اور یقینی بنائیں کہ ایئر پلین موڈ آف ہو۔</string>
-    <string name="notification_title_risky_venue">آپ نے حال ہی میں دوسرے لوگوں کی طرح اسی دن  جگہ کا دورہ کیا ہے  کہ جن کی کورونا وائرس (COVID-19) کی جانچ مثبت آئی ہے۔</string>
+    <string name="notification_title_risky_venue">آپ حال ہی میں ان دوسرے لوگوں کی طرح ایک ہی دن ایک مقام پر تشریف لے گئے جن کی اس کے بعد سے کورونا وائرس (COVID-19) کی جانچ مثبت آئی ہے</string>
     <string name="notification_text_post_code_risk_changed">مزید تفصیلات کے لئے یہاں ٹیپ کریں۔</string>
     <string name="status_area_risk_level">%s علاقے کے خطرے کی سطح ہے %s</string>
     <string name="notification_channel_area_risk_changed_name">علاقے کے خطرے میں تبدیلی</string>
@@ -240,7 +240,7 @@
     <string name="title_encounter">سامنا ہونے کی تاریخ</string>
     <string name="allow_bluetooth">بلیو ٹوتھ کی اجازت دیں</string>
     <string name="onboarding_subtitle">جب آپ ایپ کو استعمال کریں گے تو آپ ایک گمنام طریقے سے اپنے علاقے میں وائرس کے بارے میں معلومات کا اشتراک کرکے کوویڈ-19 کو مات دینے میں ہماری اور عوامی صحت کی مدد کریں گے۔</string>
-    <string name="onboarding_privacy_control_text">سکتی کہ آپ کون ہیں NHS آپ کی رازداری کی قدر کرتا ہے، یعنی یہ منائیں بتا \n\nاگر آپ  کی جانچ کرونا وائرس کے لیے مثبت ہوتی ہے  تو، آپ اپنے ڈیٹا کا این ایچ ایس کے ساتھ اشتراک کرنے کا انتخاب کرسکتے ہیں تاکہ ہم انگلینڈ، ویلز، سکاٹ لینڈ، شمالی آئرلینڈ، جرزی اور جبرالٹر میں ایپ کا استعمال کرنے والے دوسرے لوگوں کو آگاہ کرسکیں۔ جاری رکھنے  (continue)کا انتخاب کرنے پر ہم آپ کی اطلاعات ایپ کا استعمال کرنے والے اُن دوسرے لوگوں کو دستیاب کردیں گے جن کو ان تمام مقامات پر باخبر کرنے کی ضرورت ہو گی۔\n\nہم یہ فیصلہ کرنے میں مدد کے لئے خود کار فیصلے کا استعمال کرتے ہیں کہ کون سے دوسرے صارفین کو گمنام طور پر متنبہہ  ہونا ضروری ہے۔</string>
+    <string name="onboarding_privacy_control_text">این ایچ ایس آپ کی رازداری کی قدر کرتا ہے ، مطلب ایپ یہ نہیں بتا سکتی کہ آپ کون ہیں ، آپ کہاں ہیں یا آپ کے ساتھ کون ہیں \n\nاگر آپ  کی جانچ کرونا وائرس کے لیے مثبت ہوتی ہے  تو، آپ اپنے ڈیٹا کا این ایچ ایس کے ساتھ اشتراک کرنے کا انتخاب کرسکتے ہیں تاکہ ہم انگلینڈ، ویلز، سکاٹ لینڈ، شمالی آئرلینڈ، جرزی اور جبرالٹر میں ایپ کا استعمال کرنے والے دوسرے لوگوں کو آگاہ کرسکیں۔ جاری رکھنے  (continue)کا انتخاب کرنے پر ہم آپ کی اطلاعات ایپ کا استعمال کرنے والے اُن دوسرے لوگوں کو دستیاب کردیں گے جن کو ان تمام مقامات پر باخبر کرنے کی ضرورت ہو گی۔\n\nہم یہ فیصلہ کرنے میں مدد کے لئے خود کار فیصلے کا استعمال کرتے ہیں کہ کون سے دوسرے صارفین کو گمنام طور پر متنبہہ  ہونا ضروری ہے۔</string>
     <string name="onboarding_privacy_your_data_text1">یہ ایپ ڈیٹا کو ریکارڈ کرنے کے بعد 14 دنوں کے لئے اسے محفوظ اور گمنام طریقے سے محفوظ کرتی ہے۔ جب آپ مقامات میں داخِلے یعنی چیک ان کے لئے کیو آر کوڈز کا استعمال کرتے ہیں تو مقامات کا یہ ڈیٹا 21 دن کے لئے محفوظ کیا جاتا ہے۔ آپ کسی بھی وقت اپنی ایپ کی ترتیبات یعنی سیٹنگز میں جا کر، یا ایپ کو ان انسٹال کرکے ایپ سے کوائف یعنی ڈیٹا کو حذف کرسکتے ہیں۔ آپ کا فون کچھ بنیادی ڈیٹا رکھ سکتا ہے - یہ آپ کے فون کے آپریٹنگ سسٹم کے ذریعے کنٹرول کیا جاتا ہے۔</string>
     <string name="onboarding_no_thanks">نہیں، شکریہ</string>
     <string name="go_to_play_store">گوگل پلے اسٹور میں جائیں</string>
@@ -460,13 +460,24 @@
     <string name="unsupported_device">محدود کردہ سیٹنگز (مثال کے طور پر اگر یہ کمپنی فون ہو)۔\n\nآپ کے فون میں موجود ایک اور ایپ یہی ٹیکنالوجی استعمال کر رہی ہے اور ایپ کو کام کرنے سے روک رہی ہے۔</string>
     <string name="user_data_daily_contact_testing_text">مصدقہ شرکت</string>
     <string name="user_data_daily_contact_testing_title">یومیہ رابطے  کی جانچ</string>
+    <string name="about_manage_my_data_settings_subtitle">مقامی  اتھارٹی ,جانچ  نتائج ,مقام کی تاریخ</string>
+    <string name="ill_do_it_later">میں یہ   بعد میں کروں گا/ گی</string>
     <string name="link_test_result_daily_contact_testing_description">اگر آپ نے اپنی یومیہ رابطے  کی جانچ کے پروگرام کو مثبت جانچ کی اطلاع دی ہے تو آپ کو جو کوڈ موصول ہوا ہے اسے اوپر کے خانہ میں داخل کریں اور خود کو علیحدہ کر لیں \n\nاگر آپ کی یومیہ جانچ منفی تھی  تو اس ایپ میں داخل کرنے کے لیے آپ کو کوڈ موصول نہیں  ہو گا ۔ آپ کے لیے بس ہمیں یہ بتانا اور جاری رکھنا ضروری ہے کہ آپ کی جانچ منفی ہے۔</string>
     <string name="link_test_result_daily_contact_testing_description_list_header">اس کے علاوہ:</string>
-    <string name="link_test_result_error_both_inputs_provided">You cannot both enter a code and have a negative result from daily contact testing.</string>
-    <string name="link_test_result_error_neither_input_provided">You need to enter a code or tell us you have a negative result from daily contact testing.</string>
+    <string name="link_test_result_error_both_inputs_provided">آپ  ایک ہی وقت میں ٹیسٹ کے نتائج کا کوڈ درج  اور اس کی تصدیق نہیں کرسکتے ہیں کہ آپ کے ٹیسٹ کا منفی نتیجہ ہے۔</string>
+    <string name="link_test_result_error_neither_input_provided">آپ کو یا تو اپنا کوڈ درج کرنا ہوتا ہے یا ہمیں بتانا ہوتا ہے کہ آپ کے پاس یومیہ رابطے کی جانچ سے منفی نتیجہ ہے۔</string>
     <string name="link_test_result_onset_date_title">کیا آپ کو وہ ابتدائی تاریخ یاد ہے جب آپ نے ان علامات میں سے کسی کا سامنا کرنا شروع کیا تھا؟</string>
     <string name="link_test_result_symptoms_list">بڑھا ہوا درجۂ حرارت (بخار)\n\nنئی مسلسل کھانسی\n\nآپ کی سونگھنے یا چکھنے کی حس میں تبدیلی</string>
     <string name="link_test_result_symptoms_no">نہیں</string>
-    <string name="link_test_result_symptoms_yes">جی ہاں</string>
+    <string name="link_test_result_symptoms_no_accessibility">مجھ میں ان میں سے کوئی علامات نہیں</string>
     <string name="link_test_result_symptoms_title">کیا آپ کے اندر درج ذیل کرونا وائرس کی علامات میں سے کوئی پائی جاتی تھیں؟</string>
+    <string name="link_test_result_symptoms_yes">ہاں</string>
+    <string name="link_test_result_symptoms_yes_accessibility">Yes, I have symptoms.</string>
+    <string name="risk_level_mass_testing_link_text">جانچ کی سائٹ کی  تلاش کریں</string>
+    <string name="risk_level_mass_testing_link_url">https://maps.test-and-trace.nhs.uk/</string>
+    <string name="risk_level_mass_testing_text">چیک کریں کہ آپ کے علاقے میں کون سی جانچ   دستیاب ہے اور کیا آپ کو بک کروانے  کی ضرورت ہے۔</string>
+    <string name="risk_level_mass_testing_title">آپ کے قریب جانچ</string>
+    <string name="venue_alert_m2_explanation">اس بات کا خطرہ ہے کہ آپ کورونا وائرس کی زد میں آئے ہوں ۔ کورونا وائرس میں مبتلا 3 افراد  میں سے 1 فرد  میں کوئی علامت نہیں ہوتی ہے ، لیکن وہ پھر بھی اسے دوسروں تک منتقل  کر سکتے ہیں اور دوسروں کو بھی خطرے  میں ڈال سکتے ہیں۔ اس وجہ سے، براہ کرم ابھی ایک جانچ بُک کرائیں۔ آپ کو خود کوتنہا  کرنے کی ضرورت نہیں ہے، لیکن آپ کو سماجی دوری قائم رکھنے سے متعلق تازہ ترین رہنمائی پر عمل کرنا جاری رکھنا چاہیے  اور ذیل  لنک ملاحظہ کر کے کورونا وائرس کی جانچ بُک کرائیں۔ اگر آپ کی جانچ مثبت آتی ہے یا کوئی علامات پیدا ہوتی ہیں تو، آپ پر فوری طور پر خود کو تنہا  کرنا لازم ہے۔ اگرآپ کے  پاس سوالات ہوں تو آپ 119 پر کال کر سکتے ہیں۔</string>
+    <string name="venue_alert_m2_title">آپ حال ہی میں ایک ایسے مقام پر تشریف لے گئے جہاں پر کورونا وائرس (COVID-19) پھیلا ہوا  ہے</string>
+    <string name="user_data_risky_venue_visit_date_title">خطرے کے مقام پر موجودگی کی تاریخ</string>
 </resources>

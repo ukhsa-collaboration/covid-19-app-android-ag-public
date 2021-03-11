@@ -2,14 +2,11 @@ package uk.nhs.nhsx.covid19.android.app
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.jeroenmols.featureflag.framework.FeatureFlag
-import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -30,21 +27,13 @@ class MainViewModelTest {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val deviceDetection = mockk<DeviceDetection>()
-
     private val exposureNotificationApi = mockk<ExposureNotificationApi>()
-
-    private val mainViewState = mockk<Observer<MainViewModel.MainViewState>>(relaxed = true)
-
-    private val onboardingCompletedProvider = mockk<OnboardingCompletedProvider>(relaxed = true)
-
+    private val mainViewState = mockk<Observer<MainViewModel.MainViewState>>(relaxUnitFun = true)
+    private val onboardingCompletedProvider = mockk<OnboardingCompletedProvider>()
     private val policyUpdateProvider = mockk<PolicyUpdateProvider>()
-
     private val localAuthorityProvider = mockk<LocalAuthorityProvider>()
-
     private val batteryOptimizationRequired = mockk<BatteryOptimizationRequired>()
-
     private val postCodeProvider = mockk<PostCodeProvider>()
-
     private val localAuthorityPostCodeValidator = mockk<LocalAuthorityPostCodeValidator>()
 
     private val testSubject = MainViewModel(
@@ -66,15 +55,8 @@ class MainViewModelTest {
         every { batteryOptimizationRequired() } returns false
     }
 
-    @After
-    fun tearDown() {
-        FeatureFlagTestHelper.clearFeatureFlags()
-    }
-
     @Test
-    fun `policy accepted and post code to local authority missing with local authority feature flag enabled`() = runBlocking {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-
+    fun `policy accepted and post code to local authority missing`() = runBlocking {
         every { deviceDetection.isTablet() } returns false
 
         coEvery { onboardingCompletedProvider.value } returns true
@@ -93,30 +75,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `policy accepted and post code to local authority missing with local authority feature flag disabled`() = runBlocking {
-        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-
-        every { deviceDetection.isTablet() } returns false
-
-        coEvery { onboardingCompletedProvider.value } returns true
-
-        every { policyUpdateProvider.isPolicyAccepted() } returns true
-
-        every { postCodeProvider.value } returns postCode
-
-        coEvery { localAuthorityPostCodeValidator.validate(postCode) } returns Invalid
-
-        testSubject.viewState().observeForever(mainViewState)
-
-        testSubject.start()
-
-        verify { mainViewState.onChanged(MainViewModel.MainViewState.Completed) }
-    }
-
-    @Test
-    fun `policy accepted and local authority missing with local authority feature flag enabled`() = runBlocking {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-
+    fun `policy accepted and local authority missing`() = runBlocking {
         every { deviceDetection.isTablet() } returns false
 
         coEvery { onboardingCompletedProvider.value } returns true
@@ -134,25 +93,6 @@ class MainViewModelTest {
         testSubject.start()
 
         verify { mainViewState.onChanged(MainViewModel.MainViewState.LocalAuthorityMissing) }
-    }
-
-    @Test
-    fun `policy accepted and local authority missing with local authority feature flag disabled`() = runBlocking {
-        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-
-        every { deviceDetection.isTablet() } returns false
-
-        coEvery { onboardingCompletedProvider.value } returns true
-
-        every { policyUpdateProvider.isPolicyAccepted() } returns true
-
-        every { localAuthorityProvider.value } returns null
-
-        testSubject.viewState().observeForever(mainViewState)
-
-        testSubject.start()
-
-        verify { mainViewState.onChanged(MainViewModel.MainViewState.Completed) }
     }
 
     @Test

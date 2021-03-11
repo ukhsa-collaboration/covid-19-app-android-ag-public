@@ -127,6 +127,16 @@ class StatusRobot {
             .check(matches(isEnabled()))
     }
 
+    fun checkOrderTestIsDisplayed() {
+        onView(withId(R.id.optionOrderTest))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkOrderTestIsNotDisplayed() {
+        onView(withId(R.id.optionOrderTest))
+            .check(matches(not(isDisplayed())))
+    }
+
     fun checkScanQrCodeOptionIsNotDisplayed() {
         onView(withId(R.id.optionVenueCheckIn))
             .check(matches(not(isDisplayed())))

@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.payment
 import android.os.Bundle
 import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
-import androidx.lifecycle.observe
 import kotlinx.android.synthetic.main.activity_progress.buttonTryAgain
 import kotlinx.android.synthetic.main.activity_progress.errorStateContainer
 import kotlinx.android.synthetic.main.activity_progress.loadingProgress

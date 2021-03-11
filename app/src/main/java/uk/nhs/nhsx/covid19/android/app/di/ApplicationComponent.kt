@@ -4,9 +4,11 @@ import dagger.Component
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
 import uk.nhs.nhsx.covid19.android.app.about.UserDataActivity
+import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalyticsAlarmController
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitOnboardingAnalyticsWorker
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityListener
+import uk.nhs.nhsx.covid19.android.app.availability.ApplicationStartAreaRiskUpdater
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateRecommendedActivity
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationActivity
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationChecker
@@ -37,7 +39,8 @@ import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
 import uk.nhs.nhsx.covid19.android.app.payment.RedirectToIsolationPaymentWebsiteActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResultActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertActivity
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestActivity
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
@@ -45,6 +48,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AlarmRestarter
 import uk.nhs.nhsx.covid19.android.app.receiver.ExpirationCheckReceiver
 import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationReminderReceiver
 import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationRetryReceiver
+import uk.nhs.nhsx.covid19.android.app.receiver.SubmitAnalyticsAlarmReceiver
 import uk.nhs.nhsx.covid19.android.app.receiver.UpdateReceiver
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.settings.languages.LanguagesActivity
@@ -98,6 +102,7 @@ interface ApplicationComponent {
     fun inject(expirationCheckReceiver: ExpirationCheckReceiver)
     fun inject(exposureNotificationReminderReceiver: ExposureNotificationReminderReceiver)
     fun inject(exposureNotificationRetryReceiver: ExposureNotificationRetryReceiver)
+    fun inject(submitAnalyticsAlarmReceiver: SubmitAnalyticsAlarmReceiver)
     fun inject(alarmRestarter: AlarmRestarter)
     fun inject(qrCodeScanResultActivity: QrCodeScanResultActivity)
     fun inject(encounterDetectionActivity: EncounterDetectionActivity)
@@ -112,7 +117,8 @@ interface ApplicationComponent {
     fun inject(settingsActivity: SettingsActivity)
     fun inject(languagesActivity: LanguagesActivity)
     fun inject(updateReceiver: UpdateReceiver)
-    fun inject(venueAlertActivity: VenueAlertActivity)
+    fun inject(venueAlertInformActivity: VenueAlertInformActivity)
+    fun inject(venueAlertBookTestActivity: VenueAlertBookTestActivity)
     fun inject(debugFragment: DebugFragment)
     fun inject(linkTestResultActivity: LinkTestResultActivity)
     fun inject(linkTestResultActivity: LinkTestResultSymptomsActivity)
@@ -137,8 +143,10 @@ interface ApplicationComponent {
     fun provideAppAvailabilityListener(): AppAvailabilityListener
     fun providePeriodicTasks(): PeriodicTasks
     fun provideOnboardingCompleted(): OnboardingCompletedProvider
+    fun provideApplicationStartAreaRiskUpdater(): ApplicationStartAreaRiskUpdater
     fun provideNotificationProvider(): NotificationProvider
     fun provideBatteryOptimizationChecker(): BatteryOptimizationChecker
     fun provideApplicationLocaleProvider(): ApplicationLocaleProvider
     fun provideExposureNotificationRetryAlarmController(): ExposureNotificationRetryAlarmController
+    fun provideSubmitAnalyticsAlarmController(): SubmitAnalyticsAlarmController
 }

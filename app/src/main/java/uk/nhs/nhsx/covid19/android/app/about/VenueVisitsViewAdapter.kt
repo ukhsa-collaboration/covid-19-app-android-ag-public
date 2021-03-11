@@ -22,11 +22,11 @@ import java.time.ZoneId
 class VenueVisitsViewAdapter(
     private val venueVisits: List<VenueVisit>,
     private val showDeleteIcon: Boolean,
-    private val listener: (Int) -> Unit
+    private val deletionListener: (VenueVisit) -> Unit
 ) : RecyclerView.Adapter<VenueVisitViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VenueVisitViewHolder =
-        VenueVisitViewHolder(parent.inflate(R.layout.item_user_data), listener)
+        VenueVisitViewHolder(parent.inflate(R.layout.item_user_data), deletionListener)
 
     override fun getItemCount(): Int = venueVisits.size
 
@@ -34,18 +34,21 @@ class VenueVisitsViewAdapter(
         holder.bind(venueVisits[position], showDeleteIcon, position)
     }
 
-    class VenueVisitViewHolder(itemView: View, private val listener: (Int) -> Unit) :
+    class VenueVisitViewHolder(itemView: View, private val deletionListener: (VenueVisit) -> Unit) :
         RecyclerView.ViewHolder(itemView) {
         fun bind(venueVisit: VenueVisit, showDeleteIcon: Boolean, position: Int) = with(itemView) {
             textVenueName.text = venueVisit.venue.organizationPartName
             textVenueId.text = venueVisit.venue.id
             val systemDefaultZone = ZoneId.systemDefault()
 
+            // Subtract 1 second in order to show time of 23:59 instead of 00:00
+            val uiTo = venueVisit.to.minusSeconds(1L)
+
             val dateFrom = venueVisit.from.atZone(systemDefaultZone).toLocalDate().uiFormat(context)
-            val dateTo = venueVisit.to.atZone(systemDefaultZone).toLocalDate().uiFormat(context)
+            val dateTo = uiTo.atZone(systemDefaultZone).toLocalDate().uiFormat(context)
 
             val timeFrom = venueVisit.from.atZone(systemDefaultZone).toLocalTime().uiFormat()
-            val timeTo = venueVisit.to.atZone(systemDefaultZone).toLocalTime().uiFormat()
+            val timeTo = uiTo.atZone(systemDefaultZone).toLocalTime().uiFormat()
 
             val timeSpan = "$timeFrom - $timeTo"
 
@@ -68,7 +71,7 @@ class VenueVisitsViewAdapter(
             }
 
             imageDeleteVenueVisit.setOnSingleClickListener {
-                listener(position)
+                deletionListener(venueVisit)
             }
         }
     }

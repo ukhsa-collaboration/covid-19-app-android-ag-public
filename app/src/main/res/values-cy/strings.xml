@@ -49,8 +49,8 @@
     <string name="qr_code_help_how_it_works_text">Mae\'r ap hwn yn defnyddio codau QR swyddogol y GIG i\'ch helpu i fewngofnodi\'n gyflym ac yn hawdd i leoedd rydych yn ymweld â nhw, fel bwytai neu fariau. Os ydych yn defnyddio\'r ap, gallwn roi gwybod ichi os daethoch i gysylltiad â\'r feirws yn rhywle y buoch ynddo.</string>
     <string name="qr_code_help_how_it_helps_title">Sut mae’n helpu</string>
     <string name="qr_code_help_how_it_helps_text">Mae\'r nodwedd hon o\'r ap yn ei gwneud yn hawdd i fusnesau gefnogi olrhain cysylltiadau. Mae\'n helpu pob un ohonom gadw\'n ddiogel, gan amddiffyn eich preifatrwydd hefyd.</string>
-    <string name="venue_alert_title">Yn ddiweddar, fe wnaethoch ymweld â lleoliad ar yr un diwrnod â phobl sydd wedi cael prawf positif am y coronafeirws  (COVID-19).</string>
-    <string name="venue_alert_explanation">Er mai bach iawn yw’r risg y cawsoch eich heintio yn ystod eich ymweliad, dylech barhau i ddilyn y cyngor diweddaraf ar gadw pellter cymdeithasol.\n\nOs oes gennych symptomau coronafeirws mae angen i chi hunanynysu ar unwaith. Mae hynny\'n golygu aros gartref heb unrhyw ymwelwyr. Defnyddiwch y gwiriwr symptomau ar yr ap ac archebwch brawf am ddim os cynghorir chi i wneud hynny. Ffoniwch 119 os oes gennych gwestiynau.\n\nDim ond os oes gennych symptomau coronafeirws y dylech chi gael prawf.</string>
+    <string name="venue_alert_title">Fe wnaethoch chi ymweld yn ddiweddar â lleoliad ar yr un diwrnod ag eraill sydd bellach wedi cael canlyniad prawf positif am coronafeirws (COVID-19)</string>
+    <string name="venue_alert_explanation">Mae risg eich bod wedi dod i gysylltiad â\'r coronafeirws. Ni fydd tua 1 ymhob 3 o bobl â\'r coronafeirws yn cael unrhyw symptomau, ond mae hi dal yn bosibl iddynt drosglwyddo\'r firws a rhoi eraill mewn perygl. Does dim angen i chi hunan-ynysu, ond dylech gymryd gofal ychwanegol i ddilyn y canllawiau diweddaraf ar gadw pellter cymdeithasol.\n\nOs oes gennych symptomau, mae\'n rhaid i chi hunan-ynysu ac archebu prawf am ddim gan ddefnyddio\'r gwiriwr symptomau. Ffoniwch 119 os oes gennych unrhyw gwestiwn.</string>
     <string name="notification_title_post_code_risk_changed">Bu newid yn eich ardal</string>
     <string name="notification_title_test_results">Mae canlyniad eich prawf waedi cyrraedd</string>
     <string name="select_symptoms">Dewiswch symptomau</string>
@@ -192,7 +192,7 @@
     <string name="something_went_wrong">Aeth rhywbeth o\'i le</string>
     <string name="test_ordering_failure_title">Aeth rhywbeth o\'i le</string>
     <string name="test_ordering_failure_description">Cyn rhoi cynnig arall arni, gwiriwch fod gosodiadau data symudol eich ffôn ymlaen, gwiriwch eich cysylltiad Wi-Fi (os ydych yn defnyddio un) a gwnewch yn siŵr bod Modd Awyren wedi\'i ddiffodd.</string>
-    <string name="notification_title_risky_venue">Yn ddiweddar, fe wnaethoch ymweld â lleoliad ar yr un diwrnod â phobl sydd wedi cael prawf positif am y coronafeirws  (COVID-19).</string>
+    <string name="notification_title_risky_venue">Fe wnaethoch chi ymweld yn ddiweddar â lleoliad ar yr un diwrnod ag eraill sydd bellach wedi cael canlyniad prawf positif am coronafeirws (COVID-19)</string>
     <string name="notification_text_post_code_risk_changed">Tapiwch yma i gael rhagor o fanylion.</string>
     <string name="status_area_risk_level">Yn ardal %s lefel y risg yw %s</string>
     <string name="notification_channel_area_risk_changed_name">Newid yn risg eich ardal</string>
@@ -464,7 +464,7 @@
     <string name="daily_contact_testing_confirmation_no_longer_paragraph_header">O hyn allan:</string>
     <string name="daily_contact_testing_confirmation_no_longer_paragraph_text">ni fydd yr ap yn gofyn i chi hunanynysu\n\nni fydd angen i chi gofnodi unrhyw ganlyniadau negatif pellach o\'r profion cysylltiadau dyddiol yn yr ap yma\n\nni fyddwch yn gallu gwneud cais am daliadau cymorth Profi ac Olrhain</string>
     <string name="daily_contact_testing_confirmation_title">Profi cysylltiadau\'n ddyddiol</string>
-    <string name="device_not_supported_next_steps_link_text">Darllenwch y cwestiynau a ofynnir yn aml (FAQ)</string>
+    <string name="device_not_supported_next_steps_link_text">Darllenwch y ddolen cwestiynau a ofynnir yn aml (FAQs)</string>
     <string name="device_not_supported_next_steps_link_url">https://faq.covid19.nhs.uk/article/KA-01386</string>
     <string name="device_not_supported_next_steps_text">Darganfod beth i\'w wneud er mwyn parhau i ddefnyddio\'r ap.</string>
     <string name="device_not_supported_next_steps_title">Camau nesaf</string>
@@ -476,12 +476,24 @@
     <string name="unsupported_device">Cyfyngiad yn eich gosodiadau (er enghraifft, os mai ffôn cwmni yw hwn).\n\nMae ap arall ar eich ffôn yn defnyddio\'r un dechnoleg gan atal yr ap hwn rhag gweithio.</string>
     <string name="user_data_daily_contact_testing_text">Wedi cadarnhau cymryd rhan</string>
     <string name="user_data_daily_contact_testing_title">Profi cysylltiadau\'n ddyddiol</string>
+    <string name="about_manage_my_data_settings_subtitle">Awdurdod lleol, canlyniadau prawf, hanes y lleoliad</string>
+    <string name="ill_do_it_later">Fe wnaf yn nes ymlaen</string>
     <string name="link_test_result_daily_contact_testing_description">Os gwnaethoch chi roi gwybod am ganlyniad positif i\'ch rhaglen ddyddiol o brofi cysylltiadau, cofnodwch y cod a gawsoch yn y blwch uchod, a hunanynyswch\n\nOs oedd eich canlyniad dyddiol yn negatif, ni fyddwch yn derbyn cod i\'w gofnodi yn yr ap. Mae angen i chi ddweud wrthym bod eich canlyniad yn negatif, a pharhau.</string>
     <string name="link_test_result_daily_contact_testing_description_list_header">Hefyd:</string>
-    <string name="link_test_result_error_both_inputs_provided">You cannot both enter a code and have a negative result from daily contact testing.</string>
+    <string name="link_test_result_error_both_inputs_provided">Allwch chi ddim cofnodi cod canlyniad prawf a chadarnhau eich bod wedi cael canlyniad prawf negatif ar yr un pryd.</string>
+    <string name="link_test_result_error_neither_input_provided">Mae angen i chi naill ai cofnodi cod neu ddweud wrthym eich bod wedi cael canlyniad prawf negatif o\'r profion cysylltiadau dyddiol.</string>
     <string name="link_test_result_onset_date_title">Ydych chi\'n cofio pa ddiwrnod y gwnaethoch chi ddechrau cael unrhyw un o\'r symptomau yma?</string>
     <string name="link_test_result_symptoms_list">Gwres uchel (twymyn)\n\nPeswch parhaus newydd\n\nNewid yn eich gallu i arogli a blasu</string>
     <string name="link_test_result_symptoms_no">Na</string>
-    <string name="link_test_result_symptoms_yes">Ydw</string>
+    <string name="link_test_result_symptoms_no_accessibility">Nid oes gennyf unrhyw un o’r symptomau hyn</string>
     <string name="link_test_result_symptoms_title">Oedd gennych chi unrhyw un o\'r symptomau coronafeirws canlynol?</string>
+    <string name="link_test_result_symptoms_yes">Ydw</string>
+    <string name="link_test_result_symptoms_yes_accessibility">Yes, I have symptoms.</string>
+    <string name="risk_level_mass_testing_link_text">Dod o hyd i safle profi</string>
+    <string name="risk_level_mass_testing_link_url">https://maps.test-and-trace.nhs.uk/</string>
+    <string name="risk_level_mass_testing_text">Gweld pa brofi sydd ar gael yn eich ardal ac os oes angen bwcio.</string>
+    <string name="risk_level_mass_testing_title">Profi yn agos i chi</string>
+    <string name="venue_alert_m2_explanation">Mae risg eich bod wedi dod i gysylltiad â\'r coronafeirws. Ni fydd tua 1 ymhob 3 o bobl â\'r coronafeirws yn cael unrhyw symptomau, ond mae hi dal yn bosibl iddynt drosglwyddo\'r firws a rhoi eraill mewn perygl. Oherwydd hyn, archebwch brawf nawr.\n\nDoes dim angen i chi hunan-ynysu, ond dylech gymryd gofal ychwanegol i ddilyn y canllawiau diweddaraf ar gadw pellter cymdeithasol.\n\nOs cewch ganlyniadau positif i\'r prawf, neu os ydych yn datblygu unrhyw symptomau, mae\'n rhaid i chi hunan-ynysu ar unwaith. Gallwch ffonio 119 os oes gennych unrhyw gwestiwn.</string>
+    <string name="venue_alert_m2_title">Fe wnaethoch ymweld yn ddiweddar â lleoliad lle bu brigiad o achosion o\'r coronafeirws (COVID-19)</string>
+    <string name="user_data_risky_venue_visit_date_title">DYDDIAD YN LLEOLIAD Y RISG</string>
 </resources>

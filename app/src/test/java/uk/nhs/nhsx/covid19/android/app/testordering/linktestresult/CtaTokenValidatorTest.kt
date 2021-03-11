@@ -9,8 +9,8 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostalDistrictProviderWrapper
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeRequest
@@ -35,15 +35,15 @@ import kotlin.test.assertEquals
 class CtaTokenValidatorTest {
 
     private val virologyTestingApi = mockk<VirologyTestingApi>()
-    private val postalDistrictProviderWrapper = mockk<PostalDistrictProviderWrapper>()
+    private val localAuthorityPostCodeProvider = mockk<LocalAuthorityPostCodeProvider>()
     private val crockfordDammValidator = mockk<CrockfordDammValidator>()
 
     private val testSubject =
-        CtaTokenValidator(virologyTestingApi, postalDistrictProviderWrapper, crockfordDammValidator)
+        CtaTokenValidator(virologyTestingApi, localAuthorityPostCodeProvider, crockfordDammValidator)
 
     @Before
     fun setUp() {
-        coEvery { postalDistrictProviderWrapper.getPostCodeDistrict() } returns PostCodeDistrict.ENGLAND
+        coEvery { localAuthorityPostCodeProvider.getPostCodeDistrict() } returns PostCodeDistrict.ENGLAND
         every { crockfordDammValidator.validate(any()) } returns true
     }
 
@@ -254,7 +254,7 @@ class CtaTokenValidatorTest {
         runBlocking {
             val ctaToken = "12345678"
 
-            coEvery { postalDistrictProviderWrapper.getPostCodeDistrict() } returns null
+            coEvery { localAuthorityPostCodeProvider.getPostCodeDistrict() } returns null
 
             val result = testSubject.validate(ctaToken)
 

@@ -77,24 +77,24 @@ class VisitedVenuesStorageIntegrationTest {
 
     @Test
     fun addingVenueCreatesVenuesFile() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
+        testSubject.finishLastVisitAndAddNewVenue(venue1)
 
         assertTrue(file.exists())
     }
 
     @Test
     fun addedVenueCanBeReadBack() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
+        testSubject.finishLastVisitAndAddNewVenue(venue1)
 
         val visits = testSubject.getVisits()
         assertEquals(1, visits.size)
-        assertEquals(VENUE_1, visits[0].venue)
+        assertEquals(venue1, visits[0].venue)
         assertEquals(fromRounded, visits[0].from)
     }
 
     @Test
     fun deletingFileClearsVenuesStorage() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
+        testSubject.finishLastVisitAndAddNewVenue(venue1)
 
         file.delete()
 
@@ -104,20 +104,20 @@ class VisitedVenuesStorageIntegrationTest {
 
     @Test
     fun addingVenueToExistingFileUpdatesEncryptedFile() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_2)
+        testSubject.finishLastVisitAndAddNewVenue(venue1)
+        testSubject.finishLastVisitAndAddNewVenue(venue2)
 
         val visits = testSubject.getVisits()
         assertEquals(2, visits.size)
-        assertEquals(VENUE_1, visits[0].venue)
+        assertEquals(venue1, visits[0].venue)
         assertEquals(fromRounded, visits[0].from)
-        assertEquals(VENUE_2, visits[1].venue)
+        assertEquals(venue2, visits[1].venue)
         assertEquals(fromRounded, visits[1].from)
     }
 
     @Test
     fun addingVenueSetsToDateToTomorrowMidnight() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
+        testSubject.finishLastVisitAndAddNewVenue(venue1)
         val nextMidnight = Instant.parse("2014-12-22T00:00:00Z")
 
         val visits = testSubject.getVisits()
@@ -126,11 +126,11 @@ class VisitedVenuesStorageIntegrationTest {
 
     @Test
     fun addingVenueUpdatesLastVenueToTimestamp() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
+        testSubject.finishLastVisitAndAddNewVenue(venue1)
 
         val nextCheckInTime = Instant.parse("2014-12-21T10:01:00Z")
         clock.currentInstant = nextCheckInTime
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_2)
+        testSubject.finishLastVisitAndAddNewVenue(venue2)
 
         val visits = testSubject.getVisits()
         val checkOutTime = nextCheckInTime.roundUpToNearestQuarter()
@@ -141,20 +141,12 @@ class VisitedVenuesStorageIntegrationTest {
     fun markVenuesAsInRiskyListWhenVenueWasRisky() = runBlocking {
         testSubject.setVisits(
             listOf(
-                VenueVisit(
-                    venue = Venue("1", "Venue1"),
-                    from = Instant.parse("2020-07-25T10:00:00Z"),
-                    to = Instant.parse("2020-07-25T12:00:00Z")
-                ),
-                VenueVisit(
-                    venue = Venue("2", "Venue2"),
-                    from = Instant.parse("2020-07-25T10:00:00Z"),
-                    to = Instant.parse("2020-07-25T12:00:00Z")
-                )
+                venueVisit1,
+                venueVisit2
             )
         )
 
-        testSubject.markAsWasInRiskyList(listOf("1"))
+        testSubject.markAsWasInRiskyList(listOf(venueVisit1))
 
         assertEquals(true, testSubject.getVisits()[0].wasInRiskyList)
         assertEquals(false, testSubject.getVisits()[1].wasInRiskyList)
@@ -164,20 +156,12 @@ class VisitedVenuesStorageIntegrationTest {
     fun markVenuesAsInRiskyListWhenNoVenueWasRisky() = runBlocking {
         testSubject.setVisits(
             listOf(
-                VenueVisit(
-                    venue = Venue("1", "Venue1"),
-                    from = Instant.parse("2020-07-25T10:00:00Z"),
-                    to = Instant.parse("2020-07-25T12:00:00Z")
-                ),
-                VenueVisit(
-                    venue = Venue("2", "Venue2"),
-                    from = Instant.parse("2020-07-25T10:00:00Z"),
-                    to = Instant.parse("2020-07-25T12:00:00Z")
-                )
+                venueVisit1,
+                venueVisit2
             )
         )
 
-        testSubject.markAsWasInRiskyList(listOf("3"))
+        testSubject.markAsWasInRiskyList(listOf(venueVisit3))
 
         assertEquals(false, testSubject.getVisits()[0].wasInRiskyList)
         assertEquals(false, testSubject.getVisits()[1].wasInRiskyList)
@@ -187,24 +171,24 @@ class VisitedVenuesStorageIntegrationTest {
     fun setVenuesReplacesContent() = runBlocking {
         val to = Instant.parse("2014-12-21T12:39:00Z")
 
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
+        testSubject.finishLastVisitAndAddNewVenue(venue1)
 
         assertEquals(1, testSubject.getVisits().size)
 
-        val visit = VenueVisit(VENUE_2, from, to)
+        val visit = VenueVisit(venue2, from, to)
 
         testSubject.setVisits(listOf(visit))
 
         val visits = testSubject.getVisits()
         assertEquals(1, visits.size)
-        assertEquals(VENUE_2, visits[0].venue)
+        assertEquals(venue2, visits[0].venue)
         assertEquals(from, visits[0].from)
         assertEquals(to, visits[0].to)
     }
 
     @Test
     fun venuesFileIsEncrypted() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
+        testSubject.finishLastVisitAndAddNewVenue(venue1)
 
         try {
             val rawFileContents = file.readText()
@@ -216,20 +200,20 @@ class VisitedVenuesStorageIntegrationTest {
 
     @Test
     fun cancelCheckInRemovesVisitFromStorage() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_2)
+        testSubject.finishLastVisitAndAddNewVenue(venue1)
+        testSubject.finishLastVisitAndAddNewVenue(venue2)
 
         testSubject.removeLastVisit()
 
         val visits = testSubject.getVisits()
 
         assertEquals(1, visits.size)
-        assertEquals(VENUE_1, visits[0].venue)
+        assertEquals(venue1, visits[0].venue)
     }
 
     @Test
     fun callingRemoveAllVenueVisitsRemovesVisitsFile() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
+        testSubject.finishLastVisitAndAddNewVenue(venue1)
 
         testSubject.removeAllVenueVisits()
 
@@ -239,20 +223,38 @@ class VisitedVenuesStorageIntegrationTest {
 
     @Test
     fun getVisitByVenueIdReturnsCorrectVenueVisit() = runBlocking {
-        testSubject.finishLastVisitAndAddNewVenue(VENUE_1)
+        testSubject.finishLastVisitAndAddNewVenue(venue1)
 
-        val venueVisit = testSubject.getVisitByVenueId(VENUE_1.id)
+        val venueVisit = testSubject.getVisitByVenueId(venue1.id)
 
-        assertEquals(VENUE_1.id, venueVisit?.venue?.id)
+        assertEquals(venue1.id, venueVisit?.venue?.id)
     }
 
     companion object {
-        private val VENUE_1 = Venue(
+        private val venueVisit1 = VenueVisit(
+            venue = Venue("1", "Venue1"),
+            from = Instant.parse("2020-07-25T10:00:00Z"),
+            to = Instant.parse("2020-07-25T12:00:00Z")
+        )
+
+        private val venueVisit2 = VenueVisit(
+            venue = Venue("2", "Venue2"),
+            from = Instant.parse("2020-07-25T10:00:00Z"),
+            to = Instant.parse("2020-07-25T12:00:00Z")
+        )
+
+        private val venueVisit3 = VenueVisit(
+            venue = Venue("3", "Venue3"),
+            from = Instant.parse("2020-07-25T10:00:00Z"),
+            to = Instant.parse("2020-07-25T12:00:00Z")
+        )
+
+        private val venue1 = Venue(
             "2",
             organizationPartName = "organizationPartName"
         )
 
-        private val VENUE_2 = Venue(
+        private val venue2 = Venue(
             "3",
             organizationPartName = "organizationPartName"
         )

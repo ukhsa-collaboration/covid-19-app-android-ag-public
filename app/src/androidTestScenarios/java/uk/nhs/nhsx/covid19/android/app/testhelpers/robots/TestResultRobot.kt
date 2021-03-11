@@ -1,16 +1,29 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
+import androidx.appcompat.widget.AppCompatImageButton
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.hasChildCount
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.paragraphsContainerContainsStringResource
+import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.containsStringResourceAt
+import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.isAccessibilityHeading
+import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withNullOrEmptyContentDescription
+import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateColor
+import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateStringResource
+import uk.nhs.nhsx.covid19.android.app.testhelpers.withDrawable
 
 class TestResultRobot(
     private val context: Context
@@ -213,5 +226,180 @@ class TestResultRobot(
 
         onView(withId(R.id.exposureFaqsLink))
             .check(matches(not(isDisplayed())))
+    }
+
+    private fun ViewInteraction.checkDisplayed(isVisible: Boolean) {
+        if (isVisible) check(matches(isDisplayed()))
+        else check(matches(not(isDisplayed())))
+    }
+
+    private fun ViewInteraction.hasOrderedParagraphs(@StringRes vararg stringResourceIdList: Int) {
+        stringResourceIdList.forEachIndexed { index, stringResourceId ->
+            this.check(matches(containsStringResourceAt(stringResourceId, index)))
+        }
+    }
+
+    fun checkGoodNewsVisibility(isVisible: Boolean) {
+        onView(withId(R.id.goodNewsContainer))
+            .checkDisplayed(isVisible)
+    }
+
+    fun checkIsolationRequestVisibility(isVisible: Boolean) {
+        onView(withId(R.id.isolationRequestContainer))
+            .checkDisplayed(isVisible)
+    }
+
+    fun checkGoodNewsIconVisibility(isVisible: Boolean) {
+        onView(withId(R.id.goodNewsIcon)).apply {
+            if (isVisible) {
+                perform(scrollTo())
+                check(matches(isDisplayed()))
+            } else check(matches(not(isDisplayed())))
+        }
+    }
+
+    fun checkGoodNewsIcon(drawableResourceId: Int) {
+        onView(withId(R.id.goodNewsIcon))
+            .check(matches(withDrawable(drawableResourceId)))
+    }
+
+    fun checkGoodNewsTitleIsVisible() {
+        onView(withId(R.id.goodNewsTitle))
+            .checkDisplayed(true)
+    }
+
+    fun checkGoodNewsTitleStringResource(stringResourceId: Int) {
+        onView(withId(R.id.goodNewsTitle))
+            .check(matches(withText(stringResourceId)))
+    }
+
+    fun checkGoodNewsSubtitleStringResource(stringResourceId: Int) {
+        onView(withId(R.id.goodNewsSubtitle))
+            .check(matches(withText(stringResourceId)))
+    }
+
+    fun checkGoodNewsInfoState() {
+        onView(withId(R.id.goodNewsInfoView)).apply {
+            check(matches(withStateStringResource(R.string.test_result_no_self_isolation_description)))
+            check(matches(withStateColor(R.color.amber)))
+        }
+    }
+
+    fun checkIsolationRequestInfoState(stringResourceId: Int, colourRes: Int) {
+        onView(withId(R.id.isolationRequestInfoView)).apply {
+            check(matches(withStateStringResource(stringResourceId)))
+            check(matches(withStateColor(colourRes)))
+        }
+    }
+
+    fun checkGoodNewsParagraphContainStringResources(vararg stringResourceIdList: Int) {
+        with(onView(withId(R.id.goodNewsParagraphContainer))) {
+            if (stringResourceIdList.size == 1)
+                check(matches(paragraphsContainerContainsStringResource(stringResourceIdList[0])))
+            else
+                hasOrderedParagraphs(*stringResourceIdList)
+        }
+    }
+
+    fun checkGoodNewsActionButtonTextStringResource(stringResourceId: Int) {
+        onView(withId(R.id.goodNewsActionButton))
+            .check(matches(withText(stringResourceId)))
+    }
+
+    fun checkIsolationRequestActionButton(stringResourceId: Int) {
+        if (stringResourceId < 0) return
+        onView(withId(R.id.isolationRequestActionButton))
+            .check(matches(withText(stringResourceId)))
+    }
+
+    fun checkIsolationRequestImageIs(drawableResourceId: Int) {
+        onView(withId(R.id.isolationRequestImage))
+            .check(matches(withDrawable(drawableResourceId)))
+    }
+
+    fun checkIsolationRequestTitle1Is(stringResourceId: Int) {
+        onView(withId(R.id.isolationRequestTitle1))
+            .check(matches(withText(stringResourceId)))
+    }
+
+    fun checkIsolationRequestTitle2Is(text: String) {
+        onView(withId(R.id.isolationRequestTitle2))
+            .check(matches(withText(text)))
+    }
+
+    fun checkIsolationRequestTitle3Visibility(isVisible: Boolean) {
+        onView(withId(R.id.isolationRequestTitle3))
+            .checkDisplayed(isVisible)
+    }
+
+    fun checkAccessibilityContainerContentDescription(text: String) {
+        onView(withId(R.id.accessibilityContainer))
+            .check(matches(withContentDescription(text)))
+    }
+
+    fun checkAccessibilityContainerIsAccessibilityHeading() {
+        onView(withId(R.id.accessibilityContainer))
+            .check(matches(isAccessibilityHeading()))
+    }
+
+    fun checkIsolationRequestTitle1IsNotAccessibilityHeading() {
+        onView(withId(R.id.isolationRequestTitle1))
+            .check(matches(not(isAccessibilityHeading())))
+    }
+
+    fun checkIsolationRequestTitle2IsNotAccessibilityHeading() {
+        onView(withId(R.id.isolationRequestTitle1))
+            .check(matches(not(isAccessibilityHeading())))
+    }
+
+    fun checkIsolationRequestTitle3IsNotAccessibilityHeading() {
+        onView(withId(R.id.isolationRequestTitle1))
+            .check(matches(not(isAccessibilityHeading())))
+    }
+
+    fun checkIsolationRequestTitle1HasNullContentDescription() {
+        onView(withId(R.id.isolationRequestTitle1))
+            .check(matches(withNullOrEmptyContentDescription()))
+    }
+
+    fun checkIsolationRequestTitle2HasNullContentDescription() {
+        onView(withId(R.id.isolationRequestTitle2))
+            .check(matches(withNullOrEmptyContentDescription()))
+    }
+
+    fun checkIsolationRequestTitle3HasNullContentDescription() {
+        onView(withId(R.id.isolationRequestTitle3))
+            .check(matches(withNullOrEmptyContentDescription()))
+    }
+
+    fun checkExposureFaqsLinkNotVisible() {
+        onView(withId(R.id.exposureFaqsLink))
+            .checkDisplayed(false)
+    }
+
+    fun checkExposureFaqsLinkVisible() {
+        onView(withId(R.id.exposureFaqsLink)).apply {
+            perform(scrollTo())
+            checkDisplayed(true)
+        }
+    }
+
+    fun checkIsolationRequestParagraphContainerContains(vararg stringResourceIdList: Int) {
+        onView(withId(R.id.isolationRequestParagraphContainer))
+            .hasOrderedParagraphs(*stringResourceIdList)
+    }
+
+    fun checkHasCloseToolbarOption() {
+        onView(
+            Matchers.allOf(
+                Matchers.instanceOf(AppCompatImageButton::class.java),
+                withParent(withId(R.id.toolbar))
+            )
+        ).check(matches(withContentDescription(R.string.close)))
+    }
+
+    fun checkNoCloseToolbarOption() {
+        onView(withId(R.id.toolbar))
+            .check(matches(hasChildCount(0)))
     }
 }

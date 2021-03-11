@@ -48,15 +48,15 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     fun receivePositiveUnassistedLFDTestResultAfterSelfDiagnosis() = notReported {
         receivePositiveTestResultAfterSelfDiagnosis(
             RAPID_SELF_REPORTED,
-            Metrics::receivedPositiveLFDTestResultViaPolling,
-            Metrics::isIsolatingForTestedLFDPositiveBackgroundTick,
-            Metrics::hasTestedLFDPositiveBackgroundTick
+            receivedPositiveTestResultViaPollingMetric = null,
+            Metrics::isIsolatingForTestedSelfRapidPositiveBackgroundTick,
+            Metrics::hasTestedSelfRapidPositiveBackgroundTick
         )
     }
 
     private fun receivePositiveTestResultAfterSelfDiagnosis(
         testKitType: VirologyTestKitType,
-        receivedPositiveTestResultViaPollingMetric: MetricsProperty,
+        receivedPositiveTestResultViaPollingMetric: MetricsProperty?,
         isIsolatingForTestedPositiveBackgroundTickMetric: MetricsProperty,
         hasTestedPositiveBackgroundTickMetric: MetricsProperty
     ) {
@@ -90,7 +90,9 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
         assertOnFields {
             // Still in isolation, for both self-diagnosis and positive test result
             assertEquals(1, Metrics::receivedPositiveTestResult)
-            assertEquals(1, receivedPositiveTestResultViaPollingMetric)
+            receivedPositiveTestResultViaPollingMetric?.let {
+                assertEquals(1, it)
+            }
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
@@ -142,13 +144,13 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     fun receiveNegativeUnassistedLFDTestResultAfterSelfDiagnosisAndEndIsolation() = notReported {
         receiveNegativeTestResultAfterSelfDiagnosisAndEndIsolation(
             RAPID_SELF_REPORTED,
-            Metrics::receivedNegativeLFDTestResultViaPolling
+            receivedNegativeTestResultViaPollingMetric = null
         )
     }
 
     private fun receiveNegativeTestResultAfterSelfDiagnosisAndEndIsolation(
         testKitType: VirologyTestKitType,
-        receivedNegativeTestResultViaPollingMetric: MetricsProperty
+        receivedNegativeTestResultViaPollingMetric: MetricsProperty?
     ) {
         // Current date: 2nd Jan -> Analytics packet for: 1st Jan
         // Starting state: App running normally, not in isolation
@@ -181,7 +183,9 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
         assertOnFields {
             // Isolation ends part way through analytics window due to negative test result
             assertEquals(1, Metrics::receivedNegativeTestResult)
-            assertEquals(1, receivedNegativeTestResultViaPollingMetric)
+            receivedNegativeTestResultViaPollingMetric?.let {
+                assertEquals(1, it)
+            }
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertLessThanTotalBackgroundTasks(Metrics::isIsolatingBackgroundTick)
@@ -219,13 +223,13 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     fun receiveVoidUnassistedLFDTestResultAfterSelfDiagnosis() = notReported {
         receiveVoidTestResultAfterSelfDiagnosis(
             RAPID_SELF_REPORTED,
-            Metrics::receivedVoidLFDTestResultViaPolling
+            receivedVoidTestResultViaPollingMetric = null
         )
     }
 
     private fun receiveVoidTestResultAfterSelfDiagnosis(
         testKitType: VirologyTestKitType,
-        receivedVoidTestResultViaPollingMetric: MetricsProperty
+        receivedVoidTestResultViaPollingMetric: MetricsProperty?
     ) {
         selfDiagnosis.selfDiagnosePositiveAndOrderTest(receiveResultImmediately = false)
 
@@ -246,7 +250,9 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
 
         assertOnFields {
             assertEquals(1, Metrics::receivedVoidTestResult)
-            assertEquals(1, receivedVoidTestResultViaPollingMetric)
+            receivedVoidTestResultViaPollingMetric?.let {
+                assertEquals(1, it)
+            }
             ignore(
                 Metrics::hasSelfDiagnosedBackgroundTick,
                 Metrics::hasSelfDiagnosedPositiveBackgroundTick,

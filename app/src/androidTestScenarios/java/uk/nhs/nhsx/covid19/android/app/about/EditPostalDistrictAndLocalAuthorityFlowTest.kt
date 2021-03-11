@@ -1,8 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.about
 
-import com.jeroenmols.featureflag.framework.FeatureFlag
-import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
-import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -19,15 +16,8 @@ class EditPostalDistrictAndLocalAuthorityFlowTest : EspressoTest() {
     private val postCode = "N12"
     private val localAuthorityName = "Barnet"
 
-    @After
-    fun tearDown() {
-        FeatureFlagTestHelper.clearFeatureFlags()
-    }
-
     @Test
-    fun completePostCodeAndLocalAuthorityWithFeatureFlagEnabled() = notReported {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-
+    fun completePostCode() = notReported {
         startTestActivity<UserDataActivity>()
 
         userDataRobot.checkActivityIsDisplayed()
@@ -45,25 +35,6 @@ class EditPostalDistrictAndLocalAuthorityFlowTest : EspressoTest() {
         waitFor { localAuthorityRobot.checkSingleAuthorityIsDisplayed(postCode, localAuthorityName) }
 
         localAuthorityRobot.clickConfirm()
-
-        waitFor { userDataRobot.checkActivityIsDisplayed() }
-    }
-
-    @Test
-    fun completePostCodeWithFeatureFlagDisabled() = notReported {
-        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-
-        startTestActivity<UserDataActivity>()
-
-        userDataRobot.checkActivityIsDisplayed()
-
-        userDataRobot.userClicksEditPostalDistrict()
-
-        editPostalDistrictRobot.checkActivityIsDisplayed()
-
-        editPostalDistrictRobot.enterPostDistrictCode(postCode)
-
-        editPostalDistrictRobot.clickSavePostDistrictCode()
 
         waitFor { userDataRobot.checkActivityIsDisplayed() }
     }

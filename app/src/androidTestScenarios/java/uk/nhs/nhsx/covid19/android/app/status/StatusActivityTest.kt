@@ -9,7 +9,9 @@ import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Resu
 import uk.nhs.nhsx.covid19.android.app.exposure.setExposureNotificationResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDate
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueConfigurationDurationDays
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
 import uk.nhs.nhsx.covid19.android.app.report.notReported
@@ -339,6 +341,31 @@ class StatusActivityTest : EspressoTest() {
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
         statusRobot.checkOrderTestIsEnabled()
+    }
+
+    @Test
+    fun whenLastVisitedBookTestTypeVenueAtRisk_orderTestButtonShouldBeDisplayed() = notReported {
+        testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue = LastVisitedBookTestTypeVenueDate(
+            LocalDate.now(),
+            RiskyVenueConfigurationDurationDays(optionToBookATest = 10)
+        )
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        statusRobot.checkOrderTestIsDisplayed()
+    }
+
+    @Test
+    fun whenLastVisitedBookTestTypeVenueNotAtRisk_orderTestButtonShouldBeDisplayed() = notReported {
+        testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue = null
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        statusRobot.checkOrderTestIsNotDisplayed()
     }
 
     @Test

@@ -5,19 +5,19 @@ import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostalDistrictProviderWrapper
 import kotlin.test.assertEquals
 
 class DistrictAreaStringProviderTest {
 
-    private val postalDistrictProviderWrapper = mockk<PostalDistrictProviderWrapper>()
+    private val localAuthorityPostCodeProvider = mockk<LocalAuthorityPostCodeProvider>()
 
-    private val testSubject = DistrictAreaStringProvider(postalDistrictProviderWrapper)
+    private val testSubject = DistrictAreaStringProvider(localAuthorityPostCodeProvider)
 
     @Test
     fun `provide for Wales returns modified resource id`() = runBlocking {
-        coEvery { postalDistrictProviderWrapper.getPostCodeDistrict() } returns PostCodeDistrict.WALES
+        coEvery { localAuthorityPostCodeProvider.getPostCodeDistrict() } returns PostCodeDistrict.WALES
 
         val actual = testSubject.provide(R.string.privacy_notice)
 
@@ -28,7 +28,7 @@ class DistrictAreaStringProviderTest {
 
     @Test
     fun `provide not for Wales returns original resource id`() = runBlocking {
-        coEvery { postalDistrictProviderWrapper.getPostCodeDistrict() } returns PostCodeDistrict.ENGLAND
+        coEvery { localAuthorityPostCodeProvider.getPostCodeDistrict() } returns PostCodeDistrict.ENGLAND
 
         val actual = testSubject.provide(R.string.privacy_notice)
 
@@ -39,7 +39,7 @@ class DistrictAreaStringProviderTest {
 
     @Test
     fun `provide for Wales when no key in map returns original resource id`() = runBlocking {
-        coEvery { postalDistrictProviderWrapper.getPostCodeDistrict() } returns PostCodeDistrict.WALES
+        coEvery { localAuthorityPostCodeProvider.getPostCodeDistrict() } returns PostCodeDistrict.WALES
 
         val actual = testSubject.provide(R.string.tablet_information_url)
 
@@ -50,7 +50,7 @@ class DistrictAreaStringProviderTest {
 
     @Test
     fun `when provided postal district is null returns original resource id`() = runBlocking {
-        coEvery { postalDistrictProviderWrapper.getPostCodeDistrict() } returns null
+        coEvery { localAuthorityPostCodeProvider.getPostCodeDistrict() } returns null
 
         val actual = testSubject.provide(R.string.privacy_notice)
 

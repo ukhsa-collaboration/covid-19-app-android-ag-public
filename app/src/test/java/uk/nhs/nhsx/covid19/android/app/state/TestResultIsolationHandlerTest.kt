@@ -37,8 +37,8 @@ import kotlin.test.assertEquals
 
 class TestResultIsolationHandlerTest {
 
-    private val relevantTestResultProvider = mockk<RelevantTestResultProvider>(relaxed = true)
-    private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>(relaxed = true)
+    private val relevantTestResultProvider = mockk<RelevantTestResultProvider>(relaxUnitFun = true)
+    private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(now, ZoneOffset.UTC)
 
     private val testSubject = TestResultIsolationHandler(
@@ -56,10 +56,6 @@ class TestResultIsolationHandlerTest {
         requiresConfirmatoryTest = true
     )
 
-    private val expiredPositiveTestResultIndicative = positiveTestResultIndicative.copy(
-        testEndDate = now.minus(20, DAYS)
-    )
-
     private val positiveTestResultConfirmed = ReceivedTestResult(
         diagnosisKeySubmissionToken = "token",
         testEndDate = testEndDate,
@@ -67,10 +63,6 @@ class TestResultIsolationHandlerTest {
         testKitType = LAB_RESULT,
         diagnosisKeySubmissionSupported = true,
         requiresConfirmatoryTest = false
-    )
-
-    private val expiredPositiveTestResultConfirmed = positiveTestResultConfirmed.copy(
-        testEndDate = now.minus(20, DAYS)
     )
 
     private val negativeTestResultConfirmed = ReceivedTestResult(
@@ -98,6 +90,8 @@ class TestResultIsolationHandlerTest {
         every { isolationConfigurationProvider.durationDays } returns isolationConfiguration
         setRelevantTestResult(result = null, isConfirmed = false)
     }
+
+    // --- Positive, arriving in order
 
     @Test
     fun `when in isolation as index case with self-assessment, positive indicative test result is ignored`() {
@@ -165,19 +159,6 @@ class TestResultIsolationHandlerTest {
     }
 
     @Test
-    fun `when in isolation as index and contact case, expired positive confirmed test result removes contact case`() {
-        val state = isolationStateContactAndIndexCase(selfAssessment = true)
-        val result = testSubject.computeTransitionWithTestResult(
-            state,
-            expiredPositiveTestResultConfirmed
-        )
-
-        val expectedState = state.copy(contactCase = null)
-
-        assertEquals(TransitionAndStoreTestResult(expectedState, Overwrite), result)
-    }
-
-    @Test
     fun `when in isolation as contact case, positive indicative test result adds index case to isolation`() {
         val state = isolationStateContactCaseOnly()
         val result = testSubject.computeTransitionWithTestResult(
@@ -213,23 +194,6 @@ class TestResultIsolationHandlerTest {
     }
 
     @Test
-    fun `when in isolation as contact case, expired positive confirmed test result removes contact case and stores expired index isolation`() {
-        val result = testSubject.computeTransitionWithTestResult(
-            isolationStateContactCaseOnly(),
-            expiredPositiveTestResultConfirmed
-        )
-
-        val expectedState = Default(
-            previousIsolation = isolationStateIndexCaseOnly(
-                selfAssessment = false,
-                indexCaseStartInstant = expiredPositiveTestResultConfirmed.testEndDate
-            )
-        )
-
-        assertEquals(TransitionAndStoreTestResult(expectedState, Overwrite), result)
-    }
-
-    @Test
     fun `when in isolation as index case, with relevant positive indicative, positive confirmed test result does not transition`() {
         setRelevantTestResult(result = RelevantVirologyTestResult.POSITIVE, isConfirmed = false)
 
@@ -240,74 +204,6 @@ class TestResultIsolationHandlerTest {
         )
 
         assertEquals(DoNotTransitionButStoreTestResult(Confirm(confirmedDate = positiveTestResultConfirmed.testEndDate)), result)
-    }
-
-    @Test
-    fun `when in isolation as index case, with relevant positive confirmed, positive indicative test result older than symptoms replaces index case`() {
-        setRelevantTestResult(result = RelevantVirologyTestResult.POSITIVE, isConfirmed = true)
-
-        val state = isolationStateIndexCaseOnly(selfAssessment = true)
-        val testResult = positiveTestResultIndicative.copy(
-            testEndDate = state.symptomsOnsetInstant().minus(1, DAYS)
-        )
-        val result = testSubject.computeTransitionWithTestResult(
-            state,
-            testResult
-        )
-
-        val expectedTransition = TransitionAndStoreTestResult(
-            newState = isolationStateIndexCaseOnly(
-                selfAssessment = false,
-                indexCaseStartInstant = testResult.testEndDate
-            ),
-            testResultStorageOperation = OverwriteAndConfirm(confirmedDate = positiveTestResultConfirmed.testEndDate)
-        )
-
-        assertEquals(expectedTransition, result)
-    }
-
-    @Test
-    fun `when in isolation as index case, with relevant positive confirmed, positive indicative test result older than relevant test does not transition`() {
-        val relevantTestDate = testEndDate
-        setRelevantTestResult(
-            result = RelevantVirologyTestResult.POSITIVE,
-            isConfirmed = true,
-            testEndDate = relevantTestDate
-        )
-        val testResult = positiveTestResultIndicative.copy(
-            testEndDate = relevantTestDate.minus(1, DAYS)
-        )
-
-        val result = testSubject.computeTransitionWithTestResult(
-            isolationStateIndexCaseOnly(selfAssessment = true),
-            testResult
-        )
-
-        val expectedTransition = DoNotTransitionButStoreTestResult(OverwriteAndConfirm(confirmedDate = positiveTestResultConfirmed.testEndDate))
-
-        assertEquals(expectedTransition, result)
-    }
-
-    @Test
-    fun `when in isolation as index case, with relevant positive indicative, positive indicative test result older than relevant test does not transition`() {
-        val relevantTestDate = testEndDate
-        setRelevantTestResult(
-            result = RelevantVirologyTestResult.POSITIVE,
-            isConfirmed = false,
-            testEndDate = relevantTestDate
-        )
-        val testResult = positiveTestResultIndicative.copy(
-            testEndDate = relevantTestDate.minus(1, DAYS)
-        )
-
-        val result = testSubject.computeTransitionWithTestResult(
-            isolationStateIndexCaseOnly(selfAssessment = true),
-            testResult
-        )
-
-        val expectedTransition = DoNotTransitionButStoreTestResult(Overwrite)
-
-        assertEquals(expectedTransition, result)
     }
 
     @Test
@@ -324,24 +220,6 @@ class TestResultIsolationHandlerTest {
                 symptomsOnsetDate = LocalDate.parse("2020-07-22"),
                 expiryDate = LocalDate.parse("2020-08-05"),
                 selfAssessment = false
-            )
-        )
-
-        assertEquals(TransitionAndStoreTestResult(expectedState, Overwrite), result)
-    }
-
-    @Test
-    fun `when not in isolation, expired positive indicative test result stores expired index isolation`() {
-        val state = Default()
-        val result = testSubject.computeTransitionWithTestResult(
-            state,
-            expiredPositiveTestResultIndicative
-        )
-
-        val expectedState = Default(
-            previousIsolation = isolationStateIndexCaseOnly(
-                selfAssessment = false,
-                indexCaseStartInstant = expiredPositiveTestResultConfirmed.testEndDate
             )
         )
 
@@ -531,54 +409,6 @@ class TestResultIsolationHandlerTest {
     }
 
     @Test
-    fun `when not in isolation, with previous contact case, with relevant negative, expired positive confirmed test result removes old contact case and stores expired index isolation`() {
-        setRelevantTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true)
-
-        val result = testSubject.computeTransitionWithTestResult(
-            Default(
-                previousIsolation = isolationStateContactCaseOnly(
-                    encounterDate = encounterDate.minus(13, DAYS)
-                )
-            ),
-            expiredPositiveTestResultConfirmed
-        )
-
-        val expectedState = Default(
-            previousIsolation = isolationStateIndexCaseOnly(
-                selfAssessment = false,
-                indexCaseStartInstant = expiredPositiveTestResultConfirmed.testEndDate
-            )
-        )
-
-        assertEquals(TransitionAndStoreTestResult(expectedState, Overwrite), result)
-    }
-
-    @Test
-    fun `when not in isolation, with previous index and contact case, with relevant negative, expired positive confirmed test result removes old contact case and stores expired index isolation`() {
-        setRelevantTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true)
-
-        val result = testSubject.computeTransitionWithTestResult(
-            Default(
-                previousIsolation = isolationStateContactAndIndexCase(
-                    selfAssessment = false,
-                    encounterDate = encounterDate.minus(13, DAYS),
-                    indexCaseStartInstant = indexCaseStartDate.minus(13, DAYS)
-                )
-            ),
-            expiredPositiveTestResultConfirmed
-        )
-
-        val expectedState = Default(
-            previousIsolation = isolationStateIndexCaseOnly(
-                selfAssessment = false,
-                indexCaseStartInstant = expiredPositiveTestResultConfirmed.testEndDate
-            )
-        )
-
-        assertEquals(TransitionAndStoreTestResult(expectedState, Overwrite), result)
-    }
-
-    @Test
     fun `when not in isolation, with previous index case, without relevant negative, positive confirmed test result does not transition`() {
         val result = testSubject.computeTransitionWithTestResult(
             Default(
@@ -618,27 +448,6 @@ class TestResultIsolationHandlerTest {
     }
 
     @Test
-    fun `when not in isolation, with previous contact case, without relevant negative, expired positive confirmed test result removes previous contact case and stores expired index isolation`() {
-        val result = testSubject.computeTransitionWithTestResult(
-            Default(
-                previousIsolation = isolationStateContactCaseOnly(
-                    encounterDate = encounterDate.minus(13, DAYS)
-                )
-            ),
-            expiredPositiveTestResultConfirmed
-        )
-
-        val expectedState = Default(
-            previousIsolation = isolationStateIndexCaseOnly(
-                selfAssessment = false,
-                indexCaseStartInstant = expiredPositiveTestResultConfirmed.testEndDate
-            )
-        )
-
-        assertEquals(TransitionAndStoreTestResult(expectedState, Overwrite), result)
-    }
-
-    @Test
     fun `when not in isolation, without relevant negative, positive confirmed test result triggers isolation`() {
         val result = testSubject.computeTransitionWithTestResult(
             Default(),
@@ -658,6 +467,1021 @@ class TestResultIsolationHandlerTest {
         assertEquals(TransitionAndStoreTestResult(expectedState, Overwrite), result)
     }
 
+    // --- Positive, arriving out of order
+    // -- Tests that are "way too old", i.e., would expire before the start of an existing (active or expired) isolation
+
+    @Test
+    fun `when in isolation as a contact case, positive confirmed test result that is way too old does not transition`() {
+        `when has contact case, positive test result that is way too old does not transition`(
+            isolationActive = true,
+            receivedTestConfirmed = true
+        )
+    }
+
+    @Test
+    fun `when in isolation as a contact case, positive indicative test result that is way too old does not transition`() {
+        `when has contact case, positive test result that is way too old does not transition`(
+            isolationActive = true,
+            receivedTestConfirmed = false
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with previous contact case, positive confirmed test result that is way too old does not transition`() {
+        `when has contact case, positive test result that is way too old does not transition`(
+            isolationActive = false,
+            receivedTestConfirmed = true
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with previous contact case, positive indicative test result that is way too old does not transition`() {
+        `when has contact case, positive test result that is way too old does not transition`(
+            isolationActive = false,
+            receivedTestConfirmed = false
+        )
+    }
+
+    private fun `when has contact case, positive test result that is way too old does not transition`(
+        isolationActive: Boolean,
+        receivedTestConfirmed: Boolean
+    ) {
+        val isolation = isolationStateContactCaseOnly(
+            encounterDate =
+                if (isolationActive) encounterDate
+                else encounterDate.minus(13, DAYS)
+        )
+        val state =
+            if (isolationActive) isolation
+            else Default(previousIsolation = isolation)
+
+        val receivedTestResult = positiveTestResult(receivedTestConfirmed)
+            .copy(testEndDate = isolation.isolationStart.minus(11, DAYS))
+
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            receivedTestResult
+        )
+
+        assertEquals(Ignore(preventKeySubmission = true), result)
+    }
+
+    @Test
+    fun `when in isolation as an index case with self-assessment, positive confirmed test result that is way too old does not transition`() {
+        `when has index case with self-assessment, positive test result that is way too old does not transition`(
+            isolationActive = true,
+            receivedTestConfirmed = true
+        )
+    }
+
+    @Test
+    fun `when in isolation as an index case with self-assessment, positive indicative test result that is way too old does not transition`() {
+        `when has index case with self-assessment, positive test result that is way too old does not transition`(
+            isolationActive = true,
+            receivedTestConfirmed = false
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with previous index case with self-assessment, positive confirmed test result that is way too old does not transition`() {
+        `when has index case with self-assessment, positive test result that is way too old does not transition`(
+            isolationActive = false,
+            receivedTestConfirmed = true
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with previous index case with self-assessment, positive indicative test result that is way too old does not transition`() {
+        `when has index case with self-assessment, positive test result that is way too old does not transition`(
+            isolationActive = false,
+            receivedTestConfirmed = false
+        )
+    }
+
+    private fun `when has index case with self-assessment, positive test result that is way too old does not transition`(
+        isolationActive: Boolean,
+        receivedTestConfirmed: Boolean
+    ) {
+        val isolation = isolationStateIndexCaseOnly(
+            selfAssessment = true,
+            indexCaseStartInstant =
+                if (isolationActive) indexCaseStartDate
+                else indexCaseStartDate.minus(13, DAYS)
+        )
+        val state =
+            if (isolationActive) isolation
+            else Default(previousIsolation = isolation)
+
+        val receivedTestResult = positiveTestResult(receivedTestConfirmed)
+            .copy(testEndDate = isolation.symptomsOnsetInstant().minus(11, DAYS))
+
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            receivedTestResult
+        )
+
+        assertEquals(Ignore(preventKeySubmission = true), result)
+    }
+
+    @Test
+    fun `when in isolation as an index case without self-assessment, with relevant positive confirmed, positive confirmed test result that is way too old does not transition`() {
+        `when has index case without self-assessment, with relevant positive, positive test result that is way too old does not transition`(
+            isolationActive = true,
+            relevantTestConfirmed = true,
+            receivedTestConfirmed = true
+        )
+    }
+
+    @Test
+    fun `when in isolation as an index case without self-assessment, with relevant positive indicative, positive confirmed test result that is way too old does not transition`() {
+        `when has index case without self-assessment, with relevant positive, positive test result that is way too old does not transition`(
+            isolationActive = true,
+            relevantTestConfirmed = false,
+            receivedTestConfirmed = true
+        )
+    }
+
+    @Test
+    fun `when in isolation as an index case without self-assessment, with relevant positive confirmed, positive indicative test result that is way too old does not transition`() {
+        `when has index case without self-assessment, with relevant positive, positive test result that is way too old does not transition`(
+            isolationActive = true,
+            relevantTestConfirmed = true,
+            receivedTestConfirmed = false
+        )
+    }
+
+    @Test
+    fun `when in isolation as an index case without self-assessment, with relevant positive indicative, positive indicative test result that is way too old does not transition`() {
+        `when has index case without self-assessment, with relevant positive, positive test result that is way too old does not transition`(
+            isolationActive = true,
+            relevantTestConfirmed = false,
+            receivedTestConfirmed = false
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with previous index case without self-assessment, with relevant positive confirmed, positive confirmed test result that is way too old does not transition`() {
+        `when has index case without self-assessment, with relevant positive, positive test result that is way too old does not transition`(
+            isolationActive = false,
+            relevantTestConfirmed = true,
+            receivedTestConfirmed = true
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with previous index case without self-assessment, with relevant positive indicative, positive confirmed test result that is way too old does not transition`() {
+        `when has index case without self-assessment, with relevant positive, positive test result that is way too old does not transition`(
+            isolationActive = false,
+            relevantTestConfirmed = false,
+            receivedTestConfirmed = true
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with previous index case without self-assessment, with relevant positive confirmed, positive indicative test result that is way too old does not transition`() {
+        `when has index case without self-assessment, with relevant positive, positive test result that is way too old does not transition`(
+            isolationActive = false,
+            relevantTestConfirmed = true,
+            receivedTestConfirmed = false
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with previous index case without self-assessment, with relevant positive indicative, positive indicative test result that is way too old does not transition`() {
+        `when has index case without self-assessment, with relevant positive, positive test result that is way too old does not transition`(
+            isolationActive = false,
+            relevantTestConfirmed = false,
+            receivedTestConfirmed = false
+        )
+    }
+
+    private fun `when has index case without self-assessment, with relevant positive, positive test result that is way too old does not transition`(
+        isolationActive: Boolean,
+        relevantTestConfirmed: Boolean,
+        receivedTestConfirmed: Boolean
+    ) {
+        val relevantTestDate =
+            if (isolationActive) testEndDate
+            else testEndDate.minus(13, DAYS)
+        setRelevantTestResult(
+            RelevantVirologyTestResult.POSITIVE,
+            relevantTestConfirmed,
+            relevantTestDate
+        )
+
+        val isolation = isolationStateIndexCaseOnly(
+            selfAssessment = false,
+            indexCaseStartInstant = relevantTestDate
+        )
+        val state =
+            if (isolationActive) isolation
+            else Default(previousIsolation = isolation)
+
+        val receivedTestResult = positiveTestResult(receivedTestConfirmed)
+            .copy(testEndDate = relevantTestDate.minus(11, DAYS))
+
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            receivedTestResult
+        )
+
+        assertEquals(Ignore(preventKeySubmission = true), result)
+    }
+
+    // -- Positive tests that are older than symptoms
+    // - Index case only with self-assessment, without relevant, just replace index case
+
+    @Test
+    fun `when in isolation as index case with self-assessment, positive confirmed test result older than symptoms replaces index case`() {
+        `when has index case with self-assessment, positive test result older than symptoms replaces index case`(
+            isolationActive = true,
+            receivedTestConfirmed = true
+        )
+    }
+
+    @Test
+    fun `when in isolation as index case with self-assessment, positive indicative test result older than symptoms replaces index case`() {
+        `when has index case with self-assessment, positive test result older than symptoms replaces index case`(
+            isolationActive = true,
+            receivedTestConfirmed = false
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with previous index case with self-assessment, positive confirmed test result older than symptoms replaces index case`() {
+        `when has index case with self-assessment, positive test result older than symptoms replaces index case`(
+            isolationActive = false,
+            receivedTestConfirmed = true
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with previous index case with self-assessment, positive indicative test result older than symptoms replaces index case`() {
+        `when has index case with self-assessment, positive test result older than symptoms replaces index case`(
+            isolationActive = false,
+            receivedTestConfirmed = false
+        )
+    }
+
+    private fun `when has index case with self-assessment, positive test result older than symptoms replaces index case`(
+        isolationActive: Boolean,
+        receivedTestConfirmed: Boolean
+    ) {
+        val isolation = isolationStateIndexCaseOnly(
+            selfAssessment = true,
+            indexCaseStartInstant =
+                if (isolationActive) indexCaseStartDate
+                else indexCaseStartDate.minus(13, DAYS)
+        )
+        val state =
+            if (isolationActive) isolation
+            else Default(previousIsolation = isolation)
+
+        val testResult = positiveTestResult(receivedTestConfirmed).copy(
+            testEndDate = isolation.symptomsOnsetInstant().minus(1, DAYS)
+        )
+
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            testResult
+        )
+
+        val expectedIsolation = isolationStateIndexCaseOnly(
+            selfAssessment = false,
+            indexCaseStartInstant = testResult.testEndDate
+        )
+        val expectedState =
+            if (isolationActive) expectedIsolation
+            else Default(previousIsolation = expectedIsolation)
+
+        val expectedTransition = TransitionAndStoreTestResult(
+            newState = expectedState,
+            testResultStorageOperation = Overwrite
+        )
+
+        assertEquals(expectedTransition, result)
+    }
+
+    // - Index case only with self-assessment, with relevant positive, replace index case and possibly confirm
+
+    @Test
+    fun `when in isolation as index case with self-assessment, with relevant positive confirmed, positive confirmed test result older than symptoms replaces index case`() {
+        `when has index case with self-assessment, with relevant positive, positive test result older than symptoms replaces index case`(
+            isolationActive = true,
+            relevantTestConfirmed = true,
+            receivedTestConfirmed = true,
+            shouldConfirm = false
+        )
+    }
+
+    @Test
+    fun `when in isolation as index case with self-assessment, with relevant positive confirmed, positive indicative test result older than symptoms replaces index case`() {
+        `when has index case with self-assessment, with relevant positive, positive test result older than symptoms replaces index case`(
+            isolationActive = true,
+            relevantTestConfirmed = true,
+            receivedTestConfirmed = false,
+            shouldConfirm = true
+        )
+    }
+
+    @Test
+    fun `when in isolation as index case with self-assessment, with relevant positive indicative, positive confirmed test result older than symptoms replaces index case`() {
+        `when has index case with self-assessment, with relevant positive, positive test result older than symptoms replaces index case`(
+            isolationActive = true,
+            relevantTestConfirmed = false,
+            receivedTestConfirmed = true,
+            shouldConfirm = false
+        )
+    }
+
+    @Test
+    fun `when in isolation as index case with self-assessment, with relevant positive indicative, positive indicative test result older than symptoms replaces index case`() {
+        `when has index case with self-assessment, with relevant positive, positive test result older than symptoms replaces index case`(
+            isolationActive = true,
+            relevantTestConfirmed = false,
+            receivedTestConfirmed = false,
+            shouldConfirm = false
+        )
+    }
+
+    @Test
+    fun `not in isolation, with previous index case with self-assessment, with relevant positive confirmed, positive confirmed test result older than symptoms replaces index case`() {
+        `when has index case with self-assessment, with relevant positive, positive test result older than symptoms replaces index case`(
+            isolationActive = false,
+            relevantTestConfirmed = true,
+            receivedTestConfirmed = true,
+            shouldConfirm = false
+        )
+    }
+
+    @Test
+    fun `not in isolation, with previous index case with self-assessment, with relevant positive confirmed, positive indicative test result older than symptoms replaces index case`() {
+        `when has index case with self-assessment, with relevant positive, positive test result older than symptoms replaces index case`(
+            isolationActive = false,
+            relevantTestConfirmed = true,
+            receivedTestConfirmed = false,
+            shouldConfirm = true
+        )
+    }
+
+    @Test
+    fun `not in isolation, with previous index case with self-assessment, with relevant positive indicative, positive confirmed test result older than symptoms replaces index case`() {
+        `when has index case with self-assessment, with relevant positive, positive test result older than symptoms replaces index case`(
+            isolationActive = false,
+            relevantTestConfirmed = false,
+            receivedTestConfirmed = true,
+            shouldConfirm = false
+        )
+    }
+
+    @Test
+    fun `not in isolation, with previous index case with self-assessment, with relevant positive indicative, positive indicative test result older than symptoms replaces index case`() {
+        `when has index case with self-assessment, with relevant positive, positive test result older than symptoms replaces index case`(
+            isolationActive = false,
+            relevantTestConfirmed = false,
+            receivedTestConfirmed = false,
+            shouldConfirm = false
+        )
+    }
+
+    private fun `when has index case with self-assessment, with relevant positive, positive test result older than symptoms replaces index case`(
+        isolationActive: Boolean,
+        relevantTestConfirmed: Boolean,
+        receivedTestConfirmed: Boolean,
+        shouldConfirm: Boolean
+    ) {
+        val relevantTestDate =
+            if (isolationActive) testEndDate
+            else testEndDate.minus(13, DAYS)
+        setRelevantTestResult(
+            RelevantVirologyTestResult.POSITIVE,
+            isConfirmed = relevantTestConfirmed,
+            testEndDate = relevantTestDate
+        )
+
+        val isolation = isolationStateIndexCaseOnly(
+            selfAssessment = true,
+            indexCaseStartInstant = relevantTestDate.minus(4, DAYS)
+        )
+        val state =
+            if (isolationActive) isolation
+            else Default(previousIsolation = isolation)
+
+        val testResult = positiveTestResult(receivedTestConfirmed).copy(
+            testEndDate = isolation.symptomsOnsetInstant().minus(1, DAYS)
+        )
+
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            testResult
+        )
+
+        val expectedIsolation = isolationStateIndexCaseOnly(
+            selfAssessment = false,
+            indexCaseStartInstant = testResult.testEndDate
+        )
+        val expectedState =
+            if (isolationActive) expectedIsolation
+            else Default(previousIsolation = expectedIsolation)
+        val expectedTestResultStorageOperation =
+            if (shouldConfirm) OverwriteAndConfirm(confirmedDate = relevantTestDate)
+            else Overwrite
+        val expectedTransition = TransitionAndStoreTestResult(
+            expectedState,
+            expectedTestResultStorageOperation
+        )
+
+        assertEquals(expectedTransition, result)
+    }
+
+    // -- Positive tests that are older than a previous positive
+    // - Index case only without self-assessment, with relevant positive newer than received, replace index case and possibly confirm
+
+    @Test
+    fun `when in isolation as index case without self-assessment, with relevant positive confirmed, positive confirmed test result older than relevant test result replaces index case`() {
+        `when has index case without self-assessment, with relevant positive, positive test result older than relevant replaces index case`(
+            isolationActive = true,
+            relevantTestConfirmed = true,
+            receivedTestConfirmed = true,
+            shouldConfirm = false
+        )
+    }
+
+    @Test
+    fun `when in isolation as index case without self-assessment, with relevant positive confirmed, positive indicative test result older than relevant test result replaces index case`() {
+        `when has index case without self-assessment, with relevant positive, positive test result older than relevant replaces index case`(
+            isolationActive = true,
+            relevantTestConfirmed = true,
+            receivedTestConfirmed = false,
+            shouldConfirm = true
+        )
+    }
+
+    @Test
+    fun `when in isolation as index case without self-assessment, with relevant positive indicative, positive confirmed test result older than relevant test result replaces index case`() {
+        `when has index case without self-assessment, with relevant positive, positive test result older than relevant replaces index case`(
+            isolationActive = true,
+            relevantTestConfirmed = false,
+            receivedTestConfirmed = true,
+            shouldConfirm = false
+        )
+    }
+
+    @Test
+    fun `when in isolation as index case without self-assessment, with relevant positive indicative, positive indicative test result older than relevant test result replaces index case`() {
+        `when has index case without self-assessment, with relevant positive, positive test result older than relevant replaces index case`(
+            isolationActive = true,
+            relevantTestConfirmed = false,
+            receivedTestConfirmed = false,
+            shouldConfirm = false
+        )
+    }
+
+    @Test
+    fun `not in isolation, with previous index case without self-assessment, with relevant positive confirmed, positive confirmed test result older than relevant test result replaces index case`() {
+        `when has index case without self-assessment, with relevant positive, positive test result older than relevant replaces index case`(
+            isolationActive = false,
+            relevantTestConfirmed = true,
+            receivedTestConfirmed = true,
+            shouldConfirm = false
+        )
+    }
+
+    @Test
+    fun `not in isolation, with previous index case without self-assessment, with relevant positive confirmed, positive indicative test result older than relevant test result replaces index case`() {
+        `when has index case without self-assessment, with relevant positive, positive test result older than relevant replaces index case`(
+            isolationActive = false,
+            relevantTestConfirmed = true,
+            receivedTestConfirmed = false,
+            shouldConfirm = true
+        )
+    }
+
+    @Test
+    fun `not in isolation, with previous index case without self-assessment, with relevant positive indicative, positive confirmed test result older than relevant test result replaces index case`() {
+        `when has index case without self-assessment, with relevant positive, positive test result older than relevant replaces index case`(
+            isolationActive = false,
+            relevantTestConfirmed = false,
+            receivedTestConfirmed = true,
+            shouldConfirm = false
+        )
+    }
+
+    @Test
+    fun `not in isolation, with previous index case without self-assessment, with relevant positive indicative, positive indicative test result older than relevant test result replaces index case`() {
+        `when has index case without self-assessment, with relevant positive, positive test result older than relevant replaces index case`(
+            isolationActive = false,
+            relevantTestConfirmed = false,
+            receivedTestConfirmed = false,
+            shouldConfirm = false
+        )
+    }
+
+    private fun `when has index case without self-assessment, with relevant positive, positive test result older than relevant replaces index case`(
+        isolationActive: Boolean,
+        relevantTestConfirmed: Boolean,
+        receivedTestConfirmed: Boolean,
+        shouldConfirm: Boolean
+    ) {
+        val relevantTestDate =
+            if (isolationActive) testEndDate
+            else testEndDate.minus(13, DAYS)
+        setRelevantTestResult(
+            RelevantVirologyTestResult.POSITIVE,
+            isConfirmed = relevantTestConfirmed,
+            testEndDate = relevantTestDate
+        )
+
+        val isolation = isolationStateIndexCaseOnly(
+            selfAssessment = false,
+            indexCaseStartInstant = relevantTestDate
+        )
+        val state =
+            if (isolationActive) isolation
+            else Default(previousIsolation = isolation)
+
+        val testResult = positiveTestResult(receivedTestConfirmed).copy(
+            testEndDate = relevantTestDate.minus(1, DAYS)
+        )
+
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            testResult
+        )
+
+        val expectedIsolation = isolationStateIndexCaseOnly(
+            selfAssessment = false,
+            indexCaseStartInstant = testResult.testEndDate
+        )
+        val expectedState =
+            if (isolationActive) expectedIsolation
+            else Default(previousIsolation = expectedIsolation)
+        val expectedTestResultStorageOperation =
+            if (shouldConfirm) OverwriteAndConfirm(confirmedDate = relevantTestDate)
+            else Overwrite
+        val expectedTransition = TransitionAndStoreTestResult(
+            expectedState,
+            expectedTestResultStorageOperation
+        )
+
+        assertEquals(expectedTransition, result)
+    }
+
+    // - Index case only with self-assessment, with relevant positive newer than received, do not transition, possibly confirm
+
+    @Test
+    fun `when in isolation as index case with self-assessment, with relevant positive confirmed, positive confirmed test result older than relevant test result replaces index case`() {
+        `when has index case with self-assessment, with relevant positive, positive test result older than relevant does not transition`(
+            isolationActive = true,
+            relevantTestConfirmed = true,
+            receivedTestConfirmed = true,
+            shouldConfirm = false
+        )
+    }
+
+    @Test
+    fun `when in isolation as index case with self-assessment, with relevant positive confirmed, positive indicative test result older than relevant test result replaces index case`() {
+        `when has index case with self-assessment, with relevant positive, positive test result older than relevant does not transition`(
+            isolationActive = true,
+            relevantTestConfirmed = true,
+            receivedTestConfirmed = false,
+            shouldConfirm = true
+        )
+    }
+
+    @Test
+    fun `when in isolation as index case with self-assessment, with relevant positive indicative, positive confirmed test result older than relevant test result replaces index case`() {
+        `when has index case with self-assessment, with relevant positive, positive test result older than relevant does not transition`(
+            isolationActive = true,
+            relevantTestConfirmed = false,
+            receivedTestConfirmed = true,
+            shouldConfirm = false
+        )
+    }
+
+    @Test
+    fun `when in isolation as index case with self-assessment, with relevant positive indicative, positive indicative test result older than relevant test result replaces index case`() {
+        `when has index case with self-assessment, with relevant positive, positive test result older than relevant does not transition`(
+            isolationActive = true,
+            relevantTestConfirmed = false,
+            receivedTestConfirmed = false,
+            shouldConfirm = false
+        )
+    }
+
+    @Test
+    fun `not in isolation, with previous index case with self-assessment, with relevant positive confirmed, positive confirmed test result older than relevant test result replaces index case`() {
+        `when has index case with self-assessment, with relevant positive, positive test result older than relevant does not transition`(
+            isolationActive = false,
+            relevantTestConfirmed = true,
+            receivedTestConfirmed = true,
+            shouldConfirm = false
+        )
+    }
+
+    @Test
+    fun `not in isolation, with previous index case with self-assessment, with relevant positive confirmed, positive indicative test result older than relevant test result replaces index case`() {
+        `when has index case with self-assessment, with relevant positive, positive test result older than relevant does not transition`(
+            isolationActive = false,
+            relevantTestConfirmed = true,
+            receivedTestConfirmed = false,
+            shouldConfirm = true
+        )
+    }
+
+    @Test
+    fun `not in isolation, with previous index case with self-assessment, with relevant positive indicative, positive confirmed test result older than relevant test result replaces index case`() {
+        `when has index case with self-assessment, with relevant positive, positive test result older than relevant does not transition`(
+            isolationActive = false,
+            relevantTestConfirmed = false,
+            receivedTestConfirmed = true,
+            shouldConfirm = false
+        )
+    }
+
+    @Test
+    fun `not in isolation, with previous index case with self-assessment, with relevant positive indicative, positive indicative test result older than relevant test result replaces index case`() {
+        `when has index case with self-assessment, with relevant positive, positive test result older than relevant does not transition`(
+            isolationActive = false,
+            relevantTestConfirmed = false,
+            receivedTestConfirmed = false,
+            shouldConfirm = false
+        )
+    }
+
+    private fun `when has index case with self-assessment, with relevant positive, positive test result older than relevant does not transition`(
+        isolationActive: Boolean,
+        relevantTestConfirmed: Boolean,
+        receivedTestConfirmed: Boolean,
+        shouldConfirm: Boolean
+    ) {
+        val relevantTestDate =
+            if (isolationActive) testEndDate
+            else testEndDate.minus(13, DAYS)
+        setRelevantTestResult(
+            RelevantVirologyTestResult.POSITIVE,
+            isConfirmed = relevantTestConfirmed,
+            testEndDate = relevantTestDate
+        )
+
+        val isolation = isolationStateIndexCaseOnly(
+            selfAssessment = true,
+            indexCaseStartInstant = relevantTestDate.minus(2, DAYS)
+        )
+        val state =
+            if (isolationActive) isolation
+            else Default(previousIsolation = isolation)
+
+        val testResult = positiveTestResult(receivedTestConfirmed).copy(
+            testEndDate = relevantTestDate.minus(1, DAYS)
+        )
+
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            testResult
+        )
+
+        val expectedTestResultStorageOperation =
+            if (shouldConfirm) OverwriteAndConfirm(confirmedDate = relevantTestDate)
+            else Overwrite
+        val expectedTransition = DoNotTransitionButStoreTestResult(expectedTestResultStorageOperation)
+
+        assertEquals(expectedTransition, result)
+    }
+
+    // -- Positive confirmed tests that are older than a previous negative
+
+    @Test
+    fun `when in isolation as an has index case with self-assessment, with relevant negative, positive confirmed test result older than relevant test and newer than isolation does not transition`() {
+        `when has index case with self-assessment, with relevant negative, positive confirmed test result older than relevant test and newer than isolation does not transition`(
+            isolationActive = true
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with previous index case with self-assessment, with relevant negative, positive confirmed test result older than relevant test and newer than isolation does not transition`() {
+        `when has index case with self-assessment, with relevant negative, positive confirmed test result older than relevant test and newer than isolation does not transition`(
+            isolationActive = false
+        )
+    }
+
+    private fun `when has index case with self-assessment, with relevant negative, positive confirmed test result older than relevant test and newer than isolation does not transition`(
+        isolationActive: Boolean
+    ) {
+        val relevantTestDate =
+            if (isolationActive) testEndDate
+            else testEndDate.minus(13, DAYS)
+        setRelevantTestResult(
+            RelevantVirologyTestResult.NEGATIVE,
+            isConfirmed = true,
+            testEndDate = relevantTestDate
+        )
+
+        val isolation = isolationStateIndexCaseOnly(
+            selfAssessment = true,
+            indexCaseStartInstant = relevantTestDate.minus(2, DAYS)
+        )
+        val state =
+            if (isolationActive) isolation
+            else Default(previousIsolation = isolation)
+
+        val testResult = positiveTestResultConfirmed.copy(
+            testEndDate = relevantTestDate.minus(1, DAYS)
+        )
+
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            testResult
+        )
+
+        assertEquals(DoNotTransitionButStoreTestResult(Overwrite), result)
+    }
+
+    @Test
+    fun `when in isolation as an has index case without self-assessment, with relevant negative, positive confirmed test result older than relevant test and newer than isolation replaces index case but preserves isolation start`() {
+        `when has index case without self-assessment, with relevant negative, positive confirmed test result older than relevant test and newer than isolation replaces index case but preserves isolation start`(
+            isolationActive = true
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with previous index case without self-assessment, with relevant negative, positive confirmed test result older than relevant test and newer than isolation replaces index case but preserves isolation start`() {
+        `when has index case without self-assessment, with relevant negative, positive confirmed test result older than relevant test and newer than isolation replaces index case but preserves isolation start`(
+            isolationActive = false
+        )
+    }
+
+    private fun `when has index case without self-assessment, with relevant negative, positive confirmed test result older than relevant test and newer than isolation replaces index case but preserves isolation start`(
+        isolationActive: Boolean
+    ) {
+        val relevantTestDate =
+            if (isolationActive) testEndDate
+            else testEndDate.minus(13, DAYS)
+        setRelevantTestResult(
+            RelevantVirologyTestResult.NEGATIVE,
+            isConfirmed = true,
+            testEndDate = relevantTestDate
+        )
+
+        val isolation = isolationStateIndexCaseOnly(
+            selfAssessment = false,
+            indexCaseStartInstant = relevantTestDate.minus(2, DAYS)
+        )
+        val state =
+            if (isolationActive) isolation
+            else Default(previousIsolation = isolation)
+
+        val testResult = positiveTestResultConfirmed.copy(
+            testEndDate = relevantTestDate.minus(1, DAYS)
+        )
+
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            testResult
+        )
+
+        val expectedIsolation = isolationStateIndexCaseOnly(
+            selfAssessment = false,
+            indexCaseStartInstant = testResult.testEndDate
+        ).copy(
+            isolationStart = isolation.isolationStart
+        )
+        val expectedState =
+            if (isolationActive) expectedIsolation
+            else Default(previousIsolation = expectedIsolation)
+
+        assertEquals(TransitionAndStoreTestResult(expectedState, Overwrite), result)
+    }
+
+    // -- Positive indicative tests that are older than a previous negative
+
+    @Test
+    fun `when in isolation as an has index case without self-assessment, with relevant negative, positive indicative test result older than relevant test and newer than isolation does not transition`() {
+        `when has index case without self-assessment, with relevant negative, positive indicative test result older than relevant test and newer than isolation does not transition`(
+            isolationActive = true
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with previous index case without self-assessment, with relevant negative, positive indicative test result older than relevant test and newer than isolation does not transition`() {
+        `when has index case without self-assessment, with relevant negative, positive indicative test result older than relevant test and newer than isolation does not transition`(
+            isolationActive = false
+        )
+    }
+
+    private fun `when has index case without self-assessment, with relevant negative, positive indicative test result older than relevant test and newer than isolation does not transition`(
+        isolationActive: Boolean
+    ) {
+        val relevantTestDate =
+            if (isolationActive) testEndDate
+            else testEndDate.minus(13, DAYS)
+        setRelevantTestResult(
+            RelevantVirologyTestResult.NEGATIVE,
+            isConfirmed = true,
+            testEndDate = relevantTestDate
+        )
+
+        val isolation = isolationStateIndexCaseOnly(
+            selfAssessment = false,
+            indexCaseStartInstant = relevantTestDate.minus(2, DAYS)
+        )
+        val state =
+            if (isolationActive) isolation
+            else Default(previousIsolation = isolation)
+
+        val testResult = positiveTestResultIndicative.copy(
+            testEndDate = relevantTestDate.minus(1, DAYS)
+        )
+
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            testResult
+        )
+
+        assertEquals(Ignore(preventKeySubmission = true), result)
+    }
+
+    @Test
+    fun `when in isolation as an has index case with self-assessment, with relevant negative, positive indicative test result older than relevant test and newer than isolation does not transition`() {
+        `when has index case with self-assessment, with relevant negative, positive indicative test result older than relevant test and newer than isolation does not transition`(
+            isolationActive = true
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with previous index case with self-assessment, with relevant negative, positive indicative test result older than relevant test and newer than isolation does not transition`() {
+        `when has index case with self-assessment, with relevant negative, positive indicative test result older than relevant test and newer than isolation does not transition`(
+            isolationActive = false
+        )
+    }
+
+    private fun `when has index case with self-assessment, with relevant negative, positive indicative test result older than relevant test and newer than isolation does not transition`(
+        isolationActive: Boolean
+    ) {
+        val relevantTestDate =
+            if (isolationActive) testEndDate
+            else testEndDate.minus(13, DAYS)
+        setRelevantTestResult(
+            RelevantVirologyTestResult.NEGATIVE,
+            isConfirmed = true,
+            testEndDate = relevantTestDate
+        )
+
+        val isolation = isolationStateIndexCaseOnly(
+            selfAssessment = true,
+            indexCaseStartInstant = relevantTestDate.minus(2, DAYS)
+        )
+        val state =
+            if (isolationActive) isolation
+            else Default(previousIsolation = isolation)
+
+        val testResult = positiveTestResultIndicative.copy(
+            testEndDate = relevantTestDate.minus(1, DAYS)
+        )
+
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            testResult
+        )
+
+        assertEquals(Ignore(preventKeySubmission = true), result)
+    }
+
+    @Test
+    fun `when in isolation as contact case, with relevant negative, positive confirmed test result older than relevant test and newer than isolation replaces isolation`() {
+        `when has contact case, with relevant negative, positive confirmed test result older than relevant test and newer than isolation replaces isolation`(
+            isolationActive = true
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with contact case, with relevant negative, positive confirmed test result older than relevant test and newer than isolation replaces isolation`() {
+        `when has contact case, with relevant negative, positive confirmed test result older than relevant test and newer than isolation replaces isolation`(
+            isolationActive = false
+        )
+    }
+
+    private fun `when has contact case, with relevant negative, positive confirmed test result older than relevant test and newer than isolation replaces isolation`(
+        isolationActive: Boolean
+    ) {
+        val relevantTestDate =
+            if (isolationActive) testEndDate
+            else testEndDate.minus(13, DAYS)
+        setRelevantTestResult(
+            RelevantVirologyTestResult.NEGATIVE,
+            isConfirmed = true,
+            testEndDate = relevantTestDate
+        )
+
+        val isolation = isolationStateContactCaseOnly(
+            encounterDate = relevantTestDate.minus(2, DAYS)
+        )
+        val state =
+            if (isolationActive) isolation
+            else Default(previousIsolation = isolation)
+
+        val testResult = positiveTestResultConfirmed.copy(
+            testEndDate = relevantTestDate.minus(1, DAYS)
+        )
+
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            testResult
+        )
+
+        val expectedIsolation = isolationStateIndexCaseOnly(
+            selfAssessment = false,
+            indexCaseStartInstant = testResult.testEndDate
+        )
+        val expectedState =
+            if (isolationActive) expectedIsolation
+            else Default(previousIsolation = expectedIsolation)
+
+        assertEquals(TransitionAndStoreTestResult(expectedState, Overwrite), result)
+    }
+
+    @Test
+    fun `when in isolation as contact case, with relevant negative, positive indicative test result older than relevant test and newer than isolation does not transition`() {
+        `when has contact case, with relevant negative, positive indicative test result older than relevant test and newer than isolation does not transition`(
+            isolationActive = true
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with contact case, with relevant negative, positive indicative test result older than relevant test and newer than isolation does not transition`() {
+        `when has contact case, with relevant negative, positive indicative test result older than relevant test and newer than isolation does not transition`(
+            isolationActive = false
+        )
+    }
+
+    private fun `when has contact case, with relevant negative, positive indicative test result older than relevant test and newer than isolation does not transition`(
+        isolationActive: Boolean
+    ) {
+        val relevantTestDate =
+            if (isolationActive) testEndDate
+            else testEndDate.minus(13, DAYS)
+        setRelevantTestResult(
+            RelevantVirologyTestResult.NEGATIVE,
+            isConfirmed = true,
+            testEndDate = relevantTestDate
+        )
+
+        val isolation = isolationStateContactCaseOnly(
+            encounterDate = relevantTestDate.minus(2, DAYS)
+        )
+        val state =
+            if (isolationActive) isolation
+            else Default(previousIsolation = isolation)
+
+        val testResult = positiveTestResultIndicative.copy(
+            testEndDate = relevantTestDate.minus(1, DAYS)
+        )
+
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            testResult
+        )
+
+        assertEquals(Ignore(preventKeySubmission = true), result)
+    }
+
+    // -- No memory of previous isolation
+
+    @Test
+    fun `when not in isolation, expired positive confirmed test result stores expired index isolation`() {
+        `when not in isolation, expired positive test result stores expired index isolation`(
+            receivedTestConfirmed = true
+        )
+    }
+
+    @Test
+    fun `when not in isolation, expired positive indicative test result stores expired index isolation`() {
+        `when not in isolation, expired positive test result stores expired index isolation`(
+            receivedTestConfirmed = false
+        )
+    }
+
+    private fun `when not in isolation, expired positive test result stores expired index isolation`(receivedTestConfirmed: Boolean) {
+        val receivedTestResult = positiveTestResult(confirmed = receivedTestConfirmed)
+            .copy(testEndDate = now.minus(20, DAYS))
+        val state = Default()
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            receivedTestResult
+        )
+
+        val expectedState = Default(
+            previousIsolation = isolationStateIndexCaseOnly(
+                selfAssessment = false,
+                indexCaseStartInstant = receivedTestResult.testEndDate
+            )
+        )
+
+        assertEquals(TransitionAndStoreTestResult(expectedState, Overwrite), result)
+    }
+
+    // --- Negative, arriving in order
+
     @Test
     fun `when in isolation as index and contact case, with relevant positive unconfirmed, new negative confirmed test result removes index case`() {
         setRelevantTestResult(result = RelevantVirologyTestResult.POSITIVE, isConfirmed = false)
@@ -671,38 +1495,6 @@ class TestResultIsolationHandlerTest {
         val expectedState = state.copy(indexCase = null)
 
         assertEquals(TransitionAndStoreTestResult(expectedState, Overwrite), result)
-    }
-
-    @Test
-    fun `when in isolation as index and contact case, with relevant positive unconfirmed, negative confirmed test result older than relevant test does not transition`() {
-        val relevantTestDate = Instant.now(fixedClock).plus(2, DAYS)
-        setRelevantTestResult(
-            result = RelevantVirologyTestResult.POSITIVE,
-            isConfirmed = false,
-            testEndDate = relevantTestDate
-        )
-
-        val result = testSubject.computeTransitionWithTestResult(
-            isolationStateContactAndIndexCase(selfAssessment = false),
-            negativeTestResultConfirmed.copy(testEndDate = relevantTestDate.minus(1, DAYS))
-        )
-
-        assertEquals(Ignore(preventKeySubmission = false), result)
-    }
-
-    @Test
-    fun `when in isolation as index and contact case, with relevant positive unconfirmed, negative confirmed test result older than symptoms onset does not transition`() {
-        setRelevantTestResult(result = RelevantVirologyTestResult.POSITIVE, isConfirmed = false)
-
-        val state = isolationStateContactAndIndexCase(selfAssessment = false)
-        val result = testSubject.computeTransitionWithTestResult(
-            state,
-            negativeTestResultConfirmed.copy(
-                testEndDate = state.symptomsOnsetInstant().minus(1, DAYS)
-            )
-        )
-
-        assertEquals(Ignore(preventKeySubmission = false), result)
     }
 
     @Test
@@ -728,38 +1520,6 @@ class TestResultIsolationHandlerTest {
         val expectedState = Default(previousIsolation = previousIsolationWithUpdatedExpiryDate)
 
         assertEquals(TransitionAndStoreTestResult(expectedState, Overwrite), result)
-    }
-
-    @Test
-    fun `when in isolation as index case only, with relevant positive unconfirmed, negative confirmed test result older than relevant test does not transition`() {
-        val relevantTestDate = Instant.now(fixedClock).plus(2, DAYS)
-        setRelevantTestResult(
-            result = RelevantVirologyTestResult.POSITIVE,
-            isConfirmed = false,
-            testEndDate = relevantTestDate
-        )
-
-        val result = testSubject.computeTransitionWithTestResult(
-            isolationStateIndexCaseOnly(selfAssessment = false),
-            negativeTestResultConfirmed.copy(testEndDate = relevantTestDate.minus(1, DAYS))
-        )
-
-        assertEquals(Ignore(preventKeySubmission = false), result)
-    }
-
-    @Test
-    fun `when in isolation as index case only, with relevant positive unconfirmed, negative confirmed test result older than symptoms onset date does not transition`() {
-        setRelevantTestResult(result = RelevantVirologyTestResult.POSITIVE, isConfirmed = false)
-
-        val state = isolationStateIndexCaseOnly(selfAssessment = false)
-        val result = testSubject.computeTransitionWithTestResult(
-            state,
-            negativeTestResultConfirmed.copy(
-                testEndDate = state.symptomsOnsetInstant().minus(1, DAYS)
-            )
-        )
-
-        assertEquals(Ignore(preventKeySubmission = false), result)
     }
 
     @Test
@@ -810,19 +1570,6 @@ class TestResultIsolationHandlerTest {
     }
 
     @Test
-    fun `when in isolation as index case only, without relevant positive confirmed, negative confirmed test result older than symptoms onset date does not transition`() {
-        val state = isolationStateIndexCaseOnly(selfAssessment = true)
-        val result = testSubject.computeTransitionWithTestResult(
-            state,
-            negativeTestResultConfirmed.copy(
-                testEndDate = state.symptomsOnsetInstant().minus(1, DAYS)
-            )
-        )
-
-        assertEquals(Ignore(preventKeySubmission = false), result)
-    }
-
-    @Test
     fun `when in isolation as contact and index case, without relevant positive confirmed, new negative confirmed test result removes index case`() {
         val state = isolationStateContactAndIndexCase(selfAssessment = true)
         val result = testSubject.computeTransitionWithTestResult(
@@ -833,19 +1580,6 @@ class TestResultIsolationHandlerTest {
         val expectedState = state.copy(indexCase = null)
 
         assertEquals(TransitionAndStoreTestResult(expectedState, Overwrite), result)
-    }
-
-    @Test
-    fun `when in isolation as contact and index case, without relevant positive confirmed, negative confirmed test result older than symptoms onset date does not transition`() {
-        val state = isolationStateContactAndIndexCase(selfAssessment = true)
-        val result = testSubject.computeTransitionWithTestResult(
-            state,
-            negativeTestResultConfirmed.copy(
-                testEndDate = state.symptomsOnsetInstant().minus(1, DAYS)
-            )
-        )
-
-        assertEquals(Ignore(preventKeySubmission = false), result)
     }
 
     @Test
@@ -885,6 +1619,117 @@ class TestResultIsolationHandlerTest {
     }
 
     @Test
+    fun `when not in isolation, with previous index case, with relevant negative, negative confirmed test result does not transition`() {
+        setRelevantTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true)
+        val result = testSubject.computeTransitionWithTestResult(
+            Default(
+                previousIsolation = isolationStateIndexCaseOnly(
+                    selfAssessment = true,
+                    indexCaseStartInstant = indexCaseStartDate.minus(13, DAYS)
+                )
+            ),
+            negativeTestResultConfirmed
+        )
+
+        assertEquals(Ignore(preventKeySubmission = false), result)
+    }
+
+    // --- Negative, arriving out of order
+    // -- Negative older than relevant test
+
+    @Test
+    fun `when in isolation as index and contact case, with relevant positive unconfirmed, negative confirmed test result older than relevant test does not transition`() {
+        val relevantTestDate = Instant.now(fixedClock).plus(2, DAYS)
+        setRelevantTestResult(
+            result = RelevantVirologyTestResult.POSITIVE,
+            isConfirmed = false,
+            testEndDate = relevantTestDate
+        )
+
+        val result = testSubject.computeTransitionWithTestResult(
+            isolationStateContactAndIndexCase(selfAssessment = false),
+            negativeTestResultConfirmed.copy(testEndDate = relevantTestDate.minus(1, DAYS))
+        )
+
+        assertEquals(Ignore(preventKeySubmission = false), result)
+    }
+
+    @Test
+    fun `when in isolation as index case only, with relevant positive unconfirmed, negative confirmed test result older than relevant test does not transition`() {
+        val relevantTestDate = Instant.now(fixedClock).plus(2, DAYS)
+        setRelevantTestResult(
+            result = RelevantVirologyTestResult.POSITIVE,
+            isConfirmed = false,
+            testEndDate = relevantTestDate
+        )
+
+        val result = testSubject.computeTransitionWithTestResult(
+            isolationStateIndexCaseOnly(selfAssessment = false),
+            negativeTestResultConfirmed.copy(testEndDate = relevantTestDate.minus(1, DAYS))
+        )
+
+        assertEquals(Ignore(preventKeySubmission = false), result)
+    }
+
+    // -- Negative older than symptoms
+
+    @Test
+    fun `when in isolation as index and contact case, with relevant positive unconfirmed, negative confirmed test result older than symptoms onset does not transition`() {
+        setRelevantTestResult(result = RelevantVirologyTestResult.POSITIVE, isConfirmed = false)
+
+        val state = isolationStateContactAndIndexCase(selfAssessment = false)
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            negativeTestResultConfirmed.copy(
+                testEndDate = state.symptomsOnsetInstant().minus(1, DAYS)
+            )
+        )
+
+        assertEquals(Ignore(preventKeySubmission = false), result)
+    }
+
+    @Test
+    fun `when in isolation as index case only, with relevant positive unconfirmed, negative confirmed test result older than symptoms onset date does not transition`() {
+        setRelevantTestResult(result = RelevantVirologyTestResult.POSITIVE, isConfirmed = false)
+
+        val state = isolationStateIndexCaseOnly(selfAssessment = false)
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            negativeTestResultConfirmed.copy(
+                testEndDate = state.symptomsOnsetInstant().minus(1, DAYS)
+            )
+        )
+
+        assertEquals(Ignore(preventKeySubmission = false), result)
+    }
+
+    @Test
+    fun `when in isolation as index case only, without relevant positive confirmed, negative confirmed test result older than symptoms onset date does not transition`() {
+        val state = isolationStateIndexCaseOnly(selfAssessment = true)
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            negativeTestResultConfirmed.copy(
+                testEndDate = state.symptomsOnsetInstant().minus(1, DAYS)
+            )
+        )
+
+        assertEquals(Ignore(preventKeySubmission = false), result)
+    }
+
+    @Test
+    fun `when in isolation as contact and index case, without relevant positive confirmed, negative confirmed test result older than symptoms onset date does not transition`() {
+        val state = isolationStateContactAndIndexCase(selfAssessment = true)
+        val result = testSubject.computeTransitionWithTestResult(
+            state,
+            negativeTestResultConfirmed.copy(
+                testEndDate = state.symptomsOnsetInstant().minus(1, DAYS)
+            )
+        )
+
+        assertEquals(Ignore(preventKeySubmission = false), result)
+    }
+
+    @Test
     fun `when not in isolation, with previous index case, negative confirmed test result older than symptoms onset date does not transition`() {
         val previousIsolation = isolationStateIndexCaseOnly(
             selfAssessment = true,
@@ -901,21 +1746,7 @@ class TestResultIsolationHandlerTest {
         assertEquals(Ignore(preventKeySubmission = false), result)
     }
 
-    @Test
-    fun `when not in isolation, with previous index case, with relevant negative, negative confirmed test result does not transition`() {
-        setRelevantTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true)
-        val result = testSubject.computeTransitionWithTestResult(
-            Default(
-                previousIsolation = isolationStateIndexCaseOnly(
-                    selfAssessment = true,
-                    indexCaseStartInstant = indexCaseStartDate.minus(13, DAYS)
-                )
-            ),
-            negativeTestResultConfirmed
-        )
-
-        assertEquals(Ignore(preventKeySubmission = false), result)
-    }
+    // --- Void
 
     @Test
     fun `when in isolation as index case only, void confirmed test result does not transition`() {
@@ -972,7 +1803,8 @@ class TestResultIsolationHandlerTest {
 
         every { relevantTestResultProvider.isTestResultPositive() } returns isPositive
         every { relevantTestResultProvider.isTestResultNegative() } returns (result == RelevantVirologyTestResult.NEGATIVE)
-        every { relevantTestResultProvider.testResult } returns
+
+        val relevantTestResult =
             if (result == null) null
             else AcknowledgedTestResult(
                 diagnosisKeySubmissionToken = "token",
@@ -983,6 +1815,10 @@ class TestResultIsolationHandlerTest {
                 requiresConfirmatoryTest = !isConfirmed,
                 confirmedDate = null
             )
+        every { relevantTestResultProvider.testResult } returns relevantTestResult
+        every { relevantTestResultProvider.getTestResultIfPositive() } returns
+            if (relevantTestResult?.isPositive() == true) relevantTestResult
+            else null
     }
 
     private fun Isolation.symptomsOnsetInstant(): Instant =
@@ -1045,6 +1881,10 @@ class TestResultIsolationHandlerTest {
                     .plus(11, DAYS)
             )
         )
+
+    private fun positiveTestResult(confirmed: Boolean): ReceivedTestResult =
+        if (confirmed) positiveTestResultConfirmed
+        else positiveTestResultIndicative
 
     companion object {
         val now: Instant = Instant.parse("2020-07-26T12:00:00Z")!!

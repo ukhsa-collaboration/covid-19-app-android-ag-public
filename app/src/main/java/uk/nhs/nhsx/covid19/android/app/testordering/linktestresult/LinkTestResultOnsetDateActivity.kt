@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.Parcel
 import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
-import androidx.lifecycle.observe
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker.Builder
 import kotlinx.android.synthetic.main.activity_link_test_result_onset_date.dateSelectionErrorBar
@@ -34,6 +33,7 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setToolbarNoNavigation
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.smoothScrollToAndThen
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import java.time.LocalDate
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -155,6 +155,7 @@ class LinkTestResultOnsetDateActivity : BaseActivity(R.layout.activity_link_test
 
         return CalendarConstraints.Builder()
             .setValidator(maxDateValidator)
+            .setOpenAt(symptomsOnsetWindowDays.endInclusive.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli())
             .build()
     }
 

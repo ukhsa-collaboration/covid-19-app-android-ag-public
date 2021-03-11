@@ -11,6 +11,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import java.time.Instant
 
 class PollingTestResult(private val espressoTest: EspressoTest) {
 
@@ -19,16 +20,17 @@ class PollingTestResult(private val espressoTest: EspressoTest) {
     private val testOrderingRobot = TestOrderingRobot()
     private val browserRobot = BrowserRobot()
 
-    private fun receiveAndAcknowledgeResult(
+    internal fun receiveAndAcknowledgeResult(
         result: VirologyTestResult,
         testKitType: VirologyTestKitType,
         requiresConfirmatoryTest: Boolean,
         runBackgroundTasks: () -> Unit,
-        acknowledge: () -> Unit
+        acknowledge: () -> Unit,
+        testEndDate: Instant = espressoTest.testAppContext.clock.instant()
     ) {
         with(espressoTest.testAppContext.virologyTestingApi) {
             pollingTestResultHttpStatusCode = 200
-            testEndDate = espressoTest.testAppContext.clock.instant()
+            this.testEndDate = testEndDate
             testResponseForPollingToken[pollingToken] =
                 TestResponse(result, testKitType, requiresConfirmatoryTest = requiresConfirmatoryTest)
         }

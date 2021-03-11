@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.availability
 
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.lifecycle.observe
 import kotlinx.android.synthetic.main.activity_app_availability.*
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.R

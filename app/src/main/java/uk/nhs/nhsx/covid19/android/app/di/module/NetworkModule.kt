@@ -1,9 +1,11 @@
 package uk.nhs.nhsx.covid19.android.app.di.module
 
+import android.content.Context
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.EnumJsonAdapter
 import dagger.Module
 import dagger.Provides
+import okhttp3.Cache
 import okhttp3.CertificatePinner
 import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
@@ -25,6 +27,7 @@ import uk.nhs.nhsx.covid19.android.app.util.adapters.ColorSchemeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.PolicyIconAdapter
+import uk.nhs.nhsx.covid19.android.app.util.adapters.RiskyVenueMessageTypeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.TranslatableAdapter
 import uk.nhs.riskscore.ObservationType
 import uk.nhs.riskscore.ObservationType.gen
@@ -71,7 +74,8 @@ class NetworkModule(
     @Named(DISTRIBUTION_REMOTE)
     fun provideDistributionOkHttpClient(
         base64Decoder: Base64Decoder,
-        networkStatsInterceptor: NetworkStatsInterceptor
+        networkStatsInterceptor: NetworkStatsInterceptor,
+        applicationContext: Context
     ): OkHttpClient {
         val signatureValidationInterceptor = createSignatureValidationInterceptor(
             base64Decoder,
@@ -83,7 +87,8 @@ class NetworkModule(
             signatureValidationInterceptor,
             interceptors,
             networkStatsInterceptor,
-            trafficLengthObfuscationInterceptor = null
+            trafficLengthObfuscationInterceptor = null,
+            applicationContext
         )
     }
 
@@ -94,7 +99,8 @@ class NetworkModule(
         base64Decoder: Base64Decoder,
         networkStatsInterceptor: NetworkStatsInterceptor,
         userAgentInterceptor: UserAgentInterceptor,
-        trafficLengthObfuscationInterceptor: TrafficLengthObfuscationInterceptor
+        trafficLengthObfuscationInterceptor: TrafficLengthObfuscationInterceptor,
+        applicationContext: Context
     ): OkHttpClient {
         val signatureValidationInterceptor = createSignatureValidationInterceptor(
             base64Decoder,
@@ -106,7 +112,8 @@ class NetworkModule(
             signatureValidationInterceptor,
             listOf(userAgentInterceptor) + interceptors,
             networkStatsInterceptor,
-            trafficLengthObfuscationInterceptor
+            trafficLengthObfuscationInterceptor,
+            applicationContext
         )
     }
 
@@ -125,7 +132,8 @@ class NetworkModule(
         signatureValidationInterceptor: SignatureValidationInterceptor,
         interceptors: List<Interceptor>,
         networkStatsInterceptor: NetworkStatsInterceptor,
-        trafficLengthObfuscationInterceptor: TrafficLengthObfuscationInterceptor?
+        trafficLengthObfuscationInterceptor: TrafficLengthObfuscationInterceptor?,
+        applicationContext: Context
     ): OkHttpClient {
         val certificatePinnerBuilder = CertificatePinner.Builder().apply {
             remote.certificates.forEach { certificate ->
@@ -138,6 +146,7 @@ class NetworkModule(
             .build()
 
         val builder = OkHttpClient.Builder()
+            .cache(Cache(applicationContext.cacheDir, CACHE_SIZE_BYTES))
             .certificatePinner(certificatePinnerBuilder)
             .connectionSpecs(listOf(connectionSpecs))
             .followRedirects(true)
@@ -180,6 +189,7 @@ class NetworkModule(
             .add(TranslatableAdapter())
             .add(PolicyIconAdapter())
             .add(ColorSchemeAdapter())
+            .add(RiskyVenueMessageTypeAdapter())
             .add(
                 ObservationType::class.java,
                 EnumJsonAdapter.create(ObservationType::class.java).withUnknownFallback(gen)
@@ -191,5 +201,6 @@ class NetworkModule(
     companion object {
         const val DISTRIBUTION_REMOTE = "DISTRIBUTION_REMOTE"
         const val API_REMOTE = "API_REMOTE"
+        const val CACHE_SIZE_BYTES: Long = 1024 * 1024 * 2
     }
 }

@@ -2,6 +2,10 @@ package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry
+import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult
+import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveContinueIsolation
+import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveWillBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveWillBeInIsolationAndOrderTest
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.SymptomsAndOnsetFlowConfiguration
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
@@ -26,6 +30,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
                 didRememberOnsetSymptomsDate = false
             ),
             requiresConfirmatoryTest = false,
+            expectedScreenState = PositiveWillBeInIsolation,
             Metrics::receivedPositiveTestResultEnteredManually,
             Metrics::isIsolatingForTestedPositiveBackgroundTick,
             Metrics::hasTestedPositiveBackgroundTick
@@ -41,6 +46,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
                 didRememberOnsetSymptomsDate = true
             ),
             requiresConfirmatoryTest = false,
+            expectedScreenState = PositiveWillBeInIsolation,
             Metrics::receivedPositiveTestResultEnteredManually,
             Metrics::isIsolatingForTestedPositiveBackgroundTick,
             Metrics::hasTestedPositiveBackgroundTick
@@ -56,6 +62,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
                 didRememberOnsetSymptomsDate = false
             ),
             requiresConfirmatoryTest = false,
+            expectedScreenState = PositiveWillBeInIsolation,
             Metrics::receivedPositiveTestResultEnteredManually,
             Metrics::isIsolatingForTestedPositiveBackgroundTick,
             Metrics::hasTestedPositiveBackgroundTick
@@ -68,6 +75,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             RAPID_RESULT,
             symptomsAndOnsetFlowConfiguration = null,
             requiresConfirmatoryTest = false,
+            expectedScreenState = PositiveWillBeInIsolation,
             Metrics::receivedPositiveLFDTestResultEnteredManually,
             Metrics::isIsolatingForTestedLFDPositiveBackgroundTick,
             Metrics::hasTestedLFDPositiveBackgroundTick
@@ -80,9 +88,10 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             RAPID_SELF_REPORTED,
             symptomsAndOnsetFlowConfiguration = null,
             requiresConfirmatoryTest = false,
-            Metrics::receivedPositiveLFDTestResultEnteredManually,
-            Metrics::isIsolatingForTestedLFDPositiveBackgroundTick,
-            Metrics::hasTestedLFDPositiveBackgroundTick
+            expectedScreenState = PositiveWillBeInIsolation,
+            Metrics::receivedPositiveSelfRapidTestResultEnteredManually,
+            Metrics::isIsolatingForTestedSelfRapidPositiveBackgroundTick,
+            Metrics::hasTestedSelfRapidPositiveBackgroundTick
         )
     }
 
@@ -92,6 +101,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             RAPID_RESULT,
             symptomsAndOnsetFlowConfiguration = null,
             requiresConfirmatoryTest = true,
+            expectedScreenState = PositiveWillBeInIsolationAndOrderTest,
             Metrics::receivedPositiveLFDTestResultEnteredManually,
             Metrics::isIsolatingForTestedLFDPositiveBackgroundTick,
             Metrics::hasTestedLFDPositiveBackgroundTick
@@ -105,6 +115,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         testKitType: VirologyTestKitType,
         symptomsAndOnsetFlowConfiguration: SymptomsAndOnsetFlowConfiguration?,
         requiresConfirmatoryTest: Boolean,
+        expectedScreenState: ExpectedScreenAfterPositiveTestResult,
         receivedPositiveTestResultEnteredManuallyMetric: MetricsProperty,
         isIsolatingForTestedPositiveBackgroundTickMetric: MetricsProperty,
         hasTestedPositiveBackgroundTickMetric: MetricsProperty
@@ -118,7 +129,8 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         manualTestResultEntry.enterPositive(
             testKitType,
             requiresConfirmatoryTest = requiresConfirmatoryTest,
-            symptomsAndOnsetFlowConfiguration = symptomsAndOnsetFlowConfiguration
+            symptomsAndOnsetFlowConfiguration = symptomsAndOnsetFlowConfiguration,
+            expectedScreenState = expectedScreenState
         )
 
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
@@ -183,6 +195,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         manuallyEnterPositiveTestAfterSelfDiagnosisAndContinueIsolation(
             LAB_RESULT,
             requiresConfirmatoryTest = false,
+            expectedScreenState = PositiveContinueIsolation,
             Metrics::receivedPositiveTestResultEnteredManually,
             Metrics::isIsolatingForTestedPositiveBackgroundTick,
             Metrics::hasTestedPositiveBackgroundTick
@@ -195,12 +208,11 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     private fun manuallyEnterPositiveTestAfterSelfDiagnosisAndContinueIsolation(
         testKitType: VirologyTestKitType,
         requiresConfirmatoryTest: Boolean,
+        expectedScreenState: ExpectedScreenAfterPositiveTestResult,
         receivedPositiveTestResultEnteredManuallyMetric: MetricsProperty,
         isIsolatingForTestedPositiveBackgroundTickMetric: MetricsProperty,
         hasTestedPositiveBackgroundTickMetric: MetricsProperty
     ) {
-        val startDate = testAppContext.clock.instant()
-
         // Current date: 1st Jan
         // Starting state: App running normally, not in isolation
         runBackgroundTasks()
@@ -226,7 +238,11 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
 
         // Enters positive LFD test result on 3rd Jan
         // Isolation end date: 11th Jan
-        manualTestResultEntry.enterPositive(testKitType, requiresConfirmatoryTest = requiresConfirmatoryTest)
+        manualTestResultEntry.enterPositive(
+            testKitType,
+            requiresConfirmatoryTest = requiresConfirmatoryTest,
+            expectedScreenState = expectedScreenState
+        )
 
         // Current date: 4th Jan -> Analytics packet for: 3rd Jan
         assertOnFields {
@@ -325,7 +341,8 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             testKitType,
             symptomsAndOnsetFlowConfiguration = null,
             requiresConfirmatoryTest = requiresConfirmatoryTest,
-            testEndDate = testEndDate
+            testEndDate = testEndDate,
+            expectedScreenState = PositiveContinueIsolation
         )
 
         // Current date: 4th Jan -> Analytics packet for: 3rd Jan

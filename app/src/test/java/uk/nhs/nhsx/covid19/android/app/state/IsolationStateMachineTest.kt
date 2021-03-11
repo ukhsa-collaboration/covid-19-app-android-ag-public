@@ -12,7 +12,6 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DeclaredNegativeResultFromDct
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyContactNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedUnconfirmedPositiveTestResult
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
@@ -287,7 +286,6 @@ class IsolationStateMachineTest {
         verify(exactly = 1) { userInbox.addUserInboxItem(ShowEncounterDetection) }
         verify(exactly = 1) { exposureNotificationRetryAlarmController.setupNextAlarm() }
         coVerify(exactly = 1) { analyticsEventProcessor.track(StartedIsolation) }
-        coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyContactNotification) }
 
         newStateIsolationChecks(actual)
     }
@@ -315,7 +313,6 @@ class IsolationStateMachineTest {
         verify(exactly = 0) { userInbox.addUserInboxItem(ShowEncounterDetection) }
         verify(exactly = 0) { exposureNotificationRetryAlarmController.setupNextAlarm() }
         coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-        coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyContactNotification) }
 
         newStateDefaultChecks()
     }
@@ -343,7 +340,6 @@ class IsolationStateMachineTest {
         verify(exactly = 0) { userInbox.addUserInboxItem(ShowEncounterDetection) }
         verify(exactly = 0) { exposureNotificationRetryAlarmController.setupNextAlarm() }
         coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-        coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyContactNotification) }
 
         newStateDefaultChecks()
     }
@@ -375,7 +371,6 @@ class IsolationStateMachineTest {
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertEquals(SendExposedNotification, sideEffect)
         coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-        coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyContactNotification) }
 
         newStateIsolationChecks(actual)
     }
@@ -397,7 +392,6 @@ class IsolationStateMachineTest {
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertEquals(null, sideEffect)
         coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedRiskyContactNotification) }
 
         newStateIsolationChecks(actual)
     }
@@ -422,7 +416,6 @@ class IsolationStateMachineTest {
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertNull(sideEffect)
         coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedRiskyContactNotification) }
 
         newStateIsolationChecks(actual)
     }
@@ -461,7 +454,6 @@ class IsolationStateMachineTest {
             verify(exactly = 1) { notificationProvider.showExposureNotification() }
             verify(exactly = 1) { userInbox.addUserInboxItem(ShowEncounterDetection) }
             coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-            coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyContactNotification) }
 
             newStateIsolationChecks(actual)
         }

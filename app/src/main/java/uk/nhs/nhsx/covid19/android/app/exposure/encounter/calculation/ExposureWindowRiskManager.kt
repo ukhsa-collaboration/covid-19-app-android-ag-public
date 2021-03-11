@@ -23,7 +23,7 @@ class ExposureWindowRiskManager @Inject constructor(
     private val exposureConfigurationApi: ExposureConfigurationApi,
     private val exposureWindowRiskCalculator: ExposureWindowRiskCalculator
 ) {
-    suspend fun getRisk(): DayRisk? {
+    suspend fun getRisk(): RiskCalculationResult {
         val exposureConfiguration = exposureConfigurationApi.getExposureConfiguration()
         val riskCalculation = exposureConfiguration.v2RiskCalculation
         setDiagnosisKeysDataMappingIfNecessary(riskCalculation)

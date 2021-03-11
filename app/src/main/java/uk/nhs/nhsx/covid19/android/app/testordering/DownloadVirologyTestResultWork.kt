@@ -2,10 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 
 import androidx.annotation.VisibleForTesting
 import androidx.work.ListenableWorker
-import java.time.Clock
-import java.time.Instant
-import java.time.temporal.ChronoUnit.DAYS
-import javax.inject.Inject
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
@@ -13,7 +9,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostalDistrictProviderWrapper
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
@@ -25,13 +21,17 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultResponse
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
+import java.time.Clock
+import java.time.Instant
+import java.time.temporal.ChronoUnit.DAYS
+import javax.inject.Inject
 
 class DownloadVirologyTestResultWork @Inject constructor(
     private val virologyTestingApi: VirologyTestingApi,
     private val testOrderingTokensProvider: TestOrderingTokensProvider,
     private val stateMachine: IsolationStateMachine,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
-    private val postalDistrictProviderWrapper: PostalDistrictProviderWrapper,
+    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider,
     private val analyticsEventProcessor: AnalyticsEventProcessor,
     private val clock: Clock
 ) {
@@ -80,7 +80,7 @@ class DownloadVirologyTestResultWork @Inject constructor(
     }
 
     private suspend fun fetchVirologyTestResult(pollingToken: String): VirologyTestResultResponse? =
-        postalDistrictProviderWrapper.getPostCodeDistrict()?.supportedCountry?.let { country ->
+        localAuthorityPostCodeProvider.getPostCodeDistrict()?.supportedCountry?.let { country ->
             val testResultResponse =
                 virologyTestingApi.getTestResult(VirologyTestResultRequestBody(pollingToken, country))
 

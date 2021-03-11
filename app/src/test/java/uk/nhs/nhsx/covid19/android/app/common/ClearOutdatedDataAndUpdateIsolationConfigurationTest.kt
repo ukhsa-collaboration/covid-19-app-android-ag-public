@@ -13,20 +13,27 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfoProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationTokensProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.RiskyVenueConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationConfigurationApi
+import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenueConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationConfigurationResponse
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
+import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 
 class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
@@ -35,9 +42,12 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>(relaxed = true)
     private val isolationConfigurationApi = mockk<IsolationConfigurationApi>(relaxed = true)
+    private val riskyVenueConfigurationProvider = mockk<RiskyVenueConfigurationProvider>(relaxed = true)
+    private val riskyVenueConfigurationApi = mockk<RiskyVenueConfigurationApi>(relaxed = true)
     private val exposureNotificationTokensProvider = mockk<ExposureNotificationTokensProvider>(relaxed = true)
     private val exposureCircuitBreakerInfoProvider = mockk<ExposureCircuitBreakerInfoProvider>(relaxed = true)
     private val epidemiologyEventProvider = mockk<EpidemiologyEventProvider>(relaxed = true)
+    private val lastVisitedBookTestTypeVenueDateProvider = mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxed = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-07-28T01:00:00.00Z"), ZoneOffset.UTC)
 
     private val testSubject = ClearOutdatedDataAndUpdateIsolationConfiguration(
@@ -46,9 +56,12 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
         unacknowledgedTestResultsProvider,
         isolationConfigurationProvider,
         isolationConfigurationApi,
+        riskyVenueConfigurationProvider,
+        riskyVenueConfigurationApi,
         exposureNotificationTokensProvider,
         exposureCircuitBreakerInfoProvider,
         epidemiologyEventProvider,
+        lastVisitedBookTestTypeVenueDateProvider,
         fixedClock
     )
 
@@ -60,6 +73,7 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
         coEvery { isolationConfigurationApi.getIsolationConfiguration() } returns IsolationConfigurationResponse(
             DurationDays()
         )
+        every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns true
     }
 
     @After
@@ -68,14 +82,49 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
     }
 
     @Test
-    fun `clears test results when in default state without previous isolation`() = runBlocking {
+    fun `clears old test results when in default state without previous isolation`() = runBlocking {
         every { isolationStateMachine.readState() } returns Default()
+        every { relevantTestResultProvider.testResult } returns AcknowledgedTestResult(
+            diagnosisKeySubmissionToken = "token1",
+            testEndDate = Instant.now(fixedClock)
+                .minus(14, ChronoUnit.DAYS)
+                .minus(1, ChronoUnit.SECONDS),
+            acknowledgedDate = Instant.now(fixedClock)
+                .minus(13, ChronoUnit.DAYS),
+            testResult = POSITIVE,
+            testKitType = LAB_RESULT,
+            requiresConfirmatoryTest = false,
+            confirmedDate = null
+        )
 
         testSubject()
 
         val retentionPeriod = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
         val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
         verify { relevantTestResultProvider.clear() }
+        verify { unacknowledgedTestResultsProvider.clearBefore(expectedDate) }
+        verify(exactly = 0) { isolationStateMachine.clearPreviousIsolation() }
+        verify { exposureNotificationTokensProvider.clear() }
+    }
+
+    @Test
+    fun `does not clear recent test results when in default state without previous isolation`() = runBlocking {
+        every { isolationStateMachine.readState() } returns Default()
+        every { relevantTestResultProvider.testResult } returns AcknowledgedTestResult(
+            diagnosisKeySubmissionToken = "token1",
+            testEndDate = Instant.now(fixedClock).minus(14, ChronoUnit.DAYS),
+            acknowledgedDate = Instant.now(fixedClock).minus(9, ChronoUnit.DAYS),
+            testResult = POSITIVE,
+            testKitType = LAB_RESULT,
+            requiresConfirmatoryTest = false,
+            confirmedDate = null
+        )
+
+        testSubject()
+
+        val retentionPeriod = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
+        val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
+        verify(exactly = 0) { relevantTestResultProvider.clear() }
         verify { unacknowledgedTestResultsProvider.clearBefore(expectedDate) }
         verify(exactly = 0) { isolationStateMachine.clearPreviousIsolation() }
         verify { exposureNotificationTokensProvider.clear() }
@@ -173,6 +222,32 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
             verify(exactly = 0) { epidemiologyEventProvider.clear() }
             verify { exposureNotificationTokensProvider.clear() }
         }
+
+    @Test
+    fun `clears last book test type risky venue when outside of accepted time window`() = runBlocking {
+        every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns false
+
+        testSubject()
+
+        verify(exactly = 0) { relevantTestResultProvider.clear() }
+        verify(exactly = 0) { unacknowledgedTestResultsProvider.clearBefore(any()) }
+        verify(exactly = 0) { isolationStateMachine.clearPreviousIsolation() }
+        verify { exposureNotificationTokensProvider.clear() }
+        verify { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = null }
+    }
+
+    @Test
+    fun `keeps last book test type risky venue when within accepted time window`() = runBlocking {
+        every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns true
+
+        testSubject()
+
+        verify(exactly = 0) { relevantTestResultProvider.clear() }
+        verify(exactly = 0) { unacknowledgedTestResultsProvider.clearBefore(any()) }
+        verify(exactly = 0) { isolationStateMachine.clearPreviousIsolation() }
+        verify { exposureNotificationTokensProvider.clear() }
+        verify(exactly = 0) { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = any() }
+    }
 
     @Test
     fun `verify isolation configuration is updated`() = runBlocking {

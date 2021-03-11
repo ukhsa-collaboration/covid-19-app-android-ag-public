@@ -8,6 +8,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AcknowledgedStartOfIsolationDueToRiskyContact
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.TotalAlarmManagerBackgroundTasks
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.BackgroundTaskCompletion
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CanceledCheckIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireAndStartedIsolation
@@ -23,6 +24,8 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultRe
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.QrCodeCheckIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedActiveIpcToken
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyContactNotification
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyVenueM1Warning
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyVenueM2Warning
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.RiskyContactReminderNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolationPaymentsButton
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
@@ -30,6 +33,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.UpdateNetworkSta
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.Event
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.TOTAL_ALARM_MANAGER_BACKGROUND_TASKS
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
@@ -44,6 +48,8 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSIT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CODE_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_ACTIVE_IPC_TOKEN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_CONTACT_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_VENUE_M1_WARNING
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_VENUE_M2_WARNING
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RISKY_CONTACT_REMINDER_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_ISOLATION_PAYMENTS_BUTTON
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.STARTED_ISOLATION
@@ -56,6 +62,7 @@ import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Disabl
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Unresolved
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
@@ -84,6 +91,7 @@ class AnalyticsEventProcessorTest {
     private val relevantTestResultProvider = mockk<RelevantTestResultProvider>()
     private val isolationPaymentTokenStateProvider = mockk<IsolationPaymentTokenStateProvider>()
     private val notificationProvider = mockk<NotificationProvider>()
+    private val lastVisitedBookTestTypeVenueDateProvider = mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxed = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
 
     private val testSubject = AnalyticsEventProcessor(
@@ -95,6 +103,7 @@ class AnalyticsEventProcessorTest {
         relevantTestResultProvider,
         isolationPaymentTokenStateProvider,
         notificationProvider,
+        lastVisitedBookTestTypeVenueDateProvider,
         fixedClock
     )
 
@@ -107,6 +116,7 @@ class AnalyticsEventProcessorTest {
         coEvery { exposureNotificationApi.isRunningNormally() } returns true
         every { isolationPaymentTokenStateProvider.tokenState } returns Unresolved
         every { notificationProvider.isChannelEnabled(ISOLATION_STATE_CHANNEL_ID) } returns false
+        every { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue } returns null
     }
 
     @Test
@@ -484,9 +494,9 @@ class AnalyticsEventProcessorTest {
                                 isIsolatingBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
-                                isIsolatingForTestedLFDPositiveBackgroundTick = true,
+                                isIsolatingForTestedSelfRapidPositiveBackgroundTick = true,
                                 hasSelfDiagnosedBackgroundTick = true,
-                                hasTestedLFDPositiveBackgroundTick = true
+                                hasTestedSelfRapidPositiveBackgroundTick = true
                             )
                         )
                     )
@@ -620,9 +630,9 @@ class AnalyticsEventProcessorTest {
                                 isIsolatingBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
-                                isIsolatingForTestedLFDPositiveBackgroundTick = true,
+                                isIsolatingForTestedSelfRapidPositiveBackgroundTick = true,
                                 hasSelfDiagnosedBackgroundTick = true,
-                                hasTestedLFDPositiveBackgroundTick = true
+                                hasTestedSelfRapidPositiveBackgroundTick = true
                             )
                         )
                     )
@@ -847,7 +857,7 @@ class AnalyticsEventProcessorTest {
                                 isIsolatingBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForTestedLFDPositiveBackgroundTick = true,
-                                hasTestedLFDPositiveBackgroundTick = true
+                                hasTestedLFDPositiveBackgroundTick = true,
                             )
                         )
                     )
@@ -856,7 +866,7 @@ class AnalyticsEventProcessorTest {
         }
 
     @Test
-    fun `on background completed when user is isolating without self assessment and last test result is positive and unassisted LFD`() =
+    fun `on background completed when user is isolating for positive unconfirmed LFD`() =
         runBlocking {
             every { stateStorage.state } returns
                 Isolation(
@@ -874,7 +884,54 @@ class AnalyticsEventProcessorTest {
                     testEndDate = Instant.now(fixedClock),
                     acknowledgedDate = Instant.now(fixedClock),
                     testResult = POSITIVE,
-                    testKitType = RAPID_SELF_REPORTED
+                    testKitType = RAPID_SELF_REPORTED,
+                    requiresConfirmatoryTest = true,
+                    confirmedDate = null
+                )
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                isIsolatingBackgroundTick = true,
+                                hasSelfDiagnosedPositiveBackgroundTick = true,
+                                isIsolatingForTestedSelfRapidPositiveBackgroundTick = true,
+                                hasTestedSelfRapidPositiveBackgroundTick = true,
+                                isIsolatingForUnconfirmedTestBackgroundTick = true
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed when user is isolating for positive confirmed LFD`() =
+        runBlocking {
+            every { stateStorage.state } returns
+                Isolation(
+                    isolationStart = Instant.now(fixedClock),
+                    isolationConfiguration = DurationDays(),
+                    indexCase = IndexCase(
+                        symptomsOnsetDate = LocalDate.of(2018, 10, 1),
+                        expiryDate = LocalDate.of(2018, 10, 10),
+                        selfAssessment = false
+                    )
+                )
+            every { relevantTestResultProvider.getTestResultIfPositive() } returns
+                AcknowledgedTestResult(
+                    diagnosisKeySubmissionToken = "token1",
+                    testEndDate = Instant.now(fixedClock),
+                    acknowledgedDate = Instant.now(fixedClock),
+                    testResult = POSITIVE,
+                    testKitType = RAPID_RESULT,
+                    requiresConfirmatoryTest = true,
+                    confirmedDate = Instant.now(fixedClock)
                 )
 
             testSubject.track(BackgroundTaskCompletion)
@@ -1045,6 +1102,50 @@ class AnalyticsEventProcessorTest {
         }
 
     @Test
+    fun `on background completed updates hasReceivedRiskyVenueM2WarningBackgroundTick when LastVisitedBookTestTypeVenueDateProvider timestamp is set`() =
+        runBlocking {
+            every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns true
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                hasReceivedRiskyVenueM2WarningBackgroundTick = true
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed does not update hasReceivedRiskyVenueM2WarningBackgroundTick when LastVisitedBookTestTypeVenueDateProvider timestamp is not set`() =
+        runBlocking {
+            every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns false
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                hasReceivedRiskyVenueM2WarningBackgroundTick = false
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
     fun `track qr code check in`() = runBlocking {
         verifyTrackRegularAnalyticsEvent(QrCodeCheckIn, QR_CODE_CHECK_IN)
     }
@@ -1177,6 +1278,30 @@ class AnalyticsEventProcessorTest {
         verifyTrackRegularAnalyticsEvent(
             DidAskForSymptomsOnPositiveTestEntry,
             DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY
+        )
+    }
+
+    @Test
+    fun `track receivedRiskyVenueM1Warning`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            ReceivedRiskyVenueM1Warning,
+            RECEIVED_RISKY_VENUE_M1_WARNING
+        )
+    }
+
+    @Test
+    fun `track receivedRiskyVenueM2Warning`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            ReceivedRiskyVenueM2Warning,
+            RECEIVED_RISKY_VENUE_M2_WARNING
+        )
+    }
+
+    @Test
+    fun `track totalAlarmManagerBackgroundTasks`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            TotalAlarmManagerBackgroundTasks,
+            TOTAL_ALARM_MANAGER_BACKGROUND_TASKS
         )
     }
 

@@ -15,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEn
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.report.notReported
@@ -50,7 +51,7 @@ class UserInboxIntegrationTest : EspressoTest() {
 
     @Test
     fun testPutAndDeleteItemsWithPropertyInUserInbox() = notReported {
-        testSubject.addUserInboxItem(ShowVenueAlert("venue-id"))
+        testSubject.addUserInboxItem(ShowVenueAlert("venue-id", INFORM))
         val inboxItem = testSubject.fetchInbox()
         assertThat(inboxItem).isInstanceOf(ShowVenueAlert::class.java)
         assertEquals("venue-id", (inboxItem as ShowVenueAlert).venueId)
@@ -71,7 +72,7 @@ class UserInboxIntegrationTest : EspressoTest() {
             diagnosisKeySubmissionSupported = true
         )
 
-        testSubject.addUserInboxItem(ShowVenueAlert(venueId))
+        testSubject.addUserInboxItem(ShowVenueAlert(venueId, INFORM))
         testSubject.addUserInboxItem(ShowIsolationExpiration(expirationDate))
         testAppContext.getUnacknowledgedTestResultsProvider().add(testResult)
         testSubject.addUserInboxItem(ShowEncounterDetection)

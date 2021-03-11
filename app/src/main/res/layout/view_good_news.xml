@@ -29,9 +29,7 @@
             android:layout_marginTop="@dimen/vertical_margin_large"
             android:text="@string/expiration_notification_title"
             android:textAlignment="center"
-            android:textSize="56sp"
-            android:visibility="invisible"
-            tools:visibility="visible" />
+            android:textSize="56sp" />
 
         <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
             android:id="@+id/goodNewsSubtitle"
@@ -48,6 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/vertical_margin_large"
             android:background="@color/surface_background"
+            app:stateText="@string/test_result_no_self_isolation_description"
             app:stateColor="@color/amber" />
 
         <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer

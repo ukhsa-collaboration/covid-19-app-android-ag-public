@@ -5,9 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.activity_risk_level.buttonRiskLevelLink
 import kotlinx.android.synthetic.main.activity_risk_level.imageRiskLevel
+import kotlinx.android.synthetic.main.activity_risk_level.massTestingContainer
 import kotlinx.android.synthetic.main.activity_risk_level.policyItemsContainer
 import kotlinx.android.synthetic.main.activity_risk_level.riskLevelFooter
 import kotlinx.android.synthetic.main.activity_risk_level.riskLevelInformation
@@ -18,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.R.drawable
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
+import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.AMBER
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.BLACK
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.GREEN
@@ -37,8 +40,14 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpOpensInBrowserWarning
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import uk.nhs.nhsx.covid19.android.app.widgets.PolicyItemView
 import uk.nhs.nhsx.covid19.android.app.widgets.setRawText
+import javax.inject.Inject
 
 class RiskLevelActivity : BaseActivity(R.layout.activity_risk_level) {
+
+    @Inject
+    lateinit var factory: ViewModelFactory<RiskLevelViewModel>
+
+    private val viewModel: RiskLevelViewModel by viewModels { factory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,12 +58,16 @@ class RiskLevelActivity : BaseActivity(R.layout.activity_risk_level) {
             R.string.risk_level_title
         )
 
-        val riskyPostCodeViewState =
-            intent.getParcelableExtra<RiskyPostCodeViewState>(EXTRA_RISK_LEVEL)
+        val riskyPostCodeViewState = intent.getParcelableExtra<RiskyPostCodeViewState>(EXTRA_RISK_LEVEL)
 
         riskyPostCodeViewState?.let {
             when (it) {
-                is Risk -> handleRiskLevel(it)
+                is Risk -> {
+                    viewModel.showMassTesting().observe(this) { shouldShowMassTesting ->
+                        massTestingContainer.isVisible = shouldShowMassTesting
+                    }
+                    handleRiskLevel(it)
+                }
                 Unknown -> finish()
             }
         }
@@ -114,6 +127,8 @@ class RiskLevelActivity : BaseActivity(R.layout.activity_risk_level) {
             }
             policyItemsContainer.isVisible = policyData.policies.isNotEmpty()
         }
+
+        viewModel.onHandleRiskLevel(risk)
     }
 
     companion object {

@@ -27,10 +27,12 @@ import uk.nhs.nhsx.covid19.android.app.remote.MockKeysSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockQuestionnaireApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockRiskyPostDistrictsApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockRiskyVenueCircuitBreakerApi
+import uk.nhs.nhsx.covid19.android.app.remote.MockRiskyVenueConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockRiskyVenuesApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.QuestionnaireApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyPostDistrictsApi
+import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenueConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesCircuitBreakerApi
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
@@ -115,4 +117,9 @@ class MockApiModule {
     @Singleton
     fun provideIsolationPaymentApi(): IsolationPaymentApi =
         MockIsolationPaymentApi()
+
+    @Provides
+    @Singleton
+    fun provideRiskyVenueConfigurationApi(): RiskyVenueConfigurationApi =
+        MockRiskyVenueConfigurationApi()
 }

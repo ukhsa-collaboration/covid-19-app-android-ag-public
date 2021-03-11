@@ -15,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodesLo
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
@@ -34,7 +35,8 @@ class UserDataViewModel @Inject constructor(
     private val relevantTestResultProvider: RelevantTestResultProvider,
     private val sharedPreferences: SharedPreferences,
     private val localAuthorityPostCodesLoader: LocalAuthorityPostCodesLoader,
-    private val submittedOnboardingAnalyticsProvider: SubmittedOnboardingAnalyticsProvider
+    private val submittedOnboardingAnalyticsProvider: SubmittedOnboardingAnalyticsProvider,
+    private val lastVisitedBookTestTypeVenueDateProvider: LastVisitedBookTestTypeVenueDateProvider
 ) : ViewModel() {
 
     private val userDataStateLiveData = MutableLiveData<UserDataState>()
@@ -51,12 +53,8 @@ class UserDataViewModel @Inject constructor(
             val updatedViewState = UserDataState(
                 localAuthority = getLocalAuthorityText(),
                 isolationState = getIsolationState(),
-                venueVisitsUiState = VenueVisitsUiState(
-                    venuesStorage.getVisits().map {
-                        it.copy(to = it.to.minusSeconds(1L))
-                    },
-                    isInEditMode = userDataStateLiveData.value?.venueVisitsUiState?.isInEditMode ?: false
-                ),
+                lastRiskyVenueVisitDate = getLastRiskyVenueVisitDate(),
+                venueVisitsUiState = getVenueVisitsUiState(),
                 acknowledgedTestResult = relevantTestResultProvider.testResult,
                 showDialog = userDataStateLiveData.value?.showDialog
             )
@@ -65,6 +63,12 @@ class UserDataViewModel @Inject constructor(
             }
         }
     }
+
+    private suspend fun getLocalAuthorityText(): String? =
+        localAuthorityProvider.value?.let {
+            val localAuthorityName = localAuthorityPostCodesLoader.load()?.localAuthorities?.get(it)?.name
+            localAuthorityName?.let { name -> "$name\n${postCodePrefs.value}" }
+        } ?: postCodePrefs.value
 
     private fun getIsolationState(): IsolationState? {
         return when (val isolationState = stateMachine.readState()) {
@@ -87,6 +91,20 @@ class UserDataViewModel @Inject constructor(
         }
     }
 
+    private fun getLastRiskyVenueVisitDate(): LocalDate? = lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue?.latestDate
+
+    private suspend fun getVenueVisitsUiState(): VenueVisitsUiState {
+        return VenueVisitsUiState(
+            getVenueVisits(),
+            isInEditMode = userDataStateLiveData.value?.venueVisitsUiState?.isInEditMode ?: false
+        )
+    }
+
+    private suspend fun getVenueVisits() = venuesStorage.getVisits()
+        .sortedWith(
+            compareByDescending<VenueVisit> { it.from }.thenBy { it.venue.organizationPartName }
+        )
+
     private fun getDailyContactTestingOptInDateForIsolation(isolation: Isolation): LocalDate? =
         if (RuntimeBehavior.isFeatureEnabled(DAILY_CONTACT_TESTING)) {
             isolation.contactCase?.dailyContactTestingOptInDate
@@ -106,16 +124,16 @@ class UserDataViewModel @Inject constructor(
         allUserDataDeletedLiveData.postValue(Unit)
     }
 
-    fun onVenueVisitDataClicked(position: Int) {
-        userDataStateLiveData.postValue(userDataStateLiveData.value!!.copy(showDialog = ConfirmDeleteVenueVisit(position)))
+    fun onVenueVisitDataClicked(venueVisit: VenueVisit) {
+        userDataStateLiveData.postValue(userDataStateLiveData.value!!.copy(showDialog = ConfirmDeleteVenueVisit(venueVisit)))
     }
 
-    fun deleteVenueVisit(position: Int) {
+    fun deleteVenueVisit(venueVisit: VenueVisit) {
         viewModelScope.launch {
-            venuesStorage.removeVenueVisit(position)
+            venuesStorage.removeVenueVisit(venueVisit)
             userDataStateLiveData.postValue(
                 userDataStateLiveData.value!!.copy(
-                    venueVisitsUiState = VenueVisitsUiState(venuesStorage.getVisits(), isInEditMode = true),
+                    venueVisitsUiState = VenueVisitsUiState(getVenueVisits(), isInEditMode = true),
                     showDialog = null
                 )
             )
@@ -138,16 +156,11 @@ class UserDataViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getLocalAuthorityText(): String? =
-        localAuthorityProvider.value?.let {
-            val localAuthorityName = localAuthorityPostCodesLoader.load()?.localAuthorities?.get(it)?.name
-            localAuthorityName?.let { name -> "$name\n${postCodePrefs.value}" }
-        } ?: postCodePrefs.value
-
     data class UserDataState(
         val localAuthority: String?,
         val isolationState: IsolationState?,
         val venueVisitsUiState: VenueVisitsUiState,
+        val lastRiskyVenueVisitDate: LocalDate?,
         val acknowledgedTestResult: AcknowledgedTestResult?,
         val showDialog: DialogType? = null
     )
@@ -164,6 +177,6 @@ class UserDataViewModel @Inject constructor(
 
     sealed class DialogType {
         object ConfirmDeleteAllData : DialogType()
-        data class ConfirmDeleteVenueVisit(val venueVisitPosition: Int) : DialogType()
+        data class ConfirmDeleteVenueVisit(val venueVisit: VenueVisit) : DialogType()
     }
 }

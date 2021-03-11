@@ -14,4 +14,11 @@
         android:layout_height="wrap_content"
         app:settingName="@string/language" />
 
+    <uk.nhs.nhsx.covid19.android.app.widgets.SettingsOptionsView
+        android:id="@+id/manageMyDataOption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:settingName="@string/about_manage_my_data"
+        app:settingValue="@string/about_manage_my_data_settings_subtitle"/>
+
 </LinearLayout>

@@ -31,10 +31,13 @@ import uk.nhs.nhsx.covid19.android.app.payment.CanClaimIsolationPayment
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
+import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.ExposureConsent
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.IsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.TestResult
@@ -56,6 +59,7 @@ class StatusViewModel @Inject constructor(
     private val lastAppRatingStartedDateProvider: LastAppRatingStartedDateProvider,
     private val canClaimIsolationPayment: CanClaimIsolationPayment,
     private val isolationPaymentTokenStateProvider: IsolationPaymentTokenStateProvider,
+    private val lastVisitedBookTestTypeVenueDateProvider: LastVisitedBookTestTypeVenueDateProvider,
     private val analyticsEventProcessor: AnalyticsEventProcessor,
     private val clock: Clock
 ) : ViewModel() {
@@ -129,7 +133,8 @@ class StatusViewModel @Inject constructor(
                 isolationState = isolationStateMachine.readState(),
                 latestAdviceUrl = getLatestAdviceUrl(),
                 showExposureNotificationReminderDialog = showExposureNotificationReminderDialog,
-                showIsolationPaymentButton = mustShowIsolationPaymentButton()
+                showIsolationPaymentButton = mustShowIsolationPaymentButton(),
+                showOrderTestButton = canOrderTest()
             )
             viewStateLiveData.postValue(updatedViewState)
         }
@@ -198,14 +203,19 @@ class StatusViewModel @Inject constructor(
                     showInformationScreen.postValue(TestResult)
                 }
                 is ShowVenueAlert -> {
-                    showInformationScreen.postValue(VenueAlert(item.venueId))
-                    userInbox.clearItem(item)
+                    showInformationScreen.postValue(VenueAlert(item.venueId, item.messageType))
                 }
                 is ShowEncounterDetection -> {
                     showInformationScreen.postValue(ExposureConsent)
                 }
             }
         }
+    }
+
+    private fun canOrderTest(): Boolean {
+        val state = isolationStateMachine.readState()
+        return lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() ||
+            (state is Isolation && state.isIndexCase())
     }
 
     fun optionIsolationPaymentClicked() {
@@ -233,7 +243,8 @@ class StatusViewModel @Inject constructor(
         val isolationState: State,
         val latestAdviceUrl: Int,
         val showExposureNotificationReminderDialog: Boolean,
-        val showIsolationPaymentButton: Boolean
+        val showIsolationPaymentButton: Boolean,
+        val showOrderTestButton: Boolean
     )
 }
 
@@ -241,5 +252,5 @@ sealed class InformationScreen {
     data class IsolationExpiration(val expiryDate: LocalDate) : InformationScreen()
     object TestResult : InformationScreen()
     object ExposureConsent : InformationScreen()
-    data class VenueAlert(val venueId: String) : InformationScreen()
+    data class VenueAlert(val venueId: String, val messageType: MessageType) : InformationScreen()
 }

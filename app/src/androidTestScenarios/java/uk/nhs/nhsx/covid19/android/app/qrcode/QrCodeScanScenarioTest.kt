@@ -14,7 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QrCodeScanResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QrScannerRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.VenueAlertRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.VenueAlertInformRobot
 
 class QrCodeScanScenarioTest : EspressoTest() {
 
@@ -23,7 +23,7 @@ class QrCodeScanScenarioTest : EspressoTest() {
 
     private val qrScannerRobot = QrScannerRobot()
     private val qrCodeScanResultRobot = QrCodeScanResultRobot()
-    private val venueAlertRobot = VenueAlertRobot()
+    private val venueAlertInformRobot = VenueAlertInformRobot()
 
     @After
     fun tearDown() {
@@ -72,7 +72,7 @@ class QrCodeScanScenarioTest : EspressoTest() {
                 testAppContext.getDownloadAndProcessRiskyVenues().invoke()
             }
 
-            waitFor { venueAlertRobot.checkVenueTitleIsDisplayed() }
+            waitFor { venueAlertInformRobot.checkVenueTitleIsDisplayed() }
 
             step(
                 stepName = "Risky venue alert",
@@ -105,7 +105,7 @@ class QrCodeScanScenarioTest : EspressoTest() {
                 testAppContext.getDownloadAndProcessRiskyVenues().invoke()
             }
 
-            waitFor { venueAlertRobot.checkVenueTitleIsDisplayed() }
+            waitFor { venueAlertInformRobot.checkVenueTitleIsDisplayed() }
         }
 
     @Test

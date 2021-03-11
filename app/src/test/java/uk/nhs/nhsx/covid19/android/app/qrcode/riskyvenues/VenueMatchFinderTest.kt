@@ -1,13 +1,13 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueMatchFinder.Interval
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenue
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyWindow
 import java.time.Instant
@@ -76,28 +76,21 @@ class VenueMatchFinderTest {
             RiskyWindow(
                 from = Instant.parse("2020-07-08T10:00:00.00Z"),
                 to = Instant.parse("2020-07-08T12:00:00.00Z")
-            )
+            ),
+            messageType = INFORM
         ),
         RiskyVenue(
             "2",
             RiskyWindow(
                 from = Instant.parse("2020-07-07T20:00:00.00Z"),
                 to = Instant.parse("2020-07-09T20:00:00.00Z")
-            )
+            ),
+            messageType = INFORM
         )
     )
 
     @Test
-    fun `calls getStoredVenues`() = runBlocking {
-        coEvery { visitedVenuesStorage.getVisits() } returns listOf()
-
-        sut.findMatches(riskyVenues)
-
-        coVerify { visitedVenuesStorage.getVisits() }
-    }
-
-    @Test
-    fun `return empty list when no risky venues`() = runBlocking {
+    fun `return empty list when risky venues are empty`() = runBlocking {
         coEvery { visitedVenuesStorage.getVisits() } returns listOf(venueVisitNotRiskyInVenue1)
 
         val matches = sut.findMatches(listOf())
@@ -130,7 +123,8 @@ class VenueMatchFinderTest {
         val matches = sut.findMatches(riskyVenues)
 
         assertEquals(1, matches.size)
-        assertEquals("1", matches[0])
+        assertEquals(1, matches[riskyVenues[0]]?.size)
+        assertEquals(venueVisitRiskyInVenue1, matches[riskyVenues[0]]?.get(0))
     }
 
     @Test
@@ -143,31 +137,27 @@ class VenueMatchFinderTest {
     }
 
     @Test
-    fun `returns no match when visit is in risky window but was previously flagged as risky`() =
-        runBlocking {
-            coEvery { visitedVenuesStorage.getVisits() } returns listOf(
-                venueVisitRiskyInVenue2AndWasInRiskyList
-            )
+    fun `returns no match when visit is in risky window but was previously flagged as risky`() = runBlocking {
+        coEvery { visitedVenuesStorage.getVisits() } returns listOf(venueVisitRiskyInVenue2AndWasInRiskyList)
 
-            val matches = sut.findMatches(riskyVenues)
+        val matches = sut.findMatches(riskyVenues)
 
-            assertEquals(0, matches.size)
-        }
+        assertEquals(0, matches.size)
+    }
 
     @Test
     fun `returns matches when venue visit was in risky window`() = runBlocking {
-        val venueVisits = listOf(venueVisitRiskyInVenue2)
-
-        coEvery { visitedVenuesStorage.getVisits() } returns venueVisits
+        coEvery { visitedVenuesStorage.getVisits() } returns listOf(venueVisitRiskyInVenue2)
 
         val matches = sut.findMatches(riskyVenues)
 
         assertEquals(1, matches.size)
-        assertEquals("2", matches[0])
+        assertEquals(1, matches[riskyVenues[1]]?.size)
+        assertEquals(venueVisitRiskyInVenue2, matches[riskyVenues[1]]?.get(0))
     }
 
     @Test
-    fun `return one match even if more than one visit in same venue was risky`() = runBlocking {
+    fun `return two matches if both venue visits are in risky window of venue`() = runBlocking {
         val venueVisits = listOf(venueVisitRiskyInVenue1, anotherVenueVisitRiskyInVenue1)
 
         coEvery { visitedVenuesStorage.getVisits() } returns venueVisits
@@ -175,7 +165,24 @@ class VenueMatchFinderTest {
         val matches = sut.findMatches(riskyVenues)
 
         assertEquals(1, matches.size)
-        assertEquals("1", matches[0])
+        assertEquals(2, matches[riskyVenues[0]]?.size)
+        assertEquals(venueVisitRiskyInVenue1, matches[riskyVenues[0]]?.get(0))
+        assertEquals(anotherVenueVisitRiskyInVenue1, matches[riskyVenues[0]]?.get(1))
+    }
+
+    @Test
+    fun `return matches in multiple risky venues`() = runBlocking {
+        val venueVisits = listOf(venueVisitRiskyInVenue1, venueVisitRiskyInVenue2)
+
+        coEvery { visitedVenuesStorage.getVisits() } returns venueVisits
+
+        val matches = sut.findMatches(riskyVenues)
+
+        assertEquals(2, matches.size)
+        assertEquals(1, matches[riskyVenues[0]]?.size)
+        assertEquals(1, matches[riskyVenues[1]]?.size)
+        assertEquals(venueVisitRiskyInVenue1, matches[riskyVenues[0]]?.get(0))
+        assertEquals(venueVisitRiskyInVenue2, matches[riskyVenues[1]]?.get(0))
     }
 
     @Test

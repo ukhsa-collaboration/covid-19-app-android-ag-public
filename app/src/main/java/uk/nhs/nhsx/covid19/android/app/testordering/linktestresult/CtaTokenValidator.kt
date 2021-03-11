@@ -3,7 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostalDistrictProviderWrapper
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeRequest
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeResponse
@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 class CtaTokenValidator @Inject constructor(
     private val virologyTestingApi: VirologyTestingApi,
-    private val postalDistrictProviderWrapper: PostalDistrictProviderWrapper,
+    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider,
     private val crockfordDammValidator: CrockfordDammValidator
 ) {
 
@@ -30,7 +30,7 @@ class CtaTokenValidator @Inject constructor(
                 return@withContext Failure(INVALID)
             }
 
-            val country = postalDistrictProviderWrapper.getPostCodeDistrict()?.supportedCountry
+            val country = localAuthorityPostCodeProvider.getPostCodeDistrict()?.supportedCountry
             if (country != null) {
                 val result = virologyTestingApi.getTestResultForCtaToken(VirologyCtaExchangeRequest(ctaToken, country))
                 when {

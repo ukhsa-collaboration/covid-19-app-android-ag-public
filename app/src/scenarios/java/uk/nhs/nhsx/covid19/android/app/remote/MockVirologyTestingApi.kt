@@ -155,6 +155,18 @@ class MockVirologyTestingApi : VirologyTestingApi {
                     )
                 )
             }
+            POSITIVE_RAPID_SELF_REPORTED_TOKEN_INDICATIVE -> {
+                Response.success(
+                    VirologyCtaExchangeResponse(
+                        diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
+                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
+                        testResult = POSITIVE,
+                        testKit = RAPID_SELF_REPORTED,
+                        diagnosisKeySubmissionSupported = true,
+                        requiresConfirmatoryTest = true
+                    )
+                )
+            }
             NEGATIVE_PCR_TOKEN -> {
                 Response.success(
                     VirologyCtaExchangeResponse(
@@ -265,6 +277,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
         const val POSITIVE_LFD_TOKEN_INDICATIVE = "fdpstc0s"
         const val POSITIVE_LFD_TOKEN_INDICATIVE_NO_KEY_SUBMISSION = "fdpstn0j"
         const val POSITIVE_RAPID_SELF_REPORTED_TOKEN = "xzmgc0vz"
+        const val POSITIVE_RAPID_SELF_REPORTED_TOKEN_INDICATIVE = "w2vrvqhe"
         const val NEGATIVE_PCR_TOKEN = "f3dzcfdt"
         const val NEGATIVE_PCR_TOKEN_NO_KEY_SUBMISSION = "7p40rzgq"
         const val NEGATIVE_LFD_TOKEN = "fdngtngw"

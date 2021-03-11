@@ -4,9 +4,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uk.nhs.nhsx.covid19.android.app.common.Result
 import uk.nhs.nhsx.covid19.android.app.common.runSafely
+import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesApi
-import java.time.Clock
-import java.time.Instant
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenue
 import javax.inject.Inject
 
 class DownloadAndProcessRiskyVenues @Inject constructor(
@@ -15,8 +15,7 @@ class DownloadAndProcessRiskyVenues @Inject constructor(
     private val visitedVenuesStorage: VisitedVenuesStorage,
     private val filterOutdatedVisits: FilterOutdatedVisits,
     private val riskyVenuesCircuitBreakerPolling: RiskyVenuesCircuitBreakerPolling,
-    private val riskyVenueCircuitBreakerConfigurationProvider: RiskyVenueCircuitBreakerConfigurationProvider,
-    private val clock: Clock
+    private val riskyVenueCircuitBreakerConfigurationProvider: RiskyVenueCircuitBreakerConfigurationProvider
 ) {
 
     suspend operator fun invoke(clearOutdatedVisits: Boolean = true): Result<Unit> {
@@ -28,19 +27,25 @@ class DownloadAndProcessRiskyVenues @Inject constructor(
 
                 if (riskyVenues.isEmpty()) return@runSafely
 
-                val notNotifiedVisitedRiskyVenuesIds = venueMatchFinder.findMatches(riskyVenues)
+                val unnotifiedVenueVisits: Map<RiskyVenue, List<VenueVisit>> = venueMatchFinder.findMatches(riskyVenues)
 
-                if (notNotifiedVisitedRiskyVenuesIds.isEmpty()) return@runSafely
+                if (unnotifiedVenueVisits.isEmpty()) return@runSafely
 
-                visitedVenuesStorage.markAsWasInRiskyList(notNotifiedVisitedRiskyVenuesIds)
+                visitedVenuesStorage.markAsWasInRiskyList(unnotifiedVenueVisits.values.flatten())
 
-                val configurations = notNotifiedVisitedRiskyVenuesIds.map { venueId ->
-                    RiskyVenueCircuitBreakerConfiguration(
-                        startedAt = Instant.now(clock),
-                        venueId = venueId,
-                        approvalToken = null,
-                        isPolling = false
-                    )
+                val configurations = unnotifiedVenueVisits.flatMap { (riskyVenue, venueVisits) ->
+                    venueVisits.map { venueVisit ->
+                        // venueVisit.to is an instant calculated as nowForCheckIn.getNextLocalMidnightTime(clock)
+                        // which is a start of the next day of check in, startedAt has to be at the day of check in so
+                        // it is necessary to subtract 1 millisecond
+                        RiskyVenueCircuitBreakerConfiguration(
+                            startedAt = venueVisit.to.minusMillis(1),
+                            venueId = riskyVenue.id,
+                            approvalToken = null,
+                            isPolling = false,
+                            messageType = riskyVenue.messageType
+                        )
+                    }
                 }
                 riskyVenueCircuitBreakerConfigurationProvider.addAll(configurations)
 

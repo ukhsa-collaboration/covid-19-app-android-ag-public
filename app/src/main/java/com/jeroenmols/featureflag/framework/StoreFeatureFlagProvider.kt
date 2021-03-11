@@ -2,8 +2,8 @@ package com.jeroenmols.featureflag.framework
 
 import com.jeroenmols.featureflag.framework.FeatureFlag.BATTERY_OPTIMIZATION
 import com.jeroenmols.featureflag.framework.FeatureFlag.DAILY_CONTACT_TESTING
-import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_AUTHORITY
 import com.jeroenmols.featureflag.framework.FeatureFlag.STORE_EXPOSURE_WINDOWS
+import com.jeroenmols.featureflag.framework.FeatureFlag.SUBMIT_ANALYTICS_VIA_ALARM_MANAGER
 
 class StoreFeatureFlagProvider : FeatureFlagProvider {
 
@@ -13,10 +13,10 @@ class StoreFeatureFlagProvider : FeatureFlagProvider {
     override fun isFeatureEnabled(feature: Feature): Boolean {
         return if (feature is FeatureFlag) {
             when (feature) {
-                LOCAL_AUTHORITY -> true
                 BATTERY_OPTIMIZATION -> false
                 STORE_EXPOSURE_WINDOWS -> true
                 DAILY_CONTACT_TESTING -> false
+                SUBMIT_ANALYTICS_VIA_ALARM_MANAGER -> false
             }
         } else {
             // TestSettings should never be shipped to users

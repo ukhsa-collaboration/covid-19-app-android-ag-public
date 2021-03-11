@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jeroenmols.featureflag.framework.FeatureFlag
-import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.BatteryOptimizationNotAcknowledged
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.Completed
@@ -13,19 +11,19 @@ import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.ExposureNotif
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.LocalAuthorityMissing
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.OnboardingStarted
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.PolicyUpdated
+import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.PostCodeToLocalAuthorityMissing
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.TabletNotSupported
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationRequired
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Invalid
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateProvider
 import uk.nhs.nhsx.covid19.android.app.util.defaultFalse
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.DeviceDetection
 import javax.inject.Inject
-import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.PostCodeToLocalAuthorityMissing
-import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator
-import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Invalid
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 
 class MainViewModel @Inject constructor(
     private val deviceDetection: DeviceDetection,
@@ -50,14 +48,11 @@ class MainViewModel @Inject constructor(
                 !exposureNotificationApi.isAvailable() -> ExposureNotificationsNotAvailable
                 onboardingCompletedProvider.value.defaultFalse() && !policyUpdateProvider.isPolicyAccepted() -> PolicyUpdated
                 onboardingCompletedProvider.value.defaultFalse() && policyUpdateProvider.isPolicyAccepted() ->
-                    if (RuntimeBehavior.isFeatureEnabled(FeatureFlag.LOCAL_AUTHORITY) &&
-                        postCodeProvider.value != null &&
+                    if (postCodeProvider.value != null &&
                         localAuthorityPostCodeValidator.validate(postCodeProvider.value!!) is Invalid
                     ) {
                         PostCodeToLocalAuthorityMissing
-                    } else if (RuntimeBehavior.isFeatureEnabled(FeatureFlag.LOCAL_AUTHORITY) &&
-                        localAuthorityProvider.value == null
-                    ) {
+                    } else if (localAuthorityProvider.value == null) {
                         LocalAuthorityMissing
                     } else if (batteryOptimizationRequired()) {
                         BatteryOptimizationNotAcknowledged

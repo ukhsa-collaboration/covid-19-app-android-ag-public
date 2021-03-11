@@ -20,18 +20,22 @@ import kotlinx.android.synthetic.scenarios.fragment_debug.exportKeys
 import kotlinx.android.synthetic.scenarios.fragment_debug.importKeys
 import kotlinx.android.synthetic.scenarios.fragment_debug.indexState
 import kotlinx.android.synthetic.scenarios.fragment_debug.riskyPostCode
-import kotlinx.android.synthetic.scenarios.fragment_debug.riskyVenue
+import kotlinx.android.synthetic.scenarios.fragment_debug.riskyVenueM1
+import kotlinx.android.synthetic.scenarios.fragment_debug.riskyVenueM2
 import kotlinx.android.synthetic.scenarios.fragment_debug.sendExposureNotification
 import kotlinx.android.synthetic.scenarios.fragment_debug.sendNegativeTestResult
 import kotlinx.android.synthetic.scenarios.fragment_debug.sendPositiveTestResult
 import kotlinx.android.synthetic.scenarios.fragment_debug.sendVoidTestResult
 import kotlinx.android.synthetic.scenarios.fragment_debug.startDownloadTask
+import kotlinx.android.synthetic.scenarios.fragment_debug.submitAnalyticsUsingAlarmManager
 import kotlinx.android.synthetic.scenarios.fragment_debug.submitKeys
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.Error
@@ -130,12 +134,20 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
             debugViewModel.sendExposureNotification()
         }
 
-        riskyVenue.setOnSingleClickListener {
-            debugViewModel.setRiskyVenue()
+        riskyVenueM1.setOnSingleClickListener {
+            debugViewModel.setRiskyVenue(INFORM)
+        }
+
+        riskyVenueM2.setOnSingleClickListener {
+            debugViewModel.setRiskyVenue(BOOK_TEST)
         }
 
         riskyPostCode.setOnSingleClickListener {
             debugViewModel.setRiskyPostCode()
+        }
+
+        submitAnalyticsUsingAlarmManager.setOnSingleClickListener {
+            debugViewModel.submitAnalyticsUsingAlarmManager()
         }
     }
 

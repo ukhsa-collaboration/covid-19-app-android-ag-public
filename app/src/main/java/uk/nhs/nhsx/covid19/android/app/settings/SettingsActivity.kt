@@ -2,10 +2,11 @@ package uk.nhs.nhsx.covid19.android.app.settings
 
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.lifecycle.observe
 import kotlinx.android.synthetic.main.activity_settings.languageOption
+import kotlinx.android.synthetic.main.activity_settings.manageMyDataOption
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.about.UserDataActivity
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
@@ -37,6 +38,10 @@ class SettingsActivity : BaseActivity(R.layout.activity_settings) {
     private fun setClickListeners() {
         languageOption.setOnSingleClickListener {
             startActivity<LanguagesActivity>()
+        }
+
+        manageMyDataOption.setOnSingleClickListener {
+            startActivity<UserDataActivity>()
         }
     }
 }

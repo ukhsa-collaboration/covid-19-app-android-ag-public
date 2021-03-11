@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
 import androidx.core.view.children
-import androidx.lifecycle.observe
 import kotlinx.android.synthetic.main.activity_local_authority.buttonConfirmLink
 import kotlinx.android.synthetic.main.activity_local_authority.descriptionLocalAuthority
 import kotlinx.android.synthetic.main.activity_local_authority.errorView

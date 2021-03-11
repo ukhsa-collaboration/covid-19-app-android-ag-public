@@ -41,7 +41,7 @@
     <plurals name="isolation_days_to_go">
         <item quantity="one">został %d dzień</item>
         <item quantity="few">zostały %d dni</item>
-        <item quantity="many">zostały %d dni</item>
+        <item quantity="many">zostało %d dni</item>
         <item quantity="other">zostały %d dni</item>
     </plurals>
     <plurals name="isolation_view_accessibility_description">
@@ -112,7 +112,7 @@
     <string name="test_ordering_failure_description">Zanim spróbujesz ponownie, sprawdź, czy ustawienia dotyczące transmisji danych w Twoim telefonie są włączone, sprawdź połączenie Wi-Fi (jeżeli z niego korzystasz) i upewnij się, że tryb samolotowy jest wyłączony.</string>
     <string name="test_ordering_failure_action">Spróbuj ponownie</string>
     <string name="notification_title_post_code_risk_changed">W Twojej okolicy nastąpiła zmiana.</string>
-    <string name="notification_title_risky_venue">Niedawno odwiedziłeś(-aś) miejsce, w którym w tym samym dniu przebywały osoby z dodatnim wynikiem testu na obecność koronawirusa (COVID-19).</string>
+    <string name="notification_title_risky_venue">Niedawno odwiedziłeś(-aś) lokal w tym samym dniu, co inne osoby, które później uzyskały dodatni wynik testu na koronawirusa (COVID-19)</string>
     <string name="notification_text_post_code_risk_changed">Dotknij tutaj, aby zapoznać się ze szczegółowymi informacjami.</string>
     <string name="status_area_risk_level_low">NISKI</string>
     <string name="status_area_risk_level_low_wls">NISKI</string>
@@ -174,8 +174,8 @@
     <string name="questionnaire_discard_symptoms_dialog_message">Wszystkie zaznaczone objawy zostaną odznaczone.</string>
     <string name="select_symptoms">Wybierz objawy</string>
     <string name="notification_text_risky_venue">Dotknij tutaj, aby zapoznać się ze szczegółowymi informacjami</string>
-    <string name="venue_alert_title">Niedawno odwiedziłeś(-aś) miejsce, w którym w tym samym dniu przebywały osoby z dodatnim wynikiem testu na obecność koronawirusa (COVID-19).</string>
-    <string name="venue_alert_explanation">Istnieje jedynie niewielkie ryzyko, że w czasie tamtej wizyty zostałeś(-aś) zarażony(-a) koronawirusem. Należy nadal przestrzegać najnowszych wskazówek dotyczących dystansowania społecznego.\n\nJeżeli masz objawy koronawirusa, musisz natychmiast rozpocząć izolację. Oznacza to pozostanie w domu i nieprzyjmowanie żadnych gości. Skorzystaj z aplikacji, aby sprawdzić swoje objawy i zamówić bezpłatny test, jeżeli zostanie to zalecone. W razie pytań, zadzwoń pod 119.\n\nZamów test jedynie wtedy, gdy masz objawy koronawirusa.</string>
+    <string name="venue_alert_title">Niedawno odwiedziłeś(-aś) lokal w tym samym dniu, co inne osoby, które później uzyskały dodatni wynik testu na koronawirusa (COVID-19)</string>
+    <string name="venue_alert_explanation">Istnieje ryzyko, że mogło dojść do narażenia na kontakt z koronawirusem. Około 1 na 3 osoby zakażone koronawirusem nie ma żadnych objawów, ale nadal może zarażać innych, stwarzając ryzyko dla ich zdrowia. Poddanie się izolacji nie jest w tym przypadku konieczne, ale należy być szczególnie ostrożnym w przestrzeganiu najnowszych wskazówek dotyczących dystansu społecznego.\n\nJeżeli masz objawy, musisz poddać się izolacji i zamówić bezpłatny test za pomocą funkcji sprawdzania objawów. W razie pytań zadzwoń pod nr 119.</string>
     <string name="questionnaire_no_symptom_selected">Musisz zaznaczyć odpowiednie objawy lub wybrać opcję „Nie wystąpiły u mnie żadne z podanych objawów”.</string>
     <string name="title_no_coronavirus_symptoms">Jest mało prawdopodobne, że zostałeś(-aś) zakażony(-a) koronawirusem</string>
     <string name="message_no_coronavirus_symptoms">Jeżeli wystąpiły u Ciebie którekolwiek z tych objawów, zgłoś je w aplikacji i zamów bezpłatny test. Zamów test jedynie wtedy, gdy masz objawy koronawirusa.\n\nAby uzyskać dalsze informacje, prosimy o kontakt:</string>
@@ -476,13 +476,24 @@
     <string name="unsupported_device">Ograniczenie w ustawieniach (na przykład, jeśli jest to telefon firmowy)\n\nInna aplikacja w telefonie używa tej samej technologii i blokuje możliwość uruchomienia tej aplikacji.</string>
     <string name="user_data_daily_contact_testing_text">Potwierdzone uczestnictwo</string>
     <string name="user_data_daily_contact_testing_title">Codzienne testy pod kątem kontaktu z osobą zarażoną</string>
+    <string name="about_manage_my_data_settings_subtitle">Władze lokalne, wyniki testu, lista odwiedzonych miejsc</string>
+    <string name="ill_do_it_later">Zrobię to później</string>
     <string name="link_test_result_daily_contact_testing_description">Jeżeli do programu codziennego testowania został zgłoszony dodatni wynik testu, prosimy o wprowadzenie otrzymanego kodu w powyższej ramce oraz pozostanie w izolacji.\n\nJeżeli wynik Twojego codziennego testu jest ujemny, nie otrzymasz kodu do wpisania w aplikacji. Należy poinformować nas o uzyskaniu ujemnego wyniku i kontynuować.</string>
     <string name="link_test_result_daily_contact_testing_description_list_header">Dodatkowo:</string>
-    <string name="link_test_result_error_both_inputs_provided">You cannot both enter a code and have a negative result from daily contact testing.</string>
-    <string name="link_test_result_error_neither_input_provided">You need to enter a code or tell us you have a negative result from daily contact testing.</string>
+    <string name="link_test_result_error_both_inputs_provided">Nie można w tym samym czasie wprowadzić kodu oznaczającego wynik testu oraz potwierdzić otrzymanie ujemnego wyniku testu.</string>
+    <string name="link_test_result_error_neither_input_provided">Należy albo wprowadzić kod, albo informację o ujemnym wyniku otrzymanym podczas codziennych testów pod kątem kontaktu z osobą zakażoną.</string>
     <string name="link_test_result_onset_date_title">Czy pamiętasz, kiedy po raz pierwszy zaczęły występować u Ciebie którekolwiek z tych objawów?</string>
     <string name="link_test_result_symptoms_list">Wysoka temperatura (gorączka)\n\nUporczywy kaszel, który nie występował wcześniej\n\nZmiana węchu lub smaku</string>
     <string name="link_test_result_symptoms_no">Nie</string>
-    <string name="link_test_result_symptoms_yes">Tak</string>
+    <string name="link_test_result_symptoms_no_accessibility">Nie wystąpiły u mnie żadne z podanych objawów</string>
     <string name="link_test_result_symptoms_title">Czy wystąpiły u Ciebie którekolwiek z następujących objawów koronawirusa?</string>
+    <string name="link_test_result_symptoms_yes">Tak</string>
+    <string name="link_test_result_symptoms_yes_accessibility">Yes, I have symptoms.</string>
+    <string name="risk_level_mass_testing_link_text">Znajdź miejsce wykonywania testów</string>
+    <string name="risk_level_mass_testing_link_url">https://maps.test-and-trace.nhs.uk/</string>
+    <string name="risk_level_mass_testing_text">Sprawdź, jakie testy są dostępne w Twojej okolicy oraz czy trzeba je rezerwować.</string>
+    <string name="risk_level_mass_testing_title">Testy w Twojej okolicy</string>
+    <string name="venue_alert_m2_explanation">Istnieje ryzyko, że mogło dojść do narażenia na kontakt z koronawirusem. Około 1 na 3 osoby zakażone koronawirusem nie ma żadnych objawów, ale nadal może zarażać innych, stwarzając ryzyko dla ich zdrowia. Dlatego prosimy, abyś teraz umówił(-a) się na test.\n\nPoddanie się izolacji nie jest w tym przypadku konieczne, ale należy nadal przestrzegać najnowszych wskazówek dotyczących dystansowania społecznego oraz zarezerwować test na koronawirusa wchodząc w poniższy link.\n\nJeżeli Twój wynik jest dodatni lub wystąpiły u Ciebie objawy, musisz natychmiast poddać się izolacji. W razie pytań możesz dzwonić pod nr 119.</string>
+    <string name="venue_alert_m2_title">Niedawno odwiedziłeś(-aś) lokal, w którym wystąpiło ognisko koronawirusa (COVID-19)</string>
+    <string name="user_data_risky_venue_visit_date_title">DATA POBYTU W LOKALU, GDZIE WYSTĄPIŁO RYZYKO</string>
 </resources>

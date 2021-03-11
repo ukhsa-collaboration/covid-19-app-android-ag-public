@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.flow.analytics
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry
+import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.SymptomsAndOnsetFlowConfiguration
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.RiskyContact
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventPayload
@@ -38,7 +39,8 @@ class ExposureWindowAnalyticsTest : AnalyticsTest() {
 
         manualTestResultEntry.enterPositive(
             LAB_RESULT,
-            SymptomsAndOnsetFlowConfiguration()
+            SymptomsAndOnsetFlowConfiguration(),
+            expectedScreenState = PositiveContinueIsolation
         )
 
         val expectedEvents = listOf(getPositiveTestEpidemiologyEvent())

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import com.google.android.gms.common.api.Status
 import kotlinx.android.synthetic.main.activity_permission.permissionContinue
 import timber.log.Timber

@@ -5,23 +5,29 @@ import androidx.lifecycle.Observer
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
+import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertViewModel.ViewState
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertViewModel.ViewState.KnownVisit
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertViewModel.ViewState.UnknownVisit
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformViewModel.ViewState
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformViewModel.ViewState.KnownVisit
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformViewModel.ViewState.UnknownVisit
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import java.time.Instant
 
-class VenueAlertViewModelTest {
+class VenueAlertInformViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val venuesStorage = mockk<VisitedVenuesStorage>()
 
-    private val testSubject = VenueAlertViewModel(venuesStorage)
+    private val userInbox = mockk<UserInbox>(relaxUnitFun = true)
+
+    private val testSubject = VenueAlertInformViewModel(venuesStorage, userInbox)
 
     private val venueVisitObserver = mockk<Observer<ViewState>>(relaxed = true)
 
@@ -50,5 +56,12 @@ class VenueAlertViewModelTest {
         testSubject.updateVenueVisitState(venueId)
 
         coVerify { venueVisitObserver.onChanged(UnknownVisit) }
+    }
+
+    @Test
+    fun `acknowledge alert`() {
+        testSubject.acknowledgeVenueAlert("1")
+
+        verify { userInbox.clearItem(ShowVenueAlert("1", INFORM)) }
     }
 }

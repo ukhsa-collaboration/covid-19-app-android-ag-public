@@ -8,6 +8,8 @@ import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEn
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 
@@ -17,17 +19,32 @@ sealed class UserInboxItem {
 
 sealed class AddableUserInboxItem : UserInboxItem() {
     data class ShowIsolationExpiration(val expirationDate: LocalDate) : AddableUserInboxItem()
-    data class ShowVenueAlert(val venueId: String) : AddableUserInboxItem()
+    data class ShowVenueAlert(val venueId: String, val messageType: MessageType) : AddableUserInboxItem()
     object ShowEncounterDetection : AddableUserInboxItem()
 }
 
 @Singleton
 class UserInbox @Inject constructor(
     private val isolationExpirationDateProvider: IsolationExpirationDateProvider,
-    private val riskyVenueIdProvider: RiskyVenueIdProvider,
+    @Suppress("DEPRECATION") private val riskyVenueIdProvider: RiskyVenueIdProvider,
+    private val riskyVenueAlertProvider: RiskyVenueAlertProvider,
     private val shouldShowEncounterDetectionActivityProvider: ShouldShowEncounterDetectionActivityProvider,
     private val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider
 ) {
+
+    init {
+        migrateRiskyVenueIdProvider()
+    }
+
+    private fun migrateRiskyVenueIdProvider() {
+        riskyVenueIdProvider.value?.let {
+            riskyVenueAlertProvider.riskyVenueAlert = RiskyVenueAlert(
+                id = it,
+                messageType = INFORM
+            )
+            riskyVenueIdProvider.value = null
+        }
+    }
 
     internal var listeners = mutableListOf<() -> Unit>()
 
@@ -48,7 +65,7 @@ class UserInbox @Inject constructor(
             is ShowIsolationExpiration ->
                 isolationExpirationDateProvider.value = item.expirationDate.toString()
             is ShowVenueAlert ->
-                riskyVenueIdProvider.value = item.venueId
+                riskyVenueAlertProvider.riskyVenueAlert = item.toRiskyVenueAlert()
             is ShowEncounterDetection ->
                 shouldShowEncounterDetectionActivityProvider.value = true
         }
@@ -65,21 +82,29 @@ class UserInbox @Inject constructor(
         if (shouldShowEncounterDetectionActivityProvider.value == true) {
             return ShowEncounterDetection
         }
-        val venueId = riskyVenueIdProvider.value
-        if (venueId != null) {
-            return ShowVenueAlert(venueId)
-        }
-        return null
+        return riskyVenueAlertProvider.riskyVenueAlert?.toShowVenueAlert()
     }
 
     fun clearItem(item: AddableUserInboxItem) {
         when (item) {
             is ShowIsolationExpiration -> isolationExpirationDateProvider.value = null
-            is ShowVenueAlert -> riskyVenueIdProvider.value = null
+            is ShowVenueAlert -> riskyVenueAlertProvider.riskyVenueAlert = null
             is ShowEncounterDetection -> shouldShowEncounterDetectionActivityProvider.value = null
         }
         notifyChanges()
     }
+
+    private fun ShowVenueAlert.toRiskyVenueAlert() =
+        RiskyVenueAlert(
+            id = venueId,
+            messageType = messageType
+        )
+
+    private fun RiskyVenueAlert.toShowVenueAlert() =
+        ShowVenueAlert(
+            venueId = id,
+            messageType = messageType
+        )
 }
 
 class IsolationExpirationDateProvider @Inject constructor(
@@ -94,6 +119,7 @@ class IsolationExpirationDateProvider @Inject constructor(
     }
 }
 
+@Deprecated("Not used anymore since 4.6. Use RiskyVenueProvider instead.")
 class RiskyVenueIdProvider @Inject constructor(
     sharedPreferences: SharedPreferences
 ) {

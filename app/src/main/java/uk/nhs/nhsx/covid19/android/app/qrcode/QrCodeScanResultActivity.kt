@@ -10,7 +10,6 @@ import android.provider.Settings
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.annotation.StringRes
-import androidx.lifecycle.observe
 import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.actionButton

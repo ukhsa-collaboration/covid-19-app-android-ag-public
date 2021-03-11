@@ -10,13 +10,6 @@ import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit.DAYS
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -28,8 +21,8 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostalDistrictProviderWrapper
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry
@@ -46,16 +39,22 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultResponse
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit.DAYS
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class DownloadVirologyTestResultWorkTest {
 
-    private val virologyTestingApi = mockk<VirologyTestingApi>(relaxed = true)
-    private val testOrderTokensProvider = mockk<TestOrderingTokensProvider>(relaxed = true)
-    private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
-    private val isolationConfigurationProvider =
-        mockk<IsolationConfigurationProvider>(relaxed = true)
-    private val postalDistrictProviderWrapper = mockk<PostalDistrictProviderWrapper>(relaxed = true)
-    private val analyticsManager = mockk<AnalyticsEventProcessor>(relaxed = true)
+    private val virologyTestingApi = mockk<VirologyTestingApi>()
+    private val testOrderTokensProvider = mockk<TestOrderingTokensProvider>(relaxUnitFun = true)
+    private val stateMachine = mockk<IsolationStateMachine>()
+    private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
+    private val localAuthorityPostCodeProvider = mockk<LocalAuthorityPostCodeProvider>()
+    private val analyticsManager = mockk<AnalyticsEventProcessor>(relaxUnitFun = true)
     private val clock = Clock.fixed(from, ZoneId.systemDefault())
 
     val testSubject = DownloadVirologyTestResultWork(
@@ -63,7 +62,7 @@ class DownloadVirologyTestResultWorkTest {
         testOrderTokensProvider,
         stateMachine,
         isolationConfigurationProvider,
-        postalDistrictProviderWrapper,
+        localAuthorityPostCodeProvider,
         analyticsManager,
         clock
     )
@@ -73,7 +72,7 @@ class DownloadVirologyTestResultWorkTest {
     @Before
     fun setUp() {
         every { isolationConfigurationProvider.durationDays } returns DurationDays()
-        coEvery { postalDistrictProviderWrapper.getPostCodeDistrict() } returns ENGLAND
+        coEvery { localAuthorityPostCodeProvider.getPostCodeDistrict() } returns ENGLAND
     }
 
     @After
@@ -98,7 +97,7 @@ class DownloadVirologyTestResultWorkTest {
         val config1 = TestOrderPollingConfig(from, "token1", "submission_token1")
         val config2 = TestOrderPollingConfig(from, "token2", "submission_token2")
         every { testOrderTokensProvider.configs } returns listOf(config1, config2)
-        coEvery { postalDistrictProviderWrapper.getPostCodeDistrict() } returns null
+        coEvery { localAuthorityPostCodeProvider.getPostCodeDistrict() } returns null
 
         val actual = testSubject.invoke()
 

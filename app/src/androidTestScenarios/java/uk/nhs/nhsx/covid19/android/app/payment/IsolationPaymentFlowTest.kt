@@ -8,14 +8,14 @@ import java.time.temporal.ChronoUnit
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.FAIL_SUCCEED_LOOP
+import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_FAIL
+import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_SUCCEED
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.State
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
-import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationPaymentRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ProgressRobot
@@ -38,10 +38,9 @@ class IsolationPaymentFlowTest : EspressoTest() {
         FeatureFlagTestHelper.clearFeatureFlags()
     }
 
-    @RetryFlakyTest
     @Test
     fun whenUserInContactCaseIsolation_performIsolationPaymentFlow_retryOnce_endInStatusActivity() = notReported {
-        MockApiModule.behaviour.responseType = FAIL_SUCCEED_LOOP
+        MockApiModule.behaviour.responseType = ALWAYS_FAIL
 
         testAppContext.setIsolationPaymentToken("abc")
         testAppContext.setState(
@@ -67,6 +66,8 @@ class IsolationPaymentFlowTest : EspressoTest() {
         isolationPaymentRobot.clickEligibilityButton()
 
         isolationPaymentProgressRobot.checkErrorIsDisplayed()
+
+        MockApiModule.behaviour.responseType = ALWAYS_SUCCEED
 
         isolationPaymentProgressRobot.clickTryAgainButton()
 

@@ -1,9 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
 import androidx.work.ListenableWorker
-import com.jeroenmols.featureflag.framework.FeatureFlag
-import com.jeroenmols.featureflag.framework.RuntimeBehavior
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
@@ -15,6 +12,7 @@ import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyPostDistrictsApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
 import uk.nhs.nhsx.covid19.android.app.util.toWorkerResult
+import javax.inject.Inject
 
 class DownloadRiskyPostCodesWork @Inject constructor(
     private val riskyPostCodeApi: RiskyPostDistrictsApi,
@@ -37,9 +35,7 @@ class DownloadRiskyPostCodesWork @Inject constructor(
             val localAuthorityId: String? = localAuthorityProvider.value
 
             val hasLocalAuthorityToRiskLevelMapping =
-                localAuthorityId != null && response.localAuthorities?.get(localAuthorityId) != null && RuntimeBehavior.isFeatureEnabled(
-                    FeatureFlag.LOCAL_AUTHORITY
-                )
+                localAuthorityId != null && response.localAuthorities?.get(localAuthorityId) != null
             val riskIndicatorId: String? = if (hasLocalAuthorityToRiskLevelMapping) {
                 response.localAuthorities!![localAuthorityId]
             } else {

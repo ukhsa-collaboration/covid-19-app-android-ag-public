@@ -75,7 +75,8 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.ScanningNotSuppor
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.Success
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResultActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertActivity
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestActivity
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
@@ -332,8 +333,12 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             startActivity<QrCodeHelpActivity>()
         }
 
-        addScreenButton("Risky Venue Alert") {
-            VenueAlertActivity.start(this, "ABCD1234")
+        addScreenButton("Risky Venue Alert M1/INFORM") {
+            VenueAlertInformActivity.start(this, "ABCD1234")
+        }
+
+        addScreenButton("Risky Venue Alert M2/BOOK TEST") {
+            VenueAlertBookTestActivity.start(this, "ABCD1234")
         }
 
         addScreenButton("Questionnaire screen") {

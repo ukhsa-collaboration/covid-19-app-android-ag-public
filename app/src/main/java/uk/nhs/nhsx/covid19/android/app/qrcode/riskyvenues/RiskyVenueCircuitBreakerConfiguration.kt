@@ -6,6 +6,8 @@ import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import java.lang.reflect.Type
 import java.time.Instant
@@ -88,5 +90,6 @@ data class RiskyVenueCircuitBreakerConfiguration(
     val startedAt: Instant,
     val venueId: VenueId,
     val approvalToken: String?,
-    val isPolling: Boolean = true
+    val isPolling: Boolean = true,
+    val messageType: MessageType = INFORM
 )

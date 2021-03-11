@@ -81,17 +81,19 @@ class VisitedVenuesStorage @Inject constructor(
         venuesFile.delete()
     }
 
-    suspend fun removeVenueVisit(position: Int) {
+    suspend fun removeVenueVisit(venueVisit: VenueVisit) {
         val visitedVenues = getVisitedVenuesMutable()
 
-        visitedVenues.removeAt(position)
+        val removedAnything = visitedVenues.remove(venueVisit)
 
-        setVisits(visitedVenues)
+        if (removedAnything) {
+            setVisits(visitedVenues)
+        }
     }
 
-    suspend fun markAsWasInRiskyList(venueIds: List<String>) = withContext(context) {
-        val visits = getVisitedVenuesMutable()
-        setVisits(visits.map { if (it.venue.id in venueIds) it.copy(wasInRiskyList = true) else it })
+    suspend fun markAsWasInRiskyList(riskyVenueVisits: List<VenueVisit>) = withContext(context) {
+        val venueVisits = getVisitedVenuesMutable()
+        setVisits(venueVisits.map { if (it in riskyVenueVisits) it.copy(wasInRiskyList = true) else it })
     }
 
     private fun getVisitedVenuesMutable(): MutableList<VenueVisit> {

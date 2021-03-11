@@ -1,5 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyVenueM1Warning
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyVenueM2Warning
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.NO
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.PENDING
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.YES
@@ -7,6 +10,9 @@ import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVe
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesCircuitBreakerApi
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
+import java.time.Clock
 import javax.inject.Inject
 
 class RiskyVenuesCircuitBreakerPolling @Inject constructor(
@@ -14,7 +20,12 @@ class RiskyVenuesCircuitBreakerPolling @Inject constructor(
     private val notificationProvider: NotificationProvider,
     private val userInbox: UserInbox,
     private val riskyVenueCircuitBreakerConfigurationProvider: RiskyVenueCircuitBreakerConfigurationProvider,
-    private val removeOutdatedRiskyVenuePollingConfigurations: RemoveOutdatedRiskyVenuePollingConfigurations
+    private val removeOutdatedRiskyVenuePollingConfigurations: RemoveOutdatedRiskyVenuePollingConfigurations,
+    private val lastVisitedBookTestTypeVenueDateProvider: LastVisitedBookTestTypeVenueDateProvider,
+    private val shouldShowRiskyVenueNotification: ShouldShowRiskyVenueNotification,
+    private val riskyVenueConfigurationProvider: RiskyVenueConfigurationProvider,
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
+    private val clock: Clock
 ) {
 
     suspend operator fun invoke() {
@@ -25,7 +36,10 @@ class RiskyVenuesCircuitBreakerPolling @Inject constructor(
         riskyVenueCircuitBreakerConfigurationProvider.configs.forEach { config ->
             runCatching {
                 val (approval, approvalToken) = if (config.isPolling) {
-                    Pair(riskyVenuesCircuitBreakerApi.getRiskyVenuesBreakerResolution(config.approvalToken!!).approval, config.approvalToken)
+                    Pair(
+                        riskyVenuesCircuitBreakerApi.getRiskyVenuesBreakerResolution(config.approvalToken!!).approval,
+                        config.approvalToken
+                    )
                 } else {
                     val response = riskyVenuesCircuitBreakerApi.getApproval()
                     Pair(response.approval, response.approvalToken)
@@ -33,7 +47,14 @@ class RiskyVenuesCircuitBreakerPolling @Inject constructor(
 
                 when (approval) {
                     YES -> {
-                        latestApprovedConfig = config
+                        val existingApprovedConfig = latestApprovedConfig
+                        if (existingApprovedConfig?.messageType == BOOK_TEST) {
+                            if (config.messageType == BOOK_TEST && existingApprovedConfig.startedAt.isBefore(config.startedAt)) {
+                                latestApprovedConfig = config
+                            }
+                        } else {
+                            latestApprovedConfig = config
+                        }
                         riskyVenueCircuitBreakerConfigurationProvider.remove(config)
                     }
                     NO -> riskyVenueCircuitBreakerConfigurationProvider.remove(config)
@@ -48,8 +69,19 @@ class RiskyVenuesCircuitBreakerPolling @Inject constructor(
             }
         }
         latestApprovedConfig?.let {
-            notificationProvider.showRiskyVenueVisitNotification()
-            userInbox.addUserInboxItem(ShowVenueAlert(it.venueId))
+            if (it.messageType == BOOK_TEST) {
+                lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = LastVisitedBookTestTypeVenueDate(
+                    it.startedAt.toLocalDate(clock.zone),
+                    riskyVenueConfigurationProvider.durationDays
+                )
+                analyticsEventProcessor.track(ReceivedRiskyVenueM2Warning)
+            } else {
+                analyticsEventProcessor.track(ReceivedRiskyVenueM1Warning)
+            }
+            if (shouldShowRiskyVenueNotification(it.messageType)) {
+                notificationProvider.showRiskyVenueVisitNotification()
+            }
+            userInbox.addUserInboxItem(ShowVenueAlert(it.venueId, it.messageType))
         }
     }
 }

@@ -49,8 +49,8 @@
     <string name="qr_code_help_how_it_works_text">આ એપ ઓફિશ્યલ NHS QR કોડનો ઉપયોગ કરી તમે બાર અને રેસ્ટોરન્ટ જેવા જે સ્થળની મુલાકાત લો તેમાં ઝડપથી અને સરળતાથી ચેક-ઇન કરવામાં મદદ કરે છે. આ એપનો ઉપયોગ કરી, તમે તાજેતરમાં મુલાકાત લીધેલા વેન્યુમાં જો તમે વાયરસના સંપર્કમાં આવ્યા હોવ તો અમે તમને સજાગ કરી શકીએ છીએ.</string>
     <string name="qr_code_help_how_it_helps_title">તે કઈ રીતે મદદ કરે છે</string>
     <string name="qr_code_help_how_it_helps_text">આ એપની સુવિધા વ્યવસાયો માટે સંપર્ક ટ્રેસિંગને સપોર્ટ આપવો સરળ બનાવે છે. તે તમારી ગોપનીયતા સુરક્ષિત રાખી, આપણને સૌને સલામત રહેવામાં મદદ કરે છે.</string>
-    <string name="venue_alert_title">તમે તાજેતરમાં એવી જગ્યાએ ગયા હતાં જ્યાં એજ દિવસે બીજા લોકો કોરોનાવાયરસ પોઝિટિવ (COVID-19એટલે કે વાયરસ હતો)</string>
-    <string name="venue_alert_explanation">થોડો રિસ્ક છે જેમાં તમને પણ એ સમયે કોરોનાવાયરસનો ચેપ લાગ્યો હોય શકે. તમારે સોશિયલ ડિસ્ટન્સિંગ વિષેનું તાજેતરનું માર્ગદર્શન પાળવું પડશે.  \n\nજો તમને કોરોનાવાયરનનાં લક્ષણો હોય તો તમારે તરત જ સેલ્ફ-આયસોલેટ થવું પડશે. એનો અર્થ એમ થાય કે તમારે ઘરે રહેવું પડશે અને કોઈ તમને મળવા આવી ન શકે. એપમાં લક્ષણો ચેકર વાપરી શકો અને જો તમને સલાહ દેવામાં આવે તો તમારી ફ્રિ ટેસ્ટ બુક કરી શકો. જો તમને કોઇ સવાલો હોય તો 119 પર કોલ કરો   \n\nજો તમને કોરોનાવાઈરસ રોગના લક્ષણો હોય તોજ ફકત કસોટી કરાવો.</string>
+    <string name="venue_alert_title">તાજેતરમાં ઘણા લોકો એક જગ્યાએ હતા, ત્યાં તમે પણ હતા. ત્યારથી એ લોકોનો કોરોનાવાયરસ (કોવિડ-19)ટેસ્ટ  પોઝિટિવ આવેલ છે.</string>
+    <string name="venue_alert_explanation">એવું જોખમ છે કે તમે કોરોનાવાઇરસના જોખમમાં આવ્યા હોઈ શકો છો. જેઓને કોરોનાવાઇરસ હોય છે એવા 3માંથી 1 લોકોને કોઈ લક્ષણો જણાતાં નથીએ, પરંતુ તેમ છતાં તેઓને કારણે બીજા લોકોને ચેપ લાગી શકે છે અને બીજા લોકોને પર જોખમ ઊભું થઈ શકે છે. તમારે સૅલ્ફ-આઇસોલેટ થવાની જરૂર નથી, પરંતુ તમારે સોશિયલ ડિસ્ટંસ વિશે લેટેસ્ટ માર્ગદર્શનનું પાલન કરવા માટે વિશેષ સાવધાની લેવી ઘટે.\n\nજો તમને લક્ષણો જણાય તો તમારે સૅલ્ફ-આઇસોલેટ થવાનું રહેશે અને સિમ્ટમ ચેકરનો ઉપયોગ કરની મફત ટેસ્ટ બૂક કરાવવાનું રહેશે. જો તમને કોઈ પ્રશ્નો હોય તો 119 પર કૉલ કરો.</string>
     <string name="notification_title_post_code_risk_changed">તમારા એરિયામાં ફેરફાર થયા છે</string>
     <string name="notification_title_test_results">તમારા ટેસ્ટના પરિણામો આવી ગયા છે</string>
     <string name="select_symptoms">લક્ષણો પસંદ કરો</string>
@@ -176,7 +176,7 @@
     <string name="something_went_wrong">કંઈક ખોટું થયું છે</string>
     <string name="test_ordering_failure_title">કંઈક ખોટું થયું છે</string>
     <string name="test_ordering_failure_description">ફરીથી પ્રયત્ન કરતાં પહેલા, કૃપા કરી તપાસો કે તમારા ફોનના મોબાઈલ ડેટા સેટિંગ્સ ચાલુ છે, તમારું Wi-Fi જોડાણ (જો તમે ઉપયોગ કરતાં હોવ તો) તપાસો અને ખાતરી કરો કે એરોપ્લેન મોડ બંધ હોય.</string>
-    <string name="notification_title_risky_venue">તમે તાજેતરમાં એવી જગ્યાએ ગયા હતાં જ્યાં એજ દિવસે બીજા લોકો કોરોનાવાયરસ પોઝિટિવ (COVID-19એટલે કે વાયરસ હતો)</string>
+    <string name="notification_title_risky_venue">તાજેતરમાં ઘણા લોકો એક જગ્યાએ હતા, ત્યાં તમે પણ હતા. ત્યારથી એ લોકોનો કોરોનાવાયરસ (કોવિડ-19)ટેસ્ટ  પોઝિટિવ આવેલ છે</string>
     <string name="notification_text_post_code_risk_changed">વિગતો જોવા માટે અહીં ટેપ કરો.</string>
     <string name="status_area_risk_level">%s વિસ્તારનું જોખમ %s છે</string>
     <string name="notification_channel_area_risk_changed_name">વિસ્તારનું જોખમ બદલાયું છે</string>
@@ -460,13 +460,24 @@
     <string name="unsupported_device">તમારા સેટિંગ્સમાં પ્રતિબંધ (ઉદાહરણ તરીકે, જો આ કંપની ફોન છે, તો).\n\nતમારા ફોન પરની અન્ય એપ સમાન ટેક્નોલોજીનો ઉપયોગ કરી રહી છે અને આ એપને કાર્ય કરતાં રોકી રહી છે.</string>
     <string name="user_data_daily_contact_testing_text">પુષ્ટ થયેલ સહભાગિતા</string>
     <string name="user_data_daily_contact_testing_title">દૈનિક સંપર્ક પરીક્ષણ</string>
+    <string name="about_manage_my_data_settings_subtitle">લૉકલ ઑથોરીટી, ટેસ્ટનાં પરિણામો, વેન્યુનો ઇતિહાસ</string>
+    <string name="ill_do_it_later">હું એ પછી કરીશ</string>
     <string name="link_test_result_daily_contact_testing_description">જો તમે તમારા દૈનિક સંપર્ક પરીક્ષણ કાર્યક્રમમાં સકારાત્મક પરીક્ષણ અહેવાલિત કર્યું હોય, તો તમને ઉપરના બૉક્સમાં પ્રાપ્ત કોડ દાખલ કરો અને સેલ્ફ-આઇસોલેટ થાવ\n\nજો તમારું દૈનિક પરીક્ષણ નકારાત્મક હોય, તો તમને ઍપમાં દાખલ થવા માટેનો કોડ પ્રાપ્ત થતો નથી. તમારું પરિણામ નકારાત્મક છે તે તમારે અમને જણાવવાની જરૂર હોય છે અને આગળ ચાલુ રહો.</string>
     <string name="link_test_result_daily_contact_testing_description_list_header">આ ઉપરાંત:</string>
-    <string name="link_test_result_error_both_inputs_provided">You cannot both enter a code and have a negative result from daily contact testing.</string>
-    <string name="link_test_result_error_neither_input_provided">You need to enter a code or tell us you have a negative result from daily contact testing.</string>
+    <string name="link_test_result_error_both_inputs_provided">તમે એક જ સમયે ટેસ્ટના પરિણામનો કોડ દાખલ કરી ન શકો અને પુષ્ટિ ન કરી શકો કે તમારા ટેસ્ટનું પરિણામ નૅગેટિવ છે.//કન્ફર્મ</string>
+    <string name="link_test_result_error_neither_input_provided">તમારે એક કોડ દાખલ કરવાનો છે અથવા અમને કહેવાનું છે કે રોજિંદા કૉન્ટેક્ટ ટેસ્ટિંગમાંથી તમારું પરિણામ નૅગેટિવ છે.</string>
     <string name="link_test_result_onset_date_title">શું તમને સૌથી શરૂઆતની તારીખ યાદ છે જયારે તમે આમાંના કોઈપણ લક્ષણોનો અનુભવ કરવાનું શરૂ કર્યું હતું?</string>
     <string name="link_test_result_symptoms_list">ઊંચું તાપમાન (તાવ)\n\nનવી સતત ઉધરસ\n\nગંધ અથવા સ્વાદની તમારી સૂઝમાં ફેરફાર</string>
     <string name="link_test_result_symptoms_no">ના</string>
-    <string name="link_test_result_symptoms_yes">હા</string>
+    <string name="link_test_result_symptoms_no_accessibility">મને આમાંથી કોઈપણ લક્ષણો નથી</string>
     <string name="link_test_result_symptoms_title">શું તમને નીચેનામાંથી કોઈ પણ કોરોનાવાયરસ લક્ષણો થયા હતા?</string>
+    <string name="link_test_result_symptoms_yes">હા</string>
+    <string name="link_test_result_symptoms_yes_accessibility">Yes, I have symptoms.</string>
+    <string name="risk_level_mass_testing_link_text">ટેસ્ટ સાઇટ શોધો</string>
+    <string name="risk_level_mass_testing_link_url">https://maps.test-and-trace.nhs.uk/</string>
+    <string name="risk_level_mass_testing_text">તમારા એરિયામાં કયું ટેસ્ટિંગ અવેલેબલ છે અને તમે બૂક કરી શકો કે  નહિ</string>
+    <string name="risk_level_mass_testing_title">તમારી નજીક ટેસ્ટિં</string>
+    <string name="venue_alert_m2_explanation">એવું જોખમ છે કે તમે કોરોનાવાઇરસના જોખમમાં આવ્યા હોઈ શકો છો. જેઓને કોરોનાવાઇરસ હોય છે એવા 3માંથી 1 લોકોને કોઈ લક્ષણો જણાતાં નથીએ, પરંતુ તેમ છતાં તેઓને કારણે અન્યોને ચેપ લાગી શકે છે અને અન્યો પર જોખમ ઊભું થઈ શકે છે. આ કારણથી કૃપા કરીને હમણાં જ ટેસ્ટ બૂક કરાવો.\n\nતમારે સૅલ્ફ-આઇસોલેટ થવાની જરૂર નથી, પરંતુ તમારે સોશિયલ ડિસ્ટન્સીંગ પરના લેટેસ્ટ માર્ગદર્શનોનું પાલન કરવાનું ચાલુ રાખવું જોઈએ અને નીચેની લિંક પર જઈને કોરોનાવાઇરસ ટેસ્ટ બૂક કરાવવો જોઈએ.\n\nજો તમારો ટેસ્ટ પૉઝિટિવ આવે અથવા તમને કોઈ પણ લક્ષણો જણાય તો તમારે તાત્કાલિકપણે સૅલ્ફ-આઇસોલેટ થવાનું રહેશે. જો તમને કોઈ પ્રશ્નો હોય તો તમે 119 પર કૉલ કરી શકો છો.</string>
+    <string name="venue_alert_m2_title">તમે તાજેતરમાં એવી જગ્યાની મુલાકાત લીધી હતી, જ્યાં કોરોનાવાઇરસ (COVID-19) ફાટી નીકળ્યો છે</string>
+    <string name="user_data_risky_venue_visit_date_title">જોખમી જગ્યાની મુલાકાતની તારીખ</string>
 </resources>

@@ -9,11 +9,14 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenue
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyWindow
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import java.time.LocalDate
 
 class DownloadAndProcessRiskyVenuesFlowTest : EspressoTest() {
 
@@ -51,14 +54,16 @@ class DownloadAndProcessRiskyVenuesFlowTest : EspressoTest() {
             RiskyWindow(
                 from = Instant.parse("2020-08-01T00:00:00Z"),
                 to = Instant.parse("2020-08-30T23:59:59Z")
-            )
+            ),
+            messageType = INFORM
         ),
         RiskyVenue(
             venue2.id,
             RiskyWindow(
                 from = Instant.parse("2020-08-01T00:00:00Z"),
                 to = Instant.parse("2020-08-30T23:59:59Z")
-            )
+            ),
+            messageType = BOOK_TEST
         )
     )
 
@@ -68,7 +73,8 @@ class DownloadAndProcessRiskyVenuesFlowTest : EspressoTest() {
             RiskyWindow(
                 from = Instant.parse("2020-08-01T00:00:00Z"),
                 to = Instant.parse("2020-08-30T23:59:59Z")
-            )
+            ),
+            messageType = INFORM
         )
     )
 
@@ -78,7 +84,8 @@ class DownloadAndProcessRiskyVenuesFlowTest : EspressoTest() {
             RiskyWindow(
                 from = Instant.parse("2020-08-01T00:00:00Z"),
                 to = Instant.parse("2020-08-30T23:59:59Z")
-            )
+            ),
+            messageType = INFORM
         )
     )
 
@@ -118,7 +125,7 @@ class DownloadAndProcessRiskyVenuesFlowTest : EspressoTest() {
             downloadAndProcessRiskyVenues.invoke(clearOutdatedVisits = false)
 
             val alert1 = userInbox.fetchInbox() as AddableUserInboxItem
-            assertEquals(ShowVenueAlert(venue2.id), alert1)
+            assertEquals(ShowVenueAlert(venue2.id, BOOK_TEST), alert1)
             userInbox.clearItem(alert1)
 
             testAppContext.riskyVenuesApi.riskyVenuesResponse =
@@ -127,7 +134,7 @@ class DownloadAndProcessRiskyVenuesFlowTest : EspressoTest() {
             downloadAndProcessRiskyVenues.invoke(clearOutdatedVisits = false)
 
             val alert2 = userInbox.fetchInbox() as AddableUserInboxItem
-            assertEquals(ShowVenueAlert(venue3.id), alert2)
+            assertEquals(ShowVenueAlert(venue3.id, INFORM), alert2)
             userInbox.clearItem(alert2)
 
             testAppContext.riskyVenuesApi.riskyVenuesResponse =
@@ -136,12 +143,52 @@ class DownloadAndProcessRiskyVenuesFlowTest : EspressoTest() {
             downloadAndProcessRiskyVenues.invoke(clearOutdatedVisits = false)
 
             val alert3 = userInbox.fetchInbox() as AddableUserInboxItem
-            assertEquals(ShowVenueAlert(venue4.id), alert3)
+            assertEquals(ShowVenueAlert(venue4.id, INFORM), alert3)
             userInbox.clearItem(alert3)
 
             downloadAndProcessRiskyVenues.invoke(clearOutdatedVisits = false)
 
             assertNull(userInbox.fetchInbox())
+        }
+    }
+
+    @Test
+    fun visitBookTestTypeRiskyVenue() = notReported {
+        runBlocking {
+            val visitedVenuesStorage = testAppContext.getVisitedVenuesStorage()
+            val downloadAndProcessRiskyVenues = testAppContext.getDownloadAndProcessRiskyVenues()
+            val lastVisitedBookTestTypeVenueDate = testAppContext.getLastVisitedBookTestTypeVenueDateProvider()
+
+            visitedVenuesStorage.removeAllVenueVisits()
+
+            val venue = Venue(
+                id = "74ZK34RY",
+                organizationPartName = "Venue"
+            )
+
+            val bookTestTypeRiskyVenue = RiskyVenue(
+                venue.id,
+                RiskyWindow(
+                    from = Instant.parse("2020-08-01T15:00:00Z"),
+                    to = Instant.parse("2020-08-02T00:00:00Z")
+                ),
+                messageType = BOOK_TEST
+            )
+
+            testAppContext.clock.currentInstant = Instant.parse("2020-08-01T20:00:00Z")
+
+            val initialLatestDate = lastVisitedBookTestTypeVenueDate.lastVisitedVenue?.latestDate
+            assertNull(initialLatestDate)
+
+            visitedVenuesStorage.finishLastVisitAndAddNewVenue(venue)
+
+            testAppContext.riskyVenuesApi.riskyVenuesResponse =
+                RiskyVenuesResponse(venues = listOf(bookTestTypeRiskyVenue))
+
+            downloadAndProcessRiskyVenues.invoke(clearOutdatedVisits = false)
+
+            val latestDate = lastVisitedBookTestTypeVenueDate.lastVisitedVenue?.latestDate
+            assertEquals(LocalDate.parse("2020-08-01"), latestDate)
         }
     }
 }

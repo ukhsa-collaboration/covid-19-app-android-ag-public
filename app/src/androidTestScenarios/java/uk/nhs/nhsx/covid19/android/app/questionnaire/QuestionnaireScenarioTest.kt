@@ -9,7 +9,7 @@ import java.time.Instant
 import java.time.LocalDate
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_FAIL
-import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.FAIL_SUCCEED_LOOP
+import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_SUCCEED
 import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
@@ -374,11 +374,13 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
     @Test
     fun navigateToQuestionnaire_LoadingQuestionnaireFailsAndTryAgainSucceeds_NavigateToQuestionnaire() = notReported {
-        MockApiModule.behaviour.responseType = FAIL_SUCCEED_LOOP
+        MockApiModule.behaviour.responseType = ALWAYS_FAIL
 
         startTestActivity<QuestionnaireActivity>()
 
         questionnaireRobot.checkErrorStateIsDisplayed()
+
+        MockApiModule.behaviour.responseType = ALWAYS_SUCCEED
 
         questionnaireRobot.clickTryAgainButton()
 

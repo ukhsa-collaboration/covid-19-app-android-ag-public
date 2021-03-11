@@ -110,7 +110,7 @@
     <string name="test_ordering_failure_description">Before trying again, please check that your phone’s mobile data settings are on, check your Wi-Fi connection (if you’re using one) and make sure that Airplane Mode is off.</string>
     <string name="test_ordering_failure_action">Try again</string>
     <string name="notification_title_post_code_risk_changed">There has been a change in your area</string>
-    <string name="notification_title_risky_venue">You recently visited a venue on the same day as others who have tested positive for coronavirus (COVID-19).</string>
+    <string name="notification_title_risky_venue">You recently visited a venue on the same day as others who have since tested positive for coronavirus (COVID-19)</string>
     <string name="notification_text_post_code_risk_changed">Tap here for more details.</string>
     <string name="status_area_risk_level_low">LOW</string>
     <string name="status_area_risk_level_low_wls">LOW</string>
@@ -170,8 +170,8 @@
     <string name="link_test_result_daily_contact_testing_description_list_header">In addition:</string>
     <string name="link_test_result_daily_contact_testing_description_list_text">If you reported a positive test to your daily contact testing programme, enter the code you received in the box above and self-isolate\n\nIf your daily test was negative, you do not receive a code to enter in the app. You need to tell us you have a negative result and continue.</string>
     <string name="link_test_result_daily_contact_testing_negative_result_confirmation">I have a negative test result from daily contact testing</string>
-    <string name="link_test_result_error_both_inputs_provided">You cannot both enter a code and have a negative result from daily contact testing.</string>
-    <string name="link_test_result_error_neither_input_provided">You need to enter a code or tell us you have a negative result from daily contact testing.</string>
+    <string name="link_test_result_error_both_inputs_provided">You cannot enter a test result code and confirm that you have a negative test result at the same time.</string>
+    <string name="link_test_result_error_neither_input_provided">You need to either enter a code or tell us you have a negative result from daily contact testing.</string>
     <string name="daily_contact_testing_confirmation_title">Daily contact testing</string>
     <string name="daily_contact_testing_confirmation_heading">Confirm you are doing daily contact testing</string>
     <string name="daily_contact_testing_confirmation_intro">You should only continue if you are already taking part in daily contact testing.</string>
@@ -201,12 +201,15 @@
     <string name="questionnaire_discard_symptoms_dialog_message">Any selected symptoms will be unselected.</string>
     <string name="select_symptoms">Select symptoms</string>
     <string name="notification_text_risky_venue">Tap to see the details</string>
-    <string name="venue_alert_title">You recently visited a venue on the same day as others who have tested positive for coronavirus (COVID-19).</string>
-    <string name="venue_alert_explanation">There is only a small risk that you have been infected with coronavirus during your visit. You should continue to follow the latest advice on social distancing.\n\nIf you have symptoms of coronavirus you must self-isolate immediately. This means you should stay at home with no visitors. Use the symptom checker on the app and book a free test if advised to do so. Call 119 if you have questions.\n\nOnly get a test if you have coronavirus symptoms.</string>
+    <string name="venue_alert_title">You recently visited a venue on the same day as others who have since tested positive for coronavirus (COVID-19)</string>
+    <string name="venue_alert_explanation">There is a risk that you may have been exposed to coronavirus. Around 1 in 3 people who have coronavirus do not have any symptoms, but they can still pass it on and put others at risk. You do not need to self-isolate, but you should take extra care to follow the latest guidance on social distancing.\n\nIf you have symptoms, you must self-isolate and book a free test using the symptom checker. Call 119 if you have questions.</string>
+    <string name="venue_alert_m2_title">You recently visited a venue where there’s been an outbreak of coronavirus (COVID-19)</string>
+    <string name="venue_alert_m2_explanation">There is a risk that you may have been exposed to coronavirus. Around 1 in 3 people who have coronavirus do not have any symptoms, but they can still pass it on and put others at risk. For this reason, please book a test now.\n\nYou do not need to self-isolate, but you should continue to follow the latest guidance on social distancing and book a coronavirus test by visiting the link below.\n\nIf you test positive or develop any symptoms, you must self-isolate immediately. You can call 119 if you have questions.</string>
+    <string name="ill_do_it_later">I’ll do it later</string>
     <string name="questionnaire_no_symptom_selected">You need to either choose your symptoms or select “I donʼt have any of these symptoms”</string>
     <string name="title_no_coronavirus_symptoms">You are unlikely to have coronavirus</string>
     <string name="message_no_coronavirus_symptoms">If you develop any of these symptoms, report them on this app and book a free test. Only get a test if you have coronavirus symptoms.\n\nFor further advice, please contact:</string>
-    <string name="questionnaire_input_date_error">You need to either enter a date or select “I don\'t remember the date”</string>
+    <string name="questionnaire_input_date_error">You need to either enter a date or select “I donʼt remember the date”</string>
     <string name="questionnaire_review_symptoms_title">Review your answers</string>
     <string name="questionnaire_confirm">Submit</string>
     <string name="questionnaire_no_date">I do not remember the date</string>
@@ -270,6 +273,7 @@
     <string name="about_delete_all_data">Delete all my data</string>
     <string name="about_my_data_date">Date</string>
     <string name="about_manage_my_data">Manage my data</string>
+    <string name="about_manage_my_data_settings_subtitle">Local authority, test results, venue history</string>
     <string name="postal_district">Postal district</string>
     <string name="about_local_authority">Local authority</string>
     <string name="local_authority_edit">Edit your local authority</string>
@@ -289,6 +293,7 @@
     <string name="about_encounter_date">Encounter date</string>
     <string name="about_notification_date">Notification date</string>
     <string name="title_last_day_of_isolation">Last day of self-isolation</string>
+    <string name="user_data_risky_venue_visit_date_title">DATE AT VENUE OF RISK</string>
     <string name="user_data_daily_contact_testing_title">Daily contact testing</string>
     <string name="user_data_daily_contact_testing_text">Confirmed participation</string>
     <string name="about_delete_your_data_title">Deleting your data will reset the app</string>
@@ -377,6 +382,10 @@
     <string name="medium_risk_level_text_wls">Medium - your local authority, or a neighbouring local authority, has high or rising levels of infection. Please follow national guidance.</string>
     <string name="high_risk_level_text">High - Your local authority, or a neighbouring local authority, is using additional measures to those in place in the rest of England and Wales (e.g. lockdown) to reduce transmission of infection because of high levels of infection in the local area. A detailed action plan is in place and local resources are being augmented with national support.</string>
     <string name="high_risk_level_text_wls">High - Your local authority, or a neighbouring local authority, is using additional measures to those in place in the rest of England and Wales (e.g. lockdown) to reduce transmission of infection because of high levels of infection in the local area. A detailed action plan is in place and local resources are being augmented with national support.</string>
+    <string name="risk_level_mass_testing_title">Testing near you</string>
+    <string name="risk_level_mass_testing_text">Check what testing is available in your area and whether you need to book.</string>
+    <string name="risk_level_mass_testing_link_text">Find a test site</string>
+    <string name="risk_level_mass_testing_link_url">https://maps.test-and-trace.nhs.uk/</string>
     <string name="about_description">Thank you for protecting yourself and others by using the app</string>
     <string name="open_in_browser_warning">open in your browser</string>
     <string name="done_button_text">Done</string>
@@ -498,9 +507,5 @@
     <string name="link_test_result_daily_contact_testing_link_text">You must report your result every day, on the daily contact testing website</string>
     <string name="link_test_result_daily_contact_testing_link_url">http://www.google.com</string>
     <string name="unsupported_device">A restriction in your settings (for example, if this is a company phone).\n\nAnother app on your phone is using the same technology and stopping this app from working.</string>
-    <string name="about_manage_my_data_settings_subtitle">Postcode District, Test Results, Venue History</string>
-    <string name="risk_level_mass_testing_link_text">Find a test center</string>
-    <string name="risk_level_mass_testing_link_url">https://maps.test-and-trace.nhs.uk/findatestcenter.html</string>
-    <string name="risk_level_mass_testing_text">Check if mass testing is available in your area.</string>
-    <string name="risk_level_mass_testing_title">Mass testing</string>
+    <string name="about_your_data_additional_text">You can manage your data in the app settings.</string>
 </resources>

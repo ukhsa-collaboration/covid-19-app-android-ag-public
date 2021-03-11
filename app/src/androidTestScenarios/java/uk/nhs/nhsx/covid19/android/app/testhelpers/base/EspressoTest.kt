@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers.base
 import android.app.Activity
 import android.content.Intent
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.core.content.edit
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.WorkManager
@@ -50,6 +51,7 @@ abstract class EspressoTest {
     fun teardown() {
         WorkManager.getInstance(InstrumentationRegistry.getInstrumentation().targetContext)
             .cancelAllWork()
+        testAppContext.encryptedStorage.sharedPreferences.edit(commit = true) { clear() }
     }
 
     protected fun runBackgroundTasks() {

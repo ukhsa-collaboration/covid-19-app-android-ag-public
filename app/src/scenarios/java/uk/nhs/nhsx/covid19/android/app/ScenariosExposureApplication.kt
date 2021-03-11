@@ -38,7 +38,9 @@ class ScenariosExposureApplication : ExposureApplication() {
             getSharedPreferences(DebugActivity.DEBUG_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
         updateDependencyGraph()
-        startPeriodicTasks()
+        if (!isRunningTest) {
+            startPeriodicTasks()
+        }
     }
 
     fun updateDependencyGraph() {

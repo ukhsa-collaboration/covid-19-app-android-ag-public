@@ -11,7 +11,7 @@ class MockTestResultViewModel : BaseTestResultViewModel() {
     }
 
     data class Options(
-        val useMock: Boolean = true,
+        val useMock: Boolean = false,
         val viewState: TestResultViewState = PositiveWillBeInIsolation,
         val remainingDaysInIsolation: Int = 8
     )

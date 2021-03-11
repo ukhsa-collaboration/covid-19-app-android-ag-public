@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.about
 
 import androidx.test.platform.app.InstrumentationRegistry
-import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.FeatureFlag.DAILY_CONTACT_TESTING
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import kotlinx.coroutines.runBlocking
@@ -10,7 +9,9 @@ import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDate
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueConfigurationDurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
@@ -54,22 +55,26 @@ class UserDataActivityTest : EspressoTest() {
     private val statusRobot = StatusRobot()
     private val permissionRobot = PermissionRobot()
 
-    private val visits = listOf(
-        VenueVisit(
-            venue = Venue("1", "Venue1"),
-            from = Instant.parse("2020-07-25T10:00:00Z"),
-            to = Instant.parse("2020-07-25T12:00:00Z")
-        ),
-        VenueVisit(
-            venue = Venue("2", "Venue2"),
-            from = Instant.parse("2020-07-25T10:00:00Z"),
-            to = Instant.parse("2020-07-25T12:00:00Z")
-        )
+    private val visit1 = VenueVisit(
+        venue = Venue("1", "Venue1"),
+        from = Instant.parse("2020-07-25T10:00:00Z"),
+        to = Instant.parse("2020-07-25T12:00:00Z")
     )
+    private val visit2 = VenueVisit(
+        venue = Venue("2", "Venue2"),
+        from = Instant.parse("2020-07-25T14:00:00Z"),
+        to = Instant.parse("2020-07-25T16:00:00Z")
+    )
+    private val visits = listOf(visit1, visit2)
+    private val latestRiskyVenueVisitDate = LocalDate.parse("2020-07-25")
 
     @Before
     fun setUp() = runBlocking {
         testAppContext.getVisitedVenuesStorage().setVisits(visits)
+        testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue = LastVisitedBookTestTypeVenueDate(
+            latestRiskyVenueVisitDate,
+            RiskyVenueConfigurationDurationDays(optionToBookATest = 10)
+        )
     }
 
     @After
@@ -97,10 +102,8 @@ class UserDataActivityTest : EspressoTest() {
 
     @RetryFlakyTest
     @Test
-    fun clickOnDeleteUserDataWithLocalAuthorityFeatureFlagEnabled_opensWelcomeScreenAndShowsPermissionScreenWithoutDialog() =
+    fun clickOnDeleteUserData_opensWelcomeScreenAndShowsPermissionScreenWithoutDialog() =
         notReported {
-            FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-
             testAppContext.setPostCode(null)
 
             startTestActivity<UserDataActivity>()
@@ -142,64 +145,14 @@ class UserDataActivityTest : EspressoTest() {
             statusRobot.checkActivityIsDisplayed()
         }
 
-    @RetryFlakyTest
-    @Test
-    fun clickOnDeleteUserDataWithLocalAuthorityFeatureFlagDisabled_opensWelcomeScreenAndShowsPermissionScreenWithoutDialog() =
-        notReported {
-            FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-
-            testAppContext.setPostCode(null)
-
-            startTestActivity<UserDataActivity>()
-
-            userDataRobot.checkActivityIsDisplayed()
-
-            userDataRobot.userClicksOnDeleteAllDataButton()
-
-            waitFor { userDataRobot.checkDeleteDataConfirmationDialogIsDisplayed() }
-
-            setScreenOrientation(LANDSCAPE)
-
-            waitFor { userDataRobot.checkDeleteDataConfirmationDialogIsDisplayed() }
-
-            setScreenOrientation(PORTRAIT)
-
-            waitFor { userDataRobot.checkDeleteDataConfirmationDialogIsDisplayed() }
-
-            waitFor { userDataRobot.userClicksDeleteDataOnDialog() }
-
-            waitFor { welcomeRobot.isActivityDisplayed() }
-
-            welcomeRobot.checkActivityIsDisplayed()
-
-            welcomeRobot.clickConfirmOnboarding()
-
-            welcomeRobot.checkAgeConfirmationDialogIsDisplayed()
-
-            welcomeRobot.clickConfirmAgePositive()
-
-            dataAndPrivacyRobot.checkActivityIsDisplayed()
-
-            dataAndPrivacyRobot.clickConfirmOnboarding()
-
-            postCodeRobot.checkActivityIsDisplayed()
-
-            postCodeRobot.enterPostCode("SE1")
-
-            postCodeRobot.clickContinue()
-
-            waitFor { permissionRobot.checkActivityIsDisplayed() }
-
-            permissionRobot.clickEnablePermissions()
-
-            statusRobot.checkActivityIsDisplayed()
-        }
-
     @Test
     fun deleteSingleVenueVisit() = notReported {
         startTestActivity<UserDataActivity>()
 
         userDataRobot.checkActivityIsDisplayed()
+
+        userDataRobot.checkVisitIsDisplayedInRow(visit2, 0)
+        userDataRobot.checkVisitIsDisplayedInRow(visit1, 1)
 
         waitFor { userDataRobot.editVenueVisitsIsDisplayed() }
 
@@ -224,6 +177,33 @@ class UserDataActivityTest : EspressoTest() {
         waitFor { userDataRobot.userClicksEditVenueVisits() }
 
         userDataRobot.editVenueVisitsIsDisplayed()
+
+        userDataRobot.checkVisitIsDisplayedInRow(visit1, 0)
+    }
+
+    @Test
+    fun deleteVisitedVenue_shouldKeepLatestBookTestTypeVenueDate() = notReported {
+        startTestActivity<UserDataActivity>()
+
+        userDataRobot.checkActivityIsDisplayed()
+
+        waitFor { userDataRobot.editVenueVisitsIsDisplayed() }
+
+        userDataRobot.userClicksEditVenueVisits()
+
+        userDataRobot.clickDeleteVenueVisitOnFirstPosition()
+
+        waitFor { userDataRobot.confirmDialogIsDisplayed() }
+
+        userDataRobot.userClicksConfirmOnDialog()
+
+        userDataRobot.clickDeleteVenueVisitOnFirstPosition()
+
+        waitFor { userDataRobot.confirmDialogIsDisplayed() }
+
+        userDataRobot.userClicksConfirmOnDialog()
+
+        userDataRobot.checkLastVisitedBookTestTypeVenueDateIsDisplayed(latestRiskyVenueVisitDate.uiFormat(testAppContext.app))
     }
 
     @Test
@@ -419,7 +399,8 @@ class UserDataActivityTest : EspressoTest() {
                 requiresConfirmatoryTest = false,
                 diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported
             )
-            testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(followupTest, Confirm(confirmedDate = receivedFollowUpTest))
+            testAppContext.getRelevantTestResultProvider()
+                .onTestResultAcknowledged(followupTest, Confirm(confirmedDate = receivedFollowUpTest))
         }
 
         startTestActivity<UserDataActivity>()

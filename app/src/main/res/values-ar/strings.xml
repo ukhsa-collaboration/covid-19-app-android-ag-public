@@ -49,8 +49,8 @@
     <string name="qr_code_help_how_it_works_text">يستخدم هذا التطبيق رموز NHS QR الرسمية لمساعدتك في تسجيل دخولك على نحو سريع وسهل إلى الأماكن التي تزورها - مثل المطاعم أو الحانات. إذا كنت تستخدم هذا التطبيق، فيمكننا إعلامك إذا كنت قد تعرّضت للفيروس في مكانٍ ما من الأماكن التي سبق لك زيارتها.</string>
     <string name="qr_code_help_how_it_helps_title">فائدة التطبيق</string>
     <string name="qr_code_help_how_it_helps_text">تساعد خاصية التطبيق هذه في تمكين الشركات من دعم خدمة تتبع الاتصال، وتساعدنا جميعًا في الحفاظ على سلامتنا مع حماية خصوصيتنا.</string>
-    <string name="venue_alert_title">لقد زرت مؤخرًا أحد الأماكن في نفس اليوم الذي زاره فيه أشخاصٌ آخرون سجَّلوا نتيجة إيجابية في اختبار الكشف عن الإصابة بفيروس كورونا (كوفيد-19).</string>
-    <string name="venue_alert_explanation">هناك احتمالٌ ضئيلٌ فقط بأنك قد تعرّضت للإصابة بعدوى فيروس كورونا أثناء زيارتك. ينبغي لك الاستمرار في اتباع أحدث الإرشادات ذات الصلة بالتباعد الجسدي.\n\nيجب عليك الخضوع للعزل الذاتي على الفور في حال ظهور أعراض الإصابة بفيروس كورونا لديك، وهو ما يعني البقاء في المنزل وعدم استقبال أي زائرين. استخدم خاصية التحقق من الأعراض المتوفرة في التطبيق وحجزٍ اختبارٍ مجانيٍّ إذا طُلب منك ذلك. اتصل على الرقم: 119 إذا كان لديك أي أسئلة.\n\nقم بإجراء اختبار الكشف عن فيروس كورونا إذا كنت تعاني من أعراض الفيروس فقط.</string>
+    <string name="venue_alert_title">زرت مؤخرًا مكانًا ما في نفس اليوم الذي زاره فيه أشخاصٌ آخرون سجَّلوا بعد ذلك نتيجة إيجابية في اختبار الكشف عن فيروس كورونا (كوفيد-19)</string>
+    <string name="venue_alert_explanation">من المُحتمل أنك قد تعرَّضت للإصابة بفيروس كورونا. يُرجى العلم بأن شخصًا من كل 3 أشخاص من المُصابين بفيروس كورونا لا يظهر عليه أيّ أعراضٍ، ولكن على الرغم من ذلك قد ينقل الفيروس ويُعرِّض الآخرين للخطر. لا تحتاج إلى الخضوع للعزل الذاتي، ولكن ينبغي لك توخي المزيد من الحيطة في اتّباع أحدث التوجيهات المتعلقة بالتباعد الجسدي.\n\nإذا ظهرت عليك أعراض الإصابة، يتعين عليك الخضوع للعزل الذاتي وحجز اختبارٍ مجانيٍّ باستخدام خاصية التحقق من الأعراض. اتصل على الرقم 119 في حال كان لديك أيّ أسئلة.</string>
     <string name="notification_title_post_code_risk_changed">لقد حدث تغييرٌ في منطقتك</string>
     <string name="notification_title_test_results">لقد وصلت نتائج اختبارك</string>
     <string name="select_symptoms">تحديد الأعراض</string>
@@ -192,7 +192,7 @@
     <string name="something_went_wrong">حدث خطأ ما</string>
     <string name="test_ordering_failure_title">حدث خطأ ما</string>
     <string name="test_ordering_failure_description">قبل المحاولة مرة أخرى، يرجى التحقق من تشغيلك لإعدادات البيانات المتنقلة في هاتفك والتحقق من وجود شبكة واي فاي (حال استخدامها) والتأكد من إيقاف تشغيل وضع الطيران.</string>
-    <string name="notification_title_risky_venue">لقد زرت مؤخرًا أحد الأماكن في نفس اليوم الذي زاره فيه أشخاصٌ آخرون سجَّلوا نتيجة إيجابية في اختبار الكشف عن الإصابة بفيروس كورونا (كوفيد-19).</string>
+    <string name="notification_title_risky_venue">زرت مؤخرًا مكانًا ما في نفس اليوم الذي زاره فيه أشخاصٌ آخرون سجَّلوا بعد ذلك نتيجة إيجابية في اختبار الكشف عن فيروس كورونا (كوفيد-19)</string>
     <string name="notification_text_post_code_risk_changed">انقر هنا للاطلاع على المزيد التفاصيل.</string>
     <string name="status_area_risk_level">مستوى الخطورة في المنطقة %s هو %s</string>
     <string name="notification_channel_area_risk_changed_name">تغير مستوى الخطورة في المنطقة</string>
@@ -236,7 +236,7 @@
     <string name="expiration_temperature_hint">مع ذلك، إذا كنت تعاني من ارتفاع درجة الحرارة، فيجب عليك الاستمرار في العزل الذاتي لنفسك حتى تعود درجة حرارتك إلى الوضع الطبيعي</string>
     <string name="button_agree">أوافق</string>
     <string name="terms_of_use_onboarding">شروط الاستخدام</string>
-    <string name="about_common_questions_title">الاسئلة الشائعة</string>
+    <string name="about_common_questions_title">الأسئلة الشائعة</string>
     <string name="about_common_questions_link">الأسئلة الشائعة</string>
     <string name="about_accessibility_statement">بيان إمكانية الاطلاع</string>
     <string name="test_result_no_self_isolation_description">مع ذلك، إذا كنت تعاني من ارتفاع درجة الحرارة، فيجب عليك الاستمرار في العزل الذاتي لنفسك حتى تعود درجة حرارتك إلى الوضع الطبيعي</string>
@@ -447,7 +447,7 @@
     <string name="about_test_result">النتيجة</string>
     <string name="state_test_positive_and_book_test_info">نتيجة اختبار الكشف عن إصابتك بفيروس كورونا إيجابية</string>
     <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">لفهم الطريقة التي يحسب بها التطبيق عدد أيام العزل الذاتي، يُرجى زيارة الرابط أدناه المؤدي إلى الأسئلة الشائعة.</string>
-    <string name="test_result_positive_self_isolate_and_book_test_explanation_1">لفهم الطريقة التي يحسب بها التطبيق عدد أيام العزل الذاتي، يُرجى زيارة الأسئلة الشائعة.\n\nاختبارلإجرائكنظرًاتحتاجفإنكسريع،مسحةاختبارٍإجراءإلىالآنإرسالهيتمآخرنوعٍمنالمُختبراتأحدإلى.النتيجةمنللتحقق.\n\nفي تلك الأثناء، يتعين عليك وعلى الأشخاص الآخرين الذين تعيش معهم الخضوع للعزل الذاتي على الفور.</string>
+    <string name="test_result_positive_self_isolate_and_book_test_explanation_1">لفهم الطريقة التي يحسب بها التطبيق عدد أيام العزل الذاتي، يُرجى زيارة الأسئلة الشائعة.\n\nنظرًا لإجرائك اختبار مسحة سريع، فإنك تحتاج الآن إلى إجراء اختبارٍ من نوعٍ آخر يتم إرساله إلى أحد المُختبرات للتحقق من النتيجة.\n\nفي تلك الأثناء، يتعين عليك وعلى الأشخاص الآخرين الذين تعيش معهم الخضوع للعزل الذاتي على الفور.</string>
     <string name="test_result_positive_self_isolate_and_book_test_title_3">وحجز اختبار متابعة</string>
     <string name="about_lfd_self_reported">rapid_self_reported</string>
     <string name="about_test_follow_up">اختبار المتابعة</string>
@@ -476,13 +476,24 @@
     <string name="unsupported_device">يوجد أحد القيود في إعدادات هاتفك (على سبيل المثال، إذا كان هاتفك النقال تعود ملكيته لإحدى الشركات).\n\nثمة تطبيق آخر في هاتفك يستخدم نفس التقنية ويُعطِّل تشغيل هذا التطبيق.</string>
     <string name="user_data_daily_contact_testing_text">مشاركة مؤكدة</string>
     <string name="user_data_daily_contact_testing_title">الاختبار اليومي للمخالطين</string>
+    <string name="about_manage_my_data_settings_subtitle">السلطة المحلية، نتائج الاختبارات، تاريخ الأماكن</string>
+    <string name="ill_do_it_later">سأفعل ذلك في وقتٍ لاحقٍ</string>
     <string name="link_test_result_daily_contact_testing_description">يجب إدخال الرمز الذي استلمته في المربع الموجود أعلاه والخضوع للعزل الذاتي عند تسجيلك نتيجة إيجابية في الاختبار الذي تُجريه ضمن برنامج الاختبار اليومي للمخالطين\n\nلا تستلم أيّ رمزٍ لإدخاله في التطبيق إذا كانت نتيجة الاختبار اليومي الخاصة بك سلبية. ليس عليك سوى إخبارنا بتسجيلك نتيجة سلبية ومواصلة حياتك.</string>
     <string name="link_test_result_daily_contact_testing_description_list_header">بالإضافة إلى ذلك:</string>
-    <string name="link_test_result_error_both_inputs_provided">You cannot both enter a code and have a negative result from daily contact testing.</string>
-    <string name="link_test_result_error_neither_input_provided">You need to enter a code or tell us you have a negative result from daily contact testing.</string>
+    <string name="link_test_result_error_both_inputs_provided">لا يمكنك إدخال رمزٍ لنتيجة اختبارٍ ما وتأكيد أنك قد سجَّلت نتيجة سلبية في الاختبار في الوقت ذاته.</string>
+    <string name="link_test_result_error_neither_input_provided">تحتاج إمّا إلى إدخال رمزٍ أو إبلاغنا أنك قد سجَّلت نتيجة سلبية من الاختبارات اليومية للمخالطين.</string>
     <string name="link_test_result_onset_date_title">وفق ما تتذكر، ما هو أقرب تاريخ بدأت فيه الشعور بأيٍّ من هذه الأعراض؟</string>
     <string name="link_test_result_symptoms_list">ارتفاع درجة الحرارة (الحمى)\n\nسعال غير معتاد ومستمر\n\nتغيّر في حاستي الشم أو التذوق</string>
     <string name="link_test_result_symptoms_no">لا</string>
-    <string name="link_test_result_symptoms_yes">نعم</string>
+    <string name="link_test_result_symptoms_no_accessibility">لا أعاني من أيٍّ من هذه الأعراض</string>
     <string name="link_test_result_symptoms_title">هل تعاني أيًّا من أعراض فيروس كورونا التالية؟</string>
+    <string name="link_test_result_symptoms_yes">نعم</string>
+    <string name="link_test_result_symptoms_yes_accessibility">Yes, I have symptoms.</string>
+    <string name="risk_level_mass_testing_link_text">البحث عن موقعٍ لإجراء الاختبارات</string>
+    <string name="risk_level_mass_testing_link_url">https://maps.test-and-trace.nhs.uk/</string>
+    <string name="risk_level_mass_testing_text">استفسر عن الاختبارات المتوفرة في منطقتك وما إذا كنت تحتاج إلى حجز أحدها.</string>
+    <string name="risk_level_mass_testing_title">إجراء الاختبار بالقرب منك</string>
+    <string name="venue_alert_m2_explanation">من المُحتمل أنك قد تعرَّضت للإصابة بفيروس كورونا. يُرجى العلم بأن شخصًا من كل 3 أشخاص من المُصابين بفيروس كورونا لا يظهر عليه أيّ أعراضٍ، ولكن على الرغم من ذلك قد ينقل الفيروس ويُعرِّض الآخرين للخطر. ولهذا السبب، يُرجى منك حجز اختبارٍ الآن.\n\nلا تحتاج إلى الخضوع للعزل الذاتي، ولكن ينبغي لك الاستمرار في اتّباع أحدث التوجيهات المتعلقة بالتباعد الجسدي وحجز اختبار الكشف عن الإصابة بفيروس كورونا عن طريق زيارة الرابط أدناه.\n\nفي حال تسجيلك نتيجة إيجابية أو ظهور أيّ أعراضٍ عليك، يتعين عليك الخضوع للعزل الذاتي على الفور. اتصل على الرقم 119 في حال كان لديك أيّ أسئلة.</string>
+    <string name="venue_alert_m2_title">زرت مؤخرًا مكانًا ما ظهر فيه تفشٍ لفيروس كورونا (كوفيد-19)</string>
+    <string name="user_data_risky_venue_visit_date_title">التاريخ في المكان مكمن الخطورة</string>
 </resources>

@@ -146,7 +146,7 @@
     <string name="notification_title_app_not_available">App-ka hadda lama heli karo</string>
     <string name="notification_title_exposure_reminder">Waa wakhtiga la daari laha raad-raacista shakshiga</string>
     <string name="notification_title_post_code_risk_changed">Isbedel ayaa kadhacay deegaankaaga</string>
-    <string name="notification_title_risky_venue">Dhowaan ayaad booqatay goob ay isla maalintii booqdeen dad kale ee laga helay coronavirus (COVID-19).</string>
+    <string name="notification_title_risky_venue">Waxaad dhowaan booqatay goob isla maalintii ay dad kale laga helay cudurka coronavirus (COVID-19)</string>
     <string name="notification_title_state_expiration">Hagitaanka aan ku  siin jirnay waa isbeddelay</string>
     <string name="notification_title_state_exposure">Waa in aad si deg deg ah isu-go\'doomisaa. Waxaa xiriir dhow la yeelatay qof qaba coronavirus (COVID-19).</string>
     <string name="notification_title_test_results">Natiijooyinka baaritaankaaga ayaa yimid</string>
@@ -346,8 +346,8 @@
     <string name="url_terms_of_use_wls">https://covid19.nhs.uk/terms-of-use-somali.html</string>
     <string name="valid_auth_code_is_required">Koodhkaaga lama aqoonsan. Fadlan hubso inaad isticmaaleyso koodh sax ah.</string>
     <string name="valid_post_code_is_required">Fadlan gali koodhka boosta degmadaada. Tani waa qaybtii ugu horreysay ee boostada. Tusaale ahaan: E2, L36, PO30.</string>
-    <string name="venue_alert_explanation">Khatar yar ayaa jirta in aad qaadday coronavirus wakhtiga booqashadaada. Waa inaad sii wadaa raacista talooyinka ugu dambeeya ee ku saabsan kala fogaanshaha bulshada.\n\nHaddii aad leedahay astaamaha coronavirus waa inaad isla markaaba is-karantiishid. Tan macnaheedu waxa weeye inaad guriga joogtid oo aanan lagu soo booqan. Adeegso calaamada hubiyaha ee app-ka gudahiisa oo ballanso baaritaan lacag la\'aan ah haddii lagula taliyay inaad sidaas sameyso. Wac 119 haddii aad su\'aalo qabtid.\n\nKeliya baaritaan samayso haddii aad leedahay astaamaha coronavirus.</string>
-    <string name="venue_alert_title">Dhowaan ayaad booqatay goob ay isla maalintii booqdeen dad kale ee laga helay coronavirus (COVID-19).</string>
+    <string name="venue_alert_explanation">Waxaa jirta khatar ah in lagu qaadsiiyay coronavirus. Qiyaas ahaan markii la eego 3dii qof ee qaba coronavirus 1 qof malahan wax astaamo ah, laakiin wali way gudbin karaan oo waxay khatar gelin karaan dad kale. Uma baahnid inaad is go\'doomiso, laakiin waa inaad taxaddar dheeraad ah qaadataa si aad u hogaansanaato tilmaamaha ugu dambeeyay ee kala fogaanshaha bulshada.\n\nHaddii aad leedahay astaamo, waa inaad gooni isu go\'doomisa oo aad ballansatid baaritaan lacag la\'aan ah adigoo adeegsanaya astaan hubiyaha. Wac 119 haddii aad su\'aalo qabtid.</string>
+    <string name="venue_alert_title">Waxaad dhowaan booqatay goob isla maalintii ay dad kale laga helay cudurka coronavirus (COVID-19)</string>
     <string name="visit_the_link_to_find_out_more">Booqo marrinka si aad wax badan uga ogaato</string>
     <string name="you_do_not_appear_to_have_symptoms">Uma muuqato inaad leedahay astaamo coronavirus</string>
     <string name="you_need_to_self_isolate">Waxaad u baahan tahay inaad isu-go’doomisid</string>
@@ -461,13 +461,24 @@
     <string name="unsupported_device">Xaddidaadda qaybtaada isku-hagaajinta (tusaale ahaan, haddii tani ay tahay telefoon shirkadeed).\n\nApp kale oo telefoonkaaga ku jira ayaa adeegsanaya isla tiknoolijiyada oo ka joojinaya app-kani inuu shaqeeyo.</string>
     <string name="user_data_daily_contact_testing_text">Ka qaybgalka oo la xaqiijiyay</string>
     <string name="user_data_daily_contact_testing_title">Baaritaanka xiriirka maalinlaha ah</string>
+    <string name="about_manage_my_data_settings_subtitle">Maamulka deegaanka, natiijooyinka baaritaanka, taariikhda gobta</string>
+    <string name="ill_do_it_later">Mar kale ayaan sameyn doonaa</string>
     <string name="link_test_result_daily_contact_testing_description">Haddii aad barnaamijkaaga baaritaanka xiriirka maalinlaha ah ku sheegtay in aad qabtay cudurka, sanduuqa kor ku xusan ku qor nambar-sireedka aad heshay oo is-go\'doomi\n\nHaddii aan cudurka laga helin baaritaankaaga maalinlaha, ma heleysid nambar aad gelisid app-ka. Waa  inaad noo soo sheegtaa inaadan qabin cudurka oo aad sii wado.</string>
     <string name="link_test_result_daily_contact_testing_description_list_header">Intaas waxaa dheer:</string>
-    <string name="link_test_result_error_both_inputs_provided">You cannot both enter a code and have a negative result from daily contact testing.</string>
-    <string name="link_test_result_error_neither_input_provided">You need to enter a code or tell us you have a negative result from daily contact testing.</string>
+    <string name="link_test_result_error_both_inputs_provided">Ma gelin kartid nambar-sireedka natiijada baaritaanka kadibna aad xaqiijisid inaadan lahayn cudurka isla markiiba ah.</string>
+    <string name="link_test_result_error_neither_input_provided">Waxaad ubaahantahay inaad soo gelisid nambar-sireedka ama aad noo sheegto in natiijada baaritaanka shakhsiga maalinlaha ah ay caddaynayso in aadan lahayn cudurka.</string>
     <string name="link_test_result_onset_date_title">Ma xasuusataa taariikhda ugu horreysa ee aad bilowday inaad isku aragto mid ka mid ah astaamahan?</string>
     <string name="link_test_result_symptoms_list">Heerkulka sareeya (qandho)\n\nQufac cusub oo joogto ah\n\nIsbeddel ku yimid dareenkaaga urta ama dhadhanka</string>
     <string name="link_test_result_symptoms_no">Maya</string>
-    <string name="link_test_result_symptoms_yes">Haa</string>
+    <string name="link_test_result_symptoms_no_accessibility">Ma lihi astaamahan midkood</string>
     <string name="link_test_result_symptoms_title">Ma isku aragtay mid ka mid ah astaamaha soo socda ee coronavirus?</string>
+    <string name="link_test_result_symptoms_yes">Haa</string>
+    <string name="link_test_result_symptoms_yes_accessibility">Yes, I have symptoms.</string>
+    <string name="risk_level_mass_testing_link_text">Raadi goob baaritaan</string>
+    <string name="risk_level_mass_testing_link_url">https://maps.test-and-trace.nhs.uk/</string>
+    <string name="risk_level_mass_testing_text">Hubi wixii baaritaanka ee laga heli karo aaggaaga iyo haddii aad u baahan tahay inaad ballan samaysato.</string>
+    <string name="risk_level_mass_testing_title">Baaritaan kuugu dhow</string>
+    <string name="venue_alert_m2_explanation">Waxaa jirta khatar ah in lagu qaadsiiyay coronavirus. Qiyaas ahaan markii la eego 3dii qof ee qaba coronavirus 1 qof malahan wax astaamo ah, laakiin wali way gudbin karaan oo waxay khatar gelin karaan dad kale. Sidaan darteed, fadlan baaritaan ballanso hadda.\n\nUma baahnid inaad is go\'doomiso, laakiin waa inaad taxaddar dheeraad ah qaadataa si aad u hogaansanaato tilmaamaha ugu dambeeyay ee kala fogaanshaha bulshada oo aad ballansatid baaritaan coronavirus adigoo booqanayaa marrinka hoose.\n\nHaddii laga helay cudurka ama aad isku aragto astaamo, waa inaad si deg deg ah isu go\'doomisa. Waxaad wici kartaa 119 haddii aad su\'aalo qabto.</string>
+    <string name="venue_alert_m2_title">Waxaad dhowaan booqatay goob uu ka dilaacay cudurka coronavirus (COVID-19)</string>
+    <string name="user_data_risky_venue_visit_date_title">TAARIIKHDA AAD JOOGTAY GOOBTA KHATARTA</string>
 </resources>

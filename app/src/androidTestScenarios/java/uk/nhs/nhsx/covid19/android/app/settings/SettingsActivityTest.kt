@@ -6,11 +6,13 @@ import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LanguagesRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SettingsRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.UserDataRobot
 
 class SettingsActivityTest : EspressoTest() {
 
     private val settingsRobot = SettingsRobot()
     private val languagesRobot = LanguagesRobot()
+    private val userDataRobot = UserDataRobot()
 
     @Test
     fun startActivityWithoutLocale_shouldDisplayEnglishLanguage() = notReported {
@@ -43,5 +45,18 @@ class SettingsActivityTest : EspressoTest() {
         settingsRobot.clickLanguageSetting()
 
         languagesRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    fun clickManageMyDataSetting_shouldNavigateToManageMyDataActivity() = notReported {
+        testAppContext.setPostCode("AL1")
+
+        startTestActivity<SettingsActivity>()
+
+        settingsRobot.checkActivityIsDisplayed()
+
+        settingsRobot.clickManageMyDataSetting()
+
+        userDataRobot.checkActivityIsDisplayed()
     }
 }

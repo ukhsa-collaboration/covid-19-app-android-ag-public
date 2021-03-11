@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.settings.languages
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_settings_language.languagesRecyclerView

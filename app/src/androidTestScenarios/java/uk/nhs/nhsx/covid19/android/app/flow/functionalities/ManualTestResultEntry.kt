@@ -1,16 +1,20 @@
 package uk.nhs.nhsx.covid19.android.app.flow.functionalities
 
+import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveContinueIsolation
+import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveWillBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveWillBeInIsolationAndOrderTest
+import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveWontBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_LFD_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_LFD_TOKEN_INDICATIVE_NO_KEY_SUBMISSION
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_RAPID_SELF_REPORTED_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_RAPID_SELF_REPORTED_TOKEN_INDICATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.VOID_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultOnsetDateRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
@@ -33,16 +37,16 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
     fun enterPositive(
         virologyTestKitType: VirologyTestKitType,
         symptomsAndOnsetFlowConfiguration: SymptomsAndOnsetFlowConfiguration? = null,
+        expectedScreenState: ExpectedScreenAfterPositiveTestResult,
         requiresConfirmatoryTest: Boolean = false,
         testEndDate: Instant = testAppContext.clock.instant()
     ) {
-        val inIsolation = testAppContext.getCurrentState() is Isolation
-
         val token = when (virologyTestKitType) {
             LAB_RESULT -> POSITIVE_PCR_TOKEN
             RAPID_RESULT ->
                 if (requiresConfirmatoryTest) POSITIVE_LFD_TOKEN_INDICATIVE_NO_KEY_SUBMISSION else POSITIVE_LFD_TOKEN
-            RAPID_SELF_REPORTED -> POSITIVE_RAPID_SELF_REPORTED_TOKEN
+            RAPID_SELF_REPORTED ->
+                if (requiresConfirmatoryTest) POSITIVE_RAPID_SELF_REPORTED_TOKEN_INDICATIVE else POSITIVE_RAPID_SELF_REPORTED_TOKEN
         }
 
         manuallyEnterTestResult(token, testEndDate)
@@ -68,23 +72,32 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
             }
         }
 
-        if (requiresConfirmatoryTest) {
-            waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
-
-            testResultRobot.clickCloseButton()
-        } else {
-            if (inIsolation) {
-                waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
-            } else {
-                waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        when (expectedScreenState) {
+            PositiveWillBeInIsolationAndOrderTest -> {
+                waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
+                testResultRobot.clickCloseButton()
             }
-
-            testResultRobot.clickIsolationActionButton()
-
-            waitFor { shareKeysInformationRobot.checkActivityIsDisplayed() }
-
-            shareKeysInformationRobot.clickIUnderstandButton()
+            PositiveContinueIsolation -> {
+                waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+                shareKeys()
+            }
+            PositiveWillBeInIsolation -> {
+                waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+                shareKeys()
+            }
+            PositiveWontBeInIsolation -> {
+                waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
+                testResultRobot.clickGoodNewsActionButton()
+            }
         }
+    }
+
+    private fun shareKeys() {
+        testResultRobot.clickIsolationActionButton()
+
+        waitFor { shareKeysInformationRobot.checkActivityIsDisplayed() }
+
+        shareKeysInformationRobot.clickIUnderstandButton()
     }
 
     fun enterNegative(testEndDate: Instant = testAppContext.clock.instant()) {
@@ -95,7 +108,7 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
         manuallyEnterTestResult(VOID_PCR_TOKEN, testEndDate)
     }
 
-    private fun manuallyEnterTestResult(token: String, testEndDate: Instant) {
+    fun manuallyEnterTestResult(token: String, testEndDate: Instant) {
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
         statusRobot.clickLinkTestResult()
@@ -113,4 +126,11 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
         val didHaveSymptoms: Boolean = false,
         val didRememberOnsetSymptomsDate: Boolean = false
     )
+
+    enum class ExpectedScreenAfterPositiveTestResult {
+        PositiveWillBeInIsolationAndOrderTest,
+        PositiveContinueIsolation,
+        PositiveWillBeInIsolation,
+        PositiveWontBeInIsolation
+    }
 }

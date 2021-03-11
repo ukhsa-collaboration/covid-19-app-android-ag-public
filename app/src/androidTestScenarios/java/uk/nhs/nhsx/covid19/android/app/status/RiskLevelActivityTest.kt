@@ -1,8 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
-import com.jeroenmols.featureflag.framework.FeatureFlag
-import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
-import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme
@@ -41,13 +38,8 @@ class RiskLevelActivityTest : EspressoTest() {
         policyContent = Translatable(mapOf("en" to "If working from home is possible, it is advised to do so."))
     )
 
-    @After
-    fun tearDown() {
-        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-    }
-
     @Test
-    fun testRiskLevelLow() = notReported {
+    fun testRiskLevelLow_notFromLocalAuthority() = notReported {
         startTestActivity<RiskLevelActivity> {
             putExtra(
                 EXTRA_RISK_LEVEL,
@@ -77,7 +69,7 @@ class RiskLevelActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testRiskLevelMedium() = notReported {
+    fun testRiskLevelMedium_notFromLocalAuthority() = notReported {
         startTestActivity<RiskLevelActivity> {
             putExtra(
                 EXTRA_RISK_LEVEL,
@@ -107,7 +99,7 @@ class RiskLevelActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testRiskLevelHigh() = notReported {
+    fun testRiskLevelHigh_notFromLocalAuthority() = notReported {
         startTestActivity<RiskLevelActivity> {
             putExtra(
                 EXTRA_RISK_LEVEL,
@@ -137,8 +129,7 @@ class RiskLevelActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testRiskLevelHighWithLocalAuthority() = notReported {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
+    fun testRiskLevelHigh() = notReported {
         startTestActivity<RiskLevelActivity> {
             putExtra(
                 EXTRA_RISK_LEVEL,
@@ -188,9 +179,7 @@ class RiskLevelActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testRiskLevelTierFourWithLocalAuthority() = notReported {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-
+    fun testRiskLevelTierFour() = notReported {
         startTestActivity<RiskLevelActivity> {
             putExtra(
                 EXTRA_RISK_LEVEL,
@@ -229,33 +218,9 @@ class RiskLevelActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testRiskLevelFiveWithLocalAuthority() = notReported {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-
+    fun testRiskLevelFive() = notReported {
         startTestActivity<RiskLevelActivity> {
-            putExtra(
-                EXTRA_RISK_LEVEL,
-                Risk(
-                    postCode,
-                    RiskIndicator(
-                        colorScheme = ColorScheme.RED,
-                        colorSchemeV2 = ColorScheme.BLACK,
-                        name = Translatable(mapOf("en" to "$postCode is in Local Alert Level 5")),
-                        heading = Translatable(mapOf("en" to "Heading very high")),
-                        content = Translatable(mapOf("en" to "Content very high")),
-                        linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-                        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
-                        policyData = PolicyData(
-                            heading = Translatable(mapOf("en" to "Coronavirus cases are very high in your area")),
-                            content = Translatable(mapOf("en" to "Local Authority content very high")),
-                            footer = Translatable(mapOf("en" to "Find out what rules apply in your area to help reduce the spread of coronavirus.")),
-                            policies = listOf(meetingPolicy, socialDistancingPolicy),
-                            localAuthorityRiskTitle = Translatable(mapOf("en" to "$postCode is in local COVID alert level: very high"))
-                        )
-                    ),
-                    riskLevelFromLocalAuthority = true
-                )
-            )
+            putExtra(EXTRA_RISK_LEVEL, getTierFiveRisk(postCode))
         }
 
         riskLevelRobot.checkActivityIsDisplayed()
@@ -268,4 +233,70 @@ class RiskLevelActivityTest : EspressoTest() {
 
         riskLevelRobot.checkForFooter()
     }
+
+    @Test
+    fun testPostDistrictInEngland_showMassTestingInformation() = notReported {
+        testAppContext.setPostCode("BN10")
+        testAppContext.setLocalAuthority("E07000063")
+
+        startTestActivity<RiskLevelActivity> {
+            putExtra(EXTRA_RISK_LEVEL, getTierFiveRisk("BN10"))
+        }
+
+        riskLevelRobot.checkActivityIsDisplayed()
+
+        riskLevelRobot.checkMassTestingIsDisplayed()
+    }
+
+    @Test
+    fun testPostDistrictIsNotInEngland_doNotShowMassTestingInformation() = notReported {
+        testAppContext.setPostCode("NP10")
+        testAppContext.setLocalAuthority("W06000018")
+
+        startTestActivity<RiskLevelActivity> {
+            putExtra(EXTRA_RISK_LEVEL, getTierFiveRisk("NP10"))
+        }
+
+        riskLevelRobot.checkActivityIsDisplayed()
+
+        riskLevelRobot.checkMassTestingIsNotDisplayed()
+    }
+
+    @Test
+    fun testPostDistrictIsInEngland_riskIndicatorDoesNotContainPolicyInfo_doNotShowMassTestingInformation() =
+        notReported {
+            testAppContext.setPostCode("NP10")
+            testAppContext.setLocalAuthority("W06000018")
+
+            val risk = getTierFiveRisk("NP10")
+
+            startTestActivity<RiskLevelActivity> {
+                putExtra(EXTRA_RISK_LEVEL, risk.copy(riskIndicator = risk.riskIndicator.copy(policyData = null)))
+            }
+
+            riskLevelRobot.checkActivityIsDisplayed()
+
+            riskLevelRobot.checkMassTestingIsNotDisplayed()
+        }
+
+    private fun getTierFiveRisk(postCode: String) = Risk(
+        postCode,
+        RiskIndicator(
+            colorScheme = ColorScheme.RED,
+            colorSchemeV2 = ColorScheme.BLACK,
+            name = Translatable(mapOf("en" to "$postCode is in Local Alert Level 5")),
+            heading = Translatable(mapOf("en" to "Heading very high")),
+            content = Translatable(mapOf("en" to "Content very high")),
+            linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
+            linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+            policyData = PolicyData(
+                heading = Translatable(mapOf("en" to "Coronavirus cases are very high in your area")),
+                content = Translatable(mapOf("en" to "Local Authority content very high")),
+                footer = Translatable(mapOf("en" to "Find out what rules apply in your area to help reduce the spread of coronavirus.")),
+                policies = listOf(meetingPolicy, socialDistancingPolicy),
+                localAuthorityRiskTitle = Translatable(mapOf("en" to "$postCode is in local COVID alert level: very high"))
+            )
+        ),
+        riskLevelFromLocalAuthority = true
+    )
 }

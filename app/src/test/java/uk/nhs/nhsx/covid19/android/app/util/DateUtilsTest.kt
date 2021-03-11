@@ -331,6 +331,39 @@ class DateUtilsTest {
     }
 
     @Test
+    fun `isEqualOrAfter for LocalDateTime returns false if before`() {
+        val clock1 = Clock.fixed(Instant.parse("2014-12-20T06:23:00Z"), ZoneId.of("Europe/London"))
+        val clock2 = Clock.fixed(Instant.parse("2014-12-21T06:23:00Z"), ZoneId.of("Europe/London"))
+
+        val localDate1 = LocalDateTime.now(clock1)
+        val localDate2 = LocalDateTime.now(clock2)
+
+        assertFalse(localDate1.isEqualOrAfter(localDate2))
+    }
+
+    @Test
+    fun `isEqualOrAfter for LocalDateTime returns true if equal`() {
+        val clock1 = Clock.fixed(Instant.parse("2014-12-21T06:23:00Z"), ZoneId.of("Europe/London"))
+        val clock2 = Clock.fixed(Instant.parse("2014-12-21T06:23:00Z"), ZoneId.of("Europe/London"))
+
+        val localDate1 = LocalDateTime.now(clock1)
+        val localDate2 = LocalDateTime.now(clock2)
+
+        assertTrue(localDate1.isEqualOrAfter(localDate2))
+    }
+
+    @Test
+    fun `isEqualOrAfter for LocalDateTime returns true if after`() {
+        val clock1 = Clock.fixed(Instant.parse("2014-12-22T06:23:00Z"), ZoneId.of("Europe/London"))
+        val clock2 = Clock.fixed(Instant.parse("2014-12-21T06:23:00Z"), ZoneId.of("Europe/London"))
+
+        val localDate1 = LocalDateTime.now(clock1)
+        val localDate2 = LocalDateTime.now(clock2)
+
+        assertTrue(localDate1.isEqualOrAfter(localDate2))
+    }
+
+    @Test
     fun `selectEarliest returns first date if earlier`() {
         val clock1 = Clock.fixed(Instant.parse("2014-12-20T06:23:00Z"), ZoneId.of("Europe/London"))
         val clock2 = Clock.fixed(Instant.parse("2014-12-21T06:23:00Z"), ZoneId.of("Europe/London"))

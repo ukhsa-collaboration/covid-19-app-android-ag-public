@@ -55,38 +55,46 @@ class EpidemiologyEventProviderTest {
     fun `can convert exposure window to epidemiology event`() {
         val scanInstance =
             ScanInstance.Builder()
-                .setSecondsSinceLastScan(0)
                 .setMinAttenuationDb(1)
-                .setTypicalAttenuationDb(1)
+                .setSecondsSinceLastScan(2)
+                .setTypicalAttenuationDb(3)
                 .build()
+
+        val date = Instant.parse("2020-11-18T13:20:36.875Z")
 
         val exposureWindow =
             ExposureWindow.Builder()
+                .setDateMillisSinceEpoch(date.toEpochMilli())
                 .setInfectiousness(Infectiousness.HIGH)
                 .setScanInstances(listOf(scanInstance))
                 .build()
 
-        val dayRisk =
-            DayRisk(
-                startOfDayMillis = Instant.parse("2020-11-18T13:20:36.875Z").toEpochMilli(),
+        val exposureWindowWithRisk =
+            ExposureWindowWithRisk(
+                exposureWindow,
                 calculatedRisk = 10.0,
                 riskCalculationVersion = 2,
-                matchedKeyCount = 1,
-                exposureWindows = listOf(exposureWindow)
+                matchedKeyCount = 1
             )
 
-        val event = EpidemiologyEvent(
+        val expectedEvent = EpidemiologyEvent(
             version = 1,
             payload = EpidemiologyEventPayload(
-                date = Instant.parse("2020-11-18T13:20:36.875Z"),
+                date = date,
                 infectiousness = uk.nhs.nhsx.covid19.android.app.remote.data.Infectiousness.fromInt(2),
-                scanInstances = listOf(EpidemiologyEventPayloadScanInstance(1, 0, 1)),
+                scanInstances = listOf(
+                    EpidemiologyEventPayloadScanInstance(
+                        minimumAttenuation = 1,
+                        secondsSinceLastScan = 2,
+                        typicalAttenuation = 3
+                    )
+                ),
                 riskScore = 10.0,
                 riskCalculationVersion = 2
             )
         )
 
-        assertEquals(event, dayRisk.toEpidemiologyEvents().first())
+        assertEquals(expectedEvent, exposureWindowWithRisk.toEpidemiologyEvent())
     }
 
     companion object {

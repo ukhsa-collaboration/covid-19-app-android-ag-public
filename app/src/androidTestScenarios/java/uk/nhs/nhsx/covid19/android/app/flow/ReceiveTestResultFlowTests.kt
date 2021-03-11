@@ -75,7 +75,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTestOlderThanSymptomsOnsetDate_showNegAfterPosOrSymptomaticWillBeInIsolation_andContinueIsolation() = notReported {
+    fun whenIndexCase_withoutPrevTest_whenAcknowledgingConfirmedNegTestOlderThanSymptomsOnsetDate_showNegAfterPosOrSymptomaticWillBeInIsolation_andContinueIsolation() = notReported {
         val isolation = setIndexCaseIsolation(selfAssessment = true)
 
         startTestActivity<StatusActivity>()

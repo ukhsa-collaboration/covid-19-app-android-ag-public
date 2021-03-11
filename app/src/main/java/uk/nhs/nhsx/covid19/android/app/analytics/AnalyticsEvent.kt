@@ -32,4 +32,7 @@ sealed class AnalyticsEvent {
     object DidHaveSymptomsBeforeReceivedTestResult : AnalyticsEvent()
     object DidRememberOnsetSymptomsDateBeforeReceivedTestResult : AnalyticsEvent()
     object DidAskForSymptomsOnPositiveTestEntry : AnalyticsEvent()
+    object ReceivedRiskyVenueM1Warning : AnalyticsEvent()
+    object ReceivedRiskyVenueM2Warning : AnalyticsEvent()
+    object TotalAlarmManagerBackgroundTasks : AnalyticsEvent()
 }

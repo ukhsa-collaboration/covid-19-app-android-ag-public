@@ -2,15 +2,13 @@ package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
 import com.jeroenmols.featureflag.framework.FeatureFlag.STORE_EXPOSURE_WINDOWS
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
-import java.time.Clock
-import java.time.Instant
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyContactNotification
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.Result
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
@@ -23,13 +21,16 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HandlePollingExposureN
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEvent
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.ExposureWindowRiskManager
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.toEpidemiologyEvents
 import uk.nhs.nhsx.covid19.android.app.payment.CheckIsolationPaymentToken
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.CIRCUIT_BREAKER
 import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnExposedNotification
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitFakeExposureWindows
+import java.time.Clock
+import java.time.Instant
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class ExposureNotificationWork @Inject constructor(
@@ -43,6 +44,8 @@ class ExposureNotificationWork @Inject constructor(
     private val exposureCircuitBreakerInfoProvider: ExposureCircuitBreakerInfoProvider,
     private val exposureWindowRiskManager: ExposureWindowRiskManager,
     private val epidemiologyEventProvider: EpidemiologyEventProvider,
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
+    private val hasSuccessfullyProcessedNewExposureProvider: HasSuccessfullyProcessedNewExposureProvider,
     private val clock: Clock
 ) {
 
@@ -56,27 +59,33 @@ class ExposureNotificationWork @Inject constructor(
 
     suspend fun handleNewExposure(): Result<Unit> = mutex.withLock {
         withContext(Dispatchers.IO) {
-            runSafely {
-                val exposureRisk = exposureWindowRiskManager.getRisk()
+            hasSuccessfullyProcessedNewExposureProvider.value = false
 
-                if (exposureRisk == null) {
+            runSafely {
+                val riskCalculationResult = exposureWindowRiskManager.getRisk()
+
+                val relevantRisk = riskCalculationResult.relevantRisk
+                if (relevantRisk == null) {
                     Timber.d("Not a risky encounter")
                     submitEmptyData(CIRCUIT_BREAKER)
                     submitEmptyExposureWindows()
+                    hasSuccessfullyProcessedNewExposureProvider.value = true
                     return@runSafely
                 }
 
                 val exposureCircuitBreakerInfo = ExposureCircuitBreakerInfo(
-                    maximumRiskScore = exposureRisk.calculatedRisk,
-                    startOfDayMillis = exposureRisk.startOfDayMillis,
-                    matchedKeyCount = exposureRisk.matchedKeyCount,
-                    riskCalculationVersion = exposureRisk.riskCalculationVersion,
+                    maximumRiskScore = relevantRisk.calculatedRisk,
+                    startOfDayMillis = relevantRisk.startOfDayMillis,
+                    matchedKeyCount = relevantRisk.matchedKeyCount,
+                    riskCalculationVersion = relevantRisk.riskCalculationVersion,
                     exposureNotificationDate = Instant.now(clock).toEpochMilli()
                 )
 
                 exposureCircuitBreakerInfoProvider.add(exposureCircuitBreakerInfo)
 
-                val epidemiologyEvents = exposureRisk.toEpidemiologyEvents()
+                hasSuccessfullyProcessedNewExposureProvider.value = true
+
+                val epidemiologyEvents = riskCalculationResult.exposureWindowsWithRisk.map { it.toEpidemiologyEvent() }
                 storeEpidemiologyEvents(epidemiologyEvents)
                 submitEpidemiologyData.submit(epidemiologyEvents)
 
@@ -132,10 +141,11 @@ class ExposureNotificationWork @Inject constructor(
         }
     }
 
-    private fun handleYes(info: ExposureCircuitBreakerInfo) {
+    private suspend fun handleYes(info: ExposureCircuitBreakerInfo) {
         Timber.d("Circuit breaker answered YES, exposureDate=${info.startOfDayMillis}")
         stateMachine.processEvent(OnExposedNotification(Instant.ofEpochMilli(info.startOfDayMillis)))
         exposureCircuitBreakerInfoProvider.remove(info)
+        analyticsEventProcessor.track(ReceivedRiskyContactNotification)
     }
 
     private fun handleNo(info: ExposureCircuitBreakerInfo) {

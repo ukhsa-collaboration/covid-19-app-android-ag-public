@@ -8,9 +8,14 @@ import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.WorkManager
+import com.jeroenmols.featureflag.framework.FeatureFlag.SUBMIT_ANALYTICS_VIA_ALARM_MANAGER
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import com.jeroenmols.featureflag.framework.TestSetting
 import timber.log.Timber
@@ -42,11 +47,10 @@ import uk.nhs.nhsx.covid19.android.app.util.StrongBoxMigrationRetryChecker
 import uk.nhs.nhsx.covid19.android.app.util.StrongBoxMigrationRetryStorage
 import java.time.Clock
 
-open class ExposureApplication : Application(), Configuration.Provider {
+open class ExposureApplication : Application(), Configuration.Provider, LifecycleObserver {
+
     lateinit var appComponent: ApplicationComponent
-
     lateinit var encryptionUtils: EncryptionUtils
-
     private var appAvailabilityListener: AppAvailabilityListener? = null
 
     override fun onCreate() {
@@ -68,6 +72,13 @@ open class ExposureApplication : Application(), Configuration.Provider {
             startPeriodicTasks()
         }
         appComponent.provideExposureNotificationRetryAlarmController().onAppCreated()
+        if (RuntimeBehavior.isFeatureEnabled(SUBMIT_ANALYTICS_VIA_ALARM_MANAGER)) {
+            appComponent.provideSubmitAnalyticsAlarmController().onAppCreated()
+        } else {
+            appComponent.provideSubmitAnalyticsAlarmController().cancelIfScheduled()
+        }
+
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 
         if (RuntimeBehavior.isFeatureEnabled(TestSetting.STRICT_MODE)) {
             StrictMode.setThreadPolicy(
@@ -84,6 +95,11 @@ open class ExposureApplication : Application(), Configuration.Provider {
                     .build()
             )
         }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onApplicationStart() {
+        appComponent.provideApplicationStartAreaRiskUpdater().updateIfNecessary()
     }
 
     protected fun startPeriodicTasks() {
@@ -165,7 +181,7 @@ open class ExposureApplication : Application(), Configuration.Provider {
         val isTestBuild = BuildConfig.DEBUG || BuildConfig.FLAVOR == "scenarios"
     }
 
-    private val isRunningTest: Boolean by lazy {
+    protected val isRunningTest: Boolean by lazy {
         try {
             Class.forName("androidx.test.espresso.Espresso")
             true

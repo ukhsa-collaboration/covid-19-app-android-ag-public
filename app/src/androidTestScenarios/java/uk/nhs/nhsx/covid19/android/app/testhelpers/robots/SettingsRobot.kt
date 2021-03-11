@@ -32,4 +32,9 @@ class SettingsRobot {
         onView(withId(R.id.languageOption))
             .perform(click())
     }
+
+    fun clickManageMyDataSetting() {
+        onView(withId(R.id.manageMyDataOption))
+            .perform(click())
+    }
 }

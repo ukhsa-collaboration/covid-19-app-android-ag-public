@@ -34,8 +34,10 @@ import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Disabl
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Unresolved
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -67,6 +69,7 @@ class StatusViewModelTest {
         mockk<LastAppRatingStartedDateProvider>(relaxed = true)
     private val canClaimIsolationPayment = mockk<CanClaimIsolationPayment>(relaxed = true)
     private val isolationPaymentTokenStateProvider = mockk<IsolationPaymentTokenStateProvider>(relaxed = true)
+    private val lastVisitedBookTestTypeVenueDateProvider = mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxUnitFun = true)
 
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
     private val showInformationScreenObserver = mockk<Observer<InformationScreen>>(relaxed = true)
@@ -86,6 +89,7 @@ class StatusViewModelTest {
             lastReviewFlowStartedDateProvider,
             canClaimIsolationPayment,
             isolationPaymentTokenStateProvider,
+            lastVisitedBookTestTypeVenueDateProvider,
             analyticsEventProcessorMock,
             clock
         )
@@ -159,7 +163,8 @@ class StatusViewModelTest {
         isolationState = DEFAULT_ISOLATION_STATE,
         latestAdviceUrl = DEFAULT_LATEST_ADVICE_URL_RES_ID,
         showExposureNotificationReminderDialog = false,
-        showIsolationPaymentButton = false
+        showIsolationPaymentButton = false,
+        showOrderTestButton = false
     )
 
     @Before
@@ -169,6 +174,7 @@ class StatusViewModelTest {
             "medium",
             mediumRiskyPostCodeIndicator
         )
+        every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns false
         every { userInbox.fetchInbox() } returns DEFAULT_INFORMATION_SCREEN_STATE
         every { isolationStateMachine.readState() } returns DEFAULT_ISOLATION_STATE
         coEvery { districtAreaUrlProvider.provide(any()) } returns DEFAULT_LATEST_ADVICE_URL_RES_ID
@@ -400,6 +406,24 @@ class StatusViewModelTest {
     }
 
     @Test
+    fun `on update view state should not show book test button if does not contain book test type venue at risk`() {
+        every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns false
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(showOrderTestButton = false)) }
+    }
+
+    @Test
+    fun `on update view state should show book test button if does contain book test type venue at risk`() {
+        every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns true
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(showOrderTestButton = true)) }
+    }
+
+    @Test
     fun `visibility of isolation payment button should update when isolation payment token status changes`() {
         testSubject.onResume()
 
@@ -458,14 +482,13 @@ class StatusViewModelTest {
 
     @Test
     fun `update view state with show venue alert`() {
-        val inboxItem = ShowVenueAlert("venue1")
+        val inboxItem = ShowVenueAlert("venue1", INFORM)
 
         every { userInbox.fetchInbox() } returns inboxItem
 
         testSubject.userInboxListener.invoke()
 
-        verify { userInbox.clearItem(inboxItem) }
-        verify { showInformationScreenObserver.onChanged(VenueAlert("venue1")) }
+        verify { showInformationScreenObserver.onChanged(VenueAlert("venue1", INFORM)) }
     }
 
     @Test

@@ -47,6 +47,9 @@ enum class RegularAnalyticsEventType {
     DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT,
     DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT,
     DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY,
+    RECEIVED_RISKY_VENUE_M1_WARNING,
+    RECEIVED_RISKY_VENUE_M2_WARNING,
+    TOTAL_ALARM_MANAGER_BACKGROUND_TASKS
 }
 
 @JsonClass(generateAdapter = true)
@@ -58,12 +61,15 @@ data class BackgroundTaskTicks(
     var isIsolatingForSelfDiagnosedBackgroundTick: Boolean = false,
     var isIsolatingForTestedPositiveBackgroundTick: Boolean = false,
     var isIsolatingForTestedLFDPositiveBackgroundTick: Boolean = false,
+    var isIsolatingForTestedSelfRapidPositiveBackgroundTick: Boolean = false,
     var hasHadRiskyContactBackgroundTick: Boolean = false,
     var hasRiskyContactNotificationsEnabledBackgroundTick: Boolean = false,
     var hasSelfDiagnosedBackgroundTick: Boolean = false,
     var hasTestedPositiveBackgroundTick: Boolean = false,
     var hasTestedLFDPositiveBackgroundTick: Boolean = false,
+    var hasTestedSelfRapidPositiveBackgroundTick: Boolean = false,
     var encounterDetectionPausedBackgroundTick: Boolean = false,
     var haveActiveIpcTokenBackgroundTick: Boolean = false,
     var isIsolatingForUnconfirmedTestBackgroundTick: Boolean = false,
+    var hasReceivedRiskyVenueM2WarningBackgroundTick: Boolean = false,
 )

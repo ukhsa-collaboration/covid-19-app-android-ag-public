@@ -6,13 +6,10 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
-import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_test_result.goodNewsContainer
 import kotlinx.android.synthetic.main.activity_test_result.isolationRequestContainer
 import kotlinx.android.synthetic.main.view_good_news.goodNewsActionButton
 import kotlinx.android.synthetic.main.view_good_news.goodNewsIcon
-import kotlinx.android.synthetic.main.view_good_news.goodNewsInfoView
 import kotlinx.android.synthetic.main.view_good_news.goodNewsParagraphContainer
 import kotlinx.android.synthetic.main.view_good_news.goodNewsSubtitle
 import kotlinx.android.synthetic.main.view_good_news.goodNewsTitle
@@ -37,12 +34,12 @@ import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.Navi
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.NavigateToOrderTest
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.NavigateToShareKeys
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.Ignore
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWontBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolationNoChange
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolationAndOrderTest
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWontBeInIsolation
@@ -53,6 +50,7 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
+import javax.inject.Inject
 
 class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
@@ -190,7 +188,6 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
     private fun showContinueToSelfIsolationScreenOnNegative(remainingDaysInIsolation: Int) {
         goodNewsContainer.gone()
         isolationRequestContainer.visible()
-        exposureFaqsLink.gone()
 
         isolationRequestImage.setImageResource(R.drawable.ic_isolation_continue)
         setSelfIsolateTitles(
@@ -219,7 +216,6 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
         goodNewsContainer.gone()
         isolationRequestContainer.visible()
-        exposureFaqsLink.gone()
 
         isolationRequestImage.setImageResource(R.drawable.ic_isolation_book_test)
 
@@ -256,12 +252,8 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         goodNewsIcon.isVisible = inPortraitMode()
         goodNewsTitle.text = getString(R.string.test_result_your_test_result)
         title = goodNewsTitle.text
-        goodNewsTitle.visible()
 
         goodNewsSubtitle.text = getString(R.string.test_result_positive_no_self_isolation_subtitle)
-        goodNewsInfoView.stateText =
-            getString(R.string.test_result_no_self_isolation_description)
-        goodNewsInfoView.stateColor = getColor(R.color.amber)
         goodNewsParagraphContainer.addAllParagraphs(getString(R.string.for_further_advice_visit))
 
         goodNewsActionButton.text = getString(R.string.continue_button)
@@ -276,14 +268,10 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
         goodNewsIcon.setImageResource(R.drawable.ic_isolation_negative_or_finished)
         goodNewsIcon.isVisible = inPortraitMode()
-        goodNewsTitle.visible()
         title = goodNewsTitle.text
 
         goodNewsSubtitle.text =
             getString(R.string.test_result_negative_no_self_isolation_subtitle_text)
-        goodNewsInfoView.stateText =
-            getString(R.string.test_result_no_self_isolation_description)
-        goodNewsInfoView.stateColor = getColor(R.color.amber)
         goodNewsParagraphContainer.addAllParagraphs(
             getString(R.string.for_further_advice_visit)
         )
@@ -301,14 +289,10 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
         goodNewsIcon.setImageResource(R.drawable.ic_isolation_expired_or_over)
         goodNewsIcon.isVisible = inPortraitMode()
-        goodNewsTitle.visible()
         title = goodNewsTitle.text
 
         goodNewsSubtitle.text =
             getString(R.string.test_result_negative_already_not_in_isolation_subtitle)
-        goodNewsInfoView.stateText =
-            getString(R.string.test_result_no_self_isolation_description)
-        goodNewsInfoView.stateColor = getColor(R.color.amber)
         goodNewsParagraphContainer.addAllParagraphs(getString(R.string.for_further_advice_visit))
 
         goodNewsActionButton.text = getString(R.string.continue_button)
@@ -344,8 +328,6 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
     private fun showContinueToSelfIsolationScreenOnNegativeAfterPositiveOrSymptomatic(remainingDaysInIsolation: Int) {
         goodNewsContainer.gone()
         isolationRequestContainer.visible()
-
-        exposureFaqsLink.gone()
 
         isolationRequestImage.setImageResource(R.drawable.ic_isolation_continue)
         setSelfIsolateTitles(
@@ -439,13 +421,9 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         goodNewsIcon.isVisible = inPortraitMode()
         goodNewsTitle.text = getString(R.string.test_result_your_test_result)
         title = getString(R.string.test_result_your_test_result)
-        goodNewsTitle.visible()
 
         goodNewsSubtitle.text =
             getString(R.string.test_result_void_already_not_in_isolation_subtitle)
-        goodNewsInfoView.stateText =
-            getString(R.string.test_result_no_self_isolation_description)
-        goodNewsInfoView.stateColor = getColor(R.color.amber)
         goodNewsParagraphContainer.addAllParagraphs(getString(R.string.for_further_advice_visit))
 
         goodNewsActionButton.text = getString(R.string.book_free_test)

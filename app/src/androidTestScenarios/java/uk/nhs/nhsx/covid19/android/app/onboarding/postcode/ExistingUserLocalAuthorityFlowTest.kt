@@ -1,9 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.onboarding.postcode
 
-import com.jeroenmols.featureflag.framework.FeatureFlag
-import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_AUTHORITY
-import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
-import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.report.notReported
@@ -22,16 +18,9 @@ class ExistingUserLocalAuthorityFlowTest : EspressoTest() {
     private val postCode = "N12"
     private val localAuthorityName = "Barnet"
 
-    @After
-    fun tearDown() {
-        FeatureFlagTestHelper.clearFeatureFlags()
-    }
-
     @Test
     @RetryFlakyTest
-    fun setLocalAuthorityWithFeatureFlagEnabled() = notReported {
-        FeatureFlagTestHelper.enableFeatureFlag(LOCAL_AUTHORITY)
-
+    fun setLocalAuthority() = notReported {
         testAppContext.setPostCode(postCode)
         testAppContext.setOnboardingCompleted(true)
         testAppContext.setPolicyUpdateAccepted(true)
@@ -53,26 +42,11 @@ class ExistingUserLocalAuthorityFlowTest : EspressoTest() {
     }
 
     @Test
-    fun skipLocalAuthorityWithFeatureFlagEnabled() = notReported {
-        FeatureFlagTestHelper.enableFeatureFlag(LOCAL_AUTHORITY)
-
+    fun skipLocalAuthority() = notReported {
         testAppContext.setPostCode(postCode)
         testAppContext.setOnboardingCompleted(true)
         testAppContext.setPolicyUpdateAccepted(true)
         testAppContext.setLocalAuthority("1")
-
-        startTestActivity<MainActivity>()
-
-        waitFor { statusRobot.checkActivityIsDisplayed() }
-    }
-
-    @Test
-    fun skipLocalAuthorityWithFeatureFlagDisabled() = notReported {
-        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.LOCAL_AUTHORITY)
-
-        testAppContext.setPostCode(postCode)
-        testAppContext.setOnboardingCompleted(true)
-        testAppContext.setPolicyUpdateAccepted(true)
 
         startTestActivity<MainActivity>()
 

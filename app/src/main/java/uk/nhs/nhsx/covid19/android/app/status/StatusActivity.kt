@@ -9,10 +9,8 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.observe
 import com.google.android.gms.common.api.Status
 import com.google.android.material.snackbar.Snackbar
-import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_status.contactTracingActiveView
 import kotlinx.android.synthetic.main.activity_status.contactTracingStoppedView
 import kotlinx.android.synthetic.main.activity_status.contactTracingView
@@ -41,15 +39,17 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActi
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertActivity
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestActivity
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
+import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
 import uk.nhs.nhsx.covid19.android.app.state.State
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.canOrderTest
 import uk.nhs.nhsx.covid19.android.app.state.canReportSymptoms
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.ExposureConsent
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.IsolationExpiration
@@ -65,6 +65,7 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
+import javax.inject.Inject
 
 class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
 
@@ -124,7 +125,12 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
                 )
                 TestResult -> startActivity<TestResultActivity>()
                 ExposureConsent -> EncounterDetectionActivity.start(this)
-                is VenueAlert -> VenueAlertActivity.start(this, it.venueId)
+                is VenueAlert -> {
+                    when (it.messageType) {
+                        INFORM -> VenueAlertInformActivity.start(this, it.venueId)
+                        BOOK_TEST -> VenueAlertBookTestActivity.start(this, it.venueId)
+                    }
+                }
             }
         }
     }
@@ -136,7 +142,12 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
             handleRiskyPostCodeViewState(viewState.areaRiskState)
             handleReminderDialogState(viewState.showExposureNotificationReminderDialog)
             handleIsolationPaymentState(viewState.showIsolationPaymentButton)
+            handleOrderTestState(viewState.showOrderTestButton)
         }
+    }
+
+    private fun handleOrderTestState(showOrderTestButton: Boolean) {
+        optionOrderTest.isVisible = showOrderTestButton
     }
 
     private fun handleReminderDialogState(showExposureNotificationReminderDialog: Boolean) {
@@ -229,7 +240,6 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
             }
             is Isolation -> {
                 isolationView.initialize(isolationState)
-                optionOrderTest.isVisible = isolationState.canOrderTest
                 optionReportSymptoms.isVisible = isolationState.canReportSymptoms
                 showIsolationView()
             }

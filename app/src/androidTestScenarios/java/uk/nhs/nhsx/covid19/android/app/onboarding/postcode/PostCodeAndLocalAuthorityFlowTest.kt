@@ -1,8 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.onboarding.postcode
 
-import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_AUTHORITY
-import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
-import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -19,15 +16,8 @@ class PostCodeAndLocalAuthorityFlowTest : EspressoTest() {
     private val postCode = "N12"
     private val localAuthorityName = "Barnet"
 
-    @After
-    fun tearDown() {
-        FeatureFlagTestHelper.clearFeatureFlags()
-    }
-
     @Test
-    fun completePostCodeAndLocalAuthorityWithFeatureFlagEnabled() = notReported {
-        FeatureFlagTestHelper.enableFeatureFlag(LOCAL_AUTHORITY)
-
+    fun completePostCode() = notReported {
         startTestActivity<PostCodeActivity>()
 
         postCodeRobot.checkActivityIsDisplayed()
@@ -41,21 +31,6 @@ class PostCodeAndLocalAuthorityFlowTest : EspressoTest() {
         waitFor { localAuthorityRobot.checkSingleAuthorityIsDisplayed(postCode, localAuthorityName) }
 
         localAuthorityRobot.clickConfirm()
-
-        waitFor { permissionRobot.checkActivityIsDisplayed() }
-    }
-
-    @Test
-    fun completePostCodeWithFeatureFlagDisabled() = notReported {
-        FeatureFlagTestHelper.disableFeatureFlag(LOCAL_AUTHORITY)
-
-        startTestActivity<PostCodeActivity>()
-
-        postCodeRobot.checkActivityIsDisplayed()
-
-        postCodeRobot.enterPostCode(postCode)
-
-        postCodeRobot.clickContinue()
 
         waitFor { permissionRobot.checkActivityIsDisplayed() }
     }

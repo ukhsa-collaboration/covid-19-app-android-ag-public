@@ -81,11 +81,18 @@
         android:text="Send Exposure Notification" />
 
     <Button
-        android:id="@+id/riskyVenue"
+        android:id="@+id/riskyVenueM1"
         style="@style/PrimaryButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Risky Venue" />
+        android:text="Risky Venue M1 (INFORM)" />
+
+    <Button
+        android:id="@+id/riskyVenueM2"
+        style="@style/PrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Risky Venue M2 (BOOK_TEST)" />
 
     <Button
         android:id="@+id/riskyPostCode"
@@ -93,5 +100,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Risky Postcode" />
+
+    <Button
+        android:id="@+id/submitAnalyticsUsingAlarmManager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Submit analytics using AlarmManager" />
 
 </LinearLayout>

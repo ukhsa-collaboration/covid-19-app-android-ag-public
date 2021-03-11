@@ -94,8 +94,10 @@
         <activity android:name=".testordering.TestOrderingProgressActivity"
             android:label="@string/loading"/>
         <activity android:name=".availability.AppAvailabilityActivity" />
-        <activity android:name=".qrcode.riskyvenues.VenueAlertActivity"
+        <activity android:name=".qrcode.riskyvenues.VenueAlertInformActivity"
             android:label="@string/venue_alert_title"/>
+        <activity android:name=".qrcode.riskyvenues.VenueAlertBookTestActivity"
+            android:label="@string/venue_alert_m2_title"/>
         <activity android:name=".status.RiskLevelActivity"
             android:label="@string/risk_level_title"/>
         <activity android:name=".edgecases.TabletNotSupportedActivity"
@@ -142,6 +144,7 @@
         <receiver android:name=".receiver.ExpirationCheckReceiver" />
         <receiver android:name=".receiver.ExposureNotificationReminderReceiver" />
         <receiver android:name=".receiver.ExposureNotificationRetryReceiver" />
+        <receiver android:name=".receiver.SubmitAnalyticsAlarmReceiver" />
         <receiver android:name=".analytics.AnalyticsAggregatorReceiver" />
         <receiver android:name=".receiver.AlarmRestarter">
             <intent-filter>

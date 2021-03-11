@@ -24,8 +24,13 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodes
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodesLoader
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
+import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
+import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDate
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueConfigurationDurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
@@ -52,6 +57,7 @@ class UserDataViewModelTest {
     private val sharedPreferencesEditor = mockk<SharedPreferences.Editor>()
     private val sharedPreferencesDeletedDataEditor = mockk<SharedPreferences.Editor>(relaxed = true)
     private val submittedOnboardingAnalyticsProvider = mockk<SubmittedOnboardingAnalyticsProvider>(relaxed = true)
+    private val lastVisitedBookTestTypeVenueDateProvider = mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxUnitFun = true)
 
     private val testSubject = UserDataViewModel(
         postCodeProvider,
@@ -61,7 +67,8 @@ class UserDataViewModelTest {
         relevantTestResultProvider,
         sharedPreferences,
         localAuthorityPostCodesLoader,
-        submittedOnboardingAnalyticsProvider
+        submittedOnboardingAnalyticsProvider,
+        lastVisitedBookTestTypeVenueDateProvider
     )
 
     private val userDataStateObserver = mockk<Observer<UserDataState>>(relaxed = true)
@@ -81,6 +88,10 @@ class UserDataViewModelTest {
         coEvery { venuesStorage.getVisits() } returns listOf()
         every { localAuthorityProvider.value } returns localAuthorityId
         coEvery { localAuthorityPostCodesLoader.load() } returns localAuthorityPostCodes
+        every { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue } returns LastVisitedBookTestTypeVenueDate(
+            lastRiskyVenueVisit,
+            RiskyVenueConfigurationDurationDays(optionToBookATest = 10)
+        )
     }
 
     @After
@@ -134,15 +145,21 @@ class UserDataViewModelTest {
 
     @Test
     fun `delete single venue visit removes it from storage`() = runBlocking {
+        val venueVisit = VenueVisit(
+            venue = Venue("1", "A"),
+            from = Instant.parse("1970-01-01T18:00:00Z"),
+            to = Instant.parse("1970-01-01T20:00:00Z")
+        )
+
         every { stateMachine.readState() } returns contactCaseOnlyIsolation
 
         testSubject.onResume()
 
-        testSubject.deleteVenueVisit(0)
+        testSubject.deleteVenueVisit(venueVisit)
 
         coVerifyOrder {
             userDataStateObserver.onChanged(expectedInitialUserDataState)
-            venuesStorage.removeVenueVisit(0)
+            venuesStorage.removeVenueVisit(venueVisit)
             userDataStateObserver.onChanged(
                 expectedInitialUserDataState.copy(
                     venueVisitsUiState = VenueVisitsUiState(listOf(), isInEditMode = true),
@@ -226,10 +243,56 @@ class UserDataViewModelTest {
         }
     }
 
+    @Test
+    fun `list of venue visits is sorted correctly`() {
+        val venueA = VenueVisit(
+            venue = Venue("1", "A"),
+            from = Instant.parse("1970-01-01T18:00:00Z"),
+            to = Instant.parse("1970-01-01T20:00:00Z")
+        )
+        val venueB = VenueVisit(
+            venue = Venue("1", "B"),
+            from = Instant.parse("1970-01-01T13:00:00Z"),
+            to = Instant.parse("1970-01-01T16:00:00Z")
+        )
+        val venueC = VenueVisit(
+            venue = Venue("1", "C"),
+            from = Instant.parse("1970-01-01T12:00:00Z"),
+            to = Instant.parse("1970-01-01T14:00:00Z")
+        )
+        val venueD = VenueVisit(
+            venue = Venue("1", "D"),
+            from = Instant.parse("1970-01-01T12:00:00Z"),
+            to = Instant.parse("1970-01-01T14:00:00Z")
+        )
+
+        every { stateMachine.readState() } returns contactCaseOnlyIsolation
+        coEvery { venuesStorage.getVisits() } returns listOf(venueD, venueC, venueB, venueA)
+
+        testSubject.onResume()
+
+        verify {
+            userDataStateObserver.onChanged(
+                expectedInitialUserDataState.copy(
+                    venueVisitsUiState = VenueVisitsUiState(
+                        venueVisits = listOf(
+                            venueA,
+                            venueB,
+                            venueC,
+                            venueD,
+                        ),
+                        isInEditMode = false
+                    )
+                )
+            )
+        }
+    }
+
     private val postCode = "CM1"
     private val localAuthorityId = "SE00001"
     private val postCodeLocalAuthorities = listOf(localAuthorityId)
     private val localAuthority = LocalAuthority(name = "Something", country = "Somewhere")
+    private val lastRiskyVenueVisit = LocalDate.of(2020, 8, 12)
 
     private val localAuthorityPostCodes = LocalAuthorityPostCodes(
         postcodes = mapOf(postCode to postCodeLocalAuthorities),
@@ -272,6 +335,7 @@ class UserDataViewModelTest {
             indexCaseSymptomOnsetDate = contactCaseOnlyIsolation.indexCase?.symptomsOnsetDate,
             dailyContactTestingOptInDate = dailyContactTestingOptInDate
         ),
+        lastRiskyVenueVisitDate = lastRiskyVenueVisit,
         venueVisitsUiState = VenueVisitsUiState(listOf(), isInEditMode = false),
         acknowledgedTestResult = acknowledgedTestResult,
         showDialog = null

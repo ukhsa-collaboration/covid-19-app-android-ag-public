@@ -78,7 +78,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/exposure_faqs"
-            app:linkUrl="@string/url_exposure_faqs" />
+            app:linkUrl="@string/url_exposure_faqs"
+            android:visibility="gone"
+            tools:visibility="visible"
+            />
 
         <TextView
             style="@style/Body1"

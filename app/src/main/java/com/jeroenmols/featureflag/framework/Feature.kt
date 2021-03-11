@@ -28,12 +28,6 @@ enum class FeatureFlag(
     override val explanation: String,
     override val defaultValue: Boolean = true
 ) : Feature {
-    LOCAL_AUTHORITY(
-        "feature.localAuthority",
-        "Local authority",
-        "Enable local authority",
-        defaultValue = true
-    ),
     BATTERY_OPTIMIZATION(
         "feature.batteryOptimization",
         "Battery optimization",
@@ -52,6 +46,12 @@ enum class FeatureFlag(
         "Enable daily contact testing enhancements",
         defaultValue = false
     ),
+    SUBMIT_ANALYTICS_VIA_ALARM_MANAGER(
+        "feature.submitAnalyticsViaAlarmManager",
+        "Submit analytics via alarm manager",
+        "Analytics submission is triggered by the AlarmManager instead of WorkManager",
+        defaultValue = false
+    )
 }
 
 /**

@@ -1,11 +1,12 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import org.hamcrest.CoreMatchers.not
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme
 import uk.nhs.nhsx.covid19.android.app.testhelpers.withDrawable
@@ -71,6 +72,20 @@ class RiskLevelRobot {
 
     fun checkForFooter() {
         onView(withId(R.id.riskLevelFooter))
-            .perform(ViewActions.scrollTo()).check(matches(isDisplayed()))
+            .perform(scrollTo()).check(matches(isDisplayed()))
+    }
+
+    fun checkMassTestingIsDisplayed() {
+        onView(withId(R.id.massTestingContainer))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkMassTestingIsNotDisplayed() {
+        onView(withId(R.id.buttonRiskLevelLink))
+            .perform(scrollTo())
+
+        onView(withId(R.id.massTestingContainer))
+            .check(matches(not(isDisplayed())))
     }
 }
