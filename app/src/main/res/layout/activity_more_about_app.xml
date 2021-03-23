@@ -118,14 +118,15 @@
                     app:layout_constraintStart_toEndOf="@id/line_about_data"
                     app:layout_constraintTop_toBottomOf="@id/aboutUserDataTitle" />
 
-                <uk.nhs.nhsx.covid19.android.app.widgets.UnderlinedTextView
-                    android:id="@+id/linkManageData"
-                    style="@style/LinkText"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    app:layout_constraintTop_toBottomOf="@id/aboutUserDataText"
-                    android:text="@string/about_manage_my_data" />
+                    android:layout_marginTop="8dp"
+                    android:text="@string/about_your_data_additional_text"
+                    app:layout_constraintStart_toEndOf="@id/line_about_data"
+                    app:layout_constraintTop_toBottomOf="@id/aboutUserDataText" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout

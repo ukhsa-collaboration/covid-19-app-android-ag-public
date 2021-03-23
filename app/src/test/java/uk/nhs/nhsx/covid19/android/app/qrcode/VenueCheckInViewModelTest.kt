@@ -47,7 +47,20 @@ class VenueCheckInViewModelTest {
 
         testSubject.onCreate(QrCodeScanResult.Success("testVenue"))
 
-        val expectedViewState = ViewState.Success("testVenue", LocalDateTime.now(fixedClock))
+        val expectedViewState = ViewState.Success("testVenue", LocalDateTime.now(fixedClock), playAnimation = true)
+
+        verify { viewStateObserver.onChanged(expectedViewState) }
+    }
+
+    @Test
+    fun `onCreate with qr code scan result Success should return view state Success with playAnimation false if animation finished`() {
+        testSubject.viewState().observeForever(viewStateObserver)
+
+        testSubject.onCreate(QrCodeScanResult.Success("testVenue"))
+
+        testSubject.onAnimationCompleted()
+
+        val expectedViewState = ViewState.Success("testVenue", LocalDateTime.now(fixedClock), playAnimation = false)
 
         verify { viewStateObserver.onChanged(expectedViewState) }
     }

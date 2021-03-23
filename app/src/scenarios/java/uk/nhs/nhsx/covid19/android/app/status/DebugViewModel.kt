@@ -10,10 +10,6 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey.TemporaryExposureKeyBuilder
-import java.io.File
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -50,7 +46,11 @@ import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingTokensProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
+import java.io.File
+import java.time.Instant
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+import javax.inject.Inject
 
 class DebugViewModel @Inject constructor(
     private val isolationStateMachine: IsolationStateMachine,

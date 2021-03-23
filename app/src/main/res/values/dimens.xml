@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <integer name="check_in_success_anim_duration">30</integer>
     <dimen name="default_stroke_width">7dp</dimen>
     <dimen name="default_background_stroke_width">3dp</dimen>
     <dimen name="anim_circle_size">40dp</dimen>
@@ -14,4 +15,6 @@
     <dimen name="margin_horizontal_none">0dp</dimen>
     <dimen name="margin_horizontal_list_item">32dp</dimen>
     <dimen name="bullet_point_size">8dp</dimen>
+    <dimen name="list_item_space">1dp</dimen>
+    <dimen name="my_data_title_left_margin">14dp</dimen>
 </resources>

@@ -63,4 +63,6 @@
     <color name="risk_black_background">#000000</color>
 
     <color name="item_user_data_border">#DDDDDD</color>
+
+    <color name="qr_more_info_button_background">#14ffffff</color>
 </resources>

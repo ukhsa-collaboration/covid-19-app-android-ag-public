@@ -13,8 +13,8 @@ class CalculateMissingSubmissionDays @Inject constructor(
     private val rangeToCheck = 1..SUBMISSION_LOG_CHECK_RANGE_MAX
 
     operator fun invoke(analyticsWindow: AnalyticsWindow): Int {
-        val submissionLog = analyticsSubmissionLogStorage.value
         val analyticsWindowDate = analyticsWindow.startDateToLocalDate()
+        val submissionLog = analyticsSubmissionLogStorage.getLogForAnalyticsWindow(analyticsWindowDate)
         var missedPacketsLast7Days = 0
         for (i in rangeToCheck) {
             val dateToCheck = analyticsWindowDate.minusDays(i.toLong())

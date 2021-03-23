@@ -1,7 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.about
 
-import java.time.Instant
-import java.time.ZoneOffset
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.report.notReported
@@ -9,15 +7,17 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MoreAboutAppRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MyDataRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SettingsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.UserDataRobot
+import java.time.Instant
+import java.time.ZoneOffset
 
 class UserDataFlowTest : EspressoTest() {
 
     private val statusRobot = StatusRobot()
-    private val moreAboutAppRobot = MoreAboutAppRobot()
-    private val userDataRobot = UserDataRobot()
+    private val userDataRobot = MyDataRobot()
+    private val settingsRobot = SettingsRobot()
 
     @Test
     fun startContactCase_checkLastDayOfIsolationInStatusScreen_confirmLastDayOfIsolationInUserDataScreen() =
@@ -35,11 +35,9 @@ class UserDataFlowTest : EspressoTest() {
 
             statusRobot.checkIsolationSubtitleIsDisplayedWithText(testAppContext.app, expectedExpiryDate)
 
-            statusRobot.clickMoreAboutApp()
+            statusRobot.clickSettings()
 
-            moreAboutAppRobot.checkActivityIsDisplayed()
-
-            waitFor { moreAboutAppRobot.clickSeeData() }
+            settingsRobot.clickMyDataSetting()
 
             userDataRobot.checkActivityIsDisplayed()
 

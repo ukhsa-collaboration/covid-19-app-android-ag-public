@@ -51,10 +51,10 @@ allprojects {
         google()
         jcenter()
         maven {
-            url = 'https://maven.pkg.github.com/nhsx/covid-19-app-configuration-public'
+            url = 'https://maven.pkg.github.com/nihp-public/covid-19-app-configuration-public'
             credentials {
-                username = findProperty("gpr.user") ?: System.getenv("REPOS_ACCESS_ACTOR")
-                password = findProperty("gpr.key") ?: System.getenv("REPOS_ACCESS_TOKEN")
+                username = findProperty("gpr.user") ?: System.getenv("PACKAGES_ACCESS_ACTOR")
+                password = findProperty("gpr.key") ?: System.getenv("PACKAGES_ACCESS_TOKEN")
             }
         }
     }

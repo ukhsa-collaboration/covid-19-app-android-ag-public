@@ -88,4 +88,10 @@
     <style name="AppTheme.Launcher">
         <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>
+
+    <style name="PrimaryToolbarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
+        <item name="android:colorControlNormal">@color/white</item>
+    </style>
 </resources>

@@ -2,27 +2,34 @@ package uk.nhs.nhsx.covid19.android.app.about
 
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.report.notReported
+import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.EditPostalDistrictRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.UserDataRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MyAreaRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SettingsRobot
 
 class EditPostalDistrictAndLocalAuthorityFlowTest : EspressoTest() {
 
     private val editPostalDistrictRobot = EditPostalDistrictRobot()
     private val localAuthorityRobot = LocalAuthorityRobot()
-    private val userDataRobot = UserDataRobot()
+    private val settingsRobot = SettingsRobot()
+    private val myAreaRobot = MyAreaRobot()
 
     private val postCode = "N12"
     private val localAuthorityName = "Barnet"
 
     @Test
     fun completePostCode() = notReported {
-        startTestActivity<UserDataActivity>()
+        startTestActivity<SettingsActivity>()
 
-        userDataRobot.checkActivityIsDisplayed()
+        settingsRobot.checkActivityIsDisplayed()
 
-        userDataRobot.userClicksEditPostalDistrict()
+        settingsRobot.clickMyAreaSetting()
+
+        myAreaRobot.checkActivityIsDisplayed()
+
+        myAreaRobot.clickEditButton()
 
         editPostalDistrictRobot.checkActivityIsDisplayed()
 
@@ -30,12 +37,12 @@ class EditPostalDistrictAndLocalAuthorityFlowTest : EspressoTest() {
 
         editPostalDistrictRobot.clickSavePostDistrictCode()
 
-        localAuthorityRobot.checkActivityIsDisplayed()
+        waitFor { localAuthorityRobot.checkActivityIsDisplayed() }
 
-        waitFor { localAuthorityRobot.checkSingleAuthorityIsDisplayed(postCode, localAuthorityName) }
+        localAuthorityRobot.checkSingleAuthorityIsDisplayed(postCode, localAuthorityName)
 
         localAuthorityRobot.clickConfirm()
 
-        waitFor { userDataRobot.checkActivityIsDisplayed() }
+        waitFor { myAreaRobot.checkActivityIsDisplayed() }
     }
 }

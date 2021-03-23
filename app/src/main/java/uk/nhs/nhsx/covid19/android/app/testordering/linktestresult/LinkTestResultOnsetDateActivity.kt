@@ -52,7 +52,7 @@ class LinkTestResultOnsetDateActivity : BaseActivity(R.layout.activity_link_test
 
         setToolbarNoNavigation(
             toolbar,
-            R.string.status_option_link_test_result
+            R.string.link_test_result_symptoms_information_title
         )
 
         intent.getParcelableExtra<ReceivedTestResult>(EXTRA_TEST_RESULT)?.let {

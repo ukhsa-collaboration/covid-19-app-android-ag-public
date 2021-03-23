@@ -8,17 +8,67 @@
 
     <include layout="@layout/view_toolbar_primary" />
 
-    <uk.nhs.nhsx.covid19.android.app.widgets.SettingsOptionsView
-        android:id="@+id/languageOption"
+    <androidx.core.widget.NestedScrollView
+        style="@style/ScrollContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:settingName="@string/language" />
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-    <uk.nhs.nhsx.covid19.android.app.widgets.SettingsOptionsView
-        android:id="@+id/manageMyDataOption"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:settingName="@string/about_manage_my_data"
-        app:settingValue="@string/about_manage_my_data_settings_subtitle"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
+            <LinearLayout
+                android:id="@+id/settingsList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.SettingsOptionsView
+                    android:id="@+id/languageOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/list_item_space"
+                    app:settingName="@string/language" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.SettingsOptionsView
+                    android:id="@+id/myAreaOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/list_item_space"
+                    app:settingName="@string/settings_my_area" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.SettingsOptionsView
+                    android:id="@+id/myDataOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/list_item_space"
+                    app:settingName="@string/settings_my_data" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.SettingsOptionsView
+                    android:id="@+id/venueHistoryOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/list_item_space"
+                    app:settingName="@string/settings_venue_history" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/actionDeleteAllData"
+                style="@style/ErrorText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginVertical="20dp"
+                android:gravity="center"
+                android:minHeight="48dp"
+                android:paddingHorizontal="16dp"
+                android:text="@string/settings_delete_data"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/settingsList"
+                app:layout_constraintVertical_bias="1.0" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

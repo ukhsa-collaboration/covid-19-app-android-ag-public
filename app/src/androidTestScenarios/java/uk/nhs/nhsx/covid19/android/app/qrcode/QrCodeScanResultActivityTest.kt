@@ -24,8 +24,9 @@ class QrCodeScanResultActivityTest : EspressoTest() {
             )
         }
 
-        robot.checkSuccessTitleIsDisplayed()
-        robot.checkVenueNameIsDisplayed(venueName)
+        waitFor { robot.checkAnimationIconIsDisplayed() }
+
+        robot.checkSuccessTitleAndVenueIsDisplayed(venueName)
     }
 
     @Test
@@ -36,6 +37,8 @@ class QrCodeScanResultActivityTest : EspressoTest() {
                 Scanning
             )
         }
+
+        robot.checkFailureIconIsDisplayed()
 
         robot.checkQrCodeNotRecognizedTitleIsDisplayed()
     }
@@ -53,6 +56,8 @@ class QrCodeScanResultActivityTest : EspressoTest() {
                 InvalidContent
             )
         }
+
+        robot.checkFailureIconIsDisplayed()
 
         robot.checkQrCodeNotRecognizedTitleIsDisplayed()
 
@@ -75,6 +80,8 @@ class QrCodeScanResultActivityTest : EspressoTest() {
                 QrCodeScanResult.ScanningNotSupported
             )
         }
+
+        robot.checkFailureIconIsDisplayed()
 
         robot.checkNotSupportedTitleIsDisplayed()
 

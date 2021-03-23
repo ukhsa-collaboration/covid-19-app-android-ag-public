@@ -58,6 +58,7 @@ import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.Companion.ISOLATION_STATE_CHANNEL_ID
+import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Disabled
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Unresolved
@@ -92,6 +93,7 @@ class AnalyticsEventProcessorTest {
     private val isolationPaymentTokenStateProvider = mockk<IsolationPaymentTokenStateProvider>()
     private val notificationProvider = mockk<NotificationProvider>()
     private val lastVisitedBookTestTypeVenueDateProvider = mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxed = true)
+    private val onboardingCompletedProvider = mockk<OnboardingCompletedProvider>()
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
 
     private val testSubject = AnalyticsEventProcessor(
@@ -104,6 +106,7 @@ class AnalyticsEventProcessorTest {
         isolationPaymentTokenStateProvider,
         notificationProvider,
         lastVisitedBookTestTypeVenueDateProvider,
+        onboardingCompletedProvider,
         fixedClock
     )
 
@@ -117,6 +120,16 @@ class AnalyticsEventProcessorTest {
         every { isolationPaymentTokenStateProvider.tokenState } returns Unresolved
         every { notificationProvider.isChannelEnabled(ISOLATION_STATE_CHANNEL_ID) } returns false
         every { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue } returns null
+        every { onboardingCompletedProvider.value } returns true
+    }
+
+    @Test
+    fun `do not process any items when onboarding is not completed`() = runBlocking {
+        every { onboardingCompletedProvider.value } returns false
+
+        testSubject.track(BackgroundTaskCompletion)
+
+        verify(exactly = 0) { analyticsLogStorage.add(any()) }
     }
 
     @Test

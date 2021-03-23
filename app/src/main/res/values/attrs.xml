@@ -25,6 +25,7 @@
     <declare-styleable name="SettingsOptionsView">
         <attr name="settingName" format="string" />
         <attr name="settingValue" format="string" />
+        <attr name="showChevron" format="boolean" />
     </declare-styleable>
     <declare-styleable name="StateInfoView">
         <attr name="stateColor" format="reference" />

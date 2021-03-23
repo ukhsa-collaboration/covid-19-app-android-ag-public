@@ -6,11 +6,6 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import java.lang.reflect.Type
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import javax.inject.Inject
 import kotlinx.android.parcel.Parcelize
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
@@ -18,6 +13,11 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import uk.nhs.nhsx.covid19.android.app.util.isEqualOrAfter
+import java.lang.reflect.Type
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import javax.inject.Inject
 
 class UnacknowledgedTestResultsProvider @Inject constructor(
     private val unacknowledgedTestResultsStorage: UnacknowledgedTestResultsStorage,

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:animateLayoutChanges="true"
+    android:background="@color/background">
+
+<uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+    android:id="@+id/dateHeader"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="20dp"
+    android:layout_marginVertical="12dp"
+    tools:text="09 Mar 2021" />
+</LinearLayout>

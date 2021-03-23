@@ -56,10 +56,12 @@ class QrCodeScanScenarioTest : EspressoTest() {
             }
 
             startTestActivity<QrCodeScanResultActivity> {
-                putExtra(QrCodeScanResultActivity.SCAN_RESULT, QrCodeScanResult.Success("ABCD1234"))
+                putExtra(QrCodeScanResultActivity.SCAN_RESULT, Success("ABCD1234"))
             }
 
-            qrCodeScanResultRobot.checkSuccessTitleIsDisplayed()
+            waitFor { qrCodeScanResultRobot.checkAnimationIconIsDisplayed() }
+
+            qrCodeScanResultRobot.checkSuccessTitleAndVenueIsDisplayed("ABCD1234")
 
             step(
                 stepName = "Successful scan",
@@ -97,7 +99,9 @@ class QrCodeScanScenarioTest : EspressoTest() {
                 putExtra(QrCodeScanResultActivity.SCAN_RESULT, Success("ABCD1234"))
             }
 
-            qrCodeScanResultRobot.checkSuccessTitleIsDisplayed()
+            waitFor { qrCodeScanResultRobot.checkAnimationIconIsDisplayed() }
+
+            qrCodeScanResultRobot.checkSuccessTitleAndVenueIsDisplayed("ABCD1234")
 
             qrCodeScanResultRobot.clickBackToHomeButton()
 

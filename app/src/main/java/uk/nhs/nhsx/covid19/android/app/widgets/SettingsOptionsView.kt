@@ -6,10 +6,14 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import android.widget.RelativeLayout
+import androidx.core.view.isVisible
+import kotlinx.android.synthetic.main.view_settings.view.settingsChevron
 import kotlinx.android.synthetic.main.view_settings.view.settingsItemSubtitle
 import kotlinx.android.synthetic.main.view_settings.view.settingsItemTitle
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 
 class SettingsOptionsView @JvmOverloads constructor(
     context: Context,
@@ -27,6 +31,17 @@ class SettingsOptionsView @JvmOverloads constructor(
         set(value) {
             field = value
             settingsItemSubtitle.text = value
+            if (value.isNullOrBlank()) {
+                settingsItemSubtitle.gone()
+            } else {
+                settingsItemSubtitle.visible()
+            }
+        }
+
+    var showChevron: Boolean = true
+        set(value) {
+            field = value
+            settingsChevron.isVisible = showChevron
         }
 
     init {
@@ -54,6 +69,7 @@ class SettingsOptionsView @JvmOverloads constructor(
         ).apply {
             title = getString(R.styleable.SettingsOptionsView_settingName)
             subtitle = getString(R.styleable.SettingsOptionsView_settingValue)
+            showChevron = getBoolean(R.styleable.SettingsOptionsView_showChevron, true)
             recycle()
         }
     }

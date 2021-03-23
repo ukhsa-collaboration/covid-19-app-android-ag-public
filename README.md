@@ -7,7 +7,7 @@ To access the private GitHubPackages repository that hosts the remote configurat
   *  **gpr.user** is your Github username
   *  **gpr.key**  is a personal access token [issued by GitHub](https://github.com/settings/tokens). For the scope, use at least read:packages and write:packages.
 
-Having these properties in place is necessary to build the app. For more information, visit the [app configuration repository](https://github.com/nhsx/covid-19-app-configuration-public/packages).
+Having these properties in place is necessary to build the app. For more information, visit the [app configuration repository](https://github.com/nihp-public/covid-19-app-configuration-public/packages).
 
 ## Dev actions
 

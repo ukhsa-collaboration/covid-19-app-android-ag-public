@@ -10,6 +10,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers.allOf
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.NthChildOf
 
 class SettingsRobot {
 
@@ -33,8 +34,88 @@ class SettingsRobot {
             .perform(click())
     }
 
-    fun clickManageMyDataSetting() {
-        onView(withId(R.id.manageMyDataOption))
+    fun hasLanguageSetting() {
+        onView(withId(R.id.languageOption))
+            .check(
+                matches(
+                    allOf(
+                        isDisplayed(),
+                        NthChildOf(withId(R.id.settingsList), 0)
+                    )
+                )
+            )
+    }
+
+    fun hasMyAreaSetting() {
+        onView(withId(R.id.myAreaOption))
+            .check(
+                matches(
+                    allOf(
+                        isDisplayed(),
+                        NthChildOf(withId(R.id.settingsList), 1)
+                    )
+                )
+            )
+    }
+
+    fun hasMyDataSetting() {
+        onView(withId(R.id.myDataOption))
+            .check(
+                matches(
+                    allOf(
+                        isDisplayed(),
+                        NthChildOf(withId(R.id.settingsList), 2)
+                    )
+                )
+            )
+    }
+
+    fun hasVenueHistorySetting() {
+        onView(withId(R.id.venueHistoryOption))
+            .check(
+                matches(
+                    allOf(
+                        isDisplayed(),
+                        NthChildOf(withId(R.id.settingsList), 3)
+                    )
+                )
+            )
+    }
+
+    fun hasDeleteDataOption() {
+        onView(withId(R.id.actionDeleteAllData))
+            .check(
+                matches(
+                    allOf(
+                        isDisplayed(),
+                        withText(R.string.settings_delete_data)
+                    )
+                )
+            )
+    }
+
+    fun clickMyDataSetting() {
+        onView(withId(R.id.myDataOption))
+            .perform(click())
+    }
+
+    fun clickMyAreaSetting() {
+        onView(withId(R.id.myAreaOption))
+            .perform(click())
+    }
+
+    fun clickVenueHistorySetting() {
+        onView(withId(R.id.venueHistoryOption))
+            .perform(click())
+    }
+
+    fun clickDeleteSetting() {
+        onView(withId(R.id.actionDeleteAllData))
+            .perform(click())
+    }
+
+    fun userClicksDeleteDataOnDialog() {
+        onView(withText(R.string.about_delete_positive_text))
             .perform(click())
     }
 }

@@ -32,22 +32,38 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/resultIcon"
+                android:id="@+id/animationIcon"
                 style="@style/ShrinkInLandscape"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:scaleType="fitCenter"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="80dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="5dp"
                 android:contentDescription="@null"
                 app:layout_constraintBottom_toTopOf="@id/titleTextView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:src="@drawable/ic_qr_code_success" />
+                tools:src="@drawable/tick_final_2083" />
+
+            <ImageView
+                android:id="@+id/errorResultIcon"
+                style="@style/ShrinkInLandscape"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="5dp"
+                android:contentDescription="@null"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/titleTextView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:src="@drawable/ic_qr_code_failure" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
                 android:id="@+id/titleTextView"
-                style="@style/Title1"
+                style="@style/VenueSuccessTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/horizontal_margin_in_scroll_container"
@@ -56,37 +72,19 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="@string/qr_code_success_title" />
+                tools:text="Thank you for checking in to The Drapers Arms" />
 
-            <LinearLayout
-                android:id="@+id/venueInfoContainer"
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                android:id="@+id/successVenueDateTime"
+                style="@style/VenueDateTimeText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/horizontal_margin_in_scroll_container"
                 android:layout_marginTop="@dimen/vertical_margin"
-                android:orientation="vertical"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/titleTextView"
-                tools:visibility="visible">
-
-                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
-                    android:id="@+id/successVenueName"
-                    style="@style/VenueNameText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/horizontal_margin_in_scroll_container"
-                    android:textAlignment="center"
-                    tools:text="The Drapers Arms" />
-
-                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
-                    android:id="@+id/successVenueDateTime"
-                    style="@style/VenueDateTimeText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/horizontal_margin_in_scroll_container"
-                    android:layout_marginTop="@dimen/vertical_margin"
-                    android:textAlignment="center"
-                    tools:text="10 Aug 2020 19:17" />
-            </LinearLayout>
+                android:textAlignment="center"
+                tools:visibility="visible"
+                tools:text="10 Aug 2020 19:17" />
 
             <TextView
                 android:id="@+id/subtitleTextView"
@@ -96,8 +94,19 @@
                 android:layout_marginHorizontal="@dimen/horizontal_margin_in_scroll_container"
                 android:layout_marginTop="@dimen/vertical_margin_large"
                 android:textAlignment="center"
-                app:layout_constraintTop_toBottomOf="@id/venueInfoContainer"
+                app:layout_constraintTop_toBottomOf="@id/successVenueDateTime"
                 tools:text="@string/qr_code_success_subtitle" />
+
+            <TextView
+                android:id="@+id/textCancelCheckIn"
+                style="@style/LinkText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="@dimen/bottom_button_spacing"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:text="@string/qr_code_cancel_check_in"
+                tools:text="@string/qr_code_cancel_check_in" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.UnderlinedTextView
                 android:id="@+id/qrScanHelpLink"
@@ -108,7 +117,7 @@
                 android:textAlignment="center"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/subtitleTextView"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/qrCodeHelpContainer"
@@ -133,35 +142,12 @@
 
     </ScrollView>
 
-    <LinearLayout
-        android:id="@+id/buttons"
-        style="@style/BottomButtonsLayout"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/actionButton"
+        style="@style/PrimaryButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/actionButton"
-            style="@style/PrimaryButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/bottom_button_spacing"
-            android:layout_weight="0.5"
-            tools:text="@string/back_to_home" />
-
-        <TextView
-            android:id="@+id/textCancelCheckIn"
-            style="@style/LinkText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/bottom_button_spacing"
-            android:layout_weight="0.5"
-            android:gravity="center"
-            android:text="@string/qr_code_cancel_check_in" />
-
-    </LinearLayout>
-
+        android:layout_marginHorizontal="@dimen/margin_horizontal"
+        android:layout_marginVertical="@dimen/vertical_margin_large"
+        tools:text="@string/back_to_home" />
 </LinearLayout>

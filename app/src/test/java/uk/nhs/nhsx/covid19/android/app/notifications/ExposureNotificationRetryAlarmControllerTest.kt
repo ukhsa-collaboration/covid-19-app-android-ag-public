@@ -7,17 +7,17 @@ import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.Before
+import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.RiskyContactReminderNotification
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
+import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController.Companion.EXPOSURE_NOTIFICATION_RETRY_ALARM_INTENT_ID
+import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationRetryReceiver
+import uk.nhs.nhsx.covid19.android.app.util.BroadcastProvider
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
-import kotlinx.coroutines.test.TestCoroutineScope
-import org.junit.Before
-import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
-import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController.Companion.EXPOSURE_NOTIFICATION_RETRY_ALARM_INTENT_ID
-import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationRetryReceiver
-import uk.nhs.nhsx.covid19.android.app.util.BroadcastProvider
 
 class ExposureNotificationRetryAlarmControllerTest {
 
@@ -26,22 +26,19 @@ class ExposureNotificationRetryAlarmControllerTest {
     private val notificationProvider = mockk<NotificationProvider>(relaxUnitFun = true)
     private val shouldShowEncounterDetectionActivityProvider =
         mockk<ShouldShowEncounterDetectionActivityProvider>()
-    private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>()
+    private val analyticsEventTracker = mockk<AnalyticsEventTracker>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(Instant.parse("2021-01-10T10:00:00Z"), ZoneOffset.UTC)
     private val broadcastProvider = mockk<BroadcastProvider>()
     private val pendingIntent = mockk<PendingIntent>()
-
-    private val testCoroutineScope = TestCoroutineScope()
 
     private val testSubject = ExposureNotificationRetryAlarmController(
         context,
         alarmManager,
         notificationProvider,
         shouldShowEncounterDetectionActivityProvider,
-        analyticsEventProcessor,
+        analyticsEventTracker,
         fixedClock,
         broadcastProvider,
-        testCoroutineScope
     )
 
     @Before
@@ -66,6 +63,7 @@ class ExposureNotificationRetryAlarmControllerTest {
         testSubject.onDeviceRebooted()
 
         verify { notificationProvider.showExposureNotification() }
+        verify { analyticsEventTracker.track(RiskyContactReminderNotification) }
         verifyAlarmScheduled()
     }
 
@@ -94,6 +92,7 @@ class ExposureNotificationRetryAlarmControllerTest {
         testSubject.onAppCreated()
 
         verify { notificationProvider.showExposureNotification() }
+        verify { analyticsEventTracker.track(RiskyContactReminderNotification) }
         verifyAlarmScheduled()
     }
 
@@ -132,6 +131,7 @@ class ExposureNotificationRetryAlarmControllerTest {
         testSubject.onAlarmTriggered()
 
         verify { notificationProvider.showExposureNotification() }
+        verify { analyticsEventTracker.track(RiskyContactReminderNotification) }
         verifyAlarmScheduled()
     }
 

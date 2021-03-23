@@ -6,6 +6,8 @@ import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import junit.framework.Assert.assertEquals
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -14,6 +16,9 @@ import kotlinx.coroutines.test.TestCoroutineScope
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.CalculateMissingSubmissionDays.Companion.SUBMISSION_LOG_CHECK_RANGE_MAX
+import uk.nhs.nhsx.covid19.android.app.analytics.ConsumeOldestAnalyticsResult.Consumed
+import uk.nhs.nhsx.covid19.android.app.analytics.ConsumeOldestAnalyticsResult.NothingToConsume
+import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
 import uk.nhs.nhsx.covid19.android.app.remote.AnalyticsApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsPayload
@@ -22,24 +27,21 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.Metadata
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import uk.nhs.nhsx.covid19.android.app.util.toISOSecondsFormat
 import java.time.Instant
-import kotlin.test.assertEquals
 
 class SubmitAnalyticsTest {
 
-    private val analyticsLogStorage = mockk<AnalyticsLogStorage>(relaxUnitFun = true)
     private val analyticsApi = mockk<AnalyticsApi>(relaxUnitFun = true)
-    private val groupAnalyticsEvents = mockk<GroupAnalyticsEvents>()
     private val migrateMetricsLogStorageToLogStorage = mockk<MigrateMetricsLogStorageToLogStorage>(relaxUnitFun = true)
     private val analyticsSubmissionLogStorage = mockk<AnalyticsSubmissionLogStorage>(relaxUnitFun = true)
+    private val consumeOldestAnalytics = mockk<ConsumeOldestAnalytics>()
     private val createAnalyticsPayload = mockk<CreateAnalyticsPayload>()
 
     private val testSubject = SubmitAnalytics(
-        analyticsLogStorage,
         analyticsApi,
-        groupAnalyticsEvents,
         migrateMetricsLogStorageToLogStorage,
         analyticsSubmissionLogStorage,
-        createAnalyticsPayload,
+        consumeOldestAnalytics,
+        createAnalyticsPayload
     )
 
     @Before
@@ -48,9 +50,9 @@ class SubmitAnalyticsTest {
     }
 
     @Test
-    fun `when grouping analytics events throws an exception then data should not be submitted`() =
+    fun `when consuming events throws an exception then data should not be submitted`() =
         runBlocking {
-            coEvery { groupAnalyticsEvents.invoke() } throws Exception()
+            coEvery { consumeOldestAnalytics.invoke() } throws Exception()
 
             testSubject.invoke()
 
@@ -60,9 +62,9 @@ class SubmitAnalyticsTest {
         }
 
     @Test
-    fun `when grouping analytics events returns an empty list then data should not be submitted`() =
+    fun `when consuming events returns null then data should not be submitted`() =
         runBlocking {
-            coEvery { groupAnalyticsEvents.invoke() } returns Success(listOf())
+            coEvery { consumeOldestAnalytics.invoke() } returns NothingToConsume
 
             testSubject.invoke()
 
@@ -75,7 +77,7 @@ class SubmitAnalyticsTest {
     @Test
     fun `cancelling task should not prevent it from sending all the analytics data`() =
         runBlocking {
-            coEvery { groupAnalyticsEvents.invoke() } returns stubAnalyticsGroups(2)
+            coEvery { consumeOldestAnalytics.invoke() } returnsMany listOf(Consumed(group), Consumed(group), NothingToConsume)
 
             val testCoroutineScope = TestCoroutineScope()
             val job = testCoroutineScope.launch {
@@ -89,17 +91,15 @@ class SubmitAnalyticsTest {
             testCoroutineScope.advanceTimeBy(300)
 
             coVerifyOrder {
-                analyticsLogStorage.remove(any(), any())
                 analyticsApi.submitAnalytics(any())
-                analyticsLogStorage.remove(any(), any())
                 analyticsApi.submitAnalytics(any())
             }
         }
 
     @Test
-    fun `when grouping analytics events returns multiple groups then payloads should be submitted for all of them`() =
+    fun `when consuming events returns multiple groups then payloads should be submitted for all of them`() =
         runBlocking {
-            coEvery { groupAnalyticsEvents.invoke() } returns stubAnalyticsGroups(2)
+            coEvery { consumeOldestAnalytics.invoke() } returnsMany listOf(Consumed(group), Consumed(group), NothingToConsume)
 
             val result = testSubject.invoke()
 
@@ -108,30 +108,28 @@ class SubmitAnalyticsTest {
             verify { migrateMetricsLogStorageToLogStorage.invoke() }
             verify(exactly = 2) { createAnalyticsPayload.invoke(group) }
             coVerify(exactly = 2) { analyticsApi.submitAnalytics(payload) }
-            verify(exactly = 2) { analyticsSubmissionLogStorage.add(analyticsWindow.startDateToLocalDate()) }
+            verify(exactly = 2) { analyticsSubmissionLogStorage.addDate(analyticsWindow.startDateToLocalDate()) }
             verify(exactly = 2) {
                 analyticsSubmissionLogStorage.removeBeforeOrEqual(
                     analyticsWindow.startDateToLocalDate().minusDays(SUBMISSION_LOG_CHECK_RANGE_MAX.toLong())
                 )
             }
-            coVerify(exactly = 2) { analyticsLogStorage.remove(startDate, endDate) }
         }
 
     @Test
-    fun `when grouping returns 3 groups but first submission throws an exception then the task is aborted`() =
+    fun `when consuming events returns 3 groups but first submission throws an exception then the task is aborted`() =
         runBlocking {
             val testException = Exception()
-            coEvery { groupAnalyticsEvents.invoke() } returns stubAnalyticsGroups(3)
+            coEvery { consumeOldestAnalytics.invoke() } returnsMany listOf(Consumed(group), Consumed(group), NothingToConsume)
 
             coEvery { analyticsApi.submitAnalytics(any()) } throws testException
 
             val result = testSubject.invoke()
 
-            assertEquals(Success(Unit), result)
+            assertTrue(result is Failure)
 
-            verify(exactly = 1) { analyticsLogStorage.remove(startDate, endDate) }
             verify(exactly = 1) { createAnalyticsPayload.invoke(group) }
-            verify(exactly = 0) { analyticsSubmissionLogStorage.add(any()) }
+            verify(exactly = 0) { analyticsSubmissionLogStorage.addDate(any()) }
             verify(exactly = 0) { analyticsSubmissionLogStorage.removeBeforeOrEqual(any()) }
         }
 
@@ -153,13 +151,4 @@ class SubmitAnalyticsTest {
         metadata = Metadata("", "", "", "", ""),
         metrics = Metrics()
     )
-
-    private fun stubAnalyticsGroups(size: Int) =
-        Success(
-            mutableListOf<AnalyticsEventsGroup>().apply {
-                repeat(size) {
-                    add(group)
-                }
-            }
-        )
 }

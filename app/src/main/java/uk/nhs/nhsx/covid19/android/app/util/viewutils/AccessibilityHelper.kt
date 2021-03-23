@@ -162,6 +162,22 @@ fun TextView.setUpAccessibilityButton() {
     )
 }
 
+fun TextView.setUpAccessibilityHeading(heading: String) {
+    ViewCompat.setAccessibilityDelegate(
+        this,
+        object : AccessibilityDelegateCompat() {
+            override fun onInitializeAccessibilityNodeInfo(
+                host: View,
+                info: AccessibilityNodeInfoCompat
+            ) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                info.contentDescription = heading
+                info.isHeading = true
+            }
+        }
+    )
+}
+
 fun Context.announce(textToAnnounce: String) {
     val accessibilityEvent = AccessibilityEvent.obtain().apply {
         eventType = AccessibilityEvent.TYPE_ANNOUNCEMENT

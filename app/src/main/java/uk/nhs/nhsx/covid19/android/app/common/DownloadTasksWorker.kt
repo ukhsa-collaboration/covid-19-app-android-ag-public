@@ -7,7 +7,6 @@ import androidx.work.ListenableWorker.Result.Success
 import androidx.work.WorkerParameters
 import com.jeroenmols.featureflag.framework.FeatureFlag.SUBMIT_ANALYTICS_VIA_ALARM_MANAGER
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
-import javax.inject.Inject
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.BackgroundTaskCompletion
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
@@ -24,6 +23,7 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRisk
 import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWork
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
 import uk.nhs.nhsx.covid19.android.app.util.defaultFalse
+import javax.inject.Inject
 
 class DownloadTasksWorker(
     val context: Context,

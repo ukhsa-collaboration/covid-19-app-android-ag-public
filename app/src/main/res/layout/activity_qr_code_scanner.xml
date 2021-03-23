@@ -52,24 +52,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="32dp"
-                    android:layout_marginBottom="16dp"
                     android:gravity="center"
                     android:text="@string/scan_qr_code_to_check_in"
-                    android:textColor="@color/white" />
-
-                <TextView
-                    android:id="@+id/textMoreInfo"
-                    style="@style/ActionText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginHorizontal="32dp"
-                    android:drawableStart="@drawable/ic_info"
-                    android:drawablePadding="7dp"
-                    android:drawableTint="@color/white"
-                    android:gravity="center"
-                    android:text="@string/qr_code_more_info"
-                    android:textAlignment="center"
                     android:textColor="@color/white" />
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
@@ -78,20 +62,36 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="32dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/vertical_margin_large"
                     android:gravity="center"
                     android:text="@string/how_to_scan_qr_code"
                     android:textColor="@color/white" />
 
                 <TextView
                     android:id="@+id/howToUseScannerHint"
-                    style="@style/ActionText"
+                    style="@style/Body1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="32dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/vertical_margin"
                     android:gravity="center"
                     android:text="@string/qr_code_scan_explanation"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/textMoreInfo"
+                    style="@style/ActionText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginHorizontal="32dp"
+                    android:layout_marginTop="@dimen/vertical_margin_large"
+                    android:gravity="center"
+                    android:text="@string/qr_code_more_info"
+                    android:textAlignment="center"
+                    android:background="@drawable/qr_more_info_button_background"
+                    android:padding="12dp"
                     android:textColor="@color/white" />
             </LinearLayout>
         </ScrollView>

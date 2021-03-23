@@ -86,9 +86,9 @@
             android:label="@string/loading"/>
         <activity android:name=".exposure.encounter.EncounterDetectionActivity"/>
         <activity android:name=".qrcode.QrCodeHelpActivity"
-            android:label="@string/venue_check_in_title"/>
-        <activity android:name=".about.UserDataActivity"
-            android:label="@string/about_manage_my_data" />
+            android:label="@string/qr_code_help_more_information"/>
+        <activity android:name=".about.MyDataActivity"
+            android:label="@string/settings_my_data" />
         <activity android:name=".about.EditPostalDistrictActivity"
             android:label="@string/edit_postcode_district_title"/>
         <activity android:name=".testordering.TestOrderingProgressActivity"
@@ -107,9 +107,9 @@
         <activity android:name=".testordering.linktestresult.LinkTestResultActivity"
             android:label="@string/status_option_link_test_result"/>
         <activity android:name=".testordering.linktestresult.LinkTestResultSymptomsActivity"
-            android:label="@string/link_test_result_symptoms_title"/>
+            android:label="@string/link_test_result_symptoms_information_title"/>
         <activity android:name=".testordering.linktestresult.LinkTestResultOnsetDateActivity"
-            android:label="@string/link_test_result_onset_date_title"/>
+            android:label="@string/link_test_result_symptoms_information_title"/>
         <activity android:name=".payment.IsolationPaymentActivity"
             android:label="@string/isolation_payment_heading"/>
         <activity android:name=".availability.UpdateRecommendedActivity"
@@ -125,10 +125,14 @@
         <activity android:name=".payment.RedirectToIsolationPaymentWebsiteActivity" />
         <activity android:name=".settings.SettingsActivity"
             android:label="@string/settings_title"/>
+        <activity android:name=".about.VenueHistoryActivity"
+            android:label="@string/title_venue_history" />
         <activity android:name=".settings.languages.LanguagesActivity"
             android:label="@string/language_title"/>
         <activity android:name=".testordering.linktestresult.DailyContactTestingConfirmationActivity"
             android:label="@string/daily_contact_testing_confirmation_title"/>
+        <activity android:name=".settings.myarea.MyAreaActivity"
+            android:label="@string/settings_my_area_title"/>
 
         <!-- Receivers -->
         <receiver

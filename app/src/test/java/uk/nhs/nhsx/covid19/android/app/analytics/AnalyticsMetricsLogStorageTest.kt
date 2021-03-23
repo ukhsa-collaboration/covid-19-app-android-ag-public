@@ -4,13 +4,13 @@ import com.squareup.moshi.Moshi
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
+import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
 import kotlin.test.assertEquals
-import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
-import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
 
 class AnalyticsMetricsLogStorageTest {
 

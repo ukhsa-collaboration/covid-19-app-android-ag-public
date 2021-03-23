@@ -6,8 +6,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Point
+import android.media.MediaPlayer
+import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.ContextThemeWrapper
@@ -23,28 +28,27 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Button
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
-import java.time.Instant
-import java.time.LocalDate
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import kotlinx.android.synthetic.scenarios.activity_debug.buttonFeatureFlags
 import kotlinx.android.synthetic.scenarios.activity_debug.environmentSpinner
 import kotlinx.android.synthetic.scenarios.activity_debug.exposureNotificationMocks
 import kotlinx.android.synthetic.scenarios.activity_debug.languageSpinner
 import kotlinx.android.synthetic.scenarios.activity_debug.mockSettings
-import kotlinx.android.synthetic.scenarios.activity_debug.scenarioOnboarding
 import kotlinx.android.synthetic.scenarios.activity_debug.scenarioMain
+import kotlinx.android.synthetic.scenarios.activity_debug.scenarioOnboarding
 import kotlinx.android.synthetic.scenarios.activity_debug.scenarios
 import kotlinx.android.synthetic.scenarios.activity_debug.scenariosGroup
 import kotlinx.android.synthetic.scenarios.activity_debug.screenButtonContainer
 import kotlinx.android.synthetic.scenarios.activity_debug.screenFilter
 import kotlinx.android.synthetic.scenarios.activity_debug.statusScreen
-import kotlinx.android.synthetic.scenarios.activity_debug.titleScreens
 import kotlinx.android.synthetic.scenarios.activity_debug.titleScenarios
+import kotlinx.android.synthetic.scenarios.activity_debug.titleScreens
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.SupportedLanguage.DEFAULT
 import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
 import uk.nhs.nhsx.covid19.android.app.about.MoreAboutAppActivity
-import uk.nhs.nhsx.covid19.android.app.about.UserDataActivity
+import uk.nhs.nhsx.covid19.android.app.about.MyDataActivity
+import uk.nhs.nhsx.covid19.android.app.about.VenueHistoryActivity
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateRecommendedActivity
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationActivity
@@ -92,9 +96,11 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.scenariodialog.MockApiDialogFragment
+import uk.nhs.nhsx.covid19.android.app.scenariodialog.MyDataDialogFragment
 import uk.nhs.nhsx.covid19.android.app.scenariodialog.TestResultDialogFragment
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.settings.languages.LanguagesActivity
+import uk.nhs.nhsx.covid19.android.app.settings.myarea.MyAreaActivity
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
 import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
@@ -108,6 +114,8 @@ import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResul
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultOnsetDateActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
+import java.time.Instant
+import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
@@ -317,6 +325,16 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             QrCodeScanResultActivity.start(this, Success("Sample Venue"))
         }
 
+        addScreenButton("QR Success Custom Sound") {
+            QrCodeScanResultActivity.start(this, Success("Sample Venue"))
+            playCustomSoundAndVibrate()
+        }
+
+        addScreenButton("QR Success Default Sound") {
+            QrCodeScanResultActivity.start(this, Success("Sample Venue"))
+            playDefaultSoundAndVibrate()
+        }
+
         addScreenButton("QR Code Scan Failure") {
             QrCodeScanResultActivity.start(this, InvalidContent)
         }
@@ -384,7 +402,9 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
 
         addScreenButton("User Data") {
-            UserDataActivity.start(this)
+            MyDataDialogFragment {
+                MyDataActivity.start(this)
+            }.show(supportFragmentManager, "UserDataDialogFragment")
         }
 
         addScreenButton("Test Ordering Progress") {
@@ -544,8 +564,42 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             startActivity<SettingsActivity>()
         }
 
+        addScreenButton("Venue History") {
+            VenueHistoryActivity.start(this)
+        }
+
         addScreenButton("Languages") {
             startActivity<LanguagesActivity>()
+        }
+
+        addScreenButton("Settings - My area") {
+            startActivity<MyAreaActivity>()
+        }
+    }
+
+    private fun playDefaultSoundAndVibrate() {
+        val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val sound = RingtoneManager.getRingtone(applicationContext, notification)
+
+        sound.play()
+        triggerVibration()
+    }
+
+    private fun playCustomSoundAndVibrate() {
+        val player = MediaPlayer.create(this, R.raw.success)
+
+        player.start()
+        triggerVibration()
+    }
+
+    private fun triggerVibration() {
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (vibrator.hasVibrator()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                vibrator.vibrate(200)
+            }
         }
     }
 

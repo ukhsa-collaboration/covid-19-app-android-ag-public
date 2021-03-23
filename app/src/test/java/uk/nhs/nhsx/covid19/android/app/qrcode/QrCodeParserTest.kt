@@ -26,12 +26,26 @@ class QrCodeParserTest {
     private val testSubject = QrCodeParser(base64Decoder, moshi, signatureKey)
 
     @Test
-    fun `valid QR code`() {
+    fun `valid QR code without postcode`() {
         val payload =
-            "UKC19TRACING:1:eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjMifQ.eyJpZCI6IjRXVDU5TTVZIiwib3BuIjoiR292ZXJubWVudCBPZmZpY2UgT2YgSHVtYW4gUmVzb3VyY2VzIn0.ZIvwm9rxiRTm4o-koafL6Bzre9pakcyae8m6_MSyvAl-CFkUgfm6gcXYn4gg5OScKZ1-XayHBGwEdps0RKXs4g"
+            "UKC19TRACING:1:eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjMifQ.eyJpZCI6IjRXVDU5TTVZIiwib3BuIjoiR292ZXJubWVudCBPZmZpY2UgT2YgSHVtYW4gUmVzb3VyY2VzIn0.5TvKParsqDGMCrtefQ4YCgPpq-cwxzzP9hwyHbx5WJ-vp0bd7aeemRLCh5rS7CvUtdc6ytA8NNXUmTHXeyo6qA"
         val venue = Venue(
             id = "4WT59M5Y",
-            organizationPartName = "Government Office Of Human Resources"
+            organizationPartName = "Government Office Of Human Resources",
+            postCode = null
+        )
+
+        assertEquals(venue, testSubject.parse(payload))
+    }
+
+    @Test
+    fun `valid QR code with postcode`() {
+        val payload =
+            "UKC19TRACING:1:eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjMifQ.eyJpZCI6IjRXVDU5TTVZIiwib3BuIjoiR292ZXJubWVudCBPZmZpY2UgT2YgSHVtYW4gUmVzb3VyY2VzIiwicGMiOiJDTTEifQ.cGzgB0sBV6c9A5LMHgO56SECqPILnCELlr4731iCyJxKFYPrr4a5R5B_wAbkluoJHfSRX7iwbZrJdWbt4z3feA"
+        val venue = Venue(
+            id = "4WT59M5Y",
+            organizationPartName = "Government Office Of Human Resources",
+            postCode = "CM1"
         )
 
         assertEquals(venue, testSubject.parse(payload))

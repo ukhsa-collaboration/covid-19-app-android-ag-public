@@ -1,9 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.notifications
 
 import android.content.SharedPreferences
-import java.time.LocalDate
-import javax.inject.Inject
-import javax.inject.Singleton
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
@@ -12,6 +9,9 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
+import java.time.LocalDate
+import javax.inject.Inject
+import javax.inject.Singleton
 
 sealed class UserInboxItem {
     object ShowTestResult : UserInboxItem()

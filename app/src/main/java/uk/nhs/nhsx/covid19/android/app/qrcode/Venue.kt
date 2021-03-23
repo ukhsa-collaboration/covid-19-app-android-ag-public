@@ -7,5 +7,7 @@ import com.squareup.moshi.JsonClass
 data class Venue(
     val id: String,
     @Json(name = "opn")
-    val organizationPartName: String
+    val organizationPartName: String,
+    @Json(name = "pc")
+    val postCode: String? = null
 )

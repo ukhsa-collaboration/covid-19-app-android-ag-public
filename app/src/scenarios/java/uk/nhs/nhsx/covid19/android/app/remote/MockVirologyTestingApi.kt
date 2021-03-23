@@ -1,9 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.remote
 
-import java.io.IOException
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import java.util.UUID
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
@@ -22,6 +18,10 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultRequestBody
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultResponse
+import java.io.IOException
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import java.util.UUID
 
 class MockVirologyTestingApi : VirologyTestingApi {
     var pollingTestResultHttpStatusCode = 200

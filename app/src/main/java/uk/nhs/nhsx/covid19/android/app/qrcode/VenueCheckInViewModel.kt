@@ -36,14 +36,20 @@ class VenueCheckInViewModel @Inject constructor(
     fun getVisitRemovedResult(): LiveData<RemoveVisitResult> = visitRemovedResult
 
     fun onCreate(scanResult: QrCodeScanResult) {
-        viewStateLiveData.postValue(
-            when (scanResult) {
-                is Success -> ViewState.Success(scanResult.venueName, LocalDateTime.now(clock))
-                CameraPermissionNotGranted -> ViewState.CameraPermissionNotGranted
-                Scanning, InvalidContent -> ViewState.InvalidContent
-                ScanningNotSupported -> ViewState.ScanningNotSupported
-            }
-        )
+        if (viewStateLiveData.value == null) {
+            viewStateLiveData.postValue(
+                when (scanResult) {
+                    is Success -> ViewState.Success(
+                        scanResult.venueName,
+                        LocalDateTime.now(clock),
+                        playAnimation = true
+                    )
+                    CameraPermissionNotGranted -> ViewState.CameraPermissionNotGranted
+                    Scanning, InvalidContent -> ViewState.InvalidContent
+                    ScanningNotSupported -> ViewState.ScanningNotSupported
+                }
+            )
+        }
     }
 
     fun removeLastVisit() {
@@ -60,8 +66,18 @@ class VenueCheckInViewModel @Inject constructor(
         }
     }
 
+    fun onAnimationCompleted() {
+        val currentViewState = viewStateLiveData.value
+        if (currentViewState is ViewState.Success) {
+            val updatedState = currentViewState.copy(playAnimation = false)
+            viewStateLiveData.postValue(updatedState)
+        }
+    }
+
     sealed class ViewState {
-        data class Success(val venueName: String, val currentDateTime: LocalDateTime) : ViewState()
+        data class Success(val venueName: String, val currentDateTime: LocalDateTime, val playAnimation: Boolean) :
+            ViewState()
+
         object CameraPermissionNotGranted : ViewState()
         object InvalidContent : ViewState()
         object ScanningNotSupported : ViewState()

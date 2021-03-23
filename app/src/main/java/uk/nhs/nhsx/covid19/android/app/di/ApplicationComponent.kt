@@ -3,7 +3,8 @@ package uk.nhs.nhsx.covid19.android.app.di
 import dagger.Component
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
-import uk.nhs.nhsx.covid19.android.app.about.UserDataActivity
+import uk.nhs.nhsx.covid19.android.app.about.MyDataActivity
+import uk.nhs.nhsx.covid19.android.app.about.VenueHistoryActivity
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalyticsAlarmController
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitOnboardingAnalyticsWorker
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
@@ -52,6 +53,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.SubmitAnalyticsAlarmReceiver
 import uk.nhs.nhsx.covid19.android.app.receiver.UpdateReceiver
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.settings.languages.LanguagesActivity
+import uk.nhs.nhsx.covid19.android.app.settings.myarea.MyAreaActivity
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
 import uk.nhs.nhsx.covid19.android.app.status.DebugFragment
 import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWorker
@@ -110,11 +112,12 @@ interface ApplicationComponent {
     fun inject(shareKeysInformationActivity: ShareKeysInformationActivity)
     fun inject(submitKeysProgressActivity: SubmitKeysProgressActivity)
     fun inject(exposureNotificationBroadcastReceiver: ExposureNotificationBroadcastReceiver)
-    fun inject(userDataActivity: UserDataActivity)
+    fun inject(myDataActivity: MyDataActivity)
     fun inject(editPostalCodeActivity: EditPostalDistrictActivity)
     fun inject(testOrderingProgressActivity: TestOrderingProgressActivity)
     fun inject(appAvailabilityActivity: AppAvailabilityActivity)
     fun inject(settingsActivity: SettingsActivity)
+    fun inject(venueHistoryActivity: VenueHistoryActivity)
     fun inject(languagesActivity: LanguagesActivity)
     fun inject(updateReceiver: UpdateReceiver)
     fun inject(venueAlertInformActivity: VenueAlertInformActivity)
@@ -137,6 +140,7 @@ interface ApplicationComponent {
     fun inject(welcomeActivity: WelcomeActivity)
     fun inject(redirectToIsolationPaymentWebsiteActivity: RedirectToIsolationPaymentWebsiteActivity)
     fun inject(dailyContactTestingConfirmationActivity: DailyContactTestingConfirmationActivity)
+    fun inject(myAreaActivity: MyAreaActivity)
 
     fun inject(testResultViewModel: BaseTestResultViewModel)
 

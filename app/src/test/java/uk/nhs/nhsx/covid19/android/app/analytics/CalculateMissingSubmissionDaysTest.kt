@@ -15,7 +15,7 @@ class CalculateMissingSubmissionDaysTest {
 
     @Test
     fun testCalculationAllDaysSubmitted() {
-        every { analyticsSubmissionLogStorage.value } returns setOf(
+        every { analyticsSubmissionLogStorage.getLogForAnalyticsWindow(LocalDate.of(2020, 10, 8)) } returns setOf(
             LocalDate.of(2020, 10, 1),
             LocalDate.of(2020, 10, 2),
             LocalDate.of(2020, 10, 3),
@@ -31,7 +31,7 @@ class CalculateMissingSubmissionDaysTest {
 
     @Test
     fun testCalculationOneDayMissing() {
-        every { analyticsSubmissionLogStorage.value } returns setOf(
+        every { analyticsSubmissionLogStorage.getLogForAnalyticsWindow(LocalDate.of(2020, 10, 8)) } returns setOf(
             LocalDate.of(2020, 10, 1),
             LocalDate.of(2020, 10, 2),
             LocalDate.of(2020, 10, 3),
@@ -46,7 +46,7 @@ class CalculateMissingSubmissionDaysTest {
 
     @Test
     fun testCalculationAllDaysMissing() {
-        every { analyticsSubmissionLogStorage.value } returns setOf()
+        every { analyticsSubmissionLogStorage.getLogForAnalyticsWindow(LocalDate.of(2020, 10, 8)) } returns setOf()
 
         val missingDays = testSubject.invoke(AnalyticsWindow(startDate = "2020-10-08T00:00:00Z", endDate = "2020-10-09T00:00:00Z"))
         assertEquals(7, missingDays)

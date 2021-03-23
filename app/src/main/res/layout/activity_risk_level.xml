@@ -63,18 +63,10 @@
                 android:orientation="vertical"
                 android:visibility="gone" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
-                android:id="@+id/riskLevelFooter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                android:visibility="gone" />
-
             <LinearLayout
                 android:id="@+id/massTestingContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin_large"
                 android:orientation="vertical">
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
@@ -97,6 +89,13 @@
                     android:text="@string/risk_level_mass_testing_link_text"
                     app:linkUrl="@string/risk_level_mass_testing_link_url" />
             </LinearLayout>
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                android:id="@+id/riskLevelFooter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:visibility="gone" />
 
             <View
                 android:layout_width="wrap_content"

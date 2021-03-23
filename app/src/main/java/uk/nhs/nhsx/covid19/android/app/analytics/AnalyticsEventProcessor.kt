@@ -57,6 +57,7 @@ import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.Companion.ISOLATION_STATE_CHANNEL_ID
+import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
@@ -67,6 +68,7 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
+import uk.nhs.nhsx.covid19.android.app.util.defaultFalse
 import uk.nhs.nhsx.covid19.android.app.util.isEqualOrAfter
 import java.time.Clock
 import java.time.Instant
@@ -85,10 +87,16 @@ class AnalyticsEventProcessor @Inject constructor(
     private val isolationPaymentTokenStateProvider: IsolationPaymentTokenStateProvider,
     private val notificationProvider: NotificationProvider,
     private val lastVisitedBookTestTypeVenueDateProvider: LastVisitedBookTestTypeVenueDateProvider,
+    private val onboardingCompletedProvider: OnboardingCompletedProvider,
     private val clock: Clock
 ) {
 
     suspend fun track(analyticsEvent: AnalyticsEvent) {
+        val isOnboardingCompleted = onboardingCompletedProvider.value.defaultFalse()
+        if (!isOnboardingCompleted) {
+            return
+        }
+
         Timber.d("processing event: $analyticsEvent")
 
         val logItem = analyticsEvent.toAnalyticsLogItem()

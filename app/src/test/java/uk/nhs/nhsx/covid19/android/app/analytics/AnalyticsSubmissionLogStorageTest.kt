@@ -6,9 +6,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
-import java.time.Clock
 import java.time.LocalDate
-import java.time.ZoneOffset
 import kotlin.test.assertEquals
 
 class AnalyticsSubmissionLogStorageTest {
@@ -16,38 +14,35 @@ class AnalyticsSubmissionLogStorageTest {
     private val moshi = Moshi.Builder()
         .add(LocalDateAdapter())
         .build()
-
     private val analyticsSubmissionLogJsonStorage = mockk<AnalyticsSubmissionLogJsonStorage>(relaxUnitFun = true)
-    private val today = LocalDate.of(2020, 10, 9)
-    private val fixedClock = Clock.fixed(today.atStartOfDay().toInstant(ZoneOffset.UTC), ZoneOffset.UTC)
 
-    private val testSubject = AnalyticsSubmissionLogStorage(analyticsSubmissionLogJsonStorage, fixedClock, moshi)
+    private val testSubject = AnalyticsSubmissionLogStorage(analyticsSubmissionLogJsonStorage, moshi)
 
     @Test
     fun `read empty storage returns default set`() {
         every { analyticsSubmissionLogJsonStorage.value } returns null
 
-        assertEquals(defaultSet, testSubject.value)
+        assertEquals(defaultSet, testSubject.getLogForAnalyticsWindow(yesterday))
     }
 
     @Test
     fun `read corrupted storage returns default set`() {
         every { analyticsSubmissionLogJsonStorage.value } returns "adfjskg"
 
-        assertEquals(defaultSet, testSubject.value)
+        assertEquals(defaultSet, testSubject.getLogForAnalyticsWindow(yesterday))
     }
 
     @Test
     fun `verify serialization from empty set`() {
         every { analyticsSubmissionLogJsonStorage.value } returns "[]"
-        testSubject.add(localDate1)
+        testSubject.addDate(localDate1)
         verify { analyticsSubmissionLogJsonStorage.value = serializedSet1 }
     }
 
     @Test
     fun `verify serialization from non empty set`() {
         every { analyticsSubmissionLogJsonStorage.value } returns serializedSet1
-        testSubject.add(localDate2)
+        testSubject.addDate(localDate2)
         verify { analyticsSubmissionLogJsonStorage.value = serializedSet1and2 }
     }
 
@@ -55,7 +50,7 @@ class AnalyticsSubmissionLogStorageTest {
     fun `verify deserialization`() {
         every { analyticsSubmissionLogJsonStorage.value } returns serializedSet1and2
 
-        assertEquals(setOfLocalDates, testSubject.value)
+        assertEquals(setOfLocalDates, testSubject.getLogForAnalyticsWindow(yesterday))
     }
 
     @Test
@@ -98,14 +93,16 @@ class AnalyticsSubmissionLogStorageTest {
             ["2020-10-11"]
         """.trimIndent()
 
+    private val today = LocalDate.of(2020, 10, 9)
+    private val yesterday = today.minusDays(1)
+
     private val defaultSet = setOf<LocalDate>(
-        today.minusDays(1),
-        today.minusDays(2),
-        today.minusDays(3),
-        today.minusDays(4),
-        today.minusDays(5),
-        today.minusDays(6),
-        today.minusDays(7),
-        today.minusDays(8),
+        yesterday.minusDays(1),
+        yesterday.minusDays(2),
+        yesterday.minusDays(3),
+        yesterday.minusDays(4),
+        yesterday.minusDays(5),
+        yesterday.minusDays(6),
+        yesterday.minusDays(7)
     )
 }

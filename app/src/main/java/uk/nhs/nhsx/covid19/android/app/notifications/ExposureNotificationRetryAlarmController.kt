@@ -3,20 +3,16 @@ package uk.nhs.nhsx.covid19.android.app.notifications
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
+import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.RiskyContactReminderNotification
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
+import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationRetryReceiver
+import uk.nhs.nhsx.covid19.android.app.util.BroadcastProvider
 import java.time.Clock
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.RiskyContactReminderNotification
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
-import uk.nhs.nhsx.covid19.android.app.di.module.AppModule.Companion.GLOBAL_SCOPE
-import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationRetryReceiver
-import uk.nhs.nhsx.covid19.android.app.util.BroadcastProvider
 
 @Singleton
 class ExposureNotificationRetryAlarmController @Inject constructor(
@@ -24,10 +20,9 @@ class ExposureNotificationRetryAlarmController @Inject constructor(
     private val alarmManager: AlarmManager,
     private val notificationProvider: NotificationProvider,
     private val shouldShowEncounterDetectionActivityProvider: ShouldShowEncounterDetectionActivityProvider,
-    private val analyticsEventProcessor: AnalyticsEventProcessor,
+    private val analyticsEventTracker: AnalyticsEventTracker,
     private val clock: Clock,
     private val broadcastProvider: BroadcastProvider,
-    @Named(GLOBAL_SCOPE) private val analyticsEventScope: CoroutineScope
 ) {
 
     fun onDeviceRebooted() {
@@ -56,9 +51,7 @@ class ExposureNotificationRetryAlarmController @Inject constructor(
         if (shouldShowEncounterDetectionActivityProvider.value == true) {
             Timber.d("showing notification")
             notificationProvider.showExposureNotification()
-            analyticsEventScope.launch {
-                analyticsEventProcessor.track(RiskyContactReminderNotification)
-            }
+            analyticsEventTracker.track(RiskyContactReminderNotification)
             setupNextAlarm()
         }
     }

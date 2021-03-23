@@ -132,6 +132,11 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="VenueSuccessTitle">
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:textSize">25sp</item>
+    </style>
+
     <style name="OnboardingBullet" parent="Widget.MaterialComponents.TextView">
         <item name="android:layout_width">32dp</item>
         <item name="android:layout_height">32dp</item>
@@ -221,17 +226,11 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="AboutAppTitleText">
+    <style name="MyDataTitleText">
         <item name="android:textColor">?android:textColorSecondary</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:textAllCaps">true</item>
+        <item name="android:textAllCaps">false</item>
         <item name="android:letterSpacing">0.11</item>
-    </style>
-
-    <style name="VenueNameText">
-        <item name="android:textColor">?android:textColorPrimary</item>
-        <item name="android:textSize">46sp</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="VenueDateTimeText">

@@ -3,6 +3,7 @@
     package="uk.nhs.nhsx.covid19.android.app">
 
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".ScenariosExposureApplication"

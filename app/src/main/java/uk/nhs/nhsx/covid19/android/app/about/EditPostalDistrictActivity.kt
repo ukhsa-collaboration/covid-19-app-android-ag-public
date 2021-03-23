@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.about
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -62,12 +63,13 @@ class EditPostalDistrictActivity : BaseActivity(R.layout.activity_edit_postal_di
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == LOCAL_AUTHORITY_REQUEST && resultCode == RESULT_OK) {
+            setResult(Activity.RESULT_OK)
             finish()
         }
     }
 
     companion object {
-        private const val LOCAL_AUTHORITY_REQUEST = 1339
+        const val LOCAL_AUTHORITY_REQUEST = 1339
 
         fun start(context: Context) = context.startActivity(getIntent(context))
 
