@@ -84,6 +84,8 @@ class ExposureNotificationRetryAlarmController @Inject constructor(
             Timber.d("alarm cancelled")
             alarmManager.cancel(pendingIntent)
         }
+
+        notificationProvider.cancelExposureNotification()
     }
 
     private fun getExistingPendingIntent(): PendingIntent? {

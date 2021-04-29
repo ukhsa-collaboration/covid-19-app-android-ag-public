@@ -5,9 +5,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
-import java.time.Clock
-import javax.inject.Named
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import uk.nhs.covid19.config.SignatureKey
@@ -17,6 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.common.AppInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWorker
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWorkerScheduler
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RandomNonRiskyExposureWindowsLimiter
 import uk.nhs.nhsx.covid19.android.app.packagemanager.PackageManager
 import uk.nhs.nhsx.covid19.android.app.permissions.PermissionsManager
 import uk.nhs.nhsx.covid19.android.app.qrcode.BarcodeDetectorBuilder
@@ -24,7 +22,11 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.util.AndroidBase64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedFileInfo
+import uk.nhs.nhsx.covid19.android.app.util.UUIDGenerator
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.DeviceDetection
+import java.time.Clock
+import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
 class AppModule(
@@ -40,6 +42,8 @@ class AppModule(
     private val permissionsManager: PermissionsManager,
     private val packageManager: PackageManager,
     private val barcodeDetectorBuilder: BarcodeDetectorBuilder,
+    private val randomNonRiskyExposureWindowsLimiter: RandomNonRiskyExposureWindowsLimiter,
+    private val uuidGenerator: UUIDGenerator,
     private val clock: Clock
 ) {
     @Provides
@@ -103,6 +107,16 @@ class AppModule(
     @Singleton
     fun providePackageManager(): PackageManager =
         packageManager
+
+    @Provides
+    @Singleton
+    fun provideRandomNonRiskyExposureWindowsLimiter(): RandomNonRiskyExposureWindowsLimiter =
+        randomNonRiskyExposureWindowsLimiter
+
+    @Provides
+    @Singleton
+    fun provideUUIDGenerator(): UUIDGenerator =
+        uuidGenerator
 
     @Provides
     @Singleton

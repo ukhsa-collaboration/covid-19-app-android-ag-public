@@ -5,9 +5,16 @@ import com.squareup.moshi.JsonClass
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import java.time.Instant
 import java.time.ZoneId
+import java.util.UUID
 
 @JsonClass(generateAdapter = true)
-data class VenueVisit(val venue: Venue, val from: Instant, val to: Instant, val wasInRiskyList: Boolean = false)
+data class VenueVisit(
+    val id: String = UUID.randomUUID().toString(),
+    val venue: Venue,
+    val from: Instant,
+    val to: Instant,
+    val wasInRiskyList: Boolean = false
+)
 
 fun VenueVisit.uiDate(context: Context, zoneId: ZoneId = ZoneId.systemDefault()): String {
 

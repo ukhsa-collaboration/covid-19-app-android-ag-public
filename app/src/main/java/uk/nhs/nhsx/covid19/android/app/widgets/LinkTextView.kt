@@ -33,10 +33,17 @@ class LinkTextView @JvmOverloads constructor(
 
     private var linkUrl: Int = 0
 
+    private var districtAreaLinkUrl: Int? = null
+
     init {
         context.applicationContext.appComponent.inject(this)
         applyAttributes(context, attrs)
         setUpOpensInBrowserWarning()
+        setOnSingleClickListener {
+            districtAreaLinkUrl?.let {
+                getActivity()?.openUrl(it)
+            }
+        }
     }
 
     override fun onAttachedToWindow() {
@@ -51,10 +58,7 @@ class LinkTextView @JvmOverloads constructor(
     }
 
     private fun afterJobInitialized() = launch {
-        val linkUrl = districtAreaStringProvider.provide(linkUrl)
-        setOnSingleClickListener {
-            getActivity()?.openUrl(linkUrl)
-        }
+        districtAreaLinkUrl = districtAreaStringProvider.provide(linkUrl)
     }
 
     private fun applyAttributes(context: Context, attrs: AttributeSet?) {

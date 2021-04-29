@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.common
 
 import com.jeroenmols.featureflag.framework.FeatureFlag.STORE_EXPOSURE_WINDOWS
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfoProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationTokensProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
@@ -29,9 +28,9 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration @Inject constructor(
     private val riskyVenueConfigurationProvider: RiskyVenueConfigurationProvider,
     private val riskyVenueConfigurationApi: RiskyVenueConfigurationApi,
     private val exposureNotificationTokensProvider: ExposureNotificationTokensProvider,
-    private val exposureCircuitBreakerInfoProvider: ExposureCircuitBreakerInfoProvider,
     private val epidemiologyEventProvider: EpidemiologyEventProvider,
     private val lastVisitedBookTestTypeVenueDateProvider: LastVisitedBookTestTypeVenueDateProvider,
+    private val clearOutdatedKeySharingInfo: ClearOutdatedKeySharingInfo,
     private val clock: Clock
 ) {
 
@@ -39,38 +38,33 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration @Inject constructor(
         updateIsolationConfiguration()
         updateRiskyVenueConfiguration()
 
-        val expiryDays = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
+        val retentionPeriodDays = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
 
         val state = isolationStateMachine.readState()
         if (state is Default) {
             val previousIsolation = state.previousIsolation
             if (previousIsolation == null) {
-                val oldestTestEndDateToKeep = Instant.now(clock).minus(expiryDays.toLong(), ChronoUnit.DAYS)
+                val oldestTestEndDateToKeep = Instant.now(clock).minus(retentionPeriodDays.toLong(), ChronoUnit.DAYS)
                 if (relevantTestResultProvider.testResult?.testEndDate?.isBefore(oldestTestEndDateToKeep) == true) {
                     relevantTestResultProvider.clear()
                 }
-                clearOldUnacknowledgedTestResults(expiryDays)
-            } else if (previousIsolation.expiryDate.isMoreThanOrExactlyDaysAgo(expiryDays)) {
+                clearOldUnacknowledgedTestResults(retentionPeriodDays)
+            } else if (previousIsolation.expiryDate.isMoreThanOrExactlyDaysAgo(retentionPeriodDays)) {
                 relevantTestResultProvider.clear()
-                clearOldUnacknowledgedTestResults(expiryDays)
+                clearOldUnacknowledgedTestResults(retentionPeriodDays)
                 isolationStateMachine.clearPreviousIsolation()
-            }
-
-            if (RuntimeBehavior.isFeatureEnabled(STORE_EXPOSURE_WINDOWS)) {
-                if (exposureCircuitBreakerInfoProvider.info.isEmpty()) {
-                    epidemiologyEventProvider.clear()
-                }
             }
         }
 
-        if (!lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk())
+        if (!lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk()) {
             lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = null
+        }
+
+        clearOutdatedKeySharingInfo()
+
+        clearOldEpidemiologyEvents(retentionPeriodDays)
 
         clearLegacyData()
-    }
-
-    private fun clearOldUnacknowledgedTestResults(expiryDays: Int) {
-        unacknowledgedTestResultsProvider.clearBefore(LocalDate.now(clock).minusDays(expiryDays.toLong()))
     }
 
     private suspend fun updateIsolationConfiguration() {
@@ -84,6 +78,16 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration @Inject constructor(
         runCatching {
             val response = riskyVenueConfigurationApi.getRiskyVenueConfiguration()
             riskyVenueConfigurationProvider.durationDays = response.durationDays
+        }
+    }
+
+    private fun clearOldUnacknowledgedTestResults(expiryDays: Int) {
+        unacknowledgedTestResultsProvider.clearBefore(LocalDate.now(clock).minusDays(expiryDays.toLong()))
+    }
+
+    private fun clearOldEpidemiologyEvents(retentionPeriodDays: Int) {
+        if (RuntimeBehavior.isFeatureEnabled(STORE_EXPOSURE_WINDOWS)) {
+            epidemiologyEventProvider.clearOnAndBefore(LocalDate.now(clock).minusDays(retentionPeriodDays.toLong()))
         }
     }
 

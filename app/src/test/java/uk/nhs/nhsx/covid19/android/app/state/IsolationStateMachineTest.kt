@@ -7,16 +7,12 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DeclaredNegativeResultFromDct
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedUnconfirmedPositiveTestResult
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
-import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate
@@ -61,15 +57,12 @@ class IsolationStateMachineTest {
     private val notificationProvider = mockk<NotificationProvider>(relaxed = true)
     private val userInbox = mockk<UserInbox>(relaxed = true)
     private val alarmController = mockk<IsolationExpirationAlarmController>(relaxed = true)
-    private val isolationConfigurationProvider =
-        mockk<IsolationConfigurationProvider>(relaxed = true)
+    private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>(relaxed = true)
     private val relevantTestResultProvider = mockk<RelevantTestResultProvider>(relaxed = true)
     private val testResultHandler = mockk<TestResultHandler>(relaxed = true)
     private val testResultIsolationHandler = mockk<TestResultIsolationHandler>(relaxed = true)
-    private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxed = true)
-    private val exposureNotificationRetryAlarmController =
-        mockk<ExposureNotificationRetryAlarmController>(relaxed = true)
-    private val testScope = TestCoroutineScope()
+    private val analyticsEventTracker = mockk<AnalyticsEventTracker>(relaxUnitFun = true)
+    private val exposureNotificationHandler = mockk<ExposureNotificationHandler>(relaxUnitFun = true)
 
     private val durationDays =
         DurationDays(
@@ -81,116 +74,119 @@ class IsolationStateMachineTest {
         )
 
     @Before
-    fun setUp() = testScope.runBlockingTest {
+    fun setUp() {
         every { isolationConfigurationProvider.durationDays } returns durationDays
     }
 
     @Test
-    fun `from default to index case on positive self assessment and user cannot remember onset date`() =
-        testScope.runBlockingTest {
-            every { stateProvider.state } returns Default()
+    fun `from default to index case on positive self assessment and user cannot remember onset date`() {
+        every { stateProvider.state } returns Default()
 
-            val testSubject = createIsolationStateMachine(fixedClock)
+        val testSubject = createIsolationStateMachine(fixedClock)
 
-            val transition = testSubject.processEvent(
-                OnPositiveSelfAssessment(
-                    CannotRememberDate
-                )
+        val transition = testSubject.processEvent(
+            OnPositiveSelfAssessment(
+                CannotRememberDate
             )
+        )
 
-            val actualState = testSubject.readState()
+        val actualState = testSubject.readState()
 
-            val startDateForSymptomatic = Instant.now(fixedClock)
-            val expiryDateForSymptomatic = LocalDate.now(fixedClock).plus(
-                durationDays.indexCaseSinceSelfDiagnosisUnknownOnset.toLong(),
-                ChronoUnit.DAYS
+        val startDateForSymptomatic = Instant.now(fixedClock)
+        val expiryDateForSymptomatic = LocalDate.now(fixedClock).plus(
+            durationDays.indexCaseSinceSelfDiagnosisUnknownOnset.toLong(),
+            ChronoUnit.DAYS
+        )
+        val expectedState = Isolation(
+            isolationStart = startDateForSymptomatic,
+            isolationConfiguration = durationDays,
+            indexCase = IndexCase(
+                symptomsOnsetDate = LocalDate.parse("2020-05-19"),
+                expiryDate = expiryDateForSymptomatic,
+                selfAssessment = true
             )
-            val expectedState = Isolation(
-                isolationStart = startDateForSymptomatic,
-                isolationConfiguration = durationDays,
-                indexCase = IndexCase(
-                    symptomsOnsetDate = LocalDate.parse("2020-05-19"),
-                    expiryDate = expiryDateForSymptomatic,
-                    selfAssessment = true
-                )
-            )
-            assertEquals(expectedState, actualState)
+        )
+        assertEquals(expectedState, actualState)
 
-            val sideEffect = (transition as Transition.Valid).sideEffect
-            assertEquals(ClearAcknowledgedTestResult, sideEffect)
-            coVerify(exactly = 1) { analyticsEventProcessor.track(StartedIsolation) }
-            verify(exactly = 1) { relevantTestResultProvider.clear() }
+        val sideEffect = (transition as Transition.Valid).sideEffect
+        assertEquals(ClearAcknowledgedTestResult, sideEffect)
+        verify(exactly = 1) { analyticsEventTracker.track(StartedIsolation) }
+        verify(exactly = 1) { relevantTestResultProvider.clear() }
 
-            newStateIsolationChecks(actualState)
-        }
+        newStateIsolationChecks(
+            currentState = Default(),
+            newState = actualState
+        )
+    }
 
     @Test
-    fun `stay in default state on positive self assessment and onset date is too long ago`() =
-        testScope.runBlockingTest {
-            every { stateProvider.state } returns Default()
+    fun `stay in default state on positive self assessment and onset date is too long ago`() {
+        every { stateProvider.state } returns Default()
 
-            val onsetDate = LocalDate.now(fixedClock)
-                .minusDays(durationDays.indexCaseSinceSelfDiagnosisOnset.toLong() + 1)
+        val onsetDate = LocalDate.now(fixedClock)
+            .minusDays(durationDays.indexCaseSinceSelfDiagnosisOnset.toLong() + 1)
 
-            val testSubject = createIsolationStateMachine(fixedClock)
+        val testSubject = createIsolationStateMachine(fixedClock)
 
-            val transition = testSubject.processEvent(
-                OnPositiveSelfAssessment(
-                    SelectedDate.ExplicitDate(onsetDate)
-                )
+        val transition = testSubject.processEvent(
+            OnPositiveSelfAssessment(
+                SelectedDate.ExplicitDate(onsetDate)
             )
+        )
 
-            val actualState = testSubject.readState()
+        val actualState = testSubject.readState()
 
-            assertEquals(Default(), actualState)
+        assertEquals(Default(), actualState)
 
-            val sideEffect = (transition as Transition.Valid).sideEffect
-            assertNull(sideEffect)
-            coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-            verify(exactly = 0) { relevantTestResultProvider.clear() }
-
-            newStateDefaultChecks()
-        }
+        val sideEffect = (transition as Transition.Valid).sideEffect
+        assertNull(sideEffect)
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
+        verify(exactly = 0) { relevantTestResultProvider.clear() }
+        verify { alarmController.cancelExpirationCheckIfAny() }
+        verify(exactly = 1) { exposureNotificationHandler.cancel() }
+    }
 
     @Test
-    fun `from default to index state on positive self assessment and onset date is recent`() =
-        testScope.runBlockingTest {
-            every { stateProvider.state } returns Default()
+    fun `from default to index state on positive self assessment and onset date is recent`() {
+        every { stateProvider.state } returns Default()
 
-            val daysBeforeToday = 1L
-            val onsetDate = LocalDate.now(fixedClock).minusDays(daysBeforeToday)
+        val daysBeforeToday = 1L
+        val onsetDate = LocalDate.now(fixedClock).minusDays(daysBeforeToday)
 
-            val testSubject = createIsolationStateMachine(fixedClock)
+        val testSubject = createIsolationStateMachine(fixedClock)
 
-            val transition = testSubject.processEvent(
-                OnPositiveSelfAssessment(SelectedDate.ExplicitDate(onsetDate))
-            )
+        val transition = testSubject.processEvent(
+            OnPositiveSelfAssessment(SelectedDate.ExplicitDate(onsetDate))
+        )
 
-            val actualState = testSubject.readState()
+        val actualState = testSubject.readState()
 
-            val expiryDateForSymptomatic =
-                onsetDate.plusDays(durationDays.indexCaseSinceSelfDiagnosisOnset.toLong() - daysBeforeToday + 1)
-            val expectedState = Isolation(
-                indexCase = IndexCase(
-                    symptomsOnsetDate = onsetDate,
-                    expiryDate = expiryDateForSymptomatic,
-                    selfAssessment = true
-                ),
-                isolationStart = Instant.now(fixedClock),
-                isolationConfiguration = durationDays
-            )
-            assertEquals(expectedState, actualState)
+        val expiryDateForSymptomatic =
+            onsetDate.plusDays(durationDays.indexCaseSinceSelfDiagnosisOnset.toLong() - daysBeforeToday + 1)
+        val expectedState = Isolation(
+            indexCase = IndexCase(
+                symptomsOnsetDate = onsetDate,
+                expiryDate = expiryDateForSymptomatic,
+                selfAssessment = true
+            ),
+            isolationStart = Instant.now(fixedClock),
+            isolationConfiguration = durationDays
+        )
+        assertEquals(expectedState, actualState)
 
-            val sideEffect = (transition as Transition.Valid).sideEffect
-            assertEquals(ClearAcknowledgedTestResult, sideEffect)
-            coVerify(exactly = 1) { analyticsEventProcessor.track(StartedIsolation) }
-            verify(exactly = 1) { relevantTestResultProvider.clear() }
+        val sideEffect = (transition as Transition.Valid).sideEffect
+        assertEquals(ClearAcknowledgedTestResult, sideEffect)
+        verify(exactly = 1) { analyticsEventTracker.track(StartedIsolation) }
+        verify(exactly = 1) { relevantTestResultProvider.clear() }
 
-            newStateIsolationChecks(actualState)
-        }
+        newStateIsolationChecks(
+            currentState = Default(),
+            newState = actualState
+        )
+    }
 
     @Test
-    fun `stay in default on positive test result`() = testScope.runBlockingTest {
+    fun `stay in default on positive test result`() {
         val testResult = ReceivedTestResult(
             diagnosisKeySubmissionToken = "123",
             testEndDate = Instant.now(fixedClock),
@@ -214,14 +210,14 @@ class IsolationStateMachineTest {
         assertEquals(Default(), actual)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultHandler.onTestResultReceived(testResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedUnconfirmedPositiveTestResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-
-        newStateDefaultChecks()
+        verify(exactly = 0) { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
+        verify { alarmController.cancelExpirationCheckIfAny() }
+        verify(exactly = 1) { exposureNotificationHandler.cancel() }
     }
 
     @Test
-    fun `stay in default on void test result`() = testScope.runBlockingTest {
+    fun `stay in default on void test result`() {
         val testResult = ReceivedTestResult(
             diagnosisKeySubmissionToken = "123",
             testEndDate = Instant.now(fixedClock),
@@ -245,14 +241,14 @@ class IsolationStateMachineTest {
         assertEquals(Default(), actual)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultHandler.onTestResultReceived(testResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedUnconfirmedPositiveTestResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-
-        newStateDefaultChecks()
+        verify(exactly = 0) { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
+        verify { alarmController.cancelExpirationCheckIfAny() }
+        verify(exactly = 1) { exposureNotificationHandler.cancel() }
     }
 
     @Test
-    fun `from default to contact case on exposed notification contact 5 days ago`() = testScope.runBlockingTest {
+    fun `from default to contact case on exposed notification contact 5 days ago`() {
         every { stateProvider.state } returns Default()
 
         val today = Clock.fixed(Instant.parse("2020-05-20T10:00:00Z"), ZoneOffset.UTC)
@@ -282,16 +278,17 @@ class IsolationStateMachineTest {
 
         assertEquals(expected, actual)
         assertEquals(SendExposedNotification, sideEffect)
-        verify(exactly = 1) { notificationProvider.showExposureNotification() }
-        verify(exactly = 1) { userInbox.addUserInboxItem(ShowEncounterDetection) }
-        verify(exactly = 1) { exposureNotificationRetryAlarmController.setupNextAlarm() }
-        coVerify(exactly = 1) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 1) { exposureNotificationHandler.show() }
+        verify(exactly = 1) { analyticsEventTracker.track(StartedIsolation) }
 
-        newStateIsolationChecks(actual)
+        newStateIsolationChecks(
+            currentState = Default(),
+            newState = actual
+        )
     }
 
     @Test
-    fun `stay default on exposed notification contact 14 days ago`() = testScope.runBlockingTest {
+    fun `stay default on exposed notification contact 14 days ago`() {
         every { stateProvider.state } returns Default()
 
         val today = Clock.fixed(Instant.parse("2020-05-20T10:00:00Z"), ZoneOffset.UTC)
@@ -309,16 +306,13 @@ class IsolationStateMachineTest {
 
         assertEquals(expected, actual)
         assertNull(sideEffect)
-        verify(exactly = 0) { notificationProvider.showExposureNotification() }
-        verify(exactly = 0) { userInbox.addUserInboxItem(ShowEncounterDetection) }
-        verify(exactly = 0) { exposureNotificationRetryAlarmController.setupNextAlarm() }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-
-        newStateDefaultChecks()
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
+        verify { alarmController.cancelExpirationCheckIfAny() }
+        verify(exactly = 1) { exposureNotificationHandler.cancel() }
     }
 
     @Test
-    fun `stay default on exposed notification contact 15 days ago`() = testScope.runBlockingTest {
+    fun `stay default on exposed notification contact 15 days ago`() {
         every { stateProvider.state } returns Default()
 
         val today = Clock.fixed(Instant.parse("2020-05-20T10:00:00Z"), ZoneOffset.UTC)
@@ -336,16 +330,13 @@ class IsolationStateMachineTest {
 
         assertEquals(expected, actual)
         assertNull(sideEffect)
-        verify(exactly = 0) { notificationProvider.showExposureNotification() }
-        verify(exactly = 0) { userInbox.addUserInboxItem(ShowEncounterDetection) }
-        verify(exactly = 0) { exposureNotificationRetryAlarmController.setupNextAlarm() }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-
-        newStateDefaultChecks()
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
+        verify { alarmController.cancelExpirationCheckIfAny() }
+        verify(exactly = 1) { exposureNotificationHandler.cancel() }
     }
 
     @Test
-    fun `in index case on exposed notification add contact case`() = testScope.runBlockingTest {
+    fun `in index case on exposed notification add contact case`() {
         val case = isolationStateWithIndexCase(3, false)
         every { stateProvider.state } returns isolationStateWithIndexCase(3, false)
 
@@ -370,13 +361,16 @@ class IsolationStateMachineTest {
         )
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertEquals(SendExposedNotification, sideEffect)
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
-        newStateIsolationChecks(actual)
+        newStateIsolationChecks(
+            currentState = case,
+            newState = actual
+        )
     }
 
     @Test
-    fun `in contact case on exposed notification add contact case`() = testScope.runBlockingTest {
+    fun `in contact case on exposed notification add contact case`() {
         val case = isolationStateWithContactCase(expiryDaysFromStartDate = 3)
         every { stateProvider.state } returns case
 
@@ -391,13 +385,16 @@ class IsolationStateMachineTest {
         assertEquals(case, actual)
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertEquals(null, sideEffect)
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
-        newStateIsolationChecks(actual)
+        newStateIsolationChecks(
+            currentState = case,
+            newState = actual
+        )
     }
 
     @Test
-    fun `stay in index case on exposed notification with confirmed positive test result`() = testScope.runBlockingTest {
+    fun `stay in index case on exposed notification with confirmed positive test result`() {
         val initialState = isolationStateWithIndexCase(3, false)
         every { stateProvider.state } returns isolationStateWithIndexCase(3, false)
 
@@ -415,51 +412,55 @@ class IsolationStateMachineTest {
         assertEquals(initialState, actual)
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertNull(sideEffect)
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
-        newStateIsolationChecks(actual)
+        newStateIsolationChecks(
+            currentState = initialState,
+            newState = actual
+        )
     }
 
     @Test
-    fun `add contact case to index case on exposed notification without confirmed positive test result`() =
-        testScope.runBlockingTest {
-            val initialState = isolationStateWithIndexCase(3, false)
-            every { stateProvider.state } returns isolationStateWithIndexCase(3, false)
+    fun `add contact case to index case on exposed notification without confirmed positive test result`() {
+        val initialState = isolationStateWithIndexCase(3, false)
+        every { stateProvider.state } returns isolationStateWithIndexCase(3, false)
 
-            mockkStatic("uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachineKt")
-            every { initialState.hasConfirmedPositiveTestResult(testResultHandler) } returns false
+        mockkStatic("uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachineKt")
+        every { initialState.hasConfirmedPositiveTestResult(testResultHandler) } returns false
 
-            val testSubject = createIsolationStateMachine(fixedClock)
+        val testSubject = createIsolationStateMachine(fixedClock)
 
-            val exposureDate = Instant.now(fixedClock)
-            val transition = testSubject.processEvent(
-                OnExposedNotification(exposureDate)
+        val exposureDate = Instant.now(fixedClock)
+        val transition = testSubject.processEvent(
+            OnExposedNotification(exposureDate)
+        )
+
+        val actual = testSubject.readState()
+
+        val expiryDate = exposureDate.atZone(ZoneOffset.UTC).toLocalDate()
+            .plusDays(durationDays.contactCase.toLong())
+        val expected = initialState.copy(
+            contactCase = ContactCase(
+                startDate = exposureDate,
+                notificationDate = Instant.now(fixedClock),
+                expiryDate = expiryDate
             )
+        )
 
-            val actual = testSubject.readState()
+        assertEquals(expected, actual)
+        val sideEffect = (transition as Transition.Valid).sideEffect
+        assertEquals(SendExposedNotification, sideEffect)
+        verify(exactly = 1) { exposureNotificationHandler.show() }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
-            val expiryDate = exposureDate.atZone(ZoneOffset.UTC).toLocalDate()
-                .plusDays(durationDays.contactCase.toLong())
-            val expected = initialState.copy(
-                contactCase = ContactCase(
-                    startDate = exposureDate,
-                    notificationDate = Instant.now(fixedClock),
-                    expiryDate = expiryDate
-                )
-            )
-
-            assertEquals(expected, actual)
-            val sideEffect = (transition as Transition.Valid).sideEffect
-            assertEquals(SendExposedNotification, sideEffect)
-            verify(exactly = 1) { notificationProvider.showExposureNotification() }
-            verify(exactly = 1) { userInbox.addUserInboxItem(ShowEncounterDetection) }
-            coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-
-            newStateIsolationChecks(actual)
-        }
+        newStateIsolationChecks(
+            currentState = initialState,
+            newState = actual
+        )
+    }
 
     @Test
-    fun `stay in index case on positive confirmed test result`() = testScope.runBlockingTest {
+    fun `stay in index case on positive confirmed test result`() {
         val testResult = ReceivedTestResult(
             diagnosisKeySubmissionToken = "123",
             testEndDate = Instant.now(fixedClock),
@@ -485,14 +486,17 @@ class IsolationStateMachineTest {
         assertEquals(expected, actual)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultHandler.onTestResultReceived(testResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedUnconfirmedPositiveTestResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
-        newStateIsolationChecks(actual)
+        newStateIsolationChecks(
+            currentState = state,
+            newState = actual
+        )
     }
 
     @Test
-    fun `stay in index case on positive unconfirmed test result`() = testScope.runBlockingTest {
+    fun `stay in index case on positive unconfirmed test result`() {
         val testResult = ReceivedTestResult(
             diagnosisKeySubmissionToken = "123",
             testEndDate = Instant.now(fixedClock),
@@ -518,14 +522,17 @@ class IsolationStateMachineTest {
         assertEquals(expected, actual)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultHandler.onTestResultReceived(testResult) }
-        coVerify { analyticsEventProcessor.track(ReceivedUnconfirmedPositiveTestResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
-        newStateIsolationChecks(actual)
+        newStateIsolationChecks(
+            currentState = state,
+            newState = actual
+        )
     }
 
     @Test
-    fun `stay in index case on void test result`() = testScope.runBlockingTest {
+    fun `stay in index case on void test result`() {
         val testResult = ReceivedTestResult(
             diagnosisKeySubmissionToken = "123",
             testEndDate = Instant.now(fixedClock),
@@ -551,14 +558,17 @@ class IsolationStateMachineTest {
         assertEquals(expected, actual)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultHandler.onTestResultReceived(testResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedUnconfirmedPositiveTestResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
-        newStateIsolationChecks(actual)
+        newStateIsolationChecks(
+            currentState = state,
+            newState = actual
+        )
     }
 
     @Test
-    fun `stay in index case to default on negative test result`() = testScope.runBlockingTest {
+    fun `stay in index case to default on negative test result`() {
         val testResult = ReceivedTestResult(
             diagnosisKeySubmissionToken = "123",
             testEndDate = Instant.now(fixedClock),
@@ -595,14 +605,17 @@ class IsolationStateMachineTest {
         assertEquals(expected, newState)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultHandler.onTestResultReceived(testResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedUnconfirmedPositiveTestResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
-        newStateIsolationChecks(newState)
+        newStateIsolationChecks(
+            currentState = isolation,
+            newState = newState
+        )
     }
 
     @Test
-    fun `index case with previous contact case stays index case on negative test result`() = testScope.runBlockingTest {
+    fun `index case with previous contact case stays index case on negative test result`() {
         val testResult = ReceivedTestResult(
             diagnosisKeySubmissionToken = "123",
             testEndDate = Instant.now(fixedClock),
@@ -641,159 +654,171 @@ class IsolationStateMachineTest {
         assertEquals(state, newState)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultHandler.onTestResultReceived(testResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
-        newStateIsolationChecks(newState)
+        newStateIsolationChecks(
+            currentState = state,
+            newState = newState
+        )
     }
 
     @Test
-    fun `add index case to contact case on positive self assessment and contact case finishes later than index`() =
-        testScope.runBlockingTest {
-            val contactCaseStartDate = Instant.now(fixedClock)
-            val contactCaseExpiryDate = LocalDate.now(fixedClock).plusDays(365)
-            val contactCase = ContactCase(
-                startDate = contactCaseStartDate,
-                notificationDate = null,
-                expiryDate = contactCaseExpiryDate
-            )
-            every { stateProvider.state } returns Isolation(
-                isolationStart = contactCaseStartDate,
+    fun `add index case to contact case on positive self assessment and contact case finishes later than index`() {
+        val contactCaseStartDate = Instant.now(fixedClock)
+        val contactCaseExpiryDate = LocalDate.now(fixedClock).plusDays(365)
+        val contactCase = ContactCase(
+            startDate = contactCaseStartDate,
+            notificationDate = null,
+            expiryDate = contactCaseExpiryDate
+        )
+        val isolation = Isolation(
+            isolationStart = contactCaseStartDate,
+            isolationConfiguration = durationDays,
+            contactCase = contactCase
+        )
+        every { stateProvider.state } returns isolation
+
+        val testSubject = createIsolationStateMachine(fixedClock)
+
+        val startDate = LocalDate.parse("2020-05-19")
+        val transition = testSubject.processEvent(
+            OnPositiveSelfAssessment(SelectedDate.ExplicitDate(startDate))
+        )
+
+        val actual = testSubject.readState()
+
+        val startDateForIndex = Instant.now(fixedClock)
+        val expected =
+            Isolation(
+                isolationStart = startDateForIndex,
                 isolationConfiguration = durationDays,
+                indexCase = IndexCase(
+                    symptomsOnsetDate = startDate,
+                    expiryDate = startDate.plusDays(23),
+                    selfAssessment = true
+                ),
                 contactCase = contactCase
             )
 
-            val testSubject = createIsolationStateMachine(fixedClock)
+        val sideEffect = (transition as Transition.Valid).sideEffect
 
-            val startDate = LocalDate.parse("2020-05-19")
-            val transition = testSubject.processEvent(
-                OnPositiveSelfAssessment(SelectedDate.ExplicitDate(startDate))
-            )
+        assertEquals(expected, actual)
+        assertEquals(ClearAcknowledgedTestResult, sideEffect)
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
+        verify(exactly = 1) { relevantTestResultProvider.clear() }
 
-            val actual = testSubject.readState()
-
-            val startDateForIndex = Instant.now(fixedClock)
-            val expected =
-                Isolation(
-                    isolationStart = startDateForIndex,
-                    isolationConfiguration = durationDays,
-                    indexCase = IndexCase(
-                        symptomsOnsetDate = startDate,
-                        expiryDate = startDate.plusDays(23),
-                        selfAssessment = true
-                    ),
-                    contactCase = contactCase
-                )
-
-            val sideEffect = (transition as Transition.Valid).sideEffect
-
-            assertEquals(expected, actual)
-            assertEquals(ClearAcknowledgedTestResult, sideEffect)
-            coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-            verify(exactly = 1) { relevantTestResultProvider.clear() }
-
-            newStateIsolationChecks(actual)
-        }
+        newStateIsolationChecks(
+            currentState = isolation,
+            newState = actual
+        )
+    }
 
     @Test
-    fun `add index case to contact case on positive self assessment and user cannot remember onset date`() =
-        testScope.runBlockingTest {
-            val startDate = Instant.now(fixedClock)
-            val expiryDate = LocalDate.now(fixedClock).plusDays(3)
-            val contactCase = ContactCase(
-                startDate = startDate,
-                notificationDate = null,
-                expiryDate = expiryDate
-            )
-            every { stateProvider.state } returns Isolation(
-                isolationStart = startDate,
+    fun `add index case to contact case on positive self assessment and user cannot remember onset date`() {
+        val startDate = Instant.now(fixedClock)
+        val expiryDate = LocalDate.now(fixedClock).plusDays(3)
+        val contactCase = ContactCase(
+            startDate = startDate,
+            notificationDate = null,
+            expiryDate = expiryDate
+        )
+        val isolation = Isolation(
+            isolationStart = startDate,
+            isolationConfiguration = durationDays,
+            contactCase = contactCase
+        )
+        every { stateProvider.state } returns isolation
+
+        val testSubject = createIsolationStateMachine(fixedClock)
+
+        val transition = testSubject.processEvent(
+            OnPositiveSelfAssessment(CannotRememberDate)
+        )
+
+        val actual = testSubject.readState()
+
+        val startDateForIndex = Instant.now(fixedClock)
+        val expiryDateForIndex = LocalDate.now(fixedClock)
+            .plusDays(durationDays.indexCaseSinceSelfDiagnosisUnknownOnset.toLong())
+        val expected =
+            Isolation(
+                isolationStart = startDateForIndex,
                 isolationConfiguration = durationDays,
+                indexCase = IndexCase(
+                    symptomsOnsetDate = LocalDate.parse("2020-05-19"),
+                    expiryDate = expiryDateForIndex,
+                    selfAssessment = true
+                ),
                 contactCase = contactCase
             )
 
-            val testSubject = createIsolationStateMachine(fixedClock)
+        val sideEffect = (transition as Transition.Valid).sideEffect
 
-            val transition = testSubject.processEvent(
-                OnPositiveSelfAssessment(CannotRememberDate)
-            )
+        assertEquals(expected, actual)
+        assertEquals(ClearAcknowledgedTestResult, sideEffect)
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
+        verify(exactly = 1) { relevantTestResultProvider.clear() }
 
-            val actual = testSubject.readState()
-
-            val startDateForIndex = Instant.now(fixedClock)
-            val expiryDateForIndex = LocalDate.now(fixedClock)
-                .plusDays(durationDays.indexCaseSinceSelfDiagnosisUnknownOnset.toLong())
-            val expected =
-                Isolation(
-                    isolationStart = startDateForIndex,
-                    isolationConfiguration = durationDays,
-                    indexCase = IndexCase(
-                        symptomsOnsetDate = LocalDate.parse("2020-05-19"),
-                        expiryDate = expiryDateForIndex,
-                        selfAssessment = true
-                    ),
-                    contactCase = contactCase
-                )
-
-            val sideEffect = (transition as Transition.Valid).sideEffect
-
-            assertEquals(expected, actual)
-            assertEquals(ClearAcknowledgedTestResult, sideEffect)
-            coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-            verify(exactly = 1) { relevantTestResultProvider.clear() }
-
-            newStateIsolationChecks(actual)
-        }
+        newStateIsolationChecks(
+            currentState = isolation,
+            newState = actual
+        )
+    }
 
     // Note: this shouldn't actually happen since it's not possible to perform a self-assessment when already in isolation as an index case
     @Test
-    fun `from index case with positive test to index case with self assessment on positive self assessment and user cannot remember onset date`() =
-        testScope.runBlockingTest {
-            val startDate = Instant.now(fixedClock)
-            val expiryDate = LocalDate.now(fixedClock).plusDays(3)
-            val indexCase = IndexCase(
-                symptomsOnsetDate = LocalDate.parse("2020-05-19"),
-                expiryDate = expiryDate,
-                selfAssessment = false
-            )
-            every { stateProvider.state } returns Isolation(
-                isolationStart = startDate,
+    fun `from index case with positive test to index case with self assessment on positive self assessment and user cannot remember onset date`() {
+        val startDate = Instant.now(fixedClock)
+        val expiryDate = LocalDate.now(fixedClock).plusDays(3)
+        val indexCase = IndexCase(
+            symptomsOnsetDate = LocalDate.parse("2020-05-19"),
+            expiryDate = expiryDate,
+            selfAssessment = false
+        )
+        val isolation = Isolation(
+            isolationStart = startDate,
+            isolationConfiguration = durationDays,
+            indexCase = indexCase
+        )
+        every { stateProvider.state } returns isolation
+
+        val testSubject = createIsolationStateMachine(fixedClock)
+
+        val transition = testSubject.processEvent(
+            OnPositiveSelfAssessment(CannotRememberDate)
+        )
+
+        val actual = testSubject.readState()
+
+        val startDateForIndex = Instant.now(fixedClock)
+        val expiryDateForIndex = LocalDate.now(fixedClock)
+            .plusDays(durationDays.indexCaseSinceSelfDiagnosisUnknownOnset.toLong())
+        val expected =
+            Isolation(
+                isolationStart = startDateForIndex,
                 isolationConfiguration = durationDays,
-                indexCase = indexCase
-            )
-
-            val testSubject = createIsolationStateMachine(fixedClock)
-
-            val transition = testSubject.processEvent(
-                OnPositiveSelfAssessment(CannotRememberDate)
-            )
-
-            val actual = testSubject.readState()
-
-            val startDateForIndex = Instant.now(fixedClock)
-            val expiryDateForIndex = LocalDate.now(fixedClock)
-                .plusDays(durationDays.indexCaseSinceSelfDiagnosisUnknownOnset.toLong())
-            val expected =
-                Isolation(
-                    isolationStart = startDateForIndex,
-                    isolationConfiguration = durationDays,
-                    indexCase = IndexCase(
-                        symptomsOnsetDate = LocalDate.parse("2020-05-19"),
-                        expiryDate = expiryDateForIndex,
-                        selfAssessment = true
-                    )
+                indexCase = IndexCase(
+                    symptomsOnsetDate = LocalDate.parse("2020-05-19"),
+                    expiryDate = expiryDateForIndex,
+                    selfAssessment = true
                 )
+            )
 
-            val sideEffect = (transition as Transition.Valid).sideEffect
+        val sideEffect = (transition as Transition.Valid).sideEffect
 
-            assertEquals(expected, actual)
-            assertNull(sideEffect)
-            coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-            verify(exactly = 0) { relevantTestResultProvider.clear() }
+        assertEquals(expected, actual)
+        assertNull(sideEffect)
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
+        verify(exactly = 0) { relevantTestResultProvider.clear() }
 
-            newStateIsolationChecks(actual)
-        }
+        newStateIsolationChecks(
+            currentState = isolation,
+            newState = actual
+        )
+    }
 
     @Test
-    fun `keep contact case on positive test result`() = testScope.runBlockingTest {
+    fun `keep contact case on positive test result`() {
         val testResult = ReceivedTestResult(
             diagnosisKeySubmissionToken = "123",
             testEndDate = Instant.now(fixedClock),
@@ -806,7 +831,7 @@ class IsolationStateMachineTest {
         val startDate = Instant.now(fixedClock)
         val expiryDate = LocalDate.now(fixedClock).plusDays(6)
 
-        every { stateProvider.state } returns Isolation(
+        val isolation = Isolation(
             isolationStart = startDate,
             isolationConfiguration = durationDays,
             contactCase = ContactCase(
@@ -815,6 +840,7 @@ class IsolationStateMachineTest {
                 expiryDate = expiryDate
             )
         )
+        every { stateProvider.state } returns isolation
 
         val testSubject = createIsolationStateMachine(fixedClock)
 
@@ -841,14 +867,17 @@ class IsolationStateMachineTest {
         assertEquals(expected, newState)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultHandler.onTestResultReceived(testResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedUnconfirmedPositiveTestResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
-        newStateIsolationChecks(newState)
+        newStateIsolationChecks(
+            currentState = isolation,
+            newState = newState
+        )
     }
 
     @Test
-    fun `keep contact case on negative test result`() = testScope.runBlockingTest {
+    fun `keep contact case on negative test result`() {
         val testResult = ReceivedTestResult(
             diagnosisKeySubmissionToken = "123",
             testEndDate = Instant.now(fixedClock),
@@ -861,16 +890,16 @@ class IsolationStateMachineTest {
         val startDate = Instant.now(fixedClock)
         val expiryDate = LocalDate.now(fixedClock).plusDays(6)
 
-        every { stateProvider.state } returns
-            Isolation(
-                isolationStart = startDate,
-                isolationConfiguration = durationDays,
-                contactCase = ContactCase(
-                    startDate = startDate,
-                    notificationDate = null,
-                    expiryDate = expiryDate
-                )
+        val isolation = Isolation(
+            isolationStart = startDate,
+            isolationConfiguration = durationDays,
+            contactCase = ContactCase(
+                startDate = startDate,
+                notificationDate = null,
+                expiryDate = expiryDate
             )
+        )
+        every { stateProvider.state } returns isolation
 
         val testSubject = createIsolationStateMachine(fixedClock)
 
@@ -897,14 +926,17 @@ class IsolationStateMachineTest {
         assertEquals(expected, newState)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultHandler.onTestResultReceived(testResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedUnconfirmedPositiveTestResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
-        newStateIsolationChecks(newState)
+        newStateIsolationChecks(
+            currentState = isolation,
+            newState = newState
+        )
     }
 
     @Test
-    fun `keep contact case on void test result`() = testScope.runBlockingTest {
+    fun `keep contact case on void test result`() {
         val testResult = ReceivedTestResult(
             diagnosisKeySubmissionToken = "123",
             testEndDate = Instant.now(fixedClock),
@@ -917,16 +949,16 @@ class IsolationStateMachineTest {
         val startDate = Instant.now(fixedClock)
         val expiryDate = LocalDate.now(fixedClock).plusDays(6)
 
-        every { stateProvider.state } returns
-            Isolation(
-                isolationStart = startDate,
-                isolationConfiguration = durationDays,
-                contactCase = ContactCase(
-                    startDate = startDate,
-                    notificationDate = null,
-                    expiryDate = expiryDate
-                )
+        val isolation = Isolation(
+            isolationStart = startDate,
+            isolationConfiguration = durationDays,
+            contactCase = ContactCase(
+                startDate = startDate,
+                notificationDate = null,
+                expiryDate = expiryDate
             )
+        )
+        every { stateProvider.state } returns isolation
 
         val testSubject = createIsolationStateMachine(fixedClock)
 
@@ -953,285 +985,294 @@ class IsolationStateMachineTest {
         assertEquals(expected, newState)
         assertEquals(HandleTestResult(testResult), sideEffect)
         verify { testResultHandler.onTestResultReceived(testResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedUnconfirmedPositiveTestResult) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
-        newStateIsolationChecks(newState)
+        newStateIsolationChecks(
+            currentState = isolation,
+            newState = newState
+        )
     }
 
     @Test
-    fun `stay in default on test result acknowledgement when test isolation result handler returns Ignore`() =
-        testScope.runBlockingTest {
-            val testResult = ReceivedTestResult(
-                diagnosisKeySubmissionToken = "123",
-                testEndDate = Instant.now(fixedClock),
-                testResult = POSITIVE,
-                testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+    fun `stay in default on test result acknowledgement when test isolation result handler returns Ignore`() {
+        val testResult = ReceivedTestResult(
+            diagnosisKeySubmissionToken = "123",
+            testEndDate = Instant.now(fixedClock),
+            testResult = POSITIVE,
+            testKitType = LAB_RESULT,
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = false
+        )
+
+        val currentState = Default()
+        every { stateProvider.state } returns currentState
+        every {
+            testResultIsolationHandler.computeTransitionWithTestResult(
+                currentState,
+                testResult
             )
+        } returns Ignore(preventKeySubmission = false)
 
-            val currentState = Default()
-            every { stateProvider.state } returns currentState
-            every {
-                testResultIsolationHandler.computeTransitionWithTestResult(
-                    currentState,
-                    testResult
-                )
-            } returns Ignore(preventKeySubmission = false)
+        val testSubject = createIsolationStateMachine(fixedClock)
 
-            val testSubject = createIsolationStateMachine(fixedClock)
+        val transition = testSubject.processEvent(
+            OnTestResultAcknowledge(testResult)
+        )
 
-            val transition = testSubject.processEvent(
-                OnTestResultAcknowledge(testResult)
-            )
+        val actual = testSubject.readState()
 
-            val actual = testSubject.readState()
+        val expected = currentState
+        val sideEffect = (transition as Transition.Valid).sideEffect
 
-            val expected = currentState
-            val sideEffect = (transition as Transition.Valid).sideEffect
-
-            assertEquals(expected, actual)
-            assertEquals(AcknowledgeTestResult(testResult, TestResultStorageOperation.Ignore), sideEffect)
-            verify(exactly = 1) { testResultHandler.acknowledge(testResult, TestResultStorageOperation.Ignore) }
-            coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-
-            newStateDefaultChecks()
-        }
+        assertEquals(expected, actual)
+        assertEquals(AcknowledgeTestResult(testResult, TestResultStorageOperation.Ignore), sideEffect)
+        verify(exactly = 1) { testResultHandler.acknowledge(testResult, expected.symptomsOnsetDate, TestResultStorageOperation.Ignore) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
+        verify { alarmController.cancelExpirationCheckIfAny() }
+        verify(exactly = 1) { exposureNotificationHandler.cancel() }
+    }
 
     @Test
-    fun `stay in isolation on test result acknowledgement when test isolation result handler returns Ignore`() =
-        testScope.runBlockingTest {
-            val testResult = ReceivedTestResult(
-                diagnosisKeySubmissionToken = "123",
-                testEndDate = Instant.now(fixedClock),
-                testResult = POSITIVE,
-                testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+    fun `stay in isolation on test result acknowledgement when test isolation result handler returns Ignore`() {
+        val testResult = ReceivedTestResult(
+            diagnosisKeySubmissionToken = "123",
+            testEndDate = Instant.now(fixedClock),
+            testResult = POSITIVE,
+            testKitType = LAB_RESULT,
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = false
+        )
+
+        val currentState = isolationStateWithContactCase(expiryDaysFromStartDate = 3)
+        every { stateProvider.state } returns currentState
+        every {
+            testResultIsolationHandler.computeTransitionWithTestResult(
+                currentState,
+                testResult
             )
+        } returns Ignore(preventKeySubmission = false)
 
-            val currentState = isolationStateWithContactCase(expiryDaysFromStartDate = 3)
-            every { stateProvider.state } returns currentState
-            every {
-                testResultIsolationHandler.computeTransitionWithTestResult(
-                    currentState,
-                    testResult
-                )
-            } returns Ignore(preventKeySubmission = false)
+        val testSubject = createIsolationStateMachine(fixedClock)
 
-            val testSubject = createIsolationStateMachine(fixedClock)
+        val transition = testSubject.processEvent(
+            OnTestResultAcknowledge(testResult)
+        )
 
-            val transition = testSubject.processEvent(
-                OnTestResultAcknowledge(testResult)
-            )
+        val actual = testSubject.readState()
 
-            val actual = testSubject.readState()
+        val expected = currentState
+        val sideEffect = (transition as Transition.Valid).sideEffect
 
-            val expected = currentState
-            val sideEffect = (transition as Transition.Valid).sideEffect
+        assertEquals(expected, actual)
+        assertEquals(AcknowledgeTestResult(testResult, TestResultStorageOperation.Ignore), sideEffect)
+        verify(exactly = 1) { testResultHandler.acknowledge(testResult, expected.symptomsOnsetDate, TestResultStorageOperation.Ignore) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
-            assertEquals(expected, actual)
-            assertEquals(AcknowledgeTestResult(testResult, TestResultStorageOperation.Ignore), sideEffect)
-            verify(exactly = 1) { testResultHandler.acknowledge(testResult, TestResultStorageOperation.Ignore) }
-            coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-
-            newStateIsolationChecks(expected)
-        }
+        newStateIsolationChecks(
+            currentState = currentState,
+            newState = actual
+        )
+    }
 
     @Test
-    fun `transition from default on test result acknowledgement when test isolation result handler returns TransitionAndSaveTestResult`() =
-        testScope.runBlockingTest {
-            val testResult = ReceivedTestResult(
-                diagnosisKeySubmissionToken = "123",
-                testEndDate = Instant.now(fixedClock),
-                testResult = POSITIVE,
-                testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+    fun `transition from default on test result acknowledgement when test isolation result handler returns TransitionAndSaveTestResult`() {
+        val testResult = ReceivedTestResult(
+            diagnosisKeySubmissionToken = "123",
+            testEndDate = Instant.now(fixedClock),
+            testResult = POSITIVE,
+            testKitType = LAB_RESULT,
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = false
+        )
+
+        val currentState = Default()
+        val newState = Isolation(
+            isolationStart = Instant.now(fixedClock),
+            isolationConfiguration = durationDays,
+            contactCase = ContactCase(
+                startDate = Instant.now(fixedClock),
+                notificationDate = null,
+                expiryDate = LocalDate.now(fixedClock).plusDays(10)
             )
-
-            val currentState = Default()
-            val newState = Isolation(
-                isolationStart = Instant.now(fixedClock),
-                isolationConfiguration = durationDays,
-                contactCase = ContactCase(
-                    startDate = Instant.now(fixedClock),
-                    notificationDate = null,
-                    expiryDate = LocalDate.now(fixedClock).plusDays(10)
-                )
+        )
+        every { stateProvider.state } returns currentState
+        every {
+            testResultIsolationHandler.computeTransitionWithTestResult(
+                currentState,
+                testResult
             )
-            every { stateProvider.state } returns currentState
-            every {
-                testResultIsolationHandler.computeTransitionWithTestResult(
-                    currentState,
-                    testResult
-                )
-            } returns TransitionAndStoreTestResult(newState, testResultStorageOperation = Overwrite)
+        } returns TransitionAndStoreTestResult(newState, testResultStorageOperation = Overwrite)
 
-            val testSubject = createIsolationStateMachine(fixedClock)
+        val testSubject = createIsolationStateMachine(fixedClock)
 
-            val transition = testSubject.processEvent(
-                OnTestResultAcknowledge(testResult)
-            )
+        val transition = testSubject.processEvent(
+            OnTestResultAcknowledge(testResult)
+        )
 
-            val actual = testSubject.readState()
+        val actual = testSubject.readState()
 
-            val expected = newState
-            val sideEffect = (transition as Transition.Valid).sideEffect
+        val expected = newState
+        val sideEffect = (transition as Transition.Valid).sideEffect
 
-            assertEquals(expected, actual)
-            assertEquals(AcknowledgeTestResult(testResult, testResultStorageOperation = Overwrite), sideEffect)
-            verify(exactly = 1) { testResultHandler.acknowledge(testResult, testResultStorageOperation = Overwrite) }
-            coVerify { analyticsEventProcessor.track(StartedIsolation) }
+        assertEquals(expected, actual)
+        assertEquals(AcknowledgeTestResult(testResult, testResultStorageOperation = Overwrite), sideEffect)
+        verify(exactly = 1) { testResultHandler.acknowledge(testResult, expected.symptomsOnsetDate, testResultStorageOperation = Overwrite) }
+        verify { analyticsEventTracker.track(StartedIsolation) }
 
-            newStateIsolationChecks(newState)
-        }
+        newStateIsolationChecks(
+            currentState = currentState,
+            newState = newState
+        )
+    }
 
     @Test
-    fun `transition from isolation on test result acknowledgement when test isolation result handler returns TransitionAndSaveTestResult`() =
-        testScope.runBlockingTest {
-            val testResult = ReceivedTestResult(
-                diagnosisKeySubmissionToken = "123",
-                testEndDate = Instant.now(fixedClock),
-                testResult = POSITIVE,
-                testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+    fun `transition from isolation on test result acknowledgement when test isolation result handler returns TransitionAndSaveTestResult`() {
+        val testResult = ReceivedTestResult(
+            diagnosisKeySubmissionToken = "123",
+            testEndDate = Instant.now(fixedClock),
+            testResult = POSITIVE,
+            testKitType = LAB_RESULT,
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = false
+        )
+
+        val currentState = Isolation(
+            isolationStart = Instant.now(fixedClock),
+            isolationConfiguration = durationDays,
+            contactCase = ContactCase(
+                startDate = Instant.now(fixedClock),
+                notificationDate = null,
+                expiryDate = LocalDate.now(fixedClock).plusDays(10)
             )
-
-            val currentState = Isolation(
-                isolationStart = Instant.now(fixedClock),
-                isolationConfiguration = durationDays,
-                contactCase = ContactCase(
-                    startDate = Instant.now(fixedClock),
-                    notificationDate = null,
-                    expiryDate = LocalDate.now(fixedClock).plusDays(10)
-                )
+        )
+        val newState = currentState.copy(
+            indexCase = IndexCase(
+                symptomsOnsetDate = LocalDate.now(),
+                expiryDate = LocalDate.now(),
+                selfAssessment = false
             )
-            val newState = currentState.copy(
-                indexCase = IndexCase(
-                    symptomsOnsetDate = LocalDate.now(),
-                    expiryDate = LocalDate.now(),
-                    selfAssessment = false
-                )
+        )
+        every { stateProvider.state } returns currentState
+        every {
+            testResultIsolationHandler.computeTransitionWithTestResult(
+                currentState,
+                testResult
             )
-            every { stateProvider.state } returns currentState
-            every {
-                testResultIsolationHandler.computeTransitionWithTestResult(
-                    currentState,
-                    testResult
-                )
-            } returns TransitionAndStoreTestResult(newState, testResultStorageOperation = Overwrite)
+        } returns TransitionAndStoreTestResult(newState, testResultStorageOperation = Overwrite)
 
-            val testSubject = createIsolationStateMachine(fixedClock)
+        val testSubject = createIsolationStateMachine(fixedClock)
 
-            val transition = testSubject.processEvent(
-                OnTestResultAcknowledge(testResult)
-            )
+        val transition = testSubject.processEvent(
+            OnTestResultAcknowledge(testResult)
+        )
 
-            val actual = testSubject.readState()
+        val actual = testSubject.readState()
 
-            val expected = newState
-            val sideEffect = (transition as Transition.Valid).sideEffect
+        val expected = newState
+        val sideEffect = (transition as Transition.Valid).sideEffect
 
-            assertEquals(expected, actual)
-            assertEquals(AcknowledgeTestResult(testResult, testResultStorageOperation = Overwrite), sideEffect)
-            verify(exactly = 1) { testResultHandler.acknowledge(testResult, testResultStorageOperation = Overwrite) }
-            coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        assertEquals(expected, actual)
+        assertEquals(AcknowledgeTestResult(testResult, testResultStorageOperation = Overwrite), sideEffect)
+        verify(exactly = 1) { testResultHandler.acknowledge(testResult, expected.symptomsOnsetDate, testResultStorageOperation = Overwrite) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
-            newStateIsolationChecks(newState)
-        }
+        newStateIsolationChecks(
+            currentState = currentState,
+            newState = newState
+        )
+    }
 
     @Test
-    fun `do not transition from default on test result acknowledgement when test isolation result handler returns DoNotTransitionButSaveTestResult`() =
-        testScope.runBlockingTest {
-            val testResult = ReceivedTestResult(
-                diagnosisKeySubmissionToken = "123",
-                testEndDate = Instant.now(fixedClock),
-                testResult = POSITIVE,
-                testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+    fun `do not transition from default on test result acknowledgement when test isolation result handler returns DoNotTransitionButSaveTestResult`() {
+        val testResult = ReceivedTestResult(
+            diagnosisKeySubmissionToken = "123",
+            testEndDate = Instant.now(fixedClock),
+            testResult = POSITIVE,
+            testKitType = LAB_RESULT,
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = false
+        )
+
+        val currentState = Default()
+        every { stateProvider.state } returns currentState
+        every {
+            testResultIsolationHandler.computeTransitionWithTestResult(
+                currentState,
+                testResult
             )
+        } returns DoNotTransitionButStoreTestResult(testResultStorageOperation = Overwrite)
 
-            val currentState = Default()
-            every { stateProvider.state } returns currentState
-            every {
-                testResultIsolationHandler.computeTransitionWithTestResult(
-                    currentState,
-                    testResult
-                )
-            } returns DoNotTransitionButStoreTestResult(testResultStorageOperation = Overwrite)
+        val testSubject = createIsolationStateMachine(fixedClock)
 
-            val testSubject = createIsolationStateMachine(fixedClock)
+        val transition = testSubject.processEvent(
+            OnTestResultAcknowledge(testResult)
+        )
 
-            val transition = testSubject.processEvent(
-                OnTestResultAcknowledge(testResult)
-            )
+        val actual = testSubject.readState()
 
-            val actual = testSubject.readState()
+        val expected = currentState
+        val sideEffect = (transition as Transition.Valid).sideEffect
 
-            val expected = currentState
-            val sideEffect = (transition as Transition.Valid).sideEffect
-
-            assertEquals(expected, actual)
-            assertEquals(AcknowledgeTestResult(testResult, testResultStorageOperation = Overwrite), sideEffect)
-            verify(exactly = 1) { testResultHandler.acknowledge(testResult, testResultStorageOperation = Overwrite) }
-
-            newStateDefaultChecks()
-        }
+        assertEquals(expected, actual)
+        assertEquals(AcknowledgeTestResult(testResult, testResultStorageOperation = Overwrite), sideEffect)
+        verify(exactly = 1) { testResultHandler.acknowledge(testResult, expected.symptomsOnsetDate, testResultStorageOperation = Overwrite) }
+        verify { alarmController.cancelExpirationCheckIfAny() }
+        verify(exactly = 1) { exposureNotificationHandler.cancel() }
+    }
 
     @Test
-    fun `do not transition from isolation on test result acknowledgement when test isolation result handler returns DoNotTransitionButSaveTestResult`() =
-        testScope.runBlockingTest {
-            val testResult = ReceivedTestResult(
-                diagnosisKeySubmissionToken = "123",
-                testEndDate = Instant.now(fixedClock),
-                testResult = POSITIVE,
-                testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+    fun `do not transition from isolation on test result acknowledgement when test isolation result handler returns DoNotTransitionButSaveTestResult`() {
+        val testResult = ReceivedTestResult(
+            diagnosisKeySubmissionToken = "123",
+            testEndDate = Instant.now(fixedClock),
+            testResult = POSITIVE,
+            testKitType = LAB_RESULT,
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = false
+        )
+
+        val currentState = Isolation(
+            isolationStart = Instant.now(fixedClock),
+            isolationConfiguration = durationDays,
+            contactCase = ContactCase(
+                startDate = Instant.now(fixedClock),
+                notificationDate = null,
+                expiryDate = LocalDate.now(fixedClock).plusDays(10)
             )
-
-            val currentState = Isolation(
-                isolationStart = Instant.now(fixedClock),
-                isolationConfiguration = durationDays,
-                contactCase = ContactCase(
-                    startDate = Instant.now(fixedClock),
-                    notificationDate = null,
-                    expiryDate = LocalDate.now(fixedClock).plusDays(10)
-                )
+        )
+        every { stateProvider.state } returns currentState
+        every {
+            testResultIsolationHandler.computeTransitionWithTestResult(
+                currentState,
+                testResult
             )
-            every { stateProvider.state } returns currentState
-            every {
-                testResultIsolationHandler.computeTransitionWithTestResult(
-                    currentState,
-                    testResult
-                )
-            } returns DoNotTransitionButStoreTestResult(testResultStorageOperation = Overwrite)
+        } returns DoNotTransitionButStoreTestResult(testResultStorageOperation = Overwrite)
 
-            val testSubject = createIsolationStateMachine(fixedClock)
+        val testSubject = createIsolationStateMachine(fixedClock)
 
-            val transition = testSubject.processEvent(
-                OnTestResultAcknowledge(testResult)
-            )
+        val transition = testSubject.processEvent(
+            OnTestResultAcknowledge(testResult)
+        )
 
-            val actual = testSubject.readState()
+        val actual = testSubject.readState()
 
-            val expected = currentState
-            val sideEffect = (transition as Transition.Valid).sideEffect
+        val expected = currentState
+        val sideEffect = (transition as Transition.Valid).sideEffect
 
-            assertEquals(expected, actual)
-            assertEquals(AcknowledgeTestResult(testResult, testResultStorageOperation = Overwrite), sideEffect)
-            verify(exactly = 1) { testResultHandler.acknowledge(testResult, testResultStorageOperation = Overwrite) }
-            coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        assertEquals(expected, actual)
+        assertEquals(AcknowledgeTestResult(testResult, testResultStorageOperation = Overwrite), sideEffect)
+        verify(exactly = 1) { testResultHandler.acknowledge(testResult, expected.symptomsOnsetDate, testResultStorageOperation = Overwrite) }
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
-            newStateIsolationChecks(currentState)
-        }
+        newStateIsolationChecks(
+            currentState = currentState,
+            newState = currentState
+        )
+    }
 
     @Test
-    fun `verify expiration from contact case to default state`() = testScope.runBlockingTest {
+    fun `verify expiration from contact case to default state`() {
         val startDate = Instant.now(fixedClock).minus(Duration.ofDays(15))
         val expiryDate = LocalDate.now(fixedClock).minusDays(1)
         val contactCase = Isolation(
@@ -1251,13 +1292,13 @@ class IsolationStateMachineTest {
         val actual = testSubject.readState()
 
         assertEquals(Default(previousIsolation = contactCase), actual)
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-
-        newStateDefaultChecks()
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
+        verify { alarmController.cancelExpirationCheckIfAny() }
+        verify(exactly = 1) { exposureNotificationHandler.cancel() }
     }
 
     @Test
-    fun `verify expiration from index case to default state`() = testScope.runBlockingTest {
+    fun `verify expiration from index case to default state`() {
         val startDate = Instant.now(fixedClock).minus(Duration.ofDays(15))
         val expiryDate = LocalDate.now(fixedClock).minusDays(1)
         val indexCase = Isolation(
@@ -1277,13 +1318,13 @@ class IsolationStateMachineTest {
         val actual = testSubject.readState()
 
         assertEquals(Default(previousIsolation = indexCase), actual)
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-
-        newStateDefaultChecks()
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
+        verify { alarmController.cancelExpirationCheckIfAny() }
+        verify(exactly = 1) { exposureNotificationHandler.cancel() }
     }
 
     @Test
-    fun `verify expiration from previous isolation to default state`() = testScope.runBlockingTest {
+    fun `verify expiration from previous isolation to default state`() {
         val startDate = Instant.now(fixedClock).minus(Duration.ofDays(15))
         val expiryDate = LocalDate.now(fixedClock)
             .minusDays(durationDays.pendingTasksRetentionPeriod.toLong())
@@ -1307,13 +1348,13 @@ class IsolationStateMachineTest {
         val actual = testSubject.readState()
 
         assertEquals(Default(), actual)
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-
-        newStateDefaultChecks()
+        verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
+        verify { alarmController.cancelExpirationCheckIfAny() }
+        verify(exactly = 1) { exposureNotificationHandler.cancel() }
     }
 
     @Test
-    fun `reset should put state machine in default state with no history`() = testScope.runBlockingTest {
+    fun `reset should put state machine in default state with no history`() {
         val startDate = Instant.now(fixedClock)
         val expiryDate = LocalDate.now(fixedClock).plusDays(3)
         val indexCase = Isolation(
@@ -1333,9 +1374,9 @@ class IsolationStateMachineTest {
         testSubject.reset()
 
         assertEquals(Default(), testSubject.readState())
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
-
-        newStateDefaultChecks()
+        coVerify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
+        verify { alarmController.cancelExpirationCheckIfAny() }
+        verify(exactly = 1) { exposureNotificationHandler.cancel() }
     }
 
     @Test
@@ -1371,9 +1412,7 @@ class IsolationStateMachineTest {
         )
 
         assertTrue(expiryDateDayBeforeYesterday.hasExpired(fixedClock, daysAgo = 1))
-
         assertTrue(expiryDateYesterday.hasExpired(fixedClock, daysAgo = 1))
-
         assertFalse(expiryDateToday.hasExpired(fixedClock, daysAgo = 1))
     }
 
@@ -1512,7 +1551,7 @@ class IsolationStateMachineTest {
             )
         )
 
-        coVerify(exactly = 1) { analyticsEventProcessor.track(DeclaredNegativeResultFromDct) }
+        verify(exactly = 1) { analyticsEventTracker.track(DeclaredNegativeResultFromDct) }
 
         assertEquals(expected, actual)
     }
@@ -1544,24 +1583,16 @@ class IsolationStateMachineTest {
 
         testSubject.optInToDailyContactTesting()
 
-        coVerify(exactly = 0) { analyticsEventProcessor.track(DeclaredNegativeResultFromDct) }
+        verify(exactly = 0) { analyticsEventTracker.track(DeclaredNegativeResultFromDct) }
 
         val actual = testSubject.readState()
 
         assertEquals(expected = combinedIsolation, actual)
     }
 
-    private fun newStateDefaultChecks() = testScope.runBlockingTest {
-        verify { alarmController.cancelExpirationCheckIfAny() }
-
-        verify { notificationProvider.cancelExposureNotification() }
-        verify { userInbox.clearItem(ShowEncounterDetection) }
-        verify { exposureNotificationRetryAlarmController.cancel() }
-    }
-
-    private fun newStateIsolationChecks(newState: State) {
+    private fun newStateIsolationChecks(currentState: State, newState: State) {
         val newIsolationState = newState as Isolation
-        verify { alarmController.setupExpirationCheck(newIsolationState.expiryDate) }
+        verify { alarmController.setupExpirationCheck(currentState, newIsolationState) }
     }
 
     private fun isolationStateWithIndexCase(expiryDaysFromStartDate: Long, selfAssessment: Boolean): Isolation {
@@ -1603,9 +1634,8 @@ class IsolationStateMachineTest {
             userInbox,
             alarmController,
             clock,
-            analyticsEventProcessor,
-            testScope,
-            exposureNotificationRetryAlarmController
+            analyticsEventTracker,
+            exposureNotificationHandler
         )
     }
 }

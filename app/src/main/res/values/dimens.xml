@@ -17,4 +17,7 @@
     <dimen name="bullet_point_size">8dp</dimen>
     <dimen name="list_item_space">1dp</dimen>
     <dimen name="my_data_title_left_margin">14dp</dimen>
+    <dimen name="item_action_width">56dp</dimen>
+    <dimen name="vertical_margin_medium">24dp</dimen>
+    <dimen name="vertical_margin_extra_large">64dp</dimen>
 </resources>

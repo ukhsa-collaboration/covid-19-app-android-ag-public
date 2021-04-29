@@ -121,7 +121,7 @@
                     android:layout_marginBottom="8dp"
                     app:optionExternalLink="false"
                     app:optionIcon="@drawable/ic_book_test"
-                    app:optionIconBackgroundColor="@color/style_orange"
+                    app:optionIconBackgroundColor="@color/style_lighter_blue"
                     app:optionText="@string/book_free_test" />
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView

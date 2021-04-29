@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import io.mockk.coEvery
 import io.mockk.coVerifyOrder
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
@@ -11,8 +12,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.about.VenueHistoryViewModel.VenueHistoryState
-import uk.nhs.nhsx.covid19.android.app.about.VenueVisitsViewAdapter.VenueVisitEntry.VenueVisitEntryHeader
-import uk.nhs.nhsx.covid19.android.app.about.VenueVisitsViewAdapter.VenueVisitEntry.VenueVisitEntryItem
+import uk.nhs.nhsx.covid19.android.app.about.VenueVisitListItem.ContentItem
+import uk.nhs.nhsx.covid19.android.app.about.VenueVisitListItem.HeaderItem
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
@@ -25,10 +26,9 @@ class VenueHistoryViewModelTest {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val venuesStorage = mockk<VisitedVenuesStorage>(relaxed = true)
+    private val clusterVenueVisits = mockk<ClusterVenueVisits>()
 
-    private val testSubject = VenueHistoryViewModel(
-        venuesStorage,
-    )
+    private val testSubject = VenueHistoryViewModel(venuesStorage, clusterVenueVisits)
 
     private val venueHistoryStateObserver = mockk<Observer<VenueHistoryState>>(relaxed = true)
     private val venueVisitsEditModeChangedObserver = mockk<Observer<Boolean>>(relaxed = true)
@@ -39,6 +39,7 @@ class VenueHistoryViewModelTest {
         testSubject.venueVisitsEditModeChanged().observeForever(venueVisitsEditModeChangedObserver)
 
         coEvery { venuesStorage.getVisits() } returns listOf()
+        every { clusterVenueVisits.invoke(any()) } returns listOf()
     }
 
     @Test
@@ -50,7 +51,7 @@ class VenueHistoryViewModelTest {
     }
 
     @Test
-    fun `onResume with no changes to view state does not trigger view state emission`() = runBlocking {
+    fun `onResume with no changes to view state does not trigger view state emission`() {
         testSubject.onResume()
         testSubject.onResume()
 
@@ -59,7 +60,7 @@ class VenueHistoryViewModelTest {
     }
 
     @Test
-    fun `delete single venue visit removes it from storage`() = runBlocking {
+    fun `delete single venue visit removes it from storage`() {
         val venueVisit = VenueVisit(
             venue = Venue("1", "A"),
             from = Instant.parse("1970-01-01T18:00:00Z"),
@@ -134,23 +135,25 @@ class VenueHistoryViewModelTest {
             to = Instant.parse("1970-01-01T14:00:00Z")
         )
 
-        coEvery { venuesStorage.getVisits() } returns listOf(venueD, venueC, venueB, venueA)
+        val expectedVenueVisits = listOf(venueD, venueC, venueB, venueA)
+        val expectedVenueVisitListItems = listOf(
+            HeaderItem(LocalDate.parse("1970-01-02")),
+            ContentItem(VenueVisitHistory(venueA)),
+            ContentItem(VenueVisitHistory(venueB)),
+            HeaderItem(LocalDate.parse("1970-01-01")),
+            ContentItem(VenueVisitHistory(venueC)),
+            ContentItem(VenueVisitHistory(venueD))
+        )
+
+        coEvery { venuesStorage.getVisits() } returns expectedVenueVisits
+        every { clusterVenueVisits.invoke(expectedVenueVisits.map { VenueVisitHistory(it) }) } returns expectedVenueVisitListItems
 
         testSubject.onResume()
-
-        val expectedVenueVisits = listOf(
-            VenueVisitEntryHeader(LocalDate.parse("1970-01-02")),
-            VenueVisitEntryItem(venueA),
-            VenueVisitEntryItem(venueB),
-            VenueVisitEntryHeader(LocalDate.parse("1970-01-01")),
-            VenueVisitEntryItem(venueC),
-            VenueVisitEntryItem(venueD)
-        )
 
         verify {
             venueHistoryStateObserver.onChanged(
                 expectedInitialState.copy(
-                    venueVisitEntries = expectedVenueVisits,
+                    venueVisitEntries = expectedVenueVisitListItems,
                     isInEditMode = false
                 )
             )

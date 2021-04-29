@@ -100,6 +100,20 @@ class MockExposureNotificationApi(private val clock: Clock = Clock.systemUTC()) 
                         ScanInstance.Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build()
                     )
                 )
+                .build(),
+            ExposureWindow.Builder()
+                .setDateMillisSinceEpoch(Instant.now(clock).toEpochMilli())
+                .setInfectiousness(Infectiousness.HIGH)
+                .setScanInstances(
+                    listOf(
+                        ScanInstance.Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build(),
+                        ScanInstance.Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build(),
+                        ScanInstance.Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build(),
+                        ScanInstance.Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build(),
+                        ScanInstance.Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build(),
+                        ScanInstance.Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build()
+                    )
+                )
                 .build()
         )
     }

@@ -38,7 +38,10 @@ class QrCodeScanScenarioTest : EspressoTest() {
             description = "The user successfully scans an official NHS QR code and later receives warning about visited venue being risky",
             kind = FLOW
         ) {
-            testAppContext.permissionsManager.addGrantedPermission(CAMERA)
+            testAppContext.permissionsManager.setResponseForPermissionRequest(
+                CAMERA,
+                PackageManager.PERMISSION_GRANTED
+            )
 
             startTestActivity<QrScannerActivity>()
 
@@ -122,6 +125,8 @@ class QrCodeScanScenarioTest : EspressoTest() {
 
             startTestActivity<QrScannerActivity>()
 
-            waitFor { qrCodeScanResultRobot.checkPermissionDeniedTitleIsDisplayed() }
+            waitFor { qrCodeScanResultRobot.checkCameraIconIsDisplayed() }
+
+            qrCodeScanResultRobot.checkPermissionDeniedTitleIsDisplayed()
         }
 }

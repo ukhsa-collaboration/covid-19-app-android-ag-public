@@ -133,7 +133,7 @@ fun TextView.setUpOpensInBrowserWarning() {
                 info: AccessibilityNodeInfoCompat
             ) {
                 super.onInitializeAccessibilityNodeInfo(host, info)
-                info.roleDescription =
+                info.contentDescription =
                     context.getString(R.string.accessibility_announcement_link, text)
                 info.addAction(
                     AccessibilityActionCompat(
@@ -191,3 +191,6 @@ fun Context.announce(textToAnnounce: String) {
         )
     }
 }
+
+fun String.toSpelledString(): String =
+    this.toCharArray().joinToString("\uFEFF")

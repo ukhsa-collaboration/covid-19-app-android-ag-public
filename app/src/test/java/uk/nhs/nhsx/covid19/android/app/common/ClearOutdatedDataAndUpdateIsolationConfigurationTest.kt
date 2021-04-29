@@ -10,7 +10,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfoProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationTokensProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
@@ -38,17 +37,19 @@ import java.time.temporal.ChronoUnit
 class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
     private val relevantTestResultProvider = mockk<RelevantTestResultProvider>(relaxed = true)
-    private val unacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>(relaxed = true)
+    private val unacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>(relaxUnitFun = true)
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
-    private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>(relaxed = true)
-    private val isolationConfigurationApi = mockk<IsolationConfigurationApi>(relaxed = true)
-    private val riskyVenueConfigurationProvider = mockk<RiskyVenueConfigurationProvider>(relaxed = true)
-    private val riskyVenueConfigurationApi = mockk<RiskyVenueConfigurationApi>(relaxed = true)
-    private val exposureNotificationTokensProvider = mockk<ExposureNotificationTokensProvider>(relaxed = true)
-    private val exposureCircuitBreakerInfoProvider = mockk<ExposureCircuitBreakerInfoProvider>(relaxed = true)
-    private val epidemiologyEventProvider = mockk<EpidemiologyEventProvider>(relaxed = true)
-    private val lastVisitedBookTestTypeVenueDateProvider = mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxed = true)
+    private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
+    private val isolationConfigurationApi = mockk<IsolationConfigurationApi>()
+    private val riskyVenueConfigurationProvider = mockk<RiskyVenueConfigurationProvider>()
+    private val riskyVenueConfigurationApi = mockk<RiskyVenueConfigurationApi>()
+    private val exposureNotificationTokensProvider = mockk<ExposureNotificationTokensProvider>(relaxUnitFun = true)
+    private val epidemiologyEventProvider = mockk<EpidemiologyEventProvider>(relaxUnitFun = true)
+    private val lastVisitedBookTestTypeVenueDateProvider = mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxUnitFun = true)
+    private val clearOutdatedKeySharingInfo = mockk<ClearOutdatedKeySharingInfo>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-07-28T01:00:00.00Z"), ZoneOffset.UTC)
+
+    private val retentionPeriod = 14
 
     private val testSubject = ClearOutdatedDataAndUpdateIsolationConfiguration(
         isolationStateMachine,
@@ -59,16 +60,16 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
         riskyVenueConfigurationProvider,
         riskyVenueConfigurationApi,
         exposureNotificationTokensProvider,
-        exposureCircuitBreakerInfoProvider,
         epidemiologyEventProvider,
         lastVisitedBookTestTypeVenueDateProvider,
+        clearOutdatedKeySharingInfo,
         fixedClock
     )
 
     @Before
     fun setUp() {
         every { isolationConfigurationProvider.durationDays } returns DurationDays(
-            pendingTasksRetentionPeriod = 14
+            pendingTasksRetentionPeriod = retentionPeriod
         )
         coEvery { isolationConfigurationApi.getIsolationConfiguration() } returns IsolationConfigurationResponse(
             DurationDays()
@@ -87,7 +88,7 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
         every { relevantTestResultProvider.testResult } returns AcknowledgedTestResult(
             diagnosisKeySubmissionToken = "token1",
             testEndDate = Instant.now(fixedClock)
-                .minus(14, ChronoUnit.DAYS)
+                .minus(retentionPeriod.toLong(), ChronoUnit.DAYS)
                 .minus(1, ChronoUnit.SECONDS),
             acknowledgedDate = Instant.now(fixedClock)
                 .minus(13, ChronoUnit.DAYS),
@@ -112,7 +113,7 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
         every { isolationStateMachine.readState() } returns Default()
         every { relevantTestResultProvider.testResult } returns AcknowledgedTestResult(
             diagnosisKeySubmissionToken = "token1",
-            testEndDate = Instant.now(fixedClock).minus(14, ChronoUnit.DAYS),
+            testEndDate = Instant.now(fixedClock).minus(retentionPeriod.toLong(), ChronoUnit.DAYS),
             acknowledgedDate = Instant.now(fixedClock).minus(9, ChronoUnit.DAYS),
             testResult = POSITIVE,
             testKitType = LAB_RESULT,
@@ -155,71 +156,44 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
     }
 
     @Test
-    fun `clears test result and previous isolation when in default state and previous isolation state is outdated`() = runBlocking {
-        val state = getDefaultState(true)
-        every { isolationStateMachine.readState() } returns state
-
-        testSubject()
-
-        val retentionPeriod = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
-        val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
-        verify { relevantTestResultProvider.clear() }
-        verify { unacknowledgedTestResultsProvider.clearBefore(expectedDate) }
-        verify { isolationStateMachine.clearPreviousIsolation() }
-        verify { exposureNotificationTokensProvider.clear() }
-    }
-
-    @Test
-    fun `clears old epidemiology exposure windows when in default state and circuit breaker queue is empty with feature flag enabled`() =
+    fun `clears test result and previous isolation when in default state and previous isolation state is outdated`() =
         runBlocking {
-            FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.STORE_EXPOSURE_WINDOWS)
-
-            every { isolationStateMachine.readState() } returns Default()
-            every { exposureCircuitBreakerInfoProvider.info.isEmpty() } returns true
+            val state = getDefaultState(true)
+            every { isolationStateMachine.readState() } returns state
 
             testSubject()
 
-            verify { epidemiologyEventProvider.clear() }
+            val retentionPeriod = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
+            val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
+            verify { relevantTestResultProvider.clear() }
+            verify { unacknowledgedTestResultsProvider.clearBefore(expectedDate) }
+            verify { isolationStateMachine.clearPreviousIsolation() }
             verify { exposureNotificationTokensProvider.clear() }
         }
 
     @Test
-    fun `keeps epidemiology exposure windows when in default state and circuit breaker queue filled with feature flag enabled`() =
+    fun `clears old epidemiology exposure windows when feature flag enabled`() =
         runBlocking {
             FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.STORE_EXPOSURE_WINDOWS)
 
-            every { isolationStateMachine.readState() } returns Default()
-            every { exposureCircuitBreakerInfoProvider.info.isEmpty() } returns false
-
             testSubject()
 
-            verify(exactly = 0) { epidemiologyEventProvider.clear() }
+            verify {
+                epidemiologyEventProvider.clearOnAndBefore(
+                    LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
+                )
+            }
             verify { exposureNotificationTokensProvider.clear() }
         }
 
     @Test
-    fun `keeps epidemiology exposure windows when in isolation with feature flag enabled`() = runBlocking {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.STORE_EXPOSURE_WINDOWS)
-
-        every { isolationStateMachine.readState() } returns getIndexCase(isOutdated = false)
-
-        testSubject()
-
-        verify(exactly = 0) { epidemiologyEventProvider.clear() }
-        verify { exposureNotificationTokensProvider.clear() }
-    }
-
-    @Test
-    fun `keeps epidemiology exposure windows when in default state and circuit breaker queue is empty with feature flag disabled`() =
+    fun `keeps epidemiology exposure windows when feature flag disabled`() =
         runBlocking {
             FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.STORE_EXPOSURE_WINDOWS)
 
-            every { isolationStateMachine.readState() } returns Default()
-            every { exposureCircuitBreakerInfoProvider.info.isEmpty() } returns true
-
             testSubject()
 
-            verify(exactly = 0) { epidemiologyEventProvider.clear() }
+            verify(exactly = 0) { epidemiologyEventProvider.clearOnAndBefore(any()) }
             verify { exposureNotificationTokensProvider.clear() }
         }
 
@@ -255,6 +229,13 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
         verify { isolationConfigurationProvider.durationDays = DurationDays() }
         verify { exposureNotificationTokensProvider.clear() }
+    }
+
+    @Test
+    fun `calls ClearKeySharing info`() = runBlocking {
+        testSubject()
+
+        verify { clearOutdatedKeySharingInfo.invoke() }
     }
 
     private fun getIndexCase(isOutdated: Boolean): Isolation =

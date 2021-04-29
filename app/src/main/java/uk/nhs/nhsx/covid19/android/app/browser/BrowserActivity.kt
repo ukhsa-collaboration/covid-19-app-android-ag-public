@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import kotlinx.android.synthetic.main.activity_browser.browserCloseButton
 import kotlinx.android.synthetic.main.activity_browser.webView
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
@@ -22,6 +23,7 @@ class BrowserActivity : BaseActivity(R.layout.activity_browser) {
 
         val url = intent.getStringExtra(EXTRA_URL)
         webView.settings.javaScriptEnabled = true
+        webView.webViewClient = WebViewClient()
         url?.let {
             webView.loadUrl(url)
         }

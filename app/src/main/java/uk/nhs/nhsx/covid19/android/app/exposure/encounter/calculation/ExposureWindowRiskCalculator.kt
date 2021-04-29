@@ -9,8 +9,8 @@ import uk.nhs.riskscore.RiskScoreCalculatorConfiguration
 import javax.inject.Inject
 
 class ExposureWindowRiskCalculator @Inject constructor(
-    private val filterRiskyExposureWindows: FilterRiskyExposureWindows,
-    private val evaluateMostRelevantExposure: EvaluateMostRelevantExposure,
+    private val evaluateMostRelevantRiskyExposure: EvaluateMostRelevantRiskyExposure,
+    private val evaluateIfConsideredRisky: EvaluateIfConsideredRisky,
     private val calculateExposureRisk: CalculateExposureRisk,
     private val riskScoreCalculatorProvider: RiskScoreCalculatorProvider,
     private val analyticsEventTracker: AnalyticsEventTracker,
@@ -24,27 +24,37 @@ class ExposureWindowRiskCalculator @Inject constructor(
         Timber.d("Exposure windows: $exposureWindows")
 
         val allExposureWindowsWithRisk = exposureWindows.map { window ->
+            val calculatedRisk = calculateExposureRisk(window, config, riskCalculation)
+
             ExposureWindowWithRisk(
                 exposureWindow = window,
-                calculatedRisk = calculateExposureRisk(window, config, riskCalculation),
+                calculatedRisk = calculatedRisk,
                 riskCalculationVersion = riskScoreCalculatorProvider.getRiskCalculationVersion(),
-                matchedKeyCount = 1
+                matchedKeyCount = 1,
+                isConsideredRisky = evaluateIfConsideredRisky(window, calculatedRisk, riskCalculation.riskThreshold)
             )
         }
 
         Timber.d("Risk threshold is: ${riskCalculation.riskThreshold}")
 
-        val riskyExposureWindowsWithRisk =
-            filterRiskyExposureWindows(allExposureWindowsWithRisk, riskCalculation.riskThreshold)
+        val (riskyExposureWindows, nonRiskyExposureWindows) = allExposureWindowsWithRisk.partition {
+            it.isConsideredRisky
+        }
 
         trackExposureWindowsMatchedAnalyticsIfNecessary(
             totalNumberOfExposureWindows = allExposureWindowsWithRisk.size,
-            totalRisky = riskyExposureWindowsWithRisk.size
+            totalRisky = riskyExposureWindows.size
         )
 
-        val mostRelevantExposure = evaluateMostRelevantExposure(riskyExposureWindowsWithRisk)
+        val mostRelevantExposure = evaluateMostRelevantRiskyExposure(riskyExposureWindows)
 
-        return RiskCalculationResult(mostRelevantExposure, riskyExposureWindowsWithRisk)
+        return RiskCalculationResult(
+            mostRelevantExposure,
+            PartitionExposureWindowsResult(
+                riskyExposureWindows,
+                nonRiskyExposureWindows
+            )
+        )
     }
 
     private fun trackExposureWindowsMatchedAnalyticsIfNecessary(totalNumberOfExposureWindows: Int, totalRisky: Int) {
@@ -57,5 +67,10 @@ class ExposureWindowRiskCalculator @Inject constructor(
 
 data class RiskCalculationResult(
     val relevantRisk: DayRisk?,
-    val exposureWindowsWithRisk: List<ExposureWindowWithRisk>
+    val partitionedExposureWindows: PartitionExposureWindowsResult
+)
+
+data class PartitionExposureWindowsResult(
+    val riskyExposureWindows: List<ExposureWindowWithRisk>,
+    val nonRiskyExposureWindows: List<ExposureWindowWithRisk>
 )

@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.widgets
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.accessibility.AccessibilityEvent
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.view_enter_code.view.enterCodeEditText
 import kotlinx.android.synthetic.main.view_enter_code.view.enterCodeErrorIndicator
@@ -70,6 +71,7 @@ class EnterCodeView @JvmOverloads constructor(
         enterCodeEditText.setBackgroundResource(drawable.edit_text_background_error)
         enterCodeProgress.gone()
         announceForAccessibility(enterCodeErrorText.text.toString())
+        enterCodeErrorText.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
     }
 
     private fun applyAttributes(context: Context, attrs: AttributeSet?) {

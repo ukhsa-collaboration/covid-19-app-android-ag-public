@@ -117,4 +117,7 @@
         <attr name="rawText" format="string" />
         <attr name="showBulletPoints" format="boolean" />
     </declare-styleable>
+    <declare-styleable name="PrivacyView">
+        <attr name="privacyText" format="string" />
+    </declare-styleable>
 </resources>

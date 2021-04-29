@@ -22,6 +22,7 @@ import uk.nhs.nhsx.covid19.android.app.util.AndroidStrongBoxSupport
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedFileUtils
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedSharedPreferencesUtils
 import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
+import uk.nhs.nhsx.covid19.android.app.util.MockUUIDGenerator
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate
 import uk.nhs.nhsx.covid19.android.app.util.StrongBoxMigrationRetryChecker
 import uk.nhs.nhsx.covid19.android.app.util.StrongBoxMigrationRetryStorage
@@ -62,10 +63,12 @@ class VisitedVenuesStorageIntegrationTest {
         )
     )
     private val file = encryptedFileInfo.file
+    private val uuidGenerator = MockUUIDGenerator()
 
     private val testSubject = VisitedVenuesStorage(
         moshi,
         encryptedFileInfo,
+        uuidGenerator,
         clock
     )
 
@@ -175,12 +178,14 @@ class VisitedVenuesStorageIntegrationTest {
 
         assertEquals(1, testSubject.getVisits().size)
 
-        val visit = VenueVisit(venue2, from, to)
+        val visitId = uuidGenerator.nextUUID.toString()
+        val visit = VenueVisit(visitId, venue2, from, to)
 
         testSubject.setVisits(listOf(visit))
 
         val visits = testSubject.getVisits()
         assertEquals(1, visits.size)
+        assertEquals(visitId, visits[0].id)
         assertEquals(venue2, visits[0].venue)
         assertEquals(from, visits[0].from)
         assertEquals(to, visits[0].to)

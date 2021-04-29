@@ -25,10 +25,12 @@ import uk.nhs.nhsx.covid19.android.app.di.module.ApiModule
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
 import uk.nhs.nhsx.covid19.android.app.di.module.ViewModelModule
-import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationBroadcastReceiver
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWorker
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfoProvider
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysReminderActivity
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.DataAndPrivacyActivity
@@ -42,6 +44,7 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResultActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformActivity
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
@@ -109,7 +112,6 @@ interface ApplicationComponent {
     fun inject(qrCodeScanResultActivity: QrCodeScanResultActivity)
     fun inject(encounterDetectionActivity: EncounterDetectionActivity)
     fun inject(testResultActivity: TestResultActivity)
-    fun inject(shareKeysInformationActivity: ShareKeysInformationActivity)
     fun inject(submitKeysProgressActivity: SubmitKeysProgressActivity)
     fun inject(exposureNotificationBroadcastReceiver: ExposureNotificationBroadcastReceiver)
     fun inject(myDataActivity: MyDataActivity)
@@ -141,6 +143,8 @@ interface ApplicationComponent {
     fun inject(redirectToIsolationPaymentWebsiteActivity: RedirectToIsolationPaymentWebsiteActivity)
     fun inject(dailyContactTestingConfirmationActivity: DailyContactTestingConfirmationActivity)
     fun inject(myAreaActivity: MyAreaActivity)
+    fun inject(shareKeysInformationActivity: ShareKeysInformationActivity)
+    fun inject(shareKeysReminderActivity: ShareKeysReminderActivity)
 
     fun inject(testResultViewModel: BaseTestResultViewModel)
 
@@ -153,4 +157,6 @@ interface ApplicationComponent {
     fun provideApplicationLocaleProvider(): ApplicationLocaleProvider
     fun provideExposureNotificationRetryAlarmController(): ExposureNotificationRetryAlarmController
     fun provideSubmitAnalyticsAlarmController(): SubmitAnalyticsAlarmController
+    fun provideVisitedVenuesStorage(): VisitedVenuesStorage
+    fun provideKeySharingInfoProvider(): KeySharingInfoProvider
 }

@@ -8,8 +8,8 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 
-class EvaluateMostRelevantExposureTest {
-    private val evaluateMostRelevantExposure = EvaluateMostRelevantExposure()
+class EvaluateMostRelevantRiskyExposureTest {
+    private val evaluateMostRelevantExposure = EvaluateMostRelevantRiskyExposure()
 
     @Test
     fun `returns null when no risky exposures passed`() {
@@ -24,15 +24,18 @@ class EvaluateMostRelevantExposureTest {
         val exposureWindowsWithRisk = listOf(
             getExposureWindowWithRisk(
                 millisSinceEpoch = olderDate.toStartOfDayEpochMillis(),
-                calculatedRisk = 200.0
+                calculatedRisk = 200.0,
+                isConsideredRisky = true
             ),
             getExposureWindowWithRisk(
                 millisSinceEpoch = newerDate.toStartOfDayEpochMillis(),
-                calculatedRisk = 90.0
+                calculatedRisk = 90.0,
+                isConsideredRisky = true
             ),
             getExposureWindowWithRisk(
                 millisSinceEpoch = newerDate.toStartOfDayEpochMillis(),
-                calculatedRisk = 100.0
+                calculatedRisk = 100.0,
+                isConsideredRisky = true
             )
         )
 

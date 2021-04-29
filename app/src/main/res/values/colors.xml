@@ -37,6 +37,7 @@
     <color name="style_red">#ED3D3D</color>
     <color name="style_green">#27C998</color>
     <color name="style_light_blue">#12A0F0</color>
+    <color name="style_lighter_blue">#5EB1F3</color>
 
     <!-- isolation countdown colors -->
     <color name="progress_background">#D8D0D2</color>

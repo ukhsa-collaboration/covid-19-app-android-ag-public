@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <include layout="@layout/view_toolbar_primary" />
@@ -9,75 +10,74 @@
     <ScrollView
         style="@style/ScrollContainer"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="@dimen/margin_horizontal_reduced"
-            android:paddingEnd="@dimen/margin_horizontal"
-            android:paddingVertical="@dimen/vertical_margin_large">
+            android:paddingVertical="@dimen/vertical_margin_large"
+            android:paddingHorizontal="@dimen/margin_horizontal">
 
-            <TextView
+            <ImageView
+                style="@style/GoneInLandscape"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_share_keys" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
                 style="@style/Title1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"
                 android:text="@string/submit_keys_information_text" />
 
+            <uk.nhs.nhsx.covid19.android.app.widgets.PrivacyView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/vertical_margin"
+                app:privacyText="@string/share_keys_privacy_banner"/>
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                style="@style/Title3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/how_does_it_help_title" />
+
             <TextView
+                style="@style/Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:text="@string/submit_keys_information_privacy_notice" />
+                android:layout_marginTop="8dp"
+                android:text="@string/how_does_it_help_text" />
 
-            <LinearLayout
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                style="@style/Title3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin_large"
-                android:orientation="horizontal">
+                android:layout_marginTop="24dp"
+                android:text="@string/what_is_random_id_title" />
 
-                <View
-                    android:id="@+id/errorIndicatorLeft"
-                    android:layout_width="4dp"
-                    android:layout_height="match_parent"
-                    android:background="?attr/colorPrimary" />
+            <TextView
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="8dp"
+                android:text="@string/what_is_random_id_text" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/Title1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/submit_keys_information_description_title" />
-
-                    <TextView
-                        style="@style/Body1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/vertical_margin"
-                        android:text="@string/submit_keys_information_description_text" />
-                </LinearLayout>
-            </LinearLayout>
-
-
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/shareKeysConfirm"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/vertical_margin"
+                android:text="@string/continue_button" />
         </LinearLayout>
     </ScrollView>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/shareKeysConfirm"
-        style="@style/PrimaryButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin_horizontal"
-        android:layout_marginVertical="@dimen/vertical_margin"
-        android:text="@string/share_keys_information_continue_button" />
-
 </LinearLayout>

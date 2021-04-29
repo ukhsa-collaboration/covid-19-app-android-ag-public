@@ -1,9 +1,15 @@
 package uk.nhs.nhsx.covid19.android.app.notifications
 
 import android.content.SharedPreferences
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShouldEnterShareKeysFlow
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShouldEnterShareKeysFlowResult.Initial
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShouldEnterShareKeysFlowResult.None
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShouldEnterShareKeysFlowResult.Reminder
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
+import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ContinueInitialKeySharing
+import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowKeySharingReminder
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
@@ -15,6 +21,8 @@ import javax.inject.Singleton
 
 sealed class UserInboxItem {
     object ShowTestResult : UserInboxItem()
+    object ContinueInitialKeySharing : UserInboxItem()
+    object ShowKeySharingReminder : UserInboxItem()
 }
 
 sealed class AddableUserInboxItem : UserInboxItem() {
@@ -29,7 +37,8 @@ class UserInbox @Inject constructor(
     @Suppress("DEPRECATION") private val riskyVenueIdProvider: RiskyVenueIdProvider,
     private val riskyVenueAlertProvider: RiskyVenueAlertProvider,
     private val shouldShowEncounterDetectionActivityProvider: ShouldShowEncounterDetectionActivityProvider,
-    private val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider
+    private val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider,
+    private val shouldEnterShareKeysFlow: ShouldEnterShareKeysFlow
 ) {
 
     init {
@@ -82,8 +91,24 @@ class UserInbox @Inject constructor(
         if (shouldShowEncounterDetectionActivityProvider.value == true) {
             return ShowEncounterDetection
         }
-        return riskyVenueAlertProvider.riskyVenueAlert?.toShowVenueAlert()
+        val showVenueAlert = riskyVenueAlertProvider.riskyVenueAlert?.toShowVenueAlert()
+        if (showVenueAlert != null) {
+            return showVenueAlert
+        }
+        val shareKeysFlow = getShareKeysFlowInboxItem()
+        if (shareKeysFlow != null) {
+            return shareKeysFlow
+        }
+
+        return null
     }
+
+    private fun getShareKeysFlowInboxItem(): UserInboxItem? =
+        when (shouldEnterShareKeysFlow()) {
+            Initial -> ContinueInitialKeySharing
+            Reminder -> ShowKeySharingReminder
+            None -> null
+        }
 
     fun clearItem(item: AddableUserInboxItem) {
         when (item) {

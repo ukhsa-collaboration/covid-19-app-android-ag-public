@@ -52,12 +52,12 @@ class ExposureStatusViewModel @Inject constructor(
 
     fun startExposureNotifications() {
         viewModelScope.launch {
-            val startResult = if (!exposureNotificationManager.isEnabled()) {
+            val startResult = if (exposureNotificationManager.isEnabled()) {
+                Success
+            } else {
                 val result = exposureNotificationManager.startExposureNotifications()
                 checkExposureNotificationsChanged()
                 result
-            } else {
-                Success
             }
             exposureNotificationActivationResult.postValue(startResult)
             if (startResult == Success) {

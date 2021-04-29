@@ -102,7 +102,7 @@
             android:label="@string/risk_level_title"/>
         <activity android:name=".edgecases.TabletNotSupportedActivity"
             android:label="@string/tablet_support_title"/>
-        <activity android:name=".exposure.ShareKeysInformationActivity"
+        <activity android:name=".exposure.sharekeys.ShareKeysInformationActivity"
             android:label="@string/submit_keys_information_title"/>
         <activity android:name=".testordering.linktestresult.LinkTestResultActivity"
             android:label="@string/status_option_link_test_result"/>
@@ -133,6 +133,10 @@
             android:label="@string/daily_contact_testing_confirmation_title"/>
         <activity android:name=".settings.myarea.MyAreaActivity"
             android:label="@string/settings_my_area_title"/>
+        <activity android:name=".exposure.ShareKeysResultActivity"
+            android:label="@string/share_keys_success_title"/>
+        <activity android:name=".exposure.sharekeys.ShareKeysReminderActivity"
+            android:label="@string/share_keys_reminder_title"/>
 
         <!-- Receivers -->
         <receiver

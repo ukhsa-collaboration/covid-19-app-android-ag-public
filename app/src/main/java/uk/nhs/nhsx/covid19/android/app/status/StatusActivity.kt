@@ -36,6 +36,8 @@ import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationRe
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.ResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.Success
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysReminderActivity
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
@@ -53,6 +55,7 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.canReportSymptoms
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.ExposureConsent
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.IsolationExpiration
+import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.ShareKeys
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.TestResult
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.VenueAlert
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState
@@ -125,6 +128,13 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
                 )
                 TestResult -> startActivity<TestResultActivity>()
                 ExposureConsent -> EncounterDetectionActivity.start(this)
+                is ShareKeys -> {
+                    if (it.reminder) {
+                        startActivity<ShareKeysReminderActivity>()
+                    } else {
+                        startActivity<ShareKeysInformationActivity>()
+                    }
+                }
                 is VenueAlert -> {
                     when (it.messageType) {
                         INFORM -> VenueAlertInformActivity.start(this, it.venueId)

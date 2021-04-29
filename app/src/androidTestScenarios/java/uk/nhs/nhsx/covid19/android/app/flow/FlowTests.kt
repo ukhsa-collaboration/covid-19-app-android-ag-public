@@ -2,12 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.flow
 
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
-import java.time.Instant
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit.DAYS
-import java.util.concurrent.TimeUnit.SECONDS
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.until
@@ -36,10 +30,17 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.EncounterDetectionRobo
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationExpirationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
+import java.time.Instant
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit.DAYS
+import java.util.concurrent.TimeUnit.SECONDS
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class FlowTests : EspressoTest() {
 
@@ -50,6 +51,7 @@ class FlowTests : EspressoTest() {
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
     private val orderTest = OrderTest(this)
     private val selfDiagnosis = SelfDiagnosis(this)
+    private val shareKeysResultRobot = ShareKeysResultRobot()
 
     @Before
     fun setUp() {
@@ -350,7 +352,11 @@ class FlowTests : EspressoTest() {
 
         waitFor { shareKeysInformationRobot.checkActivityIsDisplayed() }
 
-        shareKeysInformationRobot.clickIUnderstandButton()
+        shareKeysInformationRobot.clickContinueButton()
+
+        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+
+        shareKeysResultRobot.clickActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
 

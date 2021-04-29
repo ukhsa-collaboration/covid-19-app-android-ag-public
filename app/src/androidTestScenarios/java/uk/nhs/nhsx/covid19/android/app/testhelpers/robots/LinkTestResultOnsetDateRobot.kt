@@ -5,7 +5,6 @@ import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.isEnabled
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
@@ -57,16 +56,6 @@ class LinkTestResultOnsetDateRobot {
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
     }
 
-    fun selectPreviousMonth() {
-        onView(
-            CoreMatchers.allOf(
-                ViewMatchers.isCompletelyDisplayed(),
-                ViewMatchers.withTagValue(CoreMatchers.equalTo("NAVIGATION_PREV_TAG"))
-            )
-        )
-            .perform(ViewActions.click())
-    }
-
     fun selectDayOfMonth(dayOfMonth: Int) {
         onView(
             CoreMatchers.allOf(
@@ -77,17 +66,5 @@ class LinkTestResultOnsetDateRobot {
         )
             .perform(ViewActions.click())
         onView(ViewMatchers.withTagValue(Matchers.`is`("CONFIRM_BUTTON_TAG"))).perform(ViewActions.click())
-    }
-
-    fun checkDayIsEnabled(dayOfMonth: Int) {
-        onView(
-            CoreMatchers.allOf(
-                ViewMatchers.isDescendantOfA(ViewMatchers.withTagValue(CoreMatchers.equalTo("MONTHS_VIEW_GROUP_TAG"))),
-                ViewMatchers.isCompletelyDisplayed(),
-                withText(dayOfMonth.toString())
-            )
-        )
-            .check(matches(isDisplayed()))
-            .check(matches(isEnabled()))
     }
 }

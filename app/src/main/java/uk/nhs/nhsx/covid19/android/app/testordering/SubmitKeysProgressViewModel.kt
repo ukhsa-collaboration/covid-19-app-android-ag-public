@@ -24,10 +24,7 @@ class SubmitKeysProgressViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             submitKeysLiveData.postValue(
-                submitTemporaryExposureKeys.invoke(
-                    exposureKeys,
-                    diagnosisKeySubmissionToken
-                )
+                submitTemporaryExposureKeys(exposureKeys, diagnosisKeySubmissionToken)
             )
         }
     }

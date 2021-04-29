@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app
 
 import android.content.Context
 import android.content.SharedPreferences
-import java.time.Clock
 import timber.log.Timber
 import uk.nhs.covid19.config.Configurations
 import uk.nhs.covid19.config.EnvironmentConfiguration
@@ -17,15 +16,18 @@ import uk.nhs.nhsx.covid19.android.app.di.DaggerMockApplicationComponent
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
+import uk.nhs.nhsx.covid19.android.app.di.module.ViewModelModule
 import uk.nhs.nhsx.covid19.android.app.exposure.GoogleExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.AndroidRandomNonRiskyExposureWindowsLimiter
 import uk.nhs.nhsx.covid19.android.app.packagemanager.AndroidPackageManager
 import uk.nhs.nhsx.covid19.android.app.permissions.AndroidPermissionsManager
 import uk.nhs.nhsx.covid19.android.app.qrcode.AndroidBarcodeDetectorBuilder
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
-import uk.nhs.nhsx.covid19.android.app.di.module.ViewModelModule
+import uk.nhs.nhsx.covid19.android.app.util.AndroidUUIDGenerator
+import java.time.Clock
 
 class ScenariosExposureApplication : ExposureApplication() {
 
@@ -106,6 +108,8 @@ class ScenariosExposureApplication : ExposureApplication() {
                         AndroidPermissionsManager(),
                         AndroidPackageManager(),
                         AndroidBarcodeDetectorBuilder(this),
+                        AndroidRandomNonRiskyExposureWindowsLimiter(),
+                        AndroidUUIDGenerator(),
                         Clock.systemDefaultZone()
                     )
                 )

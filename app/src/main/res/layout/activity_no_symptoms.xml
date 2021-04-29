@@ -45,6 +45,24 @@
                 android:text="@string/message_no_coronavirus_symptoms" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                android:id="@+id/noSymptomsGettingTestedLink"
+                style="@style/LinkTextWithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/getting_tested_online_service"
+                app:linkUrl="@string/url_nhs_get_tested"
+                />
+
+            <TextView
+                android:id="@+id/messageDevelopSymptoms"
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/message_develop_coronavirus_symptoms" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                 android:id="@+id/noSymptomsOnlineServiceLink"
                 style="@style/LinkTextWithIcon"
                 android:layout_width="wrap_content"

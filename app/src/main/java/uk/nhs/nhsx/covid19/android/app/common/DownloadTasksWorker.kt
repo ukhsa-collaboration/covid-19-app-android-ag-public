@@ -17,6 +17,7 @@ import uk.nhs.nhsx.covid19.android.app.availability.GetAvailabilityStatus
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWork
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HasSuccessfullyProcessedNewExposureProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadAndProcessKeys
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShowShareKeysReminderNotificationIfNeeded
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenues
@@ -69,6 +70,9 @@ class DownloadTasksWorker(
     @Inject
     lateinit var hasSuccessfullyProcessedNewExposureProvider: HasSuccessfullyProcessedNewExposureProvider
 
+    @Inject
+    lateinit var showShareKeysReminderNotificationIfNeeded: ShowShareKeysReminderNotificationIfNeeded
+
     override suspend fun doWork(): Result {
         applicationContext.appComponent.inject(this)
         Timber.d("Running DownloadTasksWorker")
@@ -91,6 +95,7 @@ class DownloadTasksWorker(
         downloadVirologyTestResultWork()
         downloadRiskyPostCodesWork()
         downloadAndProcessRiskyVenues()
+        showShareKeysReminderNotificationIfNeeded()
 
         if (!RuntimeBehavior.isFeatureEnabled(SUBMIT_ANALYTICS_VIA_ALARM_MANAGER)) {
             submitAnalytics()

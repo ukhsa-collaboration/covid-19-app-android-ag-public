@@ -32,7 +32,7 @@ class ExposureWindowRiskManagerTest {
     private val expectedRisk =
         RiskCalculationResult(
             DayRisk(startOfDayMillis = 0, calculatedRisk = 0.0, riskCalculationVersion = 2, matchedKeyCount = 1),
-            listOf()
+            PartitionExposureWindowsResult(riskyExposureWindows = emptyList(), nonRiskyExposureWindows = emptyList())
         )
     private val expectedExposureWindows = listOf(mockk<ExposureWindow>())
     private val v2RiskCalculation = V2RiskCalculation(

@@ -156,7 +156,7 @@ class ExposureNotificationRetryAlarmControllerTest {
             )
         }
 
-        verify { notificationProvider wasNot called }
+        verify { notificationProvider.cancelExposureNotification() }
         verify { alarmManager.cancel(pendingIntent) }
     }
 

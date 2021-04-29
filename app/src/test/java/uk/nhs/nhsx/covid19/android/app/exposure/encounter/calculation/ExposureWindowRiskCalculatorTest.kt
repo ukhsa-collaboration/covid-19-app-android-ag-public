@@ -18,8 +18,8 @@ import kotlin.test.assertTrue
 class ExposureWindowRiskCalculatorTest {
 
     private val riskScoreCalculatorProvider = mockk<RiskScoreCalculatorProvider>()
-    private val filterRiskyExposureWindows = mockk<FilterRiskyExposureWindows>()
-    private val evaluateMostRelevantExposure = mockk<EvaluateMostRelevantExposure>()
+    private val evaluateMostRelevantExposure = mockk<EvaluateMostRelevantRiskyExposure>()
+    private val evaluateIfConsideredRisky = mockk<EvaluateIfConsideredRisky>()
     private val calculateExposureRisk = mockk<CalculateExposureRisk>()
     private val analyticsEventTracker = mockk<AnalyticsEventTracker>(relaxUnitFun = true)
 
@@ -31,28 +31,25 @@ class ExposureWindowRiskCalculatorTest {
     @Test
     fun `returns null as relevant risk and empty list of exposure windows with risk when filter risky exposure windows returns empty list`() {
         val exposureWindow = getExposureWindow(listOf())
-        val expectedExposureWindowWithRisk = exposureWindow.toExposureWindowWithRisk()
 
         every {
             calculateExposureRisk.invoke(exposureWindow, riskScoreCalculationConfig, riskCalculation)
         } returns expectedRisk
-        every {
-            filterRiskyExposureWindows.invoke(listOf(expectedExposureWindowWithRisk), riskCalculation.riskThreshold)
-        } returns listOf()
         every { evaluateMostRelevantExposure.invoke(emptyList()) } returns null
+        every { evaluateIfConsideredRisky.invoke(exposureWindow, expectedRisk, any()) } returns false
 
         val result = riskCalculator(listOf(exposureWindow), riskCalculation, riskScoreCalculationConfig)
 
         verify(exactly = 1) { analyticsEventTracker.track(ExposureWindowsMatched(0, 1)) }
 
         assertNull(result.relevantRisk)
-        assertTrue(result.exposureWindowsWithRisk.isEmpty())
+        assertTrue(result.partitionedExposureWindows.riskyExposureWindows.isEmpty())
     }
 
     @Test
     fun `returns relevant risk and list of exposure windows with risk when filter does not return empty list`() {
         val exposureWindow = getExposureWindow(listOf())
-        val expectedExposureWindowsWithRisk = listOf(exposureWindow.toExposureWindowWithRisk())
+        val expectedExposureWindowsWithRisk = listOf(exposureWindow.toExposureWindowWithRisk(isConsideredRisky = true))
         val expectedDayRisk = DayRisk(
             startOfDayMillis = exposureWindow.dateMillisSinceEpoch,
             calculatedRisk = expectedExposureWindowsWithRisk[0].calculatedRisk,
@@ -63,14 +60,15 @@ class ExposureWindowRiskCalculatorTest {
         every {
             calculateExposureRisk.invoke(exposureWindow, riskScoreCalculationConfig, riskCalculation)
         } returns expectedRisk
-        every {
-            filterRiskyExposureWindows.invoke(expectedExposureWindowsWithRisk, riskCalculation.riskThreshold)
-        } returns expectedExposureWindowsWithRisk
         every { evaluateMostRelevantExposure.invoke(expectedExposureWindowsWithRisk) } returns expectedDayRisk
+        every { evaluateIfConsideredRisky.invoke(exposureWindow, expectedRisk, any()) } returns true
 
         val expected = RiskCalculationResult(
             relevantRisk = expectedDayRisk,
-            exposureWindowsWithRisk = expectedExposureWindowsWithRisk
+            partitionedExposureWindows = PartitionExposureWindowsResult(
+                riskyExposureWindows = expectedExposureWindowsWithRisk,
+                nonRiskyExposureWindows = emptyList()
+            )
         )
         val actual = riskCalculator(listOf(exposureWindow), riskCalculation, riskScoreCalculationConfig)
 
@@ -90,18 +88,19 @@ class ExposureWindowRiskCalculatorTest {
     private val expectedRiskScoreCalculationVersion = 2
 
     private val riskCalculator = ExposureWindowRiskCalculator(
-        filterRiskyExposureWindows,
         evaluateMostRelevantExposure,
+        evaluateIfConsideredRisky,
         calculateExposureRisk,
         riskScoreCalculatorProvider,
         analyticsEventTracker,
     )
 
-    private fun ExposureWindow.toExposureWindowWithRisk() =
+    private fun ExposureWindow.toExposureWindowWithRisk(isConsideredRisky: Boolean) =
         ExposureWindowWithRisk(
             exposureWindow = this,
             calculatedRisk = expectedRisk,
             riskCalculationVersion = expectedRiskScoreCalculationVersion,
-            matchedKeyCount = 1
+            matchedKeyCount = 1,
+            isConsideredRisky = isConsideredRisky
         )
 }

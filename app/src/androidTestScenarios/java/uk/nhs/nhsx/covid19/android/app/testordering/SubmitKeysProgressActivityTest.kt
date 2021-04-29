@@ -6,11 +6,11 @@ import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SubmitKeysProgressRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ProgressRobot
 
 class SubmitKeysProgressActivityTest : EspressoTest() {
 
-    private val submitKeysProgressRobot = SubmitKeysProgressRobot()
+    private val submitKeysProgressRobot = ProgressRobot()
 
     @Test
     fun startActivityWithoutExtras() = notReported {
@@ -32,6 +32,6 @@ class SubmitKeysProgressActivityTest : EspressoTest() {
             putExtra("SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN", "test")
         }
 
-        submitKeysProgressRobot.errorIsDisplayed()
+        submitKeysProgressRobot.checkErrorIsDisplayed()
     }
 }

@@ -2,7 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation
 
 import javax.inject.Inject
 
-class EvaluateMostRelevantExposure @Inject constructor() {
+class EvaluateMostRelevantRiskyExposure @Inject constructor() {
 
     operator fun invoke(exposureWindowsWithRisk: List<ExposureWindowWithRisk>): DayRisk? {
         return exposureWindowsWithRisk

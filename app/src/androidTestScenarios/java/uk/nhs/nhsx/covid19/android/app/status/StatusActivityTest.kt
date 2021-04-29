@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
 import androidx.test.internal.runner.junit4.statement.UiThreadStatement
+import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
 import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit.DAYS
@@ -20,11 +21,13 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationReminderRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MoreAboutAppRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QrScannerRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SettingsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 
 class StatusActivityTest : EspressoTest() {
@@ -33,6 +36,7 @@ class StatusActivityTest : EspressoTest() {
     private val moreAboutAppRobot = MoreAboutAppRobot()
     private val qrScannerRobot = QrScannerRobot()
     private val settingsRobot = SettingsRobot()
+    private val browserRobot = BrowserRobot()
     private val exposureNotificationReminderRobot = ExposureNotificationReminderRobot()
 
     @Test
@@ -294,15 +298,19 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun clickReadAdvice_whenBackPressed_readAdviceButtonShouldBeEnabled() = notReported {
-        startTestActivity<StatusActivity>()
+        runWithFeatureEnabled(USE_WEB_VIEW_FOR_INTERNAL_BROWSER) {
+            startTestActivity<StatusActivity>()
 
-        statusRobot.clickReadAdvice()
+            statusRobot.clickReadAdvice()
 
-        testAppContext.device.pressBack()
+            waitFor { browserRobot.checkActivityIsDisplayed() }
 
-        waitFor { statusRobot.checkActivityIsDisplayed() }
+            browserRobot.clickCloseButton()
 
-        statusRobot.checkReadAdviceIsEnabled()
+            waitFor { statusRobot.checkActivityIsDisplayed() }
+
+            statusRobot.checkReadAdviceIsEnabled()
+        }
     }
 
     @Test

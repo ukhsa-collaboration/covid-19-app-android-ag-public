@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:contentDescription="@string/share_keys_privacy_banner"
+    android:background="@drawable/area_risk_neutral_background"
+    android:orientation="horizontal">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/vertical_margin"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_privacy" />
+
+    <TextView
+        android:id="@+id/privacyTextDescription"
+        style="@style/ActionTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:layout_marginVertical="12dp"
+        android:layout_marginEnd="@dimen/vertical_margin_large"
+        tools:text="@string/share_keys_privacy_banner"
+        android:contentDescription="@null"
+        android:textColor="?attr/colorOnSurface" />
+</LinearLayout>

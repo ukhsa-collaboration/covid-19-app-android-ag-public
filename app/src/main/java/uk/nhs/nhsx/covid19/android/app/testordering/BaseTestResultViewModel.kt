@@ -17,11 +17,7 @@ abstract class BaseTestResultViewModel : ViewModel() {
 
     abstract fun onActionButtonClicked()
 
-    fun onBackPressed() {
-        acknowledgeTestResultIfNecessary()
-    }
-
-    protected abstract fun acknowledgeTestResultIfNecessary()
+    abstract fun onBackPressed()
 
     data class ViewState(
         val mainState: TestResultViewState,
@@ -29,7 +25,7 @@ abstract class BaseTestResultViewModel : ViewModel() {
     )
 
     sealed class NavigationEvent {
-        data class NavigateToShareKeys(val testResult: ReceivedTestResult) : NavigationEvent()
+        object NavigateToShareKeys : NavigationEvent()
         object NavigateToOrderTest : NavigationEvent()
         object Finish : NavigationEvent()
     }

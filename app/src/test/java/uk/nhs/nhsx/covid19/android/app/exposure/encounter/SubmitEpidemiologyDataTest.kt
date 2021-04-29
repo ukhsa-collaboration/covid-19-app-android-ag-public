@@ -5,7 +5,6 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.Instant
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
@@ -14,8 +13,6 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.MetadataProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEvent
 import uk.nhs.nhsx.covid19.android.app.remote.EpidemiologyDataApi
-import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW
-import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW_AFTER_POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventPayload
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyRequest
@@ -23,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.Infectiousness.HIGH
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metadata
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitFakeExposureWindows
+import java.time.Instant
 
 class SubmitEpidemiologyDataTest {
 
@@ -42,13 +40,13 @@ class SubmitEpidemiologyDataTest {
         )
 
     private val epidemiologyEvent = EpidemiologyEvent(
-        version = 1,
         payload = EpidemiologyEventPayload(
             date = Instant.now(),
             infectiousness = HIGH,
             scanInstances = listOf(),
             riskScore = 10.0,
-            riskCalculationVersion = 2
+            riskCalculationVersion = 2,
+            isConsideredRisky = false
         )
     )
 
@@ -59,7 +57,7 @@ class SubmitEpidemiologyDataTest {
         events = listOf(
             epidemiologyEvent.toEpidemiologyEventWithType(
                 EpidemiologyEventType.EXPOSURE_WINDOW,
-                eventVersion = 1,
+                eventVersion = 2,
                 testKitType = null,
                 requiresConfirmatoryTest = null
             )
@@ -71,7 +69,7 @@ class SubmitEpidemiologyDataTest {
         events = listOf(
             epidemiologyEvent.toEpidemiologyEventWithType(
                 EpidemiologyEventType.EXPOSURE_WINDOW_POSITIVE_TEST,
-                eventVersion = 2,
+                eventVersion = 3,
                 testKitType = LAB_RESULT,
                 requiresConfirmatoryTest = true
             )
@@ -95,7 +93,7 @@ class SubmitEpidemiologyDataTest {
                 mockEpidemiologyDataApi.submitEpidemiologyData(exposureWindowRequest)
             }
             verify(exactly = 1) {
-                submitFakeExposureWindows(EXPOSURE_WINDOW, epidemiologyEvents.size)
+                submitFakeExposureWindows(epidemiologyEvents.size)
             }
         }
 
@@ -114,7 +112,7 @@ class SubmitEpidemiologyDataTest {
                 mockEpidemiologyDataApi.submitEpidemiologyData(exposureWindowRequestWithPositiveTest)
             }
             verify(exactly = 1) {
-                submitFakeExposureWindows(EXPOSURE_WINDOW_AFTER_POSITIVE, epidemiologyEvents.size)
+                submitFakeExposureWindows(epidemiologyEvents.size)
             }
         }
 
@@ -124,7 +122,7 @@ class SubmitEpidemiologyDataTest {
             testSubject.submit(listOf())
 
             coVerify(exactly = 0) { mockEpidemiologyDataApi.submitEpidemiologyData(any()) }
-            verify { submitFakeExposureWindows(EXPOSURE_WINDOW, 0) }
+            verify { submitFakeExposureWindows(0) }
         }
 
     @Test
@@ -137,7 +135,7 @@ class SubmitEpidemiologyDataTest {
             testSubject.submit(exposureWindowsWithRisk)
 
             coVerify(exactly = 1) { mockEpidemiologyDataApi.submitEpidemiologyData(any()) }
-            verify { submitFakeExposureWindows(EXPOSURE_WINDOW, exposureWindowsWithRisk.size) }
+            verify { submitFakeExposureWindows(exposureWindowsWithRisk.size) }
         }
 
     @Test
@@ -150,6 +148,6 @@ class SubmitEpidemiologyDataTest {
             )
 
             coVerify(exactly = 0) { mockEpidemiologyDataApi.submitEpidemiologyData(any()) }
-            verify { submitFakeExposureWindows(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+            verify { submitFakeExposureWindows(0) }
         }
 }

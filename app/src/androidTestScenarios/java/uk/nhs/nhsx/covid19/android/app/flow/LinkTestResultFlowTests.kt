@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.flow
 
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
@@ -16,11 +17,13 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultOnsetDat
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import kotlin.test.assertTrue
@@ -33,10 +36,16 @@ class LinkTestResultFlowTests : EspressoTest() {
     private val linkTestResultOnsetDateRobot = LinkTestResultOnsetDateRobot()
     private val testResultRobot = TestResultRobot(testAppContext.app)
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
+    private val shareKeysResultRobot = ShareKeysResultRobot()
 
     @Before
     fun setUp() {
         testAppContext.setLocalAuthority(TestApplicationContext.ENGLISH_LOCAL_AUTHORITY)
+    }
+
+    @After
+    fun tearDown() {
+        testAppContext.clock.reset()
     }
 
     @Test
@@ -75,7 +84,11 @@ class LinkTestResultFlowTests : EspressoTest() {
 
         shareKeysInformationRobot.checkActivityIsDisplayed()
 
-        shareKeysInformationRobot.clickIUnderstandButton()
+        shareKeysInformationRobot.clickContinueButton()
+
+        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+
+        shareKeysResultRobot.clickActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
@@ -123,7 +136,11 @@ class LinkTestResultFlowTests : EspressoTest() {
 
         shareKeysInformationRobot.checkActivityIsDisplayed()
 
-        shareKeysInformationRobot.clickIUnderstandButton()
+        shareKeysInformationRobot.clickContinueButton()
+
+        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+
+        shareKeysResultRobot.clickActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
@@ -200,7 +217,11 @@ class LinkTestResultFlowTests : EspressoTest() {
 
         shareKeysInformationRobot.checkActivityIsDisplayed()
 
-        shareKeysInformationRobot.clickIUnderstandButton()
+        shareKeysInformationRobot.clickContinueButton()
+
+        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+
+        shareKeysResultRobot.clickActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
@@ -209,6 +230,10 @@ class LinkTestResultFlowTests : EspressoTest() {
 
     @Test
     fun startDefault_linkTestResult_confirmSymptoms_selectSymptomsDate_shouldIsolate() = notReported {
+        val now = Instant.parse("2021-01-10T10:00:00Z")
+        testAppContext.clock.currentInstant = now
+        testAppContext.virologyTestingApi.testEndDate = now.minus(2, ChronoUnit.DAYS)
+
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
@@ -229,12 +254,10 @@ class LinkTestResultFlowTests : EspressoTest() {
 
         linkTestResultOnsetDateRobot.clickSelectDate()
 
-        val now = LocalDate.now()
-        val onsetDate = now.minusDays(3)
-        if (onsetDate.monthValue < now.monthValue) {
-            linkTestResultOnsetDateRobot.selectPreviousMonth()
-            waitFor { linkTestResultOnsetDateRobot.checkDayIsEnabled(onsetDate.dayOfMonth) }
-        }
+        val onsetDate = LocalDateTime.ofInstant(now, testAppContext.clock.zone)
+            .toLocalDate()
+            .minusDays(3)
+
         linkTestResultOnsetDateRobot.selectDayOfMonth(onsetDate.dayOfMonth)
 
         linkTestResultOnsetDateRobot.clickContinueButton()
@@ -247,7 +270,11 @@ class LinkTestResultFlowTests : EspressoTest() {
 
         shareKeysInformationRobot.checkActivityIsDisplayed()
 
-        shareKeysInformationRobot.clickIUnderstandButton()
+        shareKeysInformationRobot.clickContinueButton()
+
+        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+
+        shareKeysResultRobot.clickActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
 

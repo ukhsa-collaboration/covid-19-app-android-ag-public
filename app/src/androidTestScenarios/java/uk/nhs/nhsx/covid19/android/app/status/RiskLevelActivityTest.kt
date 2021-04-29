@@ -235,7 +235,7 @@ class RiskLevelActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testPostDistrictInEngland_showMassTestingInformation() = notReported {
+    fun testPostDistrictInEngland_riskIndicatorContainsPolicyInfo_showMassTestingInformation() = notReported {
         testAppContext.setPostCode("BN10")
         testAppContext.setLocalAuthority("E07000063")
 
@@ -263,12 +263,12 @@ class RiskLevelActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testPostDistrictIsInEngland_riskIndicatorDoesNotContainPolicyInfo_doNotShowMassTestingInformation() =
+    fun testPostDistrictInEngland_riskIndicatorDoesNotContainPolicyInfo_showMassTestingInformation() =
         notReported {
-            testAppContext.setPostCode("NP10")
-            testAppContext.setLocalAuthority("W06000018")
+            testAppContext.setPostCode("BN10")
+            testAppContext.setLocalAuthority("E07000063")
 
-            val risk = getTierFiveRisk("NP10")
+            val risk = getTierFiveRisk("BN10")
 
             startTestActivity<RiskLevelActivity> {
                 putExtra(EXTRA_RISK_LEVEL, risk.copy(riskIndicator = risk.riskIndicator.copy(policyData = null)))
@@ -276,7 +276,7 @@ class RiskLevelActivityTest : EspressoTest() {
 
             riskLevelRobot.checkActivityIsDisplayed()
 
-            riskLevelRobot.checkMassTestingIsNotDisplayed()
+            riskLevelRobot.checkMassTestingIsDisplayed()
         }
 
     private fun getTierFiveRisk(postCode: String) = Risk(

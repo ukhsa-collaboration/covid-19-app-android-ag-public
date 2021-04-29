@@ -14,15 +14,9 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationReminderAlarmController
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationAlarmController
-import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.status.ResumeContactTracingNotificationTimeProvider
 
 class AlarmRestarter : BroadcastReceiver() {
-
-    @Inject
-    lateinit var isolationStateMachine: IsolationStateMachine
 
     @Inject
     lateinit var isolationExpirationAlarmController: IsolationExpirationAlarmController
@@ -50,11 +44,7 @@ class AlarmRestarter : BroadcastReceiver() {
             submitAnalyticsAlarmController.onDeviceRebooted()
         }
 
-        val expiryDate = when (val state = isolationStateMachine.readState()) {
-            is Isolation -> state.expiryDate
-            is Default -> return
-        }
-        isolationExpirationAlarmController.setupExpirationCheck(expiryDate)
+        isolationExpirationAlarmController.onDeviceRebooted()
 
         resumeContactTracingNotificationTimeProvider.value?.let {
             val alarmTime = Instant.ofEpochMilli(it)

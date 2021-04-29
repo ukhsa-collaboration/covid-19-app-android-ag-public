@@ -4,6 +4,7 @@ import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.RadioButton
 import androidx.core.widget.NestedScrollView
 import com.google.android.material.snackbar.Snackbar
@@ -39,6 +40,16 @@ fun NestedScrollView.smoothScrollToAndThen(
     runAfterScroll: () -> Unit
 ) {
     smoothScrollTo(x, y, scrollDuration)
+    postDelayed(runAfterScroll, scrollDuration.toLong())
+}
+
+fun LinearLayout.smoothScrollToAndThen(
+    x: Int,
+    y: Int,
+    scrollDuration: Int = 250,
+    runAfterScroll: () -> Unit
+) {
+    scrollTo(x, y)
     postDelayed(runAfterScroll, scrollDuration.toLong())
 }
 

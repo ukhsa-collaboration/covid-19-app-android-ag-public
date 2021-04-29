@@ -13,6 +13,7 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.state.StateJson
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedFileInfo
+import uk.nhs.nhsx.covid19.android.app.util.UUIDGenerator
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
 import uk.nhs.nhsx.covid19.android.app.util.readText
@@ -21,6 +22,7 @@ import java.io.File
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
+import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -28,6 +30,7 @@ class VisitedVenuesStorageTest {
     private val file = mockk<File>(relaxed = true)
     private val encryptedFile = mockk<EncryptedFile>(relaxed = true)
     private val encryptedFileInfo = EncryptedFileInfo(file, encryptedFile)
+    private val uuidGenerator = mockk<UUIDGenerator>()
     private val clock = mockk<Clock>(relaxed = true)
 
     private val moshi = Builder()
@@ -43,7 +46,7 @@ class VisitedVenuesStorageTest {
         mockkStatic("uk.nhs.nhsx.covid19.android.app.util.EncryptedFileUtilsKt")
         every { clock.zone } returns ZoneId.of("UTC+01:00")
         every { clock.withZone(any()) } returns clock
-        testSubject = VisitedVenuesStorage(moshi, encryptedFileInfo, clock)
+        testSubject = VisitedVenuesStorage(moshi, encryptedFileInfo, uuidGenerator, clock)
     }
 
     @Test
@@ -160,6 +163,7 @@ class VisitedVenuesStorageTest {
     @Test
     fun `mark new visits as risky matching`() = runBlocking {
         val venueVisit2 = VenueVisit(
+            "ABC",
             Venue("3", "otherOrganizationPartName"),
             Instant.parse(MORNING),
             Instant.parse(END_OF_DAY),
@@ -168,70 +172,71 @@ class VisitedVenuesStorageTest {
 
         every { encryptedFile.readText() } returns
             """
-                [{"venue":{"id":"${VENUE_VISIT.venue.id}","opn":"${VENUE_VISIT.venue.organizationPartName}"},"from":"${VENUE_VISIT.from}","to":"${VENUE_VISIT.to}","wasInRiskyList":true},
-                {"venue":{"id":"${venueVisit2.venue.id}","opn":"${venueVisit2.venue.organizationPartName}"},"from":"${venueVisit2.from}","to":"${venueVisit2.to}","wasInRiskyList":false}]
+                [{"id":"${VENUE_VISIT.id}","venue":{"id":"${VENUE_VISIT.venue.id}","opn":"${VENUE_VISIT.venue.organizationPartName}"},"from":"${VENUE_VISIT.from}","to":"${VENUE_VISIT.to}","wasInRiskyList":true},
+                {"id":"${venueVisit2.id}","venue":{"id":"${venueVisit2.venue.id}","opn":"${venueVisit2.venue.organizationPartName}"},"from":"${venueVisit2.from}","to":"${venueVisit2.to}","wasInRiskyList":false}]
             """.trimIndent()
 
         testSubject.markAsWasInRiskyList(listOf(venueVisit2))
 
         val expectedJson =
-            """[{"venue":{"id":"${VENUE_VISIT.venue.id}","opn":"${VENUE_VISIT.venue.organizationPartName}"},"from":"${VENUE_VISIT.from}","to":"${VENUE_VISIT.to}","wasInRiskyList":true},""" +
-                """{"venue":{"id":"${venueVisit2.venue.id}","opn":"${venueVisit2.venue.organizationPartName}"},"from":"${venueVisit2.from}","to":"${venueVisit2.to}","wasInRiskyList":true}]"""
-                    .trimIndent()
+            """[{"id":"${VENUE_VISIT.id}","venue":{"id":"${VENUE_VISIT.venue.id}","opn":"${VENUE_VISIT.venue.organizationPartName}"},"from":"${VENUE_VISIT.from}","to":"${VENUE_VISIT.to}","wasInRiskyList":true},""" +
+                """{"id":"${venueVisit2.id}","venue":{"id":"${venueVisit2.venue.id}","opn":"${venueVisit2.venue.organizationPartName}"},"from":"${venueVisit2.from}","to":"${venueVisit2.to}","wasInRiskyList":true}]"""
 
         verify { encryptedFile.writeText(expectedJson) }
     }
 
     @Test
     fun `end visit and start new one`() = runBlocking {
+        val nextUUID = UUID.randomUUID()
+        every { uuidGenerator.randomUUID() } returns nextUUID
         every { encryptedFile.readText() } returns createJson()
-
         every { clock.instant() } returns Instant.parse(AFTERNOON)
+
         testSubject.finishLastVisitAndAddNewVenue(
             Venue("3", "opn")
         )
 
         val expectedJson =
-            """
-            [{"venue":{"id":"2","opn":"organizationPartName"},"from":"$MORNING","to":"2014-12-21T15:30:00Z","wasInRiskyList":false},{"venue":{"id":"3","opn":"opn"},"from":"$AFTERNOON","to":"$END_OF_DAY","wasInRiskyList":false}]
-            """.trimIndent()
+            """[{"id":"${VENUE_VISIT.id}","venue":{"id":"2","opn":"organizationPartName"},"from":"$MORNING","to":"2014-12-21T15:30:00Z","wasInRiskyList":false},""" +
+                """{"id":"$nextUUID","venue":{"id":"3","opn":"opn"},"from":"$AFTERNOON","to":"$END_OF_DAY","wasInRiskyList":false}]"""
 
         verify { encryptedFile.writeText(expectedJson) }
     }
 
     @Test
     fun `end visit and start new one with empty list`() = runBlocking {
+        val nextUUID = UUID.randomUUID()
+        every { uuidGenerator.randomUUID() } returns nextUUID
         every { encryptedFile.readText() } returns "[]"
-
         every { clock.instant() } returns Instant.parse(AFTERNOON)
+
         testSubject.finishLastVisitAndAddNewVenue(
             Venue("3", "opn")
         )
 
         val expectedJson =
-            """
-            [{"venue":{"id":"3","opn":"opn"},"from":"$AFTERNOON","to":"$END_OF_DAY","wasInRiskyList":false}]
-            """.trimIndent()
+            """[{"id":"$nextUUID","venue":{"id":"3","opn":"opn"},"from":"$AFTERNOON","to":"$END_OF_DAY","wasInRiskyList":false}]"""
 
         verify { encryptedFile.writeText(expectedJson) }
     }
 
     @Test
     fun `end visit and start new one after the other has ended`() = runBlocking {
+        val nextUUID = UUID.randomUUID()
+        every { uuidGenerator.randomUUID() } returns nextUUID
         every { encryptedFile.readText() } returns createJson(
             start = MORNING,
             end = AFTERNOON_ROUNDED_UP
         )
-
         every { clock.instant() } returns Instant.parse(EVENING)
+
         testSubject.finishLastVisitAndAddNewVenue(
             Venue("3", "opn")
         )
 
         val expectedJson =
-            """
-            [{"venue":{"id":"2","opn":"organizationPartName"},"from":"$MORNING","to":"$AFTERNOON_ROUNDED_UP","wasInRiskyList":false},{"venue":{"id":"3","opn":"opn"},"from":"$EVENING","to":"$END_OF_DAY","wasInRiskyList":false}]
-            """.trimIndent()
+            """[{"id":"${VENUE_VISIT.id}","venue":{"id":"2","opn":"organizationPartName"},"from":"$MORNING","to":"$AFTERNOON_ROUNDED_UP","wasInRiskyList":false},""" +
+                """{"id":"$nextUUID","venue":{"id":"3","opn":"opn"},"from":"$EVENING","to":"$END_OF_DAY","wasInRiskyList":false}]"""
 
         verify { encryptedFile.writeText(expectedJson) }
     }
@@ -242,9 +247,7 @@ class VisitedVenuesStorageTest {
             end: String = END_OF_DAY,
             wasInRiskyList: Boolean = false
         ) =
-            """
-            [{"venue":{"id":"2","opn":"organizationPartName"},"from":"$start","to":"$end","wasInRiskyList":$wasInRiskyList}]
-            """.trimIndent()
+            """[{"id":"${VENUE_VISIT.id}","venue":{"id":"2","opn":"organizationPartName"},"from":"$start","to":"$end","wasInRiskyList":$wasInRiskyList}]"""
 
         private const val MORNING = "2014-12-21T10:15:00Z"
         private const val AFTERNOON = "2014-12-21T15:15:00Z"
@@ -253,10 +256,11 @@ class VisitedVenuesStorageTest {
         private const val END_OF_DAY = "2014-12-21T23:00:00Z"
 
         private val VENUE_VISIT = VenueVisit(
-            Venue("2", "organizationPartName"),
-            Instant.parse(MORNING),
-            Instant.parse(END_OF_DAY),
-            false
+            id = "XY",
+            venue = Venue("2", "organizationPartName"),
+            from = Instant.parse(MORNING),
+            to = Instant.parse(END_OF_DAY),
+            wasInRiskyList = false
         )
     }
 }

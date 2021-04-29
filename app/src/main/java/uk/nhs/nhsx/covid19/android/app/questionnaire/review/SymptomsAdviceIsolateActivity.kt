@@ -66,9 +66,6 @@ class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_ad
         finish()
     }
 
-    private fun setAccessibilityTitle(title: String) =
-        setTitle(title)
-
     private fun setupPositiveSymptomsUi(daysUntilExpiration: Int) {
         exposureFaqsLinkTextView.visible()
 

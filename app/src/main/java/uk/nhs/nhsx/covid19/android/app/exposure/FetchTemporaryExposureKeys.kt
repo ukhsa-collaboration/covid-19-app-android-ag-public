@@ -8,8 +8,8 @@ import kotlinx.coroutines.withContext
 import uk.nhs.nhsx.covid19.android.app.exposure.FetchTemporaryExposureKeys.TemporaryExposureKeysFetchResult.Failure
 import uk.nhs.nhsx.covid19.android.app.exposure.FetchTemporaryExposureKeys.TemporaryExposureKeysFetchResult.ResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.exposure.FetchTemporaryExposureKeys.TemporaryExposureKeysFetchResult.Success
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
-import java.time.LocalDate
 import javax.inject.Inject
 
 class FetchTemporaryExposureKeys @Inject constructor(
@@ -17,15 +17,16 @@ class FetchTemporaryExposureKeys @Inject constructor(
     private val transmissionRiskLevelApplier: TransmissionRiskLevelApplier
 ) {
 
-    suspend operator fun invoke(onsetDateBasedOnTestEndDate: LocalDate): TemporaryExposureKeysFetchResult =
+    suspend operator fun invoke(keySharingInfo: KeySharingInfo): TemporaryExposureKeysFetchResult =
         withContext(Dispatchers.IO) {
             runCatching {
                 val keys: List<NHSTemporaryExposureKey> =
                     exposureNotificationApi.temporaryExposureKeyHistory()
 
-                transmissionRiskLevelApplier.applyTransmissionRiskLevels(keys, onsetDateBasedOnTestEndDate)
+                transmissionRiskLevelApplier.applyTransmissionRiskLevels(keys, keySharingInfo)
                     .filter {
-                        it.transmissionRiskLevel != null && it.transmissionRiskLevel > 0 &&
+                        it.transmissionRiskLevel != null &&
+                            it.transmissionRiskLevel > MIN_TRANSMISSION_RISK_LEVEL &&
                             it.rollingPeriod == 144
                     }
             }.fold(
@@ -53,6 +54,4 @@ class FetchTemporaryExposureKeys @Inject constructor(
         data class Failure(val throwable: Throwable) : TemporaryExposureKeysFetchResult()
         data class ResolutionRequired(val status: Status) : TemporaryExposureKeysFetchResult()
     }
-
-    data class DateWindow(val fromInclusive: LocalDate, val toInclusive: LocalDate)
 }

@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
 import androidx.annotation.VisibleForTesting
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -11,8 +10,6 @@ import uk.nhs.nhsx.covid19.android.app.analytics.MetadataProvider
 import uk.nhs.nhsx.covid19.android.app.common.runSafely
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEvent
 import uk.nhs.nhsx.covid19.android.app.remote.EpidemiologyDataApi
-import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource
-import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW_AFTER_POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType.EXPOSURE_WINDOW
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType.EXPOSURE_WINDOW_POSITIVE_TEST
@@ -20,6 +17,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventWithType
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyRequest
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitFakeExposureWindows
+import javax.inject.Inject
 
 class SubmitEpidemiologyData constructor(
     private val metadataProvider: MetadataProvider,
@@ -46,7 +44,7 @@ class SubmitEpidemiologyData constructor(
         submit(
             epidemiologyEventList,
             epidemiologyEventType = EXPOSURE_WINDOW,
-            epidemiologyEventVersion = 1,
+            epidemiologyEventVersion = 2,
             testKitType = null,
             requiresConfirmatoryTest = null
         )
@@ -60,7 +58,7 @@ class SubmitEpidemiologyData constructor(
         submit(
             epidemiologyEventList,
             epidemiologyEventType = EXPOSURE_WINDOW_POSITIVE_TEST,
-            epidemiologyEventVersion = 2,
+            epidemiologyEventVersion = 3,
             testKitType,
             requiresConfirmatoryTest
         )
@@ -91,10 +89,7 @@ class SubmitEpidemiologyData constructor(
                     )
                 }
             }
-            submitFakeExposureWindows(
-                epidemiologyEventType.toEmptySubmissionSource(),
-                epidemiologyEventList.size
-            )
+            submitFakeExposureWindows(epidemiologyEventList.size)
         }
     }
 }
@@ -114,9 +109,3 @@ internal fun EpidemiologyEvent.toEpidemiologyEventWithType(
             requiresConfirmatoryTest = requiresConfirmatoryTest
         )
     )
-
-private fun EpidemiologyEventType.toEmptySubmissionSource(): EmptySubmissionSource =
-    when (this) {
-        EXPOSURE_WINDOW_POSITIVE_TEST -> EXPOSURE_WINDOW_AFTER_POSITIVE
-        EXPOSURE_WINDOW -> EmptySubmissionSource.EXPOSURE_WINDOW
-    }

@@ -27,6 +27,7 @@ import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.MockRandomNonRiskyExposureWindowsLimiter
 import uk.nhs.nhsx.covid19.android.app.packagemanager.MockPackageManager
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
 import uk.nhs.nhsx.covid19.android.app.permissions.MockPermissionsManager
@@ -54,6 +55,7 @@ import uk.nhs.nhsx.covid19.android.app.util.AndroidStrongBoxSupport
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedSharedPreferencesUtils
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedStorage
 import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
+import uk.nhs.nhsx.covid19.android.app.util.MockUUIDGenerator
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import uk.nhs.nhsx.covid19.android.app.util.StrongBoxMigrationRetryChecker
@@ -92,6 +94,10 @@ class TestApplicationContext {
     val barcodeDetectorProvider = MockBarcodeDetectorBuilder()
 
     val epidemiologyDataApi = MockEpidemiologyDataApi()
+
+    val randomNonRiskyExposureWindowsLimiter = MockRandomNonRiskyExposureWindowsLimiter()
+
+    val uuidGenerator = MockUUIDGenerator()
 
     val clock = MockClock()
 
@@ -147,6 +153,8 @@ class TestApplicationContext {
                 permissionsManager,
                 packageManager,
                 barcodeDetectorProvider,
+                randomNonRiskyExposureWindowsLimiter,
+                uuidGenerator,
                 clock
             )
         )
@@ -239,6 +247,8 @@ class TestApplicationContext {
 
     fun getTestOrderingTokensProvider() = component.getTestOrderingTokensProvider()
 
+    fun getKeySharingInfoProvider() = component.getKeySharingInfoProvider()
+
     fun setState(state: State) {
         val ref = component.provideIsolationStateMachine()
             .stateMachine
@@ -314,6 +324,9 @@ class TestApplicationContext {
 
     fun getLastVisitedBookTestTypeVenueDateProvider() =
         component.getLastVisitedBookTestTypeVenueDateProvider()
+
+    fun getAlarmManager() =
+        component.getAlarmManager()
 
     companion object {
         const val ENGLISH_LOCAL_AUTHORITY = "E07000063"

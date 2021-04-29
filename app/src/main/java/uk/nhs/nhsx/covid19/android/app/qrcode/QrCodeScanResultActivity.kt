@@ -30,6 +30,7 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.permissions.PermissionsManager
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueCheckInViewModel.ViewState
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
@@ -48,6 +49,9 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
     @Inject
     lateinit var factory: ViewModelFactory<VenueCheckInViewModel>
 
+    @Inject
+    lateinit var permissionsManager: PermissionsManager
+
     private val viewModel: VenueCheckInViewModel by viewModels { factory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +63,7 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
         }
 
         viewModel.isViewStateCameraPermissionNotGranted().observe(this) {
-            if (checkSelfPermission(CAMERA) == PERMISSION_GRANTED) {
+            if (permissionsManager.checkSelfPermission(this, CAMERA) == PERMISSION_GRANTED) {
                 finish()
             }
         }

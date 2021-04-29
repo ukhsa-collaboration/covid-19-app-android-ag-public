@@ -1,8 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
-import androidx.appcompat.widget.AppCompatImageButton
 import android.content.Context
 import androidx.annotation.StringRes
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.click
@@ -17,9 +17,9 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.paragraphsContainerContainsStringResource
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.containsStringResourceAt
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.isAccessibilityHeading
+import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.paragraphsContainerContainsStringResource
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withNullOrEmptyContentDescription
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateColor
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateStringResource
@@ -53,6 +53,7 @@ class TestResultRobot(
 
     fun checkActivityDisplaysPositiveWillBeInIsolation() {
         onView(withText(R.string.self_isolate_for))
+            .perform(scrollTo())
             .check(matches(isDisplayed()))
 
         onView(withText(R.string.state_test_positive_info))

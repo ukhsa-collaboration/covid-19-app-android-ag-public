@@ -33,13 +33,15 @@ class ExposureWindowUtils {
                 someScanInstance
             ),
             millisSinceEpoch: Long = baseDate.toEpochMilli(),
-            infectiousness: Int = Infectiousness.HIGH
+            infectiousness: Int = Infectiousness.HIGH,
+            isConsideredRisky: Boolean
         ): ExposureWindowWithRisk {
             return ExposureWindowWithRisk(
                 getExposureWindow(scanInstances, millisSinceEpoch, infectiousness),
                 calculatedRisk,
                 riskCalculationVersion = 2,
-                matchedKeyCount = 1
+                matchedKeyCount = 1,
+                isConsideredRisky = isConsideredRisky
             )
         }
 

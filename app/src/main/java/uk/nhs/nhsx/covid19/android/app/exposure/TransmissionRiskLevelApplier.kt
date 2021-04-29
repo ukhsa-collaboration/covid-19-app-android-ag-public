@@ -1,9 +1,10 @@
 package uk.nhs.nhsx.covid19.android.app.exposure
 
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.SubmissionDateRange
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CalculateKeySubmissionDateRange
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import java.lang.Integer.max
 import java.time.Duration
 import java.time.Instant
@@ -14,39 +15,43 @@ import javax.inject.Inject
 import kotlin.math.abs
 
 class TransmissionRiskLevelApplier @Inject constructor(
-    private val stateMachine: IsolationStateMachine
+    private val stateMachine: IsolationStateMachine,
+    private val calculateKeySubmissionDateRange: CalculateKeySubmissionDateRange,
 ) {
     fun applyTransmissionRiskLevels(
         keys: List<NHSTemporaryExposureKey>,
-        onsetDateBasedOnTestEndDate: LocalDate
+        keySharingInfo: KeySharingInfo
     ): List<NHSTemporaryExposureKey> {
-        return keys
-            .sortedByDescending { it.rollingStartNumber }
-            .map { key ->
-                val daysFromOnset =
-                    ChronoUnit.DAYS.between(getOnsetDate(onsetDateBasedOnTestEndDate), key.date())
-                        .toInt()
-                key.copy(
-                    transmissionRiskLevel = calculateTransmissionRiskLevel(daysFromOnset),
-                    daysSinceOnsetOfSymptoms = daysFromOnset
-                )
-            }
+        val symptomsOnsetDate = stateMachine.readState().symptomsOnsetDate
+
+        return if (symptomsOnsetDate == null) {
+            keys.sortedByDescending { it.rollingStartNumber }
+                .map { it.copy(transmissionRiskLevel = MIN_TRANSMISSION_RISK_LEVEL) }
+        } else {
+            val submissionDateRange = calculateKeySubmissionDateRange(keySharingInfo.acknowledgedDate, symptomsOnsetDate)
+            keys.sortedByDescending { it.rollingStartNumber }
+                .map { key ->
+                    val keyDate = key.date()
+                    val daysFromOnset = ChronoUnit.DAYS.between(symptomsOnsetDate, keyDate).toInt()
+                    key.copy(
+                        transmissionRiskLevel = calculateTransmissionRiskLevel(keyDate, submissionDateRange, daysFromOnset),
+                        daysSinceOnsetOfSymptoms = daysFromOnset
+                    )
+                }
+        }
     }
 
-    private fun calculateTransmissionRiskLevel(daysFromOnset: Int): Int {
-        if (daysFromOnset < PRIOR_DAYS_THRESHOLD) {
-            return 0
+    private fun calculateTransmissionRiskLevel(
+        keyDate: LocalDate,
+        submissionDateRange: SubmissionDateRange,
+        daysFromOnset: Int
+    ): Int {
+        return if (submissionDateRange.includes(keyDate)) {
+            val transmissionRiskLevel = MAX_TRANSMISSION_RISK_LEVEL - abs(daysFromOnset)
+            max(MIN_TRANSMISSION_RISK_LEVEL, transmissionRiskLevel)
+        } else {
+            MIN_TRANSMISSION_RISK_LEVEL
         }
-        val transmissionRiskLevel = MAX_TRANSMISSION_RISK_LEVEL - abs(daysFromOnset)
-        return max(MIN_TRANSMISSION_RISK_LEVEL, transmissionRiskLevel)
-    }
-
-    private fun getOnsetDate(onsetDateBasedOnTestEndDate: LocalDate): LocalDate {
-        val latestIsolation = when (val state = stateMachine.readState()) {
-            is Isolation -> state
-            is Default -> state.previousIsolation
-        }
-        return latestIsolation?.indexCase?.symptomsOnsetDate ?: onsetDateBasedOnTestEndDate
     }
 
     private fun NHSTemporaryExposureKey.date(): LocalDate {
@@ -58,7 +63,4 @@ class TransmissionRiskLevelApplier @Inject constructor(
 }
 
 const val MAX_TRANSMISSION_RISK_LEVEL = 7
-private const val MIN_TRANSMISSION_RISK_LEVEL = 0
-
-// COV-3804: We don't want keys from before 2 days prior to onset of symptoms
-private const val PRIOR_DAYS_THRESHOLD = -2
+const val MIN_TRANSMISSION_RISK_LEVEL = 0

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="?android:attr/windowTitleStyle"
+    android:id="@+id/alertTitle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+
+    android:paddingTop="@dimen/abc_dialog_padding_top_material"
+    android:paddingStart="?attr/dialogPreferredPadding"
+    android:paddingEnd="?attr/dialogPreferredPadding"
+    android:maxLines="5"
+    android:text="@string/delete_single_venue_visit_title"/>

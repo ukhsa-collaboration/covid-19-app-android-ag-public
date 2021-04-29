@@ -3,16 +3,11 @@ package uk.nhs.nhsx.covid19.android.app.state
 import com.squareup.moshi.JsonClass
 import com.tinder.StateMachine
 import com.tinder.StateMachine.Transition
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DeclaredNegativeResultFromDct
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedUnconfirmedPositiveTestResult
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
-import uk.nhs.nhsx.covid19.android.app.di.module.AppModule.Companion.GLOBAL_SCOPE
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
-import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate
@@ -47,7 +42,6 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
 
 sealed class State {
@@ -138,6 +132,12 @@ sealed class State {
             }
         }
     }
+
+    val symptomsOnsetDate: LocalDate?
+        get() = when (this) {
+            is Isolation -> this.indexCase?.symptomsOnsetDate
+            is Default -> this.previousIsolation?.indexCase?.symptomsOnsetDate
+        }
 }
 
 sealed class Event
@@ -187,9 +187,8 @@ class IsolationStateMachine @Inject constructor(
     private val userInbox: UserInbox,
     private val isolationExpirationAlarmController: IsolationExpirationAlarmController,
     private val clock: Clock,
-    private val analyticsEventProcessor: AnalyticsEventProcessor,
-    @Named(GLOBAL_SCOPE) private val analyticsEventScope: CoroutineScope,
-    private val exposureNotificationRetryAlarmController: ExposureNotificationRetryAlarmController
+    private val analyticsEventTracker: AnalyticsEventTracker,
+    private val exposureNotificationHandler: ExposureNotificationHandler,
 ) {
 
     fun readState(validateExpiry: Boolean = true): State = synchronized(this) {
@@ -380,7 +379,7 @@ class IsolationStateMachine @Inject constructor(
             }
             on<OnDailyContactTestingOptIn> {
                 if (this.isContactCaseOnly()) {
-                    trackAnalyticsEvent(DeclaredNegativeResultFromDct)
+                    analyticsEventTracker.track(DeclaredNegativeResultFromDct)
                     transitionTo(
                         Default(
                             previousIsolation = this.copy(
@@ -406,7 +405,7 @@ class IsolationStateMachine @Inject constructor(
             } else {
                 Timber.d("transition from $currentState to $newState")
                 if (currentState is Default && newState is Isolation) {
-                    trackAnalyticsEvent(StartedIsolation)
+                    analyticsEventTracker.track(StartedIsolation)
                 }
             }
 
@@ -414,9 +413,7 @@ class IsolationStateMachine @Inject constructor(
 
             when (val sideEffect = validTransition.sideEffect) {
                 SendExposedNotification -> {
-                    userInbox.addUserInboxItem(ShowEncounterDetection)
-                    notificationProvider.showExposureNotification()
-                    exposureNotificationRetryAlarmController.setupNextAlarm()
+                    exposureNotificationHandler.show()
                 }
                 is HandleTestResult -> {
                     testResultHandler.onTestResultReceived(sideEffect.testResult)
@@ -427,11 +424,11 @@ class IsolationStateMachine @Inject constructor(
                     if (sideEffect.testResult.testResult == VirologyTestResult.POSITIVE &&
                         sideEffect.testResult.requiresConfirmatoryTest
                     ) {
-                        trackAnalyticsEvent(AnalyticsEvent.ReceivedUnconfirmedPositiveTestResult)
+                        analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult)
                     }
                 }
                 is AcknowledgeTestResult -> {
-                    testResultHandler.acknowledge(sideEffect.testResult, sideEffect.testResultStorageOperation)
+                    testResultHandler.acknowledge(sideEffect.testResult, newState.symptomsOnsetDate, sideEffect.testResultStorageOperation)
                 }
                 ClearAcknowledgedTestResult -> {
                     relevantTestResultProvider.clear()
@@ -439,12 +436,10 @@ class IsolationStateMachine @Inject constructor(
             }
 
             when (newState) {
-                is Isolation -> isolationExpirationAlarmController.setupExpirationCheck(newState.expiryDate)
+                is Isolation -> isolationExpirationAlarmController.setupExpirationCheck(currentState, newState)
                 is Default -> {
                     isolationExpirationAlarmController.cancelExpirationCheckIfAny()
-                    notificationProvider.cancelExposureNotification()
-                    userInbox.clearItem(ShowEncounterDetection)
-                    exposureNotificationRetryAlarmController.cancel()
+                    exposureNotificationHandler.cancel()
                 }
             }
         }
@@ -530,12 +525,6 @@ class IsolationStateMachine @Inject constructor(
     }
 
     private fun getConfigurationDurations() = isolationConfigurationProvider.durationDays
-
-    private fun trackAnalyticsEvent(event: AnalyticsEvent) {
-        analyticsEventScope.launch {
-            analyticsEventProcessor.track(event)
-        }
-    }
 }
 
 fun Isolation.testBelongsToIsolation(testResult: TestResult): Boolean =

@@ -8,6 +8,7 @@ import kotlinx.coroutines.withContext
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedFileInfo
+import uk.nhs.nhsx.covid19.android.app.util.UUIDGenerator
 import uk.nhs.nhsx.covid19.android.app.util.getNextLocalMidnightTime
 import uk.nhs.nhsx.covid19.android.app.util.readText
 import uk.nhs.nhsx.covid19.android.app.util.roundDownToNearestQuarter
@@ -22,6 +23,7 @@ import javax.inject.Inject
 class VisitedVenuesStorage @Inject constructor(
     moshi: Moshi,
     encryptedFileInfo: EncryptedFileInfo,
+    private val uuidGenerator: UUIDGenerator,
     private val clock: Clock
 ) {
     private val context = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
@@ -50,6 +52,7 @@ class VisitedVenuesStorage @Inject constructor(
 
             val nowForCheckIn = now.roundDownToNearestQuarter()
             val visitedVenue = VenueVisit(
+                id = uuidGenerator.randomUUID().toString(),
                 venue,
                 from = nowForCheckIn,
                 to = nowForCheckIn.getNextLocalMidnightTime(clock)

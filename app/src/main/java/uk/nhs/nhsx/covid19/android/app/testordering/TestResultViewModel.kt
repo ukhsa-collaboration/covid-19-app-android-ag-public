@@ -1,9 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.common.SubmitEmptyData
-import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW_AFTER_POSITIVE
-import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.KEY_SUBMISSION
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.SubmitObfuscationData
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
@@ -21,12 +19,12 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAc
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.ORDER_TEST
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.SHARE_KEYS
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.Ignore
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWontBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolationNoChange
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolationAndOrderTest
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWontBeInIsolation
@@ -39,8 +37,7 @@ class TestResultViewModel @Inject constructor(
     private val relevantTestResultProvider: RelevantTestResultProvider,
     private val testResultIsolationHandler: TestResultIsolationHandler,
     private val stateMachine: IsolationStateMachine,
-    private val submitEmptyData: SubmitEmptyData,
-    private val submitFakeExposureWindows: SubmitFakeExposureWindows
+    private val submitObfuscationData: SubmitObfuscationData,
 ) : BaseTestResultViewModel() {
     private var wasAcknowledged = false
     private var preventKeySubmission = false
@@ -124,23 +121,25 @@ class TestResultViewModel @Inject constructor(
         testResult.diagnosisKeySubmissionSupported && !preventKeySubmission
 
     override fun onActionButtonClicked() {
+        acknowledgeTestResult()
+
         when (val buttonAction = viewState.value?.mainState?.buttonAction) {
             FINISH -> {
-                acknowledgeTestResult()
+                submitObfuscationData()
                 navigationEventLiveData.postValue(NavigationEvent.Finish)
             }
 
             SHARE_KEYS -> {
                 if (isKeySubmissionSupported()) {
-                    navigationEventLiveData.postValue(NavigationEvent.NavigateToShareKeys(testResult))
+                    navigationEventLiveData.postValue(NavigationEvent.NavigateToShareKeys)
                 } else {
-                    acknowledgeTestResult()
+                    submitObfuscationData()
                     navigationEventLiveData.postValue(NavigationEvent.Finish)
                 }
             }
 
             ORDER_TEST -> {
-                acknowledgeTestResult()
+                submitObfuscationData()
                 navigationEventLiveData.postValue(NavigationEvent.NavigateToOrderTest)
             }
 
@@ -150,17 +149,8 @@ class TestResultViewModel @Inject constructor(
         }
     }
 
-    override fun acknowledgeTestResultIfNecessary() {
-        // We do not acknowledge test results that require key submission here since we want to postpone that until:
-        //   - The exposure keys are successfully shared, or
-        //   - The user explicitly denies permission to share the exposure keys
-        val buttonAction = viewState.value?.mainState?.buttonAction
-        if (buttonAction == null ||
-            (buttonAction == SHARE_KEYS && isKeySubmissionSupported())
-        ) {
-            return
-        }
-
+    override fun onBackPressed() {
+        submitObfuscationData()
         acknowledgeTestResult()
     }
 
@@ -173,9 +163,6 @@ class TestResultViewModel @Inject constructor(
         stateMachine.processEvent(
             OnTestResultAcknowledge(testResult)
         )
-
-        submitFakeExposureWindows(EXPOSURE_WINDOW_AFTER_POSITIVE)
-        submitEmptyData(KEY_SUBMISSION)
     }
 
     private fun getHighestPriorityTestResult(): ReceivedTestResult? {

@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
@@ -28,6 +29,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Button
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import kotlinx.android.synthetic.scenarios.activity_debug.buttonFeatureFlags
 import kotlinx.android.synthetic.scenarios.activity_debug.environmentSpinner
@@ -40,9 +42,11 @@ import kotlinx.android.synthetic.scenarios.activity_debug.scenarios
 import kotlinx.android.synthetic.scenarios.activity_debug.scenariosGroup
 import kotlinx.android.synthetic.scenarios.activity_debug.screenButtonContainer
 import kotlinx.android.synthetic.scenarios.activity_debug.screenFilter
+import kotlinx.android.synthetic.scenarios.activity_debug.shareFlow
 import kotlinx.android.synthetic.scenarios.activity_debug.statusScreen
 import kotlinx.android.synthetic.scenarios.activity_debug.titleScenarios
 import kotlinx.android.synthetic.scenarios.activity_debug.titleScreens
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.SupportedLanguage.DEFAULT
 import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
@@ -62,8 +66,11 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityInformation
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.edgecases.TabletNotSupportedActivity
-import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysResultActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysReminderActivity
 import uk.nhs.nhsx.covid19.android.app.featureflag.testsettings.TestSettingsActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.DataAndPrivacyActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
@@ -79,6 +86,8 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.ScanningNotSuppor
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.Success
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResultActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
+import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
+import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoSymptomsActivity
@@ -260,6 +269,13 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         statusScreen.setOnSingleClickListener {
             startActivity<StatusActivity>()
         }
+
+        shareFlow.setOnSingleClickListener {
+            lifecycleScope.launch {
+                appComponent.provideVisitedVenuesStorage().setVisits(venueVisits)
+                startActivity(getTestResultIntent<ShareKeysInformationActivity>())
+            }
+        }
     }
 
     private fun setupScreenFilter() {
@@ -424,7 +440,13 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
 
         addScreenButton("Share keys information") {
-            startActivity(shareKeysIntent)
+            appComponent.provideKeySharingInfoProvider().keySharingInfo = keySharingInfo
+            startActivity<ShareKeysInformationActivity>()
+        }
+
+        addScreenButton("Share keys reminder") {
+            appComponent.provideKeySharingInfoProvider().keySharingInfo = keySharingInfo
+            startActivity<ShareKeysReminderActivity>()
         }
 
         val riskIndicatorWithEmptyPolicyData = RiskIndicator(
@@ -565,7 +587,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
 
         addScreenButton("Venue History") {
-            VenueHistoryActivity.start(this)
+            startActivity<VenueHistoryActivity>()
         }
 
         addScreenButton("Languages") {
@@ -574,6 +596,10 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
         addScreenButton("Settings - My area") {
             startActivity<MyAreaActivity>()
+        }
+
+        addScreenButton("Share Result") {
+            startActivity<ShareKeysResultActivity>()
         }
     }
 
@@ -629,8 +655,8 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
     }
 
-    private val shareKeysIntent: Intent by lazy {
-        Intent(this, ShareKeysInformationActivity::class.java).apply {
+    private inline fun <reified T : Activity> getTestResultIntent() =
+        Intent(this, T::class.java).apply {
             putExtra(
                 "EXTRA_TEST_RESULT",
                 ReceivedTestResult(
@@ -643,7 +669,6 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
                 )
             )
         }
-    }
 
     private val testResultSymptomsIntent: Intent by lazy {
         Intent(this, LinkTestResultSymptomsActivity::class.java).apply {
@@ -722,6 +747,51 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
         getDeepChildOffset(parentGroup.parent, parentGroup, accumulatedOffset)
     }
+
+    private val keySharingInfo = KeySharingInfo(
+        diagnosisKeySubmissionToken = "token",
+        acknowledgedDate = Instant.now(),
+        testKitType = LAB_RESULT,
+        requiresConfirmatoryTest = false
+    )
+
+    private val venueVisits = listOf(
+        VenueVisit(
+            venue = Venue("1", "Venue A"),
+            from = Instant.now().minus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).plus(18, ChronoUnit.HOURS),
+            to = Instant.now().minus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).plus(19, ChronoUnit.HOURS)
+        ),
+        VenueVisit(
+            venue = Venue("1", "Venue B"),
+            from = Instant.now().minus(2, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).plus(16, ChronoUnit.HOURS),
+            to = Instant.now().minus(2, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).plus(19, ChronoUnit.HOURS)
+        ),
+        VenueVisit(
+            venue = Venue("1", "Venue C"),
+            from = Instant.now().minus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).plus(15, ChronoUnit.HOURS),
+            to = Instant.now().minus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).plus(16, ChronoUnit.HOURS)
+        ),
+        VenueVisit(
+            venue = Venue("1", "Venue D"),
+            from = Instant.now().minus(2, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).plus(8, ChronoUnit.HOURS),
+            to = Instant.now().minus(2, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).plus(12, ChronoUnit.HOURS)
+        ),
+        VenueVisit(
+            venue = Venue("1", "Venue E"),
+            from = Instant.now().minus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).plus(9, ChronoUnit.HOURS),
+            to = Instant.now().minus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).plus(11, ChronoUnit.HOURS)
+        ),
+        VenueVisit(
+            venue = Venue("1", "Venue F"),
+            from = Instant.now().minus(2, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).plus(7, ChronoUnit.HOURS),
+            to = Instant.now().minus(2, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).plus(8, ChronoUnit.HOURS)
+        ),
+        VenueVisit(
+            venue = Venue("1", "Venue G"),
+            from = Instant.now().minus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).plus(16, ChronoUnit.HOURS),
+            to = Instant.now().minus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).plus(19, ChronoUnit.HOURS)
+        )
+    )
 
     companion object {
         const val DEBUG_PREFERENCES_NAME = "debugPreferences"

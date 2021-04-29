@@ -22,6 +22,7 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
@@ -35,6 +36,7 @@ class TestResultActivityTest : EspressoTest() {
     private val testResultRobot = TestResultRobot(testAppContext.app)
     private val statusRobot = StatusRobot()
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
+    private val shareKeysResultRobot = ShareKeysResultRobot()
 
     private val isolationStateIndexCaseOnly = Isolation(
         isolationStart = Instant.now(),
@@ -197,94 +199,100 @@ class TestResultActivityTest : EspressoTest() {
 
     @RetryFlakyTest
     @Test
-    fun showIsolationScreenWhenReceivingNegativeConfirmatoryAndThenPositiveConfirmatoryTestResultAndSharingKeys() = notReported {
-        testAppContext.setState(Default())
+    fun showIsolationScreenWhenReceivingNegativeConfirmatoryAndThenPositiveConfirmatoryTestResultAndSharingKeys() =
+        notReported {
+            testAppContext.setState(Default())
 
-        testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(
-            ReceivedTestResult(
-                diagnosisKeySubmissionToken = "a",
-                testEndDate = Instant.now(),
-                testResult = NEGATIVE,
-                testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
-            ),
-            testResultStorageOperation = Overwrite
-        )
-
-        testAppContext.getUnacknowledgedTestResultsProvider().add(
-            ReceivedTestResult(
-                diagnosisKeySubmissionToken = "a2",
-                testEndDate = Instant.now(),
-                testResult = POSITIVE,
-                testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+            testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(
+                ReceivedTestResult(
+                    diagnosisKeySubmissionToken = "a",
+                    testEndDate = Instant.now(),
+                    testResult = NEGATIVE,
+                    testKitType = LAB_RESULT,
+                    diagnosisKeySubmissionSupported = true,
+                    requiresConfirmatoryTest = false
+                ),
+                testResultStorageOperation = Overwrite
             )
-        )
 
-        startTestActivity<TestResultActivity>()
+            testAppContext.getUnacknowledgedTestResultsProvider().add(
+                ReceivedTestResult(
+                    diagnosisKeySubmissionToken = "a2",
+                    testEndDate = Instant.now(),
+                    testResult = POSITIVE,
+                    testKitType = LAB_RESULT,
+                    diagnosisKeySubmissionSupported = true,
+                    requiresConfirmatoryTest = false
+                )
+            )
 
-        testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation()
+            startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkExposureLinkIsDisplayed()
+            testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation()
 
-        testResultRobot.checkIsolationActionButtonShowsContinue()
+            testResultRobot.checkExposureLinkIsDisplayed()
 
-        testResultRobot.clickIsolationActionButton()
+            testResultRobot.checkIsolationActionButtonShowsContinue()
 
-        shareKeysInformationRobot.checkActivityIsDisplayed()
+            testResultRobot.clickIsolationActionButton()
 
-        shareKeysInformationRobot.clickIUnderstandButton()
+            shareKeysInformationRobot.checkActivityIsDisplayed()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-    }
+            shareKeysInformationRobot.clickContinueButton()
+
+            waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+
+            shareKeysResultRobot.clickActionButton()
+
+            assertTrue { testAppContext.getCurrentState() is Isolation }
+        }
 
     @RetryFlakyTest
     @Test
-    fun showIsolationScreenWhenReceivingNegativeConfirmatoryAndThenPositiveConfirmatoryTestResultAndRefusingToShareKeys() = notReported {
-        testAppContext.setTemporaryExposureKeyHistoryResolutionRequired(testAppContext.app, false)
+    fun showIsolationScreenWhenReceivingNegativeConfirmatoryAndThenPositiveConfirmatoryTestResultAndRefusingToShareKeys() =
+        notReported {
+            testAppContext.setTemporaryExposureKeyHistoryResolutionRequired(testAppContext.app, false)
 
-        testAppContext.setState(Default())
+            testAppContext.setState(Default())
 
-        testAppContext.getUnacknowledgedTestResultsProvider().add(
-            ReceivedTestResult(
-                diagnosisKeySubmissionToken = "a",
-                testEndDate = Instant.now(),
-                testResult = NEGATIVE,
-                testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+            testAppContext.getUnacknowledgedTestResultsProvider().add(
+                ReceivedTestResult(
+                    diagnosisKeySubmissionToken = "a",
+                    testEndDate = Instant.now(),
+                    testResult = NEGATIVE,
+                    testKitType = LAB_RESULT,
+                    diagnosisKeySubmissionSupported = true,
+                    requiresConfirmatoryTest = false
+                )
             )
-        )
 
-        testAppContext.getUnacknowledgedTestResultsProvider().add(
-            ReceivedTestResult(
-                diagnosisKeySubmissionToken = "a2",
-                testEndDate = Instant.now(),
-                testResult = POSITIVE,
-                testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+            testAppContext.getUnacknowledgedTestResultsProvider().add(
+                ReceivedTestResult(
+                    diagnosisKeySubmissionToken = "a2",
+                    testEndDate = Instant.now(),
+                    testResult = POSITIVE,
+                    testKitType = LAB_RESULT,
+                    diagnosisKeySubmissionSupported = true,
+                    requiresConfirmatoryTest = false
+                )
             )
-        )
 
-        startTestActivity<TestResultActivity>()
+            startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation()
+            testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation()
 
-        testResultRobot.checkExposureLinkIsDisplayed()
+            testResultRobot.checkExposureLinkIsDisplayed()
 
-        testResultRobot.checkIsolationActionButtonShowsContinue()
+            testResultRobot.checkIsolationActionButtonShowsContinue()
 
-        testResultRobot.clickIsolationActionButton()
+            testResultRobot.clickIsolationActionButton()
 
-        shareKeysInformationRobot.checkActivityIsDisplayed()
+            shareKeysInformationRobot.checkActivityIsDisplayed()
 
-        shareKeysInformationRobot.clickIUnderstandButton()
+            shareKeysInformationRobot.clickContinueButton()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-    }
+            assertTrue { testAppContext.getCurrentState() is Isolation }
+        }
 
     @Test
     fun showDoNotHaveToSelfIsolateScreenOnPositiveConfirmatory() = notReported {

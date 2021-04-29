@@ -4,12 +4,17 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfoProvider
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CalculateKeySubmissionDateRange
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.SubmissionDateRange
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Ignore
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
+import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -20,11 +25,25 @@ class TestResultHandlerTest {
 
     @Suppress("DEPRECATION")
     private val latestResultsProvider = mockk<LatestTestResultProvider>(relaxed = true)
+
     @Suppress("DEPRECATION")
     private val testResultsProvider = mockk<TestResultsProvider>(relaxed = true)
     private val unacknowledgedTestResultsProvider =
         mockk<UnacknowledgedTestResultsProvider>(relaxed = true)
     private val relevantTestResultProvider = mockk<RelevantTestResultProvider>(relaxed = true)
+    private val keySharingInfoProvider = mockk<KeySharingInfoProvider>(relaxUnitFun = true)
+    private val keysSubmissionDateRangeCalculator = mockk<CalculateKeySubmissionDateRange>()
+    private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
+
+    private fun createTestResultHandler() = TestResultHandler(
+        latestResultsProvider,
+        testResultsProvider,
+        unacknowledgedTestResultsProvider,
+        relevantTestResultProvider,
+        keySharingInfoProvider,
+        keysSubmissionDateRangeCalculator,
+        fixedClock
+    )
 
     @Test
     fun `migration from LatestTestResultProvider`() {
@@ -37,12 +56,7 @@ class TestResultHandlerTest {
 
         every { testResultsProvider.testResults.values } returns emptyList()
 
-        TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
+        createTestResultHandler()
 
         verify { latestResultsProvider.latestTestResult = null }
         verify {
@@ -73,12 +87,7 @@ class TestResultHandlerTest {
             ACKNOWLEDGED_NEWER_VOID_TEST_RESULT
         )
 
-        TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
+        createTestResultHandler()
 
         verify {
             unacknowledgedTestResultsProvider.add(
@@ -145,12 +154,7 @@ class TestResultHandlerTest {
         every { latestResultsProvider.latestTestResult } returns null
         every { testResultsProvider.testResults.values } returns emptyList()
 
-        TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
+        createTestResultHandler()
         verify(exactly = 0) { latestResultsProvider.latestTestResult = any() }
         verify(exactly = 0) { testResultsProvider.clear() }
         verify(exactly = 0) { unacknowledgedTestResultsProvider.add(any()) }
@@ -159,12 +163,7 @@ class TestResultHandlerTest {
 
     @Test
     fun `on positive test result received adds it to unacknowledged test results`() {
-        val testSubject = TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
+        val testSubject = createTestResultHandler()
 
         testSubject.onTestResultReceived(RECEIVED_POSITIVE_TEST_RESULT)
 
@@ -173,12 +172,7 @@ class TestResultHandlerTest {
 
     @Test
     fun `on negative test result received adds it to unacknowledged test results`() {
-        val testSubject = TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
+        val testSubject = createTestResultHandler()
 
         testSubject.onTestResultReceived(RECEIVED_NEGATIVE_TEST_RESULT)
 
@@ -187,12 +181,7 @@ class TestResultHandlerTest {
 
     @Test
     fun `on void test result received adds it to unacknowledged test results`() {
-        val testSubject = TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
+        val testSubject = createTestResultHandler()
 
         testSubject.onTestResultReceived(RECEIVED_VOID_TEST_RESULT)
 
@@ -200,48 +189,83 @@ class TestResultHandlerTest {
     }
 
     @Test
-    fun `on positive test result acknowledge removes it from unacknowledged test results and reports it to relevant test result provider`() {
-        val testSubject = TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
+    fun `on positive test result acknowledge removes it from unacknowledged test results reports it to relevant test result provider, and adds KeySharingInfo`() {
+        val dateRangeMock = mockk<SubmissionDateRange>()
+        every { dateRangeMock.containsAtLeastOneDay() } returns true
+        every { keysSubmissionDateRangeCalculator.invoke(any(), any()) } returns dateRangeMock
 
-        testSubject.acknowledge(RECEIVED_POSITIVE_TEST_RESULT, testResultStorageOperation = Ignore)
+        val testSubject = createTestResultHandler()
 
+        testSubject.acknowledge(RECEIVED_POSITIVE_TEST_RESULT, LocalDate.now(fixedClock), testResultStorageOperation = Ignore)
+
+        verify {
+            keySharingInfoProvider.keySharingInfo = KeySharingInfo(
+                diagnosisKeySubmissionToken = RECEIVED_POSITIVE_TEST_RESULT.diagnosisKeySubmissionToken!!,
+                acknowledgedDate = fixedClock.instant(),
+                notificationSentDate = null,
+                testKitType = LAB_RESULT,
+                requiresConfirmatoryTest = false
+            )
+        }
         verify { unacknowledgedTestResultsProvider.remove(RECEIVED_POSITIVE_TEST_RESULT) }
-        verify { relevantTestResultProvider.onTestResultAcknowledged(RECEIVED_POSITIVE_TEST_RESULT, testResultStorageOperation = Ignore) }
+        verify {
+            relevantTestResultProvider.onTestResultAcknowledged(
+                RECEIVED_POSITIVE_TEST_RESULT,
+                testResultStorageOperation = Ignore
+            )
+        }
+    }
+
+    @Test
+    fun `on positive test result acknowledge removes it from unacknowledged test results reports it to relevant test result provider but does not add KeySharingInfo because dateRange is empty`() {
+        val dateRangeMock = mockk<SubmissionDateRange>()
+        every { dateRangeMock.containsAtLeastOneDay() } returns false
+        every { keysSubmissionDateRangeCalculator.invoke(any(), any()) } returns dateRangeMock
+
+        val testSubject = createTestResultHandler()
+
+        testSubject.acknowledge(RECEIVED_POSITIVE_TEST_RESULT, LocalDate.now(fixedClock), testResultStorageOperation = Ignore)
+
+        verify(exactly = 0) { keySharingInfoProvider.keySharingInfo = any() }
+        verify { unacknowledgedTestResultsProvider.remove(RECEIVED_POSITIVE_TEST_RESULT) }
+        verify {
+            relevantTestResultProvider.onTestResultAcknowledged(
+                RECEIVED_POSITIVE_TEST_RESULT,
+                testResultStorageOperation = Ignore
+            )
+        }
     }
 
     @Test
     fun `on negative test result acknowledge removes it from unacknowledged test results and reports it to relevant test result provider`() {
-        val testSubject = TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
+        val testSubject = createTestResultHandler()
 
-        testSubject.acknowledge(RECEIVED_NEGATIVE_TEST_RESULT, testResultStorageOperation = Ignore)
+        testSubject.acknowledge(RECEIVED_NEGATIVE_TEST_RESULT, LocalDate.now(fixedClock), testResultStorageOperation = Ignore)
 
+        verify(exactly = 0) { keySharingInfoProvider.keySharingInfo = any() }
         verify { unacknowledgedTestResultsProvider.remove(RECEIVED_NEGATIVE_TEST_RESULT) }
-        verify { relevantTestResultProvider.onTestResultAcknowledged(RECEIVED_NEGATIVE_TEST_RESULT, testResultStorageOperation = Ignore) }
+        verify {
+            relevantTestResultProvider.onTestResultAcknowledged(
+                RECEIVED_NEGATIVE_TEST_RESULT,
+                testResultStorageOperation = Ignore
+            )
+        }
     }
 
     @Test
     fun `on void test result acknowledge removes it from unacknowledged test results and reports it to relevant test result provider`() {
-        val testSubject = TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
+        val testSubject = createTestResultHandler()
 
-        testSubject.acknowledge(RECEIVED_VOID_TEST_RESULT, testResultStorageOperation = Overwrite)
+        testSubject.acknowledge(RECEIVED_VOID_TEST_RESULT, LocalDate.now(fixedClock), testResultStorageOperation = Overwrite)
 
+        verify(exactly = 0) { keySharingInfoProvider.keySharingInfo = any() }
         verify { unacknowledgedTestResultsProvider.remove(RECEIVED_VOID_TEST_RESULT) }
-        verify { relevantTestResultProvider.onTestResultAcknowledged(RECEIVED_VOID_TEST_RESULT, testResultStorageOperation = Overwrite) }
+        verify {
+            relevantTestResultProvider.onTestResultAcknowledged(
+                RECEIVED_VOID_TEST_RESULT,
+                testResultStorageOperation = Overwrite
+            )
+        }
     }
 
     @Test
@@ -249,12 +273,7 @@ class TestResultHandlerTest {
         every { unacknowledgedTestResultsProvider.hasTestResultMatching(any()) } returns true
         every { relevantTestResultProvider.hasTestResultMatching(any()) } returns false
 
-        val testSubject = TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
+        val testSubject = createTestResultHandler()
 
         val predicate = mockk<(TestResult) -> Boolean>(relaxed = true)
         val result = testSubject.hasTestResultMatching(predicate)
@@ -267,12 +286,7 @@ class TestResultHandlerTest {
         every { unacknowledgedTestResultsProvider.hasTestResultMatching(any()) } returns false
         every { relevantTestResultProvider.hasTestResultMatching(any()) } returns true
 
-        val testSubject = TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
+        val testSubject = createTestResultHandler()
 
         val predicate = mockk<(TestResult) -> Boolean>(relaxed = true)
         val result = testSubject.hasTestResultMatching(predicate)
@@ -285,12 +299,7 @@ class TestResultHandlerTest {
         every { unacknowledgedTestResultsProvider.hasTestResultMatching(any()) } returns true
         every { relevantTestResultProvider.hasTestResultMatching(any()) } returns true
 
-        val testSubject = TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
+        val testSubject = createTestResultHandler()
 
         val predicate = mockk<(TestResult) -> Boolean>(relaxed = true)
         val result = testSubject.hasTestResultMatching(predicate)
@@ -303,12 +312,7 @@ class TestResultHandlerTest {
         every { unacknowledgedTestResultsProvider.hasTestResultMatching(any()) } returns false
         every { relevantTestResultProvider.hasTestResultMatching(any()) } returns false
 
-        val testSubject = TestResultHandler(
-            latestResultsProvider,
-            testResultsProvider,
-            unacknowledgedTestResultsProvider,
-            relevantTestResultProvider
-        )
+        val testSubject = createTestResultHandler()
 
         val predicate = mockk<(TestResult) -> Boolean>(relaxed = true)
         val result = testSubject.hasTestResultMatching(predicate)

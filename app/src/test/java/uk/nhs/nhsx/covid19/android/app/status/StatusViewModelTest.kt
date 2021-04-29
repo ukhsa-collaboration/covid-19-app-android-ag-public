@@ -43,6 +43,8 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.ExposureConsent
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.IsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.TestResult
@@ -51,6 +53,7 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewS
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.ViewState
 import uk.nhs.nhsx.covid19.android.app.util.DistrictAreaStringProvider
+import java.time.temporal.ChronoUnit.DAYS
 
 class StatusViewModelTest {
 
@@ -267,7 +270,8 @@ class StatusViewModelTest {
             viewStateObserver.onChanged(
                 defaultViewState.copy(
                     latestAdviceUrl = 0,
-                    isolationState = isolationState
+                    isolationState = isolationState,
+                    showOrderTestButton = true
                 )
             )
         }
@@ -421,6 +425,46 @@ class StatusViewModelTest {
         testSubject.updateViewState()
 
         verify { viewStateObserver.onChanged(defaultViewState.copy(showOrderTestButton = true)) }
+    }
+
+    @Test
+    fun `on update view state should show book test button if does not contain book test type venue at risk but is in isolation as index case`() {
+        val isolationState = Isolation(
+            isolationStart = Instant.now(),
+            isolationConfiguration = DurationDays(),
+            indexCase = IndexCase(
+                symptomsOnsetDate = LocalDate.now().minusDays(3),
+                expiryDate = LocalDate.now().plus(7, DAYS),
+                selfAssessment = false
+            )
+        )
+
+        every { isolationStateMachine.readState() } returns isolationState
+        every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns false
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(isolationState = isolationState, showOrderTestButton = true)) }
+    }
+
+    @Test
+    fun `on update view state should show book test button if does not contain book test type venue at risk but is in isolation as contact case`() {
+        val isolationState = Isolation(
+            isolationStart = Instant.now().minus(20, DAYS),
+            isolationConfiguration = DurationDays(),
+            contactCase = ContactCase(
+                startDate = Instant.now().minus(10, DAYS),
+                notificationDate = Instant.now().minus(2, DAYS),
+                expiryDate = LocalDate.now().plusDays(30)
+            )
+        )
+
+        every { isolationStateMachine.readState() } returns isolationState
+        every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns false
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(isolationState = isolationState, showOrderTestButton = true)) }
     }
 
     @Test

@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.SymptomsOnsetDateCalculator
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -32,23 +33,14 @@ import javax.inject.Inject
 class TestResultIsolationHandler @Inject constructor(
     val relevantTestResultProvider: RelevantTestResultProvider,
     val isolationConfigurationProvider: IsolationConfigurationProvider,
+    private val symptomsOnsetDateCalculator: SymptomsOnsetDateCalculator,
     val clock: Clock
 ) {
-
-    private val indexCaseOnsetDateBeforeTestResultDate: Long = 3
 
     fun computeTransitionWithTestResult(currentState: State, testResult: ReceivedTestResult): TransitionDueToTestResult {
         val isolationUpdate = computeIsolationUpdate(currentState, testResult)
         return applyIsolationUpdate(currentState, testResult, isolationUpdate)
     }
-
-    fun symptomsOnsetDateFromTestResult(testResult: ReceivedTestResult): LocalDate =
-        if (testResult.symptomsOnsetDate?.explicitDate != null) {
-            testResult.symptomsOnsetDate.explicitDate
-        } else {
-            val testResultDate = LocalDateTime.ofInstant(testResult.testEndDate, clock.zone).toLocalDate()
-            testResultDate.minusDays(indexCaseOnsetDateBeforeTestResultDate)
-        }
 
     private fun computeIsolationUpdate(
         currentState: State,
@@ -287,7 +279,7 @@ class TestResultIsolationHandler @Inject constructor(
             isolationStart = testResult.testEndDate,
             isolationConfiguration = durationDays,
             indexCase = IndexCase(
-                symptomsOnsetDate = symptomsOnsetDateFromTestResult(testResult),
+                symptomsOnsetDate = symptomsOnsetDateCalculator.symptomsOnsetDateFromTestResult(testResult),
                 expiryDate = expiryDate,
                 selfAssessment = testResult.symptomsOnsetDate != null
             )

@@ -7,18 +7,17 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
 import java.time.Instant
 
 class PollingTestResult(private val espressoTest: EspressoTest) {
 
     private val testResultRobot = TestResultRobot(espressoTest.testAppContext.app)
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
-    private val testOrderingRobot = TestOrderingRobot()
-    private val browserRobot = BrowserRobot()
+    private val shareKeysResultRobot = ShareKeysResultRobot()
 
     internal fun receiveAndAcknowledgeResult(
         result: VirologyTestResult,
@@ -44,7 +43,9 @@ class PollingTestResult(private val espressoTest: EspressoTest) {
             POSITIVE, testKitType, requiresConfirmatoryTest = false, runBackgroundTasks,
             {
                 testResultRobot.clickIsolationActionButton()
-                shareKeysInformationRobot.clickIUnderstandButton()
+                shareKeysInformationRobot.clickContinueButton()
+                waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+                shareKeysResultRobot.clickActionButton()
             },
         )
     }
@@ -61,15 +62,6 @@ class PollingTestResult(private val espressoTest: EspressoTest) {
     fun receiveAndAcknowledgeVoidTestResult(testKitType: VirologyTestKitType, runBackgroundTasks: () -> Unit) {
         receiveAndAcknowledgeResult(
             VOID, testKitType, requiresConfirmatoryTest = false, runBackgroundTasks,
-            {
-                testResultRobot.clickIsolationActionButton()
-            },
-        )
-    }
-
-    fun receiveAndAcknowledgeUnconfirmedPositiveTestResult(testKitType: VirologyTestKitType, runBackgroundTasks: () -> Unit) {
-        receiveAndAcknowledgeResult(
-            POSITIVE, testKitType, requiresConfirmatoryTest = true, runBackgroundTasks,
             {
                 testResultRobot.clickIsolationActionButton()
             },

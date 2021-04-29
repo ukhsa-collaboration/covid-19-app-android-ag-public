@@ -5,6 +5,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.View
+import android.view.accessibility.AccessibilityEvent
 import android.widget.EditText
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.view_post_code.view.errorIndicatorLeft
@@ -14,6 +15,7 @@ import kotlinx.android.synthetic.main.view_post_code.view.errorTextTitle
 import kotlinx.android.synthetic.main.view_post_code.view.postCodeEditText
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.smoothScrollToAndThen
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 
 class PostCodeView @JvmOverloads constructor(
@@ -64,7 +66,10 @@ class PostCodeView @JvmOverloads constructor(
         errorText: String
     ) {
         postCodeEditText.setBackgroundResource(R.drawable.edit_text_background_error)
-        errorInfoContainer.announceForAccessibility(announcementText)
+        errorInfoContainer.smoothScrollToAndThen(0, 0) {
+            errorInfoContainer.announceForAccessibility(announcementText)
+            errorInfoContainer.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+        }
         errorInfoContainer.visible()
         errorIndicatorLeft.visible()
         errorTextTitle.text = errorText

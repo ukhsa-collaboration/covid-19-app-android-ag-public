@@ -11,10 +11,10 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.FetchTemporaryExposureKeys.TemporaryExposureKeysFetchResult.Failure
 import uk.nhs.nhsx.covid19.android.app.exposure.FetchTemporaryExposureKeys.TemporaryExposureKeysFetchResult.ResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.exposure.FetchTemporaryExposureKeys.TemporaryExposureKeysFetchResult.Success
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import java.time.Duration
 import java.time.Instant
-import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -25,7 +25,6 @@ class FetchTemporaryExposureKeysTest {
 
     private val testSubject =
         FetchTemporaryExposureKeys(exposureNotificationApi, transmissionRiskLevelApplier)
-    private val fakeOnsetDate = LocalDate.parse("2014-12-25")
 
     // From COV-3645:
     // Change the key upload window key to include all days with transmissionRiskLevel above 0
@@ -45,7 +44,7 @@ class FetchTemporaryExposureKeysTest {
         every { transmissionRiskLevelApplier.applyTransmissionRiskLevels(any(), any()) } returns
             exposureKeys.map { if (it.key == "1") it.copy(transmissionRiskLevel = 0) else it.copy(transmissionRiskLevel = 1) }
 
-        val result = testSubject(fakeOnsetDate)
+        val result = testSubject(keySharingInfo)
 
         val expected = Success(
             listOf(
@@ -67,7 +66,7 @@ class FetchTemporaryExposureKeysTest {
             expectedMessage
         )
 
-        val result = testSubject(fakeOnsetDate)
+        val result = testSubject(keySharingInfo)
 
         assertTrue { result is Failure }
         assertTrue { (result as Failure).throwable.message == expectedMessage }
@@ -81,7 +80,7 @@ class FetchTemporaryExposureKeysTest {
 
             coEvery { exposureNotificationApi.temporaryExposureKeyHistory() } throws exception
 
-            val result = testSubject(fakeOnsetDate)
+            val result = testSubject(keySharingInfo)
 
             assertEquals(ResolutionRequired(expectedStatus), result)
         }
@@ -94,7 +93,7 @@ class FetchTemporaryExposureKeysTest {
 
             coEvery { exposureNotificationApi.temporaryExposureKeyHistory() } throws exception
 
-            val result = testSubject(fakeOnsetDate)
+            val result = testSubject(keySharingInfo)
 
             assertEquals(Failure(exception), result)
         }
@@ -105,7 +104,7 @@ class FetchTemporaryExposureKeysTest {
 
         coEvery { exposureNotificationApi.temporaryExposureKeyHistory() } throws exception
 
-        val result = testSubject(fakeOnsetDate)
+        val result = testSubject(keySharingInfo)
 
         assertEquals(Failure(exception), result)
     }
@@ -116,7 +115,7 @@ class FetchTemporaryExposureKeysTest {
 
         coEvery { exposureNotificationApi.temporaryExposureKeyHistory() } throws exception
 
-        val result = testSubject(fakeOnsetDate)
+        val result = testSubject(keySharingInfo)
 
         assertEquals(Failure(exception), result)
     }
@@ -125,4 +124,12 @@ class FetchTemporaryExposureKeysTest {
         val millisIn10Minutes = Duration.ofMinutes(10).toMillis()
         return (Instant.parse(date).toEpochMilli() / millisIn10Minutes).toInt()
     }
+
+    private val keySharingInfo = KeySharingInfo(
+        diagnosisKeySubmissionToken = "token",
+        acknowledgedDate = Instant.parse("2014-12-26T12:00:00Z"),
+        notificationSentDate = null,
+        testKitType = null,
+        requiresConfirmatoryTest = false
+    )
 }

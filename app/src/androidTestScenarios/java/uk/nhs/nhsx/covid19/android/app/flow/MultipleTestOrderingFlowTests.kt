@@ -19,6 +19,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Compan
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
@@ -35,6 +36,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
     private val orderTest = OrderTest(this)
     private val testResultRobot = TestResultRobot(testAppContext.app)
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
+    private val shareKeysResultRobot = ShareKeysResultRobot()
 
     @Before
     fun setUp() {
@@ -89,7 +91,11 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         shareKeysInformationRobot.checkActivityIsDisplayed()
 
-        shareKeysInformationRobot.clickIUnderstandButton()
+        shareKeysInformationRobot.clickContinueButton()
+
+        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+
+        shareKeysResultRobot.clickActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
@@ -195,7 +201,11 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         shareKeysInformationRobot.checkActivityIsDisplayed()
 
-        shareKeysInformationRobot.clickIUnderstandButton()
+        shareKeysInformationRobot.clickContinueButton()
+
+        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+
+        shareKeysResultRobot.clickActionButton()
 
         waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation() }
 
@@ -294,7 +304,10 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         shareKeysInformationRobot.checkActivityIsDisplayed()
 
-        shareKeysInformationRobot.clickIUnderstandButton()
+        shareKeysInformationRobot.clickContinueButton()
+
+        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+        shareKeysResultRobot.clickActionButton()
 
         assertTrue { testAppContext.getCurrentState() is Isolation }
 

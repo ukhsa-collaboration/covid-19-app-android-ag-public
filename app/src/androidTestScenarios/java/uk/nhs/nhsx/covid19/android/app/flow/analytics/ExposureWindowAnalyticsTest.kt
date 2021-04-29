@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
+import com.google.android.gms.nearby.exposurenotification.ScanInstance
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry
@@ -12,7 +13,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType.EXPOSURE_WINDOW
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType.EXPOSURE_WINDOW_POSITIVE_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventWithType
-import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyRequest
 import uk.nhs.nhsx.covid19.android.app.remote.data.Infectiousness.HIGH
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
@@ -22,20 +22,27 @@ class ExposureWindowAnalyticsTest : AnalyticsTest() {
     private val riskyContact = RiskyContact(this)
     private val manualTestResultEntry = ManualTestResultEntry(testAppContext)
 
-    private val lastRequest: EpidemiologyRequest
-        get() = testAppContext.epidemiologyDataApi.lastRequest().getOrAwaitValue()
+    private val events: List<EpidemiologyEventWithType>
+        get() = testAppContext.epidemiologyDataApi.requests.flatMap {
+            it.events
+        }
 
     @Test
     fun submitsExposureWindowData_whenUserHasRiskyContact() = runBlocking {
+        testAppContext.epidemiologyDataApi.clear()
+
         riskyContact.triggerViaBroadcastReceiver()
 
-        val expectedEvents = listOf(getRiskyEncounterEpidemiologyEvent())
-        assertEquals(expectedEvents, lastRequest.events)
+        val expectedEvents = getEncounterEpidemiologyEvents()
+
+        assertEquals(expectedEvents, events)
     }
 
     @Test
     fun submitsExposureWindowData_whenUserReceivesPositiveTest() = runBlocking {
         riskyContact.triggerViaBroadcastReceiver()
+
+        testAppContext.epidemiologyDataApi.clear()
 
         manualTestResultEntry.enterPositive(
             LAB_RESULT,
@@ -43,27 +50,63 @@ class ExposureWindowAnalyticsTest : AnalyticsTest() {
             expectedScreenState = PositiveContinueIsolation
         )
 
-        val expectedEvents = listOf(getPositiveTestEpidemiologyEvent())
-        assertEquals(expectedEvents, lastRequest.events)
+        val expectedEvents = getPositiveTestEpidemiologyEvents()
+
+        assertEquals(expectedEvents, events)
     }
 
-    private suspend fun getRiskyEncounterEpidemiologyEvent() = getEpidemiologyEvent(
-        EXPOSURE_WINDOW,
-        version = 1
-    )
+    private suspend fun getEncounterEpidemiologyEvents(): List<EpidemiologyEventWithType> {
+        val exposureWindows = testAppContext.getExposureNotificationApi().getExposureWindows()
+        return listOf(
+            getEpidemiologyEvent(
+                EXPOSURE_WINDOW,
+                version = 2,
+                riskScore = 312.8639553203358,
+                isConsideredRisky = true,
+                scanInstances = exposureWindows[0].scanInstances
+            ),
+            getEpidemiologyEvent(
+                EXPOSURE_WINDOW,
+                version = 2,
+                riskScore = 0.4272038640881409,
+                isConsideredRisky = false,
+                scanInstances = exposureWindows[1].scanInstances
+            )
+        )
+    }
 
-    private suspend fun getPositiveTestEpidemiologyEvent() = getEpidemiologyEvent(
-        EXPOSURE_WINDOW_POSITIVE_TEST,
-        testKitType = LAB_RESULT,
-        requiresConfirmatoryTest = false,
-        version = 2
-    )
+    private suspend fun getPositiveTestEpidemiologyEvents(): List<EpidemiologyEventWithType> {
+        val exposureWindows = testAppContext.getExposureNotificationApi().getExposureWindows()
+        return listOf(
+            getEpidemiologyEvent(
+                EXPOSURE_WINDOW_POSITIVE_TEST,
+                testKitType = LAB_RESULT,
+                requiresConfirmatoryTest = false,
+                version = 3,
+                riskScore = 312.8639553203358,
+                isConsideredRisky = true,
+                scanInstances = exposureWindows[0].scanInstances
+            ),
+            getEpidemiologyEvent(
+                EXPOSURE_WINDOW_POSITIVE_TEST,
+                testKitType = LAB_RESULT,
+                requiresConfirmatoryTest = false,
+                version = 3,
+                riskScore = 0.4272038640881409,
+                isConsideredRisky = false,
+                scanInstances = exposureWindows[1].scanInstances
+            )
+        )
+    }
 
-    private suspend fun getEpidemiologyEvent(
+    private fun getEpidemiologyEvent(
         epidemiologyEventType: EpidemiologyEventType,
         testKitType: VirologyTestKitType? = null,
         requiresConfirmatoryTest: Boolean? = null,
-        version: Int
+        version: Int,
+        riskScore: Double,
+        isConsideredRisky: Boolean,
+        scanInstances: List<ScanInstance>
     ) = EpidemiologyEventWithType(
         type = epidemiologyEventType,
         version = version,
@@ -72,16 +115,16 @@ class ExposureWindowAnalyticsTest : AnalyticsTest() {
             requiresConfirmatoryTest = requiresConfirmatoryTest,
             date = testAppContext.clock.instant(),
             infectiousness = HIGH,
-            scanInstances = testAppContext.getExposureNotificationApi().getExposureWindows()
-                .first().scanInstances.map {
-                    EpidemiologyEventPayloadScanInstance(
-                        it.minAttenuationDb,
-                        it.secondsSinceLastScan,
-                        it.typicalAttenuationDb
-                    )
-                },
+            scanInstances = scanInstances.map {
+                EpidemiologyEventPayloadScanInstance(
+                    it.minAttenuationDb,
+                    it.secondsSinceLastScan,
+                    it.typicalAttenuationDb
+                )
+            },
             riskCalculationVersion = 2,
-            riskScore = 312.8639553203358
+            riskScore = riskScore,
+            isConsideredRisky = isConsideredRisky
         )
     )
 }

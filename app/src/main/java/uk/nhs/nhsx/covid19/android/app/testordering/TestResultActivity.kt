@@ -27,8 +27,9 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
-import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysInformationActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.inPortraitMode
+import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.Finish
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.NavigateToOrderTest
@@ -71,10 +72,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
     private fun startViewModelListeners() {
         viewModel.navigationEvent().observe(this) { navigationEvent ->
             when (navigationEvent) {
-                is NavigateToShareKeys -> ShareKeysInformationActivity.start(
-                    this,
-                    navigationEvent.testResult
-                )
+                NavigateToShareKeys -> startActivity<ShareKeysInformationActivity>()
                 NavigateToOrderTest -> startActivityForResult(
                     TestOrderingActivity.getIntent(this),
                     REQUEST_CODE_ORDER_A_TEST

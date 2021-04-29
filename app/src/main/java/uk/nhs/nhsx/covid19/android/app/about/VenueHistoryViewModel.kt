@@ -5,18 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import uk.nhs.nhsx.covid19.android.app.about.VenueVisitsViewAdapter.VenueVisitEntry
-import uk.nhs.nhsx.covid19.android.app.about.VenueVisitsViewAdapter.VenueVisitEntry.VenueVisitEntryHeader
-import uk.nhs.nhsx.covid19.android.app.about.VenueVisitsViewAdapter.VenueVisitEntry.VenueVisitEntryItem
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
-import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
-import java.time.ZoneId
 import javax.inject.Inject
 
 class VenueHistoryViewModel @Inject constructor(
     private val venuesStorage: VisitedVenuesStorage,
+    private val clusterVenueVisits: ClusterVenueVisits,
 ) : ViewModel() {
 
     private val venueHistoryStateLiveData = MutableLiveData<VenueHistoryState>()
@@ -27,8 +23,9 @@ class VenueHistoryViewModel @Inject constructor(
 
     fun onResume() {
         viewModelScope.launch {
+            val venueVisitHistory = venuesStorage.getVisits().map { VenueVisitHistory(it) }
             val updatedViewState = VenueHistoryState(
-                venueVisitEntries = getClusteredVenueVisits(),
+                venueVisitEntries = clusterVenueVisits(venueVisitHistory),
                 isInEditMode = isInEditMode(),
                 confirmDeleteVenueVisit = venueHistoryStateLiveData.value?.confirmDeleteVenueVisit
             )
@@ -37,23 +34,6 @@ class VenueHistoryViewModel @Inject constructor(
             }
         }
     }
-
-    private suspend fun getClusteredVenueVisits(): List<VenueVisitEntry> =
-        venuesStorage.getVisits()
-            .sortedWith(
-                compareByDescending<VenueVisit> { it.from }
-                    .thenBy { it.venue.organizationPartName }
-            )
-            .groupBy { item -> item.from.toLocalDate(ZoneId.systemDefault()) }
-            .flatMap { (key, values) ->
-                listOf(VenueVisitEntryHeader(key)).plus(
-                    values.map {
-                        VenueVisitEntryItem(
-                            it
-                        )
-                    }
-                )
-            }
 
     private fun isInEditMode() = venueHistoryStateLiveData.value?.isInEditMode ?: false
 
@@ -68,9 +48,10 @@ class VenueHistoryViewModel @Inject constructor(
     fun deleteVenueVisit(venueVisit: VenueVisit) {
         viewModelScope.launch {
             venuesStorage.removeVenueVisit(venueVisit)
+            val venueVisitHistory = venuesStorage.getVisits().map { VenueVisitHistory(it) }
             venueHistoryStateLiveData.postValue(
                 venueHistoryStateLiveData.value!!.copy(
-                    venueVisitEntries = getClusteredVenueVisits(),
+                    venueVisitEntries = clusterVenueVisits(venueVisitHistory),
                     isInEditMode = true,
                     confirmDeleteVenueVisit = null
                 )
@@ -95,7 +76,7 @@ class VenueHistoryViewModel @Inject constructor(
     }
 
     data class VenueHistoryState(
-        val venueVisitEntries: List<VenueVisitEntry>,
+        val venueVisitEntries: List<VenueVisitListItem>,
         val isInEditMode: Boolean,
         val confirmDeleteVenueVisit: ConfirmDeleteVenueVisit? = null
     )

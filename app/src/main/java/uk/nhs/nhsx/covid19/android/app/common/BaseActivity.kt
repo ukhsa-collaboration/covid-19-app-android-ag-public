@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.common
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
@@ -43,6 +44,14 @@ abstract class BaseActivity(contentView: Int) : AppCompatActivity(contentView) {
             finish()
             startActivity(intent)
         }
+    }
+
+    protected fun setAccessibilityTitle(@StringRes resId: Int) {
+        setAccessibilityTitle(getString(resId))
+    }
+
+    protected fun setAccessibilityTitle(text: String) {
+        title = text
     }
 
     private fun updateBaseContextLocale(context: Context): Context {

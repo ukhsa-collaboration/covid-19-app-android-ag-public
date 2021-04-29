@@ -4,6 +4,7 @@
 
 package uk.nhs.nhsx.covid19.android.app.testhelpers
 
+import android.app.AlarmManager
 import dagger.Component
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsSubmissionLogStorage
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
@@ -14,12 +15,12 @@ import uk.nhs.nhsx.covid19.android.app.di.MockViewModelModule
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfoProvider
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfoProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateStorage
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenues
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.state.DisplayStateExpirationNotification
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -58,9 +59,10 @@ interface TestAppComponent : ApplicationComponent {
     @Singleton
     fun getTestOrderingTokensProvider(): TestOrderingTokensProvider
 
-    fun provideIsolationStateMachine(): IsolationStateMachine
+    @Singleton
+    fun getKeySharingInfoProvider(): KeySharingInfoProvider
 
-    fun provideVisitedVenuesStorage(): VisitedVenuesStorage
+    fun provideIsolationStateMachine(): IsolationStateMachine
 
     @Singleton
     fun getUserInbox(): UserInbox
@@ -88,4 +90,7 @@ interface TestAppComponent : ApplicationComponent {
 
     @Singleton
     fun getAnalyticsSubmissionLogStorage(): AnalyticsSubmissionLogStorage
+
+    @Singleton
+    fun getAlarmManager(): AlarmManager
 }

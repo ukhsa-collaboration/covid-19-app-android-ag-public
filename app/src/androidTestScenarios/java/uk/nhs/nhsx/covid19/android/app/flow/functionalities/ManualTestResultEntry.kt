@@ -19,7 +19,6 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultOnsetDateRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultSymptomsRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
@@ -32,7 +31,7 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
     private val linkTestSymptomsRobot = LinkTestResultSymptomsRobot()
     private val linkTestResultOnsetDateRobot = LinkTestResultOnsetDateRobot()
     private val testResultRobot = TestResultRobot(testAppContext.app)
-    private val shareKeysInformationRobot = ShareKeysInformationRobot()
+    private val shareKeys = ShareKeys(testAppContext.app)
 
     fun enterPositive(
         virologyTestKitType: VirologyTestKitType,
@@ -90,14 +89,6 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
                 testResultRobot.clickGoodNewsActionButton()
             }
         }
-    }
-
-    private fun shareKeys() {
-        testResultRobot.clickIsolationActionButton()
-
-        waitFor { shareKeysInformationRobot.checkActivityIsDisplayed() }
-
-        shareKeysInformationRobot.clickIUnderstandButton()
     }
 
     fun enterNegative(testEndDate: Instant = testAppContext.clock.instant()) {

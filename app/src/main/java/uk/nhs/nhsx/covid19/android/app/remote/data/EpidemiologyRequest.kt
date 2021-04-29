@@ -20,6 +20,7 @@ data class EpidemiologyEventWithType(
 @JsonClass(generateAdapter = true)
 data class EpidemiologyEventPayload(
     val testType: VirologyTestKitType? = null,
+    val isConsideredRisky: Boolean = true,
     val requiresConfirmatoryTest: Boolean? = null,
     val date: Instant,
     val infectiousness: Infectiousness,

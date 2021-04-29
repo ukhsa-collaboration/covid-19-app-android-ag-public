@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -11,10 +10,8 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.common.SubmitEmptyData
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.SubmitObfuscationData
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.EXPOSURE_WINDOW_AFTER_POSITIVE
-import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource.KEY_SUBMISSION
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -61,8 +58,7 @@ class TestResultViewModelTest {
     private val relevantTestResultProvider = mockk<RelevantTestResultProvider>(relaxed = true)
     private val testResultIsolationHandler = mockk<TestResultIsolationHandler>(relaxed = true)
     private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
-    private val submitEmptyData = mockk<SubmitEmptyData>(relaxed = true)
-    private val submitFakeExposureWindows = mockk<SubmitFakeExposureWindows>(relaxed = true)
+    private val submitObfuscationData = mockk<SubmitObfuscationData>(relaxUnitFun = true)
 
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
 
@@ -74,8 +70,7 @@ class TestResultViewModelTest {
             relevantTestResultProvider,
             testResultIsolationHandler,
             stateMachine,
-            submitEmptyData,
-            submitFakeExposureWindows
+            submitObfuscationData,
         )
 
     private val isolationState = Isolation(
@@ -692,8 +687,6 @@ class TestResultViewModelTest {
                     ViewState(PositiveWontBeInIsolation, 0)
                 )
             }
-            coVerify(exactly = 0) { submitEmptyData.invoke(KEY_SUBMISSION) }
-            coVerify(exactly = 0) { submitFakeExposureWindows.invoke(any(), any()) }
         }
 
     @Test
@@ -720,8 +713,6 @@ class TestResultViewModelTest {
                     ViewState(PositiveWontBeInIsolation, 0)
                 )
             }
-            coVerify(exactly = 0) { submitEmptyData.invoke(KEY_SUBMISSION) }
-            coVerify(exactly = 0) { submitFakeExposureWindows.invoke(any(), any()) }
         }
 
     @Test
@@ -736,9 +727,7 @@ class TestResultViewModelTest {
         testSubject.onActionButtonClicked()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(negativeTestResult)) }
-        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
-        coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
-
+        verify { submitObfuscationData() }
         verify { navigationObserver.onChanged(NavigationEvent.Finish) }
     }
 
@@ -754,9 +743,7 @@ class TestResultViewModelTest {
         testSubject.onBackPressed()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(negativeTestResult)) }
-        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
-        coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
-
+        verify { submitObfuscationData() }
         verify(exactly = 0) { navigationObserver.onChanged(any()) }
     }
 
@@ -772,9 +759,7 @@ class TestResultViewModelTest {
         testSubject.onActionButtonClicked()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(voidTestResult)) }
-        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
-        coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
-
+        verify { submitObfuscationData() }
         verify { navigationObserver.onChanged(NavigationEvent.NavigateToOrderTest) }
     }
 
@@ -790,14 +775,12 @@ class TestResultViewModelTest {
         testSubject.onBackPressed()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(voidTestResult)) }
-        coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
-        coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
-
+        verify { submitObfuscationData() }
         verify(exactly = 0) { navigationObserver.onChanged(any()) }
     }
 
     @Test
-    fun `button click for confirmed positive test result should do nothing and navigate to share keys`() {
+    fun `button click for confirmed positive test result should acknowledge test result and navigate to share keys`() {
         val state = Default()
         every { stateMachine.readState() } returns state
         every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
@@ -811,15 +794,14 @@ class TestResultViewModelTest {
 
         testSubject.onActionButtonClicked()
 
-        verify(exactly = 0) { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResult)) }
-        coVerify(exactly = 0) { submitEmptyData.invoke(any()) }
-        coVerify(exactly = 0) { submitFakeExposureWindows.invoke(any(), any()) }
+        verify { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResult)) }
+        verify(exactly = 0) { submitObfuscationData() }
 
-        verify { navigationObserver.onChanged(NavigationEvent.NavigateToShareKeys(positiveTestResult)) }
+        verify { navigationObserver.onChanged(NavigationEvent.NavigateToShareKeys) }
     }
 
     @Test
-    fun `back press for confirmed positive test result should do nothing`() {
+    fun `back press for confirmed positive test result should acknowledge test result`() {
         val state = Default()
         every { stateMachine.readState() } returns state
         every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
@@ -833,10 +815,8 @@ class TestResultViewModelTest {
 
         testSubject.onBackPressed()
 
-        verify(exactly = 0) { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResult)) }
-        coVerify(exactly = 0) { submitEmptyData.invoke(any()) }
-        coVerify(exactly = 0) { submitFakeExposureWindows.invoke(any(), any()) }
-
+        verify { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResult)) }
+        verify { submitObfuscationData() }
         verify(exactly = 0) { navigationObserver.onChanged(any()) }
     }
 
@@ -861,9 +841,7 @@ class TestResultViewModelTest {
         testSubject.onActionButtonClicked()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResultIndicative)) }
-        coVerify { submitEmptyData.invoke(any()) }
-        coVerify { submitFakeExposureWindows.invoke(any(), any()) }
-
+        verify { submitObfuscationData() }
         verify { navigationObserver.onChanged(NavigationEvent.NavigateToOrderTest) }
     }
 
@@ -888,9 +866,7 @@ class TestResultViewModelTest {
         testSubject.onBackPressed()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResultIndicative)) }
-        coVerify { submitEmptyData.invoke(any()) }
-        coVerify { submitFakeExposureWindows.invoke(any(), any()) }
-
+        verify { submitObfuscationData() }
         verify(exactly = 0) { navigationObserver.onChanged(any()) }
     }
 
@@ -912,8 +888,7 @@ class TestResultViewModelTest {
             testSubject.onActionButtonClicked()
 
             verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
-            coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
-            coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+            verify { submitObfuscationData() }
 
             verify { navigationObserver.onChanged(NavigationEvent.Finish) }
         }
@@ -933,8 +908,7 @@ class TestResultViewModelTest {
             testSubject.onActionButtonClicked()
 
             verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
-            coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
-            coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
+            verify { submitObfuscationData() }
 
             verify { navigationObserver.onChanged(NavigationEvent.Finish) }
         }
@@ -957,9 +931,7 @@ class TestResultViewModelTest {
             testSubject.onBackPressed()
 
             verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
-            coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
-            coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
-
+            verify { submitObfuscationData() }
             verify(exactly = 0) { navigationObserver.onChanged(any()) }
         }
 
@@ -978,9 +950,7 @@ class TestResultViewModelTest {
             testSubject.onBackPressed()
 
             verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
-            coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
-            coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
-
+            verify { submitObfuscationData() }
             verify(exactly = 0) { navigationObserver.onChanged(any()) }
         }
 
@@ -1002,9 +972,7 @@ class TestResultViewModelTest {
             testSubject.onBackPressed()
 
             verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
-            coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
-            coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
-
+            verify { submitObfuscationData() }
             verify(exactly = 0) { navigationObserver.onChanged(any()) }
         }
 
@@ -1023,9 +991,7 @@ class TestResultViewModelTest {
             testSubject.onBackPressed()
 
             verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
-            coVerify { submitEmptyData.invoke(KEY_SUBMISSION) }
-            coVerify { submitFakeExposureWindows.invoke(EXPOSURE_WINDOW_AFTER_POSITIVE, 0) }
-
+            verify { submitObfuscationData() }
             verify(exactly = 0) { navigationObserver.onChanged(any()) }
         }
 

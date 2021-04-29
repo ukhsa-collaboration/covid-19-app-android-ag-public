@@ -94,7 +94,7 @@ abstract class AnalyticsTest : EspressoTest() {
         }
     }
 
-    private fun advanceClock(secondsToAdvance: Long) {
+    protected fun advanceClock(secondsToAdvance: Long) {
         testAppContext.clock.currentInstant =
             testAppContext.clock.instant().plusSeconds(secondsToAdvance)
         testAppContext.getCurrentState()

@@ -1,11 +1,13 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
 import androidx.work.ListenableWorker.Result
+import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
@@ -22,7 +24,8 @@ class DisplayStateExpirationNotificationTest {
 
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val notificationProvider = mockk<NotificationProvider>(relaxed = true)
-    private val userInbox = mockk<UserInbox>(relaxed = true)
+    private val isolationExpirationAlarmProvider = mockk<IsolationExpirationAlarmProvider>(relaxUnitFun = true)
+    private val userInbox = mockk<UserInbox>(relaxUnitFun = true)
 
     @Test
     fun `on default state don't send notification`() = runBlocking {
@@ -33,13 +36,18 @@ class DisplayStateExpirationNotificationTest {
         val testSubject = DisplayStateExpirationNotification(
             isolationStateMachine,
             notificationProvider,
+            isolationExpirationAlarmProvider,
             userInbox,
             fixedClock
         )
 
         val result = testSubject.doWork()
 
+        verify { isolationExpirationAlarmProvider.value = null }
+
         verify(exactly = 0) { notificationProvider.showStateExpirationNotification() }
+
+        verify { userInbox wasNot Called }
 
         assertEquals(Result.success(), result)
     }
@@ -63,13 +71,18 @@ class DisplayStateExpirationNotificationTest {
             val testSubject = DisplayStateExpirationNotification(
                 isolationStateMachine,
                 notificationProvider,
+                isolationExpirationAlarmProvider,
                 userInbox,
                 fixedClock
             )
 
             val result = testSubject.doWork()
 
+            verify { isolationExpirationAlarmProvider.value = null }
+
             verify(exactly = 1) { notificationProvider.showStateExpirationNotification() }
+
+            verify { userInbox.addUserInboxItem(ShowIsolationExpiration(expiryDate)) }
 
             assertEquals(Result.success(), result)
         }
@@ -93,13 +106,18 @@ class DisplayStateExpirationNotificationTest {
             val testSubject = DisplayStateExpirationNotification(
                 isolationStateMachine,
                 notificationProvider,
+                isolationExpirationAlarmProvider,
                 userInbox,
                 fixedClock
             )
 
             val result = testSubject.doWork()
 
+            verify { isolationExpirationAlarmProvider.value = null }
+
             verify(exactly = 0) { notificationProvider.showStateExpirationNotification() }
+
+            verify { userInbox wasNot Called }
 
             assertEquals(Result.success(), result)
         }

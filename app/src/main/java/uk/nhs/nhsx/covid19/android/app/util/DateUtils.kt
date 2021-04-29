@@ -191,3 +191,14 @@ fun selectNewest(
         localDateTime2
     }
 }
+
+fun selectNewest(
+    localDate1: LocalDate?,
+    localDate2: LocalDate
+): LocalDate {
+    return if (localDate1?.isAfter(localDate2) == true) {
+        localDate1
+    } else {
+        localDate2
+    }
+}

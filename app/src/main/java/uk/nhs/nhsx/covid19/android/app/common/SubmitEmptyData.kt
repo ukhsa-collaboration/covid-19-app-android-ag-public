@@ -7,8 +7,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.EmptyApi
-import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionRequest
-import uk.nhs.nhsx.covid19.android.app.remote.data.EmptySubmissionSource
 import javax.inject.Inject
 
 class SubmitEmptyData(
@@ -26,14 +24,14 @@ class SubmitEmptyData(
         emptySubmissionDispatcher = Dispatchers.IO
     )
 
-    operator fun invoke(emptySubmissionSource: EmptySubmissionSource, instances: Int = 1) {
+    operator fun invoke(instances: Int = 1) {
         if (obfuscationRateLimiter.allow) {
             Timber.d("Allowing obfuscation calls")
             emptySubmissionScope.launch(emptySubmissionDispatcher) {
-                runSafely {
-                    for (callIndex in 1..instances) {
-                        Timber.d("Empty submission [$callIndex of $instances] for $emptySubmissionSource")
-                        emptyApi.submit(EmptySubmissionRequest(emptySubmissionSource))
+                for (callIndex in 1..instances) {
+                    Timber.d("Empty submission [$callIndex of $instances]")
+                    runSafely {
+                        emptyApi.submit()
                     }
                 }
             }

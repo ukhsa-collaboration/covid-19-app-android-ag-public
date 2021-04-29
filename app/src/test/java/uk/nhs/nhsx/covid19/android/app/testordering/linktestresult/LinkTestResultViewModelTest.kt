@@ -236,7 +236,7 @@ class LinkTestResultViewModelTest {
             testResultResponse.testResult,
             testResultResponse.testKit,
             testResultResponse.diagnosisKeySubmissionSupported,
-            requiresConfirmatoryTest = false
+            requiresConfirmatoryTest = testResultResponse.requiresConfirmatoryTest
         )
 
         every { linkTestResultOnsetDateNeededChecker.isInterestedInAskingForSymptomsOnsetDay(testResult) } returns true
@@ -269,7 +269,7 @@ class LinkTestResultViewModelTest {
             testResultResponse.testResult,
             testResultResponse.testKit,
             testResultResponse.diagnosisKeySubmissionSupported,
-            requiresConfirmatoryTest = false
+            requiresConfirmatoryTest = testResultResponse.requiresConfirmatoryTest
         )
 
         every { linkTestResultOnsetDateNeededChecker.isInterestedInAskingForSymptomsOnsetDay(testResult) } returns false

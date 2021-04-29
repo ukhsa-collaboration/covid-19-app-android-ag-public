@@ -40,12 +40,12 @@
                 android:id="@+id/mockSettings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rounded_corner"
                 android:animateLayoutChanges="true"
+                android:background="@drawable/rounded_corner"
                 android:gravity="center"
                 android:text="ALWAYS_FAIL after 2000ms"
                 android:visibility="gone"
-                tools:visibility="visible"/>
+                tools:visibility="visible" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -93,27 +93,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-            <Button
-                android:id="@+id/scenarioMain"
-                style="@style/PrimaryButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Main" />
 
-            <Button
-                android:id="@+id/scenarioOnboarding"
-                style="@style/PrimaryButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Onboarding" />
+                <Button
+                    android:id="@+id/scenarioMain"
+                    style="@style/PrimaryButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Main" />
 
-            <Button
-                android:id="@+id/statusScreen"
-                style="@style/PrimaryButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="StatusScreen" />
+                <Button
+                    android:id="@+id/scenarioOnboarding"
+                    style="@style/PrimaryButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Onboarding" />
+
+                <Button
+                    android:id="@+id/statusScreen"
+                    style="@style/PrimaryButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="StatusScreen" />
+
+                <Button
+                    android:id="@+id/shareFlow"
+                    style="@style/PrimaryButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Share flow" />
             </LinearLayout>
+
             <TextView
                 android:id="@+id/titleScreens"
                 android:layout_width="match_parent"
@@ -122,11 +131,12 @@
 
             <EditText
                 android:id="@+id/screenFilter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:hint="Filter"
                 android:maxLines="1"
-                android:singleLine="true"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:singleLine="true" />
+
             <LinearLayout
                 android:id="@+id/screenButtonContainer"
                 android:layout_width="match_parent"

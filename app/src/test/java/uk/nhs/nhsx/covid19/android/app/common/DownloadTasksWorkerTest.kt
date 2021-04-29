@@ -27,6 +27,7 @@ import uk.nhs.nhsx.covid19.android.app.availability.GetAvailabilityStatus
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWork
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HasSuccessfullyProcessedNewExposureProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.keysdownload.DownloadAndProcessKeys
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShowShareKeysReminderNotificationIfNeeded
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenues
@@ -53,6 +54,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
     private val hasSuccessfullyProcessedNewExposureProviderMock =
         mockk<HasSuccessfullyProcessedNewExposureProvider>(relaxUnitFun = true)
     private val notificationMock = mockk<Notification>()
+    private val showShareKeysReminderNotificationIfNeededMock = mockk<ShowShareKeysReminderNotificationIfNeeded>()
 
     private var result: Result? = null
 
@@ -71,6 +73,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
             submitAnalytics = submitAnalyticsMock
             onboardingCompletedProvider = onboardingCompletedProviderMock
             hasSuccessfullyProcessedNewExposureProvider = hasSuccessfullyProcessedNewExposureProviderMock
+            showShareKeysReminderNotificationIfNeeded = showShareKeysReminderNotificationIfNeededMock
         }
     )
 
@@ -90,6 +93,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
         coEvery { submitAnalyticsMock.invoke(any()) } returns mockk()
         coEvery { submitAnalyticsMock.invoke(any()) } returns mockk()
         every { hasSuccessfullyProcessedNewExposureProviderMock.value } returns null
+        every { showShareKeysReminderNotificationIfNeededMock.invoke() } returns mockk()
     }
 
     @After
@@ -217,6 +221,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
             downloadVirologyTestResultWorkMock()
             downloadRiskyPostCodesWorkMock()
             downloadAndProcessRiskyVenuesMock()
+            showShareKeysReminderNotificationIfNeededMock()
             submitAnalyticsMock(any())
         }
     }

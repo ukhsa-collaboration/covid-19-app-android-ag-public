@@ -31,26 +31,21 @@ class MyDataViewModel @Inject constructor(
         }
     }
 
-    override fun getIsolationState(): IsolationState? {
-        return when (val isolationState = stateMachine.readState()) {
-            is Default -> {
-                isolationState.previousIsolation?.let {
-                    IsolationState(
-                        contactCaseEncounterDate = isolationState.previousIsolation.contactCase?.startDate,
-                        contactCaseNotificationDate = isolationState.previousIsolation.contactCase?.notificationDate,
-                        dailyContactTestingOptInDate = getDailyContactTestingOptInDateForIsolation(isolationState.previousIsolation)
-                    )
-                }
-            }
-            is Isolation -> IsolationState(
-                lastDayOfIsolation = isolationState.lastDayOfIsolation,
-                contactCaseEncounterDate = isolationState.contactCase?.startDate,
-                contactCaseNotificationDate = isolationState.contactCase?.notificationDate,
-                indexCaseSymptomOnsetDate = isolationState.indexCase?.symptomsOnsetDate,
-                dailyContactTestingOptInDate = getDailyContactTestingOptInDateForIsolation(isolationState)
-            )
+    override fun getIsolationState(): IsolationState? =
+        when (val isolationState = stateMachine.readState()) {
+            is Default -> isolationState.previousIsolation?.toIsolationState(isActiveIsolation = false)
+            is Isolation -> isolationState.toIsolationState(isActiveIsolation = true)
         }
-    }
+
+    private fun Isolation?.toIsolationState(isActiveIsolation: Boolean): IsolationState? =
+        if (this == null) null
+        else IsolationState(
+            lastDayOfIsolation = if (isActiveIsolation) lastDayOfIsolation else null,
+            contactCaseEncounterDate = contactCase?.startDate,
+            contactCaseNotificationDate = contactCase?.notificationDate,
+            indexCaseSymptomOnsetDate = indexCase?.symptomsOnsetDate,
+            dailyContactTestingOptInDate = getDailyContactTestingOptInDateForIsolation(this)
+        )
 
     override fun getLastRiskyVenueVisitDate(): LocalDate? = lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue?.latestDate
 

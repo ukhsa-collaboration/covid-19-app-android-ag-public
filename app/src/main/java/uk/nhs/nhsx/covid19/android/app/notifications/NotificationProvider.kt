@@ -11,12 +11,12 @@ import android.os.Build.VERSION_CODES
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import javax.inject.Inject
-import javax.inject.Singleton
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateRecommendedActivity
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class NotificationProvider @Inject constructor(
@@ -31,6 +31,7 @@ class NotificationProvider @Inject constructor(
         createRecommendedUpdatesNotificationChannel()
         createAppConfigurationNotificationChannel()
         createBackgroundWorkNotificationChannel()
+        createShareKeysReminderNotificationChannel()
     }
 
     companion object {
@@ -41,6 +42,7 @@ class NotificationProvider @Inject constructor(
         const val RECOMMENDED_APP_UPDATE_CHANNEL_ID = "RECOMMENDED_APP_UPDATE"
         const val APP_CONFIGURATION_CHANNEL_ID = "APP_CONFIGURATION"
         const val BACKGROUND_WORK_CHANNEL_ID = "BACKGROUND_WORK"
+        const val SHARE_KEYS_REMINDER_CHANNEL_ID = "SHARE_KEYS_REMINDER"
         const val AREA_RISK_CHANGED_NOTIFICATION_ID = 0
         const val RISKY_VENUE_VISIT_NOTIFICATION_ID = 1
         const val STATE_EXPIRATION_NOTIFICATION_ID = 2
@@ -50,6 +52,7 @@ class NotificationProvider @Inject constructor(
         const val APP_NOT_AVAILABLE_NOTIFICATION_ID = 6
         const val EXPOSURE_REMINDER_NOTIFICATION_ID = 7
         const val RECOMMENDED_APP_UPDATE_NOTIFICATION_ID = 9
+        const val SHARE_KEY_REMINDER_NOTIFICATION_ID = 10
 
         const val REQUEST_CODE_APP_IS_NOT_AVAILABLE = 1
         const val REQUEST_CODE_APP_IS_AVAILABLE = 2
@@ -62,6 +65,7 @@ class NotificationProvider @Inject constructor(
         const val REQUEST_CODE_SHOW_AREA_RISK_CHANGED_NOTIFICATION = 9
         const val REQUEST_CODE_UPDATING_DATABASE_NOTIFICATION = 10
         const val REQUEST_CODE_RECOMMENDED_APP_UPDATE = 12
+        const val REQUEST_CODE_SHARE_KEYS_REMINDER = 13
 
         // TODO ?maybe move to StatusActivity
         const val TAP_EXPOSURE_NOTIFICATION_REMINDER_FLAG = "TAP_EXPOSURE_NOTIFICATION_REMINDER"
@@ -127,6 +131,15 @@ class NotificationProvider @Inject constructor(
             channelNameResId = R.string.notification_channel_background_work_name,
             importance = NotificationManagerCompat.IMPORTANCE_LOW,
             channelDescriptionResId = R.string.notification_channel_background_work_description
+        )
+    }
+
+    private fun createShareKeysReminderNotificationChannel() {
+        createNotificationChannel(
+            channelId = SHARE_KEYS_REMINDER_CHANNEL_ID,
+            channelNameResId = R.string.notification_channel_share_keys_reminder_name,
+            importance = NotificationManagerCompat.IMPORTANCE_DEFAULT,
+            channelDescriptionResId = R.string.notification_channel_share_keys_reminder_description
         )
     }
 
@@ -302,6 +315,32 @@ class NotificationProvider @Inject constructor(
             .notify(
                 TEST_RESULTS_NOTIFICATION_ID,
                 testResultsReceivedNotification
+            )
+    }
+
+    fun showShareKeysReminderNotification() {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(
+                context,
+                REQUEST_CODE_SHARE_KEYS_REMINDER,
+                intent,
+                0
+            )
+
+        val shareKeysReminderNotification = createNotification(
+            SHARE_KEYS_REMINDER_CHANNEL_ID,
+            R.string.notification_title_share_keys_reminder,
+            R.string.notification_text_share_keys_reminder,
+            pendingIntent
+        )
+
+        NotificationManagerCompat.from(context)
+            .notify(
+                SHARE_KEY_REMINDER_NOTIFICATION_ID,
+                shareKeysReminderNotification
             )
     }
 

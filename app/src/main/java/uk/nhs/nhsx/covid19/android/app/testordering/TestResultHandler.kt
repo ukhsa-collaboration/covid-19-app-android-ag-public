@@ -1,16 +1,24 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfoProvider
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CalculateKeySubmissionDateRange
 import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
+import java.time.Clock
+import java.time.LocalDate
 
 @Singleton
 class TestResultHandler @Inject constructor(
     @Suppress("DEPRECATION") private val latestTestResultProvider: LatestTestResultProvider,
     @Suppress("DEPRECATION") private val testResultsProvider: TestResultsProvider,
     private val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider,
-    private val relevantTestResultProvider: RelevantTestResultProvider
+    private val relevantTestResultProvider: RelevantTestResultProvider,
+    private val keySharingInfoProvider: KeySharingInfoProvider,
+    private val calculateKeySubmissionDateRange: CalculateKeySubmissionDateRange,
+    private val clock: Clock
 ) : TestResultChecker {
 
     init {
@@ -84,7 +92,29 @@ class TestResultHandler @Inject constructor(
         unacknowledgedTestResultsProvider.add(testResult)
     }
 
-    fun acknowledge(testResult: ReceivedTestResult, testResultStorageOperation: TestResultStorageOperation) {
+    fun acknowledge(
+        testResult: ReceivedTestResult,
+        symptomsOnsetDate: LocalDate?,
+        testResultStorageOperation: TestResultStorageOperation
+    ) {
+        if (testResult.isPositive() &&
+            testResult.isConfirmed() &&
+            testResult.diagnosisKeySubmissionSupported &&
+            testResult.diagnosisKeySubmissionToken != null &&
+            symptomsOnsetDate != null
+        ) {
+            val acknowledgedDate = Instant.now(clock)
+            val dateRange = calculateKeySubmissionDateRange(acknowledgedDate, symptomsOnsetDate)
+            if (dateRange.containsAtLeastOneDay()) {
+                keySharingInfoProvider.keySharingInfo = KeySharingInfo(
+                    diagnosisKeySubmissionToken = testResult.diagnosisKeySubmissionToken,
+                    acknowledgedDate = acknowledgedDate,
+                    notificationSentDate = null,
+                    testKitType = testResult.testKitType,
+                    requiresConfirmatoryTest = testResult.requiresConfirmatoryTest
+                )
+            }
+        }
         unacknowledgedTestResultsProvider.remove(testResult)
         relevantTestResultProvider.onTestResultAcknowledged(testResult, testResultStorageOperation)
     }

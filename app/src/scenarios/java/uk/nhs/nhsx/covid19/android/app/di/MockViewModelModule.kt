@@ -16,6 +16,6 @@ class MockViewModelModule {
         if (MockTestResultViewModel.currentOptions.useMock) MockTestResultViewModel() else testResultViewModel
 
     @Provides
-    fun provideUserDataViewModel(userDataViewModel: MyDataViewModel): BaseMyDataViewModel =
-        if (MockMyDataViewModel.currentOptions.useMock) MockMyDataViewModel() else userDataViewModel
+    fun provideMyDataViewModel(myDataViewModel: MyDataViewModel): BaseMyDataViewModel =
+        if (MockMyDataViewModel.currentOptions.useMock) MockMyDataViewModel() else myDataViewModel
 }

@@ -451,4 +451,44 @@ class DateUtilsTest {
 
         assertEquals(localDateTime1, result)
     }
+
+    @Test
+    fun `selectNewest LocalDate returns second date if newer`() {
+        val localDate1 = LocalDate.of(2020, 7, 1)
+        val localDate2 = LocalDate.of(2020, 7, 2)
+
+        val result = selectNewest(localDate1, localDate2)
+
+        assertEquals(localDate2, result)
+    }
+
+    @Test
+    fun `selectNewest LocalDate returns first date if newer`() {
+        val localDate1 = LocalDate.of(2020, 7, 3)
+        val localDate2 = LocalDate.of(2020, 7, 2)
+
+        val result = selectNewest(localDate1, localDate2)
+
+        assertEquals(localDate1, result)
+    }
+
+    @Test
+    fun `selectNewest LocalDate returns second date if first is null`() {
+        val localDate2 = LocalDate.of(2020, 7, 2)
+
+        val result = selectNewest(null, localDate2)
+
+        assertEquals(localDate2, result)
+    }
+
+    @Test
+    fun `selectNewest LocalDate returns any date if equal`() {
+        val localDate1 = LocalDate.of(2020, 7, 3)
+        val localDate2 = LocalDate.of(2020, 7, 3)
+
+        val result = selectNewest(localDate1, localDate2)
+
+        assertEquals(localDate1, result)
+        assertEquals(localDate2, result)
+    }
 }

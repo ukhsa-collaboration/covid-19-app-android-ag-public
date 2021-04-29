@@ -5,14 +5,17 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import java.lang.reflect.Type
-import javax.inject.Inject
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventPayload
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
+import java.lang.reflect.Type
+import java.time.Clock
+import java.time.LocalDate
+import javax.inject.Inject
 
 class EpidemiologyEventProvider @Inject constructor(
     private val epidemiologyEventStorage: EpidemiologyEventStorage,
+    private val clock: Clock,
     moshi: Moshi
 ) {
     private val epidemiologyEventsAdapter: JsonAdapter<List<EpidemiologyEvent>> =
@@ -41,15 +44,28 @@ class EpidemiologyEventProvider @Inject constructor(
             }
         }
 
-    fun add(events: List<EpidemiologyEvent>) = synchronized(lock) {
+    fun addRiskyEpidemiologyEvents(events: List<EpidemiologyEvent>) = synchronized(lock) {
         val updatedList = epidemiologyEvents.toMutableList().apply {
             addAll(events)
         }
         epidemiologyEvents = updatedList
     }
 
-    fun clear() = synchronized(lock) {
-        epidemiologyEventStorage.value = null
+    fun addNonRiskyEpidemiologyEvents(events: List<EpidemiologyEvent>, storageLimit: Int) = synchronized(lock) {
+        val updatedList = epidemiologyEvents
+            .partition { it.payload.isConsideredRisky }
+            .let { (riskyEpidemiologyEvents, nonRiskyEpidemiologyEvents) ->
+                riskyEpidemiologyEvents + (nonRiskyEpidemiologyEvents + events).takeLast(storageLimit)
+            }
+
+        epidemiologyEvents = updatedList
+    }
+
+    fun clearOnAndBefore(date: LocalDate) = synchronized(lock) {
+        val updatedList = epidemiologyEvents.filter {
+            it.payload.date.atZone(clock.zone).toLocalDate().isAfter(date)
+        }
+        epidemiologyEvents = updatedList
     }
 
     companion object {
@@ -73,6 +89,6 @@ class EpidemiologyEventStorage @Inject constructor(sharedPreferences: SharedPref
 
 @JsonClass(generateAdapter = true)
 data class EpidemiologyEvent(
-    val version: Int,
     val payload: EpidemiologyEventPayload
+    // removed val version: Int
 )

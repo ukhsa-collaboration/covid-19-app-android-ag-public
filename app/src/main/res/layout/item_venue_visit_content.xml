@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/venueItemContent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/textVenueName"
+        style="@style/ActionTextBold"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:textAlignment="viewStart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="The Harp" />
+
+    <LinearLayout
+        android:id="@+id/venuePostCodeAndIdContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/textVenueName"
+        app:layout_constraintTop_toBottomOf="@id/textVenueName">
+
+        <TextView
+            android:id="@+id/textVenuePostCode"
+            style="@style/ActionText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="viewStart"
+            tools:text="SW12 0NU" />
+
+        <TextView
+            android:id="@+id/textVenueId"
+            style="@style/ActionText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:maxWidth="120dp"
+            tools:text="Id: HHF94J5H" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textDate"
+        style="@style/Body1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/venuePostCodeAndIdContainer"
+        app:layout_constraintStart_toStartOf="@id/venuePostCodeAndIdContainer"
+        app:layout_constraintTop_toBottomOf="@id/venuePostCodeAndIdContainer"
+        tools:text="17 Jul 2020 12:15 - 01:00 18 Jul 2020" />
+</androidx.constraintlayout.widget.ConstraintLayout>

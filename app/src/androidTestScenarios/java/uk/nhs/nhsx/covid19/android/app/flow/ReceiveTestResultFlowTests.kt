@@ -29,6 +29,7 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
@@ -51,6 +52,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     private val testResultRobot = TestResultRobot(testAppContext.app)
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
     private val orderTest = OrderTest(this)
+    private val shareKeysResultRobot = ShareKeysResultRobot()
 
     @Before
     fun setUp() {
@@ -967,7 +969,11 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     private fun shareKeys() {
         shareKeysInformationRobot.checkActivityIsDisplayed()
 
-        shareKeysInformationRobot.clickIUnderstandButton()
+        shareKeysInformationRobot.clickContinueButton()
+
+        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+
+        shareKeysResultRobot.clickActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
     }

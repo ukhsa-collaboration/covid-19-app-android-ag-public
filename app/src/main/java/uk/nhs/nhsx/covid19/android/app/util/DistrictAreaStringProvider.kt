@@ -39,7 +39,8 @@ class DistrictAreaStringProvider @Inject constructor(
             R.string.status_area_risk_level to R.string.status_area_risk_level_wls,
             R.string.low_risk_level_text to R.string.low_risk_level_text_wls,
             R.string.medium_risk_level_text to R.string.medium_risk_level_text_wls,
-            R.string.high_risk_level_text to R.string.high_risk_level_text_wls
+            R.string.high_risk_level_text to R.string.high_risk_level_text_wls,
+            R.string.url_nhs_get_tested to R.string.url_nhs_get_tested_wls
         )
     }
 }

@@ -20,5 +20,5 @@ class MockTestResultViewModel : BaseTestResultViewModel() {
         viewState.postValue(ViewState(currentOptions.viewState, currentOptions.remainingDaysInIsolation))
 
     override fun onActionButtonClicked() = navigationEventLiveData.postValue(Finish)
-    override fun acknowledgeTestResultIfNecessary() = Unit
+    override fun onBackPressed() = Unit
 }

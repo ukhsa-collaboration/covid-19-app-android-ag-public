@@ -5,6 +5,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.SymptomsOnsetDateCalculator
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
@@ -27,6 +28,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.C
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OverwriteAndConfirm
 import uk.nhs.nhsx.covid19.android.app.util.selectEarliest
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -39,11 +41,13 @@ class TestResultIsolationHandlerTest {
 
     private val relevantTestResultProvider = mockk<RelevantTestResultProvider>(relaxUnitFun = true)
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>(relaxUnitFun = true)
+    private val symptomsOnsetDateCalculator = mockk<SymptomsOnsetDateCalculator>()
     private val fixedClock = Clock.fixed(now, ZoneOffset.UTC)
 
     private val testSubject = TestResultIsolationHandler(
         relevantTestResultProvider,
         isolationConfigurationProvider,
+        symptomsOnsetDateCalculator,
         fixedClock
     )
 
@@ -160,10 +164,13 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `when in isolation as contact case, positive indicative test result adds index case to isolation`() {
+        val positiveTestResult = positiveTestResultIndicative.copy(testEndDate = Instant.parse("2020-08-02T12:00:00Z"))
+        setOnsetDate(positiveTestResult, LocalDate.parse("2020-07-30"))
+
         val state = isolationStateContactCaseOnly()
         val result = testSubject.computeTransitionWithTestResult(
             state, // start=2020-07-23, expiry=2020-08-03
-            positiveTestResultIndicative.copy(testEndDate = Instant.parse("2020-08-02T12:00:00Z"))
+            positiveTestResult
         )
 
         val expectedState = state.copy(
@@ -179,6 +186,8 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `when in isolation as contact case, positive confirmed test result adds index case to isolation and removes contact case`() {
+        setOnsetDate(positiveTestResultConfirmed, positiveTestResultConfirmed.testEndDate.minus(3, DAYS).toLocalDate(fixedClock.zone))
+
         val state = isolationStateContactCaseOnly()
         val result = testSubject.computeTransitionWithTestResult(
             state,
@@ -203,11 +212,20 @@ class TestResultIsolationHandlerTest {
             positiveTestResultConfirmed
         )
 
-        assertEquals(DoNotTransitionButStoreTestResult(Confirm(confirmedDate = positiveTestResultConfirmed.testEndDate)), result)
+        assertEquals(
+            DoNotTransitionButStoreTestResult(Confirm(confirmedDate = positiveTestResultConfirmed.testEndDate)),
+            result
+        )
+    }
+
+    private fun setOnsetDate(testResult: ReceivedTestResult, date: LocalDate) {
+        every { symptomsOnsetDateCalculator.symptomsOnsetDateFromTestResult(testResult) } returns date
     }
 
     @Test
     fun `when not in isolation, positive indicative test result triggers isolation`() {
+        setOnsetDate(positiveTestResultIndicative, LocalDate.parse("2020-07-22"))
+
         val result = testSubject.computeTransitionWithTestResult(
             Default(),
             positiveTestResultIndicative
@@ -228,6 +246,8 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `when not in isolation, with previous index case isolation, positive indicative test result triggers isolation`() {
+        setOnsetDate(positiveTestResultIndicative, LocalDate.parse("2020-07-22"))
+
         val result = testSubject.computeTransitionWithTestResult(
             Default(
                 previousIsolation = isolationStateIndexCaseOnly(
@@ -253,6 +273,8 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `when not in isolation, without previous test result, positive indicative test result triggers isolation`() {
+        setOnsetDate(positiveTestResultIndicative, LocalDate.parse("2020-07-22"))
+
         setRelevantTestResult(result = null, isConfirmed = false)
 
         val result = testSubject.computeTransitionWithTestResult(
@@ -275,6 +297,8 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `when not in isolation, with relevant negative, positive confirmed test result triggers isolation`() {
+        setOnsetDate(positiveTestResultConfirmed, LocalDate.parse("2020-07-22"))
+
         setRelevantTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true)
 
         val result = testSubject.computeTransitionWithTestResult(
@@ -297,6 +321,8 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `when not in isolation, with previous index case, with relevant negative, positive confirmed test result triggers isolation`() {
+        setOnsetDate(positiveTestResultConfirmed, LocalDate.parse("2020-07-22"))
+
         setRelevantTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true)
 
         val result = testSubject.computeTransitionWithTestResult(
@@ -324,6 +350,8 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `when not in isolation, with previous contact case, with relevant negative, positive confirmed test result triggers isolation`() {
+        setOnsetDate(positiveTestResultConfirmed, LocalDate.parse("2020-07-22"))
+
         setRelevantTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true)
 
         val result = testSubject.computeTransitionWithTestResult(
@@ -350,6 +378,13 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `when not in isolation, with previous contact case, with relevant negative, positive confirmed test result triggers isolation, test result with explicit onset date`() {
+        val positiveTestResult = positiveTestResultConfirmed.copy(
+            symptomsOnsetDate = SymptomsDate(
+                explicitDate = LocalDate.parse("2020-08-01")
+            )
+        )
+        setOnsetDate(positiveTestResult, LocalDate.parse("2020-08-01"))
+
         setRelevantTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true)
 
         val result = testSubject.computeTransitionWithTestResult(
@@ -358,11 +393,7 @@ class TestResultIsolationHandlerTest {
                     encounterDate = encounterDate.minus(13, DAYS)
                 )
             ),
-            positiveTestResultConfirmed.copy(
-                symptomsOnsetDate = SymptomsDate(
-                    explicitDate = LocalDate.parse("2020-08-01")
-                )
-            )
+            positiveTestResult
         )
 
         val expectedState = Isolation(
@@ -380,6 +411,14 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `when not in isolation, with previous contact case, with relevant negative, positive confirmed test result triggers isolation, test result with cannot remember onset date`() {
+        val positiveTestResult = positiveTestResultConfirmed.copy(
+            symptomsOnsetDate = SymptomsDate(
+                explicitDate = null
+            )
+        )
+
+        setOnsetDate(positiveTestResult, LocalDate.parse("2020-07-22"))
+
         setRelevantTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true)
 
         val result = testSubject.computeTransitionWithTestResult(
@@ -388,11 +427,7 @@ class TestResultIsolationHandlerTest {
                     encounterDate = encounterDate.minus(13, DAYS)
                 )
             ),
-            positiveTestResultConfirmed.copy(
-                symptomsOnsetDate = SymptomsDate(
-                    explicitDate = null
-                )
-            )
+            positiveTestResult
         )
 
         val expectedState = Isolation(
@@ -425,6 +460,8 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `when not in isolation, with previous contact case, without relevant negative, positive confirmed test result triggers isolation`() {
+        setOnsetDate(positiveTestResultConfirmed, LocalDate.parse("2020-07-22"))
+
         val result = testSubject.computeTransitionWithTestResult(
             Default(
                 previousIsolation = isolationStateContactCaseOnly(
@@ -449,6 +486,8 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `when not in isolation, without relevant negative, positive confirmed test result triggers isolation`() {
+        setOnsetDate(positiveTestResultConfirmed, LocalDate.parse("2020-07-22"))
+
         val result = testSubject.computeTransitionWithTestResult(
             Default(),
             positiveTestResultConfirmed
@@ -741,6 +780,10 @@ class TestResultIsolationHandlerTest {
             testEndDate = isolation.symptomsOnsetInstant().minus(1, DAYS)
         )
 
+        val expectedOnsetDate = testResult.testEndDate.minus(3, DAYS).toLocalDate(fixedClock.zone)
+
+        setOnsetDate(testResult, expectedOnsetDate)
+
         val result = testSubject.computeTransitionWithTestResult(
             state,
             testResult
@@ -870,6 +913,10 @@ class TestResultIsolationHandlerTest {
         val testResult = positiveTestResult(receivedTestConfirmed).copy(
             testEndDate = isolation.symptomsOnsetInstant().minus(1, DAYS)
         )
+
+        val expectedOnsetDate = testResult.testEndDate.minus(3, DAYS).toLocalDate(fixedClock.zone)
+
+        setOnsetDate(testResult, expectedOnsetDate)
 
         val result = testSubject.computeTransitionWithTestResult(
             state,
@@ -1003,6 +1050,10 @@ class TestResultIsolationHandlerTest {
         val testResult = positiveTestResult(receivedTestConfirmed).copy(
             testEndDate = relevantTestDate.minus(1, DAYS)
         )
+
+        val expectedOnsetDate = testResult.testEndDate.minus(3, DAYS).toLocalDate(fixedClock.zone)
+
+        setOnsetDate(testResult, expectedOnsetDate)
 
         val result = testSubject.computeTransitionWithTestResult(
             state,
@@ -1235,6 +1286,10 @@ class TestResultIsolationHandlerTest {
             testEndDate = relevantTestDate.minus(1, DAYS)
         )
 
+        val expectedOnsetDate = testResult.testEndDate.minus(3, DAYS).toLocalDate(fixedClock.zone)
+
+        setOnsetDate(testResult, expectedOnsetDate)
+
         val result = testSubject.computeTransitionWithTestResult(
             state,
             testResult
@@ -1384,6 +1439,10 @@ class TestResultIsolationHandlerTest {
             testEndDate = relevantTestDate.minus(1, DAYS)
         )
 
+        val expectedOnsetDate = testResult.testEndDate.minus(3, DAYS).toLocalDate(fixedClock.zone)
+
+        setOnsetDate(testResult, expectedOnsetDate)
+
         val result = testSubject.computeTransitionWithTestResult(
             state,
             testResult
@@ -1461,10 +1520,17 @@ class TestResultIsolationHandlerTest {
         )
     }
 
-    private fun `when not in isolation, expired positive test result stores expired index isolation`(receivedTestConfirmed: Boolean) {
+    private fun `when not in isolation, expired positive test result stores expired index isolation`(
+        receivedTestConfirmed: Boolean
+    ) {
         val receivedTestResult = positiveTestResult(confirmed = receivedTestConfirmed)
             .copy(testEndDate = now.minus(20, DAYS))
         val state = Default()
+
+        val expectedOnsetDate = receivedTestResult.testEndDate.minus(3, DAYS).toLocalDate(fixedClock.zone)
+
+        setOnsetDate(receivedTestResult, expectedOnsetDate)
+
         val result = testSubject.computeTransitionWithTestResult(
             state,
             receivedTestResult
@@ -1512,7 +1578,8 @@ class TestResultIsolationHandlerTest {
             isolationConfiguration = state.isolationConfiguration,
             indexCase = IndexCase(
                 symptomsOnsetDate = state.indexCase!!.symptomsOnsetDate,
-                expiryDate = LocalDateTime.ofInstant(negativeTestResultConfirmed.testEndDate, fixedClock.zone).toLocalDate(),
+                expiryDate = LocalDateTime.ofInstant(negativeTestResultConfirmed.testEndDate, fixedClock.zone)
+                    .toLocalDate(),
                 selfAssessment = state.indexCase!!.selfAssessment
             )
         )
@@ -1559,7 +1626,8 @@ class TestResultIsolationHandlerTest {
             isolationConfiguration = state.isolationConfiguration,
             indexCase = IndexCase(
                 symptomsOnsetDate = state.indexCase!!.symptomsOnsetDate,
-                expiryDate = LocalDateTime.ofInstant(negativeTestResultConfirmed.testEndDate, fixedClock.zone).toLocalDate(),
+                expiryDate = LocalDateTime.ofInstant(negativeTestResultConfirmed.testEndDate, fixedClock.zone)
+                    .toLocalDate(),
                 selfAssessment = state.indexCase!!.selfAssessment
             )
         )

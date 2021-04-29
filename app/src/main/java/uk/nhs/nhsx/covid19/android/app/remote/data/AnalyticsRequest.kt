@@ -87,5 +87,5 @@ data class Metrics(
     var receivedRiskyVenueM2Warning: Int = 0,
     var hasReceivedRiskyVenueM2WarningBackgroundTick: Int = 0,
     var totalAlarmManagerBackgroundTasks: Int = 0,
-    var missingPacketsLast7Days: Int = 0,
+    var missingPacketsLast7Days: Int = 0
 )

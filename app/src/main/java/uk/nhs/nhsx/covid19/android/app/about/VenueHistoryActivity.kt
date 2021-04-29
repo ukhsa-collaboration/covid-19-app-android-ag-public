@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -15,7 +16,6 @@ import kotlinx.android.synthetic.main.activity_venue_history.venueHistoryList
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.about.VenueHistoryViewModel.VenueHistoryState
-import uk.nhs.nhsx.covid19.android.app.about.VenueVisitsViewAdapter.VenueVisitEntry
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
@@ -93,7 +93,7 @@ class VenueHistoryActivity : BaseActivity(R.layout.activity_venue_history) {
         }
     }
 
-    private fun updateVenueVisitsContainer(venueVisitEntries: List<VenueVisitEntry>, isInEditMode: Boolean) {
+    private fun updateVenueVisitsContainer(venueVisitEntries: List<VenueVisitListItem>, isInEditMode: Boolean) {
         if (venueVisitEntries.isNullOrEmpty()) {
             editButton?.gone()
             venueHistoryList.gone()
@@ -126,7 +126,7 @@ class VenueHistoryActivity : BaseActivity(R.layout.activity_venue_history) {
         else getString(R.string.venue_history_edit)
 
     private fun setUpVenueVisitsAdapter(
-        venueVisitEntries: List<VenueVisitEntry>,
+        venueVisitEntries: List<VenueVisitListItem>,
         showDeleteIcon: Boolean
     ) {
         venueVisitsViewAdapter = VenueVisitsViewAdapter(venueVisitEntries, showDeleteIcon) { venueVisit ->
@@ -138,7 +138,8 @@ class VenueHistoryActivity : BaseActivity(R.layout.activity_venue_history) {
 
     private fun showDeleteVenueVisitConfirmationDialog(venueVisit: VenueVisit) {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle(getString(R.string.delete_single_venue_visit_title))
+        val customTitle = LayoutInflater.from(builder.context).inflate(R.layout.dialog_title_venue_history_delete, null, false)
+        builder.setCustomTitle(customTitle)
         builder.setMessage(R.string.delete_single_venue_visit_text)
         builder.setPositiveButton(
             R.string.confirm

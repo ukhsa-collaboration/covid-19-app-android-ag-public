@@ -12,7 +12,6 @@ import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_questionnaire.buttonTryAgain
 import kotlinx.android.synthetic.main.activity_questionnaire.errorStateContainer
 import kotlinx.android.synthetic.main.activity_questionnaire.loadingContainer
-import kotlinx.android.synthetic.main.activity_questionnaire.loadingText
 import kotlinx.android.synthetic.main.activity_questionnaire.questionListContainer
 import kotlinx.android.synthetic.main.activity_questionnaire.textErrorMessage
 import kotlinx.android.synthetic.main.activity_questionnaire.textErrorTitle
@@ -161,7 +160,7 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
         errorStateContainer.gone()
         questionListContainer.gone()
 
-        setAccessibilityTitle(loadingText.text.toString())
+        setAccessibilityTitle(R.string.loading)
     }
 
     private fun showErrorState() {
@@ -173,16 +172,12 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
     }
 
     private fun showQuestionnaire(questions: List<Question>) {
-        setAccessibilityTitle(getString(R.string.select_symptoms))
+        setAccessibilityTitle(R.string.select_symptoms)
 
         questionListContainer.visible()
         loadingContainer.gone()
         errorStateContainer.gone()
         submitQuestions(questions)
-    }
-
-    private fun setAccessibilityTitle(text: String) {
-        title = text
     }
 
     private fun submitQuestions(questions: List<Question>) {

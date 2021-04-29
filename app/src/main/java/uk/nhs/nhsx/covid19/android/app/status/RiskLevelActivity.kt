@@ -128,7 +128,7 @@ class RiskLevelActivity : BaseActivity(R.layout.activity_risk_level) {
             policyItemsContainer.isVisible = policyData.policies.isNotEmpty()
         }
 
-        viewModel.onHandleRiskLevel(risk)
+        viewModel.onHandleRiskLevel()
     }
 
     companion object {

@@ -32,6 +32,7 @@ import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
 import uk.nhs.nhsx.covid19.android.app.di.module.ViewModelModule
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.GoogleExposureNotificationApi
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.AndroidRandomNonRiskyExposureWindowsLimiter
 import uk.nhs.nhsx.covid19.android.app.packagemanager.AndroidPackageManager
 import uk.nhs.nhsx.covid19.android.app.permissions.AndroidPermissionsManager
 import uk.nhs.nhsx.covid19.android.app.qrcode.AndroidBarcodeDetectorBuilder
@@ -39,6 +40,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
 import uk.nhs.nhsx.covid19.android.app.util.AndroidStrongBoxSupport
+import uk.nhs.nhsx.covid19.android.app.util.AndroidUUIDGenerator
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedSharedPreferencesUtils
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedStorage
 import uk.nhs.nhsx.covid19.android.app.util.EncryptionUtils
@@ -150,6 +152,8 @@ open class ExposureApplication : Application(), Configuration.Provider, Lifecycl
                     AndroidPermissionsManager(),
                     AndroidPackageManager(),
                     AndroidBarcodeDetectorBuilder(this),
+                    AndroidRandomNonRiskyExposureWindowsLimiter(),
+                    AndroidUUIDGenerator(),
                     Clock.systemDefaultZone()
                 )
             )

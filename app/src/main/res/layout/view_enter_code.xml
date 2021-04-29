@@ -59,7 +59,7 @@
                 android:background="@drawable/edit_text_background"
                 android:importantForAutofill="no"
                 android:inputType="textNoSuggestions"
-                android:maxLength="9" />
+                android:maxLength="8" />
 
             <ProgressBar
                 android:id="@+id/enterCodeProgress"

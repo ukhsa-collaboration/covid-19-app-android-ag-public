@@ -10,10 +10,6 @@ import androidx.lifecycle.Transformations.distinctUntilChanged
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.play.core.review.ReviewManagerFactory
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import javax.inject.Inject
 import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.R
@@ -26,6 +22,8 @@ import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVe
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.Companion.APP_CONFIGURATION_CHANNEL_ID
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
+import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ContinueInitialKeySharing
+import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowKeySharingReminder
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
 import uk.nhs.nhsx.covid19.android.app.payment.CanClaimIsolationPayment
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
@@ -40,12 +38,17 @@ import uk.nhs.nhsx.covid19.android.app.state.State.Default
 import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.ExposureConsent
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.IsolationExpiration
+import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.ShareKeys
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.TestResult
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.VenueAlert
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Risk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
 import uk.nhs.nhsx.covid19.android.app.util.DistrictAreaStringProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import javax.inject.Inject
 
 class StatusViewModel @Inject constructor(
     private val postCodeProvider: PostCodeProvider,
@@ -202,12 +205,10 @@ class StatusViewModel @Inject constructor(
                     notificationProvider.cancelTestResult()
                     showInformationScreen.postValue(TestResult)
                 }
-                is ShowVenueAlert -> {
-                    showInformationScreen.postValue(VenueAlert(item.venueId, item.messageType))
-                }
-                is ShowEncounterDetection -> {
-                    showInformationScreen.postValue(ExposureConsent)
-                }
+                is ShowVenueAlert -> showInformationScreen.postValue(VenueAlert(item.venueId, item.messageType))
+                is ShowEncounterDetection -> showInformationScreen.postValue(ExposureConsent)
+                is ContinueInitialKeySharing -> showInformationScreen.postValue(ShareKeys(reminder = false))
+                is ShowKeySharingReminder -> showInformationScreen.postValue(ShareKeys(reminder = true))
             }
         }
     }
@@ -215,7 +216,7 @@ class StatusViewModel @Inject constructor(
     private fun canOrderTest(): Boolean {
         val state = isolationStateMachine.readState()
         return lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() ||
-            (state is Isolation && state.isIndexCase())
+            state is Isolation
     }
 
     fun optionIsolationPaymentClicked() {
@@ -252,5 +253,6 @@ sealed class InformationScreen {
     data class IsolationExpiration(val expiryDate: LocalDate) : InformationScreen()
     object TestResult : InformationScreen()
     object ExposureConsent : InformationScreen()
+    data class ShareKeys(val reminder: Boolean) : InformationScreen()
     data class VenueAlert(val venueId: String, val messageType: MessageType) : InformationScreen()
 }

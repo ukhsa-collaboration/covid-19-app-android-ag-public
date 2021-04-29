@@ -15,11 +15,15 @@ import javax.inject.Inject
 class DisplayStateExpirationNotification @Inject constructor(
     private val isolationStateMachine: IsolationStateMachine,
     private val notificationProvider: NotificationProvider,
+    private val isolationExpirationAlarmProvider: IsolationExpirationAlarmProvider,
     private val userInbox: UserInbox,
     private val clock: Clock
 ) {
     fun doWork(): Result {
         Timber.d("doWork")
+
+        isolationExpirationAlarmProvider.value = null
+
         when (val currentState = isolationStateMachine.readState(validateExpiry = false)) {
             is Default -> Result.success()
             is Isolation -> conditionallySendNotification(currentState.expiryDate)

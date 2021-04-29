@@ -21,6 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="4dp"
         android:textColor="?attr/colorOnSurface"
         tools:text="SW12 area risk level is HIGH" />
 
