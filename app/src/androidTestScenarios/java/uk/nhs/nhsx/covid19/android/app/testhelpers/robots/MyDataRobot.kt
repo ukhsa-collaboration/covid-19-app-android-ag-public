@@ -29,9 +29,11 @@ class MyDataRobot {
     ) {
         onView(withId(R.id.titleLatestResult))
             .check(matches(isDisplayed()))
-        onView(withId(R.id.latestResultDateContainer))
+        onView(withId(R.id.testEndDateContainer))
             .check(matches(isDisplayed()))
         onView(withId(R.id.latestResultValueContainer))
+            .check(matches(isDisplayed()))
+        onView(withId(R.id.testAcknowledgedDateContainer))
             .check(matches(isDisplayed()))
 
         if (shouldKitTypeBeVisible) {
@@ -69,7 +71,7 @@ class MyDataRobot {
     fun checkLastTestResultIsNotDisplayed() {
         onView(withId(R.id.titleLatestResult))
             .check(matches(not(isDisplayed())))
-        onView(withId(R.id.latestResultDateContainer))
+        onView(withId(R.id.testEndDateContainer))
             .check(matches(not(isDisplayed())))
         onView(withId(R.id.latestResultValueContainer))
             .check(matches(not(isDisplayed())))
@@ -78,6 +80,8 @@ class MyDataRobot {
         onView(withId(R.id.followUpTestDateContainer))
             .check(matches(not(isDisplayed())))
         onView(withId(R.id.followUpTestStatusContainer))
+            .check(matches(not(isDisplayed())))
+        onView(withId(R.id.testAcknowledgedDateContainer))
             .check(matches(not(isDisplayed())))
     }
 

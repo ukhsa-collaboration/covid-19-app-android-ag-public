@@ -116,6 +116,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
         assertOnFieldsForDateRange(12..25) {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
         }
 
@@ -197,6 +198,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
         assertOnFieldsForDateRange(5..17) {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
         }
 
         // Current date: 18th Jan -> Analytics packet for: 17th Jan

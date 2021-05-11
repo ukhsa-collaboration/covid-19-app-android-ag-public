@@ -1,35 +1,22 @@
 package uk.nhs.nhsx.covid19.android.app.payment
 
-import java.time.Clock
-import java.time.LocalDate
-import javax.inject.Inject
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.testBelongsToIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultHandler
+import java.time.Clock
+import javax.inject.Inject
 
 class CanClaimIsolationPayment @Inject constructor(
     private val stateMachine: IsolationStateMachine,
-    private val testResultsHandler: TestResultHandler,
     private val clock: Clock
 ) {
 
     operator fun invoke(): Boolean {
-        val isolationState = stateMachine.readState()
-        return isolationState is Isolation &&
-            isolationState.isContactCase() &&
-            !hasHadPositiveTestSinceStartOfIsolation(isolationState) &&
-            !hasContactCaseExpired(isolationState)
+        val isolationState = stateMachine.readLogicalState()
+        return isolationState is PossiblyIsolating &&
+            isolationState.isActiveContactCase(clock) &&
+            !hasHadPositiveTestSinceStartOfIsolation(isolationState)
     }
 
-    private fun hasHadPositiveTestSinceStartOfIsolation(isolation: Isolation): Boolean =
-        testResultsHandler.hasTestResultMatching { testResult ->
-            testResult.isPositive() && isolation.testBelongsToIsolation(testResult)
-        }
-
-    private fun hasContactCaseExpired(isolation: Isolation): Boolean {
-        return isolation.contactCase?.let { contactCase ->
-            LocalDate.now(clock).isAfter(contactCase.expiryDate)
-        } ?: true
-    }
+    private fun hasHadPositiveTestSinceStartOfIsolation(isolation: PossiblyIsolating): Boolean =
+        isolation.getActiveIndexCase(clock)?.testResult?.isPositive() == true
 }

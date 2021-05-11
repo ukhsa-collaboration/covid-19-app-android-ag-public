@@ -35,7 +35,7 @@ fun AppCompatActivity.setCloseToolbar(
 fun AppCompatActivity.setNavigateUpToolbar(
     toolbar: MaterialToolbar,
     @StringRes titleResId: Int,
-    @DrawableRes upIndicator: Int,
+    @DrawableRes upIndicator: Int = R.drawable.ic_arrow_back_white,
     listenerAction: () -> Unit = {}
 ) {
     setNavigateUpToolbar(
@@ -191,6 +191,3 @@ fun Context.announce(textToAnnounce: String) {
         )
     }
 }
-
-fun String.toSpelledString(): String =
-    this.toCharArray().joinToString("\uFEFF")

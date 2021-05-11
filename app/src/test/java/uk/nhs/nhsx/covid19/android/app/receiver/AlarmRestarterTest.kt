@@ -13,6 +13,7 @@ class AlarmRestarterTest : FieldInjectionUnitTest() {
     private val testSubject = AlarmRestarter().apply {
         isolationExpirationAlarmController = mockk(relaxed = true)
         exposureNotificationReminderAlarmController = mockk(relaxed = true)
+        submitAnalyticsAlarmController = mockk(relaxed = true)
         resumeContactTracingNotificationTimeProvider = mockk()
         exposureNotificationRetryAlarmController = mockk(relaxed = true)
     }
@@ -46,6 +47,26 @@ class AlarmRestarterTest : FieldInjectionUnitTest() {
         testSubject.onReceive(context, intent)
 
         verify(exactly = 1) { testSubject.exposureNotificationRetryAlarmController.onDeviceRebooted() }
+    }
+
+    @Test
+    fun `intent action is ACTION_BOOT_COMPLETED calls submitAnalyticsAlarmController`() {
+        every { intent.action } returns Intent.ACTION_BOOT_COMPLETED
+        every { testSubject.resumeContactTracingNotificationTimeProvider.value } returns null
+
+        testSubject.onReceive(context, intent)
+
+        verify(exactly = 1) { testSubject.submitAnalyticsAlarmController.onDeviceRebooted() }
+    }
+
+    @Test
+    fun `intent action is ACTION_MY_PACKAGE_REPLACED calls submitAnalyticsAlarmController`() {
+        every { intent.action } returns Intent.ACTION_MY_PACKAGE_REPLACED
+        every { testSubject.resumeContactTracingNotificationTimeProvider.value } returns null
+
+        testSubject.onReceive(context, intent)
+
+        verify(exactly = 1) { testSubject.submitAnalyticsAlarmController.onDeviceRebooted() }
     }
 
     @Test

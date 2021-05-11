@@ -60,14 +60,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/exposure_notification_recommendation" />
-
-            <TextView
-                style="@style/Body1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:text="@string/exposure_faqs_title" />
-
             <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                 style="@style/LinkTextWithIcon"
                 android:layout_width="wrap_content"

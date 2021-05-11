@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.hour
 import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.hours_4
 import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.hours_8
 import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.minute_1
-import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.dont_remind
+import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.cancel
 import uk.nhs.nhsx.covid19.android.app.ExposureApplication
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.R.plurals
@@ -42,7 +42,7 @@ class ExposureNotificationReminderDialog(
         updateResumeRadioButton(hours_8, 8)
         updateResumeRadioButton(hours_12, 12)
 
-        dont_remind.setOnSingleClickListener { dismiss() }
+        cancel.setOnSingleClickListener { dismiss() }
     }
 
     private fun updateResumeRadioButton(

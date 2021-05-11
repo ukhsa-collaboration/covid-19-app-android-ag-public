@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
 import android.os.Build.VERSION
@@ -15,6 +16,8 @@ import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateRecommendedActivity
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction.NAVIGATE_AND_TURN_ON
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction.ONLY_NAVIGATE
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -67,8 +70,7 @@ class NotificationProvider @Inject constructor(
         const val REQUEST_CODE_RECOMMENDED_APP_UPDATE = 12
         const val REQUEST_CODE_SHARE_KEYS_REMINDER = 13
 
-        // TODO ?maybe move to StatusActivity
-        const val TAP_EXPOSURE_NOTIFICATION_REMINDER_FLAG = "TAP_EXPOSURE_NOTIFICATION_REMINDER"
+        const val CONTACT_TRACING_HUB_ACTION = "CONTACT_TRACING_HUB_ACTION"
     }
 
     private fun createAreaRiskChangedNotificationChannel() {
@@ -152,7 +154,7 @@ class NotificationProvider @Inject constructor(
                 context,
                 REQUEST_CODE_SHOW_AREA_RISK_CHANGED_NOTIFICATION,
                 intent,
-                0
+                FLAG_UPDATE_CURRENT
             )
 
         val areaRiskChangedNotification = createNotification(
@@ -178,7 +180,7 @@ class NotificationProvider @Inject constructor(
                 context,
                 REQUEST_CODE_SHOW_RISKY_VENUE_VISIT_NOTIFICATION,
                 intent,
-                0
+                FLAG_UPDATE_CURRENT
             )
 
         val riskyVenueNotification = createNotification(
@@ -204,7 +206,7 @@ class NotificationProvider @Inject constructor(
                 context,
                 REQUEST_CODE_SHOW_STATE_EXPIRATION_NOTIFICATION,
                 intent,
-                0
+                FLAG_UPDATE_CURRENT
             )
 
         val expirationNotification = createNotification(
@@ -230,7 +232,7 @@ class NotificationProvider @Inject constructor(
                 context,
                 REQUEST_CODE_SHOW_EXPOSURE_NOTIFICATION,
                 intent,
-                0
+                FLAG_UPDATE_CURRENT
             )
 
         val exposureNotification = createNotification(
@@ -252,28 +254,26 @@ class NotificationProvider @Inject constructor(
     fun showExposureNotificationReminder() {
         val contentIntentActivity = Intent(context, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            putExtra(CONTACT_TRACING_HUB_ACTION, ONLY_NAVIGATE)
         }
         val contentIntent: PendingIntent =
             PendingIntent.getActivity(
                 context,
                 REQUEST_CODE_NOTIFICATION_REMINDER_CONTENT_INTENT,
                 contentIntentActivity,
-                0
+                FLAG_UPDATE_CURRENT
             )
 
         val actionIntentActivity = Intent(context, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            putExtra(
-                TAP_EXPOSURE_NOTIFICATION_REMINDER_FLAG,
-                TAP_EXPOSURE_NOTIFICATION_REMINDER_FLAG
-            )
+            putExtra(CONTACT_TRACING_HUB_ACTION, NAVIGATE_AND_TURN_ON)
         }
         val actionIntent: PendingIntent =
             PendingIntent.getActivity(
                 context,
                 REQUEST_CODE_NOTIFICATION_REMINDER_ACTION_INTENT,
                 actionIntentActivity,
-                0
+                FLAG_UPDATE_CURRENT
             )
 
         val exposureReminderNotification = createNotification(
@@ -301,7 +301,7 @@ class NotificationProvider @Inject constructor(
                 context,
                 REQUEST_CODE_SHOW_TEST_RESULTS,
                 intent,
-                0
+                FLAG_UPDATE_CURRENT
             )
 
         val testResultsReceivedNotification = createNotification(
@@ -327,7 +327,7 @@ class NotificationProvider @Inject constructor(
                 context,
                 REQUEST_CODE_SHARE_KEYS_REMINDER,
                 intent,
-                0
+                FLAG_UPDATE_CURRENT
             )
 
         val shareKeysReminderNotification = createNotification(
@@ -367,7 +367,7 @@ class NotificationProvider @Inject constructor(
                 context,
                 REQUEST_CODE_APP_IS_AVAILABLE,
                 intent,
-                0
+                FLAG_UPDATE_CURRENT
             )
 
         val appAvailableNotification = createNotification(
@@ -393,7 +393,7 @@ class NotificationProvider @Inject constructor(
                 context,
                 REQUEST_CODE_APP_IS_NOT_AVAILABLE,
                 intent,
-                0
+                FLAG_UPDATE_CURRENT
             )
 
         val appAvailableNotification = createNotification(
@@ -420,7 +420,7 @@ class NotificationProvider @Inject constructor(
                 context,
                 REQUEST_CODE_RECOMMENDED_APP_UPDATE,
                 intent,
-                0
+                FLAG_UPDATE_CURRENT
             )
 
         val recommendedAppUpdateNotification = createNotification(
@@ -443,7 +443,7 @@ class NotificationProvider @Inject constructor(
                 context,
                 REQUEST_CODE_UPDATING_DATABASE_NOTIFICATION,
                 intent,
-                0
+                FLAG_UPDATE_CURRENT
             )
 
         return createNotification(
@@ -536,4 +536,8 @@ class NotificationProvider @Inject constructor(
             .setAutoCancel(autoCancel)
             .setContentIntent(contentIntent)
             .build()
+
+    enum class ContactTracingHubAction {
+        ONLY_NAVIGATE, NAVIGATE_AND_TURN_ON
+    }
 }

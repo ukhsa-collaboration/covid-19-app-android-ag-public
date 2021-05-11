@@ -33,6 +33,7 @@ import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenues
 import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWork
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
+import uk.nhs.nhsx.covid19.android.app.util.crashreporting.ProcessRemoteServiceExceptionCrashReport
 import kotlin.test.assertEquals
 
 class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
@@ -55,6 +56,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
         mockk<HasSuccessfullyProcessedNewExposureProvider>(relaxUnitFun = true)
     private val notificationMock = mockk<Notification>()
     private val showShareKeysReminderNotificationIfNeededMock = mockk<ShowShareKeysReminderNotificationIfNeeded>()
+    private val processRemoteServiceExceptionCrashReportMock = mockk<ProcessRemoteServiceExceptionCrashReport>(relaxUnitFun = true)
 
     private var result: Result? = null
 
@@ -74,6 +76,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
             onboardingCompletedProvider = onboardingCompletedProviderMock
             hasSuccessfullyProcessedNewExposureProvider = hasSuccessfullyProcessedNewExposureProviderMock
             showShareKeysReminderNotificationIfNeeded = showShareKeysReminderNotificationIfNeededMock
+            processRemoteServiceExceptionCrashReport = processRemoteServiceExceptionCrashReportMock
         }
     )
 
@@ -223,6 +226,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
             downloadAndProcessRiskyVenuesMock()
             showShareKeysReminderNotificationIfNeededMock()
             submitAnalyticsMock(any())
+            processRemoteServiceExceptionCrashReportMock()
         }
     }
 

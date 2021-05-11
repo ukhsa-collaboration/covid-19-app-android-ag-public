@@ -8,8 +8,8 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CanShareKeys.CanShareKeysResult.KeySharingPossible
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CanShareKeys.CanShareKeysResult.NoKeySharingPossible
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.State
 import java.time.Instant
 import kotlin.test.assertEquals
 
@@ -20,7 +20,7 @@ class CanShareKeysTest {
     private val isolationStateMachineLazy = Lazy { isolationStateMachine }
     private val calculateKeySubmissionDateRange = mockk<CalculateKeySubmissionDateRange>()
 
-    private val state = mockk<State>()
+    private val state = mockk<IsolationState>()
     private val dateRange = mockk<SubmissionDateRange>()
 
     val canShareKeys = CanShareKeys(keySharingInfoProvider, isolationStateMachineLazy, calculateKeySubmissionDateRange)
@@ -33,41 +33,67 @@ class CanShareKeysTest {
 
     @Test
     fun `if there is no keySharingInfo return NoKeySharingPossible`() {
-        every { keySharingInfoProvider.keySharingInfo } returns null
+        givenKeySharingInfoNull()
 
         assertEquals(expected = NoKeySharingPossible, actual = canShareKeys())
     }
 
     @Test
     fun `if there is no symptomsOnsetDate return NoKeySharingPossible`() {
-        every { keySharingInfoProvider.keySharingInfo } returns mockk()
-        every { state.symptomsOnsetDate } returns null
+        givenKeySharingInfoNotNull()
+        givenSymptomsOnsetDateNull()
 
         assertEquals(expected = NoKeySharingPossible, actual = canShareKeys())
     }
 
     @Test
     fun `if dateRange does not contain at least one day return NoKeySharingPossible`() {
-        every { keySharingInfoProvider.keySharingInfo } returns mockk(relaxed = true)
-        every { state.symptomsOnsetDate } returns mockk()
-        every { dateRange.containsAtLeastOneDay() } returns false
+        givenKeySharingInfoNotNull()
+        givenSymptomsOnsetDateNotNull()
+        givenDateRangeEmpty()
 
         assertEquals(expected = NoKeySharingPossible, actual = canShareKeys())
     }
 
     @Test
     fun `if dateRange contains at least one day return KeySharingPossible`() {
-        val expectedKeySharingInfo = KeySharingInfo(
+        val expectedKeySharingInfo = givenKeySharingInfoNotNull()
+        givenSymptomsOnsetDateNotNull()
+        givenDateRangeNotEmpty()
+
+        assertEquals(expected = KeySharingPossible(expectedKeySharingInfo), actual = canShareKeys())
+    }
+
+    private fun givenKeySharingInfoNull() {
+        every { keySharingInfoProvider.keySharingInfo } returns null
+    }
+
+    private fun givenKeySharingInfoNotNull(): KeySharingInfo {
+        val keySharingInfo = KeySharingInfo(
             diagnosisKeySubmissionToken = "token",
             acknowledgedDate = Instant.parse("1970-01-01T00:00:00Z"),
             testKitType = LAB_RESULT,
             requiresConfirmatoryTest = false
         )
 
-        every { keySharingInfoProvider.keySharingInfo } returns expectedKeySharingInfo
-        every { state.symptomsOnsetDate } returns mockk()
-        every { dateRange.containsAtLeastOneDay() } returns true
+        every { keySharingInfoProvider.keySharingInfo } returns keySharingInfo
 
-        assertEquals(expected = KeySharingPossible(expectedKeySharingInfo), actual = canShareKeys())
+        return keySharingInfo
+    }
+
+    private fun givenSymptomsOnsetDateNull() {
+        every { state.assumedOnsetDateForExposureKeys } returns null
+    }
+
+    private fun givenSymptomsOnsetDateNotNull() {
+        every { state.assumedOnsetDateForExposureKeys } returns mockk()
+    }
+
+    private fun givenDateRangeEmpty() {
+        every { dateRange.containsAtLeastOneDay() } returns false
+    }
+
+    private fun givenDateRangeNotEmpty() {
+        every { dateRange.containsAtLeastOneDay() } returns true
     }
 }

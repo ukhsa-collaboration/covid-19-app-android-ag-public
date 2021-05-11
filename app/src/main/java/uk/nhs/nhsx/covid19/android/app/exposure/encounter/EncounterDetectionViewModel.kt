@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import javax.inject.Inject
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AcknowledgedStartOfIsolationDueToRiskyContact
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
@@ -14,19 +13,21 @@ import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEn
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import java.time.Clock
+import javax.inject.Inject
 
 class EncounterDetectionViewModel @Inject constructor(
     private val isolationStateMachine: IsolationStateMachine,
     private val inbox: UserInbox,
     private val exposureNotificationRetryAlarmController: ExposureNotificationRetryAlarmController,
-    private val analyticsEventProcessor: AnalyticsEventProcessor
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
+    private val clock: Clock
 ) : ViewModel() {
 
     fun getIsolationDays() {
         viewModelScope.launch {
-            val state = isolationStateMachine.readState()
-            if (state is Isolation) {
+            val state = isolationStateMachine.readLogicalState()
+            if (state.isActiveIsolation(clock)) {
                 val isolationDays = isolationStateMachine.remainingDaysInIsolation().toInt()
                 resultLiveData.postValue(IsolationDurationDays(isolationDays))
             }

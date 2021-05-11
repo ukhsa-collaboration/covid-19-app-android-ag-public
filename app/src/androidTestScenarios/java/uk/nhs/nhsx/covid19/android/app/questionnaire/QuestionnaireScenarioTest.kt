@@ -5,8 +5,6 @@ import android.app.Instrumentation
 import android.content.Intent
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
-import java.time.Instant
-import java.time.LocalDate
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_FAIL
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_SUCCEED
@@ -23,8 +21,8 @@ import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.report.reporter
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
@@ -35,6 +33,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
+import java.time.LocalDate
 
 class QuestionnaireScenarioTest : EspressoTest() {
 
@@ -237,13 +236,12 @@ class QuestionnaireScenarioTest : EspressoTest() {
     @Test
     fun contactCase_SelectNotCoronavirusSymptoms_StaysInIsolation() = notReported {
         testAppContext.setState(
-            Isolation(
-                Instant.now(),
-                DurationDays(),
+            IsolationState(
+                isolationConfiguration = DurationDays(),
                 contactCase = ContactCase(
-                    Instant.parse("2020-05-19T12:00:00Z"),
-                    null,
-                    LocalDate.now().plusDays(5)
+                    exposureDate = LocalDate.parse("2020-05-19"),
+                    notificationDate = LocalDate.now(),
+                    expiryDate = LocalDate.now().plusDays(5)
                 )
             )
         )

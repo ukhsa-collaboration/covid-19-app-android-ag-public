@@ -23,6 +23,7 @@ import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenues
 import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWork
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
+import uk.nhs.nhsx.covid19.android.app.util.crashreporting.ProcessRemoteServiceExceptionCrashReport
 import uk.nhs.nhsx.covid19.android.app.util.defaultFalse
 import javax.inject.Inject
 
@@ -73,6 +74,9 @@ class DownloadTasksWorker(
     @Inject
     lateinit var showShareKeysReminderNotificationIfNeeded: ShowShareKeysReminderNotificationIfNeeded
 
+    @Inject
+    lateinit var processRemoteServiceExceptionCrashReport: ProcessRemoteServiceExceptionCrashReport
+
     override suspend fun doWork(): Result {
         applicationContext.appComponent.inject(this)
         Timber.d("Running DownloadTasksWorker")
@@ -100,6 +104,7 @@ class DownloadTasksWorker(
         if (!RuntimeBehavior.isFeatureEnabled(SUBMIT_ANALYTICS_VIA_ALARM_MANAGER)) {
             submitAnalytics()
         }
+        processRemoteServiceExceptionCrashReport()
         analyticsEventProcessor.track(BackgroundTaskCompletion)
 
         Timber.d("Finishing DownloadTasksWorker")

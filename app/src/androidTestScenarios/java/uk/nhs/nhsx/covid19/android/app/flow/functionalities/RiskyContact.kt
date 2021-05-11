@@ -6,7 +6,7 @@ import org.awaitility.kotlin.await
 import org.awaitility.kotlin.until
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationBroadcastReceiver
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.testhelpers.AWAIT_AT_MOST_SECONDS
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.EncounterDetectionRobot
@@ -44,7 +44,8 @@ class RiskyContact(
         espressoTest.waitFor { encounterDetectionRobot.clickIUnderstandButton() }
 
         await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
-            (espressoTest.testAppContext.getCurrentState() as Isolation).isContactCase()
+            (espressoTest.testAppContext.getCurrentLogicalState() as PossiblyIsolating)
+                .isActiveContactCase(espressoTest.testAppContext.clock)
         }
     }
 }

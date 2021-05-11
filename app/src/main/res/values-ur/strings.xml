@@ -28,13 +28,7 @@
     <string name="status_option_read_latest_advice">جانچ کے بارے میں پتہ کریں</string>
     <string name="status_option_contact_tracing">رابطے کا سراغ</string>
     <string name="contact_tracing_active">آپ کی ایپ فعال ہے اور اسکین کر رہی ہے</string>
-    <string name="contact_tracing_not_active">رابطے کا سراغ لگانا غیرفعال ہے</string>
-    <string name="status_area_risk_level_low">کم</string>
-    <string name="status_area_risk_level_medium">معتدل</string>
-    <string name="status_area_risk_level_high">شدید</string>
-    <string name="low_risk_level_text">کم - آپ کی مقامی اتھارٹی کا حالیہ تجزیہ \'کم خطرے\' کا ہے، جو ملک کے زیادہ تر دیگر حصوں میں انفیکشن کی سطح کے مماثل ہے۔</string>
-    <string name="medium_risk_level_text">میڈیم - آپ کی مقامی اتھارٹی ، یا ایک ہمسایہ مقامی اتھارٹی ، میں انفیکشن کی اونچی یا بڑھتی ہوئی سطح ہے۔ برائے مہربانی قومی رہنمائی پر عمل کریں۔</string>
-    <string name="high_risk_level_text">شدید- مقامی علاقے میں انفیکشن کی شدید سطح کے باعث آپ کی مقامی اتھارٹی یا ہمسایہ مقامی اتھارٹی باقی انگلینڈ اور ویلز (جیسے لاک ڈاؤن) میں موجود اقدامات کے علاوہ اضافی اقدامات کر رہی ہے تاکہ انفیکشن کی منتقلی کی رفتار گھٹائی جا سکے۔ کارروائی کا تفصیلی پلان نافذ کر دیا گیا ہے اور قومی مدد سے مقامی وسائل میں اضافہ کیا جا رہا ہے۔</string>
+    <string name="contact_tracing_not_active">رابطہ کی ٹریسنگ موقوف ہے</string>
     <string name="risk_level_title">میرے علاقے میں</string>
     <string name="qr_code_permission_denied_action">کیمرا کی اجازتیں دیں</string>
     <string name="qr_code_permission_denied_subtitle">یہ ایپ بارز اور ریستورانوں جیسے مقامات پر چیک ان کرنے کے لئے آپ کا کیمرا استعمال کرتی ہے۔\n\nبراہ کرم آفیشل NHS کیو آر کوڈ اسکین کرنے کے لئے کیمرا کی اجازتیں دیں۔</string>
@@ -83,7 +77,6 @@
     <string name="test_ordering_description_3">ایپ اور ویب سائٹ کے درمیان مشترک معلومات محض ایک ڈیجیٹل \'ٹوکن\' ہوگا جس سے ہمیں آپ کے ٹیسٹ کے نتائج واپس ایپ میں لانے میں مدد ملے گی۔</string>
     <string name="test_ordering_description_4">ٹیسٹنگ کے عمل میں استعمال کیا جانے والا تمام ڈیٹا رازداری کے نوٹس میں تفصیل سے بیان کیا گيا ہے:</string>
     <string name="test_ordering_description_5">یہ ایپ آپ کے ڈیٹا کو کس طرح استعمال کرتی ہے اس کے بارے میں جاننے کے لئے، برائےکرم ملاحظہ کریں:</string>
-    <string name="test_ordering_description_6">آپ صرف اپنا ٹیسٹ کروانے کے لئے یہ ایپ استعمال کر سکتے ہیں۔ کسی اور کا ٹیسٹ کروانے کے لئے کوروناوائرس کے ٹیسٹ کی سرکاری ویب سائٹ استعمال کریں:</string>
     <string name="book_free_test_now">ابھی مفت ٹیسٹ بک کروائیں</string>
     <string name="about_this_app_title">اس ایپ کے بارے میں</string>
     <string name="title_how_app_works">یہ ایپ کیسے کام کرتی ہے</string>
@@ -108,8 +101,8 @@
     <string name="cancel">منسوخ کریں</string>
     <string name="notification_action_exposure_reminder">رابطے کا سراغ لگانا آن کریں</string>
     <string name="notification_title_exposure_reminder">رابطے کا سراغ لگانے کو دوبارہ شروع کرنے کا وقت</string>
-    <string name="resume_contact_tracing_title">رابطے کا سراغ فعال نہیں</string>
-    <string name="resume_contact_tracing_subtitle">انتخاب کریں کہ کب ایپ آپ کو رابطے کا سراغ لگانے کو دوبارہ شروع کرنے کی یاد دلائے گی</string>
+    <string name="resume_contact_tracing_title">رابطہ کی ٹریسنگ موقوف کریں</string>
+    <string name="resume_contact_tracing_subtitle">اس کا انتخاب کریں جب ایپ آپ کو رابطے کی ٹریسنگ  کو دوبارہ شروع کرنے کی یاد دلائے گی</string>
     <string name="contact_tracing_notification_reminder_dialog_message">رابطے کا سراغ لگانے کے عمل کو بند کرنے سے ایپ کی تاثیریت متاثر ہوگی۔</string>
     <string name="edit_postcode_district_title">پوسٹ کوڈ ضلع میں ترمیم کریں</string>
     <string name="onboarding_age_confirmation_title">کیا آپ کی عمر 16 سال یا اس سے زیادہ ہے؟</string>
@@ -119,7 +112,6 @@
     <string name="onboarding_age_restriction_title">بدقسمتی سے، آپ اس ایپ کو استعمال نہیں کرسکتے ہیں۔ یہ ایپ صرف 16 سال یا اس سے زیادہ عمر کے لوگوں کے لئے ہے۔</string>
     <string name="onboarding_age_restriction_text">آپ کی دلچسپی کے لئے آپ کا شکریہ. یہ ایپ صرف 16 سال یا اس سے زیادہ عمر کے لوگوں کے لئے ہے۔</string>
     <string name="url_terms_of_use">https://covid19.nhs.uk/terms-of-use-urdu.html</string>
-    <string name="url_nhs_tablet_device">https://faq.covid19.nhs.uk/article/KA-01265/en-us</string>
     <string name="url_nhs_111_online">https://111.nhs.uk/</string>
     <string name="url_accessibility_statement">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info">https://faq.covid19.nhs.uk/article/KA-01196/en-us</string>
@@ -139,8 +131,8 @@
         <item quantity="other">آپ کو %1$s کو 23:59 تک خود کو علیحدہ کرنے کی ضرورت ہے۔ تب تک کے لیے اس میں %2$s دن باقی ہیں۔</item>
     </plurals>
     <plurals name="resume_contact_tracing_hours">
-        <item quantity="one">%1$d گھنٹے</item>
-        <item quantity="other">%1$d گھنٹے</item>
+        <item quantity="one">%d گھنٹے</item>
+        <item quantity="other">%d گھنٹے</item>
     </plurals>
     <string name="app_name">NHS Covid 19</string>
     <string name="continue_button">جاری رکھیں</string>
@@ -150,7 +142,6 @@
     <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">اگر آپ کسی ایسے شخص سے قریبی رابطے میں رہے ہیں جس کا وائرس کا ٹیسٹ مثبت آیا ہو تو ایپ آپ کو اس کی اطلاع کرے گی۔ \n\nاس ایپ کے لئے کنٹیکٹ ٹریسنگ یعنی رابطوں کا پتہ لگانے کے لئے آپ کو درج ذیل کی اجازت دینے کی ضرورت ہےایکسپوژر نوٹیفیکیشنز۔ \n\nاگر آپ اپنا ارادہ تبدیل کرتے ہیں تو، آپ کسی بھی وقت ترتیبات یعنی سیٹنگز میں اپنی اجازتیں تبدیل کرسکتے ہیں۔</string>
     <string name="privacy_notice">رازداری کا نوٹس</string>
-    <string name="tablet_information_url">ٹیبلیٹس پر استعمال کی معلومات</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
     <string name="post_code_rationale">پوسٹ کوڈ کا ضلع مختلف علاقوں میں کوروناوائرس کے پھیلاؤ کے متعلق جاننے میں مدد دیتا ہے۔ اس سے یقینی بنایا جاتا ہے کہ ہم آپ کے علاقے میں عوامی صحت کا بہترین مشورہ دے سکیں۔\n\n فکر مند نہ ہوں۔ آپ کے پوسٹ کوڈ کا ضلع آپ کے مقام کا پتہ لگانے کے لئے استعمال نہیں کیا جائے گا۔</string>
     <string name="enable_bluetooth_rationale">یہ ایپ یہ جاننے کے لئے بلوٹوتھ کا استعمال کرتی ہے کہ یہ کسی دوسرے ایسے فون کے قریب ہے جس میں یہ ایپ انسٹال شدہ ہے۔ اگر آپ نے بلوٹوتھ آف کیا ہوا ہے تو یہ ایپ کام نہیں کرے گی۔\n\nاس ایپ میں ’بلوٹوتھ لو انرجی‘ - جو بیٹری کی بچت کی ایک ٹیکنالوجی ہے - کا استعمال کرتی ہے۔\n\nبرائے کرم سیٹنگز میں جائیں اور بلوٹوتھ آن کریں۔</string>
@@ -159,8 +150,6 @@
     <string name="enable_location_service_title">آپ کو اپنے فون میں مقام کی سروسز فعال کرنے کی ضرورت ہے۔</string>
     <string name="enable_location_service_rationale">بلیو ٹوتھ کے کام کرنے کے لئے ہمیں درکار ہے کہ آپ اپنے فون میں مقام کی سروسز فعال کریں۔\n\nیہ ایپ آپ کا پتہ لگانے کے لئے بلیو ٹوتھ یا آپ کا مقام استعمال نہیں کر رہی ہے۔ آپ کی ذاتی شناخت ہمہ وقت محفوظ رہے گی۔\n\nاگر آپ نے اپنے فون میں مقام کی خدمات کو فعال نہ کیا تو یہ ایپ کام نہیں کرے گی۔\n\nاس ایپ کو کام کرنے کے قابل بنانے کے لئے براہ کرم سیٹنگز میں جا کر مقام کی خدمات فعال کریں۔</string>
     <string name="post_code_example">اس ایپ کو استعمال میں لانے کے لئے آپ کو انگریزی یا ویلش پوسٹ کوڈ ڈسٹرکٹ کی ضرورت ہے۔\n\nمثال: اگر آپ کا پوسٹ کوڈ CE1B 2PQ ہے، تو براہ کرم ‘CE1B‘ درج کریں۔ اگر CR0 3RL ہے تو براہ کرم ‘CR0’ درج کریں۔ اگر L4 0RE ہے، تو براہ کرم ‘L4’ درج کریں۔</string>
-    <string name="tablet_support_title">یہ ایپ موبائل اسمارٹ فونز کے لئے بنائی گئی ہے۔</string>
-    <string name="tablet_support_description">آپ کی ڈیوائس ٹیبلیٹ معلوم ہوتی ہے۔ یہ ایپ صرف اسمارٹ فونز کے لئے دستیاب ہے کیوں کہ یہ ایپ صرف تب مؤثر ہوتی ہے جب آپ اسے کسی ایسی ڈیوائس میں رکھیں جو گھر سے باہر جاتے ہوئے ہمہ وقت آپ کے پاس موجود ہو۔ براہ کرم اپنے اسمارٹ فون میں ایپ انسٹال کریں۔</string>
     <string name="test_ordering_testing_privacy_notice">ٹیسٹنگ کی رازداری کا نوٹس</string>
     <string name="test_ordering_app_privacy_notice">ایپ کی رازداری کا نوٹس</string>
     <string name="test_ordering_book_test_for_someone_else">کسی اور کے لئے ٹیسٹ بک کروائیں</string>
@@ -176,7 +165,6 @@
     <string name="test_ordering_failure_description">دوبارہ کوشش کرنے سے پہلے براہ کرم چیک کریں کہ آپ کے فون کی موبائل ڈیٹا سیٹنگز آن ہوں، اپنا وائی فائی کنکشن چیک کریں (اگر استعمال میں ہو) اور یقینی بنائیں کہ ایئر پلین موڈ آف ہو۔</string>
     <string name="notification_title_risky_venue">آپ حال ہی میں ان دوسرے لوگوں کی طرح ایک ہی دن ایک مقام پر تشریف لے گئے جن کی اس کے بعد سے کورونا وائرس (COVID-19) کی جانچ مثبت آئی ہے</string>
     <string name="notification_text_post_code_risk_changed">مقامات پر جاتے وقت براہ کرم باضابطہ  NHS کا QR کوڈ یاد سے اسکین کریں۔</string>
-    <string name="status_area_risk_level">%s علاقے کے خطرے کی سطح ہے %s</string>
     <string name="notification_channel_area_risk_changed_name">علاقے کے خطرے میں تبدیلی</string>
     <string name="notification_channel_area_risk_changed_description">یہ نوٹیفیکیشنز آپ کے علاقے میں انفیکشن کے خطرے کی پیروی کرنے میں مدد دیتے ہیں۔</string>
     <string name="notification_channel_isolation_state_name">علیحدگی</string>
@@ -265,7 +253,6 @@
     <string name="contact_tracing_notification_reminder_dialog_title">رابطے کا سراغ لگانے کو %1$s گھنٹوں میں دوبارہ فعال کرنے کے لئے یاددہانی سیٹ کریں</string>
     <string name="okay">ٹھیک ہے</string>
     <string name="template_hours">%d گھنٹے</string>
-    <string name="resume_contact_tracing_don_t_remind_me">مجھے یاد دلانا نہیں</string>
     <string name="url_how_app_works">https://covid19.nhs.uk/introducing-the-app-urdu.html</string>
     <string name="url_latest_advice_in_isolation">https://faq.covid19.nhs.uk/article/KA-01197/en-us</string>
     <string name="submit_keys_information_description_text">ذیل میں اس کے نتیجے کا  اشتراک کرنے کے لئے آگے بڑھیں.\n\nاشارہ ملنے پر،  اشتراک  کریں\' کو یا \'اپنی ڈیوائس کی اتفاقی آئی ڈی کا اشتراک  کریں\' کو منتخب کریں۔</string>
@@ -285,7 +272,6 @@
     <string name="submit_keys_information_title">دوسروں کو مطلع کرنے میں مدد کریں</string>
     <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_terms_of_use_wls">https://covid19.nhs.uk/terms-of-use-urdu.html</string>
-    <string name="url_nhs_tablet_device_wls">https://faq.covid19.nhs.uk/article/KA-01265/en-us</string>
     <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/</string>
     <string name="url_accessibility_statement_wls">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info_wls">https://faq.covid19.nhs.uk/article/KA-01196/en-us</string>
@@ -315,14 +301,11 @@
     <string name="authentication_example">مثال: 5apv-enka</string>
     <string name="authentication_title">اس وقت صرف NHS والینٹئیر ریسپانڈرز، آئل آف وائٹ اور نیوہیم کے رہائشین کے لئے</string>
     <string name="authentication_where_can_i_find_code">مجھے یہ کوڈ کہاں ملے گا؟</string>
-    <string name="high_risk_level_text_wls">شدید- مقامی علاقے میں انفیکشن کی شدید سطح کے باعث آپ کی مقامی اتھارٹی یا ہمسایہ مقامی اتھارٹی باقی انگلینڈ اور ویلز (جیسے لاک ڈاؤن) میں موجود اقدامات کے علاوہ اضافی اقدامات کر رہی ہے تاکہ انفیکشن کی منتقلی کی رفتار گھٹائی جا سکے۔ کارروائی کا تفصیلی پلان نافذ کر دیا گیا ہے اور قومی مدد سے مقامی وسائل میں اضافہ کیا جا رہا ہے۔</string>
     <string name="link_test_result_error_no_connection">انٹرنیٹ نہیں ہے۔ برائے کرم اپنے نیٹ ورک یا وائی فائی سے کنیکٹ کریں اور دوبارہ کوشش کریں۔</string>
     <string name="link_test_result_error_unknown">کچھ غلط ہو گیا ہے۔ برائے کرم دوبارہ کوشش کریں۔</string>
     <string name="logo_nhs_england_description">NHS ٹیسٹ اینڈ ٹریس</string>
     <string name="logo_nhs_generic_description">NHS Covid 19</string>
     <string name="logo_nhs_wales_description">NHS ویلز ٹیسٹ ٹریس پروٹیکٹ</string>
-    <string name="low_risk_level_text_wls">کم - آپ کی مقامی اتھارٹی کا حالیہ تجزیہ \'کم خطرے\' کا ہے، جو ملک کے زیادہ تر دیگر حصوں میں انفیکشن کی سطح کے مماثل ہے۔</string>
-    <string name="medium_risk_level_text_wls">میڈیم - آپ کی مقامی اتھارٹی ، یا ایک ہمسایہ مقامی اتھارٹی ، میں انفیکشن کی اونچی یا بڑھتی ہوئی سطح ہے۔ برائے مہربانی قومی رہنمائی پر عمل کریں۔</string>
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
     <string name="notification_channel_background_work_name">Background activities</string>
     <string name="notification_text_updating_database">لوڈ ہو رہا ہے...</string>
@@ -333,16 +316,11 @@
     <string name="questionnaire_no_i_dont_have_symptom">نہیں، مجھے نہیں ہے %s</string>
     <string name="questionnaire_yes_i_have_symptom">جی ہاں، مجھے ہے %s</string>
     <string name="state_test_positive_then_negative_info">آپ کے کرونا وائرس کی جانچ کا نتیجہ منفی  ہے۔ تاہم، آپ کو چاہیے کہ خود کو علیحدہ رکھیں۔ ایسا اس لیے ہے کیوں کہ آپ کی جانچ کا سابقہ نتیجہ مثبت   تھا  یا پھر آپ نے حال ہی میں علامات کی اطلاع دی ہیں۔</string>
-    <string name="status_area_risk_level_high_wls">شدید</string>
-    <string name="status_area_risk_level_low_wls">کم</string>
-    <string name="status_area_risk_level_medium_wls">معتدل</string>
-    <string name="status_area_risk_level_wls">%s علاقے کے خطرے کی سطح ہے %s</string>
     <string name="test_result_negative_then_positive_continue_explanation">یہ سمجھنے کے لئے کہ ایپ خود کو تنہائی  میں رکھنے  کے دنوں کا حساب کیسے دیتی ہے ، نیچے دیئے گئے عمومی سوالنامہ کے لنک پر جائیں۔\n\nآپ کے ٹیسٹ کے نتیجے سے ظاہر ہوتا ہے کہ ٹیسٹ کے وقت آپ میں وائرس موجود تھا۔ آپ کو ای میل، ٹیکسٹ یا فون کے ذریعے مزید معلومات بھیجی گئی ہیں۔ اگر آپ کی عمر 18 سال سے کم ہے تو آپ کو مشورہ دیا جاتا ہے کہ یہ پیغام کسی قابل اعتماد بالغ کو دکھائیں۔</string>
     <string name="test_result_positive_then_negative_explanation">یہ سمجھنے کے لئے کہ ایپ خود کو تنہائی میں رکھنے  کے دنوں کا حساب کیسے دیتی ہے ، عمومی سوالنامہ دیکھیں۔\n\nآپ کے موجودہ ٹیسٹ کے نتیجے سے ظاہر ہوتا ہے کہ ٹیسٹ ہونے کے وقت آپ میں وائرس موجود نہیں تھا۔ اگر آپ نے حال ہی میں علامات کی اطلاع دی ہیں تو یقینی بنائیں کہ آپ نے جانچ کے لیے وقت مخصوص کر لیا ہے۔ اگر آپ کے اندر علامات پائی جاتی ہیں تو اس ایپ پر ان کی اطلاع دیں۔ آپ کی عمر 18 سال سے کم ہے تو آپ کو مشورہ دیا جاتا ہے کہ یہ پیغام کسی قابل اعتماد بالغ کو دکھائیں۔</string>
     <string name="test_result_void_already_not_in_isolation_subtitle">یہ سمجھنے کے لئے کہ ایپ خود کو تنہائی میں رکھنے  کے دنوں کا حساب کیسے دیتی ہے ، عمومی سوالنامہ دیکھیں۔\n\nجب آپ کا ٹیسٹ کیا گیا تو ہم یہ نہیں بتا سکے کہ  آپ کو کورونا وائرس تھا اور آپ کو دوبارہ ٹیسٹ کروانا چاہئے۔ آپ کو ای میل، ٹیکسٹ یا فون کے ذریعے مزید معلومات بھیجی گئی ہیں۔ اگر آپ کی عمر 18 سال سے کم ہے تو آپ کو مشورہ دیا جاتا ہے کہ یہ پیغام کسی قابل اعتماد بالغ کو دکھائیں۔</string>
     <string name="test_result_void_no_self_isolation_subtitle">ہم پتہ نہیں لگاسکےکہ کیا ٹیسٹ کےوقت آپ کوکورونا وائرس لاحق تھا</string>
     <string name="test_result_your_test_result">آپکےٹیسٹ کا نتیجہ</string>
-    <string name="test_result_negative_no_self_isolation_description">آپ کے کوروناوائرس کے ٹیسٹ کا نتیجہ منفی ہے</string>
     <string name="test_result_negative_no_self_isolation_explanation">آپ کے ٹیسٹ کے نتیجے سے ظاہر ہوتا ہے کہ ٹیسٹ ہونے کے وقت آپ میں وائرس موجود نہیں تھا۔ اگر آپ میں علامات ظاہر ہو جائیں تو اس ایپ پر ان کی اطلاع دیں۔ اگر آپ کی عمر 18 سال سے کم ہے تو آپ کو مشورہ دیا جاتا ہے کہ یہ پیغام کسی قابل اعتماد بالغ کو دکھائیں۔</string>
     <string name="test_result_negative_no_self_isolation_subtitle">آپ کی ذاتی علیحدگی اب مکمل ہو چکی ہے</string>
     <string name="test_result_positive_no_self_isolation_description">لیکن اگر آپ کا درجۂ حرارت زیادہ ہے تو اس کے معتدل ہونے تک ذاتی علیحدگی جاری رکھیں</string>
@@ -357,7 +335,6 @@
     <string name="update_in_play_store">ابھی اپنی ایپ کو اپ ڈیٹ کریں</string>
     <string name="updated_privacy_control_text">ہم نے ایپ میں کچھ تبدیلیاں کی ہیں جو آپ کے سفر کرنے کی صورت میں ایپ کے لیئے زیادہ موثر انداز میں کام کرنے میں مدد گار ہوں گی۔ متعدد ممالک مل کر کام کر رہے ہیں لہذا جب لوگ مختلف ممالک کی سرحدیں  پار کرتے ہیں تو رابطوں کا سراغ لگانے کا کام جاری رہتا ہے۔\n\nانگلینڈ، ویلز،  سکاٹ لینڈ، شمالی آئرلینڈ، جرزی اور جبرالٹر سے باضابطہ رابطے کا سراغ  لگانے والی  ایپس لوگوں کی شناخت ظاہر کیئے بغیر معلومات کا اشتراک کرنے کے اہل ہوں گی۔\n\nاگر آپ کا کورونا وائرس کا ٹیسٹ مثبت ثابت ہوتا ہے تو، آپ اپنے  ڈیٹا کا این ایچ ایس کے ساتھ اشتراک کرنے کا انتخاب کرسکتے ہیں تا کہ ہم ایپ کا استعمال کرنے والے اُن دوسرے لوگوں کو اطلاعات بھیج سکیں جن کو ان ممالک میں باخبر کرنے کی ضرورت ہے۔</string>
     <string name="updated_privacy_title">ہماری پالیسیوں میں تبدیلیاں</string>
-    <string name="about_local_authority">لوکل اتھارٹی</string>
     <string name="checkin_information_title_new">مزید معلومات</string>
     <string name="confirm_and_start">تصدیق کریں</string>
     <string name="exposure_faqs">عام سوالات</string>
@@ -455,7 +432,6 @@
     <string name="unsupported_device">محدود کردہ سیٹنگز (مثال کے طور پر اگر یہ کمپنی فون ہو)۔\n\nآپ کے فون میں موجود ایک اور ایپ یہی ٹیکنالوجی استعمال کر رہی ہے اور ایپ کو کام کرنے سے روک رہی ہے۔</string>
     <string name="user_data_daily_contact_testing_text">مصدقہ شرکت</string>
     <string name="user_data_daily_contact_testing_title">یومیہ رابطے  کی جانچ</string>
-    <string name="about_manage_my_data_settings_subtitle">مقامی  اتھارٹی ,جانچ  نتائج ,مقام کی تاریخ</string>
     <string name="ill_do_it_later">میں یہ   بعد میں کروں گا/ گی</string>
     <string name="link_test_result_daily_contact_testing_description">اگر آپ کا نتیجہ مثبت ہے تو، آپ کو جو کوڈ موصول ہوا ہوگا اسے اوپر کے خانے میں درج کریں اور خود \nکو تنہا  کریں۔\n\nاگر آپ کا نتیجہ منفی ہے تو، آپ کو کوڈ موصول نہیں ہوتا ہے۔ آپ کو نیچے ہمیں بتانا ہوتا ہے کہ آپ کا نتیجہ منفی ہے اور جاری رکھیں۔</string>
     <string name="link_test_result_daily_contact_testing_description_list_header">اس کے علاوہ:</string>
@@ -524,6 +500,20 @@
     <string name="share_keys_reminder_title">دوسروں کو مطلع کرنے کی یاد دہانی</string>
     <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="url_nhs_get_tested_wls">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="camera_active_accessibility_announcement">کیمرہ فعال ہے۔ مقام میں چیک ان کرنے کے لئے اس کا منہ  ایک سرکاری این ایچ ایس کیو آر کوڈ پوسٹر کی طرف کریں۔</string>
+    <string name="contact_tracing_hub_consider_pausing_text">اپنے فون کو لاکر یا کسی مشترک جگہ میں محفوظ  کریں۔\n\nکسی لگی ہوئی شفاف اسکرین کے پیچھے سے  کام کر رہے ہوں اور دوسرے لوگوں سے پوری طرح تحفظ یافتہ ہیں\n\nصحت اور سماجی نگہداشت میں طبی درجے  کی  پی پی ای  جیسے سرجیکل ماسک پہننے ہوئے کارکن ہوں\n\nنگہداشت صحت کی عمارت جیسے ہسپتال یا GP سرجری میں کام کرنے والے نگہداشت صحت کے کارکن ہوں</string>
+    <string name="contact_tracing_hub_consider_pausing_title">رابطے  کی ٹریسنگ سے  آپ اور دوسروں کو کورونا وائرس (COVID-19) سے محفوظ رکھنے میں مدد ملتی ہے۔\n\nآپ کو رابطے  کی ٹریسنگ صرف تبھی موقوف کرنا چاہیے جب آپ:</string>
+    <string name="contact_tracing_hub_should_not_pause_text">بیٹری لائف پر زیادہ فرق نہیں پڑنا چاہیے\n\nآپ کی لوکیشن ٹریک نہیں کی جا سکتی</string>
+    <string name="contact_tracing_hub_should_not_pause_title">رابطے کی ٹریسنگ :</string>
+    <string name="contact_tracing_hub_status_off">رابطے  کی ٹریسنگ آف ہے</string>
+    <string name="contact_tracing_hub_status_on">رابطے  کی ٹریسنگ آن ہے</string>
+    <string name="contact_tracing_hub_title">رابطے  کی ٹریسنگ کا نظم کریں</string>
+    <string name="contact_tracing_hub_turn_back_on_reminder">آپ ایپ میں ایک یاد دہانی ترتیب دے سکتے ہیں تاکہ آپ کو رابطے  کی ٹریسنگ  کو دوبارہ فعال کرنے کے لئے کہا جائے۔</string>
     <string name="notification_channel_share_keys_reminder_description">These notifications remind you to share random IDs</string>
     <string name="notification_channel_share_keys_reminder_name">Share random IDs reminder</string>
+    <string name="status_contact_tracing_activate">پھر سے چلائیں</string>
+    <string name="status_option_toggle_contact_tracing">رابطے  کی ٹریسنگ کا نظم کریں</string>
+    <string name="ukca_compliance_announcement">نشان زد UKCA</string>
+    <string name="user_data_acknowledged_date">کو تسلیم شدہ</string>
+    <string name="user_data_test_end">ٹیسٹ ختم</string>
 </resources>

@@ -14,16 +14,18 @@ import kotlinx.android.synthetic.main.activity_my_data.followUpTestDateContainer
 import kotlinx.android.synthetic.main.activity_my_data.followUpTestStatusContainer
 import kotlinx.android.synthetic.main.activity_my_data.lastDayOfIsolationDate
 import kotlinx.android.synthetic.main.activity_my_data.lastDayOfIsolationSection
-import kotlinx.android.synthetic.main.activity_my_data.lastResultDate
 import kotlinx.android.synthetic.main.activity_my_data.lastResultKitType
 import kotlinx.android.synthetic.main.activity_my_data.lastResultValue
 import kotlinx.android.synthetic.main.activity_my_data.lastRiskyVenueVisitDate
 import kotlinx.android.synthetic.main.activity_my_data.lastRiskyVenueVisitSection
-import kotlinx.android.synthetic.main.activity_my_data.latestResultDateContainer
 import kotlinx.android.synthetic.main.activity_my_data.latestResultKitTypeContainer
 import kotlinx.android.synthetic.main.activity_my_data.latestResultValueContainer
 import kotlinx.android.synthetic.main.activity_my_data.noRecordsView
 import kotlinx.android.synthetic.main.activity_my_data.symptomsDataSection
+import kotlinx.android.synthetic.main.activity_my_data.testAcknowledgedDate
+import kotlinx.android.synthetic.main.activity_my_data.testAcknowledgedDateContainer
+import kotlinx.android.synthetic.main.activity_my_data.testEndDate
+import kotlinx.android.synthetic.main.activity_my_data.testEndDateContainer
 import kotlinx.android.synthetic.main.activity_my_data.textEncounterDate
 import kotlinx.android.synthetic.main.activity_my_data.textExposureNotificationDate
 import kotlinx.android.synthetic.main.activity_my_data.textViewSymptomsDate
@@ -36,7 +38,7 @@ import kotlinx.android.synthetic.main.activity_my_data.titleSymptoms
 import kotlinx.android.synthetic.main.activity_my_data.viewContent
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.about.BaseMyDataViewModel.IsolationState
+import uk.nhs.nhsx.covid19.android.app.about.BaseMyDataViewModel.IsolationViewState
 import uk.nhs.nhsx.covid19.android.app.about.BaseMyDataViewModel.MyDataState
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
@@ -52,10 +54,7 @@ import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
-import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
 import javax.inject.Inject
 
 class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
@@ -95,7 +94,7 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
         } else {
             noRecordsView.gone()
             viewContent.visible()
-            handleStateMachineState(viewState.isolationState)
+            handleIsolationState(viewState.isolationState)
             updateLastRiskyVenueVisitedSegment(viewState.lastRiskyVenueVisitDate)
             handleShowingLatestTestResult(viewState.acknowledgedTestResult)
         }
@@ -103,8 +102,9 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
 
     private fun handleShowingLatestTestResult(acknowledgedTestResult: AcknowledgedTestResult?) {
         if (acknowledgedTestResult != null) {
-            lastResultDate.text = uiFormat(acknowledgedTestResult.testEndDate)
+            testEndDate.text = acknowledgedTestResult.testEndDate.uiFormat(this)
             lastResultValue.text = getTestResultText(acknowledgedTestResult)
+            testAcknowledgedDate.text = acknowledgedTestResult.acknowledgedDate.uiFormat(this)
 
             if (acknowledgedTestResult.testKitType != null) {
                 lastResultKitType.text = getTestResultKitTypeText(acknowledgedTestResult.testKitType)
@@ -116,7 +116,7 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
             if (acknowledgedTestResult.requiresConfirmatoryTest) {
                 if (acknowledgedTestResult.confirmedDate != null) {
                     followUpState.text = getString(R.string.about_test_follow_up_state_complete)
-                    followUpDate.text = uiFormat(acknowledgedTestResult.confirmedDate)
+                    followUpDate.text = acknowledgedTestResult.confirmedDate.uiFormat(this)
                     followUpTestDateContainer.visible()
                 } else {
                     followUpState.text = getString(R.string.about_test_follow_up_state_pending)
@@ -128,15 +128,17 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
             }
 
             titleLatestResult.visible()
-            latestResultDateContainer.visible()
+            testEndDateContainer.visible()
             latestResultValueContainer.visible()
+            testAcknowledgedDateContainer.visible()
         } else {
             titleLatestResult.gone()
-            latestResultDateContainer.gone()
+            testEndDateContainer.gone()
             latestResultValueContainer.gone()
             latestResultKitTypeContainer.gone()
             followUpTestDateContainer.gone()
             followUpTestStatusContainer.gone()
+            testAcknowledgedDateContainer.gone()
         }
     }
 
@@ -153,14 +155,14 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
             RAPID_SELF_REPORTED -> getString(R.string.about_lfd_self_reported)
         }
 
-    private fun handleStateMachineState(isolationState: IsolationState?) {
-        isolationState?.let { handleIsolationState(it) } ?: handleStateMachineEmptyStates()
+    private fun handleIsolationState(isolationViewState: IsolationViewState?) {
+        isolationViewState?.let { handleActualIsolationState(it) } ?: handleEmptyIsolationState()
     }
 
-    private fun handleIsolationState(isolationState: IsolationState) {
+    private fun handleActualIsolationState(isolationViewState: IsolationViewState) {
         noRecordsView.gone()
-        if (isolationState.lastDayOfIsolation != null) {
-            lastDayOfIsolationDate.text = isolationState.lastDayOfIsolation.uiFormat(this)
+        if (isolationViewState.lastDayOfIsolation != null) {
+            lastDayOfIsolationDate.text = isolationViewState.lastDayOfIsolation.uiFormat(this)
             titleLastDayOfIsolation.visible()
             lastDayOfIsolationSection.visible()
         } else {
@@ -168,13 +170,13 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
             lastDayOfIsolationSection.gone()
         }
 
-        if (isolationState.contactCaseEncounterDate != null) {
-            textEncounterDate.text = uiFormat(isolationState.contactCaseEncounterDate)
+        if (isolationViewState.contactCaseEncounterDate != null) {
+            textEncounterDate.text = isolationViewState.contactCaseEncounterDate.uiFormat(this)
             titleExposureNotification.visible()
             encounterDataSection.visible()
 
-            if (isolationState.contactCaseNotificationDate != null) {
-                textExposureNotificationDate.text = uiFormat(isolationState.contactCaseNotificationDate)
+            if (isolationViewState.contactCaseNotificationDate != null) {
+                textExposureNotificationDate.text = isolationViewState.contactCaseNotificationDate.uiFormat(this)
                 exposureNotificationDataSection.visible()
             } else {
                 exposureNotificationDataSection.gone()
@@ -185,8 +187,8 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
             exposureNotificationDataSection.gone()
         }
 
-        if (isolationState.indexCaseSymptomOnsetDate != null) {
-            textViewSymptomsDate.text = isolationState.indexCaseSymptomOnsetDate.uiFormat(this)
+        if (isolationViewState.indexCaseSymptomOnsetDate != null) {
+            textViewSymptomsDate.text = isolationViewState.indexCaseSymptomOnsetDate.uiFormat(this)
             titleSymptoms.visible()
             symptomsDataSection.visible()
         } else {
@@ -194,8 +196,8 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
             symptomsDataSection.gone()
         }
 
-        if (isolationState.dailyContactTestingOptInDate != null) {
-            dailyContactTestingOptInDate.text = isolationState.dailyContactTestingOptInDate.uiFormat(this)
+        if (isolationViewState.dailyContactTestingOptInDate != null) {
+            dailyContactTestingOptInDate.text = isolationViewState.dailyContactTestingOptInDate.uiFormat(this)
             titleDailyContactTestingOptIn.visible()
             dailyContactTestingSection.visible()
         } else {
@@ -204,7 +206,7 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
         }
     }
 
-    private fun handleStateMachineEmptyStates() {
+    private fun handleEmptyIsolationState() {
         titleLastDayOfIsolation.gone()
         lastDayOfIsolationSection.gone()
 
@@ -228,12 +230,6 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
             titleLastRiskyVenueVisit.gone()
             lastRiskyVenueVisitSection.gone()
         }
-    }
-
-    private fun uiFormat(instant: Instant): String {
-        val localDate: LocalDate =
-            LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate()
-        return localDate.uiFormat(this)
     }
 
     companion object {

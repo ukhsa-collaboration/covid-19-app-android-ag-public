@@ -361,6 +361,7 @@
                             android:layout_width="24dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
+                            android:contentDescription="@null"
                             android:src="@drawable/ic_manufacturer" />
 
                         <TextView
@@ -386,7 +387,9 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="32dp"
                         android:layout_marginTop="24dp"
-                        android:src="@drawable/ic_ukca" />
+                        android:src="@drawable/ic_ukca"
+                        android:contentDescription="@string/ukca_compliance_announcement"
+                        />
                 </LinearLayout>
             </LinearLayout>
 

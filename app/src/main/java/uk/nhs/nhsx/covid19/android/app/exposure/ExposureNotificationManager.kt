@@ -2,10 +2,12 @@ package uk.nhs.nhsx.covid19.android.app.exposure
 
 import com.google.android.gms.common.api.ApiException
 import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationReminderAlarmController
 import javax.inject.Inject
 
 class ExposureNotificationManager @Inject constructor(
-    private val exposureNotificationApi: ExposureNotificationApi
+    private val exposureNotificationApi: ExposureNotificationApi,
+    private val exposureNotificationReminderAlarmController: ExposureNotificationReminderAlarmController,
 ) {
 
     suspend fun startExposureNotifications(): ExposureNotificationActivationResult =
@@ -13,6 +15,7 @@ class ExposureNotificationManager @Inject constructor(
             val enabled = exposureNotificationApi.isEnabled()
             Timber.d("exposureNotificationClient isOn = $enabled")
             exposureNotificationApi.start()
+            exposureNotificationReminderAlarmController.cancel()
             ExposureNotificationActivationResult.Success
         } catch (apiException: ApiException) {
             if (apiException.status.hasResolution()) {

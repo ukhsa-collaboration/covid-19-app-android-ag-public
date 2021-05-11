@@ -19,14 +19,12 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateProvider
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.DeviceDetection
 
 class MainViewModelTest {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val deviceDetection = mockk<DeviceDetection>()
     private val exposureNotificationApi = mockk<ExposureNotificationApi>()
     private val mainViewState = mockk<Observer<MainViewModel.MainViewState>>(relaxUnitFun = true)
     private val onboardingCompletedProvider = mockk<OnboardingCompletedProvider>()
@@ -37,7 +35,6 @@ class MainViewModelTest {
     private val localAuthorityPostCodeValidator = mockk<LocalAuthorityPostCodeValidator>()
 
     private val testSubject = MainViewModel(
-        deviceDetection,
         exposureNotificationApi,
         onboardingCompletedProvider,
         policyUpdateProvider,
@@ -57,8 +54,6 @@ class MainViewModelTest {
 
     @Test
     fun `policy accepted and post code to local authority missing`() = runBlocking {
-        every { deviceDetection.isTablet() } returns false
-
         coEvery { onboardingCompletedProvider.value } returns true
 
         every { policyUpdateProvider.isPolicyAccepted() } returns true
@@ -76,7 +71,6 @@ class MainViewModelTest {
 
     @Test
     fun `policy accepted and local authority missing`() = runBlocking {
-        every { deviceDetection.isTablet() } returns false
 
         coEvery { onboardingCompletedProvider.value } returns true
 
@@ -97,7 +91,6 @@ class MainViewModelTest {
 
     @Test
     fun `policy accepted and local authority present and battery optimization required`() = runBlocking {
-        every { deviceDetection.isTablet() } returns false
 
         coEvery { onboardingCompletedProvider.value } returns true
 
@@ -120,7 +113,6 @@ class MainViewModelTest {
 
     @Test
     fun `policy accepted and local authority present`() = runBlocking {
-        every { deviceDetection.isTablet() } returns false
 
         coEvery { onboardingCompletedProvider.value } returns true
 
@@ -141,7 +133,6 @@ class MainViewModelTest {
 
     @Test
     fun `policy updated`() = runBlocking {
-        every { deviceDetection.isTablet() } returns false
 
         coEvery { onboardingCompletedProvider.value } returns true
 
@@ -155,21 +146,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `device not supported`() = runBlocking {
-        every { deviceDetection.isTablet() } returns true
-
-        coEvery { exposureNotificationApi.isEnabled() } returns false
-
-        testSubject.viewState().observeForever(mainViewState)
-
-        testSubject.start()
-
-        verify { mainViewState.onChanged(MainViewModel.MainViewState.TabletNotSupported) }
-    }
-
-    @Test
     fun `exposure notifications not available`() = runBlocking {
-        every { deviceDetection.isTablet() } returns false
 
         coEvery { exposureNotificationApi.isAvailable() } returns false
 
@@ -182,7 +159,6 @@ class MainViewModelTest {
 
     @Test
     fun `start onboarding`() = runBlocking {
-        every { deviceDetection.isTablet() } returns false
 
         coEvery { exposureNotificationApi.isEnabled() } returns false
 
@@ -198,7 +174,6 @@ class MainViewModelTest {
     @Test
     fun `when post code was entered and permissions not enabled user will be in OnboardingStarted state`() =
         runBlocking {
-            every { deviceDetection.isTablet() } returns false
 
             coEvery { exposureNotificationApi.isEnabled() } returns false
 

@@ -16,7 +16,6 @@ import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationRe
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationReminderAlarmController
 import java.time.Clock
-import java.time.Duration
 import java.time.Instant
 import java.time.ZoneOffset
 
@@ -197,16 +196,5 @@ class ExposureStatusViewModelTest {
 
         coVerify { exposureNotificationService.stopExposureNotifications() }
         verify { exposureNotificationsChangedObserver.onChanged(any()) }
-    }
-
-    @Test
-    fun `schedule exposure notification reminder sets alarm controller`() {
-        val delay = Duration.ofHours(1)
-        val alarmTime = Instant.now(fixedClock).plus(delay)
-
-        testSubject.scheduleExposureNotificationReminder(delay)
-
-        verify { resumeContactTracingNotificationTimeProvider setProperty "value" value eq(alarmTime.toEpochMilli()) }
-        verify { exposureNotificationReminderAlarmController.setup(alarmTime) }
     }
 }

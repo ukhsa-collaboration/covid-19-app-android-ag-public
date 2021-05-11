@@ -21,7 +21,6 @@ import uk.nhs.nhsx.covid19.android.app.analytics.NetworkStatsInterceptor
 import uk.nhs.nhsx.covid19.android.app.di.module.SignatureValidationInterceptor.Companion.HEADER_REQUEST_ID
 import uk.nhs.nhsx.covid19.android.app.network.TrafficLengthObfuscationInterceptor
 import uk.nhs.nhsx.covid19.android.app.remote.UserAgentInterceptor
-import uk.nhs.nhsx.covid19.android.app.state.StateJson
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.adapters.ColorSchemeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
@@ -183,7 +182,6 @@ class NetworkModule(
     @Singleton
     fun provideMoshi(): Moshi {
         return Moshi.Builder()
-            .add(StateJson.stateMoshiAdapter)
             .add(LocalDateAdapter())
             .add(InstantAdapter())
             .add(TranslatableAdapter())

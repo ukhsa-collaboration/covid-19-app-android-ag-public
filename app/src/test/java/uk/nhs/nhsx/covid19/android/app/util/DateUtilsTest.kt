@@ -403,7 +403,7 @@ class DateUtilsTest {
     }
 
     @Test
-    fun `selectNewest returns first date if newer`() {
+    fun `selectNewest returns first date-time if newer`() {
         val clock1 = Clock.fixed(Instant.parse("2014-12-21T06:23:00Z"), ZoneId.of("Europe/London"))
         val clock2 = Clock.fixed(Instant.parse("2014-12-21T06:22:59Z"), ZoneId.of("Europe/London"))
 
@@ -416,7 +416,7 @@ class DateUtilsTest {
     }
 
     @Test
-    fun `selectNewest returns second date if newer`() {
+    fun `selectNewest returns second date-time if newer`() {
         val clock1 = Clock.fixed(Instant.parse("2014-12-21T06:22:59Z"), ZoneId.of("Europe/London"))
         val clock2 = Clock.fixed(Instant.parse("2014-12-21T06:23:00Z"), ZoneId.of("Europe/London"))
 
@@ -429,7 +429,7 @@ class DateUtilsTest {
     }
 
     @Test
-    fun `selectNewest returns second date if first is null`() {
+    fun `selectNewest returns second date-time if first is null`() {
         val clock2 = Clock.fixed(Instant.parse("2014-12-21T06:20:00Z"), ZoneId.of("Europe/London"))
 
         val localDateTime2 = LocalDateTime.now(clock2)
@@ -440,7 +440,7 @@ class DateUtilsTest {
     }
 
     @Test
-    fun `selectNewest returns any date if equal`() {
+    fun `selectNewest returns any date-time if equal`() {
         val clock1 = Clock.fixed(Instant.parse("2014-12-21T06:23:00Z"), ZoneId.of("Europe/London"))
         val clock2 = Clock.fixed(Instant.parse("2014-12-21T06:23:00Z"), ZoneId.of("Europe/London"))
 

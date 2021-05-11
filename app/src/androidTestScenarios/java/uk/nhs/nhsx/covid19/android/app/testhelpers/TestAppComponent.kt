@@ -6,7 +6,7 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers
 
 import android.app.AlarmManager
 import dagger.Component
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsSubmissionLogStorage
+import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalyticsAlarmController
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
@@ -25,11 +25,9 @@ import uk.nhs.nhsx.covid19.android.app.state.DisplayStateExpirationNotification
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
-import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultHandler
+import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingTokensProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
 import javax.inject.Singleton
-import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingTokensProvider
 
 @Singleton
 @Component(
@@ -49,12 +47,6 @@ interface TestAppComponent : ApplicationComponent {
 
     @Singleton
     fun getUnacknowledgedTestResultsProvider(): UnacknowledgedTestResultsProvider
-
-    @Singleton
-    fun getRelevantTestResultProvider(): RelevantTestResultProvider
-
-    @Singleton
-    fun getTestResultHandler(): TestResultHandler
 
     @Singleton
     fun getTestOrderingTokensProvider(): TestOrderingTokensProvider
@@ -89,7 +81,7 @@ interface TestAppComponent : ApplicationComponent {
     fun getLastVisitedBookTestTypeVenueDateProvider(): LastVisitedBookTestTypeVenueDateProvider
 
     @Singleton
-    fun getAnalyticsSubmissionLogStorage(): AnalyticsSubmissionLogStorage
+    fun getSubmitAnalyticsAlarmController(): SubmitAnalyticsAlarmController
 
     @Singleton
     fun getAlarmManager(): AlarmManager

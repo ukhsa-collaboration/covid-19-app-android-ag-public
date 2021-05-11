@@ -4,12 +4,9 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.report.notReported
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
+import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -20,13 +17,12 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRo
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
 import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
-import kotlin.test.assertTrue
 
 class LinkTestResultFlowTests : EspressoTest() {
 
@@ -37,6 +33,8 @@ class LinkTestResultFlowTests : EspressoTest() {
     private val testResultRobot = TestResultRobot(testAppContext.app)
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
     private val shareKeysResultRobot = ShareKeysResultRobot()
+    private val isolationHelper = IsolationHelper(testAppContext.clock)
+    private val isolationChecker = IsolationChecker(testAppContext)
 
     @Before
     fun setUp() {
@@ -49,24 +47,18 @@ class LinkTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCase_linkTestResult_shouldContinueIsolate() = notReported {
+    fun startIndexCase_linkPositiveTestResult_shouldContinueIsolation() = notReported {
         testAppContext.setState(
-            state = Isolation(
-                isolationStart = Instant.now(),
-                isolationConfiguration = DurationDays(),
-                indexCase = IndexCase(
-                    symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(7, ChronoUnit.DAYS),
-                    selfAssessment = true
-                )
-            )
+            isolationHelper.selfAssessment()
+                .copy(expiryDate = LocalDate.now().plus(7, ChronoUnit.DAYS))
+                .asIsolation()
         )
 
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
 
-        assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
+        isolationChecker.assertActiveIndexNoContact()
 
         statusRobot.clickLinkTestResult()
 
@@ -92,31 +84,30 @@ class LinkTestResultFlowTests : EspressoTest() {
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
+        isolationChecker.assertActiveIndexNoContact()
     }
 
     @Test
-    fun startContactCase_linkTestResult_shouldEndIsolation() = notReported {
-        val contactDate = Instant.now().minus(2, ChronoUnit.DAYS)
-        testAppContext.virologyTestingApi.testEndDate = contactDate.minus(10, ChronoUnit.DAYS)
+    fun startContactCase_linkJustExpiredPositiveTestResult_shouldEndIsolation() = notReported {
+        val contactInstant = Instant.now(testAppContext.clock).minus(2, ChronoUnit.DAYS)
+        testAppContext.virologyTestingApi.testEndDate = contactInstant.minus(10, ChronoUnit.DAYS)
 
+        val contactDate = contactInstant.toLocalDate(testAppContext.clock.zone)
         testAppContext.setState(
-            state = Isolation(
-                isolationStart = contactDate,
-                isolationConfiguration = DurationDays(),
-                contactCase = ContactCase(
-                    startDate = contactDate,
-                    notificationDate = null,
-                    expiryDate = contactDate.plus(10, ChronoUnit.DAYS).toLocalDate(ZoneOffset.UTC)
+            isolationHelper
+                .contactCase(
+                    exposureDate = contactDate,
+                    notificationDate = contactDate,
+                    expiryDate = contactDate.plusDays(10)
                 )
-            )
+                .asIsolation()
         )
 
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
 
-        assertTrue { (testAppContext.getCurrentState() as Isolation).isContactCaseOnly() }
+        isolationChecker.assertActiveContactNoIndex()
 
         statusRobot.clickLinkTestResult()
 
@@ -144,31 +135,30 @@ class LinkTestResultFlowTests : EspressoTest() {
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
-        assertTrue { testAppContext.getCurrentState() is Default }
+        isolationChecker.assertExpiredIndexNoContact()
     }
 
     @Test
-    fun startContactCase_linkOldTestResult_shouldContinueIsolate() = notReported {
-        val contactDate = Instant.now().minus(2, ChronoUnit.DAYS)
-        testAppContext.virologyTestingApi.testEndDate = contactDate.minus(11, ChronoUnit.DAYS)
+    fun startContactCase_linkTooOldPositiveTestResult_shouldContinueIsolation() = notReported {
+        val contactInstant = Instant.now(testAppContext.clock).minus(2, ChronoUnit.DAYS)
+        testAppContext.virologyTestingApi.testEndDate = contactInstant.minus(11, ChronoUnit.DAYS)
 
+        val contactDate = contactInstant.toLocalDate(testAppContext.clock.zone)
         testAppContext.setState(
-            state = Isolation(
-                isolationStart = contactDate,
-                isolationConfiguration = DurationDays(),
-                contactCase = ContactCase(
-                    startDate = contactDate,
-                    notificationDate = null,
-                    expiryDate = contactDate.plus(10, ChronoUnit.DAYS).toLocalDate(ZoneOffset.UTC)
+            isolationHelper
+                .contactCase(
+                    exposureDate = contactDate,
+                    notificationDate = contactDate,
+                    expiryDate = contactDate.plusDays(10)
                 )
-            )
+                .asIsolation()
         )
 
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
 
-        assertTrue { (testAppContext.getCurrentState() as Isolation).isContactCaseOnly() }
+        isolationChecker.assertActiveContactNoIndex()
 
         statusRobot.clickLinkTestResult()
 
@@ -188,11 +178,11 @@ class LinkTestResultFlowTests : EspressoTest() {
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
-        assertTrue { (testAppContext.getCurrentState() as Isolation).isContactCaseOnly() }
+        isolationChecker.assertActiveContactNoIndex()
     }
 
     @Test
-    fun startDefault_linkTestResult_noSymptoms_shouldIsolate() = notReported {
+    fun startDefault_linkPositiveTestResult_noSymptoms_shouldIsolate() = notReported {
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
@@ -225,15 +215,14 @@ class LinkTestResultFlowTests : EspressoTest() {
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
+        isolationChecker.assertActiveIndexNoContact()
     }
 
     @Test
-    fun startDefault_linkTestResult_confirmSymptoms_selectSymptomsDate_shouldIsolate() = notReported {
+    fun startDefault_linkPositiveTestResult_confirmSymptoms_selectSymptomsDate_shouldIsolate() = notReported {
         val now = Instant.parse("2021-01-10T10:00:00Z")
         testAppContext.clock.currentInstant = now
         testAppContext.virologyTestingApi.testEndDate = now.minus(2, ChronoUnit.DAYS)
-
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
@@ -278,6 +267,6 @@ class LinkTestResultFlowTests : EspressoTest() {
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
+        isolationChecker.assertActiveIndexNoContact()
     }
 }

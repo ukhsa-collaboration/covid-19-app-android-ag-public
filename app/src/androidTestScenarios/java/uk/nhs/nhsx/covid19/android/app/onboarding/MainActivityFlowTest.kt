@@ -5,9 +5,13 @@ import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BatteryOptimizationRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ContactTracingHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityInformationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PolicyUpdateRobot
@@ -22,6 +26,7 @@ class MainActivityFlowTest : EspressoTest() {
     private val statusRobot = StatusRobot()
     private val batteryOptimizationRobot = BatteryOptimizationRobot()
     private val postCodeRobot = PostCodeRobot()
+    private val contactTracingHubRobot = ContactTracingHubRobot()
 
     @After
     fun tearDown() {
@@ -106,5 +111,46 @@ class MainActivityFlowTest : EspressoTest() {
         policyUpdateRobot.clickContinue()
 
         statusRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    fun onExposureNotificationReminderAction_navigateToContactTracingHub() = notReported {
+        setupOnboardingComplete()
+        testAppContext.getExposureNotificationApi().setEnabled(false)
+
+        startTestActivity<MainActivity> {
+            putExtra(NotificationProvider.CONTACT_TRACING_HUB_ACTION, ContactTracingHubAction.ONLY_NAVIGATE)
+        }
+
+        waitFor { contactTracingHubRobot.checkActivityIsDisplayed() }
+    }
+
+    @Test
+    fun onExposureNotificationReminderAction_navigateToContactTracingHubAndTurnOnContactTracing() = notReported {
+        setupOnboardingComplete()
+        testAppContext.getExposureNotificationApi().setEnabled(false)
+        testAppContext.getExposureNotificationApi().activationResult = Result.Success()
+
+        startTestActivity<MainActivity> {
+            putExtra(NotificationProvider.CONTACT_TRACING_HUB_ACTION, ContactTracingHubAction.NAVIGATE_AND_TURN_ON)
+        }
+
+        waitFor { contactTracingHubRobot.checkActivityIsDisplayed() }
+        waitFor { contactTracingHubRobot.checkContactTracingToggledOnIsDisplayed() }
+    }
+
+    @Test
+    fun whenNotificationFlagIsNotSet_navigateToStatusActivity() = notReported {
+        setupOnboardingComplete()
+
+        startTestActivity<MainActivity>()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    private fun setupOnboardingComplete() {
+        testAppContext.setOnboardingCompleted(true)
+        testAppContext.setPolicyUpdateAccepted(true)
+        testAppContext.setLocalAuthority("1")
     }
 }

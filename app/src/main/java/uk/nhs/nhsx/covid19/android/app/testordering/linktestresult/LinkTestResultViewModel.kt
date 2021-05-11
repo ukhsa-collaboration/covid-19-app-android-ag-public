@@ -19,9 +19,9 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
-import uk.nhs.nhsx.covid19.android.app.state.State
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Failure
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Success
@@ -32,13 +32,15 @@ import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValid
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.BOTH_PROVIDED
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.NEITHER_PROVIDED
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
+import java.time.Clock
 import javax.inject.Inject
 
 class LinkTestResultViewModel @Inject constructor(
     private val ctaTokenValidator: CtaTokenValidator,
     private val isolationStateMachine: IsolationStateMachine,
     private val linkTestResultOnsetDateNeededChecker: LinkTestResultOnsetDateNeededChecker,
-    private val analyticsEventProcessor: AnalyticsEventProcessor
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
+    private val clock: Clock
 ) : ViewModel() {
 
     private val viewStateLiveData = MutableLiveData<LinkTestResultState>()
@@ -57,8 +59,9 @@ class LinkTestResultViewModel @Inject constructor(
     var ctaToken: String? = null
 
     fun fetchInitialViewState() {
-        val state = isolationStateMachine.readState()
-        val showDailyContactTesting = state is State.Isolation && state.isContactCaseOnly() &&
+        val state = isolationStateMachine.readLogicalState()
+        val showDailyContactTesting = state is PossiblyIsolating &&
+            state.isActiveContactCaseOnly(clock) &&
             RuntimeBehavior.isFeatureEnabled(DAILY_CONTACT_TESTING)
 
         val initialViewState =

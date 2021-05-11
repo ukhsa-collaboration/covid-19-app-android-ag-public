@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.di
 
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 import uk.nhs.nhsx.covid19.android.app.MockApiBehaviour
 import uk.nhs.nhsx.covid19.android.app.remote.AnalyticsApi
 import uk.nhs.nhsx.covid19.android.app.remote.AppAvailabilityApi
@@ -25,17 +24,20 @@ import uk.nhs.nhsx.covid19.android.app.remote.MockIsolationPaymentApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockKeysDistributionApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockKeysSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockQuestionnaireApi
+import uk.nhs.nhsx.covid19.android.app.remote.MockRemoteServiceExceptionCrashReportSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockRiskyPostDistrictsApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockRiskyVenueCircuitBreakerApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockRiskyVenueConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockRiskyVenuesApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.QuestionnaireApi
+import uk.nhs.nhsx.covid19.android.app.remote.RemoteServiceExceptionCrashReportSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyPostDistrictsApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenueConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesCircuitBreakerApi
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
+import javax.inject.Singleton
 
 @Module
 class MockApiModule {
@@ -122,4 +124,9 @@ class MockApiModule {
     @Singleton
     fun provideRiskyVenueConfigurationApi(): RiskyVenueConfigurationApi =
         MockRiskyVenueConfigurationApi()
+
+    @Provides
+    @Singleton
+    fun provideRemoteServiceExceptionCrashReportSubmissionApi(): RemoteServiceExceptionCrashReportSubmissionApi =
+        MockRemoteServiceExceptionCrashReportSubmissionApi()
 }

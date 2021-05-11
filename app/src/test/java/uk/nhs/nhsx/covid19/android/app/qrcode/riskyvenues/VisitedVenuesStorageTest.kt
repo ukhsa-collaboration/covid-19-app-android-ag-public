@@ -11,7 +11,6 @@ import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
-import uk.nhs.nhsx.covid19.android.app.state.StateJson
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedFileInfo
 import uk.nhs.nhsx.covid19.android.app.util.UUIDGenerator
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
@@ -34,7 +33,6 @@ class VisitedVenuesStorageTest {
     private val clock = mockk<Clock>(relaxed = true)
 
     private val moshi = Builder()
-        .add(StateJson.stateMoshiAdapter)
         .add(LocalDateAdapter())
         .add(InstantAdapter())
         .build()

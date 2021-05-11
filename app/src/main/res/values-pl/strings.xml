@@ -6,7 +6,6 @@
     <!-- URLs -->
     <string name="url_privacy_notice">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_terms_of_use">https://covid19.nhs.uk/terms-of-use-polish.html</string>
-    <string name="url_nhs_tablet_device">https://faq.covid19.nhs.uk/article/KA-01232/en-us</string>
     <string name="url_nhs_111_online">https://111.nhs.uk/</string>
     <string name="url_accessibility_statement">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info">https://faq.covid19.nhs.uk/article/KA-01236/en-us</string>
@@ -20,7 +19,6 @@
 
     <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_terms_of_use_wls">https://covid19.nhs.uk/terms-of-use-polish.html</string>
-    <string name="url_nhs_tablet_device_wls">https://faq.covid19.nhs.uk/article/KA-01232/en-us</string>
     <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/</string>
     <string name="url_accessibility_statement_wls">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info_wls">https://faq.covid19.nhs.uk/article/KA-01236/en-us</string>
@@ -51,10 +49,10 @@
         <item quantity="other">Proszę izolować się do %1$s do godz. 23:59. Zostały %2$s dni do podanego terminu.</item>
     </plurals>
     <plurals name="resume_contact_tracing_hours">
-        <item quantity="one">%1$d godzina</item>
-        <item quantity="few">%1$d godziny</item>
-        <item quantity="many">%1$d godzin</item>
-        <item quantity="other">%1$d godzin</item>
+        <item quantity="one">%d godzina</item>
+        <item quantity="few">%d godziny</item>
+        <item quantity="many">%d godzin</item>
+        <item quantity="other">%d godzin</item>
     </plurals>
     <!-- Regular strings -->
     <string name="app_name">NHS Covid-19</string>
@@ -69,7 +67,6 @@
     <string name="permission_title">Śledzenie kontaktów</string>
     <string name="exposure_notifications_rationale_title">Śledzenie kontaktów pomaga w zapobieganiu rozprzestrzeniania się koronawirusa (COVID-19)</string>
     <string name="privacy_notice">Informacja o ochronie prywatności</string>
-    <string name="tablet_information_url">Informacja o korzystaniu z tabletów</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
     <string name="post_code_title">Wprowadź pierwszą część kodu pocztowego (okręg pocztowy)</string>
     <string name="post_code_rationale">Okręg pocztowy umożliwia uzyskanie obrazu rozprzestrzeniania się koronawirusa w różnych obszarach. Dzięki temu możemy udzielić jak najlepszej porady w zakresie zdrowia publicznego w Twojej okolicy.\n\nNie martw się. Podany przez Ciebie okręg pocztowy nie zostanie wykorzystany do ustalenia Twojej lokalizacji.</string>
@@ -83,15 +80,12 @@
     <string name="enable_location_service_rationale">Aby Bluetooth działał prawidłowo, należy włączyć usługi lokalizacyjne w telefonie.\n\nTa aplikacja nie korzysta z Bluetooth lub usług lokalizacyjnych do śledzenia użytkownika. Twoja tożsamość jest chroniona przez cały czas.\n\nJeśli usługi lokalizacyjne nie zostaną włączone w telefonie, aplikacja nie będzie działać.\n\nAby aplikacja działała prawidłowo, otwórz ustawienia i włącz usługi lokalizacyjne.</string>
     <string name="post_code_example">Aby korzystać z aplikacji, należy podać angielski lub walijski okręg pocztowy.\n\nPrzykłady: jeżeli Twój kod to CE1B 2PQ, wprowadź CE1B. Jeżeli Twój kod to CR0 3RL, wprowadź CR0. Jeżeli Twój kod to L4 0RE, wprowadź L4.</string>
     <string name="post_code_rationale_title">Dlaczego należy podać swój okręg pocztowy?</string>
-    <string name="tablet_support_title">Aplikacja została stworzona na smartfony.</string>
-    <string name="tablet_support_description">Twoje urządzenie to tablet. Aplikacja jest dostępna wyłącznie na smartfony, ponieważ jej skuteczność polega na tym, aby była uruchomiona na urządzeniu, które użytkownik zabiera ze sobą, kiedy wychodzi z domu. Prosimy o zainstalowanie aplikacji na smartfonie.</string>
     <string name="test_ordering_title">Przeprowadzenie testu</string>
     <string name="test_ordering_description_1">Po wybraniu opcji „Zamów teraz bezpłatny test” użytkownik zostanie przekierowany z aplikacji na stronę rządową zajmującą się przeprowadzaniem testów na koronawirusa.</string>
     <string name="test_ordering_description_2">Aby otrzymać test, na stronie należy podać swoje dane osobowe (takie jak adres). Żadne dane podane w aplikacji lub na stronie nie zostaną udostępnione.</string>
     <string name="test_ordering_description_3">Jedyna informacja udostępniana między aplikacją a stroną internetową to tzw. cyfrowy token, który umożliwia przekazanie wyników testu do aplikacji.</string>
     <string name="test_ordering_description_4">Wszelkie dane wykorzystane w procedurze testowania zostały podane w Informacji o ochronie prywatności:</string>
     <string name="test_ordering_description_5">Aby dowiedzieć się, jak ta aplikacja wykorzystuje Twoje dane, odwiedź stronę:</string>
-    <string name="test_ordering_description_6">Niniejsza aplikacja służy do otrzymania testu wyłącznie dla użytkownika telefonu. Aby uzyskać test dla innej osoby, należy go zamówić na stronie internetowej rządu zajmującej się przeprowadzaniem testów na koronawirusa.</string>
     <string name="test_ordering_testing_privacy_notice">Informacja o ochronie prywatności dotycząca procedury testowania</string>
     <string name="test_ordering_app_privacy_notice">Informacja o ochronie prywatności w aplikacji</string>
     <string name="test_ordering_book_test_for_someone_else">Zamów test dla innej osoby</string>
@@ -114,14 +108,6 @@
     <string name="notification_title_post_code_risk_changed">Informacje lokalne zostały zaktualizowane.</string>
     <string name="notification_title_risky_venue">Niedawno odwiedziłeś(-aś) lokal w tym samym dniu, co inne osoby, które później uzyskały dodatni wynik testu na koronawirusa (COVID-19)</string>
     <string name="notification_text_post_code_risk_changed">Odwiedzając lokale, pamiętaj o zeskanowaniu oficjalnego kodu NHS QR.</string>
-    <string name="status_area_risk_level_low">NISKI</string>
-    <string name="status_area_risk_level_low_wls">NISKI</string>
-    <string name="status_area_risk_level_medium">ŚREDNI</string>
-    <string name="status_area_risk_level_medium_wls">ŚREDNI</string>
-    <string name="status_area_risk_level_high">WYSOKI</string>
-    <string name="status_area_risk_level_high_wls">WYSOKI</string>
-    <string name="status_area_risk_level">Poziom ryzyka w okolicy %s jest %s</string>
-    <string name="status_area_risk_level_wls">Poziom ryzyka w okolicy %s jest %s</string>
     <string name="notification_channel_area_risk_changed_name">Zmiana poziomu ryzyka w okolicy</string>
     <string name="notification_channel_area_risk_changed_description">Powiadomienia pomagają w śledzeniu poziomu ryzyka infekcji w danej okolicy.</string>
     <string name="notification_channel_isolation_state_name">Izolacja</string>
@@ -294,7 +280,7 @@
     <string name="onboarding_no_thanks_announcement">Nie, dziękuję, nie wyrażam zgody</string>
     <string name="title_how_app_works">Jak działa aplikacja?</string>
     <string name="contact_tracing_active">Aplikacja jest aktywna. Tryb skanowania został uruchomiony.</string>
-    <string name="contact_tracing_not_active">Funkcja śledzenia kontaktów jest nieaktywna.</string>
+    <string name="contact_tracing_not_active">Opcja śledzenia kontaktów jest wstrzymana</string>
     <string name="delete_data_explanation">Wszelkie informacje udostępniane za pośrednictwem tej aplikacji będą wykorzystywane wyłącznie do celów związanych ze zdrowiem publicznym. Zapisane dane zostaną usunięte po kliknięciu opcji „Usuń dane”. Usunięcie obejmuje także wszystkie aktywne okresy izolacji oraz pozostały czas izolacji. Należy pamiętać, że telefon użytkownika zachowa pewne informacje, takie jak dane gromadzone przez telefon do rejestrowania innych użytkowników aplikacji. Dane te nie są kontrolowane przez aplikację, ale przez system operacyjny telefonu. Jeżeli po usunięciu użytkownik będzie chciał ponownie korzystać z aplikacji, należy ponownie ją skonfigurować.</string>
     <string name="go_to_play_store">Odwiedź Sklep Play</string>
     <string name="cant_run_app">Niestety aplikacja obecnie nie działa.</string>
@@ -315,12 +301,6 @@
     <string name="exposure_notification_recommendation">Jeżeli nie masz ukończonych 18 lat, radzimy, aby pokazać tę wiadomość zaufanej osobie dorosłej.\n\nRyzyko, że masz koronawirusa i możesz zarazić innych jest wysokie, nawet jeżeli nie wystąpiły u Ciebie żadne objawy. Należy poddać się izolacji przez cały wskazany okres.\n\nPonieważ miałeś(-aś) kontakt z osobą, która uzyskała dodatni wynik testu, możesz umówić się na test, aby sprawdzić, czy masz koronawirusa. Jeżeli Twój wynik jest dodatni, możesz anonimowo powiadomić innych, że może zagrażać im ryzyko. Musisz nadal pozostawać w izolacji, nawet jeżeli Twój wynik testu jest ujemny, ponieważ nadal możesz zarażać innych.\n\nMożesz zamówić test, wracając do strony głównej aplikacji.\n</string>
     <string name="risk_level_title">W mojej okolicy</string>
     <string name="risk_level_link_text">Definicje poziomów ryzyka</string>
-    <string name="low_risk_level_text">Niski – władze lokalne oceniły poziom ryzyka jako niski, co oznacza, że liczba zakażeń utrzymuje się na tym samym poziomie, jak w większości kraju.</string>
-    <string name="low_risk_level_text_wls">Niski – władze lokalne oceniły poziom ryzyka jako niski, co oznacza, że liczba zakażeń utrzymuje się na tym samym poziomie, jak w większości kraju.</string>
-    <string name="medium_risk_level_text">Średni - władze lokalne lub sąsiednie władze lokalne mają wysoki lub rosnący poziom infekcji. Proszę postępować zgodnie z wytycznymi krajowymi.</string>
-    <string name="medium_risk_level_text_wls">Średni - władze lokalne lub sąsiednie władze lokalne mają wysoki lub rosnący poziom infekcji. Proszę postępować zgodnie z wytycznymi krajowymi.</string>
-    <string name="high_risk_level_text">Wysoki - władze lokalne lub władze w danym regionie zastosowały dodatkowe środki oprócz tych, które obowiązują w pozostałej części Anglii i Walii (np. lockdown), aby ograniczyć przenoszenie wirusa z powodu wysokiej liczby zakażeń w danej okolicy. Wdrożono szczegółowy plan działania, a lokalne działania są wspomagane dzięki wsparciu na poziomie krajowym.</string>
-    <string name="high_risk_level_text_wls">Wysoki - władze lokalne lub władze w danym regionie zastosowały dodatkowe środki oprócz tych, które obowiązują w pozostałej części Anglii i Walii (np. lockdown), aby ograniczyć przenoszenie wirusa z powodu wysokiej liczby zakażeń w danej okolicy. Wdrożono szczegółowy plan działania, a lokalne działania są wspomagane dzięki wsparciu na poziomie krajowym.</string>
     <string name="about_description">Dziękujemy za chronienie siebie i innych poprzez używanie niniejszej aplikacji</string>
     <string name="open_in_browser_warning">otwiera się w przeglądarce</string>
     <string name="done_button_text">Gotowe</string>
@@ -331,10 +311,9 @@
     <string name="contact_tracing_notification_reminder_dialog_title">Ustaw przypomnienie o włączeniu funkcji śledzenia kontaktów za %1$s godzin</string>
     <string name="contact_tracing_notification_reminder_dialog_message">Wyłączenie funkcji śledzenia kontaktów wpłynie na skuteczność działania aplikacji.</string>
     <string name="okay">OK</string>
-    <string name="resume_contact_tracing_title">Funkcja śledzenia kontaktów jest teraz wyłączona</string>
+    <string name="resume_contact_tracing_title">Wstrzymaj śledzenie kontaktów</string>
     <string name="resume_contact_tracing_subtitle">Wybierz, kiedy aplikacja ma przypomnieć o włączeniu funkcji śledzenia kontaktów</string>
     <string name="template_hours">%d godzin</string>
-    <string name="resume_contact_tracing_don_t_remind_me">Nie przypominaj</string>
     <string name="postcode_entry_information_description_2">Nie martw się. Podany przez Ciebie okręg pocztowy nie zostanie wykorzystany do ustalenia Twojej lokalizacji.</string>
     <string name="postcode_not_supported">Niestety ta aplikacja nie jest obsługiwana w Twoim regionie. Pobierz aplikację dla swojego regionu lub kraju.</string>
     <string name="accessibility_announcement_button">%s, Przycisk</string>
@@ -359,8 +338,7 @@
     <string name="questionnaire_no_i_dont_have_symptom">Nie, nie wystąpił u mnie objaw: %s</string>
     <string name="questionnaire_yes_i_have_symptom">Tak, wystąpił u mnie objaw: %s</string>
     <string name="test_result_void_no_self_isolation_subtitle">Nie można było potwierdzić, czy doszło u Ciebie do zakażenia koronawirusem.</string>
-    <string name="test_result_negative_no_self_isolation_description">Wynik Twojego testu na koronawirusa jest negatywny.</string>
-    <string name="test_result_negative_no_self_isolation_explanation">Aktualny wynik testu wskazuje, że w czasie testowania nie byłeś/aś zakażony/a wirusem. Jeśli zaczniesz odczuwać objawy, zgłoś je w tej aplikacji. Jeśli masz mniej niż 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.</string>
+    <string name="test_result_negative_no_self_isolation_explanation">Oznacza to, że kiedy test został przeprowadzony, nie doszło do zakażenia wirusem. Jeżeli wystąpią u Ciebie objawy, zgłoś je w aplikacji. Jeżeli masz poniżej 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.</string>
     <string name="test_result_negative_no_self_isolation_subtitle">Twoja izolacja zakończyła się</string>
     <string name="test_result_positive_no_self_isolation_description">Jeżeli jednak masz wysoką temperaturę, kontynuuj izolację do czasu powrotu do zdrowia.</string>
     <string name="notification_text_potential_exposure_explanation">Nie martw się, oceniliśmy twój stan zagrożenia i obecnie nie musisz podejmować żadnych działań. Zachowaj czujność i postępuj zgodnie z najnowszymi wskazówkami dotyczącymi dystansowania społecznego.</string>
@@ -373,7 +351,6 @@
     <string name="update_in_play_store">Zaktualizuj swoją aplikację teraz</string>
     <string name="updated_privacy_control_text">Wprowadziliśmy kilka zmian w aplikacji, aby usprawnić jej działanie podczas podróży. Kilka krajów współpracuje ze sobą, więc śledzenie kontaktów nadal działa, gdy ludzie przekraczają granice do różnych krajów.\n\nOficjalne aplikacje \"contact tracing\" (śledzenie kontaktów czyli ustalanie kontaktów zakaźnych) z Anglii, Walii, Szkocji, Irlandii Północnej, Jersey i Gibraltaru będą mogły udostępniać dane, zachowując jednocześnie anonimowość użytkowników. \n\nJeśli wynik testu na koronawirusa jest pozytywny, możesz zdecydować się na udostępnienie danych NHS, dzięki czemu będziemy mogli wysyłać powiadomienia do innych użytkowników aplikacji, którzy muszą być ostrzeżeni w tych krajach.</string>
     <string name="updated_privacy_title">Zmiany w naszej polityce</string>
-    <string name="about_local_authority">Władze lokalne</string>
     <string name="checkin_information_title_new">Więcej informacji</string>
     <string name="confirm_and_start">Potwierdź</string>
     <string name="exposure_faqs">Częste pytania</string>
@@ -471,7 +448,6 @@
     <string name="unsupported_device">Ograniczenie w ustawieniach (na przykład, jeśli jest to telefon firmowy)\n\nInna aplikacja w telefonie używa tej samej technologii i blokuje możliwość uruchomienia tej aplikacji.</string>
     <string name="user_data_daily_contact_testing_text">Potwierdzone uczestnictwo</string>
     <string name="user_data_daily_contact_testing_title">Codzienne testy pod kątem kontaktu z osobą zarażoną</string>
-    <string name="about_manage_my_data_settings_subtitle">Władze lokalne, wyniki testu, lista odwiedzonych miejsc</string>
     <string name="ill_do_it_later">Zrobię to później</string>
     <string name="link_test_result_daily_contact_testing_description">Jeżeli Twój wynik jest dodatni, wpisz w poniższym polu otrzymany kod i poddaj się izolacji\n\nJeżeli Twój wynik jest ujemny, nie otrzymasz kodu. Należy poniżej poinformować nas o uzyskaniu ujemnego wyniku i kontynuować</string>
     <string name="link_test_result_daily_contact_testing_description_list_header">Dodatkowo:</string>
@@ -540,6 +516,20 @@
     <string name="share_keys_reminder_title">Przypomnienie o powiadomieniu innych osób</string>
     <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="url_nhs_get_tested_wls">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="camera_active_accessibility_announcement">Funkcja aparatu jest aktywna. Skieruj telefon na oficjalny plakat z kodem NHS QR, aby zameldować się w lokalu.</string>
+    <string name="contact_tracing_hub_consider_pausing_text">telefon przechowywany jest w szafce/schowku lub w pomieszczeniach do wspólnego użytku;\n\npracujesz za przezroczystym ekranem, w pełni chroniącym Cię przed kontaktem z innymi;\n\njesteś pracownikiem służby zdrowia lub opieki społecznej, noszącym medyczną odzież ochronną, taką jak maseczki chirurgiczne;\n\njesteś pracownikiem służby zdrowia pracującym w budynku, takim jak szpital lub poradnia lekarzy rodzinnych.</string>
+    <string name="contact_tracing_hub_consider_pausing_title">Śledzenie kontaktów pomaga chronić Ciebie i innych przed koronawirusem (COVID-19). \n\nMożesz wstrzymać śledzenie kontaktów jedynie w przypadku, gdy:</string>
+    <string name="contact_tracing_hub_should_not_pause_text">nie powinno znacząco wpłynąć na zużycie baterii;\n\nnie może śledzić Twojej lokalizacji.</string>
+    <string name="contact_tracing_hub_should_not_pause_title">Śledzenie kontaktów:</string>
+    <string name="contact_tracing_hub_status_off">Opcja śledzenia kontaktów jest nieaktywna.</string>
+    <string name="contact_tracing_hub_status_on">Opcja śledzenia kontaktów jest aktywna.</string>
+    <string name="contact_tracing_hub_title">Zarządzaj śledzeniem kontaktów</string>
+    <string name="contact_tracing_hub_turn_back_on_reminder">Możesz ustawić w aplikacji przypomnienie, które powiadomi Cię, kiedy należy ponownie włączyć śledzenie kontaktów.</string>
     <string name="notification_channel_share_keys_reminder_description">These notifications remind you to share random IDs</string>
     <string name="notification_channel_share_keys_reminder_name">Share random IDs reminder</string>
+    <string name="status_contact_tracing_activate">Uruchom ponownie</string>
+    <string name="status_option_toggle_contact_tracing">Zarządzaj śledzeniem kontaktów</string>
+    <string name="ukca_compliance_announcement">Znak UKCA</string>
+    <string name="user_data_acknowledged_date">Potwierdzono dnia</string>
+    <string name="user_data_test_end">Zakończenie testu</string>
 </resources>

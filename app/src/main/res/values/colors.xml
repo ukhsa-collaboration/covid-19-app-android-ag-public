@@ -65,5 +65,5 @@
 
     <color name="item_user_data_border">#DDDDDD</color>
 
-    <color name="qr_more_info_button_background">#14ffffff</color>
+    <color name="qr_more_info_button_border">#80FFFFFF</color>
 </resources>

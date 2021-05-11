@@ -3,9 +3,8 @@ package uk.nhs.nhsx.covid19.android.app.about
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
-import java.time.Instant
 import java.time.LocalDate
 
 abstract class BaseMyDataViewModel() : ViewModel() {
@@ -14,20 +13,20 @@ abstract class BaseMyDataViewModel() : ViewModel() {
 
     abstract fun onResume()
 
-    protected abstract fun getIsolationState(): IsolationState?
+    protected abstract fun getIsolationState(): IsolationViewState?
     protected abstract fun getLastRiskyVenueVisitDate(): LocalDate?
-    protected abstract fun getDailyContactTestingOptInDateForIsolation(isolation: Isolation): LocalDate?
+    protected abstract fun getDailyContactTestingOptInDate(contactCase: ContactCase?): LocalDate?
 
     data class MyDataState(
-        val isolationState: IsolationState?,
+        val isolationState: IsolationViewState?,
         val lastRiskyVenueVisitDate: LocalDate?,
         val acknowledgedTestResult: AcknowledgedTestResult?,
     )
 
-    data class IsolationState(
+    data class IsolationViewState(
         val lastDayOfIsolation: LocalDate? = null,
-        val contactCaseEncounterDate: Instant? = null,
-        val contactCaseNotificationDate: Instant? = null,
+        val contactCaseEncounterDate: LocalDate? = null,
+        val contactCaseNotificationDate: LocalDate? = null,
         val indexCaseSymptomOnsetDate: LocalDate? = null,
         val dailyContactTestingOptInDate: LocalDate? = null
     )

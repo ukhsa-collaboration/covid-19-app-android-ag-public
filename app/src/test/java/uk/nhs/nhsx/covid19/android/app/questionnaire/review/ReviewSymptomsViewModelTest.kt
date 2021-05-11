@@ -5,6 +5,7 @@ import androidx.lifecycle.Observer
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
@@ -22,12 +23,13 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSympto
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.PositiveHeader
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.asLogical
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -41,14 +43,21 @@ class ReviewSymptomsViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
+    private val isolationStateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
     private val riskCalculator = mockk<RiskCalculator>()
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
     private val navigateToIsolationScreenObserver = mockk<Observer<SymptomAdvice>>(relaxed = true)
     private val analyticsManager = mockk<AnalyticsEventProcessor>(relaxed = true)
-    private val fixedClock = Clock.fixed(Instant.parse("2020-12-24T20:00:00Z"), ZoneOffset.UTC)
+    private val fixedClock = Clock.fixed(Instant.parse("2020-05-22T20:00:00Z"), ZoneOffset.UTC)
     private val testSubject =
         ReviewSymptomsViewModel(isolationStateMachine, riskCalculator, analyticsManager, fixedClock)
+
+    @Before
+    fun setUp() {
+        every { isolationStateMachine.processEvent(any()) } returns mockk()
+        every { isolationStateMachine.readLogicalState() } returns
+            IsolationState(isolationConfiguration = DurationDays()).asLogical()
+    }
 
     @Test
     fun `setup outputs correct viewState`() {
@@ -226,7 +235,6 @@ class ReviewSymptomsViewModelTest {
         val onsetDate = ExplicitDate(LocalDate.parse("2020-05-21"))
         setupStateWithSelectedOnsetDate(onsetDate)
         every { riskCalculator.isRiskAboveThreshold(any(), any()) } returns false
-        every { isolationStateMachine.readState() } returns Default()
 
         testSubject.onButtonConfirmedClicked()
 
@@ -235,44 +243,50 @@ class ReviewSymptomsViewModelTest {
 
     @Test
     fun `onButtonConfirmedClicked and user should self-isolate`() {
+        val remainingDaysInIsolation = 2
+        every { isolationStateMachine.remainingDaysInIsolation(any()) } returns remainingDaysInIsolation.toLong()
         testSubject.navigateToSymptomAdviceScreen().observeForever(navigateToIsolationScreenObserver)
         val onsetDate = LocalDate.parse("2020-05-21")
         setupStateWithSelectedOnsetDate(ExplicitDate(onsetDate))
         every { riskCalculator.isRiskAboveThreshold(any(), any()) } returns true
-        every { isolationStateMachine.readState() } returns Isolation(
-            Instant.now(),
-            DurationDays(),
-            indexCase = IndexCase(
-                symptomsOnsetDate = onsetDate,
-                expiryDate = LocalDate.parse("2020-05-24"),
-                selfAssessment = true
-            )
-        )
+        every { isolationStateMachine.readLogicalState() } returns
+            IsolationState(
+                isolationConfiguration = DurationDays(),
+                indexInfo = IndexCase(
+                    isolationTrigger = SelfAssessment(
+                        selfAssessmentDate = LocalDate.now(fixedClock),
+                        onsetDate
+                    ),
+                    expiryDate = LocalDate.parse("2020-05-24")
+                )
+            ).asLogical()
 
         testSubject.onButtonConfirmedClicked()
 
-        verify { navigateToIsolationScreenObserver.onChanged(Isolate(true, 0)) }
+        verify { navigateToIsolationScreenObserver.onChanged(Isolate(true, remainingDaysInIsolation)) }
     }
 
     @Test
     fun `onButtonConfirmedClicked and user should self-isolate although negative symptoms when contact case`() {
+        val remainingDaysInIsolation = 2
+        every { isolationStateMachine.remainingDaysInIsolation(any()) } returns remainingDaysInIsolation.toLong()
         testSubject.navigateToSymptomAdviceScreen().observeForever(navigateToIsolationScreenObserver)
         val onsetDate = LocalDate.parse("2020-05-21")
         setupStateWithSelectedOnsetDate(ExplicitDate(onsetDate))
         every { riskCalculator.isRiskAboveThreshold(any(), any()) } returns false
-        every { isolationStateMachine.readState() } returns Isolation(
-            Instant.now(),
-            DurationDays(),
-            contactCase = ContactCase(
-                startDate = Instant.parse("2020-05-19T12:00:00Z"),
-                notificationDate = null,
-                expiryDate = LocalDate.parse("2020-05-24")
-            )
-        )
+        every { isolationStateMachine.readLogicalState() } returns
+            IsolationState(
+                isolationConfiguration = DurationDays(),
+                contactCase = ContactCase(
+                    exposureDate = LocalDate.parse("2020-05-19"),
+                    notificationDate = LocalDate.parse("2020-05-19"),
+                    expiryDate = LocalDate.parse("2020-05-24")
+                )
+            ).asLogical()
 
         testSubject.onButtonConfirmedClicked()
 
-        verify { navigateToIsolationScreenObserver.onChanged(Isolate(false, 0)) }
+        verify { navigateToIsolationScreenObserver.onChanged(Isolate(false, remainingDaysInIsolation)) }
     }
 
     @Test

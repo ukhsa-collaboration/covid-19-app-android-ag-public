@@ -32,9 +32,6 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
 import androidx.test.uiautomator.UiDevice
-import com.jeroenmols.featureflag.framework.Feature
-import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
-import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import com.schibsted.spain.barista.internal.failurehandler.BaristaException
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.ignoreExceptionsMatching
@@ -80,20 +77,6 @@ fun runWithIntents(action: () -> Unit) {
         action()
     } finally {
         Intents.release()
-    }
-}
-
-fun runWithFeatureEnabled(feature: Feature, action: () -> Unit) {
-    val wasFeatureEnabledInitially = RuntimeBehavior.isFeatureEnabled(feature)
-    if (!wasFeatureEnabledInitially) {
-        FeatureFlagTestHelper.enableFeatureFlag(feature)
-    }
-    try {
-        action()
-    } finally {
-        if (!wasFeatureEnabledInitially) {
-            FeatureFlagTestHelper.disableFeatureFlag(feature)
-        }
     }
 }
 

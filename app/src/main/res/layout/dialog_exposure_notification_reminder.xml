@@ -56,13 +56,13 @@
         android:textAppearance="@style/ActionText" />
 
     <TextView
-        android:id="@+id/dont_remind"
+        android:id="@+id/cancel"
         style="@style/LinkText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical|end"
         android:paddingTop="8dp"
-        android:text="@string/resume_contact_tracing_don_t_remind_me"
+        android:text="@string/cancel"
         android:textAllCaps="true" />
 
 </LinearLayout>

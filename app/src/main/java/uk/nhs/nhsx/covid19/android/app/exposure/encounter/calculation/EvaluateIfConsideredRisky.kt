@@ -4,8 +4,6 @@ import com.google.android.gms.nearby.exposurenotification.ExposureWindow
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.util.isEqualOrAfter
 import java.time.Clock
 import java.time.Instant
@@ -43,12 +41,8 @@ class EvaluateIfConsideredRisky @Inject constructor(
         return encounterDate.isEqualOrAfter(oldestPossibleContactCaseIsolationDate)
     }
 
-    private fun ExposureWindow.isAfterPotentialDailyContactTestingOptIn(): Boolean {
-        return when (val isolationState = isolationStateMachine.readState()) {
-            is Default -> isolationState.previousIsolation?.contactCase?.dailyContactTestingOptInDate?.let { optInDate ->
-                dateMillisSinceEpoch >= optInDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
-            } ?: true
-            is Isolation -> true
-        }
-    }
+    private fun ExposureWindow.isAfterPotentialDailyContactTestingOptIn(): Boolean =
+        isolationStateMachine.readState().contactCase?.dailyContactTestingOptInDate?.let { optInDate ->
+            dateMillisSinceEpoch >= optInDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+        } ?: true
 }

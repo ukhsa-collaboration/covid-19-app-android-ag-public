@@ -28,13 +28,7 @@
     <string name="status_option_read_latest_advice">Test hakkında bilgi edinin</string>
     <string name="status_option_contact_tracing">Temas takibi</string>
     <string name="contact_tracing_active">Uygulamanız etkin ve tarama yapıyor</string>
-    <string name="contact_tracing_not_active">Temas takibi kapalı</string>
-    <string name="status_area_risk_level_low">DÜŞÜK</string>
-    <string name="status_area_risk_level_medium">ORTA</string>
-    <string name="status_area_risk_level_high">YÜKSEK</string>
-    <string name="low_risk_level_text">Düşük - yerel idareniz mevcut durumda bölgenizi \'düşük riskli\' olarak tanımlamaktadır; enfeksiyon seviyeleri ülkenin birçok diğer bölgesine benzerdir.</string>
-    <string name="medium_risk_level_text">Orta - yerel idareniz veya komşu bir yerel idare, yüksek veya artan enfeksiyon seviyelerine sahiptir. Lütfen ulusal yönergeleri takip edin.</string>
-    <string name="high_risk_level_text">Yüksek - yerel idareniz veya komşunuz olan bir bölgenin idaresi, yerel bölgede enfeksiyon seviyelerinin yüksek olması nedeniyle enfeksiyon yayılımını azaltmak üzere İngiltere ve Galler geri kalanında uygulanandan daha fazla tedbir (ör. sokağa çıkma yasakları) uygulamaktadır. Ayrıntılı bir eylem planı uygulamaya konulmuştur ve ulusal çaplı destekle birlikte yerel kaynaklar artırılmaktadır.</string>
+    <string name="contact_tracing_not_active">Temas takibi duraklatıldı</string>
     <string name="risk_level_title">Bölgemde</string>
     <string name="qr_code_permission_denied_action">Kamera izinlerini etkinleştir</string>
     <string name="qr_code_permission_denied_subtitle">Bu uygulama, barlar ve restoranlar gibi yerlere giriş yapmak için kameranızı kullanır.\n\nResmi NHS QR kodunun taranması için lütfen kamera izinlerini etkinleştirin.</string>
@@ -83,7 +77,6 @@
     <string name="test_ordering_description_3">Uygulama ve web sitesi arasında yalnızca test sonuçlarınızın uygulamaya geri aktarılması için bir dijital \'jeton\' paylaşılır.</string>
     <string name="test_ordering_description_4">Test sürecinde kullanılan tüm veriler gizlilik bildiriminde açıklanmaktadır:</string>
     <string name="test_ordering_description_5">Bu uygulamanın verilerinizi nasıl kullandığını öğrenmek için şu adresi ziyaret edin:</string>
-    <string name="test_ordering_description_6">Bu uygulamayı yalnızca kendiniz için test talep etmek amacıyla kullanabilirsiniz. Başka birisi için test talebinde bulunmak isterseniz, Devletin resmi koronavirüs testi web sitesini kullanın:</string>
     <string name="book_free_test_now">Kendiniz için bir test ayarlayın</string>
     <string name="about_this_app_title">Bu uygulama hakkında</string>
     <string name="title_how_app_works">Uygulama nasıl çalışır?</string>
@@ -108,8 +101,8 @@
     <string name="cancel">İptal</string>
     <string name="notification_action_exposure_reminder">Temas takibini aç</string>
     <string name="notification_title_exposure_reminder">Temas takibini tekrar açma zamanı</string>
-    <string name="resume_contact_tracing_title">Temas takibi şu anda kapalı</string>
-    <string name="resume_contact_tracing_subtitle">Uygulamanın size temas takibini tekrar açmanızı ne zaman hatırlatacağını seçin</string>
+    <string name="resume_contact_tracing_title">Temas takibini durdur</string>
+    <string name="resume_contact_tracing_subtitle">Uygulamanızın size temas takibini tekrar etkinleştirmenizi ne zaman hatırlatmasını istediğinizi seçin.</string>
     <string name="contact_tracing_notification_reminder_dialog_message">Temas takibinin kapatılması, uygulamanın etkinliğini etkileyecektir.</string>
     <string name="edit_postcode_district_title">Posta kodu bölgesini düzenle</string>
     <string name="onboarding_age_confirmation_title">16 yaş veya üstü müsünüz?</string>
@@ -119,7 +112,6 @@
     <string name="onboarding_age_restriction_title">Ne yazık ki bu uygulamayı kullanamazsınız. Bu uygulama yalnızca 16 yaşında veya daha büyük olan kişiler tarafından kullanılabilir.</string>
     <string name="onboarding_age_restriction_text">İlgi gösterdiğiniz için teşekkür ederiz. Bu uygulama yalnızca 16 yaş ve üstü olan kişiler içindir.</string>
     <string name="url_terms_of_use">https://covid19.nhs.uk/terms-of-use-turkish.html</string>
-    <string name="url_nhs_tablet_device">https://faq.covid19.nhs.uk/article/KA-01220/en-us</string>
     <string name="url_nhs_111_online">https://111.nhs.uk/</string>
     <string name="url_accessibility_statement">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info">https://faq.covid19.nhs.uk/article/KA-01224/en-us</string>
@@ -139,8 +131,8 @@
         <item quantity="other">Kişisel karantinanızın sona ereceği zaman: %1$s, 23:59. Bu tarihe kadar daha %2$s gün var.</item>
     </plurals>
     <plurals name="resume_contact_tracing_hours">
-        <item quantity="one">%1$d saat</item>
-        <item quantity="other">%1$d saat</item>
+        <item quantity="one">%d saat</item>
+        <item quantity="other">%d saat</item>
     </plurals>
     <string name="app_name">NHS Covid 19</string>
     <string name="continue_button">Devam</string>
@@ -150,7 +142,7 @@
     <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">Eğer koronavirüs testi pozitif çıkmış olan birisi ile yakın bir temasınız olmuş ise, uygulama size bir uyarı gönderecektir.\n\nBu uygulamada temas takip olanağını etkinleştirmek için şunlara izin vermeniz gerekmektedir: Maruz Kalma Bildirimleri.\n\nEğer fikrinizi değiştirirseniz, ayarlardan izinlerinizi istediğiniz zaman değiştirebilirsiniz.</string>
     <string name="privacy_notice">Gizlilik bildirimi</string>
-    <string name="tablet_information_url">Tabletlerin kullanılmasıyla ilgili bilgiler</string>
+
     <string name="nhs_111_online_service">NHS 111 online</string>
     <string name="post_code_rationale">Posta kodu bölgesi, farklı bölgelerde koronavirüsün yayılması hakkında bilgi edinmemize yardımcı olur. Bu, bulunduğunuz bölge için mümkün olan en iyi halk sağlığı tavsiyelerini size iletmemizi mümkün kılar.\n\nEndişelenmeyin. Posta kodu bölgeniz, konumunuzu takip etmek için kullanılmayacaktır.</string>
     <string name="enable_bluetooth_rationale">Bu uygulama, bu uygulamanın yüklü olduğu başka bir telefonun yakınında olduğunu bilmek için Bluetooth kullanır. Bluetooth’u kapattıysanız, bu uygulama çalışmayacaktır.\n\nBu uygulama ‘Bluetooth Düşük Enerji’ kullanmaktadır - bir pil tasarrufu teknolojisi.\n\nLütfen ayarlara gidin ve Bluetooth’u açın.</string>
@@ -159,8 +151,6 @@
     <string name="enable_location_service_title">Telefonunuzda konum hizmetlerini etkinleştirmeniz gerekmektedir</string>
     <string name="enable_location_service_rationale">Bluetooth\'un çalışması için telefonunuzda konum hizmetlerini açmanız gerekmektedir.\n\nBu uygulama sizi takip etmek için Bluetooth özelliğini veya konumunuzu kullanmaz. Kimliğiniz her zaman korunacaktır.\n\nTelefonunuzda konum hizmetlerini etkinleştirmemeniz halinde, bu uygulama çalışmayacaktır.\n\nBu uygulamanın çalışması için lütfen ayarlar kısmına gidin ve konum hizmetlerini etkinleştirin.</string>
     <string name="post_code_example">Bu uygulamayı kullanmak için İngiltere veya Galler posta kodu girin.\n\nÖrnekler: Posta kodunuz CE1B 2PQ iste lütfen \"CE1B\" yazın. CR0 3RL ise lütfen \"CR0\" yazın. L4 0RE ise lütfen \"L4\" yazın.</string>
-    <string name="tablet_support_title">Bu uygulama, mobil akıllı telefonlar için geliştirilmiştir</string>
-    <string name="tablet_support_description">Cihazınızın tablet olduğu görülüyor. Bu uygulama yalnızca dışarı çıktığınız her zaman yanınızda bulunan bir cihaz üzerinde kullanılması halinde etki göstereceğinden yalnızca akıllı telefonlar için sunulmaktadır. Lütfen uygulamayı akıllı telefonunuza yükleyin.</string>
     <string name="test_ordering_testing_privacy_notice">Test gizlilik bildirimi</string>
     <string name="test_ordering_app_privacy_notice">Uygulama gizlilik bildirimi</string>
     <string name="test_ordering_book_test_for_someone_else">Başkası için test rezervasyonu yaptırın</string>
@@ -176,7 +166,6 @@
     <string name="test_ordering_failure_description">Tekrar denemeden önce lütfen telefonunuzun mobil veri ayarlarının açık olduğunu teyit edin, Wi-Fi bağlantınızı kontrol edin (kullanıyorsanız) ve Uçak Modunun kapalı olduğundan emin olun.</string>
     <string name="notification_title_risky_venue">Yakın zaman önce, daha sonra yapılan koronavirüs (COVID-19) test sonuçları pozitif çıkan kişilerle aynı günde bir yeri ziyaret ettiniz</string>
     <string name="notification_text_post_code_risk_changed">Mekanları ziyaret ederken resmi bir NHS QR kodunu taramayı unutmayın.</string>
-    <string name="status_area_risk_level">%s bölgesinde risk seviyesi: %s</string>
     <string name="notification_channel_area_risk_changed_name">Bölge risk seviyesinde değişiklik</string>
     <string name="notification_channel_area_risk_changed_description">Bu bildirimler bulunduğunuz bölgedeki enfeksiyon riskini takip etmenize yardımcı olur.</string>
     <string name="notification_channel_isolation_state_name">Karantina</string>
@@ -265,7 +254,6 @@
     <string name="contact_tracing_notification_reminder_dialog_title">Temas takibini %1$s saat içinde yeniden açmak için hatırlatma ayarlama</string>
     <string name="okay">Tamam</string>
     <string name="template_hours">%d saat</string>
-    <string name="resume_contact_tracing_don_t_remind_me">Bana hatırlatmayı bırak</string>
     <string name="url_how_app_works">https://covid19.nhs.uk/introducing-the-app-turkish.html</string>
     <string name="url_latest_advice_in_isolation">https://faq.covid19.nhs.uk/article/KA-01225/en-us</string>
     <string name="submit_keys_information_description_text">Bu sonucu paylaşmak için aşağıdaki adıma devam edin.\n\nSorulduğunda \'Paylaş\' ya da \'Cihazınızın rastgele kimliklerini paylaşın\' seçeneğini seçin.</string>
@@ -285,7 +273,6 @@
     <string name="submit_keys_information_title">Başkalarına bildirimde bulunmaya yardımcı olun</string>
     <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_terms_of_use_wls">https://covid19.nhs.uk/terms-of-use-turkish.html</string>
-    <string name="url_nhs_tablet_device_wls">https://faq.covid19.nhs.uk/article/KA-01220/en-us</string>
     <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/</string>
     <string name="url_accessibility_statement_wls">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info_wls">https://faq.covid19.nhs.uk/article/KA-01224/en-us</string>
@@ -315,14 +302,11 @@
     <string name="authentication_example">Örnek: 5apv-enka</string>
     <string name="authentication_title">Mevcut durumda yalnızca NHS Gönüllü Müdahale Ekipleri, Isle of Wight ve Newham sakinleri için sunulmaktadır</string>
     <string name="authentication_where_can_i_find_code">Bu kodu nereden bulabilirim?</string>
-    <string name="high_risk_level_text_wls">Yüksek - yerel idareniz veya komşunuz olan bir bölgenin idaresi, yerel bölgede enfeksiyon seviyelerinin yüksek olması nedeniyle enfeksiyon yayılımını azaltmak üzere İngiltere ve Galler geri kalanında uygulanandan daha fazla tedbir (ör. sokağa çıkma yasakları) uygulamaktadır. Ayrıntılı bir eylem planı uygulamaya konulmuştur ve ulusal çaplı destekle birlikte yerel kaynaklar artırılmaktadır.</string>
     <string name="link_test_result_error_no_connection">İnternet yok. Lütfen şebekenize ya da WiFi’ya bağlanın ve bir daha deneyin.</string>
     <string name="link_test_result_error_unknown">Bir şeyler ters gitti. Lütfen bir daha deneyin.</string>
     <string name="logo_nhs_england_description">NHS Test ve Takip</string>
     <string name="logo_nhs_generic_description">NHS Covid 19</string>
     <string name="logo_nhs_wales_description">NHS Galler Test Takip Koru</string>
-    <string name="low_risk_level_text_wls">Düşük - yerel idareniz mevcut durumda bölgenizi \'düşük riskli\' olarak tanımlamaktadır; enfeksiyon seviyeleri ülkenin birçok diğer bölgesine benzerdir.</string>
-    <string name="medium_risk_level_text_wls">Orta - yerel idareniz veya komşu bir yerel idare, yüksek veya artan enfeksiyon seviyelerine sahiptir. Lütfen ulusal yönergeleri takip edin.</string>
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
     <string name="notification_channel_background_work_name">Background activities</string>
     <string name="notification_text_updating_database">Yükleniyor…</string>
@@ -333,16 +317,11 @@
     <string name="questionnaire_no_i_dont_have_symptom">Hayır bende %s yok</string>
     <string name="questionnaire_yes_i_have_symptom">Evet bende %s var</string>
     <string name="state_test_positive_then_negative_info">Koronavirüs testinizin sonucu negatif. Buna rağmen karantinada kalmalısınız. Bunun sebebi ya daha önceki bir testinizin sonucunun pozitif olması ya da yakın zaman önce belirtilerinizin olduğunu bildirmiş olmanızdır.</string>
-    <string name="status_area_risk_level_high_wls">YÜKSEK</string>
-    <string name="status_area_risk_level_low_wls">DÜŞÜK</string>
-    <string name="status_area_risk_level_medium_wls">ORTA</string>
-    <string name="status_area_risk_level_wls">%s bölgesinde risk seviyesi: %s</string>
     <string name="test_result_negative_then_positive_continue_explanation">Uygulamanın kişisel karantina günlerini nasıl hesapladığını anlamak için aşağıdaki SSS (sıkça sorulan sorular) bağlantısını ziyaret edin\n\nTest sonucunuz testin yapıldığı anda sizde virüs olduğunu göstermektedir. E-posta, SMS mesajı ya da telefon yoluyla size daha fazla bilgi gönderildi. Eğer 18 yaşın altındaysanız bu mesajı  güvendiğiniz bir yetişkine göstermeniz tavsiye edilir.</string>
     <string name="test_result_positive_then_negative_explanation">Uygulamanın kişisel karantina günlerini nasıl hesapladığını anlamak için SSS (sıkça sorulan sorular) bölümünü ziyaret edin\n\nTest sonucu testin yapıldığı anda sizde virüs olmadığını göstermektedir. Yakın zaman önce belirtilerinizin olduğunu bildirdiyseniz, bir test için rezervasyon yaptırdığınızdan emin olun. Belirtiler görmeye başlarsanız, onları bu uygulama aracılığıyla bildirin. Eğer 18 yaşın altındaysanız bu mesajı  güvendiğiniz bir yetişkine göstermeniz tavsiye edilir.</string>
     <string name="test_result_void_already_not_in_isolation_subtitle">Uygulamanın kişisel karantina günlerini nasıl hesapladığını anlamak için SSS (sıkça sorulan sorular) bölümünü ziyaret edin\n\nTest yapıldığında sizde koronavirüs olup olmadığını tesbit edememiş olduğumuzdan dolayı testi bir daha yaptırmalısınız. E-posta, SMS mesaj ya da telefon yoluyla size daha fazla bilgi gönderildi. Eğer 18 yaşın altındaysanız bu mesajı  güvendiğiniz bir yetişkine göstermeniz tavsiye edilir.</string>
     <string name="test_result_void_no_self_isolation_subtitle">Koronavirüsle enfekte olup olmadığınızı tespit edemedik</string>
     <string name="test_result_your_test_result">Test sonucunuz</string>
-    <string name="test_result_negative_no_self_isolation_description">Koronavirüs test sonucunuz negatif</string>
     <string name="test_result_negative_no_self_isolation_explanation">Test sonucu, test esnasında virüsle enfekte olmuş olmadığınızı gösteriyor. Belirti geliştirirseniz, bunları bu uygulama üzerinden bildirin. Eğer 18 yaşın altındaysanız bu mesajı  güvendiğiniz bir yetişkine göstermeniz tavsiye edilir.</string>
     <string name="test_result_negative_no_self_isolation_subtitle">Kişisel karantinanız sona erdi</string>
     <string name="test_result_positive_no_self_isolation_description">Ancak ateşiniz yüksekse, normale dönene kadar kişisel karantinanıza devam edin</string>
@@ -359,7 +338,6 @@
     <string name="update_in_play_store">Uygulamanızı şimdi güncelleyin</string>
     <string name="updated_privacy_control_text">Siz seyahat ederken daha verimli çalışmasına yardımcı olması için uygulamada bazı değişiklikler yaptık. Birkaç ülke birlikte çalışmaktadır ve bu nedenle temas takibi insanlar sınırları geçerek farklı ülkelere giriş yaptıklarında çalışmaya devam etmektedir.\n\nİngiltere, Galler, İskoçya, Kuzey İrlanda, Jersey ve Cebelitarık\'ın resmi temas takip uygulamaları kullanıcının anonimliğini korumakla birlikte verileri paylaşabilecektir.\n\nEğer koronavirüs testiniz pozitif çıkarsa verilerinizi NHS ile paylaşmayı seçebilirsiniz ve böylece bu ülkelerde uyarılması gereken diğer uygulama kullanıcılarına bildirim gönderebiliriz.</string>
     <string name="updated_privacy_title">Politikalarımızdaki değişiklikler</string>
-    <string name="about_local_authority">Yerel yönetim</string>
     <string name="checkin_information_title_new">Daha fazla bilgi</string>
     <string name="confirm_and_start">Onayla</string>
     <string name="exposure_faqs">Sık sorulan sorular</string>
@@ -455,7 +433,6 @@
     <string name="unsupported_device">Ayarlarınızdaki bir kısıtlama (örneğin, bir şirket telefonu kullanıyorsanız).\n\nTelefonunuzdaki başka bir uygulamanın aynı teknolojiyi kullanması ve bu, uygulamanın çalışmasını durdurmakta.</string>
     <string name="user_data_daily_contact_testing_text">Teyitli katılım</string>
     <string name="user_data_daily_contact_testing_title">Günlük temas testi</string>
-    <string name="about_manage_my_data_settings_subtitle">Yerel yönetim, test sonuçları, yer geçmişi</string>
     <string name="ill_do_it_later">Sonra yapacağım</string>
     <string name="link_test_result_daily_contact_testing_description">Test sonucunuz pozitifse, aldığınız kodu yukarıdaki kutuya girin ve kendinizi karantinaya alın\n\nTest sonucunuz negatifse, bir kod almazsınız. Sonucunuzun negatif olduğunu bize aşağıda söylemeli ve devam etmelisiniz</string>
     <string name="link_test_result_daily_contact_testing_description_list_header">Buna ek olarak:</string>
@@ -524,6 +501,20 @@
     <string name="share_keys_reminder_title">Başkalarına bildirimde bulunma konusunda hatırlatma</string>
     <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="url_nhs_get_tested_wls">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="camera_active_accessibility_announcement">Kamera etkin. Bir mekana giriş yapmak için resmi bir NHS QR kodu posterine doğrultun.</string>
+    <string name="contact_tracing_hub_consider_pausing_text">telefonunuzu bir dolap ya da ortak kullanım alanında muhafaza ederken\n\nsabit bir şeffaf ekranın arkasında, diğer insanlardan tamamen korunacak şekilde çalışırken\n\ncerrahi maske gibi, tıbbi kullanıma uygun KKE kullanan, sağlık ve sosyal bakım ortamında çalışan bir çalışansanız\n\nhastane ya da sağlık ocağı gibi bir sağlık hizmeti binasında çalışan bir sağlık çalışanıysanız</string>
+    <string name="contact_tracing_hub_consider_pausing_title">Temas takibi, sizi ve çevrenizdekileri koronavirüsten (COVID-19) korur.\n\nSadece aşağıdaki durumlarda temas takibini devre dışı bırakmalısınız:</string>
+    <string name="contact_tracing_hub_should_not_pause_text">telefonun batarya ömrünü etkilememelidir\n\nkonumunuzu takip edemez</string>
+    <string name="contact_tracing_hub_should_not_pause_title">Temas takibi:</string>
+    <string name="contact_tracing_hub_status_off">Temas takibi DEVRE DIŞI</string>
+    <string name="contact_tracing_hub_status_on">Temas takibi ETKİN</string>
+    <string name="contact_tracing_hub_title">Temas takibini yönet</string>
+    <string name="contact_tracing_hub_turn_back_on_reminder">Temas takibini tekrar etkinleştirmenizi hatırlatması için uygulamada bir hatırlatma bildirimi kurabilirsiniz.</string>
     <string name="notification_channel_share_keys_reminder_description">These notifications remind you to share random IDs</string>
     <string name="notification_channel_share_keys_reminder_name">Share random IDs reminder</string>
+    <string name="status_contact_tracing_activate">Tekrar etkinleştir</string>
+    <string name="status_option_toggle_contact_tracing">Temas takibini yönet</string>
+    <string name="ukca_compliance_announcement">UKCA işareti</string>
+    <string name="user_data_acknowledged_date">Test onay tarihi</string>
+    <string name="user_data_test_end">Test sona erme tarihi</string>
 </resources>

@@ -17,13 +17,14 @@ import java.lang.reflect.Type
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class UnacknowledgedTestResultsProvider @Inject constructor(
     private val unacknowledgedTestResultsStorage: UnacknowledgedTestResultsStorage,
     private val clock: Clock,
     moshi: Moshi
-) : TestResultChecker {
+) {
 
     private val testResultsSerializationAdapter: JsonAdapter<List<ReceivedTestResult>> =
         moshi.adapter(listOfReceivedTestResultEntriesType)
@@ -79,9 +80,6 @@ class UnacknowledgedTestResultsProvider @Inject constructor(
         testResults = updatedList
     }
 
-    override fun hasTestResultMatching(predicate: (TestResult) -> Boolean): Boolean =
-        testResults.any { predicate(it) }
-
     companion object {
         val listOfReceivedTestResultEntriesType: Type = Types.newParameterizedType(
             List::class.java,
@@ -106,8 +104,8 @@ class UnacknowledgedTestResultsStorage @Inject constructor(
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class ReceivedTestResult(
-    override val diagnosisKeySubmissionToken: String?,
-    override val testEndDate: Instant,
+    val diagnosisKeySubmissionToken: String?,
+    val testEndDate: Instant,
     val testResult: VirologyTestResult,
     override val testKitType: VirologyTestKitType?,
     val diagnosisKeySubmissionSupported: Boolean,
@@ -120,6 +118,9 @@ data class ReceivedTestResult(
 
     override fun isConfirmed(): Boolean =
         !requiresConfirmatoryTest
+
+    fun testEndDay(clock: Clock): LocalDate =
+        LocalDateTime.ofInstant(testEndDate, clock.zone).toLocalDate()
 }
 
 @Parcelize

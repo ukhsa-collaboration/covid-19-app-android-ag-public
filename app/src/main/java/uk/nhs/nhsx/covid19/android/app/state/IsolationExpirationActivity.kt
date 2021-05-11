@@ -31,6 +31,7 @@ class IsolationExpirationActivity : BaseActivity(R.layout.activity_isolation_exp
         appComponent.inject(this)
 
         buttonReturnToHomeScreen.setOnSingleClickListener {
+            viewModel.acknowledgeIsolationExpiration()
             StatusActivity.start(this)
         }
 
@@ -38,10 +39,16 @@ class IsolationExpirationActivity : BaseActivity(R.layout.activity_isolation_exp
 
         val isolationExpiryDateString = intent.getStringExtra(EXTRA_EXPIRY_DATE)
         if (isolationExpiryDateString.isNullOrEmpty()) {
+            viewModel.acknowledgeIsolationExpiration()
             finish()
         } else {
             viewModel.checkState(isolationExpiryDateString)
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        viewModel.acknowledgeIsolationExpiration()
     }
 
     private fun registerViewModelListeners() {
@@ -61,7 +68,7 @@ class IsolationExpirationActivity : BaseActivity(R.layout.activity_isolation_exp
         val lastDayOfIsolation = expiryDate.minusDays(1)
         val pattern =
             if (expired) R.string.expiration_notification_description_passed else R.string.your_isolation_will_finish
-        expirationDescription.text = resources.getString(
+        expirationDescription.text = getString(
             pattern,
             lastDayOfIsolation.uiFormat(this)
         )

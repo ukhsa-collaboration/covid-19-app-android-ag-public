@@ -21,8 +21,8 @@ class ExposureNotificationReminderRobot {
             .check(matches(isDisplayed()))
     }
 
-    fun clickDontRemindMe() {
-        onView(withId(R.id.dont_remind))
+    fun clickCancelButton() {
+        onView(withId(R.id.cancel))
             .inRoot(isDialog())
             .perform(click())
     }

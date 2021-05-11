@@ -1,44 +1,38 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
-import android.app.Activity
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
+import android.view.accessibility.AccessibilityNodeInfo
 import androidx.activity.viewModels
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.isVisible
-import com.google.android.gms.common.api.Status
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_status.contactTracingActiveView
 import kotlinx.android.synthetic.main.activity_status.contactTracingStoppedView
 import kotlinx.android.synthetic.main.activity_status.contactTracingView
-import kotlinx.android.synthetic.main.activity_status.encounterDetectionSwitch
 import kotlinx.android.synthetic.main.activity_status.isolationView
 import kotlinx.android.synthetic.main.activity_status.optionAboutTheApp
-import kotlinx.android.synthetic.main.activity_status.optionContactTracing
 import kotlinx.android.synthetic.main.activity_status.optionIsolationPayment
 import kotlinx.android.synthetic.main.activity_status.optionLinkTestResult
 import kotlinx.android.synthetic.main.activity_status.optionOrderTest
 import kotlinx.android.synthetic.main.activity_status.optionReadAdvice
 import kotlinx.android.synthetic.main.activity_status.optionReportSymptoms
 import kotlinx.android.synthetic.main.activity_status.optionSettings
+import kotlinx.android.synthetic.main.activity_status.optionToggleContactTracing
 import kotlinx.android.synthetic.main.activity_status.optionVenueCheckIn
 import kotlinx.android.synthetic.main.activity_status.riskAreaView
 import kotlinx.android.synthetic.main.activity_status.statusContainer
-import timber.log.Timber
+import kotlinx.android.synthetic.main.include_stopped.activateContactTracingButton
+import kotlinx.android.synthetic.main.view_default_state.contactTracingActiveLabel
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.about.MoreAboutAppActivity
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
-import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.Error
-import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.ResolutionRequired
-import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.Success
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysReminderActivity
-import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction.NAVIGATE_AND_TURN_ON
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestActivity
@@ -49,18 +43,20 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
-import uk.nhs.nhsx.covid19.android.app.state.State
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.canReportSymptoms
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.ExposureConsent
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.IsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.ShareKeys
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.TestResult
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.VenueAlert
+import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState
+import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.Isolating
+import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.NotIsolating
+import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.PermissionRequestResult.Error
+import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.PermissionRequestResult.Request
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Risk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
+import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingHubActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
@@ -68,55 +64,49 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
+import java.time.LocalDate
 import javax.inject.Inject
 
 class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
 
     @Inject
-    lateinit var exposureStatusViewModelFactory: ViewModelFactory<ExposureStatusViewModel>
-    private val exposureStatusViewModel: ExposureStatusViewModel by viewModels { exposureStatusViewModelFactory }
-
-    @Inject
     lateinit var statusViewModelFactory: ViewModelFactory<StatusViewModel>
     private val statusViewModel: StatusViewModel by viewModels { statusViewModelFactory }
 
-    private val dateChangedReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            statusViewModel.updateViewState()
-        }
-    }
+    @Inject
+    lateinit var dateChangeReceiver: DateChangeReceiver
 
     private lateinit var readAdviceUrl: String
-
-    /**
-     * Exposure notification dialog currently displayed, or null if none are displayed
-     */
-    private var currentExposureNotificationReminderDialog: ExposureNotificationReminderDialog? =
-        null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
+        startListeningToExposureNotificationPermissionState()
+
         startListeningToViewState()
 
         startListeningForInformationScreen()
 
-        startExposureNotifications()
-
-        startObservingExposureNotificationEnabled()
-
         setClickListeners()
 
-        NotificationManagerCompat.from(this)
-            .cancel(NotificationProvider.EXPOSURE_REMINDER_NOTIFICATION_ID)
-        val notificationFlag =
-            intent.getStringExtra(NotificationProvider.TAP_EXPOSURE_NOTIFICATION_REMINDER_FLAG)
-        if (!notificationFlag.isNullOrEmpty()) {
-            exposureStatusViewModel.startExposureNotifications()
+        val contactTracingHubAction =
+            intent.getSerializableExtra(CONTACT_TRACING_HUB_ACTION_EXTRA) as? ContactTracingHubAction
+        if (contactTracingHubAction != null) {
+            val shouldTurnOnContactTracing = contactTracingHubAction == NAVIGATE_AND_TURN_ON
+            ContactTracingHubActivity.start(this, shouldTurnOnContactTracing)
         }
 
         checkIfInAppReviewShouldBeDisplayed()
+    }
+
+    private fun startListeningToExposureNotificationPermissionState() {
+        statusViewModel.permissionRequest().observe(this) { result ->
+            when (result) {
+                is Request -> result.callback(this)
+                is Error -> Snackbar.make(statusContainer, result.message, Snackbar.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun startListeningForInformationScreen() {
@@ -148,24 +138,31 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
     private fun startListeningToViewState() {
         statusViewModel.viewState.observe(this) { viewState ->
             readAdviceUrl = getString(viewState.latestAdviceUrl)
-            handleIsolationState(viewState.isolationState)
+            handleIsolationState(viewState.isolationState, viewState.currentDate)
             handleRiskyPostCodeViewState(viewState.areaRiskState)
-            handleReminderDialogState(viewState.showExposureNotificationReminderDialog)
+            handleExposureNotificationState(viewState.exposureNotificationsEnabled)
             handleIsolationPaymentState(viewState.showIsolationPaymentButton)
             handleOrderTestState(viewState.showOrderTestButton)
+            handleReportSymptomsState(viewState.showReportSymptomsButton)
         }
+    }
+
+    private fun handleExposureNotificationState(exposureNotificationsEnabled: Boolean) {
+        contactTracingActiveView.isVisible = exposureNotificationsEnabled
+        contactTracingStoppedView.isVisible = !exposureNotificationsEnabled
+        if (statusViewModel.contactTracingSwitchedOn) {
+            contactTracingActiveLabel.performAccessibilityAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null)
+            statusViewModel.contactTracingSwitchedOn = false
+        }
+        setAnimationsEnabled(exposureNotificationsEnabled)
     }
 
     private fun handleOrderTestState(showOrderTestButton: Boolean) {
         optionOrderTest.isVisible = showOrderTestButton
     }
 
-    private fun handleReminderDialogState(showExposureNotificationReminderDialog: Boolean) {
-        if (showExposureNotificationReminderDialog) {
-            showExposureNotificationReminderDialog()
-        } else {
-            dismissExposureNotificationReminderDialog()
-        }
+    private fun handleReportSymptomsState(showReportSymptomsButton: Boolean) {
+        optionReportSymptoms.isVisible = showReportSymptomsButton
     }
 
     private fun handleIsolationPaymentState(showIsolationPaymentButton: Boolean) {
@@ -218,21 +215,14 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
             startActivity<LinkTestResultActivity>()
         }
 
-        optionContactTracing.setOnSingleClickListener {
-            optionContactTracing.isEnabled = false
-            encounterDetectionSwitch.isChecked = !encounterDetectionSwitch.isChecked
-            if (encounterDetectionSwitch.isChecked) {
-                exposureStatusViewModel.startExposureNotifications()
-            } else {
-                exposureStatusViewModel.stopExposureNotifications()
-                statusViewModel.onStopExposureNotificationsClicked()
-                optionContactTracing.isEnabled = true
-            }
-        }
-
         optionSettings.setOnSingleClickListener {
             optionSettings.isEnabled = false
             startActivity<SettingsActivity>()
+        }
+
+        optionToggleContactTracing.setOnSingleClickListener {
+            optionToggleContactTracing.isEnabled = false
+            startActivity<ContactTracingHubActivity>()
         }
 
         riskAreaView.setOnSingleClickListener {
@@ -241,16 +231,19 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
                 RiskLevelActivity.start(this, it.areaRiskState)
             }
         }
+
+        activateContactTracingButton.setOnSingleClickListener {
+            statusViewModel.onActivateContactTracingButtonClicked()
+        }
     }
 
-    private fun handleIsolationState(isolationState: State) {
+    private fun handleIsolationState(isolationState: IsolationViewState, currentDate: LocalDate) {
         when (isolationState) {
-            is Default -> {
+            NotIsolating -> {
                 showDefaultView()
             }
-            is Isolation -> {
-                isolationView.initialize(isolationState)
-                optionReportSymptoms.isVisible = isolationState.canReportSymptoms
+            is Isolating -> {
+                isolationView.initialize(isolationState, currentDate)
                 showIsolationView()
             }
         }
@@ -281,40 +274,6 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         optionOrderTest.gone()
     }
 
-    private fun startExposureNotifications() {
-        exposureStatusViewModel.exposureNotificationsChanged().observe(this) { isEnabled ->
-            encounterDetectionSwitch.isChecked = isEnabled
-            contactTracingActiveView.isVisible = isEnabled
-            contactTracingStoppedView.isVisible = !isEnabled
-            setAnimationsEnabled(isEnabled)
-        }
-
-        exposureStatusViewModel.exposureNotificationActivationResult().observe(this) { viewState ->
-            when (viewState) {
-                Success -> {
-                    Timber.d("Exposure notifications successfully started")
-                    optionContactTracing.isEnabled = true
-                }
-                is Error -> {
-                    handleExposureNotificationActivationError(viewState.exception.message)
-                    optionContactTracing.isEnabled = true
-                }
-                is ResolutionRequired -> handleResolution(
-                    viewState.status,
-                    REQUEST_CODE_START_EXPOSURE_NOTIFICATION
-                )
-            }
-        }
-    }
-
-    private fun startObservingExposureNotificationEnabled() {
-        exposureStatusViewModel.exposureNotificationsEnabled().observe(
-            this
-        ) { isEnabled ->
-            setAnimationsEnabled(isEnabled)
-        }
-    }
-
     private fun setAnimationsEnabled(animationsEnabled: Boolean) {
         isolationView.isAnimationEnabled = animationsEnabled
         contactTracingActiveView.isAnimationEnabled = animationsEnabled
@@ -325,10 +284,9 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         resetButtonEnabling()
         isVisible = true
         statusViewModel.onResume()
-        exposureStatusViewModel.checkExposureNotificationsEnabled()
-        exposureStatusViewModel.checkExposureNotificationsChanged()
-
-        registerReceiver(dateChangedReceiver, IntentFilter(Intent.ACTION_DATE_CHANGED))
+        dateChangeReceiver.registerReceiver(this) {
+            statusViewModel.updateViewStateAndCheckUserInbox()
+        }
     }
 
     private fun resetButtonEnabling() {
@@ -339,8 +297,8 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         optionAboutTheApp.isEnabled = true
         optionIsolationPayment.isEnabled = true
         optionLinkTestResult.isEnabled = true
-        optionContactTracing.isEnabled = true
         optionSettings.isEnabled = true
+        optionToggleContactTracing.isEnabled = true
         riskAreaView.isEnabled = true
     }
 
@@ -348,72 +306,38 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         super.onPause()
         isVisible = false
         statusViewModel.onPause()
-
-        unregisterReceiver(dateChangedReceiver)
-    }
-
-    override fun onDestroy() {
-        // To avoid leaking the window
-        currentExposureNotificationReminderDialog?.setOnDismissListener { }
-        dismissExposureNotificationReminderDialog()
-
-        super.onDestroy()
-    }
-
-    private fun handleExposureNotificationActivationError(message: String?) {
-        encounterDetectionSwitch.isChecked = false
-        Snackbar.make(statusContainer, message.toString(), Snackbar.LENGTH_SHORT).show()
-    }
-
-    private fun handleResolution(status: Status, code: Int) {
-        status.startResolutionForResult(this, code)
-    }
-
-    private fun showExposureNotificationReminderDialog() {
-        val dialog = ExposureNotificationReminderDialog(this) { duration ->
-            exposureStatusViewModel.scheduleExposureNotificationReminder(duration)
-        }
-        dialog.setOnDismissListener {
-            statusViewModel.onExposureNotificationReminderDialogDismissed()
-            currentExposureNotificationReminderDialog = null
-        }
-        currentExposureNotificationReminderDialog = dialog
-        dialog.show()
-    }
-
-    private fun dismissExposureNotificationReminderDialog() {
-        currentExposureNotificationReminderDialog?.dismiss()
-        currentExposureNotificationReminderDialog = null
+        dateChangeReceiver.unregisterReceiver(this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUEST_CODE_START_EXPOSURE_NOTIFICATION) {
-            if (resultCode == Activity.RESULT_OK) {
-                exposureStatusViewModel.startExposureNotifications()
-            } else {
-                encounterDetectionSwitch.isChecked = false
-            }
-            optionContactTracing.isEnabled = true
-        }
+        statusViewModel.onActivityResult(requestCode, resultCode)
     }
 
     companion object {
         var isVisible = false
 
-        fun start(context: Context, startedFromVenueCheckInSuccess: Boolean = false) {
-            context.startActivity(getIntent(context, startedFromVenueCheckInSuccess))
+        fun start(
+            context: Context,
+            startedFromVenueCheckInSuccess: Boolean = false,
+            contactTracingHubAction: ContactTracingHubAction? = null
+        ) {
+            context.startActivity(getIntent(context, startedFromVenueCheckInSuccess, contactTracingHubAction))
         }
 
-        private fun getIntent(context: Context, startedFromVenueCheckInSuccess: Boolean) =
+        private fun getIntent(
+            context: Context,
+            startedFromVenueCheckInSuccess: Boolean,
+            contactTracingHubAction: ContactTracingHubAction?
+        ) =
             Intent(context, StatusActivity::class.java)
                 .apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     putExtra(STARTED_FROM_VENUE_CHECK_IN_SUCCESS, startedFromVenueCheckInSuccess)
+                    putExtra(CONTACT_TRACING_HUB_ACTION_EXTRA, contactTracingHubAction)
                 }
 
         const val STARTED_FROM_VENUE_CHECK_IN_SUCCESS = "STARTED_FROM_VENUE_CHECK_IN_SUCCESS"
-        const val REQUEST_CODE_START_EXPOSURE_NOTIFICATION = 1337
+        const val CONTACT_TRACING_HUB_ACTION_EXTRA = "CONTACT_TRACING_HUB_ACTION_EXTRA"
     }
 }

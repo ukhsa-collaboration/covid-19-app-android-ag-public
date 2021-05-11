@@ -95,6 +95,7 @@ class TestResultScenarioAnalyticsTest : AnalyticsTest() {
         assertOnFieldsForDateRange(14..27) {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(Metrics::hasTestedLFDPositiveBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
         }
 
         // Current date: 28th Jan -> Analytics packet for: 27th Jan

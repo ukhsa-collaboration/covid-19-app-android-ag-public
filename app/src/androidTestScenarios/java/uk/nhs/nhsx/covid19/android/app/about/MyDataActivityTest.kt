@@ -8,7 +8,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDate
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueConfigurationDurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
@@ -17,28 +16,25 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SEL
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.report.notReported
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
+import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MoreAboutAppRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MyDataRobot
-import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Confirm
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
+import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
-import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
 
 class MyDataActivityTest : EspressoTest() {
     private val moreAboutAppRobot = MoreAboutAppRobot()
     private val myDataRobot = MyDataRobot()
 
     private val latestRiskyVenueVisitDate = LocalDate.parse("2020-07-25")
+    private val isolationHelper = IsolationHelper(testAppContext.clock)
 
     @Before
     fun setUp() = runBlocking {
@@ -64,9 +60,8 @@ class MyDataActivityTest : EspressoTest() {
     @Test
     fun displayEmptyViewWhenNoData() = notReported {
         testAppContext.apply {
-            setState(Default())
+            setState(isolationHelper.neverInIsolation())
             getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue = null
-            getRelevantTestResultProvider().clear()
         }
         startTestActivity<MyDataActivity>()
 
@@ -99,127 +94,60 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun displayLastPositivePcrAcknowledgedTestResultWithKeySubmissionSupported() = notReported {
+    fun displayLastPositivePcrAcknowledgedTestResult() = notReported {
         displayLastAcknowledgedTestResult(
             POSITIVE,
-            LAB_RESULT,
-            diagnosisKeySubmissionSupported = true
+            LAB_RESULT
         )
     }
 
     @Test
-    fun displayLastPositivePcrAcknowledgedTestResultWithKeySubmissionNotSupported() = notReported {
+    fun displayLastPositiveAssistedLfdAcknowledgedTestResult() = notReported {
         displayLastAcknowledgedTestResult(
             POSITIVE,
-            LAB_RESULT,
-            diagnosisKeySubmissionSupported = false
+            RAPID_RESULT
         )
     }
 
     @Test
-    fun displayLastPositiveAssistedLfdAcknowledgedTestResultWithKeySubmissionSupported() =
-        notReported {
-            displayLastAcknowledgedTestResult(
-                POSITIVE,
-                RAPID_RESULT,
-                diagnosisKeySubmissionSupported = true
-            )
-        }
+    fun displayLastPositiveUnassistedLfdAcknowledgedTestResult() = notReported {
+        displayLastAcknowledgedTestResult(
+            POSITIVE,
+            RAPID_SELF_REPORTED
+        )
+    }
 
     @Test
-    fun displayLastPositiveAssistedLfdAcknowledgedTestResultWithKeySubmissionNotSupported() =
-        notReported {
-            displayLastAcknowledgedTestResult(
-                POSITIVE,
-                RAPID_RESULT,
-                diagnosisKeySubmissionSupported = false
-            )
-        }
-
-    @Test
-    fun displayLastPositiveUnassistedLfdAcknowledgedTestResultWithKeySubmissionSupported() =
-        notReported {
-            displayLastAcknowledgedTestResult(
-                POSITIVE,
-                RAPID_SELF_REPORTED,
-                diagnosisKeySubmissionSupported = true
-            )
-        }
-
-    @Test
-    fun displayLastPositiveUnassistedLfdAcknowledgedTestResultWithKeySubmissionNotSupported() =
-        notReported {
-            displayLastAcknowledgedTestResult(
-                POSITIVE,
-                RAPID_SELF_REPORTED,
-                diagnosisKeySubmissionSupported = false
-            )
-        }
-
-    @Test
-    fun displayLastNegativePcrAcknowledgedTestResultWithKeySubmissionSupported() = notReported {
+    fun displayLastNegativePcrAcknowledgedTestResult() = notReported {
         displayLastAcknowledgedTestResult(
             NEGATIVE,
-            LAB_RESULT,
-            diagnosisKeySubmissionSupported = true
+            LAB_RESULT
         )
     }
 
     @Test
-    fun displayLastNegativePcrAcknowledgedTestResultWithKeySubmissionNotSupported() = notReported {
-        displayLastAcknowledgedTestResult(
-            NEGATIVE,
-            LAB_RESULT,
-            diagnosisKeySubmissionSupported = false
-        )
-    }
-
-    @Test
-    fun displayLastNegativeAssistedLfdAcknowledgedTestResultWithKeySubmissionSupported() =
+    fun displayLastNegativeAssistedLfdAcknowledgedTestResult() =
         notReported {
             displayLastAcknowledgedTestResult(
                 NEGATIVE,
-                RAPID_RESULT,
-                diagnosisKeySubmissionSupported = true
+                RAPID_RESULT
             )
         }
 
     @Test
-    fun displayLastNegativeAssistedLfdAcknowledgedTestResultWithKeySubmissionNotSupported() =
+    fun displayLastNegativeUnassistedLfdAcknowledgedTestResult() =
         notReported {
             displayLastAcknowledgedTestResult(
                 NEGATIVE,
-                RAPID_RESULT,
-                diagnosisKeySubmissionSupported = false
-            )
-        }
-
-    @Test
-    fun displayLastNegativeUnassistedLfdAcknowledgedTestResultWithKeySubmissionSupported() =
-        notReported {
-            displayLastAcknowledgedTestResult(
-                NEGATIVE,
-                RAPID_SELF_REPORTED,
-                diagnosisKeySubmissionSupported = true
-            )
-        }
-
-    @Test
-    fun displayLastNegativeUnassistedLfdAcknowledgedTestResultWithKeySubmissionNotSupported() =
-        notReported {
-            displayLastAcknowledgedTestResult(
-                NEGATIVE,
-                RAPID_SELF_REPORTED,
-                diagnosisKeySubmissionSupported = false
+                RAPID_SELF_REPORTED
             )
         }
 
     @Test
     fun requiresConfirmatoryTestNotReceivedFollowUpTestShouldBePending() = notReported {
         displayLastAcknowledgedTestResult(
-            NEGATIVE,
+            POSITIVE,
             RAPID_SELF_REPORTED,
-            diagnosisKeySubmissionSupported = false,
             requiresConfirmatoryTest = true
         )
     }
@@ -227,63 +155,70 @@ class MyDataActivityTest : EspressoTest() {
     @Test
     fun requiresConfirmatoryTestReceivedFollowUpTestShouldBeComplete() = notReported {
         displayLastAcknowledgedTestResult(
-            NEGATIVE,
+            POSITIVE,
             RAPID_SELF_REPORTED,
-            diagnosisKeySubmissionSupported = false,
             requiresConfirmatoryTest = true,
-            receivedFollowUpTest = Instant.parse("2020-07-18T00:05:00.00Z")
+            receivedFollowUpTest = LocalDate.parse("2020-07-18")
         )
     }
 
     @Test
-    fun displayLastPositiveAcknowledgedTestResultOfUnknownTypeWithKeySubmissionSupported() =
+    fun displayLastPositiveAcknowledgedTestResultOfUnknownType() =
         notReported {
             displayLastAcknowledgedTestResult(
                 POSITIVE,
-                testKitType = null, // UNKNOWN
-                diagnosisKeySubmissionSupported = true
+                testKitType = null // UNKNOWN
             )
         }
 
     @Test
-    fun displayLastNegativeAcknowledgedTestResultOfUnknownTypeWithKeySubmissionSupported() =
+    fun displayLastNegativeAcknowledgedTestResultOfUnknownType() =
         notReported {
             displayLastAcknowledgedTestResult(
                 NEGATIVE,
-                testKitType = null, // UNKNOWN
-                diagnosisKeySubmissionSupported = true
+                testKitType = null // UNKNOWN
             )
         }
 
     private fun displayLastAcknowledgedTestResult(
         testResult: VirologyTestResult,
         testKitType: VirologyTestKitType?,
-        diagnosisKeySubmissionSupported: Boolean,
         requiresConfirmatoryTest: Boolean = false,
-        receivedFollowUpTest: Instant? = null
+        receivedFollowUpTest: LocalDate? = null
     ) {
-        val initialTestResult = ReceivedTestResult(
-            diagnosisKeySubmissionToken = "a",
-            testEndDate = Instant.now(),
-            testResult = testResult,
-            testKitType = testKitType,
-            requiresConfirmatoryTest = requiresConfirmatoryTest,
-            diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported
-        )
-
-        testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(initialTestResult, Overwrite)
-
-        if (receivedFollowUpTest != null) {
-            val followupTest = ReceivedTestResult(
-                diagnosisKeySubmissionToken = "b",
-                testEndDate = receivedFollowUpTest,
-                testResult = POSITIVE,
-                testKitType = testKitType,
-                requiresConfirmatoryTest = false,
-                diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported
+        when (testResult) {
+            POSITIVE -> testAppContext.setState(
+                isolationHelper.positiveTest(
+                    AcknowledgedTestResult(
+                        testEndDate = LocalDate.now(),
+                        testResult = RelevantVirologyTestResult.POSITIVE,
+                        testKitType = testKitType,
+                        requiresConfirmatoryTest = requiresConfirmatoryTest,
+                        acknowledgedDate = LocalDate.now(),
+                        confirmedDate = receivedFollowUpTest
+                    )
+                ).asIsolation()
             )
-            testAppContext.getRelevantTestResultProvider()
-                .onTestResultAcknowledged(followupTest, Confirm(confirmedDate = receivedFollowUpTest))
+
+            NEGATIVE -> {
+                if (requiresConfirmatoryTest || receivedFollowUpTest != null) {
+                    throw IllegalArgumentException("Negative test results should not need or accept a follow-up test")
+                }
+
+                testAppContext.setState(
+                    isolationHelper.negativeTest(
+                        AcknowledgedTestResult(
+                            testEndDate = LocalDate.now(),
+                            testResult = RelevantVirologyTestResult.NEGATIVE,
+                            testKitType = testKitType,
+                            requiresConfirmatoryTest = requiresConfirmatoryTest,
+                            acknowledgedDate = LocalDate.now()
+                        )
+                    ).asIsolation()
+                )
+            }
+
+            VOID -> throw IllegalArgumentException("$testResult is not supported since it is never stored after being acknowledged")
         }
 
         startTestActivity<MyDataActivity>()
@@ -292,7 +227,7 @@ class MyDataActivityTest : EspressoTest() {
 
         val shouldKitTypeBeVisible = testKitType != null
 
-        val date: String? = receivedFollowUpTest?.atZone(ZoneId.systemDefault())?.toLocalDate()
+        val date: String? = receivedFollowUpTest
             ?.uiFormat(InstrumentationRegistry.getInstrumentation().targetContext)
 
         waitFor {
@@ -305,44 +240,8 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun displayEncounterInIsolationWithoutNotificationDate() = notReported {
-        testAppContext.setState(
-            Isolation(
-                isolationStart = Instant.now(),
-                isolationConfiguration = DurationDays(),
-                contactCase = ContactCase(
-                    Instant.parse("2020-05-19T12:00:00Z"),
-                    null,
-                    LocalDate.now().plusDays(5),
-                    dailyContactTestingOptInDate = null
-                )
-            )
-        )
-
-        startTestActivity<MyDataActivity>()
-
-        myDataRobot.checkActivityIsDisplayed()
-
-        waitFor { myDataRobot.checkEncounterIsDisplayed() }
-        myDataRobot.checkExposureNotificationIsDisplayed()
-        myDataRobot.checkExposureNotificationDateIsNotDisplayed()
-        waitFor { myDataRobot.checkDailyContactTestingOptInDateIsNotDisplayed() }
-    }
-
-    @Test
     fun displayEncounterInIsolationWithNotificationDate() = notReported {
-        testAppContext.setState(
-            Isolation(
-                isolationStart = Instant.now(),
-                isolationConfiguration = DurationDays(),
-                contactCase = ContactCase(
-                    Instant.parse("2020-05-19T12:00:00Z"),
-                    Instant.parse("2020-05-20T12:00:00Z"),
-                    LocalDate.now().plusDays(5),
-                    dailyContactTestingOptInDate = null
-                )
-            )
-        )
+        testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
         startTestActivity<MyDataActivity>()
 
@@ -357,15 +256,10 @@ class MyDataActivityTest : EspressoTest() {
     @Test
     fun displaySymptomsInIsolation() = notReported {
         testAppContext.setState(
-            Isolation(
-                isolationStart = Instant.now(),
-                isolationConfiguration = DurationDays(),
-                indexCase = IndexCase(
-                    symptomsOnsetDate = LocalDate.now(),
-                    expiryDate = LocalDate.now().plusDays(5),
-                    selfAssessment = false
-                )
-            )
+            isolationHelper.selfAssessment(
+                expired = false,
+                onsetDate = LocalDate.now(testAppContext.clock).minusDays(2)
+            ).asIsolation()
         )
 
         startTestActivity<MyDataActivity>()
@@ -378,18 +272,7 @@ class MyDataActivityTest : EspressoTest() {
 
     @Test
     fun contactCaseOnly_notOptedInToDailyContactTesting_displayLastDayOfIsolationInIsolation() = notReported {
-        testAppContext.setState(
-            Isolation(
-                isolationStart = Instant.now(),
-                isolationConfiguration = DurationDays(),
-                contactCase = ContactCase(
-                    Instant.parse("2020-05-19T12:00:00Z"),
-                    Instant.parse("2020-05-20T12:00:00Z"),
-                    LocalDate.now().plusDays(5),
-                    dailyContactTestingOptInDate = null
-                )
-            )
-        )
+        testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
         startTestActivity<MyDataActivity>()
 
@@ -401,8 +284,20 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun doNotDisplayLastDayOfIsolationWhenNotInIsolation() = notReported {
-        testAppContext.setState(Default())
+    fun doNotDisplayLastDayOfIsolationWhenIsolationIsExpired() = notReported {
+        testAppContext.setState(isolationHelper.contactCase(expired = true).asIsolation())
+
+        startTestActivity<MyDataActivity>()
+
+        myDataRobot.checkActivityIsDisplayed()
+
+        waitFor { myDataRobot.checkLastDayOfIsolationIsNotDisplayed() }
+        waitFor { myDataRobot.checkDailyContactTestingOptInDateIsNotDisplayed() }
+    }
+
+    @Test
+    fun doNotDisplayLastDayOfIsolationWhenNeverInIsolation() = notReported {
+        testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<MyDataActivity>()
 
@@ -417,27 +312,20 @@ class MyDataActivityTest : EspressoTest() {
         notReported {
             FeatureFlagTestHelper.enableFeatureFlag(DAILY_CONTACT_TESTING)
 
-            testAppContext.setState(defaultWithPreviousIsolationContactCaseOnly)
+            testAppContext.setState(
+                isolationHelper.contactCaseWithDct(
+                    dailyContactTestingOptInDate = LocalDate.now(testAppContext.clock)
+                ).asIsolation()
+            )
 
             startTestActivity<MyDataActivity>()
 
             myDataRobot.checkActivityIsDisplayed()
 
             waitFor { myDataRobot.checkLastDayOfIsolationIsNotDisplayed() }
-            waitFor { myDataRobot.checkExposureNotificationDateIsNotDisplayed() }
+            waitFor { myDataRobot.checkEncounterIsDisplayed() }
+            waitFor { myDataRobot.checkExposureNotificationIsDisplayed() }
+            waitFor { myDataRobot.checkExposureNotificationDateIsDisplayed() }
             waitFor { myDataRobot.checkDailyContactTestingOptInDateIsDisplayed() }
         }
-
-    private val defaultWithPreviousIsolationContactCaseOnly = Default(
-        previousIsolation = Isolation(
-            isolationStart = Instant.now(),
-            isolationConfiguration = DurationDays(),
-            contactCase = ContactCase(
-                Instant.parse("2020-05-19T12:00:00Z"),
-                null,
-                LocalDate.now().plusDays(5),
-                dailyContactTestingOptInDate = LocalDate.now().plusDays(5)
-            )
-        )
-    )
 }

@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.analytics
 
+import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsWindow
 import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Instant
@@ -22,6 +23,7 @@ class CalculateMissingSubmissionDays @Inject constructor(
                 missedPacketsLast7Days++
             }
         }
+        Timber.d("Calculated missingPacketsLast7Days for startDate: $analyticsWindowDate: $missedPacketsLast7Days, submissionLog: $submissionLog")
         return missedPacketsLast7Days
     }
 

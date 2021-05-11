@@ -8,10 +8,12 @@ import uk.nhs.covid19.config.EnvironmentConfiguration
 import uk.nhs.covid19.config.Remote
 import uk.nhs.covid19.config.production
 import uk.nhs.covid19.config.qrCodesSignatureKey
+import uk.nhs.nhsx.covid19.android.app.DebugActivity.Companion.OFFSET_DAYS
 import uk.nhs.nhsx.covid19.android.app.DebugActivity.Companion.SELECTED_ENVIRONMENT
 import uk.nhs.nhsx.covid19.android.app.DebugActivity.Companion.USE_MOCKED_EXPOSURE_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.availability.GooglePlayUpdateProvider
 import uk.nhs.nhsx.covid19.android.app.battery.AndroidBatteryOptimizationChecker
+import uk.nhs.nhsx.covid19.android.app.di.ApplicationClock
 import uk.nhs.nhsx.covid19.android.app.di.DaggerMockApplicationComponent
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
@@ -26,6 +28,7 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.AndroidBarcodeDetectorBuilder
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
+import uk.nhs.nhsx.covid19.android.app.status.ScenariosDateChangeBroadcastReceiver
 import uk.nhs.nhsx.covid19.android.app.util.AndroidUUIDGenerator
 import java.time.Clock
 
@@ -74,22 +77,26 @@ class ScenariosExposureApplication : ExposureApplication() {
         useMockExposureApi: Boolean
     ) {
         Timber.d("setApplicationComponent: useMockNetwork = $useMockNetwork, useMockExposureApi = $useMockExposureApi")
+        val offsetDays = debugSharedPreferences.getLong(OFFSET_DAYS, 0L)
+        val clock = ApplicationClock(offsetDays)
         if (useMockNetwork) {
-            useMockApplicationComponent(useMockExposureApi)
+            useMockApplicationComponent(useMockExposureApi, clock)
         } else {
-            useRegularApplicationComponent(useMockExposureApi)
+            useRegularApplicationComponent(useMockExposureApi, clock)
         }
     }
 
-    private fun useRegularApplicationComponent(useMockExposureApi: Boolean) {
+    private fun useRegularApplicationComponent(useMockExposureApi: Boolean, clock: Clock) {
         buildAndUseAppComponent(
             NetworkModule(getConfiguration(), additionalInterceptors),
             ViewModelModule(),
-            getExposureNotificationApi(useMockExposureApi)
+            getExposureNotificationApi(useMockExposureApi, clock),
+            clock,
+            ScenariosDateChangeBroadcastReceiver()
         )
     }
 
-    private fun useMockApplicationComponent(useMockExposureApi: Boolean) {
+    private fun useMockApplicationComponent(useMockExposureApi: Boolean, clock: Clock) {
         val encryptedStorage = createEncryptedStorage()
 
         appComponent =
@@ -97,7 +104,7 @@ class ScenariosExposureApplication : ExposureApplication() {
                 .appModule(
                     AppModule(
                         applicationContext,
-                        getExposureNotificationApi(useMockExposureApi),
+                        getExposureNotificationApi(useMockExposureApi, clock),
                         AndroidBluetoothStateProvider(),
                         AndroidLocationStateProvider(),
                         encryptedStorage.sharedPreferences,
@@ -110,7 +117,8 @@ class ScenariosExposureApplication : ExposureApplication() {
                         AndroidBarcodeDetectorBuilder(this),
                         AndroidRandomNonRiskyExposureWindowsLimiter(),
                         AndroidUUIDGenerator(),
-                        Clock.systemDefaultZone()
+                        clock,
+                        ScenariosDateChangeBroadcastReceiver()
                     )
                 )
                 .mockApiModule(MockApiModule())
@@ -119,13 +127,14 @@ class ScenariosExposureApplication : ExposureApplication() {
         updateLifecycleListener()
     }
 
-    private fun getExposureNotificationApi(useMockExposureApi: Boolean) =
-        if (useMockExposureApi) MockExposureNotificationApi() else GoogleExposureNotificationApi(
+    private fun getExposureNotificationApi(useMockExposureApi: Boolean, clock: Clock) =
+        if (useMockExposureApi) MockExposureNotificationApi(clock) else GoogleExposureNotificationApi(
             this
         )
 
     private fun getConfiguration(): EnvironmentConfiguration {
-        val selectedEnvironmentIndex = debugSharedPreferences.getInt(SELECTED_ENVIRONMENT, 0).coerceIn(0, environments.size - 1)
+        val selectedEnvironmentIndex =
+            debugSharedPreferences.getInt(SELECTED_ENVIRONMENT, 0).coerceIn(0, environments.size - 1)
         return environments[selectedEnvironmentIndex]
     }
 }

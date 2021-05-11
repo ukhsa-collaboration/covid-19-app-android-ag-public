@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/contactTracingHubContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_toolbar_primary" />
+
+    <LinearLayout
+        android:id="@+id/optionContactTracing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?colorSurface"
+        android:gravity="center_vertical"
+        android:minHeight="56dp"
+        android:paddingHorizontal="16dp">
+
+        <TextView
+            android:id="@+id/contactTracingStatus"
+            style="@style/ActionText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            tools:text="@string/contact_tracing_hub_status_on" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/encounterDetectionSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+    </LinearLayout>
+
+    <ScrollView
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingVertical="@dimen/vertical_margin">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                style="@style/Title2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/contact_tracing_hub_consider_pausing_title" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                app:rawText="@string/contact_tracing_hub_consider_pausing_text"
+                app:showBulletPoints="true" />
+
+            <TextView
+                style="@style/ActionText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/contact_tracing_hub_turn_back_on_reminder" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                style="@style/Title3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:text="@string/contact_tracing_hub_should_not_pause_title" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                app:rawText="@string/contact_tracing_hub_should_not_pause_text"
+                app:showBulletPoints="true" />
+         </LinearLayout>
+    </ScrollView>
+</LinearLayout>

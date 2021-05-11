@@ -2,20 +2,16 @@ package uk.nhs.nhsx.covid19.android.app.network
 
 import okhttp3.Interceptor
 import okhttp3.Response
-import uk.nhs.nhsx.covid19.android.app.util.AndroidBase64Encoder
 import uk.nhs.nhsx.covid19.android.app.util.Base64Encoder
 import java.security.SecureRandom
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
 
-class TrafficLengthObfuscationInterceptor(
+class TrafficLengthObfuscationInterceptor @Inject constructor(
     private val random: SecureRandom,
     private val base64Encoder: Base64Encoder
 ) : Interceptor {
-
-    @Inject
-    constructor() : this (random = SecureRandom(), base64Encoder = AndroidBase64Encoder())
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()

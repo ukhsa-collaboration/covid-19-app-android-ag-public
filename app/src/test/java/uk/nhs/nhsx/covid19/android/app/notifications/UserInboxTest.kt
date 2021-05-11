@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.notifications
 
+import dagger.Lazy
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -9,18 +10,18 @@ import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShouldEnterShareKeysFl
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShouldEnterShareKeysFlowResult
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShouldEnterShareKeysFlowResult.None
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ContinueInitialKeySharing
+import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowKeySharingReminder
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
-import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
+import uk.nhs.nhsx.covid19.android.app.state.ShouldNotifyStateExpiration
+import uk.nhs.nhsx.covid19.android.app.state.ShouldNotifyStateExpiration.ShouldNotifyStateExpirationResult.DoNotNotify
+import uk.nhs.nhsx.covid19.android.app.state.ShouldNotifyStateExpiration.ShouldNotifyStateExpirationResult.Notify
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
-import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
 import java.time.Instant
 import java.time.LocalDate
@@ -30,31 +31,31 @@ import kotlin.test.assertTrue
 
 class UserInboxTest {
     private val unacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>(relaxUnitFun = true)
-    private val relevantTestResultProvider = mockk<RelevantTestResultProvider>(relaxUnitFun = true)
-
-    private val isolationExpirationDateProvider =
-        mockk<IsolationExpirationDateProvider>(relaxUnitFun = true)
     private val riskyVenueIdProvider = mockk<RiskyVenueIdProvider>(relaxUnitFun = true)
     private val riskyVenueAlertProvider = mockk<RiskyVenueAlertProvider>(relaxUnitFun = true)
     private val shouldShowEncounterDetectionActivityProvider =
         mockk<ShouldShowEncounterDetectionActivityProvider>(relaxUnitFun = true)
     private val shouldEnterShareKeysFlow = mockk<ShouldEnterShareKeysFlow>()
+    private val shouldNotifyStateExpiration = mockk<ShouldNotifyStateExpiration>()
+    private val shouldNotifyStateExpirationLazy = Lazy { shouldNotifyStateExpiration }
 
     private fun createUserInbox(): UserInbox = UserInbox(
-        isolationExpirationDateProvider,
         riskyVenueIdProvider,
         riskyVenueAlertProvider,
         shouldShowEncounterDetectionActivityProvider,
         unacknowledgedTestResultsProvider,
-        shouldEnterShareKeysFlow
+        shouldEnterShareKeysFlow,
+        shouldNotifyStateExpirationLazy
     )
 
     @Before
     fun setUp() {
-        every { isolationExpirationDateProvider.value } returns null
+        every { shouldNotifyStateExpiration() } returns DoNotNotify
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf()
         every { riskyVenueIdProvider.value } returns null
         every { riskyVenueAlertProvider.riskyVenueAlert } returns null
         every { shouldShowEncounterDetectionActivityProvider.value } returns null
+        every { shouldEnterShareKeysFlow.invoke() } returns None
     }
 
     @Test
@@ -99,23 +100,34 @@ class UserInboxTest {
     }
 
     @Test
-    fun `return ShowIsolationExpiration if there is isolationExpirationDate`() {
-        val isolationExpirationDate = "2007-12-03"
-        every { isolationExpirationDateProvider.value } returns isolationExpirationDate
+    fun `do not return ShowIsolationExpiration if shouldNotifyStateExpiration returns DoNotNotify`() {
+        every { shouldNotifyStateExpiration() } returns DoNotNotify
+
+        val testSubject = createUserInbox()
+
+        val receivedItem = testSubject.fetchInbox()
+
+        assertNull(receivedItem)
+    }
+
+    @Test
+    fun `return ShowIsolationExpiration if shouldNotifyStateExpiration returns Notify`() {
+        val expiryDate = LocalDate.now()
+        every { shouldNotifyStateExpiration() } returns Notify(expiryDate)
 
         val testSubject = createUserInbox()
 
         val receivedItem = testSubject.fetchInbox()
 
         assertEquals(
-            receivedItem,
-            ShowIsolationExpiration(LocalDate.parse(isolationExpirationDate))
+            ShowIsolationExpiration(expiryDate),
+            receivedItem
         )
     }
 
     @Test
-    fun `return ShowEncounterDetection if there is no isolationExpirationDate and there is no unacknowledged result`() {
-        every { isolationExpirationDateProvider.value } returns null
+    fun `return ShowEncounterDetection if there is no isolation expiration date and there is no unacknowledged result`() {
+        every { shouldNotifyStateExpiration() } returns DoNotNotify
         every { unacknowledgedTestResultsProvider.testResults } returns listOf()
         every { shouldShowEncounterDetectionActivityProvider.value } returns true
 
@@ -123,12 +135,12 @@ class UserInboxTest {
 
         val receivedItem = testSubject.fetchInbox()
 
-        assertEquals(receivedItem, ShowEncounterDetection)
+        assertEquals(ShowEncounterDetection, receivedItem)
     }
 
     @Test
     fun `return ContinueInitialKeySharing when ShouldEnterShareKeysFlow returns Initial`() {
-        every { isolationExpirationDateProvider.value } returns null
+        every { shouldNotifyStateExpiration() } returns DoNotNotify
         every { unacknowledgedTestResultsProvider.testResults } returns listOf()
         every { shouldShowEncounterDetectionActivityProvider.value } returns false
         every { shouldEnterShareKeysFlow.invoke() } returns ShouldEnterShareKeysFlowResult.Initial
@@ -137,12 +149,12 @@ class UserInboxTest {
 
         val receivedItem = testSubject.fetchInbox()
 
-        assertEquals(receivedItem, ContinueInitialKeySharing)
+        assertEquals(ContinueInitialKeySharing, receivedItem)
     }
 
     @Test
     fun `return ShowKeySharingReminder when ShouldEnterShareKeysFlow returns Reminder`() {
-        every { isolationExpirationDateProvider.value } returns null
+        every { shouldNotifyStateExpiration() } returns DoNotNotify
         every { unacknowledgedTestResultsProvider.testResults } returns listOf()
         every { shouldShowEncounterDetectionActivityProvider.value } returns false
         every { shouldEnterShareKeysFlow.invoke() } returns ShouldEnterShareKeysFlowResult.Reminder
@@ -151,7 +163,7 @@ class UserInboxTest {
 
         val receivedItem = testSubject.fetchInbox()
 
-        assertEquals(receivedItem, ShowKeySharingReminder)
+        assertEquals(ShowKeySharingReminder, receivedItem)
     }
 
     @Test
@@ -159,7 +171,7 @@ class UserInboxTest {
         val riskyVenueAlert = RiskyVenueAlert("ID1", INFORM)
         val showVenueAlert = ShowVenueAlert("ID1", INFORM)
 
-        every { isolationExpirationDateProvider.value } returns null
+        every { shouldNotifyStateExpiration() } returns DoNotNotify
         every { unacknowledgedTestResultsProvider.testResults } returns listOf()
         every { shouldShowEncounterDetectionActivityProvider.value } returns false
         every { riskyVenueAlertProvider.riskyVenueAlert } returns riskyVenueAlert
@@ -169,42 +181,7 @@ class UserInboxTest {
 
         val receivedItem = testSubject.fetchInbox()
 
-        assertEquals(receivedItem, showVenueAlert)
-    }
-
-    @Test
-    fun `return nothing if there is only an acknowledged result`() {
-        val acknowledgedTestResult = AcknowledgedTestResult(
-            "abc",
-            Instant.now(),
-            RelevantVirologyTestResult.POSITIVE,
-            LAB_RESULT,
-            acknowledgedDate = Instant.now(),
-            requiresConfirmatoryTest = false,
-            confirmedDate = null
-        )
-        every { unacknowledgedTestResultsProvider.testResults } returns emptyList()
-        every { relevantTestResultProvider.testResult } returns acknowledgedTestResult
-        every { shouldEnterShareKeysFlow.invoke() } returns None
-
-        val testSubject = createUserInbox()
-
-        val receivedItem = testSubject.fetchInbox()
-
-        verify { unacknowledgedTestResultsProvider.testResults }
-
-        assertNull(receivedItem)
-    }
-
-    @Test
-    fun `add item to user inbox show isolation expiration`() {
-        val expirationDate = LocalDate.now()
-
-        val testSubject = createUserInbox()
-
-        testSubject.addUserInboxItem(ShowIsolationExpiration(expirationDate))
-
-        verify { isolationExpirationDateProvider setProperty "value" value eq(expirationDate.toString()) }
+        assertEquals(showVenueAlert, receivedItem)
     }
 
     @Test
@@ -226,17 +203,6 @@ class UserInboxTest {
         testSubject.addUserInboxItem(ShowEncounterDetection)
 
         verify { shouldShowEncounterDetectionActivityProvider setProperty "value" value eq(true) }
-    }
-
-    @Test
-    fun `remove item to user inbox show isolation expiration`() {
-        val expirationDate = LocalDate.now()
-
-        val testSubject = createUserInbox()
-
-        testSubject.clearItem(ShowIsolationExpiration(expirationDate))
-
-        verify { isolationExpirationDateProvider setProperty "value" value null }
     }
 
     @Test

@@ -155,31 +155,15 @@ fun Context.getResourcesLocale(): Locale =
     }
 
 fun selectEarliest(
-    instant1: Instant,
-    instant2: Instant
-): Instant {
-    return if (instant1.isBefore(instant2)) {
-        instant1
-    } else {
-        instant2
-    }
-}
-
-fun selectEarliest(
-    localDate1: LocalDate,
+    localDate1: LocalDate?,
     localDate2: LocalDate
 ): LocalDate {
-    return if (localDate1.isBefore(localDate2)) {
+    return if (localDate1?.isBefore(localDate2) == true) {
         localDate1
     } else {
         localDate2
     }
 }
-
-fun selectEarliest(vararg localDate: LocalDate?): LocalDate? =
-    localDate
-        .filterNotNull()
-        .minByOrNull { it.toEpochDay() }
 
 fun selectNewest(
     localDateTime1: LocalDateTime?,

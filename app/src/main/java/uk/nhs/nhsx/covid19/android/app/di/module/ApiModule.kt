@@ -16,6 +16,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.IsolationPaymentApi
 import uk.nhs.nhsx.covid19.android.app.remote.KeysDistributionApi
 import uk.nhs.nhsx.covid19.android.app.remote.KeysSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.QuestionnaireApi
+import uk.nhs.nhsx.covid19.android.app.remote.RemoteServiceExceptionCrashReportSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyPostDistrictsApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenueConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesApi
@@ -108,4 +109,9 @@ class ApiModule {
     @Singleton
     fun provideRiskyVenueConfigurationApi(@Named(DISTRIBUTION_REMOTE) retrofit: Retrofit): RiskyVenueConfigurationApi =
         retrofit.create(RiskyVenueConfigurationApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideRemoteServiceExceptionCrashReportSubmissionApi(@Named(API_REMOTE) retrofit: Retrofit): RemoteServiceExceptionCrashReportSubmissionApi =
+        retrofit.create(RemoteServiceExceptionCrashReportSubmissionApi::class.java)
 }

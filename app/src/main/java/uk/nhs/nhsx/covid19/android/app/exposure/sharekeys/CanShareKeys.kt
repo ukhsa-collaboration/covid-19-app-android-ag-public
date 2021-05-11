@@ -13,7 +13,8 @@ class CanShareKeys @Inject constructor(
 ) {
     operator fun invoke(): CanShareKeysResult {
         val keySharingInfo = keySharingInfoProvider.keySharingInfo ?: return NoKeySharingPossible
-        val symptomsOnsetDate = isolationStateMachine.get().readState().symptomsOnsetDate ?: return NoKeySharingPossible
+        val symptomsOnsetDate = isolationStateMachine.get().readState().assumedOnsetDateForExposureKeys
+            ?: return NoKeySharingPossible
         val dateRange = calculateKeySubmissionDateRange(keySharingInfo.acknowledgedDate, symptomsOnsetDate)
         return if (dateRange.containsAtLeastOneDay()) {
             KeySharingPossible(keySharingInfo)

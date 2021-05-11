@@ -2,14 +2,13 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
 import android.content.Context
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isEnabled
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertChecked
-import com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertUnchecked
 import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.not
@@ -39,6 +38,11 @@ class StatusRobot {
     fun checkAreaRiskViewIsDisplayed() {
         onView(withId(R.id.riskAreaView))
             .check(matches(isDisplayed()))
+    }
+
+    fun clickActivateContactTracingButton() {
+        onView(withId(R.id.activateContactTracingButton))
+            .perform(click())
     }
 
     fun clickVenueCheckIn() {
@@ -73,8 +77,8 @@ class StatusRobot {
         clickOn(R.id.optionAboutTheApp)
     }
 
-    fun clickEncounterDetectionSwitch() {
-        clickOn((R.id.optionContactTracing))
+    fun clickToggleContactTracing() {
+        clickOn((R.id.optionToggleContactTracing))
     }
 
     fun checkReadAdviceIsEnabled() {
@@ -112,11 +116,6 @@ class StatusRobot {
             .check(matches(isEnabled()))
     }
 
-    fun checkEncounterDetectionSwitchIsEnabled() {
-        onView(withId(R.id.optionContactTracing))
-            .check(matches(isEnabled()))
-    }
-
     fun checkSettingsIsEnabled() {
         onView(withId(R.id.optionSettings))
             .check(matches(isEnabled()))
@@ -124,6 +123,11 @@ class StatusRobot {
 
     fun checkAreaRiskViewIsEnabled() {
         onView(withId(R.id.riskAreaView))
+            .check(matches(isEnabled()))
+    }
+
+    fun checkToggleContactTracingIsEnabled() {
+        onView(withId(R.id.optionToggleContactTracing))
             .check(matches(isEnabled()))
     }
 
@@ -157,12 +161,18 @@ class StatusRobot {
             .check(matches(withText(context.getString(R.string.isolation_until_date, expected))))
     }
 
-    fun checkEncounterDetectionSwitchIsChecked() {
-        assertChecked(R.id.encounterDetectionSwitch)
+    fun checkContactTracingActiveIsDisplayed() {
+        onView(withId(R.id.contactTracingActiveView))
+            .check(matches(isDisplayed()))
+        onView(withId(R.id.activateContactTracingButton))
+            .check(matches(not(isDisplayed())))
     }
 
-    fun checkEncounterDetectionSwitchIsNotChecked() {
-        assertUnchecked(R.id.encounterDetectionSwitch)
+    fun checkContactTracingStoppedIsDisplayed() {
+        onView(withId(R.id.contactTracingStoppedView))
+            .check(matches(isDisplayed()))
+        onView(withId(R.id.activateContactTracingButton))
+            .check(matches(isDisplayed()))
     }
 
     fun checkIsolationPaymentButtonIsDisplayed() {

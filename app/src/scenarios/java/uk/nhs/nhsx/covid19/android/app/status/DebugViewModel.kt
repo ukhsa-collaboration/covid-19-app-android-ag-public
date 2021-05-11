@@ -16,6 +16,7 @@ import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalyticsAlarmController
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.common.Translatable
+import uk.nhs.nhsx.covid19.android.app.di.ApplicationClock
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfoProvider
@@ -47,6 +48,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingTokensProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import java.io.File
+import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -64,7 +66,9 @@ class DebugViewModel @Inject constructor(
     private val lastVisitedBookTestTypeVenueDateProvider: LastVisitedBookTestTypeVenueDateProvider,
     private val riskyVenueConfigurationProvider: RiskyVenueConfigurationProvider,
     private val submitAnalyticsAlarmController: SubmitAnalyticsAlarmController,
-    private val exposureCircuitBreakerInfoProvider: ExposureCircuitBreakerInfoProvider
+    private val exposureCircuitBreakerInfoProvider: ExposureCircuitBreakerInfoProvider,
+    private val clock: Clock,
+    private val dateChangeReceiver: DateChangeReceiver,
 ) : ViewModel() {
 
     val exposureKeysResult = SingleLiveEvent<ExportToFileResult>()
@@ -137,7 +141,8 @@ class DebugViewModel @Inject constructor(
             venueStorage.finishLastVisitAndAddNewVenue(
                 Venue(
                     id = "Risky Venue Id",
-                    organizationPartName = "Risky Venue Name"
+                    organizationPartName = "Risky Venue Name",
+                    postCode = "PO367GZ"
                 )
             )
             if (type == BOOK_TEST) {
@@ -231,6 +236,12 @@ class DebugViewModel @Inject constructor(
             .setTransmissionRiskLevel(temporaryTracingKey.transmissionRiskLevel ?: 0)
             .build()
     }
+
+    fun onOffsetDaysChanged(offsetDays: Long) {
+        (clock as ApplicationClock).offsetDays(offsetDays)
+    }
+
+    fun getDateChangeReceiver() = dateChangeReceiver
 }
 
 sealed class ExportToFileResult {

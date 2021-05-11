@@ -12,13 +12,12 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import java.io.File
-import javax.inject.Inject
 import kotlinx.android.synthetic.scenarios.fragment_debug.contactState
 import kotlinx.android.synthetic.scenarios.fragment_debug.defaultState
 import kotlinx.android.synthetic.scenarios.fragment_debug.exportKeys
 import kotlinx.android.synthetic.scenarios.fragment_debug.importKeys
 import kotlinx.android.synthetic.scenarios.fragment_debug.indexState
+import kotlinx.android.synthetic.scenarios.fragment_debug.offsetDaysView
 import kotlinx.android.synthetic.scenarios.fragment_debug.riskyPostCode
 import kotlinx.android.synthetic.scenarios.fragment_debug.riskyVenueM1
 import kotlinx.android.synthetic.scenarios.fragment_debug.riskyVenueM2
@@ -42,6 +41,9 @@ import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.Error
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.ResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.Success
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
+import uk.nhs.nhsx.covid19.android.app.widgets.OffsetDaysView.OnOffsetDaysChangedListener
+import java.io.File
+import javax.inject.Inject
 
 class DebugFragment : Fragment(R.layout.fragment_debug) {
 
@@ -88,6 +90,14 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
     }
 
     private fun showDebugOptions() {
+        offsetDaysView.setListener(object : OnOffsetDaysChangedListener {
+            override fun offsetChanged(offsetDays: Long) {
+                debugViewModel.onOffsetDaysChanged(offsetDays)
+            }
+        })
+
+        offsetDaysView.setDateChangeReceiver(debugViewModel.getDateChangeReceiver())
+
         submitKeys.setOnSingleClickListener {
             activity?.startActivity<ShareKeysInformationActivity> {}
         }

@@ -4,23 +4,24 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import java.time.ZoneOffset
-import java.time.temporal.ChronoUnit
-import javax.inject.Inject
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedIsolationPaymentsApplication
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
 import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationPaymentUrlRequest
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import java.time.Clock
+import java.time.ZoneOffset
+import javax.inject.Inject
 
 class RedirectToIsolationPaymentWebsiteViewModel @Inject constructor(
     private val requestIsolationPaymentUrl: RequestIsolationPaymentUrl,
     private val isolationPaymentTokenProvider: IsolationPaymentTokenStateProvider,
     private val isolationStateMachine: IsolationStateMachine,
-    private val analyticsEventProcessor: AnalyticsEventProcessor
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
+    private val clock: Clock
 ) : ViewModel() {
 
     private val fetchWebsiteUrlLiveData = MutableLiveData<ViewState>()
@@ -31,15 +32,15 @@ class RedirectToIsolationPaymentWebsiteViewModel @Inject constructor(
             fetchWebsiteUrlLiveData.postValue(ViewState.Loading)
 
             val tokenState = isolationPaymentTokenProvider.tokenState
-            val currentIsolation = isolationStateMachine.readState() as? Isolation
-            val contactCase = currentIsolation?.contactCase
+            val currentIsolation = isolationStateMachine.readLogicalState() as? PossiblyIsolating
+            val contactCase = currentIsolation?.getActiveContactCase(clock)
 
             if (tokenState !is IsolationPaymentTokenState.Token || contactCase == null) {
                 fetchWebsiteUrlLiveData.postValue(ViewState.Error)
                 return@launch
             }
 
-            val riskyEncounterDate = contactCase.startDate.truncatedTo(ChronoUnit.DAYS)
+            val riskyEncounterDate = contactCase.exposureDate.atStartOfDay(ZoneOffset.UTC).toInstant()
             val isolationPeriodEndDate = contactCase.expiryDate.atStartOfDay(ZoneOffset.UTC).toInstant()
 
             when (

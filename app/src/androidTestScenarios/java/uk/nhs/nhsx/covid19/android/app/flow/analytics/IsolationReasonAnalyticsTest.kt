@@ -5,14 +5,13 @@ import uk.nhs.nhsx.covid19.android.app.flow.functionalities.RiskyContact
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import uk.nhs.nhsx.covid19.android.app.report.notReported
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import kotlin.test.assertTrue
+import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
 
 class IsolationReasonAnalyticsTest : AnalyticsTest() {
 
-    private var selfDiagnosis = SelfDiagnosis(this)
-    private var riskyContact = RiskyContact(this)
+    private val selfDiagnosis = SelfDiagnosis(this)
+    private val riskyContact = RiskyContact(this)
+    private val isolationChecker = IsolationChecker(testAppContext)
 
     // hasSelfDiagnosedBackgroundTick
     // >0 if the app is aware that the user has completed the questionnaire with symptoms
@@ -31,7 +30,7 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
         // Isolation end date: 11th Jan
         selfDiagnosis.selfDiagnosePositiveAndPressBack()
 
-        assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
+        isolationChecker.assertActiveIndexNoContact()
 
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
         assertOnFields {
@@ -53,17 +52,20 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
         }
 
-        assertTrue { testAppContext.getCurrentState() is Default }
+        isolationChecker.assertExpiredIndexNoContact()
 
         // Dates: 12th-25th Jan -> Analytics packets for: 11th-24th Jan
         assertOnFieldsForDateRange(12..25) {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
         }
 
         // Current date: 26th Jan -> Analytics packet for: 25th Jan
         // Previous isolation reason no longer stored
         assertAnalyticsPacketIsNormal()
+
+        isolationChecker.assertNeverIsolating()
     }
 
     @Test

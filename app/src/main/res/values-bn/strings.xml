@@ -28,13 +28,7 @@
     <string name="status_option_read_latest_advice">পরীক্ষা করার বিষয়ে জানুন</string>
     <string name="status_option_contact_tracing">কন্ট্যাক্ট ট্রেসিং</string>
     <string name="contact_tracing_active">আপনার অ্যাপটি সক্রিয় রয়েছে এবং স্ক্যান করছে</string>
-    <string name="contact_tracing_not_active">কন্ট্যাক্ট ট্রেসিং বন্ধ আছে</string>
-    <string name="status_area_risk_level_low">কম</string>
-    <string name="status_area_risk_level_medium">মধ্যম</string>
-    <string name="status_area_risk_level_high">উচ্চ</string>
-    <string name="low_risk_level_text">কম - আপনার স্থানীয় কর্তৃপক্ষে আওতাধীন অঞ্চলে সংক্রমণের মাত্রা বর্তমানে কম ঝুঁকিসম্পন্ন” হিসাবে গণ্য করা হচ্ছে, যা দেশের বেশিরভাগ অঞ্চলের অনুরূপ।</string>
-    <string name="medium_risk_level_text">মাঝারি - আপনার স্থানীয় কর্তৃপক্ষ, অথবা কোন পার্শ্ববর্তী স্থানীয় কর্তৃপক্ষের সীমানার মধ্যে উচ্চ বা ক্রমবর্ধমান মাত্রার সংক্রমণ রয়েছে। দয়া করে জাতীয় নির্দেশিকা অনুসরণ করুন।</string>
-    <string name="high_risk_level_text">উচ্চ - স্থানীয় অঞ্চলে উচ্চ মাত্রায় সংক্রমণের কারণে সংক্রমণ ছড়িয়ে পড়া হ্রাস করতে, আপনার স্থানীয় কর্তৃপক্ষ, বা নিকটবর্তী স্থানীয় কর্তৃপক্ষ যুক্তরাজ্যের বাকি অঞ্চলের বাসিন্দাদের জন্য অতিরিক্ত ব্যবস্থা (যেমন লকডাউন) গ্রহণ করেছে। একটি বিস্তৃত কর্ম পরিকল্পনা প্রয়োগ করা রয়েছে এবং জাতীয় সহায়তার সাথে স্থানীয় সহায়তা বৃদ্ধি করা হচ্ছে।</string>
+    <string name="contact_tracing_not_active">কনট্যাক্ট ট্রেসিং থামানো আছে</string>
     <string name="risk_level_title">আমার এলাকায়</string>
     <string name="qr_code_permission_denied_action">ক্যামেরাকে সম্মতি প্রদান করুন</string>
     <string name="qr_code_permission_denied_subtitle">বিভিন্ন ভেন্যূ যেমন বার এবং রেস্তোরাঁতে চেক ইন করতে এই অ্যাপটি আপনার ক্যামেরা ব্যবহার করে।\n\nঅনুগ্রহ করে অফিসিয়াল NHS QR কোড স্ক্যান করার সম্মতি ক্যামেরাকে প্রদান করুন।</string>
@@ -65,7 +59,6 @@
     <string name="you_need_to_self_isolate">আপনাকে স্ব-বিচ্ছিন্ন হতে হবে</string>
     <string name="test_result_negative_no_self_isolation_subtitle">আপনার স্ব-বিচ্ছিন্ন থাকা এখন সম্পন্ন হয়েছে</string>
     <string name="test_result_positive_no_self_isolation_subtitle">যদিও পরীক্ষাতে আপনার ফলাফল পজিটিভ এসেছে, তাও আপনার স্ব-বিচ্ছিন্ন থাকার সময় শেষ হয়ে গেছে।</string>
-    <string name="test_result_negative_no_self_isolation_description">আপনার করোনাভাইরাস পরীক্ষার ফলাফল নেগেটিভ</string>
     <string name="state_test_positive_info">আপনার করোনাভাইরাস পরীক্ষার ফলাফল পজিটিভ</string>
     <string name="state_test_void_info">আপনার করোনাভাইরাস হয়েছে কিনা আমরা আপনাকে বলতে পারি নি</string>
     <string name="test_result_void_continue_self_isolate_explanation">স্ব-বিচ্ছিন্ন থাকার দিন সংখ্যা এই অ্যাপ কীভাবে গণনা করে তা বুঝতে নিচে প্রদত্ত প্রায়শই জিজ্ঞাসিত প্রশ্নাবলী দেখুন।\n\nপরীক্ষাটি করার সময় আপনার করোনভাইরাস ছিল কিনা তা আমরা জানাতে পারিনি এবং আপনার আবার পরীক্ষা করানো উচিত। যদি আপনার বয়স 18 বছরের কম হয় তাহলে আপনাকে এই বার্তাটি কোন বিশ্বস্ত প্রাপ্ত বয়স্ককে দেখানোর পরামর্শ প্রদান করা হয়।</string>
@@ -85,7 +78,6 @@
     <string name="test_ordering_description_3">অ্যাপ এবং ওয়েবসাইটের মধ্যে বিনিময় করে নেওয়া একমাত্র তথ্য হলো একটি ডিজিটাল ‘টোকেন’ যা আপনার পরীক্ষার ফলাফল অ্যাপে ফিরিয়ে আনতে আমাদের সহায়তা করবে।</string>
     <string name="test_ordering_description_4">পরীক্ষার প্রক্রিয়াতে ব্যবহৃত যে কোনো তথ্যই গোপনীয়তা বিজ্ঞপ্তিতে উল্লেখ রয়েছে:</string>
     <string name="test_ordering_description_5">এই অ্যাপ আপনার তথ্য কিভাবে ব্যবহার করে তা জানতে, অনুগ্রহ করে দেখুন:</string>
-    <string name="test_ordering_description_6">শুধুমাত্র নিজের জন্য একটি পরীক্ষা করাতে এই অ্যাপ আপনি ব্যবহার করতে পারবেন। অন্য কারো জন্য পরীক্ষা করাতে, করোনাভাইরাস পরীক্ষার সরকারি ওয়েবসাইটটি ব্যবহার করুন:</string>
     <string name="book_free_test_now">আপনার নিজের জন্য একটা পরীক্ষা বুক করুন</string>
     <string name="about_this_app_title">অ্যাপ সম্পর্কিত তথ্য</string>
     <string name="title_how_app_works">এই অ্যাপটি কিভাবে কাজ করে</string>
@@ -110,8 +102,8 @@
     <string name="cancel">বাতিল করুন</string>
     <string name="notification_action_exposure_reminder">যোগাযোগের ট্রেসিং চালু করুন</string>
     <string name="notification_title_exposure_reminder">কন্ট্যাক্ট ট্রেসিং আবার চালু করার সময় হয়েছে</string>
-    <string name="resume_contact_tracing_title">কন্ট্যাক্ট ট্রেসিং এখন চালু নেই</string>
-    <string name="resume_contact_tracing_subtitle">অ্যাপটি কখন যোগাযোগের ট্রেসিংটি আবার চালু করতে আপনাকে স্মরণ করিয়ে দেবে তা চয়ন করুন</string>
+    <string name="resume_contact_tracing_title">কনট্যাক্ট ট্রেসিং থামান</string>
+    <string name="resume_contact_tracing_subtitle">অ্যাপ আপনাকে কখন পুনরায় কনট্যাক্ট ট্রেসিং অন করতে মনে করিয়ে দেবে সেই সময় ঠিক করুন</string>
     <string name="contact_tracing_notification_reminder_dialog_message">কন্ট্যাক্ট ট্রেসিং বন্ধ করে দিলে, তা অ্যাপের কার্যকারিতার ওপর প্রভাব ফেলবে।</string>
     <string name="edit_postcode_district_title">পোস্টকোড জেলা সম্পাদনা করুন</string>
     <string name="onboarding_age_confirmation_title">আপনি কি 16 বছর বা তার বেশি?</string>
@@ -121,7 +113,6 @@
     <string name="onboarding_age_restriction_title">দুর্ভাগ্যবশত, এই অ্যাপটি শুধুমাত্র 16 বা তার বেশি বয়সী মানুষদের জন্য।</string>
     <string name="onboarding_age_restriction_text">আপনার আগ্রহের জন্য ধন্যবাদ। এই অ্যাপটি শুধুমাত্র 16 বছর বা তার চেয়ে বেশি বয়স ব্যক্তিদের জন্য।</string>
     <string name="url_terms_of_use">https://covid19.nhs.uk/terms-of-use-bengali.html</string>
-    <string name="url_nhs_tablet_device">https://faq.covid19.nhs.uk/article/KA-01266/en-us</string>
     <string name="url_nhs_111_online">https://111.nhs.uk/</string>
     <string name="url_accessibility_statement">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info">https://faq.covid19.nhs.uk/article/KA-01202/en-us</string>
@@ -141,8 +132,8 @@
         <item quantity="other">%1$s-এ 23:59 পর্যন্ত আপনাকে স্ব-বিচ্ছিন্ন থাকতে হবে। ততক্ষণ পর্যন্ত %2$s দিন বাকি রয়েছে।</item>
     </plurals>
     <plurals name="resume_contact_tracing_hours">
-        <item quantity="one">%1$d ঘন্টা</item>
-        <item quantity="other">%1$d ঘন্টা</item>
+        <item quantity="one">%d ঘন্টা</item>
+        <item quantity="other">%d ঘন্টা</item>
     </plurals>
     <string name="app_name">NHS কোভিড 19</string>
     <string name="continue_button">চালিয়ে যান</string>
@@ -152,7 +143,6 @@
     <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">যদি আপনি ভাইরাস টেস্টে পজিটিভ হওয়া এমন কারো সাথে ঘনিষ্ঠ যোগাযোগ করে থাকেন তাহলে অ্যাপটি আপনাকে একটি সতর্কতা প্রেরণ করবে। \n\nএই অ্যাপের জন্য কন্ট্যাক্ট ট্রেসিং সক্ষম করার জন্য আপনাকে এই অনুমতিগুলি দিতে হবে: ‘এক্সপোজার নোটিফিকেশন্স’। \n\nআপনি যদি নিজের মতামত পরিবর্তন করেন তবে আপনি যে কোন সময় সেটিংসে আপনার অনুমতিগুলো পরিবর্তন করতে পারবেন।</string>
     <string name="privacy_notice">গোপনীয়তার বিজ্ঞপ্তি</string>
-    <string name="tablet_information_url">ট্যাবলেটের ব্যবহার সম্পর্কিত তথ্য</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
     <string name="post_code_rationale">বিভিন্ন এলাকায় করোনাভাইরাস ছড়িয়ে পড়া সম্পর্কে জানতে এই পোস্টকোড ডিস্ট্রিক্ট সাহায্য করে। এটি নিশ্চিত করবে যে আপনার এলাকার জন্য আমরা সর্বোত্তম সম্ভাব্য জনস্বাস্থ্য বিষয়ক পরামর্শ দিতে পারি।\n\nচিন্তিত হবেন না। আপনার অবস্থান শনাক্ত করার জন্য আপনার পোস্টকোড ডিস্ট্রিক্ট ব্যবহার করা হবে না।</string>
     <string name="enable_bluetooth_rationale">এই অ্যাপটি ইনস্টল থাকা অন্য ফোনের কাছে এটি কখন রয়েছে তা জানতে এই অ্যাপ ব্লুটুথ ব্যবহার করে। আপনার যদি ব্লুটুথ বন্ধ থাকে তবে এই অ্যাপটি কাজ করবে না।\n\nএই অ্যাপ্লিকেশনটি ‘ব্লুটুথ লো এনার্জি’ - একটি ব্যাটারি সাশ্রয় প্রযুক্তি ব্যবহার করে।\n\nদয়া করে সেটিংসে যান এবং ব্লুটুথ চালু করুন।</string>
@@ -161,8 +151,6 @@
     <string name="enable_location_service_title">আপনাকে আপনার ফোনে লোকেশন সার্ভিস চালু করতে হবে</string>
     <string name="enable_location_service_rationale">ব্লুটুথ যাতে কাজ করে সেজন্যে আপনার ফোনের লোকেশন সার্ভিস চালু করতে হবে।\n\nআপনার অবস্থান শনাক্ত করতে এই অ্যাপটি ব্লুটুথ বা আপনার অবস্থান ব্যবহার করছে না। আপনার ব্যক্তিগত পরিচয় সর্বদা সুরক্ষিত থাকবে।\n\nআপনি যদি আপনার ফোনের লোকেশন সার্ভিস চালু না করেন, তাহলে এই অ্যাপটি কাজ করবে না।\n\nএই অ্যাপটি যাতে কাজ করে তাই অনুগ্রহ করে সেটিংসে যান এবং লোকেশন সার্ভিস চালু করুন।</string>
     <string name="post_code_example">অ্যাপটি ব্যবহারের জন্য একটি ইংলিশ বা ওয়েলশ পোস্টকোড ডিস্ট্রিক্ট দরকার।\n\nউদাহরণ: আপনার পোস্ট কোড যদি CE1B 2PQ হয়, তাহলে অনুগ্রহ করে ‘CE1B’ এন্টার করুন। যদি সেটি CR0 3RL হয় তাহলে অনুগ্রহ করে ‘CR0’ এন্টার করুন। যদি সেটি L4 0RE হয়, তাহলে অনুগ্রহ করে ‘L4’ এন্টার করুন।</string>
-    <string name="tablet_support_title">এই অ্যাপটি মোবাইল স্মার্টফোনের জন্য তৈরি করা হয়েছে</string>
-    <string name="tablet_support_description">আপনার ডিভাইসটি একটি ট্যাবলেট বলে মনে হচ্ছে। এই অ্যাপটি শুধুমাত্র স্মার্টফোনের জন্য রয়েছে কারণ এই অ্যাপটি কেবল তখনই কার্যকর হবে যখন আপনি এমন একটি ডিভাইসে অ্যাপটি রাখেন যা আপনি বাইরে যাওয়ার সময় সাথে নিয়ে যান। অনুগ্রহ করে আপনার স্মার্টফোনে এই অ্যাপটি ইনস্টল করুন।</string>
     <string name="test_ordering_testing_privacy_notice">গোপনীয়তার বিজ্ঞপ্তি যাচাই করুন</string>
     <string name="test_ordering_app_privacy_notice">অ্যাপের গোপনীয়তা বিজ্ঞপ্তি</string>
     <string name="test_ordering_book_test_for_someone_else">অন্য কারো জন্য পরীক্ষা করাতে বুকিং করুন</string>
@@ -178,7 +166,6 @@
     <string name="test_ordering_failure_description">আবার চেষ্টা করার আগে, অনুগ্রহ করে দেখুন যে আপনার ফোনের মোবাইল ডেটা সেটিংস চালু রয়েছে কি না, আপনার ওয়াইফাই (যদি ব্যবহার করা হয়) সংযোগ দেখুন এবং নিশ্চিত করুন যে এয়ারপ্লেন মোডটি নিষ্ক্রিয় রয়েছে।</string>
     <string name="notification_title_risky_venue">আপনি সম্প্রতি একটি স্থানে একই দিনে অন্যদের সাথে গিয়েছিলেন যারা এরপর করোনাভাইরাস (COVID-19) পরীক্ষায় পজিটিভ হয়েছেন</string>
     <string name="notification_text_post_code_risk_changed">সাক্ষাৎস্থলে যাওয়ার সময়ে আনুষ্ঠানিক NHS QR কোড স্ক্যান করতে ভুলবেন না।</string>
-    <string name="status_area_risk_level">%s এলাকার ঝুঁকির মাত্রা হলো %s</string>
     <string name="notification_channel_area_risk_changed_name">এলাকার ঝুঁকি পরিবর্তন</string>
     <string name="notification_channel_area_risk_changed_description">আপনার এলাকায় সংক্রমণের ঝুঁকি সম্পর্কে অবগত থাকতে এই নোটিফিকেশনগুলো সাহায্য করে।</string>
     <string name="notification_channel_isolation_state_name">বিচ্ছিন্ন থাকা</string>
@@ -268,7 +255,6 @@
     <string name="contact_tracing_notification_reminder_dialog_title">%1$s  ঘন্টা পরে কন্ট্যাক্ট ট্রেসিং আবার অন করে দেওয়ার উদ্দেশ্যে মনে করার ব্যবস্থা চালু করে দেবেন</string>
     <string name="okay">ঠিক আছে</string>
     <string name="template_hours">%d ঘন্টা</string>
-    <string name="resume_contact_tracing_don_t_remind_me">আমাকে মনে করিয়ে দিও না</string>
     <string name="url_how_app_works">https://covid19.nhs.uk/introducing-the-app-bengali.html</string>
     <string name="url_latest_advice_in_isolation">https://faq.covid19.nhs.uk/article/KA-01203/en-us</string>
     <string name="submit_keys_information_description_text">এই ফলাফল শেয়ার করার জন্য নিচে যান।\n\nযখন বেছে নেওয়ার জন্য বলা হবে, তখন ‘শেয়ার করুন’ বা ‘আপনার ডিভাইসের র্যান্ডম আইডি শেয়ার করুন’ বেছে নিন।</string>
@@ -288,7 +274,6 @@
     <string name="submit_keys_information_title">অন্যদের জানাতে সাহায্য করুন</string>
     <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_terms_of_use_wls">https://covid19.nhs.uk/terms-of-use-bengali.html</string>
-    <string name="url_nhs_tablet_device_wls">https://faq.covid19.nhs.uk/article/KA-01266/en-us</string>
     <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/</string>
     <string name="url_accessibility_statement_wls">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info_wls">https://faq.covid19.nhs.uk/article/KA-01202/en-us</string>
@@ -318,14 +303,11 @@
     <string name="authentication_example">উদাহরণ: 5apv-enka</string>
     <string name="authentication_title">বর্তমানে শুধু NHS-এর ভলান্টিয়ার রেস্পন্ডার (স্বেচ্ছায় উত্তরদাতা), আইল অভ ওয়াইট এবং নিউহ্যাম-এর অধিবাসীদের জন্য</string>
     <string name="authentication_where_can_i_find_code">আমি এই কোডটি কোথায় পাব?</string>
-    <string name="high_risk_level_text_wls">উচ্চ - আপনার স্থানীয় এলাকায় উচ্চ মাত্রার সংক্রমণ বিদ্যমান থাকায় সংক্রমণ কমাতে আপনার স্থানীয় কর্তৃপক্ষ, অথবা পার্শ্ববর্তী কোনো স্থানীয় কর্তৃপক্ষ, ইংল্যান্ড ও ওয়েলসের বাকি অংশে (উদাহরণস্বরূপ লকডাউন) বলবৎ ব্যবস্থাবলীর অতিরিক্ত কিছু ব্যবস্থা গ্রহণ করেছে। একটি বিস্তারিত কর্মপরিকল্পনা কার্যকর রয়েছে এবং স্থানীয় সম্পদ জাতীয় সহায়তায় বৃদ্ধি করা হচ্ছে।</string>
     <string name="link_test_result_error_no_connection">ইন্টারনেট নেই। অনুগ্রহ করে আপনার নেটওয়ার্ক বা ওয়াইফাই-এর সাথে সংযোগ করুন এবং আবার চেষ্টা করুন।</string>
     <string name="link_test_result_error_unknown">কিছু ভুল হয়েছে। অনুগ্রহপূর্বক আবার চেষ্টা করুন।</string>
     <string name="logo_nhs_england_description">NHS টেস্ট এ্যান্ড ট্রেস</string>
     <string name="logo_nhs_generic_description">NHS কোভিড 19</string>
     <string name="logo_nhs_wales_description">NHS ওয়েল্‌স টেস্ট ট্রেস প্রোটেক্ট</string>
-    <string name="low_risk_level_text_wls">কম - আপনার স্থানীয় কর্তৃপক্ষে আওতাধীন অঞ্চলে সংক্রমণের মাত্রা বর্তমানে কম ঝুঁকিসম্পন্ন” হিসাবে গণ্য করা হচ্ছে, যা দেশের বেশিরভাগ অঞ্চলের অনুরূপ।</string>
-    <string name="medium_risk_level_text_wls">মাঝারি - আপনার স্থানীয় কর্তৃপক্ষ, অথবা কোন পার্শ্ববর্তী স্থানীয় কর্তৃপক্ষের সীমানার মধ্যে উচ্চ বা ক্রমবর্ধমান মাত্রার সংক্রমণ রয়েছে। দয়া করে জাতীয় নির্দেশিকা অনুসরণ করুন।</string>
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
     <string name="notification_channel_background_work_name">Background activities</string>
     <string name="notification_text_updating_database">লোড হচ্ছে…</string>
@@ -336,10 +318,6 @@
     <string name="questionnaire_no_i_dont_have_symptom">না, আমার উপসর্গ নেই %s</string>
     <string name="questionnaire_yes_i_have_symptom">হ্যাঁ, আমার উপসর্গ রয়েছে %s</string>
     <string name="state_test_positive_then_negative_info">আপনার করোনাভাইরাস পরীক্ষার ফলাফল নেগেটিভ। তথাপি আপনার স্ব-বিচ্ছিন্ন থাকা উচিত। এর কারণ, হয় আপনার পূর্ববর্তী পরীক্ষার ফলাফল পজিটিভ ছিল নয়তো সম্প্রতি আপনি উপসর্গ থাকার বিষয়টি রিপোর্ট করেছেন।</string>
-    <string name="status_area_risk_level_high_wls">উচ্চ</string>
-    <string name="status_area_risk_level_low_wls">কম</string>
-    <string name="status_area_risk_level_medium_wls">মধ্যম</string>
-    <string name="status_area_risk_level_wls">%s এলাকার ঝুঁকির মাত্রা হলো %s</string>
     <string name="test_result_negative_then_positive_continue_explanation">স্ব-বিচ্ছিন্ন থাকার দিন সংখ্যা এই অ্যাপ কীভাবে গণনা করে তা বুঝতে নিচে প্রদত্ত প্রায়শই জিজ্ঞাসিত প্রশ্নাবলীর লিংক দেখুন।\n\nপরীক্ষার ফলাফল দেখায় যে পরীক্ষা করানোর সময় আপনার ভাইরাসটি ছিল। আপনাকে আরো তথ্য পাঠানো হয়েছে ইমেল, টেক্সত, বা ফোনের মাধ্যমে। যদি আপনার বয়স 18 বছরের কম হয় তাহলে আপনাকে এই বার্তাটি কোন বিশ্বস্ত প্রাপ্ত বয়স্ককে দেখানোর পরামর্শ প্রদান করা হয়।</string>
     <string name="test_result_positive_then_negative_explanation">স্ব-বিচ্ছিন্ন থাকার দিন সংখ্যা এই অ্যাপ কীভাবে গণনা করে তা বুঝতে নিচে প্রদত্ত প্রায়শই জিজ্ঞাসিত প্রশ্নাবলী দেখুন।\n\nআপনার বর্তমান পরীক্ষার ফলাফল দেখায় টেস্ট করার সময় আপনার ভাইরাস ছিল না। আপনি সম্প্রতি উপসর্গ থাকার বিষয়টি রিপোর্ট করে থাকলে একটি পরীক্ষা বুক করা নিশ্চিত করুন। আপনার উপসর্গ দেখা দিলে এই অ্যাপে তা রিপোর্ট করুন। যদি আপনার বয়স 18 বছরের কম হয় তাহলে আপনাকে এই বার্তাটি কোন বিশ্বস্ত প্রাপ্ত বয়স্ককে দেখানোর পরামর্শ প্রদান করা হয়।</string>
     <string name="test_result_void_already_not_in_isolation_subtitle">স্ব-বিচ্ছিন্ন থাকার দিন সংখ্যা এই অ্যাপ কীভাবে গণনা করে তা বুঝতে নিচে প্রদত্ত প্রায়শই জিজ্ঞাসিত প্রশ্নাবলী দেখুন।\n\nপরীক্ষাটি করার সময় আপনার করোনভাইরাস ছিল কিনা তা আমরা জানাতে পারিনি এবং আপনাকে আবার পরীক্ষা করানো উচিত। আপনাকে ইমেল, পাঠ্য বা ফোনের মাধ্যমে আরো তথ্য প্রেরণ করা হয়েছে। যদি আপনার বয়স 18 বছরের কম হয় তাহলে আপনাকে এই বার্তাটি কোন বিশ্বস্ত প্রাপ্ত বয়স্ককে দেখানোর পরামর্শ প্রদান করা হয়।</string>
@@ -357,7 +335,6 @@
     <string name="update_in_play_store">এখনই আপনার অ্যাপটি হালনাগাদ করুন</string>
     <string name="updated_privacy_control_text">অ্যাপটির জন্য আমরা ব্যবহারের শর্ত এবং গোপনতা নোটিস সাম্প্রতিক করেছি।\n\nসাম্প্রতিক সংস্করণ পরিবর্তনগুলি প্রতিফলিত করে যার সাহায্যে ব্যবহারকারীরা অজ্ঞাতনামে ইতিবাচক পরীক্ষার ফলাফল এবং সাক্ষাৎস্থলের ইতিবৃত্ত অন্যদের জানাতে পারবেন, যারা হয়ত করোনাভাইরাসের কবলে পড়েছেন। অন্যদের জানানোর এই প্রক্রিয়া জনস্বাস্থ্যের জন্য উপকারী।\n\nঅ্যাপ ব্যবহারকারীদের গোপনতা সুরক্ষিত থাকবে আর তথ্য অজ্ঞাত থাকবে।</string>
     <string name="updated_privacy_title">আমাদের নীতিমালায় পরিবর্তনসমূহ</string>
-    <string name="about_local_authority">স্থানীয় কর্তৃপক্ষ</string>
     <string name="checkin_information_title_new">আরো তথ্যাদি</string>
     <string name="confirm_and_start">সুনিশ্চিত করুন</string>
     <string name="exposure_faqs">সাধারণ প্রশ্নাবলি</string>
@@ -455,7 +432,6 @@
     <string name="unsupported_device">সীমিত সেটিংস (উদাহরণস্বরূপ, যদি এটি কোনো কোম্পানির ফোন হয়)।\n\nআপনার ফোনে অন্য কোনো অ্যাপ একই প্রযুক্তি ব্যবহার করছে এবং এই অ্যাপটিকে কাজ করা থেকে বিরত রাখছে।</string>
     <string name="user_data_daily_contact_testing_text">সুনিশ্চিত অংশগ্রহণ</string>
     <string name="user_data_daily_contact_testing_title">দৈনিক সংস্পর্শ পরীক্ষা</string>
-    <string name="about_manage_my_data_settings_subtitle">স্থানীয় কর্তৃপক্ষ, পরীক্ষার ফল, স্থানসমূহের ইতিহাস</string>
     <string name="ill_do_it_later">আমি এটা পরে করব</string>
     <string name="link_test_result_daily_contact_testing_description">আপনার ফলাফল পজিটিভ হলে, আপনি যে কোডটি পেয়েছেন সেটি উপরের বক্সে প্রবেশ করান এবং স্ব-বিচ্ছিন্ন থাকুন\n\nআপনার ফলাফল নেগেটিভ হলে, আপনি কোনো কোড পাবেন না। নিচে আপনাকে জানাতে হবে যে আপনার ফলাফল নেগেটিভ এবং তারপর চালিয়ে যাবেন।</string>
     <string name="link_test_result_daily_contact_testing_description_list_header">উপরন্তু:</string>
@@ -524,6 +500,20 @@
     <string name="share_keys_reminder_title">অন্যদের নোটিফাই করার ব্যাপারে একটি অনুস্মারক</string>
     <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="url_nhs_get_tested_wls">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="camera_active_accessibility_announcement">ক্যামেরা সক্রিয় আছে। কোনো ভেন্যুতে চেক ইন করার জন্য একে আনুষ্ঠানিক NHS QR কোড পোস্টারে তাক করুন।</string>
+    <string name="contact_tracing_hub_consider_pausing_text">আপনার ফোন কোনো লকারে বা এজমালি জায়গায় মজুদ রাখেন\n\nকোনো স্থির স্বচ্ছ স্ক্রিনের আড়ালে কাজ করেন এবং অন্য মানুষদের থেকে পুরোপুরি সুরক্ষিত থাকেন \n\nকোনো স্বাস্থ্য ও সমাজসেবা কর্মী হোন, যার পরনে আছে মেডিকেল গ্রেডের PPE, যেমন সার্জিকাল মাস্ক\n\nকোনো স্বাস্থ্যসেবা কর্মী, যিনি কোনো স্বাস্থ্যসেবা ভবনে কর্মরত, যেমন কোনো হাসপাতালে বা জিপি সার্জারিতে</string>
+    <string name="contact_tracing_hub_consider_pausing_title">কনট্যাক্ট ট্রেসিং আপনাকে ও অন্যদের করোনাভাইরাস (কোভিড-১৯) থেকে সুরক্ষিত রাখে।\n\nআপনার কেবল তখনই কনট্যাক্ট ট্রেসিং থামিয়ে রাখা উচিৎ যখন আপনি:</string>
+    <string name="contact_tracing_hub_should_not_pause_text">ব্যাটারির মেয়াদে খুব একটা পার্থক্য ঘটানোর কথা নয়\n\nআপনার অবস্থা ট্র্যাক করতে পারবে না</string>
+    <string name="contact_tracing_hub_should_not_pause_title">কনট্যাক্ট ট্রেসিং:</string>
+    <string name="contact_tracing_hub_status_off">কনট্যাক্ট ট্রেসিং অফ আছে</string>
+    <string name="contact_tracing_hub_status_on">কনট্যাক্ট ট্রেসিং অন আছে</string>
+    <string name="contact_tracing_hub_title">কনট্যাক্ট ট্রেসিং পরিচালনা</string>
+    <string name="contact_tracing_hub_turn_back_on_reminder">আপনি অ্যাপে একটি রিমাইন্ডার সেট করতে পারেন আপনাকে কনট্যাক্ট ট্রেসিং পুনরায় অন করতে বলার জন্য।</string>
     <string name="notification_channel_share_keys_reminder_description">These notifications remind you to share random IDs</string>
     <string name="notification_channel_share_keys_reminder_name">Share random IDs reminder</string>
+    <string name="status_contact_tracing_activate">পুনরায় অন করুন</string>
+    <string name="status_option_toggle_contact_tracing">কনট্যাক্ট ট্রেসিং পরিচালনা</string>
+    <string name="ukca_compliance_announcement">ইউকেসিএ\'র ছাপ</string>
+    <string name="user_data_acknowledged_date">অ্যাকনলেজ করার তারিখ</string>
+    <string name="user_data_test_end">পরীক্ষার সমাপ্তি</string>
 </resources>

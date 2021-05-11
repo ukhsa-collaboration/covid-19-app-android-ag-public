@@ -1,18 +1,22 @@
 package uk.nhs.nhsx.covid19.android.app.notifications
 
 import android.content.SharedPreferences
+import dagger.Lazy
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShouldEnterShareKeysFlow
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShouldEnterShareKeysFlowResult.Initial
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShouldEnterShareKeysFlowResult.None
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShouldEnterShareKeysFlowResult.Reminder
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ContinueInitialKeySharing
+import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowKeySharingReminder
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
+import uk.nhs.nhsx.covid19.android.app.state.ShouldNotifyStateExpiration
+import uk.nhs.nhsx.covid19.android.app.state.ShouldNotifyStateExpiration.ShouldNotifyStateExpirationResult.DoNotNotify
+import uk.nhs.nhsx.covid19.android.app.state.ShouldNotifyStateExpiration.ShouldNotifyStateExpirationResult.Notify
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import java.time.LocalDate
@@ -23,22 +27,22 @@ sealed class UserInboxItem {
     object ShowTestResult : UserInboxItem()
     object ContinueInitialKeySharing : UserInboxItem()
     object ShowKeySharingReminder : UserInboxItem()
+    data class ShowIsolationExpiration(val expirationDate: LocalDate) : UserInboxItem()
 }
 
 sealed class AddableUserInboxItem : UserInboxItem() {
-    data class ShowIsolationExpiration(val expirationDate: LocalDate) : AddableUserInboxItem()
     data class ShowVenueAlert(val venueId: String, val messageType: MessageType) : AddableUserInboxItem()
     object ShowEncounterDetection : AddableUserInboxItem()
 }
 
 @Singleton
 class UserInbox @Inject constructor(
-    private val isolationExpirationDateProvider: IsolationExpirationDateProvider,
     @Suppress("DEPRECATION") private val riskyVenueIdProvider: RiskyVenueIdProvider,
     private val riskyVenueAlertProvider: RiskyVenueAlertProvider,
     private val shouldShowEncounterDetectionActivityProvider: ShouldShowEncounterDetectionActivityProvider,
     private val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider,
-    private val shouldEnterShareKeysFlow: ShouldEnterShareKeysFlow
+    private val shouldEnterShareKeysFlow: ShouldEnterShareKeysFlow,
+    private val shouldNotifyStateExpiration: Lazy<ShouldNotifyStateExpiration>
 ) {
 
     init {
@@ -71,8 +75,6 @@ class UserInbox @Inject constructor(
 
     fun addUserInboxItem(item: AddableUserInboxItem) {
         when (item) {
-            is ShowIsolationExpiration ->
-                isolationExpirationDateProvider.value = item.expirationDate.toString()
             is ShowVenueAlert ->
                 riskyVenueAlertProvider.riskyVenueAlert = item.toRiskyVenueAlert()
             is ShowEncounterDetection ->
@@ -82,11 +84,12 @@ class UserInbox @Inject constructor(
     }
 
     fun fetchInbox(): UserInboxItem? {
-        if (isolationExpirationDateProvider.value != null) {
-            return ShowIsolationExpiration(LocalDate.parse(isolationExpirationDateProvider.value))
-        }
         if (unacknowledgedTestResultsProvider.testResults.isNotEmpty()) {
             return ShowTestResult
+        }
+        val showIsolationExpiration = getShowIsolationExpirationItem()
+        if (showIsolationExpiration != null) {
+            return showIsolationExpiration
         }
         if (shouldShowEncounterDetectionActivityProvider.value == true) {
             return ShowEncounterDetection
@@ -103,6 +106,12 @@ class UserInbox @Inject constructor(
         return null
     }
 
+    private fun getShowIsolationExpirationItem(): ShowIsolationExpiration? =
+        when (val result = shouldNotifyStateExpiration.get().invoke()) {
+            is Notify -> ShowIsolationExpiration(result.expiryDate)
+            DoNotNotify -> null
+        }
+
     private fun getShareKeysFlowInboxItem(): UserInboxItem? =
         when (shouldEnterShareKeysFlow()) {
             Initial -> ContinueInitialKeySharing
@@ -112,7 +121,6 @@ class UserInbox @Inject constructor(
 
     fun clearItem(item: AddableUserInboxItem) {
         when (item) {
-            is ShowIsolationExpiration -> isolationExpirationDateProvider.value = null
             is ShowVenueAlert -> riskyVenueAlertProvider.riskyVenueAlert = null
             is ShowEncounterDetection -> shouldShowEncounterDetectionActivityProvider.value = null
         }
@@ -130,18 +138,6 @@ class UserInbox @Inject constructor(
             venueId = id,
             messageType = messageType
         )
-}
-
-class IsolationExpirationDateProvider @Inject constructor(
-    sharedPreferences: SharedPreferences
-) {
-    private val prefs = sharedPreferences.with<String>(ISOLATION_EXPIRATION_DATE)
-
-    var value: String? by prefs
-
-    companion object {
-        private const val ISOLATION_EXPIRATION_DATE = "ISOLATION_EXPIRATION_DATE"
-    }
 }
 
 @Deprecated("Not used anymore since 4.6. Use RiskyVenueProvider instead.")

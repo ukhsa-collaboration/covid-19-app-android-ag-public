@@ -37,9 +37,9 @@ class SubmitAnalyticsAlarmController @Inject constructor(
         submitAnalyticsAndSetupNext()
     }
 
-    fun onAlarmTriggered() {
+    fun onAlarmTriggered(onFinished: () -> Unit = {}) {
         Timber.d("onAlarmTriggered")
-        submitAnalyticsAndSetupNext()
+        submitAnalyticsAndSetupNext(onFinished)
     }
 
     fun onAppCreated() {
@@ -53,7 +53,7 @@ class SubmitAnalyticsAlarmController @Inject constructor(
         return getExistingPendingIntent() != null
     }
 
-    private fun submitAnalyticsAndSetupNext() {
+    private fun submitAnalyticsAndSetupNext(onFinished: () -> Unit = {}) {
         Timber.d("submitAnalyticsAndSetupNext")
         globalScope.launch {
             executeWithWakeLock {
@@ -63,7 +63,7 @@ class SubmitAnalyticsAlarmController @Inject constructor(
                     submitAnalytics()
                 }
             }
-        }
+        }.invokeOnCompletion { onFinished() }
     }
 
     private fun setupNextAlarm() {

@@ -28,13 +28,7 @@
     <string name="status_option_read_latest_advice">Aflați informații despre testare</string>
     <string name="status_option_contact_tracing">Urmărirea contactelor</string>
     <string name="contact_tracing_active">Aplicația dvs. este activă și scanează</string>
-    <string name="contact_tracing_not_active">Urmărirea contactelor este dezactivată acum</string>
-    <string name="status_area_risk_level_low">SCĂZUT</string>
-    <string name="status_area_risk_level_medium">MEDIU</string>
-    <string name="status_area_risk_level_high">RIDICAT</string>
-    <string name="low_risk_level_text">Scăzut - autoritatea dvs. locală este evaluată momentan drept „risc scăzut”, cu un nivel de infecție similar cu majoritatea celorlalte părți ale țării.</string>
-    <string name="medium_risk_level_text">Mediu - autoritatea locală sau o autoritate locală învecinată are niveluri ridicate sau în creștere de infecție. Vă rugăm să urmați instrucțiunile naționale.</string>
-    <string name="high_risk_level_text">Ridicat - autoritatea dvs. locală, sau o autoritate locală vecină, folosește măsuri suplimentare celor care se află în vigoare în restul Angliei și Țara Galilor (de exemplu, carantina) pentru a reduce transmiterea infecției din cauza nivelurilor ridicate de infecție în zona locală. Există în vigoare un plan de acțiune detaliat și resursele locale sunt sporite cu sprijin național.</string>
+    <string name="contact_tracing_not_active">Urmărirea contactelor este întreruptă</string>
     <string name="risk_level_title">În zona mea</string>
     <string name="qr_code_permission_denied_action">Autorizare permisiuni cameră</string>
     <string name="qr_code_permission_denied_subtitle">Această aplicație folosește camera dvs. pentru a face check-in-uri în baruri și restaurante.\n\nVă rugăm să autorizați permisiunea camerei de a scana codul oficial NHS QR.</string>
@@ -83,7 +77,6 @@
     <string name="test_ordering_description_3">Singura informație distribuită între aplicație și website este un „jeton” digital care ne ajută să obținem rezultatele testului dvs. înapoi în aplicație.</string>
     <string name="test_ordering_description_4">Orice date utilizate în procesul de testare sunt descrise în notificarea de confidențialitate:</string>
     <string name="test_ordering_description_5">Pentru a afla cum utilizează această aplicație informațiile dvs., vizitați:</string>
-    <string name="test_ordering_description_6">Puteți utiliza această aplicație numai pentru a obține un test pentru dvs. Pentru a obține un test pentru altcineva, utilizați website-ul guvernului de testare pentru coronavirus:</string>
     <string name="book_free_test_now">Programați-vă un test</string>
     <string name="about_this_app_title">Despre această aplicație</string>
     <string name="title_how_app_works">Cum funcționează această aplicație</string>
@@ -108,8 +101,8 @@
     <string name="cancel">Anulare</string>
     <string name="notification_action_exposure_reminder">Activați urmărirea contactelor</string>
     <string name="notification_title_exposure_reminder">E timpul să reactivați urmărirea contactelor</string>
-    <string name="resume_contact_tracing_title">Urmărirea contactelor este dezactivată acum</string>
-    <string name="resume_contact_tracing_subtitle">Alegeți când aplicația vă va reaminti să reactivați urmărirea contactelor</string>
+    <string name="resume_contact_tracing_title">Întrerupeți urmărirea contactelor</string>
+    <string name="resume_contact_tracing_subtitle">Alegeți momentul în care aplicația vă va aminti să reactivați urmărirea contactelor</string>
     <string name="contact_tracing_notification_reminder_dialog_message">Dezactivarea urmăririi contactelor va afecta eficacitatea aplicației.</string>
     <string name="edit_postcode_district_title">Editare cod poștal al districtului</string>
     <string name="onboarding_age_confirmation_title">Aveți vârsta de peste 16 ani?</string>
@@ -119,7 +112,6 @@
     <string name="onboarding_age_restriction_title">Această aplicație se adresează numai persoanelor cu vârsta de peste 16 ani.</string>
     <string name="onboarding_age_restriction_text">Vă mulțumim pentru interesul dvs. Din păcate, nu puteți folosi această aplicație. Această aplicație este destinată numai persoanelor cu vârsta de peste 16 ani.</string>
     <string name="url_terms_of_use">https://covid19.nhs.uk/terms-of-use-romanian.html</string>
-    <string name="url_nhs_tablet_device">https://faq.covid19.nhs.uk/article/KA-01226/en-us</string>
     <string name="url_nhs_111_online">https://111.nhs.uk/</string>
     <string name="url_accessibility_statement">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info">https://faq.covid19.nhs.uk/article/KA-01230/en-us</string>
@@ -142,9 +134,9 @@
         <item quantity="other">Trebuie să vă auto-izolați până pe %1$s la 23:59. Sunt %2$s zile rămase până atunci.</item>
     </plurals>
     <plurals name="resume_contact_tracing_hours">
-        <item quantity="one">%1$d oră</item>
-        <item quantity="few">%1$d ore</item>
-        <item quantity="other">%1$d ore</item>
+        <item quantity="one">%d oră</item>
+        <item quantity="few">%d ore</item>
+        <item quantity="other">%d ore</item>
     </plurals>
     <string name="app_name">NHS Covid 19</string>
     <string name="continue_button">Continuare</string>
@@ -154,7 +146,6 @@
     <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">Aplicația vă va trimite o alertă dacă v-ați aflat în apropierea unei persoane care a fost testată pozitiv pentru virus.\n\nPentru a activa urmărirea contactelor pentru această aplicație, trebuie să permiteți notificări de expunere.\n\nDacă vă răzgândiți, puteți modifica permisiunile din setări în orice moment.</string>
     <string name="privacy_notice">Notificare de confidențialitate</string>
-    <string name="tablet_information_url">Informații despre utilizarea tabletelor</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
     <string name="post_code_rationale">Codul poștal al districtului ajută la anunțarea răspândirii coronavirusului în diverse zone.  Aceasta vă asigură că putem oferi cele mai bune sfaturi posibile de sănătate publică pentru zona dvs.\n\nNu vă faceți griji. Codul poștal al districtului dvs. nu va fi utilizat pentru a vă urmări locația.</string>
     <string name="enable_bluetooth_rationale">Această aplicație utilizează Bluetooth pentru a ști când se află lângă un alt telefon cu această aplicație instalată. Dacă aveți Bluetooth-ul dezactivat, această aplicație nu va funcționa.\n\nAceastă aplicație utilizează „Bluetooth Low Energy” (\"energie redusă Bluetooth\") - o tehnologie de economisire a bateriei.\n\nVă rugăm să accesați setările și să activați Bluetooth-ul.</string>
@@ -163,8 +154,6 @@
     <string name="enable_location_service_title">Trebuie să activați serviciile de localizare în telefonul dvs.</string>
     <string name="enable_location_service_rationale">Pentru a face ca Bluetooth să funcționeze, trebuie să activați serviciile de locație din telefonul dvs.\n\nAceastă aplicație nu utilizează Bluetooth sau locația dvs. pentru a vă urmări. Identitatea dvs. personală va rămâne protejată în permanență.\n\nDacă nu activați serviciile de localizare pe telefonul dvs., această aplicație nu va funcționa.\n\nPentru a permite funcționarea acestei aplicații, vă rugăm să mergeți la setări și să activați serviciile de localizare.</string>
     <string name="post_code_example">Trebuie să aveți un cod poștal de district englezesc sau galez pentru a utiliza această aplicație.\n\nExemple: Dacă codul dvs. poștal este CE1B 2PQ, vă rugăm să introduceți \"CE1B\". Dacă este CR0 3RL, vă rugăm să introduceți \"CR0\". Dacă este L4 0RE, vă rugăm să introduceți \"L4\".</string>
-    <string name="tablet_support_title">Această aplicație este făcută pentru smartphone-urile mobile</string>
-    <string name="tablet_support_description">Dispozitivul dvs. pare a fi o tabletă. Această aplicație este disponibilă numai pentru smartphone-uri, deoarece aplicația este eficientă numai dacă o aveți pe un dispozitiv care vă este alături tot timpul când ieșiți în oraș. Vă rugăm să instalați aplicația pe smartphone.</string>
     <string name="test_ordering_testing_privacy_notice">Notificare de confidențialitate a testării</string>
     <string name="test_ordering_app_privacy_notice">Notificare de confidențialitate a aplicației</string>
     <string name="test_ordering_book_test_for_someone_else">Rezervați un test pentru altcineva</string>
@@ -180,7 +169,6 @@
     <string name="test_ordering_failure_description">Înainte de a încerca din nou, vă rugăm să verificați că setările de date mobile ale telefonului dvs. sunt active, verificați-vă conexiunea Wi-Fi (dacă utilizați una) și asigurați-vă că modul Avion este oprit.</string>
     <string name="notification_title_risky_venue">Ați vizitat recent un loc în aceeași zi ca și persoanele care au testat pozitiv pentru coronavirus (COVID-19)</string>
     <string name="notification_text_post_code_risk_changed">Nu uitați să scanați un cod QR oficial când vizitați diverse locații.</string>
-    <string name="status_area_risk_level">%s nivelul de risc al zonei este %s</string>
     <string name="notification_channel_area_risk_changed_name">Modificare a riscului zonei</string>
     <string name="notification_channel_area_risk_changed_description">Aceste notificări ajută la urmărirea riscului de infecție în zona dvs.</string>
     <string name="notification_channel_isolation_state_name">Izolare</string>
@@ -269,7 +257,6 @@
     <string name="contact_tracing_notification_reminder_dialog_title">Setarea memento-ului pentru a reactiva urmărirea contactului în %1$s ore</string>
     <string name="okay">OK</string>
     <string name="template_hours">%d ore</string>
-    <string name="resume_contact_tracing_don_t_remind_me">Nu îmi reaminti</string>
     <string name="url_how_app_works">https://covid19.nhs.uk/introducing-the-app-romanian.html</string>
     <string name="url_latest_advice_in_isolation">https://faq.covid19.nhs.uk/article/KA-01231/en-us</string>
     <string name="submit_keys_information_description_text">Partajați acest rezultat mai jos.\n\nCând vi se solicită, selectați „Partajare” sau „Partajare ID aleatoriu de dispozitiv”.</string>
@@ -289,7 +276,6 @@
     <string name="submit_keys_information_title">Ajutați la informarea celorlalți</string>
     <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_terms_of_use_wls">https://covid19.nhs.uk/terms-of-use-romanian.html</string>
-    <string name="url_nhs_tablet_device_wls">https://faq.covid19.nhs.uk/article/KA-01226/en-us</string>
     <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/</string>
     <string name="url_accessibility_statement_wls">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info_wls">https://faq.covid19.nhs.uk/article/KA-01230/en-us</string>
@@ -319,14 +305,11 @@
     <string name="authentication_example">Exemplu: 5apv-enka</string>
     <string name="authentication_title">Momentan, numai pentru personalul medical voluntar al NHS, Isle of Wight și rezidenții din Newham</string>
     <string name="authentication_where_can_i_find_code">Unde pot găsi acest cod?</string>
-    <string name="high_risk_level_text_wls">Ridicat - autoritatea dvs. locală, sau o autoritate locală vecină, folosește măsuri suplimentare celor care se află în vigoare în restul Angliei și Țara Galilor (de exemplu, carantina) pentru a reduce transmiterea infecției din cauza nivelurilor ridicate de infecție în zona locală. Există în vigoare un plan de acțiune detaliat și resursele locale sunt sporite cu sprijin național.</string>
     <string name="link_test_result_error_no_connection">Fără internet. Vă rugăm să vă conectați la rețeaua dvs. sau la Wi-Fi și să încercați din nou.</string>
     <string name="link_test_result_error_unknown">Ceva nu a funcționat bine. Vă rugăm să reîncercați.</string>
     <string name="logo_nhs_england_description">NHS Test and Trace</string>
     <string name="logo_nhs_generic_description">NHS Covid 19</string>
     <string name="logo_nhs_wales_description">NHS Wales Test Trace Protect (Testați, urmăriți, protejați)</string>
-    <string name="low_risk_level_text_wls">Scăzut - autoritatea dvs. locală este evaluată momentan drept „risc scăzut”, cu un nivel de infecție similar cu majoritatea celorlalte părți ale țării.</string>
-    <string name="medium_risk_level_text_wls">Mediu - autoritatea locală sau o autoritate locală învecinată are niveluri ridicate sau în creștere de infecție. Vă rugăm să urmați instrucțiunile naționale.</string>
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
     <string name="notification_channel_background_work_name">Background activities</string>
     <string name="notification_text_updating_database">Încărcare...</string>
@@ -337,16 +320,11 @@
     <string name="questionnaire_no_i_dont_have_symptom">Nu, nu am %s</string>
     <string name="questionnaire_yes_i_have_symptom">Da, am %s</string>
     <string name="state_test_positive_then_negative_info">Rezultatul testului dvs. de coronavirus este negativ. Cu toate acestea, trebuie să rămâneți în autoizolare. Fie pentru că ați avut un rezultat pozitiv anterior la test, fie pentru că ați raportat recent simptome.</string>
-    <string name="status_area_risk_level_high_wls">RIDICAT</string>
-    <string name="status_area_risk_level_low_wls">SCĂZUT</string>
-    <string name="status_area_risk_level_medium_wls">MEDIU</string>
-    <string name="status_area_risk_level_wls">%s nivelul de risc al zonei este %s</string>
     <string name="test_result_negative_then_positive_continue_explanation">Pentru a înțelege modul în care aplicația calculează zilele de autoizolare, accesați linkul de mai jos la întrebările frecvente.\n\nRezultatul testului dvs. arată că ați avut virusul în momentul testului. Vi s-au trimis mai multe informații prin e-mail, text sau telefon. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere. Pentru sfaturi suplimentare, vă rugăm să vizitați nhs.uk.</string>
     <string name="test_result_positive_then_negative_explanation">Pentru a înțelege modul în care aplicația calculează zilele de autoizolare, accesați întrebările frecvente.\n\nRezultatul testului arată că nu aveați virusul la momentul testării. Dacă ați raportat recent simptome, asigurați-vă că ați rezervat un test. Dacă apar simptome, raportați-le prin intermediul acestei aplicații. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere.</string>
     <string name="test_result_void_already_not_in_isolation_subtitle">Pentru a înțelege modul în care aplicația calculează zilele de autoizolare, accesați întrebările frecvente.\n\nNu am putut determina dacă ați avut coronavirus când s-a făcut testul și ar trebui să vă testați din nou. Vi s-au trimis mai multe informații prin e-mail, text sau telefon. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere.</string>
     <string name="test_result_void_no_self_isolation_subtitle">Nu am putut stabili dacă aveați coronavirus la momentul testării</string>
     <string name="test_result_your_test_result">Rezultatul testului dvs</string>
-    <string name="test_result_negative_no_self_isolation_description">Testul dvs. pentru coronavirus este negativ</string>
     <string name="test_result_negative_no_self_isolation_explanation">Rezultatul testului dvs. arată că ați avut virusul în momentul testului. Vi s-au trimis mai multe informații prin e-mail, text sau telefon. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere.</string>
     <string name="test_result_negative_no_self_isolation_subtitle">Auto-izolarea dvs. s-a terminat acum</string>
     <string name="test_result_positive_no_self_isolation_description">Cu toate acestea, dacă aveți temperatură ridicată, continuați să vă auto-izolați până când temperatura va reveni la normal</string>
@@ -361,7 +339,6 @@
     <string name="update_in_play_store">Actualizați aplicația acum</string>
     <string name="updated_privacy_control_text">Am făcut câteva modificări ale aplicației pentru a o ajuta să funcționeze mai eficient atunci când călătoriți. Câteva țări lucrează împreună, astfel încât urmărirea contactelor continuă să funcționeze pe măsură ce oamenii trec granițele în diferite țări.\n\nAplicațiile oficiale de urmărire a contactelor din Anglia, Țara Galilor, Scoția, Irlanda de Nord, Jersey și Gibraltar vor putea partaja informații, păstrând în același timp anonimatul utilizatorului.\n\nDacă sunteți testat/ ă pozitiv pentru coronavirus, puteți alege să partajați informațiile cu NHS, astfel încât să putem trimite notificări altor utilizatori ai aplicației care trebuie să fie alertați în aceste țări.</string>
     <string name="updated_privacy_title">Schimbări în politicile noastre</string>
-    <string name="about_local_authority">Autoritate locală</string>
     <string name="checkin_information_title_new">Mai multe informații</string>
     <string name="confirm_and_start">Confirmare</string>
     <string name="exposure_faqs">Întrebări frecvente</string>
@@ -459,7 +436,6 @@
     <string name="unsupported_device">Unei restricții în setările dvs. (de exemplu, dacă acesta este un telefon de la companie).\n\nO altă aplicație din telefonul dvs. folosește aceeași tehnologie și oprește această aplicație de a funcționa.</string>
     <string name="user_data_daily_contact_testing_text">Participare confirmată</string>
     <string name="user_data_daily_contact_testing_title">Testarea zilnică pentru contacte</string>
-    <string name="about_manage_my_data_settings_subtitle">Autoritatea locală, rezultate test, istoric locații</string>
     <string name="ill_do_it_later">O voi face mai târziu</string>
     <string name="link_test_result_daily_contact_testing_description">Dacă aveți un rezultat pozitiv, introduceți codul pe care l-ați primit în caseta de mai sus și autoizolați-vă\n\nDacă aveți un rezultat negativ, nu veți primi niciun cod. Trebuie să ne raportați rezultatul negativ mai jos și să continuați.</string>
     <string name="link_test_result_daily_contact_testing_description_list_header">În plus:</string>
@@ -528,6 +504,20 @@
     <string name="share_keys_reminder_title">Un memento pentru a notifica alte persoane</string>
     <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="url_nhs_get_tested_wls">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="camera_active_accessibility_announcement">Camera este pornită. Îndreptați-o către un afiș oficial al codului QR NHS pentru a înregistra vizita.</string>
+    <string name="contact_tracing_hub_consider_pausing_text">vă depozitați telefonul într-un dulap sau într-o zonă comună\n\nlucrați în spatele unui paravan transparent fix și sunteți complet protejat/ ă de alte persoane\n\nsunteți cadru medical și purtați EIP special pentru uz medical, cum ar fi o mască chirurgicală\n\nsunteți cadru medical și lucrați într-o unitate medicală, cum ar fi un spital sau o unitate de intervenție chirurgicală a medicului de familie</string>
+    <string name="contact_tracing_hub_consider_pausing_title">Urmărirea contactelor vă ajută să vă protejați pe dumneavoastră și pe ceilalți de coronavirus (COVID-19).\n\nAr trebui să întrerupeți urmărirea contactelor doar atunci când:</string>
+    <string name="contact_tracing_hub_should_not_pause_text">nu ar trebui să afecteze foarte mult durata de viață a bateriei\n\nnu vă poate urmări locația</string>
+    <string name="contact_tracing_hub_should_not_pause_title">Urmărirea contactelor:</string>
+    <string name="contact_tracing_hub_status_off">Urmărirea contactelor este oprită</string>
+    <string name="contact_tracing_hub_status_on">Urmărirea contactelor este pornită</string>
+    <string name="contact_tracing_hub_title">Gestionați urmărirea contactelor</string>
+    <string name="contact_tracing_hub_turn_back_on_reminder">Puteți seta un memento în aplicație care vă va anunța că trebuie să reactivați urmărirea contactelor.</string>
     <string name="notification_channel_share_keys_reminder_description">These notifications remind you to share random IDs</string>
     <string name="notification_channel_share_keys_reminder_name">Share random IDs reminder</string>
+    <string name="status_contact_tracing_activate">Reactivați</string>
+    <string name="status_option_toggle_contact_tracing">Gestionați urmărirea contactelor</string>
+    <string name="ukca_compliance_announcement">Marcaj UKCA</string>
+    <string name="user_data_acknowledged_date">Confirmat la data de</string>
+    <string name="user_data_test_end">Terminare test</string>
 </resources>

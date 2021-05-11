@@ -5,12 +5,6 @@ import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.OrderTest
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.DIAGNOSIS_KEY_SUBMISSION_TOKEN
-import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_PCR_TOKEN
-import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_PCR_TOKEN_NO_KEY_SUBMISSION
-import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_PCR_TOKEN
-import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_PCR_TOKEN_NO_KEY_SUBMISSION
-import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.VOID_PCR_TOKEN
-import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.VOID_PCR_TOKEN_NO_KEY_SUBMISSION
 import uk.nhs.nhsx.covid19.android.app.remote.TestResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
@@ -21,10 +15,11 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.report.notReported
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -32,19 +27,19 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRo
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
-import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderPollingConfig
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
+import uk.nhs.nhsx.covid19.android.app.testordering.toRelevantVirologyTestResult
+import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class ReceiveTestResultFlowTests : EspressoTest() {
 
@@ -53,6 +48,8 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
     private val orderTest = OrderTest(this)
     private val shareKeysResultRobot = ShareKeysResultRobot()
+    private val isolationHelper = IsolationHelper(testAppContext.clock)
+    private val isolationChecker = IsolationChecker(testAppContext)
 
     @Before
     fun setUp() {
@@ -61,24 +58,24 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTest_showNegativeWontBeInIsolation_andEndIsolation() = notReported {
-        setIndexCaseIsolation()
+        setSelfAssessmentIsolation()
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
+        val testResponse = receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
         waitFor { testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Default }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.NEGATIVE)
+        isolationChecker.assertExpiredIndexNoContact()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
     fun whenIndexCase_withoutPrevTest_whenAcknowledgingConfirmedNegTestOlderThanSymptomsOnsetDate_showNegAfterPosOrSymptomaticWillBeInIsolation_andContinueIsolation() = notReported {
-        val isolation = setIndexCaseIsolation(selfAssessment = true)
+        val isolation = setSelfAssessmentIsolation()
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -86,7 +83,8 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         receiveConfirmedTestResult(
             NEGATIVE,
             diagnosisKeySubmissionSupported = true,
-            testEndDate = isolation.indexCase!!.symptomsOnsetDate.atStartOfDay().toInstant(ZoneOffset.UTC)
+            testEndDate = ((isolation.indexInfo as IndexCase).isolationTrigger as SelfAssessment).assumedOnsetDate
+                .atStartOfDay().toInstant(ZoneOffset.UTC)
                 .minus(1, ChronoUnit.DAYS)
         )
         waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation() }
@@ -94,13 +92,13 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickIsolationActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Isolation }
+        isolationChecker.assertActiveIndexNoContact()
         checkNoRelevantTestResult()
     }
 
     @Test
     fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedVoidTest_showVoidWillBeInIsolation_andContinueIsolation() = notReported {
-        setIndexCaseIsolation()
+        setSelfAssessmentIsolation()
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -111,47 +109,47 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickIsolationActionButton()
         orderTest()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
+        isolationChecker.assertActiveIndexNoContact()
         checkNoRelevantTestResult()
     }
 
     @Test
     fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation_shareKeys() = notReported {
-        setIndexCaseIsolation()
+        setSelfAssessmentIsolation()
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
+        val testResponse = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
         waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
 
         testResultRobot.clickIsolationActionButton()
         shareKeys()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
     fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation_withoutKeysSharing() = notReported {
-        setIndexCaseIsolation()
+        setSelfAssessmentIsolation()
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = false)
+        val testResponse = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = false)
         waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
 
         testResultRobot.clickIsolationActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
     fun whenIndexCase_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
-        setIndexCaseIsolation()
+        setSelfAssessmentIsolation()
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -163,7 +161,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         orderTest()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Isolation }
+        isolationChecker.assertActiveIndexNoContact()
         checkNoRelevantTestResult() // indicative tests are ignored when already in index case
     }
 
@@ -174,21 +172,20 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveIndicativePositiveTestResult()
+        val testResponse = receiveIndicativePositiveTestResult()
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexAndContact()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
-    fun whenIndexCase_withPreviousConfirmedPosTestFromCurrentIsolation_whenAcknowledgingConfirmedNegTest_showNegAfterPosOrSymptomaticWillBeInIsolation_andContinueIsolation() = notReported {
-        setIndexCaseIsolation()
-        val previousTestToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = true)
+    fun whenIndexCase_withPreviousConfirmedPosTest_whenAcknowledgingConfirmedNegTest_showNegAfterPosOrSymptomaticWillBeInIsolation_andContinueIsolation() = notReported {
+        val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -199,14 +196,13 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickIsolationActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResult(previousTestToken, RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultPreserved(previousTest)
     }
 
     @Test
-    fun whenIndexCase_withPreviousConfirmedPositiveTestFromCurrentIsolation_whenAcknowledgingConfirmedVoidTest_showVoidWillBeInIsolation_andContinueIsolation() = notReported {
-        setIndexCaseIsolation()
-        val previousToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = true)
+    fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedVoidTest_showVoidWillBeInIsolation_andContinueIsolation() = notReported {
+        val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -217,32 +213,13 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickIsolationActionButton()
         orderTest()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResult(previousToken, RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultPreserved(previousTest)
     }
 
     @Test
-    fun whenIndexCase_withPreviousConfirmedPositiveTestFromBeforeCurrentIsolation_whenAcknowledgingConfirmedVoidTest_showVoidWillBeInIsolation_andContinueIsolation() = notReported {
-        setIndexCaseIsolation()
-        val previousToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
-
-        startTestActivity<StatusActivity>()
-        statusRobot.checkActivityIsDisplayed()
-
-        receiveConfirmedTestResult(VOID, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysVoidWillBeInIsolation() }
-
-        testResultRobot.clickIsolationActionButton()
-        orderTest()
-
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResult(previousToken, RelevantVirologyTestResult.POSITIVE)
-    }
-
-    @Test
-    fun whenIndexCase_withPreviousConfirmedPositiveTestFromCurrentIsolation_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation() = notReported {
-        setIndexCaseIsolation()
-        val previousTestToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = true)
+    fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation() = notReported {
+        val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -253,32 +230,13 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickIsolationActionButton()
         shareKeys()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResult(previousTestToken, RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultPreserved(previousTest)
     }
 
     @Test
-    fun whenIndexCase_withPreviousConfirmedPositiveTestFromBeforeCurrentIsolation_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation() = notReported {
-        setIndexCaseIsolation()
-        val previousToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
-
-        startTestActivity<StatusActivity>()
-        statusRobot.checkActivityIsDisplayed()
-
-        receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
-
-        testResultRobot.clickIsolationActionButton()
-        shareKeys()
-
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResult(previousToken, RelevantVirologyTestResult.POSITIVE)
-    }
-
-    @Test
-    fun whenIndexCase_withPreviousConfirmedPositiveTestFromCurrentIsolation_whenAcknowledgingIndicativePositiveTest_showPositiveContinueIsolationNoChange_andContinueIsolation() = notReported {
-        setIndexCaseIsolation()
-        val previousTestToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = true)
+    fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingIndicativePositiveTest_showPositiveContinueIsolationNoChange_andContinueIsolation() = notReported {
+        val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -289,32 +247,30 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickIsolationActionButton()
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResult(previousTestToken, RelevantVirologyTestResult.POSITIVE)
-    }
-
-    @Test
-    fun whenIndexCase_withPrevConfirmedPosTestFromBeforeCurrentIsolation_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
-        setIndexCaseIsolation()
-        val previousTestToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
-
-        startTestActivity<StatusActivity>()
-        statusRobot.checkActivityIsDisplayed()
-
-        receiveIndicativePositiveTestResult()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
-
-        testResultRobot.clickIsolationActionButton()
-        orderTest()
-
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResult(previousTestToken, RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultPreserved(previousTest)
     }
 
     @Test
     fun whenContactCase_withPrevConfirmedPosTestFromBeforeCurrentIsolation_onAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
-        setContactCaseIsolation()
-        setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
+        setContactCaseIsolationWithExpiredPositiveTest(requiresConfirmatoryTest = false)
+
+        startTestActivity<StatusActivity>()
+        statusRobot.checkActivityIsDisplayed()
+
+        val testResponse = receiveIndicativePositiveTestResult()
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
+
+        testResultRobot.clickIsolationActionButton()
+        orderTest()
+
+        isolationChecker.assertActiveIndexAndContact()
+        checkRelevantTestResultUpdated(testResponse)
+    }
+
+    @Test
+    fun whenIndexCase_withPreviousIndicativePosTest_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
+        val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -325,50 +281,30 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickIsolationActionButton()
         orderTest()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultPreserved(previousTest)
     }
 
     @Test
-    fun whenIndexCase_withPreviousIndicativePosTestFromCurrentIsolation_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
-        setIndexCaseIsolation()
-        val previousTestToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = true, fromCurrentIsolation = true)
+    fun whenIndexCase_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedNegativeTest_showNegativeWontBeInIsolation_andNoIsolation() = notReported {
+        setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveIndicativePositiveTestResult()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
-
-        testResultRobot.clickIsolationActionButton()
-        orderTest()
-
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResult(previousTestToken, RelevantVirologyTestResult.POSITIVE)
-    }
-
-    @Test
-    fun whenIndexCase_withPreviousIndicativePositiveTestFromCurrentIsolation_whenAcknowledgingConfirmedNegativeTest_showNegativeWontBeInIsolation_andNoIsolation() = notReported {
-        setIndexCaseIsolation()
-        setPreviousTest(POSITIVE, requiresConfirmatoryTest = true, fromCurrentIsolation = true)
-
-        startTestActivity<StatusActivity>()
-        statusRobot.checkActivityIsDisplayed()
-
-        receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
+        val testResponse = receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
         waitFor { testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Default }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.NEGATIVE)
+        isolationChecker.assertNeverIsolating()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
-    fun whenIndexCase_withPrevIndicativePosTestFromCurIsolation_onAcknowledgingConfirmedNegTestOlderThanIndicative_showNegAfterPosOrSymptomaticWillBeInIsolation_andContIsolation() = notReported {
-        setIndexCaseIsolation()
-        val previousTestToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = true, fromCurrentIsolation = true)
+    fun whenIndexCase_withPrevIndicativePosTest_onAcknowledgingConfirmedNegTestOlderThanIndicative_showNegAfterPosOrSymptomaticWillBeInIsolation_andContIsolation() = notReported {
+        val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -376,73 +312,54 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         receiveConfirmedTestResult(
             NEGATIVE,
             diagnosisKeySubmissionSupported = true,
-            testEndDate = testEndDateWithinCurrentIsolation.minus(1, ChronoUnit.DAYS)
+            testEndDate = testEndDate.minus(1, ChronoUnit.DAYS)
         )
         waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResult(previousTestToken, RelevantVirologyTestResult.POSITIVE)
-    }
-
-    @Test
-    fun whenIndexCase_withPrevIndicativePosTestFromBeforeCurrentIsolation_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
-        setIndexCaseIsolation()
-        val previousTestToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = true, fromCurrentIsolation = false)
-
-        startTestActivity<StatusActivity>()
-        statusRobot.checkActivityIsDisplayed()
-
-        receiveIndicativePositiveTestResult()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
-
-        testResultRobot.clickIsolationActionButton()
-        orderTest()
-
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResult(previousTestToken, RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultPreserved(previousTest)
     }
 
     @Test
     fun whenContactCase_withPrevIndicativePosTestFromBeforeCurrentIsolation_onAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
-        setContactCaseIsolation()
-        setPreviousTest(POSITIVE, requiresConfirmatoryTest = true, fromCurrentIsolation = false)
+        setContactCaseIsolationWithExpiredPositiveTest(requiresConfirmatoryTest = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveIndicativePositiveTestResult()
+        val testResponse = receiveIndicativePositiveTestResult()
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexAndContact()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTest_showNegativeNotInIsolation_andNoIsolation() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
+        setSelfAssessmentIsolation(expired = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
+        val testResponse = receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
         waitFor { testResultRobot.checkActivityDisplaysNegativeNotInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Default }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.NEGATIVE)
+        isolationChecker.assertExpiredIndexNoContact()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTestOlderThanSymptomsOnsetDate_showNegativeNotInIsolation_andNoIsolation() = notReported {
-        val state = setDefaultWithPreviousIndexCaseIsolation(selfAssessment = true)
+        val state = setSelfAssessmentIsolation(expired = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -450,7 +367,8 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         receiveConfirmedTestResult(
             NEGATIVE,
             diagnosisKeySubmissionSupported = true,
-            testEndDate = state.previousIsolation!!.indexCase!!.symptomsOnsetDate.atStartOfDay().toInstant(ZoneOffset.UTC)
+            testEndDate = ((state.indexInfo as IndexCase).isolationTrigger as SelfAssessment).assumedOnsetDate
+                .atStartOfDay().toInstant(ZoneOffset.UTC)
                 .minus(1, ChronoUnit.DAYS)
         )
         waitFor { testResultRobot.checkActivityDisplaysNegativeNotInIsolation() }
@@ -458,13 +376,13 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickGoodNewsActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Default }
+        isolationChecker.assertExpiredIndexNoContact()
         checkNoRelevantTestResult()
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedVoidTest_showVoidNotInIsolation_andNoIsolation() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
+        setSelfAssessmentIsolation(expired = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -475,65 +393,64 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickGoodNewsActionButton()
         orderTest()
 
-        assertTrue { testAppContext.getCurrentState() is Default }
+        isolationChecker.assertExpiredIndexNoContact()
         checkNoRelevantTestResult()
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation(selfAssessment = true)
+        setSelfAssessmentIsolation(expired = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
+        val testResponse = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
         waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
         shareKeys()
 
-        assertTrue { testAppContext.getCurrentState() is Default }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertExpiredIndexNoContact()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_withoutKeysSharing() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation(selfAssessment = true)
+        setSelfAssessmentIsolation(expired = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = false)
+        val testResponse = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = false)
         waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Default }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertExpiredIndexNoContact()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
+        setSelfAssessmentIsolation(expired = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveIndicativePositiveTestResult()
+        val testResponse = receiveIndicativePositiveTestResult()
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedNegativeTest_showNegativeNotInIsolation_andNoIsolation() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
-        val previousToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
+        val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -544,14 +461,13 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickGoodNewsActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Default }
-        checkRelevantTestResult(previousToken, RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertExpiredIndexNoContact()
+        checkRelevantTestResultPreserved(previousTest)
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedVoidTest_showVoidNotInIsolation_andNoIsolation() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
-        val previousToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
+        val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -562,14 +478,13 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickGoodNewsActionButton()
         orderTest()
 
-        assertTrue { testAppContext.getCurrentState() is Default }
-        checkRelevantTestResult(previousToken, RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertExpiredIndexNoContact()
+        checkRelevantTestResultPreserved(previousTest)
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
-        val previousToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
+        val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -580,14 +495,13 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickGoodNewsActionButton()
         shareKeys()
 
-        assertTrue { testAppContext.getCurrentState() is Default }
-        checkRelevantTestResult(previousToken, RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertExpiredIndexNoContact()
+        checkRelevantTestResultPreserved(previousTest)
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
-        val previousToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = true, fromCurrentIsolation = false)
+        val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -598,14 +512,13 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickGoodNewsActionButton()
         shareKeys()
 
-        assertTrue { testAppContext.getCurrentState() is Default }
-        checkRelevantTestResult(previousToken, RelevantVirologyTestResult.POSITIVE, confirmedDateShouldBeNull = false)
+        isolationChecker.assertExpiredIndexNoContact()
+        checkRelevantTestResultPreserved(previousTest, confirmedDateShouldBeNull = false)
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_withoutKeysSharing() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
-        val previousToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
+        val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -616,14 +529,13 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickGoodNewsActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Default }
-        checkRelevantTestResult(previousToken, RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertExpiredIndexNoContact()
+        checkRelevantTestResultPreserved(previousTest)
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
-        val previousToken = setPreviousTest(POSITIVE, requiresConfirmatoryTest = true, fromCurrentIsolation = false)
+        val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -634,32 +546,30 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickGoodNewsActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Default }
-        checkRelevantTestResult(previousToken, RelevantVirologyTestResult.POSITIVE, confirmedDateShouldBeNull = false)
+        isolationChecker.assertExpiredIndexNoContact()
+        checkRelevantTestResultPreserved(previousTest, confirmedDateShouldBeNull = false)
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPosTest_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
-        setPreviousTest(POSITIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
+        setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveIndicativePositiveTestResult()
+        val testResponse = receiveIndicativePositiveTestResult()
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegativeTest_whenAcknowledgingConfirmedNegativeTest_showNegativeNotInIsolation_andNoIsolation() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
-        val previousToken = setPreviousTest(NEGATIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
+        val previousTest = setExpiredSelfAssessmentIsolationWithNegativeTest()
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -670,14 +580,13 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickGoodNewsActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Default }
-        checkRelevantTestResult(previousToken, RelevantVirologyTestResult.NEGATIVE)
+        isolationChecker.assertExpiredIndexNoContact()
+        checkRelevantTestResultPreserved(previousTest)
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegativeTest_whenAcknowledgingConfirmedVoidTest_showVoidNotInIsolation_andNoIsolation() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
-        val previousToken = setPreviousTest(NEGATIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
+        val previousTest = setExpiredSelfAssessmentIsolationWithNegativeTest()
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -688,135 +597,132 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickGoodNewsActionButton()
         orderTest()
 
-        assertTrue { testAppContext.getCurrentState() is Default }
-        checkRelevantTestResult(previousToken, RelevantVirologyTestResult.NEGATIVE)
+        isolationChecker.assertExpiredIndexNoContact()
+        checkRelevantTestResultPreserved(previousTest)
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegativeTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWillBeInIsolation_andStartIsolation_shareKeys() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
-        setPreviousTest(NEGATIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
+        setExpiredSelfAssessmentIsolationWithNegativeTest()
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
+        val testResponse = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
         shareKeys()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegTest_whenAcknowledgingConfirmedPosTest_showPosWillBeInIsolation_andStartIsolation_withoutKeysSharing() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
-        setPreviousTest(NEGATIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
+        setExpiredSelfAssessmentIsolationWithNegativeTest()
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = false)
+        val testResponse = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = false)
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegTest_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() = notReported {
-        setDefaultWithPreviousIndexCaseIsolation()
-        setPreviousTest(NEGATIVE, requiresConfirmatoryTest = false, fromCurrentIsolation = false)
+        setExpiredSelfAssessmentIsolationWithNegativeTest()
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveIndicativePositiveTestResult()
+        val testResponse = receiveIndicativePositiveTestResult()
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
     fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWillBeInIsolation_andStartIsolation_shareKeys() = notReported {
-        setDefaultWithoutPreviousIsolation()
+        testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
+        val testResponse = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
         shareKeys()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
     fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWillBeInIsolation_andStartIsolation_withoutKeysSharing() = notReported {
-        setDefaultWithoutPreviousIsolation()
+        testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = false)
+        val testResponse = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = false)
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
     fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() = notReported {
-        setDefaultWithoutPreviousIsolation()
+        testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveIndicativePositiveTestResult()
+        val testResponse = receiveIndicativePositiveTestResult()
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.POSITIVE)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
     fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTest_showNegativeNotInIsolation_andNoIsolation() = notReported {
-        setDefaultWithoutPreviousIsolation()
+        testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
+        val testResponse = receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
         waitFor { testResultRobot.checkActivityDisplaysNegativeNotInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        assertTrue { testAppContext.getCurrentState() is Default }
-        checkRelevantTestResultUpdated(RelevantVirologyTestResult.NEGATIVE)
+        isolationChecker.assertNeverIsolating()
+        checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
     fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedVoidTest_showVoidNotInIsolation_andNoIsolation() = notReported {
-        setDefaultWithoutPreviousIsolation()
+        testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -827,101 +733,125 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testResultRobot.clickGoodNewsActionButton()
         orderTest()
 
-        assertTrue { testAppContext.getCurrentState() is Default }
+        isolationChecker.assertNeverIsolating()
         checkNoRelevantTestResult()
     }
 
-    private fun setDefaultWithoutPreviousIsolation() {
-        testAppContext.setState(Default())
-    }
-
-    private fun setDefaultWithPreviousIndexCaseIsolation(selfAssessment: Boolean = false): Default {
-        val state = Default(
-            previousIsolation = createIndexCaseIsolation(
-                previousIsolationStart,
-                selfAssessment
-            )
-        )
+    private fun setSelfAssessmentIsolation(expired: Boolean = false): IsolationState {
+        val isolationStart =
+            if (expired) previousIsolationStart
+            else isolationStart
+        val state = isolationHelper.selfAssessment(selfAssessmentDate = isolationStart)
+            .asIsolation(hasAcknowledgedEndOfIsolation = expired)
         testAppContext.setState(state)
         return state
     }
 
-    private fun setIndexCaseIsolation(selfAssessment: Boolean = false): Isolation {
-        val state = createIndexCaseIsolation(isolationStart, selfAssessment)
-        testAppContext.setState(state)
-        return state
+    private fun setExpiredPositiveTestIsolation(
+        requiresConfirmatoryTest: Boolean
+    ): AcknowledgedTestResult {
+        val previousTest = previousTest(
+            testResult = RelevantVirologyTestResult.POSITIVE,
+            requiresConfirmatoryTest,
+            testEndDate = previousIsolationStart
+        )
+
+        testAppContext.setState(
+            isolationHelper.positiveTest(
+                testResult = previousTest
+            ).asIsolation(hasAcknowledgedEndOfIsolation = true)
+        )
+
+        return previousTest
     }
 
-    private fun createIndexCaseIsolation(isolationStart: Instant, selfAssessment: Boolean = false): Isolation {
-        val isolationStartDate =
-            LocalDateTime.ofInstant(isolationStart, ZoneId.systemDefault()).toLocalDate()
-        return Isolation(
-            isolationStart = isolationStart,
-            isolationConfiguration = DurationDays(),
-            indexCase = IndexCase(
-                symptomsOnsetDate = isolationStartDate.minusDays(3),
-                expiryDate = isolationStartDate.plusDays(7),
-                selfAssessment = selfAssessment
-            )
+    private fun setSelfAssessmentIsolationWithPositiveTest(
+        requiresConfirmatoryTest: Boolean
+    ): AcknowledgedTestResult {
+        val previousTest = previousTest(
+            testResult = RelevantVirologyTestResult.POSITIVE,
+            requiresConfirmatoryTest,
+            testEndDate = LocalDateTime.ofInstant(testEndDate, testAppContext.clock.zone).toLocalDate()
         )
+
+        testAppContext.setState(
+            isolationHelper.selfAssessment(
+                testResult = previousTest
+            ).asIsolation()
+        )
+
+        return previousTest
+    }
+
+    private fun setExpiredSelfAssessmentIsolationWithNegativeTest(): AcknowledgedTestResult {
+        val previousTest = previousNegativeTest()
+
+        testAppContext.setState(
+            isolationHelper.selfAssessment(
+                testResult = previousTest
+            ).copy(
+                expiryDate = previousTest.testEndDate
+            ).asIsolation(hasAcknowledgedEndOfIsolation = true)
+        )
+
+        return previousTest
     }
 
     private fun setContactCaseIsolation() {
-        val isolationStartDate =
-            LocalDateTime.ofInstant(isolationStart, ZoneId.systemDefault()).toLocalDate()
         testAppContext.setState(
-            state = Isolation(
-                isolationStart = isolationStart,
+            isolationHelper.contactCase(
+                exposureDate = isolationStart,
+                notificationDate = isolationStart
+            ).asIsolation()
+        )
+    }
+
+    private fun setContactCaseIsolationWithExpiredPositiveTest(requiresConfirmatoryTest: Boolean) {
+        testAppContext.setState(
+            IsolationState(
                 isolationConfiguration = DurationDays(),
-                contactCase = ContactCase(
-                    startDate = isolationStart,
-                    notificationDate = isolationStart,
-                    expiryDate = isolationStartDate.plusDays(11)
+                contactCase = isolationHelper.contactCase(
+                    exposureDate = isolationStart,
+                    notificationDate = isolationStart
+                ),
+                indexInfo = isolationHelper.positiveTest(
+                    previousTest(
+                        testResult = RelevantVirologyTestResult.POSITIVE,
+                        requiresConfirmatoryTest,
+                        testEndDate = isolationStart.minusDays(12)
+                    )
                 )
             )
         )
     }
 
-    private fun setPreviousTest(
-        testResult: VirologyTestResult,
-        requiresConfirmatoryTest: Boolean,
-        fromCurrentIsolation: Boolean
-    ): String {
-        val token = "oldToken"
-        val testEndDate =
-            if (fromCurrentIsolation) testEndDateWithinCurrentIsolation
-            else testEndDateBeforeCurrentIsolation
-        testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(
-            ReceivedTestResult(
-                token,
-                testEndDate,
-                testResult,
-                testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = requiresConfirmatoryTest
-            ),
-            testResultStorageOperation = Overwrite
+    private fun previousNegativeTest(): AcknowledgedTestResult =
+        previousTest(
+            testResult = RelevantVirologyTestResult.NEGATIVE,
+            requiresConfirmatoryTest = false,
+            testEndDate = LocalDateTime.ofInstant(testEndDate, testAppContext.clock.zone).toLocalDate()
         )
-        return token
-    }
 
-    private fun getConfirmedTestResultToken(
-        testResult: VirologyTestResult,
-        diagnosisKeySubmissionSupported: Boolean
-    ): String =
-        when (testResult) {
-            POSITIVE -> if (diagnosisKeySubmissionSupported) POSITIVE_PCR_TOKEN else POSITIVE_PCR_TOKEN_NO_KEY_SUBMISSION
-            NEGATIVE -> if (diagnosisKeySubmissionSupported) NEGATIVE_PCR_TOKEN else NEGATIVE_PCR_TOKEN_NO_KEY_SUBMISSION
-            VOID -> if (diagnosisKeySubmissionSupported) VOID_PCR_TOKEN else VOID_PCR_TOKEN_NO_KEY_SUBMISSION
-        }
+    private fun previousTest(
+        testResult: RelevantVirologyTestResult,
+        requiresConfirmatoryTest: Boolean,
+        testEndDate: LocalDate
+    ): AcknowledgedTestResult =
+        AcknowledgedTestResult(
+            testEndDate,
+            testResult,
+            testKitType = LAB_RESULT,
+            requiresConfirmatoryTest = requiresConfirmatoryTest,
+            acknowledgedDate = testEndDate
+        )
 
     private fun receiveConfirmedTestResult(
         testResult: VirologyTestResult,
         diagnosisKeySubmissionSupported: Boolean,
         testEndDate: Instant? = null
-    ) {
+    ): TestResponse {
         testAppContext.virologyTestingApi.testEndDate = testEndDate
-        receiveTestResult(
+        return receiveTestResult(
             testResult,
             LAB_RESULT,
             diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported,
@@ -929,21 +859,20 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         )
     }
 
-    private fun receiveIndicativePositiveTestResult() {
+    private fun receiveIndicativePositiveTestResult(): TestResponse =
         receiveTestResult(
             POSITIVE,
             RAPID_RESULT,
             diagnosisKeySubmissionSupported = true,
             requiresConfirmatoryTest = true
         )
-    }
 
     private fun receiveTestResult(
         testResult: VirologyTestResult,
         testKit: VirologyTestKitType,
         diagnosisKeySubmissionSupported: Boolean,
         requiresConfirmatoryTest: Boolean
-    ) {
+    ): TestResponse {
         val pollingConfig = TestOrderPollingConfig(
             Instant.now(),
             "pollingToken",
@@ -952,18 +881,21 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
         testAppContext.getTestOrderingTokensProvider().add(pollingConfig)
 
+        val testResponse = TestResponse(
+            testResult,
+            testKit,
+            diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported,
+            requiresConfirmatoryTest = requiresConfirmatoryTest
+        )
         testAppContext.virologyTestingApi.testResponseForPollingToken = mutableMapOf(
-            pollingConfig.testResultPollingToken to TestResponse(
-                testResult,
-                testKit,
-                diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported,
-                requiresConfirmatoryTest = requiresConfirmatoryTest
-            )
+            pollingConfig.testResultPollingToken to testResponse
         )
 
         runBlocking {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
+
+        return testResponse
     }
 
     private fun shareKeys() {
@@ -979,31 +911,38 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     private fun checkNoRelevantTestResult() {
-        assertNull(testAppContext.getRelevantTestResultProvider().testResult)
+        val relevantTestResult = testAppContext.getCurrentState().indexInfo?.testResult
+        assertNull(relevantTestResult)
     }
 
     private fun checkRelevantTestResultUpdated(
-        testResult: RelevantVirologyTestResult
+        testResponse: TestResponse
     ) {
-        checkRelevantTestResult(DIAGNOSIS_KEY_SUBMISSION_TOKEN, testResult)
+        val relevantTestResult = testAppContext.getCurrentState().indexInfo?.testResult
+        assertNotNull(relevantTestResult)
+        assertEquals(testResponse.testResult.toRelevantVirologyTestResult(), relevantTestResult.testResult)
+        assertEquals(testResponse.testKitType, relevantTestResult.testKitType)
+        assertEquals(testResponse.requiresConfirmatoryTest, relevantTestResult.requiresConfirmatoryTest)
+        assertNull(relevantTestResult.confirmedDate)
     }
 
-    private fun checkRelevantTestResult(
-        diagnosisKeySubmissionToken: String,
-        testResult: RelevantVirologyTestResult,
+    private fun checkRelevantTestResultPreserved(
+        acknowledgedTestResult: AcknowledgedTestResult,
         confirmedDateShouldBeNull: Boolean = true
     ) {
-        val relevantTestResult = testAppContext.getRelevantTestResultProvider().testResult
+        val relevantTestResult = testAppContext.getCurrentState().indexInfo?.testResult
         assertNotNull(relevantTestResult)
-        assertEquals(diagnosisKeySubmissionToken, relevantTestResult.diagnosisKeySubmissionToken)
-        assertEquals(testResult, relevantTestResult.testResult)
+        assertEquals(acknowledgedTestResult.testEndDate, relevantTestResult.testEndDate)
+        assertEquals(acknowledgedTestResult.testResult, relevantTestResult.testResult)
+        assertEquals(acknowledgedTestResult.testKitType, relevantTestResult.testKitType)
+        assertEquals(acknowledgedTestResult.requiresConfirmatoryTest, relevantTestResult.requiresConfirmatoryTest)
         assertEquals(confirmedDateShouldBeNull, relevantTestResult.confirmedDate == null)
     }
 
     companion object {
-        private val isolationStart = Instant.now().minus(3, ChronoUnit.DAYS)
-        private val previousIsolationStart = isolationStart.minus(10, ChronoUnit.DAYS)
-        private val testEndDateWithinCurrentIsolation = isolationStart.plus(1, ChronoUnit.DAYS)
-        private val testEndDateBeforeCurrentIsolation = isolationStart.minus(1, ChronoUnit.DAYS)
+        private val isolationStart = LocalDate.now().minus(3, ChronoUnit.DAYS)
+        private val previousIsolationStart = isolationStart.minus(12, ChronoUnit.DAYS)
+        private val testEndDate = isolationStart.atStartOfDay(ZoneOffset.UTC).toInstant()
+            .plus(1, ChronoUnit.DAYS)
     }
 }

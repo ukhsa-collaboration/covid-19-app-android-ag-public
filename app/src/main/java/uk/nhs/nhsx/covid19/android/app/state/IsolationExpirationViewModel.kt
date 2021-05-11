@@ -3,15 +3,14 @@ package uk.nhs.nhsx.covid19.android.app.state
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
+import uk.nhs.nhsx.covid19.android.app.util.isEqualOrAfter
 import java.time.Clock
-import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
 import javax.inject.Inject
 
 class IsolationExpirationViewModel @Inject constructor(
-    private val stateMachine: IsolationStateMachine,
+    private val isolationStateMachine: IsolationStateMachine,
     private val clock: Clock
 ) : ViewModel() {
 
@@ -21,13 +20,17 @@ class IsolationExpirationViewModel @Inject constructor(
     fun checkState(isolationExpiryDateString: String) {
         runCatching {
             val isolationExpiryDate = LocalDate.parse(isolationExpiryDateString)
-            val expiry = isolationExpiryDate.atStartOfDay(ZoneId.systemDefault()).toInstant()
-            val expired = Instant.now(clock).isAfter(expiry)
+            val expired = LocalDate.now(clock).isEqualOrAfter(isolationExpiryDate)
 
-            val state = stateMachine.readState() as? Isolation
-            val showTemperatureNotice = state?.indexCase != null
+            val isolationState = isolationStateMachine.readLogicalState()
+            val showTemperatureNotice = isolationState is PossiblyIsolating &&
+                isolationState.isActiveIndexCase(clock)
             viewState.postValue(ViewState(expired, isolationExpiryDate, showTemperatureNotice))
         }
+    }
+
+    fun acknowledgeIsolationExpiration() {
+        isolationStateMachine.acknowledgeIsolationExpiration()
     }
 
     data class ViewState(val expired: Boolean, val expiryDate: LocalDate, val showTemperatureNotice: Boolean)

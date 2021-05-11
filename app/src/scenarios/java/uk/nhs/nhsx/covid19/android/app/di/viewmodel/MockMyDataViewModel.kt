@@ -3,18 +3,18 @@ package uk.nhs.nhsx.covid19.android.app.di.viewmodel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.about.BaseMyDataViewModel
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import java.time.LocalDate
 
-class MockMyDataViewModel() : BaseMyDataViewModel() {
+class MockMyDataViewModel : BaseMyDataViewModel() {
     companion object {
         var currentOptions = Options()
     }
 
     data class Options(
         val useMock: Boolean = false,
-        val isolationState: IsolationState? = null,
+        val isolationViewState: IsolationViewState? = null,
         val lastRiskyVenueVisitDate: LocalDate? = null,
         val dailyContactTestingOptInDateForIsolation: LocalDate? = null,
         val acknowledgedTestResult: AcknowledgedTestResult? = null
@@ -33,11 +33,11 @@ class MockMyDataViewModel() : BaseMyDataViewModel() {
         }
     }
 
-    override fun getIsolationState(): IsolationState? = currentOptions.isolationState
+    override fun getIsolationState(): IsolationViewState? = currentOptions.isolationViewState
 
     override fun getLastRiskyVenueVisitDate(): LocalDate? = currentOptions.lastRiskyVenueVisitDate
 
-    override fun getDailyContactTestingOptInDateForIsolation(isolation: Isolation): LocalDate? = currentOptions.dailyContactTestingOptInDateForIsolation
+    override fun getDailyContactTestingOptInDate(contactCase: ContactCase?): LocalDate? = currentOptions.dailyContactTestingOptInDateForIsolation
 
     private fun getTestResult(): AcknowledgedTestResult? = currentOptions.acknowledgedTestResult
 }

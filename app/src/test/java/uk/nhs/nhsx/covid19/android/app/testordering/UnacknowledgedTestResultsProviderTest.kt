@@ -18,8 +18,6 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class UnacknowledgedTestResultsProviderTest {
 
@@ -122,24 +120,6 @@ class UnacknowledgedTestResultsProviderTest {
         testSubject.clearBefore(LocalDate.of(1972, 1, 2))
 
         verify { unacknowledgedTestResultsStorage.value = EMPTY_JSON }
-    }
-
-    @Test
-    fun `hasTestResultMatching returns true when a test matches predicate`() {
-        every { unacknowledgedTestResultsStorage.value } returns MULTIPLE_TEST_RESULTS_JSON
-
-        val result = testSubject.hasTestResultMatching(TestResult::isPositive)
-
-        assertTrue(result)
-    }
-
-    @Test
-    fun `hasTestResultMatching returns false when no test matches predicate`() {
-        every { unacknowledgedTestResultsStorage.value } returns MULTIPLE_TEST_RESULTS_NONE_POSITIVE_JSON
-
-        val result = testSubject.hasTestResultMatching(TestResult::isPositive)
-
-        assertFalse(result)
     }
 
     @Test

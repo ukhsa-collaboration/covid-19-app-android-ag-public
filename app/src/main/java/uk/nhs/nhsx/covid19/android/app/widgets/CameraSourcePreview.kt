@@ -24,6 +24,8 @@ import android.view.SurfaceView
 import android.view.ViewGroup
 import com.google.android.gms.vision.CameraSource
 import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.announce
 import java.io.IOException
 
 class CameraSourcePreview @JvmOverloads constructor(
@@ -67,6 +69,9 @@ class CameraSourcePreview @JvmOverloads constructor(
 
         try {
             cameraSource!!.start(surfaceView.holder)
+            context.apply {
+                announce(getString(R.string.camera_active_accessibility_announcement))
+            }
             startRequested = false
         } catch (se: SecurityException) {
             Timber.e(se, "Do not have permission to start the camera")

@@ -15,10 +15,9 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.report.reporter
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
+import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
@@ -26,7 +25,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
+import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
 import java.time.Instant
 import java.time.LocalDate
 import kotlin.test.assertTrue
@@ -37,18 +36,8 @@ class TestResultActivityTest : EspressoTest() {
     private val statusRobot = StatusRobot()
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
     private val shareKeysResultRobot = ShareKeysResultRobot()
-
-    private val isolationStateIndexCaseOnly = Isolation(
-        isolationStart = Instant.now(),
-        isolationConfiguration = DurationDays(),
-        indexCase = IndexCase(LocalDate.now(), expiryDate = LocalDate.now().plusDays(1), selfAssessment = true)
-    )
-
-    private val isolationStateContactCaseOnly = Isolation(
-        isolationStart = Instant.now(),
-        isolationConfiguration = DurationDays(),
-        contactCase = ContactCase(Instant.now(), null, LocalDate.now().plusDays(1))
-    )
+    private val isolationHelper = IsolationHelper(testAppContext.clock)
+    private val isolationChecker = IsolationChecker(testAppContext)
 
     @Test
     fun showContinueToSelfIsolateScreenOnPositiveConfirmatory() = reporter(
@@ -57,7 +46,7 @@ class TestResultActivityTest : EspressoTest() {
         description = "User receives positive confirmatory test result while in isolation",
         kind = SCREEN
     ) {
-        testAppContext.setState(isolationStateContactCaseOnly)
+        testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
@@ -78,12 +67,22 @@ class TestResultActivityTest : EspressoTest() {
 
         testResultRobot.clickIsolationActionButton()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
-
         step(
             stepName = "Positive in isolation",
             stepDescription = "User receives positive test result while in isolation"
         )
+
+        waitFor { shareKeysInformationRobot.checkActivityIsDisplayed() }
+
+        shareKeysInformationRobot.clickContinueButton()
+
+        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+
+        shareKeysResultRobot.clickActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        isolationChecker.assertActiveIndexNoContact()
     }
 
     @Test
@@ -93,7 +92,7 @@ class TestResultActivityTest : EspressoTest() {
         description = "User receives negative confirmatory test result while in isolation when at index case only",
         kind = SCREEN
     ) {
-        testAppContext.setState(isolationStateContactCaseOnly)
+        testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
@@ -114,7 +113,7 @@ class TestResultActivityTest : EspressoTest() {
 
         testResultRobot.clickIsolationActionButton()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
+        isolationChecker.assertActiveContactNoIndex()
 
         step(
             stepName = "Negative confirmatory in isolation when not at index case only",
@@ -129,7 +128,7 @@ class TestResultActivityTest : EspressoTest() {
         description = "User receives negative confirmatory test result while in isolation when at index case only",
         kind = SCREEN
     ) {
-        testAppContext.setState(isolationStateIndexCaseOnly)
+        testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
@@ -149,7 +148,7 @@ class TestResultActivityTest : EspressoTest() {
 
         testResultRobot.clickGoodNewsActionButton()
 
-        assertTrue { testAppContext.getCurrentState() is Default }
+        isolationChecker.assertExpiredIndexNoContact()
 
         step(
             stepName = "Negative in isolation",
@@ -159,18 +158,16 @@ class TestResultActivityTest : EspressoTest() {
 
     @Test
     fun showIsolationScreenWhenReceivingPositiveConfirmatoryAndThenNegativeConfirmatoryTestResult() = notReported {
-        testAppContext.setState(isolationStateIndexCaseOnly)
-
-        testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(
-            ReceivedTestResult(
-                diagnosisKeySubmissionToken = "a",
-                testEndDate = Instant.now(),
-                testResult = POSITIVE,
-                testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
-            ),
-            testResultStorageOperation = Overwrite
+        testAppContext.setState(
+            isolationHelper.selfAssessment(
+                testResult = AcknowledgedTestResult(
+                    testEndDate = LocalDate.now(),
+                    testResult = RelevantVirologyTestResult.POSITIVE,
+                    testKitType = LAB_RESULT,
+                    requiresConfirmatoryTest = false,
+                    acknowledgedDate = LocalDate.now()
+                )
+            ).asIsolation()
         )
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
@@ -194,109 +191,110 @@ class TestResultActivityTest : EspressoTest() {
 
         testResultRobot.clickIsolationActionButton()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
+        isolationChecker.assertActiveIndexNoContact()
     }
 
     @RetryFlakyTest
     @Test
-    fun showIsolationScreenWhenReceivingNegativeConfirmatoryAndThenPositiveConfirmatoryTestResultAndSharingKeys() =
-        notReported {
-            testAppContext.setState(Default())
-
-            testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(
-                ReceivedTestResult(
-                    diagnosisKeySubmissionToken = "a",
-                    testEndDate = Instant.now(),
-                    testResult = NEGATIVE,
-                    testKitType = LAB_RESULT,
-                    diagnosisKeySubmissionSupported = true,
-                    requiresConfirmatoryTest = false
-                ),
-                testResultStorageOperation = Overwrite
-            )
-
-            testAppContext.getUnacknowledgedTestResultsProvider().add(
-                ReceivedTestResult(
-                    diagnosisKeySubmissionToken = "a2",
-                    testEndDate = Instant.now(),
-                    testResult = POSITIVE,
-                    testKitType = LAB_RESULT,
-                    diagnosisKeySubmissionSupported = true,
-                    requiresConfirmatoryTest = false
+    fun showIsolationScreenWhenReceivingNegativeConfirmatoryAndThenPositiveConfirmatoryTestResultAndSharingKeys() = notReported {
+        testAppContext.setState(
+            IsolationState(
+                isolationConfiguration = DurationDays(),
+                indexInfo = isolationHelper.negativeTest(
+                    testResult = AcknowledgedTestResult(
+                        testEndDate = LocalDate.now(),
+                        testResult = RelevantVirologyTestResult.NEGATIVE,
+                        testKitType = LAB_RESULT,
+                        requiresConfirmatoryTest = false,
+                        acknowledgedDate = LocalDate.now()
+                    )
                 )
             )
+        )
 
-            startTestActivity<TestResultActivity>()
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "a2",
+                testEndDate = Instant.now(),
+                testResult = POSITIVE,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
+            )
+        )
 
-            testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation()
+        startTestActivity<TestResultActivity>()
 
-            testResultRobot.checkExposureLinkIsDisplayed()
+        testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation()
 
-            testResultRobot.checkIsolationActionButtonShowsContinue()
+        testResultRobot.checkExposureLinkIsDisplayed()
 
-            testResultRobot.clickIsolationActionButton()
+        testResultRobot.checkIsolationActionButtonShowsContinue()
 
-            shareKeysInformationRobot.checkActivityIsDisplayed()
+        testResultRobot.clickIsolationActionButton()
 
-            shareKeysInformationRobot.clickContinueButton()
+        shareKeysInformationRobot.checkActivityIsDisplayed()
 
-            waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+        shareKeysInformationRobot.clickContinueButton()
 
-            shareKeysResultRobot.clickActionButton()
+        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
 
-            assertTrue { testAppContext.getCurrentState() is Isolation }
-        }
+        shareKeysResultRobot.clickActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        isolationChecker.assertActiveIndexNoContact()
+    }
 
     @RetryFlakyTest
     @Test
-    fun showIsolationScreenWhenReceivingNegativeConfirmatoryAndThenPositiveConfirmatoryTestResultAndRefusingToShareKeys() =
-        notReported {
-            testAppContext.setTemporaryExposureKeyHistoryResolutionRequired(testAppContext.app, false)
+    fun showIsolationScreenWhenReceivingNegativeConfirmatoryAndThenPositiveConfirmatoryTestResultAndRefusingToShareKeys() = notReported {
+        testAppContext.setTemporaryExposureKeyHistoryResolutionRequired(testAppContext.app, false)
 
-            testAppContext.setState(Default())
+        testAppContext.setState(isolationHelper.neverInIsolation())
 
-            testAppContext.getUnacknowledgedTestResultsProvider().add(
-                ReceivedTestResult(
-                    diagnosisKeySubmissionToken = "a",
-                    testEndDate = Instant.now(),
-                    testResult = NEGATIVE,
-                    testKitType = LAB_RESULT,
-                    diagnosisKeySubmissionSupported = true,
-                    requiresConfirmatoryTest = false
-                )
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "a",
+                testEndDate = Instant.now(),
+                testResult = NEGATIVE,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
+        )
 
-            testAppContext.getUnacknowledgedTestResultsProvider().add(
-                ReceivedTestResult(
-                    diagnosisKeySubmissionToken = "a2",
-                    testEndDate = Instant.now(),
-                    testResult = POSITIVE,
-                    testKitType = LAB_RESULT,
-                    diagnosisKeySubmissionSupported = true,
-                    requiresConfirmatoryTest = false
-                )
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "a2",
+                testEndDate = Instant.now(),
+                testResult = POSITIVE,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
             )
+        )
 
-            startTestActivity<TestResultActivity>()
+        startTestActivity<TestResultActivity>()
 
-            testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation()
+        testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation()
 
-            testResultRobot.checkExposureLinkIsDisplayed()
+        testResultRobot.checkExposureLinkIsDisplayed()
 
-            testResultRobot.checkIsolationActionButtonShowsContinue()
+        testResultRobot.checkIsolationActionButtonShowsContinue()
 
-            testResultRobot.clickIsolationActionButton()
+        testResultRobot.clickIsolationActionButton()
 
-            shareKeysInformationRobot.checkActivityIsDisplayed()
+        shareKeysInformationRobot.checkActivityIsDisplayed()
 
-            shareKeysInformationRobot.clickContinueButton()
+        shareKeysInformationRobot.clickContinueButton()
 
-            assertTrue { testAppContext.getCurrentState() is Isolation }
-        }
+        isolationChecker.assertActiveIndexNoContact()
+    }
 
     @Test
     fun showDoNotHaveToSelfIsolateScreenOnPositiveConfirmatory() = notReported {
-        testAppContext.setState(Default(previousIsolation = isolationStateIndexCaseOnly))
+        testAppContext.setState(isolationHelper.selfAssessment(expired = true).asIsolation())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
@@ -317,12 +315,12 @@ class TestResultActivityTest : EspressoTest() {
 
         testResultRobot.clickGoodNewsActionButton()
 
-        assertTrue { testAppContext.getCurrentState() is Default }
+        isolationChecker.assertExpiredIndexNoContact()
     }
 
     @Test
     fun showDoNotHaveToSelfIsolateScreenOnNegativeConfirmatory() = notReported {
-        testAppContext.setState(Default())
+        testAppContext.setState(isolationHelper.neverInIsolation())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
@@ -343,7 +341,7 @@ class TestResultActivityTest : EspressoTest() {
 
         testResultRobot.clickGoodNewsActionButton()
 
-        assertTrue { testAppContext.getCurrentState() is Default }
+        isolationChecker.assertNeverIsolating()
     }
 
     @Test
@@ -353,7 +351,7 @@ class TestResultActivityTest : EspressoTest() {
         description = "User receives void confirmatory test result while in isolation",
         kind = SCREEN
     ) {
-        testAppContext.setState(isolationStateContactCaseOnly)
+        testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
@@ -374,7 +372,7 @@ class TestResultActivityTest : EspressoTest() {
 
         testResultRobot.clickIsolationActionButton()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
+        isolationChecker.assertActiveContactNoIndex()
 
         step(
             stepName = "Void confirmatory in isolation",
@@ -384,7 +382,7 @@ class TestResultActivityTest : EspressoTest() {
 
     @Test
     fun showAreNotIsolatingScreenOnNegativeConfirmatory() = notReported {
-        testAppContext.setState(Default())
+        testAppContext.setState(isolationHelper.neverInIsolation())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
@@ -401,11 +399,13 @@ class TestResultActivityTest : EspressoTest() {
 
         testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation()
         testResultRobot.checkGoodNewsActionButtonShowsContinue()
+
+        isolationChecker.assertNeverIsolating()
     }
 
     @Test
     fun showAreNotIsolatingScreenOnVoidConfirmatory() = notReported {
-        testAppContext.setState(Default())
+        testAppContext.setState(isolationHelper.neverInIsolation())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
@@ -426,13 +426,13 @@ class TestResultActivityTest : EspressoTest() {
 
         testResultRobot.clickGoodNewsActionButton()
 
-        assertTrue { testAppContext.getCurrentState() is Default }
+        isolationChecker.assertNeverIsolating()
     }
 
     @Test
     fun onActivityResultTestOrderingOk_navigateToStatus() = notReported {
         runWithIntents {
-            testAppContext.setState(isolationStateContactCaseOnly)
+            testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
             testAppContext.getUnacknowledgedTestResultsProvider().add(
                 ReceivedTestResult(
@@ -459,7 +459,7 @@ class TestResultActivityTest : EspressoTest() {
     @Test
     fun onActivityResultTestOrderingNotOk_finish() = notReported {
         runWithIntents {
-            testAppContext.setState(isolationStateContactCaseOnly)
+            testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
             testAppContext.getUnacknowledgedTestResultsProvider().add(
                 ReceivedTestResult(
@@ -485,7 +485,7 @@ class TestResultActivityTest : EspressoTest() {
 
     @Test
     fun onBackPressed_navigate() = notReported {
-        testAppContext.setState(isolationStateContactCaseOnly)
+        testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(

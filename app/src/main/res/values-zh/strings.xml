@@ -28,13 +28,7 @@
     <string name="status_option_read_latest_advice">了解检测相关信息</string>
     <string name="status_option_contact_tracing">接触追踪</string>
     <string name="contact_tracing_active">您的应用程序处于活动状态并正在扫描</string>
-    <string name="contact_tracing_not_active">接触人追踪未激活</string>
-    <string name="status_area_risk_level_low">低</string>
-    <string name="status_area_risk_level_medium">中</string>
-    <string name="status_area_risk_level_high">高</string>
-    <string name="low_risk_level_text">低—您的地方当局目前被评估为“低风险”，感染水平与全国其他大部分地区相似。</string>
-    <string name="medium_risk_level_text">中—您的地区或邻近的一个地区的感染水平高或者正在上升。请遵循国家指导。</string>
-    <string name="high_risk_level_text">高-您所在的地方当局或附近的地方当局采取了比英格兰及威尔士更多的额外措施（例如封锁），以减少由于该地区感染水平高而导致的传播。 已制定了详细的行动计划，并在国家支持下增加了当地资源。</string>
+    <string name="contact_tracing_not_active">接触者追踪暂停</string>
     <string name="risk_level_title">在我的地区</string>
     <string name="qr_code_permission_denied_action">允许相机权限</string>
     <string name="qr_code_permission_denied_subtitle">此应用使用您的相机签到酒吧和餐厅等场所。\n\n请允许相机权限扫描官方NHS QR码。</string>
@@ -83,7 +77,6 @@
     <string name="test_ordering_description_3">应用程序和网站之间共享的唯一信息是数字“令牌（token)”，可帮助我们将您的测试结果返回给应用程序。</string>
     <string name="test_ordering_description_4">隐私声明中描述了测试过程中使用的所有数据：</string>
     <string name="test_ordering_description_5">要了解此应用如何使用您的数据，请访问：</string>
-    <string name="test_ordering_description_6">您只能使用此应用为自己获得测试。 要想为其他人获得测试，请使用政府的冠状病毒测试网站：</string>
     <string name="book_free_test_now">请为您自己预定检测</string>
     <string name="about_this_app_title">该应用程序说明</string>
     <string name="title_how_app_works">这个应用程序是如何运作的</string>
@@ -108,8 +101,8 @@
     <string name="cancel">取消</string>
     <string name="notification_action_exposure_reminder">打开接触追踪</string>
     <string name="notification_title_exposure_reminder">是时候重新打开接触追踪了</string>
-    <string name="resume_contact_tracing_title">接触追踪现已关闭</string>
-    <string name="resume_contact_tracing_subtitle">选择应用程序何时可以提醒您重新打开接触追踪</string>
+    <string name="resume_contact_tracing_title">暂停接触者追踪</string>
+    <string name="resume_contact_tracing_subtitle">选择应用程序提醒您再次开启接触者追踪的时间</string>
     <string name="contact_tracing_notification_reminder_dialog_message">关闭接触追踪将影响应用程序的有效性。</string>
     <string name="edit_postcode_district_title">编辑邮政编码区域</string>
     <string name="onboarding_age_confirmation_title">您是否年满16岁？</string>
@@ -119,7 +112,6 @@
     <string name="onboarding_age_restriction_title">遗憾的是，您不能使用此应用程序。 此应用仅适用于16岁或以上的人。</string>
     <string name="onboarding_age_restriction_text">感谢您的关注。 本应用程序仅适用于16岁以上人员。</string>
     <string name="url_terms_of_use">https://covid19.nhs.uk/terms-of-use-chinese.html</string>
-    <string name="url_nhs_tablet_device">https://faq.covid19.nhs.uk/article/KA-01245/en-us</string>
     <string name="url_nhs_111_online">https://111.nhs.uk/</string>
     <string name="url_accessibility_statement">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info">https://faq.covid19.nhs.uk/article/KA-01250/en-us</string>
@@ -136,7 +128,7 @@
         <item quantity="other">您需要进行自我隔离，直到 %1$s的23:59。在那之前还剩下%1$s天。</item>
     </plurals>
     <plurals name="resume_contact_tracing_hours">
-        <item quantity="other">%1$d 小时</item>
+        <item quantity="other">%d 小时</item>
     </plurals>
     <string name="app_name">NHS Covid 19</string>
     <string name="continue_button">继续</string>
@@ -146,7 +138,6 @@
     <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">如果您与冠状病毒检查呈阳性的人员有过密切接触，本应用程序将向您发送警报。\n\n为了启用本应用程序“对接触者进行跟踪”的功能，您需要允许 “暴露通知”。\n\n如果您改变主意，则可以随时更改设置的权限。</string>
     <string name="privacy_notice">隐私声明</string>
-    <string name="tablet_information_url">使用平板电脑的信息</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
     <string name="post_code_rationale">邮政编码区域有助于了解冠状病毒在不同地区的传播。 这样可以确保我们为您所在地区提供最佳的公共卫生建议。\n\n请放心。 您的邮政编码区域将不会用于追踪您的位置。</string>
     <string name="enable_bluetooth_rationale">本应用程序使用蓝牙来获悉您的手机何时靠近了也安装了本应用程序的另一部手机。如果您关闭了蓝牙，本应用程序将无法运行。\n\n本应用程序使用了一种可节省电池的“蓝牙低能耗”技术。\n\n请进入设置并打开蓝牙。</string>
@@ -155,8 +146,6 @@
     <string name="enable_location_service_title">您需要在手机上打开位置服务</string>
     <string name="enable_location_service_rationale">要使蓝牙正常工作，我们需要您打开手机上的位置服务。\n\n此应用程序未使用蓝牙或您的位置来追踪您。 您的个人身份将始终受到保护。\n\n如果您未在手机上启用位置服务，则此应用程序将无法使用。\n\n要启用此应用程序，请进入“设置”并打开位置信息服务。</string>
     <string name="post_code_example">您需要英格兰或威尔士邮政编码区域才能使用此应用程序。\n\n示例：如果您的邮政编码是CE1B 2PQ，请输入“ CE1B”。 如果您的邮政编码是CR0 3RL，请输入“ CR0”。 如果您的邮政编码是L4 0RE，请输入“ L4”。</string>
-    <string name="tablet_support_title">该运用程序专供智能手机使用</string>
-    <string name="tablet_support_description">您的设备似乎是平板电脑。 此应用程序仅适用于智能手机，因为只有安装在外出时始终随身携带的设备上，该应用才有效。 请在您的智能手机上安装该应用程序。</string>
     <string name="test_ordering_testing_privacy_notice">测试隐私声明</string>
     <string name="test_ordering_app_privacy_notice">应用程序隐私声明</string>
     <string name="test_ordering_book_test_for_someone_else">为其他人预定测试</string>
@@ -172,7 +161,6 @@
     <string name="test_ordering_failure_description">在重试之前，请检查手机的移动数据设置是否打开，检查Wi-Fi连接（如果使用的是Wi-Fi连接），并确保已关闭飞行模式。</string>
     <string name="notification_title_risky_venue">您近期曾与新冠病毒阳性 (COVID-19) 确诊患者在同一天出现在同一场所中</string>
     <string name="notification_text_post_code_risk_changed">到访某一场所时，请扫描 NHS 官方二维码。</string>
-    <string name="status_area_risk_level">%s 区域的危险水平为 %s</string>
     <string name="notification_channel_area_risk_changed_name">区域风险程度更改</string>
     <string name="notification_channel_area_risk_changed_description">这些通知有助于追踪您所在地区的感染风险。</string>
     <string name="notification_channel_isolation_state_name">隔离</string>
@@ -261,7 +249,6 @@
     <string name="contact_tracing_notification_reminder_dialog_title">设置提醒以在 %1$s 小时内重新打开接触追踪</string>
     <string name="okay">好</string>
     <string name="template_hours">%d  小时</string>
-    <string name="resume_contact_tracing_don_t_remind_me">不要提醒我</string>
     <string name="url_how_app_works">https://covid19.nhs.uk/introducing-the-app-chinese.html</string>
     <string name="url_latest_advice_in_isolation">https://faq.covid19.nhs.uk/article/KA-01251/en-us</string>
     <string name="submit_keys_information_description_text">继续在下方分享本结果\n\n当出现提示时，请选择“分享”或“分享您设备的随机 ID”</string>
@@ -281,7 +268,6 @@
     <string name="submit_keys_information_title">帮助通知其他人</string>
     <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_terms_of_use_wls">https://covid19.nhs.uk/terms-of-use-chinese.html</string>
-    <string name="url_nhs_tablet_device_wls">https://faq.covid19.nhs.uk/article/KA-01245/en-us</string>
     <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/</string>
     <string name="url_accessibility_statement_wls">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info_wls">https://faq.covid19.nhs.uk/article/KA-01250/en-us</string>
@@ -311,14 +297,11 @@
     <string name="authentication_example">例如：5apv-enka</string>
     <string name="authentication_title">目前仅适用于NHS志愿者，怀特岛（Isle of Wight）和纽汉姆 （Newham）居民</string>
     <string name="authentication_where_can_i_find_code">在哪里可以找到此代码？</string>
-    <string name="high_risk_level_text_wls">高-您所在的地方当局或附近的地方当局采取了比英格兰及威尔士更多的额外措施（例如封锁），以减少由于该地区感染水平高而导致的传播。 已制定了详细的行动计划，并在国家支持下增加了当地资源。</string>
     <string name="link_test_result_error_no_connection">没有网络。请连接到您的网络或WiFi，然后重试。</string>
     <string name="link_test_result_error_unknown">出现故障。请再试一遍。</string>
     <string name="logo_nhs_england_description">NHS 测试和追踪</string>
     <string name="logo_nhs_generic_description">NHS Covid 19</string>
     <string name="logo_nhs_wales_description">NHS威尔士测试追踪保护</string>
-    <string name="low_risk_level_text_wls">低—您的地方当局目前被评估为“低风险”，感染水平与全国其他大部分地区相似。</string>
-    <string name="medium_risk_level_text_wls">中—您的地区或邻近的一个地区的感染水平高或者正在上升。请遵循国家指导。</string>
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
     <string name="notification_channel_background_work_name">Background activities</string>
     <string name="notification_text_updating_database">载入中...</string>
@@ -329,16 +312,11 @@
     <string name="questionnaire_no_i_dont_have_symptom">不，我没有 %s</string>
     <string name="questionnaire_yes_i_have_symptom">是的，我有 %s</string>
     <string name="state_test_positive_then_negative_info">您的冠状病毒检测结果呈阴性。尽管如此，您仍然应该居家自我隔离。这是因为您之前的检测结果呈阳性，或者最近报告了一些症状。</string>
-    <string name="status_area_risk_level_high_wls">高</string>
-    <string name="status_area_risk_level_low_wls">低</string>
-    <string name="status_area_risk_level_medium_wls">中</string>
-    <string name="status_area_risk_level_wls">%s 区域的危险水平为 %s</string>
     <string name="test_result_negative_then_positive_continue_explanation">若要了解应用程序如何计算自我隔离天数，请点击以下\"常见问题解答\"链接。\n\n检测结果表明，在做检测时您已经感染上了病毒。有关部门已通过电子邮件、短信或电话向您发送了更多的信息。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。</string>
     <string name="test_result_positive_then_negative_explanation">若要了解应用程序如何计算自我隔离天数，请访问\"常见问题解答\"。\n\n最新检测结果表明，在做检测时您没有感染病毒。如果您最近报告了一些症状，请确保您已经预订检测。如果您出现症状，请在该应用程序上报告。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。</string>
     <string name="test_result_void_already_not_in_isolation_subtitle">若要了解应用程序如何计算自我隔离天数，请访问\"常见问题解答\"。\n\n本次检测后我们尚无法确定您是否感染上冠状病毒，因此您应该再检测一次。有关部门已通过电子邮件、短信或电话向您发送了更多的信息。如果您还未满 18 岁，建议您将此消息提供给您信任的成年人。</string>
     <string name="test_result_void_no_self_isolation_subtitle">尽管在测试时我们无法确定您是否带有冠状病毒</string>
     <string name="test_result_your_test_result">您的检测结果</string>
-    <string name="test_result_negative_no_self_isolation_description">您的冠状病毒测试结果为阴性</string>
     <string name="test_result_negative_no_self_isolation_explanation">检测结果表明，在做检测时您没有感染病毒。如果您确实出现症状，请在本应用程序上进行报告。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。</string>
     <string name="test_result_negative_no_self_isolation_subtitle">您的自我隔离现已结束</string>
     <string name="test_result_positive_no_self_isolation_description">但是，如果您体温较高，请继续自我隔离，直到温度恢复正常为止。</string>
@@ -353,7 +331,6 @@
     <string name="update_in_play_store">立即更新您的应用程序</string>
     <string name="updated_privacy_control_text">我们对该应用程序进行了一些更改，以帮助您在旅行时它更有效地起作用。几个国家正在共同合作，以便随着人们越境进入不同国家，接触者追踪可以继续起作用。\n\n来自英格兰、威尔士、苏格兰、北爱尔兰、泽西岛和直布罗陀的官方联系跟踪应用程序将能够共享数据，同时保持用户的匿名性。\n\n如果您检测到冠状病毒呈阳性，则可以选择与国家健康体系（NHS） 共享数据，以便我们可以向这些国家/地区需要被提醒的其他应用程序用户发送通知。</string>
     <string name="updated_privacy_title">政策变更</string>
-    <string name="about_local_authority">地方当局</string>
     <string name="checkin_information_title_new">更多信息</string>
     <string name="confirm_and_start">确认</string>
     <string name="exposure_faqs">常见问题</string>
@@ -451,7 +428,6 @@
     <string name="unsupported_device">设置方面的限制（例如，如果这是公司电话）。\n\n电话上的另一个应用程序正在使用相同的技术，因此该应用程序无法运行。</string>
     <string name="user_data_daily_contact_testing_text">确认参加</string>
     <string name="user_data_daily_contact_testing_title">日常接触者检测</string>
-    <string name="about_manage_my_data_settings_subtitle">当地政府, 试验结果, 场所历史</string>
     <string name="ill_do_it_later">稍后进行</string>
     <string name="link_test_result_daily_contact_testing_description">如果您的检测结果呈阳性，输入您将在上方文本框收到的代码并进行自我隔离\n\n如果您的检测结果呈阴性，您将不会收到代码。您需要在下方告知我们您的检测结果呈阴性，然后继续</string>
     <string name="link_test_result_daily_contact_testing_description_list_header">此外：</string>
@@ -508,7 +484,7 @@
     <string name="what_is_random_id_text">您将被要求分享一个“随机 ID”。这是一个随机生成的代码，可以与其他开启了“接触风险通知”的手机进行共享。</string>
     <string name="what_is_random_id_title">它是如何发挥作用的？</string>
     <string name="getting_tested_online_service">正在测试</string>
-    <string name="message_develop_coronavirus_symptoms">如果您出现任何这些症状，请在此应用程序上报告症状并立即预订免费测试。\n\n有关更多建议，请访问：</string>
+    <string name="message_develop_coronavirus_symptoms">如果您出现任何列明的症状，请通过本应用程序进行报告。\n\n有关更多建议，请访问：\n\n</string>
     <string name="notification_text_share_keys_reminder">在保护您隐私的同时，让其他人知道他们可能有感染冠状病毒的风险。</string>
     <string name="notification_title_share_keys_reminder">通知他人，提醒风险</string>
     <string name="share_keys_reminder_do_not_share_button">不通知其他人</string>
@@ -520,6 +496,20 @@
     <string name="share_keys_reminder_title">通知他人，提醒风险</string>
     <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="url_nhs_get_tested_wls">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="camera_active_accessibility_announcement">启动摄像头，将其对准一个 NHS 官方二维码，扫描后入场。</string>
+    <string name="contact_tracing_hub_consider_pausing_text">将手机放于储物柜或公共区域\n\n在固定的透明屏障后工作，并且完全与其他人隔绝\n\n您是卫生和社会护理工作者，并且穿戴了医用级个人防护装备（如医用口罩）\n\n您是在医院或社区诊所等医疗机构工作的医疗工作者</string>
+    <string name="contact_tracing_hub_consider_pausing_title">接触者追踪有助于保护您和其他人免受冠状病毒 (COVID-19) 感染。\n\n您应该仅在以下情况下，暂停接触者追踪功能</string>
+    <string name="contact_tracing_hub_should_not_pause_text">不会对手机续航时间产生太大影响\n\n无法追踪您的位置</string>
+    <string name="contact_tracing_hub_should_not_pause_title">接触者追踪：</string>
+    <string name="contact_tracing_hub_status_off">接触者追踪关闭</string>
+    <string name="contact_tracing_hub_status_on">接触者追踪开启</string>
+    <string name="contact_tracing_hub_title">接触者追踪管理</string>
+    <string name="contact_tracing_hub_turn_back_on_reminder">您可以在应用程序中设置提醒，提醒您稍后再次开启接触者追踪。</string>
     <string name="notification_channel_share_keys_reminder_description">These notifications remind you to share random IDs</string>
     <string name="notification_channel_share_keys_reminder_name">Share random IDs reminder</string>
+    <string name="status_contact_tracing_activate">再次开启</string>
+    <string name="status_option_toggle_contact_tracing">接触者追踪管理</string>
+    <string name="ukca_compliance_announcement">UKCA 标志</string>
+    <string name="user_data_acknowledged_date">确认于</string>
+    <string name="user_data_test_end">测试结束</string>
 </resources>

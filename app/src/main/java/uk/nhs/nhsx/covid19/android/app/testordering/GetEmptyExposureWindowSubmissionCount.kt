@@ -4,10 +4,7 @@ import java.security.SecureRandom
 import javax.inject.Inject
 import kotlin.math.max
 
-class GetEmptyExposureWindowSubmissionCount(private val secureRandom: SecureRandom) {
-
-    @Inject
-    constructor() : this(secureRandom = SecureRandom())
+class GetEmptyExposureWindowSubmissionCount @Inject constructor(private val secureRandom: SecureRandom) {
 
     operator fun invoke(numberOfExposureWindowsSent: Int = 0): Int {
         val totalCallCount = secureRandom.nextInt(MAX_CALLS - MIN_CALLS) + MIN_CALLS

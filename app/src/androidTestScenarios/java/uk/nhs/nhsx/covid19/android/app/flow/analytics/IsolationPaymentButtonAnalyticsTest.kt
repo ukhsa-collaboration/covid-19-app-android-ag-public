@@ -1,16 +1,15 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
-import java.time.Instant
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit.DAYS
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit.DAYS
 
 class IsolationPaymentButtonAnalyticsTest : AnalyticsTest() {
 
@@ -20,12 +19,11 @@ class IsolationPaymentButtonAnalyticsTest : AnalyticsTest() {
     fun increasesSelectedIsolationPaymentsButtonOnButtonClick() {
         testAppContext.getIsolationPaymentTokenStateProvider().tokenState = Token("token")
         testAppContext.setState(
-            Isolation(
-                isolationStart = Instant.now().minus(20, DAYS),
+            IsolationState(
                 isolationConfiguration = DurationDays(),
                 contactCase = ContactCase(
-                    startDate = Instant.now().minus(10, DAYS),
-                    notificationDate = Instant.now().minus(2, DAYS),
+                    exposureDate = LocalDate.now().minus(10, DAYS),
+                    notificationDate = LocalDate.now().minus(2, DAYS),
                     expiryDate = LocalDate.now().plusDays(30)
                 )
             )

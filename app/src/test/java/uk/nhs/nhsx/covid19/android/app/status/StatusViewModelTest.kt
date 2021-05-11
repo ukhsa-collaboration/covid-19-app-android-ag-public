@@ -10,9 +10,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -22,11 +19,13 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolatio
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.Translatable
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
+import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
+import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationPermissionHelper
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
+import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
 import uk.nhs.nhsx.covid19.android.app.payment.CanClaimIsolationPayment
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
@@ -40,20 +39,25 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
+import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.asIsolation
+import uk.nhs.nhsx.covid19.android.app.state.asLogical
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.ExposureConsent
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.IsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.TestResult
 import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.VenueAlert
+import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.Isolating
+import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.NotIsolating
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Risk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.ViewState
 import uk.nhs.nhsx.covid19.android.app.util.DistrictAreaStringProvider
-import java.time.temporal.ChronoUnit.DAYS
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 class StatusViewModelTest {
 
@@ -63,7 +67,7 @@ class StatusViewModelTest {
     private val postCodeProvider = mockk<PostCodeProvider>(relaxed = true)
     private val postCodeIndicatorProvider = mockk<RiskyPostCodeIndicatorProvider>(relaxed = true)
     private val sharedPreferences = mockk<SharedPreferences>(relaxed = true)
-    private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
+    private val isolationStateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
     private val userInbox = mockk<UserInbox>(relaxed = true)
     private val notificationProvider = mockk<NotificationProvider>(relaxed = true)
     private val districtAreaUrlProvider = mockk<DistrictAreaStringProvider>(relaxed = true)
@@ -72,30 +76,20 @@ class StatusViewModelTest {
         mockk<LastAppRatingStartedDateProvider>(relaxed = true)
     private val canClaimIsolationPayment = mockk<CanClaimIsolationPayment>(relaxed = true)
     private val isolationPaymentTokenStateProvider = mockk<IsolationPaymentTokenStateProvider>(relaxed = true)
-    private val lastVisitedBookTestTypeVenueDateProvider = mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxUnitFun = true)
+    private val lastVisitedBookTestTypeVenueDateProvider =
+        mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxUnitFun = true)
 
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
     private val showInformationScreenObserver = mockk<Observer<InformationScreen>>(relaxed = true)
     private val analyticsEventProcessorMock = mockk<AnalyticsEventProcessor>(relaxed = true)
-    private val clock = mockk<Clock>(relaxed = true)
+    private val exposureNotificationManager = mockk<ExposureNotificationManager>()
+    private val exposureNotificationPermissionHelperFactory = mockk<ExposureNotificationPermissionHelper.Factory>()
+    private val exposureNotificationPermissionHelper = mockk<ExposureNotificationPermissionHelper>(relaxUnitFun = true)
 
-    private val testSubject =
-        StatusViewModel(
-            postCodeProvider,
-            postCodeIndicatorProvider,
-            sharedPreferences,
-            isolationStateMachine,
-            userInbox,
-            notificationProvider,
-            districtAreaUrlProvider,
-            startAppReviewFlowConstraint,
-            lastReviewFlowStartedDateProvider,
-            canClaimIsolationPayment,
-            isolationPaymentTokenStateProvider,
-            lastVisitedBookTestTypeVenueDateProvider,
-            analyticsEventProcessorMock,
-            clock
-        )
+    private val fixedClock = Clock.fixed(Instant.parse("2020-05-22T10:00:00Z"), ZoneOffset.UTC)
+    private val isolationHelper = IsolationHelper(fixedClock)
+
+    private lateinit var testSubject: StatusViewModel
 
     private val lowRiskyPostCodeIndicator = RiskIndicator(
         colorScheme = ColorScheme.GREEN,
@@ -161,13 +155,14 @@ class StatusViewModelTest {
     )
 
     private val defaultViewState = ViewState(
-        currentDate = LocalDate.now(),
+        currentDate = LocalDate.now(fixedClock),
         areaRiskState = mediumRisk,
-        isolationState = DEFAULT_ISOLATION_STATE,
+        isolationState = DEFAULT_ISOLATION_VIEW_STATE,
         latestAdviceUrl = DEFAULT_LATEST_ADVICE_URL_RES_ID,
-        showExposureNotificationReminderDialog = false,
         showIsolationPaymentButton = false,
-        showOrderTestButton = false
+        showOrderTestButton = false,
+        showReportSymptomsButton = true,
+        exposureNotificationsEnabled = false,
     )
 
     @Before
@@ -177,10 +172,33 @@ class StatusViewModelTest {
             "medium",
             mediumRiskyPostCodeIndicator
         )
+        every {
+            exposureNotificationPermissionHelperFactory.create(any(), any())
+        } returns exposureNotificationPermissionHelper
         every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns false
         every { userInbox.fetchInbox() } returns DEFAULT_INFORMATION_SCREEN_STATE
-        every { isolationStateMachine.readState() } returns DEFAULT_ISOLATION_STATE
+        every { isolationStateMachine.readLogicalState() } returns DEFAULT_ISOLATION_STATE
         coEvery { districtAreaUrlProvider.provide(any()) } returns DEFAULT_LATEST_ADVICE_URL_RES_ID
+        coEvery { exposureNotificationManager.isEnabled() } returns false
+
+        testSubject = StatusViewModel(
+            postCodeProvider,
+            postCodeIndicatorProvider,
+            sharedPreferences,
+            isolationStateMachine,
+            userInbox,
+            notificationProvider,
+            districtAreaUrlProvider,
+            startAppReviewFlowConstraint,
+            lastReviewFlowStartedDateProvider,
+            canClaimIsolationPayment,
+            isolationPaymentTokenStateProvider,
+            lastVisitedBookTestTypeVenueDateProvider,
+            analyticsEventProcessorMock,
+            fixedClock,
+            exposureNotificationManager,
+            exposureNotificationPermissionHelperFactory
+        )
 
         testSubject.viewState.observeForever(viewStateObserver)
         testSubject.showInformationScreen().observeForever(showInformationScreenObserver)
@@ -257,9 +275,10 @@ class StatusViewModelTest {
 
     @Test
     fun `get latest url when not in default state`() {
-        val isolationState = Isolation(Instant.now(), DurationDays())
+        val contactCase = isolationHelper.contactCase()
+        val isolationState = contactCase.asIsolation().asLogical()
 
-        every { isolationStateMachine.readState() } returns isolationState
+        every { isolationStateMachine.readLogicalState() } returns isolationState
         coEvery { districtAreaUrlProvider.provide(R.string.url_latest_advice_in_isolation) } returns 0
 
         testSubject.updateViewState()
@@ -270,8 +289,12 @@ class StatusViewModelTest {
             viewStateObserver.onChanged(
                 defaultViewState.copy(
                     latestAdviceUrl = 0,
-                    isolationState = isolationState,
-                    showOrderTestButton = true
+                    showReportSymptomsButton = true,
+                    showOrderTestButton = true,
+                    isolationState = Isolating(
+                        isolationStart = contactCase.startDate,
+                        expiryDate = contactCase.expiryDate,
+                    )
                 )
             )
         }
@@ -308,26 +331,6 @@ class StatusViewModelTest {
         verify { sharedPreferences.unregisterOnSharedPreferenceChangeListener(any()) }
         verify { isolationPaymentTokenStateProvider.removeTokenStateListener(any()) }
         verify { userInbox.unregisterListener(any()) }
-    }
-
-    @Test
-    fun `on stop exposure notification clicked show exposure notification reminder dialog if notification is allowed`() {
-        every { notificationProvider.isChannelEnabled(any()) } returns true
-
-        testSubject.updateViewState()
-        testSubject.onStopExposureNotificationsClicked()
-
-        verify { viewStateObserver.onChanged(defaultViewState.copy(showExposureNotificationReminderDialog = true)) }
-    }
-
-    @Test
-    fun `on stop exposure notification clicked do show exposure notification reminder dialog if notification is not allowed`() {
-        every { notificationProvider.isChannelEnabled(any()) } returns false
-
-        testSubject.updateViewState()
-        testSubject.onStopExposureNotificationsClicked()
-
-        verify { viewStateObserver.onChanged(defaultViewState) }
     }
 
     @Test
@@ -429,42 +432,45 @@ class StatusViewModelTest {
 
     @Test
     fun `on update view state should show book test button if does not contain book test type venue at risk but is in isolation as index case`() {
-        val isolationState = Isolation(
-            isolationStart = Instant.now(),
-            isolationConfiguration = DurationDays(),
-            indexCase = IndexCase(
-                symptomsOnsetDate = LocalDate.now().minusDays(3),
-                expiryDate = LocalDate.now().plus(7, DAYS),
-                selfAssessment = false
-            )
-        )
-
-        every { isolationStateMachine.readState() } returns isolationState
+        val selfAssessment = isolationHelper.selfAssessment()
+        every { isolationStateMachine.readLogicalState() } returns selfAssessment.asIsolation().asLogical()
         every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns false
 
         testSubject.updateViewState()
 
-        verify { viewStateObserver.onChanged(defaultViewState.copy(isolationState = isolationState, showOrderTestButton = true)) }
+        verify {
+            viewStateObserver.onChanged(
+                defaultViewState.copy(
+                    isolationState = Isolating(
+                        isolationStart = selfAssessment.startDate,
+                        expiryDate = selfAssessment.expiryDate
+                    ),
+                    showOrderTestButton = true,
+                    showReportSymptomsButton = false
+                )
+            )
+        }
     }
 
     @Test
     fun `on update view state should show book test button if does not contain book test type venue at risk but is in isolation as contact case`() {
-        val isolationState = Isolation(
-            isolationStart = Instant.now().minus(20, DAYS),
-            isolationConfiguration = DurationDays(),
-            contactCase = ContactCase(
-                startDate = Instant.now().minus(10, DAYS),
-                notificationDate = Instant.now().minus(2, DAYS),
-                expiryDate = LocalDate.now().plusDays(30)
-            )
-        )
-
-        every { isolationStateMachine.readState() } returns isolationState
+        val contactCase = isolationHelper.contactCase()
+        every { isolationStateMachine.readLogicalState() } returns contactCase.asIsolation().asLogical()
         every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns false
 
         testSubject.updateViewState()
 
-        verify { viewStateObserver.onChanged(defaultViewState.copy(isolationState = isolationState, showOrderTestButton = true)) }
+        verify {
+            viewStateObserver.onChanged(
+                defaultViewState.copy(
+                    isolationState = Isolating(
+                        isolationStart = contactCase.startDate,
+                        expiryDate = contactCase.expiryDate
+                    ),
+                    showOrderTestButton = true
+                )
+            )
+        }
     }
 
     @Test
@@ -490,7 +496,7 @@ class StatusViewModelTest {
 
     @Test
     fun `update view state on date change`() {
-        val today = LocalDate.now()
+        val today = LocalDate.now(fixedClock)
         val tomorrow = today.plusDays(1)
 
         testSubject.updateViewState(today)
@@ -503,14 +509,13 @@ class StatusViewModelTest {
 
     @Test
     fun `update view state with isolation expiration`() {
-        val now = LocalDate.now()
+        val now = LocalDate.now(fixedClock)
         val inboxItem = ShowIsolationExpiration(now)
 
         every { userInbox.fetchInbox() } returns inboxItem
 
         testSubject.userInboxListener.invoke()
 
-        verify { userInbox.clearItem(inboxItem) }
         verify { showInformationScreenObserver.onChanged(IsolationExpiration(now)) }
     }
 
@@ -550,10 +555,28 @@ class StatusViewModelTest {
         coVerify { analyticsEventProcessorMock.track(SelectedIsolationPaymentsButton) }
     }
 
+    @Test
+    fun `updateViewStateAndCheckUserInbox should update view state and fetch from user inbox`() {
+        every { userInbox.fetchInbox() } returns ShowEncounterDetection
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        verify { viewStateObserver.onChanged(defaultViewState) }
+        verify { userInbox.fetchInbox() }
+        verify { showInformationScreenObserver.onChanged(ExposureConsent) }
+    }
+
+    @Test
+    fun `on activate contact tracing button clicked enables contact tracing`() {
+        testSubject.onActivateContactTracingButtonClicked()
+        verify { exposureNotificationPermissionHelper.startExposureNotifications() }
+    }
+
     companion object {
         private const val DEFAULT_POST_CODE = "A1"
         private val DEFAULT_INFORMATION_SCREEN_STATE = null
-        private val DEFAULT_ISOLATION_STATE = Default()
+        private val DEFAULT_ISOLATION_VIEW_STATE = NotIsolating
+        private val DEFAULT_ISOLATION_STATE = IsolationState(isolationConfiguration = DurationDays()).asLogical()
         private const val DEFAULT_LATEST_ADVICE_URL_RES_ID = 0
     }
 }

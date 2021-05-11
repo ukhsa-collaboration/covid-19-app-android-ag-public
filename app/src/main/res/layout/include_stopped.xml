@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="400dp">
 
@@ -35,12 +36,30 @@
         android:contentDescription="@null"
         android:src="@drawable/ic_stopped" />
 
-    <TextView
-        style="@style/ActionTextBold"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="52dp"
-        android:text="@string/contact_tracing_not_active" />
+        android:layout_marginTop="80dp"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/ActionText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/contact_tracing_not_active" />
+
+        <uk.nhs.nhsx.covid19.android.app.widgets.UnderlinedButton
+            android:id="@+id/activateContactTracingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/status_contact_tracing_activate"
+            android:textAllCaps="false"
+            android:textColor="@color/nhs_lighter_blue"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/transparent" />
+    </LinearLayout>
 </FrameLayout>

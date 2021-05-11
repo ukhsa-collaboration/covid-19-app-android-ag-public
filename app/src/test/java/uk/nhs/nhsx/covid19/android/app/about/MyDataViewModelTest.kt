@@ -12,36 +12,40 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.about.BaseMyDataViewModel.IsolationState
+import uk.nhs.nhsx.covid19.android.app.about.BaseMyDataViewModel.IsolationViewState
 import uk.nhs.nhsx.covid19.android.app.about.BaseMyDataViewModel.MyDataState
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDate
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueConfigurationDurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.asLogical
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.util.selectNewest
+import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneOffset
 
 class MyDataViewModelTest {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val stateMachine = mockk<IsolationStateMachine>(relaxed = true)
-    private val relevantTestResultProvider = mockk<RelevantTestResultProvider>(relaxed = true)
+    private val stateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
     private val lastVisitedBookTestTypeVenueDateProvider = mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxUnitFun = true)
+    private val fixedClock = Clock.fixed(Instant.parse("2020-05-22T10:00:00Z"), ZoneOffset.UTC)
 
     private val testSubject = MyDataViewModel(
         stateMachine,
-        relevantTestResultProvider,
-        lastVisitedBookTestTypeVenueDateProvider
+        lastVisitedBookTestTypeVenueDateProvider,
+        fixedClock
     )
 
     private val userDataStateObserver = mockk<Observer<MyDataState>>(relaxed = true)
@@ -54,7 +58,6 @@ class MyDataViewModelTest {
 
         testSubject.myDataState().observeForever(userDataStateObserver)
 
-        every { relevantTestResultProvider.testResult } returns acknowledgedTestResult
         every { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue } returns LastVisitedBookTestTypeVenueDate(
             lastRiskyVenueVisit,
             RiskyVenueConfigurationDurationDays(optionToBookATest = 10)
@@ -68,7 +71,7 @@ class MyDataViewModelTest {
 
     @Test
     fun `onResume triggers view state emission`() = runBlocking {
-        every { stateMachine.readState() } returns contactCaseOnlyIsolation
+        setIsolationState(contactAndIndexIsolation)
 
         testSubject.onResume()
 
@@ -79,7 +82,7 @@ class MyDataViewModelTest {
 
     @Test
     fun `onResume with no changes to view state does not trigger view state emission`() = runBlocking {
-        every { stateMachine.readState() } returns contactCaseOnlyIsolation
+        setIsolationState(contactAndIndexIsolation)
 
         testSubject.onResume()
         testSubject.onResume()
@@ -91,7 +94,7 @@ class MyDataViewModelTest {
 
     @Test
     fun `loading user data only returns main post code when local authority is not stored`() {
-        every { stateMachine.readState() } returns contactCaseOnlyIsolation
+        setIsolationState(contactAndIndexIsolation)
 
         testSubject.onResume()
 
@@ -101,18 +104,47 @@ class MyDataViewModelTest {
 
     @Test
     fun `loading user data returns exposure notification details and dailyContactTestingOptInDate when previously in contact case`() {
-        every { stateMachine.readState() } returns Default(previousIsolation = contactCaseOnlyIsolation)
+        val contactExposureDate = contactCaseExposureDate.minusDays(12)
+        val contactNotificationDate = contactCaseNotificationDate.minusDays(12)
+        val contactExpiryDate = contactExposureDate.plusDays(5)
+        val dailyContactTestingOptInDate = dailyContactTestingOptInDate.minusDays(12)
+        val indexSelfAssessmentDate = selfAssessmentDate.minusDays(12)
+        val indexSymptomsOnsetDate = symptomsOnsetDate.minusDays(12)
+        val indexExpiryDate = indexCaseExpiryDate.minusDays(12)
+
+        setIsolationState(
+            IsolationState(
+                isolationConfiguration = DurationDays(),
+                contactCase = ContactCase(
+                    exposureDate = contactExposureDate,
+                    notificationDate = contactNotificationDate,
+                    expiryDate = contactExpiryDate,
+                    dailyContactTestingOptInDate = dailyContactTestingOptInDate
+                ),
+                indexInfo = IndexCase(
+                    isolationTrigger = SelfAssessment(
+                        selfAssessmentDate = indexSelfAssessmentDate,
+                        onsetDate = indexSymptomsOnsetDate
+                    ),
+                    testResult = acknowledgedTestResult,
+                    expiryDate = indexExpiryDate
+                )
+            )
+        )
 
         testSubject.onResume()
 
         verify {
             userDataStateObserver.onChanged(
-                expectedInitialUserDataState.copy(
-                    isolationState = IsolationState(
-                        contactCaseEncounterDate = contactCaseEncounterDate,
-                        contactCaseNotificationDate = contactCaseNotificationDate,
+                MyDataState(
+                    isolationState = IsolationViewState(
+                        contactCaseEncounterDate = contactExposureDate,
+                        contactCaseNotificationDate = contactNotificationDate,
+                        indexCaseSymptomOnsetDate = indexSymptomsOnsetDate,
                         dailyContactTestingOptInDate = dailyContactTestingOptInDate
-                    )
+                    ),
+                    lastRiskyVenueVisitDate = lastRiskyVenueVisit,
+                    acknowledgedTestResult = acknowledgedTestResult
                 )
             )
         }
@@ -120,50 +152,68 @@ class MyDataViewModelTest {
 
     @Test
     fun `loading user data doesn't return exposure notification details and dailyContactTestingOptInDate when previously in contact case`() {
-        every { stateMachine.readState() } returns Default()
+        setIsolationState(IsolationState(isolationConfiguration = DurationDays()))
 
         testSubject.onResume()
 
         verify {
-            userDataStateObserver.onChanged(expectedInitialUserDataState.copy(isolationState = null))
+            userDataStateObserver.onChanged(
+                expectedInitialUserDataState.copy(
+                    isolationState = null,
+                    acknowledgedTestResult = null
+                )
+            )
         }
+    }
+
+    private fun setIsolationState(isolationState: IsolationState) {
+        every { stateMachine.readState() } returns isolationState
+        every { stateMachine.readLogicalState() } returns isolationState.asLogical()
     }
 
     private val lastRiskyVenueVisit = LocalDate.of(2020, 8, 12)
 
     private val acknowledgedTestResult = AcknowledgedTestResult(
-        diagnosisKeySubmissionToken = "token",
-        testEndDate = Instant.now(),
+        testEndDate = LocalDate.now(fixedClock),
         testResult = POSITIVE,
-        acknowledgedDate = Instant.now(),
+        acknowledgedDate = LocalDate.now(fixedClock),
         testKitType = LAB_RESULT,
         requiresConfirmatoryTest = false,
         confirmedDate = null
     )
 
-    private val contactCaseEncounterDate = Instant.parse("2020-05-19T12:00:00Z")
+    private val contactCaseExposureDate = LocalDate.parse("2020-05-19")
+    private val contactCaseNotificationDate = LocalDate.parse("2020-05-20")
+    private val dailyContactTestingOptInDate = LocalDate.parse("2020-05-21")
+    private val contactCaseExpiryDate = LocalDate.parse("2020-05-24")
+    private val selfAssessmentDate = LocalDate.parse("2020-05-15")
+    private val symptomsOnsetDate = LocalDate.parse("2020-05-14")
+    private val indexCaseExpiryDate = LocalDate.parse("2020-05-23")
 
-    private val contactCaseNotificationDate = Instant.parse("2020-05-20T12:00:00Z")
-
-    private val dailyContactTestingOptInDate = LocalDate.now().plusDays(5)
-
-    private val contactCaseOnlyIsolation = Isolation(
-        isolationStart = Instant.now(),
+    private val contactAndIndexIsolation = IsolationState(
         isolationConfiguration = DurationDays(),
         contactCase = ContactCase(
-            startDate = contactCaseEncounterDate,
+            exposureDate = contactCaseExposureDate,
             notificationDate = contactCaseNotificationDate,
-            expiryDate = LocalDate.now().plusDays(5),
+            expiryDate = contactCaseExpiryDate,
             dailyContactTestingOptInDate = dailyContactTestingOptInDate
+        ),
+        indexInfo = IndexCase(
+            isolationTrigger = SelfAssessment(
+                selfAssessmentDate = selfAssessmentDate,
+                onsetDate = symptomsOnsetDate
+            ),
+            testResult = acknowledgedTestResult,
+            expiryDate = indexCaseExpiryDate
         )
     )
 
     private val expectedInitialUserDataState = MyDataState(
-        isolationState = IsolationState(
-            lastDayOfIsolation = contactCaseOnlyIsolation.lastDayOfIsolation,
-            contactCaseEncounterDate = contactCaseEncounterDate,
+        isolationState = IsolationViewState(
+            lastDayOfIsolation = selectNewest(contactCaseExpiryDate, indexCaseExpiryDate).minusDays(1),
+            contactCaseEncounterDate = contactCaseExposureDate,
             contactCaseNotificationDate = contactCaseNotificationDate,
-            indexCaseSymptomOnsetDate = contactCaseOnlyIsolation.indexCase?.symptomsOnsetDate,
+            indexCaseSymptomOnsetDate = symptomsOnsetDate,
             dailyContactTestingOptInDate = dailyContactTestingOptInDate
         ),
         lastRiskyVenueVisitDate = lastRiskyVenueVisit,

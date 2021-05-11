@@ -7,6 +7,7 @@
     <color name="nhs_blue">#5FB0EF</color>
     <color name="nhs_lighter_blue">#8CC7F7</color>
     <color name="nhs_button_green">#4EBD74</color>
+    <color name="light_green">#75C18F</color>
 
     <!-- greyscale -->
     <color name="black">#000000</color>

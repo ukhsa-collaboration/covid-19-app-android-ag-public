@@ -41,9 +41,9 @@ class DistrictAreaStringProviderTest {
     fun `provide for Wales when no key in map returns original resource id`() = runBlocking {
         coEvery { localAuthorityPostCodeProvider.getPostCodeDistrict() } returns PostCodeDistrict.WALES
 
-        val actual = testSubject.provide(R.string.tablet_information_url)
+        val actual = testSubject.provide(R.string.url_local_authority)
 
-        val expected = R.string.tablet_information_url
+        val expected = R.string.url_local_authority
 
         assertEquals(expected, actual)
     }

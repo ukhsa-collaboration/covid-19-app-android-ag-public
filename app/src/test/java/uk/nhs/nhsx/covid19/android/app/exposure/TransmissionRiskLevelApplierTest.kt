@@ -8,9 +8,11 @@ import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.SubmissionDateRange
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CalculateKeySubmissionDateRange
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -95,23 +97,29 @@ class TransmissionRiskLevelApplierTest {
     }
 
     private fun givenIndexCaseWithOnsetDate(symptomsOnsetDate: LocalDate) {
-        every { stateMachine.readState(any()) } returns Isolation(
-            isolationStart = Instant.parse("2020-07-21T12:00:00Z"),
-            indexCase = IndexCase(
-                symptomsOnsetDate,
-                expiryDate = LocalDate.parse("2020-07-27"),
-                selfAssessment = true
+        val isolation = IsolationState(
+            indexInfo = IndexCase(
+                isolationTrigger = SelfAssessment(
+                    selfAssessmentDate = LocalDate.parse("2020-07-21"),
+                    symptomsOnsetDate
+                ),
+                expiryDate = LocalDate.parse("2020-07-27")
             ),
             isolationConfiguration = DurationDays()
         )
+        every { stateMachine.readState() } returns isolation
     }
 
     private fun givenIsolationWithoutIndexCase() {
-        every { stateMachine.readState(any()) } returns Isolation(
-            isolationStart = Instant.parse("2020-07-21T12:00:00Z"),
-            indexCase = null,
-            isolationConfiguration = DurationDays()
-        )
+        every { stateMachine.readState() } returns
+            IsolationState(
+                contactCase = ContactCase(
+                    exposureDate = LocalDate.parse("2020-07-21"),
+                    notificationDate = LocalDate.parse("2020-07-21"),
+                    expiryDate = LocalDate.parse("2020-08-01")
+                ),
+                isolationConfiguration = DurationDays()
+            )
     }
 
     private fun whenApplyingRiskLevels() {

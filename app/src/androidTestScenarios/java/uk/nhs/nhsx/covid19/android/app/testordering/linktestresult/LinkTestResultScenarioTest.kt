@@ -19,9 +19,8 @@ import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.FLOW
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.report.reporter
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -30,10 +29,9 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
-import java.time.Instant
+import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
-import kotlin.test.assertTrue
+import java.time.temporal.ChronoUnit.DAYS
 
 class LinkTestResultScenarioTest : EspressoTest() {
 
@@ -42,6 +40,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     private val linkTestResultSymptomsRobot = LinkTestResultSymptomsRobot()
     private val testResultRobot = TestResultRobot(testAppContext.app)
     private val dailyContactTestingConfirmationRobot = DailyContactTestingConfirmationRobot()
+    private val isolationChecker = IsolationChecker(testAppContext)
 
     @Before
     fun setUp() {
@@ -355,7 +354,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
                 stepDescription = "The user has opted in to daily contact testing and is released from isolation."
             )
 
-            assertTrue { testAppContext.getCurrentState() is Default }
+            isolationChecker.assertExpiredContactNoIndex()
         }
 
     private fun enterLinkTestResultFromStatusActivity() {
@@ -366,12 +365,11 @@ class LinkTestResultScenarioTest : EspressoTest() {
         statusRobot.clickLinkTestResult()
     }
 
-    private val contactCaseOnlyIsolation = Isolation(
-        isolationStart = Instant.now().minus(2, ChronoUnit.DAYS),
+    private val contactCaseOnlyIsolation = IsolationState(
         isolationConfiguration = DurationDays(),
         contactCase = ContactCase(
-            startDate = Instant.now().minus(2, ChronoUnit.DAYS),
-            notificationDate = null,
+            exposureDate = LocalDate.now().minus(2, DAYS),
+            notificationDate = LocalDate.now().minus(2, DAYS),
             expiryDate = LocalDate.now().plusDays(12)
         )
     )

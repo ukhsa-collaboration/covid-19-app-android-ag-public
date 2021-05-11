@@ -53,9 +53,9 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
         }
 
-        // Dates: 5th-14th Jan -> Analytics packets for: 3rd-13th Jan
-        assertOnFieldsForDateRange(5..14) {
-            // Still in isolation
+        // Dates: 5th-11th Jan -> Analytics packets for: 3rd-10th Jan
+        assertOnFieldsForDateRange(5..11) {
+            // Still in isolation for both reasons
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
@@ -64,5 +64,28 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
             assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
         }
+
+        // Dates: 12-14th Jan -> Analytics packets for: 11th-13th Jan
+        assertOnFieldsForDateRange(12..14) {
+            // Still in isolation because of the risky contact; no longer index case
+            assertPresent(Metrics::isIsolatingBackgroundTick)
+            assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
+            assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
+            assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
+        }
+
+        // Dates: 15th-28th Jan -> Analytics packets for: 14th-27th Jan
+        assertOnFieldsForDateRange(15..28) {
+            // Isolation is over, but isolation reason still stored for 14 days
+            assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
+            assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
+        }
+
+        // Current date: 29th Jan -> Analytics packet for: 28th Jan
+        // Previous isolation reason no longer stored
+        assertAnalyticsPacketIsNormal()
     }
 }

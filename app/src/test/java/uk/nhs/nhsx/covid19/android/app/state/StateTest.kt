@@ -1,67 +1,35 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
-import java.time.Instant
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.PositiveTestResult
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
 import java.time.LocalDate
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 class StateTest {
 
     @Test
-    fun `get symptomsOnset Date from Default state`() {
-        val dateNow = LocalDate.now()
-        val onsetDate = dateNow.minusDays(7)
-        val state = Default(
-            previousIsolation = Isolation(
-                isolationStart = Instant.now(),
-                isolationConfiguration = DurationDays(),
-                indexCase = IndexCase(
-                    symptomsOnsetDate = onsetDate,
-                    expiryDate = dateNow.minusDays(2),
-                    selfAssessment = false
-                )
-            )
-        )
+    fun `get assumedOnsetDateForExposureKeys from self-assessment with explicit date`() {
+        val selfAssessmentDate = LocalDate.of(2020, 1, 10)
+        val onsetDate = LocalDate.of(2020, 1, 3)
+        val isolationTrigger = SelfAssessment(selfAssessmentDate, onsetDate)
 
-        assertEquals(onsetDate, state.symptomsOnsetDate)
+        assertEquals(onsetDate, isolationTrigger.assumedOnsetDateForExposureKeys)
     }
 
     @Test
-    fun `get symptomsOnset Date from Default without previousIsolation`() {
-        val state = Default()
+    fun `get assumedOnsetDateForExposureKeys from self-assessment without explicit date`() {
+        val selfAssessmentDate = LocalDate.of(2020, 1, 10)
+        val isolationTrigger = SelfAssessment(selfAssessmentDate)
 
-        assertNull(state.symptomsOnsetDate)
+        assertEquals(LocalDate.of(2020, 1, 8), isolationTrigger.assumedOnsetDateForExposureKeys)
     }
 
     @Test
-    fun `get symptomsOnset Date from Isolation state`() {
-        val dateNow = LocalDate.now()
-        val onsetDate = dateNow.minusDays(4)
-        val state = Isolation(
-            isolationStart = Instant.now(),
-            isolationConfiguration = DurationDays(),
-            indexCase = IndexCase(
-                symptomsOnsetDate = onsetDate,
-                expiryDate = dateNow.plusDays(2),
-                selfAssessment = false
-            )
-        )
+    fun `get assumedOnsetDateForExposureKeys from test result`() {
+        val testEndDate = LocalDate.of(2020, 1, 10)
+        val isolationTrigger = PositiveTestResult(testEndDate)
 
-        assertEquals(onsetDate, state.symptomsOnsetDate)
-    }
-
-    @Test
-    fun `get symptomsOnset Date from Isolation state without index case`() {
-        val state = Isolation(
-            isolationStart = Instant.now(),
-            isolationConfiguration = DurationDays(),
-        )
-
-        assertNull(state.symptomsOnsetDate)
+        assertEquals(LocalDate.of(2020, 1, 7), isolationTrigger.assumedOnsetDateForExposureKeys)
     }
 }

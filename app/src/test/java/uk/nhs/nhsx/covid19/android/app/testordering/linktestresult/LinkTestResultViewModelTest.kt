@@ -32,10 +32,14 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
+import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
-import uk.nhs.nhsx.covid19.android.app.state.State
+import uk.nhs.nhsx.covid19.android.app.state.asLogical
+import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Failure
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Success
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType
@@ -46,9 +50,10 @@ import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResul
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.NO_CONNECTION
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.UNEXPECTED
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultState
+import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
+import java.time.ZoneOffset
 
 class LinkTestResultViewModelTest {
 
@@ -59,12 +64,15 @@ class LinkTestResultViewModelTest {
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val linkTestResultOnsetDateNeededChecker = mockk<LinkTestResultOnsetDateNeededChecker>(relaxed = true)
     private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxed = true)
+    private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
+    private val isolationHelper = IsolationHelper(fixedClock)
 
     private val testSubject = LinkTestResultViewModel(
         ctaTokenValidator,
         isolationStateMachine,
         linkTestResultOnsetDateNeededChecker,
-        analyticsEventProcessor
+        analyticsEventProcessor,
+        fixedClock
     )
 
     private val viewStateObserver = mockk<Observer<LinkTestResultState>>(relaxed = true)
@@ -90,7 +98,7 @@ class LinkTestResultViewModelTest {
         runBlocking {
             enableShowDailyContactTesting()
 
-            verify { isolationStateMachine.readState() }
+            verify { isolationStateMachine.readLogicalState() }
 
             verify {
                 viewStateObserver.onChanged(LinkTestResultState(showDailyContactTesting = true))
@@ -101,12 +109,11 @@ class LinkTestResultViewModelTest {
     fun `do not display daily contact testing content when not exclusively contact case isolation and feature flag enabled`() =
         runBlocking {
             FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.DAILY_CONTACT_TESTING)
-
-            every { isolationStateMachine.readState() } returns indexAndContactCaseIsolation
+            setIsolationState(indexAndContactCaseIsolation)
 
             testSubject.fetchInitialViewState()
 
-            verify { isolationStateMachine.readState() }
+            verify { isolationStateMachine.readLogicalState() }
 
             verify { viewStateObserver.onChanged(LinkTestResultState(showDailyContactTesting = false)) }
         }
@@ -115,12 +122,11 @@ class LinkTestResultViewModelTest {
     fun `do not display daily contact testing content when contact case only and feature flag disabled`() =
         runBlocking {
             FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.DAILY_CONTACT_TESTING)
-
-            every { isolationStateMachine.readState() } returns contactCaseOnlyIsolation
+            setIsolationState(contactCaseOnlyIsolation)
 
             testSubject.fetchInitialViewState()
 
-            verify { isolationStateMachine.readState() }
+            verify { isolationStateMachine.readLogicalState() }
 
             verify { viewStateObserver.onChanged(LinkTestResultState(showDailyContactTesting = false)) }
         }
@@ -213,8 +219,7 @@ class LinkTestResultViewModelTest {
     @Test
     fun `continue button clicked with DCT not showing should start validation`() =
         runBlocking {
-            every { isolationStateMachine.readState() } returns indexAndContactCaseIsolation
-
+            setIsolationState(indexAndContactCaseIsolation)
             setResult(POSITIVE, LAB_RESULT)
 
             testSubject.ctaToken = "test"
@@ -527,42 +532,40 @@ class LinkTestResultViewModelTest {
 
     private fun enableShowDailyContactTesting() {
         FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.DAILY_CONTACT_TESTING)
-
-        every { isolationStateMachine.readState() } returns contactCaseOnlyIsolation
+        setIsolationState(contactCaseOnlyIsolation)
 
         testSubject.fetchInitialViewState()
     }
 
     private fun disableShowDailyContactTesting() {
         FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.DAILY_CONTACT_TESTING)
-
-        every { isolationStateMachine.readState() } returns indexAndContactCaseIsolation
+        setIsolationState(indexAndContactCaseIsolation)
 
         testSubject.fetchInitialViewState()
     }
 
-    private val contactCaseOnlyIsolation = State.Isolation(
-        isolationStart = Instant.now(),
+    private fun setIsolationState(isolationState: IsolationState) {
+        every { isolationStateMachine.readState() } returns isolationState
+        every { isolationStateMachine.readLogicalState() } returns isolationState.asLogical()
+    }
+
+    private val contactCaseOnlyIsolation = IsolationState(
         isolationConfiguration = DurationDays(),
-        contactCase = State.Isolation.ContactCase(
-            startDate = Instant.now().minus(1, ChronoUnit.DAYS),
-            notificationDate = null,
-            expiryDate = LocalDate.now().plusDays(10)
-        )
+        contactCase = isolationHelper.contactCase()
     )
 
-    private val indexAndContactCaseIsolation = State.Isolation(
-        isolationStart = Instant.now(),
+    private val indexAndContactCaseIsolation = IsolationState(
         isolationConfiguration = DurationDays(),
-        indexCase = State.Isolation.IndexCase(
-            symptomsOnsetDate = LocalDate.now().minusDays(2),
-            expiryDate = LocalDate.now().plusDays(5),
-            selfAssessment = false
-        ),
-        contactCase = State.Isolation.ContactCase(
-            startDate = Instant.now().minus(1, ChronoUnit.DAYS),
-            notificationDate = null,
-            expiryDate = LocalDate.now().plusDays(10)
+        contactCase = isolationHelper.contactCase(),
+        indexInfo = isolationHelper.positiveTest(
+            AcknowledgedTestResult(
+                testEndDate = LocalDate.now(fixedClock),
+                acknowledgedDate = LocalDate.now(fixedClock),
+                testResult = RelevantVirologyTestResult.POSITIVE,
+                testKitType = LAB_RESULT,
+                requiresConfirmatoryTest = false,
+                confirmedDate = null
+            )
         )
     )
 }

@@ -5,15 +5,13 @@ import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.OrderTest
 import uk.nhs.nhsx.covid19.android.app.remote.TestResponse
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.report.notReported
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
+import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -22,12 +20,10 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRo
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
-import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
-import java.time.Instant
+import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
+import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit.DAYS
-import java.time.temporal.ChronoUnit.HOURS
 import kotlin.test.assertTrue
 
 class MultipleTestOrderingFlowTests : EspressoTest() {
@@ -37,6 +33,8 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
     private val testResultRobot = TestResultRobot(testAppContext.app)
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
     private val shareKeysResultRobot = ShareKeysResultRobot()
+    private val isolationHelper = IsolationHelper(testAppContext.clock)
+    private val isolationChecker = IsolationChecker(testAppContext)
 
     @Before
     fun setUp() {
@@ -45,23 +43,13 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
     @Test
     fun startIndexCase_receiveNegativeAndPositiveTestResultsSequentially_shouldIsolate() = notReported {
-        testAppContext.setState(
-            state = Isolation(
-                isolationStart = Instant.now(),
-                isolationConfiguration = DurationDays(),
-                indexCase = IndexCase(
-                    symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(7, DAYS),
-                    selfAssessment = true
-                )
-            )
-        )
+        testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
 
-        assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
+        isolationChecker.assertActiveIndexNoContact()
 
         val firstToken = "firstToken"
         val secondToken = "secondToken"
@@ -78,7 +66,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         testResultRobot.clickGoodNewsActionButton()
 
-        assertTrue { testAppContext.getCurrentState() is Default }
+        isolationChecker.assertExpiredIndexNoContact()
 
         testAppContext.virologyTestingApi.testResponseForPollingToken =
             mutableMapOf(secondToken to TestResponse(POSITIVE, LAB_RESULT))
@@ -99,28 +87,18 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
+        isolationChecker.assertActiveIndexNoContact()
     }
 
     @Test
     fun startIndexCase_receiveNegativeAndNegativeTestResultsSequentially_shouldEndIsolationOnFirstNegativeTestResult() = notReported {
-        testAppContext.setState(
-            state = Isolation(
-                isolationStart = Instant.now(),
-                isolationConfiguration = DurationDays(),
-                indexCase = IndexCase(
-                    symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(7, DAYS),
-                    selfAssessment = true
-                )
-            )
-        )
+        testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
 
-        assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
+        isolationChecker.assertActiveIndexNoContact()
 
         val firstToken = "firstToken"
         val secondToken = "secondToken"
@@ -139,7 +117,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         testResultRobot.clickGoodNewsActionButton()
 
-        assertTrue { testAppContext.getCurrentState() is Default }
+        isolationChecker.assertExpiredIndexNoContact()
 
         testAppContext.virologyTestingApi.testResponseForPollingToken =
             mutableMapOf(secondToken to TestResponse(NEGATIVE, LAB_RESULT))
@@ -152,29 +130,19 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         testResultRobot.clickGoodNewsActionButton()
 
-        assertTrue { testAppContext.getCurrentState() is Default }
+        isolationChecker.assertExpiredIndexNoContact()
     }
 
     @RetryFlakyTest
     @Test
     fun startIndexCase_receiveMultipleTestResultsAtTheSameTime_firstPositive_thenNegative_shouldIsolate() = notReported {
-        testAppContext.setState(
-            state = Isolation(
-                isolationStart = Instant.now(),
-                isolationConfiguration = DurationDays(),
-                indexCase = IndexCase(
-                    symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(7, DAYS),
-                    selfAssessment = true
-                )
-            )
-        )
+        testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
 
-        assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
+        isolationChecker.assertActiveIndexNoContact()
 
         val firstToken = "firstToken"
         val secondToken = "secondToken"
@@ -213,40 +181,27 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         assertTrue { testAppContext.temporaryExposureKeyHistoryWasCalled() }
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
+        isolationChecker.assertActiveIndexNoContact()
     }
 
     @Test
     fun startIndexCaseWithPositiveTestResult_receiveNegativeTestResult_shouldStayInIsolation() = notReported {
-        val now = Instant.now()
         testAppContext.setState(
-            state = Isolation(
-                isolationStart = now.minus(1, DAYS),
-                isolationConfiguration = DurationDays(),
-                indexCase = IndexCase(
-                    symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(7, DAYS),
-                    selfAssessment = true
+            isolationHelper.selfAssessment(
+                testResult = AcknowledgedTestResult(
+                    testEndDate = LocalDate.now(),
+                    testResult = RelevantVirologyTestResult.POSITIVE,
+                    testKitType = LAB_RESULT,
+                    acknowledgedDate = LocalDate.now()
                 )
-            )
-        )
-
-        testAppContext.getRelevantTestResultProvider().onTestResultAcknowledged(
-            ReceivedTestResult(
-                diagnosisKeySubmissionToken = "token",
-                testEndDate = now.minus(1, HOURS),
-                testResult = POSITIVE,
-                testKitType = LAB_RESULT,
-                diagnosisKeySubmissionSupported = true
-            ),
-            testResultStorageOperation = Overwrite
+            ).asIsolation()
         )
 
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
 
-        assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
+        isolationChecker.assertActiveIndexNoContact()
 
         orderTestFromStatusActivity("newToken")
 
@@ -261,28 +216,18 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         testResultRobot.clickIsolationActionButton()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
+        isolationChecker.assertActiveIndexNoContact()
     }
 
     @Test
     fun startIndexCase_receivePositiveTestResult_thenVoidTestResult_thenNegativeTestResult_shouldStayInIsolation() = notReported {
-        testAppContext.setState(
-            state = Isolation(
-                isolationStart = Instant.now(),
-                isolationConfiguration = DurationDays(),
-                indexCase = IndexCase(
-                    symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(7, DAYS),
-                    selfAssessment = true
-                )
-            )
-        )
+        testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
 
-        assertTrue { (testAppContext.getCurrentState() as Isolation).isIndexCaseOnly() }
+        isolationChecker.assertActiveIndexNoContact()
 
         val positiveTestResultToken = "positiveTestResultToken"
         val voidTestResultToken = "voidTestResultToken"
@@ -309,7 +254,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
         waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
         shareKeysResultRobot.clickActionButton()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
+        isolationChecker.assertActiveIndexNoContact()
 
         testAppContext.virologyTestingApi.testResponseForPollingToken =
             mutableMapOf(voidTestResultToken to TestResponse(VOID, LAB_RESULT))
@@ -324,7 +269,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         orderTest(negativeTestResultToken)
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
+        isolationChecker.assertActiveIndexNoContact()
 
         testAppContext.virologyTestingApi.testResponseForPollingToken =
             mutableMapOf(negativeTestResultToken to TestResponse(NEGATIVE, LAB_RESULT))
@@ -337,7 +282,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         testResultRobot.clickIsolationActionButton()
 
-        assertTrue { testAppContext.getCurrentState() is Isolation }
+        isolationChecker.assertActiveIndexNoContact()
     }
 
     private fun orderTestFromStatusActivity(pollingToken: String) {

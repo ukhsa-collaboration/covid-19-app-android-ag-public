@@ -176,39 +176,15 @@
                     app:optionIconBackgroundColor="@color/style_teal"
                     app:optionText="@string/about_this_app_title" />
 
-                <LinearLayout
-                    android:id="@+id/optionContactTracing"
+                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
+                    android:id="@+id/optionToggleContactTracing"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/status_option_background"
-                    android:gravity="center_vertical"
-                    android:minHeight="56dp"
-                    android:paddingHorizontal="16dp">
-
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:contentDescription="@null"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/ic_contact_tracing" />
-
-                    <TextView
-                        style="@style/ActionText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_weight="1"
-                        android:text="@string/status_option_contact_tracing" />
-
-                    <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:id="@+id/encounterDetectionSwitch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false" />
-
-                </LinearLayout>
+                    android:layout_marginBottom="8dp"
+                    app:optionExternalLink="false"
+                    app:optionIcon="@drawable/ic_contact_tracing"
+                    app:optionIconBackgroundColor="@color/light_green"
+                    app:optionText="@string/status_option_toggle_contact_tracing" />
             </LinearLayout>
 
             <androidx.fragment.app.FragmentContainerView

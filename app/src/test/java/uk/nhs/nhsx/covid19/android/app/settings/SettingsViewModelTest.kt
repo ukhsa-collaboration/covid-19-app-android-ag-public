@@ -17,10 +17,11 @@ import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsViewModel.ViewState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
-import java.time.Instant
 import java.time.LocalDate
 
 class SettingsViewModelTest {
@@ -38,17 +39,28 @@ class SettingsViewModelTest {
     private val venuesStorage = mockk<VisitedVenuesStorage>(relaxed = true)
     private val allUserDataDeletedObserver = mockk<Observer<Unit>>(relaxed = true)
 
-    private val contactCaseEncounterDate = Instant.parse("2020-05-19T12:00:00Z")
-    private val contactCaseNotificationDate = Instant.parse("2020-05-20T12:00:00Z")
-    private val dailyContactTestingOptInDate = LocalDate.now().plusDays(5)
-    private val contactCaseOnlyIsolation = Isolation(
-        isolationStart = Instant.now(),
+    private val contactCaseExposureDate = LocalDate.parse("2020-05-19")
+    private val contactCaseNotificationDate = LocalDate.parse("2020-05-20")
+    private val dailyContactTestingOptInDate = LocalDate.parse("2020-05-21")
+    private val contactCaseExpiryDate = LocalDate.parse("2020-05-24")
+    private val selfAssessmentDate = LocalDate.parse("2020-05-15")
+    private val symptomsOnsetDate = LocalDate.parse("2020-05-14")
+    private val indexCaseExpiryDate = LocalDate.parse("2020-05-23")
+
+    private val contactAndIndexIsolation = IsolationState(
         isolationConfiguration = DurationDays(),
         contactCase = ContactCase(
-            startDate = contactCaseEncounterDate,
+            exposureDate = contactCaseExposureDate,
             notificationDate = contactCaseNotificationDate,
-            expiryDate = LocalDate.now().plusDays(5),
+            expiryDate = contactCaseExpiryDate,
             dailyContactTestingOptInDate = dailyContactTestingOptInDate
+        ),
+        indexInfo = IndexCase(
+            isolationTrigger = SelfAssessment(
+                selfAssessmentDate = selfAssessmentDate,
+                onsetDate = symptomsOnsetDate
+            ),
+            expiryDate = indexCaseExpiryDate
         )
     )
 
@@ -89,7 +101,7 @@ class SettingsViewModelTest {
 
     @Test
     fun `delete removes data from storage`() {
-        every { stateMachine.readState() } returns contactCaseOnlyIsolation
+        every { stateMachine.readState() } returns contactAndIndexIsolation
 
         every { sharedPreferences.edit() } returns sharedPreferencesEditor
         every { sharedPreferencesEditor.clear() } returns sharedPreferencesDeletedDataEditor

@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION", "ClassName")
+
 package uk.nhs.nhsx.covid19.android.app.testordering
 
 import android.content.SharedPreferences
@@ -6,31 +8,22 @@ import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
-import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.NEGATIVE
-import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Confirm
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Ignore
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.OverwriteAndConfirm
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
-import java.time.Clock
 import java.time.Instant
 import javax.inject.Inject
 
+@Deprecated("Not used anymore since 4.10. Use IndexInfo.testResult instead.")
 class RelevantTestResultProvider @Inject constructor(
     private val relevantTestResultStorage: RelevantTestResultStorage,
-    private val clock: Clock,
     moshi: Moshi
-) : TestResultChecker {
+) {
 
-    private val testResultSerializationAdapter: JsonAdapter<AcknowledgedTestResult> =
-        moshi.adapter(AcknowledgedTestResult::class.java)
+    private val testResultSerializationAdapter: JsonAdapter<AcknowledgedTestResult4_9> =
+        moshi.adapter(AcknowledgedTestResult4_9::class.java)
 
     private val lock = Object()
 
-    var testResult: AcknowledgedTestResult?
+    var testResult: AcknowledgedTestResult4_9?
         get() {
             return synchronized(lock) {
                 relevantTestResultStorage.value?.let {
@@ -51,52 +44,8 @@ class RelevantTestResultProvider @Inject constructor(
             }
         }
 
-    fun isTestResultPositive() =
-        testResult?.testResult == POSITIVE
-
-    fun isTestResultNegative() =
-        testResult?.testResult == NEGATIVE
-
-    fun getTestResultIfPositive() = synchronized(lock) {
-        if (isTestResultPositive()) testResult else null
-    }
-
-    override fun hasTestResultMatching(predicate: (TestResult) -> Boolean): Boolean =
-        testResult?.let { predicate(it) } ?: false
-
-    fun storeMigratedTestResult(migratedTestResult: AcknowledgedTestResult?) = synchronized(lock) {
+    fun storeMigratedTestResult(migratedTestResult: AcknowledgedTestResult4_9?) = synchronized(lock) {
         testResult = migratedTestResult
-    }
-
-    fun onTestResultAcknowledged(newTestResult: ReceivedTestResult, testResultStorageOperation: TestResultStorageOperation) = synchronized(lock) {
-        newTestResult.testResult.toRelevantVirologyTestResult()?.let { virologyTestResult ->
-            val acknowledgedTestResult = AcknowledgedTestResult(
-                newTestResult.diagnosisKeySubmissionToken,
-                newTestResult.testEndDate,
-                virologyTestResult,
-                newTestResult.testKitType,
-                acknowledgedDate = Instant.now(clock),
-                requiresConfirmatoryTest = newTestResult.requiresConfirmatoryTest,
-                confirmedDate = null
-            )
-            store(acknowledgedTestResult, testResultStorageOperation)
-        }
-    }
-
-    private fun store(newTestResult: AcknowledgedTestResult, testResultStorageOperation: TestResultStorageOperation) = synchronized(lock) {
-        when (testResultStorageOperation) {
-            Overwrite -> testResult = newTestResult
-            is OverwriteAndConfirm -> testResult = newTestResult.copy(confirmedDate = testResultStorageOperation.confirmedDate)
-            is Confirm -> {
-                val currentTestResult = testResult
-                if (currentTestResult != null) {
-                    testResult = currentTestResult.copy(confirmedDate = testResultStorageOperation.confirmedDate)
-                } else {
-                    Timber.e("There is no test result to confirm")
-                }
-            }
-            Ignore -> { /* nothing to do */ }
-        }
     }
 
     fun clear() = synchronized(lock) {
@@ -104,6 +53,7 @@ class RelevantTestResultProvider @Inject constructor(
     }
 }
 
+@Deprecated("Not used anymore since 4.10.")
 class RelevantTestResultStorage @Inject constructor(
     sharedPreferences: SharedPreferences
 ) {
@@ -117,32 +67,14 @@ class RelevantTestResultStorage @Inject constructor(
     }
 }
 
+@Deprecated("Not used anymore since 4.10. Use AcknowledgedTestResult instead.")
 @JsonClass(generateAdapter = true)
-data class AcknowledgedTestResult(
-    override val diagnosisKeySubmissionToken: String?,
-    override val testEndDate: Instant,
+data class AcknowledgedTestResult4_9(
+    val diagnosisKeySubmissionToken: String?,
+    val testEndDate: Instant,
     val testResult: RelevantVirologyTestResult,
-    override val testKitType: VirologyTestKitType?,
+    val testKitType: VirologyTestKitType?,
     val acknowledgedDate: Instant,
-    override val requiresConfirmatoryTest: Boolean = false,
+    val requiresConfirmatoryTest: Boolean = false,
     val confirmedDate: Instant? = null
-) : TestResult {
-
-    override fun isPositive(): Boolean =
-        testResult == POSITIVE
-
-    override fun isConfirmed(): Boolean =
-        !requiresConfirmatoryTest || confirmedDate != null
-}
-
-enum class RelevantVirologyTestResult(val relevance: Int) {
-    POSITIVE(1),
-    NEGATIVE(0)
-}
-
-fun VirologyTestResult.toRelevantVirologyTestResult(): RelevantVirologyTestResult? =
-    when (this) {
-        VirologyTestResult.POSITIVE -> POSITIVE
-        VirologyTestResult.NEGATIVE -> NEGATIVE
-        VOID -> null
-    }
+)

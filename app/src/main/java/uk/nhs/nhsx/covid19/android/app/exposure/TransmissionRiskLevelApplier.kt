@@ -1,8 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.exposure
 
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CalculateKeySubmissionDateRange
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.SubmissionDateRange
-import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CalculateKeySubmissionDateRange
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import java.lang.Integer.max
@@ -22,7 +22,7 @@ class TransmissionRiskLevelApplier @Inject constructor(
         keys: List<NHSTemporaryExposureKey>,
         keySharingInfo: KeySharingInfo
     ): List<NHSTemporaryExposureKey> {
-        val symptomsOnsetDate = stateMachine.readState().symptomsOnsetDate
+        val symptomsOnsetDate = stateMachine.readState().assumedOnsetDateForExposureKeys
 
         return if (symptomsOnsetDate == null) {
             keys.sortedByDescending { it.rollingStartNumber }

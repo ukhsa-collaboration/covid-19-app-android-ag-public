@@ -5,8 +5,9 @@ import android.app.PendingIntent
 import android.content.Context
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.receiver.ExpirationCheckReceiver
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.util.BroadcastProvider
+import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -18,7 +19,9 @@ class IsolationExpirationAlarmController @Inject constructor(
     private val context: Context,
     private val alarmManager: AlarmManager,
     private val isolationExpirationAlarmProvider: IsolationExpirationAlarmProvider,
-    private val broadcastProvider: BroadcastProvider
+    private val broadcastProvider: BroadcastProvider,
+    private val calculateExpirationNotificationTime: CalculateExpirationNotificationTime,
+    private val clock: Clock
 ) {
 
     fun onDeviceRebooted() {
@@ -28,19 +31,18 @@ class IsolationExpirationAlarmController @Inject constructor(
     }
 
     fun setupExpirationCheck(
-        currentState: State,
-        newIsolation: Isolation,
+        currentState: IsolationLogicalState,
+        newIsolation: IsolationLogicalState,
         zoneId: ZoneId = ZoneId.systemDefault()
     ) {
-        if (currentState is Isolation && currentState.expiryDate == newIsolation.expiryDate) {
+        if (newIsolation !is PossiblyIsolating ||
+            newIsolation.hasExpired(clock) ||
+            (currentState is PossiblyIsolating && currentState.expiryDate == newIsolation.expiryDate)
+        ) {
             return
         }
 
-        val startAt = newIsolation.expiryDate
-            .atStartOfDay()
-            .atZone(zoneId)
-            .minusHours(3)
-            .toInstant()
+        val startAt = calculateExpirationNotificationTime(newIsolation.expiryDate, zoneId)
             .toEpochMilli()
 
         isolationExpirationAlarmProvider.value = startAt

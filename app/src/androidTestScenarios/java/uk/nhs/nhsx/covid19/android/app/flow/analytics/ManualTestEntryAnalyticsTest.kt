@@ -180,6 +180,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         assertOnFieldsForDateRange(14..27) {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(hasTestedPositiveBackgroundTickMetric)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             if (symptomsAndOnsetFlowConfiguration?.didHaveSymptoms == true) {
                 assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             }
@@ -279,6 +280,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         assertOnFieldsForDateRange(12..25) {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
         }
 
@@ -378,6 +380,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         assertOnFieldsForDateRange(11..24) {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(hasTestedPositiveBackgroundTickMetric)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
         }
 
         // Current date: 25th Jan -> Analytics packet for: 24th Jan

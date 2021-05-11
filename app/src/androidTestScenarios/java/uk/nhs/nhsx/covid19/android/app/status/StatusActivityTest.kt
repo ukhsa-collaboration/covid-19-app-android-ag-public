@@ -2,33 +2,27 @@ package uk.nhs.nhsx.covid19.android.app.status
 
 import androidx.test.internal.runner.junit4.statement.UiThreadStatement
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
-import java.time.Instant
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit.DAYS
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result
 import uk.nhs.nhsx.covid19.android.app.exposure.setExposureNotificationResolutionRequired
-import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDate
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueConfigurationDurationDays
-import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
-import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
 import uk.nhs.nhsx.covid19.android.app.report.notReported
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
+import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationReminderRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ContactTracingHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MoreAboutAppRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QrScannerRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SettingsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
-import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
+import java.time.LocalDate
 
 class StatusActivityTest : EspressoTest() {
 
@@ -37,7 +31,8 @@ class StatusActivityTest : EspressoTest() {
     private val qrScannerRobot = QrScannerRobot()
     private val settingsRobot = SettingsRobot()
     private val browserRobot = BrowserRobot()
-    private val exposureNotificationReminderRobot = ExposureNotificationReminderRobot()
+    private val contactTracingHubRobot = ContactTracingHubRobot()
+    private val isolationHelper = IsolationHelper(testAppContext.clock)
 
     @Test
     fun clickMoreAboutApp() = notReported {
@@ -79,222 +74,129 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickEncounterDetectionSwitchAndDontRemind() = notReported {
-        startTestActivity<StatusActivity>()
-
-        statusRobot.checkActivityIsDisplayed()
-
-        statusRobot.clickEncounterDetectionSwitch()
-
-        exposureNotificationReminderRobot.checkDialogIsDisplayed()
-
-        setScreenOrientation(LANDSCAPE)
-
-        waitFor { exposureNotificationReminderRobot.checkDialogIsDisplayed() }
-
-        setScreenOrientation(PORTRAIT)
-
-        waitFor { exposureNotificationReminderRobot.checkDialogIsDisplayed() }
-
-        waitFor { exposureNotificationReminderRobot.clickDontRemindMe() }
-
-        waitFor { statusRobot.checkEncounterDetectionSwitchIsNotChecked() }
-
-        statusRobot.checkEncounterDetectionSwitchIsEnabled()
-
-        statusRobot.clickEncounterDetectionSwitch()
-
-        statusRobot.checkEncounterDetectionSwitchIsChecked()
-
-        statusRobot.checkEncounterDetectionSwitchIsEnabled()
-    }
-
-    @Test
-    fun clickEncounterDetectionSwitchAndRemindIn4Hours() = notReported {
-        startTestActivity<StatusActivity>()
-
-        statusRobot.checkActivityIsDisplayed()
-
-        statusRobot.clickEncounterDetectionSwitch()
-
-        exposureNotificationReminderRobot.checkDialogIsDisplayed()
-
-        exposureNotificationReminderRobot.clickRemindMeIn4Hours()
-
-        exposureNotificationReminderRobot.checkConfirmationDialogIsDisplayed()
-
-        exposureNotificationReminderRobot.clickConfirmationDialogOk()
-
-        statusRobot.checkEncounterDetectionSwitchIsNotChecked()
-
-        statusRobot.checkEncounterDetectionSwitchIsEnabled()
-    }
-
-    @Test
-    fun enableEncounterDetection_whenSuccessful_encounterDetectionSwitchShouldBeChecked() = notReported {
+    fun enableEncounterDetection_whenSuccessful_contactTracingShouldBeOn() = notReported {
         testAppContext.getExposureNotificationApi().setEnabled(false)
         testAppContext.getExposureNotificationApi().activationResult = Result.Success()
 
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
+        statusRobot.checkContactTracingStoppedIsDisplayed()
+        statusRobot.clickActivateContactTracingButton()
 
-        statusRobot.clickEncounterDetectionSwitch()
-
-        waitFor { statusRobot.checkEncounterDetectionSwitchIsChecked() }
-
-        statusRobot.checkEncounterDetectionSwitchIsEnabled()
+        waitFor { statusRobot.checkContactTracingActiveIsDisplayed() }
     }
 
     @Test
-    fun enableEncounterDetection_whenError_shouldShowError_encounterDetectionSwitchShouldNotBeChecked() = notReported {
+    fun enableEncounterDetection_whenError_shouldShowError_contactTracingShouldBeOff() = notReported {
         testAppContext.getExposureNotificationApi().setEnabled(false)
         testAppContext.getExposureNotificationApi().activationResult = Result.Error()
 
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
-
-        statusRobot.clickEncounterDetectionSwitch()
+        statusRobot.checkContactTracingStoppedIsDisplayed()
+        statusRobot.clickActivateContactTracingButton()
 
         waitFor { statusRobot.checkErrorIsDisplayed() }
 
-        waitFor { statusRobot.checkEncounterDetectionSwitchIsNotChecked() }
-
-        statusRobot.checkEncounterDetectionSwitchIsEnabled()
+        waitFor { statusRobot.checkContactTracingStoppedIsDisplayed() }
     }
 
     @Test
-    fun enableEncounterDetection_whenResolutionNeededAndSuccessful_encounterDetectionSwitchShouldBeChecked() = notReported {
+    fun enableEncounterDetection_whenResolutionNeededAndSuccessful_contactTracingShouldBeOn() = notReported {
         testAppContext.getExposureNotificationApi().setEnabled(false)
         testAppContext.setExposureNotificationResolutionRequired(testAppContext.app, true)
 
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
+        statusRobot.checkContactTracingStoppedIsDisplayed()
+        statusRobot.clickActivateContactTracingButton()
 
-        statusRobot.clickEncounterDetectionSwitch()
-
-        waitFor { statusRobot.checkEncounterDetectionSwitchIsChecked() }
-
-        statusRobot.checkEncounterDetectionSwitchIsEnabled()
+        waitFor { statusRobot.checkContactTracingActiveIsDisplayed() }
     }
 
     @Test
-    fun enableEncounterDetection_whenResolutionNeededAndNotSuccessful_encounterDetectionSwitchShouldNotBeChecked() = notReported {
+    fun enableEncounterDetection_whenResolutionNeededAndNotSuccessful_contactTracingShouldBeOff() = notReported {
         testAppContext.getExposureNotificationApi().setEnabled(false)
         testAppContext.setExposureNotificationResolutionRequired(testAppContext.app, false)
 
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
+        statusRobot.checkContactTracingStoppedIsDisplayed()
+        statusRobot.clickActivateContactTracingButton()
 
-        statusRobot.clickEncounterDetectionSwitch()
-
-        waitFor { statusRobot.checkEncounterDetectionSwitchIsNotChecked() }
-
-        statusRobot.checkEncounterDetectionSwitchIsEnabled()
+        waitFor { statusRobot.checkContactTracingStoppedIsDisplayed() }
     }
 
     @Test
-    fun startStatusActivity_whenNotificationFlagNull_encounterDetectionShouldNotBeActivated() = notReported {
-        testAppContext.getExposureNotificationApi().setEnabled(false)
-        testAppContext.getExposureNotificationApi().activationResult = Result.Success()
-
-        startTestActivity<StatusActivity>()
-
-        statusRobot.checkActivityIsDisplayed()
-
-        waitFor { statusRobot.checkEncounterDetectionSwitchIsNotChecked() }
-    }
-
-    @Test
-    fun startStatusActivity_whenNotificationFlagEmpty_encounterDetectionShouldNotBeActivated() = notReported {
-        testAppContext.getExposureNotificationApi().setEnabled(false)
-        testAppContext.getExposureNotificationApi().activationResult = Result.Success()
-
+    fun startStatusActivity_whenContactTracingHubActionIsNavigateOnly_thenContactTracingHubIsDisplayed() = notReported {
         startTestActivity<StatusActivity> {
-            putExtra(NotificationProvider.TAP_EXPOSURE_NOTIFICATION_REMINDER_FLAG, "")
+            putExtra(StatusActivity.CONTACT_TRACING_HUB_ACTION_EXTRA, ContactTracingHubAction.ONLY_NAVIGATE)
         }
 
-        statusRobot.checkActivityIsDisplayed()
-
-        waitFor { statusRobot.checkEncounterDetectionSwitchIsNotChecked() }
+        waitFor { contactTracingHubRobot.checkActivityIsDisplayed() }
     }
 
     @Test
-    fun startStatusActivity_whenNotificationFlagNotEmpty_encounterDetectionShouldBeActivated() = notReported {
-        testAppContext.getExposureNotificationApi().setEnabled(false)
-        testAppContext.getExposureNotificationApi().activationResult = Result.Success()
+    fun startStatusActivity_whenContactTracingHubActionIsNavigateAndTurnOn_thenNavigateToContactTracingHubAndTurnOnContactTracing() =
+        notReported {
+            testAppContext.getExposureNotificationApi().setEnabled(false)
+            testAppContext.getExposureNotificationApi().activationResult = Result.Success()
 
-        startTestActivity<StatusActivity> {
-            putExtra(NotificationProvider.TAP_EXPOSURE_NOTIFICATION_REMINDER_FLAG, "x")
+            startTestActivity<StatusActivity> {
+                putExtra(StatusActivity.CONTACT_TRACING_HUB_ACTION_EXTRA, ContactTracingHubAction.NAVIGATE_AND_TURN_ON)
+            }
+
+            waitFor { contactTracingHubRobot.checkActivityIsDisplayed() }
+            waitFor { contactTracingHubRobot.checkContactTracingToggledOnIsDisplayed() }
         }
 
-        statusRobot.checkActivityIsDisplayed()
+    @Test
+    fun startStatusActivity_whenUserCannotClaimIsolationPayment_isolationPaymentButtonShouldNotBeDisplayed() =
+        notReported {
+            testAppContext.setState(isolationHelper.neverInIsolation())
 
-        waitFor { statusRobot.checkEncounterDetectionSwitchIsChecked() }
-    }
+            startTestActivity<StatusActivity>()
+
+            statusRobot.checkActivityIsDisplayed()
+
+            waitFor { statusRobot.checkIsolationPaymentButtonIsNotDisplayed() }
+        }
 
     @Test
-    fun startStatusActivity_whenUserCannotClaimIsolationPayment_isolationPaymentButtonShouldNotBeDisplayed() = notReported {
-        testAppContext.setState(Default())
+    fun startStatusActivity_whenUserCanClaimIsolationPaymentAndHasToken_isolationPaymentButtonShouldBeDisplayed() =
+        notReported {
+            testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
-        startTestActivity<StatusActivity>()
-
-        statusRobot.checkActivityIsDisplayed()
-
-        waitFor { statusRobot.checkIsolationPaymentButtonIsNotDisplayed() }
-    }
-
-    @Test
-    fun startStatusActivity_whenUserCanClaimIsolationPaymentAndHasToken_isolationPaymentButtonShouldBeDisplayed() = notReported {
-        testAppContext.setState(
-            Isolation(
-                isolationStart = Instant.now().minus(20, DAYS),
-                isolationConfiguration = DurationDays(),
-                contactCase = ContactCase(
-                    startDate = Instant.now().minus(10, DAYS),
-                    notificationDate = Instant.now().minus(2, DAYS),
-                    expiryDate = LocalDate.now().plusDays(30)
-                )
-            )
-        )
-        testAppContext.getIsolationPaymentTokenStateProvider().tokenState = Token("token")
-
-        startTestActivity<StatusActivity>()
-
-        statusRobot.checkActivityIsDisplayed()
-
-        waitFor { statusRobot.checkIsolationPaymentButtonIsDisplayed() }
-    }
-
-    @Test
-    fun startStatusActivity_whenUserCanClaimIsolationPaymentAndDoesNotHaveToken_isolationPaymentButtonShouldBeNotDisplayed_onReceivingToken_buttonShouldBeDisplayed() = notReported {
-        testAppContext.setState(
-            Isolation(
-                isolationStart = Instant.now().minus(20, DAYS),
-                isolationConfiguration = DurationDays(),
-                contactCase = ContactCase(
-                    startDate = Instant.now().minus(10, DAYS),
-                    notificationDate = Instant.now().minus(2, DAYS),
-                    expiryDate = LocalDate.now().plusDays(30)
-                )
-            )
-        )
-
-        startTestActivity<StatusActivity>()
-
-        statusRobot.checkActivityIsDisplayed()
-
-        waitFor { statusRobot.checkIsolationPaymentButtonIsNotDisplayed() }
-
-        UiThreadStatement.runOnUiThread {
             testAppContext.getIsolationPaymentTokenStateProvider().tokenState = Token("token")
+
+            startTestActivity<StatusActivity>()
+
+            statusRobot.checkActivityIsDisplayed()
+
+            waitFor { statusRobot.checkIsolationPaymentButtonIsDisplayed() }
         }
 
-        waitFor { statusRobot.checkIsolationPaymentButtonIsDisplayed() }
-    }
+    @Test
+    fun startStatusActivity_whenUserCanClaimIsolationPaymentAndDoesNotHaveToken_isolationPaymentButtonShouldBeNotDisplayed_onReceivingToken_buttonShouldBeDisplayed() =
+        notReported {
+            testAppContext.setState(isolationHelper.contactCase().asIsolation())
+
+            startTestActivity<StatusActivity>()
+
+            statusRobot.checkActivityIsDisplayed()
+
+            waitFor { statusRobot.checkIsolationPaymentButtonIsNotDisplayed() }
+
+            UiThreadStatement.runOnUiThread {
+                testAppContext.getIsolationPaymentTokenStateProvider().tokenState = Token("token")
+            }
+
+            waitFor { statusRobot.checkIsolationPaymentButtonIsDisplayed() }
+        }
 
     @Test
     fun clickReadAdvice_whenBackPressed_readAdviceButtonShouldBeEnabled() = notReported {
@@ -328,17 +230,7 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun clickOrderTest_whenBackPressed_orderTestButtonShouldBeEnabled() = notReported {
-        testAppContext.setState(
-            state = Isolation(
-                isolationStart = Instant.now(),
-                isolationConfiguration = DurationDays(),
-                indexCase = IndexCase(
-                    symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(7, DAYS),
-                    selfAssessment = false
-                )
-            )
-        )
+        testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
 
@@ -353,10 +245,11 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun whenLastVisitedBookTestTypeVenueAtRisk_orderTestButtonShouldBeDisplayed() = notReported {
-        testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue = LastVisitedBookTestTypeVenueDate(
-            LocalDate.now(),
-            RiskyVenueConfigurationDurationDays(optionToBookATest = 10)
-        )
+        testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue =
+            LastVisitedBookTestTypeVenueDate(
+                LocalDate.now(),
+                RiskyVenueConfigurationDurationDays(optionToBookATest = 10)
+            )
 
         startTestActivity<StatusActivity>()
 
@@ -405,17 +298,7 @@ class StatusActivityTest : EspressoTest() {
     @Test
     fun clickFinancialSupport_whenBackPressed_financialSupportButtonShouldBeEnabled() = notReported {
         testAppContext.setIsolationPaymentToken("abc")
-        testAppContext.setState(
-            Isolation(
-                isolationStart = Instant.now(),
-                isolationConfiguration = DurationDays(),
-                contactCase = ContactCase(
-                    startDate = Instant.now().minus(3, DAYS),
-                    notificationDate = Instant.now().minus(2, DAYS),
-                    expiryDate = LocalDate.now().plus(1, DAYS)
-                )
-            )
-        )
+        testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
         startTestActivity<StatusActivity>()
 
@@ -463,17 +346,7 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun startStatusActivity_whenUserIsContactCaseOnly_reportSymptomsButtonShouldBeDisplayed() = notReported {
-        testAppContext.setState(
-            Isolation(
-                isolationStart = Instant.now().minus(20, DAYS),
-                isolationConfiguration = DurationDays(),
-                contactCase = ContactCase(
-                    startDate = Instant.now().minus(10, DAYS),
-                    notificationDate = Instant.now().minus(2, DAYS),
-                    expiryDate = LocalDate.now().plusDays(30)
-                )
-            )
-        )
+        testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
         startTestActivity<StatusActivity>()
 
@@ -484,7 +357,7 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun startStatusActivity_whenUserIsNotInIsolation_reportSymptomsButtonShouldBeDisplayed() = notReported {
-        testAppContext.setState(Default())
+        testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<StatusActivity>()
 
@@ -495,17 +368,7 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun startStatusActivity_whenUserIsIndexCaseOnly_reportSymptomsButtonShouldNotBeDisplayed() = notReported {
-        testAppContext.setState(
-            state = Isolation(
-                isolationStart = Instant.now(),
-                isolationConfiguration = DurationDays(),
-                indexCase = IndexCase(
-                    symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(7, DAYS),
-                    selfAssessment = false
-                )
-            )
-        )
+        testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
 
@@ -517,19 +380,10 @@ class StatusActivityTest : EspressoTest() {
     @Test
     fun startStatusActivity_whenUserIsIndexAndContactCase_reportSymptomsButtonShouldNotBeDisplayed() = notReported {
         testAppContext.setState(
-            state = Isolation(
-                isolationStart = Instant.now(),
+            IsolationState(
                 isolationConfiguration = DurationDays(),
-                indexCase = IndexCase(
-                    symptomsOnsetDate = LocalDate.now().minusDays(3),
-                    expiryDate = LocalDate.now().plus(7, DAYS),
-                    selfAssessment = false
-                ),
-                contactCase = ContactCase(
-                    startDate = Instant.now().minus(10, DAYS),
-                    notificationDate = Instant.now().minus(2, DAYS),
-                    expiryDate = LocalDate.now().plusDays(30)
-                )
+                contactCase = isolationHelper.contactCase(),
+                indexInfo = isolationHelper.selfAssessment()
             )
         )
 
@@ -538,5 +392,20 @@ class StatusActivityTest : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         waitFor { statusRobot.checkReportSymptomsIsNotDisplayed() }
+    }
+
+    @Test
+    fun clickToggleContactTracing_whenBackPressed_toggleContactTracingButtonShouldBeEnabled() = notReported {
+        startTestActivity<StatusActivity>()
+
+        statusRobot.clickToggleContactTracing()
+
+        contactTracingHubRobot.checkActivityIsDisplayed()
+
+        testAppContext.device.pressBack()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        statusRobot.checkToggleContactTracingIsEnabled()
     }
 }

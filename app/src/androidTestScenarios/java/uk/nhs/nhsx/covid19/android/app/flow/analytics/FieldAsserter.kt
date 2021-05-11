@@ -52,6 +52,7 @@ class FieldAsserter {
     private fun removeUntrackedFields(map: MutableMap<MetricsProperty, MetricsAssertion>): MutableMap<MetricsProperty, MetricsAssertion> {
         map.remove(Metrics::runningNormallyBackgroundTick)
         map.remove(Metrics::totalBackgroundTasks)
+        map.remove(Metrics::totalAlarmManagerBackgroundTasks)
         map.remove(Metrics::hasRiskyContactNotificationsEnabledBackgroundTick)
         map.remove(Metrics::totalRiskyContactReminderNotifications)
         return map

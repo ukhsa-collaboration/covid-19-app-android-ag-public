@@ -48,8 +48,10 @@ import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
 import uk.nhs.nhsx.covid19.android.app.remote.data.AppAvailabilityResponse
 import uk.nhs.nhsx.covid19.android.app.state.Event
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect
-import uk.nhs.nhsx.covid19.android.app.state.State
+import uk.nhs.nhsx.covid19.android.app.status.DateChangeBroadcastReceiver
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
 import uk.nhs.nhsx.covid19.android.app.util.AndroidStrongBoxSupport
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedSharedPreferencesUtils
@@ -155,7 +157,8 @@ class TestApplicationContext {
                 barcodeDetectorProvider,
                 randomNonRiskyExposureWindowsLimiter,
                 uuidGenerator,
-                clock
+                clock,
+                DateChangeBroadcastReceiver()
             )
         )
         .networkModule(
@@ -235,31 +238,30 @@ class TestApplicationContext {
         }
     }
 
-    fun getAnalyticsSubmissionLogStorage() = component.getAnalyticsSubmissionLogStorage()
+    fun getSubmitAnalyticsAlarmController() = component.getSubmitAnalyticsAlarmController()
 
     fun getUserInbox() = component.getUserInbox()
 
     fun getUnacknowledgedTestResultsProvider() = component.getUnacknowledgedTestResultsProvider()
 
-    fun getRelevantTestResultProvider() = component.getRelevantTestResultProvider()
-
-    fun getTestResultHandler() = component.getTestResultHandler()
-
     fun getTestOrderingTokensProvider() = component.getTestOrderingTokensProvider()
 
     fun getKeySharingInfoProvider() = component.getKeySharingInfoProvider()
 
-    fun setState(state: State) {
+    fun setState(state: IsolationState) {
         val ref = component.provideIsolationStateMachine()
             .stateMachine
-            .getPrivateProperty<StateMachine<State, Event, SideEffect>, AtomicReference<State>>(
+            .getPrivateProperty<StateMachine<IsolationState, Event, SideEffect>, AtomicReference<IsolationState>>(
                 "stateRef"
             )
         ref?.set(state)
     }
 
-    fun getCurrentState(): State =
+    fun getCurrentState(): IsolationState =
         component.provideIsolationStateMachine().readState()
+
+    fun getCurrentLogicalState(): IsolationLogicalState =
+        component.provideIsolationStateMachine().readLogicalState()
 
     fun getExposureCircuitBreakerInfoProvider() =
         component.getExposureCircuitBreakerInfoProvider()

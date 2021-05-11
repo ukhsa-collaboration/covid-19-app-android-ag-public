@@ -50,7 +50,13 @@ enum class FeatureFlag(
         "feature.submitAnalyticsViaAlarmManager",
         "Submit analytics via alarm manager",
         "Analytics submission is triggered by the AlarmManager instead of WorkManager",
-        defaultValue = false
+        defaultValue = true
+    ),
+    REMOTE_SERVICE_EXCEPTION_CRASH_ANALYTICS(
+        "feature.remoteServiceExceptionCrashAnalytics",
+        "Enable RemoteServiceException crash analytics",
+        "Store and send RemoteServiceException crash analytics data",
+        defaultValue = true
     )
 }
 

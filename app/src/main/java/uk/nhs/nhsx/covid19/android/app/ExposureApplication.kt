@@ -39,6 +39,8 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.AndroidBarcodeDetectorBuilder
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidBluetoothStateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
+import uk.nhs.nhsx.covid19.android.app.status.DateChangeBroadcastReceiver
+import uk.nhs.nhsx.covid19.android.app.status.DateChangeReceiver
 import uk.nhs.nhsx.covid19.android.app.util.AndroidStrongBoxSupport
 import uk.nhs.nhsx.covid19.android.app.util.AndroidUUIDGenerator
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedSharedPreferencesUtils
@@ -65,9 +67,17 @@ open class ExposureApplication : Application(), Configuration.Provider, Lifecycl
 
         encryptionUtils = EncryptionUtils(AndroidStrongBoxSupport)
 
-        buildAndUseAppComponent(NetworkModule(production, additionalInterceptors), ViewModelModule())
+        buildAndUseAppComponent(
+            NetworkModule(production, additionalInterceptors),
+            ViewModelModule(),
+            clock = Clock.systemDefaultZone()
+        )
 
         RuntimeBehavior.initialize(this, isTestBuild)
+
+        appComponent.provideRemoteServiceExceptionHandler().initialize()
+
+        migrateIsolationState()
 
         initializeWorkManager()
         if (!isRunningTest) {
@@ -113,6 +123,10 @@ open class ExposureApplication : Application(), Configuration.Provider, Lifecycl
         WorkManager.getInstance(this)
     }
 
+    private fun migrateIsolationState() {
+        appComponent.provideMigrateIsolationState().invoke()
+    }
+
     override fun getWorkManagerConfiguration(): Configuration {
         val builder = Configuration.Builder()
         builder.setMaxSchedulerLimit(WORK_MANAGER_SCHEDULER_LIMIT)
@@ -133,7 +147,9 @@ open class ExposureApplication : Application(), Configuration.Provider, Lifecycl
     fun buildAndUseAppComponent(
         networkModule: NetworkModule,
         viewModelModule: ViewModelModule,
-        exposureNotificationApi: ExposureNotificationApi = GoogleExposureNotificationApi(this)
+        exposureNotificationApi: ExposureNotificationApi = GoogleExposureNotificationApi(this),
+        clock: Clock,
+        dateChangeReceiver: DateChangeReceiver = DateChangeBroadcastReceiver()
     ) {
         val encryptedStorage = createEncryptedStorage()
 
@@ -154,7 +170,8 @@ open class ExposureApplication : Application(), Configuration.Provider, Lifecycl
                     AndroidBarcodeDetectorBuilder(this),
                     AndroidRandomNonRiskyExposureWindowsLimiter(),
                     AndroidUUIDGenerator(),
-                    Clock.systemDefaultZone()
+                    clock,
+                    dateChangeReceiver
                 )
             )
             .networkModule(networkModule)

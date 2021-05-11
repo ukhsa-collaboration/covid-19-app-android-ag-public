@@ -58,11 +58,13 @@ import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.settings.languages.LanguagesActivity
 import uk.nhs.nhsx.covid19.android.app.settings.myarea.MyAreaActivity
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
+import uk.nhs.nhsx.covid19.android.app.state.MigrateIsolationState
 import uk.nhs.nhsx.covid19.android.app.status.DebugFragment
 import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWorker
 import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusBaseActivity
+import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingHubActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitKeysProgressActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
@@ -72,7 +74,8 @@ import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.DailyContactT
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultOnsetDateActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultSymptomsActivity
-import uk.nhs.nhsx.covid19.android.app.widgets.IsolationStatusView
+import uk.nhs.nhsx.covid19.android.app.util.crashreporting.CrashReportProvider
+import uk.nhs.nhsx.covid19.android.app.util.crashreporting.RemoteServiceExceptionHandler
 import uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
 import uk.nhs.nhsx.covid19.android.app.widgets.LogoView
 import javax.inject.Singleton
@@ -131,7 +134,6 @@ interface ApplicationComponent {
     fun inject(updateRecommendedActivity: UpdateRecommendedActivity)
     fun inject(logoView: LogoView)
     fun inject(linkTextView: LinkTextView)
-    fun inject(isolationStatusView: IsolationStatusView)
     fun inject(downloadTasksWorker: DownloadTasksWorker)
     fun inject(submitOnboardingAnalyticsWorker: SubmitOnboardingAnalyticsWorker)
     fun inject(exposureNotificationWorker: ExposureNotificationWorker)
@@ -145,6 +147,7 @@ interface ApplicationComponent {
     fun inject(myAreaActivity: MyAreaActivity)
     fun inject(shareKeysInformationActivity: ShareKeysInformationActivity)
     fun inject(shareKeysReminderActivity: ShareKeysReminderActivity)
+    fun inject(contactTracingHubActivity: ContactTracingHubActivity)
 
     fun inject(testResultViewModel: BaseTestResultViewModel)
 
@@ -159,4 +162,7 @@ interface ApplicationComponent {
     fun provideSubmitAnalyticsAlarmController(): SubmitAnalyticsAlarmController
     fun provideVisitedVenuesStorage(): VisitedVenuesStorage
     fun provideKeySharingInfoProvider(): KeySharingInfoProvider
+    fun provideMigrateIsolationState(): MigrateIsolationState
+    fun provideRemoteServiceExceptionHandler(): RemoteServiceExceptionHandler
+    fun provideCrashReportProvider(): CrashReportProvider
 }

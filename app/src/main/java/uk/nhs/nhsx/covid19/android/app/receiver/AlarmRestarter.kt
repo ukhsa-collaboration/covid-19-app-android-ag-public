@@ -8,13 +8,13 @@ import android.content.Intent.ACTION_MY_PACKAGE_REPLACED
 import com.jeroenmols.featureflag.framework.FeatureFlag.SUBMIT_ANALYTICS_VIA_ALARM_MANAGER
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalyticsAlarmController
-import java.time.Instant
-import javax.inject.Inject
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationReminderAlarmController
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationAlarmController
 import uk.nhs.nhsx.covid19.android.app.status.ResumeContactTracingNotificationTimeProvider
+import java.time.Instant
+import javax.inject.Inject
 
 class AlarmRestarter : BroadcastReceiver() {
 

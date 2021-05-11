@@ -7,7 +7,9 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.WorkInfo
 import androidx.work.WorkInfo.State.ENQUEUED
 import androidx.work.WorkInfo.State.RUNNING
+import com.jeroenmols.featureflag.framework.FeatureFlag.SUBMIT_ANALYTICS_VIA_ALARM_MANAGER
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -40,6 +42,7 @@ abstract class AnalyticsTest : EspressoTest() {
     open fun tearDown() {
         testAppContext.clock.reset()
         testAppContext.virologyTestingApi.reset()
+        testAppContext.getSubmitAnalyticsAlarmController().cancelIfScheduled()
     }
 
     // Metrics Assertions
@@ -79,6 +82,7 @@ abstract class AnalyticsTest : EspressoTest() {
 
     fun advanceToNextBackgroundTaskExecution() {
         advanceClock(60 * 60 * 4)
+        triggerAnalyticsSubmission()
     }
 
     protected fun advanceToEndOfAnalyticsWindow(steps: Int = 4) {
@@ -91,6 +95,7 @@ abstract class AnalyticsTest : EspressoTest() {
 
         while (testAppContext.clock.instant().atZone(ZoneOffset.UTC) < endOfAnalyticsWindow) {
             advanceClock(secondsToAdvance)
+            triggerAnalyticsSubmission()
         }
     }
 
@@ -98,6 +103,33 @@ abstract class AnalyticsTest : EspressoTest() {
         testAppContext.clock.currentInstant =
             testAppContext.clock.instant().plusSeconds(secondsToAdvance)
         testAppContext.getCurrentState()
+        runBackgroundTasks()
+    }
+
+    // Analytics submission
+
+    private fun triggerAnalyticsSubmission() {
+        if (RuntimeBehavior.isFeatureEnabled(SUBMIT_ANALYTICS_VIA_ALARM_MANAGER)) {
+            triggerAnalyticsSubmissionViaAlarmManager()
+        } else {
+            triggerAnalyticsSubmissionViaBackgroundTask()
+        }
+    }
+
+    private fun triggerAnalyticsSubmissionViaAlarmManager(
+        time: Long = 5,
+        timeUnit: TimeUnit = SECONDS
+    ) {
+        val latch = CountDownLatch(1)
+        testAppContext.getSubmitAnalyticsAlarmController().onAlarmTriggered {
+            latch.countDown()
+        }
+        if (!latch.await(time, timeUnit)) {
+            throw TimeoutException("Triggering Analytics Submission Via Alarm Manager failed")
+        }
+    }
+
+    private fun triggerAnalyticsSubmissionViaBackgroundTask() {
         runBackgroundTasks()
     }
 }

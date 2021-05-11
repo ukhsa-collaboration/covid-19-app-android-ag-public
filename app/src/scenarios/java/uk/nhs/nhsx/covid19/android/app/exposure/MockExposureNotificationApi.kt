@@ -17,7 +17,7 @@ import java.io.File
 import java.time.Clock
 import java.time.Instant
 
-class MockExposureNotificationApi(private val clock: Clock = Clock.systemUTC()) : ExposureNotificationApi {
+class MockExposureNotificationApi(private val clock: Clock) : ExposureNotificationApi {
 
     private var supportsLocationlessScanning = false
     private var isEnabled = false

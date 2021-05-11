@@ -12,7 +12,6 @@ import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.LocalAuthorit
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.OnboardingStarted
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.PolicyUpdated
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.PostCodeToLocalAuthorityMissing
-import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.TabletNotSupported
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationRequired
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Invalid
@@ -22,11 +21,9 @@ import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateProvider
 import uk.nhs.nhsx.covid19.android.app.util.defaultFalse
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.DeviceDetection
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-    private val deviceDetection: DeviceDetection,
     private val exposureNotificationApi: ExposureNotificationApi,
     private val onboardingCompletedProvider: OnboardingCompletedProvider,
     private val policyUpdateProvider: PolicyUpdateProvider,
@@ -44,7 +41,6 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
 
             val state = when {
-                deviceDetection.isTablet() -> TabletNotSupported
                 !exposureNotificationApi.isAvailable() -> ExposureNotificationsNotAvailable
                 onboardingCompletedProvider.value.defaultFalse() && !policyUpdateProvider.isPolicyAccepted() -> PolicyUpdated
                 onboardingCompletedProvider.value.defaultFalse() && policyUpdateProvider.isPolicyAccepted() ->
@@ -66,7 +62,6 @@ class MainViewModel @Inject constructor(
     }
 
     sealed class MainViewState {
-        object TabletNotSupported : MainViewState()
         object ExposureNotificationsNotAvailable : MainViewState()
         object OnboardingStarted : MainViewState()
         object PolicyUpdated : MainViewState()

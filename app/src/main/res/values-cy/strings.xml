@@ -28,13 +28,7 @@
     <string name="status_option_read_latest_advice">Darganfod mwy am brofion</string>
     <string name="status_option_contact_tracing">Olrhain cysylltiadau</string>
     <string name="contact_tracing_active">Olrhain cysylltiadau yn weithredol</string>
-    <string name="contact_tracing_not_active">Mae olrhain cysylltiadau wedi’i ddiffodd.</string>
-    <string name="status_area_risk_level_low">ISEL</string>
-    <string name="status_area_risk_level_medium">CANOLIG</string>
-    <string name="status_area_risk_level_high">UCHEL</string>
-    <string name="low_risk_level_text">Isel – ar hyn o bryd mae eich awdurdod lleol yn cael ei asesu fel \'risg isel\', gyda lefelau haint sy\'n debyg i’r rhan fwyaf o rannau eraill y wlad.</string>
-    <string name="medium_risk_level_text">Canolig - mae gan eich awdurdod lleol, neu awdurdod lleol cyfagos, lefelau uchel neu gynyddol o haint. Dilynwch y canllawiau cenedlaethol.</string>
-    <string name="high_risk_level_text">Uchel – Mae eich awdurdod lleol, neu awdurdod lleol cyfagos, yn defnyddio mesurau ychwanegol i\'r rhai sydd ar waith yng ngweddill Cymru a Lloegr (ee cyfyngiadau symud) i leihau trosglwyddiad yr haint oherwydd bod lefelau uchel o haint yn yr ardal leol. Mae cynllun gweithredu manwl ar waith ac mae cymorth cenedlaethol yn cael ei ddarparu i ategu’r adnoddau lleol.</string>
+    <string name="contact_tracing_not_active">Olrhain cysylltiadau yn oedi</string>
     <string name="risk_level_title">Yn fy ardal</string>
     <string name="qr_code_permission_denied_action">Rhoi caniatâd i’r camera</string>
     <string name="qr_code_permission_denied_subtitle">Mae\'r ap hwn yn defnyddio\'ch camera i fewngofnodi i leoliadau fel bariau a bwytai.\n\nRhowch ganiatâd i’r camera sganio cod QR swyddogol y GIG.</string>
@@ -83,7 +77,6 @@
     <string name="test_ordering_description_3">Yr unig wybodaeth a rennir rhwng yr ap a’r wefan yw ‘tocyn’ digidol a fydd yn ein helpu i gael canlyniadau eich profion yn ôl i’r ap.</string>
     <string name="test_ordering_description_4">Disgrifir unrhyw ddata a ddefnyddir yn y broses brofi yn yr hysbysiad preifatrwydd:</string>
     <string name="test_ordering_description_5">Gallwch hefyd ganfod sut mae’r ap hwn yn defnyddio’r data rydych wedi’u rhoi i ni:</string>
-    <string name="test_ordering_description_6">Dim ond i gael prawf i chi’ch hun y gallwch ddefnyddio’r ap hwn. I gael prawf i rywun arall, defnyddiwch wefan profi coronafeirws y llywodraeth:</string>
     <string name="book_free_test_now">Archebu prawf am ddim nawr</string>
     <string name="about_this_app_title">Ynglŷn â\'r ap hwn</string>
     <string name="title_how_app_works">Sut mae’r ap hwn yn gweithio</string>
@@ -108,8 +101,8 @@
     <string name="cancel">Canslo</string>
     <string name="notification_action_exposure_reminder">Troi olrhain cysylltiadau ymlaen.</string>
     <string name="notification_title_exposure_reminder">Amser i droi olrhain cysylltiadau ymlaen</string>
-    <string name="resume_contact_tracing_title">Mae olrhain cysylltiadau wedi’i ddiffodd.</string>
-    <string name="resume_contact_tracing_subtitle">Dewis pryd y bydd yr ap yn eich atgoffa i droi olrhain cysylltiadau ymlaen</string>
+    <string name="resume_contact_tracing_title">Oedi wrth olrhain cysylltiadau</string>
+    <string name="resume_contact_tracing_subtitle">Dewiswch pryd y bydd yr ap yn eich atgoffa i ailgynnau\'r gwasanaeth olrhain cysylltiadau</string>
     <string name="contact_tracing_notification_reminder_dialog_message">Bydd diffodd olrhain cysylltiadau yn gwneud yr ap yn llai effeithiol.</string>
     <string name="edit_postcode_district_title">Golygu ardal cod post</string>
     <string name="onboarding_age_confirmation_title">Ydych chi\'n 16 oed neu\'n hŷn?</string>
@@ -119,7 +112,6 @@
     <string name="onboarding_age_restriction_title">Yn anffodus, i bobl 16 oed a hŷn yn unig y mae’r ap hwn.</string>
     <string name="onboarding_age_restriction_text">Diolch am eich diddordeb. Ar gyfer pobl 16 oed a hŷn yn unig y mae\'r ap hwn.</string>
     <string name="url_terms_of_use">https://covid19.nhs.uk/terms-of-use-welsh.html</string>
-    <string name="url_nhs_tablet_device">https://faq.covid19.nhs.uk/article/KA-01219</string>
     <string name="url_nhs_111_online">https://111.wales.nhs.uk/</string>
     <string name="url_accessibility_statement">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info">https://faq.covid19.nhs.uk/article/KA-01192/en-us</string>
@@ -151,12 +143,12 @@
         <item quantity="other">Mae angen ichi hunanynysu tan %1$s am 23:59. Mae %2$s diwrnod tan hynny.</item>
     </plurals>
     <plurals name="resume_contact_tracing_hours">
-        <item quantity="zero">%1$d awr</item>
-        <item quantity="one">%1$d awr</item>
-        <item quantity="two">%1$d awr</item>
-        <item quantity="few">%1$d awr</item>
-        <item quantity="many">%1$d awr</item>
-        <item quantity="other">%1$d awr</item>
+        <item quantity="zero">%d awr</item>
+        <item quantity="one">%d awr</item>
+        <item quantity="two">%d awr</item>
+        <item quantity="few">%d awr</item>
+        <item quantity="many">%d awr</item>
+        <item quantity="other">%d awr</item>
     </plurals>
     <string name="app_name">COVID-19 y GIG</string>
     <string name="continue_button">Parhau</string>
@@ -166,7 +158,6 @@
     <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">Bydd yr ap yn anfon rhybudd atoch os ydych wedi bod mewn cysylltiad agos â rhywun sydd wedi profi\'n bositif am y feirws.\n\nEr mwyn galluogi olrhain cysylltiadau ar gyfer yr ap hwn mae angen i chi ganiatáu Hysbysiadau Cysylltiad.\n\nOs byddwch yn newid eich meddwl, gallwch newid y caniatâd yn Gosodiadau ar unrhyw adeg.</string>
     <string name="privacy_notice">Hysbysiad preifatrwydd</string>
-    <string name="tablet_information_url">Gwybodaeth am ddefnyddio llechen</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
     <string name="post_code_rationale">Mae\'r ardal cod post yn helpu i ddysgu am ledaeniad y coronafeirws mewn gwahanol ardaloedd. Mae hyn yn sicrhau y gallwn roi\'r cyngor iechyd cyhoeddus gorau posibl ar gyfer eich ardal.\n\nPeidiwch â phoeni. Ni fydd eich ardal cod post yn cael ei defnyddio i dracio\'ch lleoliad.</string>
     <string name="enable_bluetooth_rationale">Mae\'r ap hwn yn defnyddio Bluetooth i wybod pryd y mae\'n agos at ffôn arall gyda\'r ap hwn wedi\'i osod. Os ydych chi wedi diffodd Bluetooth, ni fydd yr ap hwn yn gweithio.\n\nMae’r ap hwn yn defnyddio ‘Ynni Isel Bluetooth\' - technoleg i arbed batri.\n\nEwch i Gosodiadau a throwch Bluetooth ymlaen.</string>
@@ -175,8 +166,6 @@
     <string name="enable_location_service_title">Rhaid ichi alluogi\'r gwasanaeth lleoliad ar eich ffôn.</string>
     <string name="enable_location_service_rationale">I gael Bluetooth i weithio, mae angen ichi droi\'r gwasanaeth lleoliad ymlaen ar eich ffôn.\n\nNid yw\'r ap hwn yn defnyddio Bluetooth na\'ch lleoliad i\'ch tracio. Bydd eich hunaniaeth bersonol yn parhau i gael ei diogelu.\n\nOs na fyddwch yn troi\'r gwasanaeth lleoliad ymlaen ar eich ffôn ni fydd yr ap hwn yn gweithio.\n\nEr mwyn i\'r ap hwn weithio, ewch i gosodiadau i droi\'r gwasanaeth lleoliad ymlaen.</string>
     <string name="post_code_example">Mae angen cod post ardal yng Nghymru neu yn Lloegr i ddefnyddio\'r ap hwn.\n\nEnghreifftiau: Os mai\'ch cod post yw CE1B 2PQ, nodwch \"CE1B\". Os mai CR0 3RL ydyw, nodwch \"CR0\". Os mai L4 0RE ydyw, nodwch \"L4\".</string>
-    <string name="tablet_support_title">Mae\'r ap hwn wedi cael ei wneud ar gyfer ffonau clyfar symudol.</string>
-    <string name="tablet_support_description">Mae\'n ymddangos mai llechen yw eich dyfais. Mae\'r ap hwn ar gyfer ffonau clyfar yn unig oherwydd bod yr ap ddim ond yn effeithiol os yw ar ddyfais sydd yn eich meddiant trwy\'r amser. Gosodwch yr ap ar eich ffôn clyfar.</string>
     <string name="test_ordering_testing_privacy_notice">Hysbysiad preifatrwydd ar gyfer profi</string>
     <string name="test_ordering_app_privacy_notice">Hysbysiad preifatrwydd yr ap</string>
     <string name="test_ordering_book_test_for_someone_else">Archebu prawf i rywun arall</string>
@@ -192,7 +181,6 @@
     <string name="test_ordering_failure_description">Cyn rhoi cynnig arall arni, gwiriwch fod gosodiadau data symudol eich ffôn ymlaen, gwiriwch eich cysylltiad Wi-Fi (os ydych yn defnyddio un) a gwnewch yn siŵr bod Modd Awyren wedi\'i ddiffodd.</string>
     <string name="notification_title_risky_venue">Fe wnaethoch chi ymweld yn ddiweddar â lleoliad ar yr un diwrnod ag eraill sydd bellach wedi cael canlyniad prawf positif am coronafeirws (COVID-19)</string>
     <string name="notification_text_post_code_risk_changed">Cofiwch sganio cod QR y GIG wrth ymweld â lleoliadau.</string>
-    <string name="status_area_risk_level">Yn ardal %s lefel y risg yw %s</string>
     <string name="notification_channel_area_risk_changed_name">Newid yn risg eich ardal</string>
     <string name="notification_channel_area_risk_changed_description">Mae\'r hysbysiadau hyn yn helpu i dracio\'r risg o haint yn eich ardal.</string>
     <string name="notification_channel_isolation_state_name">Ynysu</string>
@@ -281,7 +269,6 @@
     <string name="contact_tracing_notification_reminder_dialog_title">Gosod nodyn atgoffa i droi olrhain cysylltiadau ymlaen mewn %1$s awr</string>
     <string name="okay">iawn</string>
     <string name="template_hours">%d awr</string>
-    <string name="resume_contact_tracing_don_t_remind_me">Peidio â’m hatgoffa</string>
     <string name="url_how_app_works">https://covid19.nhs.uk/introducing-the-app-welsh.html</string>
     <string name="url_latest_advice_in_isolation">https://faq.covid19.nhs.uk/article/KA-01193/en-us</string>
     <string name="submit_keys_information_description_text">Ewch ymlaen i rannu\'r canlyniad yma isod.\n\nPan ofynnir i chi wneud hynny, dewiswch \'Rhannu\' neu \'Rhannu\'r hap-IDs sydd ar eich dyfais’.</string>
@@ -301,7 +288,6 @@
     <string name="submit_keys_information_title">Helpu i hysbysu eraill</string>
     <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information/ap-covid-19-y-gig</string>
     <string name="url_terms_of_use_wls">https://covid19.nhs.uk/terms-of-use-welsh.html</string>
-    <string name="url_nhs_tablet_device_wls">https://faq.covid19.nhs.uk/article/KA-01219</string>
     <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/</string>
     <string name="url_accessibility_statement_wls">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info_wls">https://faq.covid19.nhs.uk/article/KA-01192/en-us</string>
@@ -331,14 +317,11 @@
     <string name="authentication_example">Enghraifft: 5apv-enka</string>
     <string name="authentication_title">Ar hyn o bryd dim ond i Ymatebwyr Gwirfoddol y GIG, trigolion Ynys Wyth a Newham</string>
     <string name="authentication_where_can_i_find_code">Ble alla i ddod o hyd i’m cod?</string>
-    <string name="high_risk_level_text_wls">Uchel – Mae eich awdurdod lleol, neu awdurdod lleol cyfagos, yn defnyddio mesurau ychwanegol i\'r rhai sydd ar waith yng ngweddill Cymru a Lloegr (ee cyfyngiadau symud) i leihau trosglwyddiad yr haint oherwydd bod lefelau uchel o haint yn yr ardal leol. Mae cynllun gweithredu manwl ar waith ac mae cymorth cenedlaethol yn cael ei ddarparu i ategu’r adnoddau lleol.</string>
     <string name="link_test_result_error_no_connection">Dim rhyngrwyd. Cysylltwch â\'ch rhwydwaith neu WiFi a rhoi cynnig arall arni.</string>
     <string name="link_test_result_error_unknown">Aeth rhywbeth o\'i le. Rhowch gynnig arall arni.</string>
     <string name="logo_nhs_england_description">Profi ac Olrhain y GIG</string>
     <string name="logo_nhs_generic_description">COVID-19 y GIG</string>
     <string name="logo_nhs_wales_description">Profi Olrhain Diogelu GIG Cymru</string>
-    <string name="low_risk_level_text_wls">Isel – ar hyn o bryd mae eich awdurdod lleol yn cael ei asesu fel \'risg isel\', gyda lefelau haint sy\'n debyg i’r rhan fwyaf o rannau eraill y wlad.</string>
-    <string name="medium_risk_level_text_wls">Canolig - mae gan eich awdurdod lleol, neu awdurdod lleol cyfagos, lefelau uchel neu gynyddol o haint. Dilynwch y canllawiau cenedlaethol.</string>
     <string name="notification_channel_background_work_description">Mae\'r hysbysiadau hyn yn rhoi gwybod am weithgareddau\'r ap yn y cefndir.</string>
     <string name="notification_channel_background_work_name">Gweithgareddau cefndir</string>
     <string name="notification_text_updating_database">Wrthi’n llwytho…</string>
@@ -349,16 +332,11 @@
     <string name="questionnaire_no_i_dont_have_symptom">Na, nid oes gennyf %s</string>
     <string name="questionnaire_yes_i_have_symptom">Oes, mae gen %s</string>
     <string name="state_test_positive_then_negative_info">Mae canlyniad eich prawf coronafeirws yn negatif. Fodd bynnag, dylech barhau i hunanynysu. Y rheswm am hyn yw eich bod naill ai wedi derbyn canlyniad positif yn flaenorol, neu wedi rhoi gwybod yn ddiweddar bod gennych symptomau.</string>
-    <string name="status_area_risk_level_high_wls">UCHEL</string>
-    <string name="status_area_risk_level_low_wls">ISEL</string>
-    <string name="status_area_risk_level_medium_wls">CANOLIG</string>
-    <string name="status_area_risk_level_wls">Yn ardal %s lefel y risg yw %s</string>
     <string name="test_result_negative_then_positive_continue_explanation">Er mwyn deall sut mae\'r ap yn cyfrifo diwrnodau hunan-ynysu, defnyddiwch y ddolen i\'r cwestiynau isod.\n\nMae canlyniad eich prawf yn dangos bod y feirws arnoch ar adeg y prawf. Anfonwyd rhagor o wybodaeth atoch trwy e-bost, neges destun neu ffôn. Os ydych chi o dan 18 oed, fe\'ch cynghorir i ddangos y neges hon i oedolyn dibynadwy.</string>
     <string name="test_result_positive_then_negative_explanation">Er mwyn deall sut mae\'r ap yn cyfrifo diwrnodau hunan-ynysu, ewch i\'r rhestr o gwestiynau a ofynnir yn aml.\n\nMae canlyniad y prawf yn dangos nad oedd y feirws arnoch ar adeg y prawf. Os ydych wedi rhoi gwybod yn ddiweddar am symptomau, gwnewch yn siŵr eich bod wedi archebu prawf. Os ydych yn datblygu symptomau, rhowch wybod amdanynt ar yr ap yma. Os ydych chi o dan 18 oed, fe\'ch cynghorir i ddangos y neges hon i oedolyn dibynadwy.</string>
     <string name="test_result_void_already_not_in_isolation_subtitle">Er mwyn deall sut mae\'r ap yn cyfrifo diwrnodau hunan-ynysu, ewch i\'r rhestr o gwestiynau a ofynnir yn aml.\n\nNi allem ddweud a oedd y coronafeirws arnoch pan wnaed y prawf a dylech gymryd y prawf eto. Os ydych chi o dan 18 oed, fe\'ch cynghorir i ddangos y neges hon i oedolyn dibynadwy.</string>
     <string name="test_result_void_no_self_isolation_subtitle">Ni allem ddweud a oedd y coronafeirws arnoch</string>
     <string name="test_result_your_test_result">Canlyniad eich prawf</string>
-    <string name="test_result_negative_no_self_isolation_description">Mae canlyniad eich prawf coronafeirws yn negyddol</string>
     <string name="test_result_negative_no_self_isolation_explanation">Mae canlyniad eich prawf yn dangos nad oedd y feirws arnoch ar adeg y prawf. Os byddwch yn datblygu symptomau, rhowch wybod amdanynt ar yr ap hwn. Os ydych chi o dan 18 oed, fe\'ch cynghorir i ddangos y neges hon i oedolyn dibynadwy.</string>
     <string name="test_result_negative_no_self_isolation_subtitle">Mae’ch hunanynysu wedi dod i ben</string>
     <string name="test_result_positive_no_self_isolation_description">Fodd bynnag, os oes gennych dymheredd uchel, parhewch i hunanynysu nes iddo ddychwelyd i normal</string>
@@ -375,7 +353,6 @@
     <string name="update_in_play_store">Diweddarwch eich ap nawr</string>
     <string name="updated_privacy_control_text">Rydyn ni wedi gwneud rhai newidiadau i\'r ap er mwyn iddo fod yn fwy effeithlon wrth ichi deithio. Mae nifer o wledydd yn gweithio gyda\'i gilydd i sicrhau bod olrhain cysylltiadau yn parhau i weithio wrth i bobl groesi ffiniau i wahanol wledydd.\n\nBydd apiau olrhain cysylltiadau swyddogol Cymru, Lloegr, yr Alban, Gogledd Iwerddon, Jersey a Gibraltar yn gallu rhannu data heb ddatgelu pwy yw\'r defnyddwyr.\n\nOs ydych chi\'n profi\'n bositif am y coronafeirws, gallwch ddewis rhannu eich data gyda\'r GIG er mwyn inni anfon hysbysiadau, os oes angen, at ddefnyddwyr eraill yr ap yn y gwledydd hyn.</string>
     <string name="updated_privacy_title">Newidiadau i\'n polisïau</string>
-    <string name="about_local_authority">Awdurdod lleol</string>
     <string name="checkin_information_title_new">Mwy o wybodaeth</string>
     <string name="confirm_and_start">Cadarnhau</string>
     <string name="exposure_faqs">Cwestiynau cyffredin</string>
@@ -471,7 +448,6 @@
     <string name="unsupported_device">Cyfyngiad yn eich gosodiadau (er enghraifft, os mai ffôn cwmni yw hwn).\n\nMae ap arall ar eich ffôn yn defnyddio\'r un dechnoleg gan atal yr ap hwn rhag gweithio.</string>
     <string name="user_data_daily_contact_testing_text">Wedi cadarnhau cymryd rhan</string>
     <string name="user_data_daily_contact_testing_title">Profi cysylltiadau\'n ddyddiol</string>
-    <string name="about_manage_my_data_settings_subtitle">Awdurdod lleol, canlyniadau prawf, hanes y lleoliad</string>
     <string name="ill_do_it_later">Fe wnaf yn nes ymlaen</string>
     <string name="link_test_result_daily_contact_testing_description">Os oes gennych ganlyniad positif, teipiwch y cod y byddwch wedi\'i dderbyn yn blwch uchod a hunanynyswch\n\nOs oes gennych ganlyniad negatif, ni fyddwch yn derbyn cod. Mae angen i chi ddweud wrthym eich bod wedi derbyn canlyniad negatif isod, a pharhau</string>
     <string name="link_test_result_daily_contact_testing_description_list_header">Hefyd:</string>
@@ -540,6 +516,20 @@
     <string name="share_keys_reminder_title">Nodyn atgoffa i hysbysu eraill</string>
     <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="url_nhs_get_tested_wls">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="camera_active_accessibility_announcement">Mae\'r camera\'n weithredol. Anelwch ef at boster cod QR swyddogol y GIG i fewngofnodi i leoliad</string>
+    <string name="contact_tracing_hub_consider_pausing_text">eich bod yn storio eich ffôn mewn locer neu ardal gymunol\n\neich bod yn gweithio y tu ôl i sgrîn dryloyw sefydlog ac wedi\'ch amddiffyn yn llawn rhag pobl eraill\n\neich bod yn weithiwr ym maes iechyd a gofal cymdeithasol ac yn gwisgo PPE o safon feddygol, er enghraifft masg llawfeddygol\n\neich bod yn weithiwr gofal iechyd sy\'n gweithio mewn adeilad gofal iechyd fel ysbyty neu feddygfa Teulu</string>
+    <string name="contact_tracing_hub_consider_pausing_title">Mae olrhain cysylltiadau\'n helpu i\'ch gwarchod chi ac eraill rhag coronafeirws (COVID-19).\n\nNi ddylech chi oedi wrth olrhain cysylltiadauoni bai:</string>
+    <string name="contact_tracing_hub_should_not_pause_text">ni ddylai wneud fawr o wahaniaeth i oes y batri\n\nni all olrhain eich lleoliad</string>
+    <string name="contact_tracing_hub_should_not_pause_title">Olrhain cysylltiadau:</string>
+    <string name="contact_tracing_hub_status_off">Olrhain cysylltiadau WEDI\'I DDIFFODD</string>
+    <string name="contact_tracing_hub_status_on">Olrhain cysylltiadau YMLAEN</string>
+    <string name="contact_tracing_hub_title">Rheoli olrhain cysylltiadau</string>
+    <string name="contact_tracing_hub_turn_back_on_reminder">Gallwch osod nodyn atgoffa yn yr ap i ddweud wrthych am ailgynnau\'r gwasanaeth olrhain cysylltiadau.</string>
     <string name="notification_channel_share_keys_reminder_description">These notifications remind you to share random IDs</string>
     <string name="notification_channel_share_keys_reminder_name">Share random IDs reminder</string>
+    <string name="status_contact_tracing_activate">Ailgynnau</string>
+    <string name="status_option_toggle_contact_tracing">Rheoli olrhain cysylltiadau</string>
+    <string name="ukca_compliance_announcement">nod UKCA</string>
+    <string name="user_data_acknowledged_date">Cydnabyddiad ar</string>
+    <string name="user_data_test_end">Diwedd y prawf</string>
 </resources>

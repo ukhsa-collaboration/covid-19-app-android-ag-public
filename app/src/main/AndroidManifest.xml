@@ -100,8 +100,6 @@
             android:label="@string/venue_alert_m2_title"/>
         <activity android:name=".status.RiskLevelActivity"
             android:label="@string/risk_level_title"/>
-        <activity android:name=".edgecases.TabletNotSupportedActivity"
-            android:label="@string/tablet_support_title"/>
         <activity android:name=".exposure.sharekeys.ShareKeysInformationActivity"
             android:label="@string/submit_keys_information_title"/>
         <activity android:name=".testordering.linktestresult.LinkTestResultActivity"
@@ -137,6 +135,8 @@
             android:label="@string/share_keys_success_title"/>
         <activity android:name=".exposure.sharekeys.ShareKeysReminderActivity"
             android:label="@string/share_keys_reminder_title"/>
+        <activity android:name=".status.contacttracinghub.ContactTracingHubActivity"
+            android:label="@string/contact_tracing_hub_title"/>
 
         <!-- Receivers -->
         <receiver

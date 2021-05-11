@@ -63,6 +63,15 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="App day offset" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.OffsetDaysView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Exposure Notification" />
 
             <CheckBox

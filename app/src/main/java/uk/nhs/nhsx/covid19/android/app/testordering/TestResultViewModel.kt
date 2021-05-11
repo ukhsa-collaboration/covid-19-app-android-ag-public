@@ -5,16 +5,13 @@ import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.SubmitObfuscationData
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
-import uk.nhs.nhsx.covid19.android.app.state.State
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler
-import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult
-import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.DoNotTransitionButStoreTestResult
-import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.TransitionAndStoreTestResult
-import uk.nhs.nhsx.covid19.android.app.state.hasConfirmedPositiveTestResult
+import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.DoNotTransition
+import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.Transition
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.FINISH
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.ORDER_TEST
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.SHARE_KEYS
@@ -30,14 +27,16 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.Positive
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWontBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidWillBeInIsolation
+import java.time.Clock
+import java.time.Instant
 import javax.inject.Inject
 
 class TestResultViewModel @Inject constructor(
     private val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider,
-    private val relevantTestResultProvider: RelevantTestResultProvider,
     private val testResultIsolationHandler: TestResultIsolationHandler,
     private val stateMachine: IsolationStateMachine,
     private val submitObfuscationData: SubmitObfuscationData,
+    private val clock: Clock
 ) : BaseTestResultViewModel() {
     private var wasAcknowledged = false
     private var preventKeySubmission = false
@@ -56,65 +55,65 @@ class TestResultViewModel @Inject constructor(
         } else {
             testResult = receivedTestResult
 
-            val state = stateMachine.readState()
+            val currentState = stateMachine.readLogicalState()
 
-            val transition = testResultIsolationHandler.computeTransitionWithTestResult(state, testResult)
-            val newStateWithTestResult = when (transition) {
-                is TransitionAndStoreTestResult -> transition.newState
-                is DoNotTransitionButStoreTestResult -> state
-                is TransitionDueToTestResult.Ignore -> state
+            val transition = testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                currentState,
+                testResult,
+                testAcknowledgedDate = Instant.now(clock)
+            )
+            val newState = when (transition) {
+                is Transition -> IsolationLogicalState.from(transition.newState)
+                is DoNotTransition -> currentState
             }
-            preventKeySubmission = transition is TransitionDueToTestResult.Ignore && transition.preventKeySubmission
+            preventKeySubmission = transition is DoNotTransition && transition.preventKeySubmission
 
             val mainState = when (testResult.testResult) {
-                POSITIVE -> mainStateWhenPositive(state, newStateWithTestResult)
-                NEGATIVE -> mainStateWhenNegative(state, newStateWithTestResult)
-                VOID -> when (state) {
-                    is Isolation -> VoidWillBeInIsolation // B
-                    is Default -> VoidNotInIsolation // F
+                POSITIVE -> mainStateWhenPositive(currentState, newState)
+                NEGATIVE -> mainStateWhenNegative(currentState, newState)
+                VOID -> when {
+                    currentState.isActiveIsolation(clock) -> VoidWillBeInIsolation // B
+                    else -> VoidNotInIsolation // F
                 }
             }
             val remainingDaysInIsolation =
-                stateMachine.remainingDaysInIsolation(newStateWithTestResult).toInt()
+                stateMachine.remainingDaysInIsolation(newState).toInt()
             viewState.postValue(ViewState(mainState, remainingDaysInIsolation))
         }
     }
 
     private fun mainStateWhenPositive(
-        state: State,
-        newStateWithTestResult: State
-    ): TestResultViewState {
-        return if (newStateWithTestResult is Isolation) {
+        currentState: IsolationLogicalState,
+        newState: IsolationLogicalState
+    ): TestResultViewState =
+        if (newState.isActiveIsolation(clock)) {
             if (testResult.requiresConfirmatoryTest) {
-                val isIsolatingDueToPositiveConfirmed =
-                    state is Isolation && state.hasConfirmedPositiveTestResult(relevantTestResultProvider)
+                val isIsolatingDueToPositiveConfirmed = currentState is PossiblyIsolating &&
+                    currentState.hasActiveConfirmedPositiveTestResult(clock)
                 if (isIsolatingDueToPositiveConfirmed) PositiveContinueIsolationNoChange
                 else PositiveWillBeInIsolationAndOrderTest
             } else {
-                when (state) {
-                    is Isolation -> PositiveContinueIsolation // C
-                    is Default -> PositiveWillBeInIsolation // H
-                }
+                if (currentState.isActiveIsolation(clock)) PositiveContinueIsolation // C
+                else PositiveWillBeInIsolation // H
             }
         } else {
             PositiveWontBeInIsolation // G
         }
-    }
 
     private fun mainStateWhenNegative(
-        state: State,
-        newStateWithTestResult: State
+        currentState: IsolationLogicalState,
+        newState: IsolationLogicalState
     ): TestResultViewState =
-        when (state) {
-            is Isolation ->
-                if (newStateWithTestResult is Isolation)
-                    if (newStateWithTestResult.isIndexCase())
-                        NegativeAfterPositiveOrSymptomaticWillBeInIsolation // D
-                    else
-                        NegativeWillBeInIsolation
+        if (currentState.isActiveIsolation(clock)) {
+            if (newState.isActiveIsolation(clock))
+                if (newState is PossiblyIsolating && newState.isActiveIndexCase(clock))
+                    NegativeAfterPositiveOrSymptomaticWillBeInIsolation // D
                 else
-                    NegativeWontBeInIsolation // A
-            is Default -> NegativeNotInIsolation // E
+                    NegativeWillBeInIsolation
+            else
+                NegativeWontBeInIsolation // A
+        } else {
+            NegativeNotInIsolation // E
         }
 
     private fun isKeySubmissionSupported(): Boolean =

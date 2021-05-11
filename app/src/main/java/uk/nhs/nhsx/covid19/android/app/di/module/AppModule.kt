@@ -19,11 +19,14 @@ import uk.nhs.nhsx.covid19.android.app.packagemanager.PackageManager
 import uk.nhs.nhsx.covid19.android.app.permissions.PermissionsManager
 import uk.nhs.nhsx.covid19.android.app.qrcode.BarcodeDetectorBuilder
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
+import uk.nhs.nhsx.covid19.android.app.status.DateChangeReceiver
 import uk.nhs.nhsx.covid19.android.app.util.AndroidBase64Decoder
+import uk.nhs.nhsx.covid19.android.app.util.AndroidBase64Encoder
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
+import uk.nhs.nhsx.covid19.android.app.util.Base64Encoder
 import uk.nhs.nhsx.covid19.android.app.util.EncryptedFileInfo
 import uk.nhs.nhsx.covid19.android.app.util.UUIDGenerator
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.DeviceDetection
+import java.security.SecureRandom
 import java.time.Clock
 import javax.inject.Named
 import javax.inject.Singleton
@@ -44,17 +47,14 @@ class AppModule(
     private val barcodeDetectorBuilder: BarcodeDetectorBuilder,
     private val randomNonRiskyExposureWindowsLimiter: RandomNonRiskyExposureWindowsLimiter,
     private val uuidGenerator: UUIDGenerator,
-    private val clock: Clock
+    private val clock: Clock,
+    private val dateChangeReceiver: DateChangeReceiver
 ) {
     @Provides
     fun provideContext() = applicationContext
 
     @Provides
     fun provideAppInfo() = AppInfo()
-
-    @Provides
-    fun provideDeviceDetection(): DeviceDetection =
-        DeviceDetection(applicationContext)
 
     @Provides
     fun provideExposureNotificationApi(): ExposureNotificationApi = exposureNotificationApi
@@ -76,6 +76,10 @@ class AppModule(
     @Provides
     @Singleton
     fun provideBase64Decoder(): Base64Decoder = AndroidBase64Decoder()
+
+    @Provides
+    @Singleton
+    fun provideBase64Encoder(): Base64Encoder = AndroidBase64Encoder()
 
     @Provides
     @Singleton
@@ -130,6 +134,12 @@ class AppModule(
     @Provides
     fun provideExposureNotificationWorkerScheduler(): ExposureNotificationWorkerScheduler =
         ExposureNotificationWorker.Companion
+
+    @Provides
+    fun provideDateChangeReceiver(): DateChangeReceiver = dateChangeReceiver
+
+    @Provides
+    fun provideSecureRandom(): SecureRandom = SecureRandom()
 
     companion object {
         const val BLUETOOTH_STATE_NAME = "BLUETOOTH_STATE"

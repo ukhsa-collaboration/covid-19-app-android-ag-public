@@ -8,11 +8,10 @@ import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
 import uk.nhs.nhsx.covid19.android.app.report.reporter
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
-import java.time.Instant
 import java.time.LocalDate
 
 class LinkTestResultActivityTest : EspressoTest() {
@@ -88,9 +87,12 @@ class LinkTestResultActivityTest : EspressoTest() {
         )
     }
 
-    private val contactCaseOnlyIsolation = Isolation(
-        isolationStart = Instant.now(),
+    private val contactCaseOnlyIsolation = IsolationState(
         isolationConfiguration = DurationDays(),
-        contactCase = ContactCase(Instant.now(), null, LocalDate.now().plusDays(1))
+        contactCase = ContactCase(
+            exposureDate = LocalDate.now(),
+            notificationDate = LocalDate.now(),
+            expiryDate = LocalDate.now().plusDays(1)
+        )
     )
 }

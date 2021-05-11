@@ -1,12 +1,13 @@
 package uk.nhs.nhsx.covid19.android.app.flow.functionalities
 
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QuestionnaireRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ReviewSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SelfDiagnosis(
@@ -21,7 +22,9 @@ class SelfDiagnosis(
     private fun selfDiagnosePositive() {
         statusRobot.checkActivityIsDisplayed()
 
-        val isContactCase = (espressoTest.testAppContext.getCurrentState() as? Isolation)?.isContactCase() ?: false
+        val isContactCase = (espressoTest.testAppContext.getCurrentLogicalState() as? PossiblyIsolating)
+            ?.isActiveContactCase(espressoTest.testAppContext.clock)
+            ?: false
 
         statusRobot.clickReportSymptoms()
 
@@ -37,12 +40,13 @@ class SelfDiagnosis(
 
         reviewSymptomsRobot.confirmSelection()
 
-        val newState = espressoTest.testAppContext.getCurrentState()
-        assertTrue(newState is Isolation)
+        val newState = espressoTest.testAppContext.getCurrentLogicalState()
+        assertTrue(newState is PossiblyIsolating)
+        assertTrue(newState.isActiveIndexCase(espressoTest.testAppContext.clock))
         if (isContactCase) {
-            assertTrue(newState.isBothCases())
+            assertTrue(newState.isActiveContactCase(espressoTest.testAppContext.clock))
         } else {
-            assertTrue(newState.isIndexCaseOnly())
+            assertFalse(newState.remembersContactCase())
         }
 
         symptomsAdviceIsolateRobot.checkActivityIsDisplayed()

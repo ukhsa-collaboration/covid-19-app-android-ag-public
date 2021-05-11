@@ -12,8 +12,6 @@ import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationReminderAlarmController
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import java.time.Clock
-import java.time.Duration
-import java.time.Instant
 import javax.inject.Inject
 
 class ExposureStatusViewModel @Inject constructor(
@@ -72,12 +70,6 @@ class ExposureStatusViewModel @Inject constructor(
             exposureNotificationManager.stopExposureNotifications()
             checkExposureNotificationsChanged()
         }
-    }
-
-    fun scheduleExposureNotificationReminder(delay: Duration) {
-        val alarmTime = Instant.now(clock).plus(delay)
-        resumeContactTracingNotificationTimeProvider.value = alarmTime.toEpochMilli()
-        exposureNotificationReminderAlarmController.setup(alarmTime)
     }
 
     companion object {

@@ -9,15 +9,13 @@ import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.receiver.ExpirationCheckReceiver
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationAlarmController.Companion.EXPIRATION_ALARM_INTENT_ID
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
 import uk.nhs.nhsx.covid19.android.app.util.BroadcastProvider
+import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZoneOffset
 
 class IsolationExpirationAlarmControllerTest {
 
@@ -25,26 +23,22 @@ class IsolationExpirationAlarmControllerTest {
     private val alarmManager = mockk<AlarmManager>(relaxed = true)
     private val isolationExpirationAlarmProvider = mockk<IsolationExpirationAlarmProvider>(relaxUnitFun = true)
     private val broadcastProvider = mockk<BroadcastProvider>()
+    private val calculateExpirationNotificationTime = mockk<CalculateExpirationNotificationTime>()
+    private val fixedClock = Clock.fixed(Instant.parse("2020-07-18T10:00:00Z"), ZoneOffset.UTC)
+    private val isolationHelper = IsolationHelper(fixedClock)
 
     private val testSubject = IsolationExpirationAlarmController(
         context,
         alarmManager,
         isolationExpirationAlarmProvider,
-        broadcastProvider
+        broadcastProvider,
+        calculateExpirationNotificationTime,
+        fixedClock
     )
 
-    val pendingIntent = mockk<PendingIntent>()
+    private val pendingIntent = mockk<PendingIntent>()
 
     private val zone = ZoneId.of("Europe/London")
-
-    private val durationDays =
-        DurationDays(
-            contactCase = 14,
-            indexCaseSinceSelfDiagnosisOnset = 5,
-            indexCaseSinceSelfDiagnosisUnknownOnset = 3,
-            maxIsolation = 21,
-            pendingTasksRetentionPeriod = 14
-        )
 
     @Before
     fun setUp() {
@@ -93,23 +87,43 @@ class IsolationExpirationAlarmControllerTest {
     }
 
     @Test
-    fun `setupExpirationCheck with new isolations state and current state not in isolation schedules alarm with proper time`() {
-        val expiryDate = LocalDate.parse("2020-07-20")
+    fun `setupExpirationCheck with new expired isolation state and current state not in isolation does not schedule alarm`() {
+        val expiryDate = LocalDate.now(fixedClock)
 
-        val currentState = Default()
-        val newIsolation = Isolation(
-            isolationStart = Instant.parse("2020-07-18T00:00:00Z"),
-            isolationConfiguration = durationDays,
-            indexCase = IndexCase(
-                symptomsOnsetDate = LocalDate.parse("2020-07-18"),
-                expiryDate = expiryDate,
-                selfAssessment = true
-            )
-        )
+        val currentState = isolationHelper.neverInIsolation().asLogical()
+        val newIsolation = isolationHelper.selfAssessment(
+            selfAssessmentDate = LocalDate.parse("2020-07-18"),
+            expiryDate = expiryDate
+        ).asIsolation().asLogical()
 
         testSubject.setupExpirationCheck(currentState, newIsolation, zone)
 
-        val alarmTime = Instant.parse("2020-07-19T20:00:00Z").toEpochMilli()
+        verify(exactly = 0) { isolationExpirationAlarmProvider.value = any() }
+        verify(exactly = 0) {
+            alarmManager.setExactAndAllowWhileIdle(
+                any(),
+                any(),
+                any()
+            )
+        }
+    }
+
+    @Test
+    fun `setupExpirationCheck with new isolation state and current state not in isolation schedules alarm with proper time`() {
+        val expiryDate = LocalDate.parse("2020-07-20")
+
+        val currentState = isolationHelper.neverInIsolation().asLogical()
+        val newIsolation = isolationHelper.selfAssessment(
+            selfAssessmentDate = LocalDate.parse("2020-07-18"),
+            expiryDate = expiryDate
+        ).asIsolation().asLogical()
+
+        val alarmInstant = Instant.parse("2020-07-19T20:00:00Z")
+        every { calculateExpirationNotificationTime(expiryDate, zone) } returns alarmInstant
+
+        testSubject.setupExpirationCheck(currentState, newIsolation, zone)
+
+        val alarmTime = alarmInstant.toEpochMilli()
 
         verify {
             broadcastProvider.getBroadcast(
@@ -130,32 +144,26 @@ class IsolationExpirationAlarmControllerTest {
     }
 
     @Test
-    fun `setupExpirationCheck with new isolations state, current state in isolation and different expiry dates schedules alarm with proper time`() {
+    fun `setupExpirationCheck with new isolation state, current state in isolation and different expiry dates schedules alarm with proper time`() {
         val oldExpiryDate = LocalDate.parse("2020-07-19")
         val newExpiryDate = LocalDate.parse("2020-07-20")
 
-        val currentState = Isolation(
-            isolationStart = Instant.parse("2020-07-18T00:00:00Z"),
-            isolationConfiguration = durationDays,
-            indexCase = IndexCase(
-                symptomsOnsetDate = LocalDate.parse("2020-07-18"),
-                expiryDate = oldExpiryDate,
-                selfAssessment = true
-            )
-        )
-        val newIsolation = Isolation(
-            isolationStart = Instant.parse("2020-07-18T00:00:00Z"),
-            isolationConfiguration = durationDays,
-            indexCase = IndexCase(
-                symptomsOnsetDate = LocalDate.parse("2020-07-18"),
-                expiryDate = newExpiryDate,
-                selfAssessment = true
-            )
-        )
+        val currentState = isolationHelper.selfAssessment(
+            selfAssessmentDate = LocalDate.parse("2020-07-18"),
+            expiryDate = oldExpiryDate
+        ).asIsolation().asLogical()
+
+        val newIsolation = isolationHelper.selfAssessment(
+            selfAssessmentDate = LocalDate.parse("2020-07-18"),
+            expiryDate = newExpiryDate
+        ).asIsolation().asLogical()
+
+        val alarmInstant = Instant.parse("2020-07-19T20:00:00Z")
+        every { calculateExpirationNotificationTime(newExpiryDate, zone) } returns alarmInstant
 
         testSubject.setupExpirationCheck(currentState, newIsolation, zone)
 
-        val alarmTime = Instant.parse("2020-07-19T20:00:00Z").toEpochMilli()
+        val alarmTime = alarmInstant.toEpochMilli()
 
         verify {
             broadcastProvider.getBroadcast(
@@ -176,27 +184,18 @@ class IsolationExpirationAlarmControllerTest {
     }
 
     @Test
-    fun `setupExpirationCheck with new isolations state, current state in isolation and same expiry dates does not schedule alarm`() {
+    fun `setupExpirationCheck with new isolation state, current state in isolation and same expiry dates does not schedule alarm`() {
         val expiryDate = LocalDate.parse("2020-07-20")
 
-        val currentState = Isolation(
-            isolationStart = Instant.parse("2020-07-18T00:00:00Z"),
-            isolationConfiguration = durationDays,
-            indexCase = IndexCase(
-                symptomsOnsetDate = LocalDate.parse("2020-07-18"),
-                expiryDate = expiryDate,
-                selfAssessment = true
-            )
-        )
-        val newIsolation = Isolation(
-            isolationStart = Instant.parse("2020-07-18T00:00:00Z"),
-            isolationConfiguration = durationDays,
-            indexCase = IndexCase(
-                symptomsOnsetDate = LocalDate.parse("2020-07-18"),
-                expiryDate = expiryDate,
-                selfAssessment = true
-            )
-        )
+        val currentState = isolationHelper.selfAssessment(
+            selfAssessmentDate = LocalDate.parse("2020-07-18"),
+            expiryDate = expiryDate
+        ).asIsolation().asLogical()
+
+        val newIsolation = isolationHelper.selfAssessment(
+            selfAssessmentDate = LocalDate.parse("2020-07-18"),
+            expiryDate = expiryDate
+        ).asIsolation().asLogical()
 
         testSubject.setupExpirationCheck(currentState, newIsolation, zone)
 

@@ -2,36 +2,33 @@ package uk.nhs.nhsx.covid19.android.app.notifications
 
 import androidx.preference.PreferenceManager
 import androidx.test.platform.app.InstrumentationRegistry
-import java.time.Instant
-import java.time.LocalDate
-import java.time.Month.AUGUST
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
+import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowIsolationExpiration
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowKeySharingReminder
 import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.report.notReported
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
+import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultStorageOperation.Overwrite
+import java.time.Instant
 import java.time.temporal.ChronoUnit
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class UserInboxIntegrationTest : EspressoTest() {
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(InstrumentationRegistry.getInstrumentation().targetContext)
+    private val isolationHelper = IsolationHelper(testAppContext.clock)
     private lateinit var testSubject: UserInbox
 
     @Before
@@ -68,7 +65,9 @@ class UserInboxIntegrationTest : EspressoTest() {
 
     @Test
     fun testOrderOfUserInboxItems() = notReported {
-        val expirationDate = LocalDate.of(2020, AUGUST, 6)
+        val expiredSelfAssessment = isolationHelper.selfAssessment(expired = true)
+        val expiredIsolation = expiredSelfAssessment.asIsolation()
+        val expirationDate = expiredSelfAssessment.expiryDate
         val venueId = "venue-id"
         val testResult = ReceivedTestResult(
             "abc",
@@ -86,30 +85,19 @@ class UserInboxIntegrationTest : EspressoTest() {
         )
 
         testSubject.addUserInboxItem(ShowVenueAlert(venueId, INFORM))
-        testSubject.addUserInboxItem(ShowIsolationExpiration(expirationDate))
         testAppContext.getUnacknowledgedTestResultsProvider().add(testResult)
         testAppContext.getKeySharingInfoProvider().keySharingInfo = keySharingInfo
-        testAppContext.setState(
-            Isolation(
-                isolationStart = Instant.now(testAppContext.clock),
-                isolationConfiguration = DurationDays(),
-                indexCase = IndexCase(
-                    symptomsOnsetDate = LocalDate.now(testAppContext.clock).minusDays(2),
-                    expiryDate = LocalDate.now(testAppContext.clock).plusDays(8),
-                    selfAssessment = true
-                )
-            )
-        )
+        testAppContext.setState(expiredIsolation)
         testSubject.addUserInboxItem(ShowEncounterDetection)
 
         val firstInboxItem = testSubject.fetchInbox()
-        assertThat(firstInboxItem).isInstanceOf(ShowIsolationExpiration::class.java)
-        assertEquals(expirationDate, (firstInboxItem as ShowIsolationExpiration).expirationDate)
-        testSubject.clearItem(firstInboxItem)
+        assertThat(firstInboxItem).isInstanceOf(ShowTestResult::class.java)
+        testAppContext.getUnacknowledgedTestResultsProvider().remove(testResult)
 
         val secondInboxItem = testSubject.fetchInbox()
-        assertThat(secondInboxItem).isInstanceOf(ShowTestResult::class.java)
-        testAppContext.getTestResultHandler().acknowledge(testResult, LocalDate.now(testAppContext.clock), Overwrite)
+        assertThat(secondInboxItem).isInstanceOf(ShowIsolationExpiration::class.java)
+        assertEquals(expirationDate, (secondInboxItem as ShowIsolationExpiration).expirationDate)
+        testAppContext.setState(expiredIsolation.copy(hasAcknowledgedEndOfIsolation = true))
 
         val thirdInboxItem = testSubject.fetchInbox()
         assertThat(thirdInboxItem).isInstanceOf(ShowEncounterDetection::class.java)

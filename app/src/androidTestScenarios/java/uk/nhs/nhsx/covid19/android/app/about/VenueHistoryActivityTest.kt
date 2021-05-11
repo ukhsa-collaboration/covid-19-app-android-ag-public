@@ -120,7 +120,7 @@ class VenueHistoryActivityTest : EspressoTest() {
 
         deleteVenueVisitOnPosition(1)
 
-        venueHistoryRobot.checkDoneButtonIsNotDisplayed()
+        waitFor { venueHistoryRobot.checkDoneButtonIsNotDisplayed() }
 
         venueHistoryRobot.checkEmptyStateIsDisplayed()
     }

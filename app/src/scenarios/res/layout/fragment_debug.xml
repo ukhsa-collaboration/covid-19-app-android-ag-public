@@ -7,13 +7,19 @@
     android:background="@drawable/status_option_background"
     android:orientation="vertical"
     android:paddingHorizontal="16dp"
-    android:paddingTop="32dp"
+    android:paddingTop="8dp"
     android:paddingBottom="50dp">
+
+    <uk.nhs.nhsx.covid19.android.app.widgets.OffsetDaysView
+        android:id="@+id/offsetDaysView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/submitKeys"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:text="Submit Keys" />
 
     <Button

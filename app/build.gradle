@@ -60,6 +60,9 @@ android {
     }
 
     sourceSets {
+        String sharedTestDirectory = 'src/sharedTest/java'
+        test.java.srcDirs += sharedTestDirectory
+        androidTest.java.srcDirs += sharedTestDirectory
         scenarios {
             proto {
                 srcDirs 'src/scenarios/java/uk/nhs/nhsx/covid19/android/app/fieldtests'
@@ -157,7 +160,7 @@ def coroutines_version = "1.3.7"
 def retrofit_version = "2.9.0"
 def moshi_version = "1.9.2"
 def okhttp_version = "4.8.0"
-def configuration_version = "1.0.24-SNAPSHOT"
+def configuration_version = "1.0.26-SNAPSHOT"
 def dagger_version = "2.31.2"
 
 dependencies {

@@ -65,11 +65,10 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityActivity
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityInformationActivity
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
-import uk.nhs.nhsx.covid19.android.app.edgecases.TabletNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysResultActivity
-import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysReminderActivity
 import uk.nhs.nhsx.covid19.android.app.featureflag.testsettings.TestSettingsActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.DataAndPrivacyActivity
@@ -114,6 +113,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
 import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState
+import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingHubActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitKeysProgressActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
@@ -122,6 +122,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultOnsetDateActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultSymptomsActivity
+import uk.nhs.nhsx.covid19.android.app.util.crashreporting.CrashReport
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import java.time.Instant
 import java.time.LocalDate
@@ -247,7 +248,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
     }
 
-    private fun setupScenariosButtons() {
+    private fun setupScenariosButtons(hidden: Boolean = false) {
         titleScenarios.setOnSingleClickListener {
             if (scenariosGroup.visibility == View.VISIBLE) {
                 scenariosGroup.visibility = View.GONE
@@ -256,6 +257,11 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
                 scenariosGroup.visibility = View.VISIBLE
                 titleScenarios.text = "Scenarios"
             }
+        }
+
+        if (hidden) {
+            scenariosGroup.visibility = View.GONE
+            titleScenarios.text = "Scenarios ..."
         }
 
         scenarioMain.setOnSingleClickListener {
@@ -278,7 +284,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
     }
 
-    private fun setupScreenFilter() {
+    private fun setupScreenFilter(withText: String? = null) {
         screenFilter.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
                 Unit
@@ -300,6 +306,10 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
                     .hideSoftInputFromWindow(screenFilter.windowToken, 0)
                 true
             } else false
+        }
+
+        if (withText != null) {
+            screenFilter.setText(withText)
         }
     }
 
@@ -433,10 +443,6 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
         addScreenButton("Device not supported") {
             startActivity<DeviceNotSupportedActivity>()
-        }
-
-        addScreenButton("Tablet not supported") {
-            startActivity<TabletNotSupportedActivity>()
         }
 
         addScreenButton("Share keys information") {
@@ -600,6 +606,14 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
         addScreenButton("Share Result") {
             startActivity<ShareKeysResultActivity>()
+        }
+
+        addScreenButton("Contact Tracing Hub") {
+            startActivity<ContactTracingHubActivity>()
+        }
+
+        addScreenButton("Add RemoteServiceException to storage") {
+            appComponent.provideCrashReportProvider().crashReport = CrashReport("android.app.RemoteServiceException", Thread.currentThread().name, "Test Stack trace...")
         }
     }
 
@@ -797,6 +811,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         const val DEBUG_PREFERENCES_NAME = "debugPreferences"
         const val SELECTED_ENVIRONMENT = "SELECTED_ENVIRONMENT"
         const val USE_MOCKED_EXPOSURE_NOTIFICATION = "USE_MOCKED_EXPOSURE_NOTIFICATION"
+        const val OFFSET_DAYS = "OFFSET_DAYS"
 
         fun start(context: Context) = context.startActivity(getIntent(context))
 

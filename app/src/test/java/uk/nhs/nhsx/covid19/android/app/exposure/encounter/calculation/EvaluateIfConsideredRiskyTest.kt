@@ -8,26 +8,25 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.ExposureWindowUtils.Companion.getExposureWindow
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import java.time.Clock
 import java.time.Instant
-import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import kotlin.test.assertTrue
 
 class EvaluateIfConsideredRiskyTest {
 
-    private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
+    private val isolationStateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
     private val baseDate: Instant = Instant.parse("2020-07-20T00:00:00Z")
     private val clock = Clock.fixed(baseDate, ZoneOffset.UTC)
     private val evaluateIfConsideredRisky =
         EvaluateIfConsideredRisky(isolationConfigurationProvider, isolationStateMachine, clock)
     private val durationDays = DurationDays()
+    private val isolationHelper = IsolationHelper(clock)
 
     @Before
     fun setUp() {
@@ -36,7 +35,7 @@ class EvaluateIfConsideredRiskyTest {
 
     @Test
     fun `returns false when no risky exposures passed`() {
-        every { isolationStateMachine.readState() } returns Default()
+        every { isolationStateMachine.readState() } returns isolationHelper.neverInIsolation()
 
         val exposureWindow = getExposureWindow(listOf())
         val isConsideredRisky = evaluateIfConsideredRisky(exposureWindow, 1.0, 2.0)
@@ -46,7 +45,7 @@ class EvaluateIfConsideredRiskyTest {
 
     @Test
     fun `return true when risky exposure windows are recent, after DCT opt-in date and above threshold`() {
-        every { isolationStateMachine.readState() } returns Default()
+        every { isolationStateMachine.readState() } returns isolationHelper.neverInIsolation()
 
         val exposureWindow = getExposureWindow()
         val isConsideredRisky = evaluateIfConsideredRisky(exposureWindow, 10.0, 2.0)
@@ -56,7 +55,7 @@ class EvaluateIfConsideredRiskyTest {
 
     @Test
     fun `return true when exposure was exactly max duration of contact case days ago`() {
-        every { isolationStateMachine.readState() } returns Default()
+        every { isolationStateMachine.readState() } returns isolationHelper.neverInIsolation()
 
         val contactCaseExpiryDate = baseDate.minus(durationDays.contactCase.toLong(), ChronoUnit.DAYS)
         val exposureWindow = getExposureWindow(millisSinceEpoch = contactCaseExpiryDate.toEpochMilli())
@@ -67,7 +66,7 @@ class EvaluateIfConsideredRiskyTest {
 
     @Test
     fun `return false if exposure more than max duration of contact case days ago`() {
-        every { isolationStateMachine.readState() } returns Default()
+        every { isolationStateMachine.readState() } returns isolationHelper.neverInIsolation()
 
         val expiredContactDate = baseDate.minus(durationDays.contactCase + 1L, ChronoUnit.DAYS)
         val exposureWindow = getExposureWindow(millisSinceEpoch = expiredContactDate.toEpochMilli())
@@ -78,7 +77,7 @@ class EvaluateIfConsideredRiskyTest {
 
     @Test
     fun `return false if exposure was before DCT opt-in`() {
-        setUpDefaultDueToDctOptIn()
+        setUpExpiredContactCaseDueToDctOptIn()
 
         val oneDayBeforeDctOptIn = baseDate.minus(1, ChronoUnit.DAYS).toEpochMilli()
         val exposureWindow = getExposureWindow(millisSinceEpoch = oneDayBeforeDctOptIn)
@@ -89,7 +88,7 @@ class EvaluateIfConsideredRiskyTest {
 
     @Test
     fun `return true if exposure was on same day as DCT opt-in`() {
-        setUpDefaultDueToDctOptIn()
+        setUpExpiredContactCaseDueToDctOptIn()
 
         val exposureWindow = getExposureWindow()
         val isConsideredRisky = evaluateIfConsideredRisky(exposureWindow, 10.0, 2.0)
@@ -99,7 +98,7 @@ class EvaluateIfConsideredRiskyTest {
 
     @Test
     fun `return true if exposure was after DCT opt-in`() {
-        setUpDefaultDueToDctOptIn()
+        setUpExpiredContactCaseDueToDctOptIn()
 
         val oneDayAfterDctOptIn = baseDate.plus(1, ChronoUnit.DAYS).toEpochMilli()
         val exposureWindow = getExposureWindow(millisSinceEpoch = oneDayAfterDctOptIn)
@@ -120,7 +119,7 @@ class EvaluateIfConsideredRiskyTest {
 
     @Test
     fun `return true if calculated risk is equal to risk threshold`() {
-        every { isolationStateMachine.readState() } returns Default()
+        every { isolationStateMachine.readState() } returns isolationHelper.neverInIsolation()
 
         val exposureWindow = getExposureWindow()
         val isConsideredRisky = evaluateIfConsideredRisky(exposureWindow, 10.0, 10.0)
@@ -130,7 +129,7 @@ class EvaluateIfConsideredRiskyTest {
 
     @Test
     fun `return false if calculated risk is below risk threshold`() {
-        every { isolationStateMachine.readState() } returns Default()
+        every { isolationStateMachine.readState() } returns isolationHelper.neverInIsolation()
 
         val exposureWindow = getExposureWindow()
         val isConsideredRisky = evaluateIfConsideredRisky(exposureWindow, 2.0, 12.0)
@@ -138,26 +137,13 @@ class EvaluateIfConsideredRiskyTest {
         assertFalse(isConsideredRisky)
     }
 
-    private fun setUpDefaultDueToDctOptIn() {
-        val defaultDueToDctOptIn = Default(
-            previousIsolation = contactCaseIsolation.copy(
-                contactCase = contactCaseIsolation.contactCase!!.copy(
-                    dailyContactTestingOptInDate = baseDate.atOffset(ZoneOffset.UTC).toLocalDate()
-                )
-            )
-        )
+    private fun setUpExpiredContactCaseDueToDctOptIn() {
+        val expiredContactCaseDueToDctOptIn = isolationHelper.contactCaseWithDct(
+            dailyContactTestingOptInDate = baseDate.atOffset(ZoneOffset.UTC).toLocalDate()
+        ).asIsolation()
 
-        every { isolationStateMachine.readState() } returns defaultDueToDctOptIn
+        every { isolationStateMachine.readState() } returns expiredContactCaseDueToDctOptIn
     }
 
-    private val contactCaseIsolation = Isolation(
-        isolationStart = Instant.now(),
-        isolationConfiguration = durationDays,
-        contactCase = ContactCase(
-            startDate = Instant.parse("2020-05-19T12:00:00Z"),
-            notificationDate = null,
-            expiryDate = LocalDate.now().plusDays(5),
-            dailyContactTestingOptInDate = null
-        )
-    )
+    private val contactCaseIsolation = isolationHelper.contactCase().asIsolation()
 }

@@ -18,10 +18,9 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSympto
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.NegativeHeader
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.PositiveHeader
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.State.Default
-import uk.nhs.nhsx.covid19.android.app.state.State.Isolation
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import java.time.Clock
 import java.time.Instant
@@ -131,14 +130,16 @@ class ReviewSymptomsViewModel @Inject constructor(
                 } else {
                     analyticsEventProcessor.track(CompletedQuestionnaireButDidNotStartIsolation)
                 }
-                when (val isolationState = isolationStateMachine.readState()) {
-                    is Default -> navigateToSymptomAdviceScreen.postValue(DoNotIsolate)
-                    is Isolation -> navigateToSymptomAdviceScreen.postValue(
-                        Isolate(
-                            isPositiveSymptoms = !isolationState.isContactCaseOnly(),
-                            isolationDurationDays = isolationStateMachine.remainingDaysInIsolation().toInt()
+                val isolationState = isolationStateMachine.readLogicalState()
+                when {
+                    isolationState is PossiblyIsolating && isolationState.isActiveIsolation(clock) ->
+                        navigateToSymptomAdviceScreen.postValue(
+                            Isolate(
+                                isPositiveSymptoms = isolationState.getActiveIndexCase(clock)?.isSelfAssessment() == true,
+                                isolationDurationDays = isolationStateMachine.remainingDaysInIsolation().toInt()
+                            )
                         )
-                    )
+                    else -> navigateToSymptomAdviceScreen.postValue(DoNotIsolate)
                 }
             }
         }
