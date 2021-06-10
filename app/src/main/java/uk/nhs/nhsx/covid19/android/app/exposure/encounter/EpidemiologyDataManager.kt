@@ -1,7 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
-import com.jeroenmols.featureflag.framework.FeatureFlag.STORE_EXPOSURE_WINDOWS
-import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uk.nhs.nhsx.covid19.android.app.common.runSafely
@@ -62,13 +60,13 @@ class EpidemiologyDataManager @Inject constructor(
     }
 
     private fun storeRiskyEpidemiologyEvents(epidemiologyEvents: List<EpidemiologyEvent>) {
-        if (RuntimeBehavior.isFeatureEnabled(STORE_EXPOSURE_WINDOWS) && epidemiologyEvents.isNotEmpty()) {
+        if (epidemiologyEvents.isNotEmpty()) {
             epidemiologyEventProvider.addRiskyEpidemiologyEvents(epidemiologyEvents)
         }
     }
 
     private fun storeNonRiskyEpidemiologyEvents(epidemiologyEvents: List<EpidemiologyEvent>, storageLimit: Int) {
-        if (RuntimeBehavior.isFeatureEnabled(STORE_EXPOSURE_WINDOWS) && epidemiologyEvents.isNotEmpty()) {
+        if (epidemiologyEvents.isNotEmpty()) {
             epidemiologyEventProvider.addNonRiskyEpidemiologyEvents(epidemiologyEvents, storageLimit = storageLimit)
         }
     }

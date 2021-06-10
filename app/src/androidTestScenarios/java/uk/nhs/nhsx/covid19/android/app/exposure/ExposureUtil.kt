@@ -21,6 +21,12 @@ fun TestApplicationContext.setTemporaryExposureKeyHistoryResolutionRequired(cont
     getExposureNotificationApi().temporaryExposureKeyHistoryResult = ResolutionRequired(pendingIntent, if (successful) Success() else Error())
 }
 
+fun TestApplicationContext.executeWithTheUserDecliningExposureKeySharing(action: () -> Unit) {
+    setTemporaryExposureKeyHistoryResolutionRequired(app, successful = false)
+    action()
+    setTemporaryExposureKeyHistoryResolutionRequired(app, successful = true)
+}
+
 fun createExposureNotificationResolutionPendingIntent(context: Context, successful: Boolean): PendingIntent {
     val intent = Intent(context, MockExposureNotificationActivationActivity::class.java).apply {
         putExtra(

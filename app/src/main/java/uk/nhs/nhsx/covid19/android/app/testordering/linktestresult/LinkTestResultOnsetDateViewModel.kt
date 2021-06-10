@@ -16,15 +16,17 @@ import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.SymptomsDate
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
+import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
 import java.time.ZoneOffset
 import javax.inject.Inject
 
 class LinkTestResultOnsetDateViewModel @Inject constructor(
     private val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider,
-    private val analyticsEventProcessor: AnalyticsEventProcessor
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
+    private val clock: Clock
 ) : ViewModel() {
 
     companion object {
@@ -46,7 +48,7 @@ class LinkTestResultOnsetDateViewModel @Inject constructor(
     fun onCreate(testResult: ReceivedTestResult) {
         this.testResult = testResult
 
-        val lastPossibleOnsetDate = testResult.testEndDate.atZone(ZoneId.systemDefault()).toLocalDate()
+        val lastPossibleOnsetDate = testResult.testEndDate.toLocalDate(clock.zone)
         val firstPossibleOnsetDate = lastPossibleOnsetDate.minusDays(MAX_DAYS_FOR_ONSET_DATE)
 
         if (viewState.value == null) {
@@ -66,7 +68,7 @@ class LinkTestResultOnsetDateViewModel @Inject constructor(
 
     fun onDateSelected(dateInMillis: Long) {
         val instant: Instant = Instant.ofEpochMilli(dateInMillis)
-        val localDate = instant.atZone(ZoneOffset.UTC).toLocalDate()
+        val localDate = instant.toLocalDate(ZoneOffset.UTC)
         val currentState = viewState.value ?: return
         val newState =
             currentState.copy(onsetDate = ExplicitDate(localDate), showOnsetDateError = false)
@@ -108,7 +110,7 @@ class LinkTestResultOnsetDateViewModel @Inject constructor(
         dateInMillis: Long,
         symptomsOnsetWindowDays: ClosedRange<LocalDate>
     ): Boolean {
-        val date = Instant.ofEpochMilli(dateInMillis).atZone(ZoneId.systemDefault()).toLocalDate()
+        val date = Instant.ofEpochMilli(dateInMillis).toLocalDate(clock.zone)
         return date in symptomsOnsetWindowDays
     }
 

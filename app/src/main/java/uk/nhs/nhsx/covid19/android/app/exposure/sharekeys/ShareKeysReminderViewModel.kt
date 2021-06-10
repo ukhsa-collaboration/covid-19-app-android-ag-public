@@ -1,12 +1,14 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.sharekeys
 
 import android.app.Activity
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInReminderScreen
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysNavigateTo.Finish
-import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysNavigateTo.ShareKeysResultActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysNavigateTo.SubmitKeysProgressActivity
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
@@ -14,10 +16,10 @@ import javax.inject.Inject
 
 class ShareKeysReminderViewModel @Inject constructor(
     private val submitObfuscationData: SubmitObfuscationData,
-    private val submitEpidemiologyDataForTestResult: SubmitEpidemiologyDataForTestResult,
     fetchKeysFlowFactory: FetchKeysFlow.Factory,
     private val keySharingInfoProvider: KeySharingInfoProvider,
-) : ViewModel() {
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
+) : ViewModel(), FetchKeysFlow.Callback {
 
     private val navigationLiveData = SingleLiveEvent<ShareKeysNavigationTarget>()
     fun navigation(): LiveData<ShareKeysNavigationTarget> = navigationLiveData
@@ -26,32 +28,13 @@ class ShareKeysReminderViewModel @Inject constructor(
     fun permissionRequest(): LiveData<(Activity) -> Unit> = permissionRequestLiveData
 
     private lateinit var keySharingInfo: KeySharingInfo
+    private var hasAlreadyConsentedToShareKeys = false
 
     private val fetchKeysFlow by lazy {
         fetchKeysFlowFactory.create(
-            object : FetchKeysFlow.Callback {
-                override fun onFetchKeysSuccess(
-                    temporaryExposureKeys: List<NHSTemporaryExposureKey>,
-                    diagnosisKeySubmissionToken: String
-                ) {
-                    navigationLiveData.postValue(
-                        SubmitKeysProgressActivity(temporaryExposureKeys, diagnosisKeySubmissionToken)
-                    )
-                }
-
-                override fun onFetchKeysPermissionDenied() {
-                    onDoNotShareKeysClicked()
-                }
-
-                override fun onFetchKeysUnexpectedError() {
-                    navigationLiveData.postValue(Finish)
-                }
-
-                override fun onPermissionRequired(permissionRequest: (Activity) -> Unit) {
-                    permissionRequestLiveData.postValue(permissionRequest)
-                }
-            },
-            viewModelScope, keySharingInfo
+            this,
+            viewModelScope,
+            keySharingInfo
         )
     }
 
@@ -67,7 +50,7 @@ class ShareKeysReminderViewModel @Inject constructor(
 
     fun onDoNotShareKeysClicked() {
         viewModelScope.launch {
-            resetKeySharingInfo()
+            keySharingInfoProvider.reset()
             submitObfuscationData()
             navigationLiveData.postValue(Finish)
         }
@@ -75,20 +58,56 @@ class ShareKeysReminderViewModel @Inject constructor(
 
     fun onActivityResult(requestCode: Int, resultCode: Int) {
         fetchKeysFlow.onActivityResult(requestCode, resultCode)
-        if (resultCode == Activity.RESULT_OK && requestCode == ShareKeysInformationActivity.REQUEST_CODE_SUBMIT_KEYS) {
-            onSuccessfulKeySubmission()
+        if (requestCode == ShareKeysInformationActivity.REQUEST_CODE_SUBMIT_KEYS) {
+            if (resultCode == Activity.RESULT_OK) {
+                onSuccessfulKeySubmission()
+            } else {
+                // Submitting the keys has failed and the user has dismissed the error screen
+                onDoNotShareKeysClicked()
+            }
         }
     }
 
     private fun onSuccessfulKeySubmission() {
         viewModelScope.launch {
-            resetKeySharingInfo()
-            submitEpidemiologyDataForTestResult(keySharingInfo)
-            navigationLiveData.postValue(ShareKeysResultActivity)
+            keySharingInfoProvider.reset()
+            navigationLiveData.postValue(ShareKeysNavigateTo.ShareKeysResultActivity(bookFollowUpTest = false))
         }
     }
 
-    private fun resetKeySharingInfo() {
-        keySharingInfoProvider.reset()
+    //region FetchKeysFlow.Callback
+
+    override fun onFetchKeysSuccess(
+        temporaryExposureKeys: List<NHSTemporaryExposureKey>,
+        diagnosisKeySubmissionToken: String
+    ) {
+        trackConsentedToShareKeys()
+        navigationLiveData.postValue(
+            SubmitKeysProgressActivity(temporaryExposureKeys, diagnosisKeySubmissionToken)
+        )
+    }
+
+    override fun onFetchKeysPermissionDenied() {
+        onDoNotShareKeysClicked()
+    }
+
+    override fun onFetchKeysUnexpectedError() {
+        navigationLiveData.postValue(Finish)
+    }
+
+    override fun onPermissionRequired(permissionRequest: (Activity) -> Unit) {
+        permissionRequestLiveData.postValue(permissionRequest)
+    }
+
+    //endregion
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun trackConsentedToShareKeys() {
+        if (!hasAlreadyConsentedToShareKeys) {
+            viewModelScope.launch {
+                analyticsEventProcessor.track(ConsentedToShareExposureKeysInReminderScreen)
+                hasAlreadyConsentedToShareKeys = true
+            }
+        }
     }
 }

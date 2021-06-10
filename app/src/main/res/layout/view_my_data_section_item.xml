@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/user_data_item_background"
+    android:minHeight="42dp"
+    android:orientation="horizontal"
+    android:paddingVertical="8dp"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <TextView
+        android:id="@+id/myDataSectionItemTitle"
+        style="@style/AboutAppItemValueText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:paddingEnd="10dp"
+        tools:text="@string/user_data_test_end" />
+
+    <TextView
+        android:id="@+id/myDataSectionItemValue"
+        style="@style/Body1.SecondaryTextColor"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|end"
+        tools:text="Date" />
+</merge>

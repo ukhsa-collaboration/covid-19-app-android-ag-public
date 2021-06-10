@@ -3,6 +3,7 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
 import android.content.SharedPreferences
+import androidx.annotation.VisibleForTesting
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
@@ -37,7 +38,8 @@ class RelevantTestResultProvider @Inject constructor(
                 }
             }
         }
-        private set(testResult) {
+        @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+        internal set(testResult) {
             return synchronized(lock) {
                 relevantTestResultStorage.value =
                     testResultSerializationAdapter.toJson(testResult)

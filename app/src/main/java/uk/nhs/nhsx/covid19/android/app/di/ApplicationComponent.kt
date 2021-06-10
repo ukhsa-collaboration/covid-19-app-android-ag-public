@@ -3,8 +3,8 @@ package uk.nhs.nhsx.covid19.android.app.di
 import dagger.Component
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
-import uk.nhs.nhsx.covid19.android.app.about.MyDataActivity
 import uk.nhs.nhsx.covid19.android.app.about.VenueHistoryActivity
+import uk.nhs.nhsx.covid19.android.app.about.mydata.MyDataActivity
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalyticsAlarmController
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitOnboardingAnalyticsWorker
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
@@ -31,6 +31,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWo
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfoProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysReminderActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysResultActivity
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.DataAndPrivacyActivity
@@ -55,16 +56,21 @@ import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationRetryReceive
 import uk.nhs.nhsx.covid19.android.app.receiver.SubmitAnalyticsAlarmReceiver
 import uk.nhs.nhsx.covid19.android.app.receiver.UpdateReceiver
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
+import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsActivity
+import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsProvider
 import uk.nhs.nhsx.covid19.android.app.settings.languages.LanguagesActivity
 import uk.nhs.nhsx.covid19.android.app.settings.myarea.MyAreaActivity
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
 import uk.nhs.nhsx.covid19.android.app.state.MigrateIsolationState
 import uk.nhs.nhsx.covid19.android.app.status.DebugFragment
-import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWorker
+import uk.nhs.nhsx.covid19.android.app.status.DownloadAreaInfoWorker
+import uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessageActivity
 import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusBaseActivity
 import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingHubActivity
+import uk.nhs.nhsx.covid19.android.app.status.localmessage.GetLocalMessageFromStorage
+import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitKeysProgressActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
@@ -74,6 +80,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.DailyContactT
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultOnsetDateActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultSymptomsActivity
+import uk.nhs.nhsx.covid19.android.app.testordering.unknownresult.UnknownTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.util.crashreporting.CrashReportProvider
 import uk.nhs.nhsx.covid19.android.app.util.crashreporting.RemoteServiceExceptionHandler
 import uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
@@ -100,7 +107,7 @@ interface ApplicationComponent {
     fun inject(activity: EnableLocationActivity)
     fun inject(activity: EnableExposureNotificationsActivity)
     fun inject(riskLevelActivity: RiskLevelActivity)
-    fun inject(downloadRiskyPostCodesWorker: DownloadRiskyPostCodesWorker)
+    fun inject(downloadAreaInfoWorker: DownloadAreaInfoWorker)
     fun inject(qrScannerActivity: QrScannerActivity)
     fun inject(questionnaireActivity: QuestionnaireActivity)
     fun inject(testOrderingActivity: TestOrderingActivity)
@@ -122,6 +129,7 @@ interface ApplicationComponent {
     fun inject(testOrderingProgressActivity: TestOrderingProgressActivity)
     fun inject(appAvailabilityActivity: AppAvailabilityActivity)
     fun inject(settingsActivity: SettingsActivity)
+    fun inject(animationsActivity: AnimationsActivity)
     fun inject(venueHistoryActivity: VenueHistoryActivity)
     fun inject(languagesActivity: LanguagesActivity)
     fun inject(updateReceiver: UpdateReceiver)
@@ -147,7 +155,11 @@ interface ApplicationComponent {
     fun inject(myAreaActivity: MyAreaActivity)
     fun inject(shareKeysInformationActivity: ShareKeysInformationActivity)
     fun inject(shareKeysReminderActivity: ShareKeysReminderActivity)
+    fun inject(shareKeysResultActivity: ShareKeysResultActivity)
     fun inject(contactTracingHubActivity: ContactTracingHubActivity)
+    fun inject(testingHubActivity: TestingHubActivity)
+    fun inject(unknownTestResultActivity: UnknownTestResultActivity)
+    fun inject(localMessageActivity: LocalMessageActivity)
 
     fun inject(testResultViewModel: BaseTestResultViewModel)
 
@@ -165,4 +177,6 @@ interface ApplicationComponent {
     fun provideMigrateIsolationState(): MigrateIsolationState
     fun provideRemoteServiceExceptionHandler(): RemoteServiceExceptionHandler
     fun provideCrashReportProvider(): CrashReportProvider
+    fun provideAnimationsProvider(): AnimationsProvider
+    fun provideGetLocalMessageFromStorage(): GetLocalMessageFromStorage
 }

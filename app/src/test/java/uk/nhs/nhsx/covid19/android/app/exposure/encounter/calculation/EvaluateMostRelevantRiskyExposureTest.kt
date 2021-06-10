@@ -4,9 +4,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.ExposureWindowUtils.Companion.getExposureWindowWithRisk
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 
 class EvaluateMostRelevantRiskyExposureTest {
     private val evaluateMostRelevantExposure = EvaluateMostRelevantRiskyExposure()
@@ -55,7 +57,7 @@ class EvaluateMostRelevantRiskyExposureTest {
     private val baseDate: Instant = Instant.parse("2020-07-20T00:00:00Z")
 
     private fun todayMinusDays(days: Long): LocalDate =
-        baseDate.atZone(ZoneOffset.UTC).minusDays(days).toLocalDate()
+        baseDate.minus(days, ChronoUnit.DAYS).toLocalDate(ZoneOffset.UTC)
 
     private fun LocalDate.toStartOfDayEpochMillis(): Long =
         atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()

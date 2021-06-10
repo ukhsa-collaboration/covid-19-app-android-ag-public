@@ -61,10 +61,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun startStatusActivity() {
         NotificationManagerCompat.from(this).cancel(NotificationProvider.EXPOSURE_REMINDER_NOTIFICATION_ID)
-        val contactTracingHubAction =
-            intent.getSerializableExtra(NotificationProvider.CONTACT_TRACING_HUB_ACTION) as? ContactTracingHubAction
-        StatusActivity.start(this, contactTracingHubAction = contactTracingHubAction)
+        StatusActivity.start(
+            this,
+            contactTracingHubAction = getContactTracingHubActionIfPresent(),
+            startedFromLocalMessageNotification = getStartedFromLocalMessageNotification()
+        )
     }
+
+    private fun getContactTracingHubActionIfPresent() =
+        intent.getSerializableExtra(NotificationProvider.CONTACT_TRACING_HUB_ACTION) as? ContactTracingHubAction
+
+    private fun getStartedFromLocalMessageNotification() =
+        intent.getBooleanExtra(NotificationProvider.TAPPED_ON_LOCAL_MESSAGE_NOTIFICATION, false)
 
     companion object {
         fun start(context: Context) =

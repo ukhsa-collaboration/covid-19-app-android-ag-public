@@ -3,7 +3,8 @@ buildscript {
     ext.kotlin_version = "1.4.21"
     repositories {
         google()
-        jcenter()
+        mavenCentral()
+        maven { url "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven" }
         maven { url "https://plugins.gradle.org/m2/" }
     }
 
@@ -18,7 +19,7 @@ buildscript {
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt").version("1.13.1")
+    id("io.gitlab.arturbosch.detekt").version("1.17.0")
 }
 
 ext {
@@ -42,20 +43,6 @@ subprojects {
             xml.enabled = false
             html.enabled = true
             txt.enabled = false
-        }
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven {
-            url = 'https://maven.pkg.github.com/nihp-public/covid-19-app-configuration-public'
-            credentials {
-                username = findProperty("gpr.user") ?: System.getenv("PACKAGES_ACCESS_ACTOR")
-                password = findProperty("gpr.key") ?: System.getenv("PACKAGES_ACCESS_TOKEN")
-            }
         }
     }
 }

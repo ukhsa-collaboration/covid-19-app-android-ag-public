@@ -8,7 +8,6 @@ import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.NestedScrollView
-import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_questionnaire.buttonTryAgain
 import kotlinx.android.synthetic.main.activity_questionnaire.errorStateContainer
 import kotlinx.android.synthetic.main.activity_questionnaire.loadingContainer
@@ -27,11 +26,16 @@ import uk.nhs.nhsx.covid19.android.app.common.Lce.Error
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Loading
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Success
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity.Companion.EXTRA_RISK_THRESHOLD
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity.Companion.EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.NoSymptoms
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.ReviewSymptoms
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.SymptomsAdviceForIndexCaseThenNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.adapter.QuestionnaireViewAdapter
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.ScrollableLayoutManager
@@ -76,37 +80,50 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
     private fun setupViewModelListeners() {
         viewModel.viewState().observe(
             this,
-            Observer {
-                when (it) {
-                    is Success -> handleSuccess(it.data)
+            { viewState ->
+                when (viewState) {
+                    is Success -> handleSuccess(viewState.data)
                     is Error -> showErrorState()
                     is Loading -> showLoadingSpinner()
                 }
             }
         )
 
-        viewModel.navigateToReviewScreen().observe(
+        viewModel.navigationTarget().observe(
             this,
-            Observer { viewState ->
-                val extraQuestions = ArrayList<Question>().apply {
-                    addAll(viewState.questions)
+            { navigationTarget ->
+                when (navigationTarget) {
+                    NoSymptoms -> {
+                        finish()
+                        startActivity<NoSymptomsActivity>()
+                    }
+                    is ReviewSymptoms -> startReviewSymptomsActivity(navigationTarget)
+                    SymptomsAdviceForIndexCaseThenNoSymptoms -> {
+                        SymptomsAdviceIsolateActivity.start(this, IsolationSymptomAdvice.IndexCaseThenNoSymptoms)
+                    }
                 }
-
-                val intent = Intent(this, ReviewSymptomsActivity::class.java).apply {
-                    putParcelableArrayListExtra(
-                        ReviewSymptomsActivity.EXTRA_QUESTIONS,
-                        extraQuestions
-                    )
-                    putExtra(EXTRA_RISK_THRESHOLD, viewState.riskThreshold)
-                    putExtra(
-                        EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS,
-                        viewState.symptomsOnsetWindowDays
-                    )
-                }
-
-                startActivityForResult(intent, CHANGE_QUESTION_REQUEST_CODE)
             }
         )
+    }
+
+    private fun startReviewSymptomsActivity(reviewSymptomsNavigationTarget: ReviewSymptoms) {
+        val extraQuestions = ArrayList<Question>().apply {
+            addAll(reviewSymptomsNavigationTarget.questions)
+        }
+
+        val intent = Intent(this, ReviewSymptomsActivity::class.java).apply {
+            putParcelableArrayListExtra(
+                ReviewSymptomsActivity.EXTRA_QUESTIONS,
+                extraQuestions
+            )
+            putExtra(EXTRA_RISK_THRESHOLD, reviewSymptomsNavigationTarget.riskThreshold)
+            putExtra(
+                EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS,
+                reviewSymptomsNavigationTarget.symptomsOnsetWindowDays
+            )
+        }
+
+        startActivityForResult(intent, CHANGE_QUESTION_REQUEST_CODE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -198,12 +215,11 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
                 dialog.dismiss()
             }
             .setPositiveButton(R.string.confirm) { _, _ ->
-                finish()
-                startActivity<NoSymptomsActivity>()
+                viewModel.onNoSymptomsConfirmed()
             }
             .setOnDismissListener {
                 currentDialog = null
-                viewModel.onDialogDismissed()
+                viewModel.onNoSymptomsDialogDismissed()
             }
             .show()
     }

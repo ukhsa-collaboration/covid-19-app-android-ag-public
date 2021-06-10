@@ -35,14 +35,14 @@ class LocalAuthorityPostCodesLoaderTest {
     }
 
     @Test
-    fun `read list form json`() = runBlocking {
+    fun `read list from json`() = runBlocking {
         testSubject.load()
 
         verify { moshiAdapter.fromJson(any<String>()) }
     }
 
     @Test
-    fun `read list form json throws exception`() = runBlocking {
+    fun `read list from json throws exception`() = runBlocking {
         every { assetManager.open(any()) } throws Exception()
 
         testSubject.load()

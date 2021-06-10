@@ -4,7 +4,9 @@ plugins {
 }
 
 repositories {
-    jcenter()
+    google()
+    mavenCentral()
+    maven { url "https://plugins.gradle.org/m2/" }
 }
 
 compileKotlin {
@@ -21,4 +23,9 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.16.1'
     testImplementation "com.pinterest.ktlint:ktlint-core:$ktlint_version"
     testImplementation "com.pinterest.ktlint:ktlint-test:$ktlint_version"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }

@@ -1,11 +1,11 @@
 package uk.nhs.nhsx.covid19.android.app.flow.functionalities
 
-import com.schibsted.spain.barista.interaction.BaristaSleepInteractions
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.DataAndPrivacyRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PermissionRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PostCodeRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.WelcomeRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
 
 class CompleteOnboarding {
 
@@ -16,9 +16,8 @@ class CompleteOnboarding {
     private val permissionRobot = PermissionRobot()
 
     fun onboard() {
-        welcomeRobot.checkActivityIsDisplayed()
+        waitFor { welcomeRobot.checkActivityIsDisplayed() }
 
-        BaristaSleepInteractions.sleep(100)
         welcomeRobot.clickConfirmOnboarding()
         welcomeRobot.checkAgeConfirmationDialogIsDisplayed()
         welcomeRobot.clickConfirmAgePositive()

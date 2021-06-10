@@ -1,7 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.common
 
-import com.jeroenmols.featureflag.framework.FeatureFlag.STORE_EXPOSURE_WINDOWS
-import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationTokensProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
@@ -83,9 +81,7 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration @Inject constructor(
     }
 
     private fun clearOldEpidemiologyEvents(retentionPeriodDays: Int) {
-        if (RuntimeBehavior.isFeatureEnabled(STORE_EXPOSURE_WINDOWS)) {
-            epidemiologyEventProvider.clearOnAndBefore(LocalDate.now(clock).minusDays(retentionPeriodDays.toLong()))
-        }
+        epidemiologyEventProvider.clearOnAndBefore(LocalDate.now(clock).minusDays(retentionPeriodDays.toLong()))
     }
 
     private fun clearLegacyData() {

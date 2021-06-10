@@ -16,13 +16,13 @@ class ProgressRobot {
             .check(matches(isDisplayed()))
     }
 
-    fun checkActivityNotIsDisplayed() {
-        onView(withId(R.id.progressContainer))
-            .check(matches(not(isDisplayed())))
-    }
-
     fun checkErrorIsDisplayed() {
         onView(withId(R.id.errorStateContainer))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkLoadingIsDisplayed() {
+        onView(withId(R.id.loadingProgress))
             .check(matches(isDisplayed()))
     }
 

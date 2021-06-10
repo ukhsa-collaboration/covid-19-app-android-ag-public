@@ -42,11 +42,11 @@ class QrScannerViewModel(
                 return@launch
             }
 
+            analyticsEventProcessor.track(QrCodeCheckIn)
             visitedVenuesStorage.finishLastVisitAndAddNewVenue(venue)
             qrCodeScanResult.postValue(Scanning)
             delay(delay)
             qrCodeScanResult.postValue(QrCodeScanResult.Success(venueName = venue.organizationPartName))
-            analyticsEventProcessor.track(QrCodeCheckIn)
         }
     }
 

@@ -165,6 +165,18 @@ class TestResultRobot(
             .check(matches(isDisplayed()))
     }
 
+    fun checkActivityDisplaysPlodScreen() {
+        onView(withText(R.string.test_result_plod_title))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+        onView(withText(R.string.test_result_plod_subtitle))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+        onView(withText(R.string.test_result_plod_description))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+    }
+
     fun checkActivityDisplaysVoidWillBeInIsolation() {
         onView(withText(R.string.test_result_positive_continue_self_isolation_title_1))
             .check(matches(isDisplayed()))
@@ -259,9 +271,20 @@ class TestResultRobot(
         }
     }
 
-    fun checkGoodNewsIcon(drawableResourceId: Int) {
-        onView(withId(R.id.goodNewsIcon))
-            .check(matches(withDrawable(drawableResourceId)))
+    fun checkGoodNewsLinkVisibility(isVisible: Boolean) {
+        onView(withId(R.id.goodNewsOnlineServiceLink)).apply {
+            if (isVisible) {
+                perform(scrollTo())
+                check(matches(isDisplayed()))
+            } else check(matches(not(isDisplayed())))
+        }
+    }
+
+    fun checkGoodNewsIcon(drawableResourceId: Int?) {
+        if (drawableResourceId != null) {
+            onView(withId(R.id.goodNewsIcon))
+                .check(matches(withDrawable(drawableResourceId)))
+        }
     }
 
     fun checkGoodNewsTitleIsVisible() {
@@ -279,9 +302,9 @@ class TestResultRobot(
             .check(matches(withText(stringResourceId)))
     }
 
-    fun checkGoodNewsInfoState() {
+    fun checkGoodNewsInfoState(stringResourceId: Int) {
         onView(withId(R.id.goodNewsInfoView)).apply {
-            check(matches(withStateStringResource(R.string.test_result_no_self_isolation_description)))
+            check(matches(withStateStringResource(stringResourceId)))
             check(matches(withStateColor(R.color.amber)))
         }
     }

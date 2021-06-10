@@ -16,8 +16,15 @@
     <dimen name="margin_horizontal_list_item">32dp</dimen>
     <dimen name="bullet_point_size">8dp</dimen>
     <dimen name="list_item_space">1dp</dimen>
-    <dimen name="my_data_title_left_margin">14dp</dimen>
     <dimen name="item_action_width">56dp</dimen>
     <dimen name="vertical_margin_medium">24dp</dimen>
     <dimen name="vertical_margin_extra_large">64dp</dimen>
+    <dimen name="minimum_touch_target_size">48dp</dimen>
+    <dimen name="my_data_min_height">42dp</dimen>
+    <dimen name="my_data_padding_vertical">8dp</dimen>
+    <dimen name="my_data_section_title_margin_start">14dp</dimen>
+    <dimen name="my_data_section_title_margin_top">9dp</dimen>
+    <dimen name="my_data_section_item_horizontal_padding">30dp</dimen>
+    <dimen name="animation_static_image_height">300dp</dimen>
+    <dimen name="local_message_banner_padding">8dp</dimen>
 </resources>

@@ -37,23 +37,48 @@
                 style="@style/Title1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin"
+                android:layout_marginTop="@dimen/vertical_margin_large"
                 android:paddingHorizontal="@dimen/margin_horizontal_reduced_relative"
                 android:text="@string/link_test_result_title" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/margin_horizontal_reduced_relative"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:layout_marginBottom="4dp"
+                android:text="@string/link_test_result_guideline" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/margin_horizontal_reduced_relative"
+                app:paddingBetweenItems="0dp"
+                app:rawText="@string/link_test_result_guideline_points"
+                app:showBulletPoints="true"/>
 
             <TextView
                 style="@style/Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin"
+                android:layout_marginTop="@dimen/vertical_margin_large"
                 android:paddingHorizontal="@dimen/margin_horizontal_reduced_relative"
-                android:text="@string/link_test_result_text" />
+                android:text="@string/link_test_result_rapid_lateral_flow_test_text" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                style="@style/LinkTextWithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/margin_horizontal_reduced_relative"
+                android:text="@string/link_test_result_report_link_text"
+                app:linkUrl="@string/link_test_result_report_link_url" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.EnterCodeView
                 android:id="@+id/linkTestResultEnterCodeView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/vertical_margin"
+                android:layout_marginVertical="@dimen/vertical_margin_large"
                 app:codeInputRegex="[^0123456789abcdefghjkmnpqrstvwxyz]"
                 app:errorText="@string/valid_auth_code_is_required"
                 app:example="@string/link_test_result_enter_code_example"

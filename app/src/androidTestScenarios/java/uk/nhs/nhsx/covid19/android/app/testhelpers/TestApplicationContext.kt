@@ -17,17 +17,24 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.work.WorkManager
+import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.tinder.StateMachine
 import uk.nhs.covid19.config.Configurations
 import uk.nhs.covid19.config.SignatureKey
 import uk.nhs.nhsx.covid19.android.app.ExposureApplication
+import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_FAIL
+import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_SUCCEED
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationChecker
+import uk.nhs.nhsx.covid19.android.app.common.PeriodicTask
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
+import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationBroadcastReceiver
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.MockRandomNonRiskyExposureWindowsLimiter
+import uk.nhs.nhsx.covid19.android.app.flow.analytics.awaitSuccess
 import uk.nhs.nhsx.covid19.android.app.packagemanager.MockPackageManager
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
 import uk.nhs.nhsx.covid19.android.app.permissions.MockPermissionsManager
@@ -42,6 +49,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.MockAnalyticsApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockEpidemiologyDataApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockIsolationPaymentApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockKeysSubmissionApi
+import uk.nhs.nhsx.covid19.android.app.remote.MockLocalMessagesApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockQuestionnaireApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockRiskyVenuesApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
@@ -50,7 +58,11 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.AppAvailabilityResponse
 import uk.nhs.nhsx.covid19.android.app.state.Event
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
+import uk.nhs.nhsx.covid19.android.app.state.MigrateIsolationState
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect
+import uk.nhs.nhsx.covid19.android.app.state.StateStringStorage
+import uk.nhs.nhsx.covid19.android.app.state.StateStringStorage4_9
 import uk.nhs.nhsx.covid19.android.app.status.DateChangeBroadcastReceiver
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
 import uk.nhs.nhsx.covid19.android.app.util.AndroidStrongBoxSupport
@@ -86,6 +98,8 @@ class TestApplicationContext {
     val keysSubmissionApi = MockKeysSubmissionApi()
 
     val analyticsApi = MockAnalyticsApi()
+
+    val localMessagesApi = MockLocalMessagesApi()
 
     val updateManager = TestUpdateManager()
 
@@ -175,7 +189,8 @@ class TestApplicationContext {
                 isolationPaymentApi,
                 keysSubmissionApi,
                 analyticsApi,
-                epidemiologyDataApi
+                epidemiologyDataApi,
+                localMessagesApi
             )
         )
         .build()
@@ -238,18 +253,26 @@ class TestApplicationContext {
         }
     }
 
+    fun setAnimations(isEnabled: Boolean) {
+        component.getAnimationsProvider().inAppAnimationEnabled = isEnabled
+    }
+
     fun getSubmitAnalyticsAlarmController() = component.getSubmitAnalyticsAlarmController()
 
     fun getUserInbox() = component.getUserInbox()
 
     fun getUnacknowledgedTestResultsProvider() = component.getUnacknowledgedTestResultsProvider()
 
+    fun getReceivedUnknownTestResultProvider() = component.getReceivedUnknownTestResultProvider()
+
+    fun getRelevantTestResultProvider() = component.getRelevantTestResultProvider()
+
     fun getTestOrderingTokensProvider() = component.getTestOrderingTokensProvider()
 
     fun getKeySharingInfoProvider() = component.getKeySharingInfoProvider()
 
     fun setState(state: IsolationState) {
-        val ref = component.provideIsolationStateMachine()
+        val ref = getIsolationStateMachine()
             .stateMachine
             .getPrivateProperty<StateMachine<IsolationState, Event, SideEffect>, AtomicReference<IsolationState>>(
                 "stateRef"
@@ -257,11 +280,26 @@ class TestApplicationContext {
         ref?.set(state)
     }
 
+    fun getRemainingDaysInIsolation(): Int =
+        getIsolationStateMachine().remainingDaysInIsolation().toInt()
+
+    fun getIsolationStateMachine(): IsolationStateMachine =
+        component.provideIsolationStateMachine()
+
     fun getCurrentState(): IsolationState =
         component.provideIsolationStateMachine().readState()
 
     fun getCurrentLogicalState(): IsolationLogicalState =
         component.provideIsolationStateMachine().readLogicalState()
+
+    fun getStateStringStorage4_9(): StateStringStorage4_9 =
+        component.provideStateStringStorage4_9()
+
+    fun getStateStringStorage(): StateStringStorage =
+        component.provideStateStringStorage()
+
+    fun getMigrateIsolationState(): MigrateIsolationState =
+        component.provideMigrateIsolationState()
 
     fun getExposureCircuitBreakerInfoProvider() =
         component.getExposureCircuitBreakerInfoProvider()
@@ -330,6 +368,40 @@ class TestApplicationContext {
     fun getAlarmManager() =
         component.getAlarmManager()
 
+    fun getRiskyVenueAlertProvider() =
+        component.getRiskyVenueAlertProvider()
+
+    fun getShouldShowEncounterDetectionActivityProvider() =
+        component.getShouldShowEncounterDetectionActivityProvider()
+
+    fun getLocalMessagesProvider() =
+        component.getLocalMessagesProvider()
+
+    fun executeWhileOffline(action: () -> Unit) {
+        MockApiModule.behaviour.responseType = ALWAYS_FAIL
+        action()
+        MockApiModule.behaviour.responseType = ALWAYS_SUCCEED
+    }
+
+    fun runBackgroundTasks() {
+        getPeriodicTasks().schedule()
+        WorkManager.getInstance(app)
+            .getWorkInfosForUniqueWorkLiveData(PeriodicTask.PERIODIC_TASKS.workName)
+            .awaitSuccess()
+    }
+
+    fun sendExposureStateUpdatedBroadcast() {
+        val intent = Intent(ExposureNotificationClient.ACTION_EXPOSURE_STATE_UPDATED)
+        val broadcastReceiver = ExposureNotificationBroadcastReceiver()
+        broadcastReceiver.onReceive(app, intent)
+    }
+
+    fun advanceClock(secondsToAdvance: Long) {
+        clock.currentInstant = clock.instant().plusSeconds(secondsToAdvance)
+        getCurrentState()
+        runBackgroundTasks()
+    }
+
     companion object {
         const val ENGLISH_LOCAL_AUTHORITY = "E07000063"
     }
@@ -343,7 +415,9 @@ class MockClock(var currentInstant: Instant? = null) : Clock() {
 
     override fun getZone(): ZoneId = ZoneOffset.UTC
 
-    fun reset() { currentInstant = null }
+    fun reset() {
+        currentInstant = null
+    }
 }
 
 fun stringFromResId(@StringRes stringRes: Int): String {

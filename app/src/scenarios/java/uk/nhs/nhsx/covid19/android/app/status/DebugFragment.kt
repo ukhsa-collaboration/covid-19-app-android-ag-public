@@ -11,7 +11,9 @@ import androidx.core.app.ShareCompat.IntentBuilder
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.work.WorkInfo.State.ENQUEUED
+import androidx.work.WorkInfo.State.RUNNING
+import androidx.work.WorkManager
 import kotlinx.android.synthetic.scenarios.fragment_debug.contactState
 import kotlinx.android.synthetic.scenarios.fragment_debug.defaultState
 import kotlinx.android.synthetic.scenarios.fragment_debug.exportKeys
@@ -23,7 +25,10 @@ import kotlinx.android.synthetic.scenarios.fragment_debug.riskyVenueM1
 import kotlinx.android.synthetic.scenarios.fragment_debug.riskyVenueM2
 import kotlinx.android.synthetic.scenarios.fragment_debug.sendExposureNotification
 import kotlinx.android.synthetic.scenarios.fragment_debug.sendNegativeTestResult
+import kotlinx.android.synthetic.scenarios.fragment_debug.sendPlodTestResult
 import kotlinx.android.synthetic.scenarios.fragment_debug.sendPositiveTestResult
+import kotlinx.android.synthetic.scenarios.fragment_debug.sendUnconfirmedPositiveTestResult
+import kotlinx.android.synthetic.scenarios.fragment_debug.sendUnknownTestResult
 import kotlinx.android.synthetic.scenarios.fragment_debug.sendVoidTestResult
 import kotlinx.android.synthetic.scenarios.fragment_debug.startDownloadTask
 import kotlinx.android.synthetic.scenarios.fragment_debug.submitAnalyticsUsingAlarmManager
@@ -31,11 +36,11 @@ import kotlinx.android.synthetic.scenarios.fragment_debug.submitKeys
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.common.PeriodicTask.PERIODIC_TASKS
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.Error
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.ResolutionRequired
@@ -63,7 +68,7 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
 
         debugViewModel.exposureKeysResult.observe(
             this,
-            Observer {
+            {
                 when (it) {
                     is ResolutionRequired -> {
                         startIntentSenderForResult(
@@ -87,6 +92,8 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
                 }
             }
         )
+
+        observeDownloadTaskStatus()
     }
 
     private fun showDebugOptions() {
@@ -117,15 +124,27 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
         }
 
         sendPositiveTestResult.setOnSingleClickListener {
-            debugViewModel.sendPositiveTestResult(requireContext(), LAB_RESULT)
+            debugViewModel.sendPositiveConfirmedTestResult(requireContext())
         }
 
         sendNegativeTestResult.setOnSingleClickListener {
-            debugViewModel.sendNegativeTestResult(requireContext(), LAB_RESULT)
+            debugViewModel.sendNegativeConfirmedTestResult(requireContext())
         }
 
         sendVoidTestResult.setOnSingleClickListener {
-            debugViewModel.sendVoidTestResult(requireContext(), LAB_RESULT)
+            debugViewModel.sendVoidConfirmedTestResult(requireContext())
+        }
+
+        sendPlodTestResult.setOnSingleClickListener {
+            debugViewModel.sendPlodConfirmedTestResult(requireContext())
+        }
+
+        sendUnconfirmedPositiveTestResult.setOnSingleClickListener {
+            debugViewModel.sendPositiveUnconfirmedTestResult()
+        }
+
+        sendUnknownTestResult.setOnSingleClickListener {
+            debugViewModel.sendUnknownTestResult()
         }
 
         defaultState.setOnSingleClickListener {
@@ -159,6 +178,23 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
         submitAnalyticsUsingAlarmManager.setOnSingleClickListener {
             debugViewModel.submitAnalyticsUsingAlarmManager()
         }
+    }
+
+    private fun observeDownloadTaskStatus() {
+        WorkManager.getInstance(requireContext())
+            .getWorkInfosForUniqueWorkLiveData(PERIODIC_TASKS.workName)
+            .observe(viewLifecycleOwner) {
+                requireActivity().runOnUiThread {
+                    it?.let { workInfos ->
+                        if (workInfos.any { workInfo -> workInfo.state == ENQUEUED }) {
+                            startDownloadTask.isEnabled = true
+                        }
+                        if (workInfos.any { workInfo -> workInfo.state == RUNNING }) {
+                            startDownloadTask.isEnabled = false
+                        }
+                    }
+                }
+            }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

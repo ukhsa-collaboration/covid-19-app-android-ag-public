@@ -22,8 +22,7 @@ class BatteryOptimizationRobot {
 
     fun clickAllowButton() {
         onView(withId(R.id.batteryOptimizationAllowButton))
-            .perform(scrollTo())
-            .perform(click())
+            .perform(scrollTo(), click())
     }
 
     fun clickCloseButton() {

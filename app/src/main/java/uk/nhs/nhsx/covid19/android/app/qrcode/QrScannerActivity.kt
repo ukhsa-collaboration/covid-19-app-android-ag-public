@@ -31,11 +31,11 @@ import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.Detector.Detections
 import com.google.android.gms.vision.Detector.Processor
 import com.google.android.gms.vision.barcode.Barcode
+import kotlinx.android.synthetic.main.activity_qr_code_scanner.moreInfoButton
 import kotlinx.android.synthetic.main.activity_qr_code_scanner.closeButton
 import kotlinx.android.synthetic.main.activity_qr_code_scanner.howToUseScannerHint
 import kotlinx.android.synthetic.main.activity_qr_code_scanner.scannerSurfaceView
 import kotlinx.android.synthetic.main.activity_qr_code_scanner.textHold
-import kotlinx.android.synthetic.main.activity_qr_code_scanner.textMoreInfo
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.R
@@ -48,7 +48,6 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.Scanning
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityButton
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
@@ -85,10 +84,9 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
             }
         )
         closeButton.setOnSingleClickListener { finish() }
-        textMoreInfo.setOnSingleClickListener {
+        moreInfoButton.setOnSingleClickListener {
             startActivity<QrCodeHelpActivity>()
         }
-        textMoreInfo.setUpAccessibilityButton()
     }
 
     override fun onResume() {

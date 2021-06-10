@@ -22,9 +22,58 @@
             android:paddingEnd="@dimen/margin_horizontal">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/how_this_app_works_container"
+                android:id="@+id/no_vaccination_status_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
+                <View
+                    android:id="@+id/line_no_vaccination_status"
+                    android:layout_width="4dp"
+                    android:layout_height="0dp"
+                    android:background="@color/style_yellow"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                    android:id="@+id/noVaccinationStatusTitle"
+                    style="@style/Title3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/about_no_vaccination_status_title"
+                    app:layout_constraintStart_toEndOf="@id/line_no_vaccination_status"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                    android:id="@+id/noVaccinationStatusText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="8dp"
+                    app:rawText="@string/about_no_vaccination_status_text"
+                    app:layout_constraintStart_toEndOf="@id/line_no_vaccination_status"
+                    app:layout_constraintTop_toBottomOf="@id/noVaccinationStatusTitle" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                    android:id="@+id/linkNoVaccinationStatus"
+                    style="@style/LinkTextWithIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/about_download_the_nhs_app"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/noVaccinationStatusText"
+                    app:linkUrl="@string/url_download_the_nhs_app" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/how_this_app_works_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large">
 
                 <View
                     android:id="@+id/line_how_app_works"
@@ -45,13 +94,13 @@
                     app:layout_constraintStart_toEndOf="@id/line_how_app_works"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
                     android:id="@+id/howItWorksText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="8dp"
-                    android:text="@string/about_how_this_app_works_text"
+                    app:rawText="@string/about_how_this_app_works_text"
                     app:layout_constraintStart_toEndOf="@id/line_how_app_works"
                     app:layout_constraintTop_toBottomOf="@id/howItWorksTitle" />
 
@@ -87,7 +136,7 @@
                 android:id="@+id/about_user_data_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp">
+                android:layout_marginTop="@dimen/vertical_margin_large">
 
                 <View
                     android:id="@+id/line_about_data"
@@ -133,7 +182,7 @@
                 android:id="@+id/our_policies_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp">
+                android:layout_marginTop="@dimen/vertical_margin_large">
 
                 <View
                     android:id="@+id/line_our_policies"
@@ -205,7 +254,7 @@
                 android:id="@+id/commonQuestionsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp">
+                android:layout_marginTop="@dimen/vertical_margin_large">
 
                 <View
                     android:id="@+id/lineCommonQuestions"
@@ -253,7 +302,7 @@
                 android:id="@+id/softwareInformationContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="@dimen/vertical_margin_large"
                 android:orientation="horizontal">
 
                 <View
@@ -291,16 +340,15 @@
                         android:layout_marginStart="32dp"
                         tools:text="App name" />
 
-                    <FrameLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="8dp">
 
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
+                            android:layout_centerVertical="true"
                             android:contentDescription="@null"
                             android:src="@drawable/ic_ref" />
 
@@ -311,7 +359,7 @@
                             android:layout_marginStart="32dp"
                             android:text="@string/about_software_information_text_app_version" />
 
-                    </FrameLayout>
+                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/textSoftwareVersion"
@@ -321,16 +369,15 @@
                         android:layout_marginStart="32dp"
                         tools:text="1.0.0" />
 
-                    <FrameLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="8dp">
 
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
+                            android:layout_centerVertical="true"
                             android:contentDescription="@null"
                             android:src="@drawable/ic_release" />
 
@@ -341,7 +388,7 @@
                             android:layout_marginStart="32dp"
                             android:text="@string/about_software_information_text_app_date_of_release" />
 
-                    </FrameLayout>
+                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/textSoftwareDateOfRelease"
@@ -351,16 +398,15 @@
                         android:layout_marginStart="32dp"
                         tools:text="08/2020" />
 
-                    <FrameLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="8dp">
 
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
+                            android:layout_centerVertical="true"
                             android:contentDescription="@null"
                             android:src="@drawable/ic_manufacturer" />
 
@@ -371,7 +417,7 @@
                             android:layout_marginStart="32dp"
                             android:text="@string/about_software_information_text_app_manufacturer" />
 
-                    </FrameLayout>
+                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/textSoftwareManufacturer"
@@ -387,9 +433,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="32dp"
                         android:layout_marginTop="24dp"
-                        android:src="@drawable/ic_ukca"
                         android:contentDescription="@string/ukca_compliance_announcement"
-                        />
+                        android:src="@drawable/ic_ukca" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -397,7 +442,7 @@
                 android:id="@+id/feedbackInformationContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="@dimen/vertical_margin_large"
                 android:orientation="horizontal">
 
                 <View
@@ -449,6 +494,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:contentDescription="@null"
                 app:srcCompat="@drawable/ic_onboarding_welcome" />
         </LinearLayout>
     </ScrollView>

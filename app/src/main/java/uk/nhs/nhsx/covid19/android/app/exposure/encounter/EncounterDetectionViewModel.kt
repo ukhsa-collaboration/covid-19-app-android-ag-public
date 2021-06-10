@@ -9,16 +9,15 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AcknowledgedStar
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionViewModel.ExposedNotificationResult.ConsentConfirmation
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionViewModel.ExposedNotificationResult.IsolationDurationDays
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.ShouldShowEncounterDetectionActivityProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import java.time.Clock
 import javax.inject.Inject
 
 class EncounterDetectionViewModel @Inject constructor(
     private val isolationStateMachine: IsolationStateMachine,
-    private val inbox: UserInbox,
+    private val shouldShowEncounterDetectionActivityProvider: ShouldShowEncounterDetectionActivityProvider,
     private val exposureNotificationRetryAlarmController: ExposureNotificationRetryAlarmController,
     private val analyticsEventProcessor: AnalyticsEventProcessor,
     private val clock: Clock
@@ -41,7 +40,7 @@ class EncounterDetectionViewModel @Inject constructor(
     fun confirmConsent() {
         viewModelScope.launch {
             exposureNotificationRetryAlarmController.cancel()
-            inbox.clearItem(ShowEncounterDetection)
+            shouldShowEncounterDetectionActivityProvider.value = null
             analyticsEventProcessor.track(AcknowledgedStartOfIsolationDueToRiskyContact)
 
             resultLiveData.postValue(ConsentConfirmation)

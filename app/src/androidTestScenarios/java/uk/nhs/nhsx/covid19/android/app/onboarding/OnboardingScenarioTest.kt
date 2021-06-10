@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.onboarding
 
 import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
-import com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep
 import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
@@ -87,8 +86,6 @@ class OnboardingScenarioTest : EspressoTest() {
 
         welcomeRobot.checkActivityIsDisplayed()
 
-        sleep(100)
-
         step(
             "Start",
             "The user is presented a screen with information on what this app can do. The user continues."
@@ -96,7 +93,7 @@ class OnboardingScenarioTest : EspressoTest() {
 
         welcomeRobot.clickConfirmOnboarding()
 
-        welcomeRobot.checkAgeConfirmationDialogIsDisplayed()
+        waitFor { welcomeRobot.checkAgeConfirmationDialogIsDisplayed() }
 
         step(
             "Confirm age",
@@ -170,9 +167,7 @@ class OnboardingScenarioTest : EspressoTest() {
 
         welcomeRobot.clickConfirmOnboarding()
 
-        sleep(100)
-
-        welcomeRobot.checkAgeConfirmationDialogIsDisplayed()
+        waitFor { welcomeRobot.checkAgeConfirmationDialogIsDisplayed() }
 
         step(
             "Confirm age",

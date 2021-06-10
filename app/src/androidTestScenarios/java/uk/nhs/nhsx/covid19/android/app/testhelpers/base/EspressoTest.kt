@@ -12,9 +12,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_SUCCEED
-import uk.nhs.nhsx.covid19.android.app.common.PeriodicTask
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
-import uk.nhs.nhsx.covid19.android.app.flow.analytics.awaitSuccess
 import uk.nhs.nhsx.covid19.android.app.testhelpers.AWAIT_AT_MOST_SECONDS
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryRule
@@ -55,10 +53,7 @@ abstract class EspressoTest {
     }
 
     protected fun runBackgroundTasks() {
-        testAppContext.getPeriodicTasks().schedule()
-        WorkManager.getInstance(testAppContext.app)
-            .getWorkInfosForUniqueWorkLiveData(PeriodicTask.PERIODIC_TASKS.workName)
-            .awaitSuccess()
+        testAppContext.runBackgroundTasks()
     }
 
     protected inline fun <reified T : Activity> startTestActivity(

@@ -82,6 +82,18 @@ class SettingsRobot {
             )
     }
 
+    fun hasAnimationsSetting() {
+        onView(withId(R.id.animationsOption))
+            .check(
+                matches(
+                    allOf(
+                        isDisplayed(),
+                        NthChildOf(withId(R.id.settingsList), 4)
+                    )
+                )
+            )
+    }
+
     fun hasDeleteDataOption() {
         onView(withId(R.id.actionDeleteAllData))
             .check(
@@ -106,6 +118,11 @@ class SettingsRobot {
 
     fun clickVenueHistorySetting() {
         onView(withId(R.id.venueHistoryOption))
+            .perform(click())
+    }
+
+    fun clickAnimationSetting() {
+        onView(withId(R.id.animationsOption))
             .perform(click())
     }
 

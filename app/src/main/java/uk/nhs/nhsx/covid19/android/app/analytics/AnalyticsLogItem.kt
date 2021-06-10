@@ -49,7 +49,15 @@ enum class RegularAnalyticsEventType {
     DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY,
     RECEIVED_RISKY_VENUE_M1_WARNING,
     RECEIVED_RISKY_VENUE_M2_WARNING,
-    TOTAL_ALARM_MANAGER_BACKGROUND_TASKS
+    TOTAL_ALARM_MANAGER_BACKGROUND_TASKS,
+    ASKED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW,
+    CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW,
+    TOTAL_SHARE_EXPOSURE_KEYS_REMINDER_NOTIFICATIONS,
+    CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_REMINDER_SCREEN,
+    SUCCESSFULLY_SHARED_EXPOSURE_KEYS,
+    DID_SEND_LOCAL_INFO_NOTIFICATION,
+    DID_ACCESS_LOCAL_INFO_SCREEN_VIA_NOTIFICATION,
+    DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER,
 }
 
 @JsonClass(generateAdapter = true)
@@ -72,4 +80,5 @@ data class BackgroundTaskTicks(
     var haveActiveIpcTokenBackgroundTick: Boolean = false,
     var isIsolatingForUnconfirmedTestBackgroundTick: Boolean = false,
     var hasReceivedRiskyVenueM2WarningBackgroundTick: Boolean = false,
+    var isDisplayingLocalInfoBackgroundTick: Boolean = false,
 )

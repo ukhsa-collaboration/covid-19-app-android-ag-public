@@ -4,7 +4,6 @@ import android.content.SharedPreferences
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import java.time.Clock
 import java.time.Instant
@@ -71,9 +70,7 @@ data class KeySharingInfo(
     val diagnosisKeySubmissionToken: String,
     val acknowledgedDate: Instant,
     val notificationSentDate: Instant? = null,
-    val hasDeclinedSharingKeys: Boolean = false,
-    val testKitType: VirologyTestKitType?, // testKitType/requiresConfirmatoryTest is only used for submitting epi data
-    val requiresConfirmatoryTest: Boolean
+    val hasDeclinedSharingKeys: Boolean = false
 ) {
     fun wasAcknowledgedMoreThan24HoursAgo(clock: Clock): Boolean {
         val exactly24HoursAgo = Instant.now(clock).minus(24, ChronoUnit.HOURS)

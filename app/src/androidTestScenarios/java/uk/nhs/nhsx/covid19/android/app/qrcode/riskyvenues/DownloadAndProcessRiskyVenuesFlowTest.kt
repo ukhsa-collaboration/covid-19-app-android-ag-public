@@ -1,13 +1,10 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 
-import java.time.Instant
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
@@ -16,7 +13,10 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyWindow
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import java.time.Instant
 import java.time.LocalDate
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class DownloadAndProcessRiskyVenuesFlowTest : EspressoTest() {
 
@@ -124,27 +124,27 @@ class DownloadAndProcessRiskyVenuesFlowTest : EspressoTest() {
 
             downloadAndProcessRiskyVenues.invoke(clearOutdatedVisits = false)
 
-            val alert1 = userInbox.fetchInbox() as AddableUserInboxItem
+            val alert1 = userInbox.fetchInbox() as UserInboxItem
             assertEquals(ShowVenueAlert(venue2.id, BOOK_TEST), alert1)
-            userInbox.clearItem(alert1)
+            testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = null
 
             testAppContext.riskyVenuesApi.riskyVenuesResponse =
                 RiskyVenuesResponse(venues = riskyVenues3)
 
             downloadAndProcessRiskyVenues.invoke(clearOutdatedVisits = false)
 
-            val alert2 = userInbox.fetchInbox() as AddableUserInboxItem
+            val alert2 = userInbox.fetchInbox() as UserInboxItem
             assertEquals(ShowVenueAlert(venue3.id, INFORM), alert2)
-            userInbox.clearItem(alert2)
+            testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = null
 
             testAppContext.riskyVenuesApi.riskyVenuesResponse =
                 RiskyVenuesResponse(venues = riskyVenues4)
 
             downloadAndProcessRiskyVenues.invoke(clearOutdatedVisits = false)
 
-            val alert3 = userInbox.fetchInbox() as AddableUserInboxItem
+            val alert3 = userInbox.fetchInbox() as UserInboxItem
             assertEquals(ShowVenueAlert(venue4.id, INFORM), alert3)
-            userInbox.clearItem(alert3)
+            testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = null
 
             downloadAndProcessRiskyVenues.invoke(clearOutdatedVisits = false)
 

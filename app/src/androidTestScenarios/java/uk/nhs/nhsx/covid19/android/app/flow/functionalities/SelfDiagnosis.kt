@@ -1,5 +1,9 @@
 package uk.nhs.nhsx.covid19.android.app.flow.functionalities
 
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.ExplicitDate
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.NotStated
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QuestionnaireRobot
@@ -19,7 +23,7 @@ class SelfDiagnosis(
     private val symptomsAdviceIsolateRobot = SymptomsAdviceIsolateRobot()
     private val orderTest = OrderTest(espressoTest)
 
-    private fun selfDiagnosePositive() {
+    private fun selfDiagnosePositive(selectedDate: SelectedDate) {
         statusRobot.checkActivityIsDisplayed()
 
         val isContactCase = (espressoTest.testAppContext.getCurrentLogicalState() as? PossiblyIsolating)
@@ -36,7 +40,14 @@ class SelfDiagnosis(
 
         reviewSymptomsRobot.confirmReviewSymptomsScreenIsDisplayed()
 
-        reviewSymptomsRobot.selectCannotRememberDate()
+        when (selectedDate) {
+            CannotRememberDate -> reviewSymptomsRobot.selectCannotRememberDate()
+            is ExplicitDate -> {
+                reviewSymptomsRobot.clickSelectDate()
+                reviewSymptomsRobot.selectDayOfMonth(selectedDate.date.dayOfMonth)
+            }
+            NotStated -> throw Exception("Self diagnosis onset date not stated")
+        }
 
         reviewSymptomsRobot.confirmSelection()
 
@@ -52,8 +63,8 @@ class SelfDiagnosis(
         symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
     }
 
-    fun selfDiagnosePositiveAndPressBack() {
-        selfDiagnosePositive()
+    fun selfDiagnosePositiveAndPressBack(selectedDate: SelectedDate = CannotRememberDate) {
+        selfDiagnosePositive(selectedDate)
         espressoTest.testAppContext.device.pressBack()
     }
 
@@ -61,7 +72,7 @@ class SelfDiagnosis(
         espressoTest.testAppContext.virologyTestingApi.pollingTestResultHttpStatusCode =
             if (receiveResultImmediately) 200 else 204
 
-        selfDiagnosePositive()
+        selfDiagnosePositive(CannotRememberDate)
 
         symptomsAdviceIsolateRobot.clickBottomActionButton()
 

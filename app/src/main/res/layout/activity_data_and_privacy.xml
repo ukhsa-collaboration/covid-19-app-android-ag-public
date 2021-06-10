@@ -76,8 +76,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/vertical_margin"
-                android:text="@string/onboarding_before_activating_app"
                 android:contentDescription="@string/onboarding_before_activating_app_announcement"
+                android:text="@string/onboarding_before_activating_app"
                 android:textStyle="bold" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
@@ -104,13 +104,12 @@
                 android:layout_height="wrap_content"
                 android:text="@string/button_agree" />
 
-            <TextView
-                android:id="@+id/textNoThanks"
-                style="@style/LinkText"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonNoThanks"
+                style="@style/SecondaryButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/onboarding_no_thanks_announcement"
-                android:gravity="center"
                 android:text="@string/onboarding_no_thanks" />
         </LinearLayout>
     </ScrollView>

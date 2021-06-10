@@ -17,6 +17,9 @@
         <item name="android:textColorPrimary">@color/primary_text_grey</item>
         <item name="android:textColorSecondary">@color/secondary_text_grey</item>
 
+        <!-- Text Direction -->
+        <item name="android:textDirection">locale</item>
+
         <item name="android:colorBackground">@color/background</item>
         <item name="colorOnBackground">@color/primary_text_grey</item>
         <item name="colorSurface">@color/white</item>

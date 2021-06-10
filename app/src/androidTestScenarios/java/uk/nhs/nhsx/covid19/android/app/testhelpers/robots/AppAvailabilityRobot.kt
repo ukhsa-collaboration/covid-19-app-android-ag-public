@@ -34,10 +34,12 @@ class AppAvailabilityRobot {
     }
 
     fun checkActivityGoToPlayStoreDisplayed() {
-        onView(withId(R.id.goToPlayStore)).check(matches(isDisplayed()))
+        onView(withId(R.id.goToPlayStore))
+            .check(matches(isDisplayed()))
     }
 
     fun checkActivityGoToPlayStoreNotDisplayed() {
-        onView(withId(R.id.goToPlayStore)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.goToPlayStore))
+            .check(matches(not(isDisplayed())))
     }
 }

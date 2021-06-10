@@ -78,29 +78,32 @@
                     android:text="@string/qr_code_scan_explanation"
                     android:textColor="@color/white" />
 
-                <TextView
-                    android:id="@+id/textMoreInfo"
-                    style="@style/ActionText"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/moreInfoButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginHorizontal="32dp"
                     android:layout_marginTop="@dimen/vertical_margin_large"
-                    android:gravity="center"
-                    android:text="@string/qr_code_more_info"
-                    android:textAlignment="center"
-                    android:background="@drawable/qr_more_info_button_background"
+                    android:minWidth="@dimen/minimum_touch_target_size"
+                    android:minHeight="@dimen/minimum_touch_target_size"
                     android:padding="12dp"
-                    android:textColor="@color/white" />
+                    android:text="@string/qr_code_more_info"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    app:cornerRadius="8dp"
+                    app:strokeColor="@color/white"
+                    app:strokeWidth="1dp" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
 
     <ImageView
         android:id="@+id/closeButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="@dimen/minimum_touch_target_size"
+        android:layout_height="@dimen/minimum_touch_target_size"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="?selectableItemBackgroundBorderless"

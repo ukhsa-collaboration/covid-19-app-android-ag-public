@@ -42,6 +42,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Failure
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Success
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.UnparsableTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.ErrorState
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.BOTH_PROVIDED
@@ -50,6 +51,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResul
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.NO_CONNECTION
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.UNEXPECTED
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultState
+import uk.nhs.nhsx.covid19.android.app.testordering.unknownresult.ReceivedUnknownTestResultProvider
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -65,6 +67,7 @@ class LinkTestResultViewModelTest {
     private val linkTestResultOnsetDateNeededChecker = mockk<LinkTestResultOnsetDateNeededChecker>(relaxed = true)
     private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxed = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
+    private val receivedUnknownTestResultProvider = mockk<ReceivedUnknownTestResultProvider>(relaxUnitFun = true)
     private val isolationHelper = IsolationHelper(fixedClock)
 
     private val testSubject = LinkTestResultViewModel(
@@ -72,6 +75,7 @@ class LinkTestResultViewModelTest {
         isolationStateMachine,
         linkTestResultOnsetDateNeededChecker,
         analyticsEventProcessor,
+        receivedUnknownTestResultProvider,
         fixedClock
     )
 
@@ -234,14 +238,22 @@ class LinkTestResultViewModelTest {
     fun `successful cta token validation, onset date needed`() = runBlocking {
         disableShowDailyContactTesting()
 
-        val testResultResponse = setResult(POSITIVE, LAB_RESULT)
+        val testResultResponse = setResult(
+            POSITIVE,
+            RAPID_RESULT,
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = true,
+            confirmatoryDayLimit = 2
+        )
+
         val testResult = ReceivedTestResult(
             testResultResponse.diagnosisKeySubmissionToken,
             testResultResponse.testEndDate,
             testResultResponse.testResult,
             testResultResponse.testKit,
             testResultResponse.diagnosisKeySubmissionSupported,
-            requiresConfirmatoryTest = testResultResponse.requiresConfirmatoryTest
+            requiresConfirmatoryTest = testResultResponse.requiresConfirmatoryTest,
+            confirmatoryDayLimit = testResultResponse.confirmatoryDayLimit
         )
 
         every { linkTestResultOnsetDateNeededChecker.isInterestedInAskingForSymptomsOnsetDay(testResult) } returns true
@@ -337,6 +349,23 @@ class LinkTestResultViewModelTest {
                     errorState = ErrorState(NO_CONNECTION)
                 )
             )
+        }
+    }
+
+    @Test
+    fun `cta token validation returns unknown test result`() = runBlocking {
+        disableShowDailyContactTesting()
+
+        coEvery { ctaTokenValidator.validate(any()) } returns UnparsableTestResult
+
+        testSubject.ctaToken = "ctaToken"
+        testSubject.onContinueButtonClicked()
+
+        verify(exactly = 0) { isolationStateMachine.processEvent(any()) }
+
+        verifyOrder {
+            receivedUnknownTestResultProvider setProperty "value" value true
+            validationCompletedObserver.onChanged(any())
         }
     }
 
@@ -515,7 +544,8 @@ class LinkTestResultViewModelTest {
         diagnosisKeySubmissionToken: String = "submissionToken",
         testEndDate: Instant = Instant.now(),
         diagnosisKeySubmissionSupported: Boolean = true,
-        requiresConfirmatoryTest: Boolean = false
+        requiresConfirmatoryTest: Boolean = false,
+        confirmatoryDayLimit: Int? = null
     ): VirologyCtaExchangeResponse {
         val testResultResponse =
             VirologyCtaExchangeResponse(
@@ -524,7 +554,8 @@ class LinkTestResultViewModelTest {
                 result,
                 testKitType,
                 diagnosisKeySubmissionSupported,
-                requiresConfirmatoryTest
+                requiresConfirmatoryTest,
+                confirmatoryDayLimit
             )
         coEvery { ctaTokenValidator.validate(any()) } returns Success(testResultResponse)
         return testResultResponse

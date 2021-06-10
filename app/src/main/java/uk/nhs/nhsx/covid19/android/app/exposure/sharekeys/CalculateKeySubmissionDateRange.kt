@@ -15,8 +15,8 @@ class CalculateKeySubmissionDateRange @Inject constructor(
     val clock: Clock
 ) {
 
-    operator fun invoke(acknowledgedDate: Instant, symptomsOnsetDate: LocalDate): SubmissionDateRange {
-        val onsetDateBasedStartDate = symptomsOnsetDate.minusDays(DAYS_PRIOR_ONSET_DATE_FOR_FIRST_SUBMISSION)
+    operator fun invoke(acknowledgedDate: Instant, assumedOnsetDate: LocalDate): SubmissionDateRange {
+        val onsetDateBasedStartDate = assumedOnsetDate.minusDays(DAYS_PRIOR_ONSET_DATE_FOR_FIRST_SUBMISSION)
         val contactCaseIsolationDuration = isolationConfigurationProvider.durationDays.contactCase.toLong()
         val isolationDurationBasedStartDate = LocalDate.now(clock).minusDays(contactCaseIsolationDuration - 1) // Minus 1 for excluding today
 

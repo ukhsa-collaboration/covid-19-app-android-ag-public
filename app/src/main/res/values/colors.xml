@@ -32,6 +32,7 @@
     <!-- style colors -->
     <color name="style_purple">#AF71FF</color>
     <color name="style_orange">#F68116</color>
+    <color name="style_yellow">#FFB81C</color>
     <color name="style_pink">#D33C80</color>
     <color name="style_teal">#29B2B2</color>
     <color name="style_red">#ED3D3D</color>
@@ -66,4 +67,8 @@
     <color name="item_user_data_border">#DDDDDD</color>
 
     <color name="qr_more_info_button_border">#80FFFFFF</color>
+
+    <!-- local message banner -->
+    <color name="colorOnAmber">#212B32</color>
+    <color name="primaryColorOnAmber">#005EB8</color>
 </resources>

@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -22,6 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setMultilineTitle
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
@@ -138,8 +138,7 @@ class VenueHistoryActivity : BaseActivity(R.layout.activity_venue_history) {
 
     private fun showDeleteVenueVisitConfirmationDialog(venueVisit: VenueVisit) {
         val builder = AlertDialog.Builder(this)
-        val customTitle = LayoutInflater.from(builder.context).inflate(R.layout.dialog_title_venue_history_delete, null, false)
-        builder.setCustomTitle(customTitle)
+        builder.setMultilineTitle(getString(R.string.delete_single_venue_visit_title))
         builder.setMessage(R.string.delete_single_venue_visit_text)
         builder.setPositiveButton(
             R.string.confirm

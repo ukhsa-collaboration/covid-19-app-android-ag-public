@@ -24,9 +24,7 @@ class FetchKeysHelperTest {
     private val keySharingInfo = KeySharingInfo(
         diagnosisKeySubmissionToken = "token1",
         acknowledgedDate = Instant.now(),
-        notificationSentDate = null,
-        testKitType = null,
-        requiresConfirmatoryTest = false
+        notificationSentDate = null
     )
 
     private val testSubject = spyk(FetchKeysHelper(callback, fetchTemporaryExposureKeys, coroutineScope, keySharingInfo))

@@ -7,16 +7,15 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
-import android.view.accessibility.AccessibilityNodeInfo
-import android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction
 import android.widget.LinearLayout
-import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import kotlinx.android.synthetic.main.view_status_option.view.statusOptionIcon
 import kotlinx.android.synthetic.main.view_status_option.view.statusOptionIconContainer
 import kotlinx.android.synthetic.main.view_status_option.view.statusOptionLinkIndicator
 import kotlinx.android.synthetic.main.view_status_option.view.statusOptionText
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpButtonType
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpLinkTypeWithBrowserWarning
 
 open class StatusOptionView @JvmOverloads constructor(
     context: Context,
@@ -35,24 +34,14 @@ open class StatusOptionView @JvmOverloads constructor(
     init {
         initializeViews()
         applyAttributes(context, attrs)
+        setUpAccessibility()
     }
 
-    override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo) {
-        super.onInitializeAccessibilityNodeInfo(info)
-        val infoCompat = AccessibilityNodeInfoCompat.wrap(info)
-
+    private fun setUpAccessibility() {
         if (attrIsExternalLink) {
-            info.contentDescription =
-                context.getString(R.string.accessibility_announcement_link, statusOptionText.text)
-            info.addAction(
-                AccessibilityAction(
-                    AccessibilityNodeInfoCompat.ACTION_CLICK,
-                    context.getString(R.string.open_in_browser_warning)
-                )
-            )
+            setUpLinkTypeWithBrowserWarning(statusOptionText.text)
         } else {
-            info.contentDescription =
-                context.getString(R.string.accessibility_announcement_button, statusOptionText.text)
+            setUpButtonType(statusOptionText.text)
         }
     }
 

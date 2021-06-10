@@ -14,7 +14,6 @@ import uk.nhs.nhsx.covid19.android.app.util.BroadcastProvider
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
 import java.time.ZoneOffset
 
 class IsolationExpirationAlarmControllerTest {
@@ -37,8 +36,6 @@ class IsolationExpirationAlarmControllerTest {
     )
 
     private val pendingIntent = mockk<PendingIntent>()
-
-    private val zone = ZoneId.of("Europe/London")
 
     @Before
     fun setUp() {
@@ -96,7 +93,7 @@ class IsolationExpirationAlarmControllerTest {
             expiryDate = expiryDate
         ).asIsolation().asLogical()
 
-        testSubject.setupExpirationCheck(currentState, newIsolation, zone)
+        testSubject.setupExpirationCheck(currentState, newIsolation)
 
         verify(exactly = 0) { isolationExpirationAlarmProvider.value = any() }
         verify(exactly = 0) {
@@ -119,9 +116,9 @@ class IsolationExpirationAlarmControllerTest {
         ).asIsolation().asLogical()
 
         val alarmInstant = Instant.parse("2020-07-19T20:00:00Z")
-        every { calculateExpirationNotificationTime(expiryDate, zone) } returns alarmInstant
+        every { calculateExpirationNotificationTime(expiryDate) } returns alarmInstant
 
-        testSubject.setupExpirationCheck(currentState, newIsolation, zone)
+        testSubject.setupExpirationCheck(currentState, newIsolation)
 
         val alarmTime = alarmInstant.toEpochMilli()
 
@@ -159,9 +156,9 @@ class IsolationExpirationAlarmControllerTest {
         ).asIsolation().asLogical()
 
         val alarmInstant = Instant.parse("2020-07-19T20:00:00Z")
-        every { calculateExpirationNotificationTime(newExpiryDate, zone) } returns alarmInstant
+        every { calculateExpirationNotificationTime(newExpiryDate) } returns alarmInstant
 
-        testSubject.setupExpirationCheck(currentState, newIsolation, zone)
+        testSubject.setupExpirationCheck(currentState, newIsolation)
 
         val alarmTime = alarmInstant.toEpochMilli()
 
@@ -197,7 +194,7 @@ class IsolationExpirationAlarmControllerTest {
             expiryDate = expiryDate
         ).asIsolation().asLogical()
 
-        testSubject.setupExpirationCheck(currentState, newIsolation, zone)
+        testSubject.setupExpirationCheck(currentState, newIsolation)
 
         verify(exactly = 0) { isolationExpirationAlarmProvider.value = any() }
         verify(exactly = 0) {

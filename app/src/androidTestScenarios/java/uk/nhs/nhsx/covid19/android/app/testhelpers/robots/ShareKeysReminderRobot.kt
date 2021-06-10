@@ -24,7 +24,7 @@ class ShareKeysReminderRobot {
             .perform(scrollTo(), click())
     }
 
-    fun doNotShareResultsButton() {
+    fun clickDoNotShareResultsButton() {
         onView(withId(R.id.doNotShareResultsButton))
             .perform(scrollTo(), click())
     }

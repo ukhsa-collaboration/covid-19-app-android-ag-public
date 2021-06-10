@@ -5,13 +5,14 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.common.Translatable
+import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.NEUTRAL
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
 import uk.nhs.nhsx.covid19.android.app.util.adapters.ColorSchemeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.PolicyIconAdapter
+import uk.nhs.nhsx.covid19.android.app.util.adapters.TranslatableStringAdapter
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -20,6 +21,7 @@ class RiskyPostCodeIndicatorProviderTest {
     private val moshi = Moshi.Builder()
         .add(PolicyIconAdapter())
         .add(ColorSchemeAdapter())
+        .add(TranslatableStringAdapter())
         .build()
 
     private val riskyPostCodeIndicatorStorage =
@@ -40,7 +42,7 @@ class RiskyPostCodeIndicatorProviderTest {
     }
 
     @Test
-    fun `verify serialization without colorSchemeV2`() {
+    fun `verify deserialization without colorSchemeV2`() {
         every { riskyPostCodeIndicatorStorage.value } returns riskyPostCodeIndicatorJsonV1
 
         val actual = testSubject.riskyPostCodeIndicator
@@ -49,14 +51,14 @@ class RiskyPostCodeIndicatorProviderTest {
     }
 
     @Test
-    fun `verify deserialization without colorSchemeV2`() {
+    fun `verify serialization without colorSchemeV2`() {
         testSubject.riskyPostCodeIndicator = riskyPostCodeIndicatorV1
 
         verify { riskyPostCodeIndicatorStorage.value = riskyPostCodeIndicatorJsonV1 }
     }
 
     @Test
-    fun `verify serialization with colorSchemeV2`() {
+    fun `verify deserialization with colorSchemeV2`() {
         every { riskyPostCodeIndicatorStorage.value } returns riskyPostCodeIndicatorJsonV2
 
         val actual = testSubject.riskyPostCodeIndicator
@@ -65,7 +67,7 @@ class RiskyPostCodeIndicatorProviderTest {
     }
 
     @Test
-    fun `verify serialization with colorSchemeV2 and unknown color scheme fall back to neutral`() {
+    fun `verify deserialization with colorSchemeV2 and unknown color scheme fall back to neutral`() {
         every { riskyPostCodeIndicatorStorage.value } returns riskyPostCodeIndicatorJsonWithUnknownColorScheme
 
         val expected = riskyPostCodeIndicatorV1.copy(
@@ -77,7 +79,7 @@ class RiskyPostCodeIndicatorProviderTest {
     }
 
     @Test
-    fun `verify V2 deserialization with colorSchemeV2`() {
+    fun `verify V2 serialization with colorSchemeV2`() {
         testSubject.riskyPostCodeIndicator = riskyPostCodeIndicatorV2
 
         verify { riskyPostCodeIndicatorStorage.value = riskyPostCodeIndicatorJsonV2 }
@@ -96,11 +98,11 @@ class RiskyPostCodeIndicatorProviderTest {
         riskLevel = "high",
         riskIndicator = RiskIndicator(
             colorScheme = ColorScheme.RED,
-            name = Translatable(mapOf("en" to "high")),
-            heading = Translatable(mapOf("en" to "Heading high")),
-            content = Translatable(mapOf("en" to "Content high")),
-            linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-            linkUrl = Translatable(mapOf("en" to "https://a.b.c/")),
+            name = TranslatableString(mapOf("en" to "high")),
+            heading = TranslatableString(mapOf("en" to "Heading high")),
+            content = TranslatableString(mapOf("en" to "Content high")),
+            linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
+            linkUrl = TranslatableString(mapOf("en" to "https://a.b.c/")),
             policyData = null
         ),
         riskLevelFromLocalAuthority = true
@@ -111,22 +113,22 @@ class RiskyPostCodeIndicatorProviderTest {
         riskIndicator = RiskIndicator(
             colorScheme = ColorScheme.RED,
             colorSchemeV2 = ColorScheme.MAROON,
-            name = Translatable(mapOf("en" to "high")),
-            heading = Translatable(mapOf("en" to "Heading high")),
-            content = Translatable(mapOf("en" to "Content high")),
-            linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-            linkUrl = Translatable(mapOf("en" to "https://a.b.c/")),
+            name = TranslatableString(mapOf("en" to "high")),
+            heading = TranslatableString(mapOf("en" to "Heading high")),
+            content = TranslatableString(mapOf("en" to "Content high")),
+            linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
+            linkUrl = TranslatableString(mapOf("en" to "https://a.b.c/")),
             policyData = null
         ),
         riskLevelFromLocalAuthority = true
     )
 
     private val riskyPostCodeIndicatorJsonV1 =
-        """{"riskLevel":"high","riskIndicator":{"colorScheme":"red","name":{"translations":{"en":"high"}},"heading":{"translations":{"en":"Heading high"}},"content":{"translations":{"en":"Content high"}},"linkTitle":{"translations":{"en":"Restrictions in your area"}},"linkUrl":{"translations":{"en":"https://a.b.c/"}}},"riskLevelFromLocalAuthority":true}"""
+        """{"riskLevel":"high","riskIndicator":{"colorScheme":"red","name":{"en":"high"},"heading":{"en":"Heading high"},"content":{"en":"Content high"},"linkTitle":{"en":"Restrictions in your area"},"linkUrl":{"en":"https://a.b.c/"}},"riskLevelFromLocalAuthority":true}"""
 
     private val riskyPostCodeIndicatorJsonV2 =
-        """{"riskLevel":"high","riskIndicator":{"colorScheme":"red","colorSchemeV2":"maroon","name":{"translations":{"en":"high"}},"heading":{"translations":{"en":"Heading high"}},"content":{"translations":{"en":"Content high"}},"linkTitle":{"translations":{"en":"Restrictions in your area"}},"linkUrl":{"translations":{"en":"https://a.b.c/"}}},"riskLevelFromLocalAuthority":true}"""
+        """{"riskLevel":"high","riskIndicator":{"colorScheme":"red","colorSchemeV2":"maroon","name":{"en":"high"},"heading":{"en":"Heading high"},"content":{"en":"Content high"},"linkTitle":{"en":"Restrictions in your area"},"linkUrl":{"en":"https://a.b.c/"}},"riskLevelFromLocalAuthority":true}"""
 
     private val riskyPostCodeIndicatorJsonWithUnknownColorScheme =
-        """{"riskLevel":"high","riskIndicator":{"colorScheme":"unknown-color-scheme","name":{"translations":{"en":"high"}},"heading":{"translations":{"en":"Heading high"}},"content":{"translations":{"en":"Content high"}},"linkTitle":{"translations":{"en":"Restrictions in your area"}},"linkUrl":{"translations":{"en":"https://a.b.c/"}}},"riskLevelFromLocalAuthority":true}"""
+        """{"riskLevel":"high","riskIndicator":{"colorScheme":"unknown-color-scheme","name":{"en":"high"},"heading":{"en":"Heading high"},"content":{"en":"Content high"},"linkTitle":{"en":"Restrictions in your area"},"linkUrl":{"en":"https://a.b.c/"}},"riskLevelFromLocalAuthority":true}"""
 }

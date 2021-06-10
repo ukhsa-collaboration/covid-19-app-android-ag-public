@@ -35,6 +35,7 @@ class NotificationProvider @Inject constructor(
         createAppConfigurationNotificationChannel()
         createBackgroundWorkNotificationChannel()
         createShareKeysReminderNotificationChannel()
+        createLocalMessageNotificationChannel()
     }
 
     companion object {
@@ -46,6 +47,7 @@ class NotificationProvider @Inject constructor(
         const val APP_CONFIGURATION_CHANNEL_ID = "APP_CONFIGURATION"
         const val BACKGROUND_WORK_CHANNEL_ID = "BACKGROUND_WORK"
         const val SHARE_KEYS_REMINDER_CHANNEL_ID = "SHARE_KEYS_REMINDER"
+        const val LOCAL_MESSAGE_CHANNEL_ID = "LOCAL_MESSAGE"
         const val AREA_RISK_CHANGED_NOTIFICATION_ID = 0
         const val RISKY_VENUE_VISIT_NOTIFICATION_ID = 1
         const val STATE_EXPIRATION_NOTIFICATION_ID = 2
@@ -56,6 +58,7 @@ class NotificationProvider @Inject constructor(
         const val EXPOSURE_REMINDER_NOTIFICATION_ID = 7
         const val RECOMMENDED_APP_UPDATE_NOTIFICATION_ID = 9
         const val SHARE_KEY_REMINDER_NOTIFICATION_ID = 10
+        const val LOCAL_MESSAGE_NOTIFICATION_ID = 11
 
         const val REQUEST_CODE_APP_IS_NOT_AVAILABLE = 1
         const val REQUEST_CODE_APP_IS_AVAILABLE = 2
@@ -69,8 +72,10 @@ class NotificationProvider @Inject constructor(
         const val REQUEST_CODE_UPDATING_DATABASE_NOTIFICATION = 10
         const val REQUEST_CODE_RECOMMENDED_APP_UPDATE = 12
         const val REQUEST_CODE_SHARE_KEYS_REMINDER = 13
+        const val REQUEST_CODE_LOCAL_MESSAGE_NOTIFICATION = 14
 
         const val CONTACT_TRACING_HUB_ACTION = "CONTACT_TRACING_HUB_ACTION"
+        const val TAPPED_ON_LOCAL_MESSAGE_NOTIFICATION = "TAPPED_ON_LOCAL_MESSAGE_NOTIFICATION"
     }
 
     private fun createAreaRiskChangedNotificationChannel() {
@@ -142,6 +147,15 @@ class NotificationProvider @Inject constructor(
             channelNameResId = R.string.notification_channel_share_keys_reminder_name,
             importance = NotificationManagerCompat.IMPORTANCE_DEFAULT,
             channelDescriptionResId = R.string.notification_channel_share_keys_reminder_description
+        )
+    }
+
+    private fun createLocalMessageNotificationChannel() {
+        createNotificationChannel(
+            channelId = LOCAL_MESSAGE_CHANNEL_ID,
+            channelNameResId = R.string.notification_channel_local_message_name,
+            importance = NotificationManagerCompat.IMPORTANCE_DEFAULT,
+            channelDescriptionResId = R.string.notification_channel_local_message_description
         )
     }
 
@@ -407,6 +421,29 @@ class NotificationProvider @Inject constructor(
             .notify(
                 APP_NOT_AVAILABLE_NOTIFICATION_ID,
                 appAvailableNotification
+            )
+    }
+
+    fun showLocalMessageNotification(title: String, message: String) {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            putExtra(TAPPED_ON_LOCAL_MESSAGE_NOTIFICATION, true)
+        }
+
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(
+                context,
+                REQUEST_CODE_LOCAL_MESSAGE_NOTIFICATION,
+                intent,
+                FLAG_UPDATE_CURRENT
+            )
+
+        val localMessageNotification = createNotification(LOCAL_MESSAGE_CHANNEL_ID, title, message, pendingIntent)
+
+        NotificationManagerCompat.from(context)
+            .notify(
+                LOCAL_MESSAGE_NOTIFICATION_ID,
+                localMessageNotification
             )
     }
 

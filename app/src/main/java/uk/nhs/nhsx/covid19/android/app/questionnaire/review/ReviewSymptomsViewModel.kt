@@ -5,77 +5,52 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireAndStartedIsolation
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireButDidNotStartIsolation
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.ExplicitDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.NotStated
-import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomAdvice.DoNotIsolate
-import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomAdvice.Isolate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.NegativeHeader
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.PositiveHeader
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
-import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
-import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
-import javax.inject.Inject
 
-sealed class SymptomAdvice {
-    data class Isolate(
-        val isPositiveSymptoms: Boolean,
-        val isolationDurationDays: Int
-    ) : SymptomAdvice()
-
-    object DoNotIsolate : SymptomAdvice()
-}
-
-class ReviewSymptomsViewModel @Inject constructor(
-    private val isolationStateMachine: IsolationStateMachine,
-    private val riskCalculator: RiskCalculator,
-    private val analyticsEventProcessor: AnalyticsEventProcessor,
-    private val clock: Clock
+class ReviewSymptomsViewModel @AssistedInject constructor(
+    private val questionnaireIsolationHandler: QuestionnaireIsolationHandler,
+    private val clock: Clock,
+    @Assisted private val questions: List<Question>,
+    @Assisted private val riskThreshold: Float,
+    @Assisted private val symptomsOnsetWindowDays: Int
 ) : ViewModel() {
 
-    @VisibleForTesting
-    internal val viewState = MutableLiveData<ViewState>(
-        ViewState(
-            reviewSymptomItems = listOf(),
-            onsetDate = NotStated,
-            showOnsetDateError = false,
-            symptomsOnsetWindowDays = 0
-        )
-    )
-
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal val viewState = MutableLiveData<ViewState>()
     fun viewState(): LiveData<ViewState> = viewState
 
     private val navigateToSymptomAdviceScreen = SingleLiveEvent<SymptomAdvice>()
     fun navigateToSymptomAdviceScreen(): LiveData<SymptomAdvice> = navigateToSymptomAdviceScreen
 
-    @VisibleForTesting
-    internal var riskThreshold = 0.0F
-
-    fun setup(
-        questions: List<Question>,
-        riskThreshold: Float,
-        symptomsOnsetWindowDays: Int
-    ) {
-        val reviewSymptomItems = generateReviewSymptomItems(questions)
-        this.riskThreshold = riskThreshold
-        val currentState = viewState.value ?: return
-        val newState = currentState.copy(
-            reviewSymptomItems = reviewSymptomItems,
-            symptomsOnsetWindowDays = symptomsOnsetWindowDays
+    init {
+        viewState.postValue(
+            ViewState(
+                reviewSymptomItems = generateReviewSymptomItems(questions),
+                onsetDate = NotStated,
+                showOnsetDateError = false,
+                symptomsOnsetWindowDays = symptomsOnsetWindowDays,
+                showOnsetDatePicker = false,
+                datePickerSelection = clock.millis()
+            )
         )
-        viewState.postValue(newState)
     }
 
     private fun generateReviewSymptomItems(questions: List<Question>): List<ReviewSymptomItem> {
@@ -92,16 +67,16 @@ class ReviewSymptomsViewModel @Inject constructor(
 
     fun onDateSelected(dateInMillis: Long) {
         val instant: Instant = Instant.ofEpochMilli(dateInMillis)
-        val localDate = instant.atZone(ZoneOffset.UTC).toLocalDate()
+        val localDate = instant.toLocalDate(ZoneOffset.UTC)
         val currentState = viewState.value ?: return
         val newState =
-            currentState.copy(onsetDate = ExplicitDate(localDate), showOnsetDateError = false)
+            currentState.copy(onsetDate = ExplicitDate(localDate), showOnsetDateError = false, showOnsetDatePicker = false)
         viewState.postValue(newState)
     }
 
     fun cannotRememberDateChecked() {
         val currentState = viewState.value ?: return
-        val newState = currentState.copy(onsetDate = CannotRememberDate, showOnsetDateError = false)
+        val newState = currentState.copy(onsetDate = CannotRememberDate, showOnsetDateError = false, showOnsetDatePicker = false)
         viewState.postValue(newState)
     }
 
@@ -112,7 +87,7 @@ class ReviewSymptomsViewModel @Inject constructor(
         } else {
             NotStated
         }
-        val newState = currentState.copy(onsetDate = onsetDate, showOnsetDateError = false)
+        val newState = currentState.copy(onsetDate = onsetDate, showOnsetDateError = false, showOnsetDatePicker = false)
         viewState.postValue(newState)
     }
 
@@ -123,58 +98,58 @@ class ReviewSymptomsViewModel @Inject constructor(
                 val newState = currentState.copy(showOnsetDateError = true)
                 viewState.postValue(newState)
             } else {
-                val userHasCoronavirusSymptoms = doesUserHaveCoronavirusSymptoms()
-                if (userHasCoronavirusSymptoms) {
-                    transitionToIndexedCase()
-                    analyticsEventProcessor.track(CompletedQuestionnaireAndStartedIsolation)
-                } else {
-                    analyticsEventProcessor.track(CompletedQuestionnaireButDidNotStartIsolation)
-                }
-                val isolationState = isolationStateMachine.readLogicalState()
-                when {
-                    isolationState is PossiblyIsolating && isolationState.isActiveIsolation(clock) ->
-                        navigateToSymptomAdviceScreen.postValue(
-                            Isolate(
-                                isPositiveSymptoms = isolationState.getActiveIndexCase(clock)?.isSelfAssessment() == true,
-                                isolationDurationDays = isolationStateMachine.remainingDaysInIsolation().toInt()
-                            )
-                        )
-                    else -> navigateToSymptomAdviceScreen.postValue(DoNotIsolate)
-                }
+                val symptomAdvice = questionnaireIsolationHandler.computeAdvice(
+                    riskThreshold = riskThreshold,
+                    selectedSymptoms = getSelectedSymptoms(),
+                    onsetDate = currentState.onsetDate
+                )
+                navigateToSymptomAdviceScreen.postValue(symptomAdvice)
             }
         }
     }
 
-    private fun doesUserHaveCoronavirusSymptoms(): Boolean {
-        val currentState = viewState.value ?: return false
-        val selectedSymptoms = currentState.reviewSymptomItems
-            .filterIsInstance<Question>()
-            .filter { it.isChecked }
-            .map { it.symptom }
-
-        return riskCalculator.isRiskAboveThreshold(selectedSymptoms, riskThreshold)
-    }
-
-    private fun transitionToIndexedCase() {
-        val currentState = viewState.value ?: return
-        val symptomsOnsetDate = currentState.onsetDate
-
-        isolationStateMachine.processEvent(
-            OnPositiveSelfAssessment(symptomsOnsetDate)
-        )
-    }
+    private fun getSelectedSymptoms(): List<Symptom> =
+        viewState.value?.reviewSymptomItems?.toSelectedSymptoms() ?: listOf()
 
     fun isOnsetDateValid(date: Long, symptomsOnsetWindowDays: Int): Boolean =
         date <= Instant.now(clock).toEpochMilli() &&
             date > Instant.now(clock).minus(symptomsOnsetWindowDays.toLong(), ChronoUnit.DAYS).toEpochMilli()
 
+    fun onDatePickerDismissed() {
+        val currentState = viewState.value ?: return
+        val newState = currentState.copy(showOnsetDatePicker = false)
+        viewState.postValue(newState)
+    }
+
+    fun onSelectDateClicked() {
+        val currentState = viewState.value ?: return
+        val newState = currentState.copy(showOnsetDatePicker = true)
+        viewState.postValue(newState)
+    }
+
     data class ViewState(
         val reviewSymptomItems: List<ReviewSymptomItem>,
         val onsetDate: SelectedDate,
         val showOnsetDateError: Boolean,
-        val symptomsOnsetWindowDays: Int
+        val symptomsOnsetWindowDays: Int,
+        val showOnsetDatePicker: Boolean,
+        val datePickerSelection: Long
     )
+
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            questions: List<Question>,
+            riskThreshold: Float,
+            symptomsOnsetWindowDays: Int
+        ): ReviewSymptomsViewModel
+    }
 }
+
+fun List<ReviewSymptomItem>.toSelectedSymptoms(): List<Symptom> =
+    this.filterIsInstance<Question>()
+        .filter { it.isChecked }
+        .map { it.symptom }
 
 sealed class SelectedDate {
     object NotStated : SelectedDate()

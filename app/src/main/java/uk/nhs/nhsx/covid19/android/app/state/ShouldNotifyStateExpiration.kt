@@ -22,7 +22,7 @@ class ShouldNotifyStateExpiration @Inject constructor(
     }
 
     private fun shouldNotifyIsolationExpiration(expiryDate: LocalDate): ShouldNotifyStateExpirationResult {
-        val notificationTime = calculateExpirationNotificationTime(expiryDate, clock.zone)
+        val notificationTime = calculateExpirationNotificationTime(expiryDate)
         val now = Instant.now(clock)
 
         return if (now.isEqualOrAfter(notificationTime)) Notify(expiryDate)

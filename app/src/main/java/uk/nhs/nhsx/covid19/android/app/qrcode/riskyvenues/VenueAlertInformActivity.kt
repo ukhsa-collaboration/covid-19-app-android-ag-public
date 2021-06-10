@@ -20,7 +20,6 @@ class VenueAlertInformActivity : BaseActivity(R.layout.activity_venue_alert_info
     @Inject
     lateinit var factory: ViewModelFactory<VenueAlertInformViewModel>
     private val viewModel: VenueAlertInformViewModel by viewModels { factory }
-    lateinit var venueId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,19 +39,18 @@ class VenueAlertInformActivity : BaseActivity(R.layout.activity_venue_alert_info
             finish()
             return
         } else {
-            venueId = extraVenueId
-            viewModel.updateVenueVisitState(venueId)
+            viewModel.updateVenueVisitState(extraVenueId)
         }
 
         buttonReturnToHomeScreen.setOnSingleClickListener {
-            viewModel.acknowledgeVenueAlert(venueId)
+            viewModel.acknowledgeVenueAlert()
             StatusActivity.start(this)
         }
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        viewModel.acknowledgeVenueAlert(venueId)
+        viewModel.acknowledgeVenueAlert()
     }
 
     companion object {

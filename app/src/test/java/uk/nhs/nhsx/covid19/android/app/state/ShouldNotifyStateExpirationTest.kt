@@ -52,7 +52,7 @@ class ShouldNotifyStateExpirationTest {
     fun `notify when possibly isolating, expiry not acknowledge, and now equals notification time`() = runBlocking {
         val expiryDate = LocalDate.of(2020, 5, 22)
         setIsolation(expiryDate, hasAcknowledgedEndOfIsolation = false)
-        every { calculateExpirationNotificationTime(expiryDate, fixedClock.zone) } returns now
+        every { calculateExpirationNotificationTime(expiryDate) } returns now
 
         val result = shouldNotifyStateExpiration()
 
@@ -63,7 +63,7 @@ class ShouldNotifyStateExpirationTest {
     fun `notify when possibly isolating, expiry not acknowledged, and now after notification time`() = runBlocking {
         val expiryDate = LocalDate.of(2020, 5, 22)
         setIsolation(expiryDate, hasAcknowledgedEndOfIsolation = false)
-        every { calculateExpirationNotificationTime(expiryDate, fixedClock.zone) } returns now.minusSeconds(1)
+        every { calculateExpirationNotificationTime(expiryDate) } returns now.minusSeconds(1)
 
         val result = shouldNotifyStateExpiration()
 
@@ -74,7 +74,7 @@ class ShouldNotifyStateExpirationTest {
     fun `do not notify when possibly isolating, expiry not acknowledged, and now before notification time`() = runBlocking {
         val expiryDate = LocalDate.of(2020, 5, 23)
         setIsolation(expiryDate, hasAcknowledgedEndOfIsolation = false)
-        every { calculateExpirationNotificationTime(expiryDate, fixedClock.zone) } returns now.plusSeconds(1)
+        every { calculateExpirationNotificationTime(expiryDate) } returns now.plusSeconds(1)
 
         val result = shouldNotifyStateExpiration()
 

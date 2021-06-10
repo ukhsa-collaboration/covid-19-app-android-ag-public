@@ -13,15 +13,14 @@ import uk.nhs.nhsx.covid19.android.app.state.State4_9.Default4_9
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Isolation4_9
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Isolation4_9.ContactCase4_9
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Isolation4_9.IndexCase4_9
+import uk.nhs.nhsx.covid19.android.app.state.StateStorage4_9.Companion.assumedDaysFromOnsetToSelfAssessment4_9
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult4_9
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 class MigrateIsolationState @Inject constructor(
@@ -56,12 +55,12 @@ class MigrateIsolationState @Inject constructor(
 
     private fun AcknowledgedTestResult4_9.toAcknowledgedTestResult(): AcknowledgedTestResult =
         AcknowledgedTestResult(
-            testEndDate = testEndDate.toLocalDate(),
+            testEndDate = testEndDate.toLocalDate(clock.zone),
             testResult,
             testKitType,
-            acknowledgedDate = acknowledgedDate.toLocalDate(),
+            acknowledgedDate = acknowledgedDate.toLocalDate(clock.zone),
             requiresConfirmatoryTest,
-            confirmedDate = confirmedDate?.toLocalDate()
+            confirmedDate = confirmedDate?.toLocalDate(clock.zone)
         )
 
     private fun State4_9.toIsolationState(testResult: AcknowledgedTestResult?): IsolationState =
@@ -131,18 +130,11 @@ class MigrateIsolationState @Inject constructor(
 
     private fun ContactCase4_9.toContactCase(): ContactCase =
         ContactCase(
-            exposureDate = startDate.toLocalDate(),
-            notificationDate = notificationDate?.toLocalDate()
+            exposureDate = startDate.toLocalDate(clock.zone),
+            notificationDate = notificationDate?.toLocalDate(clock.zone)
                 // Fall back to exposure date if notification date is not available
-                ?: startDate.toLocalDate(),
+                ?: startDate.toLocalDate(clock.zone),
             dailyContactTestingOptInDate = dailyContactTestingOptInDate,
             expiryDate = expiryDate
         )
-
-    private fun Instant.toLocalDate(): LocalDate =
-        LocalDateTime.ofInstant(this, clock.zone).toLocalDate()
-
-    companion object {
-        private const val assumedDaysFromOnsetToSelfAssessment4_9: Long = 2
-    }
 }

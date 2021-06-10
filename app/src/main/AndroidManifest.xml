@@ -83,11 +83,11 @@
             android:label="@string/about_this_app_title"/>
         <activity android:name=".testordering.TestResultActivity"/>
         <activity android:name=".testordering.SubmitKeysProgressActivity"
-            android:label="@string/loading"/>
+            android:label="@string/empty_accessibility_announcement"/>
         <activity android:name=".exposure.encounter.EncounterDetectionActivity"/>
         <activity android:name=".qrcode.QrCodeHelpActivity"
             android:label="@string/qr_code_help_more_information"/>
-        <activity android:name=".about.MyDataActivity"
+        <activity android:name=".about.mydata.MyDataActivity"
             android:label="@string/settings_my_data" />
         <activity android:name=".about.EditPostalDistrictActivity"
             android:label="@string/edit_postcode_district_title"/>
@@ -131,12 +131,21 @@
             android:label="@string/daily_contact_testing_confirmation_title"/>
         <activity android:name=".settings.myarea.MyAreaActivity"
             android:label="@string/settings_my_area_title"/>
-        <activity android:name=".exposure.ShareKeysResultActivity"
+        <activity android:name=".exposure.sharekeys.ShareKeysResultActivity"
             android:label="@string/share_keys_success_title"/>
         <activity android:name=".exposure.sharekeys.ShareKeysReminderActivity"
             android:label="@string/share_keys_reminder_title"/>
         <activity android:name=".status.contacttracinghub.ContactTracingHubActivity"
             android:label="@string/contact_tracing_hub_title"/>
+        <activity android:name=".status.testinghub.TestingHubActivity"
+            android:label="@string/testing_hub_title"/>
+        <activity android:name=".testordering.unknownresult.UnknownTestResultActivity"
+            android:label="@string/unknown_test_result_please_update_app"/>
+        <activity android:name=".exposure.sharekeys.BookFollowUpTestActivity"
+            android:label="@string/book_follow_up_test_title"/>
+        <activity android:name=".settings.animations.AnimationsActivity"
+            android:label="@string/animations_settings_title"/>
+        <activity android:name=".status.localmessage.LocalMessageActivity" />
 
         <!-- Receivers -->
         <receiver

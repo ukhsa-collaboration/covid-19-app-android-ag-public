@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.remote
 
+import com.squareup.moshi.JsonDataException
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
@@ -14,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SEL
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestOrderResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultRequestBody
@@ -29,6 +31,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
     var testResponseForPollingToken = mutableMapOf(pollingToken to TestResponse(POSITIVE, LAB_RESULT))
     var diagnosisKeySubmissionToken: String? = null
     var testEndDate: Instant? = null
+    var testResultForCtaTokenStatusCode = 200
 
     fun reset() {
         MockApiModule.behaviour.responseType = ALWAYS_SUCCEED
@@ -63,7 +66,8 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 testResult = testResponse.testResult,
                 testKit = testResponse.testKitType,
                 diagnosisKeySubmissionSupported = testResponse.diagnosisKeySubmissionSupported,
-                requiresConfirmatoryTest = testResponse.requiresConfirmatoryTest
+                requiresConfirmatoryTest = testResponse.requiresConfirmatoryTest,
+                confirmatoryDayLimit = null
             )
         } else {
             null
@@ -82,6 +86,12 @@ class MockVirologyTestingApi : VirologyTestingApi {
     override suspend fun getTestResultForCtaToken(
         virologyCtaExchangeRequest: VirologyCtaExchangeRequest
     ): Response<VirologyCtaExchangeResponse> = MockApiModule.behaviour.invoke {
+        if (testResultForCtaTokenStatusCode != 200) {
+            return@invoke Response.error(
+                testResultForCtaTokenStatusCode,
+                "".toResponseBody("application/json; charset=utf-8".toMediaTypeOrNull())
+            )
+        }
         when (virologyCtaExchangeRequest.ctaToken) {
             POSITIVE_PCR_TOKEN -> {
                 Response.success(
@@ -91,7 +101,8 @@ class MockVirologyTestingApi : VirologyTestingApi {
                         testResult = POSITIVE,
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = true,
-                        requiresConfirmatoryTest = false
+                        requiresConfirmatoryTest = false,
+                        confirmatoryDayLimit = null
                     )
                 )
             }
@@ -103,7 +114,8 @@ class MockVirologyTestingApi : VirologyTestingApi {
                         testResult = POSITIVE,
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = false,
-                        requiresConfirmatoryTest = false
+                        requiresConfirmatoryTest = false,
+                        confirmatoryDayLimit = null
                     )
                 )
             }
@@ -115,7 +127,8 @@ class MockVirologyTestingApi : VirologyTestingApi {
                         testResult = POSITIVE,
                         testKit = RAPID_RESULT,
                         diagnosisKeySubmissionSupported = true,
-                        requiresConfirmatoryTest = false
+                        requiresConfirmatoryTest = false,
+                        confirmatoryDayLimit = null
                     )
                 )
             }
@@ -127,7 +140,8 @@ class MockVirologyTestingApi : VirologyTestingApi {
                         testResult = POSITIVE,
                         testKit = RAPID_RESULT,
                         diagnosisKeySubmissionSupported = true,
-                        requiresConfirmatoryTest = true
+                        requiresConfirmatoryTest = true,
+                        confirmatoryDayLimit = 2
                     )
                 )
             }
@@ -139,7 +153,8 @@ class MockVirologyTestingApi : VirologyTestingApi {
                         testResult = POSITIVE,
                         testKit = RAPID_RESULT,
                         diagnosisKeySubmissionSupported = false,
-                        requiresConfirmatoryTest = true
+                        requiresConfirmatoryTest = true,
+                        confirmatoryDayLimit = null
                     )
                 )
             }
@@ -151,7 +166,8 @@ class MockVirologyTestingApi : VirologyTestingApi {
                         testResult = POSITIVE,
                         testKit = RAPID_SELF_REPORTED,
                         diagnosisKeySubmissionSupported = true,
-                        requiresConfirmatoryTest = false
+                        requiresConfirmatoryTest = false,
+                        confirmatoryDayLimit = null
                     )
                 )
             }
@@ -163,7 +179,8 @@ class MockVirologyTestingApi : VirologyTestingApi {
                         testResult = POSITIVE,
                         testKit = RAPID_SELF_REPORTED,
                         diagnosisKeySubmissionSupported = true,
-                        requiresConfirmatoryTest = true
+                        requiresConfirmatoryTest = true,
+                        confirmatoryDayLimit = null
                     )
                 )
             }
@@ -175,7 +192,8 @@ class MockVirologyTestingApi : VirologyTestingApi {
                         testResult = NEGATIVE,
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = true,
-                        requiresConfirmatoryTest = false
+                        requiresConfirmatoryTest = false,
+                        confirmatoryDayLimit = null
                     )
                 )
             }
@@ -187,7 +205,8 @@ class MockVirologyTestingApi : VirologyTestingApi {
                         testResult = NEGATIVE,
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = false,
-                        requiresConfirmatoryTest = false
+                        requiresConfirmatoryTest = false,
+                        confirmatoryDayLimit = null
                     )
                 )
             }
@@ -199,7 +218,8 @@ class MockVirologyTestingApi : VirologyTestingApi {
                         testResult = NEGATIVE,
                         testKit = RAPID_RESULT,
                         diagnosisKeySubmissionSupported = true,
-                        requiresConfirmatoryTest = false
+                        requiresConfirmatoryTest = false,
+                        confirmatoryDayLimit = null
                     )
                 )
             }
@@ -211,7 +231,8 @@ class MockVirologyTestingApi : VirologyTestingApi {
                         testResult = VOID,
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = true,
-                        requiresConfirmatoryTest = false
+                        requiresConfirmatoryTest = false,
+                        confirmatoryDayLimit = null
                     )
                 )
             }
@@ -223,7 +244,8 @@ class MockVirologyTestingApi : VirologyTestingApi {
                         testResult = VOID,
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = false,
-                        requiresConfirmatoryTest = false
+                        requiresConfirmatoryTest = false,
+                        confirmatoryDayLimit = null
                     )
                 )
             }
@@ -235,12 +257,29 @@ class MockVirologyTestingApi : VirologyTestingApi {
                         testResult = VOID,
                         testKit = RAPID_RESULT,
                         diagnosisKeySubmissionSupported = true,
-                        requiresConfirmatoryTest = false
+                        requiresConfirmatoryTest = false,
+                        confirmatoryDayLimit = null
+                    )
+                )
+            }
+            PLOD_PCR_TOKEN -> {
+                Response.success(
+                    VirologyCtaExchangeResponse(
+                        diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
+                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
+                        testResult = PLOD,
+                        testKit = LAB_RESULT,
+                        diagnosisKeySubmissionSupported = true,
+                        requiresConfirmatoryTest = false,
+                        confirmatoryDayLimit = null
                     )
                 )
             }
             NO_CONNECTION_TOKEN -> {
                 throw IOException("No connection")
+            }
+            UNKNOWN_RESULT_TOKEN -> {
+                throw JsonDataException("Could not parse body.")
             }
             UNEXPECTED_ERROR_TOKEN -> {
                 throw Exception("Unexpected error")
@@ -284,6 +323,8 @@ class MockVirologyTestingApi : VirologyTestingApi {
         const val VOID_PCR_TOKEN = "8vb7xehg"
         const val VOID_PCR_TOKEN_NO_KEY_SUBMISSION = "cp3xxadb"
         const val VOID_LFD_TOKEN = "fdvdvdvx"
+        const val PLOD_PCR_TOKEN = "8rqdg14d"
+        const val UNKNOWN_RESULT_TOKEN = "ebz6dxht"
         const val NO_CONNECTION_TOKEN = "n0c0nneb"
         const val UNEXPECTED_ERROR_TOKEN = "nexpectn"
 
@@ -295,5 +336,6 @@ data class TestResponse(
     val testResult: VirologyTestResult,
     val testKitType: VirologyTestKitType,
     val diagnosisKeySubmissionSupported: Boolean = true,
-    val requiresConfirmatoryTest: Boolean = false
+    val requiresConfirmatoryTest: Boolean = false,
+    val confirmatoryDayLimit: Int? = null
 )

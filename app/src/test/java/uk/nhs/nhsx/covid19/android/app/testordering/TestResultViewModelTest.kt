@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -9,10 +10,16 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AskedToShareExposureKeysInTheInitialFlow
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
+import uk.nhs.nhsx.covid19.android.app.common.SubmitEmptyData
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.SubmitEpidemiologyDataForTestResult
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.SubmitObfuscationData
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
@@ -27,11 +34,13 @@ import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.state.asLogical
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.ViewState
+import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionStatus.COMPLETED
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.Ignore
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWontBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PlodWillContinueWithCurrentState
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolationNoChange
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolation
@@ -39,6 +48,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.Positive
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWontBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidWillBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -54,7 +64,10 @@ class TestResultViewModelTest {
     private val testResultIsolationHandler = mockk<TestResultIsolationHandler>(relaxed = true)
     private val stateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
     private val submitObfuscationData = mockk<SubmitObfuscationData>(relaxUnitFun = true)
+    private val submitEmptyData = mockk<SubmitEmptyData>(relaxUnitFun = true)
+    private val submitEpidemiologyDataForTestResult = mockk<SubmitEpidemiologyDataForTestResult>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-01-01T10:00:00Z"), ZoneOffset.UTC)
+    private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxUnitFun = true)
 
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
     private val navigationObserver = mockk<Observer<NavigationEvent>>(relaxed = true)
@@ -67,7 +80,10 @@ class TestResultViewModelTest {
             testResultIsolationHandler,
             stateMachine,
             submitObfuscationData,
-            fixedClock
+            submitEmptyData,
+            submitEpidemiologyDataForTestResult,
+            fixedClock,
+            analyticsEventProcessor
         )
 
     private val positiveTestResult = ReceivedTestResult(
@@ -82,7 +98,15 @@ class TestResultViewModelTest {
         "token1",
         testEndDate = testEndDate,
         testResult = POSITIVE,
-        testKitType = LAB_RESULT,
+        testKitType = RAPID_RESULT,
+        diagnosisKeySubmissionSupported = false,
+        requiresConfirmatoryTest = true
+    )
+    private val positiveIndicativeKeySharingSupported = ReceivedTestResult(
+        "token1",
+        testEndDate = testEndDate,
+        testResult = POSITIVE,
+        testKitType = RAPID_RESULT,
         diagnosisKeySubmissionSupported = true,
         requiresConfirmatoryTest = true
     )
@@ -102,6 +126,14 @@ class TestResultViewModelTest {
         diagnosisKeySubmissionSupported = true,
         requiresConfirmatoryTest = false
     )
+    private val plodTestResult = ReceivedTestResult(
+        "token6",
+        testEndDate = testEndDate,
+        testResult = PLOD,
+        testKitType = LAB_RESULT,
+        diagnosisKeySubmissionSupported = true,
+        requiresConfirmatoryTest = false
+    )
 
     @Before
     fun setUp() {
@@ -110,6 +142,8 @@ class TestResultViewModelTest {
         every { stateMachine.remainingDaysInIsolation(any()) } returns 0
         every { stateMachine.processEvent(any()) } returns mockk()
     }
+
+    // region onCreate
 
     @Test
     fun `empty unacknowledged test results should return Ignore`() =
@@ -135,6 +169,32 @@ class TestResultViewModelTest {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                     isolationState,
                     positiveTestResult,
+                    testAcknowledgedDate = Instant.now(fixedClock)
+                )
+            } returns DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
+
+            testSubject.onCreate()
+
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveContinueIsolation, 0)
+                )
+            }
+        }
+
+    // Case C with indicative key sharing supported
+    @Test
+    fun `relevant test result confirmed positive, unacknowledged indicative positive with key sharing supported, currently in isolation and will stay in isolation should return PositiveContinueIsolation`() =
+        runBlocking {
+            val isolationState = isolationHelper.positiveTest(
+                acknowledgedTestResult(result = RelevantVirologyTestResult.POSITIVE, isConfirmed = true)
+            ).asIsolation().asLogical()
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveIndicativeKeySharingSupported)
+            every { stateMachine.readLogicalState() } returns isolationState
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                    isolationState,
+                    positiveIndicativeKeySharingSupported,
                     testAcknowledgedDate = Instant.now(fixedClock)
                 )
             } returns DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
@@ -223,6 +283,36 @@ class TestResultViewModelTest {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                     isolationState,
                     positiveTestResult,
+                    testAcknowledgedDate = Instant.now(fixedClock)
+                )
+            } returns DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
+
+            testSubject.onCreate()
+
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWontBeInIsolation, 0)
+                )
+            }
+        }
+
+    // Case G with positive indicative with key sharing supported
+    @Test
+    fun `relevant test result confirmed positive, unacknowledged indicative positive with key sharing supported, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
+        runBlocking {
+            val isolationState = isolationHelper.positiveTest(
+                acknowledgedTestResult(
+                    result = RelevantVirologyTestResult.POSITIVE,
+                    isConfirmed = true,
+                    fromCurrentIsolation = false
+                )
+            ).asIsolation().asLogical()
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveIndicativeKeySharingSupported)
+            every { stateMachine.readLogicalState() } returns isolationState
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                    isolationState,
+                    positiveIndicativeKeySharingSupported,
                     testAcknowledgedDate = Instant.now(fixedClock)
                 )
             } returns DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
@@ -375,7 +465,7 @@ class TestResultViewModelTest {
 
     // Case A
     @Test
-    fun `relevant test result indicative positive, unacknowledged negative and currently in isolation should return NegativeWontBeInIsolation`() =
+    fun `relevant test result indicative positive, unacknowledged negative inside the prescribed day limit and currently in isolation should return NegativeWontBeInIsolation`() =
         runBlocking {
             val isolation = isolationHelper.positiveTest(
                 acknowledgedTestResult(
@@ -397,6 +487,77 @@ class TestResultViewModelTest {
             testSubject.onCreate()
 
             verify { viewStateObserver.onChanged(ViewState(NegativeWontBeInIsolation, 0)) }
+        }
+
+    @Test
+    fun `relevant test result indicative positive, unacknowledged negative outside prescribed day limit and currently in isolation should return NegativeWillBeInIsolation`() =
+        runBlocking {
+            val isolation = isolationHelper.positiveTest(
+                acknowledgedTestResult(
+                    result = RelevantVirologyTestResult.POSITIVE,
+                    isConfirmed = false,
+                    confirmatoryDayLimit = 2
+                )
+            ).asIsolation()
+            val isolationState = isolation.asLogical()
+            val newNegativeTestResult = negativeTestResult.copy(testEndDate = Instant.now(fixedClock).plus(3, ChronoUnit.DAYS))
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(newNegativeTestResult)
+            every { stateMachine.readLogicalState() } returns isolationState
+            every { stateMachine.remainingDaysInIsolation(any()) } returns 12
+            val testResult = isolation.indexInfo?.testResult?.copy(
+                confirmedDate = newNegativeTestResult.testEndDate.toLocalDate(fixedClock.zone),
+                confirmatoryTestCompletionStatus = COMPLETED
+            )
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                    isolationState,
+                    newNegativeTestResult,
+                    testAcknowledgedDate = Instant.now(fixedClock)
+                )
+            } returns Transition(
+                keySharingInfo = null,
+                newState = isolation.copy(indexInfo = (isolation.indexInfo as IndexCase).copy(testResult = testResult))
+            )
+
+            testSubject.onCreate()
+
+            verify { viewStateObserver.onChanged(ViewState(NegativeWillBeInIsolation, 12)) }
+        }
+
+    @Test
+    fun `relevant test result indicative positive, unacknowledged negative outside prescribed day limit and currently not in isolation should return NegativeNotInIsolation`() =
+        runBlocking {
+            val isolation = isolationHelper.positiveTest(
+                acknowledgedTestResult(
+                    result = RelevantVirologyTestResult.POSITIVE,
+                    isConfirmed = false,
+                    confirmatoryDayLimit = 2,
+                    fromCurrentIsolation = false
+                )
+            ).asIsolation()
+            val isolationState = isolation.asLogical()
+            val newNegativeTestResult = negativeTestResult.copy(testEndDate = Instant.now(fixedClock).plus(3, ChronoUnit.DAYS))
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(newNegativeTestResult)
+            every { stateMachine.readLogicalState() } returns isolationState
+            every { stateMachine.remainingDaysInIsolation(any()) } returns 0
+            val testResult = isolation.indexInfo?.testResult?.copy(
+                confirmedDate = newNegativeTestResult.testEndDate.toLocalDate(fixedClock.zone),
+                confirmatoryTestCompletionStatus = COMPLETED
+            )
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                    isolationState,
+                    newNegativeTestResult,
+                    testAcknowledgedDate = Instant.now(fixedClock)
+                )
+            } returns Transition(
+                keySharingInfo = null,
+                newState = isolation.copy(indexInfo = (isolation.indexInfo as IndexCase).copy(testResult = testResult))
+            )
+
+            testSubject.onCreate()
+
+            verify { viewStateObserver.onChanged(ViewState(NegativeNotInIsolation, 0)) }
         }
 
     // Case F
@@ -560,7 +721,8 @@ class TestResultViewModelTest {
                 )
             } returns
                 Transition(
-                    newState = isolationHelper.positiveTest(positiveTestResult.toAcknowledgedTestResult()).asIsolation(),
+                    newState = isolationHelper.positiveTest(positiveTestResult.toAcknowledgedTestResult())
+                        .asIsolation(),
                     keySharingInfo = null
                 )
 
@@ -596,7 +758,8 @@ class TestResultViewModelTest {
                 )
             } returns
                 Transition(
-                    newState = isolationHelper.positiveTest(positiveTestResultIndicative.toAcknowledgedTestResult()).asIsolation(),
+                    newState = isolationHelper.positiveTest(positiveTestResultIndicative.toAcknowledgedTestResult())
+                        .asIsolation(),
                     keySharingInfo = null
                 )
 
@@ -699,7 +862,46 @@ class TestResultViewModelTest {
                 )
             } returns
                 Transition(
-                    newState = isolationHelper.positiveTest(positiveTestResult.toAcknowledgedTestResult()).asIsolation(),
+                    newState = isolationHelper.positiveTest(positiveTestResult.toAcknowledgedTestResult())
+                        .asIsolation(),
+                    keySharingInfo = null
+                )
+
+            testSubject.onCreate()
+
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWillBeInIsolation, 0)
+                )
+            }
+        }
+
+    // Case H with positive indicative with key submission supported
+    @Test
+    fun `relevant test result confirmed positive, unacknowledged negative and indicative positive with key sharing supported, currently not in isolation and no previous isolation return PositiveWillBeInIsolation`() =
+        runBlocking {
+            val isolationState = isolationHelper.positiveTest(
+                acknowledgedTestResult(
+                    result = RelevantVirologyTestResult.POSITIVE,
+                    isConfirmed = true,
+                    fromCurrentIsolation = false
+                )
+            ).asIsolation().asLogical()
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
+                negativeTestResult,
+                positiveIndicativeKeySharingSupported
+            )
+            every { stateMachine.readLogicalState() } returns isolationState
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                    isolationState,
+                    positiveIndicativeKeySharingSupported,
+                    testAcknowledgedDate = Instant.now(fixedClock)
+                )
+            } returns
+                Transition(
+                    newState = isolationHelper.positiveTest(positiveTestResult.toAcknowledgedTestResult())
+                        .asIsolation(),
                     keySharingInfo = null
                 )
 
@@ -802,6 +1004,174 @@ class TestResultViewModelTest {
         }
 
     @Test
+    fun `no relevant test result, unacknowledged plod and currently in isolation should return PlodWillContinueWithCurrentState`() =
+        runBlocking {
+            val isolationState = isolationHelper.contactCase().asIsolation().asLogical()
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(plodTestResult)
+            every { stateMachine.readLogicalState() } returns isolationState
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                    isolationState,
+                    plodTestResult,
+                    testAcknowledgedDate = Instant.now(fixedClock)
+                )
+            } returns
+                DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
+
+            testSubject.onCreate()
+
+            verify { viewStateObserver.onChanged(ViewState(PlodWillContinueWithCurrentState, 0)) }
+        }
+
+    @Test
+    fun `no relevant test result, unacknowledged plod and currently not in isolation should return PlodWillContinueWithCurrentState`() =
+        runBlocking {
+            val isolationState = isolationHelper.neverInIsolation().asLogical()
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(plodTestResult)
+            every { stateMachine.readLogicalState() } returns isolationState
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                    isolationState,
+                    plodTestResult,
+                    testAcknowledgedDate = Instant.now(fixedClock)
+                )
+            } returns
+                DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
+
+            testSubject.onCreate()
+
+            verify { viewStateObserver.onChanged(ViewState(PlodWillContinueWithCurrentState, 0)) }
+        }
+
+    @Test
+    fun `relevant test result confirmed positive, unacknowledged plod and currently not in isolation should return PlodWillContinueWithCurrentState`() =
+        runBlocking {
+            val isolationState = isolationHelper.positiveTest(
+                acknowledgedTestResult(
+                    result = RelevantVirologyTestResult.POSITIVE,
+                    isConfirmed = true,
+                    fromCurrentIsolation = false
+                )
+            ).asIsolation().asLogical()
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
+                plodTestResult
+            )
+            every { stateMachine.readLogicalState() } returns isolationState
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                    isolationState,
+                    plodTestResult,
+                    testAcknowledgedDate = Instant.now(fixedClock)
+                )
+            } returns DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
+
+            testSubject.onCreate()
+
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PlodWillContinueWithCurrentState, 0)
+                )
+            }
+        }
+
+    @Test
+    fun `relevant test result confirmed negative, unacknowledged plod and currently in isolation should return PlodWillContinueWithCurrentState`() =
+        runBlocking {
+            val isolationState = IsolationState(
+                isolationConfiguration = DurationDays(),
+                contactCase = isolationHelper.contactCase(),
+                indexInfo = isolationHelper.negativeTest(
+                    acknowledgedTestResult(
+                        result = RelevantVirologyTestResult.NEGATIVE,
+                        isConfirmed = true
+                    )
+                )
+            ).asLogical()
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(plodTestResult)
+            every { stateMachine.readLogicalState() } returns isolationState
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                    isolationState,
+                    plodTestResult,
+                    testAcknowledgedDate = Instant.now(fixedClock)
+                )
+            } returns
+                DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
+
+            testSubject.onCreate()
+
+            verify { viewStateObserver.onChanged(ViewState(PlodWillContinueWithCurrentState, 0)) }
+        }
+
+    @Test
+    fun `relevant test result confirmed positive, unacknowledged plod and confirmed positive, currently not in isolation should return PositiveWontBeInIsolation`() =
+        runBlocking {
+            val isolationState = isolationHelper.positiveTest(
+                acknowledgedTestResult(
+                    result = RelevantVirologyTestResult.POSITIVE,
+                    isConfirmed = true,
+                    fromCurrentIsolation = false
+                )
+            ).asIsolation().asLogical()
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
+                plodTestResult,
+                positiveTestResult
+            )
+            every { stateMachine.readLogicalState() } returns isolationState
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                    isolationState,
+                    positiveTestResult,
+                    testAcknowledgedDate = Instant.now(fixedClock)
+                )
+            } returns DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
+
+            testSubject.onCreate()
+
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PositiveWontBeInIsolation, 0)
+                )
+            }
+        }
+
+    @Test
+    fun `relevant test result confirmed positive, unacknowledged plod and confirmed negative, currently not in isolation should return PlodWillContinueWithCurrentState`() =
+        runBlocking {
+            val isolationState = isolationHelper.positiveTest(
+                acknowledgedTestResult(
+                    result = RelevantVirologyTestResult.POSITIVE,
+                    isConfirmed = true,
+                    fromCurrentIsolation = false
+                )
+            ).asIsolation().asLogical()
+            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
+                plodTestResult,
+                negativeTestResult
+            )
+            every { stateMachine.readLogicalState() } returns isolationState
+            every {
+                testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                    isolationState,
+                    plodTestResult,
+                    testAcknowledgedDate = Instant.now(fixedClock)
+                )
+            } returns DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
+
+            testSubject.onCreate()
+
+            verify {
+                viewStateObserver.onChanged(
+                    ViewState(PlodWillContinueWithCurrentState, 0)
+                )
+            }
+        }
+
+    // endregion
+
+    // region onActionButtonClicked
+
+    @Test
     fun `button click for negative test result should acknowledge test result and finish activity`() {
         val isolationState = isolationHelper.contactCase().asIsolation().asLogical()
         every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
@@ -820,6 +1190,8 @@ class TestResultViewModelTest {
         testSubject.onActionButtonClicked()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(negativeTestResult)) }
+        verify(exactly = 0) { submitEpidemiologyDataForTestResult(any(), any()) }
+        verify(exactly = 0) { submitEmptyData() }
         verify { submitObfuscationData() }
         verify { navigationObserver.onChanged(NavigationEvent.Finish) }
     }
@@ -843,6 +1215,8 @@ class TestResultViewModelTest {
         testSubject.onBackPressed()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(negativeTestResult)) }
+        verify(exactly = 0) { submitEpidemiologyDataForTestResult(any(), any()) }
+        verify(exactly = 0) { submitEmptyData() }
         verify { submitObfuscationData() }
         verify(exactly = 0) { navigationObserver.onChanged(any()) }
     }
@@ -866,6 +1240,8 @@ class TestResultViewModelTest {
         testSubject.onActionButtonClicked()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(voidTestResult)) }
+        verify(exactly = 0) { submitEpidemiologyDataForTestResult(any(), any()) }
+        verify(exactly = 0) { submitEmptyData() }
         verify { submitObfuscationData() }
         verify { navigationObserver.onChanged(NavigationEvent.NavigateToOrderTest) }
     }
@@ -889,6 +1265,8 @@ class TestResultViewModelTest {
         testSubject.onBackPressed()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(voidTestResult)) }
+        verify(exactly = 0) { submitEpidemiologyDataForTestResult(any(), any()) }
+        verify(exactly = 0) { submitEmptyData() }
         verify { submitObfuscationData() }
         verify(exactly = 0) { navigationObserver.onChanged(any()) }
     }
@@ -906,7 +1284,8 @@ class TestResultViewModelTest {
             )
         } returns
             Transition(
-                newState = isolationHelper.positiveTest(positiveTestResult.toAcknowledgedTestResult()).asIsolation(),
+                newState = isolationHelper.positiveTest(positiveTestResult.toAcknowledgedTestResult())
+                    .asIsolation(),
                 keySharingInfo = null
             )
 
@@ -915,9 +1294,16 @@ class TestResultViewModelTest {
         testSubject.onActionButtonClicked()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResult)) }
+        verify {
+            with(positiveTestResult) {
+                submitEpidemiologyDataForTestResult(testKitType, requiresConfirmatoryTest)
+            }
+        }
+        verify(exactly = 0) { submitEmptyData() }
         verify(exactly = 0) { submitObfuscationData() }
 
-        verify { navigationObserver.onChanged(NavigationEvent.NavigateToShareKeys) }
+        coVerify { analyticsEventProcessor.track(AskedToShareExposureKeysInTheInitialFlow) }
+        verify { navigationObserver.onChanged(NavigationEvent.NavigateToShareKeys(bookFollowUpTest = false)) }
     }
 
     @Test
@@ -933,7 +1319,8 @@ class TestResultViewModelTest {
             )
         } returns
             Transition(
-                newState = isolationHelper.positiveTest(positiveTestResult.toAcknowledgedTestResult()).asIsolation(),
+                newState = isolationHelper.positiveTest(positiveTestResult.toAcknowledgedTestResult())
+                    .asIsolation(),
                 keySharingInfo = null
             )
 
@@ -942,7 +1329,13 @@ class TestResultViewModelTest {
         testSubject.onBackPressed()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResult)) }
-        verify { submitObfuscationData() }
+        verify {
+            with(positiveTestResult) {
+                submitEpidemiologyDataForTestResult(testKitType, requiresConfirmatoryTest)
+            }
+        }
+        verify(exactly = 0) { submitEmptyData() }
+        verify(exactly = 0) { submitObfuscationData() }
         verify(exactly = 0) { navigationObserver.onChanged(any()) }
     }
 
@@ -968,7 +1361,13 @@ class TestResultViewModelTest {
         testSubject.onActionButtonClicked()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResultIndicative)) }
-        verify { submitObfuscationData() }
+        verify {
+            with(positiveTestResultIndicative) {
+                submitEpidemiologyDataForTestResult(testKitType, requiresConfirmatoryTest)
+            }
+        }
+        verify { submitEmptyData() }
+        verify(exactly = 0) { submitObfuscationData() }
         verify { navigationObserver.onChanged(NavigationEvent.NavigateToOrderTest) }
     }
 
@@ -984,7 +1383,8 @@ class TestResultViewModelTest {
                 testAcknowledgedDate = Instant.now(fixedClock)
             )
         } returns Transition(
-            newState = isolationHelper.positiveTest(positiveTestResultIndicative.toAcknowledgedTestResult()).asIsolation(),
+            newState = isolationHelper.positiveTest(positiveTestResultIndicative.toAcknowledgedTestResult())
+                .asIsolation(),
             keySharingInfo = null
         )
 
@@ -993,7 +1393,13 @@ class TestResultViewModelTest {
         testSubject.onBackPressed()
 
         verify { stateMachine.processEvent(OnTestResultAcknowledge(positiveTestResultIndicative)) }
-        verify { submitObfuscationData() }
+        verify {
+            with(positiveTestResultIndicative) {
+                submitEpidemiologyDataForTestResult(testKitType, requiresConfirmatoryTest)
+            }
+        }
+        verify { submitEmptyData() }
+        verify(exactly = 0) { submitObfuscationData() }
         verify(exactly = 0) { navigationObserver.onChanged(any()) }
     }
 
@@ -1021,7 +1427,13 @@ class TestResultViewModelTest {
             testSubject.onActionButtonClicked()
 
             verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
-            verify { submitObfuscationData() }
+            verify {
+                with(positiveTestResult) {
+                    submitEpidemiologyDataForTestResult(testKitType, requiresConfirmatoryTest)
+                }
+            }
+            verify { submitEmptyData() }
+            verify(exactly = 0) { submitObfuscationData() }
 
             verify { navigationObserver.onChanged(NavigationEvent.Finish) }
         }
@@ -1047,7 +1459,13 @@ class TestResultViewModelTest {
             testSubject.onActionButtonClicked()
 
             verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
-            verify { submitObfuscationData() }
+            verify {
+                with(positiveTestResult) {
+                    submitEpidemiologyDataForTestResult(testKitType, requiresConfirmatoryTest)
+                }
+            }
+            verify { submitEmptyData() }
+            verify(exactly = 0) { submitObfuscationData() }
 
             verify { navigationObserver.onChanged(NavigationEvent.Finish) }
         }
@@ -1076,7 +1494,13 @@ class TestResultViewModelTest {
             testSubject.onBackPressed()
 
             verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
-            verify { submitObfuscationData() }
+            verify {
+                with(positiveTestResult) {
+                    submitEpidemiologyDataForTestResult(testKitType, requiresConfirmatoryTest)
+                }
+            }
+            verify { submitEmptyData() }
+            verify(exactly = 0) { submitObfuscationData() }
             verify(exactly = 0) { navigationObserver.onChanged(any()) }
         }
 
@@ -1101,7 +1525,13 @@ class TestResultViewModelTest {
             testSubject.onBackPressed()
 
             verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
-            verify { submitObfuscationData() }
+            verify {
+                with(positiveTestResult) {
+                    submitEpidemiologyDataForTestResult(testKitType, requiresConfirmatoryTest)
+                }
+            }
+            verify { submitEmptyData() }
+            verify(exactly = 0) { submitObfuscationData() }
             verify(exactly = 0) { navigationObserver.onChanged(any()) }
         }
 
@@ -1120,7 +1550,8 @@ class TestResultViewModelTest {
                 )
             } returns
                 Transition(
-                    newState = isolationHelper.positiveTest(positiveTestResultIndicative.toAcknowledgedTestResult()).asIsolation(),
+                    newState = isolationHelper.positiveTest(positiveTestResultIndicative.toAcknowledgedTestResult())
+                        .asIsolation(),
                     keySharingInfo = null
                 )
 
@@ -1129,7 +1560,13 @@ class TestResultViewModelTest {
             testSubject.onBackPressed()
 
             verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
-            verify { submitObfuscationData() }
+            verify {
+                with(positiveTestResultIndicative) {
+                    submitEpidemiologyDataForTestResult(testKitType, requiresConfirmatoryTest)
+                }
+            }
+            verify { submitEmptyData() }
+            verify(exactly = 0) { submitObfuscationData() }
             verify(exactly = 0) { navigationObserver.onChanged(any()) }
         }
 
@@ -1154,26 +1591,84 @@ class TestResultViewModelTest {
             testSubject.onBackPressed()
 
             verify { stateMachine.processEvent(OnTestResultAcknowledge(testResult)) }
-            verify { submitObfuscationData() }
+            verify {
+                with(positiveTestResultIndicative) {
+                    submitEpidemiologyDataForTestResult(testKitType, requiresConfirmatoryTest)
+                }
+            }
+            verify { submitEmptyData() }
+            verify(exactly = 0) { submitObfuscationData() }
             verify(exactly = 0) { navigationObserver.onChanged(any()) }
         }
+
+    @Test
+    fun `back press for plod test result should acknowledge result`() {
+        val isolationState = isolationHelper.contactCase().asIsolation().asLogical()
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf(plodTestResult)
+        every { stateMachine.readLogicalState() } returns isolationState
+        every {
+            testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                isolationState,
+                plodTestResult,
+                testAcknowledgedDate = Instant.now(fixedClock)
+            )
+        } returns
+            DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
+
+        testSubject.onCreate()
+
+        testSubject.onBackPressed()
+
+        verify { stateMachine.processEvent(OnTestResultAcknowledge(plodTestResult)) }
+        verify { submitObfuscationData() }
+        verify(exactly = 0) { navigationObserver.onChanged(any()) }
+    }
+
+    @Test
+    fun `button click for plod test result should acknowledge test result and finish activity`() {
+        val isolationState = isolationHelper.contactCase().asIsolation().asLogical()
+        every { unacknowledgedTestResultsProvider.testResults } returns listOf(plodTestResult)
+        every { stateMachine.readLogicalState() } returns isolationState
+        every {
+            testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                isolationState,
+                plodTestResult,
+                testAcknowledgedDate = Instant.now(fixedClock)
+            )
+        } returns
+            DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
+
+        testSubject.onCreate()
+
+        testSubject.onActionButtonClicked()
+
+        verify { stateMachine.processEvent(OnTestResultAcknowledge(plodTestResult)) }
+        verify { submitObfuscationData() }
+        verify { navigationObserver.onChanged(NavigationEvent.Finish) }
+    }
+
+    // endregion
 
     private fun acknowledgedTestResult(
         result: RelevantVirologyTestResult,
         isConfirmed: Boolean,
-        fromCurrentIsolation: Boolean = true
+        fromCurrentIsolation: Boolean = true,
+        confirmatoryDayLimit: Int? = null
     ): AcknowledgedTestResult {
         val testEndDate =
             if (fromCurrentIsolation) LocalDate.now(fixedClock)
             else LocalDate.now(fixedClock).minusDays(12)
 
+        val testKitType = if (isConfirmed) LAB_RESULT else RAPID_RESULT
+
         return AcknowledgedTestResult(
             testEndDate = testEndDate,
             testResult = result,
             acknowledgedDate = testEndDate,
-            testKitType = LAB_RESULT,
+            testKitType = testKitType,
             requiresConfirmatoryTest = !isConfirmed,
-            confirmedDate = null
+            confirmedDate = null,
+            confirmatoryDayLimit = confirmatoryDayLimit
         )
     }
 

@@ -1,10 +1,11 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
 import uk.nhs.nhsx.covid19.android.app.R
 
 class IsolationPaymentRobot {
@@ -15,6 +16,7 @@ class IsolationPaymentRobot {
     }
 
     fun clickEligibilityButton() {
-        clickOn(R.id.isolationPaymentButton)
+        onView(withId(R.id.isolationPaymentButton))
+            .perform(scrollTo(), click())
     }
 }

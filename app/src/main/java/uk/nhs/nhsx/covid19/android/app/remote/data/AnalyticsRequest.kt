@@ -87,5 +87,14 @@ data class Metrics(
     var receivedRiskyVenueM2Warning: Int = 0,
     var hasReceivedRiskyVenueM2WarningBackgroundTick: Int = 0,
     var totalAlarmManagerBackgroundTasks: Int = 0,
-    var missingPacketsLast7Days: Int = 0
+    var missingPacketsLast7Days: Int = 0,
+    var askedToShareExposureKeysInTheInitialFlow: Int = 0,
+    var consentedToShareExposureKeysInTheInitialFlow: Int = 0,
+    var successfullySharedExposureKeys: Int = 0,
+    var totalShareExposureKeysReminderNotifications: Int = 0,
+    var consentedToShareExposureKeysInReminderScreen: Int = 0,
+    var didSendLocalInfoNotification: Int = 0,
+    var didAccessLocalInfoScreenViaNotification: Int = 0,
+    var didAccessLocalInfoScreenViaBanner: Int = 0,
+    var isDisplayingLocalInfoBackgroundTick: Int = 0,
 )

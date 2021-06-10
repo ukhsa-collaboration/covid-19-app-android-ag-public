@@ -8,6 +8,7 @@ import com.squareup.moshi.Types
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventPayload
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.lang.reflect.Type
 import java.time.Clock
 import java.time.LocalDate
@@ -63,7 +64,7 @@ class EpidemiologyEventProvider @Inject constructor(
 
     fun clearOnAndBefore(date: LocalDate) = synchronized(lock) {
         val updatedList = epidemiologyEvents.filter {
-            it.payload.date.atZone(clock.zone).toLocalDate().isAfter(date)
+            it.payload.date.toLocalDate(clock.zone).isAfter(date)
         }
         epidemiologyEvents = updatedList
     }

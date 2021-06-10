@@ -18,6 +18,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTe
 import uk.nhs.nhsx.covid19.android.app.state.StateStorageTest.Operation.READ
 import uk.nhs.nhsx.covid19.android.app.state.StateStorageTest.Operation.WRITE
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionStatus.COMPLETED_AND_CONFIRMED
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
@@ -109,7 +110,11 @@ class StateStorageTest(private val testParameters: StateRepresentationTest) {
         private const val TEST_ACKNOWLEDGED_DATE = "2020-01-04"
         private const val TEST_CONFIRMED_DATE = "2020-01-03"
         private const val POSITIVE_TEST_RESULT =
+            """{"testEndDate":"$TEST_END_DATE","testResult":"POSITIVE","testKitType":"LAB_RESULT","acknowledgedDate":"$TEST_ACKNOWLEDGED_DATE","requiresConfirmatoryTest":true,"confirmedDate":"$TEST_CONFIRMED_DATE","confirmatoryTestCompletionStatus":"COMPLETED_AND_CONFIRMED"}"""
+
+        private const val POSITIVE_TEST_RESULT_V1 =
             """{"testEndDate":"$TEST_END_DATE","testResult":"POSITIVE","testKitType":"LAB_RESULT","acknowledgedDate":"$TEST_ACKNOWLEDGED_DATE","requiresConfirmatoryTest":true,"confirmedDate":"$TEST_CONFIRMED_DATE"}"""
+
         private const val NEGATIVE_TEST_RESULT =
             """{"testEndDate":"$TEST_END_DATE","testResult":"NEGATIVE","testKitType":"LAB_RESULT","acknowledgedDate":"$TEST_ACKNOWLEDGED_DATE","requiresConfirmatoryTest":false}"""
 
@@ -119,7 +124,8 @@ class StateStorageTest(private val testParameters: StateRepresentationTest) {
             testKitType = LAB_RESULT,
             acknowledgedDate = LocalDate.parse(TEST_ACKNOWLEDGED_DATE),
             requiresConfirmatoryTest = true,
-            confirmedDate = LocalDate.parse(TEST_CONFIRMED_DATE)
+            confirmedDate = LocalDate.parse(TEST_CONFIRMED_DATE),
+            confirmatoryTestCompletionStatus = COMPLETED_AND_CONFIRMED
         )
         private val negativeTestResult = AcknowledgedTestResult(
             testEndDate = LocalDate.parse(TEST_END_DATE),
@@ -319,6 +325,25 @@ class StateStorageTest(private val testParameters: StateRepresentationTest) {
         // State representations that can only be read. Use these to test error handling and migration, to verify that invalid
         // or outdated states are handled properly
         private val readOnlyStateRepresentations = listOf(
+            // Copies completedDate from confirmedDate
+            StateRepresentation(
+                name = "isolating with positive test from v1 to v2",
+                json =
+                    """{"configuration":$CONFIGURATION,"testResult":$POSITIVE_TEST_RESULT_V1,"indexExpiryDate":"$INDEX_EXPIRY_DATE","hasAcknowledgedEndOfIsolation":false,"version":1}""",
+                state = IsolationState(
+                    isolationConfiguration = DurationDays(),
+                    indexInfo = IndexCase(
+                        isolationTrigger = PositiveTestResult(
+                            positiveTestResult.testEndDate
+                        ),
+                        testResult = positiveTestResult,
+                        expiryDate = LocalDate.parse(
+                            INDEX_EXPIRY_DATE
+                        )
+                    ),
+                    hasAcknowledgedEndOfIsolation = false
+                )
+            ),
             // We cannot handle this => discard symptoms
             StateRepresentation(
                 name = "isolating with self-assessment but index expiry date missing",

@@ -54,10 +54,15 @@ abstract class AnalyticsTest : EspressoTest() {
     }
 
     fun assertOnFieldsForDateRange(dateRange: IntRange, function: FieldAsserter.() -> Unit) {
-        dateRange.forEach {
-            advanceToEndOfAnalyticsWindow()
-            assertOnLastPacket(function, it)
-        }
+        advanceToEndOfAnalyticsWindow()
+        assertOnLastPacket(function, dateRange.first)
+        // Make sure packet for last day is created
+        val dayBeforeEndOfDateRange = (dateRange.last - dateRange.first - 1).toLong()
+        advanceClockByDaysAndRunBackgroundTasks(dayBeforeEndOfDateRange)
+        // Advance to the last day and verify packet contents
+        advanceClockByDaysAndRunBackgroundTasks(1L)
+        triggerAnalyticsSubmission()
+        assertOnLastPacket(function, dateRange.last)
     }
 
     fun assertOnFields(function: FieldAsserter.() -> Unit) {
@@ -81,11 +86,11 @@ abstract class AnalyticsTest : EspressoTest() {
     // Time Manipulation
 
     fun advanceToNextBackgroundTaskExecution() {
-        advanceClock(60 * 60 * 4)
+        advanceClockAndRunBackgroundTasks(60 * 60 * 4)
         triggerAnalyticsSubmission()
     }
 
-    protected fun advanceToEndOfAnalyticsWindow(steps: Int = 4) {
+    protected fun advanceToEndOfAnalyticsWindow(steps: Int = 2) {
         val currentDate = testAppContext.clock.instant().atZone(ZoneOffset.UTC)
 
         val endOfAnalyticsWindow = currentDate.plusDays(1)
@@ -94,15 +99,20 @@ abstract class AnalyticsTest : EspressoTest() {
         val secondsToAdvance = kotlin.math.ceil(differenceToEndOfWindow / steps.toDouble()).toLong()
 
         while (testAppContext.clock.instant().atZone(ZoneOffset.UTC) < endOfAnalyticsWindow) {
-            advanceClock(secondsToAdvance)
+            advanceClockAndRunBackgroundTasks(secondsToAdvance)
             triggerAnalyticsSubmission()
         }
     }
 
-    protected fun advanceClock(secondsToAdvance: Long) {
+    protected fun advanceClockAndRunBackgroundTasks(secondsToAdvance: Long) {
         testAppContext.clock.currentInstant =
             testAppContext.clock.instant().plusSeconds(secondsToAdvance)
-        testAppContext.getCurrentState()
+        runBackgroundTasks()
+    }
+
+    private fun advanceClockByDaysAndRunBackgroundTasks(daysToAdvance: Long) {
+        testAppContext.clock.currentInstant =
+            testAppContext.clock.instant().plus(daysToAdvance, ChronoUnit.DAYS)
         runBackgroundTasks()
     }
 

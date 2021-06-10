@@ -12,7 +12,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.about.UpdateAreaRisk
+import uk.nhs.nhsx.covid19.android.app.about.UpdateAreaInfo
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Invalid
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Valid
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityViewModel.ErrorState.NOT_SELECTED
@@ -35,7 +35,7 @@ class LocalAuthorityViewModelTest {
     private val postCodeProvider = mockk<PostCodeProvider>(relaxed = true)
     private val riskyPostCodeIndicatorProvider = mockk<RiskyPostCodeIndicatorProvider>(relaxed = true)
     private val onboardingCompletedProvider = mockk<OnboardingCompletedProvider>(relaxed = true)
-    private val updateAreaRisk = mockk<UpdateAreaRisk>(relaxed = true)
+    private val updateAreaRisk = mockk<UpdateAreaInfo>(relaxed = true)
 
     private val localAuthorities = mockk<Observer<List<LocalAuthorityWithId>>>(relaxed = true)
     private val viewState = mockk<Observer<ViewState>>(relaxed = true)

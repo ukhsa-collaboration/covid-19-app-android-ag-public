@@ -8,7 +8,8 @@ class CreateSelfAssessmentIndexCase @Inject constructor() {
 
     operator fun invoke(
         currentState: IsolationLogicalState,
-        selfAssessment: SelfAssessment
+        selfAssessment: SelfAssessment,
+        discardTestResultIfPresent: Boolean
     ): IndexCase {
         val isolationConfiguration = currentState.isolationConfiguration
         val potentialIndexExpiryDate =
@@ -20,7 +21,7 @@ class CreateSelfAssessmentIndexCase @Inject constructor() {
         return with(
             IndexCase(
                 isolationTrigger = selfAssessment,
-                testResult = null,
+                testResult = if (discardTestResultIfPresent) null else currentState.toIsolationState().indexInfo?.testResult,
                 expiryDate = potentialIndexExpiryDate
             )
         ) {

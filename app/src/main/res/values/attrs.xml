@@ -116,8 +116,17 @@
     <declare-styleable name="ParagraphsContainer">
         <attr name="rawText" format="string" />
         <attr name="showBulletPoints" format="boolean" />
+        <attr name="paddingBetweenItems" format="dimension"/>
     </declare-styleable>
     <declare-styleable name="PrivacyView">
         <attr name="privacyText" format="string" />
+    </declare-styleable>
+    <declare-styleable name="TestingHubItemView">
+        <attr name="testingHubItemTitle" format="string" />
+        <attr name="testingHubItemDescription" format="string" />
+        <attr name="testingHubItemIsExternalLink" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="MyDataSectionView">
+        <attr name="myDataSectionTitle" format="string" />
     </declare-styleable>
 </resources>

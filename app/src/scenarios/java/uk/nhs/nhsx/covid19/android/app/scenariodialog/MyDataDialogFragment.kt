@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.scenarios.dialog_user_data.view.mockLastRiskyVe
 import kotlinx.android.synthetic.scenarios.dialog_user_data.view.optionalContainer
 import kotlinx.android.synthetic.scenarios.dialog_user_data.view.useMock
 import uk.nhs.nhsx.covid19.android.app.R.layout
-import uk.nhs.nhsx.covid19.android.app.about.BaseMyDataViewModel.IsolationViewState
+import uk.nhs.nhsx.covid19.android.app.about.mydata.BaseMyDataViewModel.IsolationViewState
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockMyDataViewModel
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT

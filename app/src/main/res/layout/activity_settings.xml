@@ -52,6 +52,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/list_item_space"
                     app:settingName="@string/settings_venue_history" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.SettingsOptionsView
+                    android:id="@+id/animationsOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/list_item_space"
+                    app:settingName="@string/animations" />
             </LinearLayout>
 
             <TextView

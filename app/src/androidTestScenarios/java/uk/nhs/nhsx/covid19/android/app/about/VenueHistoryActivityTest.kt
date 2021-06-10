@@ -9,6 +9,7 @@ import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.VenueHistoryRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 import java.time.Instant
@@ -64,6 +65,7 @@ class VenueHistoryActivityTest : EspressoTest() {
     }
 
     @Test
+    @RetryFlakyTest
     fun testDeletion() = notReported {
         startTestActivity<VenueHistoryActivity>()
 
@@ -108,11 +110,11 @@ class VenueHistoryActivityTest : EspressoTest() {
 
         venueHistoryRobot.clickConfirmDeletionInDialog()
 
-        venueHistoryRobot.checkDoneButtonIsDisplayed()
+        waitFor { venueHistoryRobot.checkDoneButtonIsDisplayed() }
 
         deleteVenueVisitOnPosition(1)
 
-        venueHistoryRobot.checkDateIsDisplayedAtPosition(LocalDate.parse("2020-07-25"), 0)
+        waitFor { venueHistoryRobot.checkDateIsDisplayedAtPosition(LocalDate.parse("2020-07-25"), 0) }
         venueHistoryRobot.checkVisitIsDisplayedAtPosition(visitB, 1)
         venueHistoryRobot.checkVisitIsDisplayedAtPosition(visitA, 2)
 

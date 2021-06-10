@@ -10,7 +10,8 @@ import uk.nhs.nhsx.covid19.android.app.R
 
 class VenueAlertInformRobot {
     fun checkVenueTitleIsDisplayed() {
-        onView(withId(R.id.titleVenueReportedCase)).check(matches(isDisplayed()))
+        onView(withId(R.id.titleVenueReportedCase))
+            .check(matches(isDisplayed()))
     }
 
     fun clickReturnHomeButton() {

@@ -4,8 +4,10 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
+import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.view_default_state.view.imgCirclePulseAnim
 import kotlinx.android.synthetic.main.view_default_state.view.imgCircleSmallPulseAnim
+import kotlinx.android.synthetic.main.view_default_state.view.imgCircleStatic
 import uk.nhs.nhsx.covid19.android.app.R
 
 class DefaultStatusView @JvmOverloads constructor(
@@ -22,8 +24,9 @@ class DefaultStatusView @JvmOverloads constructor(
                 context = context,
                 isAnimationEnabled = isAnimationEnabled,
                 animatedView = imgCirclePulseAnim,
-                smallAnimatedView = imgCircleSmallPulseAnim
+                smallAnimatedView = imgCircleSmallPulseAnim,
             )
+            imgCircleStatic.isVisible = !isAnimationEnabled
         }
 
     init {

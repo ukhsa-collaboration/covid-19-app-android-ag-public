@@ -8,7 +8,7 @@ import com.google.android.gms.nearby.exposurenotification.DiagnosisKeysDataMappi
 import com.google.android.gms.nearby.exposurenotification.ExposureWindow
 import com.google.android.gms.nearby.exposurenotification.Infectiousness
 import com.google.android.gms.nearby.exposurenotification.ReportType
-import com.google.android.gms.nearby.exposurenotification.ScanInstance
+import com.google.android.gms.nearby.exposurenotification.ScanInstance.Builder
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result.Error
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result.ResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result.Success
@@ -85,38 +85,40 @@ class MockExposureNotificationApi(private val clock: Clock) : ExposureNotificati
 
     override suspend fun provideDiagnosisKeys(files: List<File>) = Unit
 
-    override suspend fun getExposureWindows(): List<ExposureWindow> {
-        return listOf(
-            ExposureWindow.Builder()
-                .setDateMillisSinceEpoch(Instant.now(clock).toEpochMilli())
-                .setInfectiousness(Infectiousness.HIGH)
-                .setScanInstances(
-                    listOf(
-                        ScanInstance.Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build(),
-                        ScanInstance.Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build(),
-                        ScanInstance.Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build(),
-                        ScanInstance.Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build(),
-                        ScanInstance.Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build(),
-                        ScanInstance.Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build()
-                    )
+    var mockExposureWindows: List<ExposureWindow>? = null
+
+    override suspend fun getExposureWindows(): List<ExposureWindow> = mockExposureWindows ?: createDefaultExposureWindows()
+
+    private fun createDefaultExposureWindows(): List<ExposureWindow> = listOf(
+        ExposureWindow.Builder()
+            .setDateMillisSinceEpoch(Instant.now(clock).toEpochMilli())
+            .setInfectiousness(Infectiousness.HIGH)
+            .setScanInstances(
+                listOf(
+                    Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build(),
+                    Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build(),
+                    Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build(),
+                    Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build(),
+                    Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build(),
+                    Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build()
                 )
-                .build(),
-            ExposureWindow.Builder()
-                .setDateMillisSinceEpoch(Instant.now(clock).toEpochMilli())
-                .setInfectiousness(Infectiousness.HIGH)
-                .setScanInstances(
-                    listOf(
-                        ScanInstance.Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build(),
-                        ScanInstance.Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build(),
-                        ScanInstance.Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build(),
-                        ScanInstance.Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build(),
-                        ScanInstance.Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build(),
-                        ScanInstance.Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build()
-                    )
+            )
+            .build(),
+        ExposureWindow.Builder()
+            .setDateMillisSinceEpoch(Instant.now(clock).toEpochMilli())
+            .setInfectiousness(Infectiousness.HIGH)
+            .setScanInstances(
+                listOf(
+                    Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build(),
+                    Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build(),
+                    Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build(),
+                    Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build(),
+                    Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build(),
+                    Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(1).build()
                 )
-                .build()
-        )
-    }
+            )
+            .build()
+    )
 
     override suspend fun getDiagnosisKeysDataMapping(): DiagnosisKeysDataMapping =
         DiagnosisKeysDataMapping.DiagnosisKeysDataMappingBuilder()

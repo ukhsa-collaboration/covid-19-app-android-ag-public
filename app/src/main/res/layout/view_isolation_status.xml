@@ -30,6 +30,20 @@
         app:layout_constraintTop_toTopOf="@id/imgRedCircle"
         app:srcCompat="@drawable/ic_red_circle" />
 
+    <ImageView
+        android:id="@+id/imgCircleIsolationStatic"
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:scaleType="center"
+        android:contentDescription="@null"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/imgRedCircle"
+        app:layout_constraintEnd_toEndOf="@id/imgRedCircle"
+        app:layout_constraintStart_toStartOf="@id/imgRedCircle"
+        app:layout_constraintTop_toTopOf="@id/imgRedCircle"
+        app:srcCompat="@drawable/ic_red_circle_static" />
+
     <LinearLayout
         android:id="@+id/isolationTitleContainer"
         android:layout_width="match_parent"

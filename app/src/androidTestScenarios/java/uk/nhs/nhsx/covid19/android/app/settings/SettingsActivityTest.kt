@@ -4,6 +4,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.AnimationsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.DataAndPrivacyRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LanguagesRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
@@ -23,6 +24,7 @@ class SettingsActivityTest : EspressoTest() {
     private val myDataRobot = MyDataRobot()
     private val venueHistoryRobot = VenueHistoryRobot(context = testAppContext.app)
     private val myAreaRobot = MyAreaRobot()
+    private val animationsRobot = AnimationsRobot()
 
     @Test
     fun startActivityWithoutLocale_shouldDisplayEnglishLanguage() = notReported {
@@ -70,6 +72,7 @@ class SettingsActivityTest : EspressoTest() {
             hasMyAreaSetting()
             hasMyDataSetting()
             hasVenueHistorySetting()
+            hasAnimationsSetting()
             hasDeleteDataOption()
         }
     }
@@ -106,7 +109,7 @@ class SettingsActivityTest : EspressoTest() {
 
         settingsRobot.userClicksDeleteDataOnDialog()
 
-        waitFor { welcomeRobot.isActivityDisplayed() }
+        waitFor { welcomeRobot.checkActivityIsDisplayed() }
 
         welcomeRobot.checkActivityIsDisplayed()
 
@@ -161,5 +164,16 @@ class SettingsActivityTest : EspressoTest() {
         settingsRobot.clickVenueHistorySetting()
 
         venueHistoryRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    fun clickAnimationSetting_shouldNavigateToAnimationActivity() = notReported {
+        startTestActivity<SettingsActivity>()
+
+        settingsRobot.checkActivityIsDisplayed()
+
+        settingsRobot.clickAnimationSetting()
+
+        animationsRobot.checkActivityIsDisplayed()
     }
 }

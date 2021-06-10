@@ -34,4 +34,17 @@ class SubmitKeysProgressActivityTest : EspressoTest() {
 
         submitKeysProgressRobot.checkErrorIsDisplayed()
     }
+
+    @Test
+    fun startActivityWithAllExtrasAndFailingDelayedSubmissionApi_showsLoading() = notReported {
+        MockApiModule.behaviour.responseType = ALWAYS_FAIL
+        MockApiModule.behaviour.delayMillis = 500
+        startTestActivity<SubmitKeysProgressActivity> {
+            putParcelableArrayListExtra("EXPOSURE_KEYS_TO_SUBMIT", ArrayList<NHSTemporaryExposureKey>())
+            putExtra("SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN", "test")
+        }
+
+        submitKeysProgressRobot.checkLoadingIsDisplayed()
+        waitFor { submitKeysProgressRobot.checkErrorIsDisplayed() }
+    }
 }

@@ -16,6 +16,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationAlarmController
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
+import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationExpirationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
@@ -59,7 +60,7 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
 
         // Set date: 9th Jan at 9PM
 
-        advanceClock(Duration.ofDays(8).plusHours(21).seconds)
+        advanceClockAndRunBackgroundTasks(Duration.ofDays(8).plusHours(21).seconds)
 
         isolationChecker.assertActiveIndexNoContact()
 
@@ -123,6 +124,7 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
     }
 
     @Test
+    @RetryFlakyTest
     fun startIndexCase_indexExpires_acknowledgeExpiration_notInIsolation() = notReported {
         val expiryDate = LocalDate.now(testAppContext.clock)
         testAppContext.setState(

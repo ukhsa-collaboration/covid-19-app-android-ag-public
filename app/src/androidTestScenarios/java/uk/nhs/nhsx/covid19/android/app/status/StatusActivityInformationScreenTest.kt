@@ -3,7 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.status
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
+import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlert
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
@@ -30,9 +30,10 @@ class StatusActivityInformationScreenTest : EspressoTest() {
 
     @Test
     fun venueScreenShowingCorrectly() = notReported {
-        testAppContext.getUserInbox().addUserInboxItem(ShowVenueAlert("1", INFORM))
+        testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", INFORM)
 
         startTestActivity<StatusActivity> { }
+
         venueAlertInformRobot.checkVenueTitleIsDisplayed()
     }
 }

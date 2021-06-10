@@ -22,6 +22,7 @@ class GoogleExposureNotificationApi(context: Context) : ExposureNotificationApi 
         return try {
             exposureNotificationClient.isEnabled.await()
         } catch (exception: Exception) {
+            Timber.e(exception, "Can't get isEnabled")
             false
         }
     }

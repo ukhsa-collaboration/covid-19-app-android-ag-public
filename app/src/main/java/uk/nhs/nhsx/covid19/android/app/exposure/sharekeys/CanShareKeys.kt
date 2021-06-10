@@ -1,8 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.sharekeys
 
 import dagger.Lazy
-import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CanShareKeys.CanShareKeysResult.NoKeySharingPossible
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CanShareKeys.CanShareKeysResult.KeySharingPossible
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CanShareKeys.CanShareKeysResult.NoKeySharingPossible
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import javax.inject.Inject
 
@@ -13,9 +13,9 @@ class CanShareKeys @Inject constructor(
 ) {
     operator fun invoke(): CanShareKeysResult {
         val keySharingInfo = keySharingInfoProvider.keySharingInfo ?: return NoKeySharingPossible
-        val symptomsOnsetDate = isolationStateMachine.get().readState().assumedOnsetDateForExposureKeys
+        val assumedOnsetDate = isolationStateMachine.get().readState().assumedOnsetDateForExposureKeys
             ?: return NoKeySharingPossible
-        val dateRange = calculateKeySubmissionDateRange(keySharingInfo.acknowledgedDate, symptomsOnsetDate)
+        val dateRange = calculateKeySubmissionDateRange(keySharingInfo.acknowledgedDate, assumedOnsetDate)
         return if (dateRange.containsAtLeastOneDay()) {
             KeySharingPossible(keySharingInfo)
         } else NoKeySharingPossible

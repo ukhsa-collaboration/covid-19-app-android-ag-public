@@ -13,9 +13,8 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AcknowledgedStartOfIsolationDueToRiskyContact
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionViewModel.ExposedNotificationResult
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.ShouldShowEncounterDetectionActivityProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
@@ -32,7 +31,8 @@ class EncounterDetectionViewModelTest {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
-    private val userInbox = mockk<UserInbox>(relaxed = true)
+    private val shouldShowEncounterDetectionActivityProvider =
+        mockk<ShouldShowEncounterDetectionActivityProvider>(relaxUnitFun = true)
     private val exposureNotificationRetryAlarmController =
         mockk<ExposureNotificationRetryAlarmController>(relaxed = true)
     private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxed = true)
@@ -44,7 +44,7 @@ class EncounterDetectionViewModelTest {
 
     private val testSubject = EncounterDetectionViewModel(
         isolationStateMachine,
-        userInbox,
+        shouldShowEncounterDetectionActivityProvider,
         exposureNotificationRetryAlarmController,
         analyticsEventProcessor,
         fixedClock
@@ -78,7 +78,7 @@ class EncounterDetectionViewModelTest {
         testSubject.confirmConsent()
 
         verify { exposureNotificationRetryAlarmController.cancel() }
-        verify { userInbox.clearItem(ShowEncounterDetection) }
+        verify { shouldShowEncounterDetectionActivityProvider setProperty "value" value null }
         coVerify { analyticsEventProcessor.track(AcknowledgedStartOfIsolationDueToRiskyContact) }
 
         verify { resultObserver.onChanged(ExposedNotificationResult.ConsentConfirmation) }

@@ -12,7 +12,6 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
-import com.schibsted.spain.barista.interaction.BaristaDialogInteractions
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
@@ -133,16 +132,15 @@ class LanguagesRobot {
     }
 
     fun checkConfirmationDialogIsDisplayed(languageName: String) {
-        onView(withText(context.getString(R.string.change_language_dialog, languageName))).check(
-            matches(isDisplayed())
-        )
+        onView(withText(context.getString(R.string.change_language_dialog, languageName)))
+            .check(matches(isDisplayed()))
     }
 
     fun clickConfirmPositive() {
-        BaristaDialogInteractions.clickDialogPositiveButton()
+        clickDialogPositiveButton()
     }
 
     fun clickConfirmNegative() {
-        BaristaDialogInteractions.clickDialogNegativeButton()
+        clickDialogNegativeButton()
     }
 }

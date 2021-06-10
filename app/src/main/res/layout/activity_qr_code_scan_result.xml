@@ -36,11 +36,11 @@
                 style="@style/ShrinkInLandscape"
                 android:layout_width="300dp"
                 android:layout_height="300dp"
-                android:scaleType="fitCenter"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="5dp"
                 android:contentDescription="@null"
+                android:scaleType="fitCenter"
                 app:layout_constraintBottom_toTopOf="@id/titleTextView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -81,10 +81,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/horizontal_margin_in_scroll_container"
                 android:layout_marginTop="@dimen/vertical_margin"
-                android:visibility="gone"
                 android:textAlignment="center"
-                tools:visibility="visible"
-                tools:text="10 Aug 2020 19:17" />
+                android:visibility="gone"
+                tools:text="10 Aug 2020 19:17"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/subtitleTextView"
@@ -97,14 +97,12 @@
                 app:layout_constraintTop_toBottomOf="@id/successVenueDateTime"
                 tools:text="@string/qr_code_success_subtitle" />
 
-            <TextView
-                android:id="@+id/textCancelCheckIn"
-                style="@style/LinkText"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonCancelCheckIn"
+                style="@style/SecondaryButton"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginStart="@dimen/bottom_button_spacing"
-                android:layout_weight="0.5"
-                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/horizontal_margin_in_scroll_container"
                 android:text="@string/qr_code_cancel_check_in"
                 tools:text="@string/qr_code_cancel_check_in" />
 

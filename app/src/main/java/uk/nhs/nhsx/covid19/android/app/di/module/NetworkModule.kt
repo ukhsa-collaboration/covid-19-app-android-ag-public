@@ -23,11 +23,14 @@ import uk.nhs.nhsx.covid19.android.app.network.TrafficLengthObfuscationIntercept
 import uk.nhs.nhsx.covid19.android.app.remote.UserAgentInterceptor
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.adapters.ColorSchemeAdapter
+import uk.nhs.nhsx.covid19.android.app.util.adapters.ContentBlockTypeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
+import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalMessageTypeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.PolicyIconAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.RiskyVenueMessageTypeAdapter
-import uk.nhs.nhsx.covid19.android.app.util.adapters.TranslatableAdapter
+import uk.nhs.nhsx.covid19.android.app.util.adapters.TranslatableLocalMessageAdapter
+import uk.nhs.nhsx.covid19.android.app.util.adapters.TranslatableStringAdapter
 import uk.nhs.riskscore.ObservationType
 import uk.nhs.riskscore.ObservationType.gen
 import java.util.UUID
@@ -184,10 +187,13 @@ class NetworkModule(
         return Moshi.Builder()
             .add(LocalDateAdapter())
             .add(InstantAdapter())
-            .add(TranslatableAdapter())
+            .add(TranslatableStringAdapter())
+            .add(TranslatableLocalMessageAdapter())
             .add(PolicyIconAdapter())
             .add(ColorSchemeAdapter())
             .add(RiskyVenueMessageTypeAdapter())
+            .add(LocalMessageTypeAdapter())
+            .add(ContentBlockTypeAdapter())
             .add(
                 ObservationType::class.java,
                 EnumJsonAdapter.create(ObservationType::class.java).withUnknownFallback(gen)

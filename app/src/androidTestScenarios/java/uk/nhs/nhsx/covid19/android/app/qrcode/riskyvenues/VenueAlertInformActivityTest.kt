@@ -3,7 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
+import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlert
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
@@ -61,7 +61,7 @@ class VenueAlertInformActivityTest : EspressoTest() {
 
     @Test
     fun venueScreenFinishesWhenClickingReturnHome() = notReported {
-        testAppContext.getUserInbox().addUserInboxItem(ShowVenueAlert("1", INFORM))
+        testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", INFORM)
 
         val activity = startActivity("1")
         venueAlertInformRobot.clickReturnHomeButton()
@@ -74,7 +74,7 @@ class VenueAlertInformActivityTest : EspressoTest() {
 
     @Test
     fun venueScreenFinishesWhenClickingBackButton() = notReported {
-        testAppContext.getUserInbox().addUserInboxItem(ShowVenueAlert("1", INFORM))
+        testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", INFORM)
 
         val activity = startActivity("1")
 

@@ -12,14 +12,11 @@ class UpdateRecommendedRobot {
 
     fun checkActivityIsDisplayed() {
         onView(withId(R.id.updateRecommendationContainer))
-            .check(
-                matches(isDisplayed())
-            )
+            .check(matches(isDisplayed()))
     }
 
     fun clickAskMeLater() {
         onView(withId(R.id.askMeLater))
-            .perform(scrollTo())
-            .perform(click())
+            .perform(scrollTo(), click())
     }
 }

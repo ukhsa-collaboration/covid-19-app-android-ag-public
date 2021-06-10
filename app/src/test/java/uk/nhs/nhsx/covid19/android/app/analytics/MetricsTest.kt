@@ -8,18 +8,35 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.ExposureWindow
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.UpdateNetworkStats
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ASKED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_REMINDER_SCREEN
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DECLARED_NEGATIVE_RESULT_FROM_DCT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_SEND_LOCAL_INFO_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_ISOLATION_PAYMENTS_APPLICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_TEST_ORDERING
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CODE_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_ACTIVE_IPC_TOKEN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_CONTACT_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_VENUE_M1_WARNING
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_VENUE_M2_WARNING
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_UNCONFIRMED_POSITIVE_TEST_RESULT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RISKY_CONTACT_REMINDER_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_ISOLATION_PAYMENTS_BUTTON
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.STARTED_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SUCCESSFULLY_SHARED_EXPOSURE_KEYS
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.TOTAL_ALARM_MANAGER_BACKGROUND_TASKS
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.TOTAL_SHARE_EXPOSURE_KEYS_REMINDER_NOTIFICATIONS
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.VOID_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.OUTSIDE_APP
@@ -38,55 +55,7 @@ class MetricsTest {
     private val totalBackgroundTasksMetric =
         Metrics().copy(totalBackgroundTasks = expectedLogEventCount)
 
-    @Test
-    fun `add canceledCheckIn for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            Event(CANCELED_CHECK_IN),
-            Metrics().copy(canceledCheckIn = expectedLogEventCount)
-        )
-    }
-
-    @Test
-    fun `add checkedIn for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            Event(QR_CODE_CHECK_IN),
-            Metrics().copy(checkedIn = expectedLogEventCount)
-        )
-    }
-
-    @Test
-    fun `add acknowledgedStartOfIsolationDueToRiskyContact for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            Event(ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT),
-            Metrics().copy(acknowledgedStartOfIsolationDueToRiskyContact = expectedLogEventCount)
-        )
-    }
-
-    @Test
-    fun `add completedQuestionnaireAndStartedIsolation for events in same analytics window`() =
-        runBlocking {
-            `test aggregation of analytics metrics`(
-                Event(COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION),
-                Metrics().copy(completedQuestionnaireAndStartedIsolation = expectedLogEventCount)
-            )
-        }
-
-    @Test
-    fun `add completedQuestionnaireButDidNotStartIsolation for events in same analytics window`() =
-        runBlocking {
-            `test aggregation of analytics metrics`(
-                Event(COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION),
-                Metrics().copy(completedQuestionnaireButDidNotStartIsolation = expectedLogEventCount)
-            )
-        }
-
-    @Test
-    fun `add totalRiskyContactReminderNotifications for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            Event(RISKY_CONTACT_REMINDER_NOTIFICATION),
-            Metrics().copy(totalRiskyContactReminderNotifications = expectedLogEventCount)
-        )
-    }
+    //region network stats
 
     @Test
     fun `add cumulativeDownloadBytes for events in same analytics window`() = runBlocking {
@@ -104,6 +73,10 @@ class MetricsTest {
         )
     }
 
+    //endregion
+
+    //region exposure window
+
     @Test
     fun `add totalExposureWindowsConsideredRisky for events in same analytics window`() = runBlocking {
         `test aggregation of analytics metrics`(
@@ -120,98 +93,9 @@ class MetricsTest {
         )
     }
 
-    @Test
-    fun `add encounterDetectionPausedBackgroundTick for events in same analytics window`() =
-        runBlocking {
-            `test aggregation of analytics metrics`(
-                BackgroundTaskCompletion(
-                    BackgroundTaskTicks(encounterDetectionPausedBackgroundTick = true)
-                ),
-                totalBackgroundTasksMetric.copy(encounterDetectionPausedBackgroundTick = expectedLogEventCount)
-            )
-        }
+    //endregion
 
-    @Test
-    fun `add haveActiveIpcTokenBackgroundTick for events in same analytics window`() =
-        runBlocking {
-            `test aggregation of analytics metrics`(
-                BackgroundTaskCompletion(
-                    BackgroundTaskTicks(haveActiveIpcTokenBackgroundTick = true)
-                ),
-                totalBackgroundTasksMetric.copy(haveActiveIpcTokenBackgroundTick = expectedLogEventCount)
-            )
-        }
-
-    @Test
-    fun `add hasHadRiskyContactBackgroundTick for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            BackgroundTaskCompletion(
-                BackgroundTaskTicks(hasHadRiskyContactBackgroundTick = true)
-            ),
-            totalBackgroundTasksMetric.copy(hasHadRiskyContactBackgroundTick = expectedLogEventCount)
-        )
-    }
-
-    @Test
-    fun `add hasSelfDiagnosedPositiveBackgroundTick for events in same analytics window`() =
-        runBlocking {
-            `test aggregation of analytics metrics`(
-                BackgroundTaskCompletion(
-                    BackgroundTaskTicks(hasSelfDiagnosedPositiveBackgroundTick = true)
-                ),
-                totalBackgroundTasksMetric.copy(hasSelfDiagnosedPositiveBackgroundTick = 9)
-            )
-        }
-
-    @Test
-    fun `add isIsolatingBackgroundTick for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            BackgroundTaskCompletion(
-                BackgroundTaskTicks(isIsolatingBackgroundTick = true)
-            ),
-            totalBackgroundTasksMetric.copy(isIsolatingBackgroundTick = expectedLogEventCount)
-        )
-    }
-
-    @Test
-    fun `add receivedNegativeTestResult for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            Event(NEGATIVE_RESULT_RECEIVED),
-            Metrics().copy(receivedNegativeTestResult = expectedLogEventCount)
-        )
-    }
-
-    @Test
-    fun `add receivedPositiveTestResult for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            Event(POSITIVE_RESULT_RECEIVED),
-            Metrics().copy(receivedPositiveTestResult = expectedLogEventCount)
-        )
-    }
-
-    @Test
-    fun `add receivedVoidTestResult for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            Event(VOID_RESULT_RECEIVED),
-            Metrics().copy(receivedVoidTestResult = expectedLogEventCount)
-        )
-    }
-
-    @Test
-    fun `add receivedRiskyContactNotification for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            Event(RECEIVED_RISKY_CONTACT_NOTIFICATION),
-            Metrics().copy(receivedRiskyContactNotification = 1)
-        )
-    }
-
-    @Test
-    fun `add startedIsolation for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            Event(STARTED_ISOLATION),
-            Metrics().copy(startedIsolation = expectedLogEventCount)
-        )
-    }
+    //region result received
 
     @Test
     fun `add receivedVoidTestResultViaPolling for events in same analytics window`() =
@@ -329,6 +213,100 @@ class MetricsTest {
             )
         }
 
+    //endregion
+
+    //region regular events
+
+    @Test
+    fun `add canceledCheckIn for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(CANCELED_CHECK_IN),
+            Metrics().copy(canceledCheckIn = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add checkedIn for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(QR_CODE_CHECK_IN),
+            Metrics().copy(checkedIn = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add acknowledgedStartOfIsolationDueToRiskyContact for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT),
+            Metrics().copy(acknowledgedStartOfIsolationDueToRiskyContact = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add completedQuestionnaireAndStartedIsolation for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                Event(COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION),
+                Metrics().copy(completedQuestionnaireAndStartedIsolation = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add completedQuestionnaireButDidNotStartIsolation for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                Event(COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION),
+                Metrics().copy(completedQuestionnaireButDidNotStartIsolation = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add totalRiskyContactReminderNotifications for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(RISKY_CONTACT_REMINDER_NOTIFICATION),
+            Metrics().copy(totalRiskyContactReminderNotifications = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add receivedNegativeTestResult for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(NEGATIVE_RESULT_RECEIVED),
+            Metrics().copy(receivedNegativeTestResult = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add receivedPositiveTestResult for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(POSITIVE_RESULT_RECEIVED),
+            Metrics().copy(receivedPositiveTestResult = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add receivedVoidTestResult for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(VOID_RESULT_RECEIVED),
+            Metrics().copy(receivedVoidTestResult = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add receivedRiskyContactNotification for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(RECEIVED_RISKY_CONTACT_NOTIFICATION),
+            Metrics().copy(receivedRiskyContactNotification = 1)
+        )
+    }
+
+    @Test
+    fun `add startedIsolation for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(STARTED_ISOLATION),
+            Metrics().copy(startedIsolation = expectedLogEventCount)
+        )
+    }
+
     @Test
     fun `add receivedActiveIpcToken for events in same analytics window`() = runBlocking {
         `test aggregation of analytics metrics`(
@@ -350,6 +328,199 @@ class MetricsTest {
         `test aggregation of analytics metrics`(
             Event(LAUNCHED_ISOLATION_PAYMENTS_APPLICATION),
             Metrics().copy(launchedIsolationPaymentsApplication = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add launchedTestOrdering for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(LAUNCHED_TEST_ORDERING),
+            Metrics().copy(launchedTestOrdering = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add receivedUnconfirmedPositiveTestResult for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(RECEIVED_UNCONFIRMED_POSITIVE_TEST_RESULT),
+            Metrics().copy(receivedUnconfirmedPositiveTestResult = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add declaredNegativeResultFromDCT for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(DECLARED_NEGATIVE_RESULT_FROM_DCT),
+            Metrics().copy(declaredNegativeResultFromDCT = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add didHaveSymptomsBeforeReceivedTestResult for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT),
+            Metrics().copy(didHaveSymptomsBeforeReceivedTestResult = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add didRememberOnsetSymptomsDateBeforeReceivedTestResult for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT),
+            Metrics().copy(didRememberOnsetSymptomsDateBeforeReceivedTestResult = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add didAskForSymptomsOnPositiveTestEntry for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY),
+            Metrics().copy(didAskForSymptomsOnPositiveTestEntry = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add receivedRiskyVenueM1Warning for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(RECEIVED_RISKY_VENUE_M1_WARNING),
+            Metrics().copy(receivedRiskyVenueM1Warning = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add receivedRiskyVenueM2Warning for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(RECEIVED_RISKY_VENUE_M2_WARNING),
+            Metrics().copy(receivedRiskyVenueM2Warning = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add totalAlarmManagerBackgroundTasks for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(TOTAL_ALARM_MANAGER_BACKGROUND_TASKS),
+            Metrics().copy(totalAlarmManagerBackgroundTasks = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add askedToShareExposureKeysInTheInitialFlow for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(ASKED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW),
+            Metrics().copy(askedToShareExposureKeysInTheInitialFlow = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add consentedToShareExposureKeysInTheInitialFlow for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW),
+            Metrics().copy(consentedToShareExposureKeysInTheInitialFlow = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add consentedToShareExposureKeysInReminderScreen for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_REMINDER_SCREEN),
+            Metrics().copy(consentedToShareExposureKeysInReminderScreen = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add totalShareExposureKeyReminderNotifications for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(TOTAL_SHARE_EXPOSURE_KEYS_REMINDER_NOTIFICATIONS),
+            Metrics().copy(totalShareExposureKeysReminderNotifications = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add successfullySharedExposureKeys for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(SUCCESSFULLY_SHARED_EXPOSURE_KEYS),
+            Metrics().copy(successfullySharedExposureKeys = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add didSendLocalInfoNotification for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(DID_SEND_LOCAL_INFO_NOTIFICATION),
+            Metrics().copy(didSendLocalInfoNotification = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add didAccessLocalInfoScreenViaNotification for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(DID_ACCESS_LOCAL_INFO_SCREEN_VIA_NOTIFICATION),
+            Metrics().copy(didAccessLocalInfoScreenViaNotification = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add didAccessLocalInfoScreenViaBanner for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER),
+            Metrics().copy(didAccessLocalInfoScreenViaBanner = expectedLogEventCount)
+        )
+    }
+
+    //endregion
+
+    //region background ticks
+
+    @Test
+    fun `add encounterDetectionPausedBackgroundTick for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                BackgroundTaskCompletion(
+                    BackgroundTaskTicks(encounterDetectionPausedBackgroundTick = true)
+                ),
+                totalBackgroundTasksMetric.copy(encounterDetectionPausedBackgroundTick = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add haveActiveIpcTokenBackgroundTick for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                BackgroundTaskCompletion(
+                    BackgroundTaskTicks(haveActiveIpcTokenBackgroundTick = true)
+                ),
+                totalBackgroundTasksMetric.copy(haveActiveIpcTokenBackgroundTick = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add hasHadRiskyContactBackgroundTick for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            BackgroundTaskCompletion(
+                BackgroundTaskTicks(hasHadRiskyContactBackgroundTick = true)
+            ),
+            totalBackgroundTasksMetric.copy(hasHadRiskyContactBackgroundTick = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add hasSelfDiagnosedPositiveBackgroundTick for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                BackgroundTaskCompletion(
+                    BackgroundTaskTicks(hasSelfDiagnosedPositiveBackgroundTick = true)
+                ),
+                totalBackgroundTasksMetric.copy(hasSelfDiagnosedPositiveBackgroundTick = 9)
+            )
+        }
+
+    @Test
+    fun `add isIsolatingBackgroundTick for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            BackgroundTaskCompletion(
+                BackgroundTaskTicks(isIsolatingBackgroundTick = true)
+            ),
+            totalBackgroundTasksMetric.copy(isIsolatingBackgroundTick = expectedLogEventCount)
         )
     }
 
@@ -460,6 +631,23 @@ class MetricsTest {
         }
 
     @Test
+    fun `add isDisplayingLocalInfoBackgroundTick for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                BackgroundTaskCompletion(
+                    BackgroundTaskTicks(
+                        isDisplayingLocalInfoBackgroundTick = true
+                    )
+                ),
+                totalBackgroundTasksMetric.copy(isDisplayingLocalInfoBackgroundTick = expectedLogEventCount)
+            )
+        }
+
+    // endregion
+
+    //region missingSubmissionDays
+
+    @Test
     fun `metrics with missingSubmissionDays`() = runBlocking {
         `test aggregation of analytics metrics`(
             Event(QR_CODE_CHECK_IN),
@@ -467,6 +655,8 @@ class MetricsTest {
             2
         )
     }
+
+    //endregion
 
     private fun `test aggregation of analytics metrics`(
         analyticsLogItem: AnalyticsLogItem,

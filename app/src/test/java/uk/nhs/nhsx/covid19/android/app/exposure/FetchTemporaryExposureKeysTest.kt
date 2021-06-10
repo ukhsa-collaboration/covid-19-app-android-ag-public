@@ -128,8 +128,6 @@ class FetchTemporaryExposureKeysTest {
     private val keySharingInfo = KeySharingInfo(
         diagnosisKeySubmissionToken = "token",
         acknowledgedDate = Instant.parse("2014-12-26T12:00:00Z"),
-        notificationSentDate = null,
-        testKitType = null,
-        requiresConfirmatoryTest = false
+        notificationSentDate = null
     )
 }

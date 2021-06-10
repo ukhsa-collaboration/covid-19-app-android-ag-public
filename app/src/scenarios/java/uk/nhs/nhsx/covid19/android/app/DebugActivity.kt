@@ -46,13 +46,14 @@ import kotlinx.android.synthetic.scenarios.activity_debug.shareFlow
 import kotlinx.android.synthetic.scenarios.activity_debug.statusScreen
 import kotlinx.android.synthetic.scenarios.activity_debug.titleScenarios
 import kotlinx.android.synthetic.scenarios.activity_debug.titleScreens
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.SupportedLanguage.DEFAULT
 import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
 import uk.nhs.nhsx.covid19.android.app.about.MoreAboutAppActivity
-import uk.nhs.nhsx.covid19.android.app.about.MyDataActivity
 import uk.nhs.nhsx.covid19.android.app.about.VenueHistoryActivity
+import uk.nhs.nhsx.covid19.android.app.about.mydata.MyDataActivity
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateRecommendedActivity
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationActivity
@@ -60,16 +61,17 @@ import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.common.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableExposureNotificationsActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableLocationActivity
-import uk.nhs.nhsx.covid19.android.app.common.Translatable
+import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityActivity
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityInformationActivity
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
-import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysResultActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.BookFollowUpTestActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysReminderActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysResultActivity
 import uk.nhs.nhsx.covid19.android.app.featureflag.testsettings.TestSettingsActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.DataAndPrivacyActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
@@ -89,6 +91,11 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformActivity
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsDidUpdateIsolation
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenNoSymptoms
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessment
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenSelfAssessmentNoImpactOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
@@ -107,6 +114,7 @@ import uk.nhs.nhsx.covid19.android.app.scenariodialog.MockApiDialogFragment
 import uk.nhs.nhsx.covid19.android.app.scenariodialog.MyDataDialogFragment
 import uk.nhs.nhsx.covid19.android.app.scenariodialog.TestResultDialogFragment
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
+import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsActivity
 import uk.nhs.nhsx.covid19.android.app.settings.languages.LanguagesActivity
 import uk.nhs.nhsx.covid19.android.app.settings.myarea.MyAreaActivity
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
@@ -114,6 +122,8 @@ import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState
 import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingHubActivity
+import uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessageActivity
+import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitKeysProgressActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
@@ -122,6 +132,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultOnsetDateActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultSymptomsActivity
+import uk.nhs.nhsx.covid19.android.app.testordering.unknownresult.UnknownTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.util.crashreporting.CrashReport
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import java.time.Instant
@@ -397,8 +408,24 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             startActivity(reviewSymptomsIntent)
         }
 
-        addScreenButton("Questionnaire Isolation Advice") {
-            SymptomsAdviceIsolateActivity.start(this, true, 14)
+        addScreenButton("Questionnaire Isolation Advice - NoIndexCaseThenIsolationDueToSelfAssessment") {
+            SymptomsAdviceIsolateActivity.start(this, NoIndexCaseThenIsolationDueToSelfAssessment(7))
+        }
+
+        addScreenButton("Questionnaire Isolation Advice - NoIndexCaseThenSelfAssessmentNoImpactOnIsolation") {
+            SymptomsAdviceIsolateActivity.start(this, NoIndexCaseThenSelfAssessmentNoImpactOnIsolation(7))
+        }
+
+        addScreenButton("Questionnaire Isolation Advice - IndexCaseThenHasSymptomsDidUpdateIsolation") {
+            SymptomsAdviceIsolateActivity.start(this, IndexCaseThenHasSymptomsDidUpdateIsolation(7))
+        }
+
+        addScreenButton("Questionnaire Isolation Advice - IndexCaseThenHasSymptomsNoEffectOnIsolation") {
+            SymptomsAdviceIsolateActivity.start(this, IndexCaseThenHasSymptomsNoEffectOnIsolation)
+        }
+
+        addScreenButton("Questionnaire Isolation Advice - IndexCaseThenNoSymptoms") {
+            SymptomsAdviceIsolateActivity.start(this, IndexCaseThenNoSymptoms)
         }
 
         addScreenButton("Testing information") {
@@ -409,6 +436,10 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             TestResultDialogFragment {
                 startActivity<TestResultActivity>()
             }.show(supportFragmentManager, "TestResultDialogFragment")
+        }
+
+        addScreenButton("Book follow-up test") {
+            startActivity<BookFollowUpTestActivity>()
         }
 
         addScreenButton("Encounter detection") {
@@ -455,20 +486,24 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             startActivity<ShareKeysReminderActivity>()
         }
 
+        addScreenButton("Animations") {
+            startActivity<AnimationsActivity>()
+        }
+
         val riskIndicatorWithEmptyPolicyData = RiskIndicator(
             colorScheme = GREEN,
             colorSchemeV2 = GREEN,
-            name = Translatable(mapOf("en" to "Tier1 from post code")),
-            heading = Translatable(mapOf("en" to "Data from the NHS shows that the spread of coronavirus in your area is low.")),
-            content = Translatable(
+            name = TranslatableString(mapOf("en" to "Tier1 from post code")),
+            heading = TranslatableString(mapOf("en" to "Data from the NHS shows that the spread of coronavirus in your area is low.")),
+            content = TranslatableString(
                 mapOf(
                     "en" to "Your local authority has normal measures for coronavirus in place. It’s important that you continue to follow the latest official government guidance to help control the virus.\n" +
                         "\n" +
                         "Find out the restrictions for your local area to help reduce the spread of coronavirus."
                 )
             ),
-            linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-            linkUrl = Translatable(mapOf("en" to "https://faq.covid19.nhs.uk/article/KA-01270/en-us")),
+            linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
+            linkUrl = TranslatableString(mapOf("en" to "https://faq.covid19.nhs.uk/article/KA-01270/en-us")),
             policyData = null
         )
 
@@ -515,17 +550,17 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
                     "CM2",
                     riskIndicatorWithEmptyPolicyData.copy(
                         policyData = PolicyData(
-                            heading = Translatable(mapOf("en" to "Coronavirus cases are very high in your area")),
-                            content = Translatable(mapOf("en" to "Local Authority content high")),
-                            footer = Translatable(mapOf("en" to "Find out what rules apply in your area to help reduce the spread of coronavirus.")),
+                            heading = TranslatableString(mapOf("en" to "Coronavirus cases are very high in your area")),
+                            content = TranslatableString(mapOf("en" to "Local Authority content high")),
+                            footer = TranslatableString(mapOf("en" to "Find out what rules apply in your area to help reduce the spread of coronavirus.")),
                             policies = listOf(
                                 Policy(
                                     policyIcon = MEETING_PEOPLE,
-                                    policyHeading = Translatable(mapOf("en" to "Meeting people")),
-                                    policyContent = Translatable(mapOf("en" to "Rule of six indoors and outdoors, in all settings."))
+                                    policyHeading = TranslatableString(mapOf("en" to "Meeting people")),
+                                    policyContent = TranslatableString(mapOf("en" to "Rule of six indoors and outdoors, in all settings."))
                                 )
                             ),
-                            localAuthorityRiskTitle = Translatable(mapOf("en" to "Local Authority is in local COVID alert level: high"))
+                            localAuthorityRiskTitle = TranslatableString(mapOf("en" to "Local Authority is in local COVID alert level: high"))
                         )
                     ),
                     riskLevelFromLocalAuthority = true
@@ -560,6 +595,14 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             notifications.showStateExpirationNotification()
             notifications.showTestResultsReceivedNotification()
             notifications.showRecommendedAppUpdateIsAvailable()
+            GlobalScope.launch {
+                val message = appComponent.provideGetLocalMessageFromStorage().invoke()
+                if (message?.head != null && message.body != null) {
+                    notifications.showLocalMessageNotification(title = message.head, message = message.body)
+                } else {
+                    Timber.d("Local information notification not shown because no message stored")
+                }
+            }
         }
 
         addScreenButton("Trigger background tasks") {
@@ -612,8 +655,21 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             startActivity<ContactTracingHubActivity>()
         }
 
+        addScreenButton("Unknown test result") {
+            startActivity<UnknownTestResultActivity>()
+        }
+
         addScreenButton("Add RemoteServiceException to storage") {
-            appComponent.provideCrashReportProvider().crashReport = CrashReport("android.app.RemoteServiceException", Thread.currentThread().name, "Test Stack trace...")
+            appComponent.provideCrashReportProvider().crashReport =
+                CrashReport("android.app.RemoteServiceException", Thread.currentThread().name, "Test Stack trace...")
+        }
+
+        addScreenButton("Testing Hub") {
+            startActivity<TestingHubActivity>()
+        }
+
+        addScreenButton("Local message") {
+            startActivity<LocalMessageActivity>()
         }
     }
 
@@ -726,7 +782,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
 
     private val reviewSymptomsIntent: Intent by lazy {
-        val strings = Translatable(mapOf("en" to "Test"))
+        val strings = TranslatableString(mapOf("en" to "Test"))
         Intent(this, ReviewSymptomsActivity::class.java).apply {
             putParcelableArrayListExtra(
                 ReviewSymptomsActivity.EXTRA_QUESTIONS,
@@ -764,9 +820,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
     private val keySharingInfo = KeySharingInfo(
         diagnosisKeySubmissionToken = "token",
-        acknowledgedDate = Instant.now(),
-        testKitType = LAB_RESULT,
-        requiresConfirmatoryTest = false
+        acknowledgedDate = Instant.now()
     )
 
     private val venueVisits = listOf(

@@ -10,19 +10,27 @@ import uk.nhs.nhsx.covid19.android.app.common.Lce
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.NoSymptoms
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.ReviewSymptoms
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.SymptomsAdviceForIndexCaseThenNoSymptoms
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
+import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
+import java.time.Clock
 import javax.inject.Inject
 
 class QuestionnaireViewModel @Inject constructor(
-    private val loadQuestionnaire: LoadQuestionnaire
+    private val loadQuestionnaire: LoadQuestionnaire,
+    private val isolationStateMachine: IsolationStateMachine,
+    private val clock: Clock
 ) : ViewModel() {
 
     @VisibleForTesting
     var viewState = MutableLiveData<Lce<QuestionnaireState>>()
     fun viewState(): LiveData<Lce<QuestionnaireState>> = viewState
 
-    private val navigateToReviewScreen = SingleLiveEvent<QuestionnaireState>()
-    fun navigateToReviewScreen(): LiveData<QuestionnaireState> = navigateToReviewScreen
+    private val navigationTarget = SingleLiveEvent<NavigationTarget>()
+    fun navigationTarget(): LiveData<NavigationTarget> = navigationTarget
 
     fun loadQuestionnaire() {
         if (viewState.value is Lce.Success) {
@@ -72,7 +80,13 @@ class QuestionnaireViewModel @Inject constructor(
     fun onButtonReviewSymptomsClicked() {
         val currentViewState = viewState.value!!.data!!
         if (currentViewState.questions.any { it.isChecked }) {
-            navigateToReviewScreen.postValue(currentViewState.copy(showError = false))
+            navigationTarget.postValue(
+                ReviewSymptoms(
+                    questions = currentViewState.questions,
+                    riskThreshold = currentViewState.riskThreshold,
+                    symptomsOnsetWindowDays = currentViewState.symptomsOnsetWindowDays
+                )
+            )
         } else {
             viewState.postValue(Lce.Success(currentViewState.copy(showError = true)))
         }
@@ -82,7 +96,18 @@ class QuestionnaireViewModel @Inject constructor(
         updateShowDialogState(true)
     }
 
-    fun onDialogDismissed() {
+    fun onNoSymptomsConfirmed() {
+        val isolationState = isolationStateMachine.readLogicalState()
+
+        val target = if (isolationState is PossiblyIsolating && isolationState.hasActivePositiveTestResult(clock)) {
+            SymptomsAdviceForIndexCaseThenNoSymptoms
+        } else {
+            NoSymptoms
+        }
+        navigationTarget.postValue(target)
+    }
+
+    fun onNoSymptomsDialogDismissed() {
         updateShowDialogState(false)
     }
 
@@ -91,6 +116,17 @@ class QuestionnaireViewModel @Inject constructor(
         val updatedViewState = currentViewState.copy(showDialog = showDialog)
         viewState.postValue(Lce.Success(updatedViewState))
     }
+}
+
+sealed class NavigationTarget {
+    data class ReviewSymptoms(
+        val questions: List<Question>,
+        val riskThreshold: Float,
+        val symptomsOnsetWindowDays: Int
+    ) : NavigationTarget()
+
+    object SymptomsAdviceForIndexCaseThenNoSymptoms : NavigationTarget()
+    object NoSymptoms : NavigationTarget()
 }
 
 data class QuestionnaireState(

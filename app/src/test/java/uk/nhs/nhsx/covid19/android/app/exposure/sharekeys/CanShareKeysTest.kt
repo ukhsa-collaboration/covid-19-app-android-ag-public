@@ -7,7 +7,6 @@ import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CanShareKeys.CanShareKeysResult.KeySharingPossible
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CanShareKeys.CanShareKeysResult.NoKeySharingPossible
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import java.time.Instant
@@ -71,9 +70,7 @@ class CanShareKeysTest {
     private fun givenKeySharingInfoNotNull(): KeySharingInfo {
         val keySharingInfo = KeySharingInfo(
             diagnosisKeySubmissionToken = "token",
-            acknowledgedDate = Instant.parse("1970-01-01T00:00:00Z"),
-            testKitType = LAB_RESULT,
-            requiresConfirmatoryTest = false
+            acknowledgedDate = Instant.parse("1970-01-01T00:00:00Z")
         )
 
         every { keySharingInfoProvider.keySharingInfo } returns keySharingInfo

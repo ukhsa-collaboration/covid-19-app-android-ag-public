@@ -2,6 +2,8 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 
 import androidx.annotation.VisibleForTesting
 import androidx.work.ListenableWorker
+import com.squareup.moshi.JsonDataException
+import com.squareup.moshi.JsonEncodingException
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
@@ -21,6 +23,10 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultResponse
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork.ReceivedVirologyTestResult.NoTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork.ReceivedVirologyTestResult.ParsableTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork.ReceivedVirologyTestResult.UnparsableTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.unknownresult.ReceivedUnknownTestResultProvider
 import java.time.Clock
 import java.time.Instant
 import java.time.temporal.ChronoUnit.DAYS
@@ -33,6 +39,7 @@ class DownloadVirologyTestResultWork @Inject constructor(
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider,
     private val analyticsEventProcessor: AnalyticsEventProcessor,
+    private val receivedUnknownTestResultProvider: ReceivedUnknownTestResultProvider,
     private val clock: Clock
 ) {
 
@@ -47,18 +54,29 @@ class DownloadVirologyTestResultWork @Inject constructor(
                 }
 
                 val pollingToken = config.testResultPollingToken
-                val testResultResponse = fetchVirologyTestResult(pollingToken) ?: return@forEach
-                val receivedTestResult = ReceivedTestResult(
-                    config.diagnosisKeySubmissionToken,
-                    testResultResponse.testEndDate,
-                    testResultResponse.testResult,
-                    testResultResponse.testKit,
-                    testResultResponse.diagnosisKeySubmissionSupported,
-                    testResultResponse.requiresConfirmatoryTest
-                )
-                logAnalytics(testResultResponse.testResult, testResultResponse.testKit)
-                stateMachine.processEvent(OnTestResult(receivedTestResult))
-                testOrderingTokensProvider.remove(config)
+
+                when (val receivedTestResultResponse = fetchVirologyTestResult(pollingToken)) {
+                    is ParsableTestResult -> {
+                        val testResultResponse = receivedTestResultResponse.virologyTestResultResponse
+                        val receivedTestResult = ReceivedTestResult(
+                            config.diagnosisKeySubmissionToken,
+                            testResultResponse.testEndDate,
+                            testResultResponse.testResult,
+                            testResultResponse.testKit,
+                            testResultResponse.diagnosisKeySubmissionSupported,
+                            testResultResponse.requiresConfirmatoryTest,
+                            confirmatoryDayLimit = testResultResponse.confirmatoryDayLimit
+                        )
+                        logAnalytics(testResultResponse.testResult, testResultResponse.testKit)
+                        stateMachine.processEvent(OnTestResult(receivedTestResult))
+                        testOrderingTokensProvider.remove(config)
+                    }
+                    UnparsableTestResult -> {
+                        receivedUnknownTestResultProvider.value = true
+                        testOrderingTokensProvider.remove(config)
+                    }
+                    NoTestResult -> return@forEach
+                }
             } catch (exception: Exception) {
                 Timber.e(exception)
             }
@@ -79,17 +97,27 @@ class DownloadVirologyTestResultWork @Inject constructor(
         analyticsEventProcessor.track(ResultReceived(result, testKitType, INSIDE_APP))
     }
 
-    private suspend fun fetchVirologyTestResult(pollingToken: String): VirologyTestResultResponse? =
+    private suspend fun fetchVirologyTestResult(pollingToken: String): ReceivedVirologyTestResult =
         localAuthorityPostCodeProvider.getPostCodeDistrict()?.supportedCountry?.let { country ->
-            val testResultResponse =
-                virologyTestingApi.getTestResult(VirologyTestResultRequestBody(pollingToken, country))
+            try {
+                val testResultResponse =
+                    virologyTestingApi.getTestResult(VirologyTestResultRequestBody(pollingToken, country))
 
-            if (testResultResponse.code() != 200) {
-                Timber.e("Test result polling returned error status code ${testResultResponse.code()}")
+                if (!testResultResponse.isSuccessful) {
+                    Timber.e("Test result polling returned error status code ${testResultResponse.code()}")
+                }
+                if (testResultResponse.code() == 204) {
+                    NoTestResult
+                }
+
+                val virologyTestResultResponse = testResultResponse.body() ?: return NoTestResult
+                ParsableTestResult(virologyTestResultResponse)
+            } catch (exception: JsonDataException) {
+                UnparsableTestResult
+            } catch (jsonEncodingException: JsonEncodingException) {
+                UnparsableTestResult
             }
-
-            testResultResponse.body()
-        }
+        } ?: NoTestResult
 
     @VisibleForTesting
     fun removeIfOld(config: TestOrderPollingConfig): Boolean {
@@ -102,5 +130,14 @@ class DownloadVirologyTestResultWork @Inject constructor(
             return true
         }
         return false
+    }
+
+    sealed class ReceivedVirologyTestResult {
+        data class ParsableTestResult(
+            val virologyTestResultResponse: VirologyTestResultResponse
+        ) : ReceivedVirologyTestResult()
+
+        object UnparsableTestResult : ReceivedVirologyTestResult()
+        object NoTestResult : ReceivedVirologyTestResult()
     }
 }

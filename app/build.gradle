@@ -1,4 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.apache.tools.ant.taskdefs.condition.Os
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -13,12 +14,44 @@ if (jacocoEnabled.toBoolean()) {
     apply from: rootProject.file("jacoco.gradle")
 }
 
-repositories {
-    maven {
-        url = 'https://maven.pkg.github.com/nihp-public/covid-19-app-configuration-public'
-        credentials {
-            username = project.findProperty("gpr.user") ?: System.getenv("PACKAGES_ACCESS_ACTOR")
-            password = project.findProperty("gpr.key") ?: System.getenv("PACKAGES_ACCESS_TOKEN")
+def getPasswordFromSecureStorage(String account, String service) {
+    def stdout = new ByteArrayOutputStream()
+    def stderr = new ByteArrayOutputStream()
+    def executable = ""
+    def arguments = []
+    if (Os.isFamily(Os.FAMILY_MAC)) {
+        executable = 'security'
+        arguments = ['-q', 'find-generic-password', '-a', account, '-s', service, '-w']
+    } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        executable = 'cmd'
+        arguments = ['/c', 'powershell (New-Object PSCredential ${account} (Get-StoredCredential -Target ${service}).password).GetNetworkCredential().Password']
+    } else {
+        return null
+    }
+    exec {
+        commandLine executable
+        args arguments
+        standardOutput = stdout
+        errorOutput = stderr
+        ignoreExitValue true
+    }
+    //noinspection GroovyAssignabilityCheck
+    stdout.toString().trim()
+}
+
+def user = findProperty("gpr.user") ?: System.getenv("PACKAGES_ACCESS_ACTOR")
+def service = "nhs-covid19-apps"
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url = 'https://maven.pkg.github.com/nihp-public/covid-19-app-configuration-public'
+            credentials {
+                username = user
+                password = getPasswordFromSecureStorage(user, service) ?: findProperty("gpr.key") ?: System.getenv("PACKAGES_ACCESS_TOKEN")
+            }
         }
     }
 }
@@ -51,6 +84,7 @@ android {
     buildTypes {
         debug {
             testCoverageEnabled jacocoEnabled.toBoolean()
+            pseudoLocalesEnabled true
         }
 
         release {
@@ -182,7 +216,6 @@ dependencies {
     implementation "androidx.browser:browser:1.2.0"
     implementation "androidx.preference:preference-ktx:1.1.1"
     implementation 'androidx.security:security-crypto:1.0.0-rc03'
-    implementation 'com.google.android:flexbox:2.0.1'
     implementation 'com.tinder.statemachine:statemachine:0.2.0'
 
     implementation 'com.google.android.gms:play-services-base:17.3.0'
@@ -201,7 +234,6 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     scenariosImplementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
-    scenariosImplementation 'com.github.mrmike:ok2curl:0.6.0'
 
     implementation "com.squareup.moshi:moshi:$moshi_version"
     implementation "com.squareup.moshi:moshi-adapters:$moshi_version"
@@ -236,10 +268,6 @@ dependencies {
     scenariosImplementation 'com.google.protobuf:protobuf-java:3.11.4'
     scenariosImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
-    androidTestImplementation('com.schibsted.spain:barista:3.6.0') {
-        exclude group: 'org.jetbrains.kotlin'
-    }
-
     implementation 'com.google.android.play:core:1.8.0'
     implementation 'com.google.android.play:core-ktx:1.8.1'
 
@@ -251,7 +279,6 @@ dependencies {
 afterEvaluate {
     dependencies {
         productionDebugImplementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
-        productionDebugImplementation 'com.github.mrmike:ok2curl:0.6.0'
     }
 }
 

@@ -8,10 +8,9 @@ import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed
-import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.adapter.QuestionnaireViewAdapter.QuestionnaireViewHolder
+import uk.nhs.nhsx.covid19.android.app.testhelpers.NestedScrollViewScrollToAction
 
 class QuestionnaireRobot {
 
@@ -31,7 +30,8 @@ class QuestionnaireRobot {
     }
 
     fun clickTryAgainButton() {
-        clickOn(R.id.buttonTryAgain)
+        onView(withId(R.id.buttonTryAgain))
+            .perform(click())
     }
 
     fun selectSymptomsAtPositions(vararg position: Int) {
@@ -51,15 +51,18 @@ class QuestionnaireRobot {
     }
 
     fun reviewSymptoms() {
-        clickOn(R.id.buttonReviewSymptoms)
+        onView(withId(R.id.buttonReviewSymptoms))
+            .perform(NestedScrollViewScrollToAction(), click())
     }
 
     fun confirmErrorScreenIsDisplayed() {
-        assertDisplayed(R.id.errorPanel)
+        onView(withId(R.id.errorPanel))
+            .check(matches(isDisplayed()))
     }
 
     fun selectNoSymptoms() {
-        clickOn(R.id.textNoSymptoms)
+        onView(withId(R.id.textNoSymptoms))
+            .perform(NestedScrollViewScrollToAction(), click())
     }
 
     fun discardSymptomsDialogIsDisplayed() {
@@ -70,12 +73,10 @@ class QuestionnaireRobot {
     }
 
     fun continueOnDiscardSymptomsDialog() {
-        onView(withText(R.string.confirm))
-            .perform(click())
+        clickDialogPositiveButton()
     }
 
     fun cancelOnDiscardSymptomsDialog() {
-        onView(withText(R.string.cancel))
-            .perform(click())
+        clickDialogNegativeButton()
     }
 }

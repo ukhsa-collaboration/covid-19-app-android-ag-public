@@ -12,6 +12,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.RiskyContactReminderNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController.Companion.EXPOSURE_NOTIFICATION_RETRY_ALARM_INTENT_ID
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.ShouldShowEncounterDetectionActivityProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationRetryReceiver
 import uk.nhs.nhsx.covid19.android.app.util.BroadcastProvider
 import java.time.Clock

@@ -7,6 +7,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.about.mydata.MyDataActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDate
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueConfigurationDurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
@@ -25,6 +26,9 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MoreAboutAppRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MyDataRobot
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionStatus
+import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionStatus.COMPLETED
+import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionStatus.COMPLETED_AND_CONFIRMED
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import java.time.LocalDate
@@ -158,7 +162,18 @@ class MyDataActivityTest : EspressoTest() {
             POSITIVE,
             RAPID_SELF_REPORTED,
             requiresConfirmatoryTest = true,
-            receivedFollowUpTest = LocalDate.parse("2020-07-18")
+            completedDate = LocalDate.parse("2020-07-18")
+        )
+    }
+
+    @Test
+    fun requiresConfirmatoryTestReceivedFollowUpAfterDayLimitTestShouldBeComplete() = notReported {
+        displayLastAcknowledgedTestResult(
+            POSITIVE,
+            RAPID_RESULT,
+            requiresConfirmatoryTest = true,
+            completedDate = LocalDate.parse("2020-07-18"),
+            confirmatoryTestCompletionStatus = COMPLETED
         )
     }
 
@@ -184,7 +199,8 @@ class MyDataActivityTest : EspressoTest() {
         testResult: VirologyTestResult,
         testKitType: VirologyTestKitType?,
         requiresConfirmatoryTest: Boolean = false,
-        receivedFollowUpTest: LocalDate? = null
+        completedDate: LocalDate? = null,
+        confirmatoryTestCompletionStatus: ConfirmatoryTestCompletionStatus? = completedDate?.let { COMPLETED_AND_CONFIRMED }
     ) {
         when (testResult) {
             POSITIVE -> testAppContext.setState(
@@ -195,13 +211,14 @@ class MyDataActivityTest : EspressoTest() {
                         testKitType = testKitType,
                         requiresConfirmatoryTest = requiresConfirmatoryTest,
                         acknowledgedDate = LocalDate.now(),
-                        confirmedDate = receivedFollowUpTest
+                        confirmedDate = completedDate,
+                        confirmatoryTestCompletionStatus = confirmatoryTestCompletionStatus
                     )
                 ).asIsolation()
             )
 
             NEGATIVE -> {
-                if (requiresConfirmatoryTest || receivedFollowUpTest != null) {
+                if (requiresConfirmatoryTest || completedDate != null) {
                     throw IllegalArgumentException("Negative test results should not need or accept a follow-up test")
                 }
 
@@ -227,7 +244,7 @@ class MyDataActivityTest : EspressoTest() {
 
         val shouldKitTypeBeVisible = testKitType != null
 
-        val date: String? = receivedFollowUpTest
+        val date: String? = completedDate
             ?.uiFormat(InstrumentationRegistry.getInstrumentation().targetContext)
 
         waitFor {

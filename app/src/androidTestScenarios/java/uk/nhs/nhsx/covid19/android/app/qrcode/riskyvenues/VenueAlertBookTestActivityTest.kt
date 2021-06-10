@@ -3,7 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
+import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlert
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
@@ -63,7 +63,8 @@ class VenueAlertBookTestActivityTest : EspressoTest() {
 
     @Test
     fun venueScreenFinishedWhenClickingIllDoItLater() = notReported {
-        testAppContext.getUserInbox().addUserInboxItem(ShowVenueAlert("1", BOOK_TEST))
+        testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", BOOK_TEST)
+
         val activity = startActivity("1")
 
         venueAlertBookTestRobot.checkTitleIsDisplayed()
@@ -77,8 +78,10 @@ class VenueAlertBookTestActivityTest : EspressoTest() {
 
     @Test
     fun venueScreenLeadsToBookTestScreenWhenClickingBookTest() = notReported {
-        testAppContext.getUserInbox().addUserInboxItem(ShowVenueAlert("1", BOOK_TEST))
+        testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", BOOK_TEST)
+
         startActivity("1")
+
         venueAlertBookTestRobot.checkTitleIsDisplayed()
         venueAlertBookTestRobot.clickBookTestButton()
         testOrderingRobot.checkActivityIsDisplayed()
@@ -89,7 +92,7 @@ class VenueAlertBookTestActivityTest : EspressoTest() {
 
     @Test
     fun venueScreenFinishesWhenClickingBackButton() = notReported {
-        testAppContext.getUserInbox().addUserInboxItem(ShowVenueAlert("1", BOOK_TEST))
+        testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", BOOK_TEST)
 
         val activity = startActivity("1")
 

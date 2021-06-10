@@ -15,15 +15,15 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalyticsAlarmController
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
-import uk.nhs.nhsx.covid19.android.app.common.Translatable
+import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.di.ApplicationClock
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfoProvider
 import uk.nhs.nhsx.covid19.android.app.fieldtests.utils.KeyFileWriter
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
+import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlert
+import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDate
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
@@ -37,15 +37,20 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderPollingConfig
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingTokensProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.unknownresult.ReceivedUnknownTestResultProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import java.io.File
 import java.time.Clock
@@ -59,7 +64,7 @@ class DebugViewModel @Inject constructor(
     private val periodicTasks: PeriodicTasks,
     private val testOrderingTokensProvider: TestOrderingTokensProvider,
     private val venueStorage: VisitedVenuesStorage,
-    private val userInbox: UserInbox,
+    private val riskyVenueAlertProvider: RiskyVenueAlertProvider,
     private val notificationProvider: NotificationProvider,
     private val riskyPostCodeIndicatorProvider: RiskyPostCodeIndicatorProvider,
     private val exposureNotificationApi: ExposureNotificationApi,
@@ -67,6 +72,7 @@ class DebugViewModel @Inject constructor(
     private val riskyVenueConfigurationProvider: RiskyVenueConfigurationProvider,
     private val submitAnalyticsAlarmController: SubmitAnalyticsAlarmController,
     private val exposureCircuitBreakerInfoProvider: ExposureCircuitBreakerInfoProvider,
+    private val receivedUnknownTestResultProvider: ReceivedUnknownTestResultProvider,
     private val clock: Clock,
     private val dateChangeReceiver: DateChangeReceiver,
 ) : ViewModel() {
@@ -81,45 +87,80 @@ class DebugViewModel @Inject constructor(
         submitAnalyticsAlarmController.onAlarmTriggered()
     }
 
-    fun sendPositiveTestResult(context: Context, testKitType: VirologyTestKitType) {
-        sendTestResult(context, POSITIVE, testKitType)
+    fun sendPositiveConfirmedTestResult(context: Context) {
+        sendConfirmedTestResult(context, POSITIVE)
     }
 
-    fun sendNegativeTestResult(context: Context, testKitType: VirologyTestKitType) {
-        sendTestResult(context, NEGATIVE, testKitType)
+    fun sendNegativeConfirmedTestResult(context: Context) {
+        sendConfirmedTestResult(context, NEGATIVE)
     }
 
-    fun sendVoidTestResult(context: Context, testKitType: VirologyTestKitType) {
-        sendTestResult(context, VOID, testKitType)
+    fun sendVoidConfirmedTestResult(context: Context) {
+        sendConfirmedTestResult(context, VOID)
     }
 
-    private fun sendTestResult(
+    fun sendPlodConfirmedTestResult(context: Context) {
+        sendConfirmedTestResult(context, PLOD)
+    }
+
+    fun sendPositiveUnconfirmedTestResult() {
+        sendTestResult(
+            virologyTestResult = POSITIVE,
+            testKitType = RAPID_RESULT,
+            requiresConfirmatoryTest = true,
+            confirmatoryDayLimit = 2,
+            token = "token"
+        )
+    }
+
+    private fun sendConfirmedTestResult(
         context: Context,
-        virologyTestResult: VirologyTestResult,
-        testKitType: VirologyTestKitType
+        virologyTestResult: VirologyTestResult
     ) {
         val config = testOrderingTokensProvider.configs.firstOrNull()
         if (config == null) {
             Toast.makeText(context, "Order a test first!", LENGTH_LONG).show()
             return
         }
+        sendTestResult(
+            virologyTestResult = virologyTestResult,
+            testKitType = LAB_RESULT,
+            requiresConfirmatoryTest = false,
+            confirmatoryDayLimit = null,
+            config = config
+        )
+    }
+
+    private fun sendTestResult(
+        virologyTestResult: VirologyTestResult,
+        testKitType: VirologyTestKitType,
+        requiresConfirmatoryTest: Boolean = false,
+        confirmatoryDayLimit: Int? = null,
+        config: TestOrderPollingConfig? = null,
+        token: String? = config?.diagnosisKeySubmissionToken
+    ) {
         viewModelScope.launch {
             delay(3_000)
-            testOrderingTokensProvider.remove(config)
+            config?.let { testOrderingTokensProvider.remove(it) }
 
             val receivedTestResult = ReceivedTestResult(
-                config.diagnosisKeySubmissionToken,
-                Instant.now(),
+                token,
+                Instant.now(clock),
                 virologyTestResult,
                 testKitType,
                 diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+                requiresConfirmatoryTest = requiresConfirmatoryTest,
+                confirmatoryDayLimit = confirmatoryDayLimit
             )
 
             isolationStateMachine.processEvent(
                 OnTestResult(receivedTestResult)
             )
         }
+    }
+
+    fun sendUnknownTestResult() {
+        receivedUnknownTestResultProvider.value = true
     }
 
     fun setDefaultState() {
@@ -151,7 +192,7 @@ class DebugViewModel @Inject constructor(
                     riskyVenueConfigurationProvider.durationDays
                 )
             }
-            userInbox.addUserInboxItem(ShowVenueAlert("Risky Venue Id", type))
+            riskyVenueAlertProvider.riskyVenueAlert = RiskyVenueAlert("Risky Venue Id", type)
             notificationProvider.showRiskyVenueVisitNotification()
         }
     }
@@ -162,17 +203,17 @@ class DebugViewModel @Inject constructor(
             RiskIndicator(
                 colorScheme = GREEN,
                 colorSchemeV2 = GREEN,
-                name = Translatable(mapOf("en" to "Tier1")),
-                heading = Translatable(mapOf("en" to "Data from the NHS shows that the spread of coronavirus in your area is low.")),
-                content = Translatable(
+                name = TranslatableString(mapOf("en" to "Tier1")),
+                heading = TranslatableString(mapOf("en" to "Data from the NHS shows that the spread of coronavirus in your area is low.")),
+                content = TranslatableString(
                     mapOf(
                         "en" to "Your local authority has normal measures for coronavirus in place. It’s important that you continue to follow the latest official government guidance to help control the virus.\n" +
                             "\n" +
                             "Find out the restrictions for your local area to help reduce the spread of coronavirus."
                     )
                 ),
-                linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-                linkUrl = Translatable(mapOf("en" to "https://faq.covid19.nhs.uk/article/KA-01270/en-us")),
+                linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
+                linkUrl = TranslatableString(mapOf("en" to "https://faq.covid19.nhs.uk/article/KA-01270/en-us")),
                 policyData = null
             )
         )

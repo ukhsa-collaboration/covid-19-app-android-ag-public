@@ -70,20 +70,20 @@ private fun updateRegularStrings(
     updatedStrings: MutableMap<String, String>
 ) {
     val strings = doc.getElementsByTagName("string")
-    val updatedStrings = (updatedStrings.filterKeys { !it.contains("|") }).toMutableMap()
+    val filteredUpdatedStrings = (updatedStrings.filterKeys { !it.contains("|") }).toMutableMap()
 
     for (temp in 0 until strings.length) {
         val node = strings.item(temp)
         if (node.nodeType == Node.ELEMENT_NODE) {
             val element = node as Element
             val name = element.getAttribute("name")
-            val updatedValue = updatedStrings[name]
+            val updatedValue = filteredUpdatedStrings[name]
             if (updatedValue == null) {
                 println("No new value for string name: $name")
             } else {
                 val prevValue = element.textContent
                 element.textContent = updatedValue
-                updatedStrings.remove(name)
+                filteredUpdatedStrings.remove(name)
 
                 if (prevValue != updatedValue && (prevValue.contains("%") || updatedValue.contains("%"))) {
                     println("Template string was changed $name")
@@ -96,7 +96,7 @@ private fun updateRegularStrings(
 
     val resources = doc.getElementsByTagName("resources").item(0)
 
-    updatedStrings.forEach { (name, value) ->
+    filteredUpdatedStrings.forEach { (name, value) ->
         if (value != "") {
             val newElement = doc.createElement("string")
             newElement.setAttribute("name", name)

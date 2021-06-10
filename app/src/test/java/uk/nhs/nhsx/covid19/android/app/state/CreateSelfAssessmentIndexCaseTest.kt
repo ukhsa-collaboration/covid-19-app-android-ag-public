@@ -2,8 +2,11 @@ package uk.nhs.nhsx.covid19.android.app.state
 
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
+import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -29,7 +32,8 @@ class CreateSelfAssessmentIndexCaseTest {
 
         val result = testSubject(
             currentState.asLogical(),
-            selfAssessment
+            selfAssessment,
+            discardTestResultIfPresent = true
         )
 
         val expectedExpiryDate = onsetDate.plusDays(isolationConfiguration.indexCaseSinceSelfDiagnosisOnset.toLong())
@@ -49,7 +53,8 @@ class CreateSelfAssessmentIndexCaseTest {
 
         val result = testSubject(
             currentState.asLogical(),
-            selfAssessment
+            selfAssessment,
+            discardTestResultIfPresent = true
         )
 
         val expectedExpiryDate = selfAssessmentDate.plusDays(isolationConfiguration.indexCaseSinceSelfDiagnosisUnknownOnset.toLong())
@@ -73,7 +78,8 @@ class CreateSelfAssessmentIndexCaseTest {
 
         val result = testSubject(
             currentState.asLogical(),
-            selfAssessment
+            selfAssessment,
+            discardTestResultIfPresent = true
         )
 
         // Since the contact case started earlier and the self-assessment will exceed the maximum duration, it will be capped
@@ -97,7 +103,8 @@ class CreateSelfAssessmentIndexCaseTest {
 
         val result = testSubject(
             currentState.asLogical(),
-            selfAssessment
+            selfAssessment,
+            discardTestResultIfPresent = true
         )
 
         // Since the contact case started earlier and the self-assessment will exceed the maximum duration, it will be capped
@@ -105,6 +112,54 @@ class CreateSelfAssessmentIndexCaseTest {
         val expectedIndexCase = IndexCase(
             isolationTrigger = selfAssessment,
             expiryDate = expectedExpiryDate
+        )
+        assertEquals(expectedIndexCase, result)
+    }
+
+    @Test
+    fun `create self-assessment and do not discard test result`() {
+        val testResult = AcknowledgedTestResult(
+            testEndDate = LocalDate.now(fixedClock).minusDays(1),
+            testResult = POSITIVE,
+            testKitType = LAB_RESULT,
+            acknowledgedDate = LocalDate.now(fixedClock).minusDays(1)
+        )
+        val currentState = isolationHelper.positiveTest(testResult).asIsolation()
+
+        val selfAssessmentDate = LocalDate.now(fixedClock)
+        val selfAssessment = SelfAssessment(selfAssessmentDate)
+
+        val result = testSubject(currentState.asLogical(), selfAssessment, discardTestResultIfPresent = false)
+
+        val expectedExpiryDate = selfAssessmentDate.plusDays(isolationConfiguration.indexCaseSinceSelfDiagnosisUnknownOnset.toLong())
+        val expectedIndexCase = IndexCase(
+            isolationTrigger = selfAssessment,
+            expiryDate = expectedExpiryDate,
+            testResult = testResult
+        )
+        assertEquals(expectedIndexCase, result)
+    }
+
+    @Test
+    fun `create self-assessment and discard test result`() {
+        val testResult = AcknowledgedTestResult(
+            testEndDate = LocalDate.now(fixedClock).minusDays(1),
+            testResult = POSITIVE,
+            testKitType = LAB_RESULT,
+            acknowledgedDate = LocalDate.now(fixedClock).minusDays(1)
+        )
+        val currentState = isolationHelper.positiveTest(testResult).asIsolation()
+
+        val selfAssessmentDate = LocalDate.now(fixedClock)
+        val selfAssessment = SelfAssessment(selfAssessmentDate)
+
+        val result = testSubject(currentState.asLogical(), selfAssessment, discardTestResultIfPresent = true)
+
+        val expectedExpiryDate = selfAssessmentDate.plusDays(isolationConfiguration.indexCaseSinceSelfDiagnosisUnknownOnset.toLong())
+        val expectedIndexCase = IndexCase(
+            isolationTrigger = selfAssessment,
+            expiryDate = expectedExpiryDate,
+            testResult = null
         )
         assertEquals(expectedIndexCase, result)
     }

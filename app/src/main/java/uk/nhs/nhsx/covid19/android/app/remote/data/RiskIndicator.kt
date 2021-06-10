@@ -3,28 +3,28 @@ package uk.nhs.nhsx.covid19.android.app.remote.data
 import android.os.Parcelable
 import com.squareup.moshi.JsonClass
 import kotlinx.android.parcel.Parcelize
-import uk.nhs.nhsx.covid19.android.app.common.Translatable
+import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class RiskIndicator(
     val colorScheme: ColorScheme,
     val colorSchemeV2: ColorScheme? = null,
-    val name: Translatable,
-    val heading: Translatable,
-    val content: Translatable,
-    val linkTitle: Translatable,
-    val linkUrl: Translatable,
+    val name: TranslatableString,
+    val heading: TranslatableString,
+    val content: TranslatableString,
+    val linkTitle: TranslatableString,
+    val linkUrl: TranslatableString,
     val policyData: PolicyData?
 ) : Parcelable
 
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class PolicyData(
-    val heading: Translatable,
-    val content: Translatable,
-    val footer: Translatable,
-    val localAuthorityRiskTitle: Translatable,
+    val heading: TranslatableString,
+    val content: TranslatableString,
+    val footer: TranslatableString,
+    val localAuthorityRiskTitle: TranslatableString,
     val policies: List<Policy>
 ) : Parcelable
 
@@ -32,8 +32,8 @@ data class PolicyData(
 @JsonClass(generateAdapter = true)
 data class Policy(
     val policyIcon: PolicyIcon,
-    val policyHeading: Translatable,
-    val policyContent: Translatable
+    val policyHeading: TranslatableString,
+    val policyContent: TranslatableString
 ) : Parcelable
 
 @Parcelize

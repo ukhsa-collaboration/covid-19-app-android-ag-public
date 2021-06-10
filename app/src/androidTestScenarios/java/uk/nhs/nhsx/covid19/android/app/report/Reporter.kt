@@ -61,7 +61,11 @@ class AndroidReporter internal constructor(
                     testAppContext.reset()
 
                     if (i == 4) {
-                        Log.e("Reporter", "Configuration failed: $configuration for scenario: $scenario $name", exception)
+                        Log.e(
+                            "Reporter",
+                            "Configuration failed: $configuration for scenario: $scenario $name",
+                            exception
+                        )
                         failedConfigurations.add(configuration to exception)
                     }
                 }
@@ -268,10 +272,10 @@ fun EspressoTest.reporter(
 fun notReported(
     action: () -> Unit
 ) {
-    val takeScreenshots =
-        InstrumentationRegistry.getArguments().getString("takeScreenshots")?.toBoolean()
-            ?: false
-    if (!takeScreenshots) {
+    if (!isRunningScreenshotCapture()) {
         action()
     }
 }
+
+fun isRunningScreenshotCapture() =
+    InstrumentationRegistry.getArguments().getString("takeScreenshots")?.toBoolean() ?: false

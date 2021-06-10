@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
+import kotlinx.android.synthetic.main.view_isolation_status.view.imgCircleIsolationStatic
 import kotlinx.android.synthetic.main.view_isolation_status.view.imgCirclePulseAnim
 import kotlinx.android.synthetic.main.view_isolation_status.view.imgCircleSmallPulseAnim
 import kotlinx.android.synthetic.main.view_isolation_status.view.isolationCountdownView
@@ -14,6 +16,9 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.Isolating
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
+import uk.nhs.nhsx.covid19.android.app.widgets.IsolationStatusView.AnimationState.ANIMATION_DISABLED_EN_DISABLED
+import uk.nhs.nhsx.covid19.android.app.widgets.IsolationStatusView.AnimationState.ANIMATION_DISABLED_EN_ENABLED
+import uk.nhs.nhsx.covid19.android.app.widgets.IsolationStatusView.AnimationState.ANIMATION_ENABLED_EN_ENABLED
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -26,15 +31,19 @@ class IsolationStatusView @JvmOverloads constructor(
 
     private var daysToGo = 0
 
-    var isAnimationEnabled = false
+    var animationState = ANIMATION_ENABLED_EN_ENABLED
         set(value) {
             field = value
             updateAnimations(
                 context = context,
-                isAnimationEnabled = isAnimationEnabled,
+                isAnimationEnabled = value == ANIMATION_ENABLED_EN_ENABLED,
                 animatedView = imgCirclePulseAnim,
-                smallAnimatedView = imgCircleSmallPulseAnim
+                smallAnimatedView = imgCircleSmallPulseAnim,
             )
+            imgCircleIsolationStatic.isVisible = when (value) {
+                ANIMATION_DISABLED_EN_ENABLED -> true
+                ANIMATION_ENABLED_EN_ENABLED, ANIMATION_DISABLED_EN_DISABLED -> false
+            }
         }
 
     init {
@@ -69,5 +78,9 @@ class IsolationStatusView @JvmOverloads constructor(
             lastDayOfIsolation.uiFormat(context),
             daysToGo
         )
+    }
+
+    enum class AnimationState {
+        ANIMATION_ENABLED_EN_ENABLED, ANIMATION_DISABLED_EN_ENABLED, ANIMATION_DISABLED_EN_DISABLED
     }
 }

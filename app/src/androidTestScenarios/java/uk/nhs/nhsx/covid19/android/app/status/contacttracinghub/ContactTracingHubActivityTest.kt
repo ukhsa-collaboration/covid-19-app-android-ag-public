@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.status.contacttracinghub
 
+import androidx.test.filters.FlakyTest
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result
 import uk.nhs.nhsx.covid19.android.app.exposure.setExposureNotificationResolutionRequired
@@ -92,6 +93,7 @@ class ContactTracingHubActivityTest : EspressoTest() {
     }
 
     @Test
+    @FlakyTest
     fun toggleContactTracingReminder_rotateScreen_thenClickCancel_shouldDismissDialogAndShowContactTracingScreen() = notReported {
         testAppContext.getExposureNotificationApi().setEnabled(true)
 
@@ -111,7 +113,7 @@ class ContactTracingHubActivityTest : EspressoTest() {
         waitFor { exposureNotificationReminderRobot.checkDialogIsDisplayed() }
         exposureNotificationReminderRobot.clickCancelButton()
 
-        contactTracingHubRobot.checkActivityIsDisplayed()
+        waitFor { contactTracingHubRobot.checkActivityIsDisplayed() }
         contactTracingHubRobot.checkContactTracingToggledOnIsDisplayed()
     }
 

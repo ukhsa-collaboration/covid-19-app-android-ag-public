@@ -4,7 +4,9 @@ import com.squareup.moshi.JsonClass
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
+import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionStatus.COMPLETED_AND_CONFIRMED
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import java.time.LocalDate
 
@@ -12,17 +14,22 @@ import java.time.LocalDate
 data class AcknowledgedTestResult(
     val testEndDate: LocalDate,
     val testResult: RelevantVirologyTestResult,
-    override val testKitType: VirologyTestKitType?,
+    val testKitType: VirologyTestKitType?,
     val acknowledgedDate: LocalDate,
-    override val requiresConfirmatoryTest: Boolean = false,
-    val confirmedDate: LocalDate? = null
-) : TestResult {
-
-    override fun isPositive(): Boolean =
+    val requiresConfirmatoryTest: Boolean = false,
+    val confirmedDate: LocalDate? = null,
+    val confirmatoryDayLimit: Int? = null,
+    val confirmatoryTestCompletionStatus: ConfirmatoryTestCompletionStatus? = null
+) {
+    fun isPositive(): Boolean =
         testResult == POSITIVE
 
-    override fun isConfirmed(): Boolean =
-        !requiresConfirmatoryTest || confirmedDate != null
+    fun isConfirmed(): Boolean =
+        confirmatoryTestCompletionStatus == COMPLETED_AND_CONFIRMED || !requiresConfirmatoryTest
+}
+
+enum class ConfirmatoryTestCompletionStatus {
+    COMPLETED, COMPLETED_AND_CONFIRMED
 }
 
 enum class RelevantVirologyTestResult(val relevance: Int) {
@@ -34,5 +41,5 @@ fun VirologyTestResult.toRelevantVirologyTestResult(): RelevantVirologyTestResul
     when (this) {
         VirologyTestResult.POSITIVE -> POSITIVE
         NEGATIVE -> RelevantVirologyTestResult.NEGATIVE
-        VOID -> null
+        VOID, PLOD -> null
     }

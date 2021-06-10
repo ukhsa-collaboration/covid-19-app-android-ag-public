@@ -31,6 +31,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShowShareKeysReminderN
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenues
+import uk.nhs.nhsx.covid19.android.app.status.localmessage.DownloadLocalMessagesWork
 import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWork
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
 import uk.nhs.nhsx.covid19.android.app.util.crashreporting.ProcessRemoteServiceExceptionCrashReport
@@ -44,6 +45,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
     private val analyticsEventProcessorMock = mockk<AnalyticsEventProcessor>(relaxUnitFun = true)
     private val downloadVirologyTestResultWorkMock = mockk<DownloadVirologyTestResultWork>(relaxUnitFun = true)
     private val downloadRiskyPostCodesWorkMock = mockk<DownloadRiskyPostCodesWork>(relaxUnitFun = true)
+    private val downloadLocalMessagesWorkMock = mockk<DownloadLocalMessagesWork>()
     private val downloadAndProcessRiskyVenuesMock = mockk<DownloadAndProcessRiskyVenues>(relaxUnitFun = true)
     private val downloadAndProcessKeysMock = mockk<DownloadAndProcessKeys>(relaxUnitFun = true)
     private val clearOutdatedDataAndUpdateIsolationConfigurationMock =
@@ -67,6 +69,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
             analyticsEventProcessor = analyticsEventProcessorMock
             downloadVirologyTestResultWork = downloadVirologyTestResultWorkMock
             downloadRiskyPostCodesWork = downloadRiskyPostCodesWorkMock
+            downloadLocalMessagesWork = downloadLocalMessagesWorkMock
             downloadAndProcessRiskyVenues = downloadAndProcessRiskyVenuesMock
             downloadAndProcessKeys = downloadAndProcessKeysMock
             clearOutdatedDataAndUpdateIsolationConfiguration = clearOutdatedDataAndUpdateIsolationConfigurationMock
@@ -90,13 +93,14 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
         coEvery { downloadAndProcessKeysMock.invoke() } returns mockk()
         coEvery { downloadVirologyTestResultWorkMock.invoke() } returns mockk()
         coEvery { downloadRiskyPostCodesWorkMock.invoke() } returns mockk()
+        coEvery { downloadLocalMessagesWorkMock.invoke() } returns mockk()
         coEvery { downloadAndProcessRiskyVenuesMock.invoke() } returns mockk()
         every { notificationProviderMock.getUpdatingDatabaseNotification() } returns notificationMock
         coEvery { testSubject.setForeground(any()) } returns Unit
         coEvery { submitAnalyticsMock.invoke(any()) } returns mockk()
         coEvery { submitAnalyticsMock.invoke(any()) } returns mockk()
         every { hasSuccessfullyProcessedNewExposureProviderMock.value } returns null
-        every { showShareKeysReminderNotificationIfNeededMock.invoke() } returns mockk()
+        coEvery { showShareKeysReminderNotificationIfNeededMock.invoke() } returns mockk()
     }
 
     @After
@@ -223,6 +227,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
             downloadAndProcessKeysMock()
             downloadVirologyTestResultWorkMock()
             downloadRiskyPostCodesWorkMock()
+            downloadLocalMessagesWorkMock()
             downloadAndProcessRiskyVenuesMock()
             showShareKeysReminderNotificationIfNeededMock()
             submitAnalyticsMock(any())

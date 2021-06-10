@@ -10,7 +10,6 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
-import uk.nhs.nhsx.covid19.android.app.exposure.ShareKeysResultActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysNavigateTo.Finish
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitKeysProgressActivity
@@ -48,7 +47,7 @@ class ShareKeysReminderActivity : BaseActivity(R.layout.activity_share_keys_remi
         viewModel.navigation().observe(this) { navigateTo ->
             Timber.d("navigateTo: $navigateTo")
             when (navigateTo) {
-                ShareKeysNavigateTo.ShareKeysResultActivity -> {
+                is ShareKeysNavigateTo.ShareKeysResultActivity -> {
                     ShareKeysResultActivity.start(this)
                     finish()
                 }

@@ -4,12 +4,16 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_test_result.goodNewsContainer
 import kotlinx.android.synthetic.main.activity_test_result.isolationRequestContainer
 import kotlinx.android.synthetic.main.view_good_news.goodNewsActionButton
 import kotlinx.android.synthetic.main.view_good_news.goodNewsIcon
+import kotlinx.android.synthetic.main.view_good_news.goodNewsInfoView
+import kotlinx.android.synthetic.main.view_good_news.goodNewsOnlineServiceLink
 import kotlinx.android.synthetic.main.view_good_news.goodNewsParagraphContainer
 import kotlinx.android.synthetic.main.view_good_news.goodNewsSubtitle
 import kotlinx.android.synthetic.main.view_good_news.goodNewsTitle
@@ -28,8 +32,6 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
-import uk.nhs.nhsx.covid19.android.app.inPortraitMode
-import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.Finish
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.NavigateToOrderTest
@@ -39,6 +41,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.Negative
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWontBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PlodWillContinueWithCurrentState
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolationNoChange
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolation
@@ -72,7 +75,10 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
     private fun startViewModelListeners() {
         viewModel.navigationEvent().observe(this) { navigationEvent ->
             when (navigationEvent) {
-                NavigateToShareKeys -> startActivity<ShareKeysInformationActivity>()
+                is NavigateToShareKeys -> startActivityForResult(
+                    ShareKeysInformationActivity.getIntent(this, navigationEvent.bookFollowUpTest),
+                    REQUEST_CODE_SHARE_KEYS
+                )
                 NavigateToOrderTest -> startActivityForResult(
                     TestOrderingActivity.getIntent(this),
                     REQUEST_CODE_ORDER_A_TEST
@@ -81,36 +87,35 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
             }
         }
 
-        viewModel.viewState().observe(
-            this,
-            Observer { viewState ->
-                when (viewState.mainState) {
-                    NegativeNotInIsolation ->
-                        showAreNotIsolatingScreenOnNegative()
-                    NegativeWillBeInIsolation ->
-                        showContinueToSelfIsolationScreenOnNegative(viewState.remainingDaysInIsolation)
-                    NegativeWontBeInIsolation ->
-                        showDoNotHaveToSelfIsolateScreenOnNegative()
-                    PositiveContinueIsolation ->
-                        showContinueToSelfIsolationScreenOnPositive(viewState.remainingDaysInIsolation)
-                    PositiveContinueIsolationNoChange ->
-                        showContinueToSelfIsolationScreenOnPositiveAndNoChange(viewState.remainingDaysInIsolation)
-                    PositiveWillBeInIsolation ->
-                        showSelfIsolateScreenOnPositive(viewState.remainingDaysInIsolation)
-                    PositiveWontBeInIsolation ->
-                        showDoNotHaveToSelfIsolateScreenOnPositive()
-                    NegativeAfterPositiveOrSymptomaticWillBeInIsolation ->
-                        showContinueToSelfIsolationScreenOnNegativeAfterPositiveOrSymptomatic(viewState.remainingDaysInIsolation)
-                    PositiveWillBeInIsolationAndOrderTest ->
-                        showSelfIsolateScreenOnPositiveAndOrderTest(viewState.remainingDaysInIsolation)
-                    VoidNotInIsolation ->
-                        showAreNotIsolatingScreenOnVoid()
-                    VoidWillBeInIsolation ->
-                        showContinueToSelfIsolationScreenOnVoid(viewState.remainingDaysInIsolation)
-                    Ignore -> finish()
-                }
+        viewModel.viewState().observe(this) { viewState ->
+            when (viewState.mainState) {
+                NegativeNotInIsolation ->
+                    showAreNotIsolatingScreenOnNegative()
+                NegativeWillBeInIsolation ->
+                    showContinueToSelfIsolationScreenOnNegative(viewState.remainingDaysInIsolation)
+                NegativeWontBeInIsolation ->
+                    showDoNotHaveToSelfIsolateScreenOnNegative()
+                PositiveContinueIsolation ->
+                    showContinueToSelfIsolationScreenOnPositive(viewState.remainingDaysInIsolation)
+                PositiveContinueIsolationNoChange ->
+                    showContinueToSelfIsolationScreenOnPositiveAndNoChange(viewState.remainingDaysInIsolation)
+                PositiveWillBeInIsolation ->
+                    showSelfIsolateScreenOnPositive(viewState.remainingDaysInIsolation)
+                PositiveWontBeInIsolation ->
+                    showDoNotHaveToSelfIsolateScreenOnPositive()
+                NegativeAfterPositiveOrSymptomaticWillBeInIsolation ->
+                    showContinueToSelfIsolationScreenOnNegativeAfterPositiveOrSymptomatic(viewState.remainingDaysInIsolation)
+                PositiveWillBeInIsolationAndOrderTest ->
+                    showSelfIsolateScreenOnPositiveAndOrderTest(viewState.remainingDaysInIsolation)
+                VoidNotInIsolation ->
+                    showAreNotIsolatingScreenOnVoid()
+                VoidWillBeInIsolation ->
+                    showContinueToSelfIsolationScreenOnVoid(viewState.remainingDaysInIsolation)
+                PlodWillContinueWithCurrentState ->
+                    showContinueWithCurrentStateScreenOnPlod()
+                Ignore -> finish()
             }
-        )
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -128,177 +133,20 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         finish()
     }
 
-    private fun showContinueToSelfIsolationScreenOnPositive(remainingDaysInIsolation: Int) {
-        goodNewsContainer.gone()
-        isolationRequestContainer.visible()
-        exposureFaqsLink.visible()
-
-        isolationRequestImage.setImageResource(R.drawable.ic_isolation_continue)
-        setSelfIsolateTitles(
-            getString(R.string.test_result_positive_continue_self_isolation_title_1),
-            resources.getQuantityString(
-                R.plurals.state_isolation_days,
-                remainingDaysInIsolation,
-                remainingDaysInIsolation
-            )
-        )
-        isolationRequestInfoView.stateText = getString(R.string.state_test_positive_info)
-        isolationRequestInfoView.stateColor = getColor(R.color.error_red)
-        isolationRequestParagraphContainer.addAllParagraphs(
-            getString(R.string.test_result_positive_continue_self_isolate_explanation_1),
-            getString(R.string.test_result_positive_continue_self_isolate_explanation_2),
-            getString(R.string.exposure_faqs_title)
-        )
-
-        isolationRequestActionButton.text = getString(R.string.continue_button)
-        isolationRequestActionButton.setOnSingleClickListener {
-            viewModel.onActionButtonClicked()
-        }
-    }
-
-    private fun showContinueToSelfIsolationScreenOnPositiveAndNoChange(remainingDaysInIsolation: Int) {
-        goodNewsContainer.gone()
-        isolationRequestContainer.visible()
-        exposureFaqsLink.visible()
-
-        isolationRequestImage.setImageResource(R.drawable.ic_isolation_continue)
-        setSelfIsolateTitles(
-            getString(R.string.test_result_positive_continue_self_isolation_title_1),
-            resources.getQuantityString(
-                R.plurals.state_isolation_days,
-                remainingDaysInIsolation,
-                remainingDaysInIsolation
-            )
-        )
-        isolationRequestInfoView.stateText = getString(R.string.state_test_positive_info)
-        isolationRequestInfoView.stateColor = getColor(R.color.error_red)
-        isolationRequestParagraphContainer.addAllParagraphs(
-            getString(R.string.test_result_positive_continue_self_isolate_no_change_explanation_1),
-            getString(R.string.exposure_faqs_title)
-        )
-
-        isolationRequestActionButton.text = getString(R.string.continue_button)
-        isolationRequestActionButton.setOnSingleClickListener {
-            viewModel.onActionButtonClicked()
-        }
-    }
-
-    private fun showContinueToSelfIsolationScreenOnNegative(remainingDaysInIsolation: Int) {
-        goodNewsContainer.gone()
-        isolationRequestContainer.visible()
-
-        isolationRequestImage.setImageResource(R.drawable.ic_isolation_continue)
-        setSelfIsolateTitles(
-            getString(R.string.test_result_positive_continue_self_isolation_title_1),
-            resources.getQuantityString(
-                R.plurals.state_isolation_days,
-                remainingDaysInIsolation,
-                remainingDaysInIsolation
-            )
-        )
-
-        isolationRequestInfoView.stateText = getString(R.string.state_test_negative_info)
-        isolationRequestInfoView.stateColor = getColor(R.color.amber)
-        isolationRequestParagraphContainer.addAllParagraphs(
-            getString(R.string.test_result_negative_continue_self_isolate_explanation)
-        )
-
-        isolationRequestActionButton.text = getString(R.string.back_to_home)
-        isolationRequestActionButton.setOnSingleClickListener {
-            viewModel.onActionButtonClicked()
-        }
-    }
-
-    private fun showContinueToSelfIsolationScreenOnVoid(remainingDaysInIsolation: Int) {
-        setCloseToolbar()
-
-        goodNewsContainer.gone()
-        isolationRequestContainer.visible()
-
-        isolationRequestImage.setImageResource(R.drawable.ic_isolation_book_test)
-
-        setSelfIsolateTitles(
-            getString(R.string.test_result_positive_continue_self_isolation_title_1),
-            resources.getQuantityString(
-                R.plurals.state_isolation_days,
-                remainingDaysInIsolation,
-                remainingDaysInIsolation
-            )
-        )
-        isolationRequestInfoView.stateText = getString(R.string.state_test_void_info)
-        isolationRequestInfoView.stateColor = getColor(R.color.error_red)
-        isolationRequestParagraphContainer.addAllParagraphs(
-            getString(R.string.test_result_void_continue_self_isolate_explanation)
-        )
-
-        isolationRequestActionButton.text = getString(R.string.book_free_test)
-        isolationRequestActionButton.setOnSingleClickListener {
-            viewModel.onActionButtonClicked()
-        }
-    }
-
     override fun onBackPressed() {
         super.onBackPressed()
         viewModel.onBackPressed()
     }
 
-    private fun showDoNotHaveToSelfIsolateScreenOnPositive() {
-        goodNewsContainer.visible()
-        isolationRequestContainer.gone()
-
-        goodNewsIcon.setImageResource(R.drawable.ic_isolation_expired_or_over)
-        goodNewsIcon.isVisible = inPortraitMode()
-        goodNewsTitle.text = getString(R.string.test_result_your_test_result)
-        title = goodNewsTitle.text
-
-        goodNewsSubtitle.text = getString(R.string.test_result_positive_no_self_isolation_subtitle)
-        goodNewsParagraphContainer.addAllParagraphs(getString(R.string.for_further_advice_visit))
-
-        goodNewsActionButton.text = getString(R.string.continue_button)
-        goodNewsActionButton.setOnSingleClickListener {
-            viewModel.onActionButtonClicked()
-        }
-    }
-
-    private fun showDoNotHaveToSelfIsolateScreenOnNegative() {
-        goodNewsContainer.visible()
-        isolationRequestContainer.gone()
-
-        goodNewsIcon.setImageResource(R.drawable.ic_isolation_negative_or_finished)
-        goodNewsIcon.isVisible = inPortraitMode()
-        title = goodNewsTitle.text
-
-        goodNewsSubtitle.text =
-            getString(R.string.test_result_negative_no_self_isolation_subtitle_text)
-        goodNewsParagraphContainer.addAllParagraphs(
-            getString(R.string.for_further_advice_visit)
+    private fun setCloseToolbar() {
+        setCloseToolbar(
+            toolbar,
+            R.string.empty,
+            R.drawable.ic_close_primary
         )
-
-        goodNewsActionButton.text = getString(R.string.continue_button)
-        goodNewsActionButton.setOnSingleClickListener {
-            viewModel.onActionButtonClicked()
-        }
     }
 
-    private fun showAreNotIsolatingScreenOnNegative() {
-        goodNewsContainer.visible()
-
-        isolationRequestContainer.gone()
-
-        goodNewsIcon.setImageResource(R.drawable.ic_isolation_expired_or_over)
-        goodNewsIcon.isVisible = inPortraitMode()
-        title = goodNewsTitle.text
-
-        goodNewsSubtitle.text =
-            getString(R.string.test_result_negative_already_not_in_isolation_subtitle)
-        goodNewsParagraphContainer.addAllParagraphs(getString(R.string.for_further_advice_visit))
-
-        goodNewsActionButton.text = getString(R.string.continue_button)
-        goodNewsActionButton.setOnSingleClickListener {
-            viewModel.onActionButtonClicked()
-        }
-    }
-
+    //region Isolation states
     private fun setSelfIsolateTitles(
         title1: String,
         title2: String,
@@ -323,122 +171,229 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         }
     }
 
-    private fun showContinueToSelfIsolationScreenOnNegativeAfterPositiveOrSymptomatic(remainingDaysInIsolation: Int) {
-        goodNewsContainer.gone()
-        isolationRequestContainer.visible()
-
-        isolationRequestImage.setImageResource(R.drawable.ic_isolation_continue)
-        setSelfIsolateTitles(
-            getString(R.string.test_result_positive_continue_self_isolation_title_1),
-            resources.getQuantityString(
-                R.plurals.state_isolation_days,
-                remainingDaysInIsolation,
-                remainingDaysInIsolation
-            )
-        )
-
-        isolationRequestInfoView.stateText =
-            getString(R.string.state_test_positive_then_negative_info)
-        isolationRequestInfoView.stateColor = getColor(R.color.error_red)
-        isolationRequestParagraphContainer.addAllParagraphs(
-            getString(R.string.test_result_positive_then_negative_explanation)
-        )
-
-        isolationRequestActionButton.text = getString(R.string.continue_button)
-        isolationRequestActionButton.setOnSingleClickListener {
-            viewModel.onActionButtonClicked()
+    private fun showIsolationState(
+        hasCloseToolbar: Boolean = false,
+        remainingDaysInIsolation: Int,
+        @DrawableRes iconResource: Int = R.drawable.ic_isolation_continue,
+        @StringRes stateText: Int = R.string.state_test_positive_info,
+        @ColorRes stateColor: Int = R.color.error_red,
+        @StringRes selfIsolationLabel: Int = R.string.test_result_positive_continue_self_isolation_title_1,
+        @StringRes additionalIsolationInfoText: Int? = null,
+        @StringRes actionButtonStringResource: Int = R.string.continue_button,
+        exposureLinksVisible: Boolean,
+        @StringRes vararg paragraphResources: Int
+    ) {
+        if (hasCloseToolbar) {
+            setCloseToolbar()
         }
-    }
-
-    private fun showSelfIsolateScreenOnPositive(remainingDaysInIsolation: Int) {
         goodNewsContainer.gone()
         isolationRequestContainer.visible()
-        exposureFaqsLink.visible()
+        exposureFaqsLink.isVisible = exposureLinksVisible
 
-        isolationRequestImage.setImageResource(R.drawable.ic_isolation_continue)
-        setSelfIsolateTitles(
-            getString(R.string.self_isolate_for),
-            resources.getQuantityString(
-                R.plurals.state_isolation_days,
-                remainingDaysInIsolation,
-                remainingDaysInIsolation
-            )
-        )
-        isolationRequestInfoView.stateText = getString(R.string.state_test_positive_info)
-        isolationRequestInfoView.stateColor = getColor(R.color.error_red)
-        isolationRequestParagraphContainer.addAllParagraphs(
-            getString(R.string.test_result_negative_then_positive_continue_explanation),
-            getString(R.string.exposure_faqs_title)
-        )
-
-        isolationRequestActionButton.text = getString(R.string.continue_button)
-        isolationRequestActionButton.setOnSingleClickListener {
-            viewModel.onActionButtonClicked()
-        }
-    }
-
-    private fun showSelfIsolateScreenOnPositiveAndOrderTest(remainingDaysInIsolation: Int) {
-        setCloseToolbar()
-
-        goodNewsContainer.gone()
-        isolationRequestContainer.visible()
-        exposureFaqsLink.visible()
-
-        isolationRequestImage.setImageResource(R.drawable.ic_isolation_book_test)
+        isolationRequestImage.setImageResource(iconResource)
 
         setSelfIsolateTitles(
-            getString(R.string.self_isolate_for),
+            getString(selfIsolationLabel),
             resources.getQuantityString(
                 R.plurals.state_isolation_days,
                 remainingDaysInIsolation,
                 remainingDaysInIsolation
             ),
-            getString(R.string.test_result_positive_self_isolate_and_book_test_title_3)
-        )
-        isolationRequestInfoView.stateText =
-            getString(R.string.state_test_positive_and_book_test_info)
-        isolationRequestInfoView.stateColor = getColor(R.color.amber)
-        isolationRequestParagraphContainer.addAllParagraphs(
-            getString(R.string.test_result_positive_self_isolate_and_book_test_explanation_1),
-            getString(R.string.exposure_faqs_title)
+            if (additionalIsolationInfoText == null) null else getString(additionalIsolationInfoText)
         )
 
-        isolationRequestActionButton.text = getString(R.string.book_follow_up_test)
-        isolationRequestActionButton.setOnSingleClickListener {
-            viewModel.onActionButtonClicked()
+        isolationRequestInfoView.apply {
+            this.stateText = getString(stateText)
+            this.stateColor = getColor(stateColor)
+        }
+
+        isolationRequestParagraphContainer.addAllParagraphs(paragraphResources.map { getString(it) })
+
+        isolationRequestActionButton.apply {
+            text = getString(actionButtonStringResource)
+            setOnSingleClickListener { viewModel.onActionButtonClicked() }
         }
     }
 
-    private fun showAreNotIsolatingScreenOnVoid() {
-        setCloseToolbar()
+    private fun showContinueToSelfIsolationScreenOnPositive(remainingDaysInIsolation: Int) {
+        showIsolationState(
+            remainingDaysInIsolation = remainingDaysInIsolation,
+            exposureLinksVisible = true,
+            paragraphResources = intArrayOf(
+                R.string.test_result_positive_continue_self_isolate_explanation_1,
+                R.string.test_result_positive_continue_self_isolate_explanation_2,
+                R.string.exposure_faqs_title
+            )
+        )
+    }
+
+    private fun showContinueToSelfIsolationScreenOnPositiveAndNoChange(remainingDaysInIsolation: Int) {
+        showIsolationState(
+            remainingDaysInIsolation = remainingDaysInIsolation,
+            exposureLinksVisible = true,
+            paragraphResources = intArrayOf(
+                R.string.test_result_positive_continue_self_isolate_no_change_explanation_1,
+                R.string.exposure_faqs_title
+            )
+        )
+    }
+
+    private fun showContinueToSelfIsolationScreenOnNegative(remainingDaysInIsolation: Int) {
+        showIsolationState(
+            remainingDaysInIsolation = remainingDaysInIsolation,
+            exposureLinksVisible = false,
+            stateText = R.string.state_test_negative_info,
+            stateColor = R.color.amber,
+            actionButtonStringResource = R.string.back_to_home,
+            paragraphResources = intArrayOf(
+                R.string.test_result_negative_continue_self_isolate_explanation
+            )
+        )
+    }
+
+    private fun showContinueToSelfIsolationScreenOnVoid(remainingDaysInIsolation: Int) {
+        showIsolationState(
+            hasCloseToolbar = true,
+            remainingDaysInIsolation = remainingDaysInIsolation,
+            iconResource = R.drawable.ic_isolation_book_test,
+            stateText = R.string.state_test_void_info,
+            actionButtonStringResource = R.string.book_free_test,
+            exposureLinksVisible = false,
+            paragraphResources = intArrayOf(
+                R.string.test_result_void_continue_self_isolate_explanation
+            )
+        )
+    }
+
+    private fun showContinueToSelfIsolationScreenOnNegativeAfterPositiveOrSymptomatic(remainingDaysInIsolation: Int) {
+        showIsolationState(
+            remainingDaysInIsolation = remainingDaysInIsolation,
+            stateText = R.string.state_test_positive_then_negative_info,
+            exposureLinksVisible = false,
+            paragraphResources = intArrayOf(
+                R.string.test_result_positive_then_negative_explanation
+            )
+        )
+    }
+
+    private fun showSelfIsolateScreenOnPositive(remainingDaysInIsolation: Int) {
+        showIsolationState(
+            remainingDaysInIsolation = remainingDaysInIsolation,
+            selfIsolationLabel = R.string.self_isolate_for,
+            stateText = R.string.state_test_positive_info,
+            exposureLinksVisible = true,
+            paragraphResources = intArrayOf(
+                R.string.test_result_negative_then_positive_continue_explanation,
+                R.string.exposure_faqs_title
+            )
+        )
+    }
+
+    private fun showSelfIsolateScreenOnPositiveAndOrderTest(remainingDaysInIsolation: Int) {
+        showIsolationState(
+            hasCloseToolbar = true,
+            remainingDaysInIsolation = remainingDaysInIsolation,
+            iconResource = R.drawable.ic_isolation_book_test,
+            stateText = R.string.state_test_positive_and_book_test_info,
+            stateColor = R.color.amber,
+            selfIsolationLabel = R.string.self_isolate_for,
+            additionalIsolationInfoText = R.string.test_result_positive_self_isolate_and_book_test_title_3,
+            actionButtonStringResource = R.string.book_follow_up_test,
+            exposureLinksVisible = true,
+            paragraphResources = intArrayOf(
+                R.string.test_result_positive_self_isolate_and_book_test_explanation_1,
+                R.string.exposure_faqs_title
+            )
+        )
+    }
+    //endregion
+
+    //region Good news states
+    private fun showGoodNewsState(
+        hasCloseToolbar: Boolean = false,
+        hasGoodNewsLink: Boolean = true,
+        @DrawableRes iconResource: Int? = R.drawable.ic_isolation_expired_or_over,
+        @StringRes titleStringResource: Int = R.string.expiration_notification_title,
+        @StringRes subtitleStringResource: Int,
+        @StringRes goodNewsInfoViewResource: Int = R.string.test_result_no_self_isolation_description,
+        @StringRes actionButtonStringResource: Int = R.string.continue_button,
+        @StringRes vararg paragraphResources: Int = intArrayOf(R.string.for_further_advice_visit)
+    ) {
+        if (hasCloseToolbar) setCloseToolbar()
+
+        goodNewsOnlineServiceLink.isVisible = hasGoodNewsLink
 
         goodNewsContainer.visible()
         isolationRequestContainer.gone()
 
-        goodNewsIcon.setImageResource(R.drawable.ic_isolation_expired_or_over)
-        goodNewsIcon.isVisible = inPortraitMode()
-        goodNewsTitle.text = getString(R.string.test_result_your_test_result)
-        title = getString(R.string.test_result_your_test_result)
+        if (iconResource == null) {
+            goodNewsIcon.gone()
+        } else {
+            goodNewsIcon.setImageResource(iconResource)
+        }
 
-        goodNewsSubtitle.text =
-            getString(R.string.test_result_void_already_not_in_isolation_subtitle)
-        goodNewsParagraphContainer.addAllParagraphs(getString(R.string.for_further_advice_visit))
+        with(getString(titleStringResource)) {
+            goodNewsTitle.text = this
+            title = this
+        }
 
-        goodNewsActionButton.text = getString(R.string.book_free_test)
+        goodNewsSubtitle.text = getString(subtitleStringResource)
+        goodNewsParagraphContainer.addAllParagraphs(paragraphResources.map { getString(it) })
+        goodNewsActionButton.text = getString(actionButtonStringResource)
+        goodNewsInfoView.stateText = getString(goodNewsInfoViewResource)
+
         goodNewsActionButton.setOnSingleClickListener {
             viewModel.onActionButtonClicked()
         }
     }
 
-    private fun setCloseToolbar() {
-        setCloseToolbar(
-            toolbar,
-            R.string.empty,
-            R.drawable.ic_close_primary
+    private fun showDoNotHaveToSelfIsolateScreenOnPositive() {
+        showGoodNewsState(
+            titleStringResource = R.string.test_result_your_test_result,
+            subtitleStringResource = R.string.test_result_positive_no_self_isolation_subtitle
         )
     }
 
+    private fun showDoNotHaveToSelfIsolateScreenOnNegative() {
+        showGoodNewsState(
+            iconResource = R.drawable.ic_isolation_negative_or_finished,
+            subtitleStringResource = R.string.test_result_negative_no_self_isolation_subtitle_text
+        )
+    }
+
+    private fun showAreNotIsolatingScreenOnNegative() {
+        showGoodNewsState(
+            subtitleStringResource = R.string.test_result_negative_already_not_in_isolation_subtitle
+        )
+    }
+
+    private fun showAreNotIsolatingScreenOnVoid() {
+        showGoodNewsState(
+            hasCloseToolbar = true,
+            titleStringResource = R.string.test_result_your_test_result,
+            subtitleStringResource = R.string.test_result_void_already_not_in_isolation_subtitle,
+            actionButtonStringResource = R.string.book_free_test
+        )
+    }
+    //endregion
+
+    //region PLOD states
+    private fun showContinueWithCurrentStateScreenOnPlod() {
+        showGoodNewsState(
+            hasCloseToolbar = true,
+            titleStringResource = R.string.test_result_plod_title,
+            subtitleStringResource = R.string.test_result_plod_subtitle,
+            goodNewsInfoViewResource = R.string.test_result_plod_description,
+            actionButtonStringResource = R.string.back_to_home,
+            paragraphResources = intArrayOf(R.string.test_result_plod_info),
+            hasGoodNewsLink = false,
+            iconResource = null
+        )
+    }
+    //endregion
+
     companion object {
         const val REQUEST_CODE_ORDER_A_TEST = 1339
+        const val REQUEST_CODE_SHARE_KEYS = 1534
     }
 }

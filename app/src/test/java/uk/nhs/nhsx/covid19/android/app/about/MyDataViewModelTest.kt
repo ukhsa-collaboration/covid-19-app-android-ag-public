@@ -12,8 +12,9 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.about.BaseMyDataViewModel.IsolationViewState
-import uk.nhs.nhsx.covid19.android.app.about.BaseMyDataViewModel.MyDataState
+import uk.nhs.nhsx.covid19.android.app.about.mydata.BaseMyDataViewModel.IsolationViewState
+import uk.nhs.nhsx.covid19.android.app.about.mydata.BaseMyDataViewModel.MyDataState
+import uk.nhs.nhsx.covid19.android.app.about.mydata.MyDataViewModel
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDate
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays

@@ -6,9 +6,9 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.NO
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.PENDING
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.YES
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
+import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlert
+import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertProvider
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesCircuitBreakerApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
 import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class RiskyVenuesCircuitBreakerPolling @Inject constructor(
     private val riskyVenuesCircuitBreakerApi: RiskyVenuesCircuitBreakerApi,
     private val notificationProvider: NotificationProvider,
-    private val userInbox: UserInbox,
+    private val riskyVenueAlertProvider: RiskyVenueAlertProvider,
     private val riskyVenueCircuitBreakerConfigurationProvider: RiskyVenueCircuitBreakerConfigurationProvider,
     private val removeOutdatedRiskyVenuePollingConfigurations: RemoveOutdatedRiskyVenuePollingConfigurations,
     private val lastVisitedBookTestTypeVenueDateProvider: LastVisitedBookTestTypeVenueDateProvider,
@@ -81,7 +81,7 @@ class RiskyVenuesCircuitBreakerPolling @Inject constructor(
             if (shouldShowRiskyVenueNotification(it.messageType)) {
                 notificationProvider.showRiskyVenueVisitNotification()
             }
-            userInbox.addUserInboxItem(ShowVenueAlert(it.venueId, it.messageType))
+            riskyVenueAlertProvider.riskyVenueAlert = RiskyVenueAlert(it.venueId, it.messageType)
         }
     }
 }

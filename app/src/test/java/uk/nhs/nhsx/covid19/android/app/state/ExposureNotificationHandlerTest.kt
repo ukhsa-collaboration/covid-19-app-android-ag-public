@@ -3,20 +3,20 @@ package uk.nhs.nhsx.covid19.android.app.state
 import io.mockk.mockk
 import io.mockk.verifyOrder
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.ShouldShowEncounterDetectionActivityProvider
 
 class ExposureNotificationHandlerTest {
 
-    private val userInbox = mockk<UserInbox>(relaxUnitFun = true)
+    private val shouldShowEncounterDetectionActivityProvider =
+        mockk<ShouldShowEncounterDetectionActivityProvider>(relaxUnitFun = true)
     private val notificationProvider = mockk<NotificationProvider>(relaxUnitFun = true)
     private val exposureNotificationRetryAlarmController =
         mockk<ExposureNotificationRetryAlarmController>(relaxUnitFun = true)
 
     private val testSubject = ExposureNotificationHandler(
-        userInbox,
+        shouldShowEncounterDetectionActivityProvider,
         notificationProvider,
         exposureNotificationRetryAlarmController
     )
@@ -26,7 +26,7 @@ class ExposureNotificationHandlerTest {
         testSubject.show()
 
         verifyOrder {
-            userInbox.addUserInboxItem(ShowEncounterDetection)
+            shouldShowEncounterDetectionActivityProvider setProperty "value" value eq(true)
             notificationProvider.showExposureNotification()
             exposureNotificationRetryAlarmController.setupNextAlarm()
         }
@@ -37,7 +37,7 @@ class ExposureNotificationHandlerTest {
         testSubject.cancel()
 
         verifyOrder {
-            userInbox.clearItem(ShowEncounterDetection)
+            shouldShowEncounterDetectionActivityProvider setProperty "value" value null
             exposureNotificationRetryAlarmController.cancel()
         }
     }

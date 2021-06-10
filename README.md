@@ -2,12 +2,38 @@
 
 ## Setup
 
-To access the private GitHubPackages repository that hosts the remote configurations for all environments, two properties have to be set in your global gradle.properties file:
+To access the private GitHubPackages repository that hosts the remote configurations for all environments, your Github username has to be set in your global gradle.properties file:
 
   *  **gpr.user** is your Github username
-  *  **gpr.key**  is a personal access token [issued by GitHub](https://github.com/settings/tokens). For the scope, use at least read:packages and write:packages.
 
-Having these properties in place is necessary to build the app. For more information, visit the [app configuration repository](https://github.com/nihp-public/covid-19-app-configuration-public/packages).
+Furthermore, you have to create a personal access token [issued by GitHub](https://github.com/settings/tokens). For the scope, use at least read:packages and write:packages.
+This token has to be stored in the Keychain for MacOS users or the Credential Manager for Windows users.
+
+### Add your personal access token to the Keychain (MacOS)
+
+1. Open Keychain Access
+2. Go to File > New Password Item…
+   1. __Service__ (__Keychain Item Name__) should be _nhs-covid19-apps_
+   2. __Account__ is your Github username
+   3. As __Password__ enter your personal access token
+
+### Add your personal access token to the Credential Manager (Windows)
+
+First the token has to be stored.
+
+1. Open Credential Manager
+2. Go to _Add a generic credential_
+   1. __Internet or work address__ should be _nhs-covid19-apps_
+   2. __User name__ is your Github username
+   3. As __Password__ enter your personal access token
+
+To enable PowerShell to read from the Credential Manager, the CredentialManager module needs to be installed.
+
+1. Open a PowerShell instance with Administrator privileges
+2. Enter _Install-Module -Name CredentialManager_
+3. (optional) Troubleshooting
+   1. _Install-Module_ uses NuGet. If NuGet is not pre-installed, install it with _Install-PackageProvider -Name NuGet_ from PowerShell
+   2. Installing NuGet might fail due to inappropriate TLS settings. Enforcing TLS 1.2 to install NuGet fixes this potential issue: Enter _\[Net.ServicePointManager]::SecurityProtocol = \[Net.SecurityProtocolType]::Tls12_ into PowerShell to enforce usage of TLS 1.2
 
 ## Dev actions
 

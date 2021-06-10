@@ -10,7 +10,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.common.Translatable
+import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthority
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodes
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodesLoader
@@ -45,39 +45,39 @@ class DownloadRiskyPostCodesWorkTest {
     private val lowRiskyPostCodeIndicator = RiskIndicator(
         colorScheme = ColorScheme.GREEN,
         colorSchemeV2 = ColorScheme.GREEN,
-        name = Translatable(mapOf("en" to "[postcode] is in local COVID area level: low")),
-        heading = Translatable(mapOf("en" to "Heading low")),
-        content = Translatable(
+        name = TranslatableString(mapOf("en" to "[postcode] is in local COVID area level: low")),
+        heading = TranslatableString(mapOf("en" to "Heading low")),
+        content = TranslatableString(
             mapOf(
                 "en" to "Content low"
             )
         ),
-        linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+        linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
+        linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
         policyData = null
     )
 
     private val mediumRiskyPostCodeIndicator = RiskIndicator(
         colorScheme = ColorScheme.YELLOW,
         colorSchemeV2 = ColorScheme.YELLOW,
-        name = Translatable(mapOf("en" to "[postcode] is in local COVID area level: medium")),
-        heading = Translatable(mapOf("en" to "Heading medium")),
-        content = Translatable(
+        name = TranslatableString(mapOf("en" to "[postcode] is in local COVID area level: medium")),
+        heading = TranslatableString(mapOf("en" to "Heading medium")),
+        content = TranslatableString(
             mapOf(
                 "en" to "Content medium"
             )
         ),
-        linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+        linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
+        linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
         policyData = null
     )
 
     private val mediumRiskyPostCodeIndicatorWithPolicyData = mediumRiskyPostCodeIndicator.copy(
         policyData = PolicyData(
-            heading = Translatable(mapOf("en" to "")),
-            content = Translatable(mapOf("en" to "")),
-            footer = Translatable(mapOf("en" to "")),
-            localAuthorityRiskTitle = Translatable(mapOf("en" to "[local authority] ([postcode])")),
+            heading = TranslatableString(mapOf("en" to "")),
+            content = TranslatableString(mapOf("en" to "")),
+            footer = TranslatableString(mapOf("en" to "")),
+            localAuthorityRiskTitle = TranslatableString(mapOf("en" to "[local authority] ([postcode])")),
             policies = listOf()
         )
     )
@@ -85,15 +85,15 @@ class DownloadRiskyPostCodesWorkTest {
     private val highRiskyPostCodeIndicator = RiskIndicator(
         colorScheme = ColorScheme.RED,
         colorSchemeV2 = ColorScheme.RED,
-        name = Translatable(mapOf("en" to "[postcode] is in local COVID area level: high")),
-        heading = Translatable(mapOf("en" to "Heading high")),
-        content = Translatable(
+        name = TranslatableString(mapOf("en" to "[postcode] is in local COVID area level: high")),
+        heading = TranslatableString(mapOf("en" to "Heading high")),
+        content = TranslatableString(
             mapOf(
                 "en" to "Content high"
             )
         ),
-        linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+        linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
+        linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
         policyData = null
     )
 
@@ -162,7 +162,7 @@ class DownloadRiskyPostCodesWorkTest {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
                 RiskIndicatorWrapper(
                     "high",
-                    highRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "A1 is in local COVID area level: high"))),
+                    highRiskyPostCodeIndicator.copy(name = TranslatableString(mapOf("en" to "A1 is in local COVID area level: high"))),
                     riskLevelFromLocalAuthority = false
                 )
         }
@@ -182,7 +182,7 @@ class DownloadRiskyPostCodesWorkTest {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
                 RiskIndicatorWrapper(
                     "high",
-                    highRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "A1 is in local COVID area level: high"))),
+                    highRiskyPostCodeIndicator.copy(name = TranslatableString(mapOf("en" to "A1 is in local COVID area level: high"))),
                     riskLevelFromLocalAuthority = false
                 )
         }
@@ -202,7 +202,7 @@ class DownloadRiskyPostCodesWorkTest {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
                 RiskIndicatorWrapper(
                     "low",
-                    lowRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "SE1 is in local COVID area level: low"))),
+                    lowRiskyPostCodeIndicator.copy(name = TranslatableString(mapOf("en" to "SE1 is in local COVID area level: low"))),
                     riskLevelFromLocalAuthority = false
                 )
         }
@@ -223,7 +223,7 @@ class DownloadRiskyPostCodesWorkTest {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
                 RiskIndicatorWrapper(
                     "high",
-                    highRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "A1 is in local COVID area level: high"))),
+                    highRiskyPostCodeIndicator.copy(name = TranslatableString(mapOf("en" to "A1 is in local COVID area level: high"))),
                     riskLevelFromLocalAuthority = false
                 )
         }
@@ -244,7 +244,7 @@ class DownloadRiskyPostCodesWorkTest {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
                 RiskIndicatorWrapper(
                     "medium",
-                    mediumRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "BE3 is in local COVID area level: medium"))),
+                    mediumRiskyPostCodeIndicator.copy(name = TranslatableString(mapOf("en" to "BE3 is in local COVID area level: medium"))),
                     riskLevelFromLocalAuthority = false
                 )
         }
@@ -265,7 +265,7 @@ class DownloadRiskyPostCodesWorkTest {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
                 RiskIndicatorWrapper(
                     "low",
-                    lowRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "SE1 is in local COVID area level: low"))),
+                    lowRiskyPostCodeIndicator.copy(name = TranslatableString(mapOf("en" to "SE1 is in local COVID area level: low"))),
                     riskLevelFromLocalAuthority = false
                 )
         }
@@ -286,7 +286,7 @@ class DownloadRiskyPostCodesWorkTest {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
                 RiskIndicatorWrapper(
                     "low",
-                    lowRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "SE1 is in local COVID area level: low"))),
+                    lowRiskyPostCodeIndicator.copy(name = TranslatableString(mapOf("en" to "SE1 is in local COVID area level: low"))),
                     riskLevelFromLocalAuthority = false
                 )
         }
@@ -307,7 +307,7 @@ class DownloadRiskyPostCodesWorkTest {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
                 RiskIndicatorWrapper(
                     "high",
-                    highRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "A1 is in local COVID area level: high"))),
+                    highRiskyPostCodeIndicator.copy(name = TranslatableString(mapOf("en" to "A1 is in local COVID area level: high"))),
                     riskLevelFromLocalAuthority = false
                 )
         }
@@ -327,7 +327,7 @@ class DownloadRiskyPostCodesWorkTest {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
                 RiskIndicatorWrapper(
                     "high",
-                    highRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "A1 is in local COVID area level: high"))),
+                    highRiskyPostCodeIndicator.copy(name = TranslatableString(mapOf("en" to "A1 is in local COVID area level: high"))),
                     riskLevelFromLocalAuthority = false
                 )
         }
@@ -349,7 +349,7 @@ class DownloadRiskyPostCodesWorkTest {
             riskyPostCodeIndicatorProvider.riskyPostCodeIndicator =
                 RiskIndicatorWrapper(
                     "medium",
-                    mediumRiskyPostCodeIndicator.copy(name = Translatable(mapOf("en" to "A1 is in local COVID area level: medium"))),
+                    mediumRiskyPostCodeIndicator.copy(name = TranslatableString(mapOf("en" to "A1 is in local COVID area level: medium"))),
                     riskLevelFromLocalAuthority = true
                 )
         }
@@ -370,12 +370,12 @@ class DownloadRiskyPostCodesWorkTest {
         assert(checkAreaRiskChangedResult == ListenableWorker.Result.success())
 
         val expected = mediumRiskyPostCodeIndicator.copy(
-            name = Translatable(mapOf("en" to "A1 is in local COVID area level: medium")),
+            name = TranslatableString(mapOf("en" to "A1 is in local COVID area level: medium")),
             policyData = PolicyData(
-                heading = Translatable(mapOf("en" to "")),
-                content = Translatable(mapOf("en" to "")),
-                footer = Translatable(mapOf("en" to "")),
-                localAuthorityRiskTitle = Translatable(mapOf("en" to "ASd0 (A1)")),
+                heading = TranslatableString(mapOf("en" to "")),
+                content = TranslatableString(mapOf("en" to "")),
+                footer = TranslatableString(mapOf("en" to "")),
+                localAuthorityRiskTitle = TranslatableString(mapOf("en" to "ASd0 (A1)")),
                 policies = listOf()
             )
         )
@@ -404,7 +404,7 @@ class DownloadRiskyPostCodesWorkTest {
             testSubject()
 
             val expected = mediumRiskyPostCodeIndicatorWithPolicyData.copy(
-                name = Translatable(mapOf("en" to "BE3 is in local COVID area level: medium")),
+                name = TranslatableString(mapOf("en" to "BE3 is in local COVID area level: medium")),
                 policyData = null
             )
 

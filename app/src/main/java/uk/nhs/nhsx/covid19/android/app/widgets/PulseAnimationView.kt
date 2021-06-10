@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.View
 import android.view.animation.AnimationUtils
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.animationsDisabled
 
 interface PulseAnimationView {
 
@@ -14,7 +13,7 @@ interface PulseAnimationView {
         animatedView: View,
         smallAnimatedView: View
     ) {
-        if (animationsDisabled(context) || !isAnimationEnabled) {
+        if (!isAnimationEnabled) {
             animatedView.clearAnimation()
             smallAnimatedView.clearAnimation()
             return

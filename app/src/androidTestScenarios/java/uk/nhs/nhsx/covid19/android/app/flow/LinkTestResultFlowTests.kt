@@ -21,7 +21,6 @@ import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
 import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 class LinkTestResultFlowTests : EspressoTest() {
@@ -243,9 +242,7 @@ class LinkTestResultFlowTests : EspressoTest() {
 
         linkTestResultOnsetDateRobot.clickSelectDate()
 
-        val onsetDate = LocalDateTime.ofInstant(now, testAppContext.clock.zone)
-            .toLocalDate()
-            .minusDays(3)
+        val onsetDate = now.toLocalDate(testAppContext.clock.zone).minusDays(3)
 
         linkTestResultOnsetDateRobot.selectDayOfMonth(onsetDate.dayOfMonth)
 

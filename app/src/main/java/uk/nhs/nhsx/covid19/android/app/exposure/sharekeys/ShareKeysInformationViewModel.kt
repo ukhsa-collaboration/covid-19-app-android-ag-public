@@ -1,10 +1,17 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.sharekeys
 
 import android.app.Activity
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInTheInitialFlow
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationViewModel.ShareKeysInformationNavigateTo.BookFollowUpTestActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysNavigateTo.Finish
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysNavigateTo.ShareKeysResultActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysNavigateTo.StatusActivity
@@ -12,14 +19,14 @@ import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysNavigateTo.Su
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import java.time.Clock
-import javax.inject.Inject
 
-class ShareKeysInformationViewModel @Inject constructor(
-    private val submitEpidemiologyDataForTestResult: SubmitEpidemiologyDataForTestResult,
+class ShareKeysInformationViewModel @AssistedInject constructor(
     fetchKeysFlowFactory: FetchKeysFlow.Factory,
     private val keySharingInfoProvider: KeySharingInfoProvider,
-    private val clock: Clock
-) : ViewModel() {
+    private val clock: Clock,
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
+    @Assisted private val bookFollowUpTest: Boolean
+) : ViewModel(), FetchKeysFlow.Callback {
 
     private val navigationLiveData = SingleLiveEvent<ShareKeysNavigationTarget>()
     fun navigation(): LiveData<ShareKeysNavigationTarget> = navigationLiveData
@@ -28,37 +35,11 @@ class ShareKeysInformationViewModel @Inject constructor(
     fun permissionRequest(): LiveData<(Activity) -> Unit> = permissionRequestLiveData
 
     private lateinit var keySharingInfo: KeySharingInfo
+    private var hasAlreadyConsentedToShareKeys = false
 
     private val fetchKeysFlow by lazy {
         fetchKeysFlowFactory.create(
-            object : FetchKeysFlow.Callback {
-                override fun onFetchKeysSuccess(
-                    temporaryExposureKeys: List<NHSTemporaryExposureKey>,
-                    diagnosisKeySubmissionToken: String
-                ) {
-                    navigationLiveData.postValue(
-                        SubmitKeysProgressActivity(temporaryExposureKeys, diagnosisKeySubmissionToken)
-                    )
-                }
-
-                override fun onFetchKeysPermissionDenied() {
-                    val keysSharingInfo = keySharingInfoProvider.keySharingInfo
-                    if (keysSharingInfo != null && keysSharingInfo.wasAcknowledgedMoreThan24HoursAgo(clock)) {
-                        keySharingInfoProvider.reset()
-                    } else {
-                        keySharingInfoProvider.setHasDeclinedSharingKeys()
-                    }
-                    navigationLiveData.postValue(StatusActivity)
-                }
-
-                override fun onFetchKeysUnexpectedError() {
-                    navigationLiveData.postValue(Finish)
-                }
-
-                override fun onPermissionRequired(permissionRequest: (Activity) -> Unit) {
-                    permissionRequestLiveData.postValue(permissionRequest)
-                }
-            },
+            this,
             viewModelScope,
             keySharingInfo
         )
@@ -76,20 +57,77 @@ class ShareKeysInformationViewModel @Inject constructor(
 
     fun onActivityResult(requestCode: Int, resultCode: Int) {
         fetchKeysFlow.onActivityResult(requestCode, resultCode)
-        if (resultCode == Activity.RESULT_OK && requestCode == ShareKeysInformationActivity.REQUEST_CODE_SUBMIT_KEYS) {
-            onSuccessfulKeySubmission()
+        if (requestCode == ShareKeysInformationActivity.REQUEST_CODE_SUBMIT_KEYS) {
+            if (resultCode == Activity.RESULT_OK) {
+                onSuccessfulKeySubmission()
+            } else {
+                // Submitting the keys has failed and the user has dismissed the error screen
+                onFetchKeysPermissionDenied()
+            }
         }
     }
 
     private fun onSuccessfulKeySubmission() {
         viewModelScope.launch {
             keySharingInfoProvider.reset()
-            submitEpidemiologyDataForTestResult(keySharingInfo)
-            navigationLiveData.postValue(ShareKeysResultActivity)
+            navigationLiveData.postValue(ShareKeysResultActivity(bookFollowUpTest))
+        }
+    }
+
+    //region FetchKeysFlow.Callback
+
+    override fun onFetchKeysSuccess(
+        temporaryExposureKeys: List<NHSTemporaryExposureKey>,
+        diagnosisKeySubmissionToken: String
+    ) {
+        trackConsentedToShareKeys()
+        navigationLiveData.postValue(
+            SubmitKeysProgressActivity(temporaryExposureKeys, diagnosisKeySubmissionToken)
+        )
+    }
+
+    override fun onFetchKeysPermissionDenied() {
+        val keysSharingInfo = keySharingInfoProvider.keySharingInfo
+        if (keysSharingInfo != null && keysSharingInfo.wasAcknowledgedMoreThan24HoursAgo(clock)) {
+            keySharingInfoProvider.reset()
+        } else {
+            keySharingInfoProvider.setHasDeclinedSharingKeys()
+        }
+        val navigationTarget = if (bookFollowUpTest) {
+            BookFollowUpTestActivity
+        } else {
+            StatusActivity
+        }
+        navigationLiveData.postValue(navigationTarget)
+    }
+
+    override fun onFetchKeysUnexpectedError() {
+        navigationLiveData.postValue(Finish)
+    }
+
+    override fun onPermissionRequired(permissionRequest: (Activity) -> Unit) {
+        permissionRequestLiveData.postValue(permissionRequest)
+    }
+
+    //endregion
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun trackConsentedToShareKeys() {
+        if (!hasAlreadyConsentedToShareKeys) {
+            viewModelScope.launch {
+                analyticsEventProcessor.track(ConsentedToShareExposureKeysInTheInitialFlow)
+                hasAlreadyConsentedToShareKeys = true
+            }
         }
     }
 
     sealed class ShareKeysInformationNavigateTo : ShareKeysNavigationTarget {
         object StatusActivity : ShareKeysInformationNavigateTo()
+        object BookFollowUpTestActivity : ShareKeysInformationNavigateTo()
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(bookFollowUpTest: Boolean): ShareKeysInformationViewModel
     }
 }

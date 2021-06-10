@@ -9,10 +9,10 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isEnabled
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.testhelpers.NestedScrollViewScrollToAction
 
 class StatusRobot {
 
@@ -32,7 +32,8 @@ class StatusRobot {
     }
 
     fun clickAreaRiskView() {
-        clickOn(R.id.riskAreaView)
+        onView(withId(R.id.riskAreaView))
+            .perform(click())
     }
 
     fun checkAreaRiskViewIsDisplayed() {
@@ -46,39 +47,73 @@ class StatusRobot {
     }
 
     fun clickVenueCheckIn() {
-        clickOn(R.id.optionVenueCheckIn)
+        onView(withId(R.id.optionVenueCheckIn))
+            .perform(NestedScrollViewScrollToAction(), click())
     }
 
     fun clickSettings() {
-        clickOn(R.id.optionSettings)
+        onView(withId(R.id.optionSettings))
+            .perform(NestedScrollViewScrollToAction(), click())
     }
 
     fun clickReadAdvice() {
-        clickOn(R.id.optionReadAdvice)
+        onView(withId(R.id.optionReadAdvice))
+            .perform(NestedScrollViewScrollToAction(), click())
+    }
+
+    fun checkReadAdviceIsDisplayed() {
+        onView(withId(R.id.optionReadAdvice))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkReadAdviceIsNotDisplayed() {
+        onView(withId(R.id.optionReadAdvice))
+            .check(matches(not(isDisplayed())))
+    }
+
+    fun checkNoAnimationIsDisplayed(isIsolating: Boolean) {
+        val staticImageResId = if (isIsolating) R.id.imgCircleIsolationStatic else R.id.imgCircleStatic
+        onView(withId(staticImageResId)).check(matches(isDisplayed()))
+    }
+
+    fun checkStaticImageIsNotDisplayed(isIsolating: Boolean) {
+        val staticImageResId = if (isIsolating) R.id.imgCircleIsolationStatic else R.id.imgCircleStatic
+        onView(withId(staticImageResId)).check(matches(not(isDisplayed())))
     }
 
     fun clickReportSymptoms() {
-        clickOn(R.id.optionReportSymptoms)
+        onView(withId(R.id.optionReportSymptoms))
+            .perform(NestedScrollViewScrollToAction(), click())
     }
 
-    fun clickOrderTest() {
-        clickOn(R.id.optionOrderTest)
+    fun clickTestingHub() {
+        onView(withId(R.id.optionTestingHub))
+            .perform(NestedScrollViewScrollToAction(), click())
     }
 
     fun clickFinancialSupport() {
-        clickOn(R.id.optionIsolationPayment)
+        onView(withId(R.id.optionIsolationPayment))
+            .perform(NestedScrollViewScrollToAction(), click())
     }
 
     fun clickLinkTestResult() {
-        clickOn(R.id.optionLinkTestResult)
+        onView(withId(R.id.optionLinkTestResult))
+            .perform(NestedScrollViewScrollToAction(), click())
     }
 
     fun clickMoreAboutApp() {
-        clickOn(R.id.optionAboutTheApp)
+        onView(withId(R.id.optionAboutTheApp))
+            .perform(NestedScrollViewScrollToAction(), click())
     }
 
     fun clickToggleContactTracing() {
-        clickOn((R.id.optionToggleContactTracing))
+        onView(withId(R.id.optionToggleContactTracing))
+            .perform(NestedScrollViewScrollToAction(), click())
+    }
+
+    fun clickLocalMessageBanner() {
+        onView(withId(R.id.localMessageBanner))
+            .perform(click())
     }
 
     fun checkReadAdviceIsEnabled() {
@@ -93,11 +128,6 @@ class StatusRobot {
 
     fun checkReportSymptomsIsEnabled() {
         onView(withId(R.id.optionReportSymptoms))
-            .check(matches(isEnabled()))
-    }
-
-    fun checkOrderTestIsEnabled() {
-        onView(withId(R.id.optionOrderTest))
             .check(matches(isEnabled()))
     }
 
@@ -131,14 +161,9 @@ class StatusRobot {
             .check(matches(isEnabled()))
     }
 
-    fun checkOrderTestIsDisplayed() {
-        onView(withId(R.id.optionOrderTest))
-            .check(matches(isDisplayed()))
-    }
-
-    fun checkOrderTestIsNotDisplayed() {
-        onView(withId(R.id.optionOrderTest))
-            .check(matches(not(isDisplayed())))
+    fun checkTestingHubIsEnabled() {
+        onView(withId(R.id.optionTestingHub))
+            .check(matches(isEnabled()))
     }
 
     fun checkScanQrCodeOptionIsNotDisplayed() {
@@ -197,5 +222,15 @@ class StatusRobot {
                 ViewMatchers.hasDescendant(withText(translatedWord))
             )
         ).check(matches(isDisplayed()))
+    }
+
+    fun checkLocalMessageBannerIsDisplayed() {
+        onView(withId(R.id.localMessageBanner))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkLocalMessageBannerIsNotDisplayed() {
+        onView(withId(R.id.localMessageBanner))
+            .check(matches(not(isDisplayed())))
     }
 }

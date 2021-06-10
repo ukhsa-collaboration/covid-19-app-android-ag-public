@@ -2,7 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.availability
 
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager.AvailableUpdateStatus.Available
-import uk.nhs.nhsx.covid19.android.app.common.Translatable
+import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.remote.data.AppAvailabilityResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumAppVersion
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumSdkVersion
@@ -70,13 +70,13 @@ class AppAvailabilityActivityTest : EspressoTest() {
 
     private val deviceSdkIsNotSupported = AppAvailabilityResponse(
         minimumAppVersion = MinimumAppVersion(
-            Translatable(
+            TranslatableString(
                 emptyMap()
             ),
             0
         ),
         minimumSdkVersion = MinimumSdkVersion(
-            Translatable(
+            TranslatableString(
                 mapOf(
                     "en" to deviceSdkIsNotSupportedMessage
                 )
@@ -84,11 +84,11 @@ class AppAvailabilityActivityTest : EspressoTest() {
             Int.MAX_VALUE
         ),
         recommendedAppVersion = RecommendedAppVersion(
-            Translatable(
+            TranslatableString(
                 emptyMap()
             ),
             0,
-            Translatable(
+            TranslatableString(
                 emptyMap()
             )
         )
@@ -96,7 +96,7 @@ class AppAvailabilityActivityTest : EspressoTest() {
 
     private val appVersionNotSupported = AppAvailabilityResponse(
         minimumAppVersion = MinimumAppVersion(
-            Translatable(
+            TranslatableString(
                 mapOf(
                     "en" to appVersionNotSupportedMessage
                 )
@@ -104,17 +104,17 @@ class AppAvailabilityActivityTest : EspressoTest() {
             Int.MAX_VALUE
         ),
         minimumSdkVersion = MinimumSdkVersion(
-            Translatable(
+            TranslatableString(
                 emptyMap()
             ),
             0
         ),
         recommendedAppVersion = RecommendedAppVersion(
-            Translatable(
+            TranslatableString(
                 emptyMap()
             ),
             0,
-            title = Translatable(
+            title = TranslatableString(
                 emptyMap()
             )
         )
@@ -122,23 +122,23 @@ class AppAvailabilityActivityTest : EspressoTest() {
 
     private val supported = AppAvailabilityResponse(
         minimumAppVersion = MinimumAppVersion(
-            Translatable(
+            TranslatableString(
                 emptyMap()
             ),
             0
         ),
         minimumSdkVersion = MinimumSdkVersion(
-            Translatable(
+            TranslatableString(
                 emptyMap()
             ),
             0
         ),
         recommendedAppVersion = RecommendedAppVersion(
-            Translatable(
+            TranslatableString(
                 emptyMap()
             ),
             0,
-            title = Translatable(
+            title = TranslatableString(
                 emptyMap()
             )
         )

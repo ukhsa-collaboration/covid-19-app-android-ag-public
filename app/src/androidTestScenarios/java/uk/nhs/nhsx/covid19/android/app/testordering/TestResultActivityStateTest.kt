@@ -1,18 +1,20 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
-import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import androidx.test.uiautomator.UiDevice
 import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockTestResultViewModel
+import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
+import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWontBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PlodWillContinueWithCurrentState
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolationNoChange
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolation
@@ -49,11 +51,14 @@ class TestResultActivityStateTest : EspressoTest() {
     private fun checkGoodNewsState(
         state: TestResultViewState,
         hasCloseToolbar: Boolean,
-        iconDrawableRes: Int,
+        iconDrawableRes: Int?,
         titleStringResource: Int = -1,
         subtitleStringResource: Int,
         actionButtonStringResource: Int,
-        vararg paragraphResources: Int
+        vararg paragraphResources: Int,
+        goodNewsInfoStringResource: Int,
+        hasGoodNewsLink: Boolean
+
     ) {
         setState(state)
 
@@ -63,22 +68,20 @@ class TestResultActivityStateTest : EspressoTest() {
             checkIsolationRequestVisibility(false)
 
             checkGoodNewsIcon(iconDrawableRes)
-            checkGoodNewsIconVisibility(true)
             checkGoodNewsTitleIsVisible()
             if (titleStringResource > 0) checkGoodNewsTitleStringResource(titleStringResource)
             checkGoodNewsSubtitleStringResource(subtitleStringResource)
-            checkGoodNewsInfoState()
+            checkGoodNewsInfoState(goodNewsInfoStringResource)
             checkGoodNewsParagraphContainStringResources(*paragraphResources)
 
             checkGoodNewsActionButtonTextStringResource(actionButtonStringResource)
             checkExposureFaqsLinkNotVisible()
+            checkGoodNewsLinkVisibility(hasGoodNewsLink)
         }
 
-        with(UiDevice.getInstance(getInstrumentation())) {
-            setOrientationLeft()
-            testResultRobot.checkGoodNewsIconVisibility(false)
-            setOrientationNatural()
-        }
+        setScreenOrientation(LANDSCAPE)
+        testResultRobot.checkGoodNewsIconVisibility(false)
+        setScreenOrientation(PORTRAIT)
     }
 
     private fun checkIsolationState(
@@ -142,7 +145,9 @@ class TestResultActivityStateTest : EspressoTest() {
             titleStringResource = R.string.expiration_notification_title,
             subtitleStringResource = R.string.test_result_negative_already_not_in_isolation_subtitle,
             actionButtonStringResource = R.string.continue_button,
-            paragraphResources = intArrayOf(R.string.for_further_advice_visit)
+            paragraphResources = intArrayOf(R.string.for_further_advice_visit),
+            goodNewsInfoStringResource = R.string.test_result_no_self_isolation_description,
+            hasGoodNewsLink = true
         )
     }
 
@@ -171,7 +176,9 @@ class TestResultActivityStateTest : EspressoTest() {
             titleStringResource = R.string.expiration_notification_title,
             subtitleStringResource = R.string.test_result_negative_no_self_isolation_subtitle_text,
             actionButtonStringResource = R.string.continue_button,
-            paragraphResources = intArrayOf(R.string.for_further_advice_visit)
+            paragraphResources = intArrayOf(R.string.for_further_advice_visit),
+            goodNewsInfoStringResource = R.string.test_result_no_self_isolation_description,
+            hasGoodNewsLink = true
         )
     }
 
@@ -242,7 +249,9 @@ class TestResultActivityStateTest : EspressoTest() {
             titleStringResource = R.string.test_result_your_test_result,
             subtitleStringResource = R.string.test_result_positive_no_self_isolation_subtitle,
             actionButtonStringResource = R.string.continue_button,
-            paragraphResources = intArrayOf(R.string.for_further_advice_visit)
+            paragraphResources = intArrayOf(R.string.for_further_advice_visit),
+            goodNewsInfoStringResource = R.string.test_result_no_self_isolation_description,
+            hasGoodNewsLink = true
         )
     }
 
@@ -290,7 +299,9 @@ class TestResultActivityStateTest : EspressoTest() {
             titleStringResource = R.string.test_result_your_test_result,
             subtitleStringResource = R.string.test_result_void_already_not_in_isolation_subtitle,
             actionButtonStringResource = R.string.book_free_test,
-            paragraphResources = intArrayOf(R.string.for_further_advice_visit)
+            paragraphResources = intArrayOf(R.string.for_further_advice_visit),
+            goodNewsInfoStringResource = R.string.test_result_no_self_isolation_description,
+            hasGoodNewsLink = true
         )
     }
 
@@ -308,6 +319,21 @@ class TestResultActivityStateTest : EspressoTest() {
             actionButtonStringResource = R.string.book_free_test,
             exposureLinksVisible = false,
             paragraphResources = intArrayOf(R.string.test_result_void_continue_self_isolate_explanation)
+        )
+    }
+
+    @Test
+    fun showPlodWillContinueWithCurrentStateScreen() = notReported {
+        checkGoodNewsState(
+            state = PlodWillContinueWithCurrentState,
+            hasCloseToolbar = true,
+            iconDrawableRes = null,
+            titleStringResource = R.string.test_result_plod_title,
+            subtitleStringResource = R.string.test_result_plod_subtitle,
+            actionButtonStringResource = R.string.back_to_home,
+            paragraphResources = intArrayOf(R.string.test_result_plod_info),
+            goodNewsInfoStringResource = R.string.test_result_plod_description,
+            hasGoodNewsLink = false,
         )
     }
 }

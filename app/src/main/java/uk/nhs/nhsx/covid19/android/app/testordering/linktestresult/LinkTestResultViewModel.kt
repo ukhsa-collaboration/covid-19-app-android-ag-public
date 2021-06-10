@@ -25,12 +25,14 @@ import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Failure
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Success
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.UnparsableTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType.INVALID
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType.NO_CONNECTION
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType.UNEXPECTED
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.BOTH_PROVIDED
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.NEITHER_PROVIDED
+import uk.nhs.nhsx.covid19.android.app.testordering.unknownresult.ReceivedUnknownTestResultProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import java.time.Clock
 import javax.inject.Inject
@@ -40,6 +42,7 @@ class LinkTestResultViewModel @Inject constructor(
     private val isolationStateMachine: IsolationStateMachine,
     private val linkTestResultOnsetDateNeededChecker: LinkTestResultOnsetDateNeededChecker,
     private val analyticsEventProcessor: AnalyticsEventProcessor,
+    private val receivedUnknownTestResultProvider: ReceivedUnknownTestResultProvider,
     private val clock: Clock
 ) : ViewModel() {
 
@@ -112,9 +115,15 @@ class LinkTestResultViewModel @Inject constructor(
         viewModelScope.launch {
             when (val testResultResponse = ctaTokenValidator.validate(cleanedCtaToken)) {
                 is Success -> handleTestResultResponse(testResultResponse.virologyCtaExchangeResponse)
+                is UnparsableTestResult -> handleUnparsableTestResult()
                 is Failure -> handleError(testResultResponse.type.toLinkTestResultError())
             }
         }
+    }
+
+    private fun handleUnparsableTestResult() {
+        receivedUnknownTestResultProvider.value = true
+        validationCompletedLiveData.postCall()
     }
 
     private fun handleError(error: LinkTestResultError) {
@@ -122,14 +131,18 @@ class LinkTestResultViewModel @Inject constructor(
     }
 
     private suspend fun handleTestResultResponse(testResultResponse: VirologyCtaExchangeResponse) {
-        val testResult = ReceivedTestResult(
-            testResultResponse.diagnosisKeySubmissionToken,
-            testResultResponse.testEndDate,
-            testResultResponse.testResult,
-            testResultResponse.testKit,
-            testResultResponse.diagnosisKeySubmissionSupported,
-            testResultResponse.requiresConfirmatoryTest
-        )
+        val testResult = with(testResultResponse) {
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken,
+                testEndDate,
+                testResult,
+                testKit,
+                diagnosisKeySubmissionSupported,
+                requiresConfirmatoryTest,
+                confirmatoryDayLimit = confirmatoryDayLimit
+            )
+        }
+
         isolationStateMachine.processEvent(
             OnTestResult(
                 testResult = testResult,

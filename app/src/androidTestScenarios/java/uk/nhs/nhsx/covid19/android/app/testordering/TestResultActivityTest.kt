@@ -10,6 +10,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.setTemporaryExposureKeyHistoryRe
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
@@ -423,6 +424,32 @@ class TestResultActivityTest : EspressoTest() {
         testResultRobot.checkActivityDisplaysVoidNotInIsolation()
 
         testResultRobot.checkGoodNewsActionButtonShowsOrderFreeTest()
+
+        testResultRobot.clickGoodNewsActionButton()
+
+        isolationChecker.assertNeverIsolating()
+    }
+
+    @Test
+    fun showPlodScreenOnPlodResult() = notReported {
+        testAppContext.setState(isolationHelper.neverInIsolation())
+
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "a",
+                testEndDate = Instant.now(),
+                testResult = PLOD,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
+            )
+        )
+
+        startTestActivity<TestResultActivity>()
+
+        testResultRobot.checkActivityDisplaysPlodScreen()
+
+        testResultRobot.checkGoodNewsActionButtonShowsBackHome()
 
         testResultRobot.clickGoodNewsActionButton()
 

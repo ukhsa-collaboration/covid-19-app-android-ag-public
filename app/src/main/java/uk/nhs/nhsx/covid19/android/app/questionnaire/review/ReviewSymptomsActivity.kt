@@ -5,11 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcel
 import android.view.accessibility.AccessibilityEvent
-import androidx.activity.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.datepicker.MaterialDatePicker.Builder
 import kotlinx.android.synthetic.main.activity_review_symptoms.buttonConfirmSymptoms
 import kotlinx.android.synthetic.main.activity_review_symptoms.checkboxNoDate
@@ -23,12 +22,10 @@ import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
-import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.common.assistedViewModel
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.ExplicitDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.NotStated
-import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomAdvice.DoNotIsolate
-import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomAdvice.Isolate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.SymptomsReviewViewAdapter
@@ -45,12 +42,18 @@ import javax.inject.Inject
 
 class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
 
-    private lateinit var calendarConstraints: CalendarConstraints
-
     @Inject
-    lateinit var factory: ViewModelFactory<ReviewSymptomsViewModel>
+    lateinit var factory: ReviewSymptomsViewModel.Factory
 
-    private val viewModel by viewModels<ReviewSymptomsViewModel> { factory }
+    private var datePicker: MaterialDatePicker<Long>? = null
+
+    private val viewModel: ReviewSymptomsViewModel by assistedViewModel {
+        factory.create(
+            questions = intent.getParcelableArrayListExtra(EXTRA_QUESTIONS) ?: listOf(),
+            riskThreshold = intent.getFloatExtra(EXTRA_RISK_THRESHOLD, 0.0f),
+            symptomsOnsetWindowDays = intent.getIntExtra(EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS, 0)
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,11 +65,6 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
             upIndicator = R.drawable.ic_arrow_back_white
         )
 
-        val questions = intent.getParcelableArrayListExtra<Question>(EXTRA_QUESTIONS) ?: return
-        val riskThreshold = intent.getFloatExtra(EXTRA_RISK_THRESHOLD, 0.0F)
-        val symptomsOnsetWindowDays = intent.getIntExtra(EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS, 0)
-        viewModel.setup(questions, riskThreshold, symptomsOnsetWindowDays)
-
         setupListeners()
         setupViewModelListeners()
     }
@@ -76,29 +74,41 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
             updateSymptoms(viewState.reviewSymptomItems)
             updateOnsetDate(viewState.onsetDate)
             setOnsetErrorVisibility(viewState.showOnsetDateError)
-            calendarConstraints = setupCalendarConstraints(viewState.symptomsOnsetWindowDays)
+            updateOnsetDatePicker(viewState.showOnsetDatePicker, viewState.symptomsOnsetWindowDays, viewState.datePickerSelection)
         }
 
-        viewModel.navigateToSymptomAdviceScreen().observe(
-            this,
-            Observer { symptomAdvice: SymptomAdvice ->
-                when (symptomAdvice) {
-                    is DoNotIsolate -> {
-                        startActivity<NoSymptomsActivity> {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        }
-                    }
-                    is Isolate -> {
-                        SymptomsAdviceIsolateActivity.start(
-                            this,
-                            symptomAdvice.isPositiveSymptoms,
-                            symptomAdvice.isolationDurationDays
-                        )
-                        finish()
-                    }
+        viewModel.navigateToSymptomAdviceScreen().observe(this) { symptomAdvice: SymptomAdvice ->
+            if (symptomAdvice is IsolationSymptomAdvice) {
+                SymptomsAdviceIsolateActivity.start(this, symptomAdvice)
+            } else {
+                startActivity<NoSymptomsActivity> {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
             }
-        )
+        }
+    }
+
+    private fun updateOnsetDatePicker(showOnsetDatePicker: Boolean, symptomsOnsetWindowDays: Int, datePickerSelection: Long) {
+        if (!showOnsetDatePicker) {
+            datePicker?.dismiss()
+            return
+        }
+        val calendarConstraints = setupCalendarConstraints(symptomsOnsetWindowDays)
+
+        val datePicker = Builder
+            .datePicker()
+            .setSelection(datePickerSelection)
+            .setCalendarConstraints(calendarConstraints)
+            .build().apply {
+                show(supportFragmentManager, ReviewSymptomsActivity::class.java.name)
+                addOnPositiveButtonClickListener { dateInMillis ->
+                    viewModel.onDateSelected(dateInMillis)
+                }
+                addOnCancelListener {
+                    viewModel.onDatePickerDismissed()
+                }
+            }
+        this.datePicker = datePicker
     }
 
     private fun setOnsetErrorVisibility(showOnsetDateError: Boolean) {
@@ -127,14 +137,7 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
 
     private fun setupListeners() {
         selectDateContainer.setOnSingleClickListener {
-            val datePicker = Builder
-                .datePicker()
-                .setCalendarConstraints(calendarConstraints)
-                .build()
-            datePicker.show(supportFragmentManager, ReviewSymptomsActivity::class.java.name)
-            datePicker.addOnPositiveButtonClickListener { dateInMillis ->
-                viewModel.onDateSelected(dateInMillis)
-            }
+            viewModel.onSelectDateClicked()
         }
 
         checkboxNoDate.setOnCheckedChangeListener { _, isChecked ->

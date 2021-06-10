@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_settings.actionDeleteAllData
+import kotlinx.android.synthetic.main.activity_settings.animationsOption
 import kotlinx.android.synthetic.main.activity_settings.languageOption
 import kotlinx.android.synthetic.main.activity_settings.myAreaOption
 import kotlinx.android.synthetic.main.activity_settings.myDataOption
@@ -13,11 +14,12 @@ import kotlinx.android.synthetic.main.activity_settings.venueHistoryOption
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.about.MyDataActivity
+import uk.nhs.nhsx.covid19.android.app.about.mydata.MyDataActivity
 import uk.nhs.nhsx.covid19.android.app.about.VenueHistoryActivity
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsActivity
 import uk.nhs.nhsx.covid19.android.app.settings.languages.LanguagesActivity
 import uk.nhs.nhsx.covid19.android.app.settings.myarea.MyAreaActivity
 import uk.nhs.nhsx.covid19.android.app.startActivity
@@ -78,6 +80,10 @@ class SettingsActivity : BaseActivity(R.layout.activity_settings) {
 
         actionDeleteAllData.setOnSingleClickListener {
             viewModel.onDeleteAllUserDataClicked()
+        }
+
+        animationsOption.setOnSingleClickListener {
+            startActivity<AnimationsActivity>()
         }
     }
 

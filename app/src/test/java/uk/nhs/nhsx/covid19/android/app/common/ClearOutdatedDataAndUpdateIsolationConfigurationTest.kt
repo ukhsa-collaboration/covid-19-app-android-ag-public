@@ -1,13 +1,10 @@
 package uk.nhs.nhsx.covid19.android.app.common
 
-import com.jeroenmols.featureflag.framework.FeatureFlag
-import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationTokensProvider
@@ -76,11 +73,6 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
             DurationDays()
         )
         every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns true
-    }
-
-    @After
-    fun tearDown() {
-        FeatureFlagTestHelper.clearFeatureFlags()
     }
 
     @Test
@@ -179,10 +171,8 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
     }
 
     @Test
-    fun `clears old epidemiology exposure windows when feature flag enabled`() =
+    fun `clears old epidemiology exposure windows`() =
         runBlocking {
-            FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.STORE_EXPOSURE_WINDOWS)
-
             testSubject()
 
             verify {
@@ -190,17 +180,6 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
                     LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
                 )
             }
-            verify { exposureNotificationTokensProvider.clear() }
-        }
-
-    @Test
-    fun `keeps epidemiology exposure windows when feature flag disabled`() =
-        runBlocking {
-            FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.STORE_EXPOSURE_WINDOWS)
-
-            testSubject()
-
-            verify(exactly = 0) { epidemiologyEventProvider.clearOnAndBefore(any()) }
             verify { exposureNotificationTokensProvider.clear() }
         }
 

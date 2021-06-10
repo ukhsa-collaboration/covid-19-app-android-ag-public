@@ -59,25 +59,43 @@
         android:text="Send void test result" />
 
     <Button
+        android:id="@+id/sendPlodTestResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send plod test result" />
+
+    <Button
+        android:id="@+id/sendUnknownTestResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send unknown test result" />
+
+    <Button
+        android:id="@+id/sendUnconfirmedPositiveTestResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send unconfirmed positive test result" />
+
+    <Button
         android:id="@+id/defaultState"
         style="@style/PrimaryButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Default" />
+        android:text="Default (resets state)" />
 
     <Button
         android:id="@+id/indexState"
         style="@style/PrimaryButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Index" />
+        android:text="Index (resets state)" />
 
     <Button
         android:id="@+id/contactState"
         style="@style/PrimaryButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Contact" />
+        android:text="Contact (resets state)" />
 
     <Button
         android:id="@+id/sendExposureNotification"

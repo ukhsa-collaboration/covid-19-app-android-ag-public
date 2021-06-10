@@ -17,6 +17,17 @@ class KeySharingInfoProviderTest {
 
     private val testSubject = KeySharingInfoProvider(keySharingInfoJsonStorage, moshi)
 
+    private val token = "token"
+    private val acknowledgedDate = "2020-07-25T10:00:00Z"
+    private val notificationSentDate = "2020-07-25T11:00:00Z"
+
+    private val keySharingInfo = KeySharingInfo(
+        diagnosisKeySubmissionToken = token,
+        acknowledgedDate = Instant.parse(acknowledgedDate),
+        notificationSentDate = null,
+        hasDeclinedSharingKeys = false
+    )
+
     @Test
     fun `test writing`() {
         testSubject.keySharingInfo = keySharingInfo
@@ -29,6 +40,16 @@ class KeySharingInfoProviderTest {
         every { keySharingInfoJsonStorage.value } returns keySharingInfoJson()
 
         assertEquals(keySharingInfo, testSubject.keySharingInfo)
+    }
+
+    @Test
+    fun `test reading json with additional properties`() {
+        every { keySharingInfoJsonStorage.value } returns keySharingInfoJsonWithAdditionalProperties()
+
+        assertEquals(
+            keySharingInfo.copy(notificationSentDate = Instant.parse(notificationSentDate)),
+            testSubject.keySharingInfo
+        )
     }
 
     @Test
@@ -59,21 +80,12 @@ class KeySharingInfoProviderTest {
         verify { keySharingInfoJsonStorage.value = "null" }
     }
 
-    val token = "token"
-    val acknowledgedDate = "2020-07-25T10:00:00Z"
-
-    private val keySharingInfo = KeySharingInfo(
-        diagnosisKeySubmissionToken = token,
-        acknowledgedDate = Instant.parse(acknowledgedDate),
-        notificationSentDate = null,
-        hasDeclinedSharingKeys = false,
-        testKitType = null,
-        requiresConfirmatoryTest = false
-    )
-
     private fun keySharingInfoJson(hasDeclinedSharingKeys: Boolean = false) =
-        """{"diagnosisKeySubmissionToken":"$token","acknowledgedDate":"$acknowledgedDate","hasDeclinedSharingKeys":$hasDeclinedSharingKeys,"requiresConfirmatoryTest":false}"""
+        """{"diagnosisKeySubmissionToken":"$token","acknowledgedDate":"$acknowledgedDate","hasDeclinedSharingKeys":$hasDeclinedSharingKeys}"""
 
     private fun keySharingInfoJson(notificationSentDate: String, hasDeclinedSharingKeys: Boolean = false) =
-        """{"diagnosisKeySubmissionToken":"$token","acknowledgedDate":"$acknowledgedDate","notificationSentDate":"$notificationSentDate","hasDeclinedSharingKeys":$hasDeclinedSharingKeys,"requiresConfirmatoryTest":false}"""
+        """{"diagnosisKeySubmissionToken":"$token","acknowledgedDate":"$acknowledgedDate","notificationSentDate":"$notificationSentDate","hasDeclinedSharingKeys":$hasDeclinedSharingKeys}"""
+
+    private fun keySharingInfoJsonWithAdditionalProperties() =
+        """{"diagnosisKeySubmissionToken":"$token","acknowledgedDate":"$acknowledgedDate","notificationSentDate":"2020-07-25T11:00:00Z","hasDeclinedSharingKeys":false,"testKitType":"LAB_RESULT"}"""
 }

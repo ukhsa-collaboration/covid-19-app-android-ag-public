@@ -8,21 +8,30 @@ import androidx.test.espresso.intent.matcher.IntentMatchers
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_FAIL
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_SUCCEED
-import uk.nhs.nhsx.covid19.android.app.common.Translatable
+import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsDidUpdateIsolation
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenNoSymptoms
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessment
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenSelfAssessmentNoImpactOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.report.Reporter
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.FLOW
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.report.reporter
+import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
@@ -33,6 +42,8 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
+import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import java.time.LocalDate
 
 class QuestionnaireScenarioTest : EspressoTest() {
@@ -43,11 +54,13 @@ class QuestionnaireScenarioTest : EspressoTest() {
     private val reviewSymptomsRobot = ReviewSymptomsRobot()
     private val symptomsAdviceIsolateRobot = SymptomsAdviceIsolateRobot()
 
+    private val isolationHelper = IsolationHelper(testAppContext.clock)
+
     @Test
-    fun successfullySelectSymptomsAndCannotRememberDate_GoesToIsolationState() = reporter(
+    fun whenNotIsolating_userSelectsPositiveSymptoms_transitionsIntoIsolation() = reporter(
         scenario = "Self Diagnosis",
-        title = "Positive symptoms path",
-        description = "User selects symptoms and is notified of coronavirus symptoms",
+        title = "Currently not in isolation - Positive symptoms",
+        description = "User is currently not in isolation, selects symptoms and is notified of coronavirus symptoms",
         kind = FLOW
     ) {
         startTestActivity<StatusActivity>()
@@ -95,20 +108,238 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
         symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
 
-        symptomsAdviceIsolateRobot.checkStateInfoViewForPositiveSymptoms()
+        symptomsAdviceIsolateRobot.checkViewState(
+            NoIndexCaseThenIsolationDueToSelfAssessment(testAppContext.getRemainingDaysInIsolation())
+        )
 
         step(
             stepName = "Positive Symptoms screen",
             stepDescription = "The user is asked to isolate, and given the option to book a test. They choose to close the screen."
         )
 
-        symptomsAdviceIsolateRobot.checkBottomActionButtonIsDisplayed()
-
         testAppContext.device.pressBack()
 
         step(
             stepName = "Home screen - Isolation state",
             stepDescription = "The user is presented with the home screen in isolation state"
+        )
+    }
+
+    @Test
+    fun whenNotIsolating_userSelectsNoSymptoms_NavigatesToNoSymptomsScreen() = reporter(
+        scenario = "Self Diagnosis",
+        title = "Currently not in isolation - No symptoms",
+        description = "User is currently not in isolation, has no symptoms selected and taps 'I don't have any of these symptoms'",
+        kind = FLOW
+    ) {
+        startTestActivity<QuestionnaireActivity>()
+
+        questionnaireRobot.checkActivityIsDisplayed()
+
+        step(
+            stepName = "Symptom list",
+            stepDescription = "The user is presented a list of symptoms"
+        )
+
+        questionnaireRobot.selectNoSymptoms()
+
+        waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
+
+        step(
+            stepName = "Confirmation dialog",
+            stepDescription = "The user does not select any symptoms and taps 'I don't have any of these symptoms'. A dialog is shown. The user taps 'remove'."
+        )
+
+        setScreenOrientation(LANDSCAPE)
+
+        waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
+
+        setScreenOrientation(PORTRAIT)
+
+        waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
+
+        waitFor { questionnaireRobot.continueOnDiscardSymptomsDialog() }
+
+        noSymptomsRobot.confirmNoSymptomsScreenIsDisplayed()
+
+        step(
+            stepName = "No symptoms",
+            stepDescription = "The user is informed they are unlikely to have coronavirus"
+        )
+    }
+
+    @Test
+    fun contactCase_userSelectsPositiveSymptoms_StaysInContactIsolation() = reporter(
+        scenario = "Self Diagnosis",
+        title = "Isolating due to contact case - Positive symptoms",
+        description = "User is in contact case isolation, selects symptoms that do not result in isolation due to self-assessment and is asked to continue isolating",
+        kind = FLOW
+    ) {
+        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+
+        completeQuestionnaire(selectMainSymptom = false)
+
+        symptomsAdviceIsolateRobot.checkViewState(
+            NoIndexCaseThenSelfAssessmentNoImpactOnIsolation(testAppContext.getRemainingDaysInIsolation())
+        )
+
+        step(
+            stepName = "Continue isolation screen",
+            stepDescription = "The user is informed that they do not have symptoms but should continue to self-isolate."
+        )
+    }
+
+    @Test
+    fun indexCaseWithPositiveTestResult_userSelectsPositiveSymptoms_withOnsetDateAfterTestEndDate_showIsolationUpdateScreen() =
+        reporter(
+            scenario = "Self Diagnosis",
+            title = "Isolating due to positive test result - Positive symptoms with onset date more recent than test end date",
+            description = "User is in index case isolation due to a positive test result, has " +
+                "symptoms selected and chooses a onset date after the stored test end date. " +
+                "This extends the current isolation and shows the appropriate screen.",
+            kind = FLOW
+        ) {
+            isolatingDueToPositiveTestResult(testEndDate = LocalDate.now(testAppContext.clock).minusDays(3))
+
+            completeQuestionnaire(selectMainSymptom = true)
+
+            symptomsAdviceIsolateRobot.checkViewState(
+                IndexCaseThenHasSymptomsDidUpdateIsolation(testAppContext.getRemainingDaysInIsolation())
+            )
+
+            step(
+                stepName = "Positive symptoms screen",
+                stepDescription = "The user is informed that they have symptoms and should continue to self-isolate."
+            )
+        }
+
+    @Test
+    fun indexCaseWithPositiveTestResult_userSelectsPositiveSymptoms_withOnsetDateBeforeTestEndDate_showKeepIsolatingScreen() =
+        reporter(
+            scenario = "Self Diagnosis",
+            title = "Isolating due to positive test result - Positive symptoms with onset date older than test end date",
+            description = "User is in index case isolation due to a positive test result, has " +
+                "symptoms selected and chooses an onset date before the stored test end date. " +
+                "This has no effect on the current isolation and asks the user to keep isolating.",
+            kind = FLOW
+        ) {
+            isolatingDueToPositiveTestResult()
+
+            completeQuestionnaire(selectMainSymptom = true)
+
+            symptomsAdviceIsolateRobot.checkViewState(IndexCaseThenHasSymptomsNoEffectOnIsolation)
+
+            step(
+                stepName = "Continue isolation screen",
+                stepDescription = "The user is informed that they have symptoms and should continue to self-isolate."
+            )
+        }
+
+    @Test
+    fun indexCaseWithPositiveTestResult_userSelectsLowRiskSymptoms_showKeepIsolatingScreen() =
+        reporter(
+            scenario = "Self Diagnosis",
+            title = "Isolating due to positive test result - Low risk symptoms",
+            description = "User is in index case isolation due to a positive test result, has " +
+                "low risk symptoms selected and chooses an onset date before the stored test end date. " +
+                "This has no effect on the current isolation and asks the user to keep isolating.",
+            kind = FLOW
+        ) {
+            isolatingDueToPositiveTestResult()
+
+            completeQuestionnaire(selectMainSymptom = false)
+
+            symptomsAdviceIsolateRobot.checkViewState(IndexCaseThenNoSymptoms)
+
+            step(
+                stepName = "Continue isolation screen",
+                stepDescription = "The user is informed that they do not have symptoms but should continue to self-isolate as per previous advice."
+            )
+        }
+
+    @Test
+    fun indexCaseWithPositiveTestResult_userSelectsNoSymptoms_showKeepIsolatingScreen() = reporter(
+        scenario = "Self Diagnosis",
+        title = "Isolating due to positive test result - No symptoms",
+        description = "User is in index case isolation due to a positive test result, has no symptoms selected and taps 'I don't have any of these symptoms'",
+        kind = FLOW
+    ) {
+        isolatingDueToPositiveTestResult()
+
+        startTestActivity<QuestionnaireActivity>()
+
+        step(
+            stepName = "Symptom list",
+            stepDescription = "The user is presented with a list of symptoms"
+        )
+
+        questionnaireRobot.selectNoSymptoms()
+
+        waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
+
+        step(
+            stepName = "Confirmation dialog",
+            stepDescription = "The user does not select any symptoms and taps 'I don't have any of these symptoms'. A dialog is shown. The user taps 'remove'."
+        )
+
+        waitFor { questionnaireRobot.continueOnDiscardSymptomsDialog() }
+
+        symptomsAdviceIsolateRobot.checkViewState(IndexCaseThenNoSymptoms)
+
+        step(
+            stepName = "Continue isolation screen",
+            stepDescription = "The user is informed that they do not have symptoms but should continue to self-isolate as per previous advice."
+        )
+    }
+
+    private fun Reporter.completeQuestionnaire(selectMainSymptom: Boolean) {
+        startTestActivity<QuestionnaireActivity>()
+
+        questionnaireRobot.checkActivityIsDisplayed()
+
+        step(
+            stepName = "Symptom list",
+            stepDescription = "The user is presented a list of symptoms"
+        )
+
+        if (selectMainSymptom) selectMainSymptom()
+        else selectLowThresholdSymptom()
+
+        questionnaireRobot.reviewSymptoms()
+
+        step(
+            stepName = "Review symptoms",
+            stepDescription = "The user is presented a list of the selected symptoms for review"
+        )
+
+        reviewSymptomsRobot.confirmReviewSymptomsScreenIsDisplayed()
+
+        reviewSymptomsRobot.selectCannotRememberDate()
+
+        step(
+            stepName = "No Date",
+            stepDescription = "The user can specify an onset date or tick that they don't remember the onset date, before confirming"
+        )
+
+        reviewSymptomsRobot.confirmSelection()
+    }
+
+    private fun Reporter.selectLowThresholdSymptom() {
+        // Select "Dummy" symptom that does not result in isolation
+        questionnaireRobot.selectSymptomsAtPositions(3)
+
+        step(
+            stepName = "Symptom selected",
+            stepDescription = "The user selects a symptom that does not exceed the threshold to result in isolation and confirms the screen"
+        )
+    }
+
+    private fun Reporter.selectMainSymptom() {
+        questionnaireRobot.selectSymptomsAtPositions(2)
+
+        step(
+            stepName = "Symptom selected",
+            stepDescription = "The user selects a main symptom and confirms the screen"
         )
     }
 
@@ -174,49 +405,6 @@ class QuestionnaireScenarioTest : EspressoTest() {
         )
     }
 
-    @Test
-    fun selectNoSymptoms_NavigatesToConfirmationScreen() = reporter(
-        scenario = "Self Diagnosis",
-        title = "No symptoms",
-        description = "User has no symptoms selected and taps 'I don't have any of these symptoms'",
-        kind = FLOW
-    ) {
-        startTestActivity<QuestionnaireActivity>()
-
-        questionnaireRobot.checkActivityIsDisplayed()
-
-        step(
-            stepName = "Symptom list",
-            stepDescription = "The user is presented a list of symptoms"
-        )
-
-        questionnaireRobot.selectNoSymptoms()
-
-        waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
-
-        step(
-            stepName = "Confirmation dialog",
-            stepDescription = "The user does not select any symptoms and taps 'I don't have any of these symptoms'. A dialog is shown. The user taps 'remove'."
-        )
-
-        setScreenOrientation(LANDSCAPE)
-
-        waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
-
-        setScreenOrientation(PORTRAIT)
-
-        waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
-
-        waitFor { questionnaireRobot.continueOnDiscardSymptomsDialog() }
-
-        noSymptomsRobot.confirmNoSymptomsScreenIsDisplayed()
-
-        step(
-            stepName = "No symptoms",
-            stepDescription = "The user is informed they are unlikely to have coronavirus"
-        )
-    }
-
     @RetryFlakyTest
     @Test
     fun selectNoSymptoms_CancelDialog() = notReported {
@@ -260,7 +448,9 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
         reviewSymptomsRobot.confirmSelection()
 
-        symptomsAdviceIsolateRobot.checkStateInfoViewForNegativeSymptoms()
+        symptomsAdviceIsolateRobot.checkViewState(
+            NoIndexCaseThenSelfAssessmentNoImpactOnIsolation(testAppContext.getRemainingDaysInIsolation())
+        )
     }
 
     @Test
@@ -273,8 +463,8 @@ class QuestionnaireScenarioTest : EspressoTest() {
         val questions = arrayListOf(
             Question(
                 Symptom(
-                    title = Translatable(mapOf("en" to "A high temperature (fever)")),
-                    description = Translatable(mapOf("en" to "This means that you feel hot to touch on your chest or back (you do not need to measure your temperature).")),
+                    title = TranslatableString(mapOf("en" to "A high temperature (fever)")),
+                    description = TranslatableString(mapOf("en" to "This means that you feel hot to touch on your chest or back (you do not need to measure your temperature).")),
                     riskWeight = 0.0
                 ),
                 isChecked = true
@@ -414,5 +604,15 @@ class QuestionnaireScenarioTest : EspressoTest() {
     @Test
     fun startReviewSymptomsActivityWithoutQuestions_NothingHappens() = notReported {
         startTestActivity<ReviewSymptomsActivity>()
+    }
+
+    private fun isolatingDueToPositiveTestResult(testEndDate: LocalDate = LocalDate.now(testAppContext.clock)) {
+        val testResult = AcknowledgedTestResult(
+            testEndDate = testEndDate,
+            testResult = POSITIVE,
+            testKitType = LAB_RESULT,
+            acknowledgedDate = LocalDate.now(testAppContext.clock)
+        )
+        testAppContext.setState(isolationHelper.positiveTest(testResult).asIsolation())
     }
 }

@@ -20,7 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityViewModel.App
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager.AvailableUpdateStatus.Available
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager.AvailableUpdateStatus.NoUpdateAvailable
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager.AvailableUpdateStatus.UpdateError
-import uk.nhs.nhsx.covid19.android.app.common.Translatable
+import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.remote.data.AppAvailabilityResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumAppVersion
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumSdkVersion
@@ -43,21 +43,21 @@ class AppAvailabilityViewModelTest {
 
     private val appAvailableResponse = AppAvailabilityResponse(
         MinimumAppVersion(
-            Translatable(mapOf("en" to "en")),
+            TranslatableString(mapOf("en" to "en")),
             BuildConfig.VERSION_CODE + 1
         ),
         MinimumSdkVersion(
-            Translatable(
+            TranslatableString(
                 mapOf()
             ),
             Build.VERSION.SDK_INT
         ),
         RecommendedAppVersion(
-            Translatable(
+            TranslatableString(
                 mapOf()
             ),
             BuildConfig.VERSION_CODE,
-            title = Translatable(
+            title = TranslatableString(
                 mapOf()
             )
         )
@@ -160,17 +160,17 @@ class AppAvailabilityViewModelTest {
     private fun stubResponse(minSdkValue: Int = 23, minAppVersionCode: Int = 8) =
         AppAvailabilityResponse(
             minimumAppVersion = MinimumAppVersion(
-                description = Translatable(mapOf("en-GB" to "Please Update App")),
+                description = TranslatableString(mapOf("en-GB" to "Please Update App")),
                 value = minAppVersionCode
             ),
             minimumSdkVersion = MinimumSdkVersion(
-                description = Translatable(mapOf("en-GB" to "Please Update Device")),
+                description = TranslatableString(mapOf("en-GB" to "Please Update Device")),
                 value = minSdkValue
             ),
             recommendedAppVersion = RecommendedAppVersion(
-                description = Translatable(mapOf("en-GB" to "Please Update App")),
+                description = TranslatableString(mapOf("en-GB" to "Please Update App")),
                 value = minAppVersionCode,
-                title = Translatable(mapOf("en-GB" to "Please Update App"))
+                title = TranslatableString(mapOf("en-GB" to "Please Update App"))
             )
         )
 }

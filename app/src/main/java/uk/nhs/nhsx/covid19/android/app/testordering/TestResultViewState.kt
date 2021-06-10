@@ -16,6 +16,7 @@ sealed class TestResultViewState(val buttonAction: ButtonAction) {
     object PositiveWillBeInIsolationAndOrderTest : TestResultViewState(buttonAction = ORDER_TEST)
     object VoidNotInIsolation : TestResultViewState(buttonAction = ORDER_TEST) // F
     object VoidWillBeInIsolation : TestResultViewState(buttonAction = ORDER_TEST) // B
+    object PlodWillContinueWithCurrentState : TestResultViewState(buttonAction = FINISH)
     object Ignore : TestResultViewState(buttonAction = FINISH)
 
     enum class ButtonAction {

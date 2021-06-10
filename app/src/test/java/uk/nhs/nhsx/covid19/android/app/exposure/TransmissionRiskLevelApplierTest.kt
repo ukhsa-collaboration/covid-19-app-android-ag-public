@@ -143,9 +143,7 @@ class TransmissionRiskLevelApplierTest {
     private val keySharingInfo = KeySharingInfo(
         diagnosisKeySubmissionToken = "token",
         acknowledgedDate = Instant.parse("2020-07-12T12:00:00Z"),
-        notificationSentDate = null,
-        testKitType = null,
-        requiresConfirmatoryTest = false
+        notificationSentDate = null
     )
 }
 

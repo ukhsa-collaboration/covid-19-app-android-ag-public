@@ -6,7 +6,6 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
-import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.LinearLayout
 import androidx.annotation.AttrRes
 import kotlinx.android.synthetic.main.view_area_risk.view.areaRiskChevron
@@ -24,6 +23,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getThemeColor
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getThemeDrawableResId
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpButtonType
 
 class AreaRiskView @JvmOverloads constructor(
     context: Context,
@@ -47,12 +47,11 @@ class AreaRiskView @JvmOverloads constructor(
         View.inflate(context, R.layout.view_area_risk, this)
         applyAttributes(context, attrs)
         configureLayout()
+        setUpAccessibility()
     }
 
-    override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo) {
-        super.onInitializeAccessibilityNodeInfo(info)
-        info.contentDescription =
-            context.getString(R.string.accessibility_announcement_button, areaRiskText.text)
+    private fun setUpAccessibility() {
+        setUpButtonType(areaRiskText.text)
     }
 
     private fun applyAttributes(context: Context, attrs: AttributeSet?) {

@@ -7,7 +7,6 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CanShareKeys.CanShareKeysResult.KeySharingPossible
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CanShareKeys.CanShareKeysResult.NoKeySharingPossible
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShouldEnterShareKeysFlowResult.None
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
@@ -83,8 +82,6 @@ class ShouldEnterShareKeysFlowTest {
         KeySharingInfo(
             diagnosisKeySubmissionToken = "token",
             acknowledgedDate = Instant.now(fixedClock).minus(acknowledgedHoursAgo, HOURS),
-            hasDeclinedSharingKeys = hasDeclinedSharingKeys,
-            testKitType = LAB_RESULT,
-            requiresConfirmatoryTest = false
+            hasDeclinedSharingKeys = hasDeclinedSharingKeys
         )
 }

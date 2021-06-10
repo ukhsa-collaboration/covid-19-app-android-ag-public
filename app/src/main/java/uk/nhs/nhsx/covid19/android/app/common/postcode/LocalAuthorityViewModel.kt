@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import uk.nhs.nhsx.covid19.android.app.about.UpdateAreaRisk
+import uk.nhs.nhsx.covid19.android.app.about.UpdateAreaInfo
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Valid
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityViewModel.ErrorState.NO_ERROR
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
@@ -20,7 +20,7 @@ class LocalAuthorityViewModel @Inject constructor(
     private val postCodeProvider: PostCodeProvider,
     private val riskyPostCodeIndicatorProvider: RiskyPostCodeIndicatorProvider,
     private val onboardingCompletedProvider: OnboardingCompletedProvider,
-    private val updateAreaRisk: UpdateAreaRisk
+    private val updateAreaInfo: UpdateAreaInfo
 ) : ViewModel() {
 
     @VisibleForTesting
@@ -80,7 +80,7 @@ class LocalAuthorityViewModel @Inject constructor(
             riskyPostCodeIndicatorProvider.clear()
 
             if (onboardingCompletedProvider.value == true) {
-                updateAreaRisk.schedule()
+                updateAreaInfo.schedule()
             }
             finishActivity.postCall()
         }

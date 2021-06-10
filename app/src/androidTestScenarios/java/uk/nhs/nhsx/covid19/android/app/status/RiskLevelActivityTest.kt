@@ -1,7 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.common.Translatable
+import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme
 import uk.nhs.nhsx.covid19.android.app.remote.data.Policy
 import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyData
@@ -22,20 +22,20 @@ class RiskLevelActivityTest : EspressoTest() {
 
     private val meetingPolicy = Policy(
         policyIcon = PolicyIcon.MEETING_PEOPLE,
-        policyHeading = Translatable(mapOf("en" to "Meeting people")),
-        policyContent = Translatable(mapOf("en" to "Rule of six indoors and outdoors, in all settings."))
+        policyHeading = TranslatableString(mapOf("en" to "Meeting people")),
+        policyContent = TranslatableString(mapOf("en" to "Rule of six indoors and outdoors, in all settings."))
     )
 
     private val socialDistancingPolicy = Policy(
         policyIcon = PolicyIcon.SOCIAL_DISTANCING,
-        policyHeading = Translatable(mapOf("en" to "Social distancing")),
-        policyContent = Translatable(mapOf("en" to "Please keep a safe distance of at least 2 meters people not living in your household."))
+        policyHeading = TranslatableString(mapOf("en" to "Social distancing")),
+        policyContent = TranslatableString(mapOf("en" to "Please keep a safe distance of at least 2 meters people not living in your household."))
     )
 
     private val workPolicy = Policy(
         policyIcon = PolicyIcon.WORK,
-        policyHeading = Translatable(mapOf("en" to "Work")),
-        policyContent = Translatable(mapOf("en" to "If working from home is possible, it is advised to do so."))
+        policyHeading = TranslatableString(mapOf("en" to "Work")),
+        policyContent = TranslatableString(mapOf("en" to "If working from home is possible, it is advised to do so."))
     )
 
     @Test
@@ -47,11 +47,11 @@ class RiskLevelActivityTest : EspressoTest() {
                     postCode,
                     RiskIndicator(
                         colorScheme = ColorScheme.GREEN,
-                        name = Translatable(mapOf("en" to "$postCode is in Local Alert Level 1")),
-                        heading = Translatable(mapOf("en" to "Heading low")),
-                        content = Translatable(mapOf("en" to "Content low")),
-                        linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-                        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+                        name = TranslatableString(mapOf("en" to "$postCode is in Local Alert Level 1")),
+                        heading = TranslatableString(mapOf("en" to "Heading low")),
+                        content = TranslatableString(mapOf("en" to "Content low")),
+                        linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
+                        linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
                         policyData = null
                     ),
                     riskLevelFromLocalAuthority = false
@@ -77,11 +77,11 @@ class RiskLevelActivityTest : EspressoTest() {
                     postCode,
                     RiskIndicator(
                         colorScheme = ColorScheme.YELLOW,
-                        name = Translatable(mapOf("en" to "$postCode is in Local Alert Level 2")),
-                        heading = Translatable(mapOf("en" to "Heading medium")),
-                        content = Translatable(mapOf("en" to "Content medium")),
-                        linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-                        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+                        name = TranslatableString(mapOf("en" to "$postCode is in Local Alert Level 2")),
+                        heading = TranslatableString(mapOf("en" to "Heading medium")),
+                        content = TranslatableString(mapOf("en" to "Content medium")),
+                        linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
+                        linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
                         policyData = null
                     ),
                     riskLevelFromLocalAuthority = false
@@ -107,11 +107,11 @@ class RiskLevelActivityTest : EspressoTest() {
                     postCode,
                     RiskIndicator(
                         colorScheme = ColorScheme.RED,
-                        name = Translatable(mapOf("en" to "$postCode is in Local Alert Level 3")),
-                        heading = Translatable(mapOf("en" to "Heading high")),
-                        content = Translatable(mapOf("en" to "Content high")),
-                        linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-                        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+                        name = TranslatableString(mapOf("en" to "$postCode is in Local Alert Level 3")),
+                        heading = TranslatableString(mapOf("en" to "Heading high")),
+                        content = TranslatableString(mapOf("en" to "Content high")),
+                        linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
+                        linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
                         policyData = null
                     ),
                     riskLevelFromLocalAuthority = false
@@ -137,17 +137,17 @@ class RiskLevelActivityTest : EspressoTest() {
                     postCode,
                     RiskIndicator(
                         colorScheme = ColorScheme.RED,
-                        name = Translatable(mapOf("en" to "$postCode is in Local Alert Level 3")),
-                        heading = Translatable(mapOf("en" to "Heading high")),
-                        content = Translatable(mapOf("en" to "Content high")),
-                        linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-                        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+                        name = TranslatableString(mapOf("en" to "$postCode is in Local Alert Level 3")),
+                        heading = TranslatableString(mapOf("en" to "Heading high")),
+                        content = TranslatableString(mapOf("en" to "Content high")),
+                        linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
+                        linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
                         policyData = PolicyData(
-                            heading = Translatable(mapOf("en" to "Coronavirus cases are very high in your area")),
-                            content = Translatable(mapOf("en" to "Local Authority content high")),
-                            footer = Translatable(mapOf("en" to "Find out what rules apply in your area to help reduce the spread of coronavirus.")),
+                            heading = TranslatableString(mapOf("en" to "Coronavirus cases are very high in your area")),
+                            content = TranslatableString(mapOf("en" to "Local Authority content high")),
+                            footer = TranslatableString(mapOf("en" to "Find out what rules apply in your area to help reduce the spread of coronavirus.")),
                             policies = listOf(meetingPolicy, meetingPolicy),
-                            localAuthorityRiskTitle = Translatable(mapOf("en" to "$postCode is in local COVID alert level: high"))
+                            localAuthorityRiskTitle = TranslatableString(mapOf("en" to "$postCode is in local COVID alert level: high"))
                         )
                     ),
                     riskLevelFromLocalAuthority = true
@@ -188,17 +188,17 @@ class RiskLevelActivityTest : EspressoTest() {
                     RiskIndicator(
                         colorScheme = ColorScheme.RED,
                         colorSchemeV2 = ColorScheme.MAROON,
-                        name = Translatable(mapOf("en" to "$postCode is in Local Alert Level 4")),
-                        heading = Translatable(mapOf("en" to "Heading high")),
-                        content = Translatable(mapOf("en" to "Content high")),
-                        linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-                        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+                        name = TranslatableString(mapOf("en" to "$postCode is in Local Alert Level 4")),
+                        heading = TranslatableString(mapOf("en" to "Heading high")),
+                        content = TranslatableString(mapOf("en" to "Content high")),
+                        linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
+                        linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
                         policyData = PolicyData(
-                            heading = Translatable(mapOf("en" to "Coronavirus cases are very high in your area")),
-                            content = Translatable(mapOf("en" to "Local Authority content high")),
-                            footer = Translatable(mapOf("en" to "Find out what rules apply in your area to help reduce the spread of coronavirus.")),
+                            heading = TranslatableString(mapOf("en" to "Coronavirus cases are very high in your area")),
+                            content = TranslatableString(mapOf("en" to "Local Authority content high")),
+                            footer = TranslatableString(mapOf("en" to "Find out what rules apply in your area to help reduce the spread of coronavirus.")),
                             policies = listOf(meetingPolicy, socialDistancingPolicy, workPolicy),
-                            localAuthorityRiskTitle = Translatable(mapOf("en" to "$postCode is in local COVID alert level: high"))
+                            localAuthorityRiskTitle = TranslatableString(mapOf("en" to "$postCode is in local COVID alert level: high"))
                         )
                     ),
                     riskLevelFromLocalAuthority = true
@@ -284,17 +284,17 @@ class RiskLevelActivityTest : EspressoTest() {
         RiskIndicator(
             colorScheme = ColorScheme.RED,
             colorSchemeV2 = ColorScheme.BLACK,
-            name = Translatable(mapOf("en" to "$postCode is in Local Alert Level 5")),
-            heading = Translatable(mapOf("en" to "Heading very high")),
-            content = Translatable(mapOf("en" to "Content very high")),
-            linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-            linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+            name = TranslatableString(mapOf("en" to "$postCode is in Local Alert Level 5")),
+            heading = TranslatableString(mapOf("en" to "Heading very high")),
+            content = TranslatableString(mapOf("en" to "Content very high")),
+            linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
+            linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
             policyData = PolicyData(
-                heading = Translatable(mapOf("en" to "Coronavirus cases are very high in your area")),
-                content = Translatable(mapOf("en" to "Local Authority content very high")),
-                footer = Translatable(mapOf("en" to "Find out what rules apply in your area to help reduce the spread of coronavirus.")),
+                heading = TranslatableString(mapOf("en" to "Coronavirus cases are very high in your area")),
+                content = TranslatableString(mapOf("en" to "Local Authority content very high")),
+                footer = TranslatableString(mapOf("en" to "Find out what rules apply in your area to help reduce the spread of coronavirus.")),
                 policies = listOf(meetingPolicy, socialDistancingPolicy),
-                localAuthorityRiskTitle = Translatable(mapOf("en" to "$postCode is in local COVID alert level: very high"))
+                localAuthorityRiskTitle = TranslatableString(mapOf("en" to "$postCode is in local COVID alert level: very high"))
             )
         ),
         riskLevelFromLocalAuthority = true

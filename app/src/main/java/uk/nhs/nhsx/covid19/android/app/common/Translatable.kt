@@ -1,21 +1,19 @@
 package uk.nhs.nhsx.covid19.android.app.common
 
 import android.os.Parcelable
-import com.squareup.moshi.JsonClass
 import kotlinx.android.parcel.Parcelize
 import uk.nhs.nhsx.covid19.android.app.SupportedLanguage
 import java.util.Locale
 
-@Parcelize
-@JsonClass(generateAdapter = true)
-data class Translatable(val translations: Map<String, String>) : Parcelable {
+interface Translatable<T> : Parcelable {
+    val translations: Map<String, T>
 
-    fun translate(): String {
+    fun translateOrNull(): T? {
         val languageAndRegion = Locale.getDefault().toLanguageTag()
         val languageCodeOnly = Locale.getDefault().language
 
         if (!isLanguageSupported(languageCodeOnly)) {
-            return translations[fallbackLanguageAndRegion] ?: translations[fallbackLanguage] ?: ""
+            return translations[fallbackLanguageAndRegion] ?: translations[fallbackLanguage]
         }
 
         val exactMatch = translations[languageAndRegion]
@@ -31,7 +29,7 @@ data class Translatable(val translations: Map<String, String>) : Parcelable {
             }
 
         return translations[firstMatchedLanguageCode ?: fallbackLanguageAndRegion]
-            ?: translations[fallbackLanguage] ?: ""
+            ?: translations[fallbackLanguage]
     }
 
     private fun getLanguageCode(languageAndRegion: String) =
@@ -43,11 +41,16 @@ data class Translatable(val translations: Map<String, String>) : Parcelable {
             it == languageCode
         }
 
-    fun replace(oldValue: String, newValue: String): Translatable =
-        Translatable(translations.mapValues { it.value.replace(oldValue, newValue) })
-
     companion object {
         private const val fallbackLanguageAndRegion = "en-GB"
         private const val fallbackLanguage = "en"
     }
+}
+
+@Parcelize
+data class TranslatableString(override val translations: Map<String, String>) : Translatable<String> {
+    fun replace(oldValue: String, newValue: String): TranslatableString =
+        TranslatableString(translations.mapValues { it.value.replace(oldValue, newValue) })
+
+    fun translate(): String = translateOrNull() ?: ""
 }

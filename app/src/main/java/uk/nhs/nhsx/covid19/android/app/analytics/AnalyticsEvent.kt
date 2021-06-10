@@ -35,4 +35,12 @@ sealed class AnalyticsEvent {
     object ReceivedRiskyVenueM1Warning : AnalyticsEvent()
     object ReceivedRiskyVenueM2Warning : AnalyticsEvent()
     object TotalAlarmManagerBackgroundTasks : AnalyticsEvent()
+    object AskedToShareExposureKeysInTheInitialFlow : AnalyticsEvent()
+    object ConsentedToShareExposureKeysInTheInitialFlow : AnalyticsEvent()
+    object SuccessfullySharedExposureKeys : AnalyticsEvent()
+    object TotalShareExposureKeysReminderNotifications : AnalyticsEvent()
+    object ConsentedToShareExposureKeysInReminderScreen : AnalyticsEvent()
+    object DidSendLocalInfoNotification : AnalyticsEvent()
+    object DidAccessLocalInfoScreenViaNotification : AnalyticsEvent()
+    object DidAccessLocalInfoScreenViaBanner : AnalyticsEvent()
 }

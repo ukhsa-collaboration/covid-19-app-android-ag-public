@@ -30,9 +30,7 @@ class CalculateKeySubmissionDateRangeTest {
             KeySharingInfo(
                 diagnosisKeySubmissionToken = "token",
                 acknowledgedDate = Instant.parse("2020-07-15T12:00:00Z"),
-                notificationSentDate = null,
-                testKitType = null,
-                requiresConfirmatoryTest = false
+                notificationSentDate = null
             ).acknowledgedDate,
             LocalDate.of(2020, 7, 12)
         )
@@ -50,9 +48,7 @@ class CalculateKeySubmissionDateRangeTest {
             KeySharingInfo(
                 diagnosisKeySubmissionToken = "token",
                 acknowledgedDate = Instant.parse("2020-07-15T12:00:00Z"),
-                notificationSentDate = null,
-                testKitType = null,
-                requiresConfirmatoryTest = false
+                notificationSentDate = null
             ).acknowledgedDate,
             LocalDate.of(2020, 7, 5)
         )
@@ -70,9 +66,7 @@ class CalculateKeySubmissionDateRangeTest {
             KeySharingInfo(
                 diagnosisKeySubmissionToken = "token",
                 acknowledgedDate = Instant.parse("2020-07-03T12:00:00Z"),
-                notificationSentDate = null,
-                testKitType = null,
-                requiresConfirmatoryTest = false
+                notificationSentDate = null
             ).acknowledgedDate,
             LocalDate.of(2020, 7, 5)
         )

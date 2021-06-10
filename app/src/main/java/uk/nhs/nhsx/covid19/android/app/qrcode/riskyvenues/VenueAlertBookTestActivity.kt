@@ -21,7 +21,6 @@ class VenueAlertBookTestActivity : BaseActivity(R.layout.activity_venue_alert_bo
     @Inject
     lateinit var factory: ViewModelFactory<VenueAlertBookTestViewModel>
     private val viewModel: VenueAlertBookTestViewModel by viewModels { factory }
-    lateinit var venueId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,12 +40,11 @@ class VenueAlertBookTestActivity : BaseActivity(R.layout.activity_venue_alert_bo
             finish()
             return
         } else {
-            venueId = extraVenueId
-            viewModel.updateVenueVisitState(venueId)
+            viewModel.updateVenueVisitState(extraVenueId)
         }
 
         buttonBookTest.setOnSingleClickListener {
-            viewModel.acknowledgeVenueAlert(venueId)
+            viewModel.acknowledgeVenueAlert()
             startActivityForResult(
                 TestOrderingActivity.getIntent(this),
                 REQUEST_CODE_ORDER_A_TEST
@@ -54,7 +52,7 @@ class VenueAlertBookTestActivity : BaseActivity(R.layout.activity_venue_alert_bo
         }
 
         buttonReturnToHomeScreen.setOnSingleClickListener {
-            viewModel.acknowledgeVenueAlert(venueId)
+            viewModel.acknowledgeVenueAlert()
             finish()
         }
     }
@@ -66,7 +64,7 @@ class VenueAlertBookTestActivity : BaseActivity(R.layout.activity_venue_alert_bo
 
     override fun onBackPressed() {
         super.onBackPressed()
-        viewModel.acknowledgeVenueAlert(venueId)
+        viewModel.acknowledgeVenueAlert()
     }
 
     companion object {

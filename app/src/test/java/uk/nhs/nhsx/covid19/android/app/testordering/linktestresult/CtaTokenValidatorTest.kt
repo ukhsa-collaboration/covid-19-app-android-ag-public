@@ -1,5 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 
+import com.squareup.moshi.JsonDataException
+import com.squareup.moshi.JsonEncodingException
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -25,6 +27,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Failure
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Success
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.UnparsableTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType.INVALID
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType.NO_CONNECTION
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType.UNEXPECTED
@@ -70,7 +73,7 @@ class CtaTokenValidatorTest {
     @Test
     fun `cta token valid for positive PCR test returns success`() = runBlocking {
         val ctaToken = "12345678"
-        val response = setUpValidTokenResponse(ctaToken, POSITIVE, LAB_RESULT)
+        val response = setUpTokenResponse(ctaToken, POSITIVE, LAB_RESULT)
 
         val result = testSubject.validate(ctaToken)
 
@@ -80,7 +83,7 @@ class CtaTokenValidatorTest {
     @Test
     fun `cta token valid for negative PCR test returns success`() = runBlocking {
         val ctaToken = "12345678"
-        val response = setUpValidTokenResponse(ctaToken, NEGATIVE, LAB_RESULT)
+        val response = setUpTokenResponse(ctaToken, NEGATIVE, LAB_RESULT)
 
         val result = testSubject.validate(ctaToken)
 
@@ -90,7 +93,7 @@ class CtaTokenValidatorTest {
     @Test
     fun `cta token valid for void PCR test returns success`() = runBlocking {
         val ctaToken = "12345678"
-        val response = setUpValidTokenResponse(ctaToken, VOID, LAB_RESULT)
+        val response = setUpTokenResponse(ctaToken, VOID, LAB_RESULT)
 
         val result = testSubject.validate(ctaToken)
 
@@ -100,7 +103,7 @@ class CtaTokenValidatorTest {
     @Test
     fun `cta token valid for positive assisted LFD test returns success`() = runBlocking {
         val ctaToken = "12345678"
-        val response = setUpValidTokenResponse(ctaToken, POSITIVE, RAPID_RESULT)
+        val response = setUpTokenResponse(ctaToken, POSITIVE, RAPID_RESULT)
 
         val result = testSubject.validate(ctaToken)
 
@@ -110,7 +113,7 @@ class CtaTokenValidatorTest {
     @Test
     fun `cta token valid for positive unassisted LFD test returns success`() = runBlocking {
         val ctaToken = "12345678"
-        val response = setUpValidTokenResponse(ctaToken, POSITIVE, RAPID_SELF_REPORTED)
+        val response = setUpTokenResponse(ctaToken, POSITIVE, RAPID_SELF_REPORTED)
 
         val result = testSubject.validate(ctaToken)
 
@@ -120,7 +123,7 @@ class CtaTokenValidatorTest {
     @Test
     fun `cta token valid for negative assisted LFD test results in unexpected error state`() = runBlocking {
         val ctaToken = "12345678"
-        setUpValidTokenResponse(ctaToken, NEGATIVE, RAPID_RESULT)
+        setUpTokenResponse(ctaToken, NEGATIVE, RAPID_RESULT)
 
         val result = testSubject.validate(ctaToken)
 
@@ -130,7 +133,7 @@ class CtaTokenValidatorTest {
     @Test
     fun `cta token valid for negative unassisted LFD test results in unexpected error state`() = runBlocking {
         val ctaToken = "12345678"
-        setUpValidTokenResponse(ctaToken, NEGATIVE, RAPID_SELF_REPORTED)
+        setUpTokenResponse(ctaToken, NEGATIVE, RAPID_SELF_REPORTED)
 
         val result = testSubject.validate(ctaToken)
 
@@ -140,7 +143,7 @@ class CtaTokenValidatorTest {
     @Test
     fun `cta token valid for void assisted LFD test results in unexpected error state`() = runBlocking {
         val ctaToken = "12345678"
-        setUpValidTokenResponse(ctaToken, VOID, RAPID_RESULT)
+        setUpTokenResponse(ctaToken, VOID, RAPID_RESULT)
 
         val result = testSubject.validate(ctaToken)
 
@@ -150,7 +153,7 @@ class CtaTokenValidatorTest {
     @Test
     fun `cta token valid for void unassisted LFD test results in unexpected error state`() = runBlocking {
         val ctaToken = "12345678"
-        setUpValidTokenResponse(ctaToken, VOID, RAPID_SELF_REPORTED)
+        setUpTokenResponse(ctaToken, VOID, RAPID_SELF_REPORTED)
 
         val result = testSubject.validate(ctaToken)
 
@@ -234,7 +237,39 @@ class CtaTokenValidatorTest {
         }
 
     @Test
-    fun `cta token validation throws exception other than IOException results in unexpected error state`() =
+    fun `cta token validation throws JsonDataException results in UnknownTestResult`() =
+        runBlocking {
+            val ctaToken = "12345678"
+
+            coEvery {
+                virologyTestingApi.getTestResultForCtaToken(
+                    VirologyCtaExchangeRequest(ctaToken, ENGLAND)
+                )
+            } throws JsonDataException()
+
+            val result = testSubject.validate(ctaToken)
+
+            assertEquals(UnparsableTestResult, result)
+        }
+
+    @Test
+    fun `cta token validation throws JsonEncodingException results in UnknownTestResult`() =
+        runBlocking {
+            val ctaToken = "12345678"
+
+            coEvery {
+                virologyTestingApi.getTestResultForCtaToken(
+                    VirologyCtaExchangeRequest(ctaToken, ENGLAND)
+                )
+            } throws JsonEncodingException(null)
+
+            val result = testSubject.validate(ctaToken)
+
+            assertEquals(UnparsableTestResult, result)
+        }
+
+    @Test
+    fun `cta token validation throws other exception results in unexpected error state`() =
         runBlocking {
             val ctaToken = "12345678"
 
@@ -261,10 +296,42 @@ class CtaTokenValidatorTest {
             assertEquals(Failure(UNEXPECTED), result)
         }
 
-    private fun setUpValidTokenResponse(
+    @Test
+    fun `negative indicative test is not permitted`() = runBlocking {
+        val ctaToken = "12345678"
+        setUpTokenResponse(ctaToken, NEGATIVE, LAB_RESULT, requiresConfirmatoryTest = true)
+
+        val result = testSubject.validate(ctaToken)
+
+        assertEquals(Failure(UNEXPECTED), result)
+    }
+
+    @Test
+    fun `void indicative test is not permitted`() = runBlocking {
+        val ctaToken = "12345678"
+        setUpTokenResponse(ctaToken, VOID, LAB_RESULT, requiresConfirmatoryTest = true)
+
+        val result = testSubject.validate(ctaToken)
+
+        assertEquals(Failure(UNEXPECTED), result)
+    }
+
+    @Test
+    fun `confirmatory test must not have confirmatoryDayLimit`() = runBlocking {
+        val ctaToken = "12345678"
+        setUpTokenResponse(ctaToken, POSITIVE, LAB_RESULT, confirmatoryDayLimit = 1)
+
+        val result = testSubject.validate(ctaToken)
+
+        assertEquals(Failure(UNEXPECTED), result)
+    }
+
+    private fun setUpTokenResponse(
         ctaToken: String,
         testResult: VirologyTestResult,
-        testKitType: VirologyTestKitType
+        testKitType: VirologyTestKitType,
+        requiresConfirmatoryTest: Boolean = false,
+        confirmatoryDayLimit: Int? = null
     ): Response<VirologyCtaExchangeResponse> {
         val response = Response.success(
             VirologyCtaExchangeResponse(
@@ -273,7 +340,8 @@ class CtaTokenValidatorTest {
                 testResult,
                 testKitType,
                 diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+                requiresConfirmatoryTest = requiresConfirmatoryTest,
+                confirmatoryDayLimit = confirmatoryDayLimit
             )
         )
 

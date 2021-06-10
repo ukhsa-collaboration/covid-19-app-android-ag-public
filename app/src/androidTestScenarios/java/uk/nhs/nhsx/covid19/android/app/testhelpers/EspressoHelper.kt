@@ -32,7 +32,6 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
 import androidx.test.uiautomator.UiDevice
-import com.schibsted.spain.barista.internal.failurehandler.BaristaException
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.ignoreExceptionsMatching
 import org.awaitility.kotlin.untilAsserted
@@ -42,7 +41,11 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.TypeSafeMatcher
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation
+import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
+import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
+import uk.nhs.nhsx.covid19.android.app.report.isRunningScreenshotCapture
 import java.util.concurrent.TimeUnit.SECONDS
+import kotlin.test.assertEquals
 
 fun getCurrentActivity(): Activity? {
     getInstrumentation().waitForIdleSync()
@@ -145,7 +148,7 @@ private fun Drawable.tinted(
 
 private fun Int.toColorStateList() = ColorStateList.valueOf(this)
 
-fun withViewAtPosition(position: Int, itemMatcher: Matcher<View?>): Matcher<View?>? {
+fun withViewAtPosition(position: Int, itemMatcher: Matcher<View?>): Matcher<View?> {
     return object : BoundedMatcher<View?, RecyclerView?>(RecyclerView::class.java) {
         override fun describeTo(description: Description?) {
             itemMatcher.describeTo(description)
@@ -159,7 +162,7 @@ fun withViewAtPosition(position: Int, itemMatcher: Matcher<View?>): Matcher<View
     }
 }
 
-fun clickChildViewWithId(id: Int): ViewAction? {
+fun clickChildViewWithId(id: Int): ViewAction {
     return object : ViewAction {
         override fun getConstraints(): Matcher<View>? {
             return null
@@ -179,8 +182,28 @@ fun clickChildViewWithId(id: Int): ViewAction? {
 fun setScreenOrientation(orientation: Orientation) {
     val device = UiDevice.getInstance(getInstrumentation())
     when (orientation) {
-        Orientation.LANDSCAPE -> device.setOrientationLeft()
-        Orientation.PORTRAIT -> device.setOrientationNatural()
+        LANDSCAPE -> device.setOrientationLeft()
+        PORTRAIT -> device.setOrientationNatural()
+    }
+    waitForOrientationChangeCompleted(orientation, device)
+}
+
+private fun waitForOrientationChangeCompleted(
+    orientation: Orientation,
+    device: UiDevice
+) {
+    // Causing some problems with DoReTo tool. TODO: investigate the problem
+    if (isRunningScreenshotCapture()) {
+        return
+    }
+
+    await.atMost(
+        10, SECONDS
+    ) ignoreExceptionsMatching {
+        it is AssertionError
+    } untilAsserted {
+        val shouldBeNaturalOrientation = orientation == PORTRAIT
+        assertEquals(shouldBeNaturalOrientation, device.isNaturalOrientation)
     }
 }
 
@@ -256,6 +279,6 @@ fun waitFor(idleTime: Long = AWAIT_AT_MOST_SECONDS, assertion: () -> Unit) {
     await.atMost(
         idleTime, SECONDS
     ) ignoreExceptionsMatching {
-        it is BaristaException || it is EspressoException
+        it is EspressoException
     } untilAsserted assertion
 }

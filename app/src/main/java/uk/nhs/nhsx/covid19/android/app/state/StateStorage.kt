@@ -13,6 +13,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionStatus.COMPLETED_AND_CONFIRMED
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
@@ -27,13 +28,14 @@ class StateStorage @Inject constructor(
     moshi: Moshi
 ) {
 
-    private val stateSerializationAdapter: JsonAdapter<IsolationStateJson> = moshi.adapter(IsolationStateJson::class.java)
+    private val stateSerializationAdapter: JsonAdapter<IsolationStateJson> =
+        moshi.adapter(IsolationStateJson::class.java)
 
     var state: IsolationState
         get() =
             stateStringStorage.prefsValue?.let {
                 runCatching {
-                    stateSerializationAdapter.fromJson(it)?.toState()
+                    stateSerializationAdapter.fromJson(it)?.toMigratedState()
                 }
                     .getOrElse {
                         Timber.e(it)
@@ -46,6 +48,8 @@ class StateStorage @Inject constructor(
         }
 }
 
+private const val LATEST_ISOLATION_STATE_JSON_VERSION = 1
+
 @JsonClass(generateAdapter = true)
 data class IsolationStateJson(
     val configuration: DurationDays,
@@ -54,7 +58,7 @@ data class IsolationStateJson(
     val symptomatic: SymptomaticCase? = null,
     val indexExpiryDate: LocalDate? = null, // TODO@splitIndexCase: remove
     val hasAcknowledgedEndOfIsolation: Boolean = false,
-    val version: Int = 1
+    val version: Int = LATEST_ISOLATION_STATE_JSON_VERSION
 )
 
 @JsonClass(generateAdapter = true)
@@ -81,7 +85,18 @@ private fun IndexInfo.toSymptomaticCase(): SymptomaticCase? =
         )
     else null
 
-private fun IsolationStateJson.toState(): IsolationState {
+private fun IsolationStateJson.toMigratedState(): IsolationState {
+    val migratedTestResult = if (testResult?.confirmatoryTestCompletionStatus == null && testResult?.confirmedDate != null) {
+        testResult.copy(confirmatoryTestCompletionStatus = COMPLETED_AND_CONFIRMED)
+    } else {
+        testResult
+    }
+    return isolationState(migratedTestResult)
+}
+
+private fun IsolationStateJson.isolationState(
+    testResult: AcknowledgedTestResult?
+): IsolationState {
     val indexIsolationTrigger =
         if (symptomatic != null)
             SelfAssessment(

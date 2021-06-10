@@ -9,7 +9,6 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsola
 import uk.nhs.nhsx.covid19.android.app.util.BroadcastProvider
 import java.time.Clock
 import java.time.Instant
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,8 +31,7 @@ class IsolationExpirationAlarmController @Inject constructor(
 
     fun setupExpirationCheck(
         currentState: IsolationLogicalState,
-        newIsolation: IsolationLogicalState,
-        zoneId: ZoneId = ZoneId.systemDefault()
+        newIsolation: IsolationLogicalState
     ) {
         if (newIsolation !is PossiblyIsolating ||
             newIsolation.hasExpired(clock) ||
@@ -42,7 +40,7 @@ class IsolationExpirationAlarmController @Inject constructor(
             return
         }
 
-        val startAt = calculateExpirationNotificationTime(newIsolation.expiryDate, zoneId)
+        val startAt = calculateExpirationNotificationTime(newIsolation.expiryDate)
             .toEpochMilli()
 
         isolationExpirationAlarmProvider.value = startAt

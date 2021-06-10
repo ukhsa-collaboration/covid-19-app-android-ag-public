@@ -22,6 +22,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultSymptoms
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Instant
 import java.time.ZoneOffset
 
@@ -31,7 +32,7 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
     private val linkTestSymptomsRobot = LinkTestResultSymptomsRobot()
     private val linkTestResultOnsetDateRobot = LinkTestResultOnsetDateRobot()
     private val testResultRobot = TestResultRobot(testAppContext.app)
-    private val shareKeys = ShareKeys(testAppContext.app)
+    private val shareKeys = ShareKeys()
 
     fun enterPositive(
         virologyTestKitType: VirologyTestKitType,
@@ -59,7 +60,7 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
                     linkTestResultOnsetDateRobot.clickSelectDate()
                     waitFor {
                         linkTestResultOnsetDateRobot.selectDayOfMonth(
-                            testEndDate.atOffset(ZoneOffset.UTC).toLocalDate().dayOfMonth
+                            testEndDate.toLocalDate(ZoneOffset.UTC).dayOfMonth
                         )
                     }
                 } else {
@@ -78,10 +79,12 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
             }
             PositiveContinueIsolation -> {
                 waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+                testResultRobot.clickIsolationActionButton()
                 shareKeys()
             }
             PositiveWillBeInIsolation -> {
                 waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+                testResultRobot.clickIsolationActionButton()
                 shareKeys()
             }
             PositiveWontBeInIsolation -> {

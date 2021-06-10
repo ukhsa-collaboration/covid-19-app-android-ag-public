@@ -26,9 +26,7 @@ class FetchKeysFlowTest {
     private val keySharingInfo = KeySharingInfo(
         diagnosisKeySubmissionToken = "a",
         acknowledgedDate = Instant.now(),
-        notificationSentDate = null,
-        testKitType = null,
-        requiresConfirmatoryTest = false
+        notificationSentDate = null
     )
 
     lateinit var testSubject: FetchKeysFlow

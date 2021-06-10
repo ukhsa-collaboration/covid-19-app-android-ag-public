@@ -9,11 +9,13 @@ data class VirologyTestResultResponse(
     val testResult: VirologyTestResult,
     val testKit: VirologyTestKitType,
     val diagnosisKeySubmissionSupported: Boolean,
-    val requiresConfirmatoryTest: Boolean
+    val requiresConfirmatoryTest: Boolean,
+    val confirmatoryDayLimit: Int?
 )
 
 enum class VirologyTestResult {
     POSITIVE,
     NEGATIVE,
     VOID,
+    PLOD
 }

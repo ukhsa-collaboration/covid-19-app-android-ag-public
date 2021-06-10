@@ -10,10 +10,12 @@ import uk.nhs.nhsx.covid19.android.app.R
 class PermissionRobot {
 
     fun checkActivityIsDisplayed() {
-        onView(withId(R.id.permissionContinue)).check(matches(isDisplayed()))
+        onView(withId(R.id.permissionContinue))
+            .check(matches(isDisplayed()))
     }
 
     fun clickEnablePermissions() {
-        onView(withId(R.id.permissionContinue)).perform(click())
+        onView(withId(R.id.permissionContinue))
+            .perform(click())
     }
 }

@@ -56,6 +56,13 @@ class UnacknowledgedTestResultsProviderTest {
     }
 
     @Test
+    fun `stores the day limit for a positive unconfirmed test result`() {
+        testSubject.add(SINGLE_RAPID_RESULT_UNCONFIRMED_POSITIVE_TEST_RESULT)
+
+        verify { unacknowledgedTestResultsStorage.value = SINGLE_RAPID_RESULT_UNCONFIRMED_TEST_JSON }
+    }
+
+    @Test
     fun `set explicit symptoms onset date`() {
         every { unacknowledgedTestResultsStorage.value } returns SINGLE_LAB_RESULT_TEST_RESULT_JSON
 
@@ -227,6 +234,11 @@ class UnacknowledgedTestResultsProviderTest {
             [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_SELF_REPORTED","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":true}]
             """.trimIndent()
 
+        val SINGLE_RAPID_RESULT_UNCONFIRMED_TEST_JSON =
+            """
+            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":true,"confirmatoryDayLimit":0}]
+            """.trimIndent()
+
         val MULTIPLE_TEST_RESULTS_JSON =
             """
             [
@@ -274,6 +286,16 @@ class UnacknowledgedTestResultsProviderTest {
             RAPID_SELF_REPORTED,
             diagnosisKeySubmissionSupported = false,
             requiresConfirmatoryTest = true
+        )
+
+        val SINGLE_RAPID_RESULT_UNCONFIRMED_POSITIVE_TEST_RESULT = ReceivedTestResult(
+            "token",
+            Instant.ofEpochMilli(0),
+            POSITIVE,
+            RAPID_RESULT,
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = true,
+            confirmatoryDayLimit = 0
         )
     }
 }

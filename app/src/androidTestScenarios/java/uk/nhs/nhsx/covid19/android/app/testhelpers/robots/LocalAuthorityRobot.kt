@@ -89,13 +89,11 @@ class LocalAuthorityRobot {
 
     fun clickConfirm() {
         onView(withId(R.id.buttonConfirmLink))
-            .perform(scrollTo())
-            .perform(click())
+            .perform(scrollTo(), click())
     }
 
     fun selectLocalAuthority(localAuthorityName: String) {
         onView(withText(localAuthorityName))
-            .perform(scrollTo())
-            .perform(click())
+            .perform(scrollTo(), click())
     }
 }

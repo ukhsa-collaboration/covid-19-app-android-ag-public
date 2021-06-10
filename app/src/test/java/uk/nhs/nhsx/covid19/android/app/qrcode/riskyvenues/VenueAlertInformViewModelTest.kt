@@ -9,14 +9,12 @@ import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
+import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformViewModel.ViewState
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformViewModel.ViewState.KnownVisit
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformViewModel.ViewState.UnknownVisit
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import java.time.Instant
 
 class VenueAlertInformViewModelTest {
@@ -24,10 +22,9 @@ class VenueAlertInformViewModelTest {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val venuesStorage = mockk<VisitedVenuesStorage>()
+    private val riskyVenueAlertProvider = mockk<RiskyVenueAlertProvider>(relaxUnitFun = true)
 
-    private val userInbox = mockk<UserInbox>(relaxUnitFun = true)
-
-    private val testSubject = VenueAlertInformViewModel(venuesStorage, userInbox)
+    private val testSubject = VenueAlertInformViewModel(venuesStorage, riskyVenueAlertProvider)
 
     private val venueVisitObserver = mockk<Observer<ViewState>>(relaxed = true)
 
@@ -59,9 +56,9 @@ class VenueAlertInformViewModelTest {
     }
 
     @Test
-    fun `acknowledge alert`() {
-        testSubject.acknowledgeVenueAlert("1")
+    fun `acknowledge alert removes risky venue alert from storage`() {
+        testSubject.acknowledgeVenueAlert()
 
-        verify { userInbox.clearItem(ShowVenueAlert("1", INFORM)) }
+        verify { riskyVenueAlertProvider setProperty "riskyVenueAlert" value null }
     }
 }

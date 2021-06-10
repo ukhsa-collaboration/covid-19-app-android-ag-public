@@ -1,7 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -18,7 +18,6 @@ class PolicyUpdateRobot {
 
     fun clickContinue() {
         onView(withId(R.id.policyUpdateContinueButton))
-            .perform(scrollTo())
-            .perform(ViewActions.click())
+            .perform(scrollTo(), click())
     }
 }

@@ -30,6 +30,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRo
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestingHubRobot
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import java.time.Instant
@@ -49,6 +50,7 @@ class FlowTests : EspressoTest() {
     private val orderTest = OrderTest(this)
     private val selfDiagnosis = SelfDiagnosis(this)
     private val shareKeysResultRobot = ShareKeysResultRobot()
+    private val testingHubRobot = TestingHubRobot()
     private val isolationHelper = IsolationHelper(testAppContext.clock)
 
     @Before
@@ -102,7 +104,10 @@ class FlowTests : EspressoTest() {
 
         assertTrue(isActiveIndexNoContact())
 
-        statusRobot.clickOrderTest()
+        statusRobot.clickTestingHub()
+
+        testingHubRobot.checkActivityIsDisplayed()
+        testingHubRobot.clickBookTest()
 
         orderTest()
 
@@ -315,7 +320,48 @@ class FlowTests : EspressoTest() {
     }
 
     @Test
-    fun startContactCase_selfDiagnose_receivePositiveIndicativeTestResult_inIndexAndContactIsolation() = notReported {
+    fun startContactCase_selfDiagnose_receivePositiveIndicativeTestResultWithKeySharingNotSupported_inIndexAndContactIsolation() = notReported {
+        startContactCase_selfDiagnose()
+
+        testAppContext.virologyTestingApi.setDefaultTestResponse(
+            POSITIVE,
+            requiresConfirmatoryTest = true,
+            diagnosisKeySubmissionSupported = false
+        )
+
+        runBackgroundTasks()
+
+        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
+            testAppContext.getUnacknowledgedTestResultsProvider().testResults.any { it.testResult == POSITIVE }
+        }
+
+        assertTrue(isActiveIndexAndContact())
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
+    }
+
+    @Test
+    fun startContactCase_selfDiagnose_receivePositiveIndicativeTestResultWithKeySharingSupported_inIndexAndContactIsolation() = notReported {
+        startContactCase_selfDiagnose()
+
+        testAppContext.virologyTestingApi.setDefaultTestResponse(
+            POSITIVE,
+            requiresConfirmatoryTest = true,
+            diagnosisKeySubmissionSupported = true
+        )
+
+        runBackgroundTasks()
+
+        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
+            testAppContext.getUnacknowledgedTestResultsProvider().testResults.any { it.testResult == POSITIVE }
+        }
+
+        assertTrue(isActiveIndexAndContact())
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+    }
+
+    private fun startContactCase_selfDiagnose() {
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
@@ -332,18 +378,6 @@ class FlowTests : EspressoTest() {
         selfDiagnosis.selfDiagnosePositiveAndOrderTest(receiveResultImmediately = true)
 
         waitFor { statusRobot.checkIsolationViewIsDisplayed() }
-
-        testAppContext.virologyTestingApi.setDefaultTestResponse(POSITIVE, requiresConfirmatoryTest = true)
-
-        runBackgroundTasks()
-
-        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
-            testAppContext.getUnacknowledgedTestResultsProvider().testResults.any { it.testResult == POSITIVE }
-        }
-
-        assertTrue(isActiveIndexAndContact())
-
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
     }
 
     @Test

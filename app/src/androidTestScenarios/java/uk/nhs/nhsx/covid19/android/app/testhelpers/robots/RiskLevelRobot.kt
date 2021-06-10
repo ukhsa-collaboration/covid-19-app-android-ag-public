@@ -33,11 +33,13 @@ class RiskLevelRobot {
     }
 
     fun checkContentFromPostDistrictIsDisplayed(text: String) {
-        onView(withText(text)).check(matches(isDisplayed()))
+        onView(withText(text))
+            .check(matches(isDisplayed()))
     }
 
     fun checkContentFromLocalAuthorityIsDisplayed(text: String) {
-        onView(withText(text)).check(matches(isDisplayed()))
+        onView(withText(text))
+            .check(matches(isDisplayed()))
     }
 
     fun checkImageForLowRiskDisplayed() {

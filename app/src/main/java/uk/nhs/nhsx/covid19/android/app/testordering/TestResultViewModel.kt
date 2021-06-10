@@ -1,8 +1,15 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AskedToShareExposureKeysInTheInitialFlow
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
+import uk.nhs.nhsx.covid19.android.app.common.SubmitEmptyData
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.SubmitEpidemiologyDataForTestResult
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.SubmitObfuscationData
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
@@ -20,6 +27,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.Negative
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWontBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PlodWillContinueWithCurrentState
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolationNoChange
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolation
@@ -36,7 +44,10 @@ class TestResultViewModel @Inject constructor(
     private val testResultIsolationHandler: TestResultIsolationHandler,
     private val stateMachine: IsolationStateMachine,
     private val submitObfuscationData: SubmitObfuscationData,
-    private val clock: Clock
+    private val submitEmptyData: SubmitEmptyData,
+    private val submitEpidemiologyDataForTestResult: SubmitEpidemiologyDataForTestResult,
+    private val clock: Clock,
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
 ) : BaseTestResultViewModel() {
     private var wasAcknowledged = false
     private var preventKeySubmission = false
@@ -75,6 +86,7 @@ class TestResultViewModel @Inject constructor(
                     currentState.isActiveIsolation(clock) -> VoidWillBeInIsolation // B
                     else -> VoidNotInIsolation // F
                 }
+                PLOD -> PlodWillContinueWithCurrentState
             }
             val remainingDaysInIsolation =
                 stateMachine.remainingDaysInIsolation(newState).toInt()
@@ -87,10 +99,8 @@ class TestResultViewModel @Inject constructor(
         newState: IsolationLogicalState
     ): TestResultViewState =
         if (newState.isActiveIsolation(clock)) {
-            if (testResult.requiresConfirmatoryTest) {
-                val isIsolatingDueToPositiveConfirmed = currentState is PossiblyIsolating &&
-                    currentState.hasActiveConfirmedPositiveTestResult(clock)
-                if (isIsolatingDueToPositiveConfirmed) PositiveContinueIsolationNoChange
+            if (testResult.requiresConfirmatoryTest && !isKeySubmissionSupported()) {
+                if (currentState.isIsolatingWithPositiveConfirmedTest()) PositiveContinueIsolationNoChange
                 else PositiveWillBeInIsolationAndOrderTest
             } else {
                 if (currentState.isActiveIsolation(clock)) PositiveContinueIsolation // C
@@ -103,53 +113,75 @@ class TestResultViewModel @Inject constructor(
     private fun mainStateWhenNegative(
         currentState: IsolationLogicalState,
         newState: IsolationLogicalState
-    ): TestResultViewState =
-        if (currentState.isActiveIsolation(clock)) {
-            if (newState.isActiveIsolation(clock))
-                if (newState is PossiblyIsolating && newState.isActiveIndexCase(clock))
+    ): TestResultViewState {
+        val wasInIsolation = currentState.isActiveIsolation(clock)
+        return if (wasInIsolation) {
+            val willContinueToIsolate = newState.isActiveIsolation(clock)
+            if (willContinueToIsolate) {
+                if (isTestResultBeingCompleted(currentState, newState))
+                    NegativeWillBeInIsolation
+                else if (newState is PossiblyIsolating && newState.isActiveIndexCase(clock))
                     NegativeAfterPositiveOrSymptomaticWillBeInIsolation // D
                 else
                     NegativeWillBeInIsolation
-            else
+            } else
                 NegativeWontBeInIsolation // A
         } else {
             NegativeNotInIsolation // E
         }
+    }
+
+    private fun isTestResultBeingCompleted(
+        currentState: IsolationLogicalState,
+        newState: IsolationLogicalState
+    ): Boolean {
+        val currentStateTestResultIsNotCompleted =
+            currentState.toIsolationState().indexInfo?.testResult?.confirmatoryTestCompletionStatus == null
+        val newStateTestResultIsCompleted =
+            newState.toIsolationState().indexInfo?.testResult?.confirmatoryTestCompletionStatus != null
+        return currentStateTestResultIsNotCompleted && newStateTestResultIsCompleted
+    }
+
+    private fun IsolationLogicalState.isIsolatingWithPositiveConfirmedTest(): Boolean =
+        this is PossiblyIsolating &&
+            hasActiveConfirmedPositiveTestResult(clock)
 
     private fun isKeySubmissionSupported(): Boolean =
         testResult.diagnosisKeySubmissionSupported && !preventKeySubmission
 
     override fun onActionButtonClicked() {
+        val currentState = stateMachine.readLogicalState()
+
         acknowledgeTestResult()
 
-        when (val buttonAction = viewState.value?.mainState?.buttonAction) {
-            FINISH -> {
-                submitObfuscationData()
-                navigationEventLiveData.postValue(NavigationEvent.Finish)
-            }
+        val navigationEvent = getNavigationEvent(currentState)
 
-            SHARE_KEYS -> {
-                if (isKeySubmissionSupported()) {
-                    navigationEventLiveData.postValue(NavigationEvent.NavigateToShareKeys)
-                } else {
-                    submitObfuscationData()
-                    navigationEventLiveData.postValue(NavigationEvent.Finish)
-                }
-            }
-
-            ORDER_TEST -> {
-                submitObfuscationData()
-                navigationEventLiveData.postValue(NavigationEvent.NavigateToOrderTest)
-            }
-
-            else -> {
-                Timber.d("Unexpected button action $buttonAction")
-            }
+        if (navigationEvent != null) {
+            navigationEventLiveData.postValue(navigationEvent)
+        } else {
+            Timber.d("Unexpected button action ${viewState.value?.mainState?.buttonAction}")
         }
     }
 
+    private fun getNavigationEvent(currentState: IsolationLogicalState): NavigationEvent? =
+        when (viewState.value?.mainState?.buttonAction) {
+            FINISH -> NavigationEvent.Finish
+            SHARE_KEYS -> {
+                if (isKeySubmissionSupported()) {
+                    viewModelScope.launch {
+                        analyticsEventProcessor.track(AskedToShareExposureKeysInTheInitialFlow)
+                    }
+                    NavigationEvent.NavigateToShareKeys(
+                        bookFollowUpTest = testResult.requiresConfirmatoryTest &&
+                            !currentState.isIsolatingWithPositiveConfirmedTest()
+                    )
+                } else NavigationEvent.Finish
+            }
+            ORDER_TEST -> NavigationEvent.NavigateToOrderTest
+            else -> null
+        }
+
     override fun onBackPressed() {
-        submitObfuscationData()
         acknowledgeTestResult()
     }
 
@@ -157,24 +189,30 @@ class TestResultViewModel @Inject constructor(
         if (wasAcknowledged) {
             return
         }
-
         wasAcknowledged = true
+        submitEpidemiologyData()
         stateMachine.processEvent(
             OnTestResultAcknowledge(testResult)
         )
     }
 
+    private fun submitEpidemiologyData() {
+        with(testResult) {
+            if (isPositive()) {
+                submitEpidemiologyDataForTestResult(testKitType, requiresConfirmatoryTest)
+                if (!isKeySubmissionSupported()) {
+                    submitEmptyData()
+                }
+            } else {
+                submitObfuscationData()
+            }
+        }
+    }
+
     private fun getHighestPriorityTestResult(): ReceivedTestResult? {
+        val testPriority = listOf(POSITIVE, PLOD, NEGATIVE, VOID)
         unacknowledgedTestResultsProvider.testResults
-            .firstOrNull { it.testResult == POSITIVE }
-            ?.let { return it }
-
-        unacknowledgedTestResultsProvider.testResults
-            .firstOrNull { it.testResult == NEGATIVE }
-            ?.let { return it }
-
-        unacknowledgedTestResultsProvider.testResults
-            .firstOrNull { it.testResult == VOID }
+            .minByOrNull { testPriority.indexOf(it.testResult) }
             ?.let { return it }
 
         return null

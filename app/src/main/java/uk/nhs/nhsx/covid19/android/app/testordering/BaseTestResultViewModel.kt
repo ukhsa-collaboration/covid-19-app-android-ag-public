@@ -25,7 +25,7 @@ abstract class BaseTestResultViewModel : ViewModel() {
     )
 
     sealed class NavigationEvent {
-        object NavigateToShareKeys : NavigationEvent()
+        data class NavigateToShareKeys(val bookFollowUpTest: Boolean) : NavigationEvent()
         object NavigateToOrderTest : NavigationEvent()
         object Finish : NavigationEvent()
     }

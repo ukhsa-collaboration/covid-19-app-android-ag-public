@@ -13,9 +13,9 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.NO
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.PENDING
 import uk.nhs.nhsx.covid19.android.app.common.CircuitBreakerResult.YES
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
+import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlert
+import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertProvider
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesCircuitBreakerApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
@@ -31,7 +31,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
     private val riskyVenuesCircuitBreakerApi = mockk<RiskyVenuesCircuitBreakerApi>()
     private val notificationProvider = mockk<NotificationProvider>(relaxUnitFun = true)
-    private val userInbox = mockk<UserInbox>(relaxUnitFun = true)
+    private val riskyVenueAlertProvider = mockk<RiskyVenueAlertProvider>(relaxUnitFun = true)
     private val riskyVenuePollingConfigurationProvider =
         mockk<RiskyVenueCircuitBreakerConfigurationProvider>(relaxUnitFun = true)
     private val removeOutdatedRiskyVenuePollingConfigurations =
@@ -48,7 +48,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
         RiskyVenuesCircuitBreakerPolling(
             riskyVenuesCircuitBreakerApi,
             notificationProvider,
-            userInbox,
+            riskyVenueAlertProvider,
             riskyVenuePollingConfigurationProvider,
             removeOutdatedRiskyVenuePollingConfigurations,
             lastVisitedBookTestTypeVenueDateProvider,
@@ -68,31 +68,97 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
     private val pollingConfigurations = listOf(
         RiskyVenueCircuitBreakerConfiguration(firstVenueStartedAt, firstVenueId, approvalToken, isPolling = true),
-        RiskyVenueCircuitBreakerConfiguration(secondVenueStartedAt, secondVenueId, "approval_token2", isPolling = true, messageType = BOOK_TEST)
+        RiskyVenueCircuitBreakerConfiguration(
+            secondVenueStartedAt,
+            secondVenueId,
+            "approval_token2",
+            isPolling = true,
+            messageType = BOOK_TEST
+        )
     )
     private val initialConfigurationsDoubleInform = listOf(
-        RiskyVenueCircuitBreakerConfiguration(firstVenueStartedAt, firstVenueId, null, isPolling = false, messageType = INFORM),
-        RiskyVenueCircuitBreakerConfiguration(secondVenueStartedAt, secondVenueId, null, isPolling = false, messageType = INFORM)
+        RiskyVenueCircuitBreakerConfiguration(
+            firstVenueStartedAt,
+            firstVenueId,
+            null,
+            isPolling = false,
+            messageType = INFORM
+        ),
+        RiskyVenueCircuitBreakerConfiguration(
+            secondVenueStartedAt,
+            secondVenueId,
+            null,
+            isPolling = false,
+            messageType = INFORM
+        )
     )
 
     private val initialConfigurationsBookTestThenInform = listOf(
-        RiskyVenueCircuitBreakerConfiguration(firstVenueStartedAt, firstVenueId, null, isPolling = false, messageType = BOOK_TEST),
-        RiskyVenueCircuitBreakerConfiguration(secondVenueStartedAt, secondVenueId, null, isPolling = false, messageType = INFORM)
+        RiskyVenueCircuitBreakerConfiguration(
+            firstVenueStartedAt,
+            firstVenueId,
+            null,
+            isPolling = false,
+            messageType = BOOK_TEST
+        ),
+        RiskyVenueCircuitBreakerConfiguration(
+            secondVenueStartedAt,
+            secondVenueId,
+            null,
+            isPolling = false,
+            messageType = INFORM
+        )
     )
 
     private val initialConfigurationsInformThenBookTest = listOf(
-        RiskyVenueCircuitBreakerConfiguration(firstVenueStartedAt, firstVenueId, null, isPolling = false, messageType = INFORM),
-        RiskyVenueCircuitBreakerConfiguration(secondVenueStartedAt, secondVenueId, null, isPolling = false, messageType = BOOK_TEST)
+        RiskyVenueCircuitBreakerConfiguration(
+            firstVenueStartedAt,
+            firstVenueId,
+            null,
+            isPolling = false,
+            messageType = INFORM
+        ),
+        RiskyVenueCircuitBreakerConfiguration(
+            secondVenueStartedAt,
+            secondVenueId,
+            null,
+            isPolling = false,
+            messageType = BOOK_TEST
+        )
     )
 
     private val initialConfigurationsDoubleBookTest = listOf(
-        RiskyVenueCircuitBreakerConfiguration(firstVenueStartedAt, firstVenueId, null, isPolling = false, messageType = BOOK_TEST),
-        RiskyVenueCircuitBreakerConfiguration(secondVenueStartedAt, secondVenueId, null, isPolling = false, messageType = BOOK_TEST)
+        RiskyVenueCircuitBreakerConfiguration(
+            firstVenueStartedAt,
+            firstVenueId,
+            null,
+            isPolling = false,
+            messageType = BOOK_TEST
+        ),
+        RiskyVenueCircuitBreakerConfiguration(
+            secondVenueStartedAt,
+            secondVenueId,
+            null,
+            isPolling = false,
+            messageType = BOOK_TEST
+        )
     )
 
     private val initialConfigurationsDoubleBookTestReverseOrder = listOf(
-        RiskyVenueCircuitBreakerConfiguration(secondVenueStartedAt, secondVenueId, null, isPolling = false, messageType = BOOK_TEST),
-        RiskyVenueCircuitBreakerConfiguration(firstVenueStartedAt, firstVenueId, null, isPolling = false, messageType = BOOK_TEST)
+        RiskyVenueCircuitBreakerConfiguration(
+            secondVenueStartedAt,
+            secondVenueId,
+            null,
+            isPolling = false,
+            messageType = BOOK_TEST
+        ),
+        RiskyVenueCircuitBreakerConfiguration(
+            firstVenueStartedAt,
+            firstVenueId,
+            null,
+            isPolling = false,
+            messageType = BOOK_TEST
+        )
     )
 
     @Test
@@ -115,7 +181,9 @@ class RiskyVenuesCircuitBreakerPollingTest {
         testSubject()
 
         verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
-        verify(exactly = 1) { userInbox.addUserInboxItem(ShowVenueAlert(firstVenueId, INFORM)) }
+        verify(exactly = 1) {
+            riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(firstVenueId, INFORM))
+        }
         verify(exactly = 1) { riskyVenuePollingConfigurationProvider.remove(configuration) }
         verify(exactly = 0) { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = any() }
         coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM1Warning) }
@@ -131,7 +199,9 @@ class RiskyVenuesCircuitBreakerPollingTest {
         testSubject()
 
         verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification() }
-        verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(firstVenueId, INFORM)) }
+        verify(exactly = 0) {
+            riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(firstVenueId, INFORM))
+        }
         verify(exactly = 1) { riskyVenuePollingConfigurationProvider.remove(configuration) }
         verify(exactly = 0) { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = any() }
         coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
@@ -147,7 +217,9 @@ class RiskyVenuesCircuitBreakerPollingTest {
         testSubject()
 
         verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification() }
-        verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(firstVenueId, INFORM)) }
+        verify(exactly = 0) {
+            riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(firstVenueId, INFORM))
+        }
         verify(exactly = 0) { riskyVenuePollingConfigurationProvider.remove(configuration) }
         verify(exactly = 0) { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = any() }
         coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
@@ -168,11 +240,18 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
             testSubject()
 
-            verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(pollingConfigurations[0].venueId, INFORM)) }
+            val firstVenueAlert = RiskyVenueAlert(pollingConfigurations[0].venueId, INFORM)
+            val secondVenueAlert = RiskyVenueAlert(pollingConfigurations[1].venueId, BOOK_TEST)
+
+            verify(exactly = 0) {
+                riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(firstVenueAlert)
+            }
             verify(exactly = 0) { riskyVenuePollingConfigurationProvider.remove(pollingConfigurations[0]) }
             verify(exactly = 1) { shouldShowRiskyVenueNotification(BOOK_TEST) }
             verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
-            verify(exactly = 1) { userInbox.addUserInboxItem(ShowVenueAlert(pollingConfigurations[1].venueId, BOOK_TEST)) }
+            verify(exactly = 1) {
+                riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(secondVenueAlert)
+            }
             verify(exactly = 1) { riskyVenuePollingConfigurationProvider.remove(pollingConfigurations[1]) }
             verify(exactly = 1) {
                 lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = LastVisitedBookTestTypeVenueDate(
@@ -197,10 +276,17 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
             testSubject()
 
-            verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(pollingConfigurations[0].venueId, INFORM)) }
+            val firstVenueAlert = RiskyVenueAlert(pollingConfigurations[0].venueId, INFORM)
+            val secondVenueAlert = RiskyVenueAlert(pollingConfigurations[1].venueId, BOOK_TEST)
+
+            verify(exactly = 0) {
+                riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(firstVenueAlert)
+            }
             verify(exactly = 0) { riskyVenuePollingConfigurationProvider.remove(pollingConfigurations[0]) }
             verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification() }
-            verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(pollingConfigurations[1].venueId, BOOK_TEST)) }
+            verify(exactly = 0) {
+                riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(secondVenueAlert)
+            }
             verify(exactly = 1) { riskyVenuePollingConfigurationProvider.remove(pollingConfigurations[1]) }
             verify(exactly = 0) { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = any() }
             coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
@@ -220,7 +306,9 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
         verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
         verify(exactly = 1) { shouldShowRiskyVenueNotification.invoke(INFORM) }
-        verify(exactly = 1) { userInbox.addUserInboxItem(ShowVenueAlert(secondVenueId, INFORM)) }
+        verify(exactly = 1) {
+            riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(secondVenueId, INFORM))
+        }
         verify(exactly = 0) {
             riskyVenuePollingConfigurationProvider.add(any())
         }
@@ -244,7 +332,9 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
         verify(exactly = 1) { shouldShowRiskyVenueNotification.invoke(BOOK_TEST) }
         verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
-        verify(exactly = 1) { userInbox.addUserInboxItem(ShowVenueAlert(secondVenueId, BOOK_TEST)) }
+        verify(exactly = 1) {
+            riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(secondVenueId, BOOK_TEST))
+        }
         verify(exactly = 0) {
             riskyVenuePollingConfigurationProvider.add(any())
         }
@@ -259,33 +349,36 @@ class RiskyVenuesCircuitBreakerPollingTest {
     }
 
     @Test
-    fun `triggers notification if circuit breaker approves for double book test message types in reverse order`() = runBlocking {
-        every { riskyVenuePollingConfigurationProvider.configs } returns initialConfigurationsDoubleBookTestReverseOrder
-        every { shouldShowRiskyVenueNotification.invoke(BOOK_TEST) } returns true
-        coEvery { riskyVenuesCircuitBreakerApi.getApproval(any()) } returns
-            RiskyVenuesCircuitBreakerResponse(
-                approvalToken = approvalToken,
-                approval = YES
-            )
-        every { riskyVenueConfigurationProvider.durationDays } returns riskyVenueConfigurationDurationDays
+    fun `triggers notification if circuit breaker approves for double book test message types in reverse order`() =
+        runBlocking {
+            every { riskyVenuePollingConfigurationProvider.configs } returns initialConfigurationsDoubleBookTestReverseOrder
+            every { shouldShowRiskyVenueNotification.invoke(BOOK_TEST) } returns true
+            coEvery { riskyVenuesCircuitBreakerApi.getApproval(any()) } returns
+                RiskyVenuesCircuitBreakerResponse(
+                    approvalToken = approvalToken,
+                    approval = YES
+                )
+            every { riskyVenueConfigurationProvider.durationDays } returns riskyVenueConfigurationDurationDays
 
-        testSubject()
+            testSubject()
 
-        verify(exactly = 1) { shouldShowRiskyVenueNotification.invoke(BOOK_TEST) }
-        verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
-        verify(exactly = 1) { userInbox.addUserInboxItem(ShowVenueAlert(secondVenueId, BOOK_TEST)) }
-        verify(exactly = 0) {
-            riskyVenuePollingConfigurationProvider.add(any())
+            verify(exactly = 1) { shouldShowRiskyVenueNotification.invoke(BOOK_TEST) }
+            verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
+            verify(exactly = 1) {
+                riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(secondVenueId, BOOK_TEST))
+            }
+            verify(exactly = 0) {
+                riskyVenuePollingConfigurationProvider.add(any())
+            }
+            verify(exactly = 2) { riskyVenuePollingConfigurationProvider.remove(any()) }
+            verify(exactly = 1) {
+                lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = LastVisitedBookTestTypeVenueDate(
+                    secondVenueStartedAt.toLocalDate(fixedClock.zone),
+                    riskyVenueConfigurationDurationDays
+                )
+            }
+            coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM2Warning) }
         }
-        verify(exactly = 2) { riskyVenuePollingConfigurationProvider.remove(any()) }
-        verify(exactly = 1) {
-            lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = LastVisitedBookTestTypeVenueDate(
-                secondVenueStartedAt.toLocalDate(fixedClock.zone),
-                riskyVenueConfigurationDurationDays
-            )
-        }
-        coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM2Warning) }
-    }
 
     @Test
     fun `triggers notification if circuit breaker approves for book test then inform message types`() = runBlocking {
@@ -302,7 +395,9 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
         verify(exactly = 1) { shouldShowRiskyVenueNotification.invoke(BOOK_TEST) }
         verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
-        verify(exactly = 1) { userInbox.addUserInboxItem(ShowVenueAlert(firstVenueId, BOOK_TEST)) }
+        verify(exactly = 1) {
+            riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(firstVenueId, BOOK_TEST))
+        }
         verify(exactly = 0) {
             riskyVenuePollingConfigurationProvider.add(any())
         }
@@ -331,7 +426,9 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
         verify(exactly = 1) { shouldShowRiskyVenueNotification.invoke(BOOK_TEST) }
         verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
-        verify(exactly = 1) { userInbox.addUserInboxItem(ShowVenueAlert(secondVenueId, BOOK_TEST)) }
+        verify(exactly = 1) {
+            riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(secondVenueId, BOOK_TEST))
+        }
         verify(exactly = 0) {
             riskyVenuePollingConfigurationProvider.add(any())
         }
@@ -356,7 +453,9 @@ class RiskyVenuesCircuitBreakerPollingTest {
         testSubject()
 
         verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification() }
-        verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(firstVenueId, INFORM)) }
+        verify(exactly = 0) {
+            riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(firstVenueId, INFORM))
+        }
         verify(exactly = 2) { riskyVenuePollingConfigurationProvider.remove(any()) }
         verify(exactly = 0) {
             riskyVenuePollingConfigurationProvider.add(any())
@@ -376,7 +475,9 @@ class RiskyVenuesCircuitBreakerPollingTest {
         testSubject()
 
         verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification() }
-        verify(exactly = 0) { userInbox.addUserInboxItem(ShowVenueAlert(firstVenueId, INFORM)) }
+        verify(exactly = 0) {
+            riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(firstVenueId, INFORM))
+        }
         verify(exactly = 2) { riskyVenuePollingConfigurationProvider.remove(any()) }
         verify(exactly = 2) {
             riskyVenuePollingConfigurationProvider.add(any())

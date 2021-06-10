@@ -39,14 +39,18 @@ class LinkTestResultRobot {
     }
 
     fun selectDailyContactTestingOptIn() {
-        onView(withId(R.id.dailyContactTestingNegativeResultConfirmationContainer)).perform(
-            scrollTo(),
-            click()
-        )
+        onView(withId(R.id.dailyContactTestingNegativeResultConfirmationContainer))
+            .perform(scrollTo(), click())
     }
 
     fun clickContinue() {
-        onView(withId(R.id.linkTestResultContinue)).perform(click())
+        onView(withId(R.id.linkTestResultContinue))
+            .perform(click())
+    }
+
+    fun clickReportLink() {
+        onView(withText(R.string.link_test_result_report_link_text))
+            .perform(scrollTo(), click())
     }
 
     fun checkValidationErrorInvalidTokenIsDisplayed() {

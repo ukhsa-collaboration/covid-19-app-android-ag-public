@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
+import androidx.annotation.ColorRes
+import androidx.annotation.StringRes
 import kotlinx.android.synthetic.main.view_state_info.view.stateColorView
 import kotlinx.android.synthetic.main.view_state_info.view.stateTextView
 import uk.nhs.nhsx.covid19.android.app.R
@@ -33,6 +35,11 @@ class StateInfoView @JvmOverloads constructor(
         stateTextView.setUpAccessibilityHeading()
     }
 
+    fun setStateInfoParams(stateInfoParams: StateInfoParams) {
+        stateText = context.getString(stateInfoParams.text)
+        stateColor = context.getColor(stateInfoParams.color)
+    }
+
     override fun announceForAccessibility(error: CharSequence) {
         super.announceForAccessibility(stateText)
     }
@@ -58,3 +65,8 @@ class StateInfoView @JvmOverloads constructor(
         }
     }
 }
+
+data class StateInfoParams(
+    @StringRes val text: Int,
+    @ColorRes val color: Int
+)

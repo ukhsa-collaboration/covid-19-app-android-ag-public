@@ -10,7 +10,9 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MyDataRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SettingsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Instant
+import java.time.ZoneOffset
 
 class UserDataFlowTest : EspressoTest() {
 
@@ -47,7 +49,7 @@ class UserDataFlowTest : EspressoTest() {
 
     companion object {
         private val startInstant = Instant.parse("2020-12-11T13:00:00Z")
-        private val startDate = startInstant.atOffset(java.time.ZoneOffset.UTC).toLocalDate()
+        private val startDate = startInstant.toLocalDate(ZoneOffset.UTC)
         private val contactCaseIsolation = IsolationState(
             isolationConfiguration = DurationDays(),
             contactCase = ContactCase(

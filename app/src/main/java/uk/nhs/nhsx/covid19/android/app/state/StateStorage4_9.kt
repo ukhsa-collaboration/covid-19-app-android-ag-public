@@ -20,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.state.StateJson4_9.DefaultJson4_9
 import uk.nhs.nhsx.covid19.android.app.state.StateJson4_9.IsolationJson4_9
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import uk.nhs.nhsx.covid19.android.app.util.selectEarliest
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -58,6 +59,10 @@ class StateStorage4_9 @Inject constructor(
 
     fun clear() {
         stateStringStorage.prefsValue = null
+    }
+
+    companion object {
+        const val assumedDaysFromOnsetToSelfAssessment4_9: Long = 2
     }
 }
 
@@ -309,7 +314,7 @@ sealed class State4_9 {
             val latestPossibleExpiryDate = isolationStart.plus(
                 isolationConfiguration.maxIsolation.toLong(),
                 ChronoUnit.DAYS
-            ).atZone(ZoneOffset.UTC).toLocalDate()
+            ).toLocalDate(ZoneOffset.UTC)
             return selectEarliest(latestPossibleExpiryDate, potentialExpiryDate)
         }
 

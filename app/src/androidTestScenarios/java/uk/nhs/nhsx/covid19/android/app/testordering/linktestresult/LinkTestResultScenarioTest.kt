@@ -8,10 +8,12 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_LFD_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NO_CONNECTION_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.PLOD_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_LFD_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_RAPID_SELF_REPORTED_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.UNEXPECTED_ERROR_TOKEN
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.UNKNOWN_RESULT_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.VOID_LFD_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.VOID_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
@@ -29,6 +31,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.UnknownTestResultRobot
 import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit.DAYS
@@ -39,6 +42,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     private val linkTestResultRobot = LinkTestResultRobot()
     private val linkTestResultSymptomsRobot = LinkTestResultSymptomsRobot()
     private val testResultRobot = TestResultRobot(testAppContext.app)
+    private val unknownTestResultRobot = UnknownTestResultRobot()
     private val dailyContactTestingConfirmationRobot = DailyContactTestingConfirmationRobot()
     private val isolationChecker = IsolationChecker(testAppContext)
 
@@ -156,6 +160,36 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
+    fun userEntersCtaTokenForPcrPlodTestResult_navigateToPlodTestResultScreen() = reporter(
+        scenario = "Enter test result",
+        title = "Plod test result",
+        description = "The user enters a CTA token and receives a plod test result",
+        kind = FLOW
+    ) {
+        enterLinkTestResultFromStatusActivity()
+
+        linkTestResultRobot.checkActivityIsDisplayed()
+
+        linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
+
+        linkTestResultRobot.enterCtaToken(PLOD_PCR_TOKEN)
+
+        step(
+            stepName = "Enter token",
+            stepDescription = "User enters a valid token and taps 'Continue'"
+        )
+
+        linkTestResultRobot.clickContinue()
+
+        waitFor { testResultRobot.checkActivityDisplaysPlodScreen() }
+
+        step(
+            stepName = "Plod test result",
+            stepDescription = "User is informed that their test result is plod"
+        )
+    }
+
+    @Test
     fun userIsContactCaseOnly_entersCtaTokenForPcrPositiveTestResult_noSymptoms_navigateToTestResultScreen() = notReported {
         testAppContext.setState(contactCaseOnlyIsolation)
 
@@ -196,6 +230,17 @@ class LinkTestResultScenarioTest : EspressoTest() {
         linkTestResultRobot.clickContinue()
 
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+    }
+
+    @Test
+    fun userEntersCtaTokenForUnknownTestResult_navigatesToUnknownTestResultScreen() = notReported {
+        enterLinkTestResultFromStatusActivity()
+        linkTestResultRobot.checkActivityIsDisplayed()
+        linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
+        linkTestResultRobot.enterCtaToken(UNKNOWN_RESULT_TOKEN)
+        linkTestResultRobot.clickContinue()
+
+        waitFor { unknownTestResultRobot.checkActivityIsDisplayed() }
     }
 
     @Test

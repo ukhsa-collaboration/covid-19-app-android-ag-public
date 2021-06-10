@@ -17,7 +17,6 @@ class LocalAuthorityInformationRobot {
 
     fun clickContinue() {
         onView(withId(R.id.buttonContinue))
-            .perform(scrollTo())
-            .perform(click())
+            .perform(scrollTo(), click())
     }
 }

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_toolbar_primary" />
+
+    <ScrollView
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubItemView
+                android:id="@+id/itemBookTest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                app:testingHubItemTitle="@string/testing_hub_book_test_title"
+                app:testingHubItemDescription="@string/testing_hub_book_test_description"
+                app:testingHubItemIsExternalLink="false"/>
+
+            <uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubItemView
+                android:id="@+id/itemFindOutAboutTesting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                app:testingHubItemTitle="@string/testing_hub_find_out_about_testing_title"
+                app:testingHubItemDescription="@string/testing_hub_find_out_about_testing_description"
+                app:testingHubItemIsExternalLink="true"/>
+
+            <uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubItemView
+                android:id="@+id/itemEnterTestResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                app:testingHubItemTitle="@string/testing_hub_enter_test_result_title"
+                app:testingHubItemDescription="@string/testing_hub_enter_test_result_description"
+                app:testingHubItemIsExternalLink="false"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

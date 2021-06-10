@@ -2,8 +2,8 @@ package uk.nhs.nhsx.covid19.android.app.di
 
 import dagger.Module
 import dagger.Provides
-import uk.nhs.nhsx.covid19.android.app.about.BaseMyDataViewModel
-import uk.nhs.nhsx.covid19.android.app.about.MyDataViewModel
+import uk.nhs.nhsx.covid19.android.app.about.mydata.BaseMyDataViewModel
+import uk.nhs.nhsx.covid19.android.app.about.mydata.MyDataViewModel
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockMyDataViewModel
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockTestResultViewModel
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel

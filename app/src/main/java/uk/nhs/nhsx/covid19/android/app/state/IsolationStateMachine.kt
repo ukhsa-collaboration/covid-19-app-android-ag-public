@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
+import androidx.annotation.VisibleForTesting
 import com.tinder.StateMachine
 import com.tinder.StateMachine.Transition
 import timber.log.Timber
@@ -10,7 +11,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfoProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.StorageBasedUserInbox
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.ExplicitDate
@@ -27,6 +28,7 @@ import uk.nhs.nhsx.covid19.android.app.state.SideEffect.SendExposedNotification
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.lang.Long.max
 import java.time.Clock
 import java.time.Instant
@@ -73,7 +75,7 @@ class IsolationStateMachine @Inject constructor(
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider,
     private val testResultIsolationHandler: TestResultIsolationHandler,
-    private val userInbox: UserInbox,
+    private val storageBasedUserInbox: StorageBasedUserInbox,
     private val isolationExpirationAlarmController: IsolationExpirationAlarmController,
     private val clock: Clock,
     private val analyticsEventTracker: AnalyticsEventTracker,
@@ -81,50 +83,11 @@ class IsolationStateMachine @Inject constructor(
     private val keySharingInfoProvider: KeySharingInfoProvider,
     private val createSelfAssessmentIndexCase: CreateSelfAssessmentIndexCase
 ) {
+    private var _stateMachine = createStateMachine()
+    internal val stateMachine: StateMachine<IsolationState, Event, SideEffect>
+        get() = _stateMachine
 
-    fun readState(): IsolationState = synchronized(this) {
-        return stateMachine.state
-    }
-
-    fun readLogicalState(): IsolationLogicalState = synchronized(this) {
-        return IsolationLogicalState.from(readState())
-    }
-
-    fun processEvent(event: Event): Transition<IsolationState, Event, SideEffect> = synchronized(this) {
-        return stateMachine.transition(event)
-    }
-
-    fun isInterestedInExposureNotifications(): Boolean {
-        return when (val state = readLogicalState()) {
-            is NeverIsolating -> true
-            is PossiblyIsolating ->
-                if (state.hasExpired(clock)) true
-                else state.isActiveIndexCaseOnly(clock) && !state.hasActiveConfirmedPositiveTestResult(clock)
-        }
-    }
-
-    fun reset() {
-        stateMachine.transition(OnReset)
-    }
-
-    fun optInToDailyContactTesting() {
-        stateMachine.transition(OnDailyContactTestingOptIn)
-    }
-
-    fun acknowledgeIsolationExpiration() {
-        stateMachine.transition(OnAcknowledgeIsolationExpiration)
-    }
-
-    fun remainingDaysInIsolation(state: IsolationLogicalState = readLogicalState()): Long {
-        return when (state) {
-            is NeverIsolating -> 0
-            is PossiblyIsolating -> daysUntil(state.expiryDate)
-        }
-    }
-
-    private fun daysUntil(date: LocalDate) = max(0, ChronoUnit.DAYS.between(LocalDate.now(clock), date))
-
-    internal val stateMachine = StateMachine.create<IsolationState, Event, SideEffect> {
+    private fun createStateMachine() = StateMachine.create<IsolationState, Event, SideEffect> {
         initialState(stateStorage.state)
         state<IsolationState> {
             on<OnExposedNotification> {
@@ -132,7 +95,7 @@ class IsolationStateMachine @Inject constructor(
                     return@on dontTransition()
                 }
 
-                val exposureDay = it.exposureDate.atZone(ZoneOffset.UTC).toLocalDate()
+                val exposureDay = it.exposureDate.toLocalDate(ZoneOffset.UTC)
                 val potentialContactExpiryDate = exposureDay
                     .plusDays(isolationConfiguration.contactCase.toLong())
 
@@ -221,14 +184,7 @@ class IsolationStateMachine @Inject constructor(
 
             on<OnAcknowledgeIsolationExpiration> {
                 when (IsolationLogicalState.from(this)) {
-                    is PossiblyIsolating -> {
-                        var newState = this.copy(hasAcknowledgedEndOfIsolation = true)
-                        newState = updateHasAcknowledgedEndOfIsolation(
-                            currentState = this,
-                            newState
-                        )
-                        transitionTo(newState)
-                    }
+                    is PossiblyIsolating -> transitionTo(this.copy(hasAcknowledgedEndOfIsolation = true))
                     is NeverIsolating -> dontTransition()
                 }
             }
@@ -270,7 +226,7 @@ class IsolationStateMachine @Inject constructor(
                     if (sideEffect.showNotification) {
                         notificationProvider.showTestResultsReceivedNotification()
                     }
-                    userInbox.notifyChanges()
+                    storageBasedUserInbox.notifyChanges()
                     if (sideEffect.testResult.testResult == VirologyTestResult.POSITIVE &&
                         sideEffect.testResult.requiresConfirmatoryTest
                     ) {
@@ -293,6 +249,53 @@ class IsolationStateMachine @Inject constructor(
             }
         }
     }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal fun invalidateStateMachine() {
+        _stateMachine = createStateMachine()
+    }
+
+    fun readState(): IsolationState = synchronized(this) {
+        return stateMachine.state
+    }
+
+    fun readLogicalState(): IsolationLogicalState = synchronized(this) {
+        return IsolationLogicalState.from(readState())
+    }
+
+    fun processEvent(event: Event): Transition<IsolationState, Event, SideEffect> = synchronized(this) {
+        return stateMachine.transition(event)
+    }
+
+    fun isInterestedInExposureNotifications(): Boolean {
+        return when (val state = readLogicalState()) {
+            is NeverIsolating -> true
+            is PossiblyIsolating ->
+                if (state.hasExpired(clock)) true
+                else state.isActiveIndexCaseOnly(clock) && !state.hasActiveConfirmedPositiveTestResult(clock)
+        }
+    }
+
+    fun reset() {
+        stateMachine.transition(OnReset)
+    }
+
+    fun optInToDailyContactTesting() {
+        stateMachine.transition(OnDailyContactTestingOptIn)
+    }
+
+    fun acknowledgeIsolationExpiration() {
+        stateMachine.transition(OnAcknowledgeIsolationExpiration)
+    }
+
+    fun remainingDaysInIsolation(state: IsolationLogicalState = readLogicalState()): Long {
+        return when (state) {
+            is NeverIsolating -> 0
+            is PossiblyIsolating -> daysUntil(state.expiryDate)
+        }
+    }
+
+    private fun daysUntil(date: LocalDate) = max(0, ChronoUnit.DAYS.between(LocalDate.now(clock), date))
 
     private fun updateHasAcknowledgedEndOfIsolation(
         currentState: IsolationState,
@@ -320,33 +323,49 @@ class IsolationStateMachine @Inject constructor(
         selectedDate: SelectedDate,
         currentState: IsolationLogicalState
     ): IsolationState? {
-        // If it should not be possible to report symptoms, abort
-        if (!currentState.canReportSymptoms(clock)) {
+        // If it should not be possible to report symptoms or onset date not stated, abort
+        if (!currentState.canReportSymptoms(clock) || selectedDate == NotStated) {
             return null
         }
 
-        val indexCase = when (selectedDate) {
-            NotStated -> null
-            is ExplicitDate -> createSelfAssessmentIndexCase(
-                currentState,
-                onsetDate = selectedDate.date
-            )
-            CannotRememberDate -> createSelfAssessmentIndexCase(
-                currentState,
-                onsetDate = null
-            )
-        }
+        val indexCase =
+            if (currentState is PossiblyIsolating && currentState.hasActivePositiveTestResult(clock)) {
+                val selfAssessment = SelfAssessment(
+                    selfAssessmentDate = LocalDate.now(clock),
+                    onsetDate = if (selectedDate is ExplicitDate) selectedDate.date else null
+                )
+                val testResult = currentState.toIsolationState().indexInfo!!.testResult!!
 
+                if (selfAssessment.assumedOnsetDate.isAfter(testResult.testEndDate)) {
+                    createSelfAssessmentIndexCase(currentState, selfAssessment, discardTestResultIfPresent = false)
+                } else currentState.toIsolationState().indexInfo as? IndexCase
+            } else {
+                when (selectedDate) {
+                    NotStated -> null
+                    is ExplicitDate -> createSelfAssessmentIndexCase(
+                        currentState,
+                        onsetDate = selectedDate.date,
+                        discardTestResultIfPresent = true
+                    )
+                    CannotRememberDate -> createSelfAssessmentIndexCase(
+                        currentState,
+                        onsetDate = null,
+                        discardTestResultIfPresent = true
+                    )
+                }
+            }
         return if (indexCase == null || indexCase.hasExpired(clock)) null
         else currentState.toIsolationState().copy(indexInfo = indexCase)
     }
 
     private fun createSelfAssessmentIndexCase(
         currentState: IsolationLogicalState,
-        onsetDate: LocalDate?
+        onsetDate: LocalDate?,
+        discardTestResultIfPresent: Boolean
     ): IndexCase =
         createSelfAssessmentIndexCase(
             currentState,
-            SelfAssessment(selfAssessmentDate = LocalDate.now(clock), onsetDate)
+            SelfAssessment(selfAssessmentDate = LocalDate.now(clock), onsetDate),
+            discardTestResultIfPresent
         )
 }

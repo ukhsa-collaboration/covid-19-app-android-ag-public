@@ -1,6 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.remote
 
-import uk.nhs.nhsx.covid19.android.app.common.Translatable
+import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
 import uk.nhs.nhsx.covid19.android.app.remote.data.QuestionnaireResponse
@@ -9,7 +9,7 @@ class MockQuestionnaireApi : QuestionnaireApi {
     private val successResponse = QuestionnaireResponse(
         symptoms = listOf(
             Symptom(
-                title = Translatable(
+                title = TranslatableString(
                     mapOf(
                         "en-GB" to "A high temperature (fever)",
                         "bn-BD" to "উচ্চ তাপমাত্রা (জ্বর)",
@@ -19,7 +19,7 @@ class MockQuestionnaireApi : QuestionnaireApi {
                         "cy" to "A high temperature (fever)"
                     )
                 ),
-                description = Translatable(
+                description = TranslatableString(
                     mapOf(
                         "en-GB" to "This means that you feel hot to touch on your chest or back (you do not need to measure your temperature).",
                         "bn-BD" to "এর অর্থ আপনার বুক বা পিঠে স্পর্শ করলে উষ্ণ বোধ হয় (আপনাকে আপনার তাপমাত্রা পরিমাপ করার প্রয়োজন নেই)।",
@@ -32,7 +32,7 @@ class MockQuestionnaireApi : QuestionnaireApi {
                 riskWeight = 1.0
             ),
             Symptom(
-                title = Translatable(
+                title = TranslatableString(
                     mapOf(
                         "en-GB" to "A new continuous cough",
                         "bn-BD" to "নতুন একটানা কাশি",
@@ -42,7 +42,7 @@ class MockQuestionnaireApi : QuestionnaireApi {
                         "cy" to "A new continuous cough"
                     )
                 ),
-                description = Translatable(
+                description = TranslatableString(
                     mapOf(
                         "en-GB" to "This means coughing a lot for more than an hour, or 3 or more coughing episodes in 24 hours (if you usually have a cough, it may be worse than usual).",
                         "bn-BD" to " এর অর্থ এক ঘণ্টারও বেশি সময় ধরে খুব কাশি, বা 24 ঘন্টার মধ্যে 3 বা ততোধিক কাশির পর্ব (আপনার যদি সাধারণ কাশি থেকে থাকে তবে এটি হয়তো স্বাভাবিকের চেয়েও খারাপ হতে পারে)। ",
@@ -55,7 +55,7 @@ class MockQuestionnaireApi : QuestionnaireApi {
                 riskWeight = 1.0
             ),
             Symptom(
-                title = Translatable(
+                title = TranslatableString(
                     mapOf(
                         "en-GB" to "A new loss or change to your sense of smell or taste",
                         "bn-BD" to "আপনার গন্ধ বা স্বাদের অনুভূতির পরিবর্তন বা অনুভূতি হারানো",
@@ -65,7 +65,7 @@ class MockQuestionnaireApi : QuestionnaireApi {
                         "cy" to "A new loss or change to your sense of smell or taste"
                     )
                 ),
-                description = Translatable(
+                description = TranslatableString(
                     mapOf(
                         "en-GB" to "This means you have noticed you cannot smell or taste anything, or things smell or taste different to normal.",
                         "bn-BD" to "এর অর্থ আপনি লক্ষ্য করেছেন যে আপনি কোনও কিছুর গন্ধ বা স্বাদ পাচ্ছেন না বা জিনিসের গন্ধ বা স্বাদ স্বাভাবিকের থেকে আলাদা।",
@@ -78,7 +78,7 @@ class MockQuestionnaireApi : QuestionnaireApi {
                 riskWeight = 1.0
             ),
             Symptom(
-                title = Translatable(
+                title = TranslatableString(
                     mapOf(
                         "en-GB" to "Dummy",
                         "bn-BD" to "Dummy",
@@ -88,7 +88,7 @@ class MockQuestionnaireApi : QuestionnaireApi {
                         "cy" to "Dummy"
                     )
                 ),
-                description = Translatable(
+                description = TranslatableString(
                     mapOf(
                         "en-GB" to "Dummy and not related with coronavirus",
                         "bn-BD" to "Dummy and not related with coronavirus",

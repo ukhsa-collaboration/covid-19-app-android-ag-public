@@ -13,11 +13,11 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import uk.nhs.nhsx.covid19.android.app.util.isEqualOrAfter
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.lang.reflect.Type
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 class UnacknowledgedTestResultsProvider @Inject constructor(
@@ -75,7 +75,7 @@ class UnacknowledgedTestResultsProvider @Inject constructor(
 
     fun clearBefore(date: LocalDate) = synchronized(lock) {
         val updatedList = testResults.filter {
-            it.testEndDate.atZone(clock.zone).toLocalDate().isEqualOrAfter(date)
+            it.testEndDate.toLocalDate(clock.zone).isEqualOrAfter(date)
         }
         testResults = updatedList
     }
@@ -107,20 +107,21 @@ data class ReceivedTestResult(
     val diagnosisKeySubmissionToken: String?,
     val testEndDate: Instant,
     val testResult: VirologyTestResult,
-    override val testKitType: VirologyTestKitType?,
+    val testKitType: VirologyTestKitType?,
     val diagnosisKeySubmissionSupported: Boolean,
-    override val requiresConfirmatoryTest: Boolean = false,
-    val symptomsOnsetDate: SymptomsDate? = null
-) : TestResult, Parcelable {
+    val requiresConfirmatoryTest: Boolean = false,
+    val symptomsOnsetDate: SymptomsDate? = null,
+    val confirmatoryDayLimit: Int? = null
+) : Parcelable {
 
-    override fun isPositive(): Boolean =
+    fun isPositive(): Boolean =
         testResult == POSITIVE
 
-    override fun isConfirmed(): Boolean =
+    fun isConfirmed(): Boolean =
         !requiresConfirmatoryTest
 
     fun testEndDay(clock: Clock): LocalDate =
-        LocalDateTime.ofInstant(testEndDate, clock.zone).toLocalDate()
+        testEndDate.toLocalDate(clock.zone)
 }
 
 @Parcelize

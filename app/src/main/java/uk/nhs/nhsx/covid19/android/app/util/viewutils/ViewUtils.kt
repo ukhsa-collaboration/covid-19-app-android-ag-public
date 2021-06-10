@@ -6,8 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RadioButton
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.NestedScrollView
 import com.google.android.material.snackbar.Snackbar
+import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.R
 
 fun showSnackBarShort(container: ViewGroup, message: String) {
     Snackbar.make(container, message, Snackbar.LENGTH_SHORT).show()
@@ -70,4 +74,15 @@ fun RadioButton.mirrorSystemLayoutDirection() {
         View.LAYOUT_DIRECTION_RTL
     }
     layoutDirection = oppositeDirection
+}
+
+fun AlertDialog.Builder.setMultilineTitle(title: String) {
+    val customTitle = LayoutInflater.from(context).inflate(R.layout.dialog_multiline_title, null, false)
+    if (customTitle is TextView) {
+        customTitle.text = title
+        setCustomTitle(customTitle)
+    } else {
+        Timber.e("Expected view to be TextView, but was $customTitle. Falling back to standard title")
+        setTitle(title)
+    }
 }

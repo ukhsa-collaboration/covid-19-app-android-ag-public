@@ -3,6 +3,8 @@ package uk.nhs.nhsx.covid19.android.app.exposure.sharekeys
 import android.app.Activity
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import io.mockk.coVerify
+import io.mockk.coVerifyOrder
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
@@ -11,10 +13,12 @@ import io.mockk.verifyOrder
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInReminderScreen
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysNavigateTo.Finish
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysNavigateTo.ShareKeysResultActivity
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
-import java.time.Instant
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysNavigateTo.SubmitKeysProgressActivity
+import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 
 class ShareKeysReminderViewModelTest {
 
@@ -22,25 +26,21 @@ class ShareKeysReminderViewModelTest {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val submitObfuscationData = mockk<SubmitObfuscationData>(relaxUnitFun = true)
-    private val submitEpidemiologyDataForTestResult = mockk<SubmitEpidemiologyDataForTestResult>(relaxUnitFun = true)
     private val fetchKeysFlowFactory = mockk<FetchKeysFlow.Factory>()
     private val fetchKeysFlow = mockk<FetchKeysFlow>(relaxUnitFun = true)
     private val keySharingInfoProvider = mockk<KeySharingInfoProvider>(relaxUnitFun = true)
-    private val navigationObserver = mockk<Observer<ShareKeysNavigationTarget>>(relaxUnitFun = true)
+    private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxUnitFun = true)
 
-    private val keySharingInfo = KeySharingInfo(
-        diagnosisKeySubmissionToken = "token1",
-        acknowledgedDate = Instant.now(),
-        notificationSentDate = null,
-        testKitType = LAB_RESULT,
-        requiresConfirmatoryTest = false
-    )
+    private val navigationObserver = mockk<Observer<ShareKeysNavigationTarget>>(relaxUnitFun = true)
+    private val permissionRequestObserver = mockk<Observer<(Activity) -> Unit>>(relaxUnitFun = true)
+
+    private val keySharingInfo = mockk<KeySharingInfo>()
 
     private val testSubject = ShareKeysReminderViewModel(
         submitObfuscationData,
-        submitEpidemiologyDataForTestResult,
         fetchKeysFlowFactory,
-        keySharingInfoProvider
+        keySharingInfoProvider,
+        analyticsEventProcessor
     )
 
     @Before
@@ -48,6 +48,7 @@ class ShareKeysReminderViewModelTest {
         every { fetchKeysFlowFactory.create(any(), any(), any()) } returns fetchKeysFlow
         every { keySharingInfoProvider.keySharingInfo } returns keySharingInfo
         testSubject.navigation().observeForever(navigationObserver)
+        testSubject.permissionRequest().observeForever(permissionRequestObserver)
         testSubject.onCreate()
     }
 
@@ -68,7 +69,7 @@ class ShareKeysReminderViewModelTest {
             navigationObserver.onChanged(Finish)
         }
 
-        confirmVerified(fetchKeysFlow, submitEpidemiologyDataForTestResult, navigationObserver)
+        confirmVerified(fetchKeysFlow, navigationObserver)
     }
 
     @Test
@@ -79,21 +80,23 @@ class ShareKeysReminderViewModelTest {
 
         verify { fetchKeysFlow.onActivityResult(unexpectedRequestCode, Activity.RESULT_OK) }
 
-        confirmVerified(fetchKeysFlow, submitEpidemiologyDataForTestResult, navigationObserver)
+        confirmVerified(fetchKeysFlow, navigationObserver)
     }
 
     @Test
     fun `onActivityResult after key submission with result canceled`() {
         testSubject.onActivityResult(ShareKeysInformationActivity.REQUEST_CODE_SUBMIT_KEYS, Activity.RESULT_CANCELED)
 
-        verify {
+        verifyOrder {
             fetchKeysFlow.onActivityResult(
                 ShareKeysInformationActivity.REQUEST_CODE_SUBMIT_KEYS,
                 Activity.RESULT_CANCELED
             )
+            keySharingInfoProvider.reset()
+            navigationObserver.onChanged(Finish)
         }
 
-        confirmVerified(fetchKeysFlow, submitEpidemiologyDataForTestResult, navigationObserver)
+        confirmVerified(fetchKeysFlow, navigationObserver)
     }
 
     @Test
@@ -103,10 +106,57 @@ class ShareKeysReminderViewModelTest {
         verifyOrder {
             fetchKeysFlow.onActivityResult(ShareKeysInformationActivity.REQUEST_CODE_SUBMIT_KEYS, Activity.RESULT_OK)
             keySharingInfoProvider.reset()
-            submitEpidemiologyDataForTestResult(keySharingInfo)
-            navigationObserver.onChanged(ShareKeysResultActivity)
+            navigationObserver.onChanged(ShareKeysResultActivity(bookFollowUpTest = false))
         }
 
-        confirmVerified(fetchKeysFlow, submitEpidemiologyDataForTestResult, navigationObserver)
+        confirmVerified(fetchKeysFlow, navigationObserver)
+    }
+
+    @Test
+    fun `analytics for key sharing consent is only tracked once`() {
+        testSubject.trackConsentedToShareKeys()
+        testSubject.trackConsentedToShareKeys()
+
+        coVerify(exactly = 1) { analyticsEventProcessor.track(ConsentedToShareExposureKeysInReminderScreen) }
+    }
+
+    @Test
+    fun `on fetch keys success`() {
+        val keys = emptyList<NHSTemporaryExposureKey>()
+        val token = ""
+
+        testSubject.onFetchKeysSuccess(keys, token)
+
+        coVerifyOrder {
+            analyticsEventProcessor.track(ConsentedToShareExposureKeysInReminderScreen)
+            navigationObserver.onChanged(SubmitKeysProgressActivity(keys, token))
+        }
+    }
+
+    @Test
+    fun `on fetch keys permission denied`() {
+        testSubject.onFetchKeysPermissionDenied()
+
+        verifyOrder {
+            keySharingInfoProvider.reset()
+            submitObfuscationData.invoke()
+            navigationObserver.onChanged(Finish)
+        }
+    }
+
+    @Test
+    fun `on fetch keys unexpected error`() {
+        testSubject.onFetchKeysUnexpectedError()
+
+        verify { navigationObserver.onChanged(Finish) }
+    }
+
+    @Test
+    fun `on fetch keys permission required`() {
+        val permissionRequest: (Activity) -> Unit = { }
+
+        testSubject.onPermissionRequired(permissionRequest)
+
+        verify { permissionRequestObserver.onChanged(permissionRequest) }
     }
 }

@@ -116,11 +116,21 @@ data class IsolationState(
 
             fun isSelfAssessment(): Boolean =
                 isolationTrigger is SelfAssessment
+
+            val assumedOnsetDateForExposureKeys: LocalDate
+                get() = when (isolationTrigger) {
+                    is PositiveTestResult ->
+                        isolationTrigger.testEndDate.minusDays(assumedDaysFromOnsetToTestResult)
+                    is SelfAssessment ->
+                        if (testResult != null && testResult.testEndDate.isBefore(isolationTrigger.assumedOnsetDate))
+                            testResult.testEndDate.minusDays(assumedDaysFromOnsetToTestResult)
+                        else
+                            isolationTrigger.assumedOnsetDate
+                }
         }
     }
 
     sealed class IndexCaseIsolationTrigger {
-        abstract val assumedOnsetDateForExposureKeys: LocalDate
 
         @JsonClass(generateAdapter = true)
         data class SelfAssessment(
@@ -130,19 +140,12 @@ data class IsolationState(
 
             val assumedOnsetDate: LocalDate
                 get() = onsetDate ?: selfAssessmentDate.minusDays(assumedDaysFromOnsetToSelfAssessment)
-
-            override val assumedOnsetDateForExposureKeys: LocalDate
-                get() = assumedOnsetDate
         }
 
         @JsonClass(generateAdapter = true)
         data class PositiveTestResult(
             val testEndDate: LocalDate
-        ) : IndexCaseIsolationTrigger() {
-
-            override val assumedOnsetDateForExposureKeys: LocalDate
-                get() = testEndDate.minusDays(assumedDaysFromOnsetToTestResult)
-        }
+        ) : IndexCaseIsolationTrigger()
 
         companion object {
             fun from(
@@ -163,7 +166,7 @@ data class IsolationState(
     }
 
     val assumedOnsetDateForExposureKeys: LocalDate?
-        get() = (indexInfo as? IndexCase)?.isolationTrigger?.assumedOnsetDateForExposureKeys
+        get() = (indexInfo as? IndexCase)?.assumedOnsetDateForExposureKeys
 }
 
 /**
@@ -193,7 +196,10 @@ sealed class IsolationLogicalState {
             false
     }
 
-    data class PossiblyIsolating(val isolationState: IsolationState) : IsolationLogicalState(), IsolationInfo by isolationState, IsolationPeriod {
+    data class PossiblyIsolating(val isolationState: IsolationState) :
+        IsolationLogicalState(),
+        IsolationInfo by isolationState,
+        IsolationPeriod {
         override val startDate: LocalDate
         override val expiryDate: LocalDate
         val lastDayOfIsolation: LocalDate
@@ -268,6 +274,15 @@ sealed class IsolationLogicalState {
         fun getActiveTestResult(clock: Clock): AcknowledgedTestResult? =
             getActiveIndexCase(clock)?.testResult
 
+        fun getActiveTestResultIfPositive(clock: Clock): AcknowledgedTestResult? {
+            val activeTestResult = getActiveTestResult(clock)
+            return if (activeTestResult != null && activeTestResult.isPositive()) activeTestResult
+            else null
+        }
+
+        fun hasActivePositiveTestResult(clock: Clock): Boolean =
+            getActiveTestResultIfPositive(clock) != null
+
         fun hasActiveConfirmedPositiveTestResult(clock: Clock): Boolean =
             getActiveTestResult(clock)?.let { activeTestResult ->
                 activeTestResult.isPositive() && activeTestResult.isConfirmed()
@@ -280,8 +295,11 @@ sealed class IsolationLogicalState {
         }
     }
 
-    fun canReportSymptoms(clock: Clock): Boolean =
-        if (this is PossiblyIsolating && this.isActiveIsolation(clock)) isActiveContactCaseOnly(clock) else true
+    fun canReportSymptoms(clock: Clock): Boolean {
+        val notInIsolation = !this.isActiveIsolation(clock)
+        val isActiveSelfAssessmentIndexCase = this is PossiblyIsolating && this.isActiveIndexCase(clock) && remembersIndexCaseWithSelfAssessment()
+        return notInIsolation || !isActiveSelfAssessmentIndexCase
+    }
 
     companion object {
         fun from(isolationState: IsolationState): IsolationLogicalState =

@@ -50,7 +50,7 @@
             android:contentDescription="@null"
             android:src="@drawable/image_error" />
 
-        <TextView
+        <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
             android:id="@+id/textErrorTitle"
             style="@style/Title1"
             android:layout_width="match_parent"

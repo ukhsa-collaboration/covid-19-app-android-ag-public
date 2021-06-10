@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/animation_static_image_height"
     tools:background="?android:colorBackground"
     tools:parentTag="android.widget.FrameLayout">
 
@@ -24,6 +24,7 @@
         app:srcCompat="@drawable/ic_circle_green" />
 
     <ImageView
+        android:id="@+id/imgInnerMostCircleWithTick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -32,15 +33,24 @@
         android:scaleType="centerInside"
         android:src="@drawable/ic_tick_light" />
 
+    <ImageView
+        android:id="@+id/imgCircleStatic"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/animation_static_image_height"
+        android:layout_gravity="center"
+        android:contentDescription="@null"
+        android:scaleType="center"
+        android:src="@drawable/ic_tick_with_green_border" />
+
     <TextView
         android:id="@+id/contactTracingActiveLabel"
         style="@style/ActionTextBold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxWidth="150dp"
         android:layout_gravity="center"
-        android:gravity="center"
         android:layout_marginTop="52dp"
+        android:gravity="center"
+        android:maxWidth="150dp"
         android:text="@string/contact_tracing_active" />
 
 </merge>

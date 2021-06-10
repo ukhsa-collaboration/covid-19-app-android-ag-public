@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/symptomsAdviceIsolateContainer">
 
     <include layout="@layout/view_toolbar_background" />
 
@@ -100,7 +101,6 @@
                 style="@style/LinkTextWithIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/nhs_111_online_service"
                 app:linkUrl="@string/url_nhs_111_online" />
 

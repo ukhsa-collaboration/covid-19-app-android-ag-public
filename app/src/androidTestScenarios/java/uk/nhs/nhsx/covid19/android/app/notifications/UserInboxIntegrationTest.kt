@@ -6,11 +6,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowIsolationExpiration
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowKeySharingReminder
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInbox
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowEncounterDetection
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowIsolationExpiration
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowKeySharingReminder
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowTestResult
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowUnknownTestResult
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -22,12 +24,12 @@ import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 class UserInboxIntegrationTest : EspressoTest() {
 
-    private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(InstrumentationRegistry.getInstrumentation().targetContext)
+    private val sharedPreferences =
+        PreferenceManager.getDefaultSharedPreferences(InstrumentationRegistry.getInstrumentation().targetContext)
     private val isolationHelper = IsolationHelper(testAppContext.clock)
     private lateinit var testSubject: UserInbox
 
@@ -35,32 +37,6 @@ class UserInboxIntegrationTest : EspressoTest() {
     fun setUp() {
         sharedPreferences.edit().clear()
         testSubject = testAppContext.getUserInbox()
-    }
-
-    @Test
-    fun testPutAndDeleteItemsInUserInbox() = notReported {
-        testSubject.addUserInboxItem(ShowEncounterDetection)
-        assertThat(testSubject.fetchInbox()).isInstanceOf(ShowEncounterDetection::class.java)
-        testSubject.clearItem(ShowEncounterDetection)
-        assertNull(testSubject.fetchInbox())
-    }
-
-    @Test
-    fun testFetchingItemsDoesNotDeleteThem() = notReported {
-        testSubject.addUserInboxItem(ShowEncounterDetection)
-        assertThat(testSubject.fetchInbox()).isInstanceOf(ShowEncounterDetection::class.java)
-        assertNotNull(testSubject.fetchInbox())
-    }
-
-    @Test
-    fun testPutAndDeleteItemsWithPropertyInUserInbox() = notReported {
-        testSubject.addUserInboxItem(ShowVenueAlert("venue-id", INFORM))
-        val inboxItem = testSubject.fetchInbox()
-        assertThat(inboxItem).isInstanceOf(ShowVenueAlert::class.java)
-        assertEquals("venue-id", (inboxItem as ShowVenueAlert).venueId)
-
-        testSubject.clearItem(inboxItem)
-        assertNull(testSubject.fetchInbox())
     }
 
     @Test
@@ -79,37 +55,40 @@ class UserInboxIntegrationTest : EspressoTest() {
         val keySharingInfo = KeySharingInfo(
             diagnosisKeySubmissionToken = "abc",
             acknowledgedDate = Instant.now(testAppContext.clock).minus(25, ChronoUnit.HOURS),
-            hasDeclinedSharingKeys = true,
-            testKitType = LAB_RESULT,
-            requiresConfirmatoryTest = false
+            hasDeclinedSharingKeys = true
         )
 
-        testSubject.addUserInboxItem(ShowVenueAlert(venueId, INFORM))
+        testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert(venueId, INFORM)
         testAppContext.getUnacknowledgedTestResultsProvider().add(testResult)
+        testAppContext.getReceivedUnknownTestResultProvider().value = true
         testAppContext.getKeySharingInfoProvider().keySharingInfo = keySharingInfo
         testAppContext.setState(expiredIsolation)
-        testSubject.addUserInboxItem(ShowEncounterDetection)
+        testAppContext.getShouldShowEncounterDetectionActivityProvider().value = true
 
         val firstInboxItem = testSubject.fetchInbox()
         assertThat(firstInboxItem).isInstanceOf(ShowTestResult::class.java)
         testAppContext.getUnacknowledgedTestResultsProvider().remove(testResult)
 
         val secondInboxItem = testSubject.fetchInbox()
-        assertThat(secondInboxItem).isInstanceOf(ShowIsolationExpiration::class.java)
-        assertEquals(expirationDate, (secondInboxItem as ShowIsolationExpiration).expirationDate)
-        testAppContext.setState(expiredIsolation.copy(hasAcknowledgedEndOfIsolation = true))
+        assertThat(secondInboxItem).isInstanceOf(ShowUnknownTestResult::class.java)
+        testAppContext.getReceivedUnknownTestResultProvider().value = false
 
         val thirdInboxItem = testSubject.fetchInbox()
-        assertThat(thirdInboxItem).isInstanceOf(ShowEncounterDetection::class.java)
-        testSubject.clearItem(thirdInboxItem as AddableUserInboxItem)
+        assertThat(thirdInboxItem).isInstanceOf(ShowIsolationExpiration::class.java)
+        assertEquals(expirationDate, (thirdInboxItem as ShowIsolationExpiration).expirationDate)
+        testAppContext.setState(expiredIsolation.copy(hasAcknowledgedEndOfIsolation = true))
 
         val fourthInboxItem = testSubject.fetchInbox()
-        assertThat(fourthInboxItem).isInstanceOf(ShowVenueAlert::class.java)
-        assertEquals(venueId, (fourthInboxItem as ShowVenueAlert).venueId)
-        testSubject.clearItem(fourthInboxItem)
+        assertThat(fourthInboxItem).isInstanceOf(ShowEncounterDetection::class.java)
+        testAppContext.getShouldShowEncounterDetectionActivityProvider().value = null
 
         val fifthInboxItem = testSubject.fetchInbox()
-        assertThat(fifthInboxItem).isInstanceOf(ShowKeySharingReminder::class.java)
+        assertThat(fifthInboxItem).isInstanceOf(ShowVenueAlert::class.java)
+        assertEquals(venueId, (fifthInboxItem as ShowVenueAlert).venueId)
+        testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = null
+
+        val sixthInboxItem = testSubject.fetchInbox()
+        assertThat(sixthInboxItem).isInstanceOf(ShowKeySharingReminder::class.java)
         testAppContext.getKeySharingInfoProvider().reset()
 
         assertNull(testSubject.fetchInbox())

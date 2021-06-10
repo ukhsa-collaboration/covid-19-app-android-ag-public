@@ -20,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRo
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestingHubRobot
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
@@ -33,6 +34,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
     private val testResultRobot = TestResultRobot(testAppContext.app)
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
     private val shareKeysResultRobot = ShareKeysResultRobot()
+    private val testingHubRobot = TestingHubRobot()
     private val isolationHelper = IsolationHelper(testAppContext.clock)
     private val isolationChecker = IsolationChecker(testAppContext)
 
@@ -286,7 +288,11 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
     }
 
     private fun orderTestFromStatusActivity(pollingToken: String) {
-        statusRobot.clickOrderTest()
+        statusRobot.clickTestingHub()
+
+        testingHubRobot.checkActivityIsDisplayed()
+        testingHubRobot.clickBookTest()
+
         orderTest(pollingToken)
     }
 }

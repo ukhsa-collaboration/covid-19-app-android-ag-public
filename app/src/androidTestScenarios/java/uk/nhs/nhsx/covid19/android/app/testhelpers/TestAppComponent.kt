@@ -16,17 +16,25 @@ import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfoProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfoProvider
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
+import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertProvider
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.ShouldShowEncounterDetectionActivityProvider
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInbox
 import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateStorage
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenues
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
+import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsProvider
 import uk.nhs.nhsx.covid19.android.app.state.DisplayStateExpirationNotification
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
+import uk.nhs.nhsx.covid19.android.app.state.StateStringStorage
+import uk.nhs.nhsx.covid19.android.app.state.StateStringStorage4_9
+import uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessagesProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingTokensProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
+import uk.nhs.nhsx.covid19.android.app.testordering.unknownresult.ReceivedUnknownTestResultProvider
 import javax.inject.Singleton
 
 @Singleton
@@ -46,7 +54,13 @@ interface TestAppComponent : ApplicationComponent {
     fun getLocalAuthorityProvider(): LocalAuthorityProvider
 
     @Singleton
+    fun getRelevantTestResultProvider(): RelevantTestResultProvider
+
+    @Singleton
     fun getUnacknowledgedTestResultsProvider(): UnacknowledgedTestResultsProvider
+
+    @Singleton
+    fun getReceivedUnknownTestResultProvider(): ReceivedUnknownTestResultProvider
 
     @Singleton
     fun getTestOrderingTokensProvider(): TestOrderingTokensProvider
@@ -55,6 +69,10 @@ interface TestAppComponent : ApplicationComponent {
     fun getKeySharingInfoProvider(): KeySharingInfoProvider
 
     fun provideIsolationStateMachine(): IsolationStateMachine
+
+    fun provideStateStringStorage4_9(): StateStringStorage4_9
+
+    fun provideStateStringStorage(): StateStringStorage
 
     @Singleton
     fun getUserInbox(): UserInbox
@@ -85,4 +103,16 @@ interface TestAppComponent : ApplicationComponent {
 
     @Singleton
     fun getAlarmManager(): AlarmManager
+
+    @Singleton
+    fun getRiskyVenueAlertProvider(): RiskyVenueAlertProvider
+
+    @Singleton
+    fun getShouldShowEncounterDetectionActivityProvider(): ShouldShowEncounterDetectionActivityProvider
+
+    @Singleton
+    fun getLocalMessagesProvider(): LocalMessagesProvider
+
+    @Singleton
+    fun getAnimationsProvider(): AnimationsProvider
 }

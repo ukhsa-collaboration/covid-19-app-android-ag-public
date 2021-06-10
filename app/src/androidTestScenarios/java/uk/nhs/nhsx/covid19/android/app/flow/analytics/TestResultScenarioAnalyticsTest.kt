@@ -18,7 +18,7 @@ import java.time.temporal.ChronoUnit
 class TestResultScenarioAnalyticsTest : AnalyticsTest() {
 
     private val manualTestResultEntry = ManualTestResultEntry(testAppContext)
-    private val pollingTestResult = PollingTestResult(this)
+    private val pollingTestResult = PollingTestResult(testAppContext)
     private val testResultRobot = TestResultRobot(testAppContext.app)
     private val orderTest = OrderTest(this)
 
@@ -80,6 +80,9 @@ class TestResultScenarioAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(Metrics::isIsolatingForTestedLFDPositiveBackgroundTick)
             assertPresent(Metrics::hasTestedLFDPositiveBackgroundTick)
+            assertEquals(1, Metrics::askedToShareExposureKeysInTheInitialFlow)
+            assertEquals(1, Metrics::consentedToShareExposureKeysInTheInitialFlow)
+            assertEquals(1, Metrics::successfullySharedExposureKeys)
         }
 
         // Dates: 8th-13th Jan -> Analytics packets for: 7th-12th Jan

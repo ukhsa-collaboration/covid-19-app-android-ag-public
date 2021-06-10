@@ -2,7 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.di.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import uk.nhs.nhsx.covid19.android.app.about.BaseMyDataViewModel
+import uk.nhs.nhsx.covid19.android.app.about.mydata.BaseMyDataViewModel
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import java.time.LocalDate

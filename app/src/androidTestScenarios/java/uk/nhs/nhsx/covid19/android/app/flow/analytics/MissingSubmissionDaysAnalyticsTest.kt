@@ -1,9 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_FAIL
-import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_SUCCEED
-import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 
 class MissingSubmissionDaysAnalyticsTest : AnalyticsTest() {
@@ -15,7 +12,7 @@ class MissingSubmissionDaysAnalyticsTest : AnalyticsTest() {
         assertAnalyticsPacketIsNormal()
 
         // Fast-forward one day without submitting
-        executeWhileOffline {
+        testAppContext.executeWhileOffline {
             advanceToEndOfAnalyticsWindow(steps = 1)
         }
 
@@ -25,7 +22,7 @@ class MissingSubmissionDaysAnalyticsTest : AnalyticsTest() {
         }
 
         // Fast-forward 7 days without submitting
-        executeWhileOffline {
+        testAppContext.executeWhileOffline {
             repeat(7) {
                 advanceToEndOfAnalyticsWindow(steps = 1)
             }
@@ -65,11 +62,5 @@ class MissingSubmissionDaysAnalyticsTest : AnalyticsTest() {
         // Back to normal
         // 0000000[1111111]
         assertAnalyticsPacketIsNormal()
-    }
-
-    private fun executeWhileOffline(action: () -> Unit) {
-        MockApiModule.behaviour.responseType = ALWAYS_FAIL
-        action()
-        MockApiModule.behaviour.responseType = ALWAYS_SUCCEED
     }
 }

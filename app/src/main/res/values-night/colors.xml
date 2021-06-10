@@ -26,6 +26,7 @@
     <!-- style colors -->
     <color name="style_purple">#8666B3</color>
     <color name="style_orange">#DB985A</color>
+    <color name="style_yellow">#DBB75A</color>
     <color name="style_pink">#BF5F8A</color>
     <color name="style_teal">#63AAAA</color>
     <color name="style_red">#F39892</color>

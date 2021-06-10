@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="@dimen/vertical_margin"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/localMessageContentDescription"
+        style="@style/Body1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Tempor commodo ullamcorper a lacus vestibulum." />
+
+    <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+        android:id="@+id/localMessageContentLinkView"
+        style="@style/LinkTextWithIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/minimum_touch_target_size"
+        android:minWidth="@dimen/minimum_touch_target_size"
+        tools:text="External link with icon" />
+
+</LinearLayout>

@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.activity_qr_code_scan_result.animationIcon
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.errorResultIcon
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.subtitleTextView
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.successVenueDateTime
-import kotlinx.android.synthetic.main.activity_qr_code_scan_result.textCancelCheckIn
+import kotlinx.android.synthetic.main.activity_qr_code_scan_result.buttonCancelCheckIn
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.titleTextView
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.topCloseButton
 import uk.nhs.nhsx.covid19.android.app.R
@@ -39,7 +39,6 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.ListenableAnimationDrawabl
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.animationsDisabled
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityButton
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -130,9 +129,8 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
                 startedFromVenueCheckInSuccess = true
             )
         }
-        textCancelCheckIn.visible()
-        textCancelCheckIn.setUpAccessibilityButton()
-        textCancelCheckIn.setOnSingleClickListener {
+        buttonCancelCheckIn.visible()
+        buttonCancelCheckIn.setOnSingleClickListener {
             viewModel.removeLastVisit()
         }
         topCloseButton.gone()
@@ -154,7 +152,7 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
             intent.data = uri
             startActivity(intent)
         }
-        textCancelCheckIn.gone()
+        buttonCancelCheckIn.gone()
         topCloseButton.visible()
         topCloseButton.setOnSingleClickListener {
             StatusActivity.start(this@QrCodeScanResultActivity)
@@ -182,7 +180,7 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
         qrScanHelpLink.setOnSingleClickListener {
             startActivity<QrCodeHelpActivity>()
         }
-        textCancelCheckIn.gone()
+        buttonCancelCheckIn.gone()
         topCloseButton.gone()
         successVenueDateTime.gone()
         qrCodeHelpContainer.visible()
@@ -198,7 +196,7 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
         actionButton.setOnSingleClickListener {
             StatusActivity.start(this@QrCodeScanResultActivity)
         }
-        textCancelCheckIn.gone()
+        buttonCancelCheckIn.gone()
         topCloseButton.gone()
         successVenueDateTime.gone()
         qrCodeHelpContainer.gone()

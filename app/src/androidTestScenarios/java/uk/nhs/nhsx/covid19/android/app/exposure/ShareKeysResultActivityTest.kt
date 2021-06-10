@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.exposure
 
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysResultActivity
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot

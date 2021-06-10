@@ -25,24 +25,16 @@ class SubmitEpidemiologyDataForTestResultTest {
 
         every { epidemiologyEventProvider.epidemiologyEvents } returns epidemiologyEvents
 
-        testSubject(keySharingInfo)
+        testSubject(LAB_RESULT, requiresConfirmatoryTest = false)
 
         verify {
             submitEpidemiologyData.submitAfterPositiveTest(
                 epidemiologyEventList = epidemiologyEvents,
-                testKitType = keySharingInfo.testKitType,
-                requiresConfirmatoryTest = keySharingInfo.requiresConfirmatoryTest
+                testKitType = LAB_RESULT,
+                requiresConfirmatoryTest = false
             )
         }
     }
-
-    private val keySharingInfo = KeySharingInfo(
-        diagnosisKeySubmissionToken = "token1",
-        acknowledgedDate = Instant.parse("2020-07-10T01:00:00.00Z"),
-        notificationSentDate = null,
-        testKitType = LAB_RESULT,
-        requiresConfirmatoryTest = false
-    )
 
     private val epidemiologyEvent = EpidemiologyEvent(
         payload = EpidemiologyEventPayload(

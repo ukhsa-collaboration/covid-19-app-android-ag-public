@@ -11,6 +11,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
@@ -139,7 +140,7 @@ class EvaluateIfConsideredRiskyTest {
 
     private fun setUpExpiredContactCaseDueToDctOptIn() {
         val expiredContactCaseDueToDctOptIn = isolationHelper.contactCaseWithDct(
-            dailyContactTestingOptInDate = baseDate.atOffset(ZoneOffset.UTC).toLocalDate()
+            dailyContactTestingOptInDate = baseDate.toLocalDate(ZoneOffset.UTC)
         ).asIsolation()
 
         every { isolationStateMachine.readState() } returns expiredContactCaseDueToDctOptIn

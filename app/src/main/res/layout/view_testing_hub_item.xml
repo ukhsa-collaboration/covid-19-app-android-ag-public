@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?colorSurface"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/margin_horizontal"
+    android:paddingVertical="@dimen/vertical_margin"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingEnd="16dp">
+
+        <TextView
+            android:id="@+id/testingHubItemTitle"
+            style="@style/Title3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="@string/testing_hub_enter_test_result_title" />
+
+        <TextView
+            android:id="@+id/testingHubItemDescription"
+            style="@style/Body1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            tools:text="@string/testing_hub_enter_test_result_description" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/testingHubItemNavigationIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@null"
+        tools:src="@drawable/ic_chevron_right" />
+</merge>

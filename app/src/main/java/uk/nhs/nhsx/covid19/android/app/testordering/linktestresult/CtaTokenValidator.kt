@@ -1,5 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 
+import com.squareup.moshi.JsonDataException
+import com.squareup.moshi.JsonEncodingException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -12,6 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SEL
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Failure
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.Success
+import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.UnparsableTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType.INVALID
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType.NO_CONNECTION
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType.UNEXPECTED
@@ -42,6 +45,10 @@ class CtaTokenValidator @Inject constructor(
                 Timber.e("Could not resolve supported country. It should not have been possible to get to this point without a supported country")
                 Failure(UNEXPECTED)
             }
+        } catch (jsonException: JsonDataException) {
+            UnparsableTestResult
+        } catch (jsonEncodingException: JsonEncodingException) {
+            UnparsableTestResult
         } catch (ioException: IOException) {
             Failure(NO_CONNECTION)
         } catch (exception: Exception) {
@@ -50,9 +57,10 @@ class CtaTokenValidator @Inject constructor(
     }
 
     private fun processSuccessfulResponse(response: VirologyCtaExchangeResponse): CtaTokenValidationResult =
-        if (response.testResult != POSITIVE &&
-            (response.testKit == RAPID_RESULT || response.testKit == RAPID_SELF_REPORTED)
-        ) Failure(UNEXPECTED)
+        if (response.testResult != POSITIVE && (response.testKit == RAPID_RESULT || response.testKit == RAPID_SELF_REPORTED || response.requiresConfirmatoryTest))
+            Failure(UNEXPECTED)
+        else if (!response.requiresConfirmatoryTest && response.confirmatoryDayLimit != null)
+            Failure(UNEXPECTED)
         else Success(response)
 
     companion object {
@@ -60,9 +68,11 @@ class CtaTokenValidator @Inject constructor(
     }
 
     sealed class CtaTokenValidationResult {
-        data class Success(val virologyCtaExchangeResponse: VirologyCtaExchangeResponse) :
-            CtaTokenValidationResult()
+        data class Success(
+            val virologyCtaExchangeResponse: VirologyCtaExchangeResponse
+        ) : CtaTokenValidationResult()
 
+        object UnparsableTestResult : CtaTokenValidationResult()
         data class Failure(val type: ValidationErrorType) : CtaTokenValidationResult()
     }
 

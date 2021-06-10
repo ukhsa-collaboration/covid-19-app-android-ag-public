@@ -13,7 +13,7 @@ import uk.nhs.nhsx.covid19.android.app.report.notReported
 class PollingTestResultAnalyticsTest : AnalyticsTest() {
 
     private var selfDiagnosis = SelfDiagnosis(this)
-    private var pollingTestResult = PollingTestResult(this)
+    private var pollingTestResult = PollingTestResult(testAppContext)
 
     // hasTestedPositiveBackgroundTick - Polling
     // >0 if the app is aware that the user has received/entered a positive PCR test
@@ -54,11 +54,39 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
         )
     }
 
+    // No consent to key sharing
+    // Will not have consentedToShareExposureKeysInTheInitialFlow
+    @Test
+    fun receivePositivePCRTestResultAfterSelfDiagnosisWithNoConsentToKeySharing() = notReported {
+        receivePositiveTestResultAfterSelfDiagnosis(
+            LAB_RESULT,
+            Metrics::receivedPositiveTestResultViaPolling,
+            Metrics::isIsolatingForTestedPositiveBackgroundTick,
+            Metrics::hasTestedPositiveBackgroundTick,
+            shouldConsentToKeySharing = false
+        )
+    }
+
+    // Key sharing fails
+    // Will not have successfullySharedExposureKeys, but on the next day totalShareExposureKeyReminderNotifications
+    @Test
+    fun receivePositivePCRTestResultAfterSelfDiagnosisWithKeySharingFailure() = notReported {
+        receivePositiveTestResultAfterSelfDiagnosis(
+            LAB_RESULT,
+            Metrics::receivedPositiveTestResultViaPolling,
+            Metrics::isIsolatingForTestedPositiveBackgroundTick,
+            Metrics::hasTestedPositiveBackgroundTick,
+            keySharingSucceeds = false
+        )
+    }
+
     private fun receivePositiveTestResultAfterSelfDiagnosis(
         testKitType: VirologyTestKitType,
         receivedPositiveTestResultViaPollingMetric: MetricsProperty?,
         isIsolatingForTestedPositiveBackgroundTickMetric: MetricsProperty,
-        hasTestedPositiveBackgroundTickMetric: MetricsProperty
+        hasTestedPositiveBackgroundTickMetric: MetricsProperty,
+        shouldConsentToKeySharing: Boolean = true,
+        keySharingSucceeds: Boolean = true
     ) {
         // Current date: 2nd Jan -> Analytics packet for: 1st Jan
         // Starting state: App running normally, not in isolation
@@ -81,10 +109,18 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
         }
 
-        pollingTestResult.receiveAndAcknowledgePositiveTestResult(
-            testKitType,
-            this::advanceToNextBackgroundTaskExecution
-        )
+        if (shouldConsentToKeySharing) {
+            pollingTestResult.receiveAndAcknowledgePositiveTestResult(
+                testKitType,
+                this::advanceToNextBackgroundTaskExecution,
+                keySharingSucceeds = keySharingSucceeds
+            )
+        } else {
+            pollingTestResult.receiveAndAcknowledgePositiveTestResultAndDeclineKeySharing(
+                testKitType,
+                this::advanceToNextBackgroundTaskExecution
+            )
+        }
 
         // Current date: 4th Jan -> Analytics packet for: 3rd Jan
         assertOnFields {
@@ -99,10 +135,31 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
+            assertEquals(1, Metrics::askedToShareExposureKeysInTheInitialFlow)
+            if (shouldConsentToKeySharing) {
+                assertEquals(1, Metrics::consentedToShareExposureKeysInTheInitialFlow)
+                if (keySharingSucceeds) {
+                    assertEquals(1, Metrics::successfullySharedExposureKeys)
+                }
+            }
         }
 
-        // Dates: 5th-10th Jan -> Analytics packets for: 4th-10th Jan
-        assertOnFieldsForDateRange(5..11) {
+        // Current date: 5th Jan -> Analytics packet for: 4rd Jan
+        assertOnFields {
+            // Still in isolation
+            assertPresent(Metrics::isIsolatingBackgroundTick)
+            assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
+            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
+            assertPresent(hasTestedPositiveBackgroundTickMetric)
+            if (!shouldConsentToKeySharing || !keySharingSucceeds) {
+                assertEquals(1, Metrics::totalShareExposureKeysReminderNotifications)
+            }
+        }
+
+        // Dates: 6th-11th Jan -> Analytics packets for: 5th-10th Jan
+        assertOnFieldsForDateRange(6..11) {
             // Still in isolation
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)

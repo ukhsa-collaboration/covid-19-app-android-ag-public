@@ -12,6 +12,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.IsolationConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationPaymentApi
 import uk.nhs.nhsx.covid19.android.app.remote.KeysDistributionApi
 import uk.nhs.nhsx.covid19.android.app.remote.KeysSubmissionApi
+import uk.nhs.nhsx.covid19.android.app.remote.LocalMessagesApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockAnalyticsApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockAppAvailabilityApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockEmptyApi
@@ -21,6 +22,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.MockExposureConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockIsolationConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockKeysDistributionApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockKeysSubmissionApi
+import uk.nhs.nhsx.covid19.android.app.remote.MockLocalMessagesApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockQuestionnaireApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockRemoteServiceExceptionCrashReportSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockRiskyPostDistrictsApi
@@ -43,7 +45,8 @@ class ManagedApiModule(
     private val isolationPaymentApi: IsolationPaymentApi,
     private val keysSubmissionApi: MockKeysSubmissionApi,
     private val analyticsApi: MockAnalyticsApi,
-    private val mockEpidemiologyDataApi: MockEpidemiologyDataApi
+    private val mockEpidemiologyDataApi: MockEpidemiologyDataApi,
+    private val localMessagesApi: MockLocalMessagesApi
 ) {
 
     @Provides
@@ -125,4 +128,8 @@ class ManagedApiModule(
     @Singleton
     fun provideRemoteServiceExceptionCrashReportSubmissionApi(): RemoteServiceExceptionCrashReportSubmissionApi =
         MockRemoteServiceExceptionCrashReportSubmissionApi()
+
+    @Provides
+    @Singleton
+    fun provideLocalMessagesApi(): LocalMessagesApi = localMessagesApi
 }

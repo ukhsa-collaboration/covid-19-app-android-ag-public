@@ -5,6 +5,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.SubmissionDateRange
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.lang.Integer.max
 import java.time.Duration
 import java.time.Instant
@@ -22,17 +23,17 @@ class TransmissionRiskLevelApplier @Inject constructor(
         keys: List<NHSTemporaryExposureKey>,
         keySharingInfo: KeySharingInfo
     ): List<NHSTemporaryExposureKey> {
-        val symptomsOnsetDate = stateMachine.readState().assumedOnsetDateForExposureKeys
+        val assumedOnsetDate = stateMachine.readState().assumedOnsetDateForExposureKeys
 
-        return if (symptomsOnsetDate == null) {
+        return if (assumedOnsetDate == null) {
             keys.sortedByDescending { it.rollingStartNumber }
                 .map { it.copy(transmissionRiskLevel = MIN_TRANSMISSION_RISK_LEVEL) }
         } else {
-            val submissionDateRange = calculateKeySubmissionDateRange(keySharingInfo.acknowledgedDate, symptomsOnsetDate)
+            val submissionDateRange = calculateKeySubmissionDateRange(keySharingInfo.acknowledgedDate, assumedOnsetDate)
             keys.sortedByDescending { it.rollingStartNumber }
                 .map { key ->
                     val keyDate = key.date()
-                    val daysFromOnset = ChronoUnit.DAYS.between(symptomsOnsetDate, keyDate).toInt()
+                    val daysFromOnset = ChronoUnit.DAYS.between(assumedOnsetDate, keyDate).toInt()
                     key.copy(
                         transmissionRiskLevel = calculateTransmissionRiskLevel(keyDate, submissionDateRange, daysFromOnset),
                         daysSinceOnsetOfSymptoms = daysFromOnset
@@ -56,9 +57,7 @@ class TransmissionRiskLevelApplier @Inject constructor(
 
     private fun NHSTemporaryExposureKey.date(): LocalDate {
         val timeSince1970 = rollingStartNumber * Duration.ofMinutes(10).toMillis()
-        return Instant.ofEpochMilli(timeSince1970)
-            .atZone(ZoneOffset.UTC)
-            .toLocalDate()
+        return Instant.ofEpochMilli(timeSince1970).toLocalDate(ZoneOffset.UTC)
     }
 }
 

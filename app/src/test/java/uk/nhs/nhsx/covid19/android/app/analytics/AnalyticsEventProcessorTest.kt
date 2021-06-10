@@ -8,14 +8,20 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AcknowledgedStartOfIsolationDueToRiskyContact
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AskedToShareExposureKeysInTheInitialFlow
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.BackgroundTaskCompletion
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CanceledCheckIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireAndStartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireButDidNotStartIsolation
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInReminderScreen
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInTheInitialFlow
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DeclaredNegativeResultFromDct
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaBanner
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAskForSymptomsOnPositiveTestEntry
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidHaveSymptomsBeforeReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidRememberOnsetSymptomsDateBeforeReceivedTestResult
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidSendLocalInfoNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedIsolationPaymentsApplication
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedTestOrdering
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
@@ -28,18 +34,26 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyVen
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.RiskyContactReminderNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolationPaymentsButton
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SuccessfullySharedExposureKeys
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.TotalAlarmManagerBackgroundTasks
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.TotalShareExposureKeysReminderNotifications
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.UpdateNetworkStats
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.Event
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ASKED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_REMINDER_SCREEN
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DECLARED_NEGATIVE_RESULT_FROM_DCT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_SEND_LOCAL_INFO_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_ISOLATION_PAYMENTS_APPLICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_TEST_ORDERING
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
@@ -52,7 +66,9 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEI
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RISKY_CONTACT_REMINDER_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_ISOLATION_PAYMENTS_BUTTON
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.STARTED_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SUCCESSFULLY_SHARED_EXPOSURE_KEYS
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.TOTAL_ALARM_MANAGER_BACKGROUND_TASKS
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.TOTAL_SHARE_EXPOSURE_KEYS_REMINDER_NOTIFICATIONS
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.VOID_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
@@ -71,12 +87,13 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SEL
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage
+import uk.nhs.nhsx.covid19.android.app.status.localmessage.GetLocalMessageFromStorage
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionStatus.COMPLETED_AND_CONFIRMED
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 class AnalyticsEventProcessorTest {
@@ -90,6 +107,7 @@ class AnalyticsEventProcessorTest {
     private val notificationProvider = mockk<NotificationProvider>()
     private val lastVisitedBookTestTypeVenueDateProvider = mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxed = true)
     private val onboardingCompletedProvider = mockk<OnboardingCompletedProvider>()
+    private val getLocalMessageFromStorage = mockk<GetLocalMessageFromStorage>()
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
     private val isolationHelper = IsolationHelper(fixedClock)
 
@@ -103,6 +121,7 @@ class AnalyticsEventProcessorTest {
         notificationProvider,
         lastVisitedBookTestTypeVenueDateProvider,
         onboardingCompletedProvider,
+        getLocalMessageFromStorage,
         fixedClock
     )
 
@@ -116,7 +135,10 @@ class AnalyticsEventProcessorTest {
         every { notificationProvider.isChannelEnabled(ISOLATION_STATE_CHANNEL_ID) } returns false
         every { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue } returns null
         every { onboardingCompletedProvider.value } returns true
+        coEvery { getLocalMessageFromStorage.invoke() } returns null
     }
+
+    //region background ticks
 
     @Test
     fun `do not process any items when onboarding is not completed`() = runBlocking {
@@ -623,7 +645,7 @@ class AnalyticsEventProcessorTest {
         }
 
     @Test
-    fun `on background completed when user is isolating due to self assessment and last test result is positive, with test result date before current isolation, and acknowledged before current isolation`() =
+    fun `on background completed when user is isolating due to self assessment and last test result is positive`() =
         runBlocking {
             val isolationStart = LocalDate.now(fixedClock).minusDays(1)
             every { stateStorage.state } returns
@@ -655,7 +677,8 @@ class AnalyticsEventProcessorTest {
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
                                 hasSelfDiagnosedBackgroundTick = true,
-                                hasTestedPositiveBackgroundTick = true
+                                hasTestedPositiveBackgroundTick = true,
+                                isIsolatingForTestedPositiveBackgroundTick = true
                             )
                         )
                     )
@@ -829,7 +852,8 @@ class AnalyticsEventProcessorTest {
                             testResult = POSITIVE,
                             testKitType = RAPID_RESULT,
                             requiresConfirmatoryTest = true,
-                            confirmedDate = LocalDate.now(fixedClock)
+                            confirmedDate = LocalDate.now(fixedClock),
+                            confirmatoryTestCompletionStatus = COMPLETED_AND_CONFIRMED
                         )
                     )
                 )
@@ -847,6 +871,45 @@ class AnalyticsEventProcessorTest {
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForTestedLFDPositiveBackgroundTick = true,
                                 hasTestedLFDPositiveBackgroundTick = true
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed when user is isolating as contact, was isolating without self assessment and last test result is positive`() =
+        runBlocking {
+            every { stateStorage.state } returns
+                IsolationState(
+                    isolationConfiguration = DurationDays(),
+                    contactCase = isolationHelper.contactCase(),
+                    indexInfo = isolationHelper.positiveTest(
+                        AcknowledgedTestResult(
+                            testEndDate = LocalDate.now(fixedClock).minusDays(12),
+                            acknowledgedDate = LocalDate.now(fixedClock).minusDays(12),
+                            testResult = POSITIVE,
+                            testKitType = LAB_RESULT,
+                            requiresConfirmatoryTest = false,
+                            confirmedDate = null
+                        )
+                    )
+                )
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                isIsolatingBackgroundTick = true,
+                                isIsolatingForHadRiskyContactBackgroundTick = true,
+                                hasHadRiskyContactBackgroundTick = true,
+                                hasTestedPositiveBackgroundTick = true,
+                                hasSelfDiagnosedPositiveBackgroundTick = true
                             )
                         )
                     )
@@ -1039,6 +1102,55 @@ class AnalyticsEventProcessorTest {
         }
 
     @Test
+    fun `on background completed does set isDisplayingLocalInfoBackgroundTick when localInfo is available`() = runBlocking {
+        coEvery { getLocalMessageFromStorage.invoke() } returns mockk()
+
+        testSubject.track(BackgroundTaskCompletion)
+
+        verify {
+            analyticsLogStorage.add(
+                AnalyticsLogEntry(
+                    instant = Instant.now(fixedClock),
+                    logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                        backgroundTaskTicks = BackgroundTaskTicks(
+                            runningNormallyBackgroundTick = true,
+                            isDisplayingLocalInfoBackgroundTick = true
+                        )
+                    )
+                )
+            )
+        }
+    }
+
+    //endregion
+
+    //region network stats
+
+    @Test
+    fun `on network stats update`() = runBlocking {
+        every { networkTrafficStats.getTotalBytesUploaded() } returns 15
+        every { networkTrafficStats.getTotalBytesDownloaded() } returns 25
+
+        testSubject.track(UpdateNetworkStats)
+
+        verify {
+            analyticsLogStorage.add(
+                AnalyticsLogEntry(
+                    instant = Instant.now(fixedClock),
+                    logItem = AnalyticsLogItem.UpdateNetworkStats(
+                        downloadedBytes = 25,
+                        uploadedBytes = 15
+                    )
+                )
+            )
+        }
+    }
+
+    //endregion
+
+    //region regular events
+
+    @Test
     fun `track qr code check in`() = runBlocking {
         verifyTrackRegularAnalyticsEvent(QrCodeCheckIn, QR_CODE_CHECK_IN)
     }
@@ -1077,26 +1189,6 @@ class AnalyticsEventProcessorTest {
     @Test
     fun `track void result received`() = runBlocking {
         verifyTrackRegularAnalyticsEvent(VoidResultReceived, VOID_RESULT_RECEIVED)
-    }
-
-    @Test
-    fun `on network stats update`() = runBlocking {
-        every { networkTrafficStats.getTotalBytesUploaded() } returns 15
-        every { networkTrafficStats.getTotalBytesDownloaded() } returns 25
-
-        testSubject.track(UpdateNetworkStats)
-
-        verify {
-            analyticsLogStorage.add(
-                AnalyticsLogEntry(
-                    instant = Instant.now(fixedClock),
-                    logItem = AnalyticsLogItem.UpdateNetworkStats(
-                        downloadedBytes = 25,
-                        uploadedBytes = 15
-                    )
-                )
-            )
-        }
     }
 
     @Test
@@ -1198,6 +1290,70 @@ class AnalyticsEventProcessorTest {
         )
     }
 
+    @Test
+    fun `track askedToShareExposureKeysInTheInitialFlow`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            AskedToShareExposureKeysInTheInitialFlow,
+            ASKED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW
+        )
+    }
+
+    @Test
+    fun `track consentedToShareExposureKeysInTheInitialFlow`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            ConsentedToShareExposureKeysInTheInitialFlow,
+            CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW
+        )
+    }
+
+    @Test
+    fun `track consentedToShareExposureKeysInReminderScreen`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            ConsentedToShareExposureKeysInReminderScreen,
+            CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_REMINDER_SCREEN
+        )
+    }
+
+    @Test
+    fun `track totalShareExposureKeysReminderNotifications`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            TotalShareExposureKeysReminderNotifications,
+            TOTAL_SHARE_EXPOSURE_KEYS_REMINDER_NOTIFICATIONS
+        )
+    }
+
+    @Test
+    fun `track successfullySharedExposureKeys`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            SuccessfullySharedExposureKeys,
+            SUCCESSFULLY_SHARED_EXPOSURE_KEYS
+        )
+    }
+
+    @Test
+    fun `track didSendLocalInfoNotification`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            DidSendLocalInfoNotification,
+            DID_SEND_LOCAL_INFO_NOTIFICATION
+        )
+    }
+
+    @Test
+    fun `track didAccessLocalInfoScreenViaNotification`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            DidAccessLocalInfoScreenViaNotification,
+            DID_ACCESS_LOCAL_INFO_SCREEN_VIA_NOTIFICATION
+        )
+    }
+
+    @Test
+    fun `track didAccessLocalInfoScreenViaBanner`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            DidAccessLocalInfoScreenViaBanner,
+            DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER
+        )
+    }
+
     private suspend fun verifyTrackRegularAnalyticsEvent(event: AnalyticsEvent, eventType: RegularAnalyticsEventType) {
         testSubject.track(event)
 
@@ -1211,6 +1367,5 @@ class AnalyticsEventProcessorTest {
         }
     }
 
-    private fun Instant.toLocalDate(): LocalDate =
-        LocalDateTime.ofInstant(this, fixedClock.zone).toLocalDate()
+    //endregion
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
+import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -146,22 +147,6 @@ fun TextView.setUpOpensInBrowserWarning() {
     )
 }
 
-fun TextView.setUpAccessibilityButton() {
-    ViewCompat.setAccessibilityDelegate(
-        this,
-        object : AccessibilityDelegateCompat() {
-            override fun onInitializeAccessibilityNodeInfo(
-                host: View,
-                info: AccessibilityNodeInfoCompat
-            ) {
-                super.onInitializeAccessibilityNodeInfo(host, info)
-                info.contentDescription =
-                    context.getString(R.string.accessibility_announcement_button, text)
-            }
-        }
-    )
-}
-
 fun TextView.setUpAccessibilityHeading(heading: String) {
     ViewCompat.setAccessibilityDelegate(
         this,
@@ -178,16 +163,67 @@ fun TextView.setUpAccessibilityHeading(heading: String) {
     )
 }
 
+fun Context.announce(@StringRes textResource: Int) =
+    announce(this.getString(textResource))
+
+fun Context.interruptAnnouncement() {
+    val accessibilityManager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager?
+    if (accessibilityManager?.isEnabled == true) {
+        accessibilityManager.interrupt()
+    }
+}
+
 fun Context.announce(textToAnnounce: String) {
     val accessibilityEvent = AccessibilityEvent.obtain().apply {
         eventType = AccessibilityEvent.TYPE_ANNOUNCEMENT
         text.add(textToAnnounce)
     }
-    val accessibilityManager =
-        getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager?
+    val accessibilityManager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager?
     if (accessibilityManager?.isEnabled == true) {
         accessibilityManager.sendAccessibilityEvent(
             accessibilityEvent
         )
     }
+}
+
+fun View.setUpLinkTypeWithBrowserWarning(text: CharSequence) {
+    ViewCompat.setAccessibilityDelegate(
+        this,
+        object : AccessibilityDelegateCompat() {
+            override fun onInitializeAccessibilityNodeInfo(
+                host: View,
+                info: AccessibilityNodeInfoCompat
+            ) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                // Identify control as button for "navigation by controls"
+                info.className = Button::class.qualifiedName
+                // Override role announcement that follows the content description
+                info.roleDescription = context.getString(R.string.link)
+                info.contentDescription = text
+                info.addAction(
+                    AccessibilityActionCompat(
+                        AccessibilityNodeInfoCompat.ACTION_CLICK,
+                        context.getString(R.string.open_in_browser_warning)
+                    )
+                )
+            }
+        }
+    )
+}
+
+fun View.setUpButtonType(text: CharSequence) {
+    ViewCompat.setAccessibilityDelegate(
+        this,
+        object : AccessibilityDelegateCompat() {
+            override fun onInitializeAccessibilityNodeInfo(
+                host: View,
+                info: AccessibilityNodeInfoCompat
+            ) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                // Identify control as button for "navigation by controls"
+                info.className = Button::class.qualifiedName
+                info.contentDescription = text
+            }
+        }
+    )
 }

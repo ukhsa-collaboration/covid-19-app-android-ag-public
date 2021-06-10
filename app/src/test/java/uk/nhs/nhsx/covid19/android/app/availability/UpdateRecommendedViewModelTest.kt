@@ -11,7 +11,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.BuildConfig
-import uk.nhs.nhsx.covid19.android.app.common.Translatable
+import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.remote.data.AppAvailabilityResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumAppVersion
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumSdkVersion
@@ -31,21 +31,21 @@ class UpdateRecommendedViewModelTest {
 
     private val appAvailableResponse = AppAvailabilityResponse(
         MinimumAppVersion(
-            Translatable(mapOf("en" to "en")),
+            TranslatableString(mapOf("en" to "en")),
             BuildConfig.VERSION_CODE + 1
         ),
         MinimumSdkVersion(
-            Translatable(
+            TranslatableString(
                 mapOf()
             ),
             Build.VERSION.SDK_INT
         ),
         RecommendedAppVersion(
-            Translatable(
+            TranslatableString(
                 mapOf("en-GB" to "description")
             ),
             BuildConfig.VERSION_CODE,
-            title = Translatable(
+            title = TranslatableString(
                 mapOf("en-GB" to "title")
             )
         )

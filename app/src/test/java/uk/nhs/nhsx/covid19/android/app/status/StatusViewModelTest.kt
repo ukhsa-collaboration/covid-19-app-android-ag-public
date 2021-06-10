@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -15,18 +16,25 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaBanner
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolationPaymentsButton
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
-import uk.nhs.nhsx.covid19.android.app.common.Translatable
+import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationPermissionHelper
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowEncounterDetection
-import uk.nhs.nhsx.covid19.android.app.notifications.AddableUserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInbox
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowIsolationExpiration
-import uk.nhs.nhsx.covid19.android.app.notifications.UserInboxItem.ShowTestResult
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction.NAVIGATE_AND_TURN_ON
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction.ONLY_NAVIGATE
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.StorageBasedUserInbox
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInbox
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowEncounterDetection
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowIsolationExpiration
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowTestResult
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowUnknownTestResult
+import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.payment.CanClaimIsolationPayment
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Disabled
@@ -36,24 +44,31 @@ import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvide
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessageTranslation
 import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
+import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.state.asLogical
-import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.ExposureConsent
-import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.IsolationExpiration
-import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.TestResult
-import uk.nhs.nhsx.covid19.android.app.status.InformationScreen.VenueAlert
+import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ContactTracingHub
+import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ExposureConsent
+import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.IsolationExpiration
+import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.LocalMessage
+import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.TestResult
+import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.UnknownTestResult
+import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.VenueAlert
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.Isolating
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.NotIsolating
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Risk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.ViewState
+import uk.nhs.nhsx.covid19.android.app.status.localmessage.GetLocalMessageFromStorage
 import uk.nhs.nhsx.covid19.android.app.util.DistrictAreaStringProvider
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.AreSystemLevelAnimationsEnabled
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -69,6 +84,7 @@ class StatusViewModelTest {
     private val sharedPreferences = mockk<SharedPreferences>(relaxed = true)
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
     private val userInbox = mockk<UserInbox>(relaxed = true)
+    private val storageBasedUserInbox = mockk<StorageBasedUserInbox>(relaxUnitFun = true)
     private val notificationProvider = mockk<NotificationProvider>(relaxed = true)
     private val districtAreaUrlProvider = mockk<DistrictAreaStringProvider>(relaxed = true)
     private val startAppReviewFlowConstraint = mockk<ShouldShowInAppReview>(relaxed = true)
@@ -76,15 +92,18 @@ class StatusViewModelTest {
         mockk<LastAppRatingStartedDateProvider>(relaxed = true)
     private val canClaimIsolationPayment = mockk<CanClaimIsolationPayment>(relaxed = true)
     private val isolationPaymentTokenStateProvider = mockk<IsolationPaymentTokenStateProvider>(relaxed = true)
+    private val animationsProvider = mockk<AnimationsProvider>(relaxUnitFun = true)
     private val lastVisitedBookTestTypeVenueDateProvider =
         mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxUnitFun = true)
+    private val getLocalMessageFromStorage = mockk<GetLocalMessageFromStorage>()
 
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
-    private val showInformationScreenObserver = mockk<Observer<InformationScreen>>(relaxed = true)
+    private val navigateTo = mockk<Observer<NavigationTarget>>(relaxed = true)
     private val analyticsEventProcessorMock = mockk<AnalyticsEventProcessor>(relaxed = true)
     private val exposureNotificationManager = mockk<ExposureNotificationManager>()
     private val exposureNotificationPermissionHelperFactory = mockk<ExposureNotificationPermissionHelper.Factory>()
     private val exposureNotificationPermissionHelper = mockk<ExposureNotificationPermissionHelper>(relaxUnitFun = true)
+    private val areSystemLevelAnimationsEnabled = mockk<AreSystemLevelAnimationsEnabled>(relaxUnitFun = true)
 
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-22T10:00:00Z"), ZoneOffset.UTC)
     private val isolationHelper = IsolationHelper(fixedClock)
@@ -94,45 +113,45 @@ class StatusViewModelTest {
     private val lowRiskyPostCodeIndicator = RiskIndicator(
         colorScheme = ColorScheme.GREEN,
         colorSchemeV2 = ColorScheme.GREEN,
-        name = Translatable(mapOf("en" to "low")),
-        heading = Translatable(mapOf("en" to "Heading low")),
-        content = Translatable(
+        name = TranslatableString(mapOf("en" to "low")),
+        heading = TranslatableString(mapOf("en" to "Heading low")),
+        content = TranslatableString(
             mapOf(
                 "en" to "Content low"
             )
         ),
-        linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+        linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
+        linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
         policyData = null
     )
 
     private val mediumRiskyPostCodeIndicator = RiskIndicator(
         colorScheme = ColorScheme.YELLOW,
         colorSchemeV2 = ColorScheme.YELLOW,
-        name = Translatable(mapOf("en" to "medium")),
-        heading = Translatable(mapOf("en" to "Heading medium")),
-        content = Translatable(
+        name = TranslatableString(mapOf("en" to "medium")),
+        heading = TranslatableString(mapOf("en" to "Heading medium")),
+        content = TranslatableString(
             mapOf(
                 "en" to "Content medium"
             )
         ),
-        linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+        linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
+        linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
         policyData = null
     )
 
     private val highRiskyPostCodeIndicator = RiskIndicator(
         colorScheme = ColorScheme.RED,
         colorSchemeV2 = ColorScheme.RED,
-        name = Translatable(mapOf("en" to "high")),
-        heading = Translatable(mapOf("en" to "Heading high")),
-        content = Translatable(
+        name = TranslatableString(mapOf("en" to "high")),
+        heading = TranslatableString(mapOf("en" to "Heading high")),
+        content = TranslatableString(
             mapOf(
                 "en" to "Content high"
             )
         ),
-        linkTitle = Translatable(mapOf("en" to "Restrictions in your area")),
-        linkUrl = Translatable(mapOf("en" to "https://a.b.c")),
+        linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
+        linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
         policyData = null
     )
 
@@ -158,16 +177,17 @@ class StatusViewModelTest {
         currentDate = LocalDate.now(fixedClock),
         areaRiskState = mediumRisk,
         isolationState = DEFAULT_ISOLATION_VIEW_STATE,
-        latestAdviceUrl = DEFAULT_LATEST_ADVICE_URL_RES_ID,
         showIsolationPaymentButton = false,
-        showOrderTestButton = false,
         showReportSymptomsButton = true,
         exposureNotificationsEnabled = false,
+        animationsEnabled = false,
+        localMessage = null
     )
 
     @Before
     fun setUp() {
         every { postCodeProvider.value } returns DEFAULT_POST_CODE
+        every { animationsProvider.inAppAnimationEnabled } returns false
         every { postCodeIndicatorProvider.riskyPostCodeIndicator } returns RiskIndicatorWrapper(
             "medium",
             mediumRiskyPostCodeIndicator
@@ -180,28 +200,9 @@ class StatusViewModelTest {
         every { isolationStateMachine.readLogicalState() } returns DEFAULT_ISOLATION_STATE
         coEvery { districtAreaUrlProvider.provide(any()) } returns DEFAULT_LATEST_ADVICE_URL_RES_ID
         coEvery { exposureNotificationManager.isEnabled() } returns false
+        coEvery { getLocalMessageFromStorage() } returns null
 
-        testSubject = StatusViewModel(
-            postCodeProvider,
-            postCodeIndicatorProvider,
-            sharedPreferences,
-            isolationStateMachine,
-            userInbox,
-            notificationProvider,
-            districtAreaUrlProvider,
-            startAppReviewFlowConstraint,
-            lastReviewFlowStartedDateProvider,
-            canClaimIsolationPayment,
-            isolationPaymentTokenStateProvider,
-            lastVisitedBookTestTypeVenueDateProvider,
-            analyticsEventProcessorMock,
-            fixedClock,
-            exposureNotificationManager,
-            exposureNotificationPermissionHelperFactory
-        )
-
-        testSubject.viewState.observeForever(viewStateObserver)
-        testSubject.showInformationScreen().observeForever(showInformationScreenObserver)
+        setupTestSubject(contactTracingHubAction = null)
     }
 
     @After
@@ -274,7 +275,7 @@ class StatusViewModelTest {
     }
 
     @Test
-    fun `get latest url when not in default state`() {
+    fun `get isolation advice when not in default state`() {
         val contactCase = isolationHelper.contactCase()
         val isolationState = contactCase.asIsolation().asLogical()
 
@@ -288,12 +289,11 @@ class StatusViewModelTest {
         verify {
             viewStateObserver.onChanged(
                 defaultViewState.copy(
-                    latestAdviceUrl = 0,
                     showReportSymptomsButton = true,
-                    showOrderTestButton = true,
                     isolationState = Isolating(
                         isolationStart = contactCase.startDate,
                         expiryDate = contactCase.expiryDate,
+                        isolationAdvice = 0
                     )
                 )
             )
@@ -321,7 +321,7 @@ class StatusViewModelTest {
         verify { viewStateObserver.onChanged(defaultViewState) }
         verify { sharedPreferences.registerOnSharedPreferenceChangeListener(any()) }
         verify { isolationPaymentTokenStateProvider.addTokenStateListener(any()) }
-        verify { userInbox.registerListener(any()) }
+        verify { storageBasedUserInbox.setStorageChangeListener(any()) }
     }
 
     @Test
@@ -330,7 +330,7 @@ class StatusViewModelTest {
 
         verify { sharedPreferences.unregisterOnSharedPreferenceChangeListener(any()) }
         verify { isolationPaymentTokenStateProvider.removeTokenStateListener(any()) }
-        verify { userInbox.unregisterListener(any()) }
+        verify { storageBasedUserInbox.removeStorageChangeListener() }
     }
 
     @Test
@@ -350,6 +350,46 @@ class StatusViewModelTest {
         testSubject.updateViewState()
 
         verify { viewStateObserver.onChanged(defaultViewState.copy(areaRiskState = Unknown)) }
+    }
+
+    @Test
+    fun `animation provider value is true and system level animations enabled should update state to true`() {
+        every { animationsProvider.inAppAnimationEnabled } returns true
+        every { areSystemLevelAnimationsEnabled.invoke() } returns true
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(animationsEnabled = true)) }
+    }
+
+    @Test
+    fun `animation provider value is false and system level animations enabled should update state to false`() {
+        every { animationsProvider.inAppAnimationEnabled } returns false
+        every { areSystemLevelAnimationsEnabled.invoke() } returns true
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(animationsEnabled = false)) }
+    }
+
+    @Test
+    fun `animation provider value is true and system level animations disabled should update state to false`() {
+        every { animationsProvider.inAppAnimationEnabled } returns true
+        every { areSystemLevelAnimationsEnabled.invoke() } returns false
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(animationsEnabled = false)) }
+    }
+
+    @Test
+    fun `animation provider value is false and system level animations disabled should update state to false`() {
+        every { animationsProvider.inAppAnimationEnabled } returns false
+        every { areSystemLevelAnimationsEnabled.invoke() } returns false
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(animationsEnabled = false)) }
     }
 
     @Test
@@ -413,67 +453,6 @@ class StatusViewModelTest {
     }
 
     @Test
-    fun `on update view state should not show book test button if does not contain book test type venue at risk`() {
-        every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns false
-
-        testSubject.updateViewState()
-
-        verify { viewStateObserver.onChanged(defaultViewState.copy(showOrderTestButton = false)) }
-    }
-
-    @Test
-    fun `on update view state should show book test button if does contain book test type venue at risk`() {
-        every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns true
-
-        testSubject.updateViewState()
-
-        verify { viewStateObserver.onChanged(defaultViewState.copy(showOrderTestButton = true)) }
-    }
-
-    @Test
-    fun `on update view state should show book test button if does not contain book test type venue at risk but is in isolation as index case`() {
-        val selfAssessment = isolationHelper.selfAssessment()
-        every { isolationStateMachine.readLogicalState() } returns selfAssessment.asIsolation().asLogical()
-        every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns false
-
-        testSubject.updateViewState()
-
-        verify {
-            viewStateObserver.onChanged(
-                defaultViewState.copy(
-                    isolationState = Isolating(
-                        isolationStart = selfAssessment.startDate,
-                        expiryDate = selfAssessment.expiryDate
-                    ),
-                    showOrderTestButton = true,
-                    showReportSymptomsButton = false
-                )
-            )
-        }
-    }
-
-    @Test
-    fun `on update view state should show book test button if does not contain book test type venue at risk but is in isolation as contact case`() {
-        val contactCase = isolationHelper.contactCase()
-        every { isolationStateMachine.readLogicalState() } returns contactCase.asIsolation().asLogical()
-        every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns false
-
-        testSubject.updateViewState()
-
-        verify {
-            viewStateObserver.onChanged(
-                defaultViewState.copy(
-                    isolationState = Isolating(
-                        isolationStart = contactCase.startDate,
-                        expiryDate = contactCase.expiryDate
-                    ),
-                    showOrderTestButton = true
-                )
-            )
-        }
-    }
-
-    @Test
     fun `visibility of isolation payment button should update when isolation payment token status changes`() {
         testSubject.onResume()
 
@@ -508,25 +487,51 @@ class StatusViewModelTest {
     }
 
     @Test
+    fun `update view state on null local message`() {
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(localMessage = null)) }
+    }
+
+    @Test
+    fun `update view state on new local message`() {
+        val expected = mockk<LocalMessageTranslation>()
+        coEvery { getLocalMessageFromStorage() } returns expected
+
+        testSubject.updateViewState()
+
+        verify(exactly = 1) { viewStateObserver.onChanged(defaultViewState.copy(localMessage = expected)) }
+    }
+
+    @Test
     fun `update view state with isolation expiration`() {
         val now = LocalDate.now(fixedClock)
         val inboxItem = ShowIsolationExpiration(now)
 
         every { userInbox.fetchInbox() } returns inboxItem
 
-        testSubject.userInboxListener.invoke()
+        testSubject.userInboxStorageChangeListener.notifyChanged()
 
-        verify { showInformationScreenObserver.onChanged(IsolationExpiration(now)) }
+        verify { navigateTo.onChanged(IsolationExpiration(now)) }
     }
 
     @Test
     fun `update view state with show test result`() {
         every { userInbox.fetchInbox() } returns ShowTestResult
 
-        testSubject.userInboxListener.invoke()
+        testSubject.userInboxStorageChangeListener.notifyChanged()
 
         verify { notificationProvider.cancelTestResult() }
-        verify { showInformationScreenObserver.onChanged(TestResult) }
+        verify { navigateTo.onChanged(TestResult) }
+    }
+
+    @Test
+    fun `update view state with show unknown test result`() {
+        every { userInbox.fetchInbox() } returns ShowUnknownTestResult
+
+        testSubject.userInboxStorageChangeListener.notifyChanged()
+
+        verify { navigateTo.onChanged(UnknownTestResult) }
     }
 
     @Test
@@ -535,18 +540,18 @@ class StatusViewModelTest {
 
         every { userInbox.fetchInbox() } returns inboxItem
 
-        testSubject.userInboxListener.invoke()
+        testSubject.userInboxStorageChangeListener.notifyChanged()
 
-        verify { showInformationScreenObserver.onChanged(VenueAlert("venue1", INFORM)) }
+        verify { navigateTo.onChanged(VenueAlert("venue1", INFORM)) }
     }
 
     @Test
     fun `update view state with show encounter detection`() {
         every { userInbox.fetchInbox() } returns ShowEncounterDetection
 
-        testSubject.userInboxListener.invoke()
+        testSubject.userInboxStorageChangeListener.notifyChanged()
 
-        verify { showInformationScreenObserver.onChanged(ExposureConsent) }
+        verify { navigateTo.onChanged(ExposureConsent) }
     }
 
     @Test
@@ -563,13 +568,108 @@ class StatusViewModelTest {
 
         verify { viewStateObserver.onChanged(defaultViewState) }
         verify { userInbox.fetchInbox() }
-        verify { showInformationScreenObserver.onChanged(ExposureConsent) }
+        verify { navigateTo.onChanged(ExposureConsent) }
     }
 
     @Test
     fun `on activate contact tracing button clicked enables contact tracing`() {
         testSubject.onActivateContactTracingButtonClicked()
         verify { exposureNotificationPermissionHelper.startExposureNotifications() }
+    }
+
+    @Test
+    fun `when contactTracingHubAction is set to NAVIGATE_AND_TURN_ON navigates to ContactTracingHub`() {
+        setupTestSubject(contactTracingHubAction = NAVIGATE_AND_TURN_ON)
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        verify { navigateTo.onChanged(ContactTracingHub(shouldTurnOnContactTracing = true)) }
+    }
+
+    @Test
+    fun `when contactTracingHubAction is set to ONLY_NAVIGATE navigates to ContactTracingHub`() {
+        setupTestSubject(contactTracingHubAction = ONLY_NAVIGATE)
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        verify { navigateTo.onChanged(ContactTracingHub(shouldTurnOnContactTracing = false)) }
+    }
+
+    @Test
+    fun `contactTracingHubAction consumed after first call`() {
+        setupTestSubject(contactTracingHubAction = ONLY_NAVIGATE)
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        verify { navigateTo.onChanged(ContactTracingHub(shouldTurnOnContactTracing = false)) }
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        confirmVerified(navigateTo)
+    }
+
+    @Test
+    fun `when showLocalMessageScreen is set to true navigates to LocalMessages`() {
+        setupTestSubject(contactTracingHubAction = null, showLocalMessageScreen = true)
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        verify { navigateTo.onChanged(LocalMessage) }
+        coVerify { analyticsEventProcessorMock.track(DidAccessLocalInfoScreenViaNotification) }
+    }
+
+    @Test
+    fun `showLocalMessageScreen consumed after first call`() {
+        setupTestSubject(contactTracingHubAction = null, showLocalMessageScreen = true)
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        verify { navigateTo.onChanged(LocalMessage) }
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        confirmVerified(navigateTo)
+    }
+
+    @Test
+    fun `when local message banner is clicked track analytics event DidAccessLocalInfoScreenViaBanner`() {
+        setupTestSubject(contactTracingHubAction = null)
+
+        testSubject.localMessageBannerClicked()
+
+        coVerify { analyticsEventProcessorMock.track(DidAccessLocalInfoScreenViaBanner) }
+    }
+
+    private fun setupTestSubject(
+        contactTracingHubAction: ContactTracingHubAction?,
+        showLocalMessageScreen: Boolean = false
+    ) {
+        testSubject = StatusViewModel(
+            postCodeProvider,
+            postCodeIndicatorProvider,
+            sharedPreferences,
+            isolationStateMachine,
+            userInbox,
+            storageBasedUserInbox,
+            notificationProvider,
+            districtAreaUrlProvider,
+            startAppReviewFlowConstraint,
+            lastReviewFlowStartedDateProvider,
+            canClaimIsolationPayment,
+            isolationPaymentTokenStateProvider,
+            analyticsEventProcessorMock,
+            animationsProvider,
+            fixedClock,
+            exposureNotificationManager,
+            areSystemLevelAnimationsEnabled,
+            getLocalMessageFromStorage,
+            exposureNotificationPermissionHelperFactory,
+            contactTracingHubAction = contactTracingHubAction,
+            showLocalMessageScreen = showLocalMessageScreen
+        )
+
+        testSubject.viewState.observeForever(viewStateObserver)
+        testSubject.navigationTarget().observeForever(navigateTo)
     }
 
     companion object {

@@ -4,7 +4,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result.Success
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysReminderRobot
@@ -27,9 +26,7 @@ class ShareKeysReminderActivityTest : EspressoTest() {
         testAppContext.getExposureNotificationApi().setEnabled(true)
         testAppContext.getKeySharingInfoProvider().keySharingInfo = KeySharingInfo(
             diagnosisKeySubmissionToken = "token",
-            acknowledgedDate = Instant.parse("2020-07-10T01:00:00.00Z"),
-            testKitType = LAB_RESULT,
-            requiresConfirmatoryTest = false
+            acknowledgedDate = Instant.parse("2020-07-10T01:00:00.00Z")
         )
         testAppContext.clock.currentInstant = Instant.parse("2020-07-11T01:00:00.00Z")
     }

@@ -10,7 +10,7 @@ sealed class ShareKeysNavigateTo : ShareKeysNavigationTarget {
         val diagnosisKeySubmissionToken: String
     ) : ShareKeysNavigateTo()
 
-    object ShareKeysResultActivity : ShareKeysNavigateTo()
+    data class ShareKeysResultActivity(val bookFollowUpTest: Boolean) : ShareKeysNavigateTo()
     object StatusActivity : ShareKeysNavigateTo()
     object Finish : ShareKeysNavigateTo()
 }

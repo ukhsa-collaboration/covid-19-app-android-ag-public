@@ -2,6 +2,8 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 
 import androidx.work.ListenableWorker
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
+import com.squareup.moshi.JsonDataException
+import com.squareup.moshi.JsonEncodingException
 import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -39,6 +41,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultResponse
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.unknownresult.ReceivedUnknownTestResultProvider
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
@@ -55,6 +58,7 @@ class DownloadVirologyTestResultWorkTest {
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
     private val localAuthorityPostCodeProvider = mockk<LocalAuthorityPostCodeProvider>()
     private val analyticsManager = mockk<AnalyticsEventProcessor>(relaxUnitFun = true)
+    private val receivedUnknownTestResultProvider = mockk<ReceivedUnknownTestResultProvider>(relaxUnitFun = true)
     private val clock = Clock.fixed(from, ZoneId.systemDefault())
 
     val testSubject = DownloadVirologyTestResultWork(
@@ -64,6 +68,7 @@ class DownloadVirologyTestResultWorkTest {
         isolationConfigurationProvider,
         localAuthorityPostCodeProvider,
         analyticsManager,
+        receivedUnknownTestResultProvider,
         clock
     )
 
@@ -137,9 +142,10 @@ class DownloadVirologyTestResultWorkTest {
             VirologyTestResultResponse(
                 testResultDate,
                 POSITIVE,
-                LAB_RESULT,
+                RAPID_RESULT,
                 diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+                requiresConfirmatoryTest = true,
+                confirmatoryDayLimit = 2
             )
         )
 
@@ -149,9 +155,10 @@ class DownloadVirologyTestResultWorkTest {
             config.diagnosisKeySubmissionToken,
             testResultDate,
             POSITIVE,
-            LAB_RESULT,
+            RAPID_RESULT,
             diagnosisKeySubmissionSupported = true,
-            requiresConfirmatoryTest = false
+            requiresConfirmatoryTest = true,
+            confirmatoryDayLimit = 2
         )
         verify { stateMachine.processEvent(OnTestResult(testResult)) }
 
@@ -176,7 +183,8 @@ class DownloadVirologyTestResultWorkTest {
                 NEGATIVE,
                 LAB_RESULT,
                 diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+                requiresConfirmatoryTest = false,
+                confirmatoryDayLimit = null
             )
         )
 
@@ -213,7 +221,8 @@ class DownloadVirologyTestResultWorkTest {
                 VOID,
                 LAB_RESULT,
                 diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+                requiresConfirmatoryTest = false,
+                confirmatoryDayLimit = null
             )
         )
 
@@ -250,7 +259,8 @@ class DownloadVirologyTestResultWorkTest {
                 NEGATIVE,
                 LAB_RESULT,
                 diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+                requiresConfirmatoryTest = false,
+                confirmatoryDayLimit = null
             )
         )
         coEvery {
@@ -266,7 +276,8 @@ class DownloadVirologyTestResultWorkTest {
                 POSITIVE,
                 LAB_RESULT,
                 diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = true
+                requiresConfirmatoryTest = true,
+                confirmatoryDayLimit = null
             )
         )
 
@@ -429,6 +440,63 @@ class DownloadVirologyTestResultWorkTest {
         }
     }
 
+    @Test
+    fun `receiving http 204 returns NoTestResult`() = runBlocking {
+        val config = TestOrderPollingConfig(from, "token", "submission_token")
+        every { testOrderTokensProvider.configs } returns listOf(config)
+        coEvery {
+            virologyTestingApi.getTestResult(
+                VirologyTestResultRequestBody(
+                    "token",
+                    SupportedCountry.ENGLAND
+                )
+            )
+        } returns Response.success(204, mockk<VirologyTestResultResponse>())
+
+        testSubject.invoke()
+
+        verify(exactly = 0) { receivedUnknownTestResultProvider setProperty "value" value true }
+        verify(exactly = 0) { testOrderTokensProvider.remove(config) }
+    }
+
+    @Test
+    fun `receiving an unknown json format stores the flag`() = runBlocking {
+        val config = TestOrderPollingConfig(from, "token", "submission_token")
+        every { testOrderTokensProvider.configs } returns listOf(config)
+        coEvery {
+            virologyTestingApi.getTestResult(
+                VirologyTestResultRequestBody(
+                    "token",
+                    SupportedCountry.ENGLAND
+                )
+            )
+        } throws JsonDataException()
+
+        testSubject.invoke()
+
+        verify { receivedUnknownTestResultProvider setProperty "value" value true }
+        verify { testOrderTokensProvider.remove(config) }
+    }
+
+    @Test
+    fun `receiving wrongly encoded response stores the flag`() = runBlocking {
+        val config = TestOrderPollingConfig(from, "token", "submission_token")
+        every { testOrderTokensProvider.configs } returns listOf(config)
+        coEvery {
+            virologyTestingApi.getTestResult(
+                VirologyTestResultRequestBody(
+                    "token",
+                    SupportedCountry.ENGLAND
+                )
+            )
+        } throws JsonEncodingException(null)
+
+        testSubject.invoke()
+
+        verify { receivedUnknownTestResultProvider setProperty "value" value true }
+        verify { testOrderTokensProvider.remove(config) }
+    }
+
     private fun setResult(
         result: VirologyTestResult,
         testKitType: VirologyTestKitType
@@ -449,7 +517,8 @@ class DownloadVirologyTestResultWorkTest {
                 result,
                 testKitType,
                 diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+                requiresConfirmatoryTest = false,
+                confirmatoryDayLimit = null
             )
         )
     }

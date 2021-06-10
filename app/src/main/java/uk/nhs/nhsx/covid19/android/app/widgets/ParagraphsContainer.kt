@@ -23,6 +23,7 @@ class ParagraphsContainer @JvmOverloads constructor(
 ) : LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
 
     private var shouldDisplayBulletPoints = false
+    private var paddingBetweenItems: Int
 
     init {
         orientation = VERTICAL
@@ -34,7 +35,7 @@ class ParagraphsContainer @JvmOverloads constructor(
         ).apply {
             val rawText = getText(R.styleable.ParagraphsContainer_rawText)
             shouldDisplayBulletPoints = getBoolean(R.styleable.ParagraphsContainer_showBulletPoints, false)
-
+            paddingBetweenItems = getDimensionPixelSize(R.styleable.ParagraphsContainer_paddingBetweenItems, DEFAULT_PADDING_BETWEEN_ITEMS.dpToPx.toInt())
             rawText?.let {
                 setRawText(it.toString())
             }
@@ -42,6 +43,9 @@ class ParagraphsContainer @JvmOverloads constructor(
             recycle()
         }
     }
+
+    fun addAllParagraphs(paragraphs: List<String>) =
+        addAllParagraphs(*paragraphs.toTypedArray())
 
     fun addAllParagraphs(vararg paragraphs: String) {
         removeAllViews()
@@ -61,7 +65,7 @@ class ParagraphsContainer @JvmOverloads constructor(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
-            layoutParams.setMargins(0, 16.dpToPx.toInt(), 0, 0)
+            layoutParams.setMargins(0, paddingBetweenItems, 0, 0)
             view.layoutParams = layoutParams
         }
         return this
@@ -70,6 +74,10 @@ class ParagraphsContainer @JvmOverloads constructor(
     private fun inflateLayout(): LinearLayout =
         (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
             .inflate(R.layout.view_paragraph, this, false) as LinearLayout
+
+    companion object {
+        const val DEFAULT_PADDING_BETWEEN_ITEMS = 16
+    }
 }
 
 fun ParagraphsContainer.setRawText(rawText: String, separator: String = "\n\n") =

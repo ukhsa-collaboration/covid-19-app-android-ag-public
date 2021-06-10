@@ -44,7 +44,7 @@ class RiskyVenueAlertStorage @Inject constructor(
     var value: String? by prefs
 
     companion object {
-        private const val RISKY_VENUE_ID = "RISKY_VENUE"
+        const val RISKY_VENUE_ID = "RISKY_VENUE"
     }
 }
 

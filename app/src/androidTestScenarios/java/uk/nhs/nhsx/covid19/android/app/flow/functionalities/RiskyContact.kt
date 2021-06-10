@@ -1,11 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.flow.functionalities
 
-import android.content.Intent
-import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.until
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfo
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationBroadcastReceiver
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.testhelpers.AWAIT_AT_MOST_SECONDS
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -33,9 +30,7 @@ class RiskyContact(
     }
 
     fun triggerViaBroadcastReceiver() {
-        val intent = Intent(ExposureNotificationClient.ACTION_EXPOSURE_STATE_UPDATED)
-        val broadcastReceiver = ExposureNotificationBroadcastReceiver()
-        broadcastReceiver.onReceive(espressoTest.testAppContext.app, intent)
+        espressoTest.testAppContext.sendExposureStateUpdatedBroadcast()
 
         waitFor { encounterDetectionRobot.clickIUnderstandButton() }
     }

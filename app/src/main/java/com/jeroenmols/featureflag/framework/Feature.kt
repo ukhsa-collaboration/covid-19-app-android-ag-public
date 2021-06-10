@@ -34,12 +34,6 @@ enum class FeatureFlag(
         "Enable in-app battery optimization request",
         defaultValue = false
     ),
-    STORE_EXPOSURE_WINDOWS(
-        "feature.storeExposureWindows",
-        "Store exposure windows",
-        "Enable storage of exposure windows",
-        defaultValue = true
-    ),
     DAILY_CONTACT_TESTING(
         "feature.dailyContactTesting",
         "Daily Contact Testing",
@@ -56,7 +50,7 @@ enum class FeatureFlag(
         "feature.remoteServiceExceptionCrashAnalytics",
         "Enable RemoteServiceException crash analytics",
         "Store and send RemoteServiceException crash analytics data",
-        defaultValue = true
+        defaultValue = false
     )
 }
 

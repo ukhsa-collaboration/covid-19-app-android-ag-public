@@ -1,13 +1,13 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
+import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed
-import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
-import com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo
-import com.schibsted.spain.barista.interaction.BaristaKeyboardInteractions.closeKeyboard
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import uk.nhs.nhsx.covid19.android.app.R
 import java.lang.Thread.sleep
 
@@ -19,24 +19,31 @@ class EditPostalDistrictRobot {
     }
 
     fun clickSavePostDistrictCode() {
-        clickOn(R.id.continuePostCode)
+        onView(withId(R.id.continuePostCode))
+            .perform(click())
     }
 
     fun checkErrorTitleForNotSupportedPostCodeIsDisplayed() {
-        assertDisplayed(R.id.errorTextTitle, R.string.post_code_invalid_title)
+        onView(withId(R.id.errorTextTitle))
+            .check(matches(isDisplayed()))
+            .check(matches(withText(R.string.post_code_invalid_title)))
     }
 
     fun checkErrorContainerForNotSupportedPostCodeIsDisplayed() {
-        assertDisplayed(R.id.errorText, R.string.postcode_not_supported)
+        onView(withId(R.id.errorText))
+            .check(matches(isDisplayed()))
+            .check(matches(withText(R.string.postcode_not_supported)))
     }
 
     fun checkInvalidPostDistrictErrorIsDisplayed() {
-        assertDisplayed(R.string.post_code_invalid_title)
+        onView(withText(R.string.post_code_invalid_title))
+            .check(matches(isDisplayed()))
     }
 
     fun enterPostDistrictCode(postDistrictCode: String) {
-        writeTo(R.id.postCodeEditText, postDistrictCode)
-        closeKeyboard()
+        onView(withId(R.id.postCodeEditText))
+            .perform(typeText(postDistrictCode))
+            .perform(closeSoftKeyboard())
         sleep(500)
     }
 }

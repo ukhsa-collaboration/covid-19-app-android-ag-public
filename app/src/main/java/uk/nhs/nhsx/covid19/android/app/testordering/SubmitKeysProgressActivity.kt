@@ -4,11 +4,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.accessibility.AccessibilityNodeInfo
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_progress.buttonTryAgain
 import kotlinx.android.synthetic.main.activity_progress.errorStateContainer
 import kotlinx.android.synthetic.main.activity_progress.loadingProgress
+import kotlinx.android.synthetic.main.activity_progress.textErrorTitle
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
@@ -16,7 +18,9 @@ import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.Result
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.announce
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.interruptAnnouncement
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
@@ -79,15 +83,17 @@ class SubmitKeysProgressActivity : BaseActivity(R.layout.activity_progress) {
     }
 
     private fun showLoadingSpinner() {
-        setAccessibilityTitle(R.string.loading)
+        interruptAnnouncement()
+        announce(R.string.loading)
         errorStateContainer.gone()
         loadingProgress.visible()
     }
 
     private fun showErrorState() {
-        setAccessibilityTitle(R.string.something_went_wrong)
         errorStateContainer.visible()
         loadingProgress.gone()
+        interruptAnnouncement()
+        textErrorTitle.performAccessibilityAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null)
     }
 
     companion object {

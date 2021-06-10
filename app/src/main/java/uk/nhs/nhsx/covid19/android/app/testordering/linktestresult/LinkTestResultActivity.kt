@@ -73,6 +73,7 @@ class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) 
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == DAILY_CONTACT_TESTING_REQUEST && resultCode == RESULT_OK) {
+            setResult(RESULT_OK)
             finish()
         }
     }
@@ -100,10 +101,12 @@ class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) 
 
         viewModel.validationOnsetDateNeeded().observe(this) { testResult ->
             LinkTestResultSymptomsActivity.start(this, testResult)
+            setResult(RESULT_OK)
             finish()
         }
 
         viewModel.validationCompleted().observe(this) {
+            setResult(RESULT_OK)
             finish()
         }
     }

@@ -2,14 +2,20 @@ package uk.nhs.nhsx.covid19.android.app.analytics
 
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AcknowledgedStartOfIsolationDueToRiskyContact
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AskedToShareExposureKeysInTheInitialFlow
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.BackgroundTaskCompletion
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CanceledCheckIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireAndStartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireButDidNotStartIsolation
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInReminderScreen
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInTheInitialFlow
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DeclaredNegativeResultFromDct
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaBanner
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAskForSymptomsOnPositiveTestEntry
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidHaveSymptomsBeforeReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidRememberOnsetSymptomsDateBeforeReceivedTestResult
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidSendLocalInfoNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ExposureWindowsMatched
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedIsolationPaymentsApplication
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedTestOrdering
@@ -25,19 +31,27 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.RiskyContactReminderNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolationPaymentsButton
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SuccessfullySharedExposureKeys
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.TotalAlarmManagerBackgroundTasks
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.TotalShareExposureKeysReminderNotifications
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.UpdateNetworkStats
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.Event
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.ExposureWindowMatched
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ASKED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_REMINDER_SCREEN
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DECLARED_NEGATIVE_RESULT_FROM_DCT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_SEND_LOCAL_INFO_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_ISOLATION_PAYMENTS_APPLICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_TEST_ORDERING
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
@@ -51,7 +65,9 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEI
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RISKY_CONTACT_REMINDER_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_ISOLATION_PAYMENTS_BUTTON
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.STARTED_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SUCCESSFULLY_SHARED_EXPOSURE_KEYS
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.TOTAL_ALARM_MANAGER_BACKGROUND_TASKS
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.TOTAL_SHARE_EXPOSURE_KEYS_REMINDER_NOTIFICATIONS
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.VOID_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
@@ -67,8 +83,8 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SEL
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage
+import uk.nhs.nhsx.covid19.android.app.status.localmessage.GetLocalMessageFromStorage
 import uk.nhs.nhsx.covid19.android.app.util.defaultFalse
-import uk.nhs.nhsx.covid19.android.app.util.isEqualOrAfter
 import java.time.Clock
 import java.time.Instant
 import javax.inject.Inject
@@ -85,6 +101,7 @@ class AnalyticsEventProcessor @Inject constructor(
     private val notificationProvider: NotificationProvider,
     private val lastVisitedBookTestTypeVenueDateProvider: LastVisitedBookTestTypeVenueDateProvider,
     private val onboardingCompletedProvider: OnboardingCompletedProvider,
+    private val getLocalMessageFromStorage: GetLocalMessageFromStorage,
     private val clock: Clock
 ) {
 
@@ -134,6 +151,14 @@ class AnalyticsEventProcessor @Inject constructor(
         ReceivedRiskyVenueM1Warning -> Event(RECEIVED_RISKY_VENUE_M1_WARNING)
         ReceivedRiskyVenueM2Warning -> Event(RECEIVED_RISKY_VENUE_M2_WARNING)
         TotalAlarmManagerBackgroundTasks -> Event(TOTAL_ALARM_MANAGER_BACKGROUND_TASKS)
+        AskedToShareExposureKeysInTheInitialFlow -> Event(ASKED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW)
+        ConsentedToShareExposureKeysInTheInitialFlow -> Event(CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW)
+        ConsentedToShareExposureKeysInReminderScreen -> Event(CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_REMINDER_SCREEN)
+        TotalShareExposureKeysReminderNotifications -> Event(TOTAL_SHARE_EXPOSURE_KEYS_REMINDER_NOTIFICATIONS)
+        SuccessfullySharedExposureKeys -> Event(SUCCESSFULLY_SHARED_EXPOSURE_KEYS)
+        DidSendLocalInfoNotification -> Event(DID_SEND_LOCAL_INFO_NOTIFICATION)
+        DidAccessLocalInfoScreenViaNotification -> Event(DID_ACCESS_LOCAL_INFO_SCREEN_VIA_NOTIFICATION)
+        DidAccessLocalInfoScreenViaBanner -> Event(DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER)
     }
 
     private fun updateNetworkStats() = AnalyticsLogItem.UpdateNetworkStats(
@@ -154,20 +179,16 @@ class AnalyticsEventProcessor @Inject constructor(
             if (currentState is PossiblyIsolating && currentState.isActiveIsolation(clock)) {
                 isIsolatingBackgroundTick = true
                 isIsolatingForHadRiskyContactBackgroundTick = currentState.isActiveContactCase(clock)
-                isIsolatingForSelfDiagnosedBackgroundTick = currentState.getActiveIndexCase(clock)?.isSelfAssessment() ?: false
 
-                currentState.getTestResultIfPositive()?.let { acknowledgedPositiveTestResult ->
-                    val isolationStartDate = currentState.startDate
-                    val testResultAcknowledgeDate = acknowledgedPositiveTestResult.acknowledgedDate
+                isIsolatingForSelfDiagnosedBackgroundTick =
+                    currentState.getActiveIndexCase(clock)?.isSelfAssessment() ?: false
 
-                    if (testResultAcknowledgeDate.isEqualOrAfter(isolationStartDate)) {
-                        val testKitType = acknowledgedPositiveTestResult.testKitType
-                        isIsolatingForTestedPositiveBackgroundTick = testKitType == LAB_RESULT || testKitType == null
-                        isIsolatingForTestedLFDPositiveBackgroundTick = testKitType == RAPID_RESULT
-                        isIsolatingForTestedSelfRapidPositiveBackgroundTick = testKitType == RAPID_SELF_REPORTED
-                        isIsolatingForUnconfirmedTestBackgroundTick =
-                            !acknowledgedPositiveTestResult.isConfirmed()
-                    }
+                currentState.getActiveTestResultIfPositive(clock)?.let { acknowledgedActivePositiveTestResult ->
+                    val testKitType = acknowledgedActivePositiveTestResult.testKitType
+                    isIsolatingForTestedPositiveBackgroundTick = testKitType == LAB_RESULT || testKitType == null
+                    isIsolatingForTestedLFDPositiveBackgroundTick = testKitType == RAPID_RESULT
+                    isIsolatingForTestedSelfRapidPositiveBackgroundTick = testKitType == RAPID_SELF_REPORTED
+                    isIsolatingForUnconfirmedTestBackgroundTick = !acknowledgedActivePositiveTestResult.isConfirmed()
                 }
             }
 
@@ -193,5 +214,7 @@ class AnalyticsEventProcessor @Inject constructor(
 
             hasReceivedRiskyVenueM2WarningBackgroundTick =
                 lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk()
+
+            isDisplayingLocalInfoBackgroundTick = getLocalMessageFromStorage() != null
         }
 }

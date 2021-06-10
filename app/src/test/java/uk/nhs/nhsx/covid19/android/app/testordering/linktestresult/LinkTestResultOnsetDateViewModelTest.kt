@@ -20,10 +20,11 @@ import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.SymptomsDate
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultOnsetDateViewModel.ViewState
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
+import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -35,6 +36,7 @@ class LinkTestResultOnsetDateViewModelTest {
 
     private val unacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>(relaxed = true)
     private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxed = true)
+    private val fixedClock = Clock.fixed(Instant.parse("2020-07-18T10:00:00Z"), ZoneOffset.UTC)
 
     private val testEndDate = Instant.parse("2020-07-27T01:00:00.00Z")
     private val testResult = ReceivedTestResult(
@@ -47,7 +49,11 @@ class LinkTestResultOnsetDateViewModelTest {
     )
     private val symptomsOnsetWindowDays = LocalDate.parse("2020-07-22")..LocalDate.parse("2020-07-27")
 
-    private val testSubject = LinkTestResultOnsetDateViewModel(unacknowledgedTestResultsProvider, analyticsEventProcessor)
+    private val testSubject = LinkTestResultOnsetDateViewModel(
+        unacknowledgedTestResultsProvider,
+        analyticsEventProcessor,
+        fixedClock
+    )
 
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
     private val datePickerContainerClickedObserver = mockk<Observer<Long>>(relaxed = true)
@@ -82,7 +88,7 @@ class LinkTestResultOnsetDateViewModelTest {
 
         val expectedState = initialState?.copy(
             onsetDate = ExplicitDate(
-                LocalDateTime.ofInstant(selectedDate, ZoneId.systemDefault()).toLocalDate()
+                selectedDate.toLocalDate(fixedClock.zone)
             ),
             showOnsetDateError = false
         )
@@ -130,10 +136,7 @@ class LinkTestResultOnsetDateViewModelTest {
         val initialState = testSubject.viewState.value
 
         val onset = testResult.testEndDate.minus(1, ChronoUnit.DAYS)
-        val onsetDate = LocalDateTime.ofInstant(
-            onset,
-            ZoneId.systemDefault()
-        ).toLocalDate()
+        val onsetDate = onset.toLocalDate(fixedClock.zone)
 
         testSubject.onDateSelected(onset.toEpochMilli())
 
