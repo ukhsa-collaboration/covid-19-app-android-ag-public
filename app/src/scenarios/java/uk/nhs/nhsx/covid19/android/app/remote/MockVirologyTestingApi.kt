@@ -67,7 +67,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 testKit = testResponse.testKitType,
                 diagnosisKeySubmissionSupported = testResponse.diagnosisKeySubmissionSupported,
                 requiresConfirmatoryTest = testResponse.requiresConfirmatoryTest,
-                confirmatoryDayLimit = null
+                confirmatoryDayLimit = testResponse.confirmatoryDayLimit
             )
         } else {
             null
@@ -180,7 +180,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                         testKit = RAPID_SELF_REPORTED,
                         diagnosisKeySubmissionSupported = true,
                         requiresConfirmatoryTest = true,
-                        confirmatoryDayLimit = null
+                        confirmatoryDayLimit = 1
                     )
                 )
             }

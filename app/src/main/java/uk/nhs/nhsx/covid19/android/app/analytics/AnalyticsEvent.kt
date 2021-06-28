@@ -43,4 +43,10 @@ sealed class AnalyticsEvent {
     object DidSendLocalInfoNotification : AnalyticsEvent()
     object DidAccessLocalInfoScreenViaNotification : AnalyticsEvent()
     object DidAccessLocalInfoScreenViaBanner : AnalyticsEvent()
+    object PositiveLabResultAfterPositiveLFD : AnalyticsEvent()
+    object NegativeLabResultAfterPositiveLFDWithinTimeLimit : AnalyticsEvent()
+    object NegativeLabResultAfterPositiveLFDOutsideTimeLimit : AnalyticsEvent()
+    object PositiveLabResultAfterPositiveSelfRapidTest : AnalyticsEvent()
+    object NegativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit : AnalyticsEvent()
+    object NegativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit : AnalyticsEvent()
 }

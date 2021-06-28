@@ -11,6 +11,11 @@ import javax.inject.Inject
 
 class ExposureNotificationBroadcastReceiver : BroadcastReceiver() {
 
+    private val allowedActions = listOf(
+        ExposureNotificationClient.ACTION_EXPOSURE_STATE_UPDATED,
+        ExposureNotificationClient.ACTION_EXPOSURE_NOT_FOUND
+    )
+
     @Inject
     lateinit var exposureNotificationWorkerScheduler: ExposureNotificationWorkerScheduler
 
@@ -22,16 +27,12 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver() {
 
         val action = intent.action
         Timber.d("onReceive: action = $action")
-        val interestedInExposureNotifications =
-            isolationStateMachine.isInterestedInExposureNotifications()
-        if (action == ExposureNotificationClient.ACTION_EXPOSURE_STATE_UPDATED) {
-            if (interestedInExposureNotifications) {
-                exposureNotificationWorkerScheduler.scheduleProcessNewExposure(context)
+        if (action in allowedActions) {
+            if (isolationStateMachine.isInterestedInExposureNotifications()) {
+                exposureNotificationWorkerScheduler.scheduleEvaluateRisk(context)
             } else {
-                exposureNotificationWorkerScheduler.scheduleNoMatchesFound(context)
+                exposureNotificationWorkerScheduler.scheduleDoNotEvaluateRisk(context)
             }
-        } else if (action == ExposureNotificationClient.ACTION_EXPOSURE_NOT_FOUND) {
-            exposureNotificationWorkerScheduler.scheduleNoMatchesFound(context)
         }
     }
 }

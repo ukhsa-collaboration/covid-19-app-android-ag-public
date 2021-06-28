@@ -7,18 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.jeroenmols.featureflag.framework.FeatureFlag.DAILY_CONTACT_TESTING
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.coroutines.launch
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.OUTSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeResponse
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
@@ -41,7 +31,6 @@ class LinkTestResultViewModel @Inject constructor(
     private val ctaTokenValidator: CtaTokenValidator,
     private val isolationStateMachine: IsolationStateMachine,
     private val linkTestResultOnsetDateNeededChecker: LinkTestResultOnsetDateNeededChecker,
-    private val analyticsEventProcessor: AnalyticsEventProcessor,
     private val receivedUnknownTestResultProvider: ReceivedUnknownTestResultProvider,
     private val clock: Clock
 ) : ViewModel() {
@@ -111,9 +100,8 @@ class LinkTestResultViewModel @Inject constructor(
 
     private fun validateToken(ctaToken: String) {
         updateViewState(viewStateLiveData.value!!.copy(showValidationProgress = true, errorState = null))
-        val cleanedCtaToken = ctaToken.replace(CROCKFORD_BASE32_REGEX.toRegex(), "")
         viewModelScope.launch {
-            when (val testResultResponse = ctaTokenValidator.validate(cleanedCtaToken)) {
+            when (val testResultResponse = ctaTokenValidator.validate(ctaToken)) {
                 is Success -> handleTestResultResponse(testResultResponse.virologyCtaExchangeResponse)
                 is UnparsableTestResult -> handleUnparsableTestResult()
                 is Failure -> handleError(testResultResponse.type.toLinkTestResultError())
@@ -146,24 +134,15 @@ class LinkTestResultViewModel @Inject constructor(
         isolationStateMachine.processEvent(
             OnTestResult(
                 testResult = testResult,
-                showNotification = false
+                showNotification = false,
+                testOrderType = OUTSIDE_APP
             )
         )
-        logAnalytics(testResultResponse.testResult, testResultResponse.testKit)
         if (linkTestResultOnsetDateNeededChecker.isInterestedInAskingForSymptomsOnsetDay(testResult)) {
             validationOnsetDateNeededLiveData.postValue(testResult)
         } else {
             validationCompletedLiveData.postCall()
         }
-    }
-
-    private suspend fun logAnalytics(result: VirologyTestResult, testKitType: VirologyTestKitType) {
-        when (result) {
-            POSITIVE -> analyticsEventProcessor.track(PositiveResultReceived)
-            NEGATIVE -> analyticsEventProcessor.track(NegativeResultReceived)
-            VOID -> analyticsEventProcessor.track(VoidResultReceived)
-        }
-        analyticsEventProcessor.track(ResultReceived(result, testKitType, OUTSIDE_APP))
     }
 
     private fun updateViewState(updatedViewState: LinkTestResultState) {
@@ -193,9 +172,5 @@ class LinkTestResultViewModel @Inject constructor(
         INVALID -> LinkTestResultError.INVALID
         NO_CONNECTION -> LinkTestResultError.NO_CONNECTION
         UNEXPECTED -> LinkTestResultError.UNEXPECTED
-    }
-
-    companion object {
-        private const val CROCKFORD_BASE32_REGEX = "[^${CrockfordDammValidator.CROCKFORD_BASE32}]"
     }
 }

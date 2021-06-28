@@ -19,7 +19,13 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidSendLocalInfo
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ExposureWindowsMatched
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedIsolationPaymentsApplication
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedTestOrdering
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveLFDOutsideTimeLimit
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveLFDWithinTimeLimit
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveLabResultAfterPositiveLFD
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveLabResultAfterPositiveSelfRapidTest
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.QrCodeCheckIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedActiveIpcToken
@@ -54,7 +60,13 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_R
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_SEND_LOCAL_INFO_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_ISOLATION_PAYMENTS_APPLICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_TEST_ORDERING
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_LFD_OUTSIDE_TIME_LIMIT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_LFD_WITHIN_TIME_LIMIT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_OUTSIDE_TIME_LIMIT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_WITHIN_TIME_LIMIT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_LAB_RESULT_AFTER_POSITIVE_LFD
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CODE_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_ACTIVE_IPC_TOKEN
@@ -159,6 +171,17 @@ class AnalyticsEventProcessor @Inject constructor(
         DidSendLocalInfoNotification -> Event(DID_SEND_LOCAL_INFO_NOTIFICATION)
         DidAccessLocalInfoScreenViaNotification -> Event(DID_ACCESS_LOCAL_INFO_SCREEN_VIA_NOTIFICATION)
         DidAccessLocalInfoScreenViaBanner -> Event(DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER)
+        PositiveLabResultAfterPositiveLFD -> Event(POSITIVE_LAB_RESULT_AFTER_POSITIVE_LFD)
+        NegativeLabResultAfterPositiveLFDWithinTimeLimit ->
+            Event(NEGATIVE_LAB_RESULT_AFTER_POSITIVE_LFD_WITHIN_TIME_LIMIT)
+        NegativeLabResultAfterPositiveLFDOutsideTimeLimit ->
+            Event(NEGATIVE_LAB_RESULT_AFTER_POSITIVE_LFD_OUTSIDE_TIME_LIMIT)
+        PositiveLabResultAfterPositiveSelfRapidTest ->
+            Event(POSITIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST)
+        NegativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit ->
+            Event(NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_WITHIN_TIME_LIMIT)
+        NegativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit ->
+            Event(NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_OUTSIDE_TIME_LIMIT)
     }
 
     private fun updateNetworkStats() = AnalyticsLogItem.UpdateNetworkStats(

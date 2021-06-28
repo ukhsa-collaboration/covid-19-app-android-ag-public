@@ -95,13 +95,13 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
                     showContinueToSelfIsolationScreenOnNegative(viewState.remainingDaysInIsolation)
                 NegativeWontBeInIsolation ->
                     showDoNotHaveToSelfIsolateScreenOnNegative()
-                PositiveContinueIsolation ->
+                is PositiveContinueIsolation ->
                     showContinueToSelfIsolationScreenOnPositive(viewState.remainingDaysInIsolation)
                 PositiveContinueIsolationNoChange ->
                     showContinueToSelfIsolationScreenOnPositiveAndNoChange(viewState.remainingDaysInIsolation)
-                PositiveWillBeInIsolation ->
+                is PositiveWillBeInIsolation ->
                     showSelfIsolateScreenOnPositive(viewState.remainingDaysInIsolation)
-                PositiveWontBeInIsolation ->
+                is PositiveWontBeInIsolation ->
                     showDoNotHaveToSelfIsolateScreenOnPositive()
                 NegativeAfterPositiveOrSymptomaticWillBeInIsolation ->
                     showContinueToSelfIsolationScreenOnNegativeAfterPositiveOrSymptomatic(viewState.remainingDaysInIsolation)

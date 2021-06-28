@@ -6,7 +6,7 @@ import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntr
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveWontBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_LFD_TOKEN
-import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_LFD_TOKEN_INDICATIVE_NO_KEY_SUBMISSION
+import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_LFD_TOKEN_INDICATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_RAPID_SELF_REPORTED_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.POSITIVE_RAPID_SELF_REPORTED_TOKEN_INDICATIVE
@@ -16,6 +16,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESUL
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BookFollowUpTestRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultOnsetDateRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultSymptomsRobot
@@ -32,7 +33,9 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
     private val linkTestSymptomsRobot = LinkTestResultSymptomsRobot()
     private val linkTestResultOnsetDateRobot = LinkTestResultOnsetDateRobot()
     private val testResultRobot = TestResultRobot(testAppContext.app)
+    private val bookFollowUpTestRobot = BookFollowUpTestRobot()
     private val shareKeys = ShareKeys()
+    private val shareKeysAndBookTest = ShareKeysAndBookTest(testAppContext.app)
 
     fun enterPositive(
         virologyTestKitType: VirologyTestKitType,
@@ -44,7 +47,7 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
         val token = when (virologyTestKitType) {
             LAB_RESULT -> POSITIVE_PCR_TOKEN
             RAPID_RESULT ->
-                if (requiresConfirmatoryTest) POSITIVE_LFD_TOKEN_INDICATIVE_NO_KEY_SUBMISSION else POSITIVE_LFD_TOKEN
+                if (requiresConfirmatoryTest) POSITIVE_LFD_TOKEN_INDICATIVE else POSITIVE_LFD_TOKEN
             RAPID_SELF_REPORTED ->
                 if (requiresConfirmatoryTest) POSITIVE_RAPID_SELF_REPORTED_TOKEN_INDICATIVE else POSITIVE_RAPID_SELF_REPORTED_TOKEN
         }
@@ -73,21 +76,32 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
         }
 
         when (expectedScreenState) {
-            PositiveWillBeInIsolationAndOrderTest -> {
+            is PositiveWillBeInIsolationAndOrderTest -> {
                 waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
                 testResultRobot.clickCloseButton()
             }
-            PositiveContinueIsolation -> {
+            is PositiveContinueIsolation -> {
                 waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
                 testResultRobot.clickIsolationActionButton()
                 shareKeys()
             }
-            PositiveWillBeInIsolation -> {
+            is PositiveWillBeInIsolation -> {
                 waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
-                testResultRobot.clickIsolationActionButton()
-                shareKeys()
+                if (requiresConfirmatoryTest) {
+                    if (expectedScreenState.includeBookATestFlow) {
+                        shareKeysAndBookTest()
+                        testAppContext.device.pressBack()
+                        bookFollowUpTestRobot.clickCloseButton()
+                    } else {
+                        testResultRobot.clickIsolationActionButton()
+                        shareKeys()
+                    }
+                } else {
+                    testResultRobot.clickIsolationActionButton()
+                    shareKeys()
+                }
             }
-            PositiveWontBeInIsolation -> {
+            is PositiveWontBeInIsolation -> {
                 waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
                 testResultRobot.clickGoodNewsActionButton()
             }
@@ -121,10 +135,10 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
         val didRememberOnsetSymptomsDate: Boolean = false
     )
 
-    enum class ExpectedScreenAfterPositiveTestResult {
-        PositiveWillBeInIsolationAndOrderTest,
-        PositiveContinueIsolation,
-        PositiveWillBeInIsolation,
-        PositiveWontBeInIsolation
+    sealed class ExpectedScreenAfterPositiveTestResult {
+        object PositiveWillBeInIsolationAndOrderTest : ExpectedScreenAfterPositiveTestResult()
+        object PositiveContinueIsolation : ExpectedScreenAfterPositiveTestResult()
+        data class PositiveWillBeInIsolation(val includeBookATestFlow: Boolean = true) : ExpectedScreenAfterPositiveTestResult()
+        object PositiveWontBeInIsolation : ExpectedScreenAfterPositiveTestResult()
     }
 }

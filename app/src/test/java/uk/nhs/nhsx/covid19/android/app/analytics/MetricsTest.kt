@@ -23,7 +23,13 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_R
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_SEND_LOCAL_INFO_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_ISOLATION_PAYMENTS_APPLICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_TEST_ORDERING
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_LFD_OUTSIDE_TIME_LIMIT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_LFD_WITHIN_TIME_LIMIT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_OUTSIDE_TIME_LIMIT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_WITHIN_TIME_LIMIT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_LAB_RESULT_AFTER_POSITIVE_LFD
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CODE_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_ACTIVE_IPC_TOKEN
@@ -464,6 +470,54 @@ class MetricsTest {
         `test aggregation of analytics metrics`(
             Event(DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER),
             Metrics().copy(didAccessLocalInfoScreenViaBanner = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add positiveLabResultAfterPositiveLFD for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(POSITIVE_LAB_RESULT_AFTER_POSITIVE_LFD),
+            Metrics().copy(positiveLabResultAfterPositiveLFD = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add negativeLabResultAfterPositiveLFDWithinTimeLimit for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(NEGATIVE_LAB_RESULT_AFTER_POSITIVE_LFD_WITHIN_TIME_LIMIT),
+            Metrics().copy(negativeLabResultAfterPositiveLFDWithinTimeLimit = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add negativeLabResultAfterPositiveLFDOutsideTimeLimit for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(NEGATIVE_LAB_RESULT_AFTER_POSITIVE_LFD_OUTSIDE_TIME_LIMIT),
+            Metrics().copy(negativeLabResultAfterPositiveLFDOutsideTimeLimit = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add positiveLabResultAfterPositiveSelfRapidTest for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(POSITIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST),
+            Metrics().copy(positiveLabResultAfterPositiveSelfRapidTest = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add negativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_WITHIN_TIME_LIMIT),
+            Metrics().copy(negativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_OUTSIDE_TIME_LIMIT),
+            Metrics().copy(negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit = expectedLogEventCount)
         )
     }
 

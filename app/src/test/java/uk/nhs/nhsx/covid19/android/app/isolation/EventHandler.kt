@@ -1,8 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.isolation
 
-import com.google.android.gms.nearby.exposurenotification.ExposureWindow
-import com.google.android.gms.nearby.exposurenotification.Infectiousness
-import com.google.android.gms.nearby.exposurenotification.ScanInstance.Builder
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.contactIsolationEnded
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.indexIsolationEnded
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedConfirmedPositiveTest
@@ -17,7 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTestWithE
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTestWithEndDateOlderThanRememberedUnconfirmedTestEndDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTestWithEndDateOlderThanRememberedUnconfirmedTestEndDateAndOlderThanAssumedSymptomOnsetDayIfAny
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedUnconfirmedPositiveTest
-import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDate
+import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDateAndOlderThanAssumedSymptomOnsetDayIfAny
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedUnconfirmedPositiveTestWithEndDateOlderThanAssumedSymptomOnsetDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedUnconfirmedPositiveTestWithEndDateOlderThanRememberedNegativeTestEndDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedUnconfirmedPositiveTestWithIsolationPeriodOlderThanAssumedSymptomOnsetDate
@@ -39,7 +36,6 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTr
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
-import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.NEGATIVE
@@ -56,13 +52,13 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class EventHandler(
-    val testAppContext: TestApplicationContext,
+    private val isolationTestContext: IsolationTestContext,
     val isolationConfiguration: DurationDays,
 ) {
 
     fun handleEvent(event: Event) {
-        val isolationStateMachine = testAppContext.getIsolationStateMachine()
-        val today = LocalDate.now(testAppContext.clock)
+        val isolationStateMachine = isolationTestContext.getIsolationStateMachine()
+        val today = LocalDate.now(isolationTestContext.clock)
 
         when (event) {
             riskyContact -> {
@@ -71,7 +67,7 @@ class EventHandler(
             }
 
             riskyContactWithExposureDayOlderThanIsolationTerminationDueToDCT -> {
-                val isolationState = testAppContext.getCurrentLogicalState()
+                val isolationState = isolationTestContext.getCurrentLogicalState()
                 assertTrue(isolationState is PossiblyIsolating)
                 val contactCaseOptInDate = isolationState.contactCase?.dailyContactTestingOptInDate
                 assertNotNull(contactCaseOptInDate)
@@ -146,15 +142,20 @@ class EventHandler(
                 )
             }
 
-            receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDate -> {
-                val endDate = getRememberedNegativeTestResult().testEndDate.minusDays(DEFAULT_CONFIRMATORY_DAY_LIMIT + 1)
+            receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDateAndOlderThanAssumedSymptomOnsetDayIfAny -> {
+                val testBasedEndDate =
+                    getRememberedNegativeTestResult().testEndDate.minusDays(DEFAULT_CONFIRMATORY_DAY_LIMIT + 1)
+                val onsetDateBasedEndDate = getOnsetDateIfAny()?.minusDays(1)
+
+                val endDate = selectEarliest(onsetDateBasedEndDate, testBasedEndDate)
+                assertTrue(endDate.isBeforeOrEqual(today), "testEndDate is in the future (testEndDate: $endDate)")
                 isolationStateMachine.processEvent(
                     OnTestResultAcknowledge(createPositiveUnconfirmedTestResult(endDate))
                 )
             }
 
             receivedNegativeTest -> {
-                val testResult = testAppContext.getCurrentState().indexInfo?.testResult
+                val testResult = isolationTestContext.getCurrentState().indexInfo?.testResult
                 val endDate = testResult?.testEndDate?.plusDays(1)
                     ?: today.minusDays(1)
                 assertTrue(endDate.isBeforeOrEqual(today), "testEndDate is in the future (testEndDate: $endDate)")
@@ -164,7 +165,7 @@ class EventHandler(
             }
 
             receivedNegativeTestWithEndDateOlderThanRememberedUnconfirmedTestEndDate -> {
-                val testResult = testAppContext.getCurrentState().indexInfo?.testResult
+                val testResult = isolationTestContext.getCurrentState().indexInfo?.testResult
                 assertNotNull(testResult, "Did not find required test result")
                 assertFalse(testResult.isConfirmed(), "Test result is unexpectedly confirmed")
 
@@ -182,7 +183,7 @@ class EventHandler(
             }
 
             receivedNegativeTestWithEndDateNDaysNewerThanRememberedUnconfirmedTestEndDate -> {
-                val testResult = testAppContext.getCurrentState().indexInfo?.testResult
+                val testResult = isolationTestContext.getCurrentState().indexInfo?.testResult
                 assertNotNull(testResult, "Did not find required test result")
                 assertFalse(testResult.isConfirmed(), "Test result is unexpectedly confirmed")
 
@@ -195,7 +196,7 @@ class EventHandler(
             }
 
             receivedNegativeTestWithEndDateOlderThanRememberedUnconfirmedTestEndDateAndOlderThanAssumedSymptomOnsetDayIfAny -> {
-                val testResult = testAppContext.getCurrentState().indexInfo?.testResult
+                val testResult = isolationTestContext.getCurrentState().indexInfo?.testResult
                 assertNotNull(testResult, "Did not find required test result")
                 assertFalse(testResult.isConfirmed(), "Test result is unexpectedly confirmed")
 
@@ -211,7 +212,7 @@ class EventHandler(
             }
 
             receivedNegativeTestWithEndDateNDaysNewerThanRememberedUnconfirmedTestEndDateButOlderThanAssumedSymptomOnsetDayIfAny -> {
-                val testResult = testAppContext.getCurrentState().indexInfo?.testResult
+                val testResult = isolationTestContext.getCurrentState().indexInfo?.testResult
                 assertNotNull(testResult, "Did not find required test result")
                 assertFalse(testResult.isConfirmed(), "Test result is unexpectedly confirmed")
 
@@ -221,11 +222,20 @@ class EventHandler(
                 val receivedTestEndDate = testEndDate.plusDays(DEFAULT_CONFIRMATORY_DAY_LIMIT + 1)
 
                 if (onsetDate != null) {
-                    assertTrue(onsetDate.isAfter(testEndDate), "Onset date is not newer than test end date (onsetDate: $onsetDate, testEndDate: $testEndDate)")
-                    assertTrue(receivedTestEndDate.isBefore(onsetDate), "Received test end date is not before onset date (receivedTestEndDate: $receivedTestEndDate, onsetDate: $onsetDate)")
+                    assertTrue(
+                        onsetDate.isAfter(testEndDate),
+                        "Onset date is not newer than test end date (onsetDate: $onsetDate, testEndDate: $testEndDate)"
+                    )
+                    assertTrue(
+                        receivedTestEndDate.isBefore(onsetDate),
+                        "Received test end date is not before onset date (receivedTestEndDate: $receivedTestEndDate, onsetDate: $onsetDate)"
+                    )
                 }
 
-                assertTrue(receivedTestEndDate.isBeforeOrEqual(today), "testEndDate is in the future (testEndDate: $receivedTestEndDate)")
+                assertTrue(
+                    receivedTestEndDate.isBeforeOrEqual(today),
+                    "testEndDate is in the future (testEndDate: $receivedTestEndDate)"
+                )
 
                 isolationStateMachine.processEvent(
                     OnTestResultAcknowledge(createNegativeTestResult(receivedTestEndDate))
@@ -233,7 +243,7 @@ class EventHandler(
             }
 
             receivedNegativeTestWithEndDateNewerThanAssumedSymptomOnsetDateAndAssumedSymptomOnsetDateNewerThanPositiveTestEndDate -> {
-                val testResult = testAppContext.getCurrentState().indexInfo?.testResult
+                val testResult = isolationTestContext.getCurrentState().indexInfo?.testResult
                 assertNotNull(testResult, "Did not find required test result")
                 assertTrue(testResult.isPositive(), "Test result is not positive")
 
@@ -245,8 +255,14 @@ class EventHandler(
                 )
 
                 val receivedTestEndDate = onsetDate.plusDays(1)
-                assertTrue(receivedTestEndDate.isBeforeOrEqual(today), "testEndDate is in the future (testEndDate: $receivedTestEndDate)")
-                assertTrue(receivedTestEndDate.isAfter(onsetDate), "receivedTestEndDate is not after onsetDate (receivedTestEndDate: $receivedTestEndDate, onsetDate: $onsetDate)")
+                assertTrue(
+                    receivedTestEndDate.isBeforeOrEqual(today),
+                    "testEndDate is in the future (testEndDate: $receivedTestEndDate)"
+                )
+                assertTrue(
+                    receivedTestEndDate.isAfter(onsetDate),
+                    "receivedTestEndDate is not after onsetDate (receivedTestEndDate: $receivedTestEndDate, onsetDate: $onsetDate)"
+                )
 
                 isolationStateMachine.processEvent(
                     OnTestResultAcknowledge(createNegativeTestResult(receivedTestEndDate))
@@ -258,7 +274,7 @@ class EventHandler(
             )
 
             contactIsolationEnded -> {
-                val isolationState = testAppContext.getCurrentLogicalState()
+                val isolationState = isolationTestContext.getCurrentLogicalState()
                 assertTrue(isolationState is PossiblyIsolating)
                 val contactCase = isolationState.contactCase
                 assertNotNull(contactCase)
@@ -266,7 +282,7 @@ class EventHandler(
             }
 
             indexIsolationEnded -> {
-                val isolationState = testAppContext.getCurrentLogicalState()
+                val isolationState = isolationTestContext.getCurrentLogicalState()
                 assertTrue(isolationState is PossiblyIsolating)
                 val indexInfo = isolationState.indexInfo
                 assertTrue(indexInfo is IndexCase)
@@ -274,10 +290,10 @@ class EventHandler(
             }
 
             retentionPeriodEnded -> {
-                val isolationState = testAppContext.getCurrentLogicalState()
-                assertFalse(isolationState.isActiveIsolation(testAppContext.clock))
+                val isolationState = isolationTestContext.getCurrentLogicalState()
+                assertFalse(isolationState.isActiveIsolation(isolationTestContext.clock))
                 advanceClockPastTime(
-                    testAppContext.clock.instant()
+                    isolationTestContext.clock.instant()
                         .plus(isolationConfiguration.pendingTasksRetentionPeriod.toLong(), DAYS)
                 )
             }
@@ -285,7 +301,7 @@ class EventHandler(
     }
 
     private fun getRememberedOnsetDate(): LocalDate {
-        val isolationState = testAppContext.getCurrentLogicalState()
+        val isolationState = isolationTestContext.getCurrentLogicalState()
         assertTrue(isolationState is PossiblyIsolating)
         val indexInfo = isolationState.indexInfo
         assertTrue(indexInfo is IndexCase)
@@ -295,54 +311,33 @@ class EventHandler(
     }
 
     private fun getOnsetDateIfAny(): LocalDate? {
-        return ((testAppContext.getCurrentState().indexInfo as? IndexCase)?.isolationTrigger as? SelfAssessment)?.assumedOnsetDate
+        return ((isolationTestContext.getCurrentState().indexInfo as? IndexCase)?.isolationTrigger as? SelfAssessment)?.assumedOnsetDate
     }
 
     private fun getRememberedNegativeTestResult(): AcknowledgedTestResult {
-        val rememberedTest = testAppContext.getCurrentState().indexInfo?.testResult
+        val rememberedTest = isolationTestContext.getCurrentState().indexInfo?.testResult
         assertNotNull(rememberedTest)
         assertEquals(rememberedTest.testResult, NEGATIVE)
         return rememberedTest
     }
 
-    private fun sendExposureNotification(exposureNotification: LocalDate) {
-        testAppContext.getExposureNotificationApi().mockExposureWindows =
-            listOf(
-                ExposureWindow.Builder()
-                    .setDateMillisSinceEpoch(
-                        exposureNotification.atStartOfDay(testAppContext.clock.zone).toInstant().toEpochMilli()
-                    )
-                    .setInfectiousness(Infectiousness.HIGH)
-                    .setScanInstances(
-                        listOf(
-                            Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(60).build(),
-                            Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(60).build(),
-                            Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(60).build(),
-                            Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(60).build(),
-                            Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(60).build(),
-                            Builder().setMinAttenuationDb(160).setSecondsSinceLastScan(60).build()
-                        )
-                    )
-                    .build()
-            )
-
-        testAppContext.sendExposureStateUpdatedBroadcast()
-        testAppContext.runBackgroundTasks()
+    private fun sendExposureNotification(exposureDate: LocalDate) {
+        isolationTestContext.sendExposureNotification(exposureDate)
     }
 
     private fun advanceClockPastDate(date: LocalDate) {
-        val instant = date.plusDays(1).atStartOfDay(testAppContext.clock.zone).toInstant()
+        val instant = date.plusDays(1).atStartOfDay(isolationTestContext.clock.zone).toInstant()
         advanceClockPastTime(instant)
     }
 
     private fun advanceClockPastTime(instant: Instant) {
-        val secondsUntilExpiration = SECONDS.between(testAppContext.clock.instant(), instant)
-        testAppContext.advanceClock(secondsUntilExpiration + 1)
+        val secondsUntilExpiration = SECONDS.between(isolationTestContext.clock.instant(), instant)
+        isolationTestContext.advanceClock(secondsUntilExpiration + 1)
     }
 
     private fun createPositiveConfirmedTestResult(endDate: LocalDate): ReceivedTestResult = ReceivedTestResult(
         diagnosisKeySubmissionToken = "newToken",
-        testEndDate = endDate.atStartOfDay(testAppContext.clock.zone).toInstant(),
+        testEndDate = endDate.atStartOfDay(isolationTestContext.clock.zone).toInstant(),
         testResult = POSITIVE,
         testKitType = LAB_RESULT,
         diagnosisKeySubmissionSupported = true,
@@ -351,11 +346,12 @@ class EventHandler(
 
     private fun createPositiveUnconfirmedTestResult(endDate: LocalDate): ReceivedTestResult = ReceivedTestResult(
         diagnosisKeySubmissionToken = "newToken",
-        testEndDate = endDate.atStartOfDay(testAppContext.clock.zone).toInstant(),
+        testEndDate = endDate.atStartOfDay(isolationTestContext.clock.zone).toInstant(),
         testResult = POSITIVE,
         testKitType = LAB_RESULT,
         diagnosisKeySubmissionSupported = true,
-        requiresConfirmatoryTest = true
+        requiresConfirmatoryTest = true,
+        confirmatoryDayLimit = DEFAULT_CONFIRMATORY_DAY_LIMIT.toInt()
     )
 
     private fun createNegativeTestResult(endDate: LocalDate): ReceivedTestResult = ReceivedTestResult(
@@ -369,7 +365,7 @@ class EventHandler(
 
     private fun createVoidTestResult(): ReceivedTestResult = ReceivedTestResult(
         diagnosisKeySubmissionToken = "newToken",
-        testEndDate = Instant.now(testAppContext.clock).minus(1, DAYS),
+        testEndDate = Instant.now(isolationTestContext.clock).minus(1, DAYS),
         testResult = VOID,
         testKitType = LAB_RESULT,
         diagnosisKeySubmissionSupported = true,

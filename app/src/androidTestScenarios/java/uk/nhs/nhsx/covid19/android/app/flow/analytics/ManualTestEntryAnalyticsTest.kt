@@ -5,7 +5,6 @@ import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntr
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveWillBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveWillBeInIsolationAndOrderTest
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.SymptomsAndOnsetFlowConfiguration
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.ExplicitDate
@@ -32,7 +31,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
                 didRememberOnsetSymptomsDate = false
             ),
             requiresConfirmatoryTest = false,
-            expectedScreenState = PositiveWillBeInIsolation,
+            expectedScreenState = PositiveWillBeInIsolation(),
             Metrics::receivedPositiveTestResultEnteredManually,
             Metrics::isIsolatingForTestedPositiveBackgroundTick,
             Metrics::hasTestedPositiveBackgroundTick
@@ -48,7 +47,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
                 didRememberOnsetSymptomsDate = false
             ),
             requiresConfirmatoryTest = false,
-            expectedScreenState = PositiveWillBeInIsolation,
+            expectedScreenState = PositiveWillBeInIsolation(),
             Metrics::receivedPositiveTestResultEnteredManually,
             Metrics::isIsolatingForTestedPositiveBackgroundTick,
             Metrics::hasTestedPositiveBackgroundTick
@@ -61,7 +60,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             RAPID_SELF_REPORTED,
             symptomsAndOnsetFlowConfiguration = null,
             requiresConfirmatoryTest = false,
-            expectedScreenState = PositiveWillBeInIsolation,
+            expectedScreenState = PositiveWillBeInIsolation(),
             Metrics::receivedPositiveSelfRapidTestResultEnteredManually,
             Metrics::isIsolatingForTestedSelfRapidPositiveBackgroundTick,
             Metrics::hasTestedSelfRapidPositiveBackgroundTick
@@ -74,7 +73,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             RAPID_RESULT,
             symptomsAndOnsetFlowConfiguration = null,
             requiresConfirmatoryTest = false,
-            expectedScreenState = PositiveWillBeInIsolation,
+            expectedScreenState = PositiveWillBeInIsolation(),
             Metrics::receivedPositiveLFDTestResultEnteredManually,
             Metrics::isIsolatingForTestedLFDPositiveBackgroundTick,
             Metrics::hasTestedLFDPositiveBackgroundTick
@@ -90,7 +89,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
                 didRememberOnsetSymptomsDate = true
             ),
             requiresConfirmatoryTest = false,
-            expectedScreenState = PositiveWillBeInIsolation,
+            expectedScreenState = PositiveWillBeInIsolation(),
             Metrics::receivedPositiveTestResultEnteredManually,
             Metrics::isIsolatingForTestedPositiveBackgroundTick,
             Metrics::hasTestedPositiveBackgroundTick
@@ -106,7 +105,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
                 didRememberOnsetSymptomsDate = false
             ),
             requiresConfirmatoryTest = false,
-            expectedScreenState = PositiveWillBeInIsolation,
+            expectedScreenState = PositiveWillBeInIsolation(),
             Metrics::receivedPositiveTestResultEnteredManually,
             Metrics::isIsolatingForTestedPositiveBackgroundTick,
             Metrics::hasTestedPositiveBackgroundTick
@@ -119,7 +118,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             RAPID_RESULT,
             symptomsAndOnsetFlowConfiguration = null,
             requiresConfirmatoryTest = false,
-            expectedScreenState = PositiveWillBeInIsolation,
+            expectedScreenState = PositiveWillBeInIsolation(),
             Metrics::receivedPositiveLFDTestResultEnteredManually,
             Metrics::isIsolatingForTestedLFDPositiveBackgroundTick,
             Metrics::hasTestedLFDPositiveBackgroundTick
@@ -132,7 +131,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             RAPID_SELF_REPORTED,
             symptomsAndOnsetFlowConfiguration = null,
             requiresConfirmatoryTest = false,
-            expectedScreenState = PositiveWillBeInIsolation,
+            expectedScreenState = PositiveWillBeInIsolation(),
             Metrics::receivedPositiveSelfRapidTestResultEnteredManually,
             Metrics::isIsolatingForTestedSelfRapidPositiveBackgroundTick,
             Metrics::hasTestedSelfRapidPositiveBackgroundTick
@@ -145,7 +144,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             RAPID_RESULT,
             symptomsAndOnsetFlowConfiguration = null,
             requiresConfirmatoryTest = true,
-            expectedScreenState = PositiveWillBeInIsolationAndOrderTest,
+            expectedScreenState = PositiveWillBeInIsolation(),
             Metrics::receivedPositiveLFDTestResultEnteredManually,
             Metrics::isIsolatingForTestedLFDPositiveBackgroundTick,
             Metrics::hasTestedLFDPositiveBackgroundTick
@@ -203,7 +202,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
                 assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
             }
             if (expectedScreenState == PositiveContinueIsolation ||
-                expectedScreenState == PositiveWillBeInIsolation
+                expectedScreenState == PositiveWillBeInIsolation()
             ) {
                 assertEquals(1, Metrics::askedToShareExposureKeysInTheInitialFlow)
                 assertEquals(1, Metrics::consentedToShareExposureKeysInTheInitialFlow)
@@ -290,7 +289,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
                 assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
             }
             if (expectedScreenState == PositiveContinueIsolation ||
-                expectedScreenState == PositiveWillBeInIsolation
+                expectedScreenState == PositiveWillBeInIsolation()
             ) {
                 assertEquals(1, Metrics::askedToShareExposureKeysInTheInitialFlow)
                 assertEquals(1, Metrics::consentedToShareExposureKeysInTheInitialFlow)
@@ -400,7 +399,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
                 assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
             }
             if (expectedScreenState == PositiveContinueIsolation ||
-                expectedScreenState == PositiveWillBeInIsolation
+                expectedScreenState == PositiveWillBeInIsolation()
             ) {
                 assertEquals(1, Metrics::askedToShareExposureKeysInTheInitialFlow)
                 assertEquals(1, Metrics::consentedToShareExposureKeysInTheInitialFlow)

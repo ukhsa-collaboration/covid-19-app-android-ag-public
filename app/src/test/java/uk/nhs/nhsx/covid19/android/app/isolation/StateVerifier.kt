@@ -9,7 +9,6 @@ import uk.nhs.nhsx.covid19.android.app.isolation.TestType.POSITIVE_UNCONFIRMED
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
-import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import kotlin.test.assertEquals
@@ -21,7 +20,7 @@ import kotlin.test.assertTrue
 typealias IsolationMachineState = uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 
 class StateVerifier(
-    private val testAppContext: TestApplicationContext
+    private val isolationTestContext: IsolationTestContext
 ) {
     fun verifyState(state: State) {
         verifyIsolationState(state)
@@ -29,17 +28,17 @@ class StateVerifier(
     }
 
     private fun verifyIsolationState(expectedState: State) {
-        val logicalState = testAppContext.getCurrentLogicalState()
+        val logicalState = isolationTestContext.getCurrentLogicalState()
 
         when (expectedState.strongestIsolationState) {
             ACTIVE -> {
                 assertTrue(logicalState is PossiblyIsolating, "Expect logicalState to be PossiblyIsolating but was $logicalState")
-                assertTrue(logicalState.isActiveIsolation(testAppContext.clock), "Assert is active isolation")
+                assertTrue(logicalState.isActiveIsolation(isolationTestContext.clock), "Assert is active isolation")
             }
             FINISHED -> {
                 assertTrue(logicalState is PossiblyIsolating, "Expect logicalState to be PossiblyIsolating, but was $logicalState")
                 assertFalse(
-                    logicalState.isActiveIsolation(testAppContext.clock),
+                    logicalState.isActiveIsolation(isolationTestContext.clock),
                     "Assert is not active isolation anymore"
                 )
             }
@@ -84,7 +83,7 @@ class StateVerifier(
     }
 
     private fun verifyTestResult(state: State) {
-        val acknowledgedTestResult = testAppContext.getCurrentState().indexInfo?.testResult
+        val acknowledgedTestResult = isolationTestContext.getCurrentState().indexInfo?.testResult
         when (state.positiveTest.testType) {
             TestType.NONE -> assertNull(acknowledgedTestResult, "Expected no test result to be stored")
             NEGATIVE -> {
@@ -113,7 +112,7 @@ class StateVerifier(
 
     private fun IsolationMachineState.hasActiveContactCase(): Boolean =
         when (this) {
-            is PossiblyIsolating -> contactCase?.hasExpired(testAppContext.clock) == false
+            is PossiblyIsolating -> contactCase?.hasExpired(isolationTestContext.clock) == false
             is NeverIsolating -> false
         }
 
@@ -127,7 +126,7 @@ class StateVerifier(
         when (this) {
             is PossiblyIsolating -> {
                 val indexCase = indexInfo as? IndexCase
-                indexCase?.hasExpired(testAppContext.clock) ?: false
+                indexCase?.hasExpired(isolationTestContext.clock) ?: false
             }
             is NeverIsolating -> false
         }

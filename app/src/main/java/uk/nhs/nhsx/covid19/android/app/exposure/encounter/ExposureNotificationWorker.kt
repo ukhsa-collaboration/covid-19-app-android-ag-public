@@ -33,9 +33,9 @@ class ExposureNotificationWorker(
         val matchesFound = inputData.getBoolean(INPUT_MATCHES_FOUND, true)
 
         val result = if (matchesFound) {
-            exposureNotificationWork.handleNewExposure()
+            exposureNotificationWork.evaluateRisk()
         } else {
-            exposureNotificationWork.handleNoMatchesFound()
+            exposureNotificationWork.doNotEvaluateRisk()
         }
 
         return result.toWorkerResult()
@@ -52,11 +52,11 @@ class ExposureNotificationWorker(
         const val INPUT_MATCHES_FOUND = "INPUT_MATCHES_FOUND"
         private const val NOTIFICATION_UPDATING_DATABASE_ID = 112
 
-        override fun scheduleProcessNewExposure(context: Context) {
+        override fun scheduleEvaluateRisk(context: Context) {
             schedule(context, matchesFound = true)
         }
 
-        override fun scheduleNoMatchesFound(context: Context) {
+        override fun scheduleDoNotEvaluateRisk(context: Context) {
             schedule(context, matchesFound = false)
         }
 
@@ -76,6 +76,6 @@ class ExposureNotificationWorker(
 }
 
 interface ExposureNotificationWorkerScheduler {
-    fun scheduleProcessNewExposure(context: Context)
-    fun scheduleNoMatchesFound(context: Context)
+    fun scheduleEvaluateRisk(context: Context)
+    fun scheduleDoNotEvaluateRisk(context: Context)
 }

@@ -35,7 +35,6 @@
         <attr name="title" format="string" />
         <attr name="example" format="string" />
         <attr name="errorText" format="string" />
-        <attr name="codeInputRegex" format="string" />
     </declare-styleable>
     <declare-styleable name="LinkTextView">
         <attr name="linkUrl" format="reference" />

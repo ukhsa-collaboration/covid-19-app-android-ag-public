@@ -27,7 +27,7 @@ import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsProvider
 import uk.nhs.nhsx.covid19.android.app.state.DisplayStateExpirationNotification
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.StateStringStorage
+import uk.nhs.nhsx.covid19.android.app.state.SharedPrefsStateStringStorage
 import uk.nhs.nhsx.covid19.android.app.state.StateStringStorage4_9
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessagesProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
@@ -72,7 +72,7 @@ interface TestAppComponent : ApplicationComponent {
 
     fun provideStateStringStorage4_9(): StateStringStorage4_9
 
-    fun provideStateStringStorage(): StateStringStorage
+    fun provideStateStringStorage(): SharedPrefsStateStringStorage
 
     @Singleton
     fun getUserInbox(): UserInbox

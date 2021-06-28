@@ -61,7 +61,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.MigrateIsolationState
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect
-import uk.nhs.nhsx.covid19.android.app.state.StateStringStorage
+import uk.nhs.nhsx.covid19.android.app.state.SharedPrefsStateStringStorage
 import uk.nhs.nhsx.covid19.android.app.state.StateStringStorage4_9
 import uk.nhs.nhsx.covid19.android.app.status.DateChangeBroadcastReceiver
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
@@ -295,7 +295,7 @@ class TestApplicationContext {
     fun getStateStringStorage4_9(): StateStringStorage4_9 =
         component.provideStateStringStorage4_9()
 
-    fun getStateStringStorage(): StateStringStorage =
+    fun getStateStringStorage(): SharedPrefsStateStringStorage =
         component.provideStateStringStorage()
 
     fun getMigrateIsolationState(): MigrateIsolationState =

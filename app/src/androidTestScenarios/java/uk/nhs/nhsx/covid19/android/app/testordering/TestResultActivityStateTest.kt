@@ -10,6 +10,7 @@ import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.ShareKeys
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWillBeInIsolation
@@ -185,7 +186,7 @@ class TestResultActivityStateTest : EspressoTest() {
     @Test
     fun showPositiveContinueIsolation() = notReported {
         checkIsolationState(
-            state = PositiveContinueIsolation,
+            state = PositiveContinueIsolation(ShareKeys(bookFollowUpTest = false)),
             days = 4,
             hasCloseToolbar = false,
             iconDrawableRes = R.drawable.ic_isolation_continue,
@@ -223,7 +224,7 @@ class TestResultActivityStateTest : EspressoTest() {
     @Test
     fun showPositiveWillBeInIsolation() = notReported {
         checkIsolationState(
-            state = PositiveWillBeInIsolation,
+            state = PositiveWillBeInIsolation(ShareKeys(bookFollowUpTest = false)),
             days = 6,
             hasCloseToolbar = false,
             iconDrawableRes = R.drawable.ic_isolation_continue,
@@ -243,7 +244,7 @@ class TestResultActivityStateTest : EspressoTest() {
     @Test
     fun showPositiveWontBeInIsolation() = notReported {
         checkGoodNewsState(
-            state = PositiveWontBeInIsolation,
+            state = PositiveWontBeInIsolation(ShareKeys(bookFollowUpTest = false)),
             hasCloseToolbar = false,
             iconDrawableRes = R.drawable.ic_isolation_expired_or_over,
             titleStringResource = R.string.test_result_your_test_result,

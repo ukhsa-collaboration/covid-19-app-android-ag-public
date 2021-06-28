@@ -13,6 +13,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DeclaredNegative
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedUnconfirmedPositiveTestResult
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
+import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfoProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
@@ -65,6 +66,8 @@ class IsolationStateMachineTest {
     private val exposureNotificationHandler = mockk<ExposureNotificationHandler>(relaxUnitFun = true)
     private val keySharingInfoProvider = mockk<KeySharingInfoProvider>(relaxUnitFun = true)
     private val createSelfAssessmentIndexCase = mockk<CreateSelfAssessmentIndexCase>()
+    private val trackTestResultAnalyticsOnReceive = mockk<TrackTestResultAnalyticsOnReceive>(relaxUnitFun = true)
+    private val trackTestResultAnalyticsOnAcknowledge = mockk<TrackTestResultAnalyticsOnAcknowledge>(relaxUnitFun = true)
 
     private val durationDays = DurationDays()
 
@@ -417,22 +420,23 @@ class IsolationStateMachineTest {
             requiresConfirmatoryTest = false
         )
 
-        every { stateProvider.state } returns IsolationState(isolationConfiguration = durationDays)
+        val isolationState = IsolationState(isolationConfiguration = durationDays)
+        every { stateProvider.state } returns isolationState
 
         val testSubject = createIsolationStateMachine(fixedClock)
 
         val transition = testSubject.processEvent(
-            OnTestResult(testResult)
+            OnTestResult(testResult, testOrderType = INSIDE_APP)
         )
 
         val actual = testSubject.readState()
         val sideEffect = (transition as Transition.Valid).sideEffect
 
-        assertEquals(IsolationState(isolationConfiguration = durationDays), actual)
-        assertEquals(HandleTestResult(testResult), sideEffect)
+        assertEquals(isolationState, actual)
+        assertEquals(HandleTestResult(testResult, testOrderType = INSIDE_APP), sideEffect)
+        verify { trackTestResultAnalyticsOnReceive.invoke(testResult, INSIDE_APP) }
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify(exactly = 0) { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
         verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
         newStateDefaultChecks()
@@ -454,14 +458,14 @@ class IsolationStateMachineTest {
         val testSubject = createIsolationStateMachine(fixedClock)
 
         val transition = testSubject.processEvent(
-            OnTestResult(testResult)
+            OnTestResult(testResult, testOrderType = INSIDE_APP)
         )
 
         val actual = testSubject.readState()
         val sideEffect = (transition as Transition.Valid).sideEffect
 
         assertEquals(IsolationState(isolationConfiguration = durationDays), actual)
-        assertEquals(HandleTestResult(testResult), sideEffect)
+        assertEquals(HandleTestResult(testResult, testOrderType = INSIDE_APP), sideEffect)
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
         verify(exactly = 0) { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
@@ -698,7 +702,7 @@ class IsolationStateMachineTest {
         val testSubject = createIsolationStateMachine(fixedClock)
 
         val transition = testSubject.processEvent(
-            OnTestResult(testResult)
+            OnTestResult(testResult, testOrderType = INSIDE_APP)
         )
 
         val actual = testSubject.readState()
@@ -706,10 +710,10 @@ class IsolationStateMachineTest {
 
         val expected = state.copy()
         assertEquals(expected, actual)
-        assertEquals(HandleTestResult(testResult), sideEffect)
+        assertEquals(HandleTestResult(testResult, testOrderType = INSIDE_APP), sideEffect)
+        verify { trackTestResultAnalyticsOnReceive.invoke(testResult, INSIDE_APP) }
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify(exactly = 0) { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
         verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
         newStateIsolationChecks(
@@ -735,7 +739,7 @@ class IsolationStateMachineTest {
         val testSubject = createIsolationStateMachine(fixedClock)
 
         val transition = testSubject.processEvent(
-            OnTestResult(testResult)
+            OnTestResult(testResult, testOrderType = INSIDE_APP)
         )
 
         val actual = testSubject.readState()
@@ -743,10 +747,10 @@ class IsolationStateMachineTest {
 
         val expected = state.copy()
         assertEquals(expected, actual)
-        assertEquals(HandleTestResult(testResult), sideEffect)
+        assertEquals(HandleTestResult(testResult, testOrderType = INSIDE_APP), sideEffect)
+        verify { trackTestResultAnalyticsOnReceive.invoke(testResult, INSIDE_APP) }
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
         verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
         newStateIsolationChecks(
@@ -772,7 +776,7 @@ class IsolationStateMachineTest {
         val testSubject = createIsolationStateMachine(fixedClock)
 
         val transition = testSubject.processEvent(
-            OnTestResult(testResult)
+            OnTestResult(testResult, testOrderType = INSIDE_APP)
         )
 
         val actual = testSubject.readState()
@@ -780,10 +784,10 @@ class IsolationStateMachineTest {
 
         val expected = state.copy()
         assertEquals(expected, actual)
-        assertEquals(HandleTestResult(testResult), sideEffect)
+        assertEquals(HandleTestResult(testResult, testOrderType = INSIDE_APP), sideEffect)
+        verify { trackTestResultAnalyticsOnReceive.invoke(testResult, INSIDE_APP) }
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify(exactly = 0) { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
         verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
         newStateIsolationChecks(
@@ -809,7 +813,7 @@ class IsolationStateMachineTest {
         val testSubject = createIsolationStateMachine(fixedClock)
 
         val transition = testSubject.processEvent(
-            OnTestResult(testResult)
+            OnTestResult(testResult, testOrderType = INSIDE_APP)
         )
 
         val newState = testSubject.readState()
@@ -818,10 +822,10 @@ class IsolationStateMachineTest {
 
         val expected = isolation.copy()
         assertEquals(expected, newState)
-        assertEquals(HandleTestResult(testResult), sideEffect)
+        assertEquals(HandleTestResult(testResult, testOrderType = INSIDE_APP), sideEffect)
+        verify { trackTestResultAnalyticsOnReceive.invoke(testResult, INSIDE_APP) }
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify(exactly = 0) { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
         verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
         newStateIsolationChecks(
@@ -958,7 +962,7 @@ class IsolationStateMachineTest {
         val testSubject = createIsolationStateMachine(fixedClock)
 
         val transition = testSubject.processEvent(
-            OnTestResult(testResult)
+            OnTestResult(testResult, testOrderType = INSIDE_APP)
         )
 
         val newState = testSubject.readState()
@@ -977,10 +981,10 @@ class IsolationStateMachineTest {
         val sideEffect = (transition as Transition.Valid).sideEffect
 
         assertEquals(expected, newState)
-        assertEquals(HandleTestResult(testResult), sideEffect)
+        assertEquals(HandleTestResult(testResult, testOrderType = INSIDE_APP), sideEffect)
+        verify { trackTestResultAnalyticsOnReceive.invoke(testResult, INSIDE_APP) }
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify(exactly = 0) { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
         verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
         newStateIsolationChecks(
@@ -1016,7 +1020,7 @@ class IsolationStateMachineTest {
         val testSubject = createIsolationStateMachine(fixedClock)
 
         val transition = testSubject.processEvent(
-            OnTestResult(testResult)
+            OnTestResult(testResult, testOrderType = INSIDE_APP)
         )
 
         val newState = testSubject.readState()
@@ -1035,10 +1039,10 @@ class IsolationStateMachineTest {
         val sideEffect = (transition as Transition.Valid).sideEffect
 
         assertEquals(expected, newState)
-        assertEquals(HandleTestResult(testResult), sideEffect)
+        assertEquals(HandleTestResult(testResult, testOrderType = INSIDE_APP), sideEffect)
+        verify { trackTestResultAnalyticsOnReceive.invoke(testResult, INSIDE_APP) }
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify(exactly = 0) { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
         verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
         newStateIsolationChecks(
@@ -1074,7 +1078,7 @@ class IsolationStateMachineTest {
         val testSubject = createIsolationStateMachine(fixedClock)
 
         val transition = testSubject.processEvent(
-            OnTestResult(testResult)
+            OnTestResult(testResult, testOrderType = INSIDE_APP)
         )
 
         val newState = testSubject.readState()
@@ -1093,10 +1097,10 @@ class IsolationStateMachineTest {
         val sideEffect = (transition as Transition.Valid).sideEffect
 
         assertEquals(expected, newState)
-        assertEquals(HandleTestResult(testResult), sideEffect)
+        assertEquals(HandleTestResult(testResult, testOrderType = INSIDE_APP), sideEffect)
+        verify { trackTestResultAnalyticsOnReceive.invoke(testResult, INSIDE_APP) }
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify(exactly = 0) { analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult) }
         verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
 
         newStateIsolationChecks(
@@ -1142,7 +1146,8 @@ class IsolationStateMachineTest {
         val sideEffect = (transition as Transition.Valid).sideEffect
 
         assertEquals(expected, actual)
-        assertEquals(SideEffect.HandleAcknowledgedTestResult(testResult, keySharingInfo), sideEffect)
+        assertEquals(SideEffect.HandleAcknowledgedTestResult(currentState.asLogical(), testResult, keySharingInfo), sideEffect)
+        verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentState.asLogical(), testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
         verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
@@ -1183,7 +1188,8 @@ class IsolationStateMachineTest {
         val sideEffect = (transition as Transition.Valid).sideEffect
 
         assertEquals(expected, actual)
-        assertEquals(SideEffect.HandleAcknowledgedTestResult(testResult, keySharingInfo = null), sideEffect)
+        assertEquals(SideEffect.HandleAcknowledgedTestResult(currentState.asLogical(), testResult, keySharingInfo = null), sideEffect)
+        verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentState.asLogical(), testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
         verify(exactly = 0) { keySharingInfoProvider setProperty "keySharingInfo" value any<KeySharingInfo>() }
         verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
@@ -1228,7 +1234,8 @@ class IsolationStateMachineTest {
         val sideEffect = (transition as Transition.Valid).sideEffect
 
         assertEquals(expected, actual)
-        assertEquals(SideEffect.HandleAcknowledgedTestResult(testResult, keySharingInfo), sideEffect)
+        assertEquals(SideEffect.HandleAcknowledgedTestResult(currentState.asLogical(), testResult, keySharingInfo), sideEffect)
+        verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentState.asLogical(), testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
         verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
@@ -1284,7 +1291,8 @@ class IsolationStateMachineTest {
         val sideEffect = (transition as Transition.Valid).sideEffect
 
         assertEquals(expected, actual)
-        assertEquals(SideEffect.HandleAcknowledgedTestResult(testResult, keySharingInfo), sideEffect)
+        assertEquals(SideEffect.HandleAcknowledgedTestResult(currentState.asLogical(), testResult, keySharingInfo), sideEffect)
+        verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentState.asLogical(), testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
         verify { analyticsEventTracker.track(StartedIsolation) }
@@ -1353,7 +1361,8 @@ class IsolationStateMachineTest {
         val sideEffect = (transition as Transition.Valid).sideEffect
 
         assertEquals(expected, actual)
-        assertEquals(SideEffect.HandleAcknowledgedTestResult(testResult, keySharingInfo), sideEffect)
+        assertEquals(SideEffect.HandleAcknowledgedTestResult(currentState.asLogical(), testResult, keySharingInfo), sideEffect)
+        verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentState.asLogical(), testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
         verify(exactly = 0) { analyticsEventTracker.track(StartedIsolation) }
@@ -1669,7 +1678,9 @@ class IsolationStateMachineTest {
             analyticsEventTracker,
             exposureNotificationHandler,
             keySharingInfoProvider,
-            createSelfAssessmentIndexCase
+            createSelfAssessmentIndexCase,
+            trackTestResultAnalyticsOnReceive,
+            trackTestResultAnalyticsOnAcknowledge,
         )
     }
 }

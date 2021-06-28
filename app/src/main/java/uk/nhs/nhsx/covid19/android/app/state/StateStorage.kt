@@ -127,7 +127,7 @@ private fun IsolationStateJson.isolationState(
 }
 
 @Singleton
-class StateStringStorage @Inject constructor(sharedPreferences: SharedPreferences) {
+class SharedPrefsStateStringStorage @Inject constructor(sharedPreferences: SharedPreferences) : StateStringStorage {
 
     companion object {
         private const val VALUE_KEY = "ISOLATION_STATE_KEY"
@@ -135,5 +135,9 @@ class StateStringStorage @Inject constructor(sharedPreferences: SharedPreference
 
     private val prefs = sharedPreferences.with<String>(VALUE_KEY)
 
-    var prefsValue: String? by prefs
+    override var prefsValue: String? by prefs
+}
+
+interface StateStringStorage {
+    var prefsValue: String?
 }

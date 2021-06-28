@@ -79,7 +79,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/vertical_margin_large"
-                app:codeInputRegex="[^0123456789abcdefghjkmnpqrstvwxyz]"
                 app:errorText="@string/valid_auth_code_is_required"
                 app:example="@string/link_test_result_enter_code_example"
                 app:title="@string/link_test_result_enter_code_title" />

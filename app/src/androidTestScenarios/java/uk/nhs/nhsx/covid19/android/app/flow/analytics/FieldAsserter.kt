@@ -9,19 +9,20 @@ import kotlin.test.assertTrue
 
 typealias MetricsProperty = KProperty1<Metrics, Int>
 
-class FieldAsserter {
+class FieldAsserter(private val implicitlyAssertNotPresent: Boolean = true) {
 
     private val fieldToAssertion: MutableMap<MetricsProperty, MetricsAssertion> = setupMap()
 
     private fun setupMap(): MutableMap<MetricsProperty, MetricsAssertion> {
         val map = mutableMapOf<MetricsProperty, MetricsAssertion>()
-        val intType = Int::class.createType()
-        Metrics::class.declaredMemberProperties.forEach {
-            if (it.returnType == intType) {
-                map[it as MetricsProperty] = ImplicitAssertNotPresent(it)
+        if (implicitlyAssertNotPresent) {
+            val intType = Int::class.createType()
+            Metrics::class.declaredMemberProperties.forEach {
+                if (it.returnType == intType) {
+                    map[it as MetricsProperty] = ImplicitAssertNotPresent(it)
+                }
             }
         }
-
         return removeUntrackedFields(map)
     }
 

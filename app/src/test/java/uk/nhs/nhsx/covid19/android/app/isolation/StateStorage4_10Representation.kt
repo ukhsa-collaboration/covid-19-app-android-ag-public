@@ -13,6 +13,7 @@ import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTestWithE
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTestWithEndDateNDaysNewerThanRememberedUnconfirmedTestEndDateButOlderThanAssumedSymptomOnsetDayIfAny
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTestWithEndDateNewerThanAssumedSymptomOnsetDateAndAssumedSymptomOnsetDateNewerThanPositiveTestEndDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTestWithEndDateOlderThanAssumedSymptomOnsetDate
+import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDateAndOlderThanAssumedSymptomOnsetDayIfAny
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedUnconfirmedPositiveTestWithEndDateOlderThanAssumedSymptomOnsetDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.selfDiagnosedSymptomatic
 import uk.nhs.nhsx.covid19.android.app.isolation.IsolationState.ACTIVE
@@ -28,7 +29,6 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateJson
 import uk.nhs.nhsx.covid19.android.app.state.SymptomaticCase
 import uk.nhs.nhsx.covid19.android.app.state.assumedDaysFromOnsetToSelfAssessment
-import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
@@ -36,6 +36,8 @@ import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit.DAYS
+import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 
 class StateStorage4_10Provider : StateRepresentationProvider {
     override fun getStateRepresentations(state: State, event: Event?): List<StateRepresentation> {
@@ -54,14 +56,14 @@ class StateStorage4_10Representation(
 ) : StateRepresentation {
     override val representationName = "4.10"
 
-    override fun setupState(testAppContext: TestApplicationContext, isolationConfiguration: DurationDays) =
-        StateProducer(testAppContext, isolationConfiguration).setupState(state, event)
+    override fun setupState(isolationTestContext: IsolationTestContext, isolationConfiguration: DurationDays) =
+        StateProducer(isolationTestContext, isolationConfiguration).setupState(state, event)
 
     private class StateProducer(
-        private val testAppContext: TestApplicationContext,
+        private val isolationTestContext: IsolationTestContext,
         private val isolationConfiguration: DurationDays
     ) {
-        private val today = LocalDate.now(testAppContext.clock)
+        private val today = LocalDate.now(isolationTestContext.clock)
 
         private val moshi: Moshi = Moshi.Builder()
             .add(LocalDateAdapter())
@@ -74,10 +76,10 @@ class StateStorage4_10Representation(
         fun setupState(state: State, event: Event?) {
             val isolationState = computeIsolationState(state, event)
             val isolationStateJson = stateSerializationAdapter.toJson(isolationState)
-            testAppContext.getStateStringStorage().prefsValue = isolationStateJson
+            isolationTestContext.getStateStringStorage().prefsValue = isolationStateJson
 
             // Invalidate state machine to make it read the updated state from the storage
-            testAppContext.getIsolationStateMachine().invalidateStateMachine()
+            isolationTestContext.getIsolationStateMachine().invalidateStateMachine()
         }
 
         private fun computeIsolationState(state: State, event: Event?): IsolationStateJson {
@@ -115,6 +117,14 @@ class StateStorage4_10Representation(
                         contactCase = createOverlappingContactCase()
                     }
                 }
+                receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDateAndOlderThanAssumedSymptomOnsetDayIfAny -> {
+                    if (state.symptomatic == notIsolatingAndHadSymptomsPreviously) {
+                        // Symptomatic case has been terminated by negative test, thus let it start briefly before that
+                        assertNotNull(positiveTestCase)
+                        assertFalse(positiveTestCase.isPositive())
+                        symptomaticCase = createSymptomaticCase(positiveTestCase.testEndDate.minusDays(1))
+                    }
+                }
                 receivedConfirmedPositiveTestWithEndDateOlderThanAssumedSymptomOnsetDate -> {
                     if (state.contact.isolationState == ACTIVE && state.symptomatic == notIsolatingAndHadSymptomsPreviously) {
                         // Let contact case isolation overlap with isolation triggered by symptoms/received test result
@@ -133,24 +143,28 @@ class StateStorage4_10Representation(
                 }
                 receivedNegativeTestWithEndDateOlderThanAssumedSymptomOnsetDate -> {
                     // Create test older than onset date
-                    val testEndDate = symptomaticCase!!.selfDiagnosisDate.minusDays(assumedDaysFromOnsetToSelfAssessment + 1)
+                    val testEndDate =
+                        symptomaticCase!!.selfDiagnosisDate.minusDays(assumedDaysFromOnsetToSelfAssessment + 1)
                     positiveTestCase = computePositiveTestCase(state, testEndDate)
                 }
                 receivedNegativeTestWithEndDateNDaysNewerThanRememberedUnconfirmedTestEndDate -> {
                     // Create test older than onset date and more than CONFIRMATORY_DAY_LIMIT in the past
-                    val testEndDate = symptomaticCase?.selfDiagnosisDate?.minusDays(assumedDaysFromOnsetToSelfAssessment + DEFAULT_CONFIRMATORY_DAY_LIMIT + 1)
-                        ?: today.minusDays(DEFAULT_CONFIRMATORY_DAY_LIMIT + 1)
+                    val testEndDate =
+                        symptomaticCase?.selfDiagnosisDate?.minusDays(assumedDaysFromOnsetToSelfAssessment + DEFAULT_CONFIRMATORY_DAY_LIMIT + 1)
+                            ?: today.minusDays(DEFAULT_CONFIRMATORY_DAY_LIMIT + 1)
                     positiveTestCase = computePositiveTestCase(state, testEndDate)
                 }
                 receivedNegativeTestWithEndDateNDaysNewerThanRememberedUnconfirmedTestEndDateButOlderThanAssumedSymptomOnsetDayIfAny -> {
                     // Create test results with enough distance to the onsetDay (if available) to be able to receive another test result in between
-                    val testEndDate = symptomaticCase?.selfDiagnosisDate?.minusDays(assumedDaysFromOnsetToSelfAssessment + DEFAULT_CONFIRMATORY_DAY_LIMIT + 2)
-                        ?: today.minusDays(DEFAULT_CONFIRMATORY_DAY_LIMIT + 2)
+                    val testEndDate =
+                        symptomaticCase?.selfDiagnosisDate?.minusDays(assumedDaysFromOnsetToSelfAssessment + DEFAULT_CONFIRMATORY_DAY_LIMIT + 2)
+                            ?: today.minusDays(DEFAULT_CONFIRMATORY_DAY_LIMIT + 2)
                     positiveTestCase = computePositiveTestCase(state, testEndDate)
                 }
                 receivedNegativeTestWithEndDateNewerThanAssumedSymptomOnsetDateAndAssumedSymptomOnsetDateNewerThanPositiveTestEndDate -> {
                     // Create test older than onset date
-                    val testEndDate = symptomaticCase!!.selfDiagnosisDate.minusDays(assumedDaysFromOnsetToSelfAssessment + 1)
+                    val testEndDate =
+                        symptomaticCase!!.selfDiagnosisDate.minusDays(assumedDaysFromOnsetToSelfAssessment + 1)
                     positiveTestCase = computePositiveTestCase(state, testEndDate)
                 }
             }
@@ -165,7 +179,10 @@ class StateStorage4_10Representation(
             )
         }
 
-        private fun computePositiveTestCase(state: State, testEndDate: LocalDate = computeTestEndDate(state.positiveTest.isolationState)): AcknowledgedTestResult? {
+        private fun computePositiveTestCase(
+            state: State,
+            testEndDate: LocalDate = computeTestEndDate(state.positiveTest.isolationState)
+        ): AcknowledgedTestResult? {
             return when (state.positiveTest.testType) {
                 TestType.NONE -> null
                 NEGATIVE -> AcknowledgedTestResult(

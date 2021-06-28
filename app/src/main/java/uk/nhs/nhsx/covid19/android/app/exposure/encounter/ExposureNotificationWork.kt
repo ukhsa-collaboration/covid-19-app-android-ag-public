@@ -30,13 +30,13 @@ class ExposureNotificationWork @Inject constructor(
 
     private val mutex = Mutex()
 
-    suspend fun handleNoMatchesFound(): Result<Unit> = mutex.withLock {
+    suspend fun doNotEvaluateRisk(): Result<Unit> = mutex.withLock {
         submitEmptyData()
         epidemiologyDataManager.submitEmptyExposureWindows()
         return Success(Unit)
     }
 
-    suspend fun handleNewExposure(): Result<Unit> = mutex.withLock {
+    suspend fun evaluateRisk(): Result<Unit> = mutex.withLock {
         withContext(Dispatchers.IO) {
             hasSuccessfullyProcessedNewExposureProvider.value = false
 

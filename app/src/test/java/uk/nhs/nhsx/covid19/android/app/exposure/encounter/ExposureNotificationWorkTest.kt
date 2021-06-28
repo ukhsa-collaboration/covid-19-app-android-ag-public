@@ -61,7 +61,7 @@ class ExposureNotificationWorkTest {
     @Test
     fun `handle no matches calls fake circuit breaker then submits fake exposure windows and returns success`() =
         runBlocking {
-            val result = testSubject.handleNoMatchesFound()
+            val result = testSubject.doNotEvaluateRisk()
 
             verify { submitEmptyData() }
             coVerify(exactly = 1) { epidemiologyDataManager.submitEmptyExposureWindows() }
@@ -150,7 +150,7 @@ class ExposureNotificationWorkTest {
 
             coEvery { checkIsolationPaymentToken.invoke() } returns Success(Unit)
 
-            val result = testSubject.handleNewExposure()
+            val result = testSubject.evaluateRisk()
 
             coVerifyOrder {
                 hasSuccessfullyProcessedNewExposureProvider setProperty "value" value eq(false)
@@ -196,7 +196,7 @@ class ExposureNotificationWorkTest {
 
             coEvery { checkIsolationPaymentToken.invoke() } returns Success(Unit)
 
-            val result = testSubject.handleNewExposure()
+            val result = testSubject.evaluateRisk()
 
             coVerifyOrder {
                 hasSuccessfullyProcessedNewExposureProvider setProperty "value" value eq(false)
@@ -226,7 +226,7 @@ class ExposureNotificationWorkTest {
 
             coEvery { checkIsolationPaymentToken.invoke() } returns Success(Unit)
 
-            val result = testSubject.handleNewExposure()
+            val result = testSubject.evaluateRisk()
 
             verify(exactly = 1) { hasSuccessfullyProcessedNewExposureProvider setProperty "value" value eq(false) }
             verify(exactly = 0) { exposureCircuitBreakerInfoProvider.add(any()) }

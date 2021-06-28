@@ -277,7 +277,7 @@ class TestResultIsolationHandlerTest {
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
-        val confirmedDate = positiveTestResultConfirmed.testEndDay(fixedClock)
+        val confirmedDate = positiveTestResultConfirmed.testEndDate(fixedClock)
         val expectedState = state.addTestResultToIndexCase(
             testResult = relevantTestResult.copy(confirmedDate = confirmedDate, confirmatoryTestCompletionStatus = COMPLETED_AND_CONFIRMED)
         )
@@ -1329,6 +1329,89 @@ class TestResultIsolationHandlerTest {
     //region -- Positive indicative tests that are older than a previous negative
 
     @Test
+    fun `when not isolating with negative confirmed test, new positive indicative test result with confirmatory limit of -1 and older than negative, triggers isolation and completes positive indicative test`() {
+        `when not isolating with negative confirmed test, new positive indicative test result outside confirmatory day limit and older than negative, triggers isolation and completes positive indicative test`(
+            confirmatoryDayLimit = -1,
+            testEndDate = testEndDate.minus(3, DAYS)
+        )
+    }
+
+    @Test
+    fun `when not isolating with negative confirmed test, new positive indicative test result outside confirmatory day limit and older than negative, triggers isolation and completes positive indicative test`() {
+        `when not isolating with negative confirmed test, new positive indicative test result outside confirmatory day limit and older than negative, triggers isolation and completes positive indicative test`(
+            confirmatoryDayLimit = 2,
+            testEndDate = testEndDate.minus(3, DAYS)
+        )
+    }
+
+    private fun `when not isolating with negative confirmed test, new positive indicative test result outside confirmatory day limit and older than negative, triggers isolation and completes positive indicative test`(
+        confirmatoryDayLimit: Int,
+        testEndDate: Instant
+    ) {
+        val negativeTestResult = negativeTestResultConfirmed.toAcknowledgedTestResult()
+        val state = neverIsolatingWithNegativeTest(
+            testResult = negativeTestResult,
+        )
+
+        val testResult = positiveTestResultIndicative.copy(
+            confirmatoryDayLimit = confirmatoryDayLimit,
+            testEndDate = testEndDate
+        )
+
+        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
+            state.asLogical(),
+            testResult,
+            testAcknowledgedDate = Instant.now(fixedClock)
+        )
+
+        val expectedTestResult = testResult.toAcknowledgedTestResult().copy(confirmedDate = negativeTestResult.testEndDate, confirmatoryTestCompletionStatus = COMPLETED)
+        val isolationDuration = DurationDays().indexCaseSinceTestResultEndDate.toLong()
+        val expectedState = state.copy(
+            indexInfo = IndexCase(
+                testResult = expectedTestResult,
+                isolationTrigger = PositiveTestResult(testResult.testEndDate.toLocalDate(fixedClock.zone)),
+                expiryDate = testResult.testEndDate.plus(isolationDuration, DAYS).toLocalDate(fixedClock.zone)
+            ),
+        )
+
+        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+    }
+
+    @Test
+    fun `when not in isolation, with expired index case and negative test, new positive indicative test result older than symptoms and outside confirmatory day limit, triggers isolation and completes positive indicative test`() {
+        val negativeTestResult = negativeTestResultConfirmed.toAcknowledgedTestResult()
+        val state = isolationSelfAssessmentAndTest(
+            selfAssessmentDate = indexCaseStartDate,
+            onsetDate = indexCaseStartDate,
+            testResult = negativeTestResult,
+            testExpiresIndexCase = true
+        )
+
+        val testResult = positiveTestResultIndicative.copy(
+            confirmatoryDayLimit = -1,
+            testEndDate = indexCaseStartDate.minus(3, DAYS).toInstant()
+        )
+
+        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
+            state.asLogical(),
+            testResult,
+            testAcknowledgedDate = Instant.now(fixedClock)
+        )
+
+        val expectedTestResult = testResult.toAcknowledgedTestResult().copy(confirmedDate = negativeTestResult.testEndDate, confirmatoryTestCompletionStatus = COMPLETED)
+        val isolationDuration = DurationDays().indexCaseSinceTestResultEndDate.toLong()
+        val expectedState = state.copy(
+            indexInfo = IndexCase(
+                testResult = expectedTestResult,
+                isolationTrigger = PositiveTestResult(testResult.testEndDate.toLocalDate(fixedClock.zone)),
+                expiryDate = testResult.testEndDate.plus(isolationDuration, DAYS).toLocalDate(fixedClock.zone)
+            ),
+        )
+
+        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+    }
+
+    @Test
     fun `when not in isolation, with expired index case without self-assessment, with relevant negative, positive indicative test result older than relevant test and newer than isolation is ignored`() {
         val relevantTestDate = testEndDate.minus(5, DAYS)
         val positiveTestEndDate = relevantTestDate.minus(4, DAYS)
@@ -1486,7 +1569,9 @@ class TestResultIsolationHandlerTest {
         assertEquals(DoNotTransition(preventKeySubmission = true, keySharingInfo = null), result)
     }
 
-    // -- No memory of previous isolation
+    //endregion
+
+    //region -- No memory of previous isolation
 
     @Test
     fun `when not in isolation, expired positive confirmed test result stores expired index isolation`() {
@@ -3169,7 +3254,7 @@ class TestResultIsolationHandlerTest {
             throw IllegalArgumentException("This function cannot be called with a $result test result")
         }
         return AcknowledgedTestResult(
-            testEndDay(fixedClock),
+            testEndDate(fixedClock),
             result,
             testKitType,
             acknowledgedDate = LocalDate.now(fixedClock),

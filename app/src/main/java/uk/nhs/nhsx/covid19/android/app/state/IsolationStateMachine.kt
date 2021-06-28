@@ -5,9 +5,9 @@ import com.tinder.StateMachine
 import com.tinder.StateMachine.Transition
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DeclaredNegativeResultFromDct
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedUnconfirmedPositiveTestResult
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
+import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfoProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
@@ -16,7 +16,6 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.ExplicitDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.NotStated
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
@@ -43,7 +42,8 @@ data class OnExposedNotification(val exposureDate: Instant) : Event()
 data class OnPositiveSelfAssessment(val onsetDate: SelectedDate) : Event()
 data class OnTestResult(
     val testResult: ReceivedTestResult,
-    val showNotification: Boolean = true
+    val showNotification: Boolean = true,
+    val testOrderType: TestOrderType,
 ) : Event()
 
 data class OnTestResultAcknowledge(
@@ -59,10 +59,12 @@ sealed class SideEffect {
 
     data class HandleTestResult(
         val testResult: ReceivedTestResult,
-        val showNotification: Boolean = true
+        val showNotification: Boolean = true,
+        val testOrderType: TestOrderType,
     ) : SideEffect()
 
     data class HandleAcknowledgedTestResult(
+        val previousIsolation: IsolationLogicalState,
         val testResult: ReceivedTestResult,
         val keySharingInfo: KeySharingInfo?
     ) : SideEffect()
@@ -81,7 +83,9 @@ class IsolationStateMachine @Inject constructor(
     private val analyticsEventTracker: AnalyticsEventTracker,
     private val exposureNotificationHandler: ExposureNotificationHandler,
     private val keySharingInfoProvider: KeySharingInfoProvider,
-    private val createSelfAssessmentIndexCase: CreateSelfAssessmentIndexCase
+    private val createSelfAssessmentIndexCase: CreateSelfAssessmentIndexCase,
+    private val trackTestResultAnalyticsOnReceive: TrackTestResultAnalyticsOnReceive,
+    private val trackTestResultAnalyticsOnAcknowledge: TrackTestResultAnalyticsOnAcknowledge,
 ) {
     private var _stateMachine = createStateMachine()
     internal val stateMachine: StateMachine<IsolationState, Event, SideEffect>
@@ -137,7 +141,7 @@ class IsolationStateMachine @Inject constructor(
             }
 
             on<OnTestResult> {
-                dontTransition(HandleTestResult(it.testResult, it.showNotification))
+                dontTransition(HandleTestResult(it.testResult, it.showNotification, it.testOrderType))
             }
 
             on<OnTestResultAcknowledge> {
@@ -147,7 +151,7 @@ class IsolationStateMachine @Inject constructor(
                     it.testResult,
                     testAcknowledgedDate = Instant.now(clock)
                 )
-                val sideEffect = HandleAcknowledgedTestResult(it.testResult, transition.keySharingInfo)
+                val sideEffect = HandleAcknowledgedTestResult(isolationLogicalState, it.testResult, transition.keySharingInfo)
                 when (transition) {
                     is TransitionDueToTestResult.Transition -> {
                         val newState = updateHasAcknowledgedEndOfIsolation(
@@ -227,13 +231,10 @@ class IsolationStateMachine @Inject constructor(
                         notificationProvider.showTestResultsReceivedNotification()
                     }
                     storageBasedUserInbox.notifyChanges()
-                    if (sideEffect.testResult.testResult == VirologyTestResult.POSITIVE &&
-                        sideEffect.testResult.requiresConfirmatoryTest
-                    ) {
-                        analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult)
-                    }
+                    trackTestResultAnalyticsOnReceive(sideEffect.testResult, sideEffect.testOrderType)
                 }
                 is HandleAcknowledgedTestResult -> {
+                    trackTestResultAnalyticsOnAcknowledge(sideEffect.previousIsolation, sideEffect.testResult)
                     unacknowledgedTestResultsProvider.remove(sideEffect.testResult)
                     if (sideEffect.keySharingInfo != null) {
                         keySharingInfoProvider.keySharingInfo = sideEffect.keySharingInfo

@@ -51,8 +51,35 @@ class CtaTokenValidatorTest {
     }
 
     @Test
-    fun `cta token length wrong`() = runBlocking {
+    fun `cta token length wrong - 0`() = runBlocking {
         val ctaToken = ""
+
+        val result = testSubject.validate(ctaToken)
+
+        assertEquals(Failure(INVALID), result)
+    }
+
+    @Test
+    fun `cta token length wrong - 1`() = runBlocking {
+        val ctaToken = "a"
+
+        val result = testSubject.validate(ctaToken)
+
+        assertEquals(Failure(INVALID), result)
+    }
+
+    @Test
+    fun `cta token length wrong - 7`() = runBlocking {
+        val ctaToken = "aaaaaaa"
+
+        val result = testSubject.validate(ctaToken)
+
+        assertEquals(Failure(INVALID), result)
+    }
+
+    @Test
+    fun `cta token length wrong - 9`() = runBlocking {
+        val ctaToken = "aaaaaaaaa"
 
         val result = testSubject.validate(ctaToken)
 

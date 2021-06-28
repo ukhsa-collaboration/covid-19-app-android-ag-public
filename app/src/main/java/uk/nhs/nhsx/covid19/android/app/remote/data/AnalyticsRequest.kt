@@ -97,4 +97,10 @@ data class Metrics(
     var didAccessLocalInfoScreenViaNotification: Int = 0,
     var didAccessLocalInfoScreenViaBanner: Int = 0,
     var isDisplayingLocalInfoBackgroundTick: Int = 0,
+    var positiveLabResultAfterPositiveLFD: Int = 0,
+    var negativeLabResultAfterPositiveLFDWithinTimeLimit: Int = 0,
+    var negativeLabResultAfterPositiveLFDOutsideTimeLimit: Int = 0,
+    var positiveLabResultAfterPositiveSelfRapidTest: Int = 0,
+    var negativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit: Int = 0,
+    var negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit: Int = 0,
 )

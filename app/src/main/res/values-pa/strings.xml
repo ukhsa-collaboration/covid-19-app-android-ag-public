@@ -40,9 +40,9 @@
     <string name="qr_code_success_subtitle">ਐਪ ਕਿਸੇ ਸਥਾਨ \'ਤੇ ਕੋਰੋਨਾਵਾਇਰਸ ਦੇ ਨਾਲ ਸੰਭਾਵੀ ਸੰਪਰਕ ਦਾ ਸਚੇਤ ਪ੍ਰਾਪਤ ਕਰਨ ਦਾ ਸਭ ਤੋਂ ਤੇਜ਼ ਤਰੀਕਾ ਹੈ।</string>
     <string name="qr_code_cancel_check_in">ਗਲਤ ਚੈੱਕ-ਇਨ ਹੋਇਆ ਹੈ? ਰੱਦ ਕਰਨ ਲਈ ਟੈਪ ਕਰੋ।</string>
     <string name="qr_code_help_how_it_works">ਇਹ ਕਿੰਝ ਕੰਮ ਕਰਦੀ ਹੈ</string>
-    <string name="qr_code_help_how_it_works_text">ਸਥਾਨ ਚੈੱਕ-ਇਨ ਅਧਿਕਾਰਤ NHS QR ਕੋਡ ਦੀ ਵਰਤੋਂ ਉਹਨਾਂ ਸਥਾਨਾਂ \'ਤੇ ਜਲਦੀ ਅਤੇ ਆਸਾਨੀ ਨਾਲ ਚੈੱਕ-ਇਨ ਕਰਨ ਵਿੱਚ ਤੁਹਾਡੀ ਮਦਦ ਕਰਨ ਲਈ ਕਰਦਾ ਹੈ ਜਿੱਥੇ ਤੁਸੀਂ ਜਾਂਦੇ ਹੋ - ਜਿਵੇਂ ਕਿ ਰੈਸਟੋਰੈਂਟ ਜਾਂ ਬਾਰ। ਜੇ ਤੁਸੀਂ ਐਪ ਦੀ ਵਰਤੋਂ ਕਰਦੇ ਹੋ, ਤਾਂ ਅਸੀਂ ਤੁਹਾਨੂੰ ਦੱਸ ਸਕਦੇ ਹਾਂ ਕਿ ਕੀ ਤੁਸੀਂ ਕਿਸੇ ਅਜਿਹੇ ਸਥਾਨ \'ਤੇ, ਜਿੱਥੇ ਤੁਸੀਂ ਗਏ ਸੀ, ਕੋਰੋਨਾਵਾਇਰਸ ਦੇ ਸੰਪਰਕ ਵਿੱਚ ਆਏ ਹੋ ਸਕਦੇ ਹੋ।</string>
+    <string name="qr_code_help_how_it_works_text">NHS QR ਕੋਡ ਪੋਸਟਰਾਂ ਨੂੰ ਤੇਜ਼ੀ ਅਤੇ ਅਸਾਨੀ ਨਾਲ ਸਕੈਨ ਕਰਨ ਲਈ ਇਸ ਐਪ ਦੀ ਵਰਤੋਂ ਕਰਦੇ ਹੋਏ \"ਕਿਸੇ ਸਥਾਨ \'ਤੇ ਚੈੱਕ-ਇਨ ਕਰੋ\" - ਜਿਵੇਂ ਕਿ ਕੋਈ ਰੈਸਟੋਰੈਂਟ ਜਾਂ ਬਾਰ। ਇਹ ਤੁਹਾਨੂੰ ਦੱਸ ਸਕਦਾ ਹੈ ਕਿ ਕੀ ਤੁਸੀਂ ਕਿਸੇ ਅਜਿਹੇ ਸਥਾਨ \'ਤੇ ਜਿੱਥੇ ਤੁਸੀਂ ਗਏ ਸੀ, ਵਾਇਰਸ ਦੇ ਸੰਪਰਕ ਵਿੱਚ ਆਏ ਹੋ ਸਕਦੇ ਹੋ।</string>
     <string name="venue_alert_title">ਤੁਸੀਂ ਹਾਲ ਹੀ ਵਿੱਚ ਇੱਕ ਸਥਾਨ ਦਾ ਉਸੇ ਦਿਨ ਦੌਰਾ ਕੀਤਾ ਸੀ ਜਿਸ ਦਿਨ ਦੂਜੇ ਅਜਿਹੇ ਲੋਕਾਂ ਨੇ ਵੀ ਕੀਤਾ ਸੀ ਜਿਨ੍ਹਾਂ ਦਾ ਬਾਅਦ ਵਿੱਚ ਕੋਰੋਨਾਵਾਇਰਸ (COVID-19) ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਪਾਜ਼ਿਟਿਵ ਆਇਆ ਹੈ</string>
-    <string name="venue_alert_explanation">ਇਸ ਗੱਲ ਦਾ ਜੋਖਮ ਹੈ ਕਿ ਤੁਸੀਂ ਸ਼ਾਇਦ ਵਾਇਰਸ ਦੇ ਸੰਪਰਕ ਵਿੱਚ ਆਏ ਹੋ ਸਕਦੇ ਹੋ। ਇਸ ਕਾਰਨ ਕਰਕੇ, ਅਸੀਂ ਹੁਣੇ ਇੱਕ ਟੈਸਟ ਬੁੱਕ ਕਰਾਉਣ ਦੀ ਸਿਫਾਰਸ਼ ਕਰਦੇ ਹਾਂ।\n\nਜੇ ਤੁਹਾਨੂੰ ਕੋਰੋਨਾਵਾਇਰਸ ਦੇ ਲੱਛਣ ਹਨ, ਤਾਂ ਕਿਰਪਾ ਕਰਕੇ ਐਪ ਵਿੱਚ “ਲੱਛਣਾਂ ਦੀ ਜਾਂਚ ਕਰੋ” ਬਟਨ ਦੀ ਚੋਣ ਕਰੋ ਅਤੇ ਇੱਕ ਟੈਸਟ ਬੁੱਕ ਕਰੋ।  \n\nਤੁਸੀਂ ਹਾਲੇ ਵੀ ਕੋਰੋਨਾਵਾਇਰਸ ਟੈਸਟ ਕਰਵਾ ਸਕਦੇ ਹੋ, ਭਾਵੇਂ ਤੁਹਾਨੂੰ ਦਿੱਤੇ ਗਏ ਲੱਛਣਾਂ ਵਿੱਚੋਂ ਕੋਈ ਵੀ ਨਾ ਹੋਵੇ। ਵਧੇਰੇ ਜਾਨਣ ਲਈ ਇਸ ਐਪ ਦੀ ਹੋਮ ਸਕ੍ਰੀਨ ਤੋਂ “COVID-19 ਲਈ ਟੈਸਟਿੰਗ” ਦੀ ਚੋਣ ਕਰੋ।\n\nਕਿਰਪਾ ਕਰਕੇ ਸਾਰੀ ਨਵੀਨਤਮ ਸੇਧ ਦੀ ਪਾਲਣਾ ਕਰਨਾ ਜਾਰੀ ਰੱਖੋ, ਭਾਵੇਂ ਤੁਹਾਨੂੰ ਟੀਕਾ ਲਗਾਇਆ ਗਿਆ ਹੋਵੇ। ਵਧੇਰੇ ਜਾਣਕਾਰੀ, ਸਲਾਹ ਜਾਂ ਸਹਾਇਤਾ ਲਈ ਕਿਰਪਾ ਕਰਕੇ 119 \'ਤੇ ਕਾਲ ਕਰੋ।</string>
+    <string name="venue_alert_explanation">ਇਸ ਗੱਲ ਦਾ ਜੋਖਮ ਹੈ ਕਿ ਤੁਸੀਂ ਸ਼ਾਇਦ ਵਾਇਰਸ ਦੇ ਸੰਪਰਕ ਵਿੱਚ ਆਏ ਹੋ ਸਕਦੇ ਹੋ। ਇਸ ਕਾਰਨ ਕਰਕੇ, ਅਸੀਂ ਹੁਣ ਇੱਕ ਟੈਸਟ ਬੁੱਕ ਕਰਨ ਦੀ ਸਿਫ਼ਾਰਿਸ਼ ਕਰਦੇ ਹਾਂ।\n\nਜੇ ਤੁਹਾਨੂੰ ਕੋਈ COVID-19 ਦਾ ਲੱਛਣ ਨਹੀਂ ਹੈ, ਤਾਂ ਇਹ ਪਤਾ ਕਰਨ ਲਈ ਕਿ ਰੈਪਿਡ ਲੈਟਰਲ ਫਲੋ ਟੈਸਟ ਕਿਵੇਂ ਕਰਵਾਉਣਾ ਹੈ, ਇਸ ਐਪ ਦੀ ਹੋਮ ਸਕ੍ਰੀਨ ਤੋਂ “Testing for COVID-19” (COVID-19 ਲਈ ਟੈਸਟ ਕਰਵਾਉਣਾ) ਚੁਣੋ।\n\nਜੇ ਤੁਹਾਨੂੰ COVID-19 ਦੇ ਲੱਛਣ ਹਨ, ਤਾਂ ਇਸ ਐਪ ਦੀ ਹੋਮ ਸਕ੍ਰੀਨ ਤੋਂ “Check symptoms” (ਲੱਛਣਾਂ ਦੀ ਜਾਂਚ ਕਰੋ) ਚੁਣੋ ਅਤੇ ਪੋਲੀਮੇਰੇਸ ਚੇਨ ਰਿਐਕਸ਼ਨ (PCR) ਟੈਸਟ ਬੁੱਕ ਕਰੋ।\n\nਕਿਰਪਾ ਕਰਕੇ ਸਾਰੀ ਨਵੀਨਤਮ ਸੇਧ ਦੀ ਪਾਲਣ ਕਰਨਾ ਜਾਰੀ ਰੱਖੋ, ਭਾਵੇਂ ਤੁਹਾਨੂੰ ਟੀਕਾ ਲਗਾਇਆ ਗਿਆ ਹੈ।\n\nਵਧੇਰੇ ਜਾਣਕਾਰੀ, ਸਲਾਹ ਜਾਂ ਸਹਾਇਤਾ ਲਈ ਕਿਰਪਾ ਕਰਕੇ 119 \'ਤੇ ਕਾਲ ਕਰੋ।</string>
     <string name="notification_title_post_code_risk_changed">ਸਥਾਨਕ ਜਾਣਕਾਰੀ ਨੂੰ ਅੱਪਡੇਟ ਕਰ ਦਿੱਤਾ ਗਿਆ ਹੈ।</string>
     <string name="notification_title_test_results">ਤਹਾਡੇ ਟੈਸਟ ਦੇ ਨਤੀਜੇ ਆ ਚੁੱਕੇ ਹਨ</string>
     <string name="select_symptoms">ਲੱਛਣ ਚੁਣੋ</string>
@@ -264,9 +264,9 @@
     <string name="link_test_result_text" />
     <string name="link_test_result_enter_code_title">ਆਪਣਾ ਟੈਸਟ ਕੋਡ ਦਰਜ ਕਰੋ</string>
     <string name="about_provide_feedback_link">ਫੀਡਬੈਕ ਜਾਣਕਾਰੀ</string>
-    <string name="qr_code_help_text">ਜੇ ਤੁਸੀਂ QR ਕੋਡ ਨੂੰ ਸਕੈਨ ਕਰਨ ਦੇ ਯੋਗ ਨਹੀਂ ਹੋ ਅਤੇ ਕਿਸੇ ਹੋਰ ਤਰੀਕੇ ਨਾਲ ਚੈੱਕ ਇਨ ਕਰਨ ਦੀ ਜ਼ਰੂਰਤ ਹੈ, ਤਾਂ ਕਿਰਪਾ ਕਰਕੇ ਸਟਾਫ ਦੇ ਇੱਕ ਮੈਂਬਰ ਨਾਲ ਗੱਲ ਕਰੋ।</string>
-    <string name="qr_code_help_about_qr_code_title">ਅਧਿਕਾਰਤ NHS QR ਕੋਡ ਕੀ ਹੁੰਦਾ ਹੈ?</string>
-    <string name="qr_code_help_about_qr_code_text">ਅਧਿਕਾਰਤ NHS QR ਕੋਡ ਪੋਸਟਰ ਇਸ ਤਰ੍ਹਾਂ ਦੇ ਦਿਖਾਈ ਦਿੰਦੇ ਹਨ। ਤੁਹਾਨੂੰ QR ਕੋਡ ਨੂੰ ਸਕੈਨ ਕਰਨ ਦੀ ਲੋੜ ਹੈ ਜੋ ਕੇਂਦਰ ਵਿੱਚ ਇੱਕ ਵਰਗ ਹੁੰਦਾ ਹੈ।</string>
+    <string name="qr_code_help_text">ਜੇ ਤੁਸੀਂ ਕੋਡ ਨੂੰ ਸਕੈਨ ਨਹੀਂ ਕਰ ਸਕਦੇ ਹੋ, ਤਾਂ ਅਸੀਂ ਤੁਹਾਨੂੰ ਸਲਾਹ ਦਿੰਦੇ ਹਾਂ ਕਿ ਸਥਾਨ \'ਤੇ ਸਟਾਫ਼ ਦੇ ਮੈਂਬਰ ਨਾਲ ਚੈੱਕ-ਇਨ ਕਰਨ ਦੇ ਹੋਰ ਤਰੀਕਿਆਂ ਬਾਰੇ ਗੱਲ ਕਰੋ।</string>
+    <string name="qr_code_help_about_qr_code_title">ਕਿਸੇ NHS QR ਕੋਡ ਪੋਸਟਰ ਨੂੰ ਕਿਵੇਂ ਪਛਾਣਨਾ ਹੈ</string>
+    <string name="qr_code_help_about_qr_code_text">ਅਧਿਕਾਰਤ NHS QR ਕੋਡ ਪੋਸਟਰ ਇਸ ਤਰ੍ਹਾਂ ਦੇ ਦਿਖਾਈ ਦਿੰਦੇ ਹਨ। ਤੁਹਾਨੂੰ ਕੋਡ ਨੂੰ ਸਕੈਨ ਕਰਨ ਦੀ ਲੋੜ ਹੈ ਜੋ, ਕੇਂਦਰ ਵਿੱਚ ਇੱਕ ਵਰਗ ਹੁੰਦਾ ਹੈ।</string>
     <string name="link_test_result_enter_code_example">ਉਦਾਹਰਣ: 7g8s3stn</string>
     <string name="about_software_information_text_app_manufacturer">ਨਿਰਮਾਤਾ ਅਤੇ ਪ੍ਰਬੰਧਕ</string>
     <string name="submit_keys_information_title">ਦੂਜਿਆਂ ਨੂੰ ਸੂਚਿਤ ਕਰਨ ਵਿੱਚ ਮਦਦ ਕਰੋ</string>
@@ -294,7 +294,7 @@
     <string name="qr_code_failure_help_link">ਕਿਸੇ ਥਾਂ ਵਿੱਚ ਚੈੱਕ-ਇਨ ਲਈ ਸਹਾਇਤਾ</string>
     <string name="status_option_read_self_isolation_advice">ਸੈਲਫ-ਆਈਸੋਲੇਸ਼ਨ ਬਾਰੇ ਸਲਾਹ ਪੜ੍ਹੋ</string>
     <string name="test_result_negative_already_not_in_isolation_subtitle">ਤੁਹਾਡੇ ਕੋਰੋਨਾਵਾਇਰਸ ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਨੈਗੇਟਿਵ ਰਿਹਾ ਹੈ</string>
-    <string name="qr_code_help_title">QR ਕੋਡ ਦੀ ਸਕੈਨਿੰਗ ਲਈ ਮਦਦ</string>
+    <string name="qr_code_help_title">ਜੇ ਤੁਸੀਂ ਕੋਡ ਨੂੰ ਸਕੈਨ ਨਹੀਂ ਕਰ ਸਕਦੇ ਹੋ ਤਾਂ ਮਦਦ</string>
     <string name="qr_code_help_about_qr_code_image_content_description">ਇਹ ਇੰਗਲੈਂਡ ਵਿੱਚ ਪ੍ਰਾਹੁਣਾਚਾਰੀ ਵਾਲੇ ਸਥਾਨਾਂ ਲਈ ਅਧਿਕਾਰਤ NHS QR ਕੋਡ ਪੋਸਟਰ ਦੀ ਇੱਕ ਉਦਾਹਰਨ ਹੈ</string>
     <string name="about_void">ਰੱਦ</string>
     <string name="authentication_enter_code_subtitle">ਆਪਣਾ ਵਿਲੱਖਣ ਕੋਡ ਦਰਜ ਕਰੋ</string>
@@ -309,8 +309,8 @@
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
     <string name="notification_channel_background_work_name">Background activities</string>
     <string name="notification_text_updating_database">ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...</string>
-    <string name="qr_code_help_poster_content_description_english">ਇਹ ਇੰਗਲੈਂਡ ਵਿੱਚ ਸਥਾਨਾਂ ਲਈ ਅਧਿਕਾਰਤ NHS QR ਕੋਡ ਪੋਸਟਰ ਦੀ ਇੱਕ ਉਦਾਹਰਨ ਹੈ</string>
-    <string name="qr_code_help_poster_content_description_welsh">ਇਹ ਵੇਲਜ਼ ਵਿੱਚ ਸਥਾਨਾਂ ਲਈ ਅਧਿਕਾਰਤ NHS QR ਕੋਡ ਪੋਸਟਰ ਦੀ ਇੱਕ ਉਦਾਹਰਨ ਹੈ</string>
+    <string name="qr_code_help_poster_content_description_english">ਇਹ ਇੰਗਲਿਸ਼ NHS QR ਕੋਡ ਪੋਸਟਰ ਦੀ ਉਦਾਹਰਣ ਹੈ</string>
+    <string name="qr_code_help_poster_content_description_welsh">ਇਹ ਵੈਲਸ਼ NHS QR ਕੋਡ ਪੋਸਟਰ ਦੀ ਉਦਾਹਰਣ ਹੈ</string>
     <string name="qr_code_help_poster_title_english">ਇੰਗਲਿਸ਼ NHS QR ਕੋਡ ਪੋਸਟਰ:</string>
     <string name="qr_code_help_poster_title_welsh">ਵੈਲਸ਼ NHS QR ਕੋਡ ਪੋਸਟਰ:</string>
     <string name="questionnaire_no_i_dont_have_symptom">ਨਹੀਂ, ਮੈਨੂੰ ਨਹੀਂ ਹਨ %s</string>
@@ -453,7 +453,7 @@
     <string name="qr_code_help_how_it_helps_text">ਐਪ ਦੀ ਇਹ ਸੁਵਿਧਾ ਕਾਰੋਬਾਰਾਂ ਲਈ ਕੰਟੈਕਟ ਟਰੇਸਿੰਗ ਦਾ ਸਮਰਥਨ ਕਰਨਾ ਆਸਾਨ ਬਣਾਉਂਦੀ ਹੈ। ਇਹ ਤੁਹਾਡੀ ਗੁਪਤਤਾ ਕਾਇਮ ਰੱਖਦੇ ਹੋਏ ਸਾਡੇ ਸਾਰਿਆਂ ਨੂੰ ਸੁਰੱਖਿਅਤ ਰਹਿਣ ਵਿੱਚ ਮਦਦ ਕਰਦੀ ਹੈ।</string>
     <string name="qr_code_help_how_it_helps_title">ਇਹ ਕਿੰਝ ਮਦਦ ਕਰਦੀ ਹੈ</string>
     <string name="qr_code_help_how_to_scan_text">ਆਪਣੇ ਫੋਨ ਨੂੰ ਫੜੋ ਤਾਂ ਜੋ ਅਧਿਕਾਰਤ NHS QR ਕੋਡ ਪਿਛਲੇ ਪੰਨੇ \'ਤੇ ਬਾਕਸ ਵਿੱਚ ਦਿਖਾਈ ਦੇਵੇ। ਜਦੋਂ ਤੁਹਾਡਾ ਫੋਨ QR ਕੋਡ ਨੂੰ ਪਛਾਣਦਾ ਹੈ, ਤਾਂ ਇਹ ਦਿਖਾਏਗਾ ਕਿ ਤੁਸੀਂ ਸਫਲਤਾਪੂਰਵਕ ਚੈੱਕ-ਇਨ ਕਰ ਲਿਆ ਹੈ।</string>
-    <string name="qr_code_help_how_to_scan_title">ਅਧਿਕਾਰਤ NHS QR ਕੋਡ ਨੂੰ ਕਿਵੇਂ ਸਕੈਨ ਕਰਨਾ ਹੈ</string>
+    <string name="qr_code_help_how_to_scan_title">NHS QR ਕੋਡ ਪੋਸਟਰ ਨੂੰ ਸਕੈਨ ਕਿਵੇਂ ਕਰਨਾ ਹੈ</string>
     <string name="settings_my_area_local_authority">ਸਥਾਨਕ ਅਥਾਰਿਟੀ</string>
     <string name="user_data_risky_venue_visit_date_title">ਜੋਖਮ ਵਾਲੇ ਸਥਾਨ ਦੀ ਤਾਰੀਖ</string>
     <string name="venue_check_in_title">ਵਧੇਰੇ ਜਾਣਕਾਰੀ</string>
@@ -480,9 +480,9 @@
     <string name="back">ਵਾਪਸ ਜਾਓ</string>
     <string name="how_does_it_help_text">ਇਸ ਨਾਲ ਦੂਜੇ ਐਪ ਵਰਤੋਂਕਾਰਾਂ ਨੂੰ ਇਹ ਪਤਾ ਲੱਗਦਾ ਹੈ ਕਿ ਉਹ ਕਿਸੇ ਅਜਿਹੇ ਵਿਅਕਤੀ ਦੇ ਕੋਲ ਸਨ ਜਿਸਦਾ ਕੋਰੋਨਾਵਾਇਰਸ ਲਈ ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਪਾਜ਼ਿਟਿਵ ਆਇਆ ਹੈ।</string>
     <string name="how_does_it_help_title">ਇਹ ਕਿਵੇਂ ਮਦਦ ਕਰਦਾ ਹੈ?</string>
-    <string name="qr_code_help_official_nhs_posters_title">ਅਧਿਕਾਰਤ NHS QR ਪੋਸਟਰ</string>
-    <string name="qr_code_help_poster_content_description_hospitality">ਇੰਗਲਿਸ਼ ਪ੍ਰਾਹੁਣਾਚਾਰੀ NHS QR ਕੋਡ ਪੋਸਟਰ</string>
-    <string name="qr_code_help_poster_title_hospitality">ਇੰਗਲਿਸ਼ ਪ੍ਰਾਹੁਣਾਚਾਰੀ NHS QR ਕੋਡ ਪੋਸਟਰ</string>
+    <string name="qr_code_help_official_nhs_posters_title">ਅਧਿਕਾਰਤ NHS QR ਕੋਡ ਪੋਸਟਰ</string>
+    <string name="qr_code_help_poster_content_description_hospitality">ਇਹ ਇੰਗਲਿਸ਼ ਪ੍ਰਾਹੁਣਾਚਾਰੀ NHS QR ਕੋਡ ਪੋਸਟਰ ਦੀ ਉਦਾਹਰਣ ਹੈ</string>
+    <string name="qr_code_help_poster_title_hospitality">ਇੰਗਲਿਸ਼ ਪ੍ਰਾਹੁਣਾਚਾਰੀ NHS QR ਕੋਡ ਪੋਸਟਰ:</string>
     <string name="share_keys_privacy_banner">ਕਿਸੇ ਨੂੰ ਨਹੀਂ ਪਤਾ ਹੋਵੇਗਾ ਕਿ ਸੂਚਨਾ ਤੁਹਾਡੇ ਨਾਲ ਸੰਬੰਧਿਤ ਹੈ</string>
     <string name="share_keys_success_title">COVID-19 ਦੇ ਫੈਲਣ ਨੂੰ ਰੋਕਣ ਵਿੱਚ ਮਦਦ ਕਰਨ ਲਈ ਧੰਨਵਾਦ</string>
     <string name="what_is_random_id_text">ਤੁਹਾਨੂੰ \"ਬੇਤਰਤੀਬ IDs\" ਸਾਂਝਾ ਕਰਨ ਲਈ ਕਿਹਾ ਜਾਵੇਗਾ। ਇਹ ਇੱਕ ਬੇਤਰਤੀਬੇ ਢੰਗ ਨਾਲ ਤਿਆਰ ਕੀਤਾ ਕੋਡ ਹੁੰਦਾ ਹੈ ਜੋ ਉਹਨਾਂ ਦੂਜੇ ਫੋਨਾਂ ਨਾਲ ਸਾਂਝਾ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ ਜਿਨ੍ਹਾਂ \'ਤੇ ਸੰਪਰਕ ਦੀ ਸੂਚਨਾ ਚਾਲੂ ਹੁੰਦੀ ਹੈ।</string>
@@ -563,4 +563,6 @@
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">ਸਵੈ-ਇਕੱਲਤਾ ਵਿੱਚ ਰਹਿਣਾ ਜਾਰੀ ਰੱਖਣਾ ਮਹੱਤਵਪੂਰਨ ਹੈ ਕਿਉਂਕਿ ਤੁਹਾਡੇ ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਪਾਜ਼ਿਟਿਵ ਆਇਆ ਹੈ।\n\nਆਪਣੇ-ਆਪ ਨੂੰ ਅਤੇ ਦੂਜਿਆਂ ਨੂੰ ਸੁਰੱਖਿਅਤ ਰੱਖਣ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਘਰ ਰਹੋ। ਐਪ ਹੋਮ ਸਕ੍ਰੀਨ \'ਤੇ ਕਾਉਂਟਡਾਉਨ ਟਾਈਮਰ ਦੇ ਨਾਲ ਆਪਣੀ ਸਵੈ-ਇਕਾਂਤ ਮਿਆਦ ਦਾ ਰਿਕਾਰਡ ਰੱਖੋ।</string>
+    <string name="qr_code_help_poster_title_hospitality_welsh">ਵੈਲਸ਼ ਉੱਚ ਜੋਖਮ ਵਾਲੇ ਸਥਾਨ NHS QR ਕੋਡ ਪੋਸਟਰ:</string>
+    <string name="qr_code_help_poster_content_description_hospitality_welsh">ਇਹ ਵੈਲਸ਼ ਉੱਚ ਜੋਖਮ ਵਾਲੇ ਸਥਾਨ NHS QR ਕੋਡ ਪੋਸਟਰ ਦੀ ਉਦਾਹਰਣ ਹੈ</string>
 </resources>

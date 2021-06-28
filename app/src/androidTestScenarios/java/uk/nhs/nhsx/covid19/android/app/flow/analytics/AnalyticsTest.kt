@@ -11,6 +11,11 @@ import com.jeroenmols.featureflag.framework.FeatureFlag.SUBMIT_ANALYTICS_VIA_ALA
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
+import org.junit.After
+import org.junit.Before
+import uk.nhs.nhsx.covid19.android.app.MainActivity
+import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
+import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
@@ -19,11 +24,6 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.SECONDS
 import java.util.concurrent.TimeoutException
 import kotlin.test.assertNotNull
-import org.junit.After
-import org.junit.Before
-import uk.nhs.nhsx.covid19.android.app.MainActivity
-import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
-import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 
 abstract class AnalyticsTest : EspressoTest() {
 
@@ -53,29 +53,37 @@ abstract class AnalyticsTest : EspressoTest() {
         FieldAsserter().runAllAssertions(lastRequest.metrics)
     }
 
-    fun assertOnFieldsForDateRange(dateRange: IntRange, function: FieldAsserter.() -> Unit) {
+    fun assertOnFieldsForDateRange(
+        dateRange: IntRange,
+        implicitlyAssertNotPresent: Boolean = true,
+        function: FieldAsserter.() -> Unit
+    ) {
         advanceToEndOfAnalyticsWindow()
-        assertOnLastPacket(function, dateRange.first)
+        assertOnLastPacket(implicitlyAssertNotPresent, function, dateRange.first)
         // Make sure packet for last day is created
         val dayBeforeEndOfDateRange = (dateRange.last - dateRange.first - 1).toLong()
         advanceClockByDaysAndRunBackgroundTasks(dayBeforeEndOfDateRange)
         // Advance to the last day and verify packet contents
         advanceClockByDaysAndRunBackgroundTasks(1L)
         triggerAnalyticsSubmission()
-        assertOnLastPacket(function, dateRange.last)
+        assertOnLastPacket(implicitlyAssertNotPresent, function, dateRange.last)
     }
 
-    fun assertOnFields(function: FieldAsserter.() -> Unit) {
+    fun assertOnFields(implicitlyAssertNotPresent: Boolean = true, function: FieldAsserter.() -> Unit) {
         advanceToEndOfAnalyticsWindow()
-        assertOnLastPacket(function)
+        assertOnLastPacket(implicitlyAssertNotPresent, function)
     }
 
-    fun assertOnLastFields(function: FieldAsserter.() -> Unit) {
-        assertOnLastPacket(function)
+    fun assertOnLastFields(implicitlyAssertNotPresent: Boolean = true, function: FieldAsserter.() -> Unit) {
+        assertOnLastPacket(implicitlyAssertNotPresent, function)
     }
 
-    private fun assertOnLastPacket(function: FieldAsserter.() -> Unit, day: Int? = null) {
-        val fieldAsserter = FieldAsserter()
+    private fun assertOnLastPacket(
+        implicitlyAssertNotPresent: Boolean = true,
+        function: FieldAsserter.() -> Unit,
+        day: Int? = null
+    ) {
+        val fieldAsserter = FieldAsserter(implicitlyAssertNotPresent)
         function(fieldAsserter)
         fieldAsserter.runAllAssertions(getLastAnalyticsPayload().metrics, day)
     }

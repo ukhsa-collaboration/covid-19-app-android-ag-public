@@ -24,7 +24,13 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidRememberOnset
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidSendLocalInfoNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedIsolationPaymentsApplication
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedTestOrdering
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveLFDOutsideTimeLimit
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveLFDWithinTimeLimit
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveLabResultAfterPositiveLFD
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveLabResultAfterPositiveSelfRapidTest
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.QrCodeCheckIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedActiveIpcToken
@@ -56,7 +62,13 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_R
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_SEND_LOCAL_INFO_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_ISOLATION_PAYMENTS_APPLICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_TEST_ORDERING
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_LFD_OUTSIDE_TIME_LIMIT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_LFD_WITHIN_TIME_LIMIT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_OUTSIDE_TIME_LIMIT
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_WITHIN_TIME_LIMIT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_LAB_RESULT_AFTER_POSITIVE_LFD
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CODE_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_ACTIVE_IPC_TOKEN
@@ -1351,6 +1363,54 @@ class AnalyticsEventProcessorTest {
         verifyTrackRegularAnalyticsEvent(
             DidAccessLocalInfoScreenViaBanner,
             DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER
+        )
+    }
+
+    @Test
+    fun `track positiveLabResultAfterPositiveLFD`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            PositiveLabResultAfterPositiveLFD,
+            POSITIVE_LAB_RESULT_AFTER_POSITIVE_LFD
+        )
+    }
+
+    @Test
+    fun `track negativeLabResultAfterPositiveLFDWithinTimeLimit`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            NegativeLabResultAfterPositiveLFDWithinTimeLimit,
+            NEGATIVE_LAB_RESULT_AFTER_POSITIVE_LFD_WITHIN_TIME_LIMIT
+        )
+    }
+
+    @Test
+    fun `track negativeLabResultAfterPositiveLFDOutsideTimeLimit`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            NegativeLabResultAfterPositiveLFDOutsideTimeLimit,
+            NEGATIVE_LAB_RESULT_AFTER_POSITIVE_LFD_OUTSIDE_TIME_LIMIT
+        )
+    }
+
+    @Test
+    fun `track positiveLabResultAfterPositiveSelfRapidTest`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            PositiveLabResultAfterPositiveSelfRapidTest,
+            POSITIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST
+        )
+    }
+
+    @Test
+    fun `track negativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            NegativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit,
+            NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_WITHIN_TIME_LIMIT
+        )
+    }
+
+    @Test
+    fun `track negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            NegativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit,
+            NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_OUTSIDE_TIME_LIMIT
         )
     }
 

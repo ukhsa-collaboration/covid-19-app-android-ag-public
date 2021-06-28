@@ -10,6 +10,7 @@ import kotlinx.android.parcel.Parcelize
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import uk.nhs.nhsx.covid19.android.app.util.isEqualOrAfter
@@ -107,20 +108,23 @@ data class ReceivedTestResult(
     val diagnosisKeySubmissionToken: String?,
     val testEndDate: Instant,
     val testResult: VirologyTestResult,
-    val testKitType: VirologyTestKitType?,
+    override val testKitType: VirologyTestKitType?,
     val diagnosisKeySubmissionSupported: Boolean,
     val requiresConfirmatoryTest: Boolean = false,
     val symptomsOnsetDate: SymptomsDate? = null,
-    val confirmatoryDayLimit: Int? = null
-) : Parcelable {
+    override val confirmatoryDayLimit: Int? = null
+) : TestResult, Parcelable {
 
-    fun isPositive(): Boolean =
+    override fun isPositive(): Boolean =
         testResult == POSITIVE
+
+    override fun isNegative(): Boolean =
+        testResult == NEGATIVE
 
     fun isConfirmed(): Boolean =
         !requiresConfirmatoryTest
 
-    fun testEndDay(clock: Clock): LocalDate =
+    override fun testEndDate(clock: Clock): LocalDate =
         testEndDate.toLocalDate(clock.zone)
 }
 

@@ -2,8 +2,6 @@
 
 package uk.nhs.nhsx.covid19.android.app.isolation
 
-import android.content.Context
-import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assume
@@ -11,13 +9,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDate
-import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedUnconfirmedPositiveTestWithEndDateOlderThanAssumedSymptomOnsetDate
-import uk.nhs.nhsx.covid19.android.app.isolation.PositiveTestCaseState.notIsolatingAndHasNegativeTest
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.report.notReported
-import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
-import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import java.time.LocalDate
 import java.time.ZoneOffset
 
@@ -26,10 +18,8 @@ class IsolationTests(
     private val transition: Transition,
     private val initialStateRepresentation: StateRepresentation,
     @Suppress("unused") private val testName: String
-) : EspressoTest() {
+) {
     companion object {
-        private val context: Context = InstrumentationRegistry.getInstrumentation().context
-
         @JvmStatic
         @Parameterized.Parameters(name = "{index}_{2}")
         fun generateParameters(): Iterable<Array<Any>> {
@@ -40,7 +30,7 @@ class IsolationTests(
             } else {
                 val parameters = mutableListOf<Array<Any>>()
                 val representationProvider = AllStateRepresentations()
-                IsolationTransitionLoader(context).loadTransitions()
+                IsolationTransitionLoader().loadTransitions()
                     .forEach { transition ->
                         representationProvider.getStateRepresentations(transition.initialState, transition.event)
                             .forEach { initialStateRepresentation ->
@@ -56,15 +46,15 @@ class IsolationTests(
 
         private fun getTransitionsForManualTest(): Iterable<Array<Any>> {
             val initialState = State(
-                contact = ContactCaseState.isolating,
-                symptomatic = SymptomaticCaseState.notIsolatingAndHadSymptomsPreviously,
-                positiveTest = PositiveTestCaseState.noIsolation
+                contact = ContactCaseState.noIsolation,
+                symptomatic = SymptomaticCaseState.noIsolation,
+                positiveTest = PositiveTestCaseState.notIsolatingAndHasNegativeTest
             )
-            val event = Event.receivedConfirmedPositiveTestWithEndDateOlderThanAssumedSymptomOnsetDate
+            val event = Event.receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDateAndOlderThanAssumedSymptomOnsetDayIfAny
             val finalState = State(
                 contact = ContactCaseState.noIsolation,
                 symptomatic = SymptomaticCaseState.noIsolation,
-                positiveTest = PositiveTestCaseState.notIsolatingAndHadConfirmedTestPreviously
+                positiveTest = PositiveTestCaseState.isolatingWithUnconfirmedTest
             )
             val representation4_10 = StateStorage4_10Representation(initialState, event)
 
@@ -83,23 +73,24 @@ class IsolationTests(
             )
     }
 
+    private val isolationTestContext = IsolationTestContext()
     private val isolationConfiguration = DurationDays()
-    private val stateVerifier = StateVerifier(testAppContext)
-    private val eventHandler = EventHandler(testAppContext, isolationConfiguration)
+    private val stateVerifier = StateVerifier(isolationTestContext)
+    private val eventHandler = EventHandler(isolationTestContext, isolationConfiguration)
 
     @Before
     fun setUp() {
-        testAppContext.setLocalAuthority(TestApplicationContext.ENGLISH_LOCAL_AUTHORITY)
-        testAppContext.clock.currentInstant = LocalDate.of(2020, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC)
+        isolationTestContext.setLocalAuthority(IsolationTestContext.ENGLISH_LOCAL_AUTHORITY)
+        isolationTestContext.clock.currentInstant = LocalDate.of(2020, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC)
     }
 
     @After
     fun tearDown() {
-        testAppContext.clock.reset()
+        isolationTestContext.clock.reset()
     }
 
     @Test
-    fun testTransition() = notReported {
+    fun testTransition() {
         runBlocking {
             skipUnsupportedTransition(transition)
             initialStateRepresentation.skipUnsupportedState(transition.initialState)
@@ -107,7 +98,7 @@ class IsolationTests(
             initialStateRepresentation.skipUnsupportedEvent(transition.event)
 
             try {
-                initialStateRepresentation.setupState(testAppContext, isolationConfiguration)
+                initialStateRepresentation.setupState(isolationTestContext, isolationConfiguration)
                 stateVerifier.verifyState(transition.initialState)
                 eventHandler.handleEvent(transition.event)
                 stateVerifier.verifyState(transition.finalState)
@@ -126,23 +117,16 @@ class IsolationTests(
         Event:     ${transition.event}
         Expected:  ${transition.finalState}
 
-        ContactCase:    ${testAppContext.getCurrentState().contactCase}
+        ContactCase:    ${isolationTestContext.getCurrentState().contactCase}
         
-        IndexInfo:      ${testAppContext.getCurrentState().indexInfo}
+        IndexInfo:      ${isolationTestContext.getCurrentState().indexInfo}
                 
-        Clock:          ${testAppContext.clock.currentInstant}
-        Configuration:  ${testAppContext.getCurrentState().isolationConfiguration}
+        Clock:          ${isolationTestContext.clock.currentInstant}
+        Configuration:  ${isolationTestContext.getCurrentState().isolationConfiguration}
 
         """.trimIndent()
 
     private fun skipUnsupportedTransition(transition: Transition) {
-        // TODO Should be fixed in https://jira.collab.test-and-trace.nhs.uk/browse/COV-11005
-        Assume.assumeFalse(
-            "Skipping event receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDate",
-            transition.event == receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDate &&
-                transition.initialState.positiveTest == notIsolatingAndHasNegativeTest
-        )
-
         Assume.assumeFalse("Skipping transition", transitionsToSkip.contains(transition))
     }
 

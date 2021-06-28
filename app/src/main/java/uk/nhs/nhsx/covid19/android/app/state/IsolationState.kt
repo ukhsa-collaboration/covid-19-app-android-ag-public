@@ -117,6 +117,9 @@ data class IsolationState(
             fun isSelfAssessment(): Boolean =
                 isolationTrigger is SelfAssessment
 
+            fun getSelfAssessmentOnsetDate(): LocalDate? =
+                (isolationTrigger as? SelfAssessment)?.assumedOnsetDate
+
             val assumedOnsetDateForExposureKeys: LocalDate
                 get() = when (isolationTrigger) {
                     is PositiveTestResult ->
@@ -160,7 +163,7 @@ data class IsolationState(
                             selfAssessmentDate = triggerDate,
                             onsetDate = receivedTestResult.symptomsOnsetDate.explicitDate
                         )
-                    else -> PositiveTestResult(receivedTestResult.testEndDay(clock))
+                    else -> PositiveTestResult(receivedTestResult.testEndDate(clock))
                 }
         }
     }
@@ -177,6 +180,9 @@ sealed class IsolationLogicalState {
     abstract fun toIsolationState(): IsolationState
     abstract fun capExpiryDate(isolationPeriod: IsolationPeriod): LocalDate
     abstract fun isActiveIsolation(clock: Clock): Boolean
+    abstract fun isActiveIndexCase(clock: Clock): Boolean
+    abstract fun getIndexCase(): IndexCase?
+    abstract fun getTestResult(): AcknowledgedTestResult?
 
     data class NeverIsolating(
         override val isolationConfiguration: DurationDays,
@@ -192,8 +198,14 @@ sealed class IsolationLogicalState {
         override fun capExpiryDate(isolationPeriod: IsolationPeriod): LocalDate =
             isolationPeriod.capExpiryDate(isolationConfiguration)
 
-        override fun isActiveIsolation(clock: Clock): Boolean =
-            false
+        override fun isActiveIsolation(clock: Clock): Boolean = false
+
+        override fun isActiveIndexCase(clock: Clock): Boolean = false
+
+        override fun getIndexCase(): IndexCase? = null
+
+        override fun getTestResult(): AcknowledgedTestResult? =
+            negativeTest?.testResult
     }
 
     data class PossiblyIsolating(val isolationState: IsolationState) :
@@ -224,8 +236,10 @@ sealed class IsolationLogicalState {
 
         override fun toIsolationState(): IsolationState = isolationState
 
-        fun isActiveIndexCase(clock: Clock): Boolean =
+        override fun isActiveIndexCase(clock: Clock): Boolean =
             indexInfo is IndexCase && !indexInfo.hasExpired(clock)
+
+        override fun getIndexCase(): IndexCase? = indexInfo as? IndexCase
 
         fun isActiveIndexCaseOnly(clock: Clock): Boolean =
             isActiveIndexCase(clock) && !isActiveContactCase(clock)
@@ -271,6 +285,9 @@ sealed class IsolationLogicalState {
         override fun isActiveIsolation(clock: Clock): Boolean =
             !hasExpired(clock)
 
+        override fun getTestResult(): AcknowledgedTestResult? =
+            indexInfo?.testResult
+
         fun getActiveTestResult(clock: Clock): AcknowledgedTestResult? =
             getActiveIndexCase(clock)?.testResult
 
@@ -287,6 +304,9 @@ sealed class IsolationLogicalState {
             getActiveTestResult(clock)?.let { activeTestResult ->
                 activeTestResult.isPositive() && activeTestResult.isConfirmed()
             } ?: false
+
+        fun hasCompletedPositiveTestResult(): Boolean =
+            getTestResultIfPositive()?.isCompleted() ?: false
 
         fun getTestResultIfPositive(): AcknowledgedTestResult? {
             val relevantTestResult = indexInfo?.testResult

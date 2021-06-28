@@ -77,6 +77,9 @@ class IsolationHelper(
     fun positiveTest(
         testResult: AcknowledgedTestResult
     ): IndexCase {
+        if (testResult.testResult != RelevantVirologyTestResult.POSITIVE) {
+            throw IllegalArgumentException("This function can only be called with a positive test result")
+        }
         val testEndDay = testResult.testEndDate
         return IndexCase(
             isolationTrigger = PositiveTestResult(testEndDay),

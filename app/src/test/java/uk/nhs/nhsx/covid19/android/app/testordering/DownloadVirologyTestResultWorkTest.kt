@@ -7,7 +7,6 @@ import com.squareup.moshi.JsonEncodingException
 import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.coVerifyAll
 import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
@@ -17,11 +16,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
@@ -31,7 +25,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -54,10 +47,9 @@ class DownloadVirologyTestResultWorkTest {
 
     private val virologyTestingApi = mockk<VirologyTestingApi>()
     private val testOrderTokensProvider = mockk<TestOrderingTokensProvider>(relaxUnitFun = true)
-    private val stateMachine = mockk<IsolationStateMachine>()
+    private val stateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
     private val localAuthorityPostCodeProvider = mockk<LocalAuthorityPostCodeProvider>()
-    private val analyticsManager = mockk<AnalyticsEventProcessor>(relaxUnitFun = true)
     private val receivedUnknownTestResultProvider = mockk<ReceivedUnknownTestResultProvider>(relaxUnitFun = true)
     private val clock = Clock.fixed(from, ZoneId.systemDefault())
 
@@ -67,7 +59,6 @@ class DownloadVirologyTestResultWorkTest {
         stateMachine,
         isolationConfigurationProvider,
         localAuthorityPostCodeProvider,
-        analyticsManager,
         receivedUnknownTestResultProvider,
         clock
     )
@@ -160,7 +151,7 @@ class DownloadVirologyTestResultWorkTest {
             requiresConfirmatoryTest = true,
             confirmatoryDayLimit = 2
         )
-        verify { stateMachine.processEvent(OnTestResult(testResult)) }
+        verify { stateMachine.processEvent(OnTestResult(testResult, testOrderType = INSIDE_APP)) }
 
         assertEquals(ListenableWorker.Result.success(), result)
     }
@@ -198,7 +189,7 @@ class DownloadVirologyTestResultWorkTest {
             diagnosisKeySubmissionSupported = true,
             requiresConfirmatoryTest = false
         )
-        verify { stateMachine.processEvent(OnTestResult(testResult)) }
+        verify { stateMachine.processEvent(OnTestResult(testResult, testOrderType = INSIDE_APP)) }
 
         assertEquals(ListenableWorker.Result.success(), result)
     }
@@ -236,7 +227,7 @@ class DownloadVirologyTestResultWorkTest {
             diagnosisKeySubmissionSupported = true,
             requiresConfirmatoryTest = false
         )
-        verify { stateMachine.processEvent(OnTestResult(testResult)) }
+        verify { stateMachine.processEvent(OnTestResult(testResult, testOrderType = INSIDE_APP)) }
 
         assertEquals(ListenableWorker.Result.success(), result)
     }
@@ -298,8 +289,8 @@ class DownloadVirologyTestResultWorkTest {
             diagnosisKeySubmissionSupported = true,
             requiresConfirmatoryTest = true
         )
-        verify { stateMachine.processEvent(OnTestResult(testResult2)) }
-        verify { stateMachine.processEvent(OnTestResult(testResult1)) }
+        verify { stateMachine.processEvent(OnTestResult(testResult2, testOrderType = INSIDE_APP)) }
+        verify { stateMachine.processEvent(OnTestResult(testResult1, testOrderType = INSIDE_APP)) }
     }
 
     @Test
@@ -330,114 +321,6 @@ class DownloadVirologyTestResultWorkTest {
         assertFalse(result)
 
         verify { testOrderTokensProvider wasNot called }
-    }
-
-    @Test
-    fun `track analytics events on PCR negative result`() = runBlocking {
-        setResult(NEGATIVE, LAB_RESULT)
-
-        testSubject.invoke()
-
-        coVerifyAll {
-            analyticsManager.track(NegativeResultReceived)
-            analyticsManager.track(ResultReceived(NEGATIVE, LAB_RESULT, INSIDE_APP))
-        }
-    }
-
-    @Test
-    fun `track analytics events on PCR positive result`() = runBlocking {
-        setResult(POSITIVE, LAB_RESULT)
-
-        testSubject.invoke()
-
-        coVerifyAll {
-            analyticsManager.track(PositiveResultReceived)
-            analyticsManager.track(ResultReceived(POSITIVE, LAB_RESULT, INSIDE_APP))
-        }
-    }
-
-    @Test
-    fun `track analytics events on PCR void result`() = runBlocking {
-        setResult(VOID, LAB_RESULT)
-
-        testSubject.invoke()
-
-        coVerifyAll {
-            analyticsManager.track(VoidResultReceived)
-            analyticsManager.track(ResultReceived(VOID, LAB_RESULT, INSIDE_APP))
-        }
-    }
-
-    @Test
-    fun `track analytics events on assisted LFD negative result`() = runBlocking {
-        setResult(NEGATIVE, RAPID_RESULT)
-
-        testSubject.invoke()
-
-        coVerifyAll {
-            analyticsManager.track(NegativeResultReceived)
-            analyticsManager.track(ResultReceived(NEGATIVE, RAPID_RESULT, INSIDE_APP))
-        }
-    }
-
-    @Test
-    fun `track analytics events on unassisted LFD negative result`() = runBlocking {
-        setResult(NEGATIVE, RAPID_SELF_REPORTED)
-
-        testSubject.invoke()
-
-        coVerifyAll {
-            analyticsManager.track(NegativeResultReceived)
-            analyticsManager.track(ResultReceived(NEGATIVE, RAPID_SELF_REPORTED, INSIDE_APP))
-        }
-    }
-
-    @Test
-    fun `track analytics events on assisted LFD positive result`() = runBlocking {
-        setResult(POSITIVE, RAPID_RESULT)
-
-        testSubject.invoke()
-
-        coVerifyAll {
-            analyticsManager.track(PositiveResultReceived)
-            analyticsManager.track(ResultReceived(POSITIVE, RAPID_RESULT, INSIDE_APP))
-        }
-    }
-
-    @Test
-    fun `track analytics events on unassisted LFD positive result`() = runBlocking {
-        setResult(POSITIVE, RAPID_SELF_REPORTED)
-
-        testSubject.invoke()
-
-        coVerifyAll {
-            analyticsManager.track(PositiveResultReceived)
-            analyticsManager.track(ResultReceived(POSITIVE, RAPID_SELF_REPORTED, INSIDE_APP))
-        }
-    }
-
-    @Test
-    fun `track analytics events on assisted LFD void result`() = runBlocking {
-        setResult(VOID, RAPID_RESULT)
-
-        testSubject.invoke()
-
-        coVerifyAll {
-            analyticsManager.track(VoidResultReceived)
-            analyticsManager.track(ResultReceived(VOID, RAPID_RESULT, INSIDE_APP))
-        }
-    }
-
-    @Test
-    fun `track analytics events on unassisted LFD void result`() = runBlocking {
-        setResult(VOID, RAPID_SELF_REPORTED)
-
-        testSubject.invoke()
-
-        coVerifyAll {
-            analyticsManager.track(VoidResultReceived)
-            analyticsManager.track(ResultReceived(VOID, RAPID_SELF_REPORTED, INSIDE_APP))
-        }
     }
 
     @Test

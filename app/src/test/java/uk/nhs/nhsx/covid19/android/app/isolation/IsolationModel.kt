@@ -95,7 +95,7 @@ enum class Event {
     receivedUnconfirmedPositiveTestWithEndDateOlderThanRememberedNegativeTestEndDate,
     receivedUnconfirmedPositiveTestWithEndDateOlderThanAssumedSymptomOnsetDate,
     receivedUnconfirmedPositiveTestWithIsolationPeriodOlderThanAssumedSymptomOnsetDate,
-    receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDate,
+    receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDateAndOlderThanAssumedSymptomOnsetDayIfAny,
 
     receivedNegativeTest,
     receivedNegativeTestWithEndDateOlderThanRememberedUnconfirmedTestEndDate,

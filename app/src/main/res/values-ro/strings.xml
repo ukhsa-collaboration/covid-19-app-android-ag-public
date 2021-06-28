@@ -40,9 +40,9 @@
     <string name="qr_code_success_subtitle">Aplicația este cel mai rapid mod de a fi alertat/ ă de o potențială expunere la coronavirus într-o locație.</string>
     <string name="qr_code_cancel_check_in">Ați înregistrat locația greșită? Atingeți pentru anulare.</string>
     <string name="qr_code_help_how_it_works">Cum funcționează</string>
-    <string name="qr_code_help_how_it_works_text">Înregistrarea locațiilor vizitate utilizează coduri QR NHS oficiale pentru a vă ajuta să înregistrați rapid și ușor locațiile vizitate - cum ar fi restaurantele sau barurile. Dacă utilizați aplicația, vă putem anunța dacă ați fost expus la coronavirus într-o locație vizitată.</string>
-    <string name="venue_alert_title">Ați vizitat recent un loc în aceeași zi ca și persoanele care au testat pozitiv pentru coronavirus (COVID-19)</string>
-    <string name="venue_alert_explanation">Există riscul să fi fost expus la virus. Din acest motiv, vă recomandăm să rezervați un test acum.\n\nDacă aveți simptome de coronavirus, selectați butonul „Verificați simptomele” din aplicație și rezervați un test. \n\nPuteți obține în continuare un test de coronavirus, chiar dacă nu aveți niciunul dintre simptomele enumerate. Selectați „Testare pentru COVID-19” din ecranul de pornire al acestei aplicații pentru a afla mai multe.\n\nVă rugăm să continuați să urmați cele mai recente instrucțiuni, chiar dacă ați fost vaccinat /ă. Pentru mai multe informații, recomandări sau asistență, vă rugăm să sunați la 119.</string>
+    <string name="qr_code_help_how_it_works_text">„Înregistrați-vă vizita” (de exemplu, la un bar sau restaurant) rapid și ușor, utilizând această aplicație pentru a scana afișele cu Codul QR NHS. Această măsură vă poate ajuta să aflați dacă ați fost expus /ă la virus într-un local vizitat.</string>
+    <string name="venue_alert_title">Ați vizitat recent un loc în aceeași zi ca și persoane care au testat pozitiv pentru coronavirus (COVID-19)</string>
+    <string name="venue_alert_explanation">Există riscul să fi fost expus /ă la coronavirus. Din acest motiv, vă recomandăm să rezervați un test acum.\n\nDacă nu aveți simptome de COVID-19, selectați „Testarea COVID-19” din ecranul de pornire al acestei aplicații pentru a afla cum să obțineți un test rapid cu flux lateral.\n\nDacă aveți simptome COVID-19, selectați „Verifică simptomele” din ecranul de pornire al acestei aplicații și rezervați un test de reacție de polimerizare în lanț (PCR).\n\nVă rugăm să continuați să urmați cele mai recente îndrumări, chiar dacă ați fost vaccinat /ă.\n\nPentru mai multe informații, recomandări sau asistență, vă rugăm să sunați la 119.</string>
     <string name="notification_title_post_code_risk_changed">Informațiile locale au fost actualizate.</string>
     <string name="notification_title_test_results">Rezultatele testului dvs. au ajuns</string>
     <string name="select_symptoms">Selectare simptome</string>
@@ -167,7 +167,7 @@
     <string name="something_went_wrong">Ceva n-a mers bine</string>
     <string name="test_ordering_failure_title">Ceva n-a mers bine</string>
     <string name="test_ordering_failure_description">Înainte de a încerca din nou, vă rugăm să verificați că setările de date mobile ale telefonului dvs. sunt active, verificați-vă conexiunea Wi-Fi (dacă utilizați una) și asigurați-vă că modul Avion este oprit.</string>
-    <string name="notification_title_risky_venue">Ați vizitat recent un loc în aceeași zi ca și persoanele care au testat pozitiv pentru coronavirus (COVID-19)</string>
+    <string name="notification_title_risky_venue">Ați vizitat recent un loc în aceeași zi ca și persoane care au testat pozitiv pentru coronavirus (COVID-19)</string>
     <string name="notification_text_post_code_risk_changed">Nu uitați să scanați un cod QR oficial când vizitați diverse locații.</string>
     <string name="notification_channel_area_risk_changed_name">Modificare a riscului zonei</string>
     <string name="notification_channel_area_risk_changed_description">Aceste notificări ajută la urmărirea riscului de infecție în zona dvs.</string>
@@ -268,9 +268,9 @@
     <string name="link_test_result_text" />
     <string name="link_test_result_enter_code_title">Introduceți codul testului dvs</string>
     <string name="about_provide_feedback_link">Informații despre opinii</string>
-    <string name="qr_code_help_text">Dacă nu puteți scana un cod QR și trebuie să verificați în alt mod, vă rugăm să discutați cu un membru al personalului.</string>
-    <string name="qr_code_help_about_qr_code_title">Ce este un cod QR NHS oficial?</string>
-    <string name="qr_code_help_about_qr_code_text">Iată cum arată posterele oficiale ale codului QR NHS oficial. Trebuie să scanați codul QR care este pătratul din mijloc.</string>
+    <string name="qr_code_help_text">Dacă nu puteți scana codul, vă recomandăm să discutați cu un membru al personalului localului despre alte modalități de a înregistra vizita.</string>
+    <string name="qr_code_help_about_qr_code_title">Cum se recunoaște un afiș cu cod QR NHS</string>
+    <string name="qr_code_help_about_qr_code_text">Iată cum arată afișele oficiale cu cod QR NHS. Trebuie să scanați codul, respectiv pătratul din mijloc.</string>
     <string name="link_test_result_enter_code_example">Exemplu: 7g8s3stn</string>
     <string name="about_software_information_text_app_manufacturer">Producătorul și întreținătorul</string>
     <string name="submit_keys_information_title">Ajutați la informarea celorlalți</string>
@@ -298,7 +298,7 @@
     <string name="qr_code_failure_help_link">Ajutor cu înregistrarea în locație</string>
     <string name="status_option_read_self_isolation_advice">Citiți sfaturi pentru auto-izolare</string>
     <string name="test_result_negative_already_not_in_isolation_subtitle">Testul dvs. pentru coronavirus este negativ</string>
-    <string name="qr_code_help_title">Ajutor cu scanarea unui cod QR</string>
+    <string name="qr_code_help_title">Asistență pentru cazurile în care nu puteți scana codul</string>
     <string name="qr_code_help_about_qr_code_image_content_description">Acesta este un exemplu de poster oficial cu cod QR NHS pentru spațiile de cazare din Anglia</string>
     <string name="about_void">Golire</string>
     <string name="authentication_enter_code_subtitle">Introduceți codul dvs. unic</string>
@@ -313,8 +313,8 @@
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
     <string name="notification_channel_background_work_name">Background activities</string>
     <string name="notification_text_updating_database">Încărcare...</string>
-    <string name="qr_code_help_poster_content_description_english">Acesta este un exemplu de poster oficial cu cod QR NHS pentru localurile din Anglia</string>
-    <string name="qr_code_help_poster_content_description_welsh">Acesta este un exemplu de poster oficial cu cod QR NHS pentru localurile din Țara Galilor</string>
+    <string name="qr_code_help_poster_content_description_english">Iată un exemplu de afiș cu cod QR NHS pentru Anglia</string>
+    <string name="qr_code_help_poster_content_description_welsh">Iată un exemplu de afiș cu cod QR NHS pentru Țara Galilor</string>
     <string name="qr_code_help_poster_title_english">Poster NHS cod QR engleză</string>
     <string name="qr_code_help_poster_title_welsh">Poster NHS cod QR galeză</string>
     <string name="questionnaire_no_i_dont_have_symptom">Nu, nu am %s</string>
@@ -457,7 +457,7 @@
     <string name="qr_code_help_how_it_helps_text">Această funcție a aplicației ajută afacerile în urmărirea contactelor. Ne ajută pe noi toți să fim în siguranță, în timp ce protejează intimitatea.</string>
     <string name="qr_code_help_how_it_helps_title">Cum ajută aceasta</string>
     <string name="qr_code_help_how_to_scan_text">Țineți telefonul astfel încât codul QR NHS oficial să apară în caseta de pe pagina anterioară. Atunci când telefonul dvs. recunoaște codul QR, acesta va arăta că ați înregistrat vizita cu succes.</string>
-    <string name="qr_code_help_how_to_scan_title">Cum se scanează un cod QR NHS oficial</string>
+    <string name="qr_code_help_how_to_scan_title">Cum se scanează un afiș cu cod QR NHS</string>
     <string name="settings_my_area_local_authority">Autoritate locală</string>
     <string name="user_data_risky_venue_visit_date_title">DATA LA CARE AȚI VIZITAT FOCARUL</string>
     <string name="venue_check_in_title">Mai multe informații</string>
@@ -484,9 +484,9 @@
     <string name="back">Înapoi</string>
     <string name="how_does_it_help_text">Informează ceilalți utilizatori ai aplicației că s-au aflat lângă o persoană care a testat pozitiv pentru coronavirus.</string>
     <string name="how_does_it_help_title">Cum ajută acest lucru?</string>
-    <string name="qr_code_help_official_nhs_posters_title">Postere oficiale QR NHS</string>
-    <string name="qr_code_help_poster_content_description_hospitality">Poster cod NHS - ospitalitate britanică</string>
-    <string name="qr_code_help_poster_title_hospitality">Poster cod NHS - ospitalitate britanică</string>
+    <string name="qr_code_help_official_nhs_posters_title">Afișe oficiale cu cod QR NHS</string>
+    <string name="qr_code_help_poster_content_description_hospitality">Iată un exemplu de afiș cu cod QR NHS pentru localurile HoReCa</string>
+    <string name="qr_code_help_poster_title_hospitality">Poster cod NHS - ospitalitate britanică:</string>
     <string name="share_keys_privacy_banner">Nimeni nu va ști că notificarea se referă la dvs.</string>
     <string name="share_keys_success_title">Vă mulțumim pentru ajutorul dvs. în oprirea răspândirii COVID-19\n</string>
     <string name="what_is_random_id_text">Vi se va solicita să partajați „ID-uri aleatorii”. Acesta este un cod generat aleatoriu, care poate fi partajat cu alte telefoane care au Notificările de Expunere activate.</string>
@@ -567,4 +567,6 @@
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">Este important să continuați să vă autoizolați, deoarece ați testat pozitiv.\n\nVă rugăm să stați acasă, pentru a vă menține pe dvs. și pe ceilalți în siguranță. Țineți evidența perioadei de autoizolare cu ajutorul cronometrului de numărătoare inversă de pe ecranul de pornire al aplicației.</string>
+    <string name="qr_code_help_poster_title_hospitality_welsh">Afiș cu cod QR NHS pentru localurile de risc ridicat din Țara Galilor:</string>
+    <string name="qr_code_help_poster_content_description_hospitality_welsh">Iată un exemplu de afiș cu cod QR NHS pentru localurile de risc ridicat din Țara Galilor</string>
 </resources>

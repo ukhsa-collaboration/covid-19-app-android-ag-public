@@ -35,6 +35,8 @@ import uk.nhs.nhsx.covid19.android.app.state.asLogical
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.ViewState
 import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionStatus.COMPLETED
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.Finish
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.ShareKeys
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.Ignore
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeNotInIsolation
@@ -156,7 +158,6 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(Ignore, 0)) }
         }
 
-    // Case C
     @Test
     fun `relevant test result confirmed positive, unacknowledged confirmed positive, currently in isolation and will stay in isolation should return PositiveContinueIsolation`() =
         runBlocking {
@@ -177,12 +178,11 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveContinueIsolation, 0)
+                    ViewState(PositiveContinueIsolation(ShareKeys(bookFollowUpTest = false)), 0)
                 )
             }
         }
 
-    // Case C with indicative key sharing supported
     @Test
     fun `relevant test result confirmed positive, unacknowledged indicative positive with key sharing supported, currently in isolation and will stay in isolation should return PositiveContinueIsolation`() =
         runBlocking {
@@ -203,7 +203,7 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveContinueIsolation, 0)
+                    ViewState(PositiveContinueIsolation(ShareKeys(bookFollowUpTest = false)), 0)
                 )
             }
         }
@@ -266,7 +266,6 @@ class TestResultViewModelTest {
             }
         }
 
-    // Case G
     @Test
     fun `relevant test result confirmed positive, unacknowledged confirmed positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
         runBlocking {
@@ -291,12 +290,11 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWontBeInIsolation, 0)
+                    ViewState(PositiveWontBeInIsolation(ShareKeys(bookFollowUpTest = false)), 0)
                 )
             }
         }
 
-    // Case G with positive indicative with key sharing supported
     @Test
     fun `relevant test result confirmed positive, unacknowledged indicative positive with key sharing supported, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
         runBlocking {
@@ -321,12 +319,11 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWontBeInIsolation, 0)
+                    ViewState(PositiveWontBeInIsolation(ShareKeys(bookFollowUpTest = true)), 0)
                 )
             }
         }
 
-    // Case G
     @Test
     fun `relevant test result confirmed positive, unacknowledged indicative positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
         runBlocking {
@@ -351,12 +348,11 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWontBeInIsolation, 0)
+                    ViewState(PositiveWontBeInIsolation(Finish), 0)
                 )
             }
         }
 
-    // Case E
     @Test
     fun `no relevant test result, unacknowledged negative, currently not in isolation and no previous isolation should return NegativeNotInIsolation`() =
         runBlocking {
@@ -377,7 +373,6 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(NegativeNotInIsolation, 0)) }
         }
 
-    // Case ?
     @Test
     fun `no relevant test result, unacknowledged negative and currently in isolation should return NegativeWillBeInIsolation`() =
         runBlocking {
@@ -397,7 +392,6 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(NegativeWillBeInIsolation, 0)) }
         }
 
-    // Case A
     @Test
     fun `no relevant test result, unacknowledged negative and currently in isolation as index case only should return NegativeWontBeInIsolation`() =
         runBlocking {
@@ -418,7 +412,6 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(NegativeWontBeInIsolation, 0)) }
         }
 
-    // Case D
     @Test
     fun `relevant test result confirmed positive, unacknowledged negative and currently in isolation should return NegativeAfterPositiveOrSymptomaticWillBeInIsolation`() =
         runBlocking {
@@ -443,7 +436,6 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(NegativeAfterPositiveOrSymptomaticWillBeInIsolation, 0)) }
         }
 
-    // Case D
     @Test
     fun `symptomatic, unacknowledged negative and currently in isolation should return NegativeAfterPositiveOrSymptomaticWillBeInIsolation`() =
         runBlocking {
@@ -463,7 +455,6 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(NegativeAfterPositiveOrSymptomaticWillBeInIsolation, 0)) }
         }
 
-    // Case A
     @Test
     fun `relevant test result indicative positive, unacknowledged negative inside the prescribed day limit and currently in isolation should return NegativeWontBeInIsolation`() =
         runBlocking {
@@ -560,7 +551,6 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(NegativeNotInIsolation, 0)) }
         }
 
-    // Case F
     @Test
     fun `no relevant test result, unacknowledged void and currently not in isolation should return VoidNotInIsolation`() =
         runBlocking {
@@ -581,7 +571,6 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(VoidNotInIsolation, 0)) }
         }
 
-    // Case B
     @Test
     fun `no relevant test result, unacknowledged void and currently in isolation should return VoidWillBeInIsolation`() =
         runBlocking {
@@ -602,7 +591,6 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(VoidWillBeInIsolation, 0)) }
         }
 
-    // Case B
     @Test
     fun `relevant test result confirmed negative, unacknowledged void and currently in isolation should return VoidWillBeInIsolation`() =
         runBlocking {
@@ -632,7 +620,6 @@ class TestResultViewModelTest {
             verify { viewStateObserver.onChanged(ViewState(VoidWillBeInIsolation, 0)) }
         }
 
-    // Case G
     @Test
     fun `relevant test result confirmed positive, unacknowledged void and confirmed positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
         runBlocking {
@@ -660,12 +647,11 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWontBeInIsolation, 0)
+                    ViewState(PositiveWontBeInIsolation(ShareKeys(bookFollowUpTest = false)), 0)
                 )
             }
         }
 
-    // Case G
     @Test
     fun `relevant test result confirmed positive, unacknowledged void and indicative positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
         runBlocking {
@@ -693,7 +679,7 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWontBeInIsolation, 0)
+                    ViewState(PositiveWontBeInIsolation(Finish), 0)
                 )
             }
         }
@@ -730,7 +716,7 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWillBeInIsolation, 0)
+                    ViewState(PositiveWillBeInIsolation(ShareKeys(bookFollowUpTest = false)), 0)
                 )
             }
         }
@@ -772,7 +758,6 @@ class TestResultViewModelTest {
             }
         }
 
-    // Case G
     @Test
     fun `no relevant test result unacknowledged negative and confirmed positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
         runBlocking {
@@ -800,12 +785,11 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWontBeInIsolation, 0)
+                    ViewState(PositiveWontBeInIsolation(ShareKeys(bookFollowUpTest = false)), 0)
                 )
             }
         }
 
-    // Case G
     @Test
     fun `relevant test result confirmed positive, unacknowledged negative and indicative positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
         runBlocking {
@@ -833,12 +817,11 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWontBeInIsolation, 0)
+                    ViewState(PositiveWontBeInIsolation(Finish), 0)
                 )
             }
         }
 
-    // Case H
     @Test
     fun `relevant test result confirmed positive, unacknowledged negative and confirmed positive, currently not in isolation and no previous isolation return PositiveWillBeInIsolation`() =
         runBlocking {
@@ -871,12 +854,11 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWillBeInIsolation, 0)
+                    ViewState(PositiveWillBeInIsolation(ShareKeys(bookFollowUpTest = false)), 0)
                 )
             }
         }
 
-    // Case H with positive indicative with key submission supported
     @Test
     fun `relevant test result confirmed positive, unacknowledged negative and indicative positive with key sharing supported, currently not in isolation and no previous isolation return PositiveWillBeInIsolation`() =
         runBlocking {
@@ -909,7 +891,7 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWillBeInIsolation, 0)
+                    ViewState(PositiveWillBeInIsolation(ShareKeys(bookFollowUpTest = true)), 0)
                 )
             }
         }
@@ -972,7 +954,7 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWontBeInIsolation, 0)
+                    ViewState(PositiveWontBeInIsolation(ShareKeys(bookFollowUpTest = false)), 0)
                 )
             }
         }
@@ -998,7 +980,7 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWontBeInIsolation, 0)
+                    ViewState(PositiveWontBeInIsolation(Finish), 0)
                 )
             }
         }
@@ -1130,7 +1112,7 @@ class TestResultViewModelTest {
 
             verify {
                 viewStateObserver.onChanged(
-                    ViewState(PositiveWontBeInIsolation, 0)
+                    ViewState(PositiveWontBeInIsolation(ShareKeys(bookFollowUpTest = false)), 0)
                 )
             }
         }
@@ -1684,7 +1666,7 @@ class TestResultViewModelTest {
             throw IllegalArgumentException("This function cannot be called with a $result test result")
         }
         return AcknowledgedTestResult(
-            testEndDay(fixedClock),
+            testEndDate(fixedClock),
             result,
             testKitType,
             acknowledgedDate = LocalDate.now(fixedClock),

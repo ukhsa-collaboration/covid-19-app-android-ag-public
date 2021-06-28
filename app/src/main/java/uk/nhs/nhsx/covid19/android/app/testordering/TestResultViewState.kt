@@ -1,27 +1,26 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.FINISH
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.ORDER_TEST
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.SHARE_KEYS
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.Finish
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.OrderTest
 
-sealed class TestResultViewState(val buttonAction: ButtonAction) {
-    object NegativeNotInIsolation : TestResultViewState(buttonAction = FINISH) // E
-    object NegativeWillBeInIsolation : TestResultViewState(buttonAction = FINISH) // ?
-    object NegativeWontBeInIsolation : TestResultViewState(buttonAction = FINISH) // A
-    object PositiveWillBeInIsolation : TestResultViewState(buttonAction = SHARE_KEYS) // H
-    object PositiveContinueIsolation : TestResultViewState(buttonAction = SHARE_KEYS) // C
-    object PositiveContinueIsolationNoChange : TestResultViewState(buttonAction = FINISH)
-    object PositiveWontBeInIsolation : TestResultViewState(buttonAction = SHARE_KEYS) // G
-    object NegativeAfterPositiveOrSymptomaticWillBeInIsolation : TestResultViewState(buttonAction = FINISH) // D
-    object PositiveWillBeInIsolationAndOrderTest : TestResultViewState(buttonAction = ORDER_TEST)
-    object VoidNotInIsolation : TestResultViewState(buttonAction = ORDER_TEST) // F
-    object VoidWillBeInIsolation : TestResultViewState(buttonAction = ORDER_TEST) // B
-    object PlodWillContinueWithCurrentState : TestResultViewState(buttonAction = FINISH)
-    object Ignore : TestResultViewState(buttonAction = FINISH)
+sealed class TestResultViewState(open val buttonAction: ButtonAction) {
+    object NegativeNotInIsolation : TestResultViewState(buttonAction = Finish)
+    object NegativeWillBeInIsolation : TestResultViewState(buttonAction = Finish)
+    object NegativeWontBeInIsolation : TestResultViewState(buttonAction = Finish)
+    data class PositiveWillBeInIsolation(override val buttonAction: ButtonAction) : TestResultViewState(buttonAction)
+    data class PositiveContinueIsolation(override val buttonAction: ButtonAction) : TestResultViewState(buttonAction)
+    object PositiveContinueIsolationNoChange : TestResultViewState(buttonAction = Finish)
+    data class PositiveWontBeInIsolation(override val buttonAction: ButtonAction) : TestResultViewState(buttonAction)
+    object NegativeAfterPositiveOrSymptomaticWillBeInIsolation : TestResultViewState(buttonAction = Finish)
+    object PositiveWillBeInIsolationAndOrderTest : TestResultViewState(buttonAction = OrderTest)
+    object VoidNotInIsolation : TestResultViewState(buttonAction = OrderTest)
+    object VoidWillBeInIsolation : TestResultViewState(buttonAction = OrderTest)
+    object PlodWillContinueWithCurrentState : TestResultViewState(buttonAction = Finish)
+    object Ignore : TestResultViewState(buttonAction = Finish)
 
-    enum class ButtonAction {
-        SHARE_KEYS,
-        ORDER_TEST,
-        FINISH
+    sealed class ButtonAction {
+        data class ShareKeys(val bookFollowUpTest: Boolean) : ButtonAction()
+        object OrderTest : ButtonAction()
+        object Finish : ButtonAction()
     }
 }

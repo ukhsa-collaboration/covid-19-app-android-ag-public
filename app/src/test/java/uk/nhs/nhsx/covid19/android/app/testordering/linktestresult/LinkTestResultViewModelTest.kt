@@ -6,7 +6,6 @@ import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.coVerifyAll
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -16,22 +15,15 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.OUTSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -65,7 +57,6 @@ class LinkTestResultViewModelTest {
     private val ctaTokenValidator = mockk<CtaTokenValidator>(relaxed = true)
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val linkTestResultOnsetDateNeededChecker = mockk<LinkTestResultOnsetDateNeededChecker>(relaxed = true)
-    private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxed = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
     private val receivedUnknownTestResultProvider = mockk<ReceivedUnknownTestResultProvider>(relaxUnitFun = true)
     private val isolationHelper = IsolationHelper(fixedClock)
@@ -74,7 +65,6 @@ class LinkTestResultViewModelTest {
         ctaTokenValidator,
         isolationStateMachine,
         linkTestResultOnsetDateNeededChecker,
-        analyticsEventProcessor,
         receivedUnknownTestResultProvider,
         fixedClock
     )
@@ -263,7 +253,8 @@ class LinkTestResultViewModelTest {
 
         val event = OnTestResult(
             testResult = testResult,
-            showNotification = false
+            showNotification = false,
+            testOrderType = OUTSIDE_APP,
         )
 
         verify { isolationStateMachine.processEvent(event) }
@@ -296,7 +287,8 @@ class LinkTestResultViewModelTest {
 
         val event = OnTestResult(
             testResult = testResult,
-            showNotification = false
+            showNotification = false,
+            testOrderType = OUTSIDE_APP,
         )
 
         verify { isolationStateMachine.processEvent(event) }
@@ -388,153 +380,6 @@ class LinkTestResultViewModelTest {
                     errorState = ErrorState(UNEXPECTED)
                 )
             )
-        }
-    }
-
-    @Test
-    fun `track analytics events on negative PCR result`() = runBlocking {
-        disableShowDailyContactTesting()
-
-        setResult(NEGATIVE, LAB_RESULT)
-
-        testSubject.ctaToken = "ctaToken"
-        testSubject.onContinueButtonClicked()
-
-        coVerifyAll {
-            analyticsEventProcessor.track(NegativeResultReceived)
-            analyticsEventProcessor.track(ResultReceived(NEGATIVE, LAB_RESULT, OUTSIDE_APP))
-        }
-    }
-
-    @Test
-    fun `track analytics events on positive PCR result`() = runBlocking {
-        disableShowDailyContactTesting()
-
-        setResult(POSITIVE, LAB_RESULT)
-
-        testSubject.ctaToken = "ctaToken"
-        testSubject.onContinueButtonClicked()
-
-        coVerifyAll {
-            analyticsEventProcessor.track(PositiveResultReceived)
-            analyticsEventProcessor.track(ResultReceived(POSITIVE, LAB_RESULT, OUTSIDE_APP))
-        }
-    }
-
-    @Test
-    fun `track analytics events on void PCR result`() = runBlocking {
-        disableShowDailyContactTesting()
-
-        setResult(VOID, LAB_RESULT)
-
-        testSubject.ctaToken = "ctaToken"
-        testSubject.onContinueButtonClicked()
-
-        coVerifyAll {
-            analyticsEventProcessor.track(VoidResultReceived)
-            analyticsEventProcessor.track(ResultReceived(VOID, LAB_RESULT, OUTSIDE_APP))
-        }
-    }
-
-    @Test
-    fun `track analytics events on negative assisted LFD result`() = runBlocking {
-        disableShowDailyContactTesting()
-
-        setResult(NEGATIVE, RAPID_RESULT)
-
-        testSubject.ctaToken = "ctaToken"
-        testSubject.onContinueButtonClicked()
-
-        coVerifyAll {
-            analyticsEventProcessor.track(NegativeResultReceived)
-            analyticsEventProcessor.track(ResultReceived(NEGATIVE, RAPID_RESULT, OUTSIDE_APP))
-        }
-    }
-
-    @Test
-    fun `track analytics events on negative unassisted LFD result`() = runBlocking {
-        disableShowDailyContactTesting()
-
-        setResult(NEGATIVE, RAPID_SELF_REPORTED)
-
-        testSubject.ctaToken = "ctaToken"
-        testSubject.onContinueButtonClicked()
-
-        coVerifyAll {
-            analyticsEventProcessor.track(NegativeResultReceived)
-            analyticsEventProcessor.track(
-                ResultReceived(
-                    NEGATIVE,
-                    RAPID_SELF_REPORTED,
-                    OUTSIDE_APP
-                )
-            )
-        }
-    }
-
-    @Test
-    fun `track analytics events on positive assisted LFD result`() = runBlocking {
-        disableShowDailyContactTesting()
-
-        setResult(POSITIVE, RAPID_RESULT)
-
-        testSubject.ctaToken = "ctaToken"
-        testSubject.onContinueButtonClicked()
-
-        coVerifyAll {
-            analyticsEventProcessor.track(PositiveResultReceived)
-            analyticsEventProcessor.track(ResultReceived(POSITIVE, RAPID_RESULT, OUTSIDE_APP))
-        }
-    }
-
-    @Test
-    fun `track analytics events on positive unassisted LFD result`() = runBlocking {
-        disableShowDailyContactTesting()
-
-        setResult(POSITIVE, RAPID_SELF_REPORTED)
-
-        testSubject.ctaToken = "ctaToken"
-        testSubject.onContinueButtonClicked()
-
-        coVerifyAll {
-            analyticsEventProcessor.track(PositiveResultReceived)
-            analyticsEventProcessor.track(
-                ResultReceived(
-                    POSITIVE,
-                    RAPID_SELF_REPORTED,
-                    OUTSIDE_APP
-                )
-            )
-        }
-    }
-
-    @Test
-    fun `track analytics events on void assisted LFD result`() = runBlocking {
-        disableShowDailyContactTesting()
-
-        setResult(VOID, RAPID_RESULT)
-
-        testSubject.ctaToken = "ctaToken"
-        testSubject.onContinueButtonClicked()
-
-        coVerifyAll {
-            analyticsEventProcessor.track(VoidResultReceived)
-            analyticsEventProcessor.track(ResultReceived(VOID, RAPID_RESULT, OUTSIDE_APP))
-        }
-    }
-
-    @Test
-    fun `track analytics events on void unassisted LFD result`() = runBlocking {
-        disableShowDailyContactTesting()
-
-        setResult(VOID, RAPID_SELF_REPORTED)
-
-        testSubject.ctaToken = "ctaToken"
-        testSubject.onContinueButtonClicked()
-
-        coVerifyAll {
-            analyticsEventProcessor.track(VoidResultReceived)
-            analyticsEventProcessor.track(ResultReceived(VOID, RAPID_SELF_REPORTED, OUTSIDE_APP))
         }
     }
 

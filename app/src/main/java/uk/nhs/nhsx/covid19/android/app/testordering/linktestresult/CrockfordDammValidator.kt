@@ -4,16 +4,8 @@ import javax.inject.Inject
 
 class CrockfordDammValidator @Inject constructor() {
 
-    fun validate(code: String): Boolean {
-        return code.isNotEmpty() && checksum(clean(code)) == 0
-    }
-
-    private fun clean(code: String) =
-        code.replace("i", "1")
-            .replace("l", "1")
-            .replace("o", "0")
-            .replace("u", "v")
-            .replace("-", "")
+    fun validate(code: String) =
+        code.isNotEmpty() && checksum(code) == 0 && "^[$CROCKFORD_BASE32]+$".toRegex().matches(code)
 
     private fun checksum(code: String): Int {
         return code

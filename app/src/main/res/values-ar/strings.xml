@@ -40,9 +40,9 @@
     <string name="qr_code_success_subtitle">يُعد التطبيق الطريقة الأسرع للتنبيه بالتعرّض المُحتمل لفيروس كورونا في مكانٍ ما.</string>
     <string name="qr_code_cancel_check_in">تسجيل دخول خطأ؟ انقر للإلغاء.</string>
     <string name="qr_code_help_how_it_works">كيفية العمل</string>
-    <string name="qr_code_help_how_it_works_text">تستخدم خاصية تسجيل الدخول إلى الأماكن رموز استجابة سريعة رسمية مُقدمة من هيئة الخدمات الصحية الوطنية (NHS QR) بغرض مساعدتك في تسجيل الدخول بسرعة وسهولة إلى الأماكن التي تزورها - مثل المطاعم أو الحانات. وفي حال استخدامك للتطبيق، يمكننا إبلاغك عمَّا إذا كان من المحتمل أنك قد تعرضت للإصابة بفيروس كورونا في أيّ مكانٍ زرته سابقًا.</string>
-    <string name="venue_alert_title">زرت مؤخرًا مكانًا ما في نفس اليوم الذي زاره فيه أشخاصٌ آخرون سجَّلوا بعد ذلك نتيجة إيجابية في اختبار الكشف عن فيروس كورونا (كوفيد-19)</string>
-    <string name="venue_alert_explanation">ثمة احتمالٌ بأنك قد تعرَّضت للإصابة بالفيروس. لذلك السبب، نوصيك بطلب حجز اختبارٍ الآن.\n\nإذا ظهرت عليك أعراض الإصابة بفيروس كورونا، يُرجى تحديد زرّ \"التحقق من الأعراض\" الموجود في التطبيق وحجز اختبارٍ.\n\nمع ذلك، لا زال بإمكانك الحصول على اختبار فيروس كورونا؛ حتى إذا لم يظهر عليك أيٌّ من الأعراض المُسجَّلة. حدِّد \"إجراء اختبار فيروس كوفيد-19\" من الشاشة الرئيسية بهذا التطبيق لمعرفة المزيد.\n\nيُرجى مواصلة اتّباع أحدث الإرشادات، حتى إذا كنت قد حصلت على تحصينٍ ضد الفيروس. لمزيدٍ من المعلومات أو النصائح أو الدعم، يُرجى الاتصال على الرقم: 119.</string>
+    <string name="qr_code_help_how_it_works_text">يمكن \"تسجيل الدخول إلى مكانٍ ما\" – مثل المطاعم أو الحانات - بسرعة وسهولة عن طريق استخدام هذا التطبيق لإجراء مسح ضوئي لملصقات رموز الاستجابة السريعة المُقدمة من هيئة الخدمات الصحية الوطنية (NHS QR). ومن شأن ذلك أن يُمكِّنك من معرفة ما إذا كنت قد تعرَّضت للإصابة بالفيروس في أي مكانٍ سبق لك زيارته.</string>
+    <string name="venue_alert_title">زرت مؤخرًا مكانًا ما في نفس اليوم الذي زاره فيه أشخاصٌ آخرون ثبتت إصابتهم بفيروس كورونا (كوفيد-19)</string>
+    <string name="venue_alert_explanation">ثمة احتمالٌ بأنك قد تعرَّضت للإصابة بالفيروس؛ ولهذا ننصحك بحجز اختبارٍ الآن.\n\nإذا لم يكن لديك أيٌّ من أعراض الإصابة بفيروس كوفيد-19، يُرجى اختيار \"إجراء اختبار فيروس كوفيد-19\" من الشاشة الرئيسية لهذا التطبيق للتعرّف على طريقة الحصول على اختبار تدفق جانبي سريع.\n\nإذا ظهرت عليك أعراض الإصابة بفيروس كوفيد-19، يُرجى اختيار \"التحقق من الأعراض\" من الشاشة الرئيسية لهذا التطبيق وحجز اختبار تفاعل البوليمراز المتسلسل (PCR).\n\nيُرجى الاستمرار في اتّباع جميع التوجيهات الحديثة، حتى إذا حصلت على لقاحٍ ضد الفيروس.\n\nلمعرفة المزيد من المعلومات أو النصائح أو طلب الدعم، يُرجى الاتصال على الرقم: 119.</string>
     <string name="notification_title_post_code_risk_changed">تم تحديث المعلومات المحلية.</string>
     <string name="notification_title_test_results">لقد وصلت نتائج اختبارك</string>
     <string name="select_symptoms">تحديد الأعراض</string>
@@ -179,7 +179,7 @@
     <string name="something_went_wrong">حدث خطأ ما</string>
     <string name="test_ordering_failure_title">حدث خطأ ما</string>
     <string name="test_ordering_failure_description">قبل المحاولة مرة أخرى، يرجى التحقق من تشغيلك لإعدادات البيانات المتنقلة في هاتفك والتحقق من وجود شبكة واي فاي (حال استخدامها) والتأكد من إيقاف تشغيل وضع الطيران.</string>
-    <string name="notification_title_risky_venue">زرت مؤخرًا مكانًا ما في نفس اليوم الذي زاره فيه أشخاصٌ آخرون سجَّلوا بعد ذلك نتيجة إيجابية في اختبار الكشف عن فيروس كورونا (كوفيد-19)</string>
+    <string name="notification_title_risky_venue">زرت مؤخرًا مكانًا ما في نفس اليوم الذي زاره فيه أشخاصٌ آخرون ثبتت إصابتهم بفيروس كورونا (كوفيد-19)</string>
     <string name="notification_text_post_code_risk_changed">ينبغي تذكّر إجراء مسحٍ ضوئيٍّ لرموز NHS QR الرسمية عند زيارة الأماكن.</string>
     <string name="notification_channel_area_risk_changed_name">تغير مستوى الخطورة في المنطقة</string>
     <string name="notification_channel_area_risk_changed_description">تساعد هذه الإشعارات في تعقب خطر العدوى في منطقتك.</string>
@@ -280,9 +280,9 @@
     <string name="link_test_result_text" />
     <string name="link_test_result_enter_code_title">أدخل رمز الاختبار</string>
     <string name="about_provide_feedback_link">معلومات حول آراء المستخدمين</string>
-    <string name="qr_code_help_text">إذا تعذّر عليك إجراء مسح ضوئي لأحد رموز QR وتحتاج إلى تسجيل الدخول بطريقة أخرى، يرجى التحدّث مع أحد الموظفين.</string>
-    <string name="qr_code_help_about_qr_code_title">ما هو رمز NHS QR الرسمي؟</string>
-    <string name="qr_code_help_about_qr_code_text">نُوضِّح هنا أشكال ملصقات رموز NHS QR الرسمية. يتعين عليك إجراء مسح ضوئي لرمز QR الذي يظهر في المربع الموجود في المنتصف.</string>
+    <string name="qr_code_help_text">إذا تعذّر عليك إجراء مسح ضوئي للرمز، فنقترح عليك التحدّث مع أحد العاملين في المكان للتعرّف على الطرق الأخرى الممكنة لتسجيل الدخول.</string>
+    <string name="qr_code_help_about_qr_code_title">كيفية التعرّف على أحد ملصقات رموز NHS QR</string>
+    <string name="qr_code_help_about_qr_code_text">نُوضِّح هنا أشكال ملصقات رموز NHS QR الرسمية. يتعين عليك إجراء مسح ضوئي للرمز الذي يظهر في المربع الموجود في المنتصف.</string>
     <string name="link_test_result_enter_code_example">على سبيل المثال: 7g8s3stn</string>
     <string name="about_software_information_text_app_manufacturer">اسم المؤسسة وعنوانها</string>
     <string name="submit_keys_information_title">المساعدة في إبلاغ الآخرين</string>
@@ -310,7 +310,7 @@
     <string name="qr_code_failure_help_link">المساعدة في تسجيل الدخول إلى المكان</string>
     <string name="status_option_read_self_isolation_advice">قراءة النصائح المتوفرة حول العزل الذاتي</string>
     <string name="test_result_negative_already_not_in_isolation_subtitle">نتيجة اختبار الكشف عن إصابتك بفيروس كورونا سلبية</string>
-    <string name="qr_code_help_title">المساعدة في إجراء مسح ضوئي لأحد رموز QR</string>
+    <string name="qr_code_help_title">المساعدة في حال تعذّر إجراء المسح الضوئي للرمز</string>
     <string name="qr_code_help_about_qr_code_image_content_description">يُعد هذا مثالًا لأحد ملصقات رموز NHS QR الرسمية لأماكن خدمات الضيافة في إنجلترا</string>
     <string name="about_void">باطلة</string>
     <string name="authentication_enter_code_subtitle">أدخل رمزك الفريد</string>
@@ -325,8 +325,8 @@
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
     <string name="notification_channel_background_work_name">Background activities</string>
     <string name="notification_text_updating_database">جارٍ التحميل...</string>
-    <string name="qr_code_help_poster_content_description_english">يُعد هذا مثالًا لأحد ملصقات رموز NHS QR الرسمية للأماكن في إنجلترا</string>
-    <string name="qr_code_help_poster_content_description_welsh">يُعد هذا مثالًا لأحد ملصقات رموز NHS QR الرسمية للأماكن في ويلز</string>
+    <string name="qr_code_help_poster_content_description_english">فيما يلي مثالٌ على ملصق رمز الاستجابة NHS QR الإنجليزي</string>
+    <string name="qr_code_help_poster_content_description_welsh">فيما يلي مثالٌ على ملصق رمز الاستجابة NHS QR الويلزي</string>
     <string name="qr_code_help_poster_title_english">ملصق لرمز الاستجابة السريعة QR الإنجليزي من NHS:</string>
     <string name="qr_code_help_poster_title_welsh">ملصق لرمز الاستجابة السريعة QR الويلزي من NHS:</string>
     <string name="questionnaire_no_i_dont_have_symptom">لا، لست أعاني من %s</string>
@@ -468,8 +468,8 @@
     <string name="venue_alert_m2_title">لقد زرت مؤخرًا مكانًا ما في نفس اليوم الذي زاره فيه أشخاصٌ آخرون ثبتت إصابتهم بفيروس كوفيد-19</string>
     <string name="qr_code_help_how_it_helps_text">تساعد خاصية التطبيق هذه في تمكين الشركات من دعم خدمة تتبع الاتصال، وتساعدنا جميعًا في الحفاظ على سلامتنا مع حماية خصوصيتنا.</string>
     <string name="qr_code_help_how_it_helps_title">فائدة التطبيق</string>
-    <string name="qr_code_help_how_to_scan_text">ثبتّ كاميرا هاتفك أمام مربع رمز NHS QR الرسمي المُوضَّح في الصفحة السابقة لضمان التقاطه. وعندما يتعرّف هاتفك على رمز QR، عندئذٍ تظهر على هاتفك رسالة تفيد تسجيل دخولك بنجاح.</string>
-    <string name="qr_code_help_how_to_scan_title">كيفية إجراء مسح ضوئي لرمز رسمي من رموز NHS QR</string>
+    <string name="qr_code_help_how_to_scan_text">أمسك هاتفك بحيث يظهر رمز الاستجابة السريعة (QR) في المربع المُوضَّح في الصفحة السابقة. وعندما يتعرّف هاتفك على الرمز، عندئذٍ تظهر رسالة على الهاتف تفيد تسجيل دخولك بنجاح.</string>
+    <string name="qr_code_help_how_to_scan_title">كيفية إجراء مسح ضوئي لأحد ملصقات رموز NHS QR</string>
     <string name="settings_my_area_local_authority">السلطة المحلية</string>
     <string name="user_data_risky_venue_visit_date_title">التاريخ في المكان مكمن الخطورة</string>
     <string name="venue_check_in_title">المزيد من المعلومات</string>
@@ -496,9 +496,9 @@
     <string name="back">رجوع</string>
     <string name="how_does_it_help_text">يتيح الإجراء لمُستخدمي التطبيق الآخرين معرفة أنهم كانوا بالقرب من شخصٍ ما سجَّل نتيجة إيجابية في اختبار الكشف عن الإصابة بفيروس كورونا.</string>
     <string name="how_does_it_help_title">كيف يساعد هذا الإجراء؟</string>
-    <string name="qr_code_help_official_nhs_posters_title">ملصقات NHS QR الرسمية</string>
-    <string name="qr_code_help_poster_content_description_hospitality">ملصق رمز NHS QR الإنجليزي لأماكن الضيافة</string>
-    <string name="qr_code_help_poster_title_hospitality">ملصق رمز NHS QR الإنجليزي لأماكن الضيافة</string>
+    <string name="qr_code_help_official_nhs_posters_title">ملصقات رموز NHS QR الرسمية</string>
+    <string name="qr_code_help_poster_content_description_hospitality">فيما يلي مثالٌ على ملصق رمز NHS QR الإنجليزي لأماكن الضيافة</string>
+    <string name="qr_code_help_poster_title_hospitality">ملصق رمز NHS QR الإنجليزي لأماكن الضيافة:</string>
     <string name="share_keys_privacy_banner">لن يعرف أحدٌ إن الإشعار يعود إليك</string>
     <string name="share_keys_success_title">شكرًا لك على مساعدتنا في إيقاف تفشي فيروس كوفيد-19\n</string>
     <string name="what_is_random_id_text">سيُطلب منك مشاركة \"مُعرِّفات عشوائية\"، وهي رموز تُنشئ عشوائيًا ويمكن مشاركتها مع الهواتف الأخرى التي يتم تشغيل إشعارات التعرّض فيها.</string>
@@ -558,7 +558,7 @@
     <string name="about_no_vaccination_status_text">يهدف هذا التطبيق إلى حماية خصوصيتك وهويتك؛ ومن ثمَّ لا يمكن للتطبيق تحديد هويتك ولا يتم ربطه بأيٍّ من سجلاتك الطبية.\n\nإذا كنت مقيمًا في إنجلترا، يُرجى استخدام تطبيق هيئة الخدمات الصحية الوطنية (NHS) المستقل لمعرفة حالتك فيما يخص فيروس كوفيد-19، وللحصول على معلومات صحية أخرى.</string>
     <string name="about_no_vaccination_status_title">لا يُظهر هذا التطبيق حالتك فيما يخص التحصين ضد فيروس كورونا (كوفيد-19)</string>
     <string name="animations">الصور المتحركة</string>
-    <string name="animations_description">لن يؤدي ذلك إلى تغيير طريقة عمل التطبيق لديك، بل سيؤدي فقط إلى تغيير الحركة.</string>
+    <string name="animations_description">لن يؤدي ذلك إلى تغيير طريقة عمل التطبيق لديك، بل سيؤدي فقط إلى تغيير الصور المتحركة.</string>
     <string name="animations_dialog_text">تؤدي إعدادات إمكانية الوصول في جهازك إلى إيقاف خاصية الصور المتحركة. ينبغي لك تغيير الإعدادات لتشغيل الصور المتحركة في تطبيق كوفيد-19 المُقدم من هيئة الخدمات الصحية الوطنية (NHS COVID-19).</string>
     <string name="animations_dialog_title">يجب تغيير إعدادات جهازك للسماح بتشغيل الدوائر المتحركة في الشاشة الرئيسية.</string>
     <string name="animations_settings_title">إعدادات الصور المتحركة</string>
@@ -578,5 +578,7 @@
     <string name="local_message_banner_read_more">قراءة المزيد</string>
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
-    <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">من المُهم الاستمرار في العزل الذاتي لأنك سجَّلت نتيجة إيجابية في الاختبار.\n\nيُرجى البقاء في المنزل لحماية نفسك والآخرين. يُرجى متابعة مدة العزل الذاتي لك من خلال مؤقت العدّ التنازلي الموجود في الشاشة الرئيسية للتطبيق.</string>
+    <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">من المُهم الاستمرار في العزل الذاتي لأنك سجَّلت نتيجة إيجابية في الاختبار.\n\nيُرجى البقاء في المنزل لحماية نفسك والآخرين. يجب متابعة مدة العزل الذاتي لك من خلال مؤقت العدّ التنازلي الموجود في الشاشة الرئيسية للتطبيق.</string>
+    <string name="qr_code_help_poster_title_hospitality_welsh">ملصق رمز NHS QR الويلزي للأماكن مرتفعة الخطورة:</string>
+    <string name="qr_code_help_poster_content_description_hospitality_welsh">فيما يلي مثالٌ على ملصق رمز NHS QR الويلزي للأماكن مرتفعة الخطورة</string>
 </resources>

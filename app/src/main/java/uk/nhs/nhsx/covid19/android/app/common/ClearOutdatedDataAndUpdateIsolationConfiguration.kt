@@ -7,18 +7,12 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.RiskyVenueConfiguratio
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenueConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
-import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
-import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
-import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
 import java.time.Clock
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 class ClearOutdatedDataAndUpdateIsolationConfiguration @Inject constructor(
-    private val isolationStateMachine: IsolationStateMachine,
-    private val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider,
+    private val resetIsolationStateIfNeeded: ResetIsolationStateIfNeeded,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val isolationConfigurationApi: IsolationConfigurationApi,
     private val riskyVenueConfigurationProvider: RiskyVenueConfigurationProvider,
@@ -35,21 +29,7 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration @Inject constructor(
         updateIsolationConfiguration()
         updateRiskyVenueConfiguration()
 
-        val retentionPeriodDays = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
-
-        val state = isolationStateMachine.readLogicalState()
-        if (!state.isActiveIsolation(clock)) {
-            if (state is NeverIsolating) {
-                val oldestTestEndDateToKeep = LocalDate.now(clock).minusDays(retentionPeriodDays.toLong())
-                if (state.negativeTest?.testResult?.testEndDate?.isBefore(oldestTestEndDateToKeep) == true) {
-                    isolationStateMachine.reset()
-                }
-                clearOldUnacknowledgedTestResults(retentionPeriodDays)
-            } else if (state is PossiblyIsolating && state.expiryDate.isMoreThanOrExactlyDaysAgo(retentionPeriodDays)) {
-                clearOldUnacknowledgedTestResults(retentionPeriodDays)
-                isolationStateMachine.reset()
-            }
-        }
+        resetIsolationStateIfNeeded()
 
         if (!lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk()) {
             lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = null
@@ -57,6 +37,7 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration @Inject constructor(
 
         clearOutdatedKeySharingInfo()
 
+        val retentionPeriodDays = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
         clearOldEpidemiologyEvents(retentionPeriodDays)
 
         clearLegacyData()
@@ -76,10 +57,6 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration @Inject constructor(
         }
     }
 
-    private fun clearOldUnacknowledgedTestResults(expiryDays: Int) {
-        unacknowledgedTestResultsProvider.clearBefore(LocalDate.now(clock).minusDays(expiryDays.toLong()))
-    }
-
     private fun clearOldEpidemiologyEvents(retentionPeriodDays: Int) {
         epidemiologyEventProvider.clearOnAndBefore(LocalDate.now(clock).minusDays(retentionPeriodDays.toLong()))
     }
@@ -87,10 +64,4 @@ class ClearOutdatedDataAndUpdateIsolationConfiguration @Inject constructor(
     private fun clearLegacyData() {
         exposureNotificationTokensProvider.clear()
     }
-
-    private fun LocalDate.isMoreThanOrExactlyDaysAgo(days: Int) =
-        until(
-            LocalDate.now(clock),
-            ChronoUnit.DAYS
-        ) >= days
 }

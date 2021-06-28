@@ -14,6 +14,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalyticsAlarmController
+import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.di.ApplicationClock
@@ -154,7 +155,7 @@ class DebugViewModel @Inject constructor(
             )
 
             isolationStateMachine.processEvent(
-                OnTestResult(receivedTestResult)
+                OnTestResult(receivedTestResult, testOrderType = INSIDE_APP)
             )
         }
     }

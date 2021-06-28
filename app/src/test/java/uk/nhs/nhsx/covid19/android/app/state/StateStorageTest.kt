@@ -34,7 +34,7 @@ class StateStorageTest(private val testParameters: StateRepresentationTest) {
         .add(InstantAdapter())
         .build()
 
-    private val statusStringStorage = mockk<StateStringStorage>(relaxUnitFun = true)
+    private val statusStringStorage = mockk<SharedPrefsStateStringStorage>(relaxUnitFun = true)
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
 
     private val testSubject =

@@ -161,7 +161,7 @@
     <string name="select_symptoms">Wybierz objawy</string>
     <string name="notification_text_risky_venue">Dotknij tutaj, aby zapoznać się ze szczegółowymi informacjami</string>
     <string name="venue_alert_title">Niedawno odwiedziłeś(-aś) lokal w tym samym dniu, co inne osoby, które później uzyskały dodatni wynik testu na koronawirusa (COVID-19)</string>
-    <string name="venue_alert_explanation">Istnieje ryzyko, że mogło dojść do narażenia na kontakt z wirusem. Z tego powodu zalecamy, aby teraz zamówić test.\n\nJeżeli masz objawy koronawirusa, proszę wybrać opcję „Sprawdzanie objawów” w aplikacji i zamówić test.\n\nNadal możesz zamówić test, nawet jeżeli nie masz żadnych z wymienionych objawów. Aby uzyskać więcej informacji, wybierz „Testy na COVID-19” na stronie głównej aplikacji.\n\nNależy nadal przestrzegać najnowszych wytycznych, nawet jeżeli jesteś już zaszczepiony(-a). W celu uzyskania dalszych informacji, porady lub wsparcia, proszę dzwonić pod nr 119.</string>
+    <string name="venue_alert_explanation">Istnieje ryzyko, że mogło dojść do narażenia na kontakt z wirusem. Dlatego zalecamy, abyś teraz umówił(a) się na test.\n\nJeżeli nie masz żadnych objawów COVID-19, wybierz „Testy na COVID-19” na stronie głównej aplikacji, aby dowiedzieć się, jak otrzymać szybki test przepływu bocznego.\n\nJeżeli masz objawy COVID-19, wybierz „Sprawdzanie objawów” na stronie głównej aplikacji i zamów test wykorzystujący reakcję łańcuchową polimerazy (PCR).\n\nNadal przestrzegaj najnowszych wytycznych, nawet jeżeli jesteś już zaszczepiony(-a).\n\nW celu uzyskania dalszych informacji, porady lub wsparcia należy dzwonić pod nr 119.</string>
     <string name="questionnaire_no_symptom_selected">Musisz zaznaczyć odpowiednie objawy lub wybrać opcję „Nie wystąpiły u mnie żadne z podanych objawów”.</string>
     <string name="title_no_coronavirus_symptoms">Nie wystąpiły u Ciebie żadne z głównych objawów</string>
     <string name="message_no_coronavirus_symptoms">Nadal możesz zamówić test, nawet jeżeli nie masz żadnych z wymienionych objawów.\n\nWięcej informacji o dostępnych opcjach testów na koronawirusa:</string>
@@ -242,16 +242,16 @@
     <string name="about_void">Nieważny</string>
     <string name="qr_code_more_info">Więcej informacji</string>
     <string name="qr_code_scan_explanation">Meldowanie się pomaga w powiadamianiu innych osób, które mogły zostać narażone na kontakt z koronawirusem (COVID-19) w odwiedzonym lokalu.\n\nNikt nie będzie wiedział, że powiadomienie pochodzi od Ciebie</string>
-    <string name="qr_code_help_title">Pomoc z zeskanowaniem kodu QR</string>
-    <string name="qr_code_help_text">Jeśli nie jesteś w stanie zeskanować kodu QR i potrzebujesz zameldować się w inny sposób, porozmawiaj z członkiem personelu.</string>
-    <string name="qr_code_help_about_qr_code_title">Co to jest oficjalny kod NHS QR?</string>
-    <string name="qr_code_help_about_qr_code_text">Oto jak wyglądają oficjalne plakaty z kodami NHS QR. Należy zeskanować kod QR, czyli kwadrat znajdujący się pośrodku plakatu.</string>
+    <string name="qr_code_help_title">Pomoc w przypadku, gdy nie możesz zeskanować kodu</string>
+    <string name="qr_code_help_text">Jeśli nie jesteś w stanie zeskanować kodu, radzimy porozmawiać z członkiem personelu lokalu o tym, jak zameldować się w inny sposób.</string>
+    <string name="qr_code_help_about_qr_code_title">Jak rozpoznać plakat z kodem NHS QR</string>
+    <string name="qr_code_help_about_qr_code_text">Oto jak wyglądają oficjalne plakaty z kodami NHS QR. Należy zeskanować kod, czyli kwadrat znajdujący się pośrodku plakatu.</string>
     <string name="qr_code_help_poster_title_english">Angielski plakat z kodem NHS QR:</string>
     <string name="qr_code_help_poster_title_welsh">Walijski plakat z kodem NHS QR:</string>
-    <string name="qr_code_help_poster_content_description_english">To jest przykład oficjalnego plakatu z kodem NHS QR dla lokali w Anglii</string>
-    <string name="qr_code_help_poster_content_description_welsh">To jest przykład oficjalnego plakatu z kodem NHS QR dla lokali w Walii</string>
-    <string name="qr_code_help_how_it_works">Jak działa aplikacja?</string>
-    <string name="qr_code_help_how_it_works_text">Meldowanie się w lokalach wykorzystuje oficjalne kody NHS QR w celu szybkiego i łatwego zameldowania Cię w odwiedzonych lokalach – np. w restauracjach lub barach. Jeżeli korzystasz z aplikacji, powiadomimy Cię, jeżeli mogło dojść do narażenia na kontakt z koronawirusem w odwiedzonym przez Ciebie lokalu.</string>
+    <string name="qr_code_help_poster_content_description_english">Oto przykład angielskiego plakatu z kodem NHS QR</string>
+    <string name="qr_code_help_poster_content_description_welsh">Oto przykład walijskiego plakatu z kodem NHS QR</string>
+    <string name="qr_code_help_how_it_works">Jak to działa?</string>
+    <string name="qr_code_help_how_it_works_text">„Meldowanie się w lokalach” – np. w restauracji lub w barze – szybko i łatwo poprzez zeskanowanie plakatu z kodem NHS QR za pomocą tej aplikacji. Ta opcja może powiadomić Cię, jeżeli mogło dojść do narażenia na kontakt z wirusem w odwiedzonym przez Ciebie lokalu.</string>
     <string name="allow_bluetooth">Uruchom Bluetooth</string>
     <string name="onboarding_welcome_title">Ta aplikacja pomaga w zapewnieniu nam bezpieczeństwa.</string>
     <string name="onboarding_subtitle">Korzystając z aplikacji pomożesz nam pokonać COVID-19 poprzez udostępnianie anonimowych danych na temat wirusa i zdrowia publicznego w Twoim rejonie.</string>
@@ -469,7 +469,7 @@
     <string name="qr_code_help_how_it_helps_text">Ta funkcja w aplikacji ułatwia firmom uczestnictwo w programie śledzenia kontaktów. Dzięki temu wszyscy jesteśmy bezpieczni, a jednocześnie zapewniona jest prywatność użytkowników.</string>
     <string name="qr_code_help_how_it_helps_title">Dlaczego korzystanie z aplikacji jest przydatne?</string>
     <string name="qr_code_help_how_to_scan_text">Trzymaj telefon tak, aby oficjalny kod NHS QR znajdował się w ramce pokazanej na poprzedniej stronie. Gdy Twój telefon rozpozna kod QR, pokaże się informacja o udanym zameldowaniu się w lokalu.</string>
-    <string name="qr_code_help_how_to_scan_title">Jak zeskanować oficjalny kod NHS QR</string>
+    <string name="qr_code_help_how_to_scan_title">Jak zeskanować plakat z kodem NHS QR</string>
     <string name="settings_my_area_local_authority">Władze lokalne</string>
     <string name="user_data_risky_venue_visit_date_title">DATA POBYTU W LOKALU, GDZIE WYSTĄPIŁO RYZYKO</string>
     <string name="venue_check_in_title">Więcej informacji</string>
@@ -497,8 +497,8 @@
     <string name="how_does_it_help_text">Poinformuje to innych użytkowników aplikacji, że znajdowali się blisko osoby, która otrzymała dodatni wynik testu na koronawirusa.</string>
     <string name="how_does_it_help_title">W jaki sposób jest to pomocne?</string>
     <string name="qr_code_help_official_nhs_posters_title">Oficjalne plakaty z kodami NHS QR</string>
-    <string name="qr_code_help_poster_content_description_hospitality">Angielski plakat z kodem NHS QR dla branży hotelarskiej</string>
-    <string name="qr_code_help_poster_title_hospitality">Angielski plakat z kodem NHS QR dla branży hotelarskiej</string>
+    <string name="qr_code_help_poster_content_description_hospitality">Oto przykład angielskiego plakatu z kodem NHS QR dla branży gastronomiczno-hotelarskiej</string>
+    <string name="qr_code_help_poster_title_hospitality">Angielski plakat z kodem NHS QR dla branży gastronomiczno-hotelarskiej::</string>
     <string name="share_keys_privacy_banner">Nikt nie będzie wiedział, że powiadomienie pochodzi od Ciebie</string>
     <string name="share_keys_success_title">Dziękujemy za pomoc w powstrzymaniu rozprzestrzeniania się COVID-19</string>
     <string name="what_is_random_id_text">Aplikacja poprosi Cię o udostępnienie „losowych identyfikatorów”. Są to losowo wygenerowane kody, mogące zostać udostępnione innym użytkownikom, w których telefonach włączona jest opcja Powiadomienia o narażeniu.</string>
@@ -579,4 +579,6 @@
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">Istotne jest, aby kontynuować samoizolację, ponieważ Twój wynik testu był dodatni.\n\nProszę pozostać w domu, aby chronić siebie i innych. Licznik znajdujący się na stronie głównej aplikacji pomoże Ci w kontroli czasu samoizolacji.</string>
+    <string name="qr_code_help_poster_title_hospitality_welsh">Walijski plakat z kodem NHS QR dla lokalu o podwyższonym stopniu zagrożenia:</string>
+    <string name="qr_code_help_poster_content_description_hospitality_welsh">Oto przykład walijskiego plakatu z kodem NHS QR dla lokalu o podwyższonym stopniu zagrożenia</string>
 </resources>

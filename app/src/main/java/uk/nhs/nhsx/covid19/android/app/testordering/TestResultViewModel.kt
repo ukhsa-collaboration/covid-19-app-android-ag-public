@@ -19,9 +19,10 @@ import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.DoNotTransition
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.Transition
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.FINISH
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.ORDER_TEST
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.SHARE_KEYS
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.Finish
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.OrderTest
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.ShareKeys
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.Ignore
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeNotInIsolation
@@ -100,15 +101,28 @@ class TestResultViewModel @Inject constructor(
     ): TestResultViewState =
         if (newState.isActiveIsolation(clock)) {
             if (testResult.requiresConfirmatoryTest && !isKeySubmissionSupported()) {
-                if (currentState.isIsolatingWithPositiveConfirmedTest()) PositiveContinueIsolationNoChange
-                else PositiveWillBeInIsolationAndOrderTest
-            } else {
-                if (currentState.isActiveIsolation(clock)) PositiveContinueIsolation // C
-                else PositiveWillBeInIsolation // H
-            }
+                when {
+                    currentState.isIsolatingWithPositiveConfirmedTest() -> PositiveContinueIsolationNoChange
+                    newState.hasPositiveCompletedTest() -> mainStateWhenPositiveNewStateIsIsolating(
+                        currentState,
+                        newState
+                    )
+                    else -> PositiveWillBeInIsolationAndOrderTest
+                }
+            } else mainStateWhenPositiveNewStateIsIsolating(currentState, newState)
         } else {
-            PositiveWontBeInIsolation // G
+            PositiveWontBeInIsolation(buttonActionPotentiallyShareKeys(currentState, newState))
         }
+
+    private fun mainStateWhenPositiveNewStateIsIsolating(
+        currentState: IsolationLogicalState,
+        newState: IsolationLogicalState
+    ): TestResultViewState {
+        val buttonAction = buttonActionPotentiallyShareKeys(currentState, newState)
+
+        return if (currentState.isActiveIsolation(clock)) PositiveContinueIsolation(buttonAction)
+        else PositiveWillBeInIsolation(buttonAction)
+    }
 
     private fun mainStateWhenNegative(
         currentState: IsolationLogicalState,
@@ -121,15 +135,31 @@ class TestResultViewModel @Inject constructor(
                 if (isTestResultBeingCompleted(currentState, newState))
                     NegativeWillBeInIsolation
                 else if (newState is PossiblyIsolating && newState.isActiveIndexCase(clock))
-                    NegativeAfterPositiveOrSymptomaticWillBeInIsolation // D
+                    NegativeAfterPositiveOrSymptomaticWillBeInIsolation
                 else
                     NegativeWillBeInIsolation
             } else
-                NegativeWontBeInIsolation // A
+                NegativeWontBeInIsolation
         } else {
-            NegativeNotInIsolation // E
+            NegativeNotInIsolation
         }
     }
+
+    private fun buttonActionPotentiallyShareKeys(
+        currentState: IsolationLogicalState,
+        newState: IsolationLogicalState
+    ): ButtonAction =
+        if (isKeySubmissionSupported()) {
+            ShareKeys(canBookFollowUpTest(currentState, newState))
+        } else Finish
+
+    private fun canBookFollowUpTest(
+        currentState: IsolationLogicalState,
+        newState: IsolationLogicalState
+    ): Boolean =
+        testResult.requiresConfirmatoryTest &&
+            !currentState.isIsolatingWithPositiveConfirmedTest() &&
+            !newState.hasPositiveCompletedTest()
 
     private fun isTestResultBeingCompleted(
         currentState: IsolationLogicalState,
@@ -146,15 +176,17 @@ class TestResultViewModel @Inject constructor(
         this is PossiblyIsolating &&
             hasActiveConfirmedPositiveTestResult(clock)
 
+    private fun IsolationLogicalState.hasPositiveCompletedTest(): Boolean =
+        this is PossiblyIsolating &&
+            hasCompletedPositiveTestResult()
+
     private fun isKeySubmissionSupported(): Boolean =
         testResult.diagnosisKeySubmissionSupported && !preventKeySubmission
 
     override fun onActionButtonClicked() {
-        val currentState = stateMachine.readLogicalState()
-
         acknowledgeTestResult()
 
-        val navigationEvent = getNavigationEvent(currentState)
+        val navigationEvent = getNavigationEvent()
 
         if (navigationEvent != null) {
             navigationEventLiveData.postValue(navigationEvent)
@@ -163,21 +195,18 @@ class TestResultViewModel @Inject constructor(
         }
     }
 
-    private fun getNavigationEvent(currentState: IsolationLogicalState): NavigationEvent? =
-        when (viewState.value?.mainState?.buttonAction) {
-            FINISH -> NavigationEvent.Finish
-            SHARE_KEYS -> {
-                if (isKeySubmissionSupported()) {
-                    viewModelScope.launch {
-                        analyticsEventProcessor.track(AskedToShareExposureKeysInTheInitialFlow)
-                    }
-                    NavigationEvent.NavigateToShareKeys(
-                        bookFollowUpTest = testResult.requiresConfirmatoryTest &&
-                            !currentState.isIsolatingWithPositiveConfirmedTest()
-                    )
-                } else NavigationEvent.Finish
+    private fun getNavigationEvent(): NavigationEvent? =
+        when (val buttonAction = viewState.value?.mainState?.buttonAction) {
+            Finish -> NavigationEvent.Finish
+            is ShareKeys -> {
+                viewModelScope.launch {
+                    analyticsEventProcessor.track(AskedToShareExposureKeysInTheInitialFlow)
+                }
+                NavigationEvent.NavigateToShareKeys(
+                    buttonAction.bookFollowUpTest
+                )
             }
-            ORDER_TEST -> NavigationEvent.NavigateToOrderTest
+            OrderTest -> NavigationEvent.NavigateToOrderTest
             else -> null
         }
 

@@ -1,13 +1,10 @@
 package uk.nhs.nhsx.covid19.android.app.isolation
 
-import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.report.notReported
-import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import kotlin.test.assertFails
 
 /**
@@ -20,12 +17,12 @@ class TransitionVerificationTest(
     private val otherStates: List<State>,
     private val initialStateRepresentation: StateRepresentation,
     @Suppress("unused") private val testName: String
-) : EspressoTest() {
+) {
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{index}_{3}")
         fun generateParameters(): Iterable<Array<Any>> {
-            val initialStates = IsolationTransitionLoader(InstrumentationRegistry.getInstrumentation().context)
+            val initialStates = IsolationTransitionLoader()
                 .loadTransitions()
                 .map { it.initialState }
                 .distinct()
@@ -60,11 +57,12 @@ class TransitionVerificationTest(
         )
     }
 
+    private val testAppContext = IsolationTestContext()
     private val isolationConfiguration = DurationDays()
     private val stateVerifier = StateVerifier(testAppContext)
 
     @Test
-    fun testVerification() = notReported {
+    fun testVerification() {
         runBlocking {
             initialStateRepresentation.skipUnsupportedState(initialState)
 

@@ -5,19 +5,9 @@ import androidx.work.ListenableWorker
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonEncodingException
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultRequestBody
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultResponse
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
@@ -38,7 +28,6 @@ class DownloadVirologyTestResultWork @Inject constructor(
     private val stateMachine: IsolationStateMachine,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider,
-    private val analyticsEventProcessor: AnalyticsEventProcessor,
     private val receivedUnknownTestResultProvider: ReceivedUnknownTestResultProvider,
     private val clock: Clock
 ) {
@@ -67,8 +56,8 @@ class DownloadVirologyTestResultWork @Inject constructor(
                             testResultResponse.requiresConfirmatoryTest,
                             confirmatoryDayLimit = testResultResponse.confirmatoryDayLimit
                         )
-                        logAnalytics(testResultResponse.testResult, testResultResponse.testKit)
-                        stateMachine.processEvent(OnTestResult(receivedTestResult))
+
+                        stateMachine.processEvent(OnTestResult(receivedTestResult, testOrderType = INSIDE_APP))
                         testOrderingTokensProvider.remove(config)
                     }
                     UnparsableTestResult -> {
@@ -83,18 +72,6 @@ class DownloadVirologyTestResultWork @Inject constructor(
         }
 
         return ListenableWorker.Result.success()
-    }
-
-    private suspend fun logAnalytics(
-        result: VirologyTestResult,
-        testKitType: VirologyTestKitType
-    ) {
-        when (result) {
-            POSITIVE -> analyticsEventProcessor.track(PositiveResultReceived)
-            NEGATIVE -> analyticsEventProcessor.track(NegativeResultReceived)
-            VOID -> analyticsEventProcessor.track(VoidResultReceived)
-        }
-        analyticsEventProcessor.track(ResultReceived(result, testKitType, INSIDE_APP))
     }
 
     private suspend fun fetchVirologyTestResult(pollingToken: String): ReceivedVirologyTestResult =

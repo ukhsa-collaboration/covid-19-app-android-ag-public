@@ -40,9 +40,9 @@
     <string name="qr_code_success_subtitle">સ્થળ ખાતે કોરોનાવાઇરસના સંભવિત સંસર્ગ અંગે સૂચના મેળવવા માટે ઍપ એ સૌથી ઝડપી માર્ગ છે.</string>
     <string name="qr_code_cancel_check_in">ખોટું ચેક-ઇન? રદ કરવા માટે ટેપ કરો.</string>
     <string name="qr_code_help_how_it_works">તે કઈ રીતે કાર્ય કરે છે</string>
-    <string name="qr_code_help_how_it_works_text">વેન્યૂ ચેક-ઇનમાં તમે જે સ્થળોની મુલાકાત લો તેમાં ઝડપથી અને સરળતાથી તમને ચેક ઇન કરવામાં મદદ કરવા માટે સત્તાવાર NHS QR કોડનો ઉપયોગ કરવામાં આવે છે, જેમ કે રેસ્ટોરાં અથવા બાર. જો તમે ઍપનો ઉપયોગ કરો તો અમે તમને જાણ કરી શકીશું કે તમે જે સ્થળની મુલાકાત લીધી છે ત્યાં તમે કોરોનાવાઇરસના સંસર્ગમાં આવ્યા હોઈ શકો કે કેમ.</string>
-    <string name="venue_alert_title">તાજેતરમાં ઘણા લોકો એક જગ્યાએ હતા, ત્યાં તમે પણ હતા. ત્યારથી એ લોકોનો કોરોનાવાયરસ (કોવિડ-19)ટેસ્ટ  પોઝિટિવ આવેલ છે.</string>
-    <string name="venue_alert_explanation">એવું જોખમ છે કે તમે વાઇરસના કોન્ટેક્ટમાં આવ્યા હોઈ શકો છો. એટલા માટે અમે ભલામણ કરીએ છીએ કે તમે તરત જ ટેસ્ટ બૂક કરો\n\nજો તમને કોરોનાવાયરના લક્ષણો હોય તો એપ પર \"લક્ષણો તપાસો\" બટન પર ક્લિક કરીને ટેસ્ટ બૂક કરો.\n\nતમને લિસ્ટમાંનાં લક્ષણોમાંથી એક પણ ન હોય તો પણ તમે હજીયે કોરોનાવાઇરસ ટેસ્ટ  કરાવી શકો છો. વધુ જાણવા માટે “કોવિડ-19ની ટેસ્ટ”  આ એપની હોમ સ્ક્રિન પરથી સિલેક્ટ કરો.\n\nતમને રસી કે વેક્સિન મળી ગયું હોય તો પણ મહેરબાની કરીને લેટેસ્ટ માર્ગદર્શન પાળજો. વધુ માહિતી, સલાહ કે સપોર્ટ માટે 119 પર કૉલ કરો</string>
+    <string name="qr_code_help_how_it_works_text">NHS QR કોડ પોસ્ટર્સને સ્કેન કરવા માટે આ એપ્લિકેશનનો ઉપયોગ કરીને ઝડપથી અને સરળતાથી રેસ્ટોરન્ટ અથવા બાર જેવા \"સ્થળોમાં ચેક-ઇન કરો\". જો તમે મુલાકાત લીધેલ કોઈ જગ્યાએથી વાયરસના કોન્ટેક્ટમાં આવ્યા હોવ તો આ થકી તમને જાણ થઈ શકે છે.</string>
+    <string name="venue_alert_title">તમે તાજેતરમાં અન્ય લોકોની જેમ તે જ દિવસે એક સ્થળની મુલાકાત લીધી જે દિવસથી તેઓનું કોરોનાવાયરસ (કોવિડ-19) નું રિઝલ્ટ પોઝિટિવ આવ્યું હતું</string>
+    <string name="venue_alert_explanation">એવું એક જોખમ છે કે તમે વાયરસના કોન્ટેક્ટમાં આવ્યા હોવ. આ કારણોસર, અમે હવે ટેસ્ટ માટે નોંધ કરાવવાની ભલામણ કરીએ છીએ.\n\nજો તમને કોઈ કોવિડ-19 ના લક્ષણો નથી, તો રેપીડ લેટરલ ફ્લો ટેસ્ટ કેવી રીતે કરાવવું તે જાણવા માટે આ એપ્લિકેશનની હોમ સ્ક્રીનમાંથી \"કોવિડ-19 માટે ટેસ્ટ કરાવવું\" પસંદ કરો.\n\nજો તમારી પાસે કોવિડ-19 લક્ષણો છે, તો આ એપ્લિકેશનની હોમ સ્ક્રીનમાંથી “લક્ષણો તપાસો” પસંદ કરો અને પોલિમરેઝ ચેન રિએક્શન (PCR) ટેસ્ટ બુક કરો.\n\nજો તમને રસી કે વેક્સિન આપવામાં આવી હોય, તો પણ કૃપા કરીને તમામ લેટેસ્ટ માર્ગદર્શનનું પાલન કરવાનું ચાલુ રાખો.\n\nવધુ માહિતી, સલાહ અથવા સપોર્ટ માટે કૃપા કરીને 119 પર કૉલ કરો.</string>
     <string name="notification_title_post_code_risk_changed">લૉકલ માહિતી અપડેટ કરવામાં આવી છે.</string>
     <string name="notification_title_test_results">તમારા ટેસ્ટના પરિણામો આવી ગયા છે</string>
     <string name="select_symptoms">લક્ષણો પસંદ કરો</string>
@@ -163,7 +163,7 @@
     <string name="something_went_wrong">કંઈક ખોટું થયું છે</string>
     <string name="test_ordering_failure_title">કંઈક ખોટું થયું છે</string>
     <string name="test_ordering_failure_description">ફરીથી પ્રયત્ન કરતાં પહેલા, કૃપા કરી તપાસો કે તમારા ફોનના મોબાઈલ ડેટા સેટિંગ્સ ચાલુ છે, તમારું Wi-Fi જોડાણ (જો તમે ઉપયોગ કરતાં હોવ તો) તપાસો અને ખાતરી કરો કે એરોપ્લેન મોડ બંધ હોય.</string>
-    <string name="notification_title_risky_venue">તાજેતરમાં ઘણા લોકો એક જગ્યાએ હતા, ત્યાં તમે પણ હતા. ત્યારથી એ લોકોનો કોરોનાવાયરસ (કોવિડ-19)ટેસ્ટ  પોઝિટિવ આવેલ છે.</string>
+    <string name="notification_title_risky_venue">તમે તાજેતરમાં અન્ય લોકોની જેમ તે જ દિવસે એક સ્થળની મુલાકાત લીધી જે દિવસથી તેઓનું કોરોનાવાયરસ (કોવિડ-19) નું રિઝલ્ટ પોઝિટિવ આવ્યું હતું</string>
     <string name="notification_text_post_code_risk_changed">સ્થળોની મુલાકાત લેવા દરમિયાન ઓફિશિયલ NHS QR કોડ સ્કૅન કરવાનું યાદ રાખો.</string>
     <string name="notification_channel_area_risk_changed_name">વિસ્તારનું જોખમ બદલાયું છે</string>
     <string name="notification_channel_area_risk_changed_description">આ સૂચનાઓ તમારા વિસ્તારના ચેપના જોખમનો ટ્રેક રાખવામાં મદદ કરે છે.</string>
@@ -263,9 +263,9 @@
     <string name="link_test_result_text" />
     <string name="link_test_result_enter_code_title">તમારા ટેસ્ટ કોડને દાખલ કરો</string>
     <string name="about_provide_feedback_link">ફીડબૅક માહિતી</string>
-    <string name="qr_code_help_text">જો તમે QR કોડ સ્કેન કરવામાં સમર્થ નથી અને તમારે અન્ય રીતે ચેક ઇન કરવાની જરૂર છે, તો કૃપા કરીને સ્ટાફના સભ્ય સાથે વાત કરો.</string>
-    <string name="qr_code_help_about_qr_code_title">સત્તાવાર NHS QR કોડ શું છે?</string>
-    <string name="qr_code_help_about_qr_code_text">સત્તાવાર NHS QR કોડ પોસ્ટર આ રીતે દેખાય છે. મધ્યમાં ચોરસ એવો QR કોડ તમારે સ્કૅન કરવાની જરૂર પડશે.</string>
+    <string name="qr_code_help_text">જો તમે કોડને સ્કેન કરી શકતા નથી, તો અમે તમને સ્થળ પરના સ્ટાફના સભ્ય સાથે ચેક-ઇન કરવાની અન્ય રીતો વિશે વાત કરવાની સલાહ આપીશું.</string>
+    <string name="qr_code_help_about_qr_code_title">NHS QR કોડ પોસ્ટરને કેવી રીતે ઓળખવું</string>
+    <string name="qr_code_help_about_qr_code_text">અહીં સત્તાવાર NHS QR કોડ પોસ્ટર્સ છે. તમારે કોડ સ્કેન કરવાની જરૂર છે, જે મધ્યમાં ચોરસ છે.</string>
     <string name="link_test_result_enter_code_example">ઉદાહરણ: 7g8s3stn</string>
     <string name="about_software_information_text_app_manufacturer">ઉત્પાદક અને જાળવણીકર્તા</string>
     <string name="submit_keys_information_title">અન્યોને જાણ કરવામાં મદદ કરો</string>
@@ -293,7 +293,7 @@
     <string name="qr_code_failure_help_link">વેન્યુ ચેક-ઇનમાં સહાય</string>
     <string name="status_option_read_self_isolation_advice">સેલ્ફ-આઇસોલેશન સલાહ વાંચો</string>
     <string name="test_result_negative_already_not_in_isolation_subtitle">તમારું કોરોનાવયરનું ટેસ્ટ રિઝલ્ટ નેગેટિવ છે</string>
-    <string name="qr_code_help_title">QR કોડ સ્કેન કરવામાં સહાય કરો</string>
+    <string name="qr_code_help_title">જો તમે કોડને સ્કેન કરી શકતા નથી તો સહાય માંગો</string>
     <string name="qr_code_help_about_qr_code_image_content_description">આ ઇંગ્લૅન્ડમાં હૉસ્પિટાલિટીનાં સ્થળો માટેના ઑફિશ્યલ NHS QR કોડના એક પોસ્ટરનું ઉદાહરણ છે</string>
     <string name="about_void">રદબાતલ</string>
     <string name="authentication_enter_code_subtitle">તમારો અનન્ય કોડ દાખલ કરો</string>
@@ -308,8 +308,8 @@
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
     <string name="notification_channel_background_work_name">Background activities</string>
     <string name="notification_text_updating_database">લોડ થઈ રહ્યું છે...</string>
-    <string name="qr_code_help_poster_content_description_english">આ ઇંગ્લૅન્ડમાં સ્થળો માટેના ઑફિશ્યલ NHS QR કોડના એક પોસ્ટરનું ઉદાહરણ છે</string>
-    <string name="qr_code_help_poster_content_description_welsh">આ વેલ્સમાં સ્થળો માટેના ઑફિશ્યલ NHS QR કોડના એક પોસ્ટરનું ઉદાહરણ છે</string>
+    <string name="qr_code_help_poster_content_description_english">અહીં અંગ્રેજી NHS QR કોડ પોસ્ટરનું ઉદાહરણ આપ્યું છે</string>
+    <string name="qr_code_help_poster_content_description_welsh">અહીં વેલ્શ NHS QR કોડ પોસ્ટરનું ઉદાહરણ આપ્યું છે</string>
     <string name="qr_code_help_poster_title_english">ઈંગ્લિશ NHS QR કોડ પોસ્ટરઃ</string>
     <string name="qr_code_help_poster_title_welsh">વેલ્શ NHS QR કોડ પોસ્ટર:</string>
     <string name="questionnaire_no_i_dont_have_symptom">ના, મને %s લક્ષણો નથી</string>
@@ -453,7 +453,7 @@
     <string name="qr_code_help_how_it_helps_text">આ એપની સુવિધા વ્યવસાયો માટે સંપર્ક ટ્રેસિંગને સપોર્ટ આપવો સરળ બનાવે છે. તે તમારી ગોપનીયતા સુરક્ષિત રાખી, આપણને સૌને સલામત રહેવામાં મદદ કરે છે.</string>
     <string name="qr_code_help_how_it_helps_title">તે કઈ રીતે મદદ કરે છે</string>
     <string name="qr_code_help_how_to_scan_text">તમારો ફોન એવી રીતે પકડો, જેથી સત્તાવાર NHS QR કોડ અગાઉના પાન પર ખાનામાં દેખાય. જ્યારે તમારો ફોન QR કોડને ઓળખે ત્યારે તે દર્શાવશે કે તમે સફળતાપૂર્વક ચેક ઇન કર્યું છે.</string>
-    <string name="qr_code_help_how_to_scan_title">સત્તાવાર NHS QR કોડ કેવી રીતે સ્કૅન કરશો</string>
+    <string name="qr_code_help_how_to_scan_title">NHS QR કોડ પોસ્ટર કેવી રીતે સ્કેન કરવું</string>
     <string name="settings_my_area_local_authority">લૉકલ ઑથોરિટી</string>
     <string name="user_data_risky_venue_visit_date_title">જોખમી જગ્યાની મુલાકાતની તારીખ</string>
     <string name="venue_check_in_title">વધુ માહિતી</string>
@@ -480,9 +480,9 @@
     <string name="back">પાછા જાઓ</string>
     <string name="how_does_it_help_text">તે ઍપના ને વાપરનાર લોકોને એ જણાવવા દે છે કે તેઓ કોઈ એવી વ્યક્તિની નજીક હતા, જેનો કોરોનાવાઇરસ ટેસ્ટ પૉઝિટિવ આવ્યો હતો.</string>
     <string name="how_does_it_help_title">તે કેવી રીતે મદદ કરે છે?</string>
-    <string name="qr_code_help_official_nhs_posters_title">ઓફિશિયલ NHS QR પોસ્ટર્સ</string>
-    <string name="qr_code_help_poster_content_description_hospitality">ઇંગ્લિશ હૉસ્પિટાલિટિ NHS QR કોડ પોસ્ટર</string>
-    <string name="qr_code_help_poster_title_hospitality">ઇંગ્લિશ હૉસ્પિટાલિટિ NHS QR કોડ પોસ્ટર</string>
+    <string name="qr_code_help_official_nhs_posters_title">ઓફિશિયલ NHS QR કોડ પોસ્ટર્સ</string>
+    <string name="qr_code_help_poster_content_description_hospitality">અહીં અંગ્રેજી સત્કાર NHS QR કોડ પોસ્ટરનું ઉદાહરણ આપ્યું છે</string>
+    <string name="qr_code_help_poster_title_hospitality">ઇંગ્લિશ હૉસ્પિટાલિટિ NHS QR કોડ પોસ્ટર:</string>
     <string name="share_keys_privacy_banner">નોટિફિકેશનનો તમારી સાથે સંબંધ છે એવી કોઈને જાણ થશે નહિ</string>
     <string name="share_keys_success_title">COVID-19નો ફેલાવો અટકાવવામાં મદદ કરવા માટે તમારો આભાર</string>
     <string name="what_is_random_id_text">તમને \"યાદૃચ્છિક ID\" શેયર કરવાનું કહેવામાં આવશે. આ યાદૃચ્છિકપણે બનેલો એક કોડ છે, જે એવા અન્ય ફોન સાથે શેયર કરી શકાય છે જેમાં ઍક્સપોઝર નોટિફિકેશન્સ સ્વિચ ઑન કરેલાં હોય.</string>
@@ -563,4 +563,6 @@
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">જ્યારે તમારો ટેસ્ટ પોઝિટીવ છે ત્યારે સેલ્ફ-આઇસોલેટને ચાલુ રાખવું મહત્વપૂર્ણ છે.\n\nતમને પોતાને અને બીજા લોકોને સુરક્ષિત રાખવા માટે કૃપા કરીને ઘરે રહો. એપ હોમ સ્ક્રીન પર કાઉન્ટડાઉન ટાઈમર સાથે તમારા સેલ્ફ-આઇસોલેટ સમયગાળાનો ટ્રેક રાખો.</string>
+    <string name="qr_code_help_poster_title_hospitality_welsh">વેલ્શના વધારે જોખમવાળા સ્થળના NHS QR કોડ પોસ્ટર:</string>
+    <string name="qr_code_help_poster_content_description_hospitality_welsh">અહીં વેલ્શ ઉચ્ચ જોખમ સ્થળ NHS QR કોડ પોસ્ટરનું ઉદાહરણ આપ્યું છે</string>
 </resources>

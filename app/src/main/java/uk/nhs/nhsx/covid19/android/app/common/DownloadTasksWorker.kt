@@ -21,8 +21,8 @@ import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShowShareKeysReminderN
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenues
-import uk.nhs.nhsx.covid19.android.app.status.localmessage.DownloadLocalMessagesWork
 import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWork
+import uk.nhs.nhsx.covid19.android.app.status.localmessage.DownloadLocalMessagesWork
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
 import uk.nhs.nhsx.covid19.android.app.util.crashreporting.ProcessRemoteServiceExceptionCrashReport
 import uk.nhs.nhsx.covid19.android.app.util.defaultFalse
@@ -96,7 +96,7 @@ class DownloadTasksWorker(
         clearOutdatedDataAndUpdateIsolationConfiguration()
 
         if (hasSuccessfullyProcessedNewExposureProvider.value == false) {
-            exposureNotificationWork.handleNewExposure()
+            exposureNotificationWork.evaluateRisk()
         }
         exposureNotificationWork.handleUnprocessedRequests()
         downloadAndProcessKeys()

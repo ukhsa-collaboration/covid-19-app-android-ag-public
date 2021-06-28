@@ -3,12 +3,10 @@ package uk.nhs.nhsx.covid19.android.app.state
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CalculateKeySubmissionDateRange
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
-import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.PositiveTestResult
@@ -32,7 +30,6 @@ import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionSt
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.toRelevantVirologyTestResult
-import uk.nhs.nhsx.covid19.android.app.util.isBeforeOrEqual
 import uk.nhs.nhsx.covid19.android.app.util.selectEarliest
 import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Clock
@@ -84,8 +81,8 @@ class TestResultIsolationHandler @Inject constructor(
 
                     isNegativeTestIrrelevant(receivedTestResult, currentState) -> Nothing
 
-                    isConfirmedTestAfterConfirmatoryDayLimit(receivedTestResult, currentState) ->
-                        Complete(receivedTestResult.testEndDay(clock))
+                    isConfirmedTestAfterConfirmatoryDayLimit(testInfo.acknowledgedTestResult, currentState) ->
+                        Complete(receivedTestResult.testEndDate(clock))
 
                     else -> when (previousTestResult?.testResult) {
                         RelevantVirologyTestResult.NEGATIVE -> Nothing
@@ -100,16 +97,22 @@ class TestResultIsolationHandler @Inject constructor(
                 when {
                     // If the app knows about an existing (active or expired) isolation, and “positive test isolation end
                     // date” <= “assumed isolation start date”, then test is considered “too old”
-                    wouldTestIsolationEndBeforeOrOnStartOfExistingIsolation(receivedTestResult, currentState) -> Ignore
+                    wouldTestIsolationEndBeforeOrOnStartOfExistingIsolation(receivedTestResult, currentState, clock) -> Ignore
 
                     hasBecomeSymptomaticAfterPositiveTest(currentState) ->
                         computeIsolationUpdateWhenSymptomaticAfterPositiveThenPositive(currentState, testInfo)
 
                     // If the app knows about symptoms, and “positive test end date” < “assumed symptom onset date”, then
                     // save the test and preserve the symptoms.
-                    // (Note: if there is a positive test stored, we know that the stored test is older than the symptoms,
-                    // otherwise we would have gone into the branch hasBecomeSymptomaticAfterPositiveTest)
-                    isTestOlderThanSelfAssessmentSymptoms(receivedTestResult, currentState) ->
+                    // Remarks:
+                    //  * Here we want to skip the case where we already have a negative test result stored and the positive
+                    //    test result we have just received is unconfirmed and older than the negative, hence the check for
+                    //    !receivedTestResult.isPositiveUnconfirmedOlderThanNegative(previousTestResult)
+                    //    That case is handled further below.
+                    //  * If there is a positive test stored, we know that the stored test is older than the symptoms,
+                    //    otherwise we would have gone into the branch hasBecomeSymptomaticAfterPositiveTest
+                    !receivedTestResult.isPositiveUnconfirmedOlderThanNegative(previousTestResult) &&
+                        isTestOlderThanSelfAssessmentSymptoms(receivedTestResult, currentState, clock) ->
                         getConfirmedDateIfNeeded(receivedTestResult, previousTestResult)?.let { confirmedDate ->
                             Update(testInfo.confirm(confirmedDate))
                         } ?: Update(testInfo)
@@ -117,9 +120,7 @@ class TestResultIsolationHandler @Inject constructor(
                     // If the app knows about an existing (confirmed or unconfirmed) positive test, and “positive test end
                     // date” < “existing positive test end date”, then the newly entered positive test should be used for
                     // isolation
-                    previousTestResult != null &&
-                        previousTestResult.isPositive() &&
-                        receivedTestResult.isOlderThan(previousTestResult) ->
+                    receivedTestResult.isOlderThanPositive(previousTestResult) ->
                         when (indexCase?.isolationTrigger) {
                             is PositiveTestResult ->
                                 getConfirmedDateIfNeeded(receivedTestResult, previousTestResult)?.let { confirmedDate ->
@@ -135,15 +136,20 @@ class TestResultIsolationHandler @Inject constructor(
                         }
 
                     // If the app knows about an existing negative test and “positive test end date” < “negative test end date”
-                    previousTestResult != null &&
-                        previousTestResult.testResult == RelevantVirologyTestResult.NEGATIVE &&
-                        receivedTestResult.isOlderThan(previousTestResult) ->
+                    receivedTestResult.isOlderThanNegative(previousTestResult) ->
                         if (receivedTestResult.isConfirmed()) {
                             when (indexCase?.isolationTrigger) {
                                 is SelfAssessment -> Update(testInfo)
                                 else -> Overwrite(testInfo)
                             }
-                        } else Ignore
+                        } else if (isTestOlderThanSelfAssessmentSymptoms(receivedTestResult, currentState, clock, defaultIfNoSymptoms = true) &&
+                            previousTestResult != null &&
+                            isNegativeConfirmedTestAfterPositiveUnconfirmedConfirmatoryDayLimit(testInfo.acknowledgedTestResult, previousTestResult)
+                        ) {
+                            Overwrite(testInfo.complete(completedDate = previousTestResult.testEndDate))
+                        } else {
+                            Ignore
+                        }
 
                     receivedTestResult.requiresConfirmatoryTest ->
                         if (indexCase?.hasExpired(clock) == false) Nothing
@@ -155,7 +161,7 @@ class TestResultIsolationHandler @Inject constructor(
                             RelevantVirologyTestResult.NEGATIVE -> Overwrite(testInfo)
                             RelevantVirologyTestResult.POSITIVE ->
                                 if (previousTestResult.isConfirmed()) Nothing
-                                else Confirm(receivedTestResult.testEndDay(clock))
+                                else Confirm(receivedTestResult.testEndDate(clock))
                             else -> Update(testInfo)
                         }
                 }
@@ -187,15 +193,15 @@ class TestResultIsolationHandler @Inject constructor(
             // isolation, but preserve the symptoms
             previousTestResult != null &&
                 previousTestResult.isPositive() &&
-                testInfo.receivedTestResult.isOlderThan(previousTestResult) ->
+                testInfo.receivedTestResult.isOlderThan(previousTestResult, clock) ->
                 getConfirmedDateIfNeeded(testInfo.receivedTestResult, previousTestResult)?.let { confirmedDate ->
                     Update(testInfo.confirm(confirmedDate))
                 } ?: Update(testInfo)
 
             // The new test result is newer than the already stored result but older than symptoms
-            isTestOlderThanSelfAssessmentSymptoms(testInfo.receivedTestResult, currentState) ->
+            isTestOlderThanSelfAssessmentSymptoms(testInfo.receivedTestResult, currentState, clock) ->
                 if (testInfo.receivedTestResult.isConfirmed() && previousTestResult?.isConfirmed() == false)
-                    Confirm(confirmedDate = testInfo.receivedTestResult.testEndDay(clock))
+                    Confirm(confirmedDate = testInfo.receivedTestResult.testEndDate(clock))
                 else Nothing
 
             testInfo.receivedTestResult.isConfirmed() -> Update(testInfo)
@@ -226,19 +232,19 @@ class TestResultIsolationHandler @Inject constructor(
         val previousTestResult = currentState.getTestResult()
 
         return if (previousTestResult?.isConfirmed() == true) {
-            if (isTestOlderThanSelfAssessmentSymptoms(testInfo.receivedTestResult, currentState)) Nothing
+            if (isTestOlderThanSelfAssessmentSymptoms(testInfo.receivedTestResult, currentState, clock)) Nothing
             else DeleteSymptoms
         } else {
             when {
                 isTestBeforeExistingUnconfirmedPositiveTest(testInfo.receivedTestResult, currentState) -> Nothing
 
-                isConfirmedTestAfterConfirmatoryDayLimit(testInfo.receivedTestResult, currentState) -> {
-                    if (isTestOlderThanSelfAssessmentSymptoms(testInfo.receivedTestResult, currentState))
-                        Complete(testInfo.receivedTestResult.testEndDay(clock))
-                    else CompleteAndDeleteSymptoms(testInfo.receivedTestResult.testEndDay(clock))
+                isConfirmedTestAfterConfirmatoryDayLimit(testInfo.acknowledgedTestResult, currentState) -> {
+                    if (isTestOlderThanSelfAssessmentSymptoms(testInfo.receivedTestResult, currentState, clock))
+                        Complete(testInfo.receivedTestResult.testEndDate(clock))
+                    else CompleteAndDeleteSymptoms(testInfo.receivedTestResult.testEndDate(clock))
                 }
 
-                isTestOlderThanSelfAssessmentSymptoms(testInfo.receivedTestResult, currentState) -> DeleteTest
+                isTestOlderThanSelfAssessmentSymptoms(testInfo.receivedTestResult, currentState, clock) -> DeleteTest
 
                 else -> Update(testInfo)
             }
@@ -300,7 +306,7 @@ class TestResultIsolationHandler @Inject constructor(
                 receivedTestResult = this,
                 acknowledgedTestResult =
                     AcknowledgedTestResult(
-                        testEndDay(clock),
+                        testEndDate(clock),
                         virologyTestResult,
                         testKitType,
                         acknowledgedDate = acknowledgedDate.toLocalDate(clock.zone),
@@ -316,6 +322,9 @@ class TestResultIsolationHandler @Inject constructor(
 
     private fun AcknowledgedTestResult.confirm(confirmedDate: LocalDate): AcknowledgedTestResult =
         copy(confirmedDate = confirmedDate, confirmatoryTestCompletionStatus = COMPLETED_AND_CONFIRMED)
+
+    private fun TestInfo.complete(completedDate: LocalDate): TestInfo =
+        copy(acknowledgedTestResult = acknowledgedTestResult.complete(completedDate))
 
     private fun AcknowledgedTestResult.complete(completedDate: LocalDate): AcknowledgedTestResult =
         copy(confirmedDate = completedDate, confirmatoryTestCompletionStatus = COMPLETED)
@@ -364,51 +373,27 @@ class TestResultIsolationHandler @Inject constructor(
             selfAssessmentOnsetDate.isAfter(previousTestResult.testEndDate)
     }
 
-    private fun wouldTestIsolationEndBeforeOrOnStartOfExistingIsolation(
-        receivedTestResult: ReceivedTestResult,
-        currentState: IsolationLogicalState
-    ): Boolean =
-        when (currentState) {
-            is NeverIsolating -> false
-            is PossiblyIsolating -> {
-                val isolationExpiryDate =
-                    getIsolationExpiryDateBasedOnTest(receivedTestResult, currentState.isolationConfiguration)
-                isolationExpiryDate.isBeforeOrEqual(currentState.startDate)
-            }
-        }
+    private fun ReceivedTestResult.isOlderThanPositive(otherTest: AcknowledgedTestResult?): Boolean =
+        otherTest != null &&
+            otherTest.testResult == RelevantVirologyTestResult.POSITIVE &&
+            this.isOlderThan(otherTest, clock)
 
-    private fun isTestOlderThanSelfAssessmentSymptoms(
-        testResult: ReceivedTestResult,
-        currentState: IsolationLogicalState
-    ): Boolean =
-        currentState.getIndexCase()?.getSelfAssessmentOnsetDate()?.let { onsetDate ->
-            testResult.testEndDay(clock).isBefore(onsetDate)
-        } ?: false
+    private fun ReceivedTestResult.isOlderThanNegative(otherTest: AcknowledgedTestResult?): Boolean =
+        otherTest != null &&
+            otherTest.testResult == RelevantVirologyTestResult.NEGATIVE &&
+            this.isOlderThan(otherTest, clock)
 
-    private fun IsolationLogicalState.getIndexCase(): IndexCase? =
-        when (this) {
-            is NeverIsolating -> null
-            is PossiblyIsolating -> indexInfo as? IndexCase
-        }
-
-    private fun IsolationLogicalState.getTestResult(): AcknowledgedTestResult? =
-        when (this) {
-            is NeverIsolating -> negativeTest?.testResult
-            is PossiblyIsolating -> indexInfo?.testResult
-        }
-
-    private fun IndexCase.getSelfAssessmentOnsetDate(): LocalDate? =
-        (isolationTrigger as? SelfAssessment)?.assumedOnsetDate
-
-    private fun ReceivedTestResult.isOlderThan(otherTest: AcknowledgedTestResult): Boolean =
-        testEndDay(clock).isBefore(otherTest.testEndDate)
+    private fun ReceivedTestResult.isPositiveUnconfirmedOlderThanNegative(otherTest: AcknowledgedTestResult?): Boolean =
+        isPositive() &&
+            !isConfirmed() &&
+            this.isOlderThanNegative(otherTest)
 
     private fun isNegativeTestIrrelevant(
         testResult: ReceivedTestResult,
         currentState: IsolationLogicalState
     ): Boolean =
         isTestBeforeExistingUnconfirmedPositiveTest(testResult, currentState) ||
-            isTestOlderThanSelfAssessmentSymptoms(testResult, currentState)
+            isTestOlderThanSelfAssessmentSymptoms(testResult, currentState, clock)
 
     private fun isTestBeforeExistingUnconfirmedPositiveTest(
         testResult: ReceivedTestResult,
@@ -418,21 +403,38 @@ class TestResultIsolationHandler @Inject constructor(
         return existingTestResult != null &&
             existingTestResult.isPositive() &&
             !existingTestResult.isConfirmed() &&
-            testResult.testEndDay(clock).isBefore(existingTestResult.testEndDate)
+            testResult.testEndDate(clock).isBefore(existingTestResult.testEndDate)
     }
 
     private fun isConfirmedTestAfterConfirmatoryDayLimit(
-        testResult: ReceivedTestResult,
+        testResult: AcknowledgedTestResult,
         currentState: IsolationLogicalState
     ): Boolean {
         val existingTestResult = currentState.getIndexCase()?.testResult
         return existingTestResult != null &&
-            existingTestResult.isPositive() &&
-            !existingTestResult.isConfirmed() &&
-            existingTestResult.confirmatoryDayLimit != null &&
-            testResult.isConfirmed() &&
-            testResult.testEndDay(clock)
-                .isAfter(existingTestResult.testEndDate.plusDays(existingTestResult.confirmatoryDayLimit.toLong()))
+            isNegativeConfirmedTestAfterPositiveUnconfirmedConfirmatoryDayLimit(existingTestResult, testResult)
+    }
+
+    private fun isNegativeConfirmedTestAfterPositiveUnconfirmedConfirmatoryDayLimit(
+        testResult1: AcknowledgedTestResult,
+        testResult2: AcknowledgedTestResult
+    ): Boolean {
+        val oldTest: AcknowledgedTestResult
+        val newTest: AcknowledgedTestResult
+        if (testResult1.isOlderThan(testResult2, clock)) {
+            oldTest = testResult1
+            newTest = testResult2
+        } else {
+            oldTest = testResult2
+            newTest = testResult1
+        }
+
+        return oldTest.isPositive() &&
+            !oldTest.isConfirmed() &&
+            oldTest.confirmatoryDayLimit != null &&
+            newTest.testResult == RelevantVirologyTestResult.NEGATIVE &&
+            newTest.isConfirmed() &&
+            !oldTest.isDateWithinConfirmatoryDayLimit(newTest.testEndDate, clock)
     }
 
     private fun IsolationState.clearContactCase(): IsolationState =
@@ -473,7 +475,7 @@ class TestResultIsolationHandler @Inject constructor(
     ): IndexCase {
         val isolationConfiguration = currentState.isolationConfiguration
         val expiryDateBasedOnTest =
-            getIsolationExpiryDateBasedOnTest(testInfo.receivedTestResult, isolationConfiguration)
+            getIsolationExpiryDateBasedOnTest(testInfo.receivedTestResult, isolationConfiguration, clock)
         val currentLogicalState = IsolationLogicalState.from(currentState)
 
         return IndexCase(
@@ -617,24 +619,6 @@ class TestResultIsolationHandler @Inject constructor(
 
     private fun IndexCase.capExpiryDate(logicalState: IsolationLogicalState): IndexCase =
         copy(expiryDate = logicalState.capExpiryDate(this))
-
-    private fun getIsolationExpiryDateBasedOnTest(
-        testResult: ReceivedTestResult,
-        isolationConfiguration: DurationDays
-    ): LocalDate {
-        return if (testResult.symptomsOnsetDate?.explicitDate != null) {
-            testResult.symptomsOnsetDate.explicitDate
-                .plusDays(isolationConfiguration.indexCaseSinceSelfDiagnosisOnset.toLong())
-        } else {
-            getIsolationExpiryDateBasedOnTestEndDate(testResult.testEndDay(clock), isolationConfiguration)
-        }
-    }
-
-    private fun getIsolationExpiryDateBasedOnTestEndDate(
-        testEndDate: LocalDate,
-        isolationConfiguration: DurationDays
-    ): LocalDate =
-        testEndDate.plusDays(isolationConfiguration.indexCaseSinceTestResultEndDate.toLong())
 
     private data class TestInfo(
         val receivedTestResult: ReceivedTestResult,

@@ -39,10 +39,10 @@
     <string name="qr_code_failure_help_description">您可能正在尝试扫描无效的NHS官方QR码，或者可能无法识别该场所。\n\n请寻 向工作人员寻求帮助。</string>
     <string name="qr_code_success_subtitle">这款应用程序是在一个地点提醒您可能接触冠状病毒的最快方式。</string>
     <string name="qr_code_cancel_check_in">登记错误？点击取消。</string>
-    <string name="qr_code_help_how_it_works">怎么运行的</string>
-    <string name="qr_code_help_how_it_works_text">地点登记使用 NHS 官方二维码帮你轻松快捷地进行到访地（如餐馆、酒吧）登记。如果您使用本应用程序，我们可以让您知道您是否可能在您去过的地点接触过冠状病毒。</string>
+    <string name="qr_code_help_how_it_works">工作原理</string>
+    <string name="qr_code_help_how_it_works_text">使用本应用程序扫描 NHS 二维码图片，可以快速轻松地“登记进入场所”（例如餐厅或酒吧）。通过这种方式，您可以了解自己是否曾在访问某个地方时接触过病毒。</string>
     <string name="venue_alert_title">您近期曾与新冠病毒阳性 (COVID-19) 确诊患者在同一天出现在同一场所中</string>
-    <string name="venue_alert_explanation">您有接触过病毒的风险。因此，我们建议您马上预约检测。\n\n如果您出现了冠状病毒症状，请点击应用程序中的 Check symptoms（检查症状）按钮并预约检测。 \n\n即使没有任何列明的症状，您仍然可以进行冠状病毒检测。在本应用程序的主页选择“COVID-19 检测”，了解更多详情。\n\n即使您已接种疫苗，也请继续遵循最新的防疫指南。如需进一步的信息、建议或支持，请致电 119。</string>
+    <string name="venue_alert_explanation">您有接触状病毒的风险。因此，建议您马上预约检测。\n\n如果您没有任何 COVID-19 症状，请从此应用程序的主屏幕中选择“检测 COVID-19”，了解如何进行病毒的横向流动检测。\n\n如果您存在 COVID-19 症状，请从此应用程序的主屏幕中选择“检查症状”，预约进行聚合酶链反应 (PCR) 检测。\n\n即使您已接种疫苗，也请继续遵循最新的防疫指南。\n\n如需更多信息、建议或支持，请致电 119。</string>
     <string name="notification_title_post_code_risk_changed">本地信息已更新。</string>
     <string name="notification_title_test_results">您的测试结果已经出来了</string>
     <string name="select_symptoms">选择症状</string>
@@ -260,9 +260,9 @@
     <string name="link_test_result_text" />
     <string name="link_test_result_enter_code_title">输入您的测试代码</string>
     <string name="about_provide_feedback_link">反馈信息</string>
-    <string name="qr_code_help_text">如果您不能扫描QR，需要通过其他方式进行检查，请与工作人员说明。</string>
-    <string name="qr_code_help_about_qr_code_title">什么是 NHS 官方二维码？</string>
-    <string name="qr_code_help_about_qr_code_text">以下是 NHS 官方二维码海报的样子。您需要扫描中间的正方形二维码。</string>
+    <string name="qr_code_help_text">如果您无法扫描二维码，建议您寻求所在地点工作人员的帮助，了解其他登记的方式。</string>
+    <string name="qr_code_help_about_qr_code_title">如何识别 NHS 二维码图片</string>
+    <string name="qr_code_help_about_qr_code_text">以下是 NHS 官方二维码图片的样子。您需要扫描中间的正方形二维码。</string>
     <string name="link_test_result_enter_code_example">例如：7g8s3stn</string>
     <string name="about_software_information_text_app_manufacturer">实体名称和地址</string>
     <string name="submit_keys_information_title">帮助通知其他人</string>
@@ -290,7 +290,7 @@
     <string name="qr_code_failure_help_link">帮助进行场所签入</string>
     <string name="status_option_read_self_isolation_advice">阅读自我隔离建议</string>
     <string name="test_result_negative_already_not_in_isolation_subtitle">您的冠状病毒测试结果为阴性</string>
-    <string name="qr_code_help_title">帮助扫描 QR</string>
+    <string name="qr_code_help_title">如果无法扫描代码，请寻求帮助</string>
     <string name="qr_code_help_about_qr_code_image_content_description">这是一个英格兰酒店业场所 NHS 官方二维码海报的示例。</string>
     <string name="about_void">取消</string>
     <string name="authentication_enter_code_subtitle">输入您的唯一代码</string>
@@ -305,8 +305,8 @@
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
     <string name="notification_channel_background_work_name">Background activities</string>
     <string name="notification_text_updating_database">载入中...</string>
-    <string name="qr_code_help_poster_content_description_english">这是一个英格兰场所 NHS 官方二维码海报的示例。</string>
-    <string name="qr_code_help_poster_content_description_welsh">这是一个威尔士场所 NHS 官方二维码海报的示例。</string>
+    <string name="qr_code_help_poster_content_description_english">这是英格兰 NHS 二维码图片的举例</string>
+    <string name="qr_code_help_poster_content_description_welsh">这是威尔士 NHS 二维码图片的举例</string>
     <string name="qr_code_help_poster_title_english">英格兰NHS QR码海报:</string>
     <string name="qr_code_help_poster_title_welsh">威尔士NHS QR码海报:</string>
     <string name="questionnaire_no_i_dont_have_symptom">不，我没有 %s</string>
@@ -448,8 +448,8 @@
     <string name="venue_alert_m2_title">您近期曾与 COVID-19 检测阳性患者在同一天访问过同一场所</string>
     <string name="qr_code_help_how_it_helps_text">此应用程序的功能使商家可以轻松帮助接触追踪。 它可以帮助我们所有人保持安全，同时保护您的隐私。</string>
     <string name="qr_code_help_how_it_helps_title">它如何起到作用</string>
-    <string name="qr_code_help_how_to_scan_text">拿起您的手机，NHS 官方二维码将出现在上一页的方框中。当您的手机对二维码完成识别后，将显示您已经成功登记。</string>
-    <string name="qr_code_help_how_to_scan_title">如何扫描 NHS 官方二维码</string>
+    <string name="qr_code_help_how_to_scan_text">拿起您的手机，这个二维码将出现在上一页的方框中。当您的手机对二维码完成识别后，将显示您已经成功登记。</string>
+    <string name="qr_code_help_how_to_scan_title">如何扫描 NHS 二维码图片</string>
     <string name="settings_my_area_local_authority">地方当局</string>
     <string name="user_data_risky_venue_visit_date_title">接触风险场所日期</string>
     <string name="venue_check_in_title">更多信息</string>
@@ -476,9 +476,9 @@
     <string name="back">返回</string>
     <string name="how_does_it_help_text">这样可以使其他应用程序用户知道他们附近有新冠肺炎阳性患者。</string>
     <string name="how_does_it_help_title">这将起到什么作用？</string>
-    <string name="qr_code_help_official_nhs_posters_title">NHS 官方二维码海报</string>
-    <string name="qr_code_help_poster_content_description_hospitality">英国酒店业 NHS 二维码海报</string>
-    <string name="qr_code_help_poster_title_hospitality">英国酒店业 NHS 二维码海报</string>
+    <string name="qr_code_help_official_nhs_posters_title">NHS 官方二维码图片</string>
+    <string name="qr_code_help_poster_content_description_hospitality">这是英国酒店行业 NHS 二维码图片的举例</string>
+    <string name="qr_code_help_poster_title_hospitality">英格兰酒店业 NHS 二维码图片:</string>
     <string name="share_keys_privacy_banner">没有人知道该通知是由您发出的。</string>
     <string name="share_keys_success_title">感谢您为防止冠状病毒 (COVID-19) 传播做出的贡献</string>
     <string name="what_is_random_id_text">您将被要求分享一个“随机 ID”。这是一个随机生成的代码，可以与其他开启了“接触风险通知”的手机进行共享。</string>
@@ -559,4 +559,6 @@
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">因为您的检测结果呈阳性，请务必继续进行自我隔离。\n\n为了自己和他人的安全，请待在家中。请使用应用程序主屏幕上的倒计时器记录您的自我隔离时间。</string>
+    <string name="qr_code_help_poster_title_hospitality_welsh">威尔士高风险场所 NHS 二维码图片：</string>
+    <string name="qr_code_help_poster_content_description_hospitality_welsh">这是威尔士高风险场所 NHS 二维码图片的举例</string>
 </resources>

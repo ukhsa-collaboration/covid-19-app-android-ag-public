@@ -40,9 +40,9 @@
     <string name="qr_code_success_subtitle">Uygulama, bir mekanda potansiyel koronavirüs maruziyeti konusunda uyarılmanın en hızlı yoludur.</string>
     <string name="qr_code_cancel_check_in">Yanlış giriş? İptal etmek için dokunun.</string>
     <string name="qr_code_help_how_it_works">Nasıl çalışır?</string>
-    <string name="qr_code_help_how_it_works_text">Mekanlara giriş yapma özelliği, restoranlar ve barlar gibi ziyaret ettiğiniz mekanlara kolayca giriş yapmanıza yardımcı olmak için resmi NHS QR kodlarını kullanır.  Uygulamayı kullanıyorsanız, ziyaret ettiğiniz bir mekanda koronavirüse maruz kalmış olup olmadığınızı size bildirebiliriz.</string>
-    <string name="venue_alert_title">Yakın zaman önce, daha sonra yapılan koronavirüs (COVID-19) test sonuçları pozitif çıkan kişilerle aynı günde bir yeri ziyaret ettiniz</string>
-    <string name="venue_alert_explanation">Virüse maruz kalmış olma riskiniz bulunmaktadır. Bu sebeple, şimdi bir test için rezervasyon yaptırmanızı öneriyoruz.\n\nKoronavirüs belirtilerine sahipseniz, lütfen uygulamada \"Belirtileri kontrol et\" düğmesini seçin ve bir test için rezervasyon yaptırın. \n\nListelenen belirtilerden hiçbirine sahip olmasanız dahi bir koronavirüs testi yaptırabilirsiniz. Daha fazla bilgi için bu uygulamanın ana ekranından “COVID-19 için Test”i seçin.\n\nAşı olmuş olsanız dahi lütfen en son yönergeleri izlemeye devam edin. Daha fazla bilgi, tavsiye ya da destek için lütfen 119\'u arayın.</string>
+    <string name="qr_code_help_how_it_works_text">NHS QR kodu posterlerini taratmak için bu uygulamayı kullanarak hızlı ve kolay bir şekilde bir restoran ya da bar gibi \"bir mekana giriş yapın\". Bu, ziyaret ettiğiniz bir mekanda virüse maruz kalmış olup olmayabileceğiniz hakkında sizi bilgilendirebilir.</string>
+    <string name="venue_alert_title">Yakın zamanda, koronavirüs (COVID-19) test sonuçları pozitif çıkan kişilerle aynı günde bir yeri ziyaret ettiniz</string>
+    <string name="venue_alert_explanation">Virüse maruz kalmış olma riskiniz bulunmaktadır. Bu sebeple, şimdi bir test için rezervasyon yaptırmanızı öneriyoruz.\n\nHerhangi bir COVID-19 belirtiniz yoksa, bir yanal akış testini nasıl yaptırabileceğiniz hakkında bilgi almak için bu uygulamanın ana ekranından \"COVID-19 için test\" seçeneğini seçin. \n\nCOVID-19 belirtileriniz varsa, bu uygulamanın ana ekranından \"Belirtilerizi kontrol edin\" seçeneğini seçin ve bir polimeraz zincir reaksiyonu (PCR) testi için rezervasyon yaptırın.\n\nAşı olmuş olsanız dahi lütfen en son yönergeleri izlemeye devam edin.\n\nDaha fazla bilgi, tavsiye ya da destek için lütfen 119\'u arayın.</string>
     <string name="notification_title_post_code_risk_changed">Yerel bilgiler güncellendi.</string>
     <string name="notification_title_test_results">Test sonuçlarınız hazır</string>
     <string name="select_symptoms">Belirtileri seç</string>
@@ -164,7 +164,7 @@
     <string name="something_went_wrong">Bir sorun yaşandı</string>
     <string name="test_ordering_failure_title">Bir sorun yaşandı</string>
     <string name="test_ordering_failure_description">Tekrar denemeden önce lütfen telefonunuzun mobil veri ayarlarının açık olduğunu teyit edin, Wi-Fi bağlantınızı kontrol edin (kullanıyorsanız) ve Uçak Modunun kapalı olduğundan emin olun.</string>
-    <string name="notification_title_risky_venue">Yakın zaman önce, daha sonra yapılan koronavirüs (COVID-19) test sonuçları pozitif çıkan kişilerle aynı günde bir yeri ziyaret ettiniz</string>
+    <string name="notification_title_risky_venue">Yakın zamanda, koronavirüs (COVID-19) test sonuçları pozitif çıkan kişilerle aynı günde bir yeri ziyaret ettiniz</string>
     <string name="notification_text_post_code_risk_changed">Mekanları ziyaret ederken resmi bir NHS QR kodunu taramayı unutmayın.</string>
     <string name="notification_channel_area_risk_changed_name">Bölge risk seviyesinde değişiklik</string>
     <string name="notification_channel_area_risk_changed_description">Bu bildirimler bulunduğunuz bölgedeki enfeksiyon riskini takip etmenize yardımcı olur.</string>
@@ -265,9 +265,9 @@
     <string name="link_test_result_text" />
     <string name="link_test_result_enter_code_title">Test kodunuzu girin</string>
     <string name="about_provide_feedback_link">Fikrinizi bildirin</string>
-    <string name="qr_code_help_text">QR kodunu tarayamıyorsanız ve başka bir şekilde kontrol etmeniz gerekiyorsa, lütfen bir personel ile konuşun.</string>
-    <string name="qr_code_help_about_qr_code_title">Resmi NHS QR kodu nedir?</string>
-    <string name="qr_code_help_about_qr_code_text">Resmi NHS QR kodu posterlerinin neye benzediğini burada görebilirsiniz. Ortadaki kare olan QR kodunu taramanız gerekiyor.</string>
+    <string name="qr_code_help_text">Kodu taratamazsanız, mekana giriş yapmanın diğer yollarıyla ilgili olarak bir görevliyle konuşmanızı tavsiye ederiz.</string>
+    <string name="qr_code_help_about_qr_code_title">Bir NHS QR kodu posteri nasıl tanınır</string>
+    <string name="qr_code_help_about_qr_code_text">Resmi NHS QR kodu posterlerinin neye benzediğine dair bir örneği burada görebilirsiniz. Ortasında kare olan kodu taratmanız gerekir.</string>
     <string name="link_test_result_enter_code_example">Örnek: 7g8s3stn</string>
     <string name="about_software_information_text_app_manufacturer">Üretici ve bakımcı</string>
     <string name="submit_keys_information_title">Başkalarına bildirimde bulunmaya yardımcı olun</string>
@@ -295,7 +295,7 @@
     <string name="qr_code_failure_help_link">Mekan girişi yapmak konusunda yardım</string>
     <string name="status_option_read_self_isolation_advice">Kişisel karantina tavsiyelerini okuyun</string>
     <string name="test_result_negative_already_not_in_isolation_subtitle">Koronavirüs test sonucunuz negatif</string>
-    <string name="qr_code_help_title">QR Kodunun taranması için yardım alın</string>
+    <string name="qr_code_help_title">Kodu taratamamanız durumunda yardım</string>
     <string name="qr_code_help_about_qr_code_image_content_description">Bu, İngiltere\'deki konaklama mekanları için resmi bir NHS QR kodu posteri örneğidir.</string>
     <string name="about_void">Geçersiz</string>
     <string name="authentication_enter_code_subtitle">Benzersiz kodunuzu girin</string>
@@ -310,9 +310,9 @@
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
     <string name="notification_channel_background_work_name">Background activities</string>
     <string name="notification_text_updating_database">Yükleniyor…</string>
-    <string name="qr_code_help_poster_content_description_english">Bu, İngiltere\'deki mekanlar için resmi bir NHS QR kodu posteri örneğidir.</string>
-    <string name="qr_code_help_poster_content_description_welsh">Bu, Galler\'deki mekanlar için resmi bir NHS QR kodu posteri örneğidir.</string>
-    <string name="qr_code_help_poster_title_english">İngilizce NHS QR kodu posteri:</string>
+    <string name="qr_code_help_poster_content_description_english">Örnek bir İngilizce NHS QR kodu posteri</string>
+    <string name="qr_code_help_poster_content_description_welsh">Örnek bir Galce NHS QR kodu posteri</string>
+    <string name="qr_code_help_poster_title_english">İngilizce Yemek ve Konaklama Mekanları NHS QR kodu posteri:</string>
     <string name="qr_code_help_poster_title_welsh">Galce NHS QR kodu posteri:</string>
     <string name="questionnaire_no_i_dont_have_symptom">Hayır bende %s yok</string>
     <string name="questionnaire_yes_i_have_symptom">Evet bende %s var</string>
@@ -454,7 +454,7 @@
     <string name="qr_code_help_how_it_helps_text">Bu uygulama özelliği, işletmelerin temas takibini desteklemesini kolaylaştırır. Gizliliğinizi korurken hepimiz güvende tutar.</string>
     <string name="qr_code_help_how_it_helps_title">Nasıl bir fayda sağlar?</string>
     <string name="qr_code_help_how_to_scan_text">Telefonunuzu, önceki sayfadaki kutuda resmi NHS QR kodu görünecek şekilde tutun. Telefonunuz QR kodunu tanıdığında, mekana başarılı bir şekilde giriş yaptığınızı gösterecektir.</string>
-    <string name="qr_code_help_how_to_scan_title">Resmi bir NHS QR kodu nasıl taranır</string>
+    <string name="qr_code_help_how_to_scan_title">NHS QR kodu posteri nasıl taratılır</string>
     <string name="settings_my_area_local_authority">Yerel yönetim</string>
     <string name="user_data_risky_venue_visit_date_title">RİSKLİ YERİ ZİYARET TARİHİ</string>
     <string name="venue_check_in_title">Daha fazla bilgi</string>
@@ -481,9 +481,9 @@
     <string name="back">Geri</string>
     <string name="how_does_it_help_text">Diğer uygulama kullanıcılarını koronavirüs test sonucu pozitif olan birisinin yakınında bulundukları konusunda bilgilendirir.</string>
     <string name="how_does_it_help_title">Nasıl yardımcı olur?</string>
-    <string name="qr_code_help_official_nhs_posters_title">Resmi NHS QR posterleri</string>
-    <string name="qr_code_help_poster_content_description_hospitality">İngilizce konaklama NHS QR kodu posteri</string>
-    <string name="qr_code_help_poster_title_hospitality">İngilizce konaklama NHS QR kodu posteri</string>
+    <string name="qr_code_help_official_nhs_posters_title">Resmi NHS QR kodu posterleri</string>
+    <string name="qr_code_help_poster_content_description_hospitality">Örnek bir İngilizce Yemek ve Konaklama Mekanları NHS QR kodu posteri</string>
+    <string name="qr_code_help_poster_title_hospitality">İngilizce konaklama NHS QR kodu posteri:</string>
     <string name="share_keys_privacy_banner">Bildirimin sizinle bağlantılı olduğunu kimse bilmeyecek.</string>
     <string name="share_keys_success_title">COVID-19\'un yayılmasını durdurmaya yardımcı olduğunuz için teşekkür ederiz</string>
     <string name="what_is_random_id_text">Sizden \"rastgele kimlikler\" paylaşmanız istenecek. Bu, Maruz Kalma Bildirimleri açık olan diğer telefonlarla paylaşılabilen, rastgele oluşturulmuş bir koddur.</string>
@@ -564,4 +564,6 @@
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">Test sonucunuz pozitif çıktığından karantinaya devam etmeniz önemlidir.\n\nKendinizi ve başkalarını güvende tutmak için lütfen evde kalın. Karantina sürenizi uygulama ana ekranındaki geri sayım sayacı ile takip edin.</string>
+    <string name="qr_code_help_poster_title_hospitality_welsh">Galce Yüksek Risk Mekan NHS QR kodu posteri:</string>
+    <string name="qr_code_help_poster_content_description_hospitality_welsh">Örnek bir Galce Yüksek Risk Mekan NHS QR kodu posteri</string>
 </resources>

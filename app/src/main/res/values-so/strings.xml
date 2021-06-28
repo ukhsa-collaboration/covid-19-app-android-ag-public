@@ -138,7 +138,7 @@
     <string name="notification_title_app_not_available">App-ka hadda lama heli karo</string>
     <string name="notification_title_exposure_reminder">Waa wakhtiga la daari laha raad-raacista shakshiga</string>
     <string name="notification_title_post_code_risk_changed">Macluumaadka deegaanka waa la cusbooneysiiyay.</string>
-    <string name="notification_title_risky_venue">Waxaad dhowaan booqatay goob isla maalintii ay dad kale laga helay cudurka coronavirus (COVID-19) ay booqdeen</string>
+    <string name="notification_title_risky_venue">Waxaad dhawaan booqatay goob isla maalintaas ay dad kale oo laga helay coronavirus (COVID-19) ay booqdeen</string>
     <string name="notification_title_state_expiration">Hagitaanka aan ku  siin jirnay waa isbeddelay</string>
     <string name="notification_title_state_exposure">Waa in aad si deg deg ah isu-go\'doomisaa. Waxaa xiriir dhow la yeelatay qof qaba coronavirus (COVID-19).</string>
     <string name="notification_title_test_results">Natiijooyinka baaritaankaaga ayaa yimid</string>
@@ -186,16 +186,16 @@
     <string name="qr_code_failure_subtitle">Waxay noqon kartaa inaadan iskaan-garaynin koodhka rasmiga ah ee NHS QR ah ama koodhku wuu xun yahay.</string>
     <string name="qr_code_failure_title">QR Koodhka lama aqoonsan</string>
     <string name="qr_code_help_about_qr_code_image_content_description">Tani waa tusaale ka mid ah koodhadhka rasmiga ah ee NHS QR ee loogu talagalay goobaha martigelinta ee ku yaalla England</string>
-    <string name="qr_code_help_about_qr_code_text">Waa kuwan sida ay u eg yihiin waraaqadaha rasmiga ah ee NHS QR. Waxaad u baahantahay inaad iskaan-garayso nambar-sireedka QR taasoo ah afar gees dhexda ku jira.</string>
-    <string name="qr_code_help_about_qr_code_title">Maxay tahay nambar-sireedka rasmiga ah ee NHS QR?</string>
+    <string name="qr_code_help_about_qr_code_text">Waa kuwan sida ay u eg yihiin warqadaha rasmiga ah ee NHS QR. Waxaad u baahantahay inaad iskaan-garayso koodhka, oo ah afar-geeska dhex-bartanka ku yaalla.</string>
+    <string name="qr_code_help_about_qr_code_title">Qaabka loo aqoonsado warqadda  koodhka NHS QR</string>
     <string name="qr_code_help_how_it_works">Sida ay u shaqeyso</string>
-    <string name="qr_code_help_how_it_works_text">Isku soo xaadirinta goobta  waxay adeegsaneysaa nambarada-sirta rasmiga ah ee NHS QR si ay kaaga caawiso inaad si dhakhso leh oo fudud iskaga soo xaadirisid meelaha aad booqato - sida makhaayadaha ama baararka. Haddii aad isticmaasho app-ka, waan kula soo socodsiin karnaa haddii laga yaabo in meel aad booqatay aad ka qaadday coronavirus.</string>
-    <string name="qr_code_help_poster_content_description_english">Tani waa tusaale ka mid ah koodhadhka rasmiga ah ee NHS QR ee loogu talagalay goobaha ku yaalla England</string>
-    <string name="qr_code_help_poster_content_description_welsh">Tani waa tusaale ka mid ah koodhadhka rasmiga ah ee NHS QR ee loogu talagalay goobaha ku yaalla Wales</string>
-    <string name="qr_code_help_poster_title_english">Waraqda sawirka koodhka NHS QR ee Ingiriisiga:</string>
-    <string name="qr_code_help_poster_title_welsh">Waraqda sawirka koodhka NHS QR ee Welsh:</string>
-    <string name="qr_code_help_text">Haddii aadan awoodin inaad iskaanto koodhka QR oo aad u baahan tahay inaad si kale u hubiso, fadlan la hadal xubin ka mid ah shaqaalaha.</string>
-    <string name="qr_code_help_title">Caawinta baarista koodhka QR</string>
+    <string name="qr_code_help_how_it_works_text">\"Iska soo xaadiri goob\" - sida makhaayad ama baar - si dhakhso leh oo fudud adoo adeegsanaya app-kan si aad u iskaan-garayso warqadaha koodhadhka NHS QR. Tani waxay ku ogeysiin kartaa haddii ay dhacdo in goob aad booqatay aad  ka qaadday fayraska.</string>
+    <string name="qr_code_help_poster_content_description_english">Waa kan mid ka mid ah tusaalaha warqadda  koodhka NHS QR ee Ingiriiska</string>
+    <string name="qr_code_help_poster_content_description_welsh">Waa kan mid ka mid ah tusaalaha waraaqda koodhka NHS QR ee Welsh</string>
+    <string name="qr_code_help_poster_title_english">Warqadda sawirka koodhka NHS QR ee Ingiriisiga:</string>
+    <string name="qr_code_help_poster_title_welsh">Warqadda sawirka koodhka NHS QR ee Welsh:</string>
+    <string name="qr_code_help_text">Haddii aadan awoodin inaad iskaan-garayso koodhka, waxaan kugula talineynaa inaad kala hadasho xubin ka mid ah shaqaalaha goobta jooga siyaabaha kale ee aad isku soo xaadiriso.</string>
+    <string name="qr_code_help_title">Caawinaad raadso haddii aadan iskaan-garayn karin koodhka</string>
     <string name="qr_code_more_info">Macluumaad dheeraad ah</string>
     <string name="qr_code_permission_denied_action">U oggolow rukhsadaha kamaradda</string>
     <string name="qr_code_permission_denied_subtitle">Barnaamijkan (app) wuxuu adeegsadaa kamaradaada si uu isaga xaadiriyo goobaha sida baararka iyo maqaayadaha.\n\nFadlan u oggolow rukhsadaha in lagu sawiro koodhka rasmiga ah ee NHS QR.</string>
@@ -238,7 +238,7 @@
     <string name="save">Keydso</string>
     <string name="scan_qr_code_to_check_in">Iskaan-garay warqadda rasmiga ee koodhka NHS QR si aad isku soo xaadiriso</string>
     <string name="select_symptoms">Xulo astaamaha</string>
-    <string name="self_isolate_for">Is-go\'doomin ilaa</string>
+    <string name="self_isolate_for">Is-go\'doomi ilaa</string>
     <string name="something_went_wrong">Waxbaa qaldamay</string>
     <string name="state_and_book_a_test">oo ballanso baaritaan</string>
     <string name="state_index_info">Waxaa laga yaabaa inaad qabtid coronavirus</string>
@@ -320,8 +320,8 @@
     <string name="url_terms_of_use_wls">https://covid19.nhs.uk/terms-of-use-somali.html</string>
     <string name="valid_auth_code_is_required">Koodhka lama aqoonsan ama waxaa laga yaaba in uu dhacsan yahay. Hubi in aadan isku dayeynin in aad galiso nambarka aqoonsiga ee is-baarista dhakhso lagu ogaanayo cudurka.</string>
     <string name="valid_post_code_is_required">Fadlan gali koodhka boosta degmadaada. Tani waa qaybtii ugu horreysay ee boostada. Tusaale ahaan: E2, L36, PO30.</string>
-    <string name="venue_alert_explanation">Halis baa jiri karta in lagu qaadsiiyay coronavirus. Sababtaan awgeed, waxaan kugula talineynaa inaad ballan qabsatid hadda.\n\nHaddii aad leedahay astaamaha coronavirus, fadlan dooro batoonka \'\'Eeg astaamaha\" ee ku yaal app-ka oo ballanso baaritaan. \n\nWeli waad heli kartaa baaritaanka coronavirus, xitaa haddii aadan lahayn mid kamid ah astaamaha taxan. Shaashadda soo-dhoweynta ee app-kan ka xullo \"Baaritaanka COVID-19\" si aad wax badan uga ogaato.\n\nFadlan sii raac dhammaan tilmaamaha ugu dambeeyay, xitaa haddii lagu tallaalay. Wixii macluumaad dheeraad ah, talo, ama taageero fadlan wac 119.</string>
-    <string name="venue_alert_title">Waxaad dhowaan booqatay goob isla maalintii ay dad kale laga helay cudurka coronavirus (COVID-19) ay booqdeen</string>
+    <string name="venue_alert_explanation">Halis baa jirta in lagu qaadsiiyay fayraska. Sababtan awgeed, waxaannu kugula talineynaa inaad baaritaan ballansato hadda.\n\nHaddii aadan qabin wax astaamo ah ee COVID-19, shaashadda soo-dhoweynta ee app-kan ka xulo “Baaritaanka COVID-19” si aad u ogaato qaabka aad u hesho baaritaanka cudurka lagu ogaanayo sida ugu dhakhsiya badan.\n\nHaddii aad leedahay astaamaha COVID-19, fadlan dooro batoonka \'Xulo astaamaha\' ee ku yaal app-ka oo ballanso baaritaanka nooca loo yaqaanno polymerase chain reaction (PCR).\n\nFadlan sii raac dhammaan tilmaamaha ugu dambeeyay, xitaa haddii lagaa tallaalay.\n\nWixii macluumaad dheeraad ah, talo, ama taageero fadlan wac 119.</string>
+    <string name="venue_alert_title">Waxaad dhawaan booqatay goob isla maalintaas ay dad kale oo laga helay coronavirus (COVID-19) ay booqdeen</string>
     <string name="visit_the_link_to_find_out_more">Booqo marrinka si aad wax badan uga ogaato</string>
     <string name="you_do_not_appear_to_have_symptoms">Uma muuqato inaad leedahay astaamo coronavirus</string>
     <string name="you_need_to_self_isolate">Waxaad u baahan tahay inaad isu-go’doomisid</string>
@@ -454,7 +454,7 @@
     <string name="qr_code_help_how_it_helps_text">Habka app-ka wuxuu u fududeynayaa ganacsiyada inay taageeraan raad-raacista shakhsi. Waxay naga caawinaysaa kuligeen inaan nabad galno, iyadoo ilaalinaysa asturnaantada gaarka ah.</string>
     <string name="qr_code_help_how_it_helps_title">Sida ay wax u caawiso</string>
     <string name="qr_code_help_how_to_scan_text">Hay telefoonkaaga si nambar-sireedka rasmiga ah ee NHS QR uu uga muuqdo sanduuqa ku yaal bogga hore. Markuu telefoonkaagu aqoonsado nambar-sireedka QR, waxay ku tusin doontaa inaad si guul leh isku soo xaadirisay.</string>
-    <string name="qr_code_help_how_to_scan_title">Sida loo iskaan-gareeyo nambar-sireedka rasmiga ah ee NHS QR</string>
+    <string name="qr_code_help_how_to_scan_title">Qaabka loo iskaan-gareeyo warqadda  koodhka NHS QR</string>
     <string name="settings_my_area_local_authority">Maamulka deegaanka</string>
     <string name="user_data_risky_venue_visit_date_title">TAARIIKHDA AAD JOOGTAY GOOBTA KHATARTA</string>
     <string name="venue_check_in_title">Macluumaad dheeraad ah</string>
@@ -481,9 +481,9 @@
     <string name="back">Noqo</string>
     <string name="how_does_it_help_text">Waxay u oggolaanaysaa isticmaaleyaasha kale ee app-ka inay ogaadaan inay u dhowayeen qof laga helay coronavirus.</string>
     <string name="how_does_it_help_title">Sidee wax u taraysaa?</string>
-    <string name="qr_code_help_official_nhs_posters_title">Warqadaha rasmiga ah ee NHS QR</string>
-    <string name="qr_code_help_poster_content_description_hospitality">Warqadda nambar-sireedka NHS QR ee soo dhaweynta Ingiriiska</string>
-    <string name="qr_code_help_poster_title_hospitality">Warqadda nambar-sireedka NHS QR ee soo dhaweynta Ingiriiska</string>
+    <string name="qr_code_help_official_nhs_posters_title">Warqadaha koodhadhka rasmiga ee NHS QR</string>
+    <string name="qr_code_help_poster_content_description_hospitality">Waa kan mid ka mid ah tusaalaha warqadda  koodhka marti-gelinta Ingiriiska ee NHS QR</string>
+    <string name="qr_code_help_poster_title_hospitality">Warqadda nambar-sireedka NHS QR ee soo dhaweynta Ingiriiska:</string>
     <string name="share_keys_privacy_banner">Qofna ma ogaan doono in ogeysiisku uu adiga kaa yimid.</string>
     <string name="share_keys_success_title">Waad ku mahadsantahay ka caawinta joojinta faafitaanka COVID-19</string>
     <string name="what_is_random_id_text">Waxaa lagu weydiin doonaa inaad wadaagto \"Aqoonsiyada aan kala sooc lahayn\" Kani waa nambar-sireed aan kala sooc lahayn oo la soo saaray kaas oo lala wadaagi karo telefoonnada kale ee u daaran Ogeysiisyada Soo-gaadhista.</string>
@@ -564,4 +564,6 @@
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">Waa muhiim inaad sii waddo is-go\'doominta maadaama lagaa helay cudurka.\n\nFadlan guriga joog si aad u ilaaliso naftaada iyo dadka kaleba. La soco wakhtigaaga is-go\'doominta adigoo isticmaalaya wakhtiga tirinta ee saaran shaashadda bogga soo-dhoweynta ee app-ka.</string>
+    <string name="qr_code_help_poster_title_hospitality_welsh">Warqadda koodhka NHS QR Goobta Halista Sare ee Welsh ah:</string>
+    <string name="qr_code_help_poster_content_description_hospitality_welsh">Waa kan mid ka mid ah tusaalaha warqadda koodhka NHS QR Goobta Halista Sare ee Welsh ah</string>
 </resources>

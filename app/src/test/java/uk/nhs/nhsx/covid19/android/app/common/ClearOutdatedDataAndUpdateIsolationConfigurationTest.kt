@@ -15,17 +15,13 @@ import uk.nhs.nhsx.covid19.android.app.remote.IsolationConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenueConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationConfigurationResponse
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.asLogical
-import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
 import java.time.Clock
 import java.time.Instant
@@ -35,7 +31,7 @@ import java.time.ZoneOffset
 class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
     private val unacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>(relaxUnitFun = true)
-    private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
+    private val isolationStateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
     private val isolationConfigurationApi = mockk<IsolationConfigurationApi>()
     private val riskyVenueConfigurationProvider = mockk<RiskyVenueConfigurationProvider>()
@@ -46,13 +42,13 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
     private val lastVisitedBookTestTypeVenueDateProvider = mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxUnitFun = true)
     private val clearOutdatedKeySharingInfo = mockk<ClearOutdatedKeySharingInfo>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-07-28T01:00:00.00Z"), ZoneOffset.UTC)
-    private val isolationHelper = IsolationHelper(fixedClock)
+    private val resetIsolationStateIfNeeded = mockk<ResetIsolationStateIfNeeded>(relaxUnitFun = true)
 
+    private val isolationHelper = IsolationHelper(fixedClock)
     private val retentionPeriod = DurationDays().pendingTasksRetentionPeriod
 
     private val testSubject = ClearOutdatedDataAndUpdateIsolationConfiguration(
-        isolationStateMachine,
-        unacknowledgedTestResultsProvider,
+        resetIsolationStateIfNeeded,
         isolationConfigurationProvider,
         isolationConfigurationApi,
         riskyVenueConfigurationProvider,
@@ -76,63 +72,17 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
     }
 
     @Test
-    fun `clears old test results when never in isolation`() = runBlocking {
-        val testEndDate = LocalDate.now(fixedClock)
-            .minusDays(retentionPeriod.toLong() + 1)
-
-        setIsolationState(
-            IsolationState(
-                isolationConfiguration = DurationDays(),
-                indexInfo = NegativeTest(
-                    AcknowledgedTestResult(
-                        testEndDate = testEndDate,
-                        acknowledgedDate = testEndDate.plusDays(1),
-                        testResult = NEGATIVE,
-                        testKitType = LAB_RESULT,
-                        requiresConfirmatoryTest = false,
-                        confirmedDate = null
-                    )
-                )
-            )
-        )
-
+    fun `clears legacy data`() = runBlocking {
         testSubject()
 
-        val retentionPeriod = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
-        val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
-        verify { unacknowledgedTestResultsProvider.clearBefore(expectedDate) }
-        verify { isolationStateMachine.reset() }
         verify { exposureNotificationTokensProvider.clear() }
     }
 
     @Test
-    fun `keeps recent test results when in never in isolation`() = runBlocking {
-        val testEndDate = LocalDate.now(fixedClock)
-            .minusDays(retentionPeriod.toLong())
-
-        setIsolationState(
-            IsolationState(
-                isolationConfiguration = DurationDays(),
-                indexInfo = NegativeTest(
-                    AcknowledgedTestResult(
-                        testEndDate = testEndDate,
-                        acknowledgedDate = testEndDate.plusDays(1),
-                        testResult = NEGATIVE,
-                        testKitType = LAB_RESULT,
-                        requiresConfirmatoryTest = false,
-                        confirmedDate = null
-                    )
-                )
-            )
-        )
-
+    fun `calls resetIsolationStateIfNeeded`() = runBlocking {
         testSubject()
 
-        val retentionPeriod = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
-        val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
-        verify { unacknowledgedTestResultsProvider.clearBefore(expectedDate) }
-        verify(exactly = 0) { isolationStateMachine.reset() }
-        verify { exposureNotificationTokensProvider.clear() }
+        verify { resetIsolationStateIfNeeded() }
     }
 
     @Test
@@ -154,19 +104,6 @@ class ClearOutdatedDataAndUpdateIsolationConfigurationTest {
 
         verify(exactly = 0) { unacknowledgedTestResultsProvider.clearBefore(any()) }
         verify(exactly = 0) { isolationStateMachine.reset() }
-        verify { exposureNotificationTokensProvider.clear() }
-    }
-
-    @Test
-    fun `clears isolation and test results when isolation is expired and outdated`() = runBlocking {
-        setIsolationState(expiredIsolation(isOutdated = true))
-
-        testSubject()
-
-        val retentionPeriod = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
-        val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
-        verify { unacknowledgedTestResultsProvider.clearBefore(expectedDate) }
-        verify { isolationStateMachine.reset() }
         verify { exposureNotificationTokensProvider.clear() }
     }
 

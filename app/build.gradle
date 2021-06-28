@@ -249,7 +249,8 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.16.1'
     testImplementation 'org.awaitility:awaitility-kotlin:3.1.6'
 
-    kaptAndroidTest 'com.google.dagger:dagger-compiler:2.27'
+    kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
+    kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
 
     androidTestImplementation 'androidx.arch.core:core-testing:2.1.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

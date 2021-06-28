@@ -31,8 +31,8 @@ import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShowShareKeysReminderN
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenues
-import uk.nhs.nhsx.covid19.android.app.status.localmessage.DownloadLocalMessagesWork
 import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWork
+import uk.nhs.nhsx.covid19.android.app.status.localmessage.DownloadLocalMessagesWork
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
 import uk.nhs.nhsx.covid19.android.app.util.crashreporting.ProcessRemoteServiceExceptionCrashReport
 import kotlin.test.assertEquals
@@ -88,7 +88,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
         super.setUp()
         coEvery { getAvailabilityStatusMock.invoke() } returns mockk()
         coEvery { clearOutdatedDataAndUpdateIsolationConfigurationMock.invoke() } returns mockk()
-        coEvery { exposureNotificationWorkMock.handleNewExposure() } returns mockk()
+        coEvery { exposureNotificationWorkMock.evaluateRisk() } returns mockk()
         coEvery { exposureNotificationWorkMock.handleUnprocessedRequests() } returns mockk()
         coEvery { downloadAndProcessKeysMock.invoke() } returns mockk()
         coEvery { downloadVirologyTestResultWorkMock.invoke() } returns mockk()
@@ -222,7 +222,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
     private fun thenAllTasksAreInvokedInTheRightOrder(shouldInvokeHandleNewExposure: Boolean) {
         coVerifyOrder {
             clearOutdatedDataAndUpdateIsolationConfigurationMock()
-            if (shouldInvokeHandleNewExposure) exposureNotificationWorkMock.handleNewExposure()
+            if (shouldInvokeHandleNewExposure) exposureNotificationWorkMock.evaluateRisk()
             exposureNotificationWorkMock.handleUnprocessedRequests()
             downloadAndProcessKeysMock()
             downloadVirologyTestResultWorkMock()

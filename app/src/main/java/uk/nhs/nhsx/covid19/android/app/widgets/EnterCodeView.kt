@@ -13,7 +13,6 @@ import kotlinx.android.synthetic.main.view_enter_code.view.enterCodeText
 import kotlinx.android.synthetic.main.view_enter_code.view.enterCodeTitle
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.R.drawable
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.CodeInputTextWatcher
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.invisible
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
@@ -31,14 +30,8 @@ class EnterCodeView @JvmOverloads constructor(
             enterCodeErrorText.text = errorText
         }
 
-    private var textWatcher: CodeInputTextWatcher
-
     init {
         LayoutInflater.from(context).inflate(R.layout.view_enter_code, this, true)
-
-        textWatcher = CodeInputTextWatcher(enterCodeEditText)
-
-        enterCodeEditText.addTextChangedListener(textWatcher)
 
         applyAttributes(context, attrs)
     }
@@ -84,13 +77,9 @@ class EnterCodeView @JvmOverloads constructor(
             val attrTitle = getString(R.styleable.EnterCodeView_title)
             val attrExample = getString(R.styleable.EnterCodeView_example)
             errorText = getString(R.styleable.EnterCodeView_errorText)
-            val codeInputRegex = getString(R.styleable.EnterCodeView_codeInputRegex)
 
             enterCodeTitle.text = attrTitle
             enterCodeText.text = attrExample
-            codeInputRegex?.let {
-                textWatcher.codeInputRegex = it.toRegex()
-            }
 
             recycle()
         }

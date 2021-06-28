@@ -40,9 +40,9 @@
     <string name="qr_code_success_subtitle">Yr ap yw\'r ffordd gyflymaf i dderbyn rhybudd y buoch mewn cysylltiad posibl â coronafeirws mewn lleoliad penodol.</string>
     <string name="qr_code_cancel_check_in">Mewngofnodi\'n anghywir? Tapiwch i ddileu.</string>
     <string name="qr_code_help_how_it_works">Sut mae’n gweithio</string>
-    <string name="qr_code_help_how_it_works_text">Mae cyfleuster mewngofnodi i leoliad yn defnyddio codau QR swyddogol y GIG i\'ch hepu chi i fewngofnodi\'n gyflym ac yn rhwydd i leoedd rydych wedi bod ynddyn nhw - fel tai bwyta neu farrau. Os defnyddiwch yr ap, gallwn eich hysbysu os y buoch chi  o bosibl mewn cysylltiad â coronafeirws mewn lleoliad rydych wedi bod ynddo.</string>
-    <string name="venue_alert_title">Fe wnaethoch chi ymweld yn ddiweddar â lleoliad ar yr un diwrnod ag eraill sydd bellach wedi cael canlyniad prawf positif am coronafeirws (COVID-19)</string>
-    <string name="venue_alert_explanation">Mae risg y buoch mewn cysylltiad â\'r firws. Am y rheswm yma, rydym yn argymell eich bod yn archebu prawf nawr.\n\nOs oes symptomau coronafeirws arnoch, dewiswch botwm \"Gwirio symptomau\" yn yr ap ac archebwch brawf. \n\nGallwch chi gael prawf coronafeirws, hyd yn oed os nad oes unrhyw un o\'r symptomau a restrir arnoch. Dewiswch “Profi ar gyfer COVID-19” o sgrin gartref yr ap yma i gael rhagor o wybodaeth.\n\nEwch ymlaen i ddilyn yr holl ganllawiau diweddaraf, hyd yn oed os cawsoch eich brechu. Am fwy o wybodaeth, cyngor, neu gymorth rhowch alwad i 119.</string>
+    <string name="qr_code_help_how_it_works_text">\"Mewngofnodwch i leoliad\" – fel tŷ bwyta neu far – yn gyflym ac yn rhwydd trwy ddefnyddio’r ap yma i sganio posteri cod QR y GIG. Gall hyn roi gwybod i chi os buoch mewn cysylltiad â’r feirws yn rhywle y buoch yn ymweld ag ef</string>
+    <string name="venue_alert_title">Gwnaethoch chi ymweld â lleoliad yn ddiweddar ar yr un diwrnod â phobl eraill sydd ers hynny wedi derbyn canlyniad positif i brawf coronafeirws (COVID-19)</string>
+    <string name="venue_alert_explanation">Mae risg y gallech fod wedi bod mewn cysylltiad â’r feirws. Oherwydd hyn, rydym yn argymell eich bod yn archebu prawf nawr.\n\nOs nad oes gennych unrhyw un o symptomau COVID-19, dewiswch “Profion am COVID-19” o sgrin gartref yr ap yma i ddarganfod sut i gael prawf llif unffordd cyflym.\n\nOs oes gennych symptomau COVID-19, dewiswch “Gwirio symptomau” o sgrin gartref yr ap yma ac archebu prawf adwaith cadwynol polymerasau (PCR)\n\nParhewch i ddilyn yr holl ganllawiau diweddaraf, hyd yn oed os cawsoch eich brechu.\n\nI gael rhagor o wybodaeth, cyngor neu gefnogaeth, ffoniwch 119.</string>
     <string name="notification_title_post_code_risk_changed">Mae\'r wybodaeth leol wedi\'i diweddaru.</string>
     <string name="notification_title_test_results">Mae canlyniad eich prawf waedi cyrraedd</string>
     <string name="select_symptoms">Dewiswch symptomau</string>
@@ -179,7 +179,7 @@
     <string name="something_went_wrong">Aeth rhywbeth o’i le</string>
     <string name="test_ordering_failure_title">Aeth rhywbeth o’i le</string>
     <string name="test_ordering_failure_description">Cyn rhoi cynnig arall arni, gwiriwch fod gosodiadau data symudol eich ffôn ymlaen, gwiriwch eich cysylltiad Wi-Fi (os ydych yn defnyddio un) a gwnewch yn siŵr bod Modd Awyren wedi\'i ddiffodd.</string>
-    <string name="notification_title_risky_venue">Fe wnaethoch chi ymweld yn ddiweddar â lleoliad ar yr un diwrnod ag eraill sydd bellach wedi cael canlyniad prawf positif am coronafeirws (COVID-19)</string>
+    <string name="notification_title_risky_venue">Gwnaethoch chi ymweld â lleoliad yn ddiweddar ar yr un diwrnod â phobl eraill sydd ers hynny wedi derbyn canlyniad positif i brawf coronafeirws (COVID-19)</string>
     <string name="notification_text_post_code_risk_changed">Cofiwch sganio cod QR y GIG wrth ymweld â lleoliadau.</string>
     <string name="notification_channel_area_risk_changed_name">Newid yn risg eich ardal</string>
     <string name="notification_channel_area_risk_changed_description">Mae\'r hysbysiadau hyn yn helpu i dracio\'r risg o haint yn eich ardal.</string>
@@ -280,9 +280,9 @@
     <string name="link_test_result_text" />
     <string name="link_test_result_enter_code_title">Nodwch eich cod ar gyfer y prawf</string>
     <string name="about_provide_feedback_link">Gwybodaeth adborth</string>
-    <string name="qr_code_help_text">Os na allwch sganio cod QR, ac eisiau mewngofnodi drwy ddull arall, siaradwch ag aelod o staff.</string>
-    <string name="qr_code_help_about_qr_code_title">Beth yw cod QR swyddogol y GIG?</string>
-    <string name="qr_code_help_about_qr_code_text">Dyma sut olwg sydd ar boster cod QR swyddogol y GIG. Mae angen i chi sganio\'r cod QR, sef y sgwâr yn y canol.</string>
+    <string name="qr_code_help_text">Os na allwch sganio’r cod, cynghorwn chi i siarad ag aelod o staff yn y lleoliad am ffyrdd eraill o fewngofnodi.</string>
+    <string name="qr_code_help_about_qr_code_title">Sut i adnabod poster cod QR y GIG</string>
+    <string name="qr_code_help_about_qr_code_text">Dyma sut olwg sydd ar bosteri cod QR swyddogol y GIG. Mae angen i chi sganio’r cod, sydd yn y sgwâr yn y canol.</string>
     <string name="link_test_result_enter_code_example">Enghraifft: 7g8s3stn</string>
     <string name="about_software_information_text_app_manufacturer">Gwneuthurwr a chynhaliwr</string>
     <string name="submit_keys_information_title">Helpu i hysbysu eraill</string>
@@ -310,7 +310,7 @@
     <string name="qr_code_failure_help_link">Cymorth i fewngofnodi i leoliad</string>
     <string name="status_option_read_self_isolation_advice">Darllen y cyngor diweddaraf</string>
     <string name="test_result_negative_already_not_in_isolation_subtitle">Mae canlyniad eich prawf coronafeirws yn negyddol</string>
-    <string name="qr_code_help_title">Help i sganio cod QR</string>
+    <string name="qr_code_help_title">Help os na allwch sganio’r cod</string>
     <string name="qr_code_help_about_qr_code_image_content_description">Dyma enghraifft o boster cod QR swyddogol y GIG ar gyfer lleoliadau lletygarwch yn Lloegr</string>
     <string name="about_void">Yn annilys</string>
     <string name="authentication_enter_code_subtitle">Nodwch eich cod unigryw</string>
@@ -325,8 +325,8 @@
     <string name="notification_channel_background_work_description">Mae\'r hysbysiadau hyn yn rhoi gwybod am weithgareddau\'r ap yn y cefndir.</string>
     <string name="notification_channel_background_work_name">Gweithgareddau cefndir</string>
     <string name="notification_text_updating_database">Wrthi’n llwytho…</string>
-    <string name="qr_code_help_poster_content_description_english">Dyma enghraifft o boster cod QR swyddogol y GIG ar gyfer lleoliadau yn Lloegr</string>
-    <string name="qr_code_help_poster_content_description_welsh">Dyma enghraifft o boster cod QR swyddogol y GIG ar gyfer lleoliadau yng Nghymru</string>
+    <string name="qr_code_help_poster_content_description_english">Dyma enghraifft o boster cod QR GIG Lloegr</string>
+    <string name="qr_code_help_poster_content_description_welsh">Dyma enghraifft o boster cod QR GIG Cymru</string>
     <string name="qr_code_help_poster_title_english">Poster Saesneg cod QR y GIG:</string>
     <string name="qr_code_help_poster_title_welsh">Poster Cymraeg cod QR y GIG:</string>
     <string name="questionnaire_no_i_dont_have_symptom">Na, nid oes gennyf %s</string>
@@ -469,7 +469,7 @@
     <string name="qr_code_help_how_it_helps_text">Mae\'r nodwedd hon o\'r ap yn ei gwneud yn hawdd i fusnesau gefnogi olrhain cysylltiadau. Mae\'n helpu pob un ohonom gadw\'n ddiogel, gan amddiffyn eich preifatrwydd hefyd.</string>
     <string name="qr_code_help_how_it_helps_title">Sut mae’n helpu</string>
     <string name="qr_code_help_how_to_scan_text">Daliwch eich ffôn fel bod cod QR swyddogol y GIG yn ymddangos yn y blwch ar y dudalen flaenorol. Pan fydd eich ffôn yn adnabod y cod QR, bydd yn dangos eich bod wedi mewngofnodi\'n llwyddiannus.</string>
-    <string name="qr_code_help_how_to_scan_title">Sut i sganio cod QR swyddogol y GIG</string>
+    <string name="qr_code_help_how_to_scan_title">Sut i sganio poster cod QR y GIG</string>
     <string name="settings_my_area_local_authority">Awdurdod lleol</string>
     <string name="user_data_risky_venue_visit_date_title">DYDDIAD YN LLEOLIAD Y RISG</string>
     <string name="venue_check_in_title">Mwy o wybodaeth</string>
@@ -496,9 +496,9 @@
     <string name="back">Mynd yn ôl</string>
     <string name="how_does_it_help_text">Mae\'n rhoi gwybod i ddefnyddwyr eraill yr ap iddynt fod yn agos at rywun a gafodd ganlyniad prawf positif am y coronafeirws.</string>
     <string name="how_does_it_help_title">Sut y mae\'n helpu?</string>
-    <string name="qr_code_help_official_nhs_posters_title">Posteri QR swyddogol y GIG</string>
-    <string name="qr_code_help_poster_content_description_hospitality">Poster lletygarwch Saesneg cod QR y GIG</string>
-    <string name="qr_code_help_poster_title_hospitality">Poster lletygarwch Saesneg cod QR y GIG</string>
+    <string name="qr_code_help_official_nhs_posters_title">Posteri cod QR swyddogol y GIG</string>
+    <string name="qr_code_help_poster_content_description_hospitality">Dyma enghraifft o boster cod QR Lletygarwch GIG Lloegr</string>
+    <string name="qr_code_help_poster_title_hospitality">Poster lletygarwch Saesneg cod QR y GIG:</string>
     <string name="share_keys_privacy_banner">Ni fydd unrhyw un yn gwybod bod yr hysbysiad yn gysylltiedig â chi</string>
     <string name="share_keys_success_title">Diolch i chi am helpu i atal lledaeniad COVID-19</string>
     <string name="what_is_random_id_text">Bydd gofyn i chi rannu “manylion hunaniaeth (ID) ar hap.” Cod wedi\'i gynhyrchu ar hap yw hwn y gallwch ei rannu gyda ffonau eraill sydd â\'u Hysbysiadau Cysylltiadau wedi\'u galluogi.</string>
@@ -579,4 +579,6 @@
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">Mae’n bwysig parhau i hunanynysu gan eich bod wedi derbyn canlyniad positif i brawf.\n\nArhoswch gartref i’ch cadw eich hun ac eraill yn ddiogel. Gallwch olrhain eich cyfnod hunanynysu gyda’r amserydd cyfrif-i-lawr ar sgrin gartref yr ap.</string>
+    <string name="qr_code_help_poster_title_hospitality_welsh">Posteri cod QR Lleoliad Risg Uwch GIG Cymru</string>
+    <string name="qr_code_help_poster_content_description_hospitality_welsh">Dyma enghraifft o boster cod QR Lleoliad Risg Uwch GIG Cymru</string>
 </resources>

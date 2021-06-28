@@ -21,6 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
@@ -324,6 +325,152 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { statusRobot.checkActivityIsDisplayed() }
         isolationChecker.assertActiveIndexNoContact()
         checkRelevantTestResultPreserved(previousTest)
+    }
+
+    @Test
+    fun whenExpiredIndexCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWillBeInIsolation_andStartIsolation() = notReported {
+        val onsetDate = testEndDate.minus(2, ChronoUnit.DAYS)
+        val previousTest = setExpiredSelfAssessmentIsolationWithNegativeTest(
+            onsetDate = onsetDate.toLocalDate(testAppContext.clock.zone)
+        )
+
+        startTestActivity<StatusActivity>()
+        statusRobot.checkActivityIsDisplayed()
+
+        val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported(
+            testEndDate = onsetDate.minus(3, ChronoUnit.DAYS),
+            confirmatoryDayLimit = 2
+        )
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+
+        testResultRobot.clickIsolationActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+        isolationChecker.assertActiveIndexNoContact()
+
+        checkRelevantTestResultUpdatedAndCompleted(testResponse, previousTest.testEndDate, COMPLETED)
+    }
+
+    @Test
+    fun whenExpiredIndexCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWontBeInIsolation_andNoIsolation() = notReported {
+        val onsetInstant = testEndDate.minus(DurationDays().indexCaseSinceSelfDiagnosisOnset.toLong(), ChronoUnit.DAYS)
+        val onsetDate = onsetInstant.toLocalDate(testAppContext.clock.zone)
+        val previousTest = setExpiredSelfAssessmentIsolationWithNegativeTest(
+            selfAssessmentDate = onsetDate,
+            onsetDate = onsetDate
+        )
+
+        startTestActivity<StatusActivity>()
+        statusRobot.checkActivityIsDisplayed()
+
+        val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported(
+            testEndDate = onsetInstant.minus(3, ChronoUnit.DAYS),
+            confirmatoryDayLimit = 2
+        )
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
+
+        testResultRobot.clickGoodNewsActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+        isolationChecker.assertExpiredIndexNoContact()
+
+        checkRelevantTestResultUpdatedAndCompleted(testResponse, previousTest.testEndDate, COMPLETED)
+    }
+
+    @Test
+    fun whenExpiredIndexCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() = notReported {
+        val onsetInstant = testEndDate.minus(DurationDays().indexCaseSinceSelfDiagnosisOnset.toLong(), ChronoUnit.DAYS)
+        val onsetDate = onsetInstant.toLocalDate(testAppContext.clock.zone)
+        val previousTest = setExpiredSelfAssessmentIsolationWithNegativeTest(
+            selfAssessmentDate = onsetDate,
+            onsetDate = onsetDate
+        )
+
+        startTestActivity<StatusActivity>()
+        statusRobot.checkActivityIsDisplayed()
+
+        val testResponse = receiveIndicativePosTestResultWithKeySubmissionSupported(
+            testEndDate = onsetInstant.minus(3, ChronoUnit.DAYS),
+            confirmatoryDayLimit = 2
+        )
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
+
+        testResultRobot.clickGoodNewsActionButton()
+        shareKeys()
+
+        isolationChecker.assertExpiredIndexNoContact()
+
+        checkRelevantTestResultUpdatedAndCompleted(testResponse, previousTest.testEndDate, COMPLETED)
+    }
+
+    @Test
+    fun whenExpiredIndexCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWillBeInIsolation_andStartIsolation_shareKeys() = notReported {
+        val onsetDate = testEndDate.minus(2, ChronoUnit.DAYS)
+        val previousTest = setExpiredSelfAssessmentIsolationWithNegativeTest(onsetDate.toLocalDate(testAppContext.clock.zone))
+
+        startTestActivity<StatusActivity>()
+        statusRobot.checkActivityIsDisplayed()
+
+        val testResponse = receiveIndicativePosTestResultWithKeySubmissionSupported(
+            testEndDate = onsetDate.minus(3, ChronoUnit.DAYS),
+            confirmatoryDayLimit = 2
+        )
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+
+        testResultRobot.clickIsolationActionButton()
+        shareKeys()
+
+        isolationChecker.assertActiveIndexNoContact()
+
+        checkRelevantTestResultUpdatedAndCompleted(testResponse, previousTest.testEndDate, COMPLETED)
+    }
+
+    @Test
+    fun whenContactCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveContinueIsolation_andContinueIsolation() = notReported {
+        val previousTest = setContactCaseIsolationWithNegativeTest()
+
+        startTestActivity<StatusActivity>()
+        statusRobot.checkActivityIsDisplayed()
+
+        val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported(
+            testEndDate = testEndDate.minus(3, ChronoUnit.DAYS),
+            confirmatoryDayLimit = 2
+        )
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+
+        testResultRobot.clickIsolationActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+        isolationChecker.assertActiveIndexAndContact()
+
+        checkRelevantTestResultUpdatedAndCompleted(testResponse, previousTest.testEndDate, COMPLETED)
+    }
+
+    @Test
+    fun whenDefault_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWillBeInIsolation_andStartIsolation() = notReported {
+        val previousTest = setNoIsolationWithNegativeTest()
+
+        startTestActivity<StatusActivity>()
+        statusRobot.checkActivityIsDisplayed()
+
+        val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported(
+            testEndDate = testEndDate.minus(3, ChronoUnit.DAYS),
+            confirmatoryDayLimit = 2
+        )
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+
+        testResultRobot.clickIsolationActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+        isolationChecker.assertActiveIndexNoContact()
+
+        checkRelevantTestResultUpdatedAndCompleted(testResponse, previousTest.testEndDate, COMPLETED)
     }
 
     @Test
@@ -1002,15 +1149,32 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         return previousTest
     }
 
-    private fun setExpiredSelfAssessmentIsolationWithNegativeTest(): AcknowledgedTestResult {
+    private fun setExpiredSelfAssessmentIsolationWithNegativeTest(
+        selfAssessmentDate: LocalDate = LocalDate.now(testAppContext.clock).minusDays(2),
+        onsetDate: LocalDate? = null
+    ): AcknowledgedTestResult {
         val previousTest = previousNegativeTest()
 
         testAppContext.setState(
             isolationHelper.selfAssessment(
-                testResult = previousTest
+                testResult = previousTest,
+                selfAssessmentDate = selfAssessmentDate,
+                onsetDate = onsetDate
             ).copy(
                 expiryDate = previousTest.testEndDate
             ).asIsolation(hasAcknowledgedEndOfIsolation = true)
+        )
+
+        return previousTest
+    }
+
+    private fun setNoIsolationWithNegativeTest(): AcknowledgedTestResult {
+        val previousTest = previousNegativeTest()
+
+        testAppContext.setState(
+            isolationHelper.neverInIsolation().copy(
+                indexInfo = NegativeTest(previousTest)
+            ).copy(hasAcknowledgedEndOfIsolation = true)
         )
 
         return previousTest
@@ -1042,6 +1206,23 @@ class ReceiveTestResultFlowTests : EspressoTest() {
                 )
             )
         )
+    }
+
+    private fun setContactCaseIsolationWithNegativeTest(): AcknowledgedTestResult {
+        val previousNegativeTest = previousNegativeTest()
+        testAppContext.setState(
+            IsolationState(
+                isolationConfiguration = DurationDays(),
+                contactCase = isolationHelper.contactCase(
+                    exposureDate = isolationStart,
+                    notificationDate = isolationStart
+                ),
+                indexInfo = isolationHelper.negativeTest(
+                    previousNegativeTest
+                )
+            )
+        )
+        return previousNegativeTest
     }
 
     private fun previousNegativeTest(): AcknowledgedTestResult =
@@ -1081,26 +1262,30 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     private fun receiveIndicativePosTestResultWithKeySubmissionNotSupported(
-        testEndDate: Instant? = null
+        testEndDate: Instant? = null,
+        confirmatoryDayLimit: Int? = null
     ): TestResponse {
         return receiveTestResult(
             POSITIVE,
             RAPID_RESULT,
             testEndDate,
             diagnosisKeySubmissionSupported = false,
-            requiresConfirmatoryTest = true
+            requiresConfirmatoryTest = true,
+            confirmatoryDayLimit = confirmatoryDayLimit
         )
     }
 
     private fun receiveIndicativePosTestResultWithKeySubmissionSupported(
-        testEndDate: Instant? = null
+        testEndDate: Instant? = null,
+        confirmatoryDayLimit: Int? = null
     ): TestResponse {
         return receiveTestResult(
             POSITIVE,
             RAPID_RESULT,
             testEndDate,
             diagnosisKeySubmissionSupported = true,
-            requiresConfirmatoryTest = true
+            requiresConfirmatoryTest = true,
+            confirmatoryDayLimit = confirmatoryDayLimit
         )
     }
 

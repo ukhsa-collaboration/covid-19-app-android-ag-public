@@ -24,40 +24,52 @@ class ExposureNotificationBroadcastReceiverTest : FieldInjectionUnitTest() {
     @Before
     override fun setUp() {
         super.setUp()
-        every { testSubject.exposureNotificationWorkerScheduler.scheduleProcessNewExposure(context) } returns Unit
-        every { testSubject.exposureNotificationWorkerScheduler.scheduleNoMatchesFound(context) } returns Unit
+        every { testSubject.exposureNotificationWorkerScheduler.scheduleEvaluateRisk(context) } returns Unit
+        every { testSubject.exposureNotificationWorkerScheduler.scheduleDoNotEvaluateRisk(context) } returns Unit
     }
 
     @Test
-    fun `schedules matches found handler if a match is found and interested in exposure notifications`() = runBlocking {
+    fun `schedules evaluate risk if a match is found and interested in exposure notifications`() = runBlocking {
         every { testSubject.isolationStateMachine.isInterestedInExposureNotifications() } returns true
         every { intent.action } returns ACTION_EXPOSURE_STATE_UPDATED
 
         testSubject.onReceive(context, intent)
 
-        verify { testSubject.exposureNotificationWorkerScheduler.scheduleProcessNewExposure(context) }
-        verify(exactly = 0) { testSubject.exposureNotificationWorkerScheduler.scheduleNoMatchesFound(context) }
+        verify { testSubject.exposureNotificationWorkerScheduler.scheduleEvaluateRisk(context) }
+        verify(exactly = 0) { testSubject.exposureNotificationWorkerScheduler.scheduleDoNotEvaluateRisk(context) }
     }
 
     @Test
-    fun `schedules no matches found handler if a match is found but not interested in exposure notifications`() = runBlocking {
+    fun `schedules do not evaluate risk if a match is found but not interested in exposure notifications`() = runBlocking {
         every { testSubject.isolationStateMachine.isInterestedInExposureNotifications() } returns false
         every { intent.action } returns ACTION_EXPOSURE_STATE_UPDATED
 
         testSubject.onReceive(context, intent)
 
-        verify(exactly = 0) { testSubject.exposureNotificationWorkerScheduler.scheduleProcessNewExposure(context) }
-        verify { testSubject.exposureNotificationWorkerScheduler.scheduleNoMatchesFound(context) }
+        verify(exactly = 0) { testSubject.exposureNotificationWorkerScheduler.scheduleEvaluateRisk(context) }
+        verify { testSubject.exposureNotificationWorkerScheduler.scheduleDoNotEvaluateRisk(context) }
     }
 
     @Test
-    fun `schedules no matches found handler if no match is found`() {
+    fun `schedules evaluate risk if no match is found but interested in exposure notifications`() {
+        every { testSubject.isolationStateMachine.isInterestedInExposureNotifications() } returns true
         every { intent.action } returns ACTION_EXPOSURE_NOT_FOUND
 
         testSubject.onReceive(context, intent)
 
-        verify(exactly = 0) { testSubject.exposureNotificationWorkerScheduler.scheduleProcessNewExposure(context) }
-        verify { testSubject.exposureNotificationWorkerScheduler.scheduleNoMatchesFound(context) }
+        verify { testSubject.exposureNotificationWorkerScheduler.scheduleEvaluateRisk(context) }
+        verify(exactly = 0) { testSubject.exposureNotificationWorkerScheduler.scheduleDoNotEvaluateRisk(context) }
+    }
+
+    @Test
+    fun `schedules do not evaluate risk if no match is found and not interested in exposure notifications`() {
+        every { testSubject.isolationStateMachine.isInterestedInExposureNotifications() } returns false
+        every { intent.action } returns ACTION_EXPOSURE_NOT_FOUND
+
+        testSubject.onReceive(context, intent)
+
+        verify(exactly = 0) { testSubject.exposureNotificationWorkerScheduler.scheduleEvaluateRisk(context) }
+        verify { testSubject.exposureNotificationWorkerScheduler.scheduleDoNotEvaluateRisk(context) }
     }
 
     @Test
@@ -66,7 +78,7 @@ class ExposureNotificationBroadcastReceiverTest : FieldInjectionUnitTest() {
 
         testSubject.onReceive(context, intent)
 
-        verify(exactly = 0) { testSubject.exposureNotificationWorkerScheduler.scheduleProcessNewExposure(context) }
-        verify(exactly = 0) { testSubject.exposureNotificationWorkerScheduler.scheduleNoMatchesFound(context) }
+        verify(exactly = 0) { testSubject.exposureNotificationWorkerScheduler.scheduleEvaluateRisk(context) }
+        verify(exactly = 0) { testSubject.exposureNotificationWorkerScheduler.scheduleDoNotEvaluateRisk(context) }
     }
 }
