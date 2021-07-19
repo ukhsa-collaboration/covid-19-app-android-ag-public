@@ -16,14 +16,14 @@ class ShowShareKeysReminderNotificationIfNeeded @Inject constructor(
     private val clock: Clock,
     private val analyticsEventProcessor: AnalyticsEventProcessor,
 ) {
-    suspend operator fun invoke() {
+    operator fun invoke() {
         when (val canShareKeysResult = canShareKeys()) {
             NoKeySharingPossible -> return
             is KeySharingPossible -> showNotificationIfNecessary(canShareKeysResult.keySharingInfo)
         }
     }
 
-    private suspend fun showNotificationIfNecessary(keySharingInfo: KeySharingInfo) {
+    private fun showNotificationIfNecessary(keySharingInfo: KeySharingInfo) {
         if (keySharingInfo.wasAcknowledgedMoreThan24HoursAgo(clock) && keySharingInfo.notificationSentDate == null) {
             analyticsEventProcessor.track(TotalShareExposureKeysReminderNotifications)
             keySharingInfoProvider.setNotificationSentDate(Instant.now(clock))

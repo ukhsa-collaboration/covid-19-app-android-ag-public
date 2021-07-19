@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.settings.animations
 
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.AnimationsRobot
 import kotlin.test.assertTrue
@@ -11,7 +10,7 @@ class AnimationsActivityTest : EspressoTest() {
     private val animationsRobot = AnimationsRobot()
 
     @Test
-    fun whenSystemAnimationDisabled_enableAnimations_shouldNotTurnOnAndShowDialog() = notReported {
+    fun whenSystemAnimationDisabled_enableAnimations_shouldNotTurnOnAndShowDialog() {
         testAppContext.setAnimations(isEnabled = false)
 
         startTestActivity<AnimationsActivity>()
@@ -28,7 +27,7 @@ class AnimationsActivityTest : EspressoTest() {
     }
 
     @Test
-    fun whenBackPressed_shouldGoToSettingsActivity() = notReported {
+    fun whenBackPressed_shouldGoToSettingsActivity() {
         val activity = startTestActivity<AnimationsActivity>()
 
         animationsRobot.checkActivityIsDisplayed()

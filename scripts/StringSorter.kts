@@ -22,11 +22,11 @@ fun main() {
     }
 }
 
-private fun getValuesDir(languageCode: String): String {
+fun getValuesDir(languageCode: String): String {
     return if (languageCode == "en") "values" else "values-$languageCode"
 }
 
-private fun updateValues(
+fun updateValues(
     languageCode: String,
     filename: String,
     updatedStrings: MutableMap<String, String>
@@ -65,7 +65,7 @@ private fun updateValues(
     outputFile.writeText(updated)
 }
 
-private fun updateRegularStrings(
+fun updateRegularStrings(
     doc: Document,
     updatedStrings: MutableMap<String, String>
 ) {
@@ -110,7 +110,7 @@ private fun updateRegularStrings(
     }
 }
 
-private fun updatePlurals(
+fun updatePlurals(
     doc: Document,
     updatedStrings: MutableMap<String, String>
 ) {
@@ -163,7 +163,7 @@ private fun updatePlurals(
     }
 }
 
-private fun addQuantityToExistingPlural(
+fun addQuantityToExistingPlural(
     doc: Document,
     plurals: NodeList,
     pluralName: String,
@@ -192,7 +192,7 @@ private fun addQuantityToExistingPlural(
     return foundParent
 }
 
-private fun readUnsorted(filename: String): MutableMap<String, String> {
+fun readUnsorted(filename: String): MutableMap<String, String> {
     val doc = parse(filename)
 
     val strings = doc.getElementsByTagName("string")
@@ -240,7 +240,7 @@ fun innerXml(node: Node): String {
     return sb.toString()
 }
 
-private fun parse(filename: String): Document {
+fun parse(filename: String): Document {
     val fXmlFile = File(filename)
     val dbFactory = DocumentBuilderFactory.newInstance()
     val dBuilder = dbFactory.newDocumentBuilder()
@@ -249,3 +249,5 @@ private fun parse(filename: String): Document {
     doc.documentElement.normalize()
     return doc
 }
+
+main()

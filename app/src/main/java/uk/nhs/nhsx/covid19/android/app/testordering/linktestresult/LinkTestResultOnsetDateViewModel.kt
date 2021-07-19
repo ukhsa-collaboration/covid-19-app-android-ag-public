@@ -4,8 +4,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidRememberOnsetSymptomsDateBeforeReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate
@@ -89,19 +87,17 @@ class LinkTestResultOnsetDateViewModel @Inject constructor(
 
     fun onButtonContinueClicked() {
         val currentState = viewState.value ?: return
-        viewModelScope.launch {
-            when (val onsetDate = currentState.onsetDate) {
-                is NotStated -> {
-                    val newState = currentState.copy(showOnsetDateError = true)
-                    viewState.postValue(newState)
+        when (val onsetDate = currentState.onsetDate) {
+            is NotStated -> {
+                val newState = currentState.copy(showOnsetDateError = true)
+                viewState.postValue(newState)
+            }
+            is ExplicitDate, is CannotRememberDate -> {
+                if (onsetDate is ExplicitDate) {
+                    analyticsEventProcessor.track(DidRememberOnsetSymptomsDateBeforeReceivedTestResult)
                 }
-                is ExplicitDate, is CannotRememberDate -> {
-                    if (onsetDate is ExplicitDate) {
-                        analyticsEventProcessor.track(DidRememberOnsetSymptomsDateBeforeReceivedTestResult)
-                    }
-                    unacknowledgedTestResultsProvider.setSymptomsOnsetDate(testResult, onsetDate.toSymptomsDate())
-                    continueEvent.postValue(Unit)
-                }
+                unacknowledgedTestResultsProvider.setSymptomsOnsetDate(testResult, onsetDate.toSymptomsDate())
+                continueEvent.postValue(Unit)
             }
         }
     }

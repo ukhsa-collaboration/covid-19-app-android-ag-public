@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationReminderReceiver
+import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingActivationReminderProvider
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -14,7 +15,8 @@ import javax.inject.Singleton
 @Singleton
 class ExposureNotificationReminderAlarmController @Inject constructor(
     private val context: Context,
-    private val alarmManager: AlarmManager
+    private val alarmManager: AlarmManager,
+    private val contactTracingActivationReminderProvider: ContactTracingActivationReminderProvider
 ) {
     fun setup(alarmTime: Instant) {
         val startAt = alarmTime.toEpochMilli()
@@ -37,6 +39,8 @@ class ExposureNotificationReminderAlarmController @Inject constructor(
     }
 
     fun cancel() {
+        contactTracingActivationReminderProvider.reminder = null
+
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             EXPOSURE_NOTIFICATION_REMINDER_ALARM_INTENT_ID,

@@ -6,7 +6,7 @@ import com.tinder.StateMachine.Transition
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DeclaredNegativeResultFromDct
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfoProvider
@@ -80,7 +80,7 @@ class IsolationStateMachine @Inject constructor(
     private val storageBasedUserInbox: StorageBasedUserInbox,
     private val isolationExpirationAlarmController: IsolationExpirationAlarmController,
     private val clock: Clock,
-    private val analyticsEventTracker: AnalyticsEventTracker,
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
     private val exposureNotificationHandler: ExposureNotificationHandler,
     private val keySharingInfoProvider: KeySharingInfoProvider,
     private val createSelfAssessmentIndexCase: CreateSelfAssessmentIndexCase,
@@ -154,10 +154,10 @@ class IsolationStateMachine @Inject constructor(
                 val sideEffect = HandleAcknowledgedTestResult(isolationLogicalState, it.testResult, transition.keySharingInfo)
                 when (transition) {
                     is TransitionDueToTestResult.Transition -> {
-                        val newState = updateHasAcknowledgedEndOfIsolation(
-                            currentState = this,
-                            transition.newState
-                        )
+                        val newLogicalState = IsolationLogicalState.from(transition.newState)
+                        val hasExpiredIsolation = newLogicalState is PossiblyIsolating &&
+                            !newLogicalState.isActiveIsolation(clock)
+                        val newState = transition.newState.copy(hasAcknowledgedEndOfIsolation = hasExpiredIsolation)
                         transitionTo(newState, sideEffect)
                     }
                     is TransitionDueToTestResult.DoNotTransition -> dontTransition(sideEffect)
@@ -166,10 +166,8 @@ class IsolationStateMachine @Inject constructor(
 
             on<OnDailyContactTestingOptIn> {
                 val isolationLogicalState = IsolationLogicalState.from(this)
-                if (isolationLogicalState is PossiblyIsolating &&
-                    isolationLogicalState.isActiveContactCaseOnly(clock)
-                ) {
-                    analyticsEventTracker.track(DeclaredNegativeResultFromDct)
+                if (isolationLogicalState.isActiveContactCaseOnly(clock)) {
+                    analyticsEventProcessor.track(DeclaredNegativeResultFromDct)
                     var newState = this.copy(
                         contactCase = this.contactCase!!.copy(
                             expiryDate = LocalDate.now(clock),
@@ -214,7 +212,7 @@ class IsolationStateMachine @Inject constructor(
             } else {
                 val isInIsolation = currentLogicalState.isActiveIsolation(clock)
                 if (!isInIsolation && willBeInIsolation) {
-                    analyticsEventTracker.track(StartedIsolation)
+                    analyticsEventProcessor.track(StartedIsolation)
                 }
                 Timber.d("transition from $currentState to $newState")
             }
@@ -330,7 +328,7 @@ class IsolationStateMachine @Inject constructor(
         }
 
         val indexCase =
-            if (currentState is PossiblyIsolating && currentState.hasActivePositiveTestResult(clock)) {
+            if (currentState.hasActivePositiveTestResult(clock)) {
                 val selfAssessment = SelfAssessment(
                     selfAssessmentDate = LocalDate.now(clock),
                     onsetDate = if (selectedDate is ExplicitDate) selectedDate.date else null

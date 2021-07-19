@@ -5,7 +5,6 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result.Success
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
@@ -33,48 +32,46 @@ class ShareKeysInformationActivityTest : EspressoTest() {
     }
 
     @Test
-    fun showScreen() = notReported {
+    fun showScreen() {
         startTestActivity<ShareKeysInformationActivity>()
         shareKeysInformationRobot.checkActivityIsDisplayed()
     }
 
     @Test
-    fun clickShareKeysButton_whenExposureKeyHistorySuccess_shouldShowResultScreen_thenStatusScreen() =
-        notReported {
-            startTestActivity<ShareKeysInformationActivity>()
+    fun clickShareKeysButton_whenExposureKeyHistorySuccess_shouldShowResultScreen_thenStatusScreen() {
+        startTestActivity<ShareKeysInformationActivity>()
 
-            shareKeysInformationRobot.checkActivityIsDisplayed()
+        shareKeysInformationRobot.checkActivityIsDisplayed()
 
-            shareKeysInformationRobot.clickContinueButton()
+        shareKeysInformationRobot.clickContinueButton()
 
-            waitFor { shareResultRobot.checkActivityIsDisplayed() }
+        waitFor { shareResultRobot.checkActivityIsDisplayed() }
 
-            shareResultRobot.clickActionButton()
+        shareResultRobot.clickActionButton()
 
-            waitFor { statusRobot.checkActivityIsDisplayed() }
-        }
-
-    @Test
-    fun clickShareKeysButton_whenExpKeyHistoryResolutionRequiredAndSuccessful_shouldStartENs_whenResolutionRequiredAndSuccessful_shouldShowStatusActivity() =
-        notReported {
-            shareKeysTestHelper.whenExposureNotificationResolutionRequired(true)
-            shareKeysTestHelper.whenTemporaryExposureKeyHistoryResolutionRequired(true)
-
-            startTestActivity<ShareKeysInformationActivity>()
-
-            shareKeysInformationRobot.checkActivityIsDisplayed()
-
-            shareKeysInformationRobot.clickContinueButton()
-
-            waitFor { shareResultRobot.checkActivityIsDisplayed() }
-
-            shareResultRobot.clickActionButton()
-
-            waitFor { statusRobot.checkActivityIsDisplayed() }
-        }
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
 
     @Test
-    fun clickShareKeysButton_whenExposureKeyHistoryErrorWithoutDeveloperError_shouldFinish() = notReported {
+    fun clickShareKeysButton_whenExpKeyHistoryResolutionRequiredAndSuccessful_shouldStartENs_whenResolutionRequiredAndSuccessful_shouldShowStatusActivity() {
+        shareKeysTestHelper.whenExposureNotificationResolutionRequired(true)
+        shareKeysTestHelper.whenTemporaryExposureKeyHistoryResolutionRequired(true)
+
+        startTestActivity<ShareKeysInformationActivity>()
+
+        shareKeysInformationRobot.checkActivityIsDisplayed()
+
+        shareKeysInformationRobot.clickContinueButton()
+
+        waitFor { shareResultRobot.checkActivityIsDisplayed() }
+
+        shareResultRobot.clickActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    @Test
+    fun clickShareKeysButton_whenExposureKeyHistoryErrorWithoutDeveloperError_shouldFinish() {
         shareKeysTestHelper.whenExposureKeyHistoryErrorWithoutDeveloperError()
 
         val activity = startTestActivity<ShareKeysInformationActivity>()
@@ -87,78 +84,74 @@ class ShareKeysInformationActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickShareKeysButton_whenExposureKeyHistoryErrorWithDeveloperError_shouldStartExposureNotifications_whenActivationSuccessful_shouldShowStatusActivity() =
-        notReported {
-            shareKeysTestHelper.whenExposureNotificationsInitiallyDisabled()
+    fun clickShareKeysButton_whenExposureKeyHistoryErrorWithDeveloperError_shouldStartExposureNotifications_whenActivationSuccessful_shouldShowStatusActivity() {
+        shareKeysTestHelper.whenExposureNotificationsInitiallyDisabled()
 
-            startTestActivity<ShareKeysInformationActivity>()
+        startTestActivity<ShareKeysInformationActivity>()
 
-            shareKeysInformationRobot.checkActivityIsDisplayed()
+        shareKeysInformationRobot.checkActivityIsDisplayed()
 
-            shareKeysInformationRobot.clickContinueButton()
+        shareKeysInformationRobot.clickContinueButton()
 
-            waitFor { shareResultRobot.checkActivityIsDisplayed() }
+        waitFor { shareResultRobot.checkActivityIsDisplayed() }
 
-            shareResultRobot.clickActionButton()
+        shareResultRobot.clickActionButton()
 
-            waitFor { statusRobot.checkActivityIsDisplayed() }
-        }
-
-    @Test
-    fun clickShareKeysButton_whenExposureKeyHistoryErrorWithDeveloperError_shouldStartENs_whenResolutionRequiredAndSuccessful_shouldStatusActivity() =
-        notReported {
-            shareKeysTestHelper.whenExposureNotificationsInitiallyDisabled()
-            shareKeysTestHelper.whenExposureNotificationResolutionRequired(successful = true)
-
-            startTestActivity<ShareKeysInformationActivity>()
-
-            shareKeysInformationRobot.checkActivityIsDisplayed()
-
-            shareKeysInformationRobot.clickContinueButton()
-
-            waitFor { shareResultRobot.checkActivityIsDisplayed() }
-
-            shareResultRobot.clickActionButton()
-
-            waitFor { statusRobot.checkActivityIsDisplayed() }
-        }
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
 
     @Test
-    fun clickShareKeysButton_whenExposureKeyHistoryErrorWithDeveloperError_shouldStartENs_whenResolutionRequiredAndNotSuccessful_shouldDoNothing() =
-        notReported {
-            shareKeysTestHelper.whenExposureNotificationsInitiallyDisabled()
-            shareKeysTestHelper.whenExposureNotificationResolutionRequired(successful = false)
+    fun clickShareKeysButton_whenExposureKeyHistoryErrorWithDeveloperError_shouldStartENs_whenResolutionRequiredAndSuccessful_shouldStatusActivity() {
+        shareKeysTestHelper.whenExposureNotificationsInitiallyDisabled()
+        shareKeysTestHelper.whenExposureNotificationResolutionRequired(successful = true)
 
-            startTestActivity<ShareKeysInformationActivity>()
+        startTestActivity<ShareKeysInformationActivity>()
 
-            shareKeysInformationRobot.checkActivityIsDisplayed()
+        shareKeysInformationRobot.checkActivityIsDisplayed()
 
-            shareKeysInformationRobot.clickContinueButton()
+        shareKeysInformationRobot.clickContinueButton()
 
-            shareKeysInformationRobot.checkActivityIsDisplayed()
-        }
+        waitFor { shareResultRobot.checkActivityIsDisplayed() }
 
-    @Test
-    fun clickShareKeysButton_whenExpKeyHistoryErrorWithDevError_shouldStartENs_whenResolutionRequiredThenResolutionRequiredThenSuccessful_shouldStatusActivity() =
-        notReported {
-            shareKeysTestHelper.whenExposureNotificationsInitiallyDisabled()
-            shareKeysTestHelper.whenResolutionRequiredThenResolutionRequiredThenSuccessful()
+        shareResultRobot.clickActionButton()
 
-            startTestActivity<ShareKeysInformationActivity>()
-
-            shareKeysInformationRobot.checkActivityIsDisplayed()
-
-            shareKeysInformationRobot.clickContinueButton()
-
-            waitFor { shareResultRobot.checkActivityIsDisplayed() }
-
-            shareResultRobot.clickActionButton()
-
-            waitFor { statusRobot.checkActivityIsDisplayed() }
-        }
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
 
     @Test
-    fun clickShareKeysButton_whenExposureKeyHistoryDenied_thenShowStatusActivity() = notReported {
+    fun clickShareKeysButton_whenExposureKeyHistoryErrorWithDeveloperError_shouldStartENs_whenResolutionRequiredAndNotSuccessful_shouldDoNothing() {
+        shareKeysTestHelper.whenExposureNotificationsInitiallyDisabled()
+        shareKeysTestHelper.whenExposureNotificationResolutionRequired(successful = false)
+
+        startTestActivity<ShareKeysInformationActivity>()
+
+        shareKeysInformationRobot.checkActivityIsDisplayed()
+
+        shareKeysInformationRobot.clickContinueButton()
+
+        shareKeysInformationRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    fun clickShareKeysButton_whenExpKeyHistoryErrorWithDevError_shouldStartENs_whenResolutionRequiredThenResolutionRequiredThenSuccessful_shouldStatusActivity() {
+        shareKeysTestHelper.whenExposureNotificationsInitiallyDisabled()
+        shareKeysTestHelper.whenResolutionRequiredThenResolutionRequiredThenSuccessful()
+
+        startTestActivity<ShareKeysInformationActivity>()
+
+        shareKeysInformationRobot.checkActivityIsDisplayed()
+
+        shareKeysInformationRobot.clickContinueButton()
+
+        waitFor { shareResultRobot.checkActivityIsDisplayed() }
+
+        shareResultRobot.clickActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    @Test
+    fun clickShareKeysButton_whenExposureKeyHistoryDenied_thenShowStatusActivity() {
         shareKeysTestHelper.whenExposureKeyHistoryDenied()
 
         startTestActivity<ShareKeysInformationActivity>()
@@ -169,7 +162,7 @@ class ShareKeysInformationActivityTest : EspressoTest() {
     }
 
     @Test
-    fun pressBack_doNothing() = notReported {
+    fun pressBack_doNothing() {
         val activity = startTestActivity<ShareKeysInformationActivity>()
 
         testAppContext.device.pressBack()

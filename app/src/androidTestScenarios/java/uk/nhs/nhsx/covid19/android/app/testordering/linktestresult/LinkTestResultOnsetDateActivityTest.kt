@@ -5,7 +5,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultOnsetDateRobot
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
@@ -18,7 +17,7 @@ class LinkTestResultOnsetDateActivityTest : EspressoTest() {
     private val linkTestResultOnsetDateRobot = LinkTestResultOnsetDateRobot()
 
     @Test
-    fun selectWrongData_showError_clickContinue_keepActivity() = notReported {
+    fun selectWrongData_showError_clickContinue_keepActivity() {
         val activity = startTestActivity<LinkTestResultOnsetDateActivity> {
             putExtra(LinkTestResultOnsetDateActivity.EXTRA_TEST_RESULT, testResult)
         }
@@ -37,7 +36,7 @@ class LinkTestResultOnsetDateActivityTest : EspressoTest() {
     }
 
     @Test
-    fun selectDoNotRememberDate_clickContinue_closeActivity() = notReported {
+    fun selectDoNotRememberDate_clickContinue_closeActivity() {
         val activity = startTestActivity<LinkTestResultOnsetDateActivity> {
             putExtra(LinkTestResultOnsetDateActivity.EXTRA_TEST_RESULT, testResult)
         }
@@ -58,7 +57,7 @@ class LinkTestResultOnsetDateActivityTest : EspressoTest() {
     }
 
     @Test
-    fun selectDoNotRememberDate_selectDate_clickContinue_closeActivity() = notReported {
+    fun selectDoNotRememberDate_selectDate_clickContinue_closeActivity() {
         val activity = startTestActivity<LinkTestResultOnsetDateActivity> {
             putExtra(LinkTestResultOnsetDateActivity.EXTRA_TEST_RESULT, testResult)
         }
@@ -87,7 +86,7 @@ class LinkTestResultOnsetDateActivityTest : EspressoTest() {
     }
 
     @Test
-    fun backPressed_keepActivity() = notReported {
+    fun backPressed_keepActivity() {
         val activity = startTestActivity<LinkTestResultOnsetDateActivity> {
             putExtra(LinkTestResultOnsetDateActivity.EXTRA_TEST_RESULT, testResult)
         }

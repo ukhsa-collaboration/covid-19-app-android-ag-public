@@ -9,6 +9,9 @@ import io.mockk.verify
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.BookATest
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -33,6 +36,8 @@ class TestingHubViewModelTest {
     private val districtAreaStringProvider = mockk<DistrictAreaStringProvider>()
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-22T10:00:00Z"), ZoneOffset.UTC)
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxUnitFun = true)
+    private val navigationTargetObserver = mockk<Observer<NavigationTarget>>(relaxUnitFun = true)
+    private val evaluateVenueAlertNavigation = mockk<EvaluateVenueAlertNavigation>()
 
     val isolationHelper = IsolationHelper(fixedClock)
 
@@ -40,6 +45,7 @@ class TestingHubViewModelTest {
         isolationStateMachine,
         lastVisitedBookTestTypeVenueDateProvider,
         districtAreaStringProvider,
+        evaluateVenueAlertNavigation,
         fixedClock
     )
 
@@ -91,5 +97,27 @@ class TestingHubViewModelTest {
                 ViewState(showBookTestButton = true, showFindOutAboutTestingButton = DoNotShow)
             )
         }
+    }
+
+    @Test
+    fun `when book a test is clicked and has visited risky venue, post evaluate navigation`() {
+        val expected = mockk<NavigationTarget>()
+        every { evaluateVenueAlertNavigation.invoke() } returns expected
+        every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns true
+
+        testSubject.onBookATestClicked()
+
+        testSubject.navigationTarget().observeForever(navigationTargetObserver)
+        verify { navigationTargetObserver.onChanged(expected) }
+    }
+
+    @Test
+    fun `when book a test is clicked and has not visited risky venue, post BookATest`() {
+        every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns false
+
+        testSubject.onBookATestClicked()
+
+        testSubject.navigationTarget().observeForever(navigationTargetObserver)
+        verify { navigationTargetObserver.onChanged(BookATest) }
     }
 }

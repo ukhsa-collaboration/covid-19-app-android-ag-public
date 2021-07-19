@@ -9,6 +9,7 @@ import kotlinx.android.synthetic.main.view_my_data_section.view.myDataSectionTit
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 
 class MyDataSectionView @JvmOverloads constructor(
     context: Context,
@@ -47,7 +48,7 @@ class MyDataSectionView @JvmOverloads constructor(
 
     private fun applyAttributes(context: Context, attrs: AttributeSet?) {
         context.theme.obtainStyledAttributes(attrs, R.styleable.MyDataSectionView, 0, 0).apply {
-            val title = getString(R.styleable.MyDataSectionView_myDataSectionTitle)
+            val title = getString(context, R.styleable.MyDataSectionView_myDataSectionTitle)
             myDataSectionTitle.text = title
             recycle()
         }

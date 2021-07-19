@@ -37,9 +37,10 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
-import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessageTranslation
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
+import uk.nhs.nhsx.covid19.android.app.remote.data.NotificationMessage
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
@@ -81,7 +82,8 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
     private val statusViewModel: StatusViewModel by assistedViewModel {
         statusViewModelFactory.create(
             contactTracingHubAction = intent.getSerializableExtra(CONTACT_TRACING_HUB_ACTION_EXTRA) as? ContactTracingHubAction,
-            showLocalMessageScreen = intent.getBooleanExtra(STARTED_FROM_LOCAL_MESSAGE_NOTIFICATION, false)
+            showLocalMessageScreen = intent.getBooleanExtra(STARTED_FROM_LOCAL_MESSAGE_NOTIFICATION, false),
+            startedFromRiskyVenueNotificationWithType = intent.getSerializableExtra(STARTED_FROM_RISKY_VENUE_NOTIFICATION_WITH_TYPE) as? RiskyVenueMessageType
         )
     }
 
@@ -156,7 +158,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         }
     }
 
-    private fun handleLocalMessageState(localMessage: LocalMessageTranslation?) {
+    private fun handleLocalMessageState(localMessage: NotificationMessage?) {
         localMessageBanner.title = localMessage?.head
         localMessageBanner.isVisible = localMessage != null
     }
@@ -354,14 +356,16 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
             context: Context,
             startedFromVenueCheckInSuccess: Boolean = false,
             contactTracingHubAction: ContactTracingHubAction? = null,
-            startedFromLocalMessageNotification: Boolean = false
+            startedFromLocalMessageNotification: Boolean = false,
+            startedFromRiskyVenueNotificationWithType: RiskyVenueMessageType? = null
         ) {
             context.startActivity(
                 getIntent(
                     context,
                     startedFromVenueCheckInSuccess,
                     contactTracingHubAction,
-                    startedFromLocalMessageNotification
+                    startedFromLocalMessageNotification,
+                    startedFromRiskyVenueNotificationWithType
                 )
             )
         }
@@ -370,7 +374,8 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
             context: Context,
             startedFromVenueCheckInSuccess: Boolean,
             contactTracingHubAction: ContactTracingHubAction?,
-            startedFromLocalMessageNotification: Boolean
+            startedFromLocalMessageNotification: Boolean,
+            startedFromRiskyVenueNotificationWithType: RiskyVenueMessageType?
         ) =
             Intent(context, StatusActivity::class.java)
                 .apply {
@@ -378,10 +383,12 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
                     putExtra(STARTED_FROM_VENUE_CHECK_IN_SUCCESS, startedFromVenueCheckInSuccess)
                     putExtra(CONTACT_TRACING_HUB_ACTION_EXTRA, contactTracingHubAction)
                     putExtra(STARTED_FROM_LOCAL_MESSAGE_NOTIFICATION, startedFromLocalMessageNotification)
+                    putExtra(STARTED_FROM_RISKY_VENUE_NOTIFICATION_WITH_TYPE, startedFromRiskyVenueNotificationWithType)
                 }
 
         const val STARTED_FROM_VENUE_CHECK_IN_SUCCESS = "STARTED_FROM_VENUE_CHECK_IN_SUCCESS"
         const val CONTACT_TRACING_HUB_ACTION_EXTRA = "CONTACT_TRACING_HUB_ACTION_EXTRA"
         const val STARTED_FROM_LOCAL_MESSAGE_NOTIFICATION = "STARTED_FROM_LOCAL_MESSAGE_NOTIFICATION"
+        const val STARTED_FROM_RISKY_VENUE_NOTIFICATION_WITH_TYPE = "STARTED_FROM_RISKY_VENUE_NOTIFICATION_WITH_TYPE"
     }
 }

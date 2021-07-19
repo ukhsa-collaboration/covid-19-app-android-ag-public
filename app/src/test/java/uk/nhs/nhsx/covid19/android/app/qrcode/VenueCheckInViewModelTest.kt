@@ -38,7 +38,7 @@ class VenueCheckInViewModelTest {
 
         coVerify { visitedVenuesStorage.removeLastVisit() }
         verify { visitRemoveResultObserver.onChanged(RemoveVisitResult) }
-        coVerify { analyticsEventProcessor.track(CanceledCheckIn) }
+        verify { analyticsEventProcessor.track(CanceledCheckIn) }
     }
 
     @Test

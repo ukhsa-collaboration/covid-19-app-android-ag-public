@@ -7,11 +7,11 @@ import android.widget.RadioButton
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.cancel
 import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.hours_12
 import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.hours_4
 import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.hours_8
 import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.minute_1
-import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.cancel
 import uk.nhs.nhsx.covid19.android.app.ExposureApplication
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.R.plurals
@@ -34,8 +34,7 @@ class ExposureNotificationReminderDialog(
     private fun initializeView() {
         minute_1.isVisible = ExposureApplication.isTestBuild
         minute_1.setOnSingleClickListener {
-            showNotificationReminderConfirmationDialog(Duration.ofMinutes(1))
-            dismiss()
+            onRadioButtonClick(Duration.ofMinutes(1))
         }
 
         updateResumeRadioButton(hours_4, 4)
@@ -52,9 +51,14 @@ class ExposureNotificationReminderDialog(
         radioButton.text =
             context.resources.getQuantityString(plurals.resume_contact_tracing_hours, hours, hours)
         radioButton.setOnSingleClickListener {
-            showNotificationReminderConfirmationDialog(Duration.ofHours(hours.toLong()))
-            dismiss()
+            onRadioButtonClick(Duration.ofHours(hours.toLong()))
         }
+    }
+
+    private fun onRadioButtonClick(duration: Duration) {
+        scheduleExposureNotification(duration)
+        showNotificationReminderConfirmationDialog(duration)
+        dismiss()
     }
 
     private fun showNotificationReminderConfirmationDialog(duration: Duration) {
@@ -71,7 +75,6 @@ class ExposureNotificationReminderDialog(
         builder.setPositiveButton(
             context.getString(R.string.okay)
         ) { _, _ ->
-            scheduleExposureNotification(duration)
         }
 
         builder.show()

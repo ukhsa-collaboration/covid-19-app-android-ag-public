@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.settings.myarea
 
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.EditPostalDistrictRobot
@@ -17,7 +16,7 @@ class MyAreaScenarioTest : EspressoTest() {
     private val localAuthorityRobot = LocalAuthorityRobot()
 
     @Test
-    fun whenCompletingEnterPostCodeAndLocalAuthorityJourney_returnToSettings_thenConfirmUpdatedMyAreaDetails() = notReported {
+    fun whenCompletingEnterPostCodeAndLocalAuthorityJourney_returnToSettings_thenConfirmUpdatedMyAreaDetails() {
         testAppContext.setPostCode(null)
         testAppContext.setLocalAuthority(null)
 

@@ -15,7 +15,14 @@ import uk.nhs.nhsx.covid19.android.app.isolation.TestType.POSITIVE_UNCONFIRMED
 data class Transition(
     val initialState: State,
     val event: Event,
-    val finalState: State
+    val finalState: State,
+    val reference: TransitionReference = TransitionReference("", 0)
+)
+
+@JsonClass(generateAdapter = true)
+data class TransitionReference(
+    val file: String,
+    val line: Int
 )
 
 @JsonClass(generateAdapter = true)
@@ -83,6 +90,7 @@ enum class Event {
     riskyContactWithExposureDayOlderThanIsolationTerminationDueToDCT,
 
     selfDiagnosedSymptomatic,
+    selfDiagnosedSymptomaticWithAssumedOnsetDateOlderThanPositiveTestEndDate,
 
     terminateRiskyContactDueToDCT,
 

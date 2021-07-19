@@ -5,6 +5,8 @@ import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_LFD_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NO_CONNECTION_TOKEN
@@ -17,9 +19,10 @@ import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.U
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.VOID_LFD_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.VOID_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.report.Reported
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.FLOW
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
-import uk.nhs.nhsx.covid19.android.app.report.notReported
+import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
@@ -36,7 +39,8 @@ import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit.DAYS
 
-class LinkTestResultScenarioTest : EspressoTest() {
+@RunWith(Parameterized::class)
+class LinkTestResultScenarioTest(override val configuration: TestConfiguration) : EspressoTest() {
 
     private val statusRobot = StatusRobot()
     private val linkTestResultRobot = LinkTestResultRobot()
@@ -58,6 +62,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun userEntersCtaTokenForPcrPositiveTestResult_noSymptoms_navigateToTestResultScreen() = reporter(
         scenario = "Enter test result",
         title = "Positive test result",
@@ -100,6 +105,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun userEntersCtaTokenForPcrNegativeTestResult_navigateToTestResultScreen() = reporter(
         scenario = "Enter test result",
         title = "Negative test result",
@@ -130,6 +136,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun userEntersCtaTokenForPcrVoidTestResult_navigateToTestResultScreen() = reporter(
         scenario = "Enter test result",
         title = "Void test result",
@@ -160,6 +167,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun userEntersCtaTokenForPcrPlodTestResult_navigateToPlodTestResultScreen() = reporter(
         scenario = "Enter test result",
         title = "Plod test result",
@@ -190,7 +198,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun userIsContactCaseOnly_entersCtaTokenForPcrPositiveTestResult_noSymptoms_navigateToTestResultScreen() = notReported {
+    fun userIsContactCaseOnly_entersCtaTokenForPcrPositiveTestResult_noSymptoms_navigateToTestResultScreen() {
         testAppContext.setState(contactCaseOnlyIsolation)
 
         enterLinkTestResultFromStatusActivity()
@@ -211,7 +219,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun userEntersCtaTokenForAssistedLfdPositiveTestResult_navigateToTestResultScreen() = notReported {
+    fun userEntersCtaTokenForAssistedLfdPositiveTestResult_navigateToTestResultScreen() {
         enterLinkTestResultFromStatusActivity()
         linkTestResultRobot.checkActivityIsDisplayed()
         linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
@@ -222,7 +230,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun userEntersCtaTokenForUnassistedLfdPositiveTestResult_navigateToTestResultScreen() = notReported {
+    fun userEntersCtaTokenForUnassistedLfdPositiveTestResult_navigateToTestResultScreen() {
         enterLinkTestResultFromStatusActivity()
         linkTestResultRobot.checkActivityIsDisplayed()
         linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
@@ -233,7 +241,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun userEntersCtaTokenForUnknownTestResult_navigatesToUnknownTestResultScreen() = notReported {
+    fun userEntersCtaTokenForUnknownTestResult_navigatesToUnknownTestResultScreen() {
         enterLinkTestResultFromStatusActivity()
         linkTestResultRobot.checkActivityIsDisplayed()
         linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
@@ -244,7 +252,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun userEntersCtaTokenForLfdNegativeTestResult_showErrorMessage() = notReported {
+    fun userEntersCtaTokenForLfdNegativeTestResult_showErrorMessage() {
         enterLinkTestResultFromStatusActivity()
         linkTestResultRobot.checkActivityIsDisplayed()
         linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
@@ -255,7 +263,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun userEntersCtaTokenForLfdVoidTestResult_showErrorMessage() = notReported {
+    fun userEntersCtaTokenForLfdVoidTestResult_showErrorMessage() {
         enterLinkTestResultFromStatusActivity()
         linkTestResultRobot.checkActivityIsDisplayed()
         linkTestResultRobot.checkDailyContactTestingContainerIsNotDisplayed()
@@ -266,7 +274,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun userEntersTooShortCtaToken_showErrorMessage() = notReported {
+    fun userEntersTooShortCtaToken_showErrorMessage() {
         enterLinkTestResultFromStatusActivity()
 
         linkTestResultRobot.checkActivityIsDisplayed()
@@ -281,6 +289,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun userEntersInvalidCtaToken_showErrorMessage() = reporter(
         scenario = "Enter test result",
         title = "Invalid code",
@@ -311,7 +320,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun noConnection_showErrorMessage() = notReported {
+    fun noConnection_showErrorMessage() {
         startTestActivity<LinkTestResultActivity>()
 
         linkTestResultRobot.checkActivityIsDisplayed()
@@ -326,7 +335,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun unexpectedError_showErrorMessage() = notReported {
+    fun unexpectedError_showErrorMessage() {
         startTestActivity<LinkTestResultActivity>()
 
         linkTestResultRobot.checkActivityIsDisplayed()
@@ -341,6 +350,7 @@ class LinkTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun userInContactCaseOnly_inLinkTestResultScreen_checkOptInToDailyContactTesting_confirmOptIn_transitionOutOfIsolation() =
         reporter(
             scenario = "Daily contact testing",

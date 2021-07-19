@@ -49,4 +49,11 @@ sealed class AnalyticsEvent {
     object PositiveLabResultAfterPositiveSelfRapidTest : AnalyticsEvent()
     object NegativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit : AnalyticsEvent()
     object NegativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit : AnalyticsEvent()
+    object DidAccessRiskyVenueM2Notification : AnalyticsEvent()
+    object SelectedTakeTestM2Journey : AnalyticsEvent()
+    object SelectedTakeTestLaterM2Journey : AnalyticsEvent()
+    object SelectedHasSymptomsM2Journey : AnalyticsEvent()
+    object SelectedHasNoSymptomsM2Journey : AnalyticsEvent()
+    object SelectedLfdTestOrderingM2Journey : AnalyticsEvent()
+    object SelectedHasLfdTestM2Journey : AnalyticsEvent()
 }

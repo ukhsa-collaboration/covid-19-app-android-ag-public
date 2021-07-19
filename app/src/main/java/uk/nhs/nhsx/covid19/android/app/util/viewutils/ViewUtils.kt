@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AlertDialog.Builder
 import androidx.core.widget.NestedScrollView
 import com.google.android.material.snackbar.Snackbar
 import timber.log.Timber
@@ -76,7 +76,7 @@ fun RadioButton.mirrorSystemLayoutDirection() {
     layoutDirection = oppositeDirection
 }
 
-fun AlertDialog.Builder.setMultilineTitle(title: String) {
+fun Builder.setMultilineTitle(title: String): Builder {
     val customTitle = LayoutInflater.from(context).inflate(R.layout.dialog_multiline_title, null, false)
     if (customTitle is TextView) {
         customTitle.text = title
@@ -85,4 +85,5 @@ fun AlertDialog.Builder.setMultilineTitle(title: String) {
         Timber.e("Expected view to be TextView, but was $customTitle. Falling back to standard title")
         setTitle(title)
     }
+    return this
 }

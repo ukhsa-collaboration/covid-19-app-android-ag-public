@@ -17,9 +17,9 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaBanner
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaNotification
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessRiskyVenueM2Notification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolationPaymentsButton
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
@@ -42,8 +42,9 @@ import uk.nhs.nhsx.covid19.android.app.payment.CanClaimIsolationPayment
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
-import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessageTranslation
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
+import uk.nhs.nhsx.covid19.android.app.remote.data.NotificationMessage
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
@@ -92,12 +93,14 @@ class StatusViewModel @AssistedInject constructor(
     private val getLocalMessageFromStorage: GetLocalMessageFromStorage,
     exposureNotificationPermissionHelperFactory: ExposureNotificationPermissionHelper.Factory,
     @Assisted val contactTracingHubAction: ContactTracingHubAction?,
-    @Assisted val showLocalMessageScreen: Boolean
+    @Assisted val showLocalMessageScreen: Boolean,
+    @Assisted val startedFromRiskyVenueNotificationWithType: RiskyVenueMessageType?
 ) : ViewModel() {
 
     var contactTracingSwitchedOn = false
     var contactTracingHubActionHandled = false
     var showLocalMessageScreenHandled = false
+    var didTrackRiskyVenueM2NotificationAnalytics = false
 
     private val viewStateLiveData = MutableLiveData<ViewState>()
     val viewState = distinctUntilChanged(viewStateLiveData)
@@ -253,6 +256,11 @@ class StatusViewModel @AssistedInject constructor(
     }
 
     private fun checkShouldShowInformationScreen() {
+        if (startedFromRiskyVenueNotificationWithType == BOOK_TEST && !didTrackRiskyVenueM2NotificationAnalytics) {
+            didTrackRiskyVenueM2NotificationAnalytics = true
+            analyticsEventProcessor.track(DidAccessRiskyVenueM2Notification)
+        }
+
         if (contactTracingHubAction != null && !contactTracingHubActionHandled) {
             contactTracingHubActionHandled = true
             navigationTarget.postValue(ContactTracingHub(shouldTurnOnContactTracing = contactTracingHubAction == NAVIGATE_AND_TURN_ON))
@@ -261,29 +269,27 @@ class StatusViewModel @AssistedInject constructor(
 
         if (showLocalMessageScreen && !showLocalMessageScreenHandled) {
             showLocalMessageScreenHandled = true
-            trackAnalyticsEvent(DidAccessLocalInfoScreenViaNotification)
+            analyticsEventProcessor.track(DidAccessLocalInfoScreenViaNotification)
             navigationTarget.postValue(LocalMessage)
             return
         }
 
-        viewModelScope.launch {
-            val target = when (val item = userInbox.fetchInbox()) {
-                is ShowIsolationExpiration -> IsolationExpiration(item.expirationDate)
-                is ShowTestResult -> {
-                    notificationProvider.cancelTestResult()
-                    TestResult
-                }
-                is ShowUnknownTestResult -> UnknownTestResult
-                is ShowVenueAlert -> VenueAlert(item.venueId, item.messageType)
-                is ShowEncounterDetection -> ExposureConsent
-                is ContinueInitialKeySharing -> ShareKeys(reminder = false)
-                is ShowKeySharingReminder -> ShareKeys(reminder = true)
-                null -> null
+        val target = when (val item = userInbox.fetchInbox()) {
+            is ShowIsolationExpiration -> IsolationExpiration(item.expirationDate)
+            is ShowTestResult -> {
+                notificationProvider.cancelTestResult()
+                TestResult
             }
+            is ShowUnknownTestResult -> UnknownTestResult
+            is ShowVenueAlert -> VenueAlert(item.venueId, item.messageType)
+            is ShowEncounterDetection -> ExposureConsent
+            is ContinueInitialKeySharing -> ShareKeys(reminder = false)
+            is ShowKeySharingReminder -> ShareKeys(reminder = true)
+            null -> null
+        }
 
-            if (target != null) {
-                navigationTarget.postValue(target)
-            }
+        if (target != null) {
+            navigationTarget.postValue(target)
         }
     }
 
@@ -291,17 +297,11 @@ class StatusViewModel @AssistedInject constructor(
         isolationState.canReportSymptoms(clock)
 
     fun optionIsolationPaymentClicked() {
-        trackAnalyticsEvent(SelectedIsolationPaymentsButton)
+        analyticsEventProcessor.track(SelectedIsolationPaymentsButton)
     }
 
     fun localMessageBannerClicked() {
-        trackAnalyticsEvent(DidAccessLocalInfoScreenViaBanner)
-    }
-
-    private fun trackAnalyticsEvent(event: AnalyticsEvent) {
-        viewModelScope.launch {
-            analyticsEventProcessor.track(event)
-        }
+        analyticsEventProcessor.track(DidAccessLocalInfoScreenViaBanner)
     }
 
     sealed class RiskyPostCodeViewState : Parcelable {
@@ -325,7 +325,7 @@ class StatusViewModel @AssistedInject constructor(
         val showReportSymptomsButton: Boolean,
         val exposureNotificationsEnabled: Boolean,
         val animationsEnabled: Boolean,
-        val localMessage: LocalMessageTranslation?
+        val localMessage: NotificationMessage?
     )
 
     sealed class PermissionRequestResult {
@@ -347,6 +347,7 @@ class StatusViewModel @AssistedInject constructor(
         fun create(
             contactTracingHubAction: ContactTracingHubAction?,
             showLocalMessageScreen: Boolean,
+            startedFromRiskyVenueNotificationWithType: RiskyVenueMessageType?
         ): StatusViewModel
     }
 }
@@ -357,7 +358,7 @@ sealed class NavigationTarget {
     object UnknownTestResult : NavigationTarget()
     object ExposureConsent : NavigationTarget()
     data class ShareKeys(val reminder: Boolean) : NavigationTarget()
-    data class VenueAlert(val venueId: String, val messageType: MessageType) : NavigationTarget()
+    data class VenueAlert(val venueId: String, val messageType: RiskyVenueMessageType) : NavigationTarget()
     data class ContactTracingHub(val shouldTurnOnContactTracing: Boolean) : NavigationTarget()
     object LocalMessage : NavigationTarget()
 }

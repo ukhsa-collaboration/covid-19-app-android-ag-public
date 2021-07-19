@@ -3,7 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation
 import com.google.android.gms.nearby.exposurenotification.ExposureWindow
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ExposureWindowsMatched
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.remote.data.V2RiskCalculation
 import uk.nhs.riskscore.RiskScoreCalculatorConfiguration
 import javax.inject.Inject
@@ -13,7 +13,7 @@ class ExposureWindowRiskCalculator @Inject constructor(
     private val evaluateIfConsideredRisky: EvaluateIfConsideredRisky,
     private val calculateExposureRisk: CalculateExposureRisk,
     private val riskScoreCalculatorProvider: RiskScoreCalculatorProvider,
-    private val analyticsEventTracker: AnalyticsEventTracker,
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
 ) {
 
     operator fun invoke(
@@ -60,7 +60,7 @@ class ExposureWindowRiskCalculator @Inject constructor(
     private fun trackExposureWindowsMatchedAnalyticsIfNecessary(totalNumberOfExposureWindows: Int, totalRisky: Int) {
         if (totalNumberOfExposureWindows > 0) {
             val totalNonRisky = totalNumberOfExposureWindows - totalRisky
-            analyticsEventTracker.track(ExposureWindowsMatched(totalRisky, totalNonRisky))
+            analyticsEventProcessor.track(ExposureWindowsMatched(totalRisky, totalNonRisky))
         }
     }
 }

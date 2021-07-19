@@ -1,7 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.notifications.userinbox
 
 import android.content.SharedPreferences
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import java.time.LocalDate
 import javax.inject.Inject
@@ -25,7 +25,7 @@ sealed class UserInboxItem {
     object ContinueInitialKeySharing : UserInboxItem()
     object ShowKeySharingReminder : UserInboxItem()
     data class ShowIsolationExpiration(val expirationDate: LocalDate) : UserInboxItem()
-    data class ShowVenueAlert(val venueId: String, val messageType: MessageType) : UserInboxItem()
+    data class ShowVenueAlert(val venueId: String, val messageType: RiskyVenueMessageType) : UserInboxItem()
     object ShowEncounterDetection : UserInboxItem()
 }
 

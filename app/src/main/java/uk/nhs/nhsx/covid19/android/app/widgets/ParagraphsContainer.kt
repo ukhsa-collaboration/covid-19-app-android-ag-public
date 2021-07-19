@@ -13,7 +13,7 @@ import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.view_paragraph.view.bulletPoint
 import kotlinx.android.synthetic.main.view_paragraph.view.paragraphText
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 
 class ParagraphsContainer @JvmOverloads constructor(
     context: Context,
@@ -33,12 +33,11 @@ class ParagraphsContainer @JvmOverloads constructor(
             0,
             0
         ).apply {
-            val rawText = getText(R.styleable.ParagraphsContainer_rawText)
+            val rawText = getString(context, R.styleable.ParagraphsContainer_rawText)
             shouldDisplayBulletPoints = getBoolean(R.styleable.ParagraphsContainer_showBulletPoints, false)
-            paddingBetweenItems = getDimensionPixelSize(R.styleable.ParagraphsContainer_paddingBetweenItems, DEFAULT_PADDING_BETWEEN_ITEMS.dpToPx.toInt())
-            rawText?.let {
-                setRawText(it.toString())
-            }
+            val defaultPadding = context.resources.getDimension(R.dimen.paragraph_container_padding_between_items_default).toInt()
+            paddingBetweenItems = getDimensionPixelSize(R.styleable.ParagraphsContainer_paddingBetweenItems, defaultPadding)
+            setRawText(rawText)
 
             recycle()
         }
@@ -74,10 +73,6 @@ class ParagraphsContainer @JvmOverloads constructor(
     private fun inflateLayout(): LinearLayout =
         (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
             .inflate(R.layout.view_paragraph, this, false) as LinearLayout
-
-    companion object {
-        const val DEFAULT_PADDING_BETWEEN_ITEMS = 16
-    }
 }
 
 fun ParagraphsContainer.setRawText(rawText: String, separator: String = "\n\n") =

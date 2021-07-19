@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import uk.nhs.covid19.config.SignatureKey
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateManager
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationChecker
@@ -36,6 +35,7 @@ import javax.inject.Singleton
 @Module
 class AppModule(
     private val applicationContext: Context,
+    private val applicationScope: CoroutineScope,
     private val exposureNotificationApi: ExposureNotificationApi,
     private val bluetoothStateProvider: AvailabilityStateProvider,
     private val locationStateProvider: AvailabilityStateProvider,
@@ -54,6 +54,11 @@ class AppModule(
 ) {
     @Provides
     fun provideContext() = applicationContext
+
+    @Provides
+    @Singleton
+    @Named(APPLICATION_SCOPE)
+    fun provideApplicationScope(): CoroutineScope = applicationScope
 
     @Provides
     fun provideAppInfo() = AppInfo()
@@ -129,11 +134,6 @@ class AppModule(
     fun provideClock(): Clock = clock
 
     @Provides
-    @Singleton
-    @Named(GLOBAL_SCOPE)
-    fun provideCoroutineScope(): CoroutineScope = GlobalScope
-
-    @Provides
     fun provideExposureNotificationWorkerScheduler(): ExposureNotificationWorkerScheduler =
         ExposureNotificationWorker.Companion
 
@@ -150,6 +150,6 @@ class AppModule(
     companion object {
         const val BLUETOOTH_STATE_NAME = "BLUETOOTH_STATE"
         const val LOCATION_STATE_NAME = "LOCATION_STATE"
-        const val GLOBAL_SCOPE = "GLOBAL_SCOPE"
+        const val APPLICATION_SCOPE = "APPLICATION_SCOPE"
     }
 }

@@ -5,7 +5,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultRe
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedUnconfirmedPositiveTestResult
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.VoidResultReceived
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
@@ -15,7 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import javax.inject.Inject
 
 class TrackTestResultAnalyticsOnReceive @Inject constructor(
-    private val analyticsEventTracker: AnalyticsEventTracker
+    private val analyticsEventProcessor: AnalyticsEventProcessor
 ) {
 
     operator fun invoke(
@@ -24,18 +24,18 @@ class TrackTestResultAnalyticsOnReceive @Inject constructor(
     ) {
         when (receivedTestResult.testResult) {
             POSITIVE -> {
-                analyticsEventTracker.track(PositiveResultReceived)
+                analyticsEventProcessor.track(PositiveResultReceived)
                 if (receivedTestResult.requiresConfirmatoryTest) {
-                    analyticsEventTracker.track(ReceivedUnconfirmedPositiveTestResult)
+                    analyticsEventProcessor.track(ReceivedUnconfirmedPositiveTestResult)
                 }
             }
-            NEGATIVE -> analyticsEventTracker.track(NegativeResultReceived)
-            VOID -> analyticsEventTracker.track(VoidResultReceived)
+            NEGATIVE -> analyticsEventProcessor.track(NegativeResultReceived)
+            VOID -> analyticsEventProcessor.track(VoidResultReceived)
             PLOD -> {
             }
         }
         receivedTestResult.testKitType?.let {
-            analyticsEventTracker.track(
+            analyticsEventProcessor.track(
                 ResultReceived(
                     receivedTestResult.testResult,
                     receivedTestResult.testKitType,

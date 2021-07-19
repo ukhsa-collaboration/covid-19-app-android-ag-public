@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.settings.myarea
 
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MyAreaRobot
 
@@ -10,7 +9,7 @@ class MyAreaActivityTest : EspressoTest() {
     private val myAreaRobot = MyAreaRobot()
 
     @Test
-    fun whenNeitherPostCodeOrLocalAuthorityAreStored_thenNoValuesDisplayed() = notReported {
+    fun whenNeitherPostCodeOrLocalAuthorityAreStored_thenNoValuesDisplayed() {
         testAppContext.setPostCode(null)
         testAppContext.setLocalAuthority(null)
 
@@ -22,7 +21,7 @@ class MyAreaActivityTest : EspressoTest() {
     }
 
     @Test
-    fun whenPostCodeAndLocalAuthorityAreStored_thenDisplayStoredValues() = notReported {
+    fun whenPostCodeAndLocalAuthorityAreStored_thenDisplayStoredValues() {
         testAppContext.setPostCode("SE1")
         testAppContext.setLocalAuthority("E09000028")
 

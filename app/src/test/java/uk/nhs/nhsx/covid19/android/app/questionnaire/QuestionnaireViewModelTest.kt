@@ -26,8 +26,7 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireStat
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireViewModel
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
 import uk.nhs.nhsx.covid19.android.app.remote.data.QuestionnaireResponse
-import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
-import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import java.time.Clock
 
@@ -263,7 +262,7 @@ class QuestionnaireViewModelTest {
         val response = Lce.Success(viewState)
         testSubject.viewState.postValue(response)
 
-        val mockedLogicalState = mockk<PossiblyIsolating>()
+        val mockedLogicalState = mockk<IsolationLogicalState>()
         every { mockedLogicalState.hasActivePositiveTestResult(clock) } returns true
         every { isolationStateMachine.readLogicalState() } returns mockedLogicalState
 
@@ -286,7 +285,7 @@ class QuestionnaireViewModelTest {
         val response = Lce.Success(viewState)
         testSubject.viewState.postValue(response)
 
-        val mockedLogicalState = mockk<PossiblyIsolating>()
+        val mockedLogicalState = mockk<IsolationLogicalState>()
         every { mockedLogicalState.hasActivePositiveTestResult(clock) } returns false
         every { isolationStateMachine.readLogicalState() } returns mockedLogicalState
 
@@ -310,7 +309,8 @@ class QuestionnaireViewModelTest {
         val response = Lce.Success(viewState)
         testSubject.viewState.postValue(response)
 
-        val mockedLogicalState = mockk<NeverIsolating>()
+        val mockedLogicalState = mockk<IsolationLogicalState>()
+        every { mockedLogicalState.hasActivePositiveTestResult(any()) } returns false
         every { isolationStateMachine.readLogicalState() } returns mockedLogicalState
 
         testSubject.onNoSymptomsConfirmed()

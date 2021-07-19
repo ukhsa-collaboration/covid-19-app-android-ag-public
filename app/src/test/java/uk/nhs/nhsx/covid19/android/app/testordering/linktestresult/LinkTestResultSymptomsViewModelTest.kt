@@ -2,10 +2,9 @@ package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import io.mockk.coVerify
-import io.mockk.coVerifyOrder
 import io.mockk.mockk
 import io.mockk.verify
+import io.mockk.verifyOrder
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
@@ -34,7 +33,7 @@ class LinkTestResultSymptomsViewModelTest {
     fun `onCreate should trigger analytics event DidAskForSymptomsOnPositiveTestEntry`() = runBlocking {
         testSubject.onCreate()
 
-        coVerify { analyticsEventProcessor.track(DidAskForSymptomsOnPositiveTestEntry) }
+        verify { analyticsEventProcessor.track(DidAskForSymptomsOnPositiveTestEntry) }
         verify(exactly = 0) { confirmSymptomsObserver.onChanged(any()) }
     }
 
@@ -44,7 +43,7 @@ class LinkTestResultSymptomsViewModelTest {
         testSubject.onCreate()
         testSubject.onCreate()
 
-        coVerify(exactly = 1) { analyticsEventProcessor.track(DidAskForSymptomsOnPositiveTestEntry) }
+        verify(exactly = 1) { analyticsEventProcessor.track(DidAskForSymptomsOnPositiveTestEntry) }
         verify(exactly = 0) { confirmSymptomsObserver.onChanged(any()) }
     }
 
@@ -52,7 +51,7 @@ class LinkTestResultSymptomsViewModelTest {
     fun `onConfirmSymptomsClicked should trigger analytics event DidHaveSymptomsBeforeReceivedTestResult and emit confirmSymptoms event`() =
         runBlocking {
             testSubject.onConfirmSymptomsClicked()
-            coVerifyOrder {
+            verifyOrder {
                 analyticsEventProcessor.track(DidHaveSymptomsBeforeReceivedTestResult)
                 confirmSymptomsObserver.onChanged(null)
             }

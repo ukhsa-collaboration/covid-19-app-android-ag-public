@@ -1,19 +1,25 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
+import uk.nhs.nhsx.covid19.android.app.report.Reported
 import uk.nhs.nhsx.covid19.android.app.report.Reporter
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.FLOW
+import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.RiskLevelRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 
-class RiskLevelFlowTest : EspressoTest() {
+@RunWith(Parameterized::class)
+class RiskLevelFlowTest(override val configuration: TestConfiguration) : EspressoTest() {
 
     private val statusRobot = StatusRobot()
     private val riskLevelRobot = RiskLevelRobot()
 
     @Test
+    @Reported
     fun riskLevelNeutralLowInStatusScreen_navigateToRiskLevelScreen() = reporter(
         scenario = "Area risk level",
         title = "Neutral risk (low)",
@@ -24,6 +30,7 @@ class RiskLevelFlowTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun riskLevelNeutralLowBasedOnLocalAuthority_startInStatusActivity_navigateToRiskLevelScreen() = reporter(
         scenario = "Area risk level",
         title = "Neutral risk (low) based on local authority",
@@ -34,6 +41,7 @@ class RiskLevelFlowTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun riskLevelGreenLowInStatusScreen_navigateToRiskLevelScreen() = reporter(
         scenario = "Area risk level",
         title = "Green risk (low)",
@@ -44,6 +52,7 @@ class RiskLevelFlowTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun riskLevelAmberMediumInStatusScreen_navigateToRiskLevelScreen() = reporter(
         scenario = "Area risk level",
         title = "Amber risk (medium)",
@@ -54,6 +63,7 @@ class RiskLevelFlowTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun riskLevelYellowMediumInStatusScreen_navigateToRiskLevelScreen() = reporter(
         scenario = "Area risk level",
         title = "Yellow risk (medium)",
@@ -64,6 +74,7 @@ class RiskLevelFlowTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun riskLevelRedHighInStatusScreen_navigateToRiskLevelScreen() = reporter(
         scenario = "Area risk level",
         title = "Red risk (high)",
@@ -74,6 +85,7 @@ class RiskLevelFlowTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun riskLevelTierFourBasedOnLocalAuthority_startInStatusActivity_navigateToRiskLevelScreen() = reporter(
         scenario = "Area risk level",
         title = "Tier 4 risk (high) based on local authority",
@@ -84,6 +96,7 @@ class RiskLevelFlowTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun riskLevelFiveBasedOnLocalAuthority_startInStatusActivity_navigateToRiskLevelScreen() = reporter(
         scenario = "Area risk level",
         title = "Tier 5 risk (very high) based on local authority",

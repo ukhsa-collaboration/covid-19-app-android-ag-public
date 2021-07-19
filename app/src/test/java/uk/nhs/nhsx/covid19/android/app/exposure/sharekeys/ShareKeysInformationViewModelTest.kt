@@ -5,7 +5,6 @@ import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import io.mockk.coVerifyOrder
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
@@ -136,7 +135,7 @@ class ShareKeysInformationViewModelTest {
 
         testSubject.onFetchKeysSuccess(keys, token)
 
-        coVerifyOrder {
+        verifyOrder {
             analyticsEventProcessor.track(ConsentedToShareExposureKeysInTheInitialFlow)
             navigationObserver.onChanged(SubmitKeysProgressActivity(keys, token))
         }

@@ -9,16 +9,11 @@ import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult.Success
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
-import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationReminderAlarmController
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
-import java.time.Clock
 import javax.inject.Inject
 
 class ExposureStatusViewModel @Inject constructor(
-    private val exposureNotificationManager: ExposureNotificationManager,
-    private val exposureNotificationReminderAlarmController: ExposureNotificationReminderAlarmController,
-    private val resumeContactTracingNotificationTimeProvider: ResumeContactTracingNotificationTimeProvider,
-    private val clock: Clock
+    private val exposureNotificationManager: ExposureNotificationManager
 ) : ViewModel() {
 
     private val exposureNotificationActivationResult =
@@ -58,10 +53,6 @@ class ExposureStatusViewModel @Inject constructor(
                 result
             }
             exposureNotificationActivationResult.postValue(startResult)
-            if (startResult == Success) {
-                exposureNotificationReminderAlarmController.cancel()
-                resumeContactTracingNotificationTimeProvider.value = null
-            }
         }
     }
 

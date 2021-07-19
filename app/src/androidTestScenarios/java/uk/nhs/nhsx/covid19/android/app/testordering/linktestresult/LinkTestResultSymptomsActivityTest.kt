@@ -4,7 +4,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
@@ -17,7 +16,7 @@ class LinkTestResultSymptomsActivityTest : EspressoTest() {
     private val linkTestResultSymptomsRobot = LinkTestResultSymptomsRobot()
 
     @Test
-    fun clickYes_closeActivity() = notReported {
+    fun clickYes_closeActivity() {
         val activity = startTestActivity<LinkTestResultSymptomsActivity> {
             putExtra(LinkTestResultSymptomsActivity.EXTRA_TEST_RESULT, testResult)
         }
@@ -30,7 +29,7 @@ class LinkTestResultSymptomsActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickNo_closeActivity() = notReported {
+    fun clickNo_closeActivity() {
         val activity = startTestActivity<LinkTestResultSymptomsActivity> {
             putExtra(LinkTestResultSymptomsActivity.EXTRA_TEST_RESULT, testResult)
         }
@@ -43,7 +42,7 @@ class LinkTestResultSymptomsActivityTest : EspressoTest() {
     }
 
     @Test
-    fun onBackPressed_keepActivity() = notReported {
+    fun onBackPressed_keepActivity() {
         val activity = startTestActivity<LinkTestResultSymptomsActivity> {
             putExtra(LinkTestResultSymptomsActivity.EXTRA_TEST_RESULT, testResult)
         }

@@ -67,7 +67,7 @@ class ExposureCircuitBreakerTest {
             }
             verify(exactly = 0) { exposureCircuitBreakerInfoProvider.setApprovalToken(any(), any()) }
             verify(exactly = 0) { stateMachine.processEvent(any()) }
-            coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
+            verify(exactly = 0) { analyticsEventProcessor.track(any()) }
         }
 
     @Test
@@ -85,7 +85,7 @@ class ExposureCircuitBreakerTest {
             }
             verify(exactly = 0) { exposureCircuitBreakerInfoProvider.remove(any()) }
             verify(exactly = 0) { stateMachine.processEvent(any()) }
-            coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
+            verify(exactly = 0) { analyticsEventProcessor.track(any()) }
         }
 
     @Test
@@ -99,7 +99,7 @@ class ExposureCircuitBreakerTest {
             verify(exactly = 0) { exposureCircuitBreakerInfoProvider.remove(any()) }
             verify(exactly = 0) { exposureCircuitBreakerInfoProvider.setApprovalToken(any(), any()) }
             verify(exactly = 0) { stateMachine.processEvent(any()) }
-            coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
+            verify(exactly = 0) { analyticsEventProcessor.track(any()) }
         }
 
     @Test
@@ -135,7 +135,7 @@ class ExposureCircuitBreakerTest {
             }
             verify(exactly = 0) { exposureCircuitBreakerInfoProvider.setApprovalToken(any(), any()) }
             verify(exactly = 0) { stateMachine.processEvent(any()) }
-            coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
+            verify(exactly = 0) { analyticsEventProcessor.track(any()) }
         }
 
     @Test
@@ -151,7 +151,7 @@ class ExposureCircuitBreakerTest {
             verify(exactly = 0) { exposureCircuitBreakerInfoProvider.remove(any()) }
             verify(exactly = 0) { exposureCircuitBreakerInfoProvider.setApprovalToken(any(), any()) }
             verify(exactly = 0) { stateMachine.processEvent(any()) }
-            coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
+            verify(exactly = 0) { analyticsEventProcessor.track(any()) }
         }
 
     @Test
@@ -165,7 +165,7 @@ class ExposureCircuitBreakerTest {
             verify(exactly = 0) { exposureCircuitBreakerInfoProvider.remove(any()) }
             verify(exactly = 0) { exposureCircuitBreakerInfoProvider.setApprovalToken(any(), any()) }
             verify(exactly = 0) { stateMachine.processEvent(any()) }
-            coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
+            verify(exactly = 0) { analyticsEventProcessor.track(any()) }
         }
 
     companion object {

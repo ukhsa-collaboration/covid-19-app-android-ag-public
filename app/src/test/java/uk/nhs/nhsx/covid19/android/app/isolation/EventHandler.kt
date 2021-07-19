@@ -23,13 +23,14 @@ import uk.nhs.nhsx.covid19.android.app.isolation.Event.retentionPeriodEnded
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.riskyContact
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.riskyContactWithExposureDayOlderThanIsolationTerminationDueToDCT
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.selfDiagnosedSymptomatic
+import uk.nhs.nhsx.covid19.android.app.isolation.Event.selfDiagnosedSymptomaticWithAssumedOnsetDateOlderThanPositiveTestEndDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.terminateRiskyContactDueToDCT
 import uk.nhs.nhsx.covid19.android.app.isolation.StateStorage4_10Representation.Companion.DEFAULT_CONFIRMATORY_DAY_LIMIT
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
@@ -38,6 +39,7 @@ import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.util.isBeforeOrEqual
 import uk.nhs.nhsx.covid19.android.app.util.selectEarliest
@@ -79,6 +81,11 @@ class EventHandler(
             selfDiagnosedSymptomatic -> isolationStateMachine.processEvent(
                 OnPositiveSelfAssessment(CannotRememberDate)
             )
+
+            selfDiagnosedSymptomaticWithAssumedOnsetDateOlderThanPositiveTestEndDate -> {
+                val onsetDate = getRememberedPositiveTestResult().testEndDate.minusDays(1)
+                isolationStateMachine.processEvent(OnPositiveSelfAssessment(SelectedDate.ExplicitDate(onsetDate)))
+            }
 
             terminateRiskyContactDueToDCT -> {
                 isolationStateMachine.optInToDailyContactTesting()
@@ -165,8 +172,7 @@ class EventHandler(
             }
 
             receivedNegativeTestWithEndDateOlderThanRememberedUnconfirmedTestEndDate -> {
-                val testResult = isolationTestContext.getCurrentState().indexInfo?.testResult
-                assertNotNull(testResult, "Did not find required test result")
+                val testResult = getRememberedTestResult()
                 assertFalse(testResult.isConfirmed(), "Test result is unexpectedly confirmed")
 
                 val endDate = testResult.testEndDate.minus(1, DAYS)
@@ -183,8 +189,7 @@ class EventHandler(
             }
 
             receivedNegativeTestWithEndDateNDaysNewerThanRememberedUnconfirmedTestEndDate -> {
-                val testResult = isolationTestContext.getCurrentState().indexInfo?.testResult
-                assertNotNull(testResult, "Did not find required test result")
+                val testResult = getRememberedTestResult()
                 assertFalse(testResult.isConfirmed(), "Test result is unexpectedly confirmed")
 
                 val endDate = testResult.testEndDate.plusDays(DEFAULT_CONFIRMATORY_DAY_LIMIT + 1)
@@ -196,8 +201,7 @@ class EventHandler(
             }
 
             receivedNegativeTestWithEndDateOlderThanRememberedUnconfirmedTestEndDateAndOlderThanAssumedSymptomOnsetDayIfAny -> {
-                val testResult = isolationTestContext.getCurrentState().indexInfo?.testResult
-                assertNotNull(testResult, "Did not find required test result")
+                val testResult = getRememberedTestResult()
                 assertFalse(testResult.isConfirmed(), "Test result is unexpectedly confirmed")
 
                 val onsetDate = getOnsetDateIfAny()
@@ -212,8 +216,7 @@ class EventHandler(
             }
 
             receivedNegativeTestWithEndDateNDaysNewerThanRememberedUnconfirmedTestEndDateButOlderThanAssumedSymptomOnsetDayIfAny -> {
-                val testResult = isolationTestContext.getCurrentState().indexInfo?.testResult
-                assertNotNull(testResult, "Did not find required test result")
+                val testResult = getRememberedTestResult()
                 assertFalse(testResult.isConfirmed(), "Test result is unexpectedly confirmed")
 
                 val onsetDate = getOnsetDateIfAny()
@@ -243,11 +246,7 @@ class EventHandler(
             }
 
             receivedNegativeTestWithEndDateNewerThanAssumedSymptomOnsetDateAndAssumedSymptomOnsetDateNewerThanPositiveTestEndDate -> {
-                val testResult = isolationTestContext.getCurrentState().indexInfo?.testResult
-                assertNotNull(testResult, "Did not find required test result")
-                assertTrue(testResult.isPositive(), "Test result is not positive")
-
-                val testEndDate = testResult.testEndDate
+                val testEndDate = getRememberedPositiveTestResult().testEndDate
                 val onsetDate = getRememberedOnsetDate()
                 assertTrue(
                     onsetDate.isAfter(testEndDate),
@@ -314,10 +313,21 @@ class EventHandler(
         return ((isolationTestContext.getCurrentState().indexInfo as? IndexCase)?.isolationTrigger as? SelfAssessment)?.assumedOnsetDate
     }
 
+    private fun getRememberedPositiveTestResult(): AcknowledgedTestResult {
+        val rememberedTest = getRememberedTestResult()
+        assertEquals(rememberedTest.testResult, POSITIVE, "Stored test result is not positive")
+        return rememberedTest
+    }
+
     private fun getRememberedNegativeTestResult(): AcknowledgedTestResult {
+        val rememberedTest = getRememberedTestResult()
+        assertEquals(rememberedTest.testResult, NEGATIVE, "Stored test result is not negative")
+        return rememberedTest
+    }
+
+    private fun getRememberedTestResult(): AcknowledgedTestResult {
         val rememberedTest = isolationTestContext.getCurrentState().indexInfo?.testResult
-        assertNotNull(rememberedTest)
-        assertEquals(rememberedTest.testResult, NEGATIVE)
+        assertNotNull(rememberedTest, "Did not find stored test result")
         return rememberedTest
     }
 
@@ -338,7 +348,7 @@ class EventHandler(
     private fun createPositiveConfirmedTestResult(endDate: LocalDate): ReceivedTestResult = ReceivedTestResult(
         diagnosisKeySubmissionToken = "newToken",
         testEndDate = endDate.atStartOfDay(isolationTestContext.clock.zone).toInstant(),
-        testResult = POSITIVE,
+        testResult = VirologyTestResult.POSITIVE,
         testKitType = LAB_RESULT,
         diagnosisKeySubmissionSupported = true,
         requiresConfirmatoryTest = false
@@ -347,7 +357,7 @@ class EventHandler(
     private fun createPositiveUnconfirmedTestResult(endDate: LocalDate): ReceivedTestResult = ReceivedTestResult(
         diagnosisKeySubmissionToken = "newToken",
         testEndDate = endDate.atStartOfDay(isolationTestContext.clock.zone).toInstant(),
-        testResult = POSITIVE,
+        testResult = VirologyTestResult.POSITIVE,
         testKitType = LAB_RESULT,
         diagnosisKeySubmissionSupported = true,
         requiresConfirmatoryTest = true,

@@ -2,9 +2,9 @@ package uk.nhs.nhsx.covid19.android.app.util.adapters
 
 import com.squareup.moshi.Moshi
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -12,7 +12,7 @@ class RiskyVenueMessageTypeAdapterTest {
 
     private val moshi = Moshi.Builder().add(RiskyVenueMessageTypeAdapter()).build()
 
-    private val testSubject = moshi.adapter(MessageType::class.java)
+    private val testSubject = moshi.adapter(RiskyVenueMessageType::class.java)
 
     private val messageTypeJson =
         """"M2""""

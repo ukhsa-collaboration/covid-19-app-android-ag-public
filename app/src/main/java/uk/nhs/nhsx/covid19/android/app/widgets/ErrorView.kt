@@ -8,6 +8,7 @@ import kotlinx.android.synthetic.main.view_error.view.errorDescriptionView
 import kotlinx.android.synthetic.main.view_error.view.errorTitleView
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 
 class ErrorView @JvmOverloads constructor(
     context: Context,
@@ -51,7 +52,7 @@ class ErrorView @JvmOverloads constructor(
     private fun applyAttributes(context: Context, attrs: AttributeSet?) {
         context.theme.obtainStyledAttributes(attrs, R.styleable.ErrorView, 0, 0)
             .apply {
-                errorTitle = getString(R.styleable.ErrorView_error_title)
+                errorTitle = getString(context, R.styleable.ErrorView_error_title)
                 errorDescription = getString(R.styleable.ErrorView_error_description)
                 recycle()
             }

@@ -7,7 +7,6 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.DailyContactTesting
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.RiskyContact
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 
 class DailyContactTestingOptInAnalyticsTest : AnalyticsTest() {
 
@@ -21,7 +20,7 @@ class DailyContactTestingOptInAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun contactCaseOnly_optInToDailyContactTesting_setAppropriateAnalyticsFlags() = notReported {
+    fun contactCaseOnly_optInToDailyContactTesting_setAppropriateAnalyticsFlags() {
         FeatureFlagTestHelper.enableFeatureFlag(DAILY_CONTACT_TESTING)
 
         // Current date: 1st Jan

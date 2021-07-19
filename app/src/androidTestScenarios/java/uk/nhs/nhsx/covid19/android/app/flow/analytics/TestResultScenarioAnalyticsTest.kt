@@ -12,7 +12,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SEL
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -25,7 +24,7 @@ class TestResultScenarioAnalyticsTest : AnalyticsTest() {
     private val testResultRobot = TestResultRobot(testAppContext.app)
 
     @Test
-    fun enterPositiveLFDTest_isolateForUnconfirmed_confirmByPCRTest_isolateForConfirmed() = notReported {
+    fun enterPositiveLFDTest_isolateForUnconfirmed_confirmByPCRTest_isolateForConfirmed() {
         // Current date: 1st Jan
         // Starting state: App running normally, not in isolation
         runBackgroundTasks()
@@ -113,7 +112,7 @@ class TestResultScenarioAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun enterNegativePCRTest_receiveOldPositiveLFDTest_isolateAndShareKeys() = notReported {
+    fun enterNegativePCRTest_receiveOldPositiveLFDTest_isolateAndShareKeys() {
         // Current date: 1st Jan
         // Starting state: App running normally, not in isolation
         runBackgroundTasks()

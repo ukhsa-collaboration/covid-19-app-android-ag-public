@@ -12,7 +12,8 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationReminderAlarmController
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationAlarmController
-import uk.nhs.nhsx.covid19.android.app.status.ResumeContactTracingNotificationTimeProvider
+import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingActivationReminderProvider
+import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.MigrateContactTracingActivationReminderProvider
 import java.time.Instant
 import javax.inject.Inject
 
@@ -28,7 +29,10 @@ class AlarmRestarter : BroadcastReceiver() {
     lateinit var submitAnalyticsAlarmController: SubmitAnalyticsAlarmController
 
     @Inject
-    lateinit var resumeContactTracingNotificationTimeProvider: ResumeContactTracingNotificationTimeProvider
+    lateinit var contactTracingActivationReminderProvider: ContactTracingActivationReminderProvider
+
+    @Inject
+    lateinit var migrateContactTracingActivationReminderProvider: MigrateContactTracingActivationReminderProvider
 
     @Inject
     lateinit var exposureNotificationRetryAlarmController: ExposureNotificationRetryAlarmController
@@ -40,14 +44,17 @@ class AlarmRestarter : BroadcastReceiver() {
         if (action != ACTION_BOOT_COMPLETED && action != ACTION_MY_PACKAGE_REPLACED) return
 
         exposureNotificationRetryAlarmController.onDeviceRebooted()
+
         if (RuntimeBehavior.isFeatureEnabled(SUBMIT_ANALYTICS_VIA_ALARM_MANAGER)) {
             submitAnalyticsAlarmController.onDeviceRebooted()
         }
 
         isolationExpirationAlarmController.onDeviceRebooted()
 
-        resumeContactTracingNotificationTimeProvider.value?.let {
-            val alarmTime = Instant.ofEpochMilli(it)
+        migrateContactTracingActivationReminderProvider()
+
+        contactTracingActivationReminderProvider.reminder?.let {
+            val alarmTime = Instant.ofEpochMilli(it.alarmTime)
             exposureNotificationReminderAlarmController.setup(alarmTime)
         }
     }

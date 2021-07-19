@@ -8,7 +8,6 @@ import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BatteryOptimizationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ContactTracingHubRobot
@@ -34,7 +33,7 @@ class MainActivityFlowTest : EspressoTest() {
     }
 
     @Test
-    fun startingAppWithOnboardingCompletedAndPolicyNotAccepted_shouldShowPolicyUpdateScreen() = notReported {
+    fun startingAppWithOnboardingCompletedAndPolicyNotAccepted_shouldShowPolicyUpdateScreen() {
         testAppContext.setOnboardingCompleted(true)
         testAppContext.setPolicyUpdateAccepted(false)
 
@@ -44,7 +43,7 @@ class MainActivityFlowTest : EspressoTest() {
     }
 
     @Test
-    fun startingAppWithOnboardingCompletedAndPolicyAccepted_shouldShowLocalAuthorityInformationScreen() = notReported {
+    fun startingAppWithOnboardingCompletedAndPolicyAccepted_shouldShowLocalAuthorityInformationScreen() {
         testAppContext.setOnboardingCompleted(true)
         testAppContext.setPolicyUpdateAccepted(true)
         testAppContext.setLocalAuthority(null)
@@ -55,57 +54,54 @@ class MainActivityFlowTest : EspressoTest() {
     }
 
     @Test
-    fun startingAppWithOnboardingCompletedAndPolicyAcceptedWithBatteryOptimizationRequired_shouldBatteryOptimizationScreen() =
-        notReported {
-            FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.BATTERY_OPTIMIZATION)
+    fun startingAppWithOnboardingCompletedAndPolicyAcceptedWithBatteryOptimizationRequired_shouldBatteryOptimizationScreen() {
+        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.BATTERY_OPTIMIZATION)
 
-            testAppContext.setOnboardingCompleted(true)
-            testAppContext.setPolicyUpdateAccepted(true)
-            testAppContext.setLocalAuthority("1")
+        testAppContext.setOnboardingCompleted(true)
+        testAppContext.setPolicyUpdateAccepted(true)
+        testAppContext.setLocalAuthority("1")
 
-            startTestActivity<MainActivity>()
+        startTestActivity<MainActivity>()
 
-            waitFor { batteryOptimizationRobot.checkActivityIsDisplayed() }
-        }
-
-    @Test
-    fun startingAppWithOnboardingCompletedAndPolicyAcceptedWithLocalAuthoritySet_shouldShowStatusScreen() =
-        notReported {
-            testAppContext.setOnboardingCompleted(true)
-            testAppContext.setPolicyUpdateAccepted(true)
-            testAppContext.setLocalAuthority("1")
-
-            startTestActivity<MainActivity>()
-
-            waitFor { statusRobot.checkActivityIsDisplayed() }
-        }
+        waitFor { batteryOptimizationRobot.checkActivityIsDisplayed() }
+    }
 
     @Test
-    fun startingAppWithOnboardingCompletedAndPolicyAcceptedWithLocalAuthorityMappingMissing_shouldCompleteFlow() =
-        notReported {
-            testAppContext.setOnboardingCompleted(true)
-            testAppContext.setPolicyUpdateAccepted(true)
-            testAppContext.setPostCode("BE22")
+    fun startingAppWithOnboardingCompletedAndPolicyAcceptedWithLocalAuthoritySet_shouldShowStatusScreen() {
+        testAppContext.setOnboardingCompleted(true)
+        testAppContext.setPolicyUpdateAccepted(true)
+        testAppContext.setLocalAuthority("1")
 
-            startTestActivity<MainActivity>()
+        startTestActivity<MainActivity>()
 
-            waitFor { postCodeRobot.checkActivityIsDisplayed() }
-
-            postCodeRobot.enterPostCode("N12")
-
-            postCodeRobot.clickContinue()
-
-            localAuthorityRobot.checkActivityIsDisplayed()
-
-            waitFor { localAuthorityRobot.checkSingleAuthorityIsDisplayed("N12", "Barnet") }
-
-            localAuthorityRobot.clickConfirm()
-
-            statusRobot.checkActivityIsDisplayed()
-        }
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
 
     @Test
-    fun onPolicyUpdateScreen_userClicksContinueAndSeesStatusScreen() = notReported {
+    fun startingAppWithOnboardingCompletedAndPolicyAcceptedWithLocalAuthorityMappingMissing_shouldCompleteFlow() {
+        testAppContext.setOnboardingCompleted(true)
+        testAppContext.setPolicyUpdateAccepted(true)
+        testAppContext.setPostCode("BE22")
+
+        startTestActivity<MainActivity>()
+
+        waitFor { postCodeRobot.checkActivityIsDisplayed() }
+
+        postCodeRobot.enterPostCode("N12")
+
+        postCodeRobot.clickContinue()
+
+        localAuthorityRobot.checkActivityIsDisplayed()
+
+        waitFor { localAuthorityRobot.checkSingleAuthorityIsDisplayed("N12", "Barnet") }
+
+        localAuthorityRobot.clickConfirm()
+
+        statusRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    fun onPolicyUpdateScreen_userClicksContinueAndSeesStatusScreen() {
         startTestActivity<PolicyUpdateActivity>()
 
         policyUpdateRobot.clickContinue()
@@ -114,7 +110,7 @@ class MainActivityFlowTest : EspressoTest() {
     }
 
     @Test
-    fun onExposureNotificationReminderAction_navigateToContactTracingHub() = notReported {
+    fun onExposureNotificationReminderAction_navigateToContactTracingHub() {
         setupOnboardingComplete()
         testAppContext.getExposureNotificationApi().setEnabled(false)
 
@@ -126,7 +122,7 @@ class MainActivityFlowTest : EspressoTest() {
     }
 
     @Test
-    fun onExposureNotificationReminderAction_navigateToContactTracingHubAndTurnOnContactTracing() = notReported {
+    fun onExposureNotificationReminderAction_navigateToContactTracingHubAndTurnOnContactTracing() {
         setupOnboardingComplete()
         testAppContext.getExposureNotificationApi().setEnabled(false)
         testAppContext.getExposureNotificationApi().activationResult = Result.Success()
@@ -140,7 +136,7 @@ class MainActivityFlowTest : EspressoTest() {
     }
 
     @Test
-    fun whenNotificationFlagIsNotSet_navigateToStatusActivity() = notReported {
+    fun whenNotificationFlagIsNotSet_navigateToStatusActivity() {
         setupOnboardingComplete()
 
         startTestActivity<MainActivity>()

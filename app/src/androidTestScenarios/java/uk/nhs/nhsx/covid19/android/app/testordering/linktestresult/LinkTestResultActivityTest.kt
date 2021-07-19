@@ -6,11 +6,14 @@ import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_EXTERNAL_BROWSER
 import org.junit.After
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.report.Reported
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
-import uk.nhs.nhsx.covid19.android.app.report.notReported
+import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
@@ -20,7 +23,8 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import java.time.LocalDate
 
-class LinkTestResultActivityTest : EspressoTest() {
+@RunWith(Parameterized::class)
+class LinkTestResultActivityTest(override val configuration: TestConfiguration) : EspressoTest() {
 
     private val linkTestResultRobot = LinkTestResultRobot()
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
@@ -31,6 +35,7 @@ class LinkTestResultActivityTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun userIsContactCaseOnly_providesNeitherCtaTokenNorDailyContactTestingOptIn_showErrorMessage() = reporter(
         scenario = "Enter test result",
         title = "Neither provided",
@@ -61,6 +66,7 @@ class LinkTestResultActivityTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun userIsContactCaseOnly_providesBothCtaTokenAndDailyContactTestingOptIn_showErrorMessage() = reporter(
         scenario = "Enter test result",
         title = "Both provided",
@@ -95,7 +101,7 @@ class LinkTestResultActivityTest : EspressoTest() {
     }
 
     @Test
-    fun userTapsOnLink_NavigateToExternalLink() = notReported {
+    fun userTapsOnLink_NavigateToExternalLink() {
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
             startTestActivity<LinkTestResultActivity>()
             assertBrowserIsOpened(context.getString(R.string.link_test_result_report_link_url)) {

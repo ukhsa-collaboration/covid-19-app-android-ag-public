@@ -2,26 +2,16 @@ package uk.nhs.nhsx.covid19.android.app.util
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import javax.inject.Inject
+import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.util.workarounds.ConcurrentModificationExceptionWorkaround
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-class SharedPrefsDelegate<T> @Inject constructor(
+class SharedPrefsDelegate<T>(
     private val sharedPref: SharedPreferences,
     private val valueKey: String,
     private val commit: Boolean
 ) : ReadWriteProperty<Any?, T?> {
-
-    companion object {
-        const val fileName = "encryptedSharedPreferences"
-        const val migrationSharedPreferencesFileName = "migrationEncryptedSharedPreferences"
-
-        fun <T> SharedPreferences.with(
-            valueKey: String,
-            commit: Boolean = false
-        ): SharedPrefsDelegate<T> =
-            SharedPrefsDelegate(this, valueKey, commit)
-    }
 
     @Suppress("UNCHECKED_CAST")
     override operator fun getValue(
@@ -35,6 +25,18 @@ class SharedPrefsDelegate<T> @Inject constructor(
         property: KProperty<*>,
         value: T?
     ) {
+        if (ConcurrentModificationExceptionWorkaround.shouldApplyWorkaround) {
+            try {
+                setValue(value)
+            } catch (e: ConcurrentModificationException) {
+                Timber.e(e, "ConcurrentModificationException swallowed. Please check if fix for https://issuetracker.google.com/issues/169862952 is released")
+            }
+        } else {
+            setValue(value)
+        }
+    }
+
+    private fun setValue(value: T?) {
         sharedPref.edit(commit) {
             when (value) {
                 is String -> putString(valueKey, value)
@@ -45,5 +47,16 @@ class SharedPrefsDelegate<T> @Inject constructor(
                 null -> remove(valueKey)
             }
         }
+    }
+
+    companion object {
+        const val fileName = "encryptedSharedPreferences"
+        const val migrationSharedPreferencesFileName = "migrationEncryptedSharedPreferences"
+
+        fun <T> SharedPreferences.with(
+            valueKey: String,
+            commit: Boolean = false
+        ): SharedPrefsDelegate<T> =
+            SharedPrefsDelegate(this, valueKey, commit)
     }
 }

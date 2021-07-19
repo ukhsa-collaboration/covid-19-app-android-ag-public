@@ -17,11 +17,12 @@ import java.time.ZoneOffset
 class IsolationTests(
     private val transition: Transition,
     private val initialStateRepresentation: StateRepresentation,
+    private val source: Source,
     @Suppress("unused") private val testName: String
 ) {
     companion object {
         @JvmStatic
-        @Parameterized.Parameters(name = "{index}_{2}")
+        @Parameterized.Parameters(name = "{index}_{3}")
         fun generateParameters(): Iterable<Array<Any>> {
             val testSingleTransition = false // Adjust this to manually test a single transition
 
@@ -30,16 +31,16 @@ class IsolationTests(
             } else {
                 val parameters = mutableListOf<Array<Any>>()
                 val representationProvider = AllStateRepresentations()
-                IsolationTransitionLoader().loadTransitions()
-                    .forEach { transition ->
-                        representationProvider.getStateRepresentations(transition.initialState, transition.event)
-                            .forEach { initialStateRepresentation ->
-                                parameters.add(
-                                    // Create one test for every combination of transitions and representations
-                                    createTestParameters(transition, initialStateRepresentation)
-                                )
-                            }
-                    }
+                val rules = IsolationRuleLoader().loadIsolationRules()
+                rules.transitions.forEach { transition ->
+                    representationProvider.getStateRepresentations(transition.initialState, transition.event)
+                        .forEach { initialStateRepresentation ->
+                            parameters.add(
+                                // Create one test for every combination of transitions and representations
+                                createTestParameters(transition, initialStateRepresentation, rules.source)
+                            )
+                        }
+                }
                 return parameters
             }
         }
@@ -50,7 +51,8 @@ class IsolationTests(
                 symptomatic = SymptomaticCaseState.noIsolation,
                 positiveTest = PositiveTestCaseState.notIsolatingAndHasNegativeTest
             )
-            val event = Event.receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDateAndOlderThanAssumedSymptomOnsetDayIfAny
+            val event =
+                Event.receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDateAndOlderThanAssumedSymptomOnsetDayIfAny
             val finalState = State(
                 contact = ContactCaseState.noIsolation,
                 symptomatic = SymptomaticCaseState.noIsolation,
@@ -64,13 +66,16 @@ class IsolationTests(
             )
         }
 
-        private fun createTestParameters(transition: Transition, initialStateRepresentation: StateRepresentation) =
-            arrayOf(
-                transition,
-                initialStateRepresentation,
-                "v${initialStateRepresentation.representationName}_C${transition.initialState.contact}_S${transition.initialState.symptomatic}_P${transition.initialState.positiveTest}_E${transition.event}"
-                    .take(160)
-            )
+        private fun createTestParameters(
+            transition: Transition,
+            initialStateRepresentation: StateRepresentation,
+            source: Source = Source("", "")
+        ) = arrayOf(
+            transition,
+            initialStateRepresentation,
+            source,
+            "Contact.${transition.initialState.contact}_Symptomatic.${transition.initialState.symptomatic}_PositiveTest.${transition.initialState.positiveTest}_Event.${transition.event}_v${initialStateRepresentation.representationName}"
+        )
     }
 
     private val isolationTestContext = IsolationTestContext()
@@ -108,6 +113,7 @@ class IsolationTests(
         }
     }
 
+    // In order to print the full url to a rule definition, add the global gradle property "isolationModel.repo=http://url-to-repo..."
     private fun errorMessage() =
         """
         
@@ -116,6 +122,7 @@ class IsolationTests(
         Initial:   ${transition.initialState}
         Event:     ${transition.event}
         Expected:  ${transition.finalState}
+        Reference: ${System.getProperty("isolationModel.repo") ?: "https://isolationModel.repo"}/blob/${source.commit}/${source.referenceBasePath}/${transition.reference!!.file}#L${transition.reference.line}
 
         ContactCase:    ${isolationTestContext.getCurrentState().contactCase}
         
@@ -127,7 +134,14 @@ class IsolationTests(
         """.trimIndent()
 
     private fun skipUnsupportedTransition(transition: Transition) {
-        Assume.assumeFalse("Skipping transition", transitionsToSkip.contains(transition))
+        Assume.assumeFalse(
+            "Skipping unsupported transition",
+            transitionsToSkip.any {
+                it.initialState == transition.initialState &&
+                    it.event == transition.event &&
+                    it.finalState == transition.finalState
+            }
+        )
     }
 
     private val transitionsToSkip = listOf(

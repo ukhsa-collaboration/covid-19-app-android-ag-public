@@ -5,11 +5,11 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.GetLocalAuthorityName
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import javax.inject.Inject
 
-class SubstitutePlaceholdersInMessageWithId @Inject constructor(
+class SubstitutePlaceholdersInNotificationWithId @Inject constructor(
     private val postCodeProvider: PostCodeProvider,
     private val getLocalAuthorityName: GetLocalAuthorityName
 ) {
-    suspend operator fun invoke(messageWithId: MessageWithId): MessageWithId? {
+    suspend operator fun invoke(notificationWithId: NotificationWithId): NotificationWithId? {
         val postCode = postCodeProvider.value
         val localAuthorityName = getLocalAuthorityName()
 
@@ -18,9 +18,9 @@ class SubstitutePlaceholdersInMessageWithId @Inject constructor(
             return null
         }
 
-        return messageWithId.copy(
-            message = messageWithId.message.copy(
-                translations = messageWithId.message.translations.replacePlaceholders(
+        return notificationWithId.copy(
+            message = notificationWithId.message.copy(
+                translations = notificationWithId.message.translations.replacePlaceholders(
                     postCode,
                     localAuthorityName
                 )

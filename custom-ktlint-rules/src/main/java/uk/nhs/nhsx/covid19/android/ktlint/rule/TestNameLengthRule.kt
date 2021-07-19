@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import uk.nhs.nhsx.covid19.android.ktlint.util.hasImport
 
 /**
- * All functions annotated with @Test within classes that extend EspressoTest must be initialized with
- * notReported or reporter. See ReportedTestRuleTest for valid and invalid examples.
+ * All functions annotated with @Test within classes that extend EspressoTest must have fully qualified
+ * name that is shorter than 234 characters (Firebase Test Lab limitation)
  *
  * Caveat: at the moment this rule can only deal with direct inheritance of EspressoTest. Classes that
  * extend another class that in turn extends EspressoTest will not be covered by the rule.

@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -62,7 +61,6 @@ class TestResultViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val unacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>(relaxed = true)
     private val testResultIsolationHandler = mockk<TestResultIsolationHandler>(relaxed = true)
     private val stateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
     private val submitObfuscationData = mockk<SubmitObfuscationData>(relaxUnitFun = true)
@@ -70,6 +68,7 @@ class TestResultViewModelTest {
     private val submitEpidemiologyDataForTestResult = mockk<SubmitEpidemiologyDataForTestResult>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-01-01T10:00:00Z"), ZoneOffset.UTC)
     private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxUnitFun = true)
+    private val getHighestPriorityTestResult = mockk<GetHighestPriorityTestResult>()
 
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
     private val navigationObserver = mockk<Observer<NavigationEvent>>(relaxed = true)
@@ -78,14 +77,14 @@ class TestResultViewModelTest {
 
     private val testSubject =
         TestResultViewModel(
-            unacknowledgedTestResultsProvider,
             testResultIsolationHandler,
             stateMachine,
             submitObfuscationData,
             submitEmptyData,
             submitEpidemiologyDataForTestResult,
-            fixedClock,
-            analyticsEventProcessor
+            analyticsEventProcessor,
+            getHighestPriorityTestResult,
+            fixedClock
         )
 
     private val positiveTestResult = ReceivedTestResult(
@@ -148,10 +147,10 @@ class TestResultViewModelTest {
     // region onCreate
 
     @Test
-    fun `empty unacknowledged test results should return Ignore`() =
+    fun `when no highest priority test result found then should return Ignore`() =
         runBlocking {
             every { stateMachine.readLogicalState() } returns isolationHelper.neverInIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns emptyList()
+            every { getHighestPriorityTestResult() } returns null
 
             testSubject.onCreate()
 
@@ -164,7 +163,7 @@ class TestResultViewModelTest {
             val isolationState = isolationHelper.positiveTest(
                 acknowledgedTestResult(result = RelevantVirologyTestResult.POSITIVE, isConfirmed = true)
             ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
+            every { getHighestPriorityTestResult() } returns positiveTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -189,7 +188,7 @@ class TestResultViewModelTest {
             val isolationState = isolationHelper.positiveTest(
                 acknowledgedTestResult(result = RelevantVirologyTestResult.POSITIVE, isConfirmed = true)
             ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveIndicativeKeySharingSupported)
+            every { getHighestPriorityTestResult() } returns positiveIndicativeKeySharingSupported
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -222,7 +221,7 @@ class TestResultViewModelTest {
                     )
                 )
             ).asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResultIndicative)
+            every { getHighestPriorityTestResult() } returns positiveTestResultIndicative
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -247,7 +246,7 @@ class TestResultViewModelTest {
             val isolationState = isolationHelper.positiveTest(
                 acknowledgedTestResult(result = RelevantVirologyTestResult.POSITIVE, isConfirmed = true)
             ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResultIndicative)
+            every { getHighestPriorityTestResult() } returns positiveTestResultIndicative
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -276,7 +275,7 @@ class TestResultViewModelTest {
                     fromCurrentIsolation = false
                 )
             ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
+            every { getHighestPriorityTestResult() } returns positiveTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -305,7 +304,7 @@ class TestResultViewModelTest {
                     fromCurrentIsolation = false
                 )
             ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveIndicativeKeySharingSupported)
+            every { getHighestPriorityTestResult() } returns positiveIndicativeKeySharingSupported
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -334,7 +333,7 @@ class TestResultViewModelTest {
                     fromCurrentIsolation = false
                 )
             ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResultIndicative)
+            every { getHighestPriorityTestResult() } returns positiveTestResultIndicative
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -357,7 +356,7 @@ class TestResultViewModelTest {
     fun `no relevant test result, unacknowledged negative, currently not in isolation and no previous isolation should return NegativeNotInIsolation`() =
         runBlocking {
             val isolationState = isolationHelper.neverInIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
+            every { getHighestPriorityTestResult() } returns negativeTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -377,7 +376,7 @@ class TestResultViewModelTest {
     fun `no relevant test result, unacknowledged negative and currently in isolation should return NegativeWillBeInIsolation`() =
         runBlocking {
             val isolationState = isolationHelper.contactCase().asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
+            every { getHighestPriorityTestResult() } returns negativeTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -397,7 +396,7 @@ class TestResultViewModelTest {
         runBlocking {
             val isolation = isolationHelper.selfAssessment().asIsolation()
             val isolationState = isolation.asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
+            every { getHighestPriorityTestResult() } returns negativeTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -421,7 +420,7 @@ class TestResultViewModelTest {
                     isConfirmed = true
                 )
             ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
+            every { getHighestPriorityTestResult() } returns negativeTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -440,7 +439,7 @@ class TestResultViewModelTest {
     fun `symptomatic, unacknowledged negative and currently in isolation should return NegativeAfterPositiveOrSymptomaticWillBeInIsolation`() =
         runBlocking {
             val isolationState = isolationHelper.selfAssessment().asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
+            every { getHighestPriorityTestResult() } returns negativeTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -465,7 +464,7 @@ class TestResultViewModelTest {
                 )
             ).asIsolation()
             val isolationState = isolation.asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
+            every { getHighestPriorityTestResult() } returns negativeTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -491,8 +490,9 @@ class TestResultViewModelTest {
                 )
             ).asIsolation()
             val isolationState = isolation.asLogical()
-            val newNegativeTestResult = negativeTestResult.copy(testEndDate = Instant.now(fixedClock).plus(3, ChronoUnit.DAYS))
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(newNegativeTestResult)
+            val newNegativeTestResult =
+                negativeTestResult.copy(testEndDate = Instant.now(fixedClock).plus(3, ChronoUnit.DAYS))
+            every { getHighestPriorityTestResult() } returns newNegativeTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every { stateMachine.remainingDaysInIsolation(any()) } returns 12
             val testResult = isolation.indexInfo?.testResult?.copy(
@@ -527,8 +527,9 @@ class TestResultViewModelTest {
                 )
             ).asIsolation()
             val isolationState = isolation.asLogical()
-            val newNegativeTestResult = negativeTestResult.copy(testEndDate = Instant.now(fixedClock).plus(3, ChronoUnit.DAYS))
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(newNegativeTestResult)
+            val newNegativeTestResult =
+                negativeTestResult.copy(testEndDate = Instant.now(fixedClock).plus(3, ChronoUnit.DAYS))
+            every { getHighestPriorityTestResult() } returns newNegativeTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every { stateMachine.remainingDaysInIsolation(any()) } returns 0
             val testResult = isolation.indexInfo?.testResult?.copy(
@@ -555,7 +556,7 @@ class TestResultViewModelTest {
     fun `no relevant test result, unacknowledged void and currently not in isolation should return VoidNotInIsolation`() =
         runBlocking {
             val isolationState = isolationHelper.neverInIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
+            every { getHighestPriorityTestResult() } returns voidTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -575,7 +576,7 @@ class TestResultViewModelTest {
     fun `no relevant test result, unacknowledged void and currently in isolation should return VoidWillBeInIsolation`() =
         runBlocking {
             val isolationState = isolationHelper.contactCase().asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
+            every { getHighestPriorityTestResult() } returns voidTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -604,7 +605,7 @@ class TestResultViewModelTest {
                     )
                 )
             ).asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
+            every { getHighestPriorityTestResult() } returns voidTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -621,7 +622,7 @@ class TestResultViewModelTest {
         }
 
     @Test
-    fun `relevant test result confirmed positive, unacknowledged void and confirmed positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
+    fun `relevant test result confirmed positive, unacknowledged confirmed positive, currently not in isolation and no previous isolation should return PositiveWillBeInIsolation`() =
         runBlocking {
             val isolationState = isolationHelper.positiveTest(
                 acknowledgedTestResult(
@@ -630,74 +631,7 @@ class TestResultViewModelTest {
                     fromCurrentIsolation = false
                 )
             ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
-                voidTestResult,
-                positiveTestResult
-            )
-            every { stateMachine.readLogicalState() } returns isolationState
-            every {
-                testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
-                    isolationState,
-                    positiveTestResult,
-                    testAcknowledgedDate = Instant.now(fixedClock)
-                )
-            } returns DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
-
-            testSubject.onCreate()
-
-            verify {
-                viewStateObserver.onChanged(
-                    ViewState(PositiveWontBeInIsolation(ShareKeys(bookFollowUpTest = false)), 0)
-                )
-            }
-        }
-
-    @Test
-    fun `relevant test result confirmed positive, unacknowledged void and indicative positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
-        runBlocking {
-            val isolationState = isolationHelper.positiveTest(
-                acknowledgedTestResult(
-                    result = RelevantVirologyTestResult.POSITIVE,
-                    isConfirmed = true,
-                    fromCurrentIsolation = false
-                )
-            ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
-                voidTestResult,
-                positiveTestResultIndicative
-            )
-            every { stateMachine.readLogicalState() } returns isolationState
-            every {
-                testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
-                    isolationState,
-                    positiveTestResultIndicative,
-                    testAcknowledgedDate = Instant.now(fixedClock)
-                )
-            } returns DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
-
-            testSubject.onCreate()
-
-            verify {
-                viewStateObserver.onChanged(
-                    ViewState(PositiveWontBeInIsolation(Finish), 0)
-                )
-            }
-        }
-
-    @Test
-    fun `relevant test result confirmed positive, unacknowledged void and confirmed positive, currently not in isolation and no previous isolation should return PositiveWillBeInIsolation`() =
-        runBlocking {
-            val isolationState = isolationHelper.positiveTest(
-                acknowledgedTestResult(
-                    result = RelevantVirologyTestResult.POSITIVE,
-                    isConfirmed = true,
-                    fromCurrentIsolation = false
-                )
-            ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
-                voidTestResult,
-                positiveTestResult
-            )
+            every { getHighestPriorityTestResult() } returns positiveTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -722,7 +656,7 @@ class TestResultViewModelTest {
         }
 
     @Test
-    fun `relevant test result confirmed positive, unacknowledged void and indicative positive, currently not in isolation and no previous isolation should return PositiveWillBeInIsolation`() =
+    fun `relevant test result confirmed positive, unacknowledged indicative positive, currently not in isolation and no previous isolation should return PositiveWillBeInIsolation`() =
         runBlocking {
             val isolationState = isolationHelper.positiveTest(
                 acknowledgedTestResult(
@@ -731,10 +665,7 @@ class TestResultViewModelTest {
                     fromCurrentIsolation = false
                 )
             ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
-                voidTestResult,
-                positiveTestResultIndicative
-            )
+            every { getHighestPriorityTestResult() } returns positiveTestResultIndicative
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -759,7 +690,7 @@ class TestResultViewModelTest {
         }
 
     @Test
-    fun `no relevant test result unacknowledged negative and confirmed positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
+    fun `no relevant test result unacknowledged confirmed positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
         runBlocking {
             val isolationState = isolationHelper.positiveTest(
                 acknowledgedTestResult(
@@ -768,10 +699,7 @@ class TestResultViewModelTest {
                     fromCurrentIsolation = false
                 )
             ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
-                negativeTestResult,
-                positiveTestResult
-            )
+            every { getHighestPriorityTestResult() } returns positiveTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -791,7 +719,7 @@ class TestResultViewModelTest {
         }
 
     @Test
-    fun `relevant test result confirmed positive, unacknowledged negative and indicative positive, currently not in isolation and previous isolation is index case should return PositiveWontBeInIsolation`() =
+    fun `relevant test result confirmed positive, unacknowledged confirmed positive, currently not in isolation and no previous isolation return PositiveWillBeInIsolation`() =
         runBlocking {
             val isolationState = isolationHelper.positiveTest(
                 acknowledgedTestResult(
@@ -800,42 +728,7 @@ class TestResultViewModelTest {
                     fromCurrentIsolation = false
                 )
             ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
-                negativeTestResult,
-                positiveTestResultIndicative
-            )
-            every { stateMachine.readLogicalState() } returns isolationState
-            every {
-                testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
-                    isolationState,
-                    positiveTestResultIndicative,
-                    testAcknowledgedDate = Instant.now(fixedClock)
-                )
-            } returns DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
-
-            testSubject.onCreate()
-
-            verify {
-                viewStateObserver.onChanged(
-                    ViewState(PositiveWontBeInIsolation(Finish), 0)
-                )
-            }
-        }
-
-    @Test
-    fun `relevant test result confirmed positive, unacknowledged negative and confirmed positive, currently not in isolation and no previous isolation return PositiveWillBeInIsolation`() =
-        runBlocking {
-            val isolationState = isolationHelper.positiveTest(
-                acknowledgedTestResult(
-                    result = RelevantVirologyTestResult.POSITIVE,
-                    isConfirmed = true,
-                    fromCurrentIsolation = false
-                )
-            ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
-                negativeTestResult,
-                positiveTestResult
-            )
+            every { getHighestPriorityTestResult() } returns positiveTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -860,7 +753,7 @@ class TestResultViewModelTest {
         }
 
     @Test
-    fun `relevant test result confirmed positive, unacknowledged negative and indicative positive with key sharing supported, currently not in isolation and no previous isolation return PositiveWillBeInIsolation`() =
+    fun `relevant test result confirmed positive, unacknowledged indicative positive with key sharing supported, currently not in isolation and no previous isolation return PositiveWillBeInIsolation`() =
         runBlocking {
             val isolationState = isolationHelper.positiveTest(
                 acknowledgedTestResult(
@@ -869,10 +762,7 @@ class TestResultViewModelTest {
                     fromCurrentIsolation = false
                 )
             ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
-                negativeTestResult,
-                positiveIndicativeKeySharingSupported
-            )
+            every { getHighestPriorityTestResult() } returns positiveIndicativeKeySharingSupported
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -897,7 +787,7 @@ class TestResultViewModelTest {
         }
 
     @Test
-    fun `relevant test result confirmed positive, unacknowledged negative and indicative positive, currently not in isolation and no previous isolation return PositiveWillBeInIsolation`() =
+    fun `relevant test result confirmed positive, unacknowledged indicative positive, currently not in isolation and no previous isolation return PositiveWillBeInIsolation`() =
         runBlocking {
             val isolationState = isolationHelper.positiveTest(
                 acknowledgedTestResult(
@@ -906,10 +796,7 @@ class TestResultViewModelTest {
                     fromCurrentIsolation = false
                 )
             ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
-                negativeTestResult,
-                positiveTestResultIndicative
-            )
+            every { getHighestPriorityTestResult() } returns positiveTestResultIndicative
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -940,7 +827,7 @@ class TestResultViewModelTest {
             val expiredPositiveTestResult = positiveTestResult.copy(
                 testEndDate = symptomsOnsetDate.atStartOfDay().toInstant(ZoneOffset.UTC).minus(10, ChronoUnit.DAYS)
             )
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(expiredPositiveTestResult)
+            every { getHighestPriorityTestResult() } returns expiredPositiveTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -966,7 +853,7 @@ class TestResultViewModelTest {
             val expiredPositiveTestResult = positiveTestResultIndicative.copy(
                 testEndDate = symptomsOnsetDate.atStartOfDay().toInstant(ZoneOffset.UTC).minus(10, ChronoUnit.DAYS)
             )
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(expiredPositiveTestResult)
+            every { getHighestPriorityTestResult() } returns expiredPositiveTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -989,7 +876,7 @@ class TestResultViewModelTest {
     fun `no relevant test result, unacknowledged plod and currently in isolation should return PlodWillContinueWithCurrentState`() =
         runBlocking {
             val isolationState = isolationHelper.contactCase().asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(plodTestResult)
+            every { getHighestPriorityTestResult() } returns plodTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -1009,7 +896,7 @@ class TestResultViewModelTest {
     fun `no relevant test result, unacknowledged plod and currently not in isolation should return PlodWillContinueWithCurrentState`() =
         runBlocking {
             val isolationState = isolationHelper.neverInIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(plodTestResult)
+            every { getHighestPriorityTestResult() } returns plodTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -1035,9 +922,7 @@ class TestResultViewModelTest {
                     fromCurrentIsolation = false
                 )
             ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
-                plodTestResult
-            )
+            every { getHighestPriorityTestResult() } returns plodTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -1069,7 +954,7 @@ class TestResultViewModelTest {
                     )
                 )
             ).asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(plodTestResult)
+            every { getHighestPriorityTestResult() } returns plodTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -1086,7 +971,7 @@ class TestResultViewModelTest {
         }
 
     @Test
-    fun `relevant test result confirmed positive, unacknowledged plod and confirmed positive, currently not in isolation should return PositiveWontBeInIsolation`() =
+    fun `relevant test result confirmed positive, unacknowledged confirmed positive, currently not in isolation should return PositiveWontBeInIsolation`() =
         runBlocking {
             val isolationState = isolationHelper.positiveTest(
                 acknowledgedTestResult(
@@ -1095,10 +980,7 @@ class TestResultViewModelTest {
                     fromCurrentIsolation = false
                 )
             ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
-                plodTestResult,
-                positiveTestResult
-            )
+            every { getHighestPriorityTestResult() } returns positiveTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -1118,7 +1000,7 @@ class TestResultViewModelTest {
         }
 
     @Test
-    fun `relevant test result confirmed positive, unacknowledged plod and confirmed negative, currently not in isolation should return PlodWillContinueWithCurrentState`() =
+    fun `relevant test result confirmed positive, unacknowledged confirmed negative, currently not in isolation should return PlodWillContinueWithCurrentState`() =
         runBlocking {
             val isolationState = isolationHelper.positiveTest(
                 acknowledgedTestResult(
@@ -1127,10 +1009,7 @@ class TestResultViewModelTest {
                     fromCurrentIsolation = false
                 )
             ).asIsolation().asLogical()
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(
-                plodTestResult,
-                negativeTestResult
-            )
+            every { getHighestPriorityTestResult() } returns plodTestResult
             every { stateMachine.readLogicalState() } returns isolationState
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -1156,7 +1035,7 @@ class TestResultViewModelTest {
     @Test
     fun `button click for negative test result should acknowledge test result and finish activity`() {
         val isolationState = isolationHelper.contactCase().asIsolation().asLogical()
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
+        every { getHighestPriorityTestResult() } returns negativeTestResult
         every { stateMachine.readLogicalState() } returns isolationState
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -1181,7 +1060,7 @@ class TestResultViewModelTest {
     @Test
     fun `back press for negative test result should acknowledge test result`() {
         val isolationState = isolationHelper.contactCase().asIsolation().asLogical()
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf(negativeTestResult)
+        every { getHighestPriorityTestResult() } returns negativeTestResult
         every { stateMachine.readLogicalState() } returns isolationState
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -1206,7 +1085,7 @@ class TestResultViewModelTest {
     @Test
     fun `button click for void test result should acknowledge test result and navigate to order test`() {
         val isolationState = isolationHelper.contactCase().asIsolation().asLogical()
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
+        every { getHighestPriorityTestResult() } returns voidTestResult
         every { stateMachine.readLogicalState() } returns isolationState
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -1231,7 +1110,7 @@ class TestResultViewModelTest {
     @Test
     fun `back press for void test result should acknowledge test result`() {
         val isolationState = isolationHelper.contactCase().asIsolation().asLogical()
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf(voidTestResult)
+        every { getHighestPriorityTestResult() } returns voidTestResult
         every { stateMachine.readLogicalState() } returns isolationState
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -1257,7 +1136,7 @@ class TestResultViewModelTest {
     fun `button click for confirmed positive test result should acknowledge test result and navigate to share keys`() {
         val isolationState = isolationHelper.neverInIsolation().asLogical()
         every { stateMachine.readLogicalState() } returns isolationState
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
+        every { getHighestPriorityTestResult() } returns positiveTestResult
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                 isolationState,
@@ -1284,7 +1163,7 @@ class TestResultViewModelTest {
         verify(exactly = 0) { submitEmptyData() }
         verify(exactly = 0) { submitObfuscationData() }
 
-        coVerify { analyticsEventProcessor.track(AskedToShareExposureKeysInTheInitialFlow) }
+        verify { analyticsEventProcessor.track(AskedToShareExposureKeysInTheInitialFlow) }
         verify { navigationObserver.onChanged(NavigationEvent.NavigateToShareKeys(bookFollowUpTest = false)) }
     }
 
@@ -1292,7 +1171,7 @@ class TestResultViewModelTest {
     fun `back press for confirmed positive test result should acknowledge test result`() {
         val isolationState = isolationHelper.neverInIsolation().asLogical()
         every { stateMachine.readLogicalState() } returns isolationState
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResult)
+        every { getHighestPriorityTestResult() } returns positiveTestResult
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                 isolationState,
@@ -1325,7 +1204,7 @@ class TestResultViewModelTest {
     fun `button click for indicative positive test result should acknowledge test result and navigate to order test`() {
         val isolationState = isolationHelper.neverInIsolation().asLogical()
         every { stateMachine.readLogicalState() } returns isolationState
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResultIndicative)
+        every { getHighestPriorityTestResult() } returns positiveTestResultIndicative
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                 isolationState,
@@ -1357,7 +1236,7 @@ class TestResultViewModelTest {
     fun `back press for indicative positive test result should acknowledge test result`() {
         val isolationState = isolationHelper.neverInIsolation().asLogical()
         every { stateMachine.readLogicalState() } returns isolationState
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf(positiveTestResultIndicative)
+        every { getHighestPriorityTestResult() } returns positiveTestResultIndicative
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                 isolationState,
@@ -1391,7 +1270,7 @@ class TestResultViewModelTest {
             val isolationState = isolationHelper.neverInIsolation().asLogical()
             val testResult = positiveTestResult.copy(diagnosisKeySubmissionSupported = false)
             every { stateMachine.readLogicalState() } returns isolationState
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
+            every { getHighestPriorityTestResult() } returns testResult
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                     isolationState,
@@ -1426,7 +1305,7 @@ class TestResultViewModelTest {
             val isolationState = isolationHelper.neverInIsolation().asLogical()
             val testResult = positiveTestResult
             every { stateMachine.readLogicalState() } returns isolationState
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
+            every { getHighestPriorityTestResult() } returns testResult
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                     isolationState,
@@ -1458,7 +1337,7 @@ class TestResultViewModelTest {
             val isolationState = isolationHelper.neverInIsolation().asLogical()
             val testResult = positiveTestResult.copy(diagnosisKeySubmissionSupported = false)
             every { stateMachine.readLogicalState() } returns isolationState
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
+            every { getHighestPriorityTestResult() } returns testResult
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                     isolationState,
@@ -1492,7 +1371,7 @@ class TestResultViewModelTest {
             val isolationState = isolationHelper.neverInIsolation().asLogical()
             val testResult = positiveTestResult
             every { stateMachine.readLogicalState() } returns isolationState
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
+            every { getHighestPriorityTestResult() } returns testResult
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                     isolationState,
@@ -1523,7 +1402,7 @@ class TestResultViewModelTest {
             val isolationState = isolationHelper.neverInIsolation().asLogical()
             val testResult = positiveTestResultIndicative.copy(diagnosisKeySubmissionSupported = false)
             every { stateMachine.readLogicalState() } returns isolationState
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
+            every { getHighestPriorityTestResult() } returns testResult
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                     isolationState,
@@ -1558,7 +1437,7 @@ class TestResultViewModelTest {
             val isolationState = isolationHelper.neverInIsolation().asLogical()
             val testResult = positiveTestResultIndicative.copy(diagnosisKeySubmissionSupported = false)
             every { stateMachine.readLogicalState() } returns isolationState
-            every { unacknowledgedTestResultsProvider.testResults } returns listOf(testResult)
+            every { getHighestPriorityTestResult() } returns testResult
             every {
                 testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                     isolationState,
@@ -1586,7 +1465,7 @@ class TestResultViewModelTest {
     @Test
     fun `back press for plod test result should acknowledge result`() {
         val isolationState = isolationHelper.contactCase().asIsolation().asLogical()
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf(plodTestResult)
+        every { getHighestPriorityTestResult() } returns plodTestResult
         every { stateMachine.readLogicalState() } returns isolationState
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
@@ -1609,7 +1488,7 @@ class TestResultViewModelTest {
     @Test
     fun `button click for plod test result should acknowledge test result and finish activity`() {
         val isolationState = isolationHelper.contactCase().asIsolation().asLogical()
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf(plodTestResult)
+        every { getHighestPriorityTestResult() } returns plodTestResult
         every { stateMachine.readLogicalState() } returns isolationState
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(

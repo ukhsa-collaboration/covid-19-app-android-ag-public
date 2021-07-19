@@ -43,6 +43,7 @@ import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
 import uk.nhs.nhsx.covid19.android.app.payment.RedirectToIsolationPaymentWebsiteActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResultActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.SymptomsAfterRiskyVenueActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
@@ -76,6 +77,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.SubmitKeysProgressActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingProgressActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
+import uk.nhs.nhsx.covid19.android.app.testordering.lfd.OrderLfdTestActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.DailyContactTestingConfirmationActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultOnsetDateActivity
@@ -160,6 +162,8 @@ interface ApplicationComponent {
     fun inject(testingHubActivity: TestingHubActivity)
     fun inject(unknownTestResultActivity: UnknownTestResultActivity)
     fun inject(localMessageActivity: LocalMessageActivity)
+    fun inject(symptomsAfterRiskyVenueActivity: SymptomsAfterRiskyVenueActivity)
+    fun inject(orderLfdTestActivity: OrderLfdTestActivity)
 
     fun inject(testResultViewModel: BaseTestResultViewModel)
 

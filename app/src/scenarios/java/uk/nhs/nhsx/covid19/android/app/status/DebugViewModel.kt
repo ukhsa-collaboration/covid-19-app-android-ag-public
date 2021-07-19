@@ -32,8 +32,8 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.RiskyVenueConfiguratio
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.GREEN
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
@@ -178,7 +178,7 @@ class DebugViewModel @Inject constructor(
         sendExposureNotification()
     }
 
-    fun setRiskyVenue(type: MessageType) {
+    fun setRiskyVenue(type: RiskyVenueMessageType) {
         viewModelScope.launch {
             venueStorage.finishLastVisitAndAddNewVenue(
                 Venue(
@@ -194,7 +194,7 @@ class DebugViewModel @Inject constructor(
                 )
             }
             riskyVenueAlertProvider.riskyVenueAlert = RiskyVenueAlert("Risky Venue Id", type)
-            notificationProvider.showRiskyVenueVisitNotification()
+            notificationProvider.showRiskyVenueVisitNotification(type)
         }
     }
 

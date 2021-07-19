@@ -1,7 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.sharekeys
 
-import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SuccessfullySharedExposureKeys
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
@@ -19,6 +19,6 @@ class ShareKeysResultViewModelTest {
         testSubject.onCreate()
         testSubject.onCreate()
 
-        coVerify(exactly = 1) { analyticsEventProcessor.track(SuccessfullySharedExposureKeys) }
+        verify(exactly = 1) { analyticsEventProcessor.track(SuccessfullySharedExposureKeys) }
     }
 }

@@ -230,7 +230,7 @@ class SubmitAnalyticsAlarmControllerTest {
         testSubject.cancelIfScheduled()
     }
 
-    private suspend fun thenAnalyticsEventIsTracked() {
+    private fun thenAnalyticsEventIsTracked() {
         analyticsEventProcessor.track(TotalAlarmManagerBackgroundTasks)
     }
 

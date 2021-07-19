@@ -3,8 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.exposure.sharekeys
 import android.app.Activity
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import io.mockk.coVerify
-import io.mockk.coVerifyOrder
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
@@ -117,7 +115,7 @@ class ShareKeysReminderViewModelTest {
         testSubject.trackConsentedToShareKeys()
         testSubject.trackConsentedToShareKeys()
 
-        coVerify(exactly = 1) { analyticsEventProcessor.track(ConsentedToShareExposureKeysInReminderScreen) }
+        verify(exactly = 1) { analyticsEventProcessor.track(ConsentedToShareExposureKeysInReminderScreen) }
     }
 
     @Test
@@ -127,7 +125,7 @@ class ShareKeysReminderViewModelTest {
 
         testSubject.onFetchKeysSuccess(keys, token)
 
-        coVerifyOrder {
+        verifyOrder {
             analyticsEventProcessor.track(ConsentedToShareExposureKeysInReminderScreen)
             navigationObserver.onChanged(SubmitKeysProgressActivity(keys, token))
         }

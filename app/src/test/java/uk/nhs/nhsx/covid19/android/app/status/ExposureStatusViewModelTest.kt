@@ -14,42 +14,23 @@ import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationActivationResult
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
-import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationReminderAlarmController
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneOffset
 
 class ExposureStatusViewModelTest {
+
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val exposureNotificationService = mockk<ExposureNotificationManager>(relaxed = true)
+    private val exposureNotificationManager = mockk<ExposureNotificationManager>(relaxUnitFun = true)
 
-    private val exposureNotificationReminderAlarmController =
-        mockk<ExposureNotificationReminderAlarmController>(relaxed = true)
+    private val testSubject = ExposureStatusViewModel(exposureNotificationManager)
 
-    private val resumeContactTracingNotificationTimeProvider =
-        mockk<ResumeContactTracingNotificationTimeProvider>(relaxed = true)
-
-    private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
-
-    private val testSubject = ExposureStatusViewModel(
-        exposureNotificationService,
-        exposureNotificationReminderAlarmController,
-        resumeContactTracingNotificationTimeProvider,
-        fixedClock
-    )
-
-    private val activationResultObserver =
-        mockk<Observer<ExposureNotificationActivationResult>>(relaxed = true)
-
-    private val exposureNotificationsChangedObserver = mockk<Observer<Boolean>>(relaxed = true)
-    private val exposureNotificationsEnabledObserver = mockk<Observer<Boolean>>(relaxed = true)
-    private val exposureNotificationReminderRequestObserver = mockk<Observer<Void>>(relaxed = true)
+    private val activationResultObserver = mockk<Observer<ExposureNotificationActivationResult>>(relaxUnitFun = true)
+    private val exposureNotificationsChangedObserver = mockk<Observer<Boolean>>(relaxUnitFun = true)
+    private val exposureNotificationsEnabledObserver = mockk<Observer<Boolean>>(relaxUnitFun = true)
 
     @Before
     fun setUp() {
-        coEvery { exposureNotificationService.isEnabled() } returns false
+        coEvery { exposureNotificationManager.isEnabled() } returns false
     }
 
     @Test
@@ -57,12 +38,11 @@ class ExposureStatusViewModelTest {
 
         testSubject.exposureNotificationActivationResult().observeForever(activationResultObserver)
 
-        coEvery { exposureNotificationService.startExposureNotifications() } returns ExposureNotificationActivationResult.Success
+        coEvery { exposureNotificationManager.startExposureNotifications() } returns ExposureNotificationActivationResult.Success
 
         testSubject.startExposureNotifications()
 
         verify { activationResultObserver.onChanged(ExposureNotificationActivationResult.Success) }
-        verify { exposureNotificationReminderAlarmController.cancel() }
     }
 
     @Test
@@ -72,7 +52,7 @@ class ExposureStatusViewModelTest {
 
         val resolutionStatus = Status(CommonStatusCodes.RESOLUTION_REQUIRED)
 
-        coEvery { exposureNotificationService.startExposureNotifications() } returns ExposureNotificationActivationResult
+        coEvery { exposureNotificationManager.startExposureNotifications() } returns ExposureNotificationActivationResult
             .ResolutionRequired(
                 resolutionStatus
             )
@@ -86,7 +66,6 @@ class ExposureStatusViewModelTest {
                 )
             )
         }
-        verify(exactly = 0) { exposureNotificationReminderAlarmController.cancel() }
     }
 
     @Test
@@ -96,7 +75,7 @@ class ExposureStatusViewModelTest {
 
         val testException = Exception()
 
-        coEvery { exposureNotificationService.startExposureNotifications() } returns ExposureNotificationActivationResult
+        coEvery { exposureNotificationManager.startExposureNotifications() } returns ExposureNotificationActivationResult
             .Error(
                 testException
             )
@@ -110,7 +89,6 @@ class ExposureStatusViewModelTest {
                 )
             )
         }
-        verify(exactly = 0) { exposureNotificationReminderAlarmController.cancel() }
     }
 
     @Test
@@ -118,7 +96,7 @@ class ExposureStatusViewModelTest {
         testSubject.exposureNotificationsChanged()
             .observeForever(exposureNotificationsChangedObserver)
 
-        coEvery { exposureNotificationService.isEnabled() } returns true
+        coEvery { exposureNotificationManager.isEnabled() } returns true
 
         testSubject.checkExposureNotificationsChanged()
 
@@ -130,7 +108,7 @@ class ExposureStatusViewModelTest {
         testSubject.exposureNotificationsChanged()
             .observeForever(exposureNotificationsChangedObserver)
 
-        coEvery { exposureNotificationService.isEnabled() } returns true
+        coEvery { exposureNotificationManager.isEnabled() } returns true
 
         testSubject.checkExposureNotificationsChanged()
         testSubject.checkExposureNotificationsChanged()
@@ -143,7 +121,7 @@ class ExposureStatusViewModelTest {
         testSubject.exposureNotificationsChanged()
             .observeForever(exposureNotificationsChangedObserver)
 
-        coEvery { exposureNotificationService.isEnabled() } returns false
+        coEvery { exposureNotificationManager.isEnabled() } returns false
 
         testSubject.checkExposureNotificationsChanged()
 
@@ -155,7 +133,7 @@ class ExposureStatusViewModelTest {
         testSubject.exposureNotificationsEnabled()
             .observeForever(exposureNotificationsEnabledObserver)
 
-        coEvery { exposureNotificationService.isEnabled() } returns true
+        coEvery { exposureNotificationManager.isEnabled() } returns true
 
         testSubject.checkExposureNotificationsEnabled()
 
@@ -167,7 +145,7 @@ class ExposureStatusViewModelTest {
         testSubject.exposureNotificationsEnabled()
             .observeForever(exposureNotificationsEnabledObserver)
 
-        coEvery { exposureNotificationService.isEnabled() } returns true
+        coEvery { exposureNotificationManager.isEnabled() } returns true
 
         testSubject.checkExposureNotificationsEnabled()
         testSubject.checkExposureNotificationsEnabled()
@@ -180,7 +158,7 @@ class ExposureStatusViewModelTest {
         testSubject.exposureNotificationsEnabled()
             .observeForever(exposureNotificationsEnabledObserver)
 
-        coEvery { exposureNotificationService.isEnabled() } returns false
+        coEvery { exposureNotificationManager.isEnabled() } returns false
 
         testSubject.checkExposureNotificationsEnabled()
 
@@ -194,7 +172,7 @@ class ExposureStatusViewModelTest {
 
         testSubject.stopExposureNotifications()
 
-        coVerify { exposureNotificationService.stopExposureNotifications() }
+        coVerify { exposureNotificationManager.stopExposureNotifications() }
         verify { exposureNotificationsChangedObserver.onChanged(any()) }
     }
 }

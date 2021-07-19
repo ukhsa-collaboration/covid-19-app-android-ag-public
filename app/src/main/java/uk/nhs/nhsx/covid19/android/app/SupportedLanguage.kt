@@ -5,9 +5,8 @@ import androidx.annotation.StringRes
 enum class SupportedLanguage(
     @StringRes val languageName: Int,
     val nativeLanguageName: String,
-    val code: String? = null
+    val code: String
 ) {
-    DEFAULT(R.string.default_language, "Default"),
     ENGLISH(R.string.english, "English (UK)", "en"),
     BENGALI(R.string.bengali, "বাংলা", "bn"),
     URDU(R.string.urdu, "اردو", "ur"),
@@ -21,3 +20,15 @@ enum class SupportedLanguage(
     POLISH(R.string.polish, "Polski", "pl"),
     SOMALI(R.string.somali, "Soomaali", "so"),
 }
+
+data class SupportedLanguageItem(
+    @StringRes val nameResId: Int,
+    val code: String?
+)
+
+fun SupportedLanguage?.toSupportedLanguageItem() =
+    if (this == null) {
+        SupportedLanguageItem(nameResId = R.string.default_language, code = null)
+    } else {
+        SupportedLanguageItem(nameResId = this.languageName, code = this.code)
+    }

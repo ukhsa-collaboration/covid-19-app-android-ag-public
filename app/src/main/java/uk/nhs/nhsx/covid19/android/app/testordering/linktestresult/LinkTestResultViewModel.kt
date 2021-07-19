@@ -9,7 +9,6 @@ import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.OUTSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeResponse
-import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
@@ -52,8 +51,7 @@ class LinkTestResultViewModel @Inject constructor(
 
     fun fetchInitialViewState() {
         val state = isolationStateMachine.readLogicalState()
-        val showDailyContactTesting = state is PossiblyIsolating &&
-            state.isActiveContactCaseOnly(clock) &&
+        val showDailyContactTesting = state.isActiveContactCaseOnly(clock) &&
             RuntimeBehavior.isFeatureEnabled(DAILY_CONTACT_TESTING)
 
         val initialViewState =

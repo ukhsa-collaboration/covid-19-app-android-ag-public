@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
+import android.content.Context
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.test.espresso.Espresso.onView
@@ -14,10 +15,12 @@ import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.platform.app.InstrumentationRegistry
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
+import java.util.Locale
 
 fun clickDialogPositiveButton() {
     onView(withId(android.R.id.button1))
@@ -64,3 +67,12 @@ private fun datePickerSelectDay(dayOfMonth: Int) {
 }
 
 private fun swipeUpFromCenter() = GeneralSwipeAction(SLOW, CENTER, TOP_CENTER, FINGER)
+
+val context: Context // Do not cache it, since context can be changed (e.g. locale change)
+    get() {
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val config = targetContext.resources.configuration.apply {
+            setLocale(Locale.getDefault())
+        }
+        return targetContext.createConfigurationContext(config)
+    }

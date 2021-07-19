@@ -10,20 +10,6 @@
         android:id="@+id/statusBanner"
         layout="@layout/banner_home" />
 
-    <uk.nhs.nhsx.covid19.android.app.widgets.AreaRiskView
-        android:id="@+id/riskAreaView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin_horizontal_small"
-        android:layout_marginTop="24dp"
-        android:elevation="1dp"
-        android:visibility="gone"
-        app:optionExternalLink="false"
-        app:optionIconBackgroundColor="?colorSurface"
-        tools:areaRisk="LOW"
-        tools:areaRiskText="CM2 area risk level is LOW"
-        tools:visibility="visible" />
-
     <androidx.core.widget.NestedScrollView
         style="@style/ScrollContainer"
         android:layout_width="match_parent"
@@ -39,6 +25,22 @@
             android:clipToPadding="false"
             android:paddingHorizontal="@dimen/margin_horizontal_small">
 
+            <uk.nhs.nhsx.covid19.android.app.widgets.AreaRiskView
+                android:id="@+id/riskAreaView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:elevation="1dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:optionExternalLink="false"
+                app:optionIconBackgroundColor="?colorSurface"
+                tools:areaRisk="LOW"
+                tools:areaRiskText="CM2 area risk level is LOW"
+                tools:visibility="visible" />
+
             <FrameLayout
                 android:id="@+id/stateContainer"
                 android:layout_width="match_parent"
@@ -46,7 +48,7 @@
                 android:clipChildren="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@+id/riskAreaView">
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.IsolationStatusView
                     android:id="@+id/isolationView"
@@ -82,7 +84,6 @@
                         android:visibility="gone"
                         tools:visibility="visible" />
                 </FrameLayout>
-
             </FrameLayout>
 
             <uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessageBannerView

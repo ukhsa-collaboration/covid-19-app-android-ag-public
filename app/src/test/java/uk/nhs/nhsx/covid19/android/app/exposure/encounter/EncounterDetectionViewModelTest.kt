@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -79,7 +78,7 @@ class EncounterDetectionViewModelTest {
 
         verify { exposureNotificationRetryAlarmController.cancel() }
         verify { shouldShowEncounterDetectionActivityProvider setProperty "value" value null }
-        coVerify { analyticsEventProcessor.track(AcknowledgedStartOfIsolationDueToRiskyContact) }
+        verify { analyticsEventProcessor.track(AcknowledgedStartOfIsolationDueToRiskyContact) }
 
         verify { resultObserver.onChanged(ExposedNotificationResult.ConsentConfirmation) }
     }

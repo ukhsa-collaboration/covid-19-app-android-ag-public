@@ -36,10 +36,8 @@ interface Translatable<T> : Parcelable {
         if (languageAndRegion.contains("-")) languageAndRegion.split("-")[0] else languageAndRegion
 
     private fun isLanguageSupported(languageCode: String) = SupportedLanguage.values()
-        .mapNotNull { it.code }
-        .any {
-            it == languageCode
-        }
+        .map { it.code }
+        .any { it == languageCode }
 
     companion object {
         private const val fallbackLanguageAndRegion = "en-GB"

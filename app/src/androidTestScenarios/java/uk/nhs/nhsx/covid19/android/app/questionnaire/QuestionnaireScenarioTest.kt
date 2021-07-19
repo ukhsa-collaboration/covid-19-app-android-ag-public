@@ -6,6 +6,8 @@ import android.content.Intent
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_FAIL
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_SUCCEED
 import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
@@ -21,12 +23,11 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActi
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.report.Reported
 import uk.nhs.nhsx.covid19.android.app.report.Reporter
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.FLOW
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
-import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
-import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
-import uk.nhs.nhsx.covid19.android.app.report.notReported
+import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
@@ -41,12 +42,12 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ReviewSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
-import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import java.time.LocalDate
 
-class QuestionnaireScenarioTest : EspressoTest() {
+@RunWith(Parameterized::class)
+class QuestionnaireScenarioTest(override val configuration: TestConfiguration) : EspressoTest() {
 
     private val statusRobot = StatusRobot()
     private val questionnaireRobot = QuestionnaireRobot()
@@ -57,6 +58,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     private val isolationHelper = IsolationHelper(testAppContext.clock)
 
     @Test
+    @Reported
     fun whenNotIsolating_userSelectsPositiveSymptoms_transitionsIntoIsolation() = reporter(
         scenario = "Self Diagnosis",
         title = "Currently not in isolation - Positive symptoms",
@@ -90,7 +92,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
         questionnaireRobot.reviewSymptoms()
 
-        reviewSymptomsRobot.confirmReviewSymptomsScreenIsDisplayed()
+        reviewSymptomsRobot.checkActivityIsDisplayed()
 
         step(
             stepName = "Review symptoms",
@@ -126,6 +128,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun whenNotIsolating_userSelectsNoSymptoms_NavigatesToNoSymptomsScreen() = reporter(
         scenario = "Self Diagnosis",
         title = "Currently not in isolation - No symptoms",
@@ -150,12 +153,6 @@ class QuestionnaireScenarioTest : EspressoTest() {
             stepDescription = "The user does not select any symptoms and taps 'I don't have any of these symptoms'. A dialog is shown. The user taps 'remove'."
         )
 
-        setScreenOrientation(LANDSCAPE)
-
-        waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
-
-        setScreenOrientation(PORTRAIT)
-
         waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
 
         waitFor { questionnaireRobot.continueOnDiscardSymptomsDialog() }
@@ -169,6 +166,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun contactCase_userSelectsPositiveSymptoms_StaysInContactIsolation() = reporter(
         scenario = "Self Diagnosis",
         title = "Isolating due to contact case - Positive symptoms",
@@ -190,6 +188,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun indexCaseWithPositiveTestResult_userSelectsPositiveSymptoms_withOnsetDateAfterTestEndDate_showIsolationUpdateScreen() =
         reporter(
             scenario = "Self Diagnosis",
@@ -214,6 +213,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
         }
 
     @Test
+    @Reported
     fun indexCaseWithPositiveTestResult_userSelectsPositiveSymptoms_withOnsetDateBeforeTestEndDate_showKeepIsolatingScreen() =
         reporter(
             scenario = "Self Diagnosis",
@@ -236,6 +236,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
         }
 
     @Test
+    @Reported
     fun indexCaseWithPositiveTestResult_userSelectsLowRiskSymptoms_showKeepIsolatingScreen() =
         reporter(
             scenario = "Self Diagnosis",
@@ -258,6 +259,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
         }
 
     @Test
+    @Reported
     fun indexCaseWithPositiveTestResult_userSelectsNoSymptoms_showKeepIsolatingScreen() = reporter(
         scenario = "Self Diagnosis",
         title = "Isolating due to positive test result - No symptoms",
@@ -312,7 +314,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
             stepDescription = "The user is presented a list of the selected symptoms for review"
         )
 
-        reviewSymptomsRobot.confirmReviewSymptomsScreenIsDisplayed()
+        reviewSymptomsRobot.checkActivityIsDisplayed()
 
         reviewSymptomsRobot.selectCannotRememberDate()
 
@@ -344,7 +346,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun selectNotCoronavirusSymptomsAndCannotRememberDate_StaysInDefaultState() = notReported {
+    fun selectNotCoronavirusSymptomsAndCannotRememberDate_StaysInDefaultState() {
         startTestActivity<QuestionnaireActivity>()
 
         questionnaireRobot.checkActivityIsDisplayed()
@@ -353,7 +355,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
         questionnaireRobot.reviewSymptoms()
 
-        reviewSymptomsRobot.confirmReviewSymptomsScreenIsDisplayed()
+        reviewSymptomsRobot.checkActivityIsDisplayed()
 
         reviewSymptomsRobot.selectCannotRememberDate()
 
@@ -363,7 +365,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun successfullySelectSymptomsAndChangeSymptoms_GoesBackToQuestionnaire() = notReported {
+    fun successfullySelectSymptomsAndChangeSymptoms_GoesBackToQuestionnaire() {
         startTestActivity<QuestionnaireActivity>()
 
         questionnaireRobot.checkActivityIsDisplayed()
@@ -372,7 +374,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
         questionnaireRobot.reviewSymptoms()
 
-        reviewSymptomsRobot.confirmReviewSymptomsScreenIsDisplayed()
+        reviewSymptomsRobot.checkActivityIsDisplayed()
 
         reviewSymptomsRobot.changeFirstNegativeSymptom()
 
@@ -380,6 +382,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun clickOnReviewSymptomsWithoutSelectingSymptoms_DisplaysErrorPanel() = reporter(
         scenario = "Self Diagnosis",
         title = "Continue no symptoms",
@@ -407,7 +410,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
     @RetryFlakyTest
     @Test
-    fun selectNoSymptoms_CancelDialog() = notReported {
+    fun selectNoSymptoms_CancelDialog() {
         startTestActivity<QuestionnaireActivity>()
 
         questionnaireRobot.checkActivityIsDisplayed()
@@ -422,7 +425,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun contactCase_SelectNotCoronavirusSymptoms_StaysInIsolation() = notReported {
+    fun contactCase_SelectNotCoronavirusSymptoms_StaysInIsolation() {
         testAppContext.setState(
             IsolationState(
                 isolationConfiguration = DurationDays(),
@@ -442,7 +445,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
         questionnaireRobot.reviewSymptoms()
 
-        reviewSymptomsRobot.confirmReviewSymptomsScreenIsDisplayed()
+        reviewSymptomsRobot.checkActivityIsDisplayed()
 
         reviewSymptomsRobot.selectCannotRememberDate()
 
@@ -454,6 +457,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun reviewSymptoms_doNotSelectDateOrTickDoNotRemember() = reporter(
         scenario = "Self Diagnosis",
         title = "No onset date",
@@ -475,7 +479,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
             putParcelableArrayListExtra("EXTRA_QUESTIONS", questions)
         }
 
-        reviewSymptomsRobot.confirmReviewSymptomsScreenIsDisplayed()
+        reviewSymptomsRobot.checkActivityIsDisplayed()
 
         step(
             stepName = "Review symptoms",
@@ -493,7 +497,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun selectSymptoms_SelectTodayAsDate_NoSymptomsScreenIsDisplayed() = notReported {
+    fun selectSymptoms_SelectTodayAsDate_NoSymptomsScreenIsDisplayed() {
         startTestActivity<QuestionnaireActivity>()
 
         questionnaireRobot.checkActivityIsDisplayed()
@@ -502,7 +506,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
         questionnaireRobot.reviewSymptoms()
 
-        reviewSymptomsRobot.confirmReviewSymptomsScreenIsDisplayed()
+        reviewSymptomsRobot.checkActivityIsDisplayed()
 
         reviewSymptomsRobot.clickSelectDate()
 
@@ -514,7 +518,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun selectSymptoms_SelectDoNotRememberDateThenSelectTodayAsDate_DoNotRememberIsNotChecked() = notReported {
+    fun selectSymptoms_SelectDoNotRememberDateThenSelectTodayAsDate_DoNotRememberIsNotChecked() {
         startTestActivity<QuestionnaireActivity>()
 
         questionnaireRobot.checkActivityIsDisplayed()
@@ -523,7 +527,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
 
         questionnaireRobot.reviewSymptoms()
 
-        reviewSymptomsRobot.confirmReviewSymptomsScreenIsDisplayed()
+        reviewSymptomsRobot.checkActivityIsDisplayed()
 
         reviewSymptomsRobot.selectCannotRememberDate()
 
@@ -537,7 +541,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun selectSymptoms_NavigateToReviewScreen_NavigateBackToSelectSymptoms() = notReported {
+    fun selectSymptoms_NavigateToReviewScreen_NavigateBackToSelectSymptoms() {
         startTestActivity<QuestionnaireActivity>()
 
         questionnaireRobot.checkActivityIsDisplayed()
@@ -552,7 +556,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun navigateToQuestionnaire_LoadingQuestionnaireFails_ShowsErrorState() = notReported {
+    fun navigateToQuestionnaire_LoadingQuestionnaireFails_ShowsErrorState() {
         MockApiModule.behaviour.responseType = ALWAYS_FAIL
 
         startTestActivity<QuestionnaireActivity>()
@@ -561,7 +565,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun navigateToQuestionnaire_LoadingQuestionnaireFailsAndTryAgainSucceeds_NavigateToQuestionnaire() = notReported {
+    fun navigateToQuestionnaire_LoadingQuestionnaireFailsAndTryAgainSucceeds_NavigateToQuestionnaire() {
         MockApiModule.behaviour.responseType = ALWAYS_FAIL
 
         startTestActivity<QuestionnaireActivity>()
@@ -576,7 +580,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun successfullySelectSymptoms_ReviewAndCancel_NothingHappens() = notReported {
+    fun successfullySelectSymptoms_ReviewAndCancel_NothingHappens() {
         runWithIntents {
             val result = Instrumentation.ActivityResult(Activity.RESULT_CANCELED, Intent())
             Intents.intending(IntentMatchers.hasComponent(ReviewSymptomsActivity::class.qualifiedName))
@@ -589,7 +593,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun successfullySelectSymptoms_ReviewAndDoNotReturnData_NothingHappens() = notReported {
+    fun successfullySelectSymptoms_ReviewAndDoNotReturnData_NothingHappens() {
         runWithIntents {
             val result = Instrumentation.ActivityResult(Activity.RESULT_OK, null)
             Intents.intending(IntentMatchers.hasComponent(ReviewSymptomsActivity::class.qualifiedName))
@@ -602,7 +606,7 @@ class QuestionnaireScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun startReviewSymptomsActivityWithoutQuestions_NothingHappens() = notReported {
+    fun startReviewSymptomsActivityWithoutQuestions_NothingHappens() {
         startTestActivity<ReviewSymptomsActivity>()
     }
 

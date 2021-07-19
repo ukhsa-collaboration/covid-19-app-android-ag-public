@@ -6,12 +6,11 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenue
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyWindow
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import java.time.Instant
 import java.time.LocalDate
@@ -95,7 +94,7 @@ class DownloadAndProcessRiskyVenuesFlowTest : EspressoTest() {
     }
 
     @Test
-    fun visitAndMarkRiskyMultipleVenues() = notReported {
+    fun visitAndMarkRiskyMultipleVenues() {
         runBlocking {
             val visitedVenuesStorage = testAppContext.getVisitedVenuesStorage()
             val downloadAndProcessRiskyVenues = testAppContext.getDownloadAndProcessRiskyVenues()
@@ -153,7 +152,7 @@ class DownloadAndProcessRiskyVenuesFlowTest : EspressoTest() {
     }
 
     @Test
-    fun visitBookTestTypeRiskyVenue() = notReported {
+    fun visitBookTestTypeRiskyVenue() {
         runBlocking {
             val visitedVenuesStorage = testAppContext.getVisitedVenuesStorage()
             val downloadAndProcessRiskyVenues = testAppContext.getDownloadAndProcessRiskyVenues()

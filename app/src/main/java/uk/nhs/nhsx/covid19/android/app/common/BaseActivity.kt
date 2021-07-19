@@ -3,11 +3,15 @@ package uk.nhs.nhsx.covid19.android.app.common
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
-import java.util.Locale
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.overriddenResources
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.updateBaseContextLocale
 import javax.inject.Inject
 
 abstract class BaseActivity(contentView: Int) : AppCompatActivity(contentView) {
@@ -56,9 +60,16 @@ abstract class BaseActivity(contentView: Int) : AppCompatActivity(contentView) {
 
     private fun updateBaseContextLocale(context: Context): Context {
         val locale = applicationLocaleProvider.getLocale()
-        Locale.setDefault(locale)
-        val config = context.resources.configuration
-        config.setLocale(locale)
-        return context.createConfigurationContext(config)
+        Timber.d("updateBaseContextLocale to $locale")
+        return context.updateBaseContextLocale(locale)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        if (menu != null) {
+            val menuItem: MenuItem? =
+                menu.findItem(R.id.menuEditAction) // explicitly mentioned nullability because it will crash on some systems otherwise
+            menuItem?.title = overriddenResources.getString(R.string.edit)
+        }
+        return super.onPrepareOptionsMenu(menu)
     }
 }

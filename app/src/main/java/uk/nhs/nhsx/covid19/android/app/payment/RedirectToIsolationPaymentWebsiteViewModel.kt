@@ -54,9 +54,7 @@ class RedirectToIsolationPaymentWebsiteViewModel @Inject constructor(
                     )
             ) {
                 is Success -> {
-                    viewModelScope.launch {
-                        analyticsEventProcessor.track(LaunchedIsolationPaymentsApplication)
-                    }
+                    analyticsEventProcessor.track(LaunchedIsolationPaymentsApplication)
                     fetchWebsiteUrlLiveData.postValue(ViewState.Success(result.value.websiteUrlWithQuery))
                 }
                 is Failure -> fetchWebsiteUrlLiveData.postValue(ViewState.Error)

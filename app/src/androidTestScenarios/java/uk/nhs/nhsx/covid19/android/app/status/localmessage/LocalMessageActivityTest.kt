@@ -4,22 +4,18 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.ContentBlock
 import uk.nhs.nhsx.covid19.android.app.remote.data.ContentBlockType.PARAGRAPH
 import uk.nhs.nhsx.covid19.android.app.remote.data.ContentBlockType.UNKNOWN
-import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessage
-import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessageTranslation
-import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessageType.NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.remote.data.LocalInformation.Notification
 import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessagesResponse
-import uk.nhs.nhsx.covid19.android.app.remote.data.TranslatableLocalMessage
-import uk.nhs.nhsx.covid19.android.app.report.notReported
+import uk.nhs.nhsx.covid19.android.app.remote.data.NotificationMessage
+import uk.nhs.nhsx.covid19.android.app.remote.data.TranslatableNotificationMessage
 import uk.nhs.nhsx.covid19.android.app.testhelpers.assertBrowserIsOpened
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalMessageRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import java.time.Instant
 import kotlin.test.assertTrue
 
 class LocalMessageActivityTest : EspressoTest() {
     private val localMessageRobot = LocalMessageRobot()
-    private val statusRobot = StatusRobot()
 
     private val head = "A new variant of concern is in your area"
     private val content = listOf(
@@ -47,7 +43,7 @@ class LocalMessageActivityTest : EspressoTest() {
         ContentBlock(type = UNKNOWN)
     )
 
-    private val localMessage = LocalMessageTranslation(
+    private val localMessage = NotificationMessage(
         head = head,
         body = "This is the body of the notification",
         content = content
@@ -58,11 +54,10 @@ class LocalMessageActivityTest : EspressoTest() {
             "E07000240" to listOf("message1")
         ),
         messages = mapOf(
-            "message1" to LocalMessage(
-                type = NOTIFICATION,
+            "message1" to Notification(
                 updated = Instant.parse("2021-05-19T14:59:13Z"),
                 contentVersion = 1,
-                translations = TranslatableLocalMessage(
+                translations = TranslatableNotificationMessage(
                     mapOf("en" to localMessage)
                 )
             )
@@ -70,7 +65,7 @@ class LocalMessageActivityTest : EspressoTest() {
     )
 
     @Test
-    fun startLocalMessageActivity_displaysContentBlocks() = notReported {
+    fun startLocalMessageActivity_displaysContentBlocks() {
         testAppContext.setLocalAuthority("E07000240")
         testAppContext.setPostCode("AL1")
         testAppContext.getLocalMessagesProvider().localMessages = response
@@ -89,7 +84,7 @@ class LocalMessageActivityTest : EspressoTest() {
     }
 
     @Test
-    fun startLocalMessageActivity_whenClickLink_opensInBrowser() = notReported {
+    fun startLocalMessageActivity_whenClickLink_opensInBrowser() {
         testAppContext.setLocalAuthority("E07000240")
         testAppContext.setPostCode("AL1")
         testAppContext.getLocalMessagesProvider().localMessages = response
@@ -104,7 +99,7 @@ class LocalMessageActivityTest : EspressoTest() {
     }
 
     @Test
-    fun startLocalMessageActivity_whenClickCloseButton_finishesActivity() = notReported {
+    fun startLocalMessageActivity_whenClickCloseButton_finishesActivity() {
         testAppContext.setLocalAuthority("E07000240")
         testAppContext.setPostCode("AL1")
         testAppContext.getLocalMessagesProvider().localMessages = response
@@ -119,7 +114,7 @@ class LocalMessageActivityTest : EspressoTest() {
     }
 
     @Test
-    fun startLocalMessageActivity_whenClickBackToHome_finishesActivity() = notReported {
+    fun startLocalMessageActivity_whenClickBackToHome_finishesActivity() {
         testAppContext.setLocalAuthority("E07000240")
         testAppContext.setPostCode("AL1")
         testAppContext.getLocalMessagesProvider().localMessages = response

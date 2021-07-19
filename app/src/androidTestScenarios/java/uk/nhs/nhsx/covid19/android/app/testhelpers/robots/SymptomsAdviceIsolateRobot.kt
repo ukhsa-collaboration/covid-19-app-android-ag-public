@@ -11,7 +11,6 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.stateExplanation
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
@@ -26,8 +25,6 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateColor
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateStringResource
 
 class SymptomsAdviceIsolateRobot {
-
-    private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     fun checkActivityIsDisplayed() {
         onView(withId(R.id.symptomsAdviceIsolateContainer))

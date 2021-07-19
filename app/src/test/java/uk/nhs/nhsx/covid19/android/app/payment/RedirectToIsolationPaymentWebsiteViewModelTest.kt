@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.payment
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verifyOrder
@@ -76,9 +75,9 @@ class RedirectToIsolationPaymentWebsiteViewModelTest {
 
         testSubject.loadIsolationPaymentUrl()
 
-        coVerify { analyticsEventProcessorMock.track(LaunchedIsolationPaymentsApplication) }
         verifyOrder {
             loadPaymentUrlResultObserver.onChanged(ViewState.Loading)
+            analyticsEventProcessorMock.track(LaunchedIsolationPaymentsApplication)
             loadPaymentUrlResultObserver.onChanged(
                 ViewState.Success("https://website/abc")
             )

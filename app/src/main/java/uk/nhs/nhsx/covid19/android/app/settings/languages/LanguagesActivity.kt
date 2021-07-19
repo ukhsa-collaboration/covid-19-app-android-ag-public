@@ -54,7 +54,7 @@ class LanguagesActivity : BaseActivity(R.layout.activity_settings_language) {
     }
 
     private fun setUpSystemLanguage() {
-        val language = applicationLocaleProvider.getSystemLanguage()
+        val language = applicationLocaleProvider.getDefaultSystemLanguage()
         systemLanguage.languageNativeName.text = language.nativeLanguageName
         systemLanguage.languageTranslatedName.text = getString(language.languageName)
         systemLanguage.languageRadio.mirrorSystemLayoutDirection()
@@ -67,7 +67,7 @@ class LanguagesActivity : BaseActivity(R.layout.activity_settings_language) {
         }
 
         viewModel.systemLanguageSelected().observe(this) {
-            val language = applicationLocaleProvider.getSystemLanguage()
+            val language = applicationLocaleProvider.getDefaultSystemLanguage()
             showConfirmationDialog(getString(language.languageName)) { viewModel.switchToSystemLanguage() }
         }
 

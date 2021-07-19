@@ -6,5 +6,5 @@ import com.squareup.moshi.JsonClass
 data class Step(
     val name: String,
     val description: String,
-    val screenshots: List<Screenshot>
+    val screenshots: MutableList<Screenshot>
 )

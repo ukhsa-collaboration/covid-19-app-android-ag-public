@@ -27,4 +27,7 @@
     <dimen name="my_data_section_item_horizontal_padding">30dp</dimen>
     <dimen name="animation_static_image_height">300dp</dimen>
     <dimen name="local_message_banner_padding">8dp</dimen>
+    <dimen name="paragraph_container_padding_between_items_default">16dp</dimen>
+    <dimen name="paragraph_container_padding_between_items_small">4dp</dimen>
+    <dimen name="list_item_min_height">64dp</dimen>
 </resources>

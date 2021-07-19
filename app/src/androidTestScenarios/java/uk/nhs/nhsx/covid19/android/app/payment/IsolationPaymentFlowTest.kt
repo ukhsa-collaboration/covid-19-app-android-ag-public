@@ -9,7 +9,6 @@ import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_FAIL
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_SUCCEED
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
@@ -39,7 +38,7 @@ class IsolationPaymentFlowTest : EspressoTest() {
     }
 
     @Test
-    fun whenUserInContactCaseIsolation_performIsolationPaymentFlow_retryOnce_endInStatusActivity() = notReported {
+    fun whenUserInContactCaseIsolation_performIsolationPaymentFlow_retryOnce_endInStatusActivity() {
         MockApiModule.behaviour.responseType = ALWAYS_FAIL
 
         testAppContext.setIsolationPaymentToken("abc")

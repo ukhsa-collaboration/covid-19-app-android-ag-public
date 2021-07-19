@@ -3,7 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.remote
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenue
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyWindow

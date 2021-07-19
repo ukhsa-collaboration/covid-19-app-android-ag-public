@@ -16,7 +16,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.N
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
@@ -68,7 +67,7 @@ class FlowTests : EspressoTest() {
     }
 
     @Test
-    fun startDefault_selfDiagnose_receiveNegative_notInIsolation() = notReported {
+    fun startDefault_selfDiagnose_receiveNegative_notInIsolation() {
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
@@ -95,7 +94,7 @@ class FlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCase_receivePositiveTestResult_inIndexIsolation() = notReported {
+    fun startIndexCase_receivePositiveTestResult_inIndexIsolation() {
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -125,7 +124,7 @@ class FlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCaseWithSelfAssessment_receiveExposureNotification_inIndexAndContactIsolation() = notReported {
+    fun startIndexCaseWithSelfAssessment_receiveExposureNotification_inIndexAndContactIsolation() {
         val dateNow = LocalDate.now()
 
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
@@ -162,7 +161,7 @@ class FlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCaseWithPositiveIndicative_receiveExposureNotification_inIndexAndContactIsolation() = notReported {
+    fun startIndexCaseWithPositiveIndicative_receiveExposureNotification_inIndexAndContactIsolation() {
         val dateNow = LocalDate.now()
         testAppContext.setState(
             isolationHelper.positiveTest(
@@ -208,7 +207,7 @@ class FlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCaseWithPositiveConfirmed_receiveExposureNotification_remainIndexCase() = notReported {
+    fun startIndexCaseWithPositiveConfirmed_receiveExposureNotification_remainIndexCase() {
         testAppContext.setState(
             isolationHelper.positiveTest(
                 AcknowledgedTestResult(
@@ -236,7 +235,7 @@ class FlowTests : EspressoTest() {
     }
 
     @Test
-    fun startContactCase_selfDiagnose_receiveNegativeTestResult_inContactIsolation() = notReported {
+    fun startContactCase_selfDiagnose_receiveNegativeTestResult_inContactIsolation() {
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
@@ -276,7 +275,7 @@ class FlowTests : EspressoTest() {
     }
 
     @Test
-    fun startContactCase_selfDiagnose_receivePositiveConfirmedTestResult_inIndexIsolation() = notReported {
+    fun startContactCase_selfDiagnose_receivePositiveConfirmedTestResult_inIndexIsolation() {
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
@@ -320,7 +319,7 @@ class FlowTests : EspressoTest() {
     }
 
     @Test
-    fun startContactCase_selfDiagnose_receivePositiveIndicativeTestResultWithKeySharingNotSupported_inIndexAndContactIsolation() = notReported {
+    fun startContactCase_selfDiagnose_receivePositiveIndicativeTestResultWithKeySharingNotSupported_inIndexAndContactIsolation() {
         startContactCase_selfDiagnose()
 
         testAppContext.virologyTestingApi.setDefaultTestResponse(
@@ -341,7 +340,7 @@ class FlowTests : EspressoTest() {
     }
 
     @Test
-    fun startContactCase_selfDiagnose_receivePositiveIndicativeTestResultWithKeySharingSupported_inIndexAndContactIsolation() = notReported {
+    fun startContactCase_selfDiagnose_receivePositiveIndicativeTestResultWithKeySharingSupported_inIndexAndContactIsolation() {
         startContactCase_selfDiagnose()
 
         testAppContext.virologyTestingApi.setDefaultTestResponse(
@@ -381,7 +380,7 @@ class FlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCase_linkNegativeTestResult() = notReported {
+    fun startIndexCase_linkNegativeTestResult() {
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -413,37 +412,32 @@ class FlowTests : EspressoTest() {
 
     private fun isActiveIndexAndContact(): Boolean {
         val state = testAppContext.getCurrentLogicalState()
-        return state is PossiblyIsolating &&
-            state.isActiveIndexCase(testAppContext.clock) &&
+        return state.isActiveIndexCase(testAppContext.clock) &&
             state.isActiveContactCase(testAppContext.clock)
     }
 
     private fun isActiveIndexNoContact(): Boolean {
         val state = testAppContext.getCurrentLogicalState()
-        return state is PossiblyIsolating &&
-            state.isActiveIndexCase(testAppContext.clock) &&
+        return state.isActiveIndexCase(testAppContext.clock) &&
             !state.remembersContactCase()
     }
 
     private fun isExpiredIndexNoContact(): Boolean {
         val state = testAppContext.getCurrentLogicalState()
-        return state is PossiblyIsolating &&
-            state.remembersIndexCase() &&
+        return state.remembersIndexCase() &&
             !state.isActiveIndexCase(testAppContext.clock) &&
             !state.remembersContactCase()
     }
 
     private fun isActiveContactNoIndex(): Boolean {
         val state = testAppContext.getCurrentLogicalState()
-        return state is PossiblyIsolating &&
-            state.isActiveContactCase(testAppContext.clock) &&
+        return state.isActiveContactCase(testAppContext.clock) &&
             !state.remembersIndexCase()
     }
 
     private fun isActiveContactAndExpiredIndex(): Boolean {
         val state = testAppContext.getCurrentLogicalState()
-        return state is PossiblyIsolating &&
-            state.isActiveContactCase(testAppContext.clock) &&
+        return state.isActiveContactCase(testAppContext.clock) &&
             state.remembersIndexCase() &&
             !state.isActiveIndexCase(testAppContext.clock)
     }

@@ -3,8 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.availability
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class UpdateRecommendedViewModel @Inject constructor(
@@ -15,7 +13,7 @@ class UpdateRecommendedViewModel @Inject constructor(
 
     fun observeRecommendationInfo(): LiveData<RecommendationInfo> = recommendationInfoLiveData
 
-    fun fetchRecommendationInfo() = viewModelScope.launch {
+    fun fetchRecommendationInfo() {
         appAvailabilityProvider.appAvailability?.let {
             recommendationInfoLiveData.postValue(
                 RecommendationInfo(

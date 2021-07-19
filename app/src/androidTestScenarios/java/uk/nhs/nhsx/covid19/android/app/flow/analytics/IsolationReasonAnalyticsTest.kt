@@ -4,7 +4,6 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.RiskyContact
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
 
 class IsolationReasonAnalyticsTest : AnalyticsTest() {
@@ -17,7 +16,7 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
     // >0 if the app is aware that the user has completed the questionnaire with symptoms
     // this currently happens during an isolation and for the 14 days after isolation.
     @Test
-    fun hasSelfDiagnosedBackgroundTickIsPresentWhenCompletedQuestionnaireAndFor14DaysAfterIsolation() = notReported {
+    fun hasSelfDiagnosedBackgroundTickIsPresentWhenCompletedQuestionnaireAndFor14DaysAfterIsolation() {
         // Current date: 1st Jan
         // Starting state: App running normally, not in isolation
         runBackgroundTasks()
@@ -69,7 +68,7 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun hasHadRiskyContactBackgroundTickIsPresentWhenIsolatingAndFor14DaysAfter() = notReported {
+    fun hasHadRiskyContactBackgroundTickIsPresentWhenIsolatingAndFor14DaysAfter() {
         // Current date: 2nd Jan -> Analytics packet for: 1st Jan
         // Starting state: App running normally, not in isolation
         assertAnalyticsPacketIsNormal()

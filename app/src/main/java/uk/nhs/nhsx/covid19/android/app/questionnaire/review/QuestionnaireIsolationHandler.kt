@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireAndStartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireButDidNotStartIsolation
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsDidUpdateIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenNoSymptoms
@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 class QuestionnaireIsolationHandler @Inject constructor(
     private val isolationStateMachine: IsolationStateMachine,
-    private val analyticsEventTracker: AnalyticsEventTracker,
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
     private val riskCalculator: RiskCalculator,
     private val clock: Clock
 ) {
@@ -32,7 +32,7 @@ class QuestionnaireIsolationHandler @Inject constructor(
         val isolationState = isolationStateMachine.readLogicalState()
         val doesUserHaveCoronaVirusSymptoms = riskCalculator.isRiskAboveThreshold(selectedSymptoms, riskThreshold)
 
-        return if (isolationState is PossiblyIsolating && isolationState.hasActivePositiveTestResult(clock)) {
+        return if (isolationState.hasActivePositiveTestResult(clock)) {
             symptomAdviceWhenIsolatingDueToPositiveTestResult(doesUserHaveCoronaVirusSymptoms, onsetDate)
         } else {
             symptomAdviceWhenNotIsolatingDueToPositiveTestResult(doesUserHaveCoronaVirusSymptoms, onsetDate)
@@ -45,14 +45,14 @@ class QuestionnaireIsolationHandler @Inject constructor(
     ): SymptomAdvice {
         if (hasSymptoms) {
             isolationStateMachine.processEvent(OnPositiveSelfAssessment(onsetDate))
-            analyticsEventTracker.track(CompletedQuestionnaireAndStartedIsolation)
+            analyticsEventProcessor.track(CompletedQuestionnaireAndStartedIsolation)
         } else {
-            analyticsEventTracker.track(CompletedQuestionnaireButDidNotStartIsolation)
+            analyticsEventProcessor.track(CompletedQuestionnaireButDidNotStartIsolation)
         }
 
         val isolationState = isolationStateMachine.readLogicalState()
 
-        val isInActiveIsolation = isolationState is PossiblyIsolating && isolationState.isActiveIsolation(clock)
+        val isInActiveIsolation = isolationState.isActiveIsolation(clock)
         val isolatingDueToSelfAssessment =
             (isolationState as? PossiblyIsolating)?.getActiveIndexCase(clock)?.isSelfAssessment() == true
 

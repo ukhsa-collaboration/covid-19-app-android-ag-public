@@ -27,6 +27,7 @@ class UpdateRecommendedActivity : BaseActivity(R.layout.activity_update_recommen
 
         updateInStore.setOnSingleClickListener {
             openAppStore()
+            finish()
         }
 
         askMeLater.setOnSingleClickListener {

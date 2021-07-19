@@ -4,11 +4,9 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.ExplicitDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.NotStated
@@ -70,13 +68,18 @@ class ReviewSymptomsViewModel @AssistedInject constructor(
         val localDate = instant.toLocalDate(ZoneOffset.UTC)
         val currentState = viewState.value ?: return
         val newState =
-            currentState.copy(onsetDate = ExplicitDate(localDate), showOnsetDateError = false, showOnsetDatePicker = false)
+            currentState.copy(
+                onsetDate = ExplicitDate(localDate),
+                showOnsetDateError = false,
+                showOnsetDatePicker = false
+            )
         viewState.postValue(newState)
     }
 
     fun cannotRememberDateChecked() {
         val currentState = viewState.value ?: return
-        val newState = currentState.copy(onsetDate = CannotRememberDate, showOnsetDateError = false, showOnsetDatePicker = false)
+        val newState =
+            currentState.copy(onsetDate = CannotRememberDate, showOnsetDateError = false, showOnsetDatePicker = false)
         viewState.postValue(newState)
     }
 
@@ -92,19 +95,17 @@ class ReviewSymptomsViewModel @AssistedInject constructor(
     }
 
     fun onButtonConfirmedClicked() {
-        viewModelScope.launch {
-            val currentState = viewState.value ?: return@launch
-            if (currentState.onsetDate == NotStated) {
-                val newState = currentState.copy(showOnsetDateError = true)
-                viewState.postValue(newState)
-            } else {
-                val symptomAdvice = questionnaireIsolationHandler.computeAdvice(
-                    riskThreshold = riskThreshold,
-                    selectedSymptoms = getSelectedSymptoms(),
-                    onsetDate = currentState.onsetDate
-                )
-                navigateToSymptomAdviceScreen.postValue(symptomAdvice)
-            }
+        val currentState = viewState.value ?: return
+        if (currentState.onsetDate == NotStated) {
+            val newState = currentState.copy(showOnsetDateError = true)
+            viewState.postValue(newState)
+        } else {
+            val symptomAdvice = questionnaireIsolationHandler.computeAdvice(
+                riskThreshold = riskThreshold,
+                selectedSymptoms = getSelectedSymptoms(),
+                onsetDate = currentState.onsetDate
+            )
+            navigateToSymptomAdviceScreen.postValue(symptomAdvice)
         }
     }
 

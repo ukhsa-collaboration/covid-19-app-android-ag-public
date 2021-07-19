@@ -1,20 +1,24 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode
 
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.InvalidContent
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.Scanning
+import uk.nhs.nhsx.covid19.android.app.report.Reported
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
-import uk.nhs.nhsx.covid19.android.app.report.notReported
+import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QrCodeScanResultRobot
 
-class QrCodeScanResultActivityTest : EspressoTest() {
+@RunWith(Parameterized::class)
+class QrCodeScanResultActivityTest(override val configuration: TestConfiguration) : EspressoTest() {
 
     private val robot = QrCodeScanResultRobot()
 
     @Test
-    fun showSuccess() = notReported {
+    fun showSuccess() {
         val venueName = "Sample Venue"
 
         startTestActivity<QrCodeScanResultActivity> {
@@ -30,7 +34,7 @@ class QrCodeScanResultActivityTest : EspressoTest() {
     }
 
     @Test
-    fun showInvalidContent() = notReported {
+    fun showInvalidContent() {
         startTestActivity<QrCodeScanResultActivity> {
             putExtra(
                 QrCodeScanResultActivity.SCAN_RESULT,
@@ -44,6 +48,7 @@ class QrCodeScanResultActivityTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun showInvalidContentScanningResult() = reporter(
         scenario = "Venue check-in",
         title = "Invalid QRCode",
@@ -68,6 +73,7 @@ class QrCodeScanResultActivityTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun showScanningNotSupported() = reporter(
         scenario = "Venue check-in",
         title = "Unsupported Phone",

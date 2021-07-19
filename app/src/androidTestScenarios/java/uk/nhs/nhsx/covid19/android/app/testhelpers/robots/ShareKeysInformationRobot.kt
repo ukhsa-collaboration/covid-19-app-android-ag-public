@@ -7,14 +7,11 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.platform.app.InstrumentationRegistry
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.R.id
 import uk.nhs.nhsx.covid19.android.app.R.string
 
 class ShareKeysInformationRobot {
-
-    private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     fun checkActivityIsDisplayed() {
         checkActivityTitleIsDisplayed(R.string.submit_keys_information_title)

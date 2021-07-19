@@ -16,7 +16,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
@@ -61,7 +60,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTest_showNegativeWontBeInIsolation_andEndIsolation() = notReported {
+    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTest_showNegativeWontBeInIsolation_andEndIsolation() {
         setSelfAssessmentIsolation()
 
         startTestActivity<StatusActivity>()
@@ -78,7 +77,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withoutPrevTest_whenAcknowledgingConfirmedNegTestOlderThanSymptomsOnsetDate_showNegAfterPosOrSymptomaticWillBeInIsolation_andContinueIsolation() = notReported {
+    fun whenIndexCase_withoutPrevTest_whenAcknowledgingConfirmedNegTestOlderThanSymptomsOnsetDate_showNegAfterPosOrSymptomaticWillBeInIsolation_andContinueIsolation() {
         val isolation = setSelfAssessmentIsolation()
 
         startTestActivity<StatusActivity>()
@@ -101,7 +100,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedVoidTest_showVoidWillBeInIsolation_andContinueIsolation() = notReported {
+    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedVoidTest_showVoidWillBeInIsolation_andContinueIsolation() {
         setSelfAssessmentIsolation()
 
         startTestActivity<StatusActivity>()
@@ -118,7 +117,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation_shareKeys() = notReported {
+    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation_shareKeys() {
         setSelfAssessmentIsolation()
 
         startTestActivity<StatusActivity>()
@@ -135,7 +134,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation_withoutKeysSharing() = notReported {
+    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation_withoutKeysSharing() {
         setSelfAssessmentIsolation()
 
         startTestActivity<StatusActivity>()
@@ -152,7 +151,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
+    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() {
         setSelfAssessmentIsolation()
 
         startTestActivity<StatusActivity>()
@@ -170,7 +169,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenContactCase_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
+    fun whenContactCase_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() {
         setContactCaseIsolation()
 
         startTestActivity<StatusActivity>()
@@ -188,7 +187,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withPreviousConfirmedPosTest_whenAcknowledgingConfirmedNegTest_showNegAfterPosOrSymptomaticWillBeInIsolation_andContinueIsolation() = notReported {
+    fun whenIndexCase_withPreviousConfirmedPosTest_whenAcknowledgingConfirmedNegTest_showNegAfterPosOrSymptomaticWillBeInIsolation_andContinueIsolation() {
         val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
@@ -205,7 +204,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedVoidTest_showVoidWillBeInIsolation_andContinueIsolation() = notReported {
+    fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedVoidTest_showVoidWillBeInIsolation_andContinueIsolation() {
         val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
@@ -222,7 +221,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation() = notReported {
+    fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation() {
         val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
@@ -239,7 +238,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingIndicativePositiveTest_showPositiveContinueIsolationNoChange_andContinueIsolation() = notReported {
+    fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingIndicativePositiveTest_showPositiveContinueIsolationNoChange_andContinueIsolation() {
         val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
@@ -256,7 +255,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenContactCase_withPrevConfirmedPosTestFromBeforeCurrentIsolation_onAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
+    fun whenContactCase_withPrevConfirmedPosTestFromBeforeCurrentIsolation_onAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() {
         setContactCaseIsolationWithExpiredPositiveTest(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
@@ -273,7 +272,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withPreviousIndicativePosTest_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
+    fun whenIndexCase_withPreviousIndicativePosTest_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() {
         val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = true)
 
         startTestActivity<StatusActivity>()
@@ -290,7 +289,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedNegativeTest_showNegativeWontBeInIsolation_andNoIsolation() = notReported {
+    fun whenIndexCase_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedNegativeTest_showNegativeWontBeInIsolation_andNoIsolation() {
         setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = true)
 
         startTestActivity<StatusActivity>()
@@ -307,7 +306,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withPrevIndicativePosTest_onAcknowledgingConfirmedNegTestOlderThanIndicative_showNegAfterPosOrSymptomaticWillBeInIsolation_andContIsolation() = notReported {
+    fun whenIndexCase_withPrevIndicativePosTest_onAcknowledgingConfirmedNegTestOlderThanIndicative_showNegAfterPosOrSymptomaticWillBeInIsolation_andContIsolation() {
         val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = true)
 
         startTestActivity<StatusActivity>()
@@ -328,7 +327,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenExpiredIndexCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWillBeInIsolation_andStartIsolation() = notReported {
+    fun whenExpiredIndexCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWillBeInIsolation_andStartIsolation() {
         val onsetDate = testEndDate.minus(2, ChronoUnit.DAYS)
         val previousTest = setExpiredSelfAssessmentIsolationWithNegativeTest(
             onsetDate = onsetDate.toLocalDate(testAppContext.clock.zone)
@@ -353,7 +352,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenExpiredIndexCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWontBeInIsolation_andNoIsolation() = notReported {
+    fun whenExpiredIndexCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWontBeInIsolation_andNoIsolation() {
         val onsetInstant = testEndDate.minus(DurationDays().indexCaseSinceSelfDiagnosisOnset.toLong(), ChronoUnit.DAYS)
         val onsetDate = onsetInstant.toLocalDate(testAppContext.clock.zone)
         val previousTest = setExpiredSelfAssessmentIsolationWithNegativeTest(
@@ -380,7 +379,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenExpiredIndexCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() = notReported {
+    fun whenExpiredIndexCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() {
         val onsetInstant = testEndDate.minus(DurationDays().indexCaseSinceSelfDiagnosisOnset.toLong(), ChronoUnit.DAYS)
         val onsetDate = onsetInstant.toLocalDate(testAppContext.clock.zone)
         val previousTest = setExpiredSelfAssessmentIsolationWithNegativeTest(
@@ -407,7 +406,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenExpiredIndexCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWillBeInIsolation_andStartIsolation_shareKeys() = notReported {
+    fun whenExpiredIndexCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWillBeInIsolation_andStartIsolation_shareKeys() {
         val onsetDate = testEndDate.minus(2, ChronoUnit.DAYS)
         val previousTest = setExpiredSelfAssessmentIsolationWithNegativeTest(onsetDate.toLocalDate(testAppContext.clock.zone))
 
@@ -430,7 +429,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenContactCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveContinueIsolation_andContinueIsolation() = notReported {
+    fun whenContactCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveContinueIsolation_andContinueIsolation() {
         val previousTest = setContactCaseIsolationWithNegativeTest()
 
         startTestActivity<StatusActivity>()
@@ -452,7 +451,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefault_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWillBeInIsolation_andStartIsolation() = notReported {
+    fun whenDefault_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWillBeInIsolation_andStartIsolation() {
         val previousTest = setNoIsolationWithNegativeTest()
 
         startTestActivity<StatusActivity>()
@@ -474,7 +473,29 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedNegativeTestOutsideConfirmatoryDayLimit_showNegativeWillBeInIsolation_andContIsolation() = notReported {
+    fun whenDefault_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWontBeInIsolation_andNoIsolation() {
+        val previousTest = setNoIsolationWithNegativeTest()
+
+        startTestActivity<StatusActivity>()
+        statusRobot.checkActivityIsDisplayed()
+
+        val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported(
+            testEndDate = testEndDate.minus(DurationDays().indexCaseSinceTestResultEndDate.toLong(), ChronoUnit.DAYS),
+            confirmatoryDayLimit = 2
+        )
+
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
+
+        testResultRobot.clickGoodNewsActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+        isolationChecker.assertExpiredIndexNoContact()
+
+        checkRelevantTestResultUpdatedAndCompleted(testResponse, previousTest.testEndDate, COMPLETED)
+    }
+
+    @Test
+    fun whenIndexCase_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedNegativeTestOutsideConfirmatoryDayLimit_showNegativeWillBeInIsolation_andContIsolation() {
         val indicativePositiveTestResult = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = true, confirmatoryDayLimit = 2)
 
         startTestActivity<StatusActivity>()
@@ -494,7 +515,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenContactCase_withPrevIndicativePosTestFromBeforeCurrentIsolation_onAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() = notReported {
+    fun whenContactCase_withPrevIndicativePosTestFromBeforeCurrentIsolation_onAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() {
         setContactCaseIsolationWithExpiredPositiveTest(requiresConfirmatoryTest = true)
 
         startTestActivity<StatusActivity>()
@@ -511,7 +532,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenNotIsolating_withPrevExpiredIndicativePosTest_onAcknowledgingConfirmedNegativeTest_showNegativeNotInIsolation_andNoIsolation() = notReported {
+    fun whenNotIsolating_withPrevExpiredIndicativePosTest_onAcknowledgingConfirmedNegativeTest_showNegativeNotInIsolation_andNoIsolation() {
         val indicativePositiveTestResult = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = true, confirmatoryDayLimit = 2)
 
         startTestActivity<StatusActivity>()
@@ -530,7 +551,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTest_showNegativeNotInIsolation_andNoIsolation() = notReported {
+    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTest_showNegativeNotInIsolation_andNoIsolation() {
         setSelfAssessmentIsolation(expired = true)
 
         startTestActivity<StatusActivity>()
@@ -547,7 +568,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTestOlderThanSymptomsOnsetDate_showNegativeNotInIsolation_andNoIsolation() = notReported {
+    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTestOlderThanSymptomsOnsetDate_showNegativeNotInIsolation_andNoIsolation() {
         val state = setSelfAssessmentIsolation(expired = true)
 
         startTestActivity<StatusActivity>()
@@ -570,7 +591,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedVoidTest_showVoidNotInIsolation_andNoIsolation() = notReported {
+    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedVoidTest_showVoidNotInIsolation_andNoIsolation() {
         setSelfAssessmentIsolation(expired = true)
 
         startTestActivity<StatusActivity>()
@@ -587,7 +608,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() = notReported {
+    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() {
         setSelfAssessmentIsolation(expired = true)
 
         startTestActivity<StatusActivity>()
@@ -604,7 +625,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_withoutKeysSharing() = notReported {
+    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_withoutKeysSharing() {
         setSelfAssessmentIsolation(expired = true)
 
         startTestActivity<StatusActivity>()
@@ -621,7 +642,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() = notReported {
+    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() {
         setSelfAssessmentIsolation(expired = true)
 
         startTestActivity<StatusActivity>()
@@ -638,7 +659,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedNegativeTest_showNegativeNotInIsolation_andNoIsolation() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedNegativeTest_showNegativeNotInIsolation_andNoIsolation() {
         val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
@@ -655,7 +676,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedVoidTest_showVoidNotInIsolation_andNoIsolation() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedVoidTest_showVoidNotInIsolation_andNoIsolation() {
         val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
@@ -672,7 +693,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() {
         val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
@@ -689,7 +710,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() {
         val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = true)
 
         startTestActivity<StatusActivity>()
@@ -709,7 +730,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_withoutKeysSharing() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_withoutKeysSharing() {
         val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
@@ -726,7 +747,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation() {
         val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = true)
 
         startTestActivity<StatusActivity>()
@@ -746,7 +767,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPosTest_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPosTest_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() {
         setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
@@ -763,7 +784,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegativeTest_whenAcknowledgingConfirmedNegativeTest_showNegativeNotInIsolation_andNoIsolation() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegativeTest_whenAcknowledgingConfirmedNegativeTest_showNegativeNotInIsolation_andNoIsolation() {
         val previousTest = setExpiredSelfAssessmentIsolationWithNegativeTest()
 
         startTestActivity<StatusActivity>()
@@ -780,7 +801,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegativeTest_whenAcknowledgingConfirmedVoidTest_showVoidNotInIsolation_andNoIsolation() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegativeTest_whenAcknowledgingConfirmedVoidTest_showVoidNotInIsolation_andNoIsolation() {
         val previousTest = setExpiredSelfAssessmentIsolationWithNegativeTest()
 
         startTestActivity<StatusActivity>()
@@ -797,7 +818,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegativeTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWillBeInIsolation_andStartIsolation_shareKeys() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegativeTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWillBeInIsolation_andStartIsolation_shareKeys() {
         setExpiredSelfAssessmentIsolationWithNegativeTest()
 
         startTestActivity<StatusActivity>()
@@ -814,7 +835,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegTest_whenAcknowledgingConfirmedPosTest_showPosWillBeInIsolation_andStartIsolation_withoutKeysSharing() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegTest_whenAcknowledgingConfirmedPosTest_showPosWillBeInIsolation_andStartIsolation_withoutKeysSharing() {
         setExpiredSelfAssessmentIsolationWithNegativeTest()
 
         startTestActivity<StatusActivity>()
@@ -831,7 +852,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegTest_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegTest_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() {
         setExpiredSelfAssessmentIsolationWithNegativeTest()
 
         startTestActivity<StatusActivity>()
@@ -848,7 +869,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWillBeInIsolation_andStartIsolation_shareKeys() = notReported {
+    fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWillBeInIsolation_andStartIsolation_shareKeys() {
         testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<StatusActivity>()
@@ -865,7 +886,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWillBeInIsolation_andStartIsolation_withoutKeysSharing() = notReported {
+    fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWillBeInIsolation_andStartIsolation_withoutKeysSharing() {
         testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<StatusActivity>()
@@ -882,7 +903,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() = notReported {
+    fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() {
         testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<StatusActivity>()
@@ -899,7 +920,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTest_showNegativeNotInIsolation_andNoIsolation() = notReported {
+    fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedNegativeTest_showNegativeNotInIsolation_andNoIsolation() {
         testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<StatusActivity>()
@@ -916,7 +937,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedVoidTest_showVoidNotInIsolation_andNoIsolation() = notReported {
+    fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedVoidTest_showVoidNotInIsolation_andNoIsolation() {
         testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<StatusActivity>()
@@ -933,7 +954,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveContinueIsolation_andContinueIsolation_shareKeysAndBookTest() = notReported {
+    fun whenIndexCase_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveContinueIsolation_andContinueIsolation_shareKeysAndBookTest() {
         setSelfAssessmentIsolation()
 
         startTestActivity<StatusActivity>()
@@ -949,7 +970,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenContactCase_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveContinueIsolation_andContinueIsolation_shareKeys() = notReported {
+    fun whenContactCase_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveContinueIsolation_andContinueIsolation_shareKeys() {
         setContactCaseIsolation()
 
         startTestActivity<StatusActivity>()
@@ -964,7 +985,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingIndicativePositiveTest_showPositiveContinueIsolation_andContinueIsolation_shareKeys() = notReported {
+    fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingIndicativePositiveTest_showPositiveContinueIsolation_andContinueIsolation_shareKeys() {
         val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
@@ -981,7 +1002,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingIndicativePosTestOlderThanConfirmed_showPositiveContinueIsolation_andContinueIsolation_shareKeys() = notReported {
+    fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingIndicativePosTestOlderThanConfirmed_showPositiveContinueIsolation_andContinueIsolation_shareKeys() {
         val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
@@ -1004,7 +1025,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenContactCase_withPrevConfirmedPosTestFromBeforeCurrentIsolation_onAcknowledgingIndicativePosTest_showPosContinueIsolation_andContinueIsolation_shareKeysAndBookTest() = notReported {
+    fun whenContactCase_withPrevConfirmedPosTestFromBeforeCurrentIsolation_onAcknowledgingIndicativePosTest_showPosContinueIsolation_andContinueIsolation_shareKeysAndBookTest() {
         setContactCaseIsolationWithExpiredPositiveTest(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
@@ -1020,7 +1041,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenContactCase_withPrevIndicativePosTestFromBeforeCurrentIsolation_onAcknowledgingIndicativePosTest_showPositiveContinueIsolation_shareKeysAndBookTest() = notReported {
+    fun whenContactCase_withPrevIndicativePosTestFromBeforeCurrentIsolation_onAcknowledgingIndicativePosTest_showPositiveContinueIsolation_shareKeysAndBookTest() {
         setContactCaseIsolationWithExpiredPositiveTest(requiresConfirmatoryTest = true)
 
         startTestActivity<StatusActivity>()
@@ -1036,7 +1057,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolation_andStartIsolation_shareKeysAndBookTest() = notReported {
+    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolation_andStartIsolation_shareKeysAndBookTest() {
         setSelfAssessmentIsolation(expired = true)
 
         startTestActivity<StatusActivity>()
@@ -1052,7 +1073,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPosTest_whenAcknowledgingIndicativePosTest_showPositiveWillBeInIsolation_andStartIsolation_shareKeysAndBookTest() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPosTest_whenAcknowledgingIndicativePosTest_showPositiveWillBeInIsolation_andStartIsolation_shareKeysAndBookTest() {
         setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
 
         startTestActivity<StatusActivity>()
@@ -1068,7 +1089,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegTest_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolation_andStartIsolation_shareKeysAndBookTest() = notReported {
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedNegTest_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolation_andStartIsolation_shareKeysAndBookTest() {
         setExpiredSelfAssessmentIsolationWithNegativeTest()
 
         startTestActivity<StatusActivity>()
@@ -1084,7 +1105,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolation_andStartIsolation_shareKeysAndBookTest() = notReported {
+    fun whenDefaultWithoutPreviousIsolation_withoutPreviousTest_whenAcknowledgingIndicativePositiveTest_showPositiveWillBeInIsolation_andStartIsolation_shareKeysAndBookTest() {
         testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<StatusActivity>()

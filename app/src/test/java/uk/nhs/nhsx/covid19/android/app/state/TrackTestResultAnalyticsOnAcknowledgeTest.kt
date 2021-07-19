@@ -1,7 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
-import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveLFDOutsideTimeLimit
@@ -10,7 +10,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResul
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveLabResultAfterPositiveLFD
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveLabResultAfterPositiveSelfRapidTest
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
@@ -30,12 +30,12 @@ import java.time.temporal.ChronoUnit.DAYS
 
 class TrackTestResultAnalyticsOnAcknowledgeTest {
 
-    private val analyticsEventTracker = mockk<AnalyticsEventTracker>(relaxUnitFun = true)
+    private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(Instant.parse("2021-05-01T10:00:00Z"), ZoneOffset.UTC)
     private val isolationHelper = IsolationHelper(fixedClock)
 
     private val trackTestResultAnalyticsOnAcknowledge =
-        TrackTestResultAnalyticsOnAcknowledge(analyticsEventTracker, fixedClock)
+        TrackTestResultAnalyticsOnAcknowledge(analyticsEventProcessor, fixedClock)
 
     //region early return conditions
 
@@ -161,7 +161,7 @@ class TrackTestResultAnalyticsOnAcknowledgeTest {
     }
 
     private fun thenNothingIsTracked() {
-        coVerify(exactly = 0) { analyticsEventTracker.track(any()) }
+        verify(exactly = 0) { analyticsEventProcessor.track(any()) }
     }
 
     //endregion
@@ -231,7 +231,7 @@ class TrackTestResultAnalyticsOnAcknowledgeTest {
         }
 
     private fun thenTrackPositiveLabResultAfterPositiveLFD() {
-        coVerify { analyticsEventTracker.track(PositiveLabResultAfterPositiveLFD) }
+        verify { analyticsEventProcessor.track(PositiveLabResultAfterPositiveLFD) }
     }
 
     //endregion
@@ -311,7 +311,7 @@ class TrackTestResultAnalyticsOnAcknowledgeTest {
         }
 
     private fun thenTrackPositiveLabResultAfterPositiveSelfRapidTest() {
-        coVerify { analyticsEventTracker.track(PositiveLabResultAfterPositiveSelfRapidTest) }
+        verify { analyticsEventProcessor.track(PositiveLabResultAfterPositiveSelfRapidTest) }
     }
 
     //endregion
@@ -350,7 +350,7 @@ class TrackTestResultAnalyticsOnAcknowledgeTest {
         }
 
     private fun thenTrackNegativeLabResultAfterPositiveLFDWithinTimeLimit() {
-        coVerify { analyticsEventTracker.track(NegativeLabResultAfterPositiveLFDWithinTimeLimit) }
+        verify { analyticsEventProcessor.track(NegativeLabResultAfterPositiveLFDWithinTimeLimit) }
     }
 
     //endregion
@@ -429,7 +429,7 @@ class TrackTestResultAnalyticsOnAcknowledgeTest {
         }
 
     private fun thenTrackNegativeLabResultAfterPositiveLFDOutsideTimeLimit() {
-        coVerify { analyticsEventTracker.track(NegativeLabResultAfterPositiveLFDOutsideTimeLimit) }
+        verify { analyticsEventProcessor.track(NegativeLabResultAfterPositiveLFDOutsideTimeLimit) }
     }
 
     //endregion
@@ -473,7 +473,7 @@ class TrackTestResultAnalyticsOnAcknowledgeTest {
         }
 
     private fun thenTrackNegativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit() {
-        coVerify { analyticsEventTracker.track(NegativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit) }
+        verify { analyticsEventProcessor.track(NegativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit) }
     }
 
     //endregion
@@ -557,7 +557,7 @@ class TrackTestResultAnalyticsOnAcknowledgeTest {
         }
 
     private fun thenTrackNegativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit() {
-        coVerify { analyticsEventTracker.track(NegativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit) }
+        verify { analyticsEventProcessor.track(NegativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit) }
     }
 
     //endregion

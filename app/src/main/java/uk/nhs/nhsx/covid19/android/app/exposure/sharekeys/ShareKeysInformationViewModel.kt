@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInTheInitialFlow
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationViewModel.ShareKeysInformationNavigateTo.BookFollowUpTestActivity
@@ -68,10 +67,8 @@ class ShareKeysInformationViewModel @AssistedInject constructor(
     }
 
     private fun onSuccessfulKeySubmission() {
-        viewModelScope.launch {
-            keySharingInfoProvider.reset()
-            navigationLiveData.postValue(ShareKeysResultActivity(bookFollowUpTest))
-        }
+        keySharingInfoProvider.reset()
+        navigationLiveData.postValue(ShareKeysResultActivity(bookFollowUpTest))
     }
 
     //region FetchKeysFlow.Callback
@@ -114,10 +111,8 @@ class ShareKeysInformationViewModel @AssistedInject constructor(
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun trackConsentedToShareKeys() {
         if (!hasAlreadyConsentedToShareKeys) {
-            viewModelScope.launch {
-                analyticsEventProcessor.track(ConsentedToShareExposureKeysInTheInitialFlow)
-                hasAlreadyConsentedToShareKeys = true
-            }
+            analyticsEventProcessor.track(ConsentedToShareExposureKeysInTheInitialFlow)
+            hasAlreadyConsentedToShareKeys = true
         }
     }
 

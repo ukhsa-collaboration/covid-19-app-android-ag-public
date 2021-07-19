@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.sharekeys
 
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BookFollowUpTestRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
@@ -13,7 +12,7 @@ class BookFollowUpTestActivityTest : EspressoTest() {
     private val testOrderingRobot = TestOrderingRobot()
 
     @Test
-    fun testActivityNavigatesToTestOrderingActivity() = notReported {
+    fun testActivityNavigatesToTestOrderingActivity() {
         startTestActivity<BookFollowUpTestActivity>()
 
         waitFor { bookFollowUpTestRobot.checkActivityIsDisplayed() }
@@ -24,7 +23,7 @@ class BookFollowUpTestActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testActivityCloseButtonFinishesActivity() = notReported {
+    fun testActivityCloseButtonFinishesActivity() {
         val activity = startTestActivity<BookFollowUpTestActivity>()
 
         waitFor { bookFollowUpTestRobot.checkActivityIsDisplayed() }

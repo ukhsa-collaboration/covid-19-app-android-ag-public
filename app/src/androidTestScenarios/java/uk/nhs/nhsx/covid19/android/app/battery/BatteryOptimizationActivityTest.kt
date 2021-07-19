@@ -11,7 +11,6 @@ import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BatteryOptimizationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
@@ -34,14 +33,14 @@ class BatteryOptimizationActivityTest : EspressoTest() {
     }
 
     @Test
-    fun showScreen() = notReported {
+    fun showScreen() {
         startTestActivity<BatteryOptimizationActivity>()
 
         batteryOptimizationRobot.checkActivityIsDisplayed()
     }
 
     @Test
-    fun openingBatteryOptimizationActivityWhenAlreadyIgnoringBatteryOptimizations_shouldStartStatusActivity() = notReported {
+    fun openingBatteryOptimizationActivityWhenAlreadyIgnoringBatteryOptimizations_shouldStartStatusActivity() {
         testAppContext.setIgnoringBatteryOptimizations(true)
 
         startTestActivity<BatteryOptimizationActivity>()
@@ -50,7 +49,7 @@ class BatteryOptimizationActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickAllowAndPressBack_shouldRemainInBatteryOptimizationActivity() = notReported {
+    fun clickAllowAndPressBack_shouldRemainInBatteryOptimizationActivity() {
         startTestActivity<BatteryOptimizationActivity>()
 
         batteryOptimizationRobot.clickAllowButton()
@@ -61,7 +60,7 @@ class BatteryOptimizationActivityTest : EspressoTest() {
     }
 
     @Test
-    fun pressBack_shouldRemainInBatteryOptimizationActivity() = notReported {
+    fun pressBack_shouldRemainInBatteryOptimizationActivity() {
         startTestActivity<BatteryOptimizationActivity>()
 
         testAppContext.device.pressBack()
@@ -70,7 +69,7 @@ class BatteryOptimizationActivityTest : EspressoTest() {
     }
 
     @Test
-    fun pressClose_shouldStartStatusActivity() = notReported {
+    fun pressClose_shouldStartStatusActivity() {
         startTestActivity<BatteryOptimizationActivity>()
 
         batteryOptimizationRobot.clickCloseButton()
@@ -79,7 +78,7 @@ class BatteryOptimizationActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickAllowAndOk_shouldStartStatusActivity() = notReported {
+    fun clickAllowAndOk_shouldStartStatusActivity() {
         runWithIntents {
             val result = Instrumentation.ActivityResult(Activity.RESULT_OK, Intent())
             val packageUri = Uri.parse("package:${testAppContext.app.packageName}")

@@ -6,7 +6,6 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result.Success
 import uk.nhs.nhsx.covid19.android.app.exposure.setExposureNotificationResolutionRequired
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.EnableExposureNotificationsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PermissionRobot
@@ -32,7 +31,7 @@ class PermissionActivityTest : EspressoTest() {
     }
 
     @Test
-    fun grantExposureNotificationPermissions_whenError_shouldShowDeviceNotSupportedScreen() = notReported {
+    fun grantExposureNotificationPermissions_whenError_shouldShowDeviceNotSupportedScreen() {
         testAppContext.getExposureNotificationApi().activationResult = Result.Error()
 
         startTestActivity<PermissionActivity>()
@@ -45,7 +44,7 @@ class PermissionActivityTest : EspressoTest() {
     }
 
     @Test
-    fun grantExposureNotificationPermissions_whenSuccessful_shouldShowStatusScreen() = notReported {
+    fun grantExposureNotificationPermissions_whenSuccessful_shouldShowStatusScreen() {
         testAppContext.getExposureNotificationApi().activationResult = Success()
 
         startTestActivity<PermissionActivity>()
@@ -58,7 +57,7 @@ class PermissionActivityTest : EspressoTest() {
     }
 
     @Test
-    fun grantExposureNotificationPermissions_whenResolutionNeededAndSuccessful_shouldShowStatusScreen() = notReported {
+    fun grantExposureNotificationPermissions_whenResolutionNeededAndSuccessful_shouldShowStatusScreen() {
         val activity = startTestActivity<PermissionActivity>()
 
         testAppContext.setExposureNotificationResolutionRequired(activity!!, true)
@@ -71,7 +70,7 @@ class PermissionActivityTest : EspressoTest() {
     }
 
     @Test
-    fun grantExposureNotificationPermissions_whenResolutionNeededAndNotSuccessful_shouldEnableExposureNotificationsScreen_whenSuccessful_shouldShowStatusScreen() = notReported {
+    fun grantExposureNotificationPermissions_whenResolutionNeededAndNotSuccessful_shouldEnableExposureNotificationsScreen_whenSuccessful_shouldShowStatusScreen() {
         val activity = startTestActivity<PermissionActivity>()
 
         testAppContext.setExposureNotificationResolutionRequired(activity!!, false)
@@ -90,7 +89,7 @@ class PermissionActivityTest : EspressoTest() {
     }
 
     @Test
-    fun grantExposureNotificationPermissions_whenResolutionNeededAndNotSuccessful_shouldEnableExposureNotificationsScreen_whenBackPressed_shouldStayOnPermissionScreen() = notReported {
+    fun grantExposureNotificationPermissions_whenResolutionNeededAndNotSuccessful_shouldEnableExposureNotificationsScreen_whenBackPressed_shouldStayOnPermissionScreen() {
         val activity = startTestActivity<PermissionActivity>()
 
         testAppContext.setExposureNotificationResolutionRequired(activity!!, false)

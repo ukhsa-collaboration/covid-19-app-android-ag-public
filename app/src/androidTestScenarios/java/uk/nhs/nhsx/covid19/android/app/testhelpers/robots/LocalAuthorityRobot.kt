@@ -7,13 +7,10 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.platform.app.InstrumentationRegistry
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
 
 class LocalAuthorityRobot {
-
-    private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     fun checkActivityIsDisplayed() {
         onView(withId(R.id.localAuthorityContainer))

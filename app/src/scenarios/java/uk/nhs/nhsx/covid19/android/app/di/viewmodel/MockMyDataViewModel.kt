@@ -1,7 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.di.viewmodel
 
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.about.mydata.BaseMyDataViewModel
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
@@ -21,15 +19,13 @@ class MockMyDataViewModel : BaseMyDataViewModel() {
     )
 
     override fun onResume() {
-        viewModelScope.launch {
-            val updatedViewState = MyDataState(
-                isolationState = getIsolationState(),
-                lastRiskyVenueVisitDate = getLastRiskyVenueVisitDate(),
-                acknowledgedTestResult = getTestResult()
-            )
-            if (myDataStateLiveData.value != updatedViewState) {
-                myDataStateLiveData.postValue(updatedViewState)
-            }
+        val updatedViewState = MyDataState(
+            isolationState = getIsolationState(),
+            lastRiskyVenueVisitDate = getLastRiskyVenueVisitDate(),
+            acknowledgedTestResult = getTestResult()
+        )
+        if (myDataStateLiveData.value != updatedViewState) {
+            myDataStateLiveData.postValue(updatedViewState)
         }
     }
 
@@ -37,7 +33,8 @@ class MockMyDataViewModel : BaseMyDataViewModel() {
 
     override fun getLastRiskyVenueVisitDate(): LocalDate? = currentOptions.lastRiskyVenueVisitDate
 
-    override fun getDailyContactTestingOptInDate(contactCase: ContactCase?): LocalDate? = currentOptions.dailyContactTestingOptInDateForIsolation
+    override fun getDailyContactTestingOptInDate(contactCase: ContactCase?): LocalDate? =
+        currentOptions.dailyContactTestingOptInDateForIsolation
 
     private fun getTestResult(): AcknowledgedTestResult? = currentOptions.acknowledgedTestResult
 }

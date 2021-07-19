@@ -26,10 +26,10 @@ import uk.nhs.nhsx.covid19.android.app.util.adapters.ColorSchemeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.ContentBlockTypeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
+import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalInformationAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalMessageTypeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.PolicyIconAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.RiskyVenueMessageTypeAdapter
-import uk.nhs.nhsx.covid19.android.app.util.adapters.TranslatableLocalMessageAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.TranslatableStringAdapter
 import uk.nhs.riskscore.ObservationType
 import uk.nhs.riskscore.ObservationType.gen
@@ -188,7 +188,6 @@ class NetworkModule(
             .add(LocalDateAdapter())
             .add(InstantAdapter())
             .add(TranslatableStringAdapter())
-            .add(TranslatableLocalMessageAdapter())
             .add(PolicyIconAdapter())
             .add(ColorSchemeAdapter())
             .add(RiskyVenueMessageTypeAdapter())
@@ -198,6 +197,7 @@ class NetworkModule(
                 ObservationType::class.java,
                 EnumJsonAdapter.create(ObservationType::class.java).withUnknownFallback(gen)
             )
+            .add(LocalInformationAdapter())
             .add(AnalyticsLogStorage.analyticsLogItemAdapter)
             .build()
     }

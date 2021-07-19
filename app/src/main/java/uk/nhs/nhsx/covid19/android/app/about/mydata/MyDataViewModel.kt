@@ -1,9 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.about.mydata
 
-import androidx.lifecycle.viewModelScope
 import com.jeroenmols.featureflag.framework.FeatureFlag.DAILY_CONTACT_TESTING
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
-import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
@@ -22,15 +20,13 @@ class MyDataViewModel @Inject constructor(
 ) : BaseMyDataViewModel() {
 
     override fun onResume() {
-        viewModelScope.launch {
-            val updatedViewState = MyDataState(
-                isolationState = getIsolationState(),
-                lastRiskyVenueVisitDate = getLastRiskyVenueVisitDate(),
-                acknowledgedTestResult = stateMachine.readState().indexInfo?.testResult
-            )
-            if (myDataStateLiveData.value != updatedViewState) {
-                myDataStateLiveData.postValue(updatedViewState)
-            }
+        val updatedViewState = MyDataState(
+            isolationState = getIsolationState(),
+            lastRiskyVenueVisitDate = getLastRiskyVenueVisitDate(),
+            acknowledgedTestResult = stateMachine.readState().indexInfo?.testResult
+        )
+        if (myDataStateLiveData.value != updatedViewState) {
+            myDataStateLiveData.postValue(updatedViewState)
         }
     }
 
@@ -49,7 +45,8 @@ class MyDataViewModel @Inject constructor(
                 )
         }
 
-    override fun getLastRiskyVenueVisitDate(): LocalDate? = lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue?.latestDate
+    override fun getLastRiskyVenueVisitDate(): LocalDate? =
+        lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue?.latestDate
 
     override fun getDailyContactTestingOptInDate(contactCase: ContactCase?): LocalDate? =
         if (RuntimeBehavior.isFeatureEnabled(DAILY_CONTACT_TESTING)) {

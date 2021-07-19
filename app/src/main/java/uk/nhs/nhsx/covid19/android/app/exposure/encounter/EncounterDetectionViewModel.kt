@@ -3,8 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AcknowledgedStartOfIsolationDueToRiskyContact
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionViewModel.ExposedNotificationResult.ConsentConfirmation
@@ -24,12 +22,10 @@ class EncounterDetectionViewModel @Inject constructor(
 ) : ViewModel() {
 
     fun getIsolationDays() {
-        viewModelScope.launch {
-            val state = isolationStateMachine.readLogicalState()
-            if (state.isActiveIsolation(clock)) {
-                val isolationDays = isolationStateMachine.remainingDaysInIsolation().toInt()
-                resultLiveData.postValue(IsolationDurationDays(isolationDays))
-            }
+        val state = isolationStateMachine.readLogicalState()
+        if (state.isActiveIsolation(clock)) {
+            val isolationDays = isolationStateMachine.remainingDaysInIsolation().toInt()
+            resultLiveData.postValue(IsolationDurationDays(isolationDays))
         }
     }
 
@@ -38,13 +34,11 @@ class EncounterDetectionViewModel @Inject constructor(
     fun isolationState(): LiveData<ExposedNotificationResult> = resultLiveData
 
     fun confirmConsent() {
-        viewModelScope.launch {
-            exposureNotificationRetryAlarmController.cancel()
-            shouldShowEncounterDetectionActivityProvider.value = null
-            analyticsEventProcessor.track(AcknowledgedStartOfIsolationDueToRiskyContact)
+        exposureNotificationRetryAlarmController.cancel()
+        shouldShowEncounterDetectionActivityProvider.value = null
+        analyticsEventProcessor.track(AcknowledgedStartOfIsolationDueToRiskyContact)
 
-            resultLiveData.postValue(ConsentConfirmation)
-        }
+        resultLiveData.postValue(ConsentConfirmation)
     }
 
     sealed class ExposedNotificationResult {

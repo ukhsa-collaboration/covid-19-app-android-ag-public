@@ -32,19 +32,35 @@
             android:text="@string/venue_alert_m2_title" />
 
         <TextView
-            android:id="@+id/venueAlertM2subtitle"
             style="@style/Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+            android:layout_marginTop="@dimen/vertical_margin"
+            android:text="@string/venue_alert_m2_paragraph_above_description" />
+
+        <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/vertical_margin"
-            android:text="@string/venue_alert_m2_explanation" />
+            android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+            app:rawText="@string/venue_alert_m2_details"
+            app:showBulletPoints="true" />
+
+        <TextView
+            style="@style/Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+            android:layout_marginTop="@dimen/vertical_margin"
+            android:text="@string/venue_alert_m2_paragraph_below_description" />
 
         <Button
             android:id="@+id/buttonBookTest"
             style="@style/PrimaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/vertical_margin"
+            android:layout_marginTop="@dimen/vertical_margin"
             android:text="@string/book_free_test" />
 
         <Button

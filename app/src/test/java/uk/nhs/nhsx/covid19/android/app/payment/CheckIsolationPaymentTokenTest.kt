@@ -58,7 +58,7 @@ class CheckIsolationPaymentTokenTest {
 
         testSubject()
 
-        coVerify { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
+        verify { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
     }
 
     @Test
@@ -78,7 +78,7 @@ class CheckIsolationPaymentTokenTest {
 
             coVerify { isolationPaymentApi.createToken(IsolationPaymentCreateTokenRequest(ENGLAND)) }
             verify { isolationPaymentTokenProvider setProperty "tokenState" value eq(Unresolved) }
-            coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
+            verify(exactly = 0) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
         }
 
     @Test
@@ -97,7 +97,7 @@ class CheckIsolationPaymentTokenTest {
 
             coVerify { isolationPaymentApi.createToken(IsolationPaymentCreateTokenRequest(ENGLAND)) }
             verify { isolationPaymentTokenProvider setProperty "tokenState" value eq(Token(token)) }
-            coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
+            verify(exactly = 1) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
         }
 
     @Test
@@ -116,7 +116,7 @@ class CheckIsolationPaymentTokenTest {
 
             coVerify { isolationPaymentApi.createToken(IsolationPaymentCreateTokenRequest(WALES)) }
             verify { isolationPaymentTokenProvider setProperty "tokenState" value eq(Token(token)) }
-            coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
+            verify(exactly = 1) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
         }
 
     @Test
@@ -135,7 +135,7 @@ class CheckIsolationPaymentTokenTest {
 
             coVerify { isolationPaymentApi.createToken(IsolationPaymentCreateTokenRequest(ENGLAND)) }
             verify { isolationPaymentTokenProvider setProperty "tokenState" value eq(Disabled) }
-            coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
+            verify(exactly = 0) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
         }
 
     @Test
@@ -149,7 +149,7 @@ class CheckIsolationPaymentTokenTest {
 
             coVerify(exactly = 0) { isolationPaymentApi.createToken(any()) }
             verify(exactly = 0) { isolationPaymentTokenProvider setProperty "tokenState" value any<IsolationPaymentTokenState>() }
-            coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
+            verify(exactly = 0) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
         }
 
     @Test
@@ -161,7 +161,7 @@ class CheckIsolationPaymentTokenTest {
 
         coVerify(exactly = 0) { isolationPaymentApi.createToken(any()) }
         verify(exactly = 0) { isolationPaymentTokenProvider setProperty "tokenState" value any<IsolationPaymentTokenState>() }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
+        verify(exactly = 0) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
     }
 
     @Test
@@ -173,7 +173,7 @@ class CheckIsolationPaymentTokenTest {
 
         coVerify(exactly = 0) { isolationPaymentApi.createToken(any()) }
         verify(exactly = 0) { isolationPaymentTokenProvider setProperty "tokenState" value any<IsolationPaymentTokenState>() }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
+        verify(exactly = 0) { analyticsEventProcessor.track(ReceivedActiveIpcToken) }
     }
 
     @Test

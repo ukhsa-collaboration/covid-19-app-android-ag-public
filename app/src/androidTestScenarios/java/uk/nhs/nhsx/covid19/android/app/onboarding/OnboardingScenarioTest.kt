@@ -4,8 +4,12 @@ import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import org.junit.After
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
+import uk.nhs.nhsx.covid19.android.app.report.Reported
 import uk.nhs.nhsx.covid19.android.app.report.Reporter
+import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
@@ -18,7 +22,8 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.WelcomeRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.edgecases.AgeRestrictionRobot
 
-class OnboardingScenarioTest : EspressoTest() {
+@RunWith(Parameterized::class)
+class OnboardingScenarioTest(override val configuration: TestConfiguration) : EspressoTest() {
 
     private val welcomeRobot = WelcomeRobot()
     private val postCodeRobot = PostCodeRobot()
@@ -35,6 +40,7 @@ class OnboardingScenarioTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun onboardingSuccessful_batteryOptimizationFeatureDisabled_navigateToStatusScreen() = reporter(
         "Onboarding",
         "Happy path - confirm local authority (battery optimization feature disabled)",
@@ -54,6 +60,7 @@ class OnboardingScenarioTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun onboardingSuccessful_batteryOptimizationFeatureEnabled_navigateToStatusScreen() = reporter(
         "Onboarding",
         "Happy path - confirm local authority (battery optimization feature enabled)",
@@ -150,6 +157,7 @@ class OnboardingScenarioTest : EspressoTest() {
 
     @RetryFlakyTest
     @Test
+    @Reported
     fun onboardingAgeConfirmationNegative_showAgeRestrictionScreen() = reporter(
         "Onboarding",
         "User not 16+",
@@ -186,6 +194,7 @@ class OnboardingScenarioTest : EspressoTest() {
 
     @RetryFlakyTest
     @Test
+    @Reported
     fun onboardingFailedBecauseInvalidPostcodeEntered_showInvalidPostcodeError() = reporter(
         "Onboarding",
         "Invalid postcode",
@@ -222,6 +231,7 @@ class OnboardingScenarioTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun userEntersNotSupportedPostCode_shouldSeeErrorMessage() = reporter(
         "Onboarding",
         "Unsupported postcode",

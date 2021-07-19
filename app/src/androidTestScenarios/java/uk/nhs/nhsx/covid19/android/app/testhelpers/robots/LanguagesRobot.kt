@@ -11,7 +11,6 @@ import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.platform.app.InstrumentationRegistry
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
@@ -22,8 +21,6 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.compose
 import uk.nhs.nhsx.covid19.android.app.testhelpers.recyclerViewItemDiscriminatorMatcher
 
 class LanguagesRobot {
-
-    private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     fun checkActivityIsDisplayed() {
         onView(withId(R.id.languagesContainer))

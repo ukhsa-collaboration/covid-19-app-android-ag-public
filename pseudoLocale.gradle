@@ -1,0 +1,26 @@
+task generatePseudoLocaleForStringIds {
+    def strings = new XmlParser().parse("app/src/main/res/values/strings.xml")
+
+    // update regular strings
+    strings.string.each { it.value = it.@name }
+
+    // update plurals
+    strings.plurals.each { plurals ->
+        plurals.item.each { it.value = plurals.@name + "|" + it.@quantity }
+    }
+
+    def outputDir = new File("app/src/scenarios/res/values-non")
+    outputDir.mkdirs()
+    def outputFile = new File(outputDir, "strings.xml")
+    outputFile.withWriter { out ->
+        def printer = new XmlNodePrinter(new PrintWriter(out))
+        printer.preserveWhitespace = true
+        printer.print(strings)
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'compileScenariosDebugSources' || task.name == 'compileScenariosReleaseSources') {
+        task.dependsOn generatePseudoLocaleForStringIds
+    }
+}

@@ -5,6 +5,7 @@ import androidx.lifecycle.Observer
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -15,6 +16,8 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationPermissionHelper
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
+import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingHubViewModel.NavigationTarget
+import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingHubViewModel.NavigationTarget.WhenNotToPauseContactTracing
 import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingHubViewModel.ViewState
 import java.time.Duration
 
@@ -31,28 +34,32 @@ class ContactTracingHubViewModelTest {
     private val exposureNotificationPermissionHelper = mockk<ExposureNotificationPermissionHelper>(relaxUnitFun = true)
 
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxUnitFun = true)
-
-    private lateinit var testSubject: ContactTracingHubViewModel
+    private val navigationTargetObserver = mockk<Observer<NavigationTarget>>(relaxUnitFun = true)
 
     @Before
     fun setUp() {
         every {
             exposureNotificationPermissionHelperFactory.create(any(), any())
         } returns exposureNotificationPermissionHelper
+    }
 
-        testSubject = ContactTracingHubViewModel(
+    private fun createTestSubject(shouldTurnOnContactTracing: Boolean = false): ContactTracingHubViewModel {
+        val testSubject = ContactTracingHubViewModel(
             exposureNotificationManager,
             notificationProvider,
             scheduleContactTracingActivationReminder,
+            shouldTurnOnContactTracing,
             exposureNotificationPermissionHelperFactory
         )
-
         testSubject.viewState.observeForever(viewStateObserver)
+        return testSubject
     }
 
     @Test
     fun `when onResume is called with exposure notifications enabled`() {
         coEvery { exposureNotificationManager.isEnabled() } returns true
+
+        val testSubject = createTestSubject()
 
         testSubject.onResume()
 
@@ -64,6 +71,8 @@ class ContactTracingHubViewModelTest {
     @Test
     fun `when onResume is called with exposure notifications disabled`() {
         coEvery { exposureNotificationManager.isEnabled() } returns false
+
+        val testSubject = createTestSubject()
 
         testSubject.onResume()
 
@@ -77,6 +86,8 @@ class ContactTracingHubViewModelTest {
         val expectedRequestCode = 1234
         val expectedResultCode = 5678
 
+        val testSubject = createTestSubject()
+
         testSubject.onActivityResult(expectedRequestCode, expectedResultCode)
 
         verify { exposureNotificationPermissionHelper.onActivityResult(expectedRequestCode, expectedResultCode) }
@@ -86,6 +97,8 @@ class ContactTracingHubViewModelTest {
     fun `when exposure notifications are enabled and notification channel is disabled and toggle is clicked then stop exposure notifications`() {
         coEvery { exposureNotificationManager.isEnabled() } returns true andThen false
         every { notificationProvider.isChannelEnabled(any()) } returns false
+
+        val testSubject = createTestSubject()
 
         testSubject.onContactTracingToggleClicked()
 
@@ -100,6 +113,8 @@ class ContactTracingHubViewModelTest {
         coEvery { exposureNotificationManager.isEnabled() } returns false
         every { notificationProvider.isChannelEnabled(any()) } returns false
 
+        val testSubject = createTestSubject()
+
         testSubject.onContactTracingToggleClicked()
 
         coVerify(exactly = 0) { exposureNotificationManager.stopExposureNotifications() }
@@ -110,6 +125,8 @@ class ContactTracingHubViewModelTest {
     fun `when exposure notifications and notification channel are enabled and toggle is clicked then show reminder dialog`() {
         coEvery { exposureNotificationManager.isEnabled() } returns true
         every { notificationProvider.isChannelEnabled(any()) } returns true
+
+        val testSubject = createTestSubject()
 
         testSubject.onContactTracingToggleClicked()
 
@@ -124,6 +141,8 @@ class ContactTracingHubViewModelTest {
         coEvery { exposureNotificationManager.isEnabled() } returns false
 
         val expectedDuration = Duration.ofHours(4)
+
+        val testSubject = createTestSubject()
 
         testSubject.onReminderDelaySelected(expectedDuration)
 
@@ -140,6 +159,8 @@ class ContactTracingHubViewModelTest {
     fun `when exposure dialog is dismissed then update view state`() {
         coEvery { exposureNotificationManager.isEnabled() } returns true
         every { notificationProvider.isChannelEnabled(any()) } returns true
+
+        val testSubject = createTestSubject()
 
         testSubject.onContactTracingToggleClicked()
 
@@ -158,10 +179,12 @@ class ContactTracingHubViewModelTest {
     }
 
     @Test
-    fun `when turn on contract tracing extra received is true start exposure notifications`() {
+    fun `onCreate when turn on contract tracing extra received is true start exposure notifications`() {
         coEvery { exposureNotificationManager.isEnabled() } returns true
 
-        testSubject.onTurnOnContactTracingExtraReceived()
+        val testSubject = createTestSubject(shouldTurnOnContactTracing = true)
+
+        testSubject.onCreate()
 
         verify { exposureNotificationPermissionHelper.startExposureNotifications() }
 
@@ -171,5 +194,25 @@ class ContactTracingHubViewModelTest {
                 ViewState(exposureNotificationEnabled = true, showReminderDialog = false)
             )
         }
+    }
+
+    @Test
+    fun `onCreate when turn on contract tracing extra received is false do not start exposure notifications`() {
+        val testSubject = createTestSubject(shouldTurnOnContactTracing = false)
+
+        testSubject.onCreate()
+
+        confirmVerified(exposureNotificationPermissionHelper, viewStateObserver)
+    }
+
+    @Test
+    fun `when onWhenNotToPauseClicked then emit WhenNotToPauseContactTracing navigation target`() {
+        val testSubject = createTestSubject()
+
+        testSubject.navigationTarget().observeForever(navigationTargetObserver)
+
+        testSubject.onWhenNotToPauseClicked()
+
+        verify { navigationTargetObserver.onChanged(WhenNotToPauseContactTracing) }
     }
 }

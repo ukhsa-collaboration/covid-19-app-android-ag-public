@@ -39,8 +39,8 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTask.PERIODIC_TASKS
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.Error
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.ResolutionRequired
@@ -184,14 +184,13 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
         WorkManager.getInstance(requireContext())
             .getWorkInfosForUniqueWorkLiveData(PERIODIC_TASKS.workName)
             .observe(viewLifecycleOwner) {
-                requireActivity().runOnUiThread {
-                    it?.let { workInfos ->
-                        if (workInfos.any { workInfo -> workInfo.state == ENQUEUED }) {
-                            startDownloadTask.isEnabled = true
-                        }
-                        if (workInfos.any { workInfo -> workInfo.state == RUNNING }) {
-                            startDownloadTask.isEnabled = false
-                        }
+                val startDownloadTask = startDownloadTask ?: return@observe
+                it?.let { workInfos ->
+                    if (workInfos.any { workInfo -> workInfo.state == ENQUEUED }) {
+                        startDownloadTask.isEnabled = true
+                    }
+                    if (workInfos.any { workInfo -> workInfo.state == RUNNING }) {
+                        startDownloadTask.isEnabled = false
                     }
                 }
             }

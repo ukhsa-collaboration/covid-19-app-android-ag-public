@@ -2,16 +2,15 @@ package uk.nhs.nhsx.covid19.android.app.status
 
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
-import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessage
-import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessageType.NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.remote.data.LocalInformation.Notification
 import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessagesResponse
 import javax.inject.Inject
 
 class GetFirstMessageOfTypeNotification @Inject constructor(
     private val localAuthorityProvider: LocalAuthorityProvider,
-    private val substitutePlaceholdersInMessageWithId: SubstitutePlaceholdersInMessageWithId
+    private val substitutePlaceholdersInNotificationWithId: SubstitutePlaceholdersInNotificationWithId
 ) {
-    suspend operator fun invoke(localMessagesResponse: LocalMessagesResponse?): MessageWithId? {
+    suspend operator fun invoke(localMessagesResponse: LocalMessagesResponse?): NotificationWithId? {
         if (localMessagesResponse == null) return null
 
         val localAuthority = localAuthorityProvider.value
@@ -27,7 +26,7 @@ class GetFirstMessageOfTypeNotification @Inject constructor(
             ?: localMessagesResponse.firstNotificationMessageMatchingIds(messageIdsForWildcard)
 
         return message
-            ?.let { substitutePlaceholdersInMessageWithId(it) }
+            ?.let { substitutePlaceholdersInNotificationWithId(it) }
     }
 
     private fun containsNoMessageIds(messageIds: List<String>?) =
@@ -35,15 +34,15 @@ class GetFirstMessageOfTypeNotification @Inject constructor(
 
     private fun LocalMessagesResponse.firstNotificationMessageMatchingIds(
         messageIdsForLocalAuthority: List<String>?
-    ): MessageWithId? =
+    ): NotificationWithId? =
         if (messageIdsForLocalAuthority == null) null
         else messageIdsForLocalAuthority
-            .firstOrNull { messages.containsKey(it) && messages[it]!!.type == NOTIFICATION }
-            ?.let { MessageWithId(messageId = it, message = messages[it]!!) }
+            .firstOrNull { messages.containsKey(it) && messages[it] is Notification }
+            ?.let { NotificationWithId(messageId = it, message = messages[it]!! as Notification) }
 
     companion object {
         private const val WILDCARD = "*"
     }
 }
 
-data class MessageWithId(val messageId: String, val message: LocalMessage)
+data class NotificationWithId(val messageId: String, val message: Notification)

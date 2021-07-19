@@ -6,7 +6,6 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.WelcomeRobot
@@ -22,7 +21,7 @@ class WelcomeActivityTest : EspressoTest() {
     }
 
     @Test
-    fun onboardingNotFinishedAndAppStarted_shouldDisplayOnboardingWelcomeScreen() = notReported {
+    fun onboardingNotFinishedAndAppStarted_shouldDisplayOnboardingWelcomeScreen() {
         testAppContext.setPostCode(null)
 
         startTestActivity<WelcomeActivity>()
@@ -31,7 +30,7 @@ class WelcomeActivityTest : EspressoTest() {
     }
 
     @Test
-    fun onboardingOnFirstStart_navigatesToWelcomeScreen() = notReported {
+    fun onboardingOnFirstStart_navigatesToWelcomeScreen() {
         testAppContext.setExposureNotificationsEnabled(false)
         testAppContext.setPostCode(null)
         testAppContext.setOnboardingCompleted(false)
@@ -43,7 +42,7 @@ class WelcomeActivityTest : EspressoTest() {
 
     @RetryFlakyTest
     @Test
-    fun onWelcomeActivity_userClicksConfirmAndSeesAgeConfirmationDialog() = notReported {
+    fun onWelcomeActivity_userClicksConfirmAndSeesAgeConfirmationDialog() {
         startTestActivity<WelcomeActivity>()
 
         welcomeRobot.checkActivityIsDisplayed()

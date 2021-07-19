@@ -70,7 +70,7 @@ class QrScannerViewModelTest {
 
         sut.parseQrCode(QR_CODE_PAYLOAD_VALID)
 
-        coVerify { analyticsManager.track(QrCodeCheckIn) }
+        verify { analyticsManager.track(QrCodeCheckIn) }
     }
 
     private fun mockValidVenue(): Venue {

@@ -17,8 +17,8 @@ import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertProvider
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesCircuitBreakerApi
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueConfigurationDurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesCircuitBreakerPollingResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesCircuitBreakerResponse
@@ -180,13 +180,13 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
         testSubject()
 
-        verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
+        verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification(INFORM) }
         verify(exactly = 1) {
             riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(firstVenueId, INFORM))
         }
         verify(exactly = 1) { riskyVenuePollingConfigurationProvider.remove(configuration) }
         verify(exactly = 0) { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = any() }
-        coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM1Warning) }
+        verify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM1Warning) }
     }
 
     @Test
@@ -198,13 +198,13 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
         testSubject()
 
-        verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification() }
+        verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification(any()) }
         verify(exactly = 0) {
             riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(firstVenueId, INFORM))
         }
         verify(exactly = 1) { riskyVenuePollingConfigurationProvider.remove(configuration) }
         verify(exactly = 0) { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = any() }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
+        verify(exactly = 0) { analyticsEventProcessor.track(any()) }
     }
 
     @Test
@@ -216,13 +216,13 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
         testSubject()
 
-        verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification() }
+        verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification(any()) }
         verify(exactly = 0) {
             riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(firstVenueId, INFORM))
         }
         verify(exactly = 0) { riskyVenuePollingConfigurationProvider.remove(configuration) }
         verify(exactly = 0) { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = any() }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
+        verify(exactly = 0) { analyticsEventProcessor.track(any()) }
     }
 
     @Test
@@ -248,7 +248,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
             }
             verify(exactly = 0) { riskyVenuePollingConfigurationProvider.remove(pollingConfigurations[0]) }
             verify(exactly = 1) { shouldShowRiskyVenueNotification(BOOK_TEST) }
-            verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
+            verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification(BOOK_TEST) }
             verify(exactly = 1) {
                 riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(secondVenueAlert)
             }
@@ -259,7 +259,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
                     riskyVenueConfigurationDurationDays
                 )
             }
-            coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM2Warning) }
+            verify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM2Warning) }
         }
 
     @Test
@@ -283,13 +283,13 @@ class RiskyVenuesCircuitBreakerPollingTest {
                 riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(firstVenueAlert)
             }
             verify(exactly = 0) { riskyVenuePollingConfigurationProvider.remove(pollingConfigurations[0]) }
-            verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification() }
+            verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification(any()) }
             verify(exactly = 0) {
                 riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(secondVenueAlert)
             }
             verify(exactly = 1) { riskyVenuePollingConfigurationProvider.remove(pollingConfigurations[1]) }
             verify(exactly = 0) { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = any() }
-            coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
+            verify(exactly = 0) { analyticsEventProcessor.track(any()) }
         }
 
     @Test
@@ -304,7 +304,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
         testSubject()
 
-        verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
+        verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification(INFORM) }
         verify(exactly = 1) { shouldShowRiskyVenueNotification.invoke(INFORM) }
         verify(exactly = 1) {
             riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(secondVenueId, INFORM))
@@ -314,7 +314,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
         }
         verify(exactly = 2) { riskyVenuePollingConfigurationProvider.remove(any()) }
         verify(exactly = 0) { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = any() }
-        coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM1Warning) }
+        verify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM1Warning) }
     }
 
     @Test
@@ -331,7 +331,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
         testSubject()
 
         verify(exactly = 1) { shouldShowRiskyVenueNotification.invoke(BOOK_TEST) }
-        verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
+        verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification(BOOK_TEST) }
         verify(exactly = 1) {
             riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(secondVenueId, BOOK_TEST))
         }
@@ -345,7 +345,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
                 riskyVenueConfigurationDurationDays
             )
         }
-        coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM2Warning) }
+        verify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM2Warning) }
     }
 
     @Test
@@ -363,7 +363,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
             testSubject()
 
             verify(exactly = 1) { shouldShowRiskyVenueNotification.invoke(BOOK_TEST) }
-            verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
+            verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification(BOOK_TEST) }
             verify(exactly = 1) {
                 riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(secondVenueId, BOOK_TEST))
             }
@@ -377,7 +377,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
                     riskyVenueConfigurationDurationDays
                 )
             }
-            coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM2Warning) }
+            verify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM2Warning) }
         }
 
     @Test
@@ -394,7 +394,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
         testSubject()
 
         verify(exactly = 1) { shouldShowRiskyVenueNotification.invoke(BOOK_TEST) }
-        verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
+        verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification(BOOK_TEST) }
         verify(exactly = 1) {
             riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(firstVenueId, BOOK_TEST))
         }
@@ -408,7 +408,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
                 riskyVenueConfigurationDurationDays
             )
         }
-        coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM2Warning) }
+        verify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM2Warning) }
     }
 
     @Test
@@ -425,7 +425,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
         testSubject()
 
         verify(exactly = 1) { shouldShowRiskyVenueNotification.invoke(BOOK_TEST) }
-        verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification() }
+        verify(exactly = 1) { notificationProvider.showRiskyVenueVisitNotification(BOOK_TEST) }
         verify(exactly = 1) {
             riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(secondVenueId, BOOK_TEST))
         }
@@ -439,7 +439,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
                 riskyVenueConfigurationDurationDays
             )
         }
-        coVerify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM2Warning) }
+        verify(exactly = 1) { analyticsEventProcessor.track(ReceivedRiskyVenueM2Warning) }
     }
 
     @Test
@@ -452,7 +452,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
         testSubject()
 
-        verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification() }
+        verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification(any()) }
         verify(exactly = 0) {
             riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(firstVenueId, INFORM))
         }
@@ -460,7 +460,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
         verify(exactly = 0) {
             riskyVenuePollingConfigurationProvider.add(any())
         }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
+        verify(exactly = 0) { analyticsEventProcessor.track(any()) }
     }
 
     @Test
@@ -474,7 +474,7 @@ class RiskyVenuesCircuitBreakerPollingTest {
 
         testSubject()
 
-        verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification() }
+        verify(exactly = 0) { notificationProvider.showRiskyVenueVisitNotification(any()) }
         verify(exactly = 0) {
             riskyVenueAlertProvider setProperty "riskyVenueAlert" value eq(RiskyVenueAlert(firstVenueId, INFORM))
         }
@@ -482,6 +482,6 @@ class RiskyVenuesCircuitBreakerPollingTest {
         verify(exactly = 2) {
             riskyVenuePollingConfigurationProvider.add(any())
         }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
+        verify(exactly = 0) { analyticsEventProcessor.track(any()) }
     }
 }

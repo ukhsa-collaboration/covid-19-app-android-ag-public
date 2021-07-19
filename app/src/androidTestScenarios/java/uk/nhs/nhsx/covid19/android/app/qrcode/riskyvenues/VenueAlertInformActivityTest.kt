@@ -6,8 +6,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlert
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
-import uk.nhs.nhsx.covid19.android.app.report.notReported
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.VenueAlertInformRobot
 import java.time.Instant
@@ -32,35 +31,35 @@ class VenueAlertInformActivityTest : EspressoTest() {
     }
 
     @Test
-    fun venueScreenShowingCorrectly() = notReported {
+    fun venueScreenShowingCorrectly() {
         startActivity("1")
 
         venueAlertInformRobot.checkVenueTitleIsDisplayed()
     }
 
     @Test
-    fun venueScreenFinishesIfVenueIsNoLongerStored() = notReported {
+    fun venueScreenFinishesIfVenueIsNoLongerStored() {
         val activity = startActivity("UNKNOWN")
 
         waitFor { assertTrue(activity!!.isDestroyed) }
     }
 
     @Test
-    fun venueScreenFinishesIfVenueIsNull() = notReported {
+    fun venueScreenFinishesIfVenueIsNull() {
         val activity = startTestActivity<VenueAlertInformActivity>()
 
         waitFor { assertTrue(activity!!.isDestroyed) }
     }
 
     @Test
-    fun venueScreenFinishesIfVenueIsEmpty() = notReported {
+    fun venueScreenFinishesIfVenueIsEmpty() {
         val activity = startActivity("")
 
         waitFor { assertTrue(activity!!.isDestroyed) }
     }
 
     @Test
-    fun venueScreenFinishesWhenClickingReturnHome() = notReported {
+    fun venueScreenFinishesWhenClickingReturnHome() {
         testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", INFORM)
 
         val activity = startActivity("1")
@@ -73,7 +72,7 @@ class VenueAlertInformActivityTest : EspressoTest() {
     }
 
     @Test
-    fun venueScreenFinishesWhenClickingBackButton() = notReported {
+    fun venueScreenFinishesWhenClickingBackButton() {
         testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", INFORM)
 
         val activity = startActivity("1")

@@ -64,15 +64,13 @@ class VenueHistoryViewModel @Inject constructor(
     }
 
     fun onEditVenueVisitClicked() {
-        viewModelScope.launch {
-            val toggleIsInEditMode = !venueHistoryStateLiveData.value!!.isInEditMode
-            venueHistoryStateLiveData.postValue(
-                venueHistoryStateLiveData.value!!.copy(
-                    isInEditMode = toggleIsInEditMode
-                )
+        val toggleIsInEditMode = !venueHistoryStateLiveData.value!!.isInEditMode
+        venueHistoryStateLiveData.postValue(
+            venueHistoryStateLiveData.value!!.copy(
+                isInEditMode = toggleIsInEditMode
             )
-            venueVisitsEditModeChangedLiveData.postValue(toggleIsInEditMode)
-        }
+        )
+        venueVisitsEditModeChangedLiveData.postValue(toggleIsInEditMode)
     }
 
     data class VenueHistoryState(

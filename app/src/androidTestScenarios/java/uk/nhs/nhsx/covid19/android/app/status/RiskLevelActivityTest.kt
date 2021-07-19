@@ -7,7 +7,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.Policy
 import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyData
 import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyIcon
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity.Companion.EXTRA_RISK_LEVEL
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Risk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
@@ -39,7 +38,7 @@ class RiskLevelActivityTest : EspressoTest() {
     )
 
     @Test
-    fun testRiskLevelLow_notFromLocalAuthority() = notReported {
+    fun testRiskLevelLow_notFromLocalAuthority() {
         startTestActivity<RiskLevelActivity> {
             putExtra(
                 EXTRA_RISK_LEVEL,
@@ -69,7 +68,7 @@ class RiskLevelActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testRiskLevelMedium_notFromLocalAuthority() = notReported {
+    fun testRiskLevelMedium_notFromLocalAuthority() {
         startTestActivity<RiskLevelActivity> {
             putExtra(
                 EXTRA_RISK_LEVEL,
@@ -99,7 +98,7 @@ class RiskLevelActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testRiskLevelHigh_notFromLocalAuthority() = notReported {
+    fun testRiskLevelHigh_notFromLocalAuthority() {
         startTestActivity<RiskLevelActivity> {
             putExtra(
                 EXTRA_RISK_LEVEL,
@@ -129,7 +128,7 @@ class RiskLevelActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testRiskLevelHigh() = notReported {
+    fun testRiskLevelHigh() {
         startTestActivity<RiskLevelActivity> {
             putExtra(
                 EXTRA_RISK_LEVEL,
@@ -167,7 +166,7 @@ class RiskLevelActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testRiskLevelUnknown() = notReported {
+    fun testRiskLevelUnknown() {
         val activity = startTestActivity<RiskLevelActivity> {
             putExtra(
                 EXTRA_RISK_LEVEL,
@@ -179,7 +178,7 @@ class RiskLevelActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testRiskLevelTierFour() = notReported {
+    fun testRiskLevelTierFour() {
         startTestActivity<RiskLevelActivity> {
             putExtra(
                 EXTRA_RISK_LEVEL,
@@ -218,7 +217,7 @@ class RiskLevelActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testRiskLevelFive() = notReported {
+    fun testRiskLevelFive() {
         startTestActivity<RiskLevelActivity> {
             putExtra(EXTRA_RISK_LEVEL, getTierFiveRisk(postCode))
         }
@@ -235,7 +234,7 @@ class RiskLevelActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testPostDistrictInEngland_riskIndicatorContainsPolicyInfo_showMassTestingInformation() = notReported {
+    fun testPostDistrictInEngland_riskIndicatorContainsPolicyInfo_showMassTestingInformation() {
         testAppContext.setPostCode("BN10")
         testAppContext.setLocalAuthority("E07000063")
 
@@ -249,7 +248,7 @@ class RiskLevelActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testPostDistrictIsNotInEngland_doNotShowMassTestingInformation() = notReported {
+    fun testPostDistrictIsNotInEngland_doNotShowMassTestingInformation() {
         testAppContext.setPostCode("NP10")
         testAppContext.setLocalAuthority("W06000018")
 
@@ -263,21 +262,20 @@ class RiskLevelActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testPostDistrictInEngland_riskIndicatorDoesNotContainPolicyInfo_showMassTestingInformation() =
-        notReported {
-            testAppContext.setPostCode("BN10")
-            testAppContext.setLocalAuthority("E07000063")
+    fun testPostDistrictInEngland_riskIndicatorDoesNotContainPolicyInfo_showMassTestingInformation() {
+        testAppContext.setPostCode("BN10")
+        testAppContext.setLocalAuthority("E07000063")
 
-            val risk = getTierFiveRisk("BN10")
+        val risk = getTierFiveRisk("BN10")
 
-            startTestActivity<RiskLevelActivity> {
-                putExtra(EXTRA_RISK_LEVEL, risk.copy(riskIndicator = risk.riskIndicator.copy(policyData = null)))
-            }
-
-            riskLevelRobot.checkActivityIsDisplayed()
-
-            riskLevelRobot.checkMassTestingIsDisplayed()
+        startTestActivity<RiskLevelActivity> {
+            putExtra(EXTRA_RISK_LEVEL, risk.copy(riskIndicator = risk.riskIndicator.copy(policyData = null)))
         }
+
+        riskLevelRobot.checkActivityIsDisplayed()
+
+        riskLevelRobot.checkMassTestingIsDisplayed()
+    }
 
     private fun getTierFiveRisk(postCode: String) = Risk(
         postCode,

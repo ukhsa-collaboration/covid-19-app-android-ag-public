@@ -92,7 +92,7 @@ class SettingsViewModelTest {
     @Test
     fun `load settings without user language`() {
         every { applicationLocaleProvider.getUserSelectedLanguage() } returns null
-        every { applicationLocaleProvider.getSystemLanguage() } returns ENGLISH
+        every { applicationLocaleProvider.getDefaultSystemLanguage() } returns ENGLISH
 
         testSubject.loadSettings()
 

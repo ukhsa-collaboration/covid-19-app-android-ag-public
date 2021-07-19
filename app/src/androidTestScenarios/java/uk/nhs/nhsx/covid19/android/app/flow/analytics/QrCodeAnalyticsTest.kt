@@ -6,7 +6,6 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.Success
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResultActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QrCodeScanResultRobot
 
 class QrCodeAnalyticsTest : AnalyticsTest() {
@@ -14,7 +13,7 @@ class QrCodeAnalyticsTest : AnalyticsTest() {
     private val qrCodeScanResultRobot = QrCodeScanResultRobot()
 
     @Test
-    fun countsNumberOfCheckIns() = notReported {
+    fun countsNumberOfCheckIns() {
         checkInQrCode()
 
         assertOnFields {
@@ -23,7 +22,7 @@ class QrCodeAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun countsNumberOfCanceledCheckIns() = notReported {
+    fun countsNumberOfCanceledCheckIns() {
         cancelQrCheckIn()
 
         assertOnFields {

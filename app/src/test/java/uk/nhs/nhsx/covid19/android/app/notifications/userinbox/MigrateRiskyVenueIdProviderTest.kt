@@ -6,7 +6,7 @@ import io.mockk.verify
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertProvider
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
 
 class MigrateRiskyVenueIdProviderTest {
 

@@ -6,7 +6,6 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockTestResultViewModel
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
@@ -138,7 +137,7 @@ class TestResultActivityStateTest : EspressoTest() {
     }
 
     @Test
-    fun showNegativeNotInIsolation() = notReported {
+    fun showNegativeNotInIsolation() {
         checkGoodNewsState(
             state = NegativeNotInIsolation,
             hasCloseToolbar = false,
@@ -153,7 +152,7 @@ class TestResultActivityStateTest : EspressoTest() {
     }
 
     @Test
-    fun showNegativeWillBeInIsolation() = notReported {
+    fun showNegativeWillBeInIsolation() {
         checkIsolationState(
             state = NegativeWillBeInIsolation,
             days = 3,
@@ -169,7 +168,7 @@ class TestResultActivityStateTest : EspressoTest() {
     }
 
     @Test
-    fun showNegativeWontBeInIsolation() = notReported {
+    fun showNegativeWontBeInIsolation() {
         checkGoodNewsState(
             state = NegativeWontBeInIsolation,
             hasCloseToolbar = false,
@@ -184,7 +183,7 @@ class TestResultActivityStateTest : EspressoTest() {
     }
 
     @Test
-    fun showPositiveContinueIsolation() = notReported {
+    fun showPositiveContinueIsolation() {
         checkIsolationState(
             state = PositiveContinueIsolation(ShareKeys(bookFollowUpTest = false)),
             days = 4,
@@ -205,7 +204,7 @@ class TestResultActivityStateTest : EspressoTest() {
     }
 
     @Test
-    fun showPositiveContinueIsolationNoChange() = notReported {
+    fun showPositiveContinueIsolationNoChange() {
         checkIsolationState(
             state = PositiveContinueIsolationNoChange,
             days = 5,
@@ -222,7 +221,7 @@ class TestResultActivityStateTest : EspressoTest() {
     }
 
     @Test
-    fun showPositiveWillBeInIsolation() = notReported {
+    fun showPositiveWillBeInIsolation() {
         checkIsolationState(
             state = PositiveWillBeInIsolation(ShareKeys(bookFollowUpTest = false)),
             days = 6,
@@ -242,7 +241,7 @@ class TestResultActivityStateTest : EspressoTest() {
     }
 
     @Test
-    fun showPositiveWontBeInIsolation() = notReported {
+    fun showPositiveWontBeInIsolation() {
         checkGoodNewsState(
             state = PositiveWontBeInIsolation(ShareKeys(bookFollowUpTest = false)),
             hasCloseToolbar = false,
@@ -257,7 +256,7 @@ class TestResultActivityStateTest : EspressoTest() {
     }
 
     @Test
-    fun showNegativeAfterPositiveOrSymptomaticWillBeInIsolation() = notReported {
+    fun showNegativeAfterPositiveOrSymptomaticWillBeInIsolation() {
         checkIsolationState(
             state = NegativeAfterPositiveOrSymptomaticWillBeInIsolation,
             days = 7,
@@ -274,7 +273,7 @@ class TestResultActivityStateTest : EspressoTest() {
     }
 
     @Test
-    fun showPositiveWillBeInIsolationAndOrderTest() = notReported {
+    fun showPositiveWillBeInIsolationAndOrderTest() {
         checkIsolationState(
             state = PositiveWillBeInIsolationAndOrderTest,
             days = 1,
@@ -292,7 +291,7 @@ class TestResultActivityStateTest : EspressoTest() {
     }
 
     @Test
-    fun showVoidNotInIsolation() = notReported {
+    fun showVoidNotInIsolation() {
         checkGoodNewsState(
             state = VoidNotInIsolation,
             hasCloseToolbar = true,
@@ -307,7 +306,7 @@ class TestResultActivityStateTest : EspressoTest() {
     }
 
     @Test
-    fun showVoidWillBeInIsolation() = notReported {
+    fun showVoidWillBeInIsolation() {
         checkIsolationState(
             state = VoidWillBeInIsolation,
             days = 8,
@@ -324,7 +323,7 @@ class TestResultActivityStateTest : EspressoTest() {
     }
 
     @Test
-    fun showPlodWillContinueWithCurrentStateScreen() = notReported {
+    fun showPlodWillContinueWithCurrentStateScreen() {
         checkGoodNewsState(
             state = PlodWillContinueWithCurrentState,
             hasCloseToolbar = true,

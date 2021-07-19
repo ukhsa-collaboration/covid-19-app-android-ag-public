@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.view_state_info.view.stateColorView
 import kotlinx.android.synthetic.main.view_state_info.view.stateTextView
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 
 class StateInfoView @JvmOverloads constructor(
     context: Context,
@@ -56,7 +57,7 @@ class StateInfoView @JvmOverloads constructor(
             0
         ).apply {
             stateColor = getColor(R.styleable.StateInfoView_stateColor, 0)
-            stateText = getString(R.styleable.StateInfoView_stateText)
+            stateText = getString(context, R.styleable.StateInfoView_stateText)
 
             stateColorView.setBackgroundColor(stateColor)
             stateTextView.text = stateText

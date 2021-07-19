@@ -21,10 +21,10 @@ import uk.nhs.nhsx.covid19.android.app.util.adapters.ColorSchemeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.ContentBlockTypeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
+import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalInformationAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalMessageTypeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.PolicyIconAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.RiskyVenueMessageTypeAdapter
-import uk.nhs.nhsx.covid19.android.app.util.adapters.TranslatableLocalMessageAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.TranslatableStringAdapter
 import uk.nhs.riskscore.ObservationType
 import uk.nhs.riskscore.ObservationType.gen
@@ -62,7 +62,7 @@ class IsolationTestContext {
         storageBasedUserInbox = mockk(relaxUnitFun = true),
         isolationExpirationAlarmController = mockk(relaxUnitFun = true),
         clock = clock,
-        analyticsEventTracker = mockk(relaxUnitFun = true),
+        analyticsEventProcessor = mockk(relaxUnitFun = true),
         exposureNotificationHandler = mockk(relaxUnitFun = true),
         keySharingInfoProvider = mockk(relaxUnitFun = true),
         createSelfAssessmentIndexCase = CreateSelfAssessmentIndexCase(),
@@ -83,7 +83,7 @@ class IsolationTestContext {
             .add(LocalDateAdapter())
             .add(InstantAdapter())
             .add(TranslatableStringAdapter())
-            .add(TranslatableLocalMessageAdapter())
+            .add(LocalInformationAdapter())
             .add(PolicyIconAdapter())
             .add(ColorSchemeAdapter())
             .add(RiskyVenueMessageTypeAdapter())

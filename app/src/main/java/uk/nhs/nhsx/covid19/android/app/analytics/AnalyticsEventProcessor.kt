@@ -1,5 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.analytics
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AcknowledgedStartOfIsolationDueToRiskyContact
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AskedToShareExposureKeysInTheInitialFlow
@@ -12,6 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShare
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DeclaredNegativeResultFromDct
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaBanner
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaNotification
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessRiskyVenueM2Notification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAskForSymptomsOnPositiveTestEntry
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidHaveSymptomsBeforeReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidRememberOnsetSymptomsDateBeforeReceivedTestResult
@@ -35,7 +38,13 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedRiskyVen
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedUnconfirmedPositiveTestResult
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.RiskyContactReminderNotification
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedHasLfdTestM2Journey
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedHasNoSymptomsM2Journey
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedHasSymptomsM2Journey
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolationPaymentsButton
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedLfdTestOrderingM2Journey
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedTakeTestLaterM2Journey
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedTakeTestM2Journey
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SuccessfullySharedExposureKeys
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.TotalAlarmManagerBackgroundTasks
@@ -54,6 +63,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSE
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DECLARED_NEGATIVE_RESULT_FROM_DCT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_RISKY_VENUE_M2_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT
@@ -75,13 +85,20 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEI
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_VENUE_M2_WARNING
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_UNCONFIRMED_POSITIVE_TEST_RESULT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RISKY_CONTACT_REMINDER_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_HAS_LFD_TEST_M2_JOURNEY
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_HAS_NO_SYMPTOMS_M2_JOURNEY
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_HAS_SYMPTOMS_M2_JOURNEY
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_ISOLATION_PAYMENTS_BUTTON
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_LFD_TEST_ORDERING_M2_JOURNEY
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_TAKE_TEST_LATER_M2_JOURNEY
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_TAKE_TEST_M2_JOURNEY
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SUCCESSFULLY_SHARED_EXPOSURE_KEYS
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.TOTAL_ALARM_MANAGER_BACKGROUND_TASKS
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.TOTAL_SHARE_EXPOSURE_KEYS_REMINDER_NOTIFICATIONS
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.VOID_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
+import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.Companion.ISOLATION_STATE_CHANNEL_ID
@@ -100,6 +117,7 @@ import uk.nhs.nhsx.covid19.android.app.util.defaultFalse
 import java.time.Clock
 import java.time.Instant
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
@@ -114,10 +132,11 @@ class AnalyticsEventProcessor @Inject constructor(
     private val lastVisitedBookTestTypeVenueDateProvider: LastVisitedBookTestTypeVenueDateProvider,
     private val onboardingCompletedProvider: OnboardingCompletedProvider,
     private val getLocalMessageFromStorage: GetLocalMessageFromStorage,
+    @Named(AppModule.APPLICATION_SCOPE) private val analyticsEventScope: CoroutineScope,
     private val clock: Clock
 ) {
 
-    suspend fun track(analyticsEvent: AnalyticsEvent) {
+    fun track(analyticsEvent: AnalyticsEvent) {
         val isOnboardingCompleted = onboardingCompletedProvider.value.defaultFalse()
         if (!isOnboardingCompleted) {
             return
@@ -125,9 +144,10 @@ class AnalyticsEventProcessor @Inject constructor(
 
         Timber.d("processing event: $analyticsEvent")
 
-        val logItem = analyticsEvent.toAnalyticsLogItem()
-
-        analyticsLogStorage.add(AnalyticsLogEntry(Instant.now(clock), logItem))
+        analyticsEventScope.launch {
+            val logItem = analyticsEvent.toAnalyticsLogItem()
+            analyticsLogStorage.add(AnalyticsLogEntry(Instant.now(clock), logItem))
+        }
     }
 
     private suspend fun AnalyticsEvent.toAnalyticsLogItem() = when (this) {
@@ -182,6 +202,13 @@ class AnalyticsEventProcessor @Inject constructor(
             Event(NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_WITHIN_TIME_LIMIT)
         NegativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit ->
             Event(NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_OUTSIDE_TIME_LIMIT)
+        DidAccessRiskyVenueM2Notification -> Event(DID_ACCESS_RISKY_VENUE_M2_NOTIFICATION)
+        SelectedTakeTestM2Journey -> Event(SELECTED_TAKE_TEST_M2_JOURNEY)
+        SelectedTakeTestLaterM2Journey -> Event(SELECTED_TAKE_TEST_LATER_M2_JOURNEY)
+        SelectedHasSymptomsM2Journey -> Event(SELECTED_HAS_SYMPTOMS_M2_JOURNEY)
+        SelectedHasNoSymptomsM2Journey -> Event(SELECTED_HAS_NO_SYMPTOMS_M2_JOURNEY)
+        SelectedLfdTestOrderingM2Journey -> Event(SELECTED_LFD_TEST_ORDERING_M2_JOURNEY)
+        SelectedHasLfdTestM2Journey -> Event(SELECTED_HAS_LFD_TEST_M2_JOURNEY)
     }
 
     private fun updateNetworkStats() = AnalyticsLogItem.UpdateNetworkStats(
@@ -199,7 +226,7 @@ class AnalyticsEventProcessor @Inject constructor(
 
             val currentState = IsolationLogicalState.from(stateStorage.state)
 
-            if (currentState is PossiblyIsolating && currentState.isActiveIsolation(clock)) {
+            if (currentState.isActiveIsolation(clock)) {
                 isIsolatingBackgroundTick = true
                 isIsolatingForHadRiskyContactBackgroundTick = currentState.isActiveContactCase(clock)
 

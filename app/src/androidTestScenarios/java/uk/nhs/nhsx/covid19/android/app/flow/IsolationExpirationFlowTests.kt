@@ -11,7 +11,6 @@ import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntr
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.receiver.ExpirationCheckReceiver
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationAlarmController
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
@@ -79,7 +78,7 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
     }
 
     @Test
-    fun startIndexCase_dayBeforeIndexExpiresBefore9pm_doNotInform_after9m_inform_acknowledgeExpiration_indexExpires_notInIsolation() = notReported {
+    fun startIndexCase_dayBeforeIndexExpiresBefore9pm_doNotInform_after9m_inform_acknowledgeExpiration_indexExpires_notInIsolation() {
         // Day before expiry, at 8pm
         testAppContext.clock.currentInstant = Instant.parse("2020-01-01T20:00:00Z")
 
@@ -125,7 +124,7 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
 
     @Test
     @RetryFlakyTest
-    fun startIndexCase_indexExpires_acknowledgeExpiration_notInIsolation() = notReported {
+    fun startIndexCase_indexExpires_acknowledgeExpiration_notInIsolation() {
         val expiryDate = LocalDate.now(testAppContext.clock)
         testAppContext.setState(
             isolationHelper.selfAssessment()

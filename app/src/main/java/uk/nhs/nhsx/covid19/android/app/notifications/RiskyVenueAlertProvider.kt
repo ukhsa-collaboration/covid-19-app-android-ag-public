@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import javax.inject.Inject
 
@@ -51,5 +51,5 @@ class RiskyVenueAlertStorage @Inject constructor(
 @JsonClass(generateAdapter = true)
 data class RiskyVenueAlert(
     val id: String,
-    val messageType: MessageType
+    val messageType: RiskyVenueMessageType
 )

@@ -7,7 +7,6 @@ import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Resu
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result.Success
 import uk.nhs.nhsx.covid19.android.app.exposure.createExposureNotificationResolutionPendingIntent
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -33,7 +32,7 @@ class TestResultShareInformationTests : EspressoTest() {
     }
 
     @Test
-    fun linkTestResult_shareKeys() = notReported {
+    fun linkTestResult_shareKeys() {
         val resolutionIntent = createExposureNotificationResolutionPendingIntent(testAppContext.app, successful = true)
         testAppContext.getExposureNotificationApi().temporaryExposureKeyHistoryResult =
             ResolutionRequired(resolutionIntent, Success())
@@ -72,7 +71,7 @@ class TestResultShareInformationTests : EspressoTest() {
     }
 
     @Test
-    fun linkTestResult_doNotShareKeys() = notReported {
+    fun linkTestResult_doNotShareKeys() {
         runBlocking {
             val resolutionIntent = createExposureNotificationResolutionPendingIntent(testAppContext.app, successful = false)
             testAppContext.getExposureNotificationApi().temporaryExposureKeyHistoryResult =

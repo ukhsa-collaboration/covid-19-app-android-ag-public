@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.browser
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -40,6 +41,9 @@ class BrowserActivity : BaseActivity(R.layout.activity_browser) {
 
         fun start(context: Context, url: String) =
             context.startActivity(getIntent(context, url))
+
+        fun startForResult(activity: Activity, url: String, requestId: Int) =
+            activity.startActivityForResult(getIntent(activity, url), requestId)
 
         private fun getIntent(context: Context, url: String) =
             Intent(context, BrowserActivity::class.java)

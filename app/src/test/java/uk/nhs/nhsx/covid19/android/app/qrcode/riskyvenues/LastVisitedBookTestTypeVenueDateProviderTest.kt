@@ -1,95 +1,49 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 
+import android.content.SharedPreferences
 import com.squareup.moshi.Moshi
 import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider.Companion.LAST_VISITED_BOOK_TEST_TYPE_VENUE_DATE_KEY
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueConfigurationDurationDays
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTest
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectation
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectationDirection.OBJECT_TO_JSON
 import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class LastVisitedBookTestTypeVenueDateProviderTest {
-
-    private val lastVisitedBookTestTypeVenueDateStorage = mockk<LastVisitedBookTestTypeVenueDateStorage>(relaxUnitFun = true)
+class LastVisitedBookTestTypeVenueDateProviderTest : ProviderTest<LastVisitedBookTestTypeVenueDateProvider, LastVisitedBookTestTypeVenueDate?>() {
     private val fixedClock = Clock.fixed(Instant.parse("2020-12-01T10:00:00Z"), ZoneOffset.UTC)
     private val moshi = Moshi.Builder().add(LocalDateAdapter()).build()
 
-    @Test
-    fun `fetching latest stored date when it was not set before should return null`() {
-        every { lastVisitedBookTestTypeVenueDateStorage.value } returns null
-
-        val testSubject = LastVisitedBookTestTypeVenueDateProvider(
-            lastVisitedBookTestTypeVenueDateStorage,
+    override val getTestSubject: (SharedPreferences) -> LastVisitedBookTestTypeVenueDateProvider = { sharedPreferences ->
+        LastVisitedBookTestTypeVenueDateProvider(
             fixedClock,
-            moshi
+            moshi,
+            sharedPreferences
         )
-
-        val actual = testSubject.lastVisitedVenue
-
-        assertNull(actual)
     }
-
-    @Test
-    fun `fetching latest stored date when value is stored in shared preferences should return correct value`() {
-        every { lastVisitedBookTestTypeVenueDateStorage.value } returns TEST_DATE_JSON
-
-        val testSubject = LastVisitedBookTestTypeVenueDateProvider(
-            lastVisitedBookTestTypeVenueDateStorage,
-            fixedClock,
-            moshi
-        )
-
-        val actual = testSubject.lastVisitedVenue
-
-        assertEquals(TEST_DATE, actual)
-    }
-
-    @Test
-    fun `save last stored date`() {
-        every { lastVisitedBookTestTypeVenueDateStorage.value } returns null
-
-        val testSubject = LastVisitedBookTestTypeVenueDateProvider(
-            lastVisitedBookTestTypeVenueDateStorage,
-            fixedClock,
-            moshi
-        )
-
-        testSubject.lastVisitedVenue = TEST_DATE
-
-        verify { lastVisitedBookTestTypeVenueDateStorage.value = TEST_DATE_JSON }
-    }
-
-    @Test
-    fun `clear last stored date`() {
-        every { lastVisitedBookTestTypeVenueDateStorage.value } returns TEST_DATE_JSON
-
-        val testSubject = LastVisitedBookTestTypeVenueDateProvider(
-            lastVisitedBookTestTypeVenueDateStorage,
-            fixedClock,
-            moshi
-        )
-
-        testSubject.lastVisitedVenue = null
-
-        verify { lastVisitedBookTestTypeVenueDateStorage.value = null }
-    }
+    override val property = LastVisitedBookTestTypeVenueDateProvider::lastVisitedVenue
+    override val key = LAST_VISITED_BOOK_TEST_TYPE_VENUE_DATE_KEY
+    override val defaultValue: LastVisitedBookTestTypeVenueDate? = null
+    override val expectations: List<ProviderTestExpectation<LastVisitedBookTestTypeVenueDate?>> = listOf(
+        ProviderTestExpectation(json = TEST_DATE_JSON, objectValue = TEST_DATE),
+        ProviderTestExpectation(json = null, objectValue = null, direction = OBJECT_TO_JSON)
+    )
 
     @Test
     fun `does not contain book test type risky venue when latest date is null`() {
-        every { lastVisitedBookTestTypeVenueDateStorage.value } returns null
+        every { sharedPreferences.all[LAST_VISITED_BOOK_TEST_TYPE_VENUE_DATE_KEY] } returns null
 
         val testSubject = LastVisitedBookTestTypeVenueDateProvider(
-            lastVisitedBookTestTypeVenueDateStorage,
             fixedClock,
-            moshi
+            moshi,
+            sharedPreferences
         )
 
         val actual = testSubject.containsBookTestTypeVenueAtRisk()
@@ -99,13 +53,13 @@ class LastVisitedBookTestTypeVenueDateProviderTest {
 
     @Test
     fun `does not contain book test type risky venue when current date is before stored latest date`() {
-        every { lastVisitedBookTestTypeVenueDateStorage.value } returns TEST_DATE_JSON
+        every { sharedPreferences.all[LAST_VISITED_BOOK_TEST_TYPE_VENUE_DATE_KEY] } returns TEST_DATE_JSON
 
         val fixedClock = Clock.fixed(Instant.parse("2020-11-30T10:00:00Z"), ZoneOffset.UTC)
         val testSubject = LastVisitedBookTestTypeVenueDateProvider(
-            lastVisitedBookTestTypeVenueDateStorage,
             fixedClock,
-            moshi
+            moshi,
+            sharedPreferences
         )
 
         val actual = testSubject.containsBookTestTypeVenueAtRisk()
@@ -115,12 +69,12 @@ class LastVisitedBookTestTypeVenueDateProviderTest {
 
     @Test
     fun `contains book test type risky venue when latest date is equal to current date`() {
-        every { lastVisitedBookTestTypeVenueDateStorage.value } returns TEST_DATE_JSON
+        every { sharedPreferences.all[LAST_VISITED_BOOK_TEST_TYPE_VENUE_DATE_KEY] } returns TEST_DATE_JSON
 
         val testSubject = LastVisitedBookTestTypeVenueDateProvider(
-            lastVisitedBookTestTypeVenueDateStorage,
             fixedClock,
-            moshi
+            moshi,
+            sharedPreferences
         )
 
         val actual = testSubject.containsBookTestTypeVenueAtRisk()
@@ -130,13 +84,13 @@ class LastVisitedBookTestTypeVenueDateProviderTest {
 
     @Test
     fun `contains book test type risky venue when current date is 10 days after stored latest date`() {
-        every { lastVisitedBookTestTypeVenueDateStorage.value } returns TEST_DATE_JSON
+        every { sharedPreferences.all[LAST_VISITED_BOOK_TEST_TYPE_VENUE_DATE_KEY] } returns TEST_DATE_JSON
 
         val fixedClock = Clock.fixed(Instant.parse("2020-12-10T10:00:00Z"), ZoneOffset.UTC)
         val testSubject = LastVisitedBookTestTypeVenueDateProvider(
-            lastVisitedBookTestTypeVenueDateStorage,
             fixedClock,
-            moshi
+            moshi,
+            sharedPreferences
         )
 
         val actual = testSubject.containsBookTestTypeVenueAtRisk()
@@ -146,13 +100,13 @@ class LastVisitedBookTestTypeVenueDateProviderTest {
 
     @Test
     fun `does not contain book test type risky venue when current date is 11 days after stored latest date`() {
-        every { lastVisitedBookTestTypeVenueDateStorage.value } returns TEST_DATE_JSON
+        every { sharedPreferences.all[LAST_VISITED_BOOK_TEST_TYPE_VENUE_DATE_KEY] } returns TEST_DATE_JSON
 
         val fixedClock = Clock.fixed(Instant.parse("2020-12-11T10:00:00Z"), ZoneOffset.UTC)
         val testSubject = LastVisitedBookTestTypeVenueDateProvider(
-            lastVisitedBookTestTypeVenueDateStorage,
             fixedClock,
-            moshi
+            moshi,
+            sharedPreferences
         )
 
         val actual = testSubject.containsBookTestTypeVenueAtRisk()

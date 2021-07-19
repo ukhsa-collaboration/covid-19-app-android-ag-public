@@ -5,7 +5,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInReminderScreen
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysNavigateTo.Finish
@@ -49,11 +48,9 @@ class ShareKeysReminderViewModel @Inject constructor(
     }
 
     fun onDoNotShareKeysClicked() {
-        viewModelScope.launch {
-            keySharingInfoProvider.reset()
-            submitObfuscationData()
-            navigationLiveData.postValue(Finish)
-        }
+        keySharingInfoProvider.reset()
+        submitObfuscationData()
+        navigationLiveData.postValue(Finish)
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int) {
@@ -69,10 +66,8 @@ class ShareKeysReminderViewModel @Inject constructor(
     }
 
     private fun onSuccessfulKeySubmission() {
-        viewModelScope.launch {
-            keySharingInfoProvider.reset()
-            navigationLiveData.postValue(ShareKeysNavigateTo.ShareKeysResultActivity(bookFollowUpTest = false))
-        }
+        keySharingInfoProvider.reset()
+        navigationLiveData.postValue(ShareKeysNavigateTo.ShareKeysResultActivity(bookFollowUpTest = false))
     }
 
     //region FetchKeysFlow.Callback
@@ -104,10 +99,8 @@ class ShareKeysReminderViewModel @Inject constructor(
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun trackConsentedToShareKeys() {
         if (!hasAlreadyConsentedToShareKeys) {
-            viewModelScope.launch {
-                analyticsEventProcessor.track(ConsentedToShareExposureKeysInReminderScreen)
-                hasAlreadyConsentedToShareKeys = true
-            }
+            analyticsEventProcessor.track(ConsentedToShareExposureKeysInReminderScreen)
+            hasAlreadyConsentedToShareKeys = true
         }
     }
 }

@@ -6,9 +6,11 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlert
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
-import uk.nhs.nhsx.covid19.android.app.report.notReported
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
+import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
+import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAfterRiskyVenueRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.VenueAlertBookTestRobot
 import java.time.Instant
@@ -19,6 +21,8 @@ class VenueAlertBookTestActivityTest : EspressoTest() {
 
     private val venueAlertBookTestRobot = VenueAlertBookTestRobot()
     private val testOrderingRobot = TestOrderingRobot()
+    private val symptomsAfterRiskyVenueVisitRobot = SymptomsAfterRiskyVenueRobot()
+    private val isolationHelper = IsolationHelper(testAppContext.clock)
 
     private val visits = listOf(
         VenueVisit(
@@ -34,40 +38,40 @@ class VenueAlertBookTestActivityTest : EspressoTest() {
     }
 
     @Test
-    fun venueScreenShowingCorrectly() = notReported {
+    fun venueScreenShowingCorrectly() {
         startActivity("1")
 
-        venueAlertBookTestRobot.checkTitleIsDisplayed()
+        venueAlertBookTestRobot.checkActivityIsDisplayed()
     }
 
     @Test
-    fun venueScreenFinishesIfVenueIsNoLongerStored() = notReported {
+    fun venueScreenFinishesIfVenueIsNoLongerStored() {
         val activity = startActivity("UNKNOWN")
 
         waitFor { assertTrue(activity!!.isDestroyed) }
     }
 
     @Test
-    fun venueScreenFinishesIfVenueIsNull() = notReported {
+    fun venueScreenFinishesIfVenueIsNull() {
         val activity = startTestActivity<VenueAlertBookTestActivity>()
 
         waitFor { assertTrue(activity!!.isDestroyed) }
     }
 
     @Test
-    fun venueScreenFinishesIfVenueIsEmpty() = notReported {
+    fun venueScreenFinishesIfVenueIsEmpty() {
         val activity = startActivity("")
 
         waitFor { assertTrue(activity!!.isDestroyed) }
     }
 
     @Test
-    fun venueScreenFinishedWhenClickingIllDoItLater() = notReported {
+    fun venueScreenFinishedWhenClickingIllDoItLater() {
         testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", BOOK_TEST)
 
         val activity = startActivity("1")
 
-        venueAlertBookTestRobot.checkTitleIsDisplayed()
+        venueAlertBookTestRobot.checkActivityIsDisplayed()
         venueAlertBookTestRobot.clickIllDoItLaterButton()
 
         waitFor { assertTrue(activity!!.isDestroyed) }
@@ -77,13 +81,16 @@ class VenueAlertBookTestActivityTest : EspressoTest() {
     }
 
     @Test
-    fun venueScreenLeadsToBookTestScreenWhenClickingBookTest() = notReported {
+    fun whenActiveIndexCaseIsolation_clickingBookTest_navigateToBookTestScreen() {
         testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", BOOK_TEST)
+
+        testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startActivity("1")
 
-        venueAlertBookTestRobot.checkTitleIsDisplayed()
+        venueAlertBookTestRobot.checkActivityIsDisplayed()
         venueAlertBookTestRobot.clickBookTestButton()
+
         testOrderingRobot.checkActivityIsDisplayed()
 
         val item = testAppContext.getUserInbox().fetchInbox()
@@ -91,7 +98,37 @@ class VenueAlertBookTestActivityTest : EspressoTest() {
     }
 
     @Test
-    fun venueScreenFinishesWhenClickingBackButton() = notReported {
+    fun whenNotIsolating_clickingBookTest_navigateToSymptomsAfterRiskyVenueVisit() {
+        testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", BOOK_TEST)
+
+        startActivity("1")
+
+        venueAlertBookTestRobot.checkActivityIsDisplayed()
+        venueAlertBookTestRobot.clickBookTestButton()
+
+        symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed()
+
+        val item = testAppContext.getUserInbox().fetchInbox()
+        assertNull(item)
+    }
+
+    @Test
+    fun whenIsolatingAsContactCase_clickingBookTest_navigateToSymptomsAfterRiskyVenueVisit() {
+        testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", BOOK_TEST)
+
+        startActivity("1")
+
+        venueAlertBookTestRobot.checkActivityIsDisplayed()
+        venueAlertBookTestRobot.clickBookTestButton()
+
+        symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed()
+
+        val item = testAppContext.getUserInbox().fetchInbox()
+        assertNull(item)
+    }
+
+    @Test
+    fun venueScreenFinishesWhenClickingBackButton() {
         testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", BOOK_TEST)
 
         val activity = startActivity("1")

@@ -18,6 +18,9 @@ import androidx.work.WorkManager
 import com.jeroenmols.featureflag.framework.FeatureFlag.SUBMIT_ANALYTICS_VIA_ALARM_MANAGER
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import com.jeroenmols.featureflag.framework.TestSetting
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 import uk.nhs.covid19.config.production
@@ -56,6 +59,8 @@ open class ExposureApplication : Application(), Configuration.Provider, Lifecycl
     lateinit var appComponent: ApplicationComponent
     lateinit var encryptionUtils: EncryptionUtils
     private var appAvailabilityListener: AppAvailabilityListener? = null
+
+    val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     override fun onCreate() {
         super.onCreate()
@@ -149,14 +154,16 @@ open class ExposureApplication : Application(), Configuration.Provider, Lifecycl
         viewModelModule: ViewModelModule,
         exposureNotificationApi: ExposureNotificationApi = GoogleExposureNotificationApi(this),
         clock: Clock,
-        dateChangeReceiver: DateChangeReceiver = DateChangeBroadcastReceiver()
+        dateChangeReceiver: DateChangeReceiver = DateChangeBroadcastReceiver(),
+        applicationContext: Context = this,
     ) {
         val encryptedStorage = createEncryptedStorage()
 
         appComponent = DaggerApplicationComponent.builder()
             .appModule(
                 AppModule(
-                    this,
+                    applicationContext,
+                    applicationScope,
                     exposureNotificationApi,
                     AndroidBluetoothStateProvider(),
                     AndroidLocationStateProvider(),

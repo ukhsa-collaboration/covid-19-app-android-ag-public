@@ -14,7 +14,7 @@ if (jacocoEnabled.toBoolean()) {
     apply from: rootProject.file("jacoco.gradle")
 }
 
-def getPasswordFromSecureStorage(String account, String service) {
+def getStringFromSecureStorage(String account, String service) {
     def stdout = new ByteArrayOutputStream()
     def stderr = new ByteArrayOutputStream()
     def executable = ""
@@ -40,18 +40,21 @@ def getPasswordFromSecureStorage(String account, String service) {
 }
 
 def user = findProperty("gpr.user") ?: System.getenv("PACKAGES_ACCESS_ACTOR")
-def service = "nhs-covid19-apps"
+def configurationPasswordService = "nihp-public"
 
 allprojects {
     repositories {
         google()
         mavenCentral()
         maven {
-            url = 'https://maven.pkg.github.com/nihp-public/covid-19-app-configuration-public'
+            url = 'https://maven.pkg.github.com/nihp-public/covid-19-app-configuration'
             credentials {
                 username = user
-                password = getPasswordFromSecureStorage(user, service) ?: findProperty("gpr.key") ?: System.getenv("PACKAGES_ACCESS_TOKEN")
+                password = getStringFromSecureStorage(user, configurationPasswordService) ?: findProperty("gpr.key") ?: System.getenv("PACKAGES_ACCESS_TOKEN")
             }
+        }
+        maven {
+            url "https://maven.lokalise.co"
         }
     }
 }
@@ -70,7 +73,7 @@ android {
         targetSdkVersion 29
         versionName versionNameValue
         versionCode buildNumber
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "uk.nhs.nhsx.covid19.android.app.util.DoReToAwareAndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         buildConfigField "String", "VERSION_NAME_SHORT", "\"" + versionNameValue + "\""
         buildConfigField "String", "RELEASE_DATE", "\"" + releaseDate + "\""
@@ -120,6 +123,7 @@ android {
         unitTests.all {
             testLogging.exceptionFormat = TestExceptionFormat.FULL
             testLogging.showStandardStreams = true
+            systemProperty "isolationModel.repo", findProperty("isolationModel.repo")
         }
         // execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
@@ -194,7 +198,7 @@ def coroutines_version = "1.3.7"
 def retrofit_version = "2.9.0"
 def moshi_version = "1.9.2"
 def okhttp_version = "4.8.0"
-def configuration_version = "1.0.26-SNAPSHOT"
+def configuration_version = "1.0.27-SNAPSHOT"
 def dagger_version = "2.31.2"
 
 dependencies {
@@ -245,6 +249,8 @@ dependencies {
     testImplementation 'androidx.arch.core:core-testing:2.1.0'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     testImplementation 'junit:junit:4.13.1'
+    testImplementation platform("org.junit:junit-bom:5.7.2")
+    testImplementation "org.junit.jupiter:junit-jupiter"
     testImplementation 'io.mockk:mockk:1.10.0'
     testImplementation 'org.assertj:assertj-core:3.16.1'
     testImplementation 'org.awaitility:awaitility-kotlin:3.1.6'
@@ -272,6 +278,9 @@ dependencies {
     implementation 'com.google.android.play:core:1.8.0'
     implementation 'com.google.android.play:core-ktx:1.8.1'
 
+    scenariosImplementation 'com.lokalise.android:ota-sdk:1.3.15'
+    scenariosImplementation 'com.google.code.gson:gson:2.8.0'
+
     api 'io.jsonwebtoken:jjwt-api:0.11.2'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
     runtimeOnly('io.jsonwebtoken:jjwt-orgjson:0.11.2')
@@ -284,3 +293,4 @@ afterEvaluate {
 }
 
 apply from: "$rootDir/screenshots.gradle"
+apply from: "$rootDir/pseudoLocale.gradle"

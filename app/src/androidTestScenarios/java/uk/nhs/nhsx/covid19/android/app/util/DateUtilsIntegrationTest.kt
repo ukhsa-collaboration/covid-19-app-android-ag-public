@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.util
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResultActivity
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationExpirationRobot
@@ -18,7 +17,7 @@ class DateUtilsIntegrationTest : EspressoTest() {
     private val currentDateTime = Instant.parse("2020-12-11T13:00:00Z")
 
     @Test
-    fun qrCodeSuccessDateTime_inChineseLocale_returnsCorrectFormat() = notReported {
+    fun qrCodeSuccessDateTime_inChineseLocale_returnsCorrectFormat() {
         testAppContext.setLocale("zh")
         testAppContext.clock.currentInstant = currentDateTime
 
@@ -33,7 +32,7 @@ class DateUtilsIntegrationTest : EspressoTest() {
     }
 
     @Test
-    fun isolationExpirationDate_inChineseLocale_returnsCorrectFormat() = notReported {
+    fun isolationExpirationDate_inChineseLocale_returnsCorrectFormat() {
         testAppContext.setLocale("zh")
         testAppContext.clock.currentInstant = currentDateTime
 

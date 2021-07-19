@@ -13,7 +13,6 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSympto
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.NoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.ReviewSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.SymptomsAdviceForIndexCaseThenNoSymptoms
-import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import java.time.Clock
@@ -99,7 +98,7 @@ class QuestionnaireViewModel @Inject constructor(
     fun onNoSymptomsConfirmed() {
         val isolationState = isolationStateMachine.readLogicalState()
 
-        val target = if (isolationState is PossiblyIsolating && isolationState.hasActivePositiveTestResult(clock)) {
+        val target = if (isolationState.hasActivePositiveTestResult(clock)) {
             SymptomsAdviceForIndexCaseThenNoSymptoms
         } else {
             NoSymptoms

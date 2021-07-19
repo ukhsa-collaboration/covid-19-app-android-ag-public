@@ -7,14 +7,11 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.platform.app.InstrumentationRegistry
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.testhelpers.withDrawable
 
 class QrCodeScanResultRobot {
-
-    private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     fun checkAnimationIconIsDisplayed() {
         onView(withId(R.id.animationIcon))

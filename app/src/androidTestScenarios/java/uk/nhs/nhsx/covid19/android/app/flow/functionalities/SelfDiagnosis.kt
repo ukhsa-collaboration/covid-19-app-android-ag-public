@@ -38,7 +38,7 @@ class SelfDiagnosis(
 
         questionnaireRobot.reviewSymptoms()
 
-        reviewSymptomsRobot.confirmReviewSymptomsScreenIsDisplayed()
+        reviewSymptomsRobot.checkActivityIsDisplayed()
 
         when (selectedDate) {
             CannotRememberDate -> reviewSymptomsRobot.selectCannotRememberDate()

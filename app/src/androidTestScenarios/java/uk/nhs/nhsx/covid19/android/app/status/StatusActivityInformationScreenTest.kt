@@ -6,8 +6,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlert
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
-import uk.nhs.nhsx.covid19.android.app.report.notReported
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.VenueAlertInformRobot
 import java.time.Instant
@@ -29,7 +28,7 @@ class StatusActivityInformationScreenTest : EspressoTest() {
     }
 
     @Test
-    fun venueScreenShowingCorrectly() = notReported {
+    fun venueScreenShowingCorrectly() {
         testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", INFORM)
 
         startTestActivity<StatusActivity> { }

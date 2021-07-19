@@ -13,10 +13,9 @@ import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.Sho
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowTestResult
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowUnknownTestResult
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowVenueAlert
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -40,7 +39,7 @@ class UserInboxIntegrationTest : EspressoTest() {
     }
 
     @Test
-    fun testOrderOfUserInboxItems() = notReported {
+    fun testOrderOfUserInboxItems() {
         val expiredSelfAssessment = isolationHelper.selfAssessment(expired = true)
         val expiredIsolation = expiredSelfAssessment.asIsolation()
         val expirationDate = expiredSelfAssessment.expiryDate

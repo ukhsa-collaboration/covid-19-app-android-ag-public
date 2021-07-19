@@ -8,7 +8,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 
 class PollingTestResultAnalyticsTest : AnalyticsTest() {
 
@@ -19,7 +18,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     // >0 if the app is aware that the user has received/entered a positive PCR test
     // this currently happens during an isolation and for the 14 days after isolation
     @Test
-    fun receivePositivePCRTestResultAfterSelfDiagnosis() = notReported {
+    fun receivePositivePCRTestResultAfterSelfDiagnosis() {
         receivePositiveTestResultAfterSelfDiagnosis(
             LAB_RESULT,
             Metrics::receivedPositiveTestResultViaPolling,
@@ -32,7 +31,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     // >0 if the app is aware that the user has received/entered a positive assisted LFD test
     // this currently happens during an isolation and for the 14 days after isolation
     @Test
-    fun receivePositiveAssistedLFDTestResultAfterSelfDiagnosis() = notReported {
+    fun receivePositiveAssistedLFDTestResultAfterSelfDiagnosis() {
         receivePositiveTestResultAfterSelfDiagnosis(
             RAPID_RESULT,
             Metrics::receivedPositiveLFDTestResultViaPolling,
@@ -45,7 +44,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     // >0 if the app is aware that the user has received/entered a positive unassisted LFD test
     // this currently happens during an isolation and for the 14 days after isolation
     @Test
-    fun receivePositiveUnassistedLFDTestResultAfterSelfDiagnosis() = notReported {
+    fun receivePositiveUnassistedLFDTestResultAfterSelfDiagnosis() {
         receivePositiveTestResultAfterSelfDiagnosis(
             RAPID_SELF_REPORTED,
             receivedPositiveTestResultViaPollingMetric = null,
@@ -57,7 +56,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     // No consent to key sharing
     // Will not have consentedToShareExposureKeysInTheInitialFlow
     @Test
-    fun receivePositivePCRTestResultAfterSelfDiagnosisWithNoConsentToKeySharing() = notReported {
+    fun receivePositivePCRTestResultAfterSelfDiagnosisWithNoConsentToKeySharing() {
         receivePositiveTestResultAfterSelfDiagnosis(
             LAB_RESULT,
             Metrics::receivedPositiveTestResultViaPolling,
@@ -70,7 +69,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     // Key sharing fails
     // Will not have successfullySharedExposureKeys, but on the next day totalShareExposureKeyReminderNotifications
     @Test
-    fun receivePositivePCRTestResultAfterSelfDiagnosisWithKeySharingFailure() = notReported {
+    fun receivePositivePCRTestResultAfterSelfDiagnosisWithKeySharingFailure() {
         receivePositiveTestResultAfterSelfDiagnosis(
             LAB_RESULT,
             Metrics::receivedPositiveTestResultViaPolling,
@@ -183,7 +182,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun receiveNegativePCRTestResultAfterSelfDiagnosisAndEndIsolation() = notReported {
+    fun receiveNegativePCRTestResultAfterSelfDiagnosisAndEndIsolation() {
         receiveNegativeTestResultAfterSelfDiagnosisAndEndIsolation(
             LAB_RESULT,
             Metrics::receivedNegativeTestResultViaPolling
@@ -191,7 +190,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun receiveNegativeAssistedLFDTestResultAfterSelfDiagnosisAndEndIsolation() = notReported {
+    fun receiveNegativeAssistedLFDTestResultAfterSelfDiagnosisAndEndIsolation() {
         receiveNegativeTestResultAfterSelfDiagnosisAndEndIsolation(
             RAPID_RESULT,
             Metrics::receivedNegativeLFDTestResultViaPolling
@@ -199,7 +198,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun receiveNegativeUnassistedLFDTestResultAfterSelfDiagnosisAndEndIsolation() = notReported {
+    fun receiveNegativeUnassistedLFDTestResultAfterSelfDiagnosisAndEndIsolation() {
         receiveNegativeTestResultAfterSelfDiagnosisAndEndIsolation(
             RAPID_SELF_REPORTED,
             receivedNegativeTestResultViaPollingMetric = null
@@ -263,7 +262,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun receiveVoidPCRTestResultAfterSelfDiagnosis() = notReported {
+    fun receiveVoidPCRTestResultAfterSelfDiagnosis() {
         receiveVoidTestResultAfterSelfDiagnosis(
             LAB_RESULT,
             Metrics::receivedVoidTestResultViaPolling
@@ -271,7 +270,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun receiveVoidAssistedLFDTestResultAfterSelfDiagnosis() = notReported {
+    fun receiveVoidAssistedLFDTestResultAfterSelfDiagnosis() {
         receiveVoidTestResultAfterSelfDiagnosis(
             RAPID_RESULT,
             Metrics::receivedVoidLFDTestResultViaPolling
@@ -279,7 +278,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun receiveVoidUnassistedLFDTestResultAfterSelfDiagnosis() = notReported {
+    fun receiveVoidUnassistedLFDTestResultAfterSelfDiagnosis() {
         receiveVoidTestResultAfterSelfDiagnosis(
             RAPID_SELF_REPORTED,
             receivedVoidTestResultViaPollingMetric = null

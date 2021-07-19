@@ -19,7 +19,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.NestedScrollViewScrollToActio
 
 class ReviewSymptomsRobot {
 
-    fun confirmReviewSymptomsScreenIsDisplayed() {
+    fun checkActivityIsDisplayed() {
         checkActivityTitleIsDisplayed(R.string.questionnaire_review_symptoms)
     }
 

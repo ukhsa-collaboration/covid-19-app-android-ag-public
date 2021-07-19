@@ -199,6 +199,6 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
         const val EXTRA_QUESTIONS = "EXTRA_QUESTIONS"
         const val EXTRA_RISK_THRESHOLD = "EXTRA_RISK_THRESHOLD"
         const val EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS = "EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS"
-        const val SELECTED_DATE_FORMAT = "dd MMM yyyy"
+        const val SELECTED_DATE_FORMAT = "d MMM yyyy"
     }
 }

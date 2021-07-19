@@ -2,9 +2,12 @@ package uk.nhs.nhsx.covid19.android.app
 
 import android.content.Context
 import android.content.SharedPreferences
+import co.lokalise.android.sdk.LokaliseSDK
+import co.lokalise.android.sdk.core.LokaliseContextWrapper
 import timber.log.Timber
 import uk.nhs.covid19.config.Configurations
 import uk.nhs.covid19.config.EnvironmentConfiguration
+import uk.nhs.covid19.config.LokaliseSettings
 import uk.nhs.covid19.config.Remote
 import uk.nhs.covid19.config.production
 import uk.nhs.covid19.config.qrCodesSignatureKey
@@ -30,6 +33,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
 import uk.nhs.nhsx.covid19.android.app.status.ScenariosDateChangeBroadcastReceiver
 import uk.nhs.nhsx.covid19.android.app.util.AndroidUUIDGenerator
+import uk.nhs.nhsx.covid19.android.app.util.workarounds.ConcurrentModificationExceptionWorkaround
 import java.time.Clock
 
 class ScenariosExposureApplication : ExposureApplication() {
@@ -37,7 +41,11 @@ class ScenariosExposureApplication : ExposureApplication() {
     private lateinit var debugSharedPreferences: SharedPreferences
 
     override fun onCreate() {
+        ConcurrentModificationExceptionWorkaround.init(this)
         super.onCreate()
+        LokaliseSDK.init(LokaliseSettings.apiKey, LokaliseSettings.projectId, this)
+        LokaliseSDK.setPreRelease(true)
+
         Timber.d("onCreate")
         debugSharedPreferences =
             getSharedPreferences(DebugActivity.DEBUG_PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -92,7 +100,8 @@ class ScenariosExposureApplication : ExposureApplication() {
             ViewModelModule(),
             getExposureNotificationApi(useMockExposureApi, clock),
             clock,
-            ScenariosDateChangeBroadcastReceiver()
+            ScenariosDateChangeBroadcastReceiver(),
+            applicationContext = LokaliseContextWrapper(applicationContext)
         )
     }
 
@@ -103,7 +112,8 @@ class ScenariosExposureApplication : ExposureApplication() {
             DaggerMockApplicationComponent.builder()
                 .appModule(
                     AppModule(
-                        applicationContext,
+                        LokaliseContextWrapper(applicationContext),
+                        applicationScope,
                         getExposureNotificationApi(useMockExposureApi, clock),
                         AndroidBluetoothStateProvider(),
                         AndroidLocationStateProvider(),

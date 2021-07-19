@@ -3,8 +3,11 @@ package uk.nhs.nhsx.covid19.android.app.edgecases
 import android.content.pm.ResolveInfo
 import org.junit.After
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
+import uk.nhs.nhsx.covid19.android.app.report.Reported
 import uk.nhs.nhsx.covid19.android.app.report.Reporter
-import uk.nhs.nhsx.covid19.android.app.report.notReported
+import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -12,7 +15,8 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.edgecases.EnableBluetoothRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.edgecases.EnableLocationRobot
 
-class EdgeCaseScenarioTest : EspressoTest() {
+@RunWith(Parameterized::class)
+class EdgeCaseScenarioTest(override val configuration: TestConfiguration) : EspressoTest() {
 
     private val enableBluetoothRobot = EnableBluetoothRobot()
     private val enableLocationRobot = EnableLocationRobot()
@@ -24,61 +28,59 @@ class EdgeCaseScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun openingHomeActivityWithBluetoothDisabled_shouldNavigateToEnableBluetoothActivity() =
-        notReported {
-            startTestActivity<StatusActivity>()
+    fun openingHomeActivityWithBluetoothDisabled_shouldNavigateToEnableBluetoothActivity() {
+        startTestActivity<StatusActivity>()
 
-            testAppContext.setBluetoothEnabled(false)
+        testAppContext.setBluetoothEnabled(false)
 
-            waitFor { enableBluetoothRobot.checkActivityIsDisplayed() }
-        }
-
-    @Test
-    fun pressingBackInEnableBluetoothActivity_shouldNotNavigate() =
-        notReported {
-            startTestActivity<StatusActivity>()
-
-            testAppContext.setBluetoothEnabled(false)
-
-            waitFor { enableBluetoothRobot.checkActivityIsDisplayed() }
-
-            testAppContext.device.pressBack()
-
-            enableBluetoothRobot.checkActivityIsDisplayed()
-        }
+        waitFor { enableBluetoothRobot.checkActivityIsDisplayed() }
+    }
 
     @Test
-    fun clickingEnableBluetoothButtonInEnableBluetoothActivity_whenCanResolveAndStartActivity_shouldNotShowError() =
-        notReported {
-            startTestActivity<StatusActivity>()
+    fun pressingBackInEnableBluetoothActivity_shouldNotNavigate() {
+        startTestActivity<StatusActivity>()
 
-            testAppContext.setBluetoothEnabled(false)
-            testAppContext.packageManager.resolutionsByAction[android.provider.Settings.ACTION_BLUETOOTH_SETTINGS] = ResolveInfo()
+        testAppContext.setBluetoothEnabled(false)
 
-            waitFor { enableBluetoothRobot.checkActivityIsDisplayed() }
+        waitFor { enableBluetoothRobot.checkActivityIsDisplayed() }
 
-            enableBluetoothRobot.clickAllowBluetoothButton()
+        testAppContext.device.pressBack()
 
-            testAppContext.device.pressBack()
-
-            waitFor { enableBluetoothRobot.checkActivityIsDisplayed() }
-        }
+        enableBluetoothRobot.checkActivityIsDisplayed()
+    }
 
     @Test
-    fun clickingEnableBluetoothButtonInEnableBluetoothActivity_whenCannotResolveActivity_shouldShowError() =
-        notReported {
-            startTestActivity<StatusActivity>()
+    fun clickingEnableBluetoothButtonInEnableBluetoothActivity_whenCanResolveAndStartActivity_shouldNotShowError() {
+        startTestActivity<StatusActivity>()
 
-            testAppContext.setBluetoothEnabled(false)
+        testAppContext.setBluetoothEnabled(false)
+        testAppContext.packageManager.resolutionsByAction[android.provider.Settings.ACTION_BLUETOOTH_SETTINGS] =
+            ResolveInfo()
 
-            waitFor { enableBluetoothRobot.checkActivityIsDisplayed() }
+        waitFor { enableBluetoothRobot.checkActivityIsDisplayed() }
 
-            enableBluetoothRobot.clickAllowBluetoothButton()
+        enableBluetoothRobot.clickAllowBluetoothButton()
 
-            waitFor { enableBluetoothRobot.checkErrorIsDisplayed() }
-        }
+        testAppContext.device.pressBack()
+
+        waitFor { enableBluetoothRobot.checkActivityIsDisplayed() }
+    }
 
     @Test
+    fun clickingEnableBluetoothButtonInEnableBluetoothActivity_whenCannotResolveActivity_shouldShowError() {
+        startTestActivity<StatusActivity>()
+
+        testAppContext.setBluetoothEnabled(false)
+
+        waitFor { enableBluetoothRobot.checkActivityIsDisplayed() }
+
+        enableBluetoothRobot.clickAllowBluetoothButton()
+
+        waitFor { enableBluetoothRobot.checkErrorIsDisplayed() }
+    }
+
+    @Test
+    @Reported
     fun openingHomeActivityWithBluetoothDisabledThenEnableBluetooth_shouldNavigateBackToHomeActivity() =
         reporter(
             "Edge cases",
@@ -108,41 +110,39 @@ class EdgeCaseScenarioTest : EspressoTest() {
         }
 
     @Test
-    fun openingHomeActivityWithLocationServicesDisabled_shouldNavigateToEnableLocationActivity() =
-        notReported {
-            startTestActivity<StatusActivity>()
+    fun openingHomeActivityWithLocationServicesDisabled_shouldNavigateToEnableLocationActivity() {
+        startTestActivity<StatusActivity>()
 
-            testAppContext.setLocationEnabled(false)
+        testAppContext.setLocationEnabled(false)
 
-            waitFor { enableLocationRobot.checkActivityIsDisplayed() }
-        }
-
-    @Test
-    fun pressingBackInEnableLocationActivity_shouldNotNavigate() =
-        notReported {
-            startTestActivity<StatusActivity>()
-
-            testAppContext.setLocationEnabled(false)
-
-            waitFor { enableLocationRobot.checkActivityIsDisplayed() }
-
-            testAppContext.device.pressBack()
-
-            enableLocationRobot.checkActivityIsDisplayed()
-        }
+        waitFor { enableLocationRobot.checkActivityIsDisplayed() }
+    }
 
     @Test
-    fun openingHomeActivityWithLocationServicesDisabled_whenDeviceSupportsLocationlessScanning_shouldStayOnStatusActivity() =
-        notReported {
-            testAppContext.getExposureNotificationApi().setDeviceSupportsLocationlessScanning(true)
-            startTestActivity<StatusActivity>()
+    fun pressingBackInEnableLocationActivity_shouldNotNavigate() {
+        startTestActivity<StatusActivity>()
 
-            testAppContext.setLocationEnabled(false)
+        testAppContext.setLocationEnabled(false)
 
-            statusRobot.checkActivityIsDisplayed()
-        }
+        waitFor { enableLocationRobot.checkActivityIsDisplayed() }
+
+        testAppContext.device.pressBack()
+
+        enableLocationRobot.checkActivityIsDisplayed()
+    }
 
     @Test
+    fun openingHomeActivityWithLocationServicesDisabled_whenDeviceSupportsLocationlessScanning_shouldStayOnStatusActivity() {
+        testAppContext.getExposureNotificationApi().setDeviceSupportsLocationlessScanning(true)
+        startTestActivity<StatusActivity>()
+
+        testAppContext.setLocationEnabled(false)
+
+        statusRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    @Reported
     fun openingHomeActivityWithLocationServicesDisabledThenEnableLocationServices_shouldNavigateBackToHomeActivity() =
         reporter(
             "Edge cases",

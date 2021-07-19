@@ -1,23 +1,27 @@
 package uk.nhs.nhsx.covid19.android.app.report.config
 
-enum class Orientation(val exportName: String) {
-    LANDSCAPE("landscape-left"), PORTRAIT("portrait")
+enum class Orientation(val exportName: String, val shortName: String) {
+    LANDSCAPE("landscape-left", "L"), PORTRAIT("portrait", "P")
 }
 
-enum class FontScale(val scale: Float, val exportName: String) {
-    SMALL(0.85f, "content-size-S"),
-    DEFAULT(1.0f, "content-size-M"),
-    LARGE(1.15f, "content-size-L"),
-    LARGEST(1.3f, "content-size-XL")
+enum class FontScale(val scale: Float, val exportName: String, val shortName: String) {
+    SMALL(0.85f, "content-size-S", "S"),
+    DEFAULT(1.0f, "content-size-M", "M"),
+    LARGE(1.15f, "content-size-L", "L"),
+    LARGEST(1.3f, "content-size-XL", "X")
 }
 
-enum class Theme(val exportName: String) {
-    LIGHT("light"), DARK("dark")
+enum class Theme(val exportName: String, val shortName: String) {
+    LIGHT("light", "L"), DARK("dark", "D")
 }
 
 data class TestConfiguration(
     val orientation: Orientation,
     val fontScale: FontScale,
     val theme: Theme,
-    val languageCode: String? = null
-)
+    val languageCode: String = "en"
+) {
+    override fun toString(): String {
+        return languageCode + orientation.shortName + fontScale.shortName + theme.shortName
+    }
+}

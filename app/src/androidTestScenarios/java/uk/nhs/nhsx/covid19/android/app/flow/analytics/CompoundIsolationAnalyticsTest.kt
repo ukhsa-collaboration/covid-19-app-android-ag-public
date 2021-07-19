@@ -4,14 +4,13 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.RiskyContact
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 
 class CompoundIsolationAnalyticsTest : AnalyticsTest() {
     private var selfDiagnosis = SelfDiagnosis(this)
     private var riskyContact = RiskyContact(this)
 
     @Test
-    fun selfDiagnose_thenRiskyContact_isolatingForBothReasons() = notReported {
+    fun selfDiagnose_thenRiskyContact_isolatingForBothReasons() {
         // Current date: 1st Jan
         // Starting state: App running normally, not in isolation
         // Current date: 2nd Jan -> Analytics packet for: 1st Jan

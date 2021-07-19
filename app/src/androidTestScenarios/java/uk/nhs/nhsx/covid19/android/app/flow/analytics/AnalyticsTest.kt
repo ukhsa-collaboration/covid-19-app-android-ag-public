@@ -168,7 +168,9 @@ fun <T : Any> LiveData<T>.getOrAwaitValue(
         }
     }
 
-    this.observeForever(observer)
+    InstrumentationRegistry.getInstrumentation().runOnMainSync {
+        this.observeForever(observer)
+    }
 
     // Don't wait indefinitely if the LiveData is not set.
     if (!latch.await(time, timeUnit)) {
@@ -190,9 +192,7 @@ fun LiveData<List<WorkInfo>>.awaitSuccess(
             if (o != null) {
                 if (o.any { it.state == ENQUEUED } && hasStartedRunning) {
                     latch.countDown()
-                    InstrumentationRegistry.getInstrumentation().runOnMainSync {
-                        this@awaitSuccess.removeObserver(this)
-                    }
+                    this@awaitSuccess.removeObserver(this)
                 }
                 if (o.any { it.state == RUNNING }) {
                     hasStartedRunning = true
@@ -201,7 +201,9 @@ fun LiveData<List<WorkInfo>>.awaitSuccess(
         }
     }
 
-    this.observeForever(observer)
+    InstrumentationRegistry.getInstrumentation().runOnMainSync {
+        this.observeForever(observer)
+    }
 
     if (!latch.await(time, timeUnit)) {
         throw TimeoutException("Work never completed successfully")

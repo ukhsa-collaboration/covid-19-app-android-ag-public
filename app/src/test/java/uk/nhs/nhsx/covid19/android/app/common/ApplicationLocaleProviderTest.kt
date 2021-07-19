@@ -1,17 +1,16 @@
 package uk.nhs.nhsx.covid19.android.app.common
 
 import android.content.SharedPreferences
-import android.content.res.Resources
-import android.os.Build.VERSION_CODES
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.SupportedLanguage
 import uk.nhs.nhsx.covid19.android.app.SupportedLanguage.ENGLISH
 import uk.nhs.nhsx.covid19.android.app.SupportedLanguage.WELSH
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider.Companion.APPLICATION_LANGUAGE_KEY
+import uk.nhs.nhsx.covid19.android.app.settings.languages.GetDefaultSystemLanguage
 import java.util.Locale
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -19,13 +18,12 @@ import kotlin.test.assertNull
 class ApplicationLocaleProviderTest {
     private val sharedPreferences = mockk<SharedPreferences>(relaxed = true)
     private val sharedPreferencesEditor = mockk<SharedPreferences.Editor>(relaxed = true)
-    private val versionProvider = mockk<BuildVersionProvider>()
+    private val getDefaultSystemLanguage = mockk<GetDefaultSystemLanguage>()
 
-    private val testSubject = ApplicationLocaleProvider(sharedPreferences, versionProvider)
+    private val testSubject = ApplicationLocaleProvider(sharedPreferences, getDefaultSystemLanguage)
 
     @Before
     fun setUp() {
-        mockkStatic(Resources::class)
         every {
             sharedPreferences.edit()
         } returns sharedPreferencesEditor
@@ -34,10 +32,11 @@ class ApplicationLocaleProviderTest {
     @Test
     fun `no saved language returns default locale`() = runBlocking {
         every { sharedPreferences.all[APPLICATION_LANGUAGE_KEY] } returns null
+        every { getDefaultSystemLanguage() } returns ENGLISH
 
         val result = testSubject.getLocale()
 
-        assertEquals(Locale.getDefault(), result)
+        assertEquals(Locale(ENGLISH.code!!), result)
     }
 
     @Test
@@ -77,22 +76,12 @@ class ApplicationLocaleProviderTest {
     }
 
     @Test
-    fun `supported system language for API version N or above`() {
-        every { Resources.getSystem().configuration.locales.getFirstMatch(any()) } returns Locale("cy")
-        every { versionProvider.version() } returns VERSION_CODES.N
+    fun `getDefaultSystemLanguage delegates call to interactor`() {
+        val expectedDefaultSystemLanguage = mockk<SupportedLanguage>()
+        every { getDefaultSystemLanguage() } returns expectedDefaultSystemLanguage
 
-        val result = testSubject.getSystemLanguage()
+        val result = getDefaultSystemLanguage()
 
-        assertEquals(WELSH, result)
-    }
-
-    @Test
-    fun `unsupported system language returns English language for API version N or above`() {
-        every { Resources.getSystem().configuration.locales.getFirstMatch(any()) } returns null
-        every { versionProvider.version() } returns VERSION_CODES.N
-
-        val result = testSubject.getSystemLanguage()
-
-        assertEquals(ENGLISH, result)
+        assertEquals(expectedDefaultSystemLanguage, result)
     }
 }

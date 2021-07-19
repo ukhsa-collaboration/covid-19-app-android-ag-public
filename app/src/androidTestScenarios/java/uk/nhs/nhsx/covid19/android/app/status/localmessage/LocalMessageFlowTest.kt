@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.status.localmessage
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.MockLocalMessagesApi
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
@@ -17,7 +16,7 @@ class LocalMessageFlowTest : EspressoTest() {
     private val browserRobot = BrowserRobot()
 
     @Test
-    fun localMessageInStatusScreen_navigatesToInfoScreen_clickLink_opensBrowserAndClose_clickBackToHome_navigatesToStatusScreen() = notReported {
+    fun localMessageInStatusScreen_navigatesToInfoScreen_clickLink_opensBrowserAndClose_clickBackToHome_navigatesToStatusScreen() {
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_INTERNAL_BROWSER) {
             testAppContext.setLocalAuthority("E07000240")
             testAppContext.setPostCode("AL1")
@@ -46,7 +45,7 @@ class LocalMessageFlowTest : EspressoTest() {
     }
 
     @Test
-    fun localMessageInStatusScreen_navigatesToInfoScreen_clickClose_navigatesToStatusScreen() = notReported {
+    fun localMessageInStatusScreen_navigatesToInfoScreen_clickClose_navigatesToStatusScreen() {
         testAppContext.setLocalAuthority("E07000240")
         testAppContext.setPostCode("AL1")
         testAppContext.getLocalMessagesProvider().localMessages = MockLocalMessagesApi.successResponse

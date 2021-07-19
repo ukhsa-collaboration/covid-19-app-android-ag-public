@@ -7,7 +7,6 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.VenueHistoryRobot
@@ -51,7 +50,7 @@ class VenueHistoryActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testActivity() = notReported {
+    fun testActivity() {
         startTestActivity<VenueHistoryActivity>()
 
         venueHistoryRobot.checkActivityIsDisplayed()
@@ -66,7 +65,7 @@ class VenueHistoryActivityTest : EspressoTest() {
 
     @Test
     @RetryFlakyTest
-    fun testDeletion() = notReported {
+    fun testDeletion() {
         startTestActivity<VenueHistoryActivity>()
 
         venueHistoryRobot.checkActivityIsDisplayed()

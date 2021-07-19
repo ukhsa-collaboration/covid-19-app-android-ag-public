@@ -17,6 +17,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSE
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DECLARED_NEGATIVE_RESULT_FROM_DCT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_RISKY_VENUE_M2_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT
@@ -38,7 +39,13 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEI
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_RISKY_VENUE_M2_WARNING
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RECEIVED_UNCONFIRMED_POSITIVE_TEST_RESULT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.RISKY_CONTACT_REMINDER_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_HAS_LFD_TEST_M2_JOURNEY
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_HAS_NO_SYMPTOMS_M2_JOURNEY
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_HAS_SYMPTOMS_M2_JOURNEY
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_ISOLATION_PAYMENTS_BUTTON
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_LFD_TEST_ORDERING_M2_JOURNEY
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_TAKE_TEST_LATER_M2_JOURNEY
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_TAKE_TEST_M2_JOURNEY
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SUCCESSFULLY_SHARED_EXPOSURE_KEYS
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.TOTAL_ALARM_MANAGER_BACKGROUND_TASKS
@@ -518,6 +525,62 @@ class MetricsTest {
         `test aggregation of analytics metrics`(
             Event(NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_OUTSIDE_TIME_LIMIT),
             Metrics().copy(negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add didAccessRiskyVenueM2Notification for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(DID_ACCESS_RISKY_VENUE_M2_NOTIFICATION),
+            Metrics().copy(didAccessRiskyVenueM2Notification = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add selectedTakeTestM2Journey for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(SELECTED_TAKE_TEST_M2_JOURNEY),
+            Metrics().copy(selectedTakeTestM2Journey = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add selectedTakeTestLaterM2Journey for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(SELECTED_TAKE_TEST_LATER_M2_JOURNEY),
+            Metrics().copy(selectedTakeTestLaterM2Journey = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add selectedHasSymptomsM2Journey for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(SELECTED_HAS_SYMPTOMS_M2_JOURNEY),
+            Metrics().copy(selectedHasSymptomsM2Journey = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add selectedHasNoSymptomsM2Journey for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(SELECTED_HAS_NO_SYMPTOMS_M2_JOURNEY),
+            Metrics().copy(selectedHasNoSymptomsM2Journey = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add selectedLFDTestOrderingM2Journey for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(SELECTED_LFD_TEST_ORDERING_M2_JOURNEY),
+            Metrics().copy(selectedLFDTestOrderingM2Journey = expectedLogEventCount)
+        )
+    }
+
+    @Test
+    fun `add selectedHasLFDTestM2Journey for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(SELECTED_HAS_LFD_TEST_M2_JOURNEY),
+            Metrics().copy(selectedHasLFDTestM2Journey = expectedLogEventCount)
         )
     }
 

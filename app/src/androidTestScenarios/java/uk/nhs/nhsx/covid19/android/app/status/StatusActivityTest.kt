@@ -13,7 +13,6 @@ import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
 import uk.nhs.nhsx.covid19.android.app.remote.MockLocalMessagesApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -44,7 +43,7 @@ class StatusActivityTest : EspressoTest() {
     private val isolationHelper = IsolationHelper(testAppContext.clock)
 
     @Test
-    fun clickMoreAboutApp() = notReported {
+    fun clickMoreAboutApp() {
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
@@ -55,7 +54,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickVenueCheckIn() = notReported {
+    fun clickVenueCheckIn() {
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
@@ -66,7 +65,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickSettings_whenBackPressed_settingsButtonShouldBeEnabled() = notReported {
+    fun clickSettings_whenBackPressed_settingsButtonShouldBeEnabled() {
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
@@ -83,7 +82,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun enableEncounterDetection_whenSuccessful_contactTracingShouldBeOn() = notReported {
+    fun enableEncounterDetection_whenSuccessful_contactTracingShouldBeOn() {
         testAppContext.getExposureNotificationApi().setEnabled(false)
         testAppContext.getExposureNotificationApi().activationResult = Result.Success()
 
@@ -97,7 +96,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun enableEncounterDetection_whenError_shouldShowError_contactTracingShouldBeOff() = notReported {
+    fun enableEncounterDetection_whenError_shouldShowError_contactTracingShouldBeOff() {
         testAppContext.getExposureNotificationApi().setEnabled(false)
         testAppContext.getExposureNotificationApi().activationResult = Result.Error()
 
@@ -113,7 +112,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun enableEncounterDetection_whenResolutionNeededAndSuccessful_contactTracingShouldBeOn() = notReported {
+    fun enableEncounterDetection_whenResolutionNeededAndSuccessful_contactTracingShouldBeOn() {
         testAppContext.getExposureNotificationApi().setEnabled(false)
         testAppContext.setExposureNotificationResolutionRequired(testAppContext.app, true)
 
@@ -127,7 +126,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun enableEncounterDetection_whenResolutionNeededAndNotSuccessful_contactTracingShouldBeOff() = notReported {
+    fun enableEncounterDetection_whenResolutionNeededAndNotSuccessful_contactTracingShouldBeOff() {
         testAppContext.getExposureNotificationApi().setEnabled(false)
         testAppContext.setExposureNotificationResolutionRequired(testAppContext.app, false)
 
@@ -141,7 +140,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun startStatusActivity_whenContactTracingHubActionIsNavigateOnly_thenContactTracingHubIsDisplayed() = notReported {
+    fun startStatusActivity_whenContactTracingHubActionIsNavigateOnly_thenContactTracingHubIsDisplayed() {
         startTestActivity<StatusActivity> {
             putExtra(StatusActivity.CONTACT_TRACING_HUB_ACTION_EXTRA, ContactTracingHubAction.ONLY_NAVIGATE)
         }
@@ -150,107 +149,101 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun startStatusActivity_whenContactTracingHubActionIsNavigateAndTurnOn_thenNavigateToContactTracingHubAndTurnOnContactTracing() =
-        notReported {
-            testAppContext.getExposureNotificationApi().setEnabled(false)
-            testAppContext.getExposureNotificationApi().activationResult = Result.Success()
+    fun startStatusActivity_whenContactTracingHubActionIsNavigateAndTurnOn_thenNavigateToContactTracingHubAndTurnOnContactTracing() {
+        testAppContext.getExposureNotificationApi().setEnabled(false)
+        testAppContext.getExposureNotificationApi().activationResult = Result.Success()
 
-            startTestActivity<StatusActivity> {
-                putExtra(StatusActivity.CONTACT_TRACING_HUB_ACTION_EXTRA, ContactTracingHubAction.NAVIGATE_AND_TURN_ON)
-            }
-
-            waitFor { contactTracingHubRobot.checkActivityIsDisplayed() }
-            waitFor { contactTracingHubRobot.checkContactTracingToggledOnIsDisplayed() }
+        startTestActivity<StatusActivity> {
+            putExtra(StatusActivity.CONTACT_TRACING_HUB_ACTION_EXTRA, ContactTracingHubAction.NAVIGATE_AND_TURN_ON)
         }
+
+        waitFor { contactTracingHubRobot.checkActivityIsDisplayed() }
+        waitFor { contactTracingHubRobot.checkContactTracingToggledOnIsDisplayed() }
+    }
 
     @Test
-    fun startStatusActivity_whenUserCannotClaimIsolationPayment_isolationPaymentButtonShouldNotBeDisplayed() =
-        notReported {
-            testAppContext.setState(isolationHelper.neverInIsolation())
+    fun startStatusActivity_whenUserCannotClaimIsolationPayment_isolationPaymentButtonShouldNotBeDisplayed() {
+        testAppContext.setState(isolationHelper.neverInIsolation())
 
-            startTestActivity<StatusActivity>()
+        startTestActivity<StatusActivity>()
 
-            statusRobot.checkActivityIsDisplayed()
+        statusRobot.checkActivityIsDisplayed()
 
-            waitFor { statusRobot.checkIsolationPaymentButtonIsNotDisplayed() }
-        }
+        waitFor { statusRobot.checkIsolationPaymentButtonIsNotDisplayed() }
+    }
 
     @Test
     @FlakyTest
-    fun startStatusActivity_whenNavigateToContactTracingHubViaBundle_thenPressBackAndRotateDevice_shouldShowStatusActivity() =
-        notReported {
-            testAppContext.getExposureNotificationApi().setEnabled(false)
-            testAppContext.getExposureNotificationApi().activationResult = Result.Success()
+    fun startStatusActivity_whenNavigateToContactTracingHubViaBundle_thenPressBackAndRotateDevice_shouldShowStatusActivity() {
+        testAppContext.getExposureNotificationApi().setEnabled(false)
+        testAppContext.getExposureNotificationApi().activationResult = Result.Success()
 
-            startTestActivity<StatusActivity> {
-                putExtra(StatusActivity.CONTACT_TRACING_HUB_ACTION_EXTRA, ContactTracingHubAction.NAVIGATE_AND_TURN_ON)
-            }
-
-            waitFor { contactTracingHubRobot.checkActivityIsDisplayed() }
-            waitFor { contactTracingHubRobot.checkContactTracingToggledOnIsDisplayed() }
-
-            UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).pressBack()
-
-            waitFor { statusRobot.checkActivityIsDisplayed() }
-            setScreenOrientation(LANDSCAPE)
-            waitFor { statusRobot.checkActivityIsDisplayed() }
+        startTestActivity<StatusActivity> {
+            putExtra(StatusActivity.CONTACT_TRACING_HUB_ACTION_EXTRA, ContactTracingHubAction.NAVIGATE_AND_TURN_ON)
         }
+
+        waitFor { contactTracingHubRobot.checkActivityIsDisplayed() }
+        waitFor { contactTracingHubRobot.checkContactTracingToggledOnIsDisplayed() }
+
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).pressBack()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+        setScreenOrientation(LANDSCAPE)
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
 
     @Test
     @FlakyTest
-    fun startStatusActivity_whenNavigateToLocalMessageScreenViaBundle_thenPressBackAndRotateDevice_shouldShowStatusActivity() =
-        notReported {
-            testAppContext.setLocalAuthority("E07000240")
-            testAppContext.setPostCode("AL1")
-            testAppContext.getLocalMessagesProvider().localMessages = MockLocalMessagesApi.successResponse
+    fun startStatusActivity_whenNavigateToLocalMessageScreenViaBundle_thenPressBackAndRotateDevice_shouldShowStatusActivity() {
+        testAppContext.setLocalAuthority("E07000240")
+        testAppContext.setPostCode("AL1")
+        testAppContext.getLocalMessagesProvider().localMessages = MockLocalMessagesApi.successResponse
 
-            startTestActivity<StatusActivity> {
-                putExtra(StatusActivity.STARTED_FROM_LOCAL_MESSAGE_NOTIFICATION, true)
-            }
-
-            waitFor { localMessageRobot.checkActivityIsDisplayed() }
-
-            UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).pressBack()
-
-            waitFor { statusRobot.checkActivityIsDisplayed() }
-            setScreenOrientation(LANDSCAPE)
-            waitFor { statusRobot.checkActivityIsDisplayed() }
+        startTestActivity<StatusActivity> {
+            putExtra(StatusActivity.STARTED_FROM_LOCAL_MESSAGE_NOTIFICATION, true)
         }
 
-    @Test
-    fun startStatusActivity_whenUserCanClaimIsolationPaymentAndHasToken_isolationPaymentButtonShouldBeDisplayed() =
-        notReported {
-            testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        waitFor { localMessageRobot.checkActivityIsDisplayed() }
 
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).pressBack()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+        setScreenOrientation(LANDSCAPE)
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    @Test
+    fun startStatusActivity_whenUserCanClaimIsolationPaymentAndHasToken_isolationPaymentButtonShouldBeDisplayed() {
+        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+
+        testAppContext.getIsolationPaymentTokenStateProvider().tokenState = Token("token")
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        waitFor { statusRobot.checkIsolationPaymentButtonIsDisplayed() }
+    }
+
+    @Test
+    fun startStatusActivity_whenUserCanClaimIsolationPaymentAndDoesNotHaveToken_isolationPaymentButtonShouldBeNotDisplayed_onReceivingToken_buttonShouldBeDisplayed() {
+        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        waitFor { statusRobot.checkIsolationPaymentButtonIsNotDisplayed() }
+
+        UiThreadStatement.runOnUiThread {
             testAppContext.getIsolationPaymentTokenStateProvider().tokenState = Token("token")
-
-            startTestActivity<StatusActivity>()
-
-            statusRobot.checkActivityIsDisplayed()
-
-            waitFor { statusRobot.checkIsolationPaymentButtonIsDisplayed() }
         }
 
-    @Test
-    fun startStatusActivity_whenUserCanClaimIsolationPaymentAndDoesNotHaveToken_isolationPaymentButtonShouldBeNotDisplayed_onReceivingToken_buttonShouldBeDisplayed() =
-        notReported {
-            testAppContext.setState(isolationHelper.contactCase().asIsolation())
-
-            startTestActivity<StatusActivity>()
-
-            statusRobot.checkActivityIsDisplayed()
-
-            waitFor { statusRobot.checkIsolationPaymentButtonIsNotDisplayed() }
-
-            UiThreadStatement.runOnUiThread {
-                testAppContext.getIsolationPaymentTokenStateProvider().tokenState = Token("token")
-            }
-
-            waitFor { statusRobot.checkIsolationPaymentButtonIsDisplayed() }
-        }
+        waitFor { statusRobot.checkIsolationPaymentButtonIsDisplayed() }
+    }
 
     @Test
-    fun startStatusActivity_whenDoesNotHaveLocalMessage_bannerIsNotDisplayed() = notReported {
+    fun startStatusActivity_whenDoesNotHaveLocalMessage_bannerIsNotDisplayed() {
         testAppContext.setLocalAuthority("E07000240")
         testAppContext.setPostCode("AL1")
         testAppContext.getLocalMessagesProvider().localMessages = MockLocalMessagesApi.emptyResponse
@@ -263,7 +256,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun startStatusActivity_whenHasLocalMessage_bannerIsDisplayed() = notReported {
+    fun startStatusActivity_whenHasLocalMessage_bannerIsDisplayed() {
         testAppContext.setLocalAuthority("E07000240")
         testAppContext.setPostCode("AL1")
         testAppContext.getLocalMessagesProvider().localMessages = MockLocalMessagesApi.successResponse
@@ -278,7 +271,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun whenNotIsolating_doNotShowReadAdviceButton() = notReported {
+    fun whenNotIsolating_doNotShowReadAdviceButton() {
         testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<StatusActivity>()
@@ -287,7 +280,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun whenIsolating_showReadAdviceButton() = notReported {
+    fun whenIsolating_showReadAdviceButton() {
         testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -295,7 +288,7 @@ class StatusActivityTest : EspressoTest() {
         statusRobot.checkReadAdviceIsDisplayed()
     }
 
-    fun whenIsolating_withAnimationDisabled_shouldShowStaticImage() = notReported {
+    fun whenIsolating_withAnimationDisabled_shouldShowStaticImage() {
         testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -303,7 +296,7 @@ class StatusActivityTest : EspressoTest() {
         statusRobot.checkNoAnimationIsDisplayed(isIsolating = true)
     }
 
-    fun whenNotIsolating_withAnimationDisabled_shouldShowStaticImage() = notReported {
+    fun whenNotIsolating_withAnimationDisabled_shouldShowStaticImage() {
         testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<StatusActivity>()
@@ -311,7 +304,7 @@ class StatusActivityTest : EspressoTest() {
         statusRobot.checkNoAnimationIsDisplayed(isIsolating = false)
     }
 
-    fun whenIsolating_withAnimationDisabled_contactTracingOff_shouldNotShowStaticImage() = notReported {
+    fun whenIsolating_withAnimationDisabled_contactTracingOff_shouldNotShowStaticImage() {
         testAppContext.setState(isolationHelper.contactCase().asIsolation())
         testAppContext.getExposureNotificationApi().setEnabled(false)
 
@@ -320,7 +313,7 @@ class StatusActivityTest : EspressoTest() {
         statusRobot.checkStaticImageIsNotDisplayed(isIsolating = true)
     }
 
-    fun whenNotIsolating_withAnimationDisabled_contactTracingOff_shouldNotShowStaticImage() = notReported {
+    fun whenNotIsolating_withAnimationDisabled_contactTracingOff_shouldNotShowStaticImage() {
         testAppContext.setState(isolationHelper.neverInIsolation())
         testAppContext.getExposureNotificationApi().setEnabled(false)
 
@@ -330,7 +323,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun whenIsolating_clickReadAdvice_whenBackPressed_readAdviceButtonShouldBeEnabled() = notReported {
+    fun whenIsolating_clickReadAdvice_whenBackPressed_readAdviceButtonShouldBeEnabled() {
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_INTERNAL_BROWSER) {
             testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
@@ -349,7 +342,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickReportSymptoms_whenBackPressed_reportSymptomsButtonShouldBeEnabled() = notReported {
+    fun clickReportSymptoms_whenBackPressed_reportSymptomsButtonShouldBeEnabled() {
         startTestActivity<StatusActivity>()
 
         statusRobot.clickReportSymptoms()
@@ -362,7 +355,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickVenueCheckIn_whenBackPressed_venueCheckInButtonShouldBeEnabled() = notReported {
+    fun clickVenueCheckIn_whenBackPressed_venueCheckInButtonShouldBeEnabled() {
         startTestActivity<StatusActivity>()
 
         statusRobot.clickVenueCheckIn()
@@ -375,7 +368,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickMoreAboutApp_whenBackPressed_moreAboutAppButtonShouldBeEnabled() = notReported {
+    fun clickMoreAboutApp_whenBackPressed_moreAboutAppButtonShouldBeEnabled() {
         startTestActivity<StatusActivity>()
 
         statusRobot.clickMoreAboutApp()
@@ -388,7 +381,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickFinancialSupport_whenBackPressed_financialSupportButtonShouldBeEnabled() = notReported {
+    fun clickFinancialSupport_whenBackPressed_financialSupportButtonShouldBeEnabled() {
         testAppContext.setIsolationPaymentToken("abc")
         testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
@@ -404,7 +397,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickLinkTestResult_whenBackPressed_linkTestResultButtonShouldBeEnabled() = notReported {
+    fun clickLinkTestResult_whenBackPressed_linkTestResultButtonShouldBeEnabled() {
         startTestActivity<StatusActivity>()
 
         statusRobot.clickLinkTestResult()
@@ -417,7 +410,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickRiskAreaView_whenBackPressed_riskAreaViewShouldBeEnabled() = notReported {
+    fun clickRiskAreaView_whenBackPressed_riskAreaViewShouldBeEnabled() {
         testAppContext.setPostCode("CM2")
 
         startTestActivity<StatusActivity>()
@@ -437,7 +430,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun whenUserIsNotIsolating_reportSymptomsButtonShouldBeDisplayed() = notReported {
+    fun whenUserIsNotIsolating_reportSymptomsButtonShouldBeDisplayed() {
         testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<StatusActivity>()
@@ -448,7 +441,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun whenUserIsContactCase_reportSymptomsButtonShouldBeDisplayed() = notReported {
+    fun whenUserIsContactCase_reportSymptomsButtonShouldBeDisplayed() {
         testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -459,7 +452,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun whenUserIsIndexCaseTriggeredBySelfAssessment_reportSymptomsButtonShouldNotBeDisplayed() = notReported {
+    fun whenUserIsIndexCaseTriggeredBySelfAssessment_reportSymptomsButtonShouldNotBeDisplayed() {
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -470,29 +463,28 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun whenUserIsIndexCaseTriggeredByPositiveTestResultWithUnknownOnsetDate_reportSymptomsButtonShouldBeDisplayed() =
-        notReported {
-            testAppContext.setState(
-                isolationHelper.positiveTest(
-                    AcknowledgedTestResult(
-                        testEndDate = LocalDate.now(testAppContext.clock),
-                        testResult = POSITIVE,
-                        testKitType = LAB_RESULT,
-                        acknowledgedDate = LocalDate.now(testAppContext.clock),
-                        requiresConfirmatoryTest = false
-                    )
-                ).asIsolation()
-            )
+    fun whenUserIsIndexCaseTriggeredByPositiveTestResultWithUnknownOnsetDate_reportSymptomsButtonShouldBeDisplayed() {
+        testAppContext.setState(
+            isolationHelper.positiveTest(
+                AcknowledgedTestResult(
+                    testEndDate = LocalDate.now(testAppContext.clock),
+                    testResult = POSITIVE,
+                    testKitType = LAB_RESULT,
+                    acknowledgedDate = LocalDate.now(testAppContext.clock),
+                    requiresConfirmatoryTest = false
+                )
+            ).asIsolation()
+        )
 
-            startTestActivity<StatusActivity>()
+        startTestActivity<StatusActivity>()
 
-            statusRobot.checkActivityIsDisplayed()
+        statusRobot.checkActivityIsDisplayed()
 
-            waitFor { statusRobot.checkReportSymptomsIsDisplayed() }
-        }
+        waitFor { statusRobot.checkReportSymptomsIsDisplayed() }
+    }
 
     @Test
-    fun clickToggleContactTracing_whenBackPressed_toggleContactTracingButtonShouldBeEnabled() = notReported {
+    fun clickToggleContactTracing_whenBackPressed_toggleContactTracingButtonShouldBeEnabled() {
         startTestActivity<StatusActivity>()
 
         statusRobot.clickToggleContactTracing()
@@ -507,7 +499,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickTestingHub_whenBackPressed_TestingHubButtonShouldBeEnabled() = notReported {
+    fun clickTestingHub_whenBackPressed_TestingHubButtonShouldBeEnabled() {
         startTestActivity<StatusActivity>()
 
         statusRobot.clickTestingHub()

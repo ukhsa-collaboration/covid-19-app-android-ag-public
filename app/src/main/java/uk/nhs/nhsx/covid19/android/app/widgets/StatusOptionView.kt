@@ -16,6 +16,7 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpButtonType
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpLinkTypeWithBrowserWarning
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 
 open class StatusOptionView @JvmOverloads constructor(
     context: Context,
@@ -60,7 +61,8 @@ open class StatusOptionView @JvmOverloads constructor(
             val attrOptionIcon = getDrawable(R.styleable.StatusOptionView_optionIcon)
             val attrOptionIconBackgroundColor =
                 getColor(R.styleable.StatusOptionView_optionIconBackgroundColor, -1)
-            text = getString(R.styleable.StatusOptionView_optionText)
+
+            text = getString(context, R.styleable.StatusOptionView_optionText)
             attrIsExternalLink = getBoolean(R.styleable.StatusOptionView_optionExternalLink, false)
 
             statusOptionText.text = text

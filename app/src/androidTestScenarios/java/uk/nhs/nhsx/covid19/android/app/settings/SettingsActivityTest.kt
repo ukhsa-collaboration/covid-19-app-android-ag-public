@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.settings
 
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.AnimationsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.DataAndPrivacyRobot
@@ -27,7 +26,7 @@ class SettingsActivityTest : EspressoTest() {
     private val animationsRobot = AnimationsRobot()
 
     @Test
-    fun startActivityWithoutLocale_shouldDisplayEnglishLanguage() = notReported {
+    fun startActivityWithoutLocale_shouldDisplayEnglishLanguage() {
         testAppContext.setLocale(null)
 
         startTestActivity<SettingsActivity>()
@@ -38,7 +37,7 @@ class SettingsActivityTest : EspressoTest() {
     }
 
     @Test
-    fun startActivityWithWelshLocale_shouldDisplayWelshLanguage() = notReported {
+    fun startActivityWithWelshLocale_shouldDisplayWelshLanguage() {
         testAppContext.setLocale("cy")
 
         startTestActivity<SettingsActivity>()
@@ -49,7 +48,7 @@ class SettingsActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickLanguagesSetting_shouldNavigateToLanguagesActivity() = notReported {
+    fun clickLanguagesSetting_shouldNavigateToLanguagesActivity() {
         startTestActivity<SettingsActivity>()
 
         settingsRobot.checkActivityIsDisplayed()
@@ -60,7 +59,7 @@ class SettingsActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickManageMyDataSetting_HasSettingsOptions() = notReported {
+    fun clickManageMyDataSetting_HasSettingsOptions() {
         testAppContext.setPostCode("AL1")
 
         startTestActivity<SettingsActivity>()
@@ -78,7 +77,7 @@ class SettingsActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickMyDataSetting_shouldNavigateToMyDataActivity() = notReported {
+    fun clickMyDataSetting_shouldNavigateToMyDataActivity() {
         testAppContext.setPostCode("AL1")
 
         startTestActivity<SettingsActivity>()
@@ -91,7 +90,7 @@ class SettingsActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickMyDataSetting_shouldDeleteData() = notReported {
+    fun clickMyDataSetting_shouldDeleteData() {
         val welcomeRobot = WelcomeRobot()
         val dataAndPrivacyRobot = DataAndPrivacyRobot()
         val postCodeRobot = PostCodeRobot()
@@ -141,7 +140,7 @@ class SettingsActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickMyAreaSetting_shouldNavigateToMyAreaActivity() = notReported {
+    fun clickMyAreaSetting_shouldNavigateToMyAreaActivity() {
         testAppContext.setPostCode("AL1")
 
         startTestActivity<SettingsActivity>()
@@ -154,7 +153,7 @@ class SettingsActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickVenueHistorySetting_shouldNavigateToVenusHistoryActivity() = notReported {
+    fun clickVenueHistorySetting_shouldNavigateToVenusHistoryActivity() {
         testAppContext.setPostCode("AL1")
 
         startTestActivity<SettingsActivity>()
@@ -167,7 +166,7 @@ class SettingsActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickAnimationSetting_shouldNavigateToAnimationActivity() = notReported {
+    fun clickAnimationSetting_shouldNavigateToAnimationActivity() {
         startTestActivity<SettingsActivity>()
 
         settingsRobot.checkActivityIsDisplayed()

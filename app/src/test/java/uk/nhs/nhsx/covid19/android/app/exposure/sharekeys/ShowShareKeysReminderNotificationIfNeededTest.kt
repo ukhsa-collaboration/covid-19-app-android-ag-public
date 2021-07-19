@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.sharekeys
 
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -78,12 +77,12 @@ class ShowShareKeysReminderNotificationIfNeededTest {
     private fun thenShareKeysNotificationIsSent() {
         verify { keySharingInfoProvider.setNotificationSentDate(Instant.now(fixedClock)) }
         verify { notificationProvider.showShareKeysReminderNotification() }
-        coVerify { analyticsEventProcessor.track(TotalShareExposureKeysReminderNotifications) }
+        verify { analyticsEventProcessor.track(TotalShareExposureKeysReminderNotifications) }
     }
 
     private fun thenNotificationIsNotSent() {
         verify(exactly = 0) { keySharingInfoProvider.setNotificationSentDate(any()) }
         verify(exactly = 0) { notificationProvider.showShareKeysReminderNotification() }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(any()) }
+        verify(exactly = 0) { analyticsEventProcessor.track(any()) }
     }
 }

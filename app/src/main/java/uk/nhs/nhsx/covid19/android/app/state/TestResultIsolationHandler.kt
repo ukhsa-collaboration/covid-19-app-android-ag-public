@@ -206,7 +206,7 @@ class TestResultIsolationHandler @Inject constructor(
 
             testInfo.receivedTestResult.isConfirmed() -> Update(testInfo)
 
-            currentState is PossiblyIsolating && currentState.isActiveIndexCase(clock) -> Nothing
+            currentState.isActiveIndexCase(clock) -> Nothing
 
             else -> Overwrite(testInfo)
         }

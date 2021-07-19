@@ -4,7 +4,6 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_FAIL
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ProgressRobot
 
@@ -13,19 +12,19 @@ class SubmitKeysProgressActivityTest : EspressoTest() {
     private val submitKeysProgressRobot = ProgressRobot()
 
     @Test
-    fun startActivityWithoutExtras() = notReported {
+    fun startActivityWithoutExtras() {
         startTestActivity<SubmitKeysProgressActivity>()
     }
 
     @Test
-    fun startActivityWithExposureKeysExtra() = notReported {
+    fun startActivityWithExposureKeysExtra() {
         startTestActivity<SubmitKeysProgressActivity> {
             putParcelableArrayListExtra("EXPOSURE_KEYS_TO_SUBMIT", ArrayList<NHSTemporaryExposureKey>())
         }
     }
 
     @Test
-    fun startActivityWithAllExtrasAndFailingSubmissionApi_showsError() = notReported {
+    fun startActivityWithAllExtrasAndFailingSubmissionApi_showsError() {
         MockApiModule.behaviour.responseType = ALWAYS_FAIL
         startTestActivity<SubmitKeysProgressActivity> {
             putParcelableArrayListExtra("EXPOSURE_KEYS_TO_SUBMIT", ArrayList<NHSTemporaryExposureKey>())
@@ -36,7 +35,7 @@ class SubmitKeysProgressActivityTest : EspressoTest() {
     }
 
     @Test
-    fun startActivityWithAllExtrasAndFailingDelayedSubmissionApi_showsLoading() = notReported {
+    fun startActivityWithAllExtrasAndFailingDelayedSubmissionApi_showsLoading() {
         MockApiModule.behaviour.responseType = ALWAYS_FAIL
         MockApiModule.behaviour.delayMillis = 500
         startTestActivity<SubmitKeysProgressActivity> {

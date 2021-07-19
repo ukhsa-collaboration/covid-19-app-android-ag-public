@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.about
 
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.EditPostalDistrictRobot
@@ -20,7 +19,7 @@ class EditPostalDistrictAndLocalAuthorityFlowTest : EspressoTest() {
     private val localAuthorityName = "Barnet"
 
     @Test
-    fun completePostCode() = notReported {
+    fun completePostCode() {
         startTestActivity<SettingsActivity>()
 
         settingsRobot.checkActivityIsDisplayed()

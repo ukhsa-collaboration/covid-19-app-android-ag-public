@@ -145,7 +145,13 @@
             android:label="@string/book_follow_up_test_title"/>
         <activity android:name=".settings.animations.AnimationsActivity"
             android:label="@string/animations_settings_title"/>
+        <activity android:name=".qrcode.riskyvenues.SymptomsAfterRiskyVenueActivity"
+            android:label="@string/symptoms_after_risky_venue_title"/>
         <activity android:name=".status.localmessage.LocalMessageActivity" />
+        <activity android:name=".testordering.lfd.OrderLfdTestActivity"
+            android:label="@string/book_free_lfd_test_title"/>
+        <activity android:name=".status.contacttracinghub.WhenNotToPauseContactTracingActivity"
+            android:label="@string/when_not_to_pause_contact_tracing_title"/>
 
         <!-- Receivers -->
         <receiver

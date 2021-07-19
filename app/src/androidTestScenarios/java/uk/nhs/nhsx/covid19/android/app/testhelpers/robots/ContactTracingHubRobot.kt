@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isChecked
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -40,5 +41,10 @@ class ContactTracingHubRobot {
     fun checkErrorIsDisplayed() {
         onView(withId(com.google.android.material.R.id.snackbar_text))
             .check(matches(isDisplayed()))
+    }
+
+    fun clickWhenNotToPauseContactTracing() {
+        onView(withId(R.id.optionWhenNotToPause))
+            .perform(scrollTo(), click())
     }
 }

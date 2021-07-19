@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.exposure
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysResultActivity
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
@@ -20,13 +19,13 @@ class ShareKeysResultActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testBackDoesNothing() = notReported {
+    fun testBackDoesNothing() {
         testAppContext.device.pressBack()
         shareResultRobot.checkActivityIsDisplayed()
     }
 
     @Test
-    fun testActionButtonFinishesActivity() = notReported {
+    fun testActionButtonFinishesActivity() {
         shareResultRobot.clickActionButton()
         waitFor { statusRobot.checkActivityIsDisplayed() }
     }

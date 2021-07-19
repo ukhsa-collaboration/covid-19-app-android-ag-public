@@ -51,7 +51,7 @@ fun LocalDate.uiFormat(context: Context): String {
         DateTimeFormatter.ofLocalizedDate(MEDIUM).withLocale(context.getResourcesLocale())
             .format(this)
     } else {
-        DateTimeFormatter.ofPattern("dd MMM yyyy", context.getResourcesLocale())
+        DateTimeFormatter.ofPattern("d MMM yyyy", context.getResourcesLocale())
             .format(this)
     }
 }
@@ -61,7 +61,7 @@ fun LocalDate.uiLongFormat(context: Context): String {
         DateTimeFormatter.ofLocalizedDate(LONG).withLocale(context.getResourcesLocale())
             .format(this)
     } else {
-        DateTimeFormatter.ofPattern("dd MMMM yyyy", context.getResourcesLocale())
+        DateTimeFormatter.ofPattern("d MMMM yyyy", context.getResourcesLocale())
             .format(this)
     }
 }
@@ -76,7 +76,7 @@ fun LocalDateTime.uiFormat(context: Context): String {
         val time = uiTimeFormatter.withLocale(context.getResourcesLocale()).format(this)
         "$date $time"
     } else {
-        DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm", context.getResourcesLocale())
+        DateTimeFormatter.ofPattern("d MMM yyyy, HH:mm", context.getResourcesLocale())
             .format(this)
     }
 }

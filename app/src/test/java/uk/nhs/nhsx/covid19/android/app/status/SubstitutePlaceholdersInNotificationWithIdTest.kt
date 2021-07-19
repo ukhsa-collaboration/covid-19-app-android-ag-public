@@ -8,17 +8,17 @@ import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.postcode.GetLocalAuthorityName
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
-import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessage
-import uk.nhs.nhsx.covid19.android.app.remote.data.TranslatableLocalMessage
+import uk.nhs.nhsx.covid19.android.app.remote.data.LocalInformation.Notification
+import uk.nhs.nhsx.covid19.android.app.remote.data.TranslatableNotificationMessage
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class SubstitutePlaceholdersInMessageWithIdTest {
+class SubstitutePlaceholdersInNotificationWithIdTest {
 
     private val postCodeProvider = mockk<PostCodeProvider>()
     private val getLocalAuthorityName = mockk<GetLocalAuthorityName>()
 
-    private val translateMessageWithId = SubstitutePlaceholdersInMessageWithId(postCodeProvider, getLocalAuthorityName)
+    private val testSubject = SubstitutePlaceholdersInNotificationWithId(postCodeProvider, getLocalAuthorityName)
 
     private val postCode = "SE1"
     private val localAuthorityName = "Somethingsborough"
@@ -33,37 +33,36 @@ class SubstitutePlaceholdersInMessageWithIdTest {
     fun `when the app does not know of a post code then return null`() = runBlocking {
         every { postCodeProvider.value } returns null
 
-        assertNull(translateMessageWithId(mockk()))
+        assertNull(testSubject(mockk()))
     }
 
     @Test
     fun `when the app can not resolve a local authority name then return null`() = runBlocking {
         coEvery { getLocalAuthorityName() } returns null
 
-        assertNull(translateMessageWithId(mockk()))
+        assertNull(testSubject(mockk()))
     }
 
     @Test
     fun `when a post code and local authority name are present then placeholders in MessageWithId are substituted with corresponding values`() =
         runBlocking {
-            val translations = mockk<TranslatableLocalMessage>()
-            val messageWithId = MessageWithId(
+            val translations = mockk<TranslatableNotificationMessage>()
+            val messageWithId = NotificationWithId(
                 messageId = "messageId",
-                message = LocalMessage(
-                    type = mockk(),
+                message = Notification(
                     updated = mockk(),
                     contentVersion = mockk(relaxed = true),
                     translations
                 )
             )
 
-            val translatableLocalMessage = mockk<TranslatableLocalMessage>()
-            every { translations.replacePlaceholders(postCode, localAuthorityName) } returns translatableLocalMessage
+            val translatableNotificationMessage = mockk<TranslatableNotificationMessage>()
+            every { translations.replacePlaceholders(postCode, localAuthorityName) } returns translatableNotificationMessage
 
-            val result = translateMessageWithId(messageWithId)
+            val result = testSubject(messageWithId)
 
             assertEquals(
-                expected = messageWithId.copy(message = messageWithId.message.copy(translations = translatableLocalMessage)),
+                expected = messageWithId.copy(message = messageWithId.message.copy(translations = translatableNotificationMessage)),
                 actual = result
             )
         }

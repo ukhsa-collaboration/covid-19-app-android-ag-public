@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.di.module.AppModule.Companion.GLOBAL_SCOPE
+import uk.nhs.nhsx.covid19.android.app.di.module.AppModule.Companion.APPLICATION_SCOPE
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.status.DownloadRiskyPostCodesWork
 import uk.nhs.nhsx.covid19.android.app.util.minutesUntilNow
@@ -33,7 +33,7 @@ class ApplicationStartAreaRiskUpdater(
         onboardingCompletedProvider: OnboardingCompletedProvider,
         appAvailabilityProvider: AppAvailabilityProvider,
         downloadRiskyPostCodesWork: DownloadRiskyPostCodesWork,
-        @Named(GLOBAL_SCOPE) downloadRiskyPostCodesScope: CoroutineScope,
+        @Named(APPLICATION_SCOPE) downloadRiskyPostCodesScope: CoroutineScope,
         clock: Clock
     ) : this(
         onboardingCompletedProvider,

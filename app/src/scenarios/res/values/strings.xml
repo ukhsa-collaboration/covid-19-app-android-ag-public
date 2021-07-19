@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="field_tests" translatable="false">Field Tests</string>
+    <string name="show_string_ids">Show String Ids</string>
 </resources>

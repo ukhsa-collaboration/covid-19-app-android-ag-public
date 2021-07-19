@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.onboarding.postcode
 
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PermissionRobot
@@ -17,7 +16,7 @@ class PostCodeAndLocalAuthorityFlowTest : EspressoTest() {
     private val localAuthorityName = "Barnet"
 
     @Test
-    fun completePostCode() = notReported {
+    fun completePostCode() {
         startTestActivity<PostCodeActivity>()
 
         postCodeRobot.checkActivityIsDisplayed()

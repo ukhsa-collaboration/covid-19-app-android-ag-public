@@ -3,8 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.di.viewmodel
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.Finish
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWontBeInIsolation
 
 class MockTestResultViewModel : BaseTestResultViewModel() {
     companion object {
@@ -13,7 +12,7 @@ class MockTestResultViewModel : BaseTestResultViewModel() {
 
     data class Options(
         val useMock: Boolean = false,
-        val viewState: TestResultViewState = PositiveWillBeInIsolation(ButtonAction.Finish),
+        val viewState: TestResultViewState = NegativeWontBeInIsolation,
         val remainingDaysInIsolation: Int = 8
     )
 

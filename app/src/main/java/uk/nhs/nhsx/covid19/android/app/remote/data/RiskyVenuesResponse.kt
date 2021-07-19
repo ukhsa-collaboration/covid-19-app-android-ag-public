@@ -8,12 +8,12 @@ import java.time.Instant
 data class RiskyVenuesResponse(val venues: List<RiskyVenue>)
 
 @JsonClass(generateAdapter = true)
-data class RiskyVenue(val id: String, val riskyWindow: RiskyWindow, val messageType: MessageType)
+data class RiskyVenue(val id: String, val riskyWindow: RiskyWindow, val messageType: RiskyVenueMessageType)
 
 @JsonClass(generateAdapter = true)
 data class RiskyWindow(val from: Instant, @Json(name = "until") val to: Instant)
 
-enum class MessageType(
+enum class RiskyVenueMessageType(
     val jsonName: String
 ) {
     INFORM(jsonName = "M1"),

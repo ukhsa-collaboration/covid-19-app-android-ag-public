@@ -46,7 +46,7 @@ class LocalMessageActivity : BaseActivity(R.layout.activity_local_message) {
             if (localMessage != null) {
                 with(localMessage) {
                     titleLocalMessage.text = head
-                    head?.let { setAccessibilityTitle(it) }
+                    setAccessibilityTitle(head)
                     setUpLocalMessageAdapter(content)
                 }
             } else {
@@ -65,8 +65,8 @@ class LocalMessageActivity : BaseActivity(R.layout.activity_local_message) {
         }
     }
 
-    private fun setUpLocalMessageAdapter(contentBlocks: List<ContentBlock>?) {
-        localMessageViewAdapter = LocalMessageViewAdapter(contentBlocks?.filter { it.isDisplayable() } ?: listOf(), ::openUrl)
+    private fun setUpLocalMessageAdapter(contentBlocks: List<ContentBlock>) {
+        localMessageViewAdapter = LocalMessageViewAdapter(contentBlocks.filter { it.isDisplayable() }, ::openUrl)
         localMessageContentList.layoutManager = LinearLayoutManager(this)
         localMessageContentList.adapter = localMessageViewAdapter
     }

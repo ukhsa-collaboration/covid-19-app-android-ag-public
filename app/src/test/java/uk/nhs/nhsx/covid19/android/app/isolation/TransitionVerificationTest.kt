@@ -22,8 +22,8 @@ class TransitionVerificationTest(
         @JvmStatic
         @Parameterized.Parameters(name = "{index}_{3}")
         fun generateParameters(): Iterable<Array<Any>> {
-            val initialStates = IsolationTransitionLoader()
-                .loadTransitions()
+            val initialStates = IsolationRuleLoader()
+                .loadIsolationRules().transitions
                 .map { it.initialState }
                 .distinct()
 

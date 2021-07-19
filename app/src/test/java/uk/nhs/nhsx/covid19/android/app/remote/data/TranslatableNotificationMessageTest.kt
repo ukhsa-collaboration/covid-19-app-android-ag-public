@@ -4,13 +4,13 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.ContentBlockType.PARAGRAPH
 import kotlin.test.assertEquals
 
-class TranslatableLocalMessageTest {
+class TranslatableNotificationMessageTest {
     private val postCode = "AL1"
     private val localAuthority = "St. Albans"
 
     @Test
     fun `replacePlaceholders replaces local authority and post code placeholders with relevant strings`() {
-        val translatableLocalMessage = TranslatableLocalMessage(
+        val translatableNotificationMessage = TranslatableNotificationMessage(
             mapOf(
                 "en" to translationWithText(
                     head = "Head with [postcode] and [local authority]",
@@ -25,9 +25,9 @@ class TranslatableLocalMessageTest {
             )
         )
 
-        val replaced = translatableLocalMessage.replacePlaceholders(postCode, localAuthority)
+        val replaced = translatableNotificationMessage.replacePlaceholders(postCode, localAuthority)
 
-        val expected = TranslatableLocalMessage(
+        val expected = TranslatableNotificationMessage(
             mapOf(
                 "en" to translationWithText(
                     head = "Head with $postCode and $localAuthority",
@@ -44,7 +44,7 @@ class TranslatableLocalMessageTest {
         assertEquals(expected, replaced)
     }
 
-    private fun translationWithText(head: String, body: String, text: String) = LocalMessageTranslation(
+    private fun translationWithText(head: String, body: String, text: String) = NotificationMessage(
         head = head,
         body = body,
         content = listOf(

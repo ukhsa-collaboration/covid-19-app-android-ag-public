@@ -7,16 +7,20 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.Success
+import uk.nhs.nhsx.covid19.android.app.report.Reported
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.FLOW
-import uk.nhs.nhsx.covid19.android.app.report.notReported
+import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QrCodeScanResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QrScannerRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.VenueAlertInformRobot
 
-class QrCodeScanScenarioTest : EspressoTest() {
+@RunWith(Parameterized::class)
+class QrCodeScanScenarioTest(override val configuration: TestConfiguration) : EspressoTest() {
 
     @get:Rule
     var cameraPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(CAMERA)
@@ -31,6 +35,7 @@ class QrCodeScanScenarioTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun checkInWithValidQrCodeAndCameraPermissionEnabled_shouldReceiveRiskyVenueWarning() =
         reporter(
             scenario = "Venue check-in",
@@ -86,47 +91,45 @@ class QrCodeScanScenarioTest : EspressoTest() {
         }
 
     @Test
-    fun checkInWithValidQrCodeAndCameraPermissionDisabled_shouldRequestPermission_onPermissionGranted_shouldReceiveRiskyVenueWarning() =
-        notReported {
-            startTestActivity<QrScannerActivity>()
+    fun checkInWithValidQrCodeAndCameraPermissionDisabled_shouldRequestPermission_onPermissionGranted_shouldReceiveRiskyVenueWarning() {
+        startTestActivity<QrScannerActivity>()
 
-            qrScannerRobot.checkActivityIsDisplayed()
+        qrScannerRobot.checkActivityIsDisplayed()
 
-            runBlocking {
-                testAppContext.getVisitedVenuesStorage().finishLastVisitAndAddNewVenue(
-                    Venue("ABCD1234", "ABCD1234")
-                )
-            }
-
-            startTestActivity<QrCodeScanResultActivity> {
-                putExtra(QrCodeScanResultActivity.SCAN_RESULT, Success("ABCD1234"))
-            }
-
-            waitFor { qrCodeScanResultRobot.checkAnimationIconIsDisplayed() }
-
-            qrCodeScanResultRobot.checkSuccessTitleAndVenueIsDisplayed("ABCD1234")
-
-            qrCodeScanResultRobot.clickBackToHomeButton()
-
-            runBlocking {
-                testAppContext.getDownloadAndProcessRiskyVenues().invoke()
-            }
-
-            waitFor { venueAlertInformRobot.checkVenueTitleIsDisplayed() }
+        runBlocking {
+            testAppContext.getVisitedVenuesStorage().finishLastVisitAndAddNewVenue(
+                Venue("ABCD1234", "ABCD1234")
+            )
         }
+
+        startTestActivity<QrCodeScanResultActivity> {
+            putExtra(QrCodeScanResultActivity.SCAN_RESULT, Success("ABCD1234"))
+        }
+
+        waitFor { qrCodeScanResultRobot.checkAnimationIconIsDisplayed() }
+
+        qrCodeScanResultRobot.checkSuccessTitleAndVenueIsDisplayed("ABCD1234")
+
+        qrCodeScanResultRobot.clickBackToHomeButton()
+
+        runBlocking {
+            testAppContext.getDownloadAndProcessRiskyVenues().invoke()
+        }
+
+        waitFor { venueAlertInformRobot.checkVenueTitleIsDisplayed() }
+    }
 
     @Test
-    fun checkInWithValidQrCodeAndCameraPermissionDisabled_shouldRequestPermission_onPermissionDenied_shouldShowPermissionDenied() =
-        notReported {
-            testAppContext.permissionsManager.setResponseForPermissionRequest(
-                CAMERA,
-                PackageManager.PERMISSION_DENIED
-            )
+    fun checkInWithValidQrCodeAndCameraPermissionDisabled_shouldRequestPermission_onPermissionDenied_shouldShowPermissionDenied() {
+        testAppContext.permissionsManager.setResponseForPermissionRequest(
+            CAMERA,
+            PackageManager.PERMISSION_DENIED
+        )
 
-            startTestActivity<QrScannerActivity>()
+        startTestActivity<QrScannerActivity>()
 
-            waitFor { qrCodeScanResultRobot.checkCameraIconIsDisplayed() }
+        waitFor { qrCodeScanResultRobot.checkCameraIconIsDisplayed() }
 
-            qrCodeScanResultRobot.checkPermissionDeniedTitleIsDisplayed()
-        }
+        qrCodeScanResultRobot.checkPermissionDeniedTitleIsDisplayed()
+    }
 }

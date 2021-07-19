@@ -5,7 +5,6 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.CompleteOnboarding
 import uk.nhs.nhsx.covid19.android.app.onboarding.WelcomeActivity
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import kotlin.test.assertTrue
 
 class OnboardingAnalyticsTest : AnalyticsTest() {
@@ -19,7 +18,7 @@ class OnboardingAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun completeOnboardingMetricsPresent() = notReported {
+    fun completeOnboardingMetricsPresent() {
         completeOnboarding.onboard()
 
         assertOnLastFields {

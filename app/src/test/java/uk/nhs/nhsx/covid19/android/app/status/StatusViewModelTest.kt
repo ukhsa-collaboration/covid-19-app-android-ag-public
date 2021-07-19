@@ -18,6 +18,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaBanner
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaNotification
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessRiskyVenueM2Notification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolationPaymentsButton
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
@@ -44,8 +45,10 @@ import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvide
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessageTranslation
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
+import uk.nhs.nhsx.covid19.android.app.remote.data.NotificationMessage
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
 import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsProvider
@@ -495,7 +498,7 @@ class StatusViewModelTest {
 
     @Test
     fun `update view state on new local message`() {
-        val expected = mockk<LocalMessageTranslation>()
+        val expected = mockk<NotificationMessage>()
         coEvery { getLocalMessageFromStorage() } returns expected
 
         testSubject.updateViewState()
@@ -557,7 +560,7 @@ class StatusViewModelTest {
     @Test
     fun `when isolation payment button tapped selectedIsolationPaymentsButton analytics event added`() {
         testSubject.optionIsolationPaymentClicked()
-        coVerify { analyticsEventProcessorMock.track(SelectedIsolationPaymentsButton) }
+        verify { analyticsEventProcessorMock.track(SelectedIsolationPaymentsButton) }
     }
 
     @Test
@@ -615,7 +618,7 @@ class StatusViewModelTest {
         testSubject.updateViewStateAndCheckUserInbox()
 
         verify { navigateTo.onChanged(LocalMessage) }
-        coVerify { analyticsEventProcessorMock.track(DidAccessLocalInfoScreenViaNotification) }
+        verify { analyticsEventProcessorMock.track(DidAccessLocalInfoScreenViaNotification) }
     }
 
     @Test
@@ -637,12 +640,37 @@ class StatusViewModelTest {
 
         testSubject.localMessageBannerClicked()
 
-        coVerify { analyticsEventProcessorMock.track(DidAccessLocalInfoScreenViaBanner) }
+        verify { analyticsEventProcessorMock.track(DidAccessLocalInfoScreenViaBanner) }
+    }
+
+    @Test
+    fun `when startedFromRiskyVenueNotificationWithType is set to BOOK_TEST tracks didAccessRiskyVenueM2Notification once`() {
+        setupTestSubject(contactTracingHubAction = null, startedFromRiskyVenueNotificationWithType = BOOK_TEST)
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        verify(exactly = 0) { navigateTo.onChanged(any()) }
+        verify { analyticsEventProcessorMock.track(DidAccessRiskyVenueM2Notification) }
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        confirmVerified(analyticsEventProcessorMock)
+    }
+
+    @Test
+    fun `when startedFromRiskyVenueNotificationWithType is set to INFORM do nothing`() {
+        setupTestSubject(contactTracingHubAction = null, startedFromRiskyVenueNotificationWithType = INFORM)
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        verify(exactly = 0) { navigateTo.onChanged(any()) }
+        verify(exactly = 0) { analyticsEventProcessorMock.track(any()) }
     }
 
     private fun setupTestSubject(
         contactTracingHubAction: ContactTracingHubAction?,
-        showLocalMessageScreen: Boolean = false
+        showLocalMessageScreen: Boolean = false,
+        startedFromRiskyVenueNotificationWithType: RiskyVenueMessageType? = null
     ) {
         testSubject = StatusViewModel(
             postCodeProvider,
@@ -665,7 +693,8 @@ class StatusViewModelTest {
             getLocalMessageFromStorage,
             exposureNotificationPermissionHelperFactory,
             contactTracingHubAction = contactTracingHubAction,
-            showLocalMessageScreen = showLocalMessageScreen
+            showLocalMessageScreen = showLocalMessageScreen,
+            startedFromRiskyVenueNotificationWithType = startedFromRiskyVenueNotificationWithType,
         )
 
         testSubject.viewState.observeForever(viewStateObserver)

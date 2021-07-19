@@ -9,7 +9,6 @@ import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ShareKeysReminder
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 
 class ShareKeysReminderFlowAnalyticsTest : AnalyticsTest() {
 
@@ -24,22 +23,19 @@ class ShareKeysReminderFlowAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun selfDiagnosis_receivePositivePCR_declineKeySharingInInitialFlow_DeclineKeySharingInReminderFlow() =
-        notReported {
-            receivePositiveTestResultAfterSelfDiagnosisAndDeclineSharingKeysInitially(NO_CONSENT)
-        }
+    fun selfDiagnosis_receivePositivePCR_declineKeySharingInInitialFlow_DeclineKeySharingInReminderFlow() {
+        receivePositiveTestResultAfterSelfDiagnosisAndDeclineSharingKeysInitially(NO_CONSENT)
+    }
 
     @Test
-    fun selfDiagnosis_receivePositivePCR_declineKeySharingInInitialFlow_ConsentToKeySharingInReminderFlow_Failure() =
-        notReported {
-            receivePositiveTestResultAfterSelfDiagnosisAndDeclineSharingKeysInitially(CONSENT_BUT_FAILURE)
-        }
+    fun selfDiagnosis_receivePositivePCR_declineKeySharingInInitialFlow_ConsentToKeySharingInReminderFlow_Failure() {
+        receivePositiveTestResultAfterSelfDiagnosisAndDeclineSharingKeysInitially(CONSENT_BUT_FAILURE)
+    }
 
     @Test
-    fun selfDiagnosis_receivePositivePCR_declineKeySharingInInitialFlow_ConsentToKeySharingInReminderFlow_Success() =
-        notReported {
-            receivePositiveTestResultAfterSelfDiagnosisAndDeclineSharingKeysInitially(CONSENT_AND_SUCCESS)
-        }
+    fun selfDiagnosis_receivePositivePCR_declineKeySharingInInitialFlow_ConsentToKeySharingInReminderFlow_Success() {
+        receivePositiveTestResultAfterSelfDiagnosisAndDeclineSharingKeysInitially(CONSENT_AND_SUCCESS)
+    }
 
     private fun receivePositiveTestResultAfterSelfDiagnosisAndDeclineSharingKeysInitially(reminderFlow: KeySharingReminderTestFlow) {
         // Current date: 2nd Jan -> Analytics packet for: 1st Jan

@@ -10,7 +10,7 @@ import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertProvider
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesCircuitBreakerApi
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.BOOK_TEST
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
 import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Clock
 import javax.inject.Inject
@@ -79,7 +79,7 @@ class RiskyVenuesCircuitBreakerPolling @Inject constructor(
                 analyticsEventProcessor.track(ReceivedRiskyVenueM1Warning)
             }
             if (shouldShowRiskyVenueNotification(it.messageType)) {
-                notificationProvider.showRiskyVenueVisitNotification()
+                notificationProvider.showRiskyVenueVisitNotification(messageType = it.messageType)
             }
             riskyVenueAlertProvider.riskyVenueAlert = RiskyVenueAlert(it.venueId, it.messageType)
         }

@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.questionnaire.review
 
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -8,7 +7,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireAndStartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireButDidNotStartIsolation
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsDidUpdateIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenNoSymptoms
@@ -30,7 +29,7 @@ import java.time.ZoneOffset
 class QuestionnaireIsolationHandlerTest {
 
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
-    private val analyticsEventTracker = mockk<AnalyticsEventTracker>(relaxUnitFun = true)
+    private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxUnitFun = true)
     private val riskCalculator = mockk<RiskCalculator>()
     private val fixedClock = Clock.fixed(Instant.parse("2020-01-01T10:00:00Z"), ZoneOffset.UTC)
 
@@ -38,7 +37,7 @@ class QuestionnaireIsolationHandlerTest {
 
     private val testSubject = QuestionnaireIsolationHandler(
         isolationStateMachine,
-        analyticsEventTracker,
+        analyticsEventProcessor,
         riskCalculator,
         fixedClock
     )
@@ -71,7 +70,7 @@ class QuestionnaireIsolationHandlerTest {
 
         verify {
             isolationStateMachine.processEvent(OnPositiveSelfAssessment(onsetDate))
-            analyticsEventTracker.track(CompletedQuestionnaireAndStartedIsolation)
+            analyticsEventProcessor.track(CompletedQuestionnaireAndStartedIsolation)
         }
     }
 
@@ -91,7 +90,7 @@ class QuestionnaireIsolationHandlerTest {
 
         verify {
             isolationStateMachine.processEvent(OnPositiveSelfAssessment(onsetDate))
-            analyticsEventTracker.track(CompletedQuestionnaireAndStartedIsolation)
+            analyticsEventProcessor.track(CompletedQuestionnaireAndStartedIsolation)
         }
     }
 
@@ -102,7 +101,7 @@ class QuestionnaireIsolationHandlerTest {
 
         val symptomAdvice = testSubject.computeAdvice(riskThreshold, symptoms, onsetDate)
 
-        coVerify { analyticsEventTracker.track(CompletedQuestionnaireButDidNotStartIsolation) }
+        verify { analyticsEventProcessor.track(CompletedQuestionnaireButDidNotStartIsolation) }
         assertEquals(NoIsolationSymptomAdvice.NoSymptoms, symptomAdvice)
     }
 

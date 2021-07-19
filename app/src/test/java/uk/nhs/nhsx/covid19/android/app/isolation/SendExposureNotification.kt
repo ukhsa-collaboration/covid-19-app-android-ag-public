@@ -69,7 +69,7 @@ class SendExposureNotification(
         evaluateIfConsideredRisky = evaluateIfConsideredRisky,
         calculateExposureRisk = calculateExposureRisk,
         riskScoreCalculatorProvider = riskScoreCalculatorProvider,
-        analyticsEventTracker = mockk(relaxUnitFun = true)
+        analyticsEventProcessor = mockk(relaxUnitFun = true)
     )
 
     private val exposureWindowRiskManager = ExposureWindowRiskManager(

@@ -13,7 +13,7 @@ This token has to be stored in the Keychain for MacOS users or the Credential Ma
 
 1. Open Keychain Access
 2. Go to File > New Password Item…
-   1. __Service__ (__Keychain Item Name__) should be _nhs-covid19-apps_
+   1. __Service__ (__Keychain Item Name__) should be _nihp-public_
    2. __Account__ is your Github username
    3. As __Password__ enter your personal access token
 
@@ -23,7 +23,7 @@ First the token has to be stored.
 
 1. Open Credential Manager
 2. Go to _Add a generic credential_
-   1. __Internet or work address__ should be _nhs-covid19-apps_
+   1. __Internet or work address__ should be _nihp-public_
    2. __User name__ is your Github username
    3. As __Password__ enter your personal access token
 
@@ -34,6 +34,12 @@ To enable PowerShell to read from the Credential Manager, the CredentialManager 
 3. (optional) Troubleshooting
    1. _Install-Module_ uses NuGet. If NuGet is not pre-installed, install it with _Install-PackageProvider -Name NuGet_ from PowerShell
    2. Installing NuGet might fail due to inappropriate TLS settings. Enforcing TLS 1.2 to install NuGet fixes this potential issue: Enter _\[Net.ServicePointManager]::SecurityProtocol = \[Net.SecurityProtocolType]::Tls12_ into PowerShell to enforce usage of TLS 1.2
+
+### Optional: Setup path to isolation model in global gradle.properties
+
+In order to get a direct link to the related isolation rule in case of a failing isolation test, you need to add the path to the repo hosting the rules in the global gradle.properties file:
+
+  * `isolationModel.repo = https://<insert path to repo here>`
 
 ## Dev actions
 

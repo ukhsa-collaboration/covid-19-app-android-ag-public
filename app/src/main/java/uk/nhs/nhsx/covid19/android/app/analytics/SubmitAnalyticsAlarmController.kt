@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.TotalAlarmManagerBackgroundTasks
-import uk.nhs.nhsx.covid19.android.app.di.module.AppModule.Companion.GLOBAL_SCOPE
+import uk.nhs.nhsx.covid19.android.app.di.module.AppModule.Companion.APPLICATION_SCOPE
 import uk.nhs.nhsx.covid19.android.app.receiver.SubmitAnalyticsAlarmReceiver
 import uk.nhs.nhsx.covid19.android.app.util.BroadcastProvider
 import uk.nhs.nhsx.covid19.android.app.util.HasInternetConnectivity
@@ -28,7 +28,7 @@ class SubmitAnalyticsAlarmController @Inject constructor(
     private val submitAnalytics: SubmitAnalytics,
     private val clock: Clock,
     private val broadcastProvider: BroadcastProvider,
-    @Named(GLOBAL_SCOPE) private val globalScope: CoroutineScope,
+    @Named(APPLICATION_SCOPE) private val applicationScope: CoroutineScope,
     private val hasInternetConnectivity: HasInternetConnectivity
 ) {
 
@@ -55,7 +55,7 @@ class SubmitAnalyticsAlarmController @Inject constructor(
 
     private fun submitAnalyticsAndSetupNext(onFinished: () -> Unit = {}) {
         Timber.d("submitAnalyticsAndSetupNext")
-        globalScope.launch {
+        applicationScope.launch {
             executeWithWakeLock {
                 setupNextAlarm()
                 if (hasInternetConnectivity()) {

@@ -22,6 +22,7 @@ import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.Contac
 import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.WelcomeActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import javax.inject.Inject
 
@@ -64,7 +65,8 @@ class MainActivity : AppCompatActivity() {
         StatusActivity.start(
             this,
             contactTracingHubAction = getContactTracingHubActionIfPresent(),
-            startedFromLocalMessageNotification = getStartedFromLocalMessageNotification()
+            startedFromLocalMessageNotification = getStartedFromLocalMessageNotification(),
+            startedFromRiskyVenueNotificationWithType = getStartedFromRiskyVenueNotificationWithType()
         )
     }
 
@@ -73,6 +75,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun getStartedFromLocalMessageNotification() =
         intent.getBooleanExtra(NotificationProvider.TAPPED_ON_LOCAL_MESSAGE_NOTIFICATION, false)
+
+    private fun getStartedFromRiskyVenueNotificationWithType() =
+        intent.getSerializableExtra(NotificationProvider.RISKY_VENUE_NOTIFICATION_TAPPED_WITH_TYPE) as? RiskyVenueMessageType
 
     companion object {
         fun start(context: Context) =

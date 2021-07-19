@@ -2,7 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.notifications.userinbox
 
 import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertProvider
-import uk.nhs.nhsx.covid19.android.app.remote.data.MessageType.INFORM
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
 import javax.inject.Inject
 
 class MigrateRiskyVenueIdProvider @Inject constructor(

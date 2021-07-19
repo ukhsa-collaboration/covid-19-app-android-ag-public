@@ -28,7 +28,7 @@ class SettingsViewModel @Inject constructor(
 
     fun loadSettings() {
         val language = applicationLocaleProvider.getUserSelectedLanguage()
-            ?: applicationLocaleProvider.getSystemLanguage()
+            ?: applicationLocaleProvider.getDefaultSystemLanguage()
         viewState.postValue(ViewState(language))
     }
 

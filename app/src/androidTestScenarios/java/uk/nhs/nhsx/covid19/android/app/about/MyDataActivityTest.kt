@@ -18,7 +18,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -42,10 +41,11 @@ class MyDataActivityTest : EspressoTest() {
 
     @Before
     fun setUp() = runBlocking {
-        testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue = LastVisitedBookTestTypeVenueDate(
-            latestRiskyVenueVisitDate,
-            RiskyVenueConfigurationDurationDays(optionToBookATest = 10)
-        )
+        testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue =
+            LastVisitedBookTestTypeVenueDate(
+                latestRiskyVenueVisitDate,
+                RiskyVenueConfigurationDurationDays(optionToBookATest = 10)
+            )
     }
 
     @After
@@ -54,7 +54,7 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun myDataScreenShows() = notReported {
+    fun myDataScreenShows() {
         startTestActivity<MoreAboutAppActivity>()
 
         moreAboutAppRobot.checkActivityIsDisplayed()
@@ -62,7 +62,7 @@ class MyDataActivityTest : EspressoTest() {
 
     @RetryFlakyTest
     @Test
-    fun displayEmptyViewWhenNoData() = notReported {
+    fun displayEmptyViewWhenNoData() {
         testAppContext.apply {
             setState(isolationHelper.neverInIsolation())
             getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue = null
@@ -75,7 +75,7 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun doNotDisplayTestResultSectionIfNoTestResults() = notReported {
+    fun doNotDisplayTestResultSectionIfNoTestResults() {
         startTestActivity<MyDataActivity>()
 
         myDataRobot.checkActivityIsDisplayed()
@@ -84,11 +84,12 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun displaysLastVisitedBookTestTypeVenueDateIsDisplayed() = notReported {
-        testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue = LastVisitedBookTestTypeVenueDate(
-            latestRiskyVenueVisitDate,
-            RiskyVenueConfigurationDurationDays(optionToBookATest = 10)
-        )
+    fun displaysLastVisitedBookTestTypeVenueDateIsDisplayed() {
+        testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue =
+            LastVisitedBookTestTypeVenueDate(
+                latestRiskyVenueVisitDate,
+                RiskyVenueConfigurationDurationDays(optionToBookATest = 10)
+            )
 
         startTestActivity<MyDataActivity>()
 
@@ -98,7 +99,7 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun displayLastPositivePcrAcknowledgedTestResult() = notReported {
+    fun displayLastPositivePcrAcknowledgedTestResult() {
         displayLastAcknowledgedTestResult(
             POSITIVE,
             LAB_RESULT
@@ -106,7 +107,7 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun displayLastPositiveAssistedLfdAcknowledgedTestResult() = notReported {
+    fun displayLastPositiveAssistedLfdAcknowledgedTestResult() {
         displayLastAcknowledgedTestResult(
             POSITIVE,
             RAPID_RESULT
@@ -114,7 +115,7 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun displayLastPositiveUnassistedLfdAcknowledgedTestResult() = notReported {
+    fun displayLastPositiveUnassistedLfdAcknowledgedTestResult() {
         displayLastAcknowledgedTestResult(
             POSITIVE,
             RAPID_SELF_REPORTED
@@ -122,7 +123,7 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun displayLastNegativePcrAcknowledgedTestResult() = notReported {
+    fun displayLastNegativePcrAcknowledgedTestResult() {
         displayLastAcknowledgedTestResult(
             NEGATIVE,
             LAB_RESULT
@@ -130,25 +131,23 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun displayLastNegativeAssistedLfdAcknowledgedTestResult() =
-        notReported {
-            displayLastAcknowledgedTestResult(
-                NEGATIVE,
-                RAPID_RESULT
-            )
-        }
+    fun displayLastNegativeAssistedLfdAcknowledgedTestResult() {
+        displayLastAcknowledgedTestResult(
+            NEGATIVE,
+            RAPID_RESULT
+        )
+    }
 
     @Test
-    fun displayLastNegativeUnassistedLfdAcknowledgedTestResult() =
-        notReported {
-            displayLastAcknowledgedTestResult(
-                NEGATIVE,
-                RAPID_SELF_REPORTED
-            )
-        }
+    fun displayLastNegativeUnassistedLfdAcknowledgedTestResult() {
+        displayLastAcknowledgedTestResult(
+            NEGATIVE,
+            RAPID_SELF_REPORTED
+        )
+    }
 
     @Test
-    fun requiresConfirmatoryTestNotReceivedFollowUpTestShouldBePending() = notReported {
+    fun requiresConfirmatoryTestNotReceivedFollowUpTestShouldBePending() {
         displayLastAcknowledgedTestResult(
             POSITIVE,
             RAPID_SELF_REPORTED,
@@ -157,7 +156,7 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun requiresConfirmatoryTestReceivedFollowUpTestShouldBeComplete() = notReported {
+    fun requiresConfirmatoryTestReceivedFollowUpTestShouldBeComplete() {
         displayLastAcknowledgedTestResult(
             POSITIVE,
             RAPID_SELF_REPORTED,
@@ -167,7 +166,7 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun requiresConfirmatoryTestReceivedFollowUpAfterDayLimitTestShouldBeComplete() = notReported {
+    fun requiresConfirmatoryTestReceivedFollowUpAfterDayLimitTestShouldBeComplete() {
         displayLastAcknowledgedTestResult(
             POSITIVE,
             RAPID_RESULT,
@@ -178,22 +177,20 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun displayLastPositiveAcknowledgedTestResultOfUnknownType() =
-        notReported {
-            displayLastAcknowledgedTestResult(
-                POSITIVE,
-                testKitType = null // UNKNOWN
-            )
-        }
+    fun displayLastPositiveAcknowledgedTestResultOfUnknownType() {
+        displayLastAcknowledgedTestResult(
+            POSITIVE,
+            testKitType = null // UNKNOWN
+        )
+    }
 
     @Test
-    fun displayLastNegativeAcknowledgedTestResultOfUnknownType() =
-        notReported {
-            displayLastAcknowledgedTestResult(
-                NEGATIVE,
-                testKitType = null // UNKNOWN
-            )
-        }
+    fun displayLastNegativeAcknowledgedTestResultOfUnknownType() {
+        displayLastAcknowledgedTestResult(
+            NEGATIVE,
+            testKitType = null // UNKNOWN
+        )
+    }
 
     private fun displayLastAcknowledgedTestResult(
         testResult: VirologyTestResult,
@@ -257,7 +254,7 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun displayEncounterInIsolationWithNotificationDate() = notReported {
+    fun displayEncounterInIsolationWithNotificationDate() {
         testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
         startTestActivity<MyDataActivity>()
@@ -271,7 +268,7 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun displaySymptomsInIsolation() = notReported {
+    fun displaySymptomsInIsolation() {
         testAppContext.setState(
             isolationHelper.selfAssessment(
                 expired = false,
@@ -288,7 +285,7 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun contactCaseOnly_notOptedInToDailyContactTesting_displayLastDayOfIsolationInIsolation() = notReported {
+    fun contactCaseOnly_notOptedInToDailyContactTesting_displayLastDayOfIsolationInIsolation() {
         testAppContext.setState(isolationHelper.contactCase().asIsolation())
 
         startTestActivity<MyDataActivity>()
@@ -301,7 +298,7 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun doNotDisplayLastDayOfIsolationWhenIsolationIsExpired() = notReported {
+    fun doNotDisplayLastDayOfIsolationWhenIsolationIsExpired() {
         testAppContext.setState(isolationHelper.contactCase(expired = true).asIsolation())
 
         startTestActivity<MyDataActivity>()
@@ -313,7 +310,7 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun doNotDisplayLastDayOfIsolationWhenNeverInIsolation() = notReported {
+    fun doNotDisplayLastDayOfIsolationWhenNeverInIsolation() {
         testAppContext.setState(isolationHelper.neverInIsolation())
 
         startTestActivity<MyDataActivity>()
@@ -325,24 +322,23 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun previouslyIsolatedAsContactCaseOnly_optedInToDailyContactTesting_showDailyContactTestingOptInDate() =
-        notReported {
-            FeatureFlagTestHelper.enableFeatureFlag(DAILY_CONTACT_TESTING)
+    fun previouslyIsolatedAsContactCaseOnly_optedInToDailyContactTesting_showDailyContactTestingOptInDate() {
+        FeatureFlagTestHelper.enableFeatureFlag(DAILY_CONTACT_TESTING)
 
-            testAppContext.setState(
-                isolationHelper.contactCaseWithDct(
-                    dailyContactTestingOptInDate = LocalDate.now(testAppContext.clock)
-                ).asIsolation()
-            )
+        testAppContext.setState(
+            isolationHelper.contactCaseWithDct(
+                dailyContactTestingOptInDate = LocalDate.now(testAppContext.clock)
+            ).asIsolation()
+        )
 
-            startTestActivity<MyDataActivity>()
+        startTestActivity<MyDataActivity>()
 
-            myDataRobot.checkActivityIsDisplayed()
+        myDataRobot.checkActivityIsDisplayed()
 
-            waitFor { myDataRobot.checkLastDayOfIsolationIsNotDisplayed() }
-            waitFor { myDataRobot.checkEncounterIsDisplayed() }
-            waitFor { myDataRobot.checkExposureNotificationIsDisplayed() }
-            waitFor { myDataRobot.checkExposureNotificationDateIsDisplayed() }
-            waitFor { myDataRobot.checkDailyContactTestingOptInDateIsDisplayed() }
-        }
+        waitFor { myDataRobot.checkLastDayOfIsolationIsNotDisplayed() }
+        waitFor { myDataRobot.checkEncounterIsDisplayed() }
+        waitFor { myDataRobot.checkExposureNotificationIsDisplayed() }
+        waitFor { myDataRobot.checkExposureNotificationDateIsDisplayed() }
+        waitFor { myDataRobot.checkDailyContactTestingOptInDateIsDisplayed() }
+    }
 }

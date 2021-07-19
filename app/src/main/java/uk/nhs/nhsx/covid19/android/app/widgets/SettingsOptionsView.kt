@@ -11,9 +11,9 @@ import kotlinx.android.synthetic.main.view_settings.view.settingsChevron
 import kotlinx.android.synthetic.main.view_settings.view.settingsItemSubtitle
 import kotlinx.android.synthetic.main.view_settings.view.settingsItemTitle
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 
 class SettingsOptionsView @JvmOverloads constructor(
     context: Context,
@@ -55,7 +55,6 @@ class SettingsOptionsView @JvmOverloads constructor(
     }
 
     private fun configureLayout() {
-        minimumHeight = 48.dpToPx.toInt()
         setBackgroundResource(R.drawable.settings_option_background)
         setSelectableItemForeground()
     }
@@ -67,8 +66,8 @@ class SettingsOptionsView @JvmOverloads constructor(
             0,
             0
         ).apply {
-            title = getString(R.styleable.SettingsOptionsView_settingName)
-            subtitle = getString(R.styleable.SettingsOptionsView_settingValue)
+            title = getString(context, R.styleable.SettingsOptionsView_settingName)
+            subtitle = getString(context, R.styleable.SettingsOptionsView_settingValue)
             showChevron = getBoolean(R.styleable.SettingsOptionsView_showChevron, true)
             recycle()
         }

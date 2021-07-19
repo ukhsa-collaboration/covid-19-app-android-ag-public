@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.onboarding.postcode
 
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityInformationRobot
@@ -20,7 +19,7 @@ class ExistingUserLocalAuthorityFlowTest : EspressoTest() {
 
     @Test
     @RetryFlakyTest
-    fun setLocalAuthority() = notReported {
+    fun setLocalAuthority() {
         testAppContext.setPostCode(postCode)
         testAppContext.setOnboardingCompleted(true)
         testAppContext.setPolicyUpdateAccepted(true)
@@ -42,7 +41,7 @@ class ExistingUserLocalAuthorityFlowTest : EspressoTest() {
     }
 
     @Test
-    fun skipLocalAuthority() = notReported {
+    fun skipLocalAuthority() {
         testAppContext.setPostCode(postCode)
         testAppContext.setOnboardingCompleted(true)
         testAppContext.setPolicyUpdateAccepted(true)

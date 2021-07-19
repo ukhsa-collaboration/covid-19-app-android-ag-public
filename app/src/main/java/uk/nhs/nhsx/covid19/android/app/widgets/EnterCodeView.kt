@@ -16,6 +16,7 @@ import uk.nhs.nhsx.covid19.android.app.R.drawable
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.invisible
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 
 class EnterCodeView @JvmOverloads constructor(
     context: Context,
@@ -74,9 +75,9 @@ class EnterCodeView @JvmOverloads constructor(
             0,
             0
         ).apply {
-            val attrTitle = getString(R.styleable.EnterCodeView_title)
-            val attrExample = getString(R.styleable.EnterCodeView_example)
-            errorText = getString(R.styleable.EnterCodeView_errorText)
+            val attrTitle = getString(context, R.styleable.EnterCodeView_title)
+            val attrExample = getString(context, R.styleable.EnterCodeView_example)
+            errorText = getString(context, R.styleable.EnterCodeView_errorText)
 
             enterCodeTitle.text = attrTitle
             enterCodeText.text = attrExample

@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
@@ -127,7 +126,7 @@ class LinkTestResultOnsetDateViewModelTest {
         val expectedState = initialState?.copy(showOnsetDateError = true)
 
         verify { viewStateObserver.onChanged(expectedState) }
-        coVerify(exactly = 0) { analyticsEventProcessor.track(DidRememberOnsetSymptomsDateBeforeReceivedTestResult) }
+        verify(exactly = 0) { analyticsEventProcessor.track(DidRememberOnsetSymptomsDateBeforeReceivedTestResult) }
         verify(exactly = 0) { continueEventObserver.onChanged(any()) }
     }
 
@@ -144,7 +143,7 @@ class LinkTestResultOnsetDateViewModelTest {
 
         verify { viewStateObserver.onChanged(initialState?.copy(ExplicitDate(onsetDate))) }
 
-        coVerify { analyticsEventProcessor.track(DidRememberOnsetSymptomsDateBeforeReceivedTestResult) }
+        verify { analyticsEventProcessor.track(DidRememberOnsetSymptomsDateBeforeReceivedTestResult) }
         verify {
             unacknowledgedTestResultsProvider.setSymptomsOnsetDate(
                 testResult,
@@ -166,7 +165,7 @@ class LinkTestResultOnsetDateViewModelTest {
 
         verify { viewStateObserver.onChanged(initialState?.copy(CannotRememberDate)) }
 
-        coVerify(exactly = 0) { analyticsEventProcessor.track(DidRememberOnsetSymptomsDateBeforeReceivedTestResult) }
+        verify(exactly = 0) { analyticsEventProcessor.track(DidRememberOnsetSymptomsDateBeforeReceivedTestResult) }
         verify {
             unacknowledgedTestResultsProvider.setSymptomsOnsetDate(
                 testResult,

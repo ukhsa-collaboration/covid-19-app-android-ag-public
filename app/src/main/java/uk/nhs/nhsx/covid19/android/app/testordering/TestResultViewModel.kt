@@ -1,7 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AskedToShareExposureKeysInTheInitialFlow
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
@@ -41,14 +39,14 @@ import java.time.Instant
 import javax.inject.Inject
 
 class TestResultViewModel @Inject constructor(
-    private val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider,
     private val testResultIsolationHandler: TestResultIsolationHandler,
     private val stateMachine: IsolationStateMachine,
     private val submitObfuscationData: SubmitObfuscationData,
     private val submitEmptyData: SubmitEmptyData,
     private val submitEpidemiologyDataForTestResult: SubmitEpidemiologyDataForTestResult,
-    private val clock: Clock,
     private val analyticsEventProcessor: AnalyticsEventProcessor,
+    private val getHighestPriorityTestResult: GetHighestPriorityTestResult,
+    private val clock: Clock,
 ) : BaseTestResultViewModel() {
     private var wasAcknowledged = false
     private var preventKeySubmission = false
@@ -134,7 +132,7 @@ class TestResultViewModel @Inject constructor(
             if (willContinueToIsolate) {
                 if (isTestResultBeingCompleted(currentState, newState))
                     NegativeWillBeInIsolation
-                else if (newState is PossiblyIsolating && newState.isActiveIndexCase(clock))
+                else if (newState.isActiveIndexCase(clock))
                     NegativeAfterPositiveOrSymptomaticWillBeInIsolation
                 else
                     NegativeWillBeInIsolation
@@ -199,9 +197,7 @@ class TestResultViewModel @Inject constructor(
         when (val buttonAction = viewState.value?.mainState?.buttonAction) {
             Finish -> NavigationEvent.Finish
             is ShareKeys -> {
-                viewModelScope.launch {
-                    analyticsEventProcessor.track(AskedToShareExposureKeysInTheInitialFlow)
-                }
+                analyticsEventProcessor.track(AskedToShareExposureKeysInTheInitialFlow)
                 NavigationEvent.NavigateToShareKeys(
                     buttonAction.bookFollowUpTest
                 )
@@ -236,14 +232,5 @@ class TestResultViewModel @Inject constructor(
                 submitObfuscationData()
             }
         }
-    }
-
-    private fun getHighestPriorityTestResult(): ReceivedTestResult? {
-        val testPriority = listOf(POSITIVE, PLOD, NEGATIVE, VOID)
-        unacknowledgedTestResultsProvider.testResults
-            .minByOrNull { testPriority.indexOf(it.testResult) }
-            ?.let { return it }
-
-        return null
     }
 }

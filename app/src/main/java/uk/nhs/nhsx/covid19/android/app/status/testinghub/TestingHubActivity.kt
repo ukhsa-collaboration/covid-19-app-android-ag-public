@@ -13,6 +13,10 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.BookATest
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.Finish
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.SymptomsAfterRiskyVenue
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.SymptomsAfterRiskyVenueActivity
 import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.ShowFindOutAboutTesting
 import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.ShowFindOutAboutTesting.DoNotShow
 import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.ShowFindOutAboutTesting.Show
@@ -39,9 +43,7 @@ class TestingHubActivity : BaseActivity(R.layout.activity_testing_hub) {
 
         setNavigateUpToolbar(toolbar, R.string.testing_hub_title, upIndicator = R.drawable.ic_arrow_back_white)
 
-        viewModel.viewState().observe(this) {
-            renderViewState(it)
-        }
+        setUpViewModelListeners()
 
         setUpOnClickListeners()
     }
@@ -57,6 +59,26 @@ class TestingHubActivity : BaseActivity(R.layout.activity_testing_hub) {
             resultCode == Activity.RESULT_OK
         ) {
             finish()
+        }
+    }
+
+    private fun setUpViewModelListeners() {
+        viewModel.viewState().observe(this) {
+            renderViewState(it)
+        }
+
+        viewModel.navigationTarget().observe(this) { navigationTarget ->
+            when (navigationTarget) {
+                BookATest -> startActivityForResult(
+                    TestOrderingActivity.getIntent(this),
+                    REQUEST_CODE_ORDER_A_TEST
+                )
+                SymptomsAfterRiskyVenue -> SymptomsAfterRiskyVenueActivity.start(
+                    this,
+                    shouldShowCancelConfirmationDialogOnCancelButtonClick = false
+                )
+                Finish -> finish()
+            }
         }
     }
 
@@ -80,8 +102,7 @@ class TestingHubActivity : BaseActivity(R.layout.activity_testing_hub) {
 
     private fun setUpOnClickListeners() {
         itemBookTest.setOnSingleClickListener {
-            val intent = Intent(this, TestOrderingActivity::class.java)
-            startActivityForResult(intent, REQUEST_CODE_ORDER_A_TEST)
+            viewModel.onBookATestClicked()
         }
 
         itemEnterTestResult.setOnSingleClickListener {

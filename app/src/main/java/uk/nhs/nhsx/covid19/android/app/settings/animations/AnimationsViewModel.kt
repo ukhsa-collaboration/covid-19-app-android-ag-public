@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.distinctUntilChanged
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.AreSystemLevelAnimationsEnabled
 import javax.inject.Inject
 
@@ -20,6 +18,7 @@ class AnimationsViewModel @Inject constructor(
             showDialog = false
         )
     )
+
     fun viewState(): LiveData<ViewState> = distinctUntilChanged(viewState)
 
     fun onAnimationToggleClicked() {
@@ -34,14 +33,12 @@ class AnimationsViewModel @Inject constructor(
     }
 
     private fun updateViewState(showDialog: Boolean? = null) {
-        viewModelScope.launch {
-            viewState.postValue(
-                ViewState(
-                    animationsEnabled = animationsProvider.inAppAnimationEnabled && areSystemLevelAnimationsEnabled(),
-                    showDialog = showDialog ?: viewState.value!!.showDialog
-                )
+        viewState.postValue(
+            ViewState(
+                animationsEnabled = animationsProvider.inAppAnimationEnabled && areSystemLevelAnimationsEnabled(),
+                showDialog = showDialog ?: viewState.value!!.showDialog
             )
-        }
+        )
     }
 
     fun onResume() {

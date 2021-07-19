@@ -4,14 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_venue_alert_book_test.buttonBookTest
 import kotlinx.android.synthetic.main.activity_venue_alert_book_test.buttonReturnToHomeScreen
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.BookATest
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.Finish
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.SymptomsAfterRiskyVenue
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.ViewState.UnknownVisit
+import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
@@ -25,15 +28,19 @@ class VenueAlertBookTestActivity : BaseActivity(R.layout.activity_venue_alert_bo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
-
-        viewModel.venueVisitState().observe(
-            this,
-            Observer { viewState ->
-                if (viewState == UnknownVisit) {
-                    finish()
-                }
+        viewModel.venueVisitState().observe(this) { viewState ->
+            if (viewState == UnknownVisit) {
+                finish()
             }
-        )
+        }
+
+        viewModel.navigationEvent().observe(this) { navigationTarget ->
+            when (navigationTarget) {
+                BookATest -> navigateToBookATest()
+                SymptomsAfterRiskyVenue -> navigateToSymptomsConfirmation()
+                Finish -> finish()
+            }
+        }
 
         val extraVenueId = intent.getStringExtra(EXTRA_VENUE_ID)
         if (extraVenueId.isNullOrEmpty()) {
@@ -44,17 +51,23 @@ class VenueAlertBookTestActivity : BaseActivity(R.layout.activity_venue_alert_bo
         }
 
         buttonBookTest.setOnSingleClickListener {
-            viewModel.acknowledgeVenueAlert()
-            startActivityForResult(
-                TestOrderingActivity.getIntent(this),
-                REQUEST_CODE_ORDER_A_TEST
-            )
+            viewModel.onBookATestClicked()
         }
 
         buttonReturnToHomeScreen.setOnSingleClickListener {
-            viewModel.acknowledgeVenueAlert()
-            finish()
+            viewModel.onReturnToHomeClicked()
         }
+    }
+
+    private fun navigateToBookATest() {
+        startActivityForResult(
+            TestOrderingActivity.getIntent(this),
+            REQUEST_CODE_ORDER_A_TEST
+        )
+    }
+
+    private fun navigateToSymptomsConfirmation() {
+        SymptomsAfterRiskyVenueActivity.start(this, shouldShowCancelConfirmationDialogOnCancelButtonClick = true)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

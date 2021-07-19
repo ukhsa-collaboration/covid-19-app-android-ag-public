@@ -1,18 +1,23 @@
 package uk.nhs.nhsx.covid19.android.app.common.postcode
 
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import uk.nhs.nhsx.covid19.android.app.report.Reporter
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
+import uk.nhs.nhsx.covid19.android.app.report.Reported
+import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import kotlin.test.assertTrue
 
-class LocalAuthorityActivityTest : EspressoTest() {
+@RunWith(Parameterized::class)
+class LocalAuthorityActivityTest(override val configuration: TestConfiguration) : EspressoTest() {
 
     private val localAuthorityRobot = LocalAuthorityRobot()
 
     @Test
+    @Reported
     fun showSingleLocalAuthority() = reporter(
         "Local Authority",
         "Single local authority",
@@ -37,6 +42,7 @@ class LocalAuthorityActivityTest : EspressoTest() {
     }
 
     @Test
+    @Reported
     fun showMultipleLocalAuthorities() = reporter(
         "Local Authority",
         "Multiple local authorities",
@@ -91,7 +97,7 @@ class LocalAuthorityActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickBackWhenBackAllowedIsNotDefined_nothingHappens() = notReported {
+    fun clickBackWhenBackAllowedIsNotDefined_nothingHappens() {
         startTestActivity<LocalAuthorityActivity> {
             putExtra(
                 LocalAuthorityActivity.EXTRA_POST_CODE,
@@ -107,7 +113,7 @@ class LocalAuthorityActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickBackWhenBackAllowedIsFalse_nothingHappens() = notReported {
+    fun clickBackWhenBackAllowedIsFalse_nothingHappens() {
         startTestActivity<LocalAuthorityActivity> {
             putExtra(
                 LocalAuthorityActivity.EXTRA_POST_CODE,
@@ -127,7 +133,7 @@ class LocalAuthorityActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickBackWhenBackAllowedIsTrue_goesBack() = notReported {
+    fun clickBackWhenBackAllowedIsTrue_goesBack() {
         val activity = startTestActivity<LocalAuthorityActivity> {
             putExtra(
                 LocalAuthorityActivity.EXTRA_POST_CODE,

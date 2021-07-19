@@ -68,6 +68,13 @@ enum class RegularAnalyticsEventType(
     POSITIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST({ it.positiveLabResultAfterPositiveSelfRapidTest++ }),
     NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_WITHIN_TIME_LIMIT({ it.negativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit++ }),
     NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_OUTSIDE_TIME_LIMIT({ it.negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit++ }),
+    DID_ACCESS_RISKY_VENUE_M2_NOTIFICATION({ it.didAccessRiskyVenueM2Notification++ }),
+    SELECTED_TAKE_TEST_M2_JOURNEY({ it.selectedTakeTestM2Journey++ }),
+    SELECTED_TAKE_TEST_LATER_M2_JOURNEY({ it.selectedTakeTestLaterM2Journey++ }),
+    SELECTED_HAS_SYMPTOMS_M2_JOURNEY({ it.selectedHasSymptomsM2Journey++ }),
+    SELECTED_HAS_NO_SYMPTOMS_M2_JOURNEY({ it.selectedHasNoSymptomsM2Journey++ }),
+    SELECTED_LFD_TEST_ORDERING_M2_JOURNEY({ it.selectedLFDTestOrderingM2Journey++ }),
+    SELECTED_HAS_LFD_TEST_M2_JOURNEY({ it.selectedHasLFDTestM2Journey++ }),
 }
 
 @JsonClass(generateAdapter = true)

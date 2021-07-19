@@ -10,7 +10,7 @@ import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.RiskyContactReminderNotification
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController.Companion.EXPOSURE_NOTIFICATION_RETRY_ALARM_INTENT_ID
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.ShouldShowEncounterDetectionActivityProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationRetryReceiver
@@ -27,7 +27,7 @@ class ExposureNotificationRetryAlarmControllerTest {
     private val notificationProvider = mockk<NotificationProvider>(relaxUnitFun = true)
     private val shouldShowEncounterDetectionActivityProvider =
         mockk<ShouldShowEncounterDetectionActivityProvider>()
-    private val analyticsEventTracker = mockk<AnalyticsEventTracker>(relaxUnitFun = true)
+    private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(Instant.parse("2021-01-10T10:00:00Z"), ZoneOffset.UTC)
     private val broadcastProvider = mockk<BroadcastProvider>()
     private val pendingIntent = mockk<PendingIntent>()
@@ -37,7 +37,7 @@ class ExposureNotificationRetryAlarmControllerTest {
         alarmManager,
         notificationProvider,
         shouldShowEncounterDetectionActivityProvider,
-        analyticsEventTracker,
+        analyticsEventProcessor,
         fixedClock,
         broadcastProvider,
     )
@@ -64,7 +64,7 @@ class ExposureNotificationRetryAlarmControllerTest {
         testSubject.onDeviceRebooted()
 
         verify { notificationProvider.showExposureNotification() }
-        verify { analyticsEventTracker.track(RiskyContactReminderNotification) }
+        verify { analyticsEventProcessor.track(RiskyContactReminderNotification) }
         verifyAlarmScheduled()
     }
 
@@ -93,7 +93,7 @@ class ExposureNotificationRetryAlarmControllerTest {
         testSubject.onAppCreated()
 
         verify { notificationProvider.showExposureNotification() }
-        verify { analyticsEventTracker.track(RiskyContactReminderNotification) }
+        verify { analyticsEventProcessor.track(RiskyContactReminderNotification) }
         verifyAlarmScheduled()
     }
 
@@ -132,7 +132,7 @@ class ExposureNotificationRetryAlarmControllerTest {
         testSubject.onAlarmTriggered()
 
         verify { notificationProvider.showExposureNotification() }
-        verify { analyticsEventTracker.track(RiskyContactReminderNotification) }
+        verify { analyticsEventProcessor.track(RiskyContactReminderNotification) }
         verifyAlarmScheduled()
     }
 

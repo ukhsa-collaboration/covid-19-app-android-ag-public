@@ -14,6 +14,6 @@ class ViewModelModule {
         testResultViewModel
 
     @Provides
-    fun provideUserDataViewModel(userDataViewModel: MyDataViewModel): BaseMyDataViewModel =
-        userDataViewModel
+    fun provideMyDataViewModel(myDataViewModel: MyDataViewModel): BaseMyDataViewModel =
+        myDataViewModel
 }

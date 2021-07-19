@@ -12,7 +12,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import org.junit.Before
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.util.AndroidStrongBoxSupport.getStrongBoxStatus
 import uk.nhs.nhsx.covid19.android.app.util.StrongBoxStatus.NOT_PRESENT
@@ -36,7 +35,7 @@ class EncryptionUtilsIntegrationTest : EspressoTest() {
     }
 
     @Test
-    fun encryptedFileWhenStrongBoxPresentAndDisallowed() = notReported {
+    fun encryptedFileWhenStrongBoxPresentAndDisallowed() {
         assumeTrue(
             "Skip test on device without StrongBox",
             getStrongBoxStatus(context) == PRESENT_ALLOWED || getStrongBoxStatus(context) == PRESENT_DISALLOWED
@@ -64,7 +63,7 @@ class EncryptionUtilsIntegrationTest : EspressoTest() {
     }
 
     @Test
-    fun encryptedFileWhenStrongBoxPresentAndAllowed() = notReported {
+    fun encryptedFileWhenStrongBoxPresentAndAllowed() {
         assumeTrue(
             "Skip test on device without StrongBox",
             getStrongBoxStatus(context) == PRESENT_ALLOWED || getStrongBoxStatus(context) == PRESENT_DISALLOWED
@@ -91,7 +90,7 @@ class EncryptionUtilsIntegrationTest : EspressoTest() {
     }
 
     @Test
-    fun encryptedFileWhenStrongBoxNotPresent() = notReported {
+    fun encryptedFileWhenStrongBoxNotPresent() {
 
         val encryptionUtils = EncryptionUtils(object : StrongBoxSupport {
             override fun getStrongBoxStatus(context: Context): StrongBoxStatus =
@@ -115,7 +114,7 @@ class EncryptionUtilsIntegrationTest : EspressoTest() {
     }
 
     @Test
-    fun migrateEncryptedFileFromStrongBox() = notReported {
+    fun migrateEncryptedFileFromStrongBox() {
         assumeTrue(
             "Skip test on device without StrongBox",
             getStrongBoxStatus(context) == PRESENT_ALLOWED || getStrongBoxStatus(context) == PRESENT_DISALLOWED
@@ -149,7 +148,7 @@ class EncryptionUtilsIntegrationTest : EspressoTest() {
     }
 
     @Test
-    fun sharedPreferencesWhenStrongBoxPresentAndDisallowed() = notReported {
+    fun sharedPreferencesWhenStrongBoxPresentAndDisallowed() {
         assumeTrue(
             "Skip test on device without StrongBox",
             getStrongBoxStatus(context) == PRESENT_ALLOWED || getStrongBoxStatus(context) == PRESENT_DISALLOWED
@@ -186,7 +185,7 @@ class EncryptionUtilsIntegrationTest : EspressoTest() {
     }
 
     @Test
-    fun sharedPreferencesWhenStrongBoxPresentAndAllowed() = notReported {
+    fun sharedPreferencesWhenStrongBoxPresentAndAllowed() {
         assumeTrue(
             "Skip test on device without StrongBox",
             getStrongBoxStatus(context) == PRESENT_ALLOWED || getStrongBoxStatus(context) == PRESENT_DISALLOWED
@@ -223,7 +222,7 @@ class EncryptionUtilsIntegrationTest : EspressoTest() {
     }
 
     @Test
-    fun sharedPreferencesWhenStrongBoxNotPresent() = notReported {
+    fun sharedPreferencesWhenStrongBoxNotPresent() {
 
         val encryptionUtils = EncryptionUtils(object : StrongBoxSupport {
             override fun getStrongBoxStatus(context: Context): StrongBoxStatus =
@@ -257,7 +256,7 @@ class EncryptionUtilsIntegrationTest : EspressoTest() {
     }
 
     @Test
-    fun migrateSharedPreferencesFromStrongBox() = notReported {
+    fun migrateSharedPreferencesFromStrongBox() {
         assumeTrue(
             "Skip test on device without StrongBox",
             getStrongBoxStatus(context) == PRESENT_ALLOWED || getStrongBoxStatus(context) == PRESENT_DISALLOWED

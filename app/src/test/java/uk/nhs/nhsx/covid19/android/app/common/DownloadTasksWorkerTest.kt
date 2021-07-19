@@ -244,11 +244,11 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
     }
 
     private fun thenBackgroundTaskCompletionEventIsTracked() {
-        coVerify { analyticsEventProcessorMock.track(BackgroundTaskCompletion) }
+        verify { analyticsEventProcessorMock.track(BackgroundTaskCompletion) }
     }
 
     private fun thenBackgroundTaskCompletionEventIsNotTracked() {
-        coVerify(exactly = 0) { analyticsEventProcessorMock.track(BackgroundTaskCompletion) }
+        verify(exactly = 0) { analyticsEventProcessorMock.track(BackgroundTaskCompletion) }
     }
 
     private fun thenForegroundIsStartedWithUpdatingDatabaseNotification() {

@@ -7,7 +7,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.AppAvailabilityResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumAppVersion
 import uk.nhs.nhsx.covid19.android.app.remote.data.MinimumSdkVersion
 import uk.nhs.nhsx.covid19.android.app.remote.data.RecommendedAppVersion
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.AppAvailabilityRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
@@ -19,7 +18,7 @@ class AppAvailabilityActivityTest : EspressoTest() {
     private val statusRobot = StatusRobot()
 
     @Test
-    fun showDeviceSdkIsNotSupported() = notReported {
+    fun showDeviceSdkIsNotSupported() {
 
         testAppContext.setAppAvailability(deviceSdkIsNotSupported)
 
@@ -31,7 +30,7 @@ class AppAvailabilityActivityTest : EspressoTest() {
     }
 
     @Test
-    fun showAppVersionIsNotSupported() = notReported {
+    fun showAppVersionIsNotSupported() {
         testAppContext.setAppAvailability(appVersionNotSupported)
 
         startTestActivity<AppAvailabilityActivity>()
@@ -42,7 +41,7 @@ class AppAvailabilityActivityTest : EspressoTest() {
     }
 
     @Test
-    fun showUpdateAvailable() = notReported {
+    fun showUpdateAvailable() {
         testAppContext.setAppAvailability(appVersionNotSupported)
         testAppContext.updateManager.availableUpdateStatus =
             Available(Int.MAX_VALUE)
@@ -55,7 +54,7 @@ class AppAvailabilityActivityTest : EspressoTest() {
     }
 
     @Test
-    fun showStatusScreenWhenPassingAllAppAvailabilityChecks() = notReported {
+    fun showStatusScreenWhenPassingAllAppAvailabilityChecks() {
         testAppContext.setLocalAuthority("1")
         testAppContext.setAppAvailability(supported)
 

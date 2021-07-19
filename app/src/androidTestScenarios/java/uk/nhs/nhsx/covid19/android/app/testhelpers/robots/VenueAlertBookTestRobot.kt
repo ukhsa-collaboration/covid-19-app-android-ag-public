@@ -9,7 +9,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import uk.nhs.nhsx.covid19.android.app.R
 
 class VenueAlertBookTestRobot {
-    fun checkTitleIsDisplayed() {
+    fun checkActivityIsDisplayed() {
         onView(withId(R.id.venueAlertM2title))
             .check(matches(isDisplayed()))
     }

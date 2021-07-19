@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.view_testing_hub_item.view.testingHubItemT
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpButtonType
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpLinkTypeWithBrowserWarning
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 
 class TestingHubItemView @JvmOverloads constructor(
     context: Context,
@@ -48,8 +49,8 @@ class TestingHubItemView @JvmOverloads constructor(
             0,
             0
         ).apply {
-            val title = getString(R.styleable.TestingHubItemView_testingHubItemTitle)
-            val description = getString(R.styleable.TestingHubItemView_testingHubItemDescription)
+            val title = getString(context, R.styleable.TestingHubItemView_testingHubItemTitle)
+            val description = getString(context, R.styleable.TestingHubItemView_testingHubItemDescription)
             isExternalLink = getBoolean(R.styleable.TestingHubItemView_testingHubItemIsExternalLink, false)
 
             testingHubItemTitle.text = title

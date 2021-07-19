@@ -1,16 +1,22 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode
 
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
+import uk.nhs.nhsx.covid19.android.app.report.Reported
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
+import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QrCodeHelpRobot
 
-class QrCodeHelpActivityTest : EspressoTest() {
+@RunWith(Parameterized::class)
+class QrCodeHelpActivityTest(override val configuration: TestConfiguration) : EspressoTest() {
 
     private val qrCodeHelpRobot = QrCodeHelpRobot()
 
     @Test
+    @Reported
     fun checkActivityIsDisplayed() = reporter(
         scenario = "Venue check-in",
         title = "Show More info",

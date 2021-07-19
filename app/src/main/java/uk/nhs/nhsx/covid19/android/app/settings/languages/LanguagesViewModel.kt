@@ -33,10 +33,9 @@ class LanguagesViewModel @Inject constructor(
             strength = Collator.PRIMARY
         }
         val languages = SupportedLanguage.values().toList()
-            .filter { it.code != null }
             .map { language ->
                 Language(
-                    language.code!!,
+                    language.code,
                     language.nativeLanguageName,
                     translatedName = context.getString(language.languageName),
                     isSelected = language == selectedLanguage

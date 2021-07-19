@@ -8,6 +8,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingActivationReminderProvider
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
@@ -16,18 +17,20 @@ import java.time.ZoneOffset
 class ExposureNotificationReminderAlarmControllerTest {
 
     private val context = mockk<Context>(relaxed = true)
-    private val alarmManager = mockk<AlarmManager>(relaxed = true)
-    private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
+    private val alarmManager = mockk<AlarmManager>(relaxUnitFun = true)
+    private val contactTracingActivationReminderProvider =
+        mockk<ContactTracingActivationReminderProvider>(relaxUnitFun = true)
 
     private val testSubject = ExposureNotificationReminderAlarmController(
         context,
-        alarmManager
+        alarmManager,
+        contactTracingActivationReminderProvider
     )
 
     @Test
-    fun `setup calls AlarmManager with proper time`() {
+    fun `setup schedules AlarmManager with appropriate time`() {
+        val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
         val delay = Duration.ofHours(1)
-
         val alarmTime = Instant.now(fixedClock).plus(delay)
 
         testSubject.setup(alarmTime)
@@ -42,14 +45,27 @@ class ExposureNotificationReminderAlarmControllerTest {
     }
 
     @Test
-    fun `cancel AlarmController`() {
+    fun `cancel AlarmController with pending intent`() {
         mockkStatic(PendingIntent::class)
         val pendingIntent = mockk<PendingIntent>()
         every { PendingIntent.getBroadcast(any(), any(), any(), any()) } returns pendingIntent
 
         testSubject.cancel()
+
         verify {
+            contactTracingActivationReminderProvider setProperty "reminder" value null
             alarmManager.cancel(pendingIntent)
         }
+    }
+
+    @Test
+    fun `cancel AlarmController without pending intent`() {
+        mockkStatic(PendingIntent::class)
+        every { PendingIntent.getBroadcast(any(), any(), any(), any()) } returns null
+
+        testSubject.cancel()
+
+        verify { contactTracingActivationReminderProvider setProperty "reminder" value null }
+        verify(exactly = 0) { alarmManager.cancel(any<PendingIntent>()) }
     }
 }

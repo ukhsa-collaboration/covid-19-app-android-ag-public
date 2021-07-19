@@ -28,14 +28,12 @@ class ShowLocalMessageNotificationIfNeeded @Inject constructor(
         }
 
         with(notificationMessage) {
-            if (head != null && body != null) {
-                notificationProvider.showLocalMessageNotification(title = head, message = body)
-            }
+            notificationProvider.showLocalMessageNotification(title = head, message = body)
         }
         analyticsEventProcessor.track(DidSendLocalInfoNotification)
     }
 
-    private fun MessageWithId.hasContentChangedSince(previousMessageWithId: MessageWithId?): Boolean =
-        this.messageId != previousMessageWithId?.messageId ||
-            this.message.contentVersion != previousMessageWithId.message.contentVersion
+    private fun NotificationWithId.hasContentChangedSince(previousNotificationWithId: NotificationWithId?): Boolean =
+        this.messageId != previousNotificationWithId?.messageId ||
+            this.message.contentVersion != previousNotificationWithId.message.contentVersion
 }

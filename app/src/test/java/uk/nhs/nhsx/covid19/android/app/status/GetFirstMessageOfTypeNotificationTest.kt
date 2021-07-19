@@ -8,17 +8,15 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertNull
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityProvider
-import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessage
-import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessageType
-import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessageType.NOTIFICATION
-import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessageType.UNKNOWN
+import uk.nhs.nhsx.covid19.android.app.remote.data.LocalInformation.Notification
+import uk.nhs.nhsx.covid19.android.app.remote.data.LocalInformation.Unknown
 import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessagesResponse
 import kotlin.test.assertEquals
 
 class GetFirstMessageOfTypeNotificationTest {
 
     private val localAuthorityProvider = mockk<LocalAuthorityProvider>()
-    private val substitutePlaceholdersInMessageWithId = mockk<SubstitutePlaceholdersInMessageWithId>()
+    private val substitutePlaceholdersInMessageWithId = mockk<SubstitutePlaceholdersInNotificationWithId>()
 
     private val getFirstMessageOfTypeNotificationTest = GetFirstMessageOfTypeNotification(
         localAuthorityProvider,
@@ -72,8 +70,8 @@ class GetFirstMessageOfTypeNotificationTest {
     fun `successfully return the first message of type notification`() = runBlocking {
         every { localAuthorityProvider.value } returns localAuthorityId
 
-        val expectedMessageWithId = MessageWithId(messageId = "message1", message = message1)
-        val expectedResult = mockk<MessageWithId>()
+        val expectedMessageWithId = NotificationWithId(messageId = "message1", message = message1)
+        val expectedResult = mockk<NotificationWithId>()
 
         coEvery { substitutePlaceholdersInMessageWithId(expectedMessageWithId) } returns expectedResult
 
@@ -104,8 +102,8 @@ class GetFirstMessageOfTypeNotificationTest {
     fun `specific message has priority over wildcard message`() = runBlocking {
         every { localAuthorityProvider.value } returns localAuthorityId
 
-        val expectedMessageWithId = MessageWithId(messageId = "message1", message = message1)
-        val expectedResult = mockk<MessageWithId>()
+        val expectedMessageWithId = NotificationWithId(messageId = "message1", message = message1)
+        val expectedResult = mockk<NotificationWithId>()
 
         coEvery { substitutePlaceholdersInMessageWithId(expectedMessageWithId) } returns expectedResult
 
@@ -118,8 +116,8 @@ class GetFirstMessageOfTypeNotificationTest {
     fun `wildcard message applies to any local authority not already in map`() = runBlocking {
         every { localAuthorityProvider.value } returns "anotherLocalAuthority"
 
-        val expectedMessageWithId = MessageWithId(messageId = "wildcard-message", message = wildcardMessage)
-        val expectedResult = mockk<MessageWithId>()
+        val expectedMessageWithId = NotificationWithId(messageId = "wildcard-message", message = wildcardMessage)
+        val expectedResult = mockk<NotificationWithId>()
 
         coEvery { substitutePlaceholdersInMessageWithId(expectedMessageWithId) } returns expectedResult
 
@@ -132,8 +130,8 @@ class GetFirstMessageOfTypeNotificationTest {
     fun `wildcard message is selected when specific local authority message is not of type notification`() = runBlocking {
         every { localAuthorityProvider.value } returns "authorityWithUnknown"
 
-        val expectedMessageWithId = MessageWithId(messageId = "wildcard-message", message = wildcardMessage)
-        val expectedResult = mockk<MessageWithId>()
+        val expectedMessageWithId = NotificationWithId(messageId = "wildcard-message", message = wildcardMessage)
+        val expectedResult = mockk<NotificationWithId>()
 
         coEvery { substitutePlaceholdersInMessageWithId(expectedMessageWithId) } returns expectedResult
 
@@ -144,8 +142,8 @@ class GetFirstMessageOfTypeNotificationTest {
 
     private val localAuthorityId = "S00001"
 
-    private val wildcardMessage = localMessageWithType(NOTIFICATION)
-    private val message1 = localMessageWithType(NOTIFICATION)
+    private val wildcardMessage = notificationMessage()
+    private val message1 = notificationMessage()
 
     private val localMessagesResponse = LocalMessagesResponse(
         localAuthorities = mapOf(
@@ -154,10 +152,10 @@ class GetFirstMessageOfTypeNotificationTest {
             "test2" to listOf("mm3")
         ),
         messages = mapOf(
-            "message3" to localMessageWithType(UNKNOWN),
-            "message2" to localMessageWithType(NOTIFICATION),
+            "message3" to Unknown,
+            "message2" to notificationMessage(),
             "message1" to message1,
-            "mm3" to localMessageWithType(UNKNOWN)
+            "mm3" to Unknown
         )
     )
 
@@ -169,14 +167,13 @@ class GetFirstMessageOfTypeNotificationTest {
         ),
         messages = mapOf(
             "wildcard-message" to wildcardMessage,
-            "message2" to localMessageWithType(NOTIFICATION),
+            "message2" to notificationMessage(),
             "message1" to message1,
-            "unknown-message" to localMessageWithType(UNKNOWN)
+            "unknown-message" to Unknown
         )
     )
 
-    private fun localMessageWithType(localMessageType: LocalMessageType) = LocalMessage(
-        type = localMessageType,
+    private fun notificationMessage() = Notification(
         updated = mockk(),
         contentVersion = 1,
         translations = mockk()

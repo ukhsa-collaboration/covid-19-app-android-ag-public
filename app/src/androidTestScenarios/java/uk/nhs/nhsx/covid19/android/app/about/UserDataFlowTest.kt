@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.about
 
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
@@ -21,31 +20,30 @@ class UserDataFlowTest : EspressoTest() {
     private val settingsRobot = SettingsRobot()
 
     @Test
-    fun startContactCase_checkLastDayOfIsolationInStatusScreen_confirmLastDayOfIsolationInUserDataScreen() =
-        notReported {
-            testAppContext.clock.currentInstant = startInstant
-            testAppContext.setState(contactCaseIsolation)
+    fun startContactCase_checkLastDayOfIsolationInStatusScreen_confirmLastDayOfIsolationInUserDataScreen() {
+        testAppContext.clock.currentInstant = startInstant
+        testAppContext.setState(contactCaseIsolation)
 
-            startTestActivity<StatusActivity>()
+        startTestActivity<StatusActivity>()
 
-            statusRobot.checkActivityIsDisplayed()
+        statusRobot.checkActivityIsDisplayed()
 
-            waitFor { statusRobot.checkIsolationViewIsDisplayed() }
+        waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
-            val expectedExpiryDate = "24 Dec 2020"
+        val expectedExpiryDate = "24 Dec 2020"
 
-            statusRobot.checkIsolationSubtitleIsDisplayedWithText(testAppContext.app, expectedExpiryDate)
+        statusRobot.checkIsolationSubtitleIsDisplayedWithText(testAppContext.app, expectedExpiryDate)
 
-            statusRobot.clickSettings()
+        statusRobot.clickSettings()
 
-            settingsRobot.clickMyDataSetting()
+        settingsRobot.clickMyDataSetting()
 
-            userDataRobot.checkActivityIsDisplayed()
+        userDataRobot.checkActivityIsDisplayed()
 
-            waitFor { userDataRobot.checkLastDayOfIsolationIsDisplayed() }
+        waitFor { userDataRobot.checkLastDayOfIsolationIsDisplayed() }
 
-            waitFor { userDataRobot.checkLastDayOfIsolationDisplaysText(expectedExpiryDate) }
-        }
+        waitFor { userDataRobot.checkLastDayOfIsolationDisplaysText(expectedExpiryDate) }
+    }
 
     companion object {
         private val startInstant = Instant.parse("2020-12-11T13:00:00Z")

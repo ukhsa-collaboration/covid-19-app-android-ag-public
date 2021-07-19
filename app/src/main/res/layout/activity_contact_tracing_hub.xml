@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:background="?colorSurface"
         android:gravity="center_vertical"
-        android:minHeight="56dp"
+        android:minHeight="@dimen/list_item_min_height"
         android:paddingHorizontal="16dp">
 
         <TextView
@@ -40,48 +40,152 @@
     <ScrollView
         style="@style/ScrollContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingHorizontal="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/margin_horizontal"
-            android:paddingVertical="@dimen/vertical_margin">
+            android:orientation="vertical">
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
-                style="@style/Title2"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/contact_tracing_hub_consider_pausing_title" />
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/vertical_margin_large">
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="@dimen/margin_horizontal">
+
+                    <ImageView
+                        android:layout_width="72dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_no_location_pin" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                            style="@style/ActionTextBold"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/contact_tracing_hub_no_tracking_title" />
+
+                        <TextView
+                            style="@style/Body1.SecondaryTextColor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/contact_tracing_hub_no_tracking_description" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/vertical_margin"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="@dimen/margin_horizontal">
+
+                    <ImageView
+                        android:layout_width="72dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_privacy_shield" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                            style="@style/ActionTextBold"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/contact_tracing_hub_privacy_title" />
+
+                        <TextView
+                            style="@style/Body1.SecondaryTextColor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/contact_tracing_hub_privacy_description" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/vertical_margin"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="@dimen/margin_horizontal">
+
+                    <ImageView
+                        android:layout_width="72dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_battery" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                            style="@style/ActionTextBold"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/contact_tracing_hub_battery_drain_title" />
+
+                        <TextView
+                            style="@style/Body1.SecondaryTextColor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/contact_tracing_hub_battery_drain_description" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin"
-                app:rawText="@string/contact_tracing_hub_consider_pausing_text"
-                app:showBulletPoints="true" />
+                android:orientation="vertical">
 
-            <TextView
-                style="@style/ActionText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:text="@string/contact_tracing_hub_turn_back_on_reminder" />
+                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                    style="@style/ActionText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/vertical_margin_large"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/list_item_min_height"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="@dimen/vertical_margin"
+                    android:text="@string/contact_tracing_hub_more_info_title"
+                    android:textColor="@color/secondary_text_grey" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
-                style="@style/Title3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin_large"
-                android:text="@string/contact_tracing_hub_should_not_pause_title" />
-
-            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin"
-                app:rawText="@string/contact_tracing_hub_should_not_pause_text"
-                app:showBulletPoints="true" />
-         </LinearLayout>
+                <uk.nhs.nhsx.covid19.android.app.widgets.SettingsOptionsView
+                    android:id="@+id/optionWhenNotToPause"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/list_item_space"
+                    app:settingName="@string/contact_tracing_when_not_to_pause_option" />
+            </LinearLayout>
+        </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingVertical="5dp">
+    <LinearLayout
+        android:id="@+id/projectIdError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:src="@android:drawable/stat_notify_error"
+            android:tint="@color/error_red" />
+
+        <TextView
+            style="@style/Title3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Project ID is not specified" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/apiIdError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:src="@android:drawable/stat_notify_error"
+            android:tint="@color/error_red" />
+
+        <TextView
+            style="@style/Title3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="API key is not specified" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/lokaliseProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        />
+
+    <Button
+        android:id="@+id/updateFromLokalise"
+        style="@style/PrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Update copy from Lokalise" />
+
+    <Button
+        android:id="@+id/purgeLokalise"
+        style="@style/PrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Purge Lokalise" />
+
+</LinearLayout>
+

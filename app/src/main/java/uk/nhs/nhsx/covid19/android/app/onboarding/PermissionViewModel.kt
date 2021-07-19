@@ -2,8 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.onboarding
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitOnboardingAnalyticsWorker
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmittedOnboardingAnalyticsProvider
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationRequired
@@ -25,19 +23,17 @@ class PermissionViewModel @Inject constructor(
     fun onActivityNavigation(): LiveData<NavigationTarget> = activityNavigationLiveData
 
     fun onExposureNotificationsActive() {
-        viewModelScope.launch {
-            onboardingCompletedProvider.value = true
-            if (submittedOnboardingAnalyticsProvider.value != true) {
-                submitOnboardingAnalyticsWorkerScheduler.scheduleOnboardingAnalyticsEvent()
-                submittedOnboardingAnalyticsProvider.value = true
-            }
-            periodicTasks.schedule()
+        onboardingCompletedProvider.value = true
+        if (submittedOnboardingAnalyticsProvider.value != true) {
+            submitOnboardingAnalyticsWorkerScheduler.scheduleOnboardingAnalyticsEvent()
+            submittedOnboardingAnalyticsProvider.value = true
+        }
+        periodicTasks.schedule()
 
-            if (batteryOptimizationRequired()) {
-                activityNavigationLiveData.postValue(BATTERY_OPTIMIZATION)
-            } else {
-                activityNavigationLiveData.postValue(STATUS_ACTIVITY)
-            }
+        if (batteryOptimizationRequired()) {
+            activityNavigationLiveData.postValue(BATTERY_OPTIMIZATION)
+        } else {
+            activityNavigationLiveData.postValue(STATUS_ACTIVITY)
         }
     }
 

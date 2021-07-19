@@ -18,6 +18,7 @@ import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateRecommendedActivity
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction.NAVIGATE_AND_TURN_ON
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction.ONLY_NAVIGATE
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -76,6 +77,7 @@ class NotificationProvider @Inject constructor(
 
         const val CONTACT_TRACING_HUB_ACTION = "CONTACT_TRACING_HUB_ACTION"
         const val TAPPED_ON_LOCAL_MESSAGE_NOTIFICATION = "TAPPED_ON_LOCAL_MESSAGE_NOTIFICATION"
+        const val RISKY_VENUE_NOTIFICATION_TAPPED_WITH_TYPE = "RISKY_VENUE_NOTIFICATION_TAPPED_WITH_TYPE"
     }
 
     private fun createAreaRiskChangedNotificationChannel() {
@@ -185,9 +187,10 @@ class NotificationProvider @Inject constructor(
             )
     }
 
-    fun showRiskyVenueVisitNotification() {
+    fun showRiskyVenueVisitNotification(messageType: RiskyVenueMessageType) {
         val intent = Intent(context, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            putExtra(RISKY_VENUE_NOTIFICATION_TAPPED_WITH_TYPE, messageType)
         }
         val pendingIntent: PendingIntent =
             PendingIntent.getActivity(
@@ -252,9 +255,7 @@ class NotificationProvider @Inject constructor(
         val exposureNotification = createNotification(
             ISOLATION_STATE_CHANNEL_ID,
             title = context.getString(R.string.app_name),
-            message = context.getString(R.string.notification_title_state_exposure) + "\n\n" + context.getString(
-                R.string.notification_text_state_exposure
-            ),
+            message = context.getString(R.string.notification_title_state_exposure),
             contentIntent = pendingIntent
         )
 

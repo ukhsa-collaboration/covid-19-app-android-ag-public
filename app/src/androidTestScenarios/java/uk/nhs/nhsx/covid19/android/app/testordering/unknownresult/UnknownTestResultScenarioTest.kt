@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.testordering.unknownresult
 
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
@@ -13,7 +12,7 @@ class UnknownTestResultScenarioTest : EspressoTest() {
     private val unknownTestResultRobot = UnknownTestResultRobot()
 
     @Test
-    fun startAppWithUnknownTestResult_showsUnknownTestResultScreen_closingScreenShowsStatusScreen() = notReported {
+    fun startAppWithUnknownTestResult_showsUnknownTestResultScreen_closingScreenShowsStatusScreen() {
         testAppContext.getReceivedUnknownTestResultProvider().value = true
 
         startTestActivity<StatusActivity>()
@@ -26,7 +25,7 @@ class UnknownTestResultScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun startAppWithUnknownTestResult_showsUnknownTestResultScreen_pressingBackShowsStatusScreen() = notReported {
+    fun startAppWithUnknownTestResult_showsUnknownTestResultScreen_pressingBackShowsStatusScreen() {
         testAppContext.getReceivedUnknownTestResultProvider().value = true
 
         startTestActivity<StatusActivity>()

@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.view_privacy_protected.view.privacyTextDescription
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 
 class PrivacyView @JvmOverloads constructor(
     context: Context,
@@ -19,7 +20,7 @@ class PrivacyView @JvmOverloads constructor(
 ) : LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
 
     private var text: String = ""
-        set(value: String) {
+        set(value) {
             field = value
             privacyTextDescription.text = value
             this.contentDescription = value
@@ -34,11 +35,7 @@ class PrivacyView @JvmOverloads constructor(
             0,
             0
         ).apply {
-            val rawText = getText(R.styleable.PrivacyView_privacyText)
-
-            rawText?.let {
-                text = (it.toString())
-            }
+            text = getString(context, R.styleable.PrivacyView_privacyText)
 
             recycle()
         }

@@ -6,11 +6,11 @@ import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Resu
 import uk.nhs.nhsx.covid19.android.app.exposure.setExposureNotificationResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingHubActivity.Companion.SHOULD_TURN_ON_CONTACT_TRACING
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ContactTracingHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationReminderRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.WhenNotToPauseContactTracingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 
 class ContactTracingHubActivityTest : EspressoTest() {
@@ -19,7 +19,7 @@ class ContactTracingHubActivityTest : EspressoTest() {
     private val exposureNotificationReminderRobot = ExposureNotificationReminderRobot()
 
     @Test
-    fun enableEncounterDetection_whenSuccessful_contactTracingShouldBeOn() = notReported {
+    fun enableEncounterDetection_whenSuccessful_contactTracingShouldBeOn() {
         testAppContext.getExposureNotificationApi().setEnabled(false)
         testAppContext.getExposureNotificationApi().activationResult = Result.Success()
 
@@ -29,7 +29,7 @@ class ContactTracingHubActivityTest : EspressoTest() {
     }
 
     @Test
-    fun enableEncounterDetection_whenError_shouldShowError_contactTracingShouldBeOff() = notReported {
+    fun enableEncounterDetection_whenError_shouldShowError_contactTracingShouldBeOff() {
         testAppContext.getExposureNotificationApi().setEnabled(false)
         testAppContext.getExposureNotificationApi().activationResult = Result.Error()
 
@@ -41,7 +41,7 @@ class ContactTracingHubActivityTest : EspressoTest() {
     }
 
     @Test
-    fun enableEncounterDetection_whenResolutionNeededAndSuccessful_contactTracingShouldBeOn() = notReported {
+    fun enableEncounterDetection_whenResolutionNeededAndSuccessful_contactTracingShouldBeOn() {
         testAppContext.getExposureNotificationApi().setEnabled(false)
         testAppContext.setExposureNotificationResolutionRequired(testAppContext.app, true)
 
@@ -51,7 +51,7 @@ class ContactTracingHubActivityTest : EspressoTest() {
     }
 
     @Test
-    fun enableEncounterDetection_whenResolutionNeededAndNotSuccessful_contactTracingShouldBeOff() = notReported {
+    fun enableEncounterDetection_whenResolutionNeededAndNotSuccessful_contactTracingShouldBeOff() {
         testAppContext.getExposureNotificationApi().setEnabled(false)
         testAppContext.setExposureNotificationResolutionRequired(testAppContext.app, false)
 
@@ -61,7 +61,7 @@ class ContactTracingHubActivityTest : EspressoTest() {
     }
 
     @Test
-    fun toggleContactTracingReminder_thenCancel_contactTracingShouldRemainOn() = notReported {
+    fun toggleContactTracingReminder_thenCancel_contactTracingShouldRemainOn() {
         testAppContext.getExposureNotificationApi().setEnabled(true)
 
         startTestActivity<ContactTracingHubActivity>()
@@ -76,7 +76,7 @@ class ContactTracingHubActivityTest : EspressoTest() {
     }
 
     @Test
-    fun toggleContactTracingReminder_remindIn4Hours_shouldSwitchOffContactTracing() = notReported {
+    fun toggleContactTracingReminder_remindIn4Hours_shouldSwitchOffContactTracing() {
         testAppContext.getExposureNotificationApi().setEnabled(true)
 
         startTestActivity<ContactTracingHubActivity>()
@@ -93,8 +93,22 @@ class ContactTracingHubActivityTest : EspressoTest() {
     }
 
     @Test
+    fun whenNotToPauseContactTracingClicked_shouldOpenWhenNotToPauseContactTracingActivity_navigateUp_shouldShowContactTracingHub() {
+        val whenNotToPauseContactTracingRobot = WhenNotToPauseContactTracingRobot()
+
+        startTestActivity<ContactTracingHubActivity>()
+
+        contactTracingHubRobot.clickWhenNotToPauseContactTracing()
+
+        whenNotToPauseContactTracingRobot.checkActivityIsDisplayed()
+        whenNotToPauseContactTracingRobot.pressBackArrow()
+
+        contactTracingHubRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
     @FlakyTest
-    fun toggleContactTracingReminder_rotateScreen_thenClickCancel_shouldDismissDialogAndShowContactTracingScreen() = notReported {
+    fun toggleContactTracingReminder_rotateScreen_thenClickCancel_shouldDismissDialogAndShowContactTracingScreen() {
         testAppContext.getExposureNotificationApi().setEnabled(true)
 
         startTestActivity<ContactTracingHubActivity>()
@@ -118,7 +132,7 @@ class ContactTracingHubActivityTest : EspressoTest() {
     }
 
     @Test
-    fun startActivityWithShouldTurnOnContactTracingSetToFalse_shouldNotTurnOnContactTracing() = notReported {
+    fun startActivityWithShouldTurnOnContactTracingSetToFalse_shouldNotTurnOnContactTracing() {
         testAppContext.getExposureNotificationApi().setEnabled(false)
         testAppContext.getExposureNotificationApi().activationResult = Result.Success()
 
@@ -132,7 +146,7 @@ class ContactTracingHubActivityTest : EspressoTest() {
     }
 
     @Test
-    fun startActivityWithShouldTurnOnContactTracingSetToTrue_shouldTurnOnContactTracing() = notReported {
+    fun startActivityWithShouldTurnOnContactTracingSetToTrue_shouldTurnOnContactTracing() {
         testAppContext.getExposureNotificationApi().setEnabled(false)
         testAppContext.getExposureNotificationApi().activationResult = Result.Success()
 

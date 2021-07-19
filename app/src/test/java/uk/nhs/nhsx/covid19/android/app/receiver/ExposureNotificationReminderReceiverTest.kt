@@ -10,16 +10,19 @@ import uk.nhs.nhsx.covid19.android.app.FieldInjectionUnitTest
 class ExposureNotificationReminderReceiverTest : FieldInjectionUnitTest() {
 
     private val testSubject = ExposureNotificationReminderReceiver().apply {
-        notificationProvider = mockk(relaxed = true)
-        resumeContactTracingNotificationTimeProvider = mockk(relaxed = true)
+        notificationProvider = mockk(relaxUnitFun = true)
+        scheduleContactTracingActivationAdditionalReminderIfNeeded = mockk(relaxUnitFun = true)
     }
 
     private val intent = mockk<Intent>()
 
     @Test
-    fun `on receive triggers exposure notification reminder`() = runBlocking {
+    fun `on receive triggers reminder notification and schedules additional reminder`() = runBlocking {
         testSubject.onReceive(context, intent)
 
-        verify { testSubject.notificationProvider.showExposureNotificationReminder() }
+        verify {
+            testSubject.notificationProvider.showExposureNotificationReminder()
+            testSubject.scheduleContactTracingActivationAdditionalReminderIfNeeded()
+        }
     }
 }

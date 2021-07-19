@@ -103,4 +103,11 @@ data class Metrics(
     var positiveLabResultAfterPositiveSelfRapidTest: Int = 0,
     var negativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit: Int = 0,
     var negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit: Int = 0,
+    var didAccessRiskyVenueM2Notification: Int = 0,
+    var selectedTakeTestM2Journey: Int = 0,
+    var selectedTakeTestLaterM2Journey: Int = 0,
+    var selectedHasSymptomsM2Journey: Int = 0,
+    var selectedHasNoSymptomsM2Journey: Int = 0,
+    var selectedLFDTestOrderingM2Journey: Int = 0,
+    var selectedHasLFDTestM2Journey: Int = 0,
 )

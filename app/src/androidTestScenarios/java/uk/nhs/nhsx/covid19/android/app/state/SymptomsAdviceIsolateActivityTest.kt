@@ -10,7 +10,6 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvi
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenSelfAssessmentNoImpactOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateRobot
 
@@ -26,27 +25,27 @@ class SymptomsAdviceIsolateActivityTest : EspressoTest() {
     }
 
     @Test
-    fun whenNotIsolating_thenTransitionToIndexCaseDueToSelfAssessment() = notReported {
+    fun whenNotIsolating_thenTransitionToIndexCaseDueToSelfAssessment() {
         verifyViewState(NoIndexCaseThenIsolationDueToSelfAssessment(remainingDaysInIsolation))
     }
 
     @Test
-    fun whenIsolatingAsContactCase_thenReportSymptomsWithoutTransition() = notReported {
+    fun whenIsolatingAsContactCase_thenReportSymptomsWithoutTransition() {
         verifyViewState(NoIndexCaseThenSelfAssessmentNoImpactOnIsolation(remainingDaysInIsolation))
     }
 
     @Test
-    fun whenIsolatingDueToPositiveTestResult_thenReportSymptomsWithOnsetDateAfterTestResult() = notReported {
+    fun whenIsolatingDueToPositiveTestResult_thenReportSymptomsWithOnsetDateAfterTestResult() {
         verifyViewState(IndexCaseThenHasSymptomsDidUpdateIsolation(remainingDaysInIsolation))
     }
 
     @Test
-    fun whenIsolatingDueToPositiveTestResult_thenReportSymptomsWithOnsetDateBeforeTestResult() = notReported {
+    fun whenIsolatingDueToPositiveTestResult_thenReportSymptomsWithOnsetDateBeforeTestResult() {
         verifyViewState(IndexCaseThenHasSymptomsNoEffectOnIsolation)
     }
 
     @Test
-    fun whenIsolatingDueToPositiveTestResult_thenReportNoSymptoms() = notReported {
+    fun whenIsolatingDueToPositiveTestResult_thenReportNoSymptoms() {
         verifyViewState(IndexCaseThenNoSymptoms)
     }
 

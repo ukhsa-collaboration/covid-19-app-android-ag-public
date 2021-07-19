@@ -6,7 +6,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResul
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveLabResultAfterPositiveLFD
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveLabResultAfterPositiveSelfRapidTest
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
@@ -17,7 +17,7 @@ import java.time.Clock
 import javax.inject.Inject
 
 class TrackTestResultAnalyticsOnAcknowledge @Inject constructor(
-    private val analyticsEventTracker: AnalyticsEventTracker,
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
     private val clock: Clock,
 ) {
 
@@ -99,7 +99,7 @@ class TrackTestResultAnalyticsOnAcknowledge @Inject constructor(
             else -> null
         }
         if (analyticsEvent != null) {
-            analyticsEventTracker.track(analyticsEvent)
+            analyticsEventProcessor.track(analyticsEvent)
         }
     }
 }

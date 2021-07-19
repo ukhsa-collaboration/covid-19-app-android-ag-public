@@ -9,7 +9,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESUL
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
@@ -44,7 +43,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCase_receiveNegativeAndPositiveTestResultsSequentially_shouldIsolate() = notReported {
+    fun startIndexCase_receiveNegativeAndPositiveTestResultsSequentially_shouldIsolate() {
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -93,7 +92,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCase_receiveNegativeAndNegativeTestResultsSequentially_shouldEndIsolationOnFirstNegativeTestResult() = notReported {
+    fun startIndexCase_receiveNegativeAndNegativeTestResultsSequentially_shouldEndIsolationOnFirstNegativeTestResult() {
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -137,7 +136,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
     @RetryFlakyTest
     @Test
-    fun startIndexCase_receiveMultipleTestResultsAtTheSameTime_firstPositive_thenNegative_shouldIsolate() = notReported {
+    fun startIndexCase_receiveMultipleTestResultsAtTheSameTime_firstPositive_thenNegative_shouldIsolate() {
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -187,7 +186,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCaseWithPositiveTestResult_receiveNegativeTestResult_shouldStayInIsolation() = notReported {
+    fun startIndexCaseWithPositiveTestResult_receiveNegativeTestResult_shouldStayInIsolation() {
         testAppContext.setState(
             isolationHelper.selfAssessment(
                 testResult = AcknowledgedTestResult(
@@ -222,7 +221,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCase_receivePositiveTestResult_thenVoidTestResult_thenNegativeTestResult_shouldStayInIsolation() = notReported {
+    fun startIndexCase_receivePositiveTestResult_thenVoidTestResult_thenNegativeTestResult_shouldStayInIsolation() {
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()

@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.about
 
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.EditPostalDistrictRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
@@ -15,14 +14,14 @@ class EditPostalDistrictActivityTest : EspressoTest() {
     private val validPostDistrictCode = "CM2"
 
     @Test
-    fun editPostalDistrictScreenShows() = notReported {
+    fun editPostalDistrictScreenShows() {
         startTestActivity<EditPostalDistrictActivity>()
 
         editPostalDistrictRobot.checkActivityIsDisplayed()
     }
 
     @Test
-    fun clickSavePostDistrictCodeWhenCodeIsEmpty_showsErrorMessage() = notReported {
+    fun clickSavePostDistrictCodeWhenCodeIsEmpty_showsErrorMessage() {
         startTestActivity<EditPostalDistrictActivity>()
 
         editPostalDistrictRobot.checkActivityIsDisplayed()
@@ -33,7 +32,7 @@ class EditPostalDistrictActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickSavePostDistrictCodeWhenCodeIsInvalid_showsErrorMessage() = notReported {
+    fun clickSavePostDistrictCodeWhenCodeIsInvalid_showsErrorMessage() {
         startTestActivity<EditPostalDistrictActivity>()
 
         editPostalDistrictRobot.checkActivityIsDisplayed()
@@ -46,7 +45,7 @@ class EditPostalDistrictActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickSavePostDistrictCodeWhenCodeIsValid_opensLocalAuthorityActivity() = notReported {
+    fun clickSavePostDistrictCodeWhenCodeIsValid_opensLocalAuthorityActivity() {
         startTestActivity<EditPostalDistrictActivity>()
 
         editPostalDistrictRobot.checkActivityIsDisplayed()
@@ -59,7 +58,7 @@ class EditPostalDistrictActivityTest : EspressoTest() {
     }
 
     @Test
-    fun userTriesToChangePostCodeToNotSupported_errorIsShown() = notReported {
+    fun userTriesToChangePostCodeToNotSupported_errorIsShown() {
         startTestActivity<EditPostalDistrictActivity>()
 
         editPostalDistrictRobot.checkActivityIsDisplayed()

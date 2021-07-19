@@ -9,7 +9,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.LocalMessageTranslation
+import uk.nhs.nhsx.covid19.android.app.remote.data.NotificationMessage
 
 class LocalMessageViewModelTest {
 
@@ -17,9 +17,9 @@ class LocalMessageViewModelTest {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val getLocalMessageFromStorage = mockk<GetLocalMessageFromStorage>()
-    private val localMessage: LocalMessageTranslation = mockk()
+    private val localMessage: NotificationMessage = mockk()
 
-    private val localMessageObserver = mockk<Observer<LocalMessageTranslation?>>(relaxUnitFun = true)
+    private val localMessageObserver = mockk<Observer<NotificationMessage?>>(relaxUnitFun = true)
 
     private val testSubject = LocalMessageViewModel(getLocalMessageFromStorage)
 

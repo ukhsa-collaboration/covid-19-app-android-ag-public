@@ -13,7 +13,6 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -23,7 +22,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     private val selfDiagnosis = SelfDiagnosis(this)
 
     @Test
-    fun manuallyEnterPositivePCRTest_noSymptoms_thenGoIntoIsolation() = notReported {
+    fun manuallyEnterPositivePCRTest_noSymptoms_thenGoIntoIsolation() {
         manuallyEnterPositiveTestAndGoIntoIsolation(
             LAB_RESULT,
             symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
@@ -39,7 +38,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun manuallyEnterPositivePCRTest_noSymptoms_enterSymptomsLater() = notReported {
+    fun manuallyEnterPositivePCRTest_noSymptoms_enterSymptomsLater() {
         manuallyEnterPositiveTestAndGoIntoIsolationThenEnterSymptoms(
             LAB_RESULT,
             symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
@@ -55,7 +54,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun manuallyEnterPositiveUnassistedLFDTest_enterSymptomsLater() = notReported {
+    fun manuallyEnterPositiveUnassistedLFDTest_enterSymptomsLater() {
         manuallyEnterPositiveTestAndGoIntoIsolationThenEnterSymptoms(
             RAPID_SELF_REPORTED,
             symptomsAndOnsetFlowConfiguration = null,
@@ -68,7 +67,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun manuallyEnterPositiveAssistedLFDTest_enterSymptomsLater() = notReported {
+    fun manuallyEnterPositiveAssistedLFDTest_enterSymptomsLater() {
         manuallyEnterPositiveTestAndGoIntoIsolationThenEnterSymptoms(
             RAPID_RESULT,
             symptomsAndOnsetFlowConfiguration = null,
@@ -81,7 +80,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun manuallyEnterPositivePCRTest_confirmSymptoms_selectExplicitDate_thenGoIntoIsolation() = notReported {
+    fun manuallyEnterPositivePCRTest_confirmSymptoms_selectExplicitDate_thenGoIntoIsolation() {
         manuallyEnterPositiveTestAndGoIntoIsolation(
             LAB_RESULT,
             symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
@@ -97,7 +96,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun manuallyEnterPositivePCRTest_confirmSymptoms_cannotRememberOnsetDate_thenGoIntoIsolation() = notReported {
+    fun manuallyEnterPositivePCRTest_confirmSymptoms_cannotRememberOnsetDate_thenGoIntoIsolation() {
         manuallyEnterPositiveTestAndGoIntoIsolation(
             LAB_RESULT,
             symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
@@ -113,7 +112,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun manuallyEnterPositiveAssistedLFDTestAndGoIntoIsolation() = notReported {
+    fun manuallyEnterPositiveAssistedLFDTestAndGoIntoIsolation() {
         manuallyEnterPositiveTestAndGoIntoIsolation(
             RAPID_RESULT,
             symptomsAndOnsetFlowConfiguration = null,
@@ -126,7 +125,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun manuallyEnterPositiveUnassistedLFDTestAndGoIntoIsolation() = notReported {
+    fun manuallyEnterPositiveUnassistedLFDTestAndGoIntoIsolation() {
         manuallyEnterPositiveTestAndGoIntoIsolation(
             RAPID_SELF_REPORTED,
             symptomsAndOnsetFlowConfiguration = null,
@@ -139,7 +138,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun manuallyEnterPositiveUnconfirmedLFDTestAndGoIntoIsolation() = notReported {
+    fun manuallyEnterPositiveUnconfirmedLFDTestAndGoIntoIsolation() {
         manuallyEnterPositiveTestAndGoIntoIsolation(
             RAPID_RESULT,
             symptomsAndOnsetFlowConfiguration = null,
@@ -330,7 +329,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun manuallyEnterPositivePCRTestAfterSelfDiagnosisAndContinueIsolation() = notReported {
+    fun manuallyEnterPositivePCRTestAfterSelfDiagnosisAndContinueIsolation() {
         manuallyEnterPositiveTestAfterSelfDiagnosisAndContinueIsolation(
             LAB_RESULT,
             requiresConfirmatoryTest = false,
@@ -435,7 +434,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun manuallyEnterOldPositivePCRTestAfterSelfDiagnosisAndContinueIsolation() = notReported {
+    fun manuallyEnterOldPositivePCRTestAfterSelfDiagnosisAndContinueIsolation() {
         manuallyEnterOldPositiveTestAfterSelfDiagnosisAndContinueIsolation(
             LAB_RESULT,
             requiresConfirmatoryTest = false,
@@ -539,7 +538,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun manuallyEnterNegativeTestResultSetsReceivedNegativeTestResultEnteredManually() = notReported {
+    fun manuallyEnterNegativeTestResultSetsReceivedNegativeTestResultEnteredManually() {
         manualTestResultEntry.enterNegative()
 
         assertOnFields {
@@ -549,7 +548,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun manuallyEnterVoidTestResultSetsReceivedVoidTestResultEnteredManually() = notReported {
+    fun manuallyEnterVoidTestResultSetsReceivedVoidTestResultEnteredManually() {
         manualTestResultEntry.enterVoid()
 
         assertOnFields {

@@ -12,7 +12,6 @@ import androidx.test.uiautomator.UiDevice
 import com.squareup.moshi.Moshi
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind
 import uk.nhs.nhsx.covid19.android.app.report.config.FontScale
-import uk.nhs.nhsx.covid19.android.app.report.config.Orientation
 import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.config.Theme
 import uk.nhs.nhsx.covid19.android.app.report.output.Report
@@ -20,7 +19,6 @@ import uk.nhs.nhsx.covid19.android.app.report.output.Screenshot
 import uk.nhs.nhsx.covid19.android.app.report.output.Step
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
-import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.takeScreenshot
 import java.io.File
 
@@ -33,46 +31,31 @@ interface Reporter {
 }
 
 class AndroidReporter internal constructor(
-    private val testAppContext: TestApplicationContext,
+    private val configuration: TestConfiguration,
     private val scenario: String,
     private val name: String,
     private val description: String,
     private val kind: Kind,
-    private val testConfigurations: List<TestConfiguration>
+    private val testAppContext: TestApplicationContext
 ) : Reporter {
     private val screenshotFolderName = "${kind.description} - $scenario - $name"
-    private val steps = linkedMapOf<String, Step>()
+    private val steps = mutableListOf<Step>()
     private val reportAdapter = Moshi.Builder().build().adapter(Report::class.java).indent("\t")
-    private lateinit var currentTestConfiguration: TestConfiguration
 
     fun runWithConfigurations(builderAction: Reporter.() -> Unit) {
         Log.d("Reporter", "Start run for scenario: $scenario $name")
-        val failedConfigurations = mutableListOf<Pair<TestConfiguration, Exception>>()
 
-        testConfigurations.forEach { configuration ->
-            Log.d("Reporter", "Use configuration: $configuration for scenario: $scenario $name")
-            applyConfiguration(configuration)
-            for (i in 0..4) {
-                try {
-                    builderAction()
-                    break
-                } catch (exception: Exception) {
-                    UiDevice.getInstance(getInstrumentation()).pressBack()
-                    testAppContext.reset()
-
-                    if (i == 4) {
-                        Log.e(
-                            "Reporter",
-                            "Configuration failed: $configuration for scenario: $scenario $name",
-                            exception
-                        )
-                        failedConfigurations.add(configuration to exception)
-                    }
-                }
-            }
-        }
-        if (failedConfigurations.isNotEmpty()) {
-            throw failedConfigurations[0].second
+        Log.d("Reporter", "Use configuration: $configuration for scenario: $scenario $name")
+        applyConfiguration(configuration)
+        try {
+            builderAction()
+        } catch (exception: Exception) {
+            Log.e(
+                "Reporter",
+                "Configuration failed: $configuration for scenario: $scenario $name",
+                exception
+            )
+            throw exception
         }
 
         save()
@@ -83,11 +66,8 @@ class AndroidReporter internal constructor(
     private fun applyConfiguration(testConfiguration: TestConfiguration) {
         UiDevice.getInstance(getInstrumentation()).pressBack()
 
-        this.currentTestConfiguration = testConfiguration
-        setScreenOrientation(testConfiguration.orientation)
         adjustFontScale(testConfiguration.fontScale)
         applyTheme(testConfiguration.theme)
-        testAppContext.reset()
         testAppContext.setLocale(testConfiguration.languageCode)
     }
 
@@ -108,10 +88,10 @@ class AndroidReporter internal constructor(
     private fun resetSystemFontScaling() = adjustFontScale(FontScale.DEFAULT)
 
     override fun step(stepName: String, stepDescription: String) {
-        val orientationName = currentTestConfiguration.orientation.exportName
-        val fontScaleName = currentTestConfiguration.fontScale.exportName
-        val themeName = currentTestConfiguration.theme.exportName
-        val languageCode = currentTestConfiguration.languageCode ?: "en"
+        val orientationName = configuration.orientation.exportName
+        val fontScaleName = configuration.fontScale.exportName
+        val themeName = configuration.theme.exportName
+        val languageCode = configuration.languageCode
         val filename = "$orientationName-$fontScaleName-$themeName-$stepName-$languageCode"
 
         val outputFilename = takeScreenshot(filename, screenshotFolderName)
@@ -119,49 +99,50 @@ class AndroidReporter internal constructor(
             val tags = listOf(orientationName, fontScaleName, themeName, languageCode)
             val screenshot = Screenshot("$screenshotFolderName/$outputFilename", tags)
 
-            createOrUpdateStep(stepName, stepDescription, screenshot)
+            createStep(stepName, stepDescription, screenshot)
         }
     }
 
-    private fun createOrUpdateStep(
+    private fun createStep(
         stepName: String,
         stepDescription: String,
         screenshot: Screenshot
     ) {
-        val savedStep = steps[stepName]
-        if (savedStep == null) {
-            steps[stepName] = Step(
+        steps.add(
+            Step(
                 stepName,
                 stepDescription,
-                screenshots = listOf(screenshot)
+                screenshots = mutableListOf(screenshot)
             )
-        } else {
-            val updatedScreenshots = mutableListOf<Screenshot>().apply {
-                addAll(savedStep.screenshots)
-                add(screenshot)
-            }
-            steps[stepName] = savedStep.copy(screenshots = updatedScreenshots)
-        }
+        )
     }
 
     @Suppress("DEPRECATION")
     private fun save() {
-        val report = Report(
-            description = description,
-            kind = kind.description,
-            name = name,
-            scenario = scenario,
-            steps = steps.values.toList()
-        )
         val outputFolder = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
             "covid19"
         )
-        val text = reportAdapter.toJson(report)
         val file = File(outputFolder, "$screenshotFolderName.json")
+        val report = if (file.exists()) {
+            val existingReport = reportAdapter.fromJson(file.readText())!!
+            steps.forEach { step ->
+                val existingStep = existingReport.steps.first { it.name == step.name }
+                existingStep.screenshots.addAll(step.screenshots)
+            }
+            existingReport
+        } else {
+            Report(
+                description = description,
+                kind = kind.description,
+                name = name,
+                scenario = scenario,
+                steps = steps
+            )
+        }
+
+        val text = reportAdapter.toJson(report)
         file.writeText(text)
-        val exists = file.exists()
-        Log.d("Screenshots", "Exists = $exists")
     }
 }
 
@@ -170,11 +151,6 @@ class DummyReporter : Reporter {
     }
 }
 
-fun isReporterRunning() =
-    InstrumentationRegistry.getArguments().getString("takeScreenshots")
-        ?.toBoolean()
-        ?: false
-
 fun EspressoTest.reporter(
     scenario: String,
     title: String,
@@ -182,85 +158,14 @@ fun EspressoTest.reporter(
     kind: Kind,
     builderAction: Reporter.() -> Unit
 ) {
-    if (isReporterRunning()) {
-        val configurations = listOf(
-            TestConfiguration(Orientation.PORTRAIT, FontScale.DEFAULT, Theme.LIGHT),
-            TestConfiguration(Orientation.LANDSCAPE, FontScale.SMALL, Theme.DARK),
-            TestConfiguration(
-                Orientation.PORTRAIT,
-                FontScale.SMALL,
-                Theme.LIGHT,
-                languageCode = "ar"
-            ),
-            TestConfiguration(
-                Orientation.PORTRAIT,
-                FontScale.SMALL,
-                Theme.LIGHT,
-                languageCode = "bn"
-            ),
-            TestConfiguration(
-                Orientation.PORTRAIT,
-                FontScale.SMALL,
-                Theme.LIGHT,
-                languageCode = "cy"
-            ),
-            TestConfiguration(
-                Orientation.PORTRAIT,
-                FontScale.SMALL,
-                Theme.LIGHT,
-                languageCode = "gu"
-            ),
-            TestConfiguration(
-                Orientation.PORTRAIT,
-                FontScale.SMALL,
-                Theme.LIGHT,
-                languageCode = "pa"
-            ),
-            TestConfiguration(
-                Orientation.PORTRAIT,
-                FontScale.SMALL,
-                Theme.LIGHT,
-                languageCode = "ro"
-            ),
-            TestConfiguration(
-                Orientation.PORTRAIT,
-                FontScale.SMALL,
-                Theme.LIGHT,
-                languageCode = "tr"
-            ),
-            TestConfiguration(
-                Orientation.PORTRAIT,
-                FontScale.SMALL,
-                Theme.LIGHT,
-                languageCode = "ur"
-            ),
-            TestConfiguration(
-                Orientation.PORTRAIT,
-                FontScale.SMALL,
-                Theme.LIGHT,
-                languageCode = "zh"
-            ),
-            TestConfiguration(
-                Orientation.PORTRAIT,
-                FontScale.SMALL,
-                Theme.LIGHT,
-                languageCode = "pl"
-            ),
-            TestConfiguration(
-                Orientation.PORTRAIT,
-                FontScale.SMALL,
-                Theme.LIGHT,
-                languageCode = "so"
-            )
-        ).sortedBy { it.orientation }
-
+    if (isRunningReporterTool()) {
         AndroidReporter(
-            testAppContext,
+            configuration!!,
             scenario,
             title,
             description,
             kind,
-            configurations
+            testAppContext
         ).runWithConfigurations(
             builderAction
         )
@@ -269,13 +174,5 @@ fun EspressoTest.reporter(
     }
 }
 
-fun notReported(
-    action: () -> Unit
-) {
-    if (!isRunningScreenshotCapture()) {
-        action()
-    }
-}
-
-fun isRunningScreenshotCapture() =
+fun isRunningReporterTool() =
     InstrumentationRegistry.getArguments().getString("takeScreenshots")?.toBoolean() ?: false

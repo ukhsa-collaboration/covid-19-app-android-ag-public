@@ -29,12 +29,20 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Button
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import co.lokalise.android.sdk.LokaliseSDK
+import co.lokalise.android.sdk.core.LokalisePreferences
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import kotlinx.android.synthetic.scenarios.activity_debug.buttonFeatureFlags
 import kotlinx.android.synthetic.scenarios.activity_debug.environmentSpinner
 import kotlinx.android.synthetic.scenarios.activity_debug.exposureNotificationMocks
 import kotlinx.android.synthetic.scenarios.activity_debug.languageSpinner
+import kotlinx.android.synthetic.scenarios.activity_debug.localiseHeadingContainer
+import kotlinx.android.synthetic.scenarios.activity_debug.lokaliseContent
+import kotlinx.android.synthetic.scenarios.activity_debug.lokaliseHeadingIcon
+import kotlinx.android.synthetic.scenarios.activity_debug.lokaliseVersion
 import kotlinx.android.synthetic.scenarios.activity_debug.mockSettings
 import kotlinx.android.synthetic.scenarios.activity_debug.scenarioMain
 import kotlinx.android.synthetic.scenarios.activity_debug.scenarioOnboarding
@@ -46,10 +54,15 @@ import kotlinx.android.synthetic.scenarios.activity_debug.shareFlow
 import kotlinx.android.synthetic.scenarios.activity_debug.statusScreen
 import kotlinx.android.synthetic.scenarios.activity_debug.titleScenarios
 import kotlinx.android.synthetic.scenarios.activity_debug.titleScreens
+import kotlinx.android.synthetic.scenarios.include_lokalise_options.apiIdError
+import kotlinx.android.synthetic.scenarios.include_lokalise_options.lokaliseProgress
+import kotlinx.android.synthetic.scenarios.include_lokalise_options.projectIdError
+import kotlinx.android.synthetic.scenarios.include_lokalise_options.purgeLokalise
+import kotlinx.android.synthetic.scenarios.include_lokalise_options.updateFromLokalise
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.SupportedLanguage.DEFAULT
+import uk.nhs.covid19.config.LokaliseSettings
 import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
 import uk.nhs.nhsx.covid19.android.app.about.MoreAboutAppActivity
 import uk.nhs.nhsx.covid19.android.app.about.VenueHistoryActivity
@@ -89,6 +102,7 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResultActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.SymptomsAfterRiskyVenueActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsDidUpdateIsolation
@@ -108,6 +122,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.Policy
 import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyData
 import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyIcon.MEETING_PEOPLE
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.scenariodialog.MockApiDialogFragment
@@ -129,11 +144,13 @@ import uk.nhs.nhsx.covid19.android.app.testordering.SubmitKeysProgressActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingProgressActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
+import uk.nhs.nhsx.covid19.android.app.testordering.lfd.OrderLfdTestActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultOnsetDateActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.unknownresult.UnknownTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.util.crashreporting.CrashReport
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.purgeLokalise
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import java.time.Instant
 import java.time.LocalDate
@@ -168,6 +185,50 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         setupScreenButtons()
 
         setupScreenFilter()
+
+        setupUpdateTranslationsFromLokalise()
+    }
+
+    private fun setupUpdateTranslationsFromLokalise() {
+        with(LokaliseSettings) {
+            apiIdError.isVisible = apiKey == ""
+            projectIdError.isVisible = projectId == ""
+        }
+
+        localiseHeadingContainer.setOnSingleClickListener {
+            if (lokaliseContent.visibility == View.GONE) {
+                lokaliseHeadingIcon.setImageDrawable(getDrawable(android.R.drawable.arrow_up_float))
+                lokaliseContent.visibility = View.VISIBLE
+            } else {
+                lokaliseHeadingIcon.setImageDrawable(getDrawable(android.R.drawable.arrow_down_float))
+                lokaliseContent.visibility = View.GONE
+            }
+        }
+        updateLokaliseVersion()
+        updateFromLokalise.setOnSingleClickListener {
+            LokaliseSDK.clearCallbacks()
+            LokaliseSDK.addCallback { previousVersion, newVersion ->
+                Timber.d("LokaliseSDK On translations updated from $previousVersion to $newVersion")
+                Snackbar.make(scenarios, "Updated to version $newVersion", Snackbar.LENGTH_LONG).show()
+                updateLokaliseVersion()
+            }
+            updateFromLokalise.visibility = View.GONE
+            lokaliseProgress.visibility = View.VISIBLE
+            lokaliseProgress.animate()
+            LokaliseSDK.updateTranslations()
+        }
+
+        purgeLokalise.setOnSingleClickListener {
+            LokaliseSDK.clearCallbacks()
+            purgeLokalise(this)
+            updateLokaliseVersion()
+        }
+    }
+
+    private fun updateLokaliseVersion() = runOnUiThread {
+        updateFromLokalise.visibility = View.VISIBLE
+        lokaliseProgress.visibility = View.GONE
+        lokaliseVersion.text = LokalisePreferences(this).BUNDLE_ID.get().toString()
     }
 
     private fun setupEnvironmentSpinner() {
@@ -227,31 +288,30 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
     }
 
     private fun setupLanguageSpinner() {
-        val supportedLanguages = SupportedLanguage.values().toList()
-        val languageAdapter = LanguageAdapter(this, supportedLanguages)
+        val supportedLanguageItems = getSupportedLanguageItems()
+        languageSpinner.adapter = LanguageAdapter(this, supportedLanguageItems)
 
-        languageSpinner.adapter = languageAdapter
-
-        val previouslySelectedLanguage = appLocaleProvider.getUserSelectedLanguage() ?: DEFAULT
-        val indexOfPreviouslySelectedLanguage =
-            supportedLanguages.indexOf(previouslySelectedLanguage)
-        languageSpinner.setSelection(indexOfPreviouslySelectedLanguage)
+        val previouslySelectedLanguageItem = appLocaleProvider.getUserSelectedLanguage().toSupportedLanguageItem()
+        val indexOfPreviouslySelectedLanguageItem = supportedLanguageItems.indexOf(previouslySelectedLanguageItem)
+        languageSpinner.setSelection(indexOfPreviouslySelectedLanguageItem)
 
         languageSpinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
 
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                val selectedLanguage = supportedLanguages[position]
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedLanguage = supportedLanguageItems[position]
                 appLocaleProvider.languageCode = selectedLanguage.code
             }
         }
     }
+
+    private fun getSupportedLanguageItems(): List<SupportedLanguageItem> =
+        listOf(
+            SupportedLanguageItem(nameResId = R.string.default_language, code = null),
+            SupportedLanguageItem(nameResId = R.string.show_string_ids, code = "non")
+        ) +
+            SupportedLanguage.values().toList().map { SupportedLanguageItem(it.languageName, it.code) }
 
     private fun setupFeatureFlagButton() {
         buttonFeatureFlags.setOnSingleClickListener {
@@ -468,6 +528,10 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             startActivity<TestOrderingProgressActivity>()
         }
 
+        addScreenButton("Order LFD test") {
+            startActivity<OrderLfdTestActivity>()
+        }
+
         addScreenButton("App Availability") {
             startActivity<AppAvailabilityActivity>()
         }
@@ -591,13 +655,13 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             notifications.showAreaRiskChangedNotification()
             notifications.showExposureNotification()
             notifications.showExposureNotificationReminder()
-            notifications.showRiskyVenueVisitNotification()
+            notifications.showRiskyVenueVisitNotification(BOOK_TEST)
             notifications.showStateExpirationNotification()
             notifications.showTestResultsReceivedNotification()
             notifications.showRecommendedAppUpdateIsAvailable()
             GlobalScope.launch {
                 val message = appComponent.provideGetLocalMessageFromStorage().invoke()
-                if (message?.head != null && message.body != null) {
+                if (message != null) {
                     notifications.showLocalMessageNotification(title = message.head, message = message.body)
                 } else {
                     Timber.d("Local information notification not shown because no message stored")
@@ -670,6 +734,10 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
         addScreenButton("Local message") {
             startActivity<LocalMessageActivity>()
+        }
+
+        addScreenButton("Risky Venue (M2): Do you have symptoms") {
+            startActivity<SymptomsAfterRiskyVenueActivity>()
         }
     }
 

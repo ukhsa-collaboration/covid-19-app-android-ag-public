@@ -3,8 +3,8 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.verify
 import io.mockk.verifyOrder
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
@@ -49,7 +49,7 @@ class TestOrderingProgressViewModelTest {
 
         testSubject.loadVirologyTestOrder()
 
-        coVerify {
+        verify {
             analyticsEventProcessor.track(AnalyticsEvent.LaunchedTestOrdering)
             testOrderTokensProvider.add(TestOrderPollingConfig(Instant.now(clock), "f", "g"))
         }
@@ -72,7 +72,7 @@ class TestOrderingProgressViewModelTest {
 
         testSubject.loadVirologyTestOrder()
 
-        coVerify(exactly = 0) { analyticsEventProcessor.track(AnalyticsEvent.LaunchedTestOrdering) }
+        verify(exactly = 0) { analyticsEventProcessor.track(AnalyticsEvent.LaunchedTestOrdering) }
 
         verifyOrder {
             loadVirologyTestOrderResultObserver.onChanged(Lce.Loading)

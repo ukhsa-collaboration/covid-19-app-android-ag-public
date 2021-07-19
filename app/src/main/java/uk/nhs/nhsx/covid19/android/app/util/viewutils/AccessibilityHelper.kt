@@ -33,6 +33,21 @@ fun AppCompatActivity.setCloseToolbar(
     )
 }
 
+fun AppCompatActivity.setCancelToolbar(
+    toolbar: MaterialToolbar,
+    @StringRes titleResId: Int,
+    @DrawableRes closeIndicator: Int = R.drawable.ic_close_white,
+    listenerAction: () -> Unit = {}
+) {
+    setNavigateUpToolbar(
+        toolbar = toolbar,
+        titleResId = titleResId,
+        upContentDescription = R.string.cancel,
+        upIndicator = closeIndicator,
+        listenerAction = listenerAction
+    )
+}
+
 fun AppCompatActivity.setNavigateUpToolbar(
     toolbar: MaterialToolbar,
     @StringRes titleResId: Int,

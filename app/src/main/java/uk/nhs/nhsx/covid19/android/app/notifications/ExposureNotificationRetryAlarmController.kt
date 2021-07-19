@@ -5,7 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.RiskyContactReminderNotification
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.ShouldShowEncounterDetectionActivityProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationRetryReceiver
 import uk.nhs.nhsx.covid19.android.app.util.BroadcastProvider
@@ -21,7 +21,7 @@ class ExposureNotificationRetryAlarmController @Inject constructor(
     private val alarmManager: AlarmManager,
     private val notificationProvider: NotificationProvider,
     private val shouldShowEncounterDetectionActivityProvider: ShouldShowEncounterDetectionActivityProvider,
-    private val analyticsEventTracker: AnalyticsEventTracker,
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
     private val clock: Clock,
     private val broadcastProvider: BroadcastProvider,
 ) {
@@ -52,7 +52,7 @@ class ExposureNotificationRetryAlarmController @Inject constructor(
         if (shouldShowEncounterDetectionActivityProvider.value == true) {
             Timber.d("showing notification")
             notificationProvider.showExposureNotification()
-            analyticsEventTracker.track(RiskyContactReminderNotification)
+            analyticsEventProcessor.track(RiskyContactReminderNotification)
             setupNextAlarm()
         }
     }

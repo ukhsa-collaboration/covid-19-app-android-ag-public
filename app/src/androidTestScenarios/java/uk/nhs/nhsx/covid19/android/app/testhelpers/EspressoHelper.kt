@@ -43,7 +43,7 @@ import org.hamcrest.TypeSafeMatcher
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
-import uk.nhs.nhsx.covid19.android.app.report.isRunningScreenshotCapture
+import uk.nhs.nhsx.covid19.android.app.report.isRunningReporterTool
 import java.util.concurrent.TimeUnit.SECONDS
 import kotlin.test.assertEquals
 
@@ -193,7 +193,7 @@ private fun waitForOrientationChangeCompleted(
     device: UiDevice
 ) {
     // Causing some problems with DoReTo tool. TODO: investigate the problem
-    if (isRunningScreenshotCapture()) {
+    if (isRunningReporterTool()) {
         return
     }
 

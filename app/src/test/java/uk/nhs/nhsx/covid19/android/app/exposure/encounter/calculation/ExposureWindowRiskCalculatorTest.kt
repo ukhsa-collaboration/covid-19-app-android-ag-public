@@ -7,7 +7,7 @@ import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ExposureWindowsMatched
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventTracker
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.ExposureWindowUtils.Companion.getExposureWindow
 import uk.nhs.nhsx.covid19.android.app.remote.data.V2RiskCalculation
 import uk.nhs.riskscore.RiskScoreCalculatorConfiguration
@@ -21,7 +21,7 @@ class ExposureWindowRiskCalculatorTest {
     private val evaluateMostRelevantExposure = mockk<EvaluateMostRelevantRiskyExposure>()
     private val evaluateIfConsideredRisky = mockk<EvaluateIfConsideredRisky>()
     private val calculateExposureRisk = mockk<CalculateExposureRisk>()
-    private val analyticsEventTracker = mockk<AnalyticsEventTracker>(relaxUnitFun = true)
+    private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxUnitFun = true)
 
     @Before
     fun setup() {
@@ -40,7 +40,7 @@ class ExposureWindowRiskCalculatorTest {
 
         val result = riskCalculator(listOf(exposureWindow), riskCalculation, riskScoreCalculationConfig)
 
-        verify(exactly = 1) { analyticsEventTracker.track(ExposureWindowsMatched(0, 1)) }
+        verify(exactly = 1) { analyticsEventProcessor.track(ExposureWindowsMatched(0, 1)) }
 
         assertNull(result.relevantRisk)
         assertTrue(result.partitionedExposureWindows.riskyExposureWindows.isEmpty())
@@ -72,7 +72,7 @@ class ExposureWindowRiskCalculatorTest {
         )
         val actual = riskCalculator(listOf(exposureWindow), riskCalculation, riskScoreCalculationConfig)
 
-        verify(exactly = 1) { analyticsEventTracker.track(ExposureWindowsMatched(1, 0)) }
+        verify(exactly = 1) { analyticsEventProcessor.track(ExposureWindowsMatched(1, 0)) }
 
         assertEquals(expected, actual)
     }
@@ -92,7 +92,7 @@ class ExposureWindowRiskCalculatorTest {
         evaluateIfConsideredRisky,
         calculateExposureRisk,
         riskScoreCalculatorProvider,
-        analyticsEventTracker,
+        analyticsEventProcessor,
     )
 
     private fun ExposureWindow.toExposureWindowWithRisk(isConsideredRisky: Boolean) =

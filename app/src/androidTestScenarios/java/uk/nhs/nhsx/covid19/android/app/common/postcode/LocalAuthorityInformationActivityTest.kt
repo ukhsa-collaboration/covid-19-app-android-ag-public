@@ -6,7 +6,6 @@ import android.content.Intent
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityInformationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
@@ -17,7 +16,7 @@ class LocalAuthorityInformationActivityTest : EspressoTest() {
     private val localAuthorityInformationRobot = LocalAuthorityInformationRobot()
 
     @Test
-    fun clickBack_nothingHappens() = notReported {
+    fun clickBack_nothingHappens() {
         startTestActivity<LocalAuthorityInformationActivity>()
 
         localAuthorityInformationRobot.checkActivityIsDisplayed()
@@ -28,7 +27,7 @@ class LocalAuthorityInformationActivityTest : EspressoTest() {
     }
 
     @Test
-    fun onActivityResultLocalAuthorityOk_finished() = notReported {
+    fun onActivityResultLocalAuthorityOk_finished() {
         runWithIntents {
             val result = Instrumentation.ActivityResult(Activity.RESULT_OK, Intent())
             Intents.intending(hasComponent(LocalAuthorityActivity::class.qualifiedName)).respondWith(result)
@@ -41,7 +40,7 @@ class LocalAuthorityInformationActivityTest : EspressoTest() {
     }
 
     @Test
-    fun onActivityResultLocalAuthorityOk_nothingHappens() = notReported {
+    fun onActivityResultLocalAuthorityOk_nothingHappens() {
         runWithIntents {
             val result = Instrumentation.ActivityResult(Activity.RESULT_CANCELED, Intent())
             Intents.intending(hasComponent(LocalAuthorityActivity::class.qualifiedName)).respondWith(result)

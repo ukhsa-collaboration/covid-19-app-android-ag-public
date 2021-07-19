@@ -4,7 +4,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
@@ -46,7 +45,7 @@ class LinkTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCase_linkPositiveTestResult_shouldContinueIsolation() = notReported {
+    fun startIndexCase_linkPositiveTestResult_shouldContinueIsolation() {
         testAppContext.setState(
             isolationHelper.selfAssessment()
                 .copy(expiryDate = LocalDate.now().plus(7, ChronoUnit.DAYS))
@@ -87,7 +86,7 @@ class LinkTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startContactCase_linkJustExpiredPositiveTestResult_shouldEndIsolation() = notReported {
+    fun startContactCase_linkJustExpiredPositiveTestResult_shouldEndIsolation() {
         val contactInstant = Instant.now(testAppContext.clock).minus(2, ChronoUnit.DAYS)
         testAppContext.virologyTestingApi.testEndDate = contactInstant.minus(10, ChronoUnit.DAYS)
 
@@ -138,7 +137,7 @@ class LinkTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startContactCase_linkTooOldPositiveTestResult_shouldContinueIsolation() = notReported {
+    fun startContactCase_linkTooOldPositiveTestResult_shouldContinueIsolation() {
         val contactInstant = Instant.now(testAppContext.clock).minus(2, ChronoUnit.DAYS)
         testAppContext.virologyTestingApi.testEndDate = contactInstant.minus(11, ChronoUnit.DAYS)
 
@@ -181,7 +180,7 @@ class LinkTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startDefault_linkPositiveTestResult_noSymptoms_shouldIsolate() = notReported {
+    fun startDefault_linkPositiveTestResult_noSymptoms_shouldIsolate() {
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
@@ -218,7 +217,7 @@ class LinkTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startDefault_linkPositiveTestResult_confirmSymptoms_selectSymptomsDate_shouldIsolate() = notReported {
+    fun startDefault_linkPositiveTestResult_confirmSymptoms_selectSymptomsDate_shouldIsolate() {
         val now = Instant.parse("2021-01-10T10:00:00Z")
         testAppContext.clock.currentInstant = now
         testAppContext.virologyTestingApi.testEndDate = now.minus(2, ChronoUnit.DAYS)

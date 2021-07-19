@@ -6,7 +6,6 @@ import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_FAIL
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_SUCCEED
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.testhelpers.assertBrowserIsOpened
@@ -35,14 +34,14 @@ class RedirectToIsolationPaymentWebsiteActivityTest : EspressoTest() {
     }
 
     @Test
-    fun opensBrowser() = notReported {
+    fun opensBrowser() {
         assertBrowserIsOpened("about:blank") {
             startTestActivity<RedirectToIsolationPaymentWebsiteActivity>()
         }
     }
 
     @Test
-    fun clickTryAgainButtonOnResponseFailure() = notReported {
+    fun clickTryAgainButtonOnResponseFailure() {
         MockApiModule.behaviour.responseType = ALWAYS_FAIL
 
         startTestActivity<RedirectToIsolationPaymentWebsiteActivity>()

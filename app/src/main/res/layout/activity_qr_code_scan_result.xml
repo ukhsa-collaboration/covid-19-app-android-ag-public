@@ -34,8 +34,8 @@
             <ImageView
                 android:id="@+id/animationIcon"
                 style="@style/ShrinkInLandscape"
-                android:layout_width="300dp"
-                android:layout_height="300dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="5dp"
@@ -44,7 +44,7 @@
                 app:layout_constraintBottom_toTopOf="@id/titleTextView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:src="@drawable/tick_final_2083" />
+                tools:src="@drawable/ic_tick" />
 
             <ImageView
                 android:id="@+id/errorResultIcon"

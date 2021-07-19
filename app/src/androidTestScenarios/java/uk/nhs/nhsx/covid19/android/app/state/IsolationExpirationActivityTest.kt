@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.report.notReported
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity.Companion.EXTRA_EXPIRY_DATE
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationExpirationRobot
@@ -13,14 +12,14 @@ class IsolationExpirationActivityTest : EspressoTest() {
     private val isolationExpirationRobot = IsolationExpirationRobot()
 
     @Test
-    fun startWithNullExpiryDate_shouldFinish() = notReported {
+    fun startWithNullExpiryDate_shouldFinish() {
         val activity = startTestActivity<IsolationExpirationActivity>()
 
         waitFor { assertTrue(activity!!.isDestroyed) }
     }
 
     @Test
-    fun startWithEmptyExpiryDate_shouldFinish() = notReported {
+    fun startWithEmptyExpiryDate_shouldFinish() {
         val activity = startTestActivity<IsolationExpirationActivity> {
             putExtra(EXTRA_EXPIRY_DATE, "")
         }
@@ -29,7 +28,7 @@ class IsolationExpirationActivityTest : EspressoTest() {
     }
 
     @Test
-    fun startWithExpiryDayInThePast_shouldShowIsolationHasFinished() = notReported {
+    fun startWithExpiryDayInThePast_shouldShowIsolationHasFinished() {
         val expiryDate = LocalDate.now().minusDays(1)
         startTestActivity<IsolationExpirationActivity> {
             putExtra(EXTRA_EXPIRY_DATE, expiryDate.toString())
@@ -41,7 +40,7 @@ class IsolationExpirationActivityTest : EspressoTest() {
     }
 
     @Test
-    fun startWithExpiryDayInTheFuture_shouldShowIsolationWillFinish() = notReported {
+    fun startWithExpiryDayInTheFuture_shouldShowIsolationWillFinish() {
         val expiryDate = LocalDate.now().plusDays(1)
         startTestActivity<IsolationExpirationActivity> {
             putExtra(EXTRA_EXPIRY_DATE, expiryDate.toString())

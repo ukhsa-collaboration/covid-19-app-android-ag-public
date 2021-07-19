@@ -20,6 +20,7 @@ import androidx.work.WorkManager
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.tinder.StateMachine
+import kotlinx.coroutines.test.TestCoroutineScope
 import uk.nhs.covid19.config.Configurations
 import uk.nhs.covid19.config.SignatureKey
 import uk.nhs.nhsx.covid19.android.app.ExposureApplication
@@ -158,6 +159,7 @@ class TestApplicationContext {
         .appModule(
             AppModule(
                 app,
+                applicationScope = TestCoroutineScope(),
                 exposureNotificationApi,
                 bluetoothStateProvider,
                 locationStateProvider,
@@ -204,7 +206,7 @@ class TestApplicationContext {
         app.baseContext.sendBroadcast(it)
     }
 
-    fun reset() {
+    fun reset(resetLocale: Boolean = true) {
         WorkManager.getInstance(app).cancelAllWork()
 
         encryptedStorage.sharedPreferences.edit(commit = true) { clear() }
@@ -217,6 +219,10 @@ class TestApplicationContext {
         setPolicyUpdateAccepted(true)
         FeatureFlagTestHelper.clearFeatureFlags()
         closeNotificationPanel()
+
+        if (resetLocale) {
+            setLocale("en")
+        }
 
         component.provideIsolationStateMachine().reset()
     }
@@ -337,6 +343,8 @@ class TestApplicationContext {
         component.provideApplicationLocaleProvider().languageCode = languageCode
         updateResources()
     }
+
+    fun getApplicationLocaleProvider() = component.provideApplicationLocaleProvider()
 
     private fun updateResources() {
         val locale = component.provideApplicationLocaleProvider().getLocale()

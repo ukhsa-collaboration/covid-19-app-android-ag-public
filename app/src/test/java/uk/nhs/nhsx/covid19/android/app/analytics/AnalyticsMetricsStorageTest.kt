@@ -144,6 +144,13 @@ class AnalyticsMetricsStorageTest {
         positiveLabResultAfterPositiveSelfRapidTest = 74,
         negativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit = 75,
         negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit = 76,
+        didAccessRiskyVenueM2Notification = 77,
+        selectedTakeTestM2Journey = 78,
+        selectedTakeTestLaterM2Journey = 79,
+        selectedHasSymptomsM2Journey = 80,
+        selectedHasNoSymptomsM2Journey = 81,
+        selectedLFDTestOrderingM2Journey = 82,
+        selectedHasLFDTestM2Journey = 83,
     )
 
     private val metricsJson =
@@ -223,7 +230,14 @@ class AnalyticsMetricsStorageTest {
         "negativeLabResultAfterPositiveLFDOutsideTimeLimit":73,
         "positiveLabResultAfterPositiveSelfRapidTest":74,
         "negativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit":75,
-        "negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit":76
+        "negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit":76,
+        "didAccessRiskyVenueM2Notification":77,
+        "selectedTakeTestM2Journey":78,
+        "selectedTakeTestLaterM2Journey":79,
+        "selectedHasSymptomsM2Journey":80,
+        "selectedHasNoSymptomsM2Journey":81,
+        "selectedLFDTestOrderingM2Journey":82,
+        "selectedHasLFDTestM2Journey":83
         }
         """.trimIndent().replace("\n", "")
 }
