@@ -37,6 +37,10 @@ class FetchKeysFlow @AssistedInject constructor(
                     callback.onPermissionRequired(permissionRequest)
                 }
 
+                override fun onPermissionDenied() {
+                    Timber.d("Permission to start contact tracing denied")
+                }
+
                 override fun onError(error: Throwable) {
                     Timber.e(error, "Could not start exposure notifications")
                 }

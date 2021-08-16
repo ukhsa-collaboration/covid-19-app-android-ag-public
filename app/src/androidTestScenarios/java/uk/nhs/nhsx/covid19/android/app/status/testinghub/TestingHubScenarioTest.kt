@@ -1,10 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.status.testinghub
 
 import androidx.test.platform.app.InstrumentationRegistry
-import com.jeroenmols.featureflag.framework.FeatureFlag.DAILY_CONTACT_TESTING
-import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.flow.functionalities.DailyContactTesting
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.OrderTest
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDate
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
@@ -14,7 +11,6 @@ import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultOnsetDateRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultSymptomsRobot
@@ -26,7 +22,6 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAfterRiskyVenu
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestingHubRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import java.time.LocalDate
 
 class TestingHubScenarioTest : EspressoTest() {
@@ -38,8 +33,6 @@ class TestingHubScenarioTest : EspressoTest() {
     private val questionnaireRobot = QuestionnaireRobot()
     private val reviewSymptomsRobot = ReviewSymptomsRobot()
     private val symptomsAdviceIsolateRobot = SymptomsAdviceIsolateRobot()
-    private val dailyContactTesting = DailyContactTesting()
-    private val browserRobot = BrowserRobot()
     private val linkTestResultRobot = LinkTestResultRobot()
     private val linkTestResultSymptomsRobot = LinkTestResultSymptomsRobot()
     private val linkTestResultOnsetDateRobot = LinkTestResultOnsetDateRobot()
@@ -138,27 +131,6 @@ class TestingHubScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun noActiveIsolation_thenNavigateToFindOutAboutTesting_closeBrowser_shouldShowStatusActivity() {
-        runWithFeatureEnabled(USE_WEB_VIEW_FOR_INTERNAL_BROWSER) {
-            testAppContext.setState(isolationHelper.neverInIsolation())
-
-            startTestActivity<StatusActivity>()
-
-            statusRobot.checkActivityIsDisplayed()
-            statusRobot.clickTestingHub()
-
-            testingHubRobot.checkActivityIsDisplayed()
-            testingHubRobot.checkBookTestIsNotDisplayed()
-            testingHubRobot.clickFindOutAboutTesting()
-
-            waitFor { browserRobot.checkActivityIsDisplayed() }
-            browserRobot.clickCloseButton()
-
-            statusRobot.checkActivityIsDisplayed()
-        }
-    }
-
-    @Test
     fun navigateToEnterTestResultViaTestingHub_enterValidToken_receivedApiResult_shouldShowStatusActivity() {
         testAppContext.setLocalAuthority(TestApplicationContext.ENGLISH_LOCAL_AUTHORITY)
 
@@ -242,19 +214,6 @@ class TestingHubScenarioTest : EspressoTest() {
         testAppContext.device.pressBack()
 
         testingHubRobot.checkActivityIsDisplayed()
-    }
-
-    @Test
-    fun userParticipatesInDailyContactTesting_completesFlow_shouldShowStatusActivity() {
-        runWithFeatureEnabled(DAILY_CONTACT_TESTING) {
-            testAppContext.setState(isolationHelper.contactCase().asIsolation())
-
-            startTestActivity<StatusActivity>()
-
-            dailyContactTesting.optIn()
-
-            statusRobot.checkActivityIsDisplayed()
-        }
     }
 
     @Test

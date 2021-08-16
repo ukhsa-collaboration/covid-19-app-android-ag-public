@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/vertical_margin"
+    android:orientation="horizontal"
+    tools:showIn="@layout/activity_exposure_notification_age_limit">
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:alignContent="flex_start"
+        app:alignItems="flex_start"
+        app:dividerDrawable="@drawable/divider_binary_radio_group"
+        app:flexWrap="wrap"
+        app:showDivider="middle">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/radio_not_selected_background"
+            android:minWidth="112dp">
+
+            <RadioButton
+                android:id="@+id/binaryRadioButtonOption1"
+                style="@style/Title3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:paddingVertical="15dp"
+                android:paddingStart="6dp"
+                android:paddingEnd="15dp"
+                tools:text="@string/exposure_notification_age_option1_text" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/radio_not_selected_background"
+            android:minWidth="112dp">
+
+            <RadioButton
+                android:id="@+id/binaryRadioButtonOption2"
+                style="@style/Title3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:paddingVertical="15dp"
+                android:paddingStart="6dp"
+                android:paddingEnd="15dp"
+                tools:checked="true"
+                tools:text="@string/exposure_notification_age_option2_text" />
+        </FrameLayout>
+
+    </com.google.android.flexbox.FlexboxLayout>
+</RadioGroup>

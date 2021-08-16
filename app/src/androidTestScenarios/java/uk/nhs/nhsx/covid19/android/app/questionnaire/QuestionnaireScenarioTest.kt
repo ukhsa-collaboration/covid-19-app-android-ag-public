@@ -5,6 +5,10 @@ import android.app.Instrumentation
 import android.content.Intent
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
+import com.jeroenmols.featureflag.framework.FeatureFlag.NEW_NO_SYMPTOMS_SCREEN
+import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -36,26 +40,40 @@ import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.NewNoSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.NoSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QuestionnaireRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ReviewSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import java.time.LocalDate
 
 @RunWith(Parameterized::class)
-class QuestionnaireScenarioTest(override val configuration: TestConfiguration) : EspressoTest() {
+class QuestionnaireScenarioTest(override val configuration: TestConfiguration) : EspressoTest(), IsolationSetupHelper {
 
     private val statusRobot = StatusRobot()
     private val questionnaireRobot = QuestionnaireRobot()
     private val noSymptomsRobot = NoSymptomsRobot()
     private val reviewSymptomsRobot = ReviewSymptomsRobot()
     private val symptomsAdviceIsolateRobot = SymptomsAdviceIsolateRobot()
+    private val newNoSymptomsRobot = NewNoSymptomsRobot()
 
-    private val isolationHelper = IsolationHelper(testAppContext.clock)
+    override val isolationHelper = IsolationHelper(testAppContext.clock)
+
+    @Before
+    fun setUp() {
+        FeatureFlagTestHelper.disableFeatureFlag(NEW_NO_SYMPTOMS_SCREEN)
+    }
+
+    @After
+    fun tearDown() {
+        FeatureFlagTestHelper.clearFeatureFlags()
+    }
 
     @Test
     @Reported
@@ -144,7 +162,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
             stepDescription = "The user is presented a list of symptoms"
         )
 
-        questionnaireRobot.selectNoSymptoms()
+        questionnaireRobot.clickNoSymptoms()
 
         waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
 
@@ -194,8 +212,8 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
             scenario = "Self Diagnosis",
             title = "Isolating due to positive test result - Positive symptoms with onset date more recent than test end date",
             description = "User is in index case isolation due to a positive test result, has " +
-                "symptoms selected and chooses a onset date after the stored test end date. " +
-                "This extends the current isolation and shows the appropriate screen.",
+                    "symptoms selected and chooses a onset date after the stored test end date. " +
+                    "This extends the current isolation and shows the appropriate screen.",
             kind = FLOW
         ) {
             isolatingDueToPositiveTestResult(testEndDate = LocalDate.now(testAppContext.clock).minusDays(3))
@@ -219,8 +237,8 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
             scenario = "Self Diagnosis",
             title = "Isolating due to positive test result - Positive symptoms with onset date older than test end date",
             description = "User is in index case isolation due to a positive test result, has " +
-                "symptoms selected and chooses an onset date before the stored test end date. " +
-                "This has no effect on the current isolation and asks the user to keep isolating.",
+                    "symptoms selected and chooses an onset date before the stored test end date. " +
+                    "This has no effect on the current isolation and asks the user to keep isolating.",
             kind = FLOW
         ) {
             isolatingDueToPositiveTestResult()
@@ -242,8 +260,8 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
             scenario = "Self Diagnosis",
             title = "Isolating due to positive test result - Low risk symptoms",
             description = "User is in index case isolation due to a positive test result, has " +
-                "low risk symptoms selected and chooses an onset date before the stored test end date. " +
-                "This has no effect on the current isolation and asks the user to keep isolating.",
+                    "low risk symptoms selected and chooses an onset date before the stored test end date. " +
+                    "This has no effect on the current isolation and asks the user to keep isolating.",
             kind = FLOW
         ) {
             isolatingDueToPositiveTestResult()
@@ -275,7 +293,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
             stepDescription = "The user is presented with a list of symptoms"
         )
 
-        questionnaireRobot.selectNoSymptoms()
+        questionnaireRobot.clickNoSymptoms()
 
         waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
 
@@ -415,7 +433,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
 
         questionnaireRobot.checkActivityIsDisplayed()
 
-        questionnaireRobot.selectNoSymptoms()
+        questionnaireRobot.clickNoSymptoms()
 
         questionnaireRobot.discardSymptomsDialogIsDisplayed()
 
@@ -450,6 +468,36 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
         reviewSymptomsRobot.selectCannotRememberDate()
 
         reviewSymptomsRobot.confirmSelection()
+
+        symptomsAdviceIsolateRobot.checkViewState(
+            NoIndexCaseThenSelfAssessmentNoImpactOnIsolation(testAppContext.getRemainingDaysInIsolation())
+        )
+    }
+
+    @Test
+    fun contactCase_selectNoCoronavirusSymptoms_staysInIsolation() {
+        testAppContext.setState(
+            IsolationState(
+                isolationConfiguration = DurationDays(),
+                contactCase = ContactCase(
+                    exposureDate = LocalDate.parse("2020-05-19"),
+                    notificationDate = LocalDate.now(),
+                    expiryDate = LocalDate.now().plusDays(5)
+                )
+            )
+        )
+
+        startTestActivity<QuestionnaireActivity>()
+
+        questionnaireRobot.checkActivityIsDisplayed()
+
+        questionnaireRobot.clickNoSymptoms()
+
+        waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
+
+        waitFor { questionnaireRobot.continueOnDiscardSymptomsDialog() }
+
+        symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
 
         symptomsAdviceIsolateRobot.checkViewState(
             NoIndexCaseThenSelfAssessmentNoImpactOnIsolation(testAppContext.getRemainingDaysInIsolation())
@@ -608,6 +656,60 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
     @Test
     fun startReviewSymptomsActivityWithoutQuestions_NothingHappens() {
         startTestActivity<ReviewSymptomsActivity>()
+    }
+
+    @Test
+    fun startWithNewNoSymptomFeatureEnabled_inActiveIsolation_clickNoSymptoms_showDialogAndConfirm_noSymptomsScreenIsDisplayed() {
+        runWithFeatureEnabled(NEW_NO_SYMPTOMS_SCREEN, clearFeatureFlags = true) {
+            givenContactIsolation()
+
+            startTestActivity<QuestionnaireActivity>()
+
+            questionnaireRobot.clickNoSymptoms()
+            waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
+            waitFor { questionnaireRobot.continueOnDiscardSymptomsDialog() }
+
+            waitFor { symptomsAdviceIsolateRobot.checkViewState(NoIndexCaseThenSelfAssessmentNoImpactOnIsolation(remainingDaysInIsolation = 9)) }
+        }
+    }
+
+    @Test
+    fun startWithNewNoSymptomFeatureEnabled_notInActiveIsolation_clickNoSymptoms_showNewNoSymptomsScreen_tapBackToHome_showStatusScreen() {
+        runWithFeatureEnabled(NEW_NO_SYMPTOMS_SCREEN, clearFeatureFlags = true) {
+            givenNeverInIsolation()
+
+            startTestActivity<QuestionnaireActivity>()
+
+            questionnaireRobot.clickNoSymptoms()
+
+            waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
+            waitFor { questionnaireRobot.continueOnDiscardSymptomsDialog() }
+
+            waitFor { newNoSymptomsRobot.checkActivityIsDisplayed() }
+            newNoSymptomsRobot.clickBackToHomeButton()
+
+            waitFor { statusRobot.checkActivityIsDisplayed() }
+        }
+    }
+
+    @Test
+    fun startWithNewNoSymptomFeatureEnabled_notInActiveIsolation_clickNoSymptoms_showNewNoSymptomsScreen_tapBack_showStatusScreen() {
+        runWithFeatureEnabled(NEW_NO_SYMPTOMS_SCREEN, clearFeatureFlags = true) {
+            givenNeverInIsolation()
+
+            startTestActivity<QuestionnaireActivity>()
+
+            questionnaireRobot.clickNoSymptoms()
+
+            waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
+            waitFor { questionnaireRobot.continueOnDiscardSymptomsDialog() }
+
+            waitFor { newNoSymptomsRobot.checkActivityIsDisplayed() }
+
+            testAppContext.device.pressBack()
+
+            waitFor { statusRobot.checkActivityIsDisplayed() }
+        }
     }
 
     private fun isolatingDueToPositiveTestResult(testEndDate: LocalDate = LocalDate.now(testAppContext.clock)) {

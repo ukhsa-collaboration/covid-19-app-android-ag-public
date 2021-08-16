@@ -75,8 +75,8 @@ class UserInboxIntegrationTest : EspressoTest() {
         val thirdInboxItem = testSubject.fetchInbox()
         assertThat(thirdInboxItem).isInstanceOf(ShowIsolationExpiration::class.java)
         assertEquals(expirationDate, (thirdInboxItem as ShowIsolationExpiration).expirationDate)
-        testAppContext.setState(expiredIsolation.copy(hasAcknowledgedEndOfIsolation = true))
 
+        testAppContext.setState(isolationHelper.contactCase().asIsolation())
         val fourthInboxItem = testSubject.fetchInbox()
         assertThat(fourthInboxItem).isInstanceOf(ShowEncounterDetection::class.java)
         testAppContext.getShouldShowEncounterDetectionActivityProvider().value = null
@@ -86,6 +86,7 @@ class UserInboxIntegrationTest : EspressoTest() {
         assertEquals(venueId, (fifthInboxItem as ShowVenueAlert).venueId)
         testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = null
 
+        testAppContext.setState(expiredIsolation.copy(hasAcknowledgedEndOfIsolation = true))
         val sixthInboxItem = testSubject.fetchInbox()
         assertThat(sixthInboxItem).isInstanceOf(ShowKeySharingReminder::class.java)
         testAppContext.getKeySharingInfoProvider().reset()

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:orientation="vertical"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Scan order" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/scanList"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            tools:listitem="@android:layout/simple_dropdown_item_1line" />
+
+        <ImageView
+            android:id="@+id/deleteSelected"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="5dp"
+            android:src="@drawable/ic_close_primary" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Venue Id" />
+
+    <EditText
+        android:id="@+id/qrScanVenueId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Venue id" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="M1/M2 depends on the backend"
+        android:textAlignment="textEnd"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Venue Name" />
+
+    <EditText
+        android:id="@+id/qrScanVenueName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Type any name" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Venue Postcode" />
+
+    <EditText
+        android:id="@+id/qrScanVenuePostcode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Type postcode" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/addVenue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Add venue" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/uploadCsv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="CSV" />
+
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/autoLoop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Continuous loop" />
+
+</LinearLayout>

@@ -1,10 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
 import android.content.SharedPreferences
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
-import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.PositiveTestResult
@@ -16,36 +14,30 @@ import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionStatus.COMPLETED_AND_CONFIRMED
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
-import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
+import uk.nhs.nhsx.covid19.android.app.util.Provider
+import uk.nhs.nhsx.covid19.android.app.util.storage
 import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class StateStorage @Inject constructor(
-    private val stateStringStorage: StateStringStorage,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
-    moshi: Moshi
-) {
+    override val moshi: Moshi,
+    override val sharedPreferences: SharedPreferences
+) : Provider {
 
-    private val stateSerializationAdapter: JsonAdapter<IsolationStateJson> =
-        moshi.adapter(IsolationStateJson::class.java)
+    private var storedState: IsolationStateJson? by storage(ISOLATION_STATE_KEY)
 
     var state: IsolationState
-        get() =
-            stateStringStorage.prefsValue?.let {
-                runCatching {
-                    stateSerializationAdapter.fromJson(it)?.toMigratedState()
-                }
-                    .getOrElse {
-                        Timber.e(it)
-                        IsolationState(isolationConfigurationProvider.durationDays)
-                    } // TODO add crash analytics and come up with a more sophisticated solution
-            } ?: IsolationState(isolationConfigurationProvider.durationDays)
+        get() = storedState?.toMigratedState() ?: IsolationState(isolationConfigurationProvider.durationDays)
         set(newState) {
-            stateStringStorage.prefsValue =
-                stateSerializationAdapter.toJson(newState.toStateJson())
+            storedState = newState.toStateJson()
         }
+
+    companion object {
+        const val ISOLATION_STATE_KEY = "ISOLATION_STATE_KEY"
+    }
 }
 
 private const val LATEST_ISOLATION_STATE_JSON_VERSION = 1
@@ -124,20 +116,4 @@ private fun IsolationStateJson.isolationState(
         contactCase = contact,
         hasAcknowledgedEndOfIsolation = hasAcknowledgedEndOfIsolation
     )
-}
-
-@Singleton
-class SharedPrefsStateStringStorage @Inject constructor(sharedPreferences: SharedPreferences) : StateStringStorage {
-
-    companion object {
-        private const val VALUE_KEY = "ISOLATION_STATE_KEY"
-    }
-
-    private val prefs = sharedPreferences.with<String>(VALUE_KEY)
-
-    override var prefsValue: String? by prefs
-}
-
-interface StateStringStorage {
-    var prefsValue: String?
 }

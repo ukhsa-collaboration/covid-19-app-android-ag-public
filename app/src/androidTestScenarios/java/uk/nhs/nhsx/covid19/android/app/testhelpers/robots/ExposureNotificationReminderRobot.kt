@@ -18,6 +18,12 @@ class ExposureNotificationReminderRobot {
             .check(matches(isDisplayed()))
     }
 
+    fun checkCancelButtonIsDisplayed() {
+        onView(withId(R.id.cancel))
+            .inRoot(isDialog())
+            .check(matches(isDisplayed()))
+    }
+
     fun clickCancelButton() {
         onView(withId(R.id.cancel))
             .inRoot(isDialog())

@@ -1,82 +1,46 @@
 package uk.nhs.nhsx.covid19.android.app.payment
 
-import com.squareup.moshi.Moshi
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Disabled
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Unresolved
-import kotlin.test.assertEquals
+import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider.Companion.ISOLATION_PAYMENT_TOKEN
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTest
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectation
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectationDirection.JSON_TO_OBJECT
 
-class IsolationPaymentTokenStateProviderTest {
+class IsolationPaymentTokenStateProviderTest :
+    ProviderTest<IsolationPaymentTokenStateProvider, IsolationPaymentTokenState>() {
 
-    private val isolationPaymentTokenStateStorage = mockk<IsolationPaymentTokenStateStorage>(relaxed = true)
-    private val moshi = Moshi.Builder().build()
-
-    private val testSubject = IsolationPaymentTokenStateProvider(
-        isolationPaymentTokenStateStorage,
-        moshi
+    override val getTestSubject = ::IsolationPaymentTokenStateProvider
+    override val property = IsolationPaymentTokenStateProvider::tokenState
+    override val key = ISOLATION_PAYMENT_TOKEN
+    override val defaultValue = Unresolved
+    override val expectations: List<ProviderTestExpectation<IsolationPaymentTokenState>> = listOf(
+        ProviderTestExpectation(json = UNRESOLVED_JSON, objectValue = Unresolved, direction = JSON_TO_OBJECT),
+        ProviderTestExpectation(json = DISABLED_JSON, objectValue = Disabled),
+        ProviderTestExpectation(json = TOKEN_JSON, objectValue = Token(TOKEN_VALUE))
     )
 
     @Test
-    fun `reading null token state returns unresolved`() {
-        every { isolationPaymentTokenStateStorage.value } returns null
+    fun `does not call set on storage when value has not changed`() {
+        sharedPreferencesReturns(UNRESOLVED_JSON)
 
-        assertEquals(Unresolved, testSubject.tokenState)
-    }
-
-    @Test
-    fun `read unresolved token state`() {
-        every { isolationPaymentTokenStateStorage.value } returns UNRESOLVED_JSON
-
-        assertEquals(Unresolved, testSubject.tokenState)
-    }
-
-    @Test
-    fun `read disabled token state`() {
-        every { isolationPaymentTokenStateStorage.value } returns DISABLED_JSON
-
-        assertEquals(Disabled, testSubject.tokenState)
-    }
-
-    @Test
-    fun `read token present token state`() {
-        every { isolationPaymentTokenStateStorage.value } returns TOKEN_JSON
-
-        assertEquals(Token(TOKEN_VALUE), testSubject.tokenState)
-    }
-
-    @Test
-    fun `store unresolved token state`() {
         testSubject.tokenState = Unresolved
 
-        verify { isolationPaymentTokenStateStorage.value = UNRESOLVED_JSON }
-    }
-
-    @Test
-    fun `store disabled token state`() {
-        testSubject.tokenState = Disabled
-
-        verify { isolationPaymentTokenStateStorage.value = DISABLED_JSON }
-    }
-
-    @Test
-    fun `store token present token state`() {
-        testSubject.tokenState = Token(TOKEN_VALUE)
-
-        verify { isolationPaymentTokenStateStorage.value = TOKEN_JSON }
+        verifySharedPreferencesEditorWasNotCalled()
     }
 
     companion object {
-        val TOKEN_VALUE = "myToken"
+        private const val TOKEN_VALUE = "myToken"
 
-        val UNRESOLVED_JSON =
+        private const val UNRESOLVED_JSON =
             """{"type":"UNRESOLVED"}"""
-        val DISABLED_JSON =
+
+        private const val DISABLED_JSON =
             """{"type":"DISABLED"}"""
-        val TOKEN_JSON =
+
+        private const val TOKEN_JSON =
             """{"type":"TOKEN","token":"$TOKEN_VALUE"}"""
     }
 }

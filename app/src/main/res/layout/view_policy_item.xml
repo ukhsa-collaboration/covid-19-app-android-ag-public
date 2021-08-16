@@ -11,7 +11,7 @@
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_marginEnd="16dp"
-        tools:src="@drawable/ic_policy_default_icon" />
+        tools:src="@drawable/ic_policy_default" />
 
     <LinearLayout
         android:layout_width="wrap_content"

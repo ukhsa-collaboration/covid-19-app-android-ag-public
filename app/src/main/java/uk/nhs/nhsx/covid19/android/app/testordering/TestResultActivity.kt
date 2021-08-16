@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.view_isolation_request.exposureFaqsLink
 import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestActionButton
 import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestImage
 import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestInfoView
+import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestOnlineServiceLink
 import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestParagraphContainer
 import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestTitle1
 import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestTitle2
@@ -68,8 +69,6 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         appComponent.inject(this)
 
         startViewModelListeners()
-
-        viewModel.onCreate()
     }
 
     private fun startViewModelListeners() {
@@ -181,6 +180,8 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         @StringRes additionalIsolationInfoText: Int? = null,
         @StringRes actionButtonStringResource: Int = R.string.continue_button,
         exposureLinksVisible: Boolean,
+        @StringRes onlineServiceLinkText: Int = R.string.nhs_111_online_service,
+        @StringRes onlineServiceLinkUrl: Int = R.string.url_nhs_111_online,
         @StringRes vararg paragraphResources: Int
     ) {
         if (hasCloseToolbar) {
@@ -208,6 +209,9 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         }
 
         isolationRequestParagraphContainer.addAllParagraphs(paragraphResources.map { getString(it) })
+
+        isolationRequestOnlineServiceLink.setDisplayText(onlineServiceLinkText)
+        isolationRequestOnlineServiceLink.setLinkUrl(onlineServiceLinkUrl)
 
         isolationRequestActionButton.apply {
             text = getString(actionButtonStringResource)
@@ -245,6 +249,8 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
             stateText = R.string.state_test_negative_info,
             stateColor = R.color.amber,
             actionButtonStringResource = R.string.back_to_home,
+            onlineServiceLinkText = R.string.test_result_negative_continue_self_isolate_nhs_guidance_label,
+            onlineServiceLinkUrl = R.string.url_nhs_guidance,
             paragraphResources = intArrayOf(
                 R.string.test_result_negative_continue_self_isolate_explanation
             )
@@ -259,6 +265,8 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
             stateText = R.string.state_test_void_info,
             actionButtonStringResource = R.string.book_free_test,
             exposureLinksVisible = false,
+            onlineServiceLinkText = R.string.test_result_void_continue_self_isolate_nhs_guidance_label,
+            onlineServiceLinkUrl = R.string.url_nhs_guidance,
             paragraphResources = intArrayOf(
                 R.string.test_result_void_continue_self_isolate_explanation
             )
@@ -356,7 +364,6 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
     private fun showDoNotHaveToSelfIsolateScreenOnNegative() {
         showGoodNewsState(
-            iconResource = R.drawable.ic_isolation_negative_or_finished,
             subtitleStringResource = R.string.test_result_negative_no_self_isolation_subtitle_text
         )
     }
@@ -385,9 +392,9 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
             subtitleStringResource = R.string.test_result_plod_subtitle,
             goodNewsInfoViewResource = R.string.test_result_plod_description,
             actionButtonStringResource = R.string.back_to_home,
-            paragraphResources = intArrayOf(R.string.test_result_plod_info),
             hasGoodNewsLink = false,
-            iconResource = null
+            iconResource = null,
+            paragraphResources = intArrayOf(R.string.test_result_plod_info)
         )
     }
     //endregion

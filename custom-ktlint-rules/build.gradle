@@ -13,8 +13,6 @@ compileKotlin {
     kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
 }
 
-def ktlint_version = "0.37.1"
-
 dependencies {
     compileOnly "com.pinterest.ktlint:ktlint-core:$ktlint_version"
 

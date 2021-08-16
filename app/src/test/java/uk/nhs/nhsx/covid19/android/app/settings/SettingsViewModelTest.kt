@@ -21,6 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import java.time.LocalDate
 
@@ -53,7 +54,7 @@ class SettingsViewModelTest {
             exposureDate = contactCaseExposureDate,
             notificationDate = contactCaseNotificationDate,
             expiryDate = contactCaseExpiryDate,
-            dailyContactTestingOptInDate = dailyContactTestingOptInDate
+            optOutOfContactIsolation = OptOutOfContactIsolation(dailyContactTestingOptInDate)
         ),
         indexInfo = IndexCase(
             isolationTrigger = SelfAssessment(

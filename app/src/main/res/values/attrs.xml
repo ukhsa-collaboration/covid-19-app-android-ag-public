@@ -117,15 +117,26 @@
         <attr name="showBulletPoints" format="boolean" />
         <attr name="paddingBetweenItems" format="dimension"/>
     </declare-styleable>
+    <declare-styleable name="AccordionButtonView">
+        <attr name="accordionTitle" format="string" />
+        <attr name="accordionExpanded" format="boolean" />
+        <attr name="accordionContent" format="reference" />
+    </declare-styleable>
     <declare-styleable name="PrivacyView">
         <attr name="privacyText" format="string" />
     </declare-styleable>
-    <declare-styleable name="TestingHubItemView">
-        <attr name="testingHubItemTitle" format="string" />
-        <attr name="testingHubItemDescription" format="string" />
-        <attr name="testingHubItemIsExternalLink" format="boolean" />
+    <declare-styleable name="NavigationItemView">
+        <attr name="navigationItemTitle" format="string" />
+        <attr name="navigationItemDescription" format="string" />
+        <attr name="navigationItemIsExternalLink" format="boolean" />
     </declare-styleable>
     <declare-styleable name="MyDataSectionView">
         <attr name="myDataSectionTitle" format="string" />
+    </declare-styleable>
+    <declare-styleable name="BinaryRadioGroup">
+        <attr name="option1Text" format="string" />
+        <attr name="option2Text" format="string" />
+        <attr name="option1ContentDescription" format="string" />
+        <attr name="option2ContentDescription" format="string" />
     </declare-styleable>
 </resources>

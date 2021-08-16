@@ -15,6 +15,7 @@
     <color name="secondary_text_grey">#DDDDDD</color>
     <color name="tertiary_text_grey">#A3A3A3</color>
     <color name="background">#191919</color>
+    <color name="accordion_icon">#191919</color>
     <color name="surface_background">#212B32</color>
     <color name="white">#ffffff</color>
     <color name="transparent">#00000000</color>

@@ -4,7 +4,6 @@ import androidx.annotation.VisibleForTesting
 import com.tinder.StateMachine
 import com.tinder.StateMachine.Transition
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DeclaredNegativeResultFromDct
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType
@@ -21,10 +20,13 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsola
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.HandleAcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.HandleTestResult
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.SendExposedNotification
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult
+import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubReminderAlarmController
+import uk.nhs.nhsx.covid19.android.app.status.isolationhub.ScheduleIsolationHubReminder
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
 import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
@@ -51,7 +53,7 @@ data class OnTestResultAcknowledge(
 ) : Event()
 
 private object OnReset : Event()
-private object OnDailyContactTestingOptIn : Event()
+private data class OnOptOutOfContactIsolation(val encounterDate: LocalDate) : Event()
 private object OnAcknowledgeIsolationExpiration : Event()
 
 sealed class SideEffect {
@@ -86,6 +88,8 @@ class IsolationStateMachine @Inject constructor(
     private val createSelfAssessmentIndexCase: CreateSelfAssessmentIndexCase,
     private val trackTestResultAnalyticsOnReceive: TrackTestResultAnalyticsOnReceive,
     private val trackTestResultAnalyticsOnAcknowledge: TrackTestResultAnalyticsOnAcknowledge,
+    private val scheduleIsolationHubReminder: ScheduleIsolationHubReminder,
+    private val isolationHubReminderAlarmController: IsolationHubReminderAlarmController,
 ) {
     private var _stateMachine = createStateMachine()
     internal val stateMachine: StateMachine<IsolationState, Event, SideEffect>
@@ -109,7 +113,7 @@ class IsolationStateMachine @Inject constructor(
                         exposureDate = exposureDay,
                         notificationDate = LocalDate.now(clock),
                         expiryDate = potentialContactExpiryDate,
-                        dailyContactTestingOptInDate = null
+                        optOutOfContactIsolation = null
                     )
                 ) {
                     this.copy(expiryDate = currentLogicalState.capExpiryDate(this))
@@ -151,12 +155,13 @@ class IsolationStateMachine @Inject constructor(
                     it.testResult,
                     testAcknowledgedDate = Instant.now(clock)
                 )
-                val sideEffect = HandleAcknowledgedTestResult(isolationLogicalState, it.testResult, transition.keySharingInfo)
+                val sideEffect =
+                    HandleAcknowledgedTestResult(isolationLogicalState, it.testResult, transition.keySharingInfo)
                 when (transition) {
                     is TransitionDueToTestResult.Transition -> {
                         val newLogicalState = IsolationLogicalState.from(transition.newState)
                         val hasExpiredIsolation = newLogicalState is PossiblyIsolating &&
-                            !newLogicalState.isActiveIsolation(clock)
+                                !newLogicalState.isActiveIsolation(clock)
                         val newState = transition.newState.copy(hasAcknowledgedEndOfIsolation = hasExpiredIsolation)
                         transitionTo(newState, sideEffect)
                     }
@@ -164,24 +169,15 @@ class IsolationStateMachine @Inject constructor(
                 }
             }
 
-            on<OnDailyContactTestingOptIn> {
-                val isolationLogicalState = IsolationLogicalState.from(this)
-                if (isolationLogicalState.isActiveContactCaseOnly(clock)) {
-                    analyticsEventProcessor.track(DeclaredNegativeResultFromDct)
-                    var newState = this.copy(
-                        contactCase = this.contactCase!!.copy(
-                            expiryDate = LocalDate.now(clock),
-                            dailyContactTestingOptInDate = LocalDate.now(clock)
-                        )
+            on<OnOptOutOfContactIsolation> {
+                var newState = this.copy(
+                    contactCase = this.contactCase!!.copy(
+                        expiryDate = it.encounterDate,
+                        optOutOfContactIsolation = OptOutOfContactIsolation(date = it.encounterDate)
                     )
-                    newState = updateHasAcknowledgedEndOfIsolation(
-                        currentState = this,
-                        newState
-                    )
-                    transitionTo(newState)
-                } else {
-                    dontTransition()
-                }
+                )
+                newState = updateHasAcknowledgedEndOfIsolation(currentState = this, newState)
+                transitionTo(newState)
             }
 
             on<OnAcknowledgeIsolationExpiration> {
@@ -213,6 +209,15 @@ class IsolationStateMachine @Inject constructor(
                 val isInIsolation = currentLogicalState.isActiveIsolation(clock)
                 if (!isInIsolation && willBeInIsolation) {
                     analyticsEventProcessor.track(StartedIsolation)
+                    /*
+                    If the user has started isolation as an index case, they have already acknowledged the start of
+                    the isolation so we schedule the reminder. For contact case, they are put into isolation immediately
+                    after receiving the exposure notification - they haven't acknowledged the start of the isolation yet
+                    so in that case we do not schedule the reminder.
+                     */
+                    if (newLogicalState.isActiveIndexCase(clock)) {
+                        scheduleIsolationHubReminder()
+                    }
                 }
                 Timber.d("transition from $currentState to $newState")
             }
@@ -245,6 +250,7 @@ class IsolationStateMachine @Inject constructor(
             } else {
                 isolationExpirationAlarmController.cancelExpirationCheckIfAny()
                 exposureNotificationHandler.cancel()
+                isolationHubReminderAlarmController.cancel()
             }
         }
     }
@@ -279,8 +285,8 @@ class IsolationStateMachine @Inject constructor(
         stateMachine.transition(OnReset)
     }
 
-    fun optInToDailyContactTesting() {
-        stateMachine.transition(OnDailyContactTestingOptIn)
+    fun optOutOfContactIsolation(encounterDate: LocalDate) {
+        stateMachine.transition(OnOptOutOfContactIsolation(encounterDate))
     }
 
     fun acknowledgeIsolationExpiration() {

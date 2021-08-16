@@ -54,7 +54,7 @@ class KeyFileWriter internal constructor(
                     val exportEntry = ZipEntry(EXPORT_FILENAME)
                     val exportProto = export(batch, start, end, regionIsoAlpha2, batchNum)
                     val exportBytes: ByteArray = header().toByteArray() + exportProto.toByteArray()
-                    val signature = sign(exportBytes, batch.size, batchNum)
+                    val signature = sign(batch.size, batchNum)
                     out.putNextEntry(signatureEntry)
                     out.write(signature.toByteArray())
                     out.putNextEntry(exportEntry)
@@ -89,7 +89,6 @@ class KeyFileWriter internal constructor(
     }
 
     private fun sign(
-        exportBytes: ByteArray,
         batchSize: Int,
         batchNum: Int
     ): TEKSignatureList {

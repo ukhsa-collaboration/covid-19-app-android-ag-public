@@ -110,6 +110,17 @@
                 app:layout_constraintTop_toBottomOf="@id/localMessageBanner">
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
+                    android:id="@+id/optionIsolationHub"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:visibility="gone"
+                    app:optionExternalLink="false"
+                    app:optionIcon="@drawable/ic_isolation_hub"
+                    app:optionIconBackgroundColor="@color/style_red"
+                    app:optionText="@string/status_option_isolation_hub" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
                     android:id="@+id/optionVenueCheckIn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -130,16 +141,6 @@
                     app:optionText="@string/status_option_report_symptoms" />
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
-                    android:id="@+id/optionReadAdvice"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    app:optionExternalLink="true"
-                    app:optionIcon="@drawable/ic_advice"
-                    app:optionIconBackgroundColor="@color/style_pink"
-                    app:optionText="@string/status_option_read_self_isolation_advice" />
-
-                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
                     android:id="@+id/optionTestingHub"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -158,18 +159,6 @@
                     app:optionIcon="@drawable/ic_link_test_result"
                     app:optionIconBackgroundColor="@color/nhs_lighter_blue"
                     app:optionText="@string/status_option_link_test_result" />
-
-                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
-                    android:id="@+id/optionIsolationPayment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:visibility="gone"
-                    app:optionExternalLink="false"
-                    app:optionIcon="@drawable/ic_isolation_payment"
-                    app:optionIconBackgroundColor="@color/light_green"
-                    app:optionText="@string/status_option_isolation_payment"
-                    tools:visibility="visible" />
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
                     android:id="@+id/optionSettings"

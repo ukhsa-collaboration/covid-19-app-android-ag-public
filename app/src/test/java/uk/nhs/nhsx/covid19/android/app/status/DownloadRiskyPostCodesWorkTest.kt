@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.status
 import androidx.work.ListenableWorker
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.coEvery
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -23,6 +24,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyData
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyPostCodeDistributionResponse
+import kotlin.test.assertEquals
 
 class DownloadRiskyPostCodesWorkTest {
 
@@ -138,15 +140,44 @@ class DownloadRiskyPostCodesWorkTest {
     @Before
     fun setUp() {
         statusScreenIsNotShowing()
-        coEvery { riskyPostCodeApi.fetchRiskyPostCodeDistribution() }.returns(
-            fetchRiskyPostCodeDistributionResponse
-        )
+        coEvery { riskyPostCodeApi.fetchRiskyPostCodeDistribution() } returns fetchRiskyPostCodeDistributionResponse
         coEvery { localAuthorityPostCodesLoader.load() } returns localAuthorityPostCodes
     }
 
     @After
     fun tearDown() {
         FeatureFlagTestHelper.clearFeatureFlags()
+    }
+
+    @Test
+    fun `when RiskyPostCodeApi throws Exception then return failure`() = runBlocking {
+        coEvery { riskyPostCodeApi.fetchRiskyPostCodeDistribution() } throws Exception()
+
+        val result = testSubject()
+
+        assertEquals(ListenableWorker.Result.failure(), result)
+    }
+
+    @Test
+    fun `when RiskyPostCodeApi response is empty then return failure`() = runBlocking {
+        val response = mockk<RiskyPostCodeDistributionResponse>()
+        every { response.postDistricts } returns emptyMap()
+        coEvery { riskyPostCodeApi.fetchRiskyPostCodeDistribution() } returns response
+
+        val result = testSubject()
+
+        assertEquals(ListenableWorker.Result.failure(), result)
+    }
+
+    @Test
+    fun `when PostCodeProvider does not contain any value then return success`() = runBlocking {
+        every { postCodeProvider.value } returns null
+
+        val result = testSubject()
+
+        assertEquals(ListenableWorker.Result.success(), result)
+
+        confirmVerified(localAuthorityProvider)
     }
 
     @Test

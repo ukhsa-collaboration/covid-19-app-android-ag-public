@@ -5,7 +5,7 @@
 configurations.create("ktlint")
 
 dependencies {
-    ktlint "com.pinterest:ktlint:0.37.1"
+    ktlint "com.pinterest:ktlint:$ktlint_version"
     ktlint project(":custom-ktlint-rules")
 }
 

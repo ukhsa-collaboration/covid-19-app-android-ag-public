@@ -9,6 +9,8 @@ import org.junit.runners.Parameterized
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
 import uk.nhs.nhsx.covid19.android.app.report.Reported
 import uk.nhs.nhsx.covid19.android.app.report.Reporter
+import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
+import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
 import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -21,6 +23,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PostCodeRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.WelcomeRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.edgecases.AgeRestrictionRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 
 @RunWith(Parameterized::class)
 class OnboardingScenarioTest(override val configuration: TestConfiguration) : EspressoTest() {
@@ -266,5 +269,40 @@ class OnboardingScenarioTest(override val configuration: TestConfiguration) : Es
             "Postcode not supported",
             "The user is shown an error that the postcode they entered is not supported."
         )
+    }
+
+    @Test
+    fun performOnboardingWorkflow_goBackFromLocalAuthority() {
+        setScreenOrientation(PORTRAIT)
+
+        startTestActivity<WelcomeActivity>()
+
+        welcomeRobot.checkActivityIsDisplayed()
+
+        welcomeRobot.clickConfirmOnboarding()
+
+        waitFor { welcomeRobot.checkAgeConfirmationDialogIsDisplayed() }
+
+        welcomeRobot.clickConfirmAgePositive()
+
+        waitFor { dataAndPrivacyRobot.checkActivityIsDisplayed() }
+
+        dataAndPrivacyRobot.clickConfirmOnboarding()
+
+        postCodeRobot.checkActivityIsDisplayed()
+
+        postCodeRobot.enterPostCode("SE3")
+
+        waitFor { postCodeRobot.checkContinueButtonIsDisplayed() }
+
+        postCodeRobot.clickContinue()
+
+        waitFor { localAuthorityRobot.checkActivityIsDisplayed() }
+
+        setScreenOrientation(LANDSCAPE)
+
+        testAppContext.device.pressBack()
+
+        postCodeRobot.checkActivityIsDisplayed()
     }
 }

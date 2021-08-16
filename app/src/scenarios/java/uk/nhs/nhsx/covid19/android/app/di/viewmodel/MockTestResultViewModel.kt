@@ -16,8 +16,9 @@ class MockTestResultViewModel : BaseTestResultViewModel() {
         val remainingDaysInIsolation: Int = 8
     )
 
-    override fun onCreate() =
+    init {
         viewState.postValue(ViewState(currentOptions.viewState, currentOptions.remainingDaysInIsolation))
+    }
 
     override fun onActionButtonClicked() = navigationEventLiveData.postValue(Finish)
     override fun onBackPressed() = Unit

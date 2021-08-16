@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.util.AttributeSet
+import androidx.annotation.StringRes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -46,10 +47,15 @@ class LinkTextView @JvmOverloads constructor(
         }
     }
 
+    fun setLinkUrl(@StringRes linkUrl: Int) {
+        this.linkUrl = linkUrl
+        updateDistrictAreaLinkUrl()
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         job = Job()
-        afterJobInitialized()
+        updateDistrictAreaLinkUrl()
     }
 
     override fun onDetachedFromWindow() {
@@ -57,8 +63,12 @@ class LinkTextView @JvmOverloads constructor(
         job.cancel()
     }
 
-    private fun afterJobInitialized() = launch {
-        districtAreaLinkUrl = districtAreaStringProvider.provide(linkUrl)
+    private fun updateDistrictAreaLinkUrl() {
+        if (this::job.isInitialized) {
+            launch {
+                districtAreaLinkUrl = districtAreaStringProvider.provide(linkUrl)
+            }
+        }
     }
 
     private fun applyAttributes(context: Context, attrs: AttributeSet?) {

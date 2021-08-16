@@ -7,6 +7,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
@@ -45,7 +46,7 @@ class StateStorageSerializationTest {
             contact = ContactCase(
                 exposureDate = LocalDate.now(fixedClock).minusDays(1),
                 notificationDate = LocalDate.now(fixedClock).minusDays(2),
-                dailyContactTestingOptInDate = LocalDate.now(fixedClock).minusDays(3),
+                optOutOfContactIsolation = OptOutOfContactIsolation(LocalDate.now(fixedClock).minusDays(3)),
                 expiryDate = LocalDate.now(fixedClock).minusDays(4)
             ),
             testResult = AcknowledgedTestResult(

@@ -1,11 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.about.mydata
 
-import com.jeroenmols.featureflag.framework.FeatureFlag.DAILY_CONTACT_TESTING
-import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -36,20 +33,15 @@ class MyDataViewModel @Inject constructor(
             is PossiblyIsolating ->
                 IsolationViewState(
                     lastDayOfIsolation =
-                        if (isolationState.hasExpired(clock)) null
-                        else isolationState.lastDayOfIsolation,
+                    if (isolationState.hasExpired(clock)) null
+                    else isolationState.lastDayOfIsolation,
                     contactCaseEncounterDate = isolationState.contactCase?.exposureDate,
                     contactCaseNotificationDate = isolationState.contactCase?.notificationDate,
                     indexCaseSymptomOnsetDate = ((isolationState.indexInfo as? IndexCase)?.isolationTrigger as? SelfAssessment)?.assumedOnsetDate,
-                    dailyContactTestingOptInDate = getDailyContactTestingOptInDate(isolationState.contactCase)
+                    optOutOfContactIsolationDate = isolationState.contactCase?.optOutOfContactIsolation?.date
                 )
         }
 
     override fun getLastRiskyVenueVisitDate(): LocalDate? =
         lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue?.latestDate
-
-    override fun getDailyContactTestingOptInDate(contactCase: ContactCase?): LocalDate? =
-        if (RuntimeBehavior.isFeatureEnabled(DAILY_CONTACT_TESTING)) {
-            contactCase?.dailyContactTestingOptInDate
-        } else null
 }

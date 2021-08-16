@@ -31,21 +31,22 @@ class ExposureNotificationPermissionHelperTest {
     }
 
     @Test
-    fun `onActivityResult does not call startExposureNotifications if request code does not indicate starting exposure notifications`() {
+    fun `onActivityResult does nothing if request code does not indicate starting exposure notifications`() {
         val unexpectedRequestCode = 1234
 
         testSubject.onActivityResult(unexpectedRequestCode, RESULT_OK)
 
         verify(exactly = 0) { testSubject.startExposureNotifications() }
+        verify(exactly = 0) { callback.onPermissionDenied() }
     }
 
     @Test
-    fun `onActivityResult does not call startExposureNotifications if result code is not ok`() {
+    fun `onActivityResult emits permission denied if result code is not ok`() {
         testSubject.onActivityResult(
             ExposureNotificationPermissionHelper.REQUEST_CODE_START_EXPOSURE_NOTIFICATION,
             RESULT_CANCELED
         )
-        verify(exactly = 0) { testSubject.startExposureNotifications() }
+        verify { callback.onPermissionDenied() }
     }
 
     @Test

@@ -4,7 +4,10 @@ import com.jeroenmols.featureflag.framework.Feature
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 
-fun runWithFeatureEnabled(feature: Feature, action: () -> Unit) {
+fun runWithFeatureEnabled(feature: Feature, clearFeatureFlags: Boolean = false, action: () -> Unit) {
+    if (clearFeatureFlags) {
+        FeatureFlagTestHelper.clearFeatureFlags()
+    }
     val wasFeatureEnabledInitially = RuntimeBehavior.isFeatureEnabled(feature)
     if (!wasFeatureEnabledInitially) {
         FeatureFlagTestHelper.enableFeatureFlag(feature)
@@ -27,7 +30,10 @@ fun runWithFeature(feature: Feature, enabled: Boolean, action: () -> Unit) {
     }
 }
 
-suspend fun coRunWithFeature(feature: Feature, enabled: Boolean, action: suspend () -> Unit) {
+suspend fun coRunWithFeature(feature: Feature, enabled: Boolean, clearFeatureFlags: Boolean = false, action: suspend () -> Unit) {
+    if (clearFeatureFlags) {
+        FeatureFlagTestHelper.clearFeatureFlags()
+    }
     setupFeature(feature, enabled)
     try {
         action()

@@ -27,6 +27,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Button
+import android.widget.CompoundButton.OnCheckedChangeListener
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -34,7 +35,10 @@ import androidx.lifecycle.lifecycleScope
 import co.lokalise.android.sdk.LokaliseSDK
 import co.lokalise.android.sdk.core.LokalisePreferences
 import com.google.android.material.snackbar.Snackbar
+import com.jeroenmols.featureflag.framework.RuntimeFeatureFlagProvider
+import com.jeroenmols.featureflag.framework.TestSetting
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
+import kotlinx.android.synthetic.scenarios.activity_debug.analyticsData
 import kotlinx.android.synthetic.scenarios.activity_debug.buttonFeatureFlags
 import kotlinx.android.synthetic.scenarios.activity_debug.environmentSpinner
 import kotlinx.android.synthetic.scenarios.activity_debug.exposureNotificationMocks
@@ -44,6 +48,7 @@ import kotlinx.android.synthetic.scenarios.activity_debug.lokaliseContent
 import kotlinx.android.synthetic.scenarios.activity_debug.lokaliseHeadingIcon
 import kotlinx.android.synthetic.scenarios.activity_debug.lokaliseVersion
 import kotlinx.android.synthetic.scenarios.activity_debug.mockSettings
+import kotlinx.android.synthetic.scenarios.activity_debug.qrScannerFirstVenueAutomated
 import kotlinx.android.synthetic.scenarios.activity_debug.scenarioMain
 import kotlinx.android.synthetic.scenarios.activity_debug.scenarioOnboarding
 import kotlinx.android.synthetic.scenarios.activity_debug.scenarios
@@ -78,8 +83,13 @@ import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityActivity
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityInformationActivity
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
+import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockQrScannerViewModel
+import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockQrScannerViewModel.Options
 import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationAgeLimitActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.BookFollowUpTestActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
@@ -105,6 +115,7 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.SymptomsAfterRiskyVenueActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformActivity
+import uk.nhs.nhsx.covid19.android.app.questionnaire.NewNoSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsDidUpdateIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenNoSymptoms
@@ -112,6 +123,7 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvi
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenSelfAssessmentNoImpactOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
@@ -127,16 +139,21 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESUL
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.scenariodialog.MockApiDialogFragment
 import uk.nhs.nhsx.covid19.android.app.scenariodialog.MyDataDialogFragment
+import uk.nhs.nhsx.covid19.android.app.scenariodialog.QrScannerDialogFragment
+import uk.nhs.nhsx.covid19.android.app.scenariodialog.ScenarioDialogFragment
 import uk.nhs.nhsx.covid19.android.app.scenariodialog.TestResultDialogFragment
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsActivity
 import uk.nhs.nhsx.covid19.android.app.settings.languages.LanguagesActivity
 import uk.nhs.nhsx.covid19.android.app.settings.myarea.MyAreaActivity
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
+import uk.nhs.nhsx.covid19.android.app.state.OnExposedNotification
+import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState
 import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingHubActivity
+import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubActivity
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessageActivity
 import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
@@ -186,7 +203,63 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
         setupScreenFilter()
 
+        setupQrScannerSettings()
+
         setupUpdateTranslationsFromLokalise()
+
+        setupAnalyticsData()
+    }
+
+    private fun setupAnalyticsData() {
+        analyticsData.setOnSingleClickListener {
+            startActivity<AnalyticsReportActivity>()
+        }
+    }
+
+    private fun setupQrScannerSettings() {
+        MockQrScannerViewModel.currentOptions = Options(useMock = false)
+        qrScannerFirstVenueAutomated.isChecked = false
+        qrScannerFirstVenueAutomated.setOnCheckedChangeListener(qrScannerCheckChangeListener)
+    }
+
+    private val qrScannerCheckChangeListener =
+        OnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                showQrScannerDialog()
+            } else {
+                MockQrScannerViewModel.currentOptions = MockQrScannerViewModel.currentOptions.copy(useMock = false)
+            }
+        }
+
+    private fun showQrScannerDialog() {
+        dialog = QrScannerDialogFragment(
+            positiveAction = {
+                if (MockQrScannerViewModel.currentOptions.venueList.size == 0) {
+                    MockQrScannerViewModel.currentOptions =
+                        MockQrScannerViewModel.currentOptions.copy(useMock = false)
+                    qrScannerFirstVenueAutomated.isChecked = false
+                } else {
+                    MockQrScannerViewModel.currentOptions =
+                        MockQrScannerViewModel.currentOptions.copy(useMock = true)
+                }
+            },
+            dismissAction = {
+                qrScannerFirstVenueAutomated.isChecked = false
+            }
+        )
+        dialog?.show(supportFragmentManager, "QrScannerDialogFragment")
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            FILE_SELECT_CODE -> if (resultCode == RESULT_OK && data != null) {
+                val uri: Uri? = data.data
+                if (dialog != null && dialog is QrScannerDialogFragment && uri != null) {
+                    (dialog as QrScannerDialogFragment).processCsv(uri)
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun setupUpdateTranslationsFromLokalise() {
@@ -302,16 +375,22 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val selectedLanguage = supportedLanguageItems[position]
                 appLocaleProvider.languageCode = selectedLanguage.code
+                if (selectedLanguage == stringIdsSupportedLanguageItem) {
+                    val runtimeFeatureFlagProvider = RuntimeFeatureFlagProvider(this@DebugActivity)
+                    runtimeFeatureFlagProvider.setFeatureEnabled(TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER, true)
+                    runtimeFeatureFlagProvider.setFeatureEnabled(TestSetting.USE_WEB_VIEW_FOR_EXTERNAL_BROWSER, true)
+                }
             }
         }
     }
 
-    private fun getSupportedLanguageItems(): List<SupportedLanguageItem> =
-        listOf(
+    private fun getSupportedLanguageItems(): List<SupportedLanguageItem> {
+        return listOf(
             SupportedLanguageItem(nameResId = R.string.default_language, code = null),
-            SupportedLanguageItem(nameResId = R.string.show_string_ids, code = "non")
+            stringIdsSupportedLanguageItem
         ) +
-            SupportedLanguage.values().toList().map { SupportedLanguageItem(it.languageName, it.code) }
+                SupportedLanguage.values().toList().map { SupportedLanguageItem(it.languageName, it.code) }
+    }
 
     private fun setupFeatureFlagButton() {
         buttonFeatureFlags.setOnSingleClickListener {
@@ -399,7 +478,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
 
         addScreenButton("Permission") {
-            PermissionActivity.start(this)
+            startActivity<PermissionActivity>()
         }
 
         addScreenButton("Enable bluetooth") {
@@ -411,7 +490,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
 
         addScreenButton("Enable exposure notifications") {
-            EnableExposureNotificationsActivity.start(this)
+            startActivity<EnableExposureNotificationsActivity>()
         }
 
         addScreenButton("QR Code Scanner") {
@@ -502,8 +581,8 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             startActivity<BookFollowUpTestActivity>()
         }
 
-        addScreenButton("Encounter detection") {
-            EncounterDetectionActivity.start(this)
+        addScreenButton("Exposure Notification Screen") {
+            ExposureNotificationActivity.start(this)
         }
 
         addScreenButton("Isolation Expiration") {
@@ -562,8 +641,8 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             content = TranslatableString(
                 mapOf(
                     "en" to "Your local authority has normal measures for coronavirus in place. It’s important that you continue to follow the latest official government guidance to help control the virus.\n" +
-                        "\n" +
-                        "Find out the restrictions for your local area to help reduce the spread of coronavirus."
+                            "\n" +
+                            "Find out the restrictions for your local area to help reduce the spread of coronavirus."
                 )
             ),
             linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
@@ -601,6 +680,10 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
                     false
                 )
             }
+        }
+
+        addScreenButton("Accordion Test") {
+            startActivity<ComponentsActivity>()
         }
 
         addScreenButton("Local Authority Information") {
@@ -739,6 +822,49 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         addScreenButton("Risky Venue (M2): Do you have symptoms") {
             startActivity<SymptomsAfterRiskyVenueActivity>()
         }
+
+        addScreenButton("Exposure Notification Age Limit") {
+            startActivity<ExposureNotificationAgeLimitActivity>()
+        }
+
+        addScreenButton("Exposure Notification Vaccination Status") {
+            appComponent.provideIsolationStateMachine().processEvent(OnExposedNotification(Instant.now()))
+            startActivity<ExposureNotificationVaccinationStatusActivity>()
+        }
+
+        addScreenButton("Self-isolation hub") {
+            startActivity<IsolationHubActivity>()
+        }
+
+        addScreenButton("Risky Contact Advice - Under 18 (resets state)") {
+            val isolationStateMachine = appComponent.provideIsolationStateMachine()
+            isolationStateMachine.reset()
+            RiskyContactIsolationAdviceActivity.startAsMinor(this)
+        }
+
+        addScreenButton("Risky Contact Advice - Fully vaccinated (resets state)") {
+            val isolationStateMachine = appComponent.provideIsolationStateMachine()
+            isolationStateMachine.reset()
+            RiskyContactIsolationAdviceActivity.startAsFullyVaccinated(this)
+        }
+
+        addScreenButton("Risky Contact Advice - New isolation (resets state)") {
+            val isolationStateMachine = appComponent.provideIsolationStateMachine()
+            isolationStateMachine.reset()
+            isolationStateMachine.processEvent(OnExposedNotification(Instant.now()))
+            RiskyContactIsolationAdviceActivity.start(this)
+        }
+
+        addScreenButton("Risky Contact Advice - Continue isolation (resets state)") {
+            val isolationStateMachine = appComponent.provideIsolationStateMachine()
+            isolationStateMachine.reset()
+            isolationStateMachine.processEvent(OnPositiveSelfAssessment(SelectedDate.CannotRememberDate))
+            RiskyContactIsolationAdviceActivity.start(this)
+        }
+
+        addScreenButton("New no symptoms") {
+            startActivity<NewNoSymptomsActivity>()
+        }
     }
 
     private fun playDefaultSoundAndVibrate() {
@@ -762,6 +888,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
             } else {
+                @Suppress("DEPRECATION")
                 vibrator.vibrate(200)
             }
         }
@@ -929,11 +1056,16 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         )
     )
 
+    private var dialog: ScenarioDialogFragment? = null
+
     companion object {
         const val DEBUG_PREFERENCES_NAME = "debugPreferences"
         const val SELECTED_ENVIRONMENT = "SELECTED_ENVIRONMENT"
         const val USE_MOCKED_EXPOSURE_NOTIFICATION = "USE_MOCKED_EXPOSURE_NOTIFICATION"
         const val OFFSET_DAYS = "OFFSET_DAYS"
+        const val FILE_SELECT_CODE = 10011
+        private val stringIdsSupportedLanguageItem =
+            SupportedLanguageItem(nameResId = R.string.show_string_ids, code = "non")
 
         fun start(context: Context) = context.startActivity(getIntent(context))
 

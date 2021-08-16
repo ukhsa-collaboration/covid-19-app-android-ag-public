@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_toolbar_primary" />
+
+    <androidx.core.widget.NestedScrollView
+        style="@style/ScrollContainer"
+        android:id="@+id/ageLimitScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingVertical="@dimen/vertical_margin_large">
+
+            <ImageView
+                style="@style/GoneInLandscape"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_isolation_continue" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                style="@style/Title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:text="@string/exposure_notification_age_heading"
+                android:textAlignment="center" />
+
+            <TextView
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:layout_marginBottom="4dp"
+                android:text="@string/exposure_notification_age_description" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ErrorView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ageLimitErrorView"
+                android:layout_marginTop="@dimen/vertical_margin"
+                app:error_title="@string/exposure_notification_age_error_title"
+                app:error_description="@string/exposure_notification_age_error_description"
+                android:visibility="gone"
+                tools:visibility="visible"
+                />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                style="@style/Title2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:text="@string/exposure_notification_age_subtitle" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ageLimitBinaryRadioGroup"
+                app:option1Text="@string/exposure_notification_age_option1_text"
+                app:option2Text="@string/exposure_notification_age_option2_text"
+                app:option1ContentDescription="@string/exposure_notification_age_yes_content_description"
+                app:option2ContentDescription="@string/exposure_notification_age_no_content_description"
+                />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/continueButton"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/exposure_notification_age_continue_button" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

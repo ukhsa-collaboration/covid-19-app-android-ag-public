@@ -9,6 +9,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTr
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Default4_9
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Isolation4_9
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Isolation4_9.ContactCase4_9
@@ -134,7 +135,7 @@ class MigrateIsolationState @Inject constructor(
             notificationDate = notificationDate?.toLocalDate(clock.zone)
                 // Fall back to exposure date if notification date is not available
                 ?: startDate.toLocalDate(clock.zone),
-            dailyContactTestingOptInDate = dailyContactTestingOptInDate,
+            optOutOfContactIsolation = dailyContactTestingOptInDate?.let { OptOutOfContactIsolation(it) },
             expiryDate = expiryDate
         )
 }

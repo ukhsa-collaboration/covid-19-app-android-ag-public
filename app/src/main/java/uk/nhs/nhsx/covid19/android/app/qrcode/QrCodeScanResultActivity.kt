@@ -17,13 +17,13 @@ import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.actionButton
+import kotlinx.android.synthetic.main.activity_qr_code_scan_result.animationIcon
+import kotlinx.android.synthetic.main.activity_qr_code_scan_result.buttonCancelCheckIn
+import kotlinx.android.synthetic.main.activity_qr_code_scan_result.errorResultIcon
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.qrCodeHelpContainer
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.qrScanHelpLink
-import kotlinx.android.synthetic.main.activity_qr_code_scan_result.animationIcon
-import kotlinx.android.synthetic.main.activity_qr_code_scan_result.errorResultIcon
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.subtitleTextView
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.successVenueDateTime
-import kotlinx.android.synthetic.main.activity_qr_code_scan_result.buttonCancelCheckIn
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.titleTextView
 import kotlinx.android.synthetic.main.activity_qr_code_scan_result.topCloseButton
 import uk.nhs.nhsx.covid19.android.app.R
@@ -34,6 +34,7 @@ import uk.nhs.nhsx.covid19.android.app.permissions.PermissionsManager
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueCheckInViewModel.ViewState
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.StartInAppReview
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.ListenableAnimationDrawable
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.animationsDisabled
@@ -126,7 +127,7 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
         actionButton.setOnSingleClickListener {
             StatusActivity.start(
                 this@QrCodeScanResultActivity,
-                startedFromVenueCheckInSuccess = true
+                statusActivityAction = StartInAppReview
             )
         }
         buttonCancelCheckIn.visible()

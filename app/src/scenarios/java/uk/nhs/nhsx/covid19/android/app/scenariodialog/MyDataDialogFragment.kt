@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.appcompat.widget.SwitchCompat
 import kotlinx.android.synthetic.scenarios.dialog_user_data.view.mockAcknowledgedTestResult
-import kotlinx.android.synthetic.scenarios.dialog_user_data.view.mockDailyContactTestingOptInDateForIsolation
 import kotlinx.android.synthetic.scenarios.dialog_user_data.view.mockIsolationState
 import kotlinx.android.synthetic.scenarios.dialog_user_data.view.mockLastRiskyVenueVisitDate
 import kotlinx.android.synthetic.scenarios.dialog_user_data.view.optionalContainer
@@ -21,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import java.time.LocalDate
@@ -61,7 +61,7 @@ class MyDataDialogFragment(positiveAction: (() -> Unit)) :
                             contactCaseEncounterDate = contactCaseEncounterDate,
                             contactCaseNotificationDate = contactCaseNotificationDate,
                             indexCaseSymptomOnsetDate = ((contactCaseOnlyIsolation.indexInfo as? IndexCase)?.isolationTrigger as? SelfAssessment)?.onsetDate,
-                            dailyContactTestingOptInDate = dailyContactTestingOptInDate
+                            optOutOfContactIsolationDate = optOutOfContactIsolationDate
                         )
                     )
                 } else {
@@ -86,20 +86,7 @@ class MyDataDialogFragment(positiveAction: (() -> Unit)) :
                 }
             }
         }
-        with(view.mockDailyContactTestingOptInDateForIsolation) {
-            isChecked = MockMyDataViewModel.currentOptions.dailyContactTestingOptInDateForIsolation != null
-            setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    MockMyDataViewModel.currentOptions = MockMyDataViewModel.currentOptions.copy(
-                        dailyContactTestingOptInDateForIsolation = LocalDate.now().minusDays(5)
-                    )
-                } else {
-                    MockMyDataViewModel.currentOptions = MockMyDataViewModel.currentOptions.copy(
-                        dailyContactTestingOptInDateForIsolation = null
-                    )
-                }
-            }
-        }
+
         with(view.mockAcknowledgedTestResult) {
             isChecked = MockMyDataViewModel.currentOptions.acknowledgedTestResult != null
             setOnCheckedChangeListener { _, isChecked ->
@@ -125,14 +112,14 @@ class MyDataDialogFragment(positiveAction: (() -> Unit)) :
 
     private val contactCaseEncounterDate = LocalDate.parse("2020-05-19")
     private val contactCaseNotificationDate = LocalDate.parse("2020-05-20")
-    private val dailyContactTestingOptInDate = LocalDate.now().plusDays(5)
+    private val optOutOfContactIsolationDate = LocalDate.now().plusDays(5)
     private val contactCaseOnlyIsolation = IsolationState(
         isolationConfiguration = DurationDays(),
         contactCase = ContactCase(
             exposureDate = contactCaseEncounterDate,
             notificationDate = contactCaseNotificationDate,
             expiryDate = LocalDate.now().plusDays(5),
-            dailyContactTestingOptInDate = dailyContactTestingOptInDate
+            optOutOfContactIsolation = OptOutOfContactIsolation(optOutOfContactIsolationDate)
         )
     )
 }

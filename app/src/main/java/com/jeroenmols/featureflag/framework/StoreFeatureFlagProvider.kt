@@ -1,7 +1,7 @@
 package com.jeroenmols.featureflag.framework
 
 import com.jeroenmols.featureflag.framework.FeatureFlag.BATTERY_OPTIMIZATION
-import com.jeroenmols.featureflag.framework.FeatureFlag.DAILY_CONTACT_TESTING
+import com.jeroenmols.featureflag.framework.FeatureFlag.NEW_NO_SYMPTOMS_SCREEN
 import com.jeroenmols.featureflag.framework.FeatureFlag.REMOTE_SERVICE_EXCEPTION_CRASH_ANALYTICS
 import com.jeroenmols.featureflag.framework.FeatureFlag.SUBMIT_ANALYTICS_VIA_ALARM_MANAGER
 
@@ -14,9 +14,9 @@ class StoreFeatureFlagProvider : FeatureFlagProvider {
         return if (feature is FeatureFlag) {
             when (feature) {
                 BATTERY_OPTIMIZATION -> false
-                DAILY_CONTACT_TESTING -> false
                 SUBMIT_ANALYTICS_VIA_ALARM_MANAGER -> true
                 REMOTE_SERVICE_EXCEPTION_CRASH_ANALYTICS -> false
+                NEW_NO_SYMPTOMS_SCREEN -> false
             }
         } else {
             // TestSettings should never be shipped to users

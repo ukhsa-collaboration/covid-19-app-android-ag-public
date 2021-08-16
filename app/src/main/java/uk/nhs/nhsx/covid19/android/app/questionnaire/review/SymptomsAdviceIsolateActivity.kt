@@ -160,7 +160,7 @@ class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_ad
             showCloseButtonInToolbar = true,
             stateIconResource = R.drawable.ic_isolation_contact,
             isolationDescription = IsolationDescription(
-                preBigText = R.string.self_isolate_for,
+                preBigText = R.string.continue_to_self_isolate_for,
                 bigText = resources.getQuantityString(
                     R.plurals.state_isolation_days,
                     remainingDaysInIsolation,

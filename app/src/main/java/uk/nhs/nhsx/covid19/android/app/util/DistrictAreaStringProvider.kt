@@ -21,7 +21,7 @@ class DistrictAreaStringProvider @Inject constructor(
 
     companion object {
         private val welshMapping = mapOf(
-            R.string.privacy_notice to R.string.url_privacy_notice_wls,
+            R.string.url_privacy_notice to R.string.url_privacy_notice_wls,
             R.string.url_terms_of_use to R.string.url_terms_of_use_wls,
             R.string.url_nhs_111_online to R.string.url_nhs_111_online_wls,
             R.string.url_accessibility_statement to R.string.url_accessibility_statement_wls,
@@ -32,7 +32,10 @@ class DistrictAreaStringProvider @Inject constructor(
             R.string.url_latest_advice_in_isolation to R.string.url_latest_advice_in_isolation_wls,
             R.string.url_order_test_privacy to R.string.url_order_test_privacy_wls,
             R.string.url_order_test_for_someone_else to R.string.url_order_test_for_someone_else_wls,
-            R.string.url_nhs_get_tested to R.string.url_nhs_get_tested_wls
+            R.string.url_nhs_get_tested to R.string.url_nhs_get_tested_wls,
+            R.string.url_latest_government_guidance to R.string.url_latest_government_guidance_wls,
+            R.string.url_nhs_guidance to R.string.url_nhs_guidance_wls,
+            R.string.exposure_notification_vaccination_status_all_doses_question_link_url to R.string.exposure_notification_vaccination_status_all_doses_question_link_url_wls,
         )
     }
 }

@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.RiskyContact
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
@@ -11,6 +12,7 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun selfDiagnose_thenRiskyContact_isolatingForBothReasons() {
+        startTestActivity<MainActivity>()
         // Current date: 1st Jan
         // Starting state: App running normally, not in isolation
         // Current date: 2nd Jan -> Analytics packet for: 1st Jan
@@ -35,7 +37,7 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
         // Has risky contact on 3nd Jan
         // Isolation end date: 14th Jan
         riskyContact.triggerViaCircuitBreaker(this::advanceToNextBackgroundTaskExecution)
-        riskyContact.acknowledge()
+        riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinated(alreadyIsolating = true)
 
         // Current date: 4th Jan -> Analytics packet for: 3rd Jan
         assertOnFields {

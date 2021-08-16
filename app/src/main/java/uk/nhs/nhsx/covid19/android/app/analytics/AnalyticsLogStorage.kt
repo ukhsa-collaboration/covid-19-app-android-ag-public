@@ -1,43 +1,23 @@
 package uk.nhs.nhsx.covid19.android.app.analytics
 
 import android.content.SharedPreferences
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
-import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
-import java.lang.reflect.Type
+import uk.nhs.nhsx.covid19.android.app.util.Provider
+import uk.nhs.nhsx.covid19.android.app.util.isBeforeOrEqual
+import uk.nhs.nhsx.covid19.android.app.util.listStorage
 import java.time.Instant
 import javax.inject.Inject
 
 class AnalyticsLogStorage @Inject constructor(
-    private val analyticsLogEntryJsonStorage: AnalyticsLogEntryJsonStorage,
-    moshi: Moshi
-) {
-
-    private val analyticsLogEntriesSerializationAdapter: JsonAdapter<List<AnalyticsLogEntry>> =
-        moshi.adapter(listOfAnalyticsLogEntriesType)
+    override val moshi: Moshi,
+    override val sharedPreferences: SharedPreferences
+) : Provider {
 
     private val lock = Object()
 
-    var value: List<AnalyticsLogEntry>
-        get() = synchronized(lock) {
-            analyticsLogEntryJsonStorage.value?.let {
-                runCatching {
-                    analyticsLogEntriesSerializationAdapter.fromJson(it)
-                }
-                    .getOrElse {
-                        Timber.e(it)
-                        listOf()
-                    } // TODO add crash analytics and come up with a more sophisticated solution
-            } ?: listOf()
-        }
-        set(value) = synchronized(lock) {
-            analyticsLogEntryJsonStorage.value =
-                analyticsLogEntriesSerializationAdapter.toJson(value)
-        }
+    var value: List<AnalyticsLogEntry> by listStorage(VALUE_KEY, default = emptyList())
 
     fun add(logEntry: AnalyticsLogEntry) = synchronized(lock) {
         val updatedList = value.toMutableList().apply {
@@ -53,11 +33,13 @@ class AnalyticsLogStorage @Inject constructor(
         value = updatedList
     }
 
+    fun removeBeforeOrEqual(date: Instant) {
+        val updatedList = value.filterNot { it.instant.isBeforeOrEqual(date) }
+        value = updatedList
+    }
+
     companion object {
-        private val listOfAnalyticsLogEntriesType: Type = Types.newParameterizedType(
-            List::class.java,
-            AnalyticsLogEntry::class.java
-        )
+        const val VALUE_KEY = "ANALYTICS_EVENTS_KEY"
 
         val analyticsLogItemAdapter: PolymorphicJsonAdapterFactory<AnalyticsLogItem> =
             PolymorphicJsonAdapterFactory.of(AnalyticsLogItem::class.java, "type")
@@ -69,16 +51,6 @@ class AnalyticsLogStorage @Inject constructor(
                 .withSubtype(AnalyticsLogItem.ResultReceived::class.java, "ResultReceived")
                 .withSubtype(AnalyticsLogItem.UpdateNetworkStats::class.java, "UpdateNetworkStats")
                 .withSubtype(AnalyticsLogItem.ExposureWindowMatched::class.java, "ExposureWindowMatched")
-    }
-}
-
-class AnalyticsLogEntryJsonStorage @Inject constructor(sharedPreferences: SharedPreferences) {
-    private val prefs = sharedPreferences.with<String>(VALUE_KEY)
-
-    var value: String? by prefs
-
-    companion object {
-        const val VALUE_KEY = "ANALYTICS_EVENTS_KEY"
     }
 }
 

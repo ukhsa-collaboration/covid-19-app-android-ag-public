@@ -14,6 +14,8 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeVal
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.ParseJsonError
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Unsupported
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Valid
+import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeViewModel.NavigationTarget
+import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeViewModel.NavigationTarget.LocalAuthority
 
 class PostCodeViewModelTest {
 
@@ -24,52 +26,63 @@ class PostCodeViewModelTest {
 
     private val testSubject = PostCodeViewModel(localAuthorityPostCodeValidator)
 
-    private val postCodeValidationViewState =
+    private val navigationTargetObserver =
+        mockk<Observer<NavigationTarget>>(relaxUnitFun = true)
+
+    private val postCodeValidationErrorViewState =
         mockk<Observer<LocalAuthorityPostCodeValidationResult>>(relaxUnitFun = true)
 
     private val postCode = "CM1"
 
     @Test
     fun `valid post code in validate`() = runBlocking {
-        testSubject.postCodeValidationResult().observeForever(postCodeValidationViewState)
+        testSubject.navigationTarget().observeForever(navigationTargetObserver)
+        testSubject.postCodeValidationError().observeForever(postCodeValidationErrorViewState)
 
         coEvery { localAuthorityPostCodeValidator.validate(any()) } returns Valid(postCode, emptyList())
 
         testSubject.validateMainPostCode(postCode)
 
-        verify { postCodeValidationViewState.onChanged(Valid(postCode, emptyList())) }
+        verify { navigationTargetObserver.onChanged(LocalAuthority(postCode)) }
+        verify(exactly = 0) { postCodeValidationErrorViewState.onChanged(any()) }
     }
 
     @Test
     fun `invalid post code in validate`() = runBlocking {
-        testSubject.postCodeValidationResult().observeForever(postCodeValidationViewState)
+        testSubject.navigationTarget().observeForever(navigationTargetObserver)
+        testSubject.postCodeValidationError().observeForever(postCodeValidationErrorViewState)
 
         coEvery { localAuthorityPostCodeValidator.validate(any()) } returns Invalid
 
         testSubject.validateMainPostCode(postCode)
 
-        verify { postCodeValidationViewState.onChanged(Invalid) }
+        verify(exactly = 0) { navigationTargetObserver.onChanged(any()) }
+        verify { postCodeValidationErrorViewState.onChanged(Invalid) }
     }
 
     @Test
     fun `invalid post code in validate due to json error`() = runBlocking {
-        testSubject.postCodeValidationResult().observeForever(postCodeValidationViewState)
+        testSubject.navigationTarget().observeForever(navigationTargetObserver)
+        testSubject.postCodeValidationError().observeForever(postCodeValidationErrorViewState)
 
         coEvery { localAuthorityPostCodeValidator.validate(any()) } returns ParseJsonError
 
         testSubject.validateMainPostCode(postCode)
 
-        verify { postCodeValidationViewState.onChanged(ParseJsonError) }
+        verify(exactly = 0) { navigationTargetObserver.onChanged(any()) }
+        verify { postCodeValidationErrorViewState.onChanged(ParseJsonError) }
     }
 
     @Test
     fun `unsupported post code in validate`() = runBlocking {
-        testSubject.postCodeValidationResult().observeForever(postCodeValidationViewState)
+        testSubject.navigationTarget().observeForever(navigationTargetObserver)
+        testSubject.postCodeValidationError().observeForever(postCodeValidationErrorViewState)
 
         coEvery { localAuthorityPostCodeValidator.validate(any()) } returns Unsupported
 
         testSubject.validateMainPostCode(postCode)
 
-        verify { postCodeValidationViewState.onChanged(Unsupported) }
+        verify(exactly = 0) { navigationTargetObserver.onChanged(any()) }
+        verify { postCodeValidationErrorViewState.onChanged(Unsupported) }
     }
 }

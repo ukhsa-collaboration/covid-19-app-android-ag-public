@@ -14,6 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationPaymentRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ProgressRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
@@ -25,6 +26,7 @@ class IsolationPaymentFlowTest : EspressoTest() {
     private val statusRobot = StatusRobot()
     private val isolationPaymentRobot = IsolationPaymentRobot()
     private val isolationPaymentProgressRobot = ProgressRobot()
+    private val isolationHubRobot = IsolationHubRobot()
     private val browserRobot = BrowserRobot()
 
     @Before
@@ -55,12 +57,13 @@ class IsolationPaymentFlowTest : EspressoTest() {
 
         startTestActivity<StatusActivity>()
 
-        statusRobot.checkActivityIsDisplayed()
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+        statusRobot.clickIsolationHub()
 
-        statusRobot.clickFinancialSupport()
+        isolationHubRobot.checkActivityIsDisplayed()
+        isolationHubRobot.clickItemIsolationPayment()
 
         isolationPaymentRobot.checkActivityIsDisplayed()
-
         isolationPaymentRobot.clickEligibilityButton()
 
         isolationPaymentProgressRobot.checkErrorIsDisplayed()

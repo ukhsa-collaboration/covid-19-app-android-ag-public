@@ -1,16 +1,24 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
+import android.app.Activity
 import android.content.SharedPreferences
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import com.google.android.play.core.review.ReviewInfo
+import com.google.android.play.core.review.ReviewManager
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.tasks.Task
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
+import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.mockk.verify
+import io.mockk.verifyOrder
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -19,14 +27,12 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaBanner
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessRiskyVenueM2Notification
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolationPaymentsButton
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationPermissionHelper
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
-import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction.NAVIGATE_AND_TURN_ON
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction.ONLY_NAVIGATE
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.StorageBasedUserInbox
@@ -36,21 +42,14 @@ import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.Sho
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowTestResult
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowUnknownTestResult
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowVenueAlert
-import uk.nhs.nhsx.covid19.android.app.payment.CanClaimIsolationPayment
-import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
-import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Disabled
-import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
-import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Unresolved
-import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.NotificationMessage
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
@@ -59,11 +58,20 @@ import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.state.asLogical
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ContactTracingHub
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ExposureConsent
+import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.InAppReview
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.IsolationExpiration
+import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.IsolationHub
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.LocalMessage
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.TestResult
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.UnknownTestResult
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.VenueAlert
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.NavigateToContactTracingHub
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.NavigateToIsolationHub
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.NavigateToLocalMessage
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.None
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.ProcessRiskyVenueAlert
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.StartInAppReview
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.Isolating
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.NotIsolating
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Risk
@@ -90,16 +98,13 @@ class StatusViewModelTest {
     private val storageBasedUserInbox = mockk<StorageBasedUserInbox>(relaxUnitFun = true)
     private val notificationProvider = mockk<NotificationProvider>(relaxed = true)
     private val districtAreaUrlProvider = mockk<DistrictAreaStringProvider>(relaxed = true)
-    private val startAppReviewFlowConstraint = mockk<ShouldShowInAppReview>(relaxed = true)
+    private val shouldShowInAppReview = mockk<ShouldShowInAppReview>(relaxed = true)
     private val lastReviewFlowStartedDateProvider =
         mockk<LastAppRatingStartedDateProvider>(relaxed = true)
-    private val canClaimIsolationPayment = mockk<CanClaimIsolationPayment>(relaxed = true)
-    private val isolationPaymentTokenStateProvider = mockk<IsolationPaymentTokenStateProvider>(relaxed = true)
     private val animationsProvider = mockk<AnimationsProvider>(relaxUnitFun = true)
     private val lastVisitedBookTestTypeVenueDateProvider =
         mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxUnitFun = true)
     private val getLocalMessageFromStorage = mockk<GetLocalMessageFromStorage>()
-
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
     private val navigateTo = mockk<Observer<NavigationTarget>>(relaxed = true)
     private val analyticsEventProcessorMock = mockk<AnalyticsEventProcessor>(relaxed = true)
@@ -180,7 +185,6 @@ class StatusViewModelTest {
         currentDate = LocalDate.now(fixedClock),
         areaRiskState = mediumRisk,
         isolationState = DEFAULT_ISOLATION_VIEW_STATE,
-        showIsolationPaymentButton = false,
         showReportSymptomsButton = true,
         exposureNotificationsEnabled = false,
         animationsEnabled = false,
@@ -205,7 +209,7 @@ class StatusViewModelTest {
         coEvery { exposureNotificationManager.isEnabled() } returns false
         coEvery { getLocalMessageFromStorage() } returns null
 
-        setupTestSubject(contactTracingHubAction = null)
+        setupTestSubject()
     }
 
     @After
@@ -323,7 +327,6 @@ class StatusViewModelTest {
 
         verify { viewStateObserver.onChanged(defaultViewState) }
         verify { sharedPreferences.registerOnSharedPreferenceChangeListener(any()) }
-        verify { isolationPaymentTokenStateProvider.addTokenStateListener(any()) }
         verify { storageBasedUserInbox.setStorageChangeListener(any()) }
     }
 
@@ -332,7 +335,6 @@ class StatusViewModelTest {
         testSubject.onPause()
 
         verify { sharedPreferences.unregisterOnSharedPreferenceChangeListener(any()) }
-        verify { isolationPaymentTokenStateProvider.removeTokenStateListener(any()) }
         verify { storageBasedUserInbox.removeStorageChangeListener() }
     }
 
@@ -348,7 +350,7 @@ class StatusViewModelTest {
     @Test
     fun `risky post code indicator has no risk set`() {
         every { postCodeIndicatorProvider.riskyPostCodeIndicator } returns
-            RiskIndicatorWrapper("medium", null)
+                RiskIndicatorWrapper("medium", null)
 
         testSubject.updateViewState()
 
@@ -393,87 +395,6 @@ class StatusViewModelTest {
         testSubject.updateViewState()
 
         verify { viewStateObserver.onChanged(defaultViewState.copy(animationsEnabled = false)) }
-    }
-
-    @Test
-    fun `on update view state should not show isolation payment button if cannot claim isolation payment and token is unresolved`() {
-        every { canClaimIsolationPayment() } returns false
-        every { isolationPaymentTokenStateProvider.tokenState } returns Unresolved
-
-        testSubject.updateViewState()
-
-        verify { viewStateObserver.onChanged(defaultViewState.copy(showIsolationPaymentButton = false)) }
-    }
-
-    @Test
-    fun `on update view state should not show isolation payment button if cannot claim isolation payment and token is disabled`() {
-        every { canClaimIsolationPayment() } returns false
-        every { isolationPaymentTokenStateProvider.tokenState } returns Disabled
-
-        testSubject.updateViewState()
-
-        verify { viewStateObserver.onChanged(defaultViewState.copy(showIsolationPaymentButton = false)) }
-    }
-
-    @Test
-    fun `on update view state should not show isolation payment button if cannot claim isolation payment and there is a token`() {
-        every { canClaimIsolationPayment() } returns false
-        every { isolationPaymentTokenStateProvider.tokenState } returns Token("token")
-
-        testSubject.updateViewState()
-
-        verify { viewStateObserver.onChanged(defaultViewState.copy(showIsolationPaymentButton = false)) }
-    }
-
-    @Test
-    fun `on update view state should not show isolation payment button if can claim isolation payment and token is unresolved`() {
-        every { canClaimIsolationPayment() } returns true
-        every { isolationPaymentTokenStateProvider.tokenState } returns Unresolved
-
-        testSubject.updateViewState()
-
-        verify { viewStateObserver.onChanged(defaultViewState.copy(showIsolationPaymentButton = false)) }
-    }
-
-    @Test
-    fun `on update view state should not show isolation payment button if can claim isolation payment and token is disabled`() {
-        every { canClaimIsolationPayment() } returns true
-        every { isolationPaymentTokenStateProvider.tokenState } returns Disabled
-
-        testSubject.updateViewState()
-
-        verify { viewStateObserver.onChanged(defaultViewState.copy(showIsolationPaymentButton = false)) }
-    }
-
-    @Test
-    fun `on update view state should show isolation payment button if can claim isolation payment and there is a token`() {
-        every { canClaimIsolationPayment() } returns true
-        every { isolationPaymentTokenStateProvider.tokenState } returns Token("token")
-
-        testSubject.updateViewState()
-
-        verify { viewStateObserver.onChanged(defaultViewState.copy(showIsolationPaymentButton = true)) }
-    }
-
-    @Test
-    fun `visibility of isolation payment button should update when isolation payment token status changes`() {
-        testSubject.onResume()
-
-        val tokenStateListenerSlot = slot<(IsolationPaymentTokenState) -> Unit>()
-        verify { isolationPaymentTokenStateProvider.addTokenStateListener(capture(tokenStateListenerSlot)) }
-
-        every { canClaimIsolationPayment() } returns true
-        every { isolationPaymentTokenStateProvider.tokenState } returns Unresolved
-
-        testSubject.updateViewState()
-
-        verify { viewStateObserver.onChanged(defaultViewState.copy(showIsolationPaymentButton = false)) }
-
-        val newState = Token("token")
-        every { isolationPaymentTokenStateProvider.tokenState } returns newState
-        tokenStateListenerSlot.captured(newState)
-
-        verify { viewStateObserver.onChanged(defaultViewState.copy(showIsolationPaymentButton = true)) }
     }
 
     @Test
@@ -558,20 +479,13 @@ class StatusViewModelTest {
     }
 
     @Test
-    fun `when isolation payment button tapped selectedIsolationPaymentsButton analytics event added`() {
-        testSubject.optionIsolationPaymentClicked()
-        verify { analyticsEventProcessorMock.track(SelectedIsolationPaymentsButton) }
-    }
-
-    @Test
     fun `updateViewStateAndCheckUserInbox should update view state and fetch from user inbox`() {
-        every { userInbox.fetchInbox() } returns ShowEncounterDetection
+        every { userInbox.fetchInbox() } returns ShowTestResult
 
         testSubject.updateViewStateAndCheckUserInbox()
 
         verify { viewStateObserver.onChanged(defaultViewState) }
         verify { userInbox.fetchInbox() }
-        verify { navigateTo.onChanged(ExposureConsent) }
     }
 
     @Test
@@ -581,8 +495,8 @@ class StatusViewModelTest {
     }
 
     @Test
-    fun `when contactTracingHubAction is set to NAVIGATE_AND_TURN_ON navigates to ContactTracingHub`() {
-        setupTestSubject(contactTracingHubAction = NAVIGATE_AND_TURN_ON)
+    fun `when evaluating navigation with NavigateToContactTracingHub and action NAVIGATE_AND_TURN_ON navigates to ContactTracingHub`() {
+        setupTestSubject(NavigateToContactTracingHub(action = NAVIGATE_AND_TURN_ON))
 
         testSubject.updateViewStateAndCheckUserInbox()
 
@@ -590,8 +504,8 @@ class StatusViewModelTest {
     }
 
     @Test
-    fun `when contactTracingHubAction is set to ONLY_NAVIGATE navigates to ContactTracingHub`() {
-        setupTestSubject(contactTracingHubAction = ONLY_NAVIGATE)
+    fun `when evaluating navigation with NavigateToContactTracingHub and action ONLY_NAVIGATE navigates to ContactTracingHub`() {
+        setupTestSubject(NavigateToContactTracingHub(action = ONLY_NAVIGATE))
 
         testSubject.updateViewStateAndCheckUserInbox()
 
@@ -599,8 +513,8 @@ class StatusViewModelTest {
     }
 
     @Test
-    fun `contactTracingHubAction consumed after first call`() {
-        setupTestSubject(contactTracingHubAction = ONLY_NAVIGATE)
+    fun `NavigateToContactTracingHub consumed after first call`() {
+        setupTestSubject(NavigateToContactTracingHub(action = ONLY_NAVIGATE))
 
         testSubject.updateViewStateAndCheckUserInbox()
 
@@ -612,8 +526,8 @@ class StatusViewModelTest {
     }
 
     @Test
-    fun `when showLocalMessageScreen is set to true navigates to LocalMessages`() {
-        setupTestSubject(contactTracingHubAction = null, showLocalMessageScreen = true)
+    fun `when evaluating navigation with NavigateToLocalMessage set then emit LocalMessage`() {
+        setupTestSubject(NavigateToLocalMessage)
 
         testSubject.updateViewStateAndCheckUserInbox()
 
@@ -622,8 +536,8 @@ class StatusViewModelTest {
     }
 
     @Test
-    fun `showLocalMessageScreen consumed after first call`() {
-        setupTestSubject(contactTracingHubAction = null, showLocalMessageScreen = true)
+    fun `NavigateToLocalMessage consumed after first call`() {
+        setupTestSubject(NavigateToLocalMessage)
 
         testSubject.updateViewStateAndCheckUserInbox()
 
@@ -636,7 +550,7 @@ class StatusViewModelTest {
 
     @Test
     fun `when local message banner is clicked track analytics event DidAccessLocalInfoScreenViaBanner`() {
-        setupTestSubject(contactTracingHubAction = null)
+        setupTestSubject()
 
         testSubject.localMessageBannerClicked()
 
@@ -644,8 +558,8 @@ class StatusViewModelTest {
     }
 
     @Test
-    fun `when startedFromRiskyVenueNotificationWithType is set to BOOK_TEST tracks didAccessRiskyVenueM2Notification once`() {
-        setupTestSubject(contactTracingHubAction = null, startedFromRiskyVenueNotificationWithType = BOOK_TEST)
+    fun `when evaluating navigation with ProcessRiskyVenueAlert and type BOOK_TEST set, tracks didAccessRiskyVenueM2Notification once`() {
+        setupTestSubject(ProcessRiskyVenueAlert(type = BOOK_TEST))
 
         testSubject.updateViewStateAndCheckUserInbox()
 
@@ -658,8 +572,8 @@ class StatusViewModelTest {
     }
 
     @Test
-    fun `when startedFromRiskyVenueNotificationWithType is set to INFORM do nothing`() {
-        setupTestSubject(contactTracingHubAction = null, startedFromRiskyVenueNotificationWithType = INFORM)
+    fun `when evaluating navigation with ProcessRiskyVenueAlert and type INFORM do nothing`() {
+        setupTestSubject(ProcessRiskyVenueAlert(type = INFORM))
 
         testSubject.updateViewStateAndCheckUserInbox()
 
@@ -667,11 +581,113 @@ class StatusViewModelTest {
         verify(exactly = 0) { analyticsEventProcessorMock.track(any()) }
     }
 
-    private fun setupTestSubject(
-        contactTracingHubAction: ContactTracingHubAction?,
-        showLocalMessageScreen: Boolean = false,
-        startedFromRiskyVenueNotificationWithType: RiskyVenueMessageType? = null
-    ) {
+    @Test
+    fun `when evaluating navigation with NavigateToIsolationHub set then emit IsolationHub`() {
+        setupTestSubject(NavigateToIsolationHub)
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        verify { navigateTo.onChanged(IsolationHub) }
+    }
+
+    @Test
+    fun `NavigateToIsolationHub consumed after first call`() {
+        setupTestSubject(NavigateToIsolationHub)
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        verify { navigateTo.onChanged(IsolationHub) }
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        confirmVerified(navigateTo)
+    }
+
+    @Test
+    fun `attempt to start app review flow when entering app review flow is not possible`() {
+        setupTestSubject()
+
+        val activity = mockk<Activity>()
+
+        mockkStatic(ReviewManagerFactory::class)
+
+        coEvery { shouldShowInAppReview() } returns false
+
+        testSubject.attemptToStartAppReviewFlow(activity)
+
+        verify { ReviewManagerFactory.create(any()) wasNot called }
+
+        unmockkStatic(ReviewManagerFactory::class)
+    }
+
+    @Test
+    fun `attempt to start app review flow when entering app review flow is possible`() {
+        setupTestSubject()
+
+        val activity = mockk<Activity>()
+        val reviewManager = mockk<ReviewManager>()
+        val reviewInfoTask = mockk<Task<ReviewInfo>>(relaxed = true)
+
+        mockkStatic(ReviewManagerFactory::class)
+
+        coEvery { shouldShowInAppReview() } returns true
+        every { ReviewManagerFactory.create(activity) } returns reviewManager
+        every { reviewManager.requestReviewFlow() } returns reviewInfoTask
+
+        testSubject.attemptToStartAppReviewFlow(activity)
+
+        verifyOrder {
+            ReviewManagerFactory.create(activity)
+            reviewManager.requestReviewFlow()
+            reviewInfoTask.addOnCompleteListener(any())
+        }
+
+        unmockkStatic(ReviewManagerFactory::class)
+    }
+
+    @Test
+    fun `onActivityResult delegates call to ExposureNotificationPermissionHelper`() {
+        setupTestSubject()
+
+        val expectedRequestCode = 123
+        val expectedResultCode = 456
+        testSubject.onActivityResult(expectedRequestCode, expectedResultCode)
+
+        verify { exposureNotificationPermissionHelper.onActivityResult(expectedRequestCode, expectedResultCode) }
+    }
+
+    @Test
+    fun `when evaluating navigation with StartInAppReview set then emit InAppReview`() {
+        setupTestSubject(StartInAppReview)
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        verify { navigateTo.onChanged(InAppReview) }
+    }
+
+    @Test
+    fun `StartInAppReview consumed after first call`() {
+        setupTestSubject(StartInAppReview)
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        verify { navigateTo.onChanged(InAppReview) }
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        confirmVerified(navigateTo)
+    }
+
+    @Test
+    fun `when evaluating navigation with None set then emit nothing`() {
+        setupTestSubject(None)
+
+        testSubject.updateViewStateAndCheckUserInbox()
+
+        confirmVerified(navigateTo)
+    }
+
+    private fun setupTestSubject(statusActivityAction: StatusActivityAction = None) {
         testSubject = StatusViewModel(
             postCodeProvider,
             postCodeIndicatorProvider,
@@ -681,10 +697,8 @@ class StatusViewModelTest {
             storageBasedUserInbox,
             notificationProvider,
             districtAreaUrlProvider,
-            startAppReviewFlowConstraint,
+            shouldShowInAppReview,
             lastReviewFlowStartedDateProvider,
-            canClaimIsolationPayment,
-            isolationPaymentTokenStateProvider,
             analyticsEventProcessorMock,
             animationsProvider,
             fixedClock,
@@ -692,9 +706,7 @@ class StatusViewModelTest {
             areSystemLevelAnimationsEnabled,
             getLocalMessageFromStorage,
             exposureNotificationPermissionHelperFactory,
-            contactTracingHubAction = contactTracingHubAction,
-            showLocalMessageScreen = showLocalMessageScreen,
-            startedFromRiskyVenueNotificationWithType = startedFromRiskyVenueNotificationWithType,
+            statusActivityAction
         )
 
         testSubject.viewState.observeForever(viewStateObserver)

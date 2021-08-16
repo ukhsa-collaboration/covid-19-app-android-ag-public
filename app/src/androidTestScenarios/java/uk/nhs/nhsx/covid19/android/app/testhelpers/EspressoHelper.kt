@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers
 
 import android.app.Activity
+import android.app.Activity.RESULT_CANCELED
 import android.app.Instrumentation
 import android.content.Context
 import android.content.Intent
@@ -12,6 +13,7 @@ import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.NestedScrollView
@@ -44,6 +46,7 @@ import uk.nhs.nhsx.covid19.android.app.report.config.Orientation
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
 import uk.nhs.nhsx.covid19.android.app.report.isRunningReporterTool
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.context
 import java.util.concurrent.TimeUnit.SECONDS
 import kotlin.test.assertEquals
 
@@ -61,13 +64,29 @@ fun getCurrentActivity(): Activity? {
     return currentActivity
 }
 
+fun assertBrowserIsOpened(@StringRes urResourceId: Int, action: () -> Unit) {
+    val url = context.getString(urResourceId)
+    assertBrowserIsOpened(url, action)
+}
+
 fun assertBrowserIsOpened(url: String, action: () -> Unit) {
     runWithIntents {
         val expectedIntent = CoreMatchers.allOf(
             IntentMatchers.hasAction(Intent.ACTION_VIEW),
             IntentMatchers.hasData(url)
         )
-        Intents.intending(expectedIntent).respondWith(Instrumentation.ActivityResult(0, null))
+        Intents.intending(expectedIntent).respondWith(Instrumentation.ActivityResult(RESULT_CANCELED, null))
+
+        action()
+        Intents.intended(expectedIntent)
+    }
+}
+
+fun assertInternalBrowserIsOpened(url: String, action: () -> Unit) {
+    runWithIntents {
+        val expectedIntent = CoreMatchers.allOf(
+            IntentMatchers.hasData(url)
+        )
 
         action()
         Intents.intended(expectedIntent)
@@ -82,6 +101,8 @@ fun runWithIntents(action: () -> Unit) {
         Intents.release()
     }
 }
+
+fun nestedScrollTo(original: ScrollToAction = ScrollToAction()) = NestedScrollViewScrollToAction(original)
 
 class NestedScrollViewScrollToAction(
     private val original: ScrollToAction = ScrollToAction()

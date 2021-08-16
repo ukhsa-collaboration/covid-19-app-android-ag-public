@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.PollingTestResult
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
@@ -87,6 +88,8 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
         shouldConsentToKeySharing: Boolean = true,
         keySharingSucceeds: Boolean = true
     ) {
+        startTestActivity<MainActivity>()
+
         // Current date: 2nd Jan -> Analytics packet for: 1st Jan
         // Starting state: App running normally, not in isolation
         assertAnalyticsPacketIsNormal()
@@ -209,6 +212,8 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
         testKitType: VirologyTestKitType,
         receivedNegativeTestResultViaPollingMetric: MetricsProperty?
     ) {
+        startTestActivity<MainActivity>()
+
         // Current date: 2nd Jan -> Analytics packet for: 1st Jan
         // Starting state: App running normally, not in isolation
         assertAnalyticsPacketIsNormal()
@@ -289,6 +294,8 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
         testKitType: VirologyTestKitType,
         receivedVoidTestResultViaPollingMetric: MetricsProperty?
     ) {
+        startTestActivity<MainActivity>()
+
         selfDiagnosis.selfDiagnosePositiveAndOrderTest(receiveResultImmediately = false)
 
         assertOnFields {

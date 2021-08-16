@@ -61,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/vertical_margin"
-            android:text="@string/book_free_test" />
+            android:text="@string/venue_alert_m2_take_test_button_title" />
 
         <Button
             android:id="@+id/buttonReturnToHomeScreen"

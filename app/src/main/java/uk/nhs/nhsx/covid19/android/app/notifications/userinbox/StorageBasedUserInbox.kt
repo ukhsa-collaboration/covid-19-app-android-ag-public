@@ -2,7 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.notifications.userinbox
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertStorage
+import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertProvider.Companion.RISKY_VENUE
 import uk.nhs.nhsx.covid19.android.app.testordering.unknownresult.ReceivedUnknownTestResultProvider
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -37,7 +37,7 @@ class StorageBasedUserInbox @Inject constructor(
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if (key == RiskyVenueAlertStorage.RISKY_VENUE_ID ||
+        if (key == RISKY_VENUE ||
             key == ShouldShowEncounterDetectionActivityProvider.SHOULD_SHOW_ENCOUNTER_DETECTION_ACTIVITY ||
             key == ReceivedUnknownTestResultProvider.RECEIVED_UNKNOWN_TEST_RESULT
         ) {

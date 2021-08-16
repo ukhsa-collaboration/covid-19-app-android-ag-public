@@ -1,3 +1,4 @@
+@file:Suppress("DEPRECATION")
 package uk.nhs.nhsx.covid19.android.app.analytics.legacy
 
 import android.app.AlarmManager

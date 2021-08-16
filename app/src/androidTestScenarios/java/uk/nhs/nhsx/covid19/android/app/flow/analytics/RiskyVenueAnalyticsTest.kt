@@ -35,6 +35,8 @@ class RiskyVenueAnalyticsTest : AnalyticsTest() {
     @Test
     fun receiveRiskyVenueWithTypeM1() {
         runBlocking {
+            startTestActivity<MainActivity>()
+
             // Current date: 1st Jan
             // Starting state: App running normally
             assertAnalyticsPacketIsNormal()
@@ -54,6 +56,8 @@ class RiskyVenueAnalyticsTest : AnalyticsTest() {
     @Test
     fun receiveRiskyVenueWithTypeM1AndM2() {
         runBlocking {
+            startTestActivity<MainActivity>()
+
             // Current date: 1st Jan
             // Starting state: App running normally
             assertAnalyticsPacketIsNormal()
@@ -92,6 +96,8 @@ class RiskyVenueAnalyticsTest : AnalyticsTest() {
     @Test
     fun startAppWithPendingM2VenueAlert_takeTestLater_backToHome() {
         runBlocking {
+            startTestActivity<MainActivity>()
+
             assertAnalyticsPacketIsNormal()
 
             testAppContext.getVisitedVenuesStorage().setVisits(listOf(m2VenueVisit))
@@ -110,6 +116,8 @@ class RiskyVenueAnalyticsTest : AnalyticsTest() {
     @Test
     fun startAppWithPendingM2VenueAlert_takeTestNow_hasSymptoms_showsQuestionnaire() {
         runBlocking {
+            startTestActivity<MainActivity>()
+
             assertAnalyticsPacketIsNormal()
 
             testAppContext.getVisitedVenuesStorage().setVisits(listOf(m2VenueVisit))
@@ -130,6 +138,8 @@ class RiskyVenueAnalyticsTest : AnalyticsTest() {
     fun startAppWithPendingM2VenueAlert_takeTestNow_hasNoSymptoms_ordersLfdTest_showsWebsite() {
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
             runBlocking {
+                startTestActivity<MainActivity>()
+
                 assertAnalyticsPacketIsNormal()
 
                 testAppContext.getVisitedVenuesStorage().setVisits(listOf(m2VenueVisit))
@@ -151,6 +161,8 @@ class RiskyVenueAnalyticsTest : AnalyticsTest() {
     @Test
     fun startAppWithPendingM2VenueAlert_takeTestNow_hasNoSymptoms_alreadyHasLfdTests_backToHome() {
         runBlocking {
+            startTestActivity<MainActivity>()
+
             assertAnalyticsPacketIsNormal()
 
             testAppContext.getVisitedVenuesStorage().setVisits(listOf(m2VenueVisit))

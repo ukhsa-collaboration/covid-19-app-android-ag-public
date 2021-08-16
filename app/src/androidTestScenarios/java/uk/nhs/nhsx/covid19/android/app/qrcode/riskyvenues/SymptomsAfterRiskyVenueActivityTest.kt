@@ -21,6 +21,27 @@ class SymptomsAfterRiskyVenueActivityTest : EspressoTest() {
         symptomsAfterRiskyVenueVisitRobot.clickHasSymptomsButton()
 
         questionnaireRobot.checkActivityIsDisplayed()
+
+        questionnaireRobot.clickCloseButton()
+
+        symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    fun whenHasSymptomsIsClicked_thenNavigateToQuestionnaireWhichFails() {
+        testAppContext.executeWhileOffline {
+            startTestActivity<SymptomsAfterRiskyVenueActivity>()
+
+            symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed()
+
+            symptomsAfterRiskyVenueVisitRobot.clickHasSymptomsButton()
+
+            questionnaireRobot.checkErrorStateIsDisplayed()
+
+            questionnaireRobot.clickCloseButton()
+
+            symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed()
+        }
     }
 
     @Test

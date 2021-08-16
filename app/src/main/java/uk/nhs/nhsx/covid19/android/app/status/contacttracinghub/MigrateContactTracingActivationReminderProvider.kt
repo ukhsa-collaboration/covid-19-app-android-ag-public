@@ -1,3 +1,4 @@
+@file:Suppress("DEPRECATION")
 package uk.nhs.nhsx.covid19.android.app.status.contacttracinghub
 
 import uk.nhs.nhsx.covid19.android.app.status.ResumeContactTracingNotificationTimeProvider

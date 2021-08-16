@@ -1,3 +1,4 @@
+@file:Suppress("DEPRECATION")
 package uk.nhs.nhsx.covid19.android.app.exposure
 
 import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration

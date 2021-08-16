@@ -46,12 +46,9 @@ fun updateValues(
     val result = StreamResult(outputFileWriter)
 
     val transformerFactory = TransformerFactory.newInstance()
-//    transformerFactory.setAttribute("indent-number", 10)
     val transformer = transformerFactory.newTransformer()
     transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8")
     transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")
-    transformer.setOutputProperty(OutputKeys.INDENT, "yes")
-//    transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "10")
 
     val source = DOMSource(doc)
 

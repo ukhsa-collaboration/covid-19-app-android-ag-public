@@ -197,6 +197,11 @@ class TestResultRobot(
         onView(withContentDescription(R.string.close)).perform(click())
     }
 
+    fun clickServiceLink() {
+        onView(withId(R.id.isolationRequestOnlineServiceLink))
+            .perform(scrollTo(), click())
+    }
+
     fun checkGoodNewsActionButtonShowsOrderFreeTest() {
         onView(withId(R.id.goodNewsActionButton))
             .check(matches(withText(R.string.book_free_test)))
@@ -406,6 +411,11 @@ class TestResultRobot(
             perform(scrollTo())
             checkDisplayed(true)
         }
+    }
+
+    fun checkOnlineServiceLinkText(@StringRes text: Int) {
+        onView(withId(R.id.isolationRequestOnlineServiceLink))
+            .check(matches(withText(text)))
     }
 
     fun checkIsolationRequestParagraphContainerContains(vararg stringResourceIdList: Int) {

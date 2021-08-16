@@ -18,6 +18,7 @@
     <color name="background">#F0F4F5</color>
     <color name="surface_background">#FFFFFF</color>
     <color name="white">#FFFFFF</color>
+    <color name="accordion_icon">#FFFFFF</color>
     <color name="transparent">#00000000</color>
 
     <!-- status colors -->

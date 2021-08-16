@@ -11,7 +11,6 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestio
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireButDidNotStartIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInReminderScreen
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInTheInitialFlow
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DeclaredNegativeResultFromDct
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaBanner
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessRiskyVenueM2Notification
@@ -27,6 +26,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResul
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.OptedOutForContactIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveLabResultAfterPositiveLFD
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveLabResultAfterPositiveSelfRapidTest
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
@@ -60,7 +60,6 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPL
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_REMINDER_SCREEN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW
-import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DECLARED_NEGATIVE_RESULT_FROM_DCT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_RISKY_VENUE_M2_NOTIFICATION
@@ -75,6 +74,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGAT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_OUTSIDE_TIME_LIMIT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_WITHIN_TIME_LIMIT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.OPTED_OUT_FOR_CONTACT_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_LAB_RESULT_AFTER_POSITIVE_LFD
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_RESULT_RECEIVED
@@ -175,7 +175,6 @@ class AnalyticsEventProcessor @Inject constructor(
         LaunchedTestOrdering -> Event(LAUNCHED_TEST_ORDERING)
         is ExposureWindowsMatched -> ExposureWindowMatched(totalRiskyExposures, totalNonRiskyExposures)
         ReceivedUnconfirmedPositiveTestResult -> Event(RECEIVED_UNCONFIRMED_POSITIVE_TEST_RESULT)
-        DeclaredNegativeResultFromDct -> Event(DECLARED_NEGATIVE_RESULT_FROM_DCT)
         DidHaveSymptomsBeforeReceivedTestResult -> Event(DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT)
         DidRememberOnsetSymptomsDateBeforeReceivedTestResult ->
             Event(DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT)
@@ -209,6 +208,7 @@ class AnalyticsEventProcessor @Inject constructor(
         SelectedHasNoSymptomsM2Journey -> Event(SELECTED_HAS_NO_SYMPTOMS_M2_JOURNEY)
         SelectedLfdTestOrderingM2Journey -> Event(SELECTED_LFD_TEST_ORDERING_M2_JOURNEY)
         SelectedHasLfdTestM2Journey -> Event(SELECTED_HAS_LFD_TEST_M2_JOURNEY)
+        OptedOutForContactIsolation -> Event(OPTED_OUT_FOR_CONTACT_ISOLATION)
     }
 
     private fun updateNetworkStats() = AnalyticsLogItem.UpdateNetworkStats(
@@ -266,5 +266,8 @@ class AnalyticsEventProcessor @Inject constructor(
                 lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk()
 
             isDisplayingLocalInfoBackgroundTick = getLocalMessageFromStorage() != null
+
+            optedOutForContactIsolationBackgroundTick =
+                stateStorage.state.contactCase?.optOutOfContactIsolation != null
         }
 }

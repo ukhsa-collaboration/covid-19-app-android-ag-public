@@ -35,8 +35,10 @@ class ParagraphsContainer @JvmOverloads constructor(
         ).apply {
             val rawText = getString(context, R.styleable.ParagraphsContainer_rawText)
             shouldDisplayBulletPoints = getBoolean(R.styleable.ParagraphsContainer_showBulletPoints, false)
-            val defaultPadding = context.resources.getDimension(R.dimen.paragraph_container_padding_between_items_default).toInt()
-            paddingBetweenItems = getDimensionPixelSize(R.styleable.ParagraphsContainer_paddingBetweenItems, defaultPadding)
+            val defaultPadding =
+                context.resources.getDimension(R.dimen.paragraph_container_padding_between_items_default).toInt()
+            paddingBetweenItems =
+                getDimensionPixelSize(R.styleable.ParagraphsContainer_paddingBetweenItems, defaultPadding)
             setRawText(rawText)
 
             recycle()

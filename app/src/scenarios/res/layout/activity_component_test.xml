@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_toolbar_primary" />
+
+    <ScrollView
+        android:id="@+id/scenarios"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Title4"
+                android:layout_marginHorizontal="10dp"
+                android:text="@string/component_test_title_1"
+                android:layout_marginBottom="@dimen/vertical_margin"/>
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/hasId"
+                app:accordionTitle="@string/accordion_button_test_title_plain_text_with_id"
+                app:accordionContent="@layout/include_test_plain_text"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:accordionExpanded="true"
+                app:accordionTitle="@string/accordion_button_test_title_paragraph_no_bullets"
+                app:accordionContent="@layout/include_test_no_bullet_paragraph"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:accordionTitle="@string/accordion_button_test_title_paragraph_bullets"
+                app:accordionContent="@layout/include_test_bullet_paragraph"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Title2"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                android:layout_marginHorizontal="10dp"
+                android:text="@string/component_test_title_2" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/hasIdAsWell"
+                app:accordionTitle="@string/accordion_button_test_title_inner_components"
+                app:accordionContent="@layout/include_test_complex_components"
+                tools:accordionExpanded="true"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:accordionTitle="@string/accordion_button_test_title_paragraph_no_bullets"
+                app:accordionContent="@layout/include_test_no_bullet_paragraph"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:accordionTitle="@string/accordion_button_test_title_paragraph_bullets"
+                app:accordionContent="@layout/include_test_bullet_paragraph"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                />
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:accordionTitle="@string/accordion_button_test_title_plain_text"
+                app:accordionContent="@layout/include_test_plain_text"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:accordionTitle="@string/accordion_button_test_title_paragraph_no_bullets"
+                app:accordionContent="@layout/include_test_no_bullet_paragraph"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:accordionTitle="@string/accordion_button_test_title_paragraph_bullets"
+                app:accordionContent="@layout/include_test_bullet_paragraph"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                />
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:accordionTitle="@string/accordion_button_test_title_plain_text"
+                app:accordionContent="@layout/include_test_plain_text"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:accordionTitle="@string/accordion_button_test_title_paragraph_no_bullets"
+                app:accordionContent="@layout/include_test_no_bullet_paragraph"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:accordionTitle="@string/accordion_button_test_title_paragraph_bullets"
+                app:accordionContent="@layout/include_test_bullet_paragraph"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

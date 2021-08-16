@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import kotlinx.android.synthetic.main.activity_my_data.dailyContactTestingSection
 import kotlinx.android.synthetic.main.activity_my_data.exposureNotificationSection
 import kotlinx.android.synthetic.main.activity_my_data.lastTestResultSection
 import kotlinx.android.synthetic.main.activity_my_data.noRecordsView
@@ -110,15 +109,10 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
     }
 
     private fun handleIsolationState(isolationViewState: IsolationViewState?) {
-        dailyContactTestingSection.clear()
         selfIsolationSection.clear()
         symptomsInformationSection.clear()
         exposureNotificationSection.clear()
-        if (isolationViewState?.dailyContactTestingOptInDate != null) {
-            dailyContactTestingSection.addItems(
-                dailyContactTestingSectionItem(isolationViewState.dailyContactTestingOptInDate)
-            )
-        }
+
         if (isolationViewState?.lastDayOfIsolation != null) {
             selfIsolationSection.addItems(
                 lastDayOfIsolationDateSectionItem(isolationViewState.lastDayOfIsolation)
@@ -130,14 +124,19 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
             )
         }
         if (isolationViewState?.contactCaseEncounterDate != null) {
+            exposureNotificationSection.addItems(
+                encounterDateSectionItem(isolationViewState.contactCaseEncounterDate)
+            )
             if (isolationViewState.contactCaseNotificationDate != null) {
                 exposureNotificationSection.addItems(
                     exposureNotificationDateSectionItem(isolationViewState.contactCaseNotificationDate)
                 )
             }
-            exposureNotificationSection.addItems(
-                encounterDateSectionItem(isolationViewState.contactCaseEncounterDate)
-            )
+            if (isolationViewState.optOutOfContactIsolationDate != null) {
+                exposureNotificationSection.addItems(
+                    optOutOfContactIsolationDateSectionItem(isolationViewState.optOutOfContactIsolationDate)
+                )
+            }
         }
     }
 
@@ -164,7 +163,6 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
     private fun checkSectionItemOrientation() {
         isFontScalingIncreased().also {
             lastTestResultSection.setSectionItemStackVertically(it)
-            dailyContactTestingSection.setSectionItemStackVertically(it)
             selfIsolationSection.setSectionItemStackVertically(it)
             symptomsInformationSection.setSectionItemStackVertically(it)
             exposureNotificationSection.setSectionItemStackVertically(it)
@@ -195,9 +193,6 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
     private fun followUpStatusSectionItem(status: String) =
         MyDataSectionItem(getString(R.string.about_test_follow_up_status), value = status)
 
-    private fun dailyContactTestingSectionItem(date: LocalDate) =
-        dateSectionItem(getString(R.string.user_data_daily_contact_testing_text), date)
-
     private fun lastDayOfIsolationDateSectionItem(date: LocalDate) =
         dateSectionItem(getString(R.string.about_my_data_last_day_of_isolation), date)
 
@@ -209,6 +204,9 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
 
     private fun encounterDateSectionItem(date: LocalDate) =
         dateSectionItem(getString(R.string.about_encounter_date), date)
+
+    private fun optOutOfContactIsolationDateSectionItem(date: LocalDate) =
+        dateSectionItem(getString(R.string.about_contact_isolation_opt_out_date), date)
 
     private fun riskyVenueSectionItem(date: LocalDate) =
         dateSectionItem(getString(R.string.about_my_data_last_visited), date)

@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveContinueIsolation
@@ -162,6 +163,8 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         isIsolatingForTestedPositiveBackgroundTickMetric: MetricsProperty,
         hasTestedPositiveBackgroundTickMetric: MetricsProperty
     ) {
+        startTestActivity<MainActivity>()
+
         // Current date: 1st Jan
         // Starting state: App running normally, not in isolation
         runBackgroundTasks()
@@ -249,6 +252,8 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         isIsolatingForTestedPositiveBackgroundTickMetric: MetricsProperty,
         hasTestedPositiveBackgroundTickMetric: MetricsProperty
     ) {
+        startTestActivity<MainActivity>()
+
         // Current date: 1st Jan
         // Starting state: App running normally, not in isolation
         runBackgroundTasks()
@@ -351,6 +356,8 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         isIsolatingForTestedPositiveBackgroundTickMetric: MetricsProperty,
         hasTestedPositiveBackgroundTickMetric: MetricsProperty
     ) {
+        startTestActivity<MainActivity>()
+
         // Current date: 1st Jan
         // Starting state: App running normally, not in isolation
         runBackgroundTasks()
@@ -454,6 +461,8 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         isIsolatingForTestedPositiveBackgroundTickMetric: MetricsProperty,
         hasTestedPositiveBackgroundTickMetric: MetricsProperty
     ) {
+        startTestActivity<MainActivity>()
+
         val startDate = testAppContext.clock.instant()
 
         // Current date: 1st Jan
@@ -539,6 +548,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun manuallyEnterNegativeTestResultSetsReceivedNegativeTestResultEnteredManually() {
+        startTestActivity<MainActivity>()
         manualTestResultEntry.enterNegative()
 
         assertOnFields {
@@ -549,6 +559,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun manuallyEnterVoidTestResultSetsReceivedVoidTestResultEnteredManually() {
+        startTestActivity<MainActivity>()
         manualTestResultEntry.enterVoid()
 
         assertOnFields {

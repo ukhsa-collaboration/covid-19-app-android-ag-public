@@ -32,6 +32,7 @@ class IsolationPaymentActivity : BaseActivity(R.layout.activity_isolation_paymen
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_URL_FETCHED) {
+            setResult(RESULT_OK)
             finish()
         }
     }

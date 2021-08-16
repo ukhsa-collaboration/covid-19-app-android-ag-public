@@ -36,8 +36,7 @@ class FetchUserInboxItemTest {
 
     private val unacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>(relaxUnitFun = true)
     private val shouldNotifyStateExpiration = mockk<ShouldNotifyStateExpiration>()
-    private val shouldShowEncounterDetectionActivityProvider =
-        mockk<ShouldShowEncounterDetectionActivityProvider>(relaxUnitFun = true)
+    private val shouldShowEncounterDetection = mockk<ShouldShowEncounterDetection>()
     private val shouldEnterShareKeysFlow = mockk<ShouldEnterShareKeysFlow>()
     private val riskyVenueAlertProvider = mockk<RiskyVenueAlertProvider>(relaxUnitFun = true)
     private val receivedUnknownTestResultProvider = mockk<ReceivedUnknownTestResultProvider>(relaxUnitFun = true)
@@ -45,7 +44,7 @@ class FetchUserInboxItemTest {
     private val fetchUserInboxItem = FetchUserInboxItem(
         unacknowledgedTestResultsProvider,
         shouldNotifyStateExpiration,
-        shouldShowEncounterDetectionActivityProvider,
+        shouldShowEncounterDetection,
         shouldEnterShareKeysFlow,
         riskyVenueAlertProvider,
         receivedUnknownTestResultProvider
@@ -56,7 +55,7 @@ class FetchUserInboxItemTest {
         every { shouldNotifyStateExpiration() } returns DoNotNotify
         every { unacknowledgedTestResultsProvider.testResults } returns listOf()
         every { riskyVenueAlertProvider.riskyVenueAlert } returns null
-        every { shouldShowEncounterDetectionActivityProvider.value } returns null
+        every { shouldShowEncounterDetection() } returns false
         every { shouldEnterShareKeysFlow.invoke() } returns None
         every { receivedUnknownTestResultProvider.value } returns false
     }
@@ -111,10 +110,8 @@ class FetchUserInboxItemTest {
     }
 
     @Test
-    fun `return ShowEncounterDetection if there is no isolation expiration date and there is no unacknowledged result`() {
-        every { shouldNotifyStateExpiration() } returns DoNotNotify
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf()
-        every { shouldShowEncounterDetectionActivityProvider.value } returns true
+    fun `return ShowEncounterDetection if ShouldShowEncounterDetection returns true`() {
+        every { shouldShowEncounterDetection() } returns true
 
         val receivedItem = fetchUserInboxItem()
 
@@ -123,9 +120,6 @@ class FetchUserInboxItemTest {
 
     @Test
     fun `return ContinueInitialKeySharing when ShouldEnterShareKeysFlow returns Initial`() {
-        every { shouldNotifyStateExpiration() } returns DoNotNotify
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf()
-        every { shouldShowEncounterDetectionActivityProvider.value } returns false
         every { shouldEnterShareKeysFlow.invoke() } returns ShouldEnterShareKeysFlowResult.Initial
 
         val receivedItem = fetchUserInboxItem()
@@ -135,9 +129,6 @@ class FetchUserInboxItemTest {
 
     @Test
     fun `return ShowKeySharingReminder when ShouldEnterShareKeysFlow returns Reminder`() {
-        every { shouldNotifyStateExpiration() } returns DoNotNotify
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf()
-        every { shouldShowEncounterDetectionActivityProvider.value } returns false
         every { shouldEnterShareKeysFlow.invoke() } returns ShouldEnterShareKeysFlowResult.Reminder
 
         val receivedItem = fetchUserInboxItem()
@@ -150,9 +141,6 @@ class FetchUserInboxItemTest {
         val riskyVenueAlert = RiskyVenueAlert("ID1", INFORM)
         val showVenueAlert = ShowVenueAlert("ID1", INFORM)
 
-        every { shouldNotifyStateExpiration() } returns DoNotNotify
-        every { unacknowledgedTestResultsProvider.testResults } returns listOf()
-        every { shouldShowEncounterDetectionActivityProvider.value } returns false
         every { riskyVenueAlertProvider.riskyVenueAlert } returns riskyVenueAlert
         every { shouldEnterShareKeysFlow.invoke() } returns None
 

@@ -23,7 +23,7 @@ import javax.inject.Inject
 class FetchUserInboxItem @Inject constructor(
     private val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider,
     private val shouldNotifyStateExpiration: ShouldNotifyStateExpiration,
-    private val shouldShowEncounterDetectionActivityProvider: ShouldShowEncounterDetectionActivityProvider,
+    private val shouldShowEncounterDetection: ShouldShowEncounterDetection,
     private val shouldEnterShareKeysFlow: ShouldEnterShareKeysFlow,
     private val riskyVenueAlertProvider: RiskyVenueAlertProvider,
     private val receivedUnknownTestResultProvider: ReceivedUnknownTestResultProvider
@@ -40,7 +40,7 @@ class FetchUserInboxItem @Inject constructor(
         if (showIsolationExpiration != null) {
             return showIsolationExpiration
         }
-        if (shouldShowEncounterDetectionActivityProvider.value == true) {
+        if (shouldShowEncounterDetection()) {
             return ShowEncounterDetection
         }
         val showVenueAlert = riskyVenueAlertProvider.riskyVenueAlert?.toShowVenueAlert()

@@ -1,53 +1,26 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 
-import com.squareup.moshi.Moshi
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.RiskyVenueConfigurationProvider.Companion.RISKY_VENUE_CONFIGURATION_DURATION_DAYS_KEY
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueConfigurationDurationDays
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTest
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectation
 
-class RiskyVenueConfigurationProviderTest {
+class RiskyVenueConfigurationProviderTest : ProviderTest<RiskyVenueConfigurationProvider, RiskyVenueConfigurationDurationDays>() {
 
-    private val moshi = Moshi.Builder().build()
-
-    private val riskyVenueConfigurationStorage = mockk<RiskyVenueConfigurationStorage>(relaxed = true)
-
-    private val testSubject = RiskyVenueConfigurationProvider(
-        riskyVenueConfigurationStorage,
-        moshi
+    override val getTestSubject = ::RiskyVenueConfigurationProvider
+    override val property = RiskyVenueConfigurationProvider::durationDays
+    override val key = RISKY_VENUE_CONFIGURATION_DURATION_DAYS_KEY
+    override val defaultValue = RiskyVenueConfigurationDurationDays()
+    override val expectations: List<ProviderTestExpectation<RiskyVenueConfigurationDurationDays>> = listOf(
+        ProviderTestExpectation(json = durationDaysJson, objectValue = durationDays)
     )
 
-    @Test
-    fun `verify serialization`() {
-        every { riskyVenueConfigurationStorage.value } returns durationDaysJson
+    companion object {
+        private val durationDays = RiskyVenueConfigurationDurationDays(
+            optionToBookATest = 5
+        )
 
-        val parsedDurationDays = testSubject.durationDays
-
-        kotlin.test.assertEquals(durationDays, parsedDurationDays)
+        private const val durationDaysJson =
+            """{"optionToBookATest":5}"""
     }
-
-    @Test
-    fun `verify deserialization`() {
-
-        testSubject.durationDays = durationDays
-
-        verify { riskyVenueConfigurationStorage.value = durationDaysJson }
-    }
-
-    @Test
-    fun `on exception will return default values`() {
-        every { riskyVenueConfigurationStorage.value } returns """wrong_format"""
-
-        val parsedDurationDays = testSubject.durationDays
-
-        kotlin.test.assertEquals(RiskyVenueConfigurationDurationDays(), parsedDurationDays)
-    }
-
-    private val durationDays = RiskyVenueConfigurationDurationDays(
-        optionToBookATest = 5
-    )
-
-    private val durationDaysJson =
-        """{"optionToBookATest":5}"""
 }

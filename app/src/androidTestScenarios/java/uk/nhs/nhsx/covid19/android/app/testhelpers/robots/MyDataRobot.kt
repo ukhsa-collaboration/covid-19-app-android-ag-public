@@ -108,6 +108,11 @@ class MyDataRobot {
             .check(matches(isDisplayed()))
     }
 
+    fun checkOptOutOfContactIsolationDateIsDisplayed() {
+        onView(withText(R.string.about_contact_isolation_opt_out_date))
+            .check(matches(isDisplayed()))
+    }
+
     fun checkLastDayOfIsolationIsDisplayed() {
         onView(withId(R.id.selfIsolationSection))
             .check(matches(isDisplayed()))
@@ -124,20 +129,6 @@ class MyDataRobot {
         onView(withId(R.id.selfIsolationSection))
             .check(matches(not(isDisplayed())))
         onView(withText(R.string.about_my_data_last_day_of_isolation))
-            .check(doesNotExist())
-    }
-
-    fun checkDailyContactTestingOptInDateIsDisplayed() {
-        onView(withId(R.id.dailyContactTestingSection))
-            .check(matches(isDisplayed()))
-        onView(withText(R.string.user_data_daily_contact_testing_text))
-            .check(matches(isDisplayed()))
-    }
-
-    fun checkDailyContactTestingOptInDateIsNotDisplayed() {
-        onView(withId(R.id.dailyContactTestingSection))
-            .check(matches(not(isDisplayed())))
-        onView(withText(R.string.user_data_daily_contact_testing_text))
             .check(doesNotExist())
     }
 

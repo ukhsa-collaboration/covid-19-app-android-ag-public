@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
 import android.content.Context
+import android.content.Intent
 import android.util.Base64
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
@@ -8,6 +9,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Status
+import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
+import com.google.android.gms.nearby.exposurenotification.ExposureWindow
+import com.google.android.gms.nearby.exposurenotification.Infectiousness
+import com.google.android.gms.nearby.exposurenotification.ScanInstance.Builder
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey.TemporaryExposureKeyBuilder
 import kotlinx.coroutines.delay
@@ -15,12 +20,15 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalyticsAlarmController
 import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
+import uk.nhs.nhsx.covid19.android.app.app
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
 import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.di.ApplicationClock
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfo
+import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfoProvider
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationBroadcastReceiver
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.HasSuccessfullyProcessedNewExposureProvider
 import uk.nhs.nhsx.covid19.android.app.fieldtests.utils.KeyFileWriter
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlert
@@ -74,8 +82,10 @@ class DebugViewModel @Inject constructor(
     private val submitAnalyticsAlarmController: SubmitAnalyticsAlarmController,
     private val exposureCircuitBreakerInfoProvider: ExposureCircuitBreakerInfoProvider,
     private val receivedUnknownTestResultProvider: ReceivedUnknownTestResultProvider,
+    private val hasSuccessfullyProcessedNewExposureProvider: HasSuccessfullyProcessedNewExposureProvider,
     private val clock: Clock,
     private val dateChangeReceiver: DateChangeReceiver,
+    private val context: Context
 ) : ViewModel() {
 
     val exposureKeysResult = SingleLiveEvent<ExportToFileResult>()
@@ -257,17 +267,31 @@ class DebugViewModel @Inject constructor(
     }
 
     fun sendExposureNotification() {
-        exposureCircuitBreakerInfoProvider.add(
-            ExposureCircuitBreakerInfo(
-                maximumRiskScore = 101.0,
-                startOfDayMillis = Instant.now().minus(1, ChronoUnit.DAYS).toEpochMilli(),
-                matchedKeyCount = 1,
-                riskCalculationVersion = 2,
-                exposureNotificationDate = Instant.now().toEpochMilli(),
-                approvalToken = null
-            )
-        )
+        if (exposureNotificationApi is MockExposureNotificationApi) {
+            val exposureWindow = ExposureWindow.Builder()
+                .setDateMillisSinceEpoch(Instant.now(clock).minus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).toEpochMilli())
+                .setInfectiousness(Infectiousness.HIGH)
+                .setScanInstances(
+                    listOf(
+                        Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build(),
+                        Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build(),
+                        Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build(),
+                        Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build(),
+                        Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build(),
+                        Builder().setMinAttenuationDb(40).setSecondsSinceLastScan(240).build()
+                    )
+                )
+                .build()
+            exposureNotificationApi.mockExposureWindows = listOf(exposureWindow)
+        }
+        sendExposureStateUpdatedBroadcast()
         startDownloadTask()
+    }
+
+    fun sendExposureStateUpdatedBroadcast() {
+        val intent = Intent(ExposureNotificationClient.ACTION_EXPOSURE_STATE_UPDATED)
+        val broadcastReceiver = ExposureNotificationBroadcastReceiver()
+        broadcastReceiver.onReceive(context.app, intent)
     }
 
     fun decodeObject(temporaryTracingKey: NHSTemporaryExposureKey): TemporaryExposureKey {

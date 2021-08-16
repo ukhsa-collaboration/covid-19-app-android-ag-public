@@ -11,6 +11,9 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvi
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenSelfAssessmentNoImpactOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoIsolationSymptomAdvice.NoSymptoms
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.QuestionnaireIsolationHandler.SymptomsSelectionOutcome.CardinalSymptomsSelected
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.QuestionnaireIsolationHandler.SymptomsSelectionOutcome.NoSymptomsSelected
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.QuestionnaireIsolationHandler.SymptomsSelectionOutcome.OnlyNonCardinalSymptomsSelected
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -29,25 +32,42 @@ class QuestionnaireIsolationHandler @Inject constructor(
         selectedSymptoms: List<Symptom>,
         onsetDate: SelectedDate
     ): SymptomAdvice {
-        val isolationState = isolationStateMachine.readLogicalState()
-        val doesUserHaveCoronaVirusSymptoms = riskCalculator.isRiskAboveThreshold(selectedSymptoms, riskThreshold)
+        val symptomsSelectionOutcome = calculateSymptomsSelectionOutcome(selectedSymptoms, riskThreshold)
 
+        val isolationState = isolationStateMachine.readLogicalState()
         return if (isolationState.hasActivePositiveTestResult(clock)) {
-            symptomAdviceWhenIsolatingDueToPositiveTestResult(doesUserHaveCoronaVirusSymptoms, onsetDate)
+            symptomAdviceWhenIsolatingDueToPositiveTestResult(symptomsSelectionOutcome, onsetDate)
         } else {
-            symptomAdviceWhenNotIsolatingDueToPositiveTestResult(doesUserHaveCoronaVirusSymptoms, onsetDate)
+            symptomAdviceWhenNotIsolatingDueToPositiveTestResult(symptomsSelectionOutcome, onsetDate)
+        }
+    }
+
+    private fun calculateSymptomsSelectionOutcome(
+        selectedSymptoms: List<Symptom>,
+        riskThreshold: Float
+    ): SymptomsSelectionOutcome {
+        val noSymptomsSelected = selectedSymptoms.isEmpty()
+        return when {
+            noSymptomsSelected -> NoSymptomsSelected
+            riskCalculator.isRiskAboveThreshold(selectedSymptoms, riskThreshold) -> CardinalSymptomsSelected
+            else -> OnlyNonCardinalSymptomsSelected
         }
     }
 
     private fun symptomAdviceWhenNotIsolatingDueToPositiveTestResult(
-        hasSymptoms: Boolean,
+        symptomsSelectionOutcome: SymptomsSelectionOutcome,
         onsetDate: SelectedDate
     ): SymptomAdvice {
-        if (hasSymptoms) {
-            isolationStateMachine.processEvent(OnPositiveSelfAssessment(onsetDate))
-            analyticsEventProcessor.track(CompletedQuestionnaireAndStartedIsolation)
-        } else {
-            analyticsEventProcessor.track(CompletedQuestionnaireButDidNotStartIsolation)
+        when (symptomsSelectionOutcome) {
+            CardinalSymptomsSelected -> {
+                isolationStateMachine.processEvent(OnPositiveSelfAssessment(onsetDate))
+                analyticsEventProcessor.track(CompletedQuestionnaireAndStartedIsolation)
+            }
+            OnlyNonCardinalSymptomsSelected -> {
+                analyticsEventProcessor.track(CompletedQuestionnaireButDidNotStartIsolation)
+            }
+            NoSymptomsSelected -> {
+            }
         }
 
         val isolationState = isolationStateMachine.readLogicalState()
@@ -67,23 +87,32 @@ class QuestionnaireIsolationHandler @Inject constructor(
     }
 
     private fun symptomAdviceWhenIsolatingDueToPositiveTestResult(
-        hasSymptoms: Boolean,
+        symptomsSelectionOutcome: SymptomsSelectionOutcome,
         onsetDate: SelectedDate
     ): SymptomAdvice {
-        return if (hasSymptoms) {
-            isolationStateMachine.processEvent(OnPositiveSelfAssessment(onsetDate))
+        return when (symptomsSelectionOutcome) {
+            CardinalSymptomsSelected -> {
+                isolationStateMachine.processEvent(OnPositiveSelfAssessment(onsetDate))
 
-            val isolationState = isolationStateMachine.readLogicalState()
+                val isolationState = isolationStateMachine.readLogicalState()
 
-            val selfAssessmentStored =
-                (isolationState as? PossiblyIsolating)?.remembersIndexCaseWithSelfAssessment() == true
+                val selfAssessmentStored =
+                    (isolationState as? PossiblyIsolating)?.remembersIndexCaseWithSelfAssessment() == true
 
-            if (selfAssessmentStored) {
-                IndexCaseThenHasSymptomsDidUpdateIsolation(isolationStateMachine.remainingDaysInIsolation().toInt())
-            } else {
-                IndexCaseThenHasSymptomsNoEffectOnIsolation
+                if (selfAssessmentStored) {
+                    IndexCaseThenHasSymptomsDidUpdateIsolation(isolationStateMachine.remainingDaysInIsolation().toInt())
+                } else {
+                    IndexCaseThenHasSymptomsNoEffectOnIsolation
+                }
             }
-        } else IndexCaseThenNoSymptoms
+            NoSymptomsSelected, OnlyNonCardinalSymptomsSelected -> IndexCaseThenNoSymptoms
+        }
+    }
+
+    sealed class SymptomsSelectionOutcome {
+        object NoSymptomsSelected : SymptomsSelectionOutcome()
+        object CardinalSymptomsSelected : SymptomsSelectionOutcome()
+        object OnlyNonCardinalSymptomsSelected : SymptomsSelectionOutcome()
     }
 }
 

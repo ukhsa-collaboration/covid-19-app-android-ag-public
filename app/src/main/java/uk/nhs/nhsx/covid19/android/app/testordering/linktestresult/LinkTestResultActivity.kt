@@ -1,15 +1,10 @@
 package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.activity_link_test_result.dailyContactTestingContainer
-import kotlinx.android.synthetic.main.activity_link_test_result.dailyContactTestingNegativeResultConfirmationCheckBox
-import kotlinx.android.synthetic.main.activity_link_test_result.dailyContactTestingNegativeResultConfirmationContainer
 import kotlinx.android.synthetic.main.activity_link_test_result.inputErrorView
 import kotlinx.android.synthetic.main.activity_link_test_result.linkTestResultContinue
 import kotlinx.android.synthetic.main.activity_link_test_result.linkTestResultEnterCodeView
@@ -21,16 +16,13 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError
-import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.BOTH_PROVIDED
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.INVALID
-import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.NEITHER_PROVIDED
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.NO_CONNECTION
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.UNEXPECTED
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultState
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
 class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) {
@@ -69,34 +61,16 @@ class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) 
         viewModel.fetchInitialViewState()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == DAILY_CONTACT_TESTING_REQUEST && resultCode == RESULT_OK) {
-            setResult(RESULT_OK)
-            finish()
-        }
-    }
-
     private fun setupOnClickListeners() {
         linkTestResultContinue.setOnSingleClickListener {
             clearErrors()
             viewModel.onContinueButtonClicked()
-        }
-
-        dailyContactTestingNegativeResultConfirmationContainer.setOnSingleClickListener {
-            viewModel.onDailyContactTestingOptInChecked()
         }
     }
 
     private fun startListeningToViewState() {
         viewModel.viewState().observe(this) {
             renderViewState(it)
-        }
-
-        viewModel.confirmedDailyContactTestingNegative().observe(this) {
-            val intent = Intent(this, DailyContactTestingConfirmationActivity::class.java)
-            startActivityForResult(intent, DAILY_CONTACT_TESTING_REQUEST)
         }
 
         viewModel.validationOnsetDateNeeded().observe(this) { testResult ->
@@ -112,16 +86,6 @@ class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) 
     }
 
     private fun renderViewState(viewState: LinkTestResultState) {
-        dailyContactTestingContainer.isVisible = viewState.showDailyContactTesting
-
-        dailyContactTestingNegativeResultConfirmationCheckBox.isChecked =
-            viewState.confirmedNegativeDailyContactTestingResult
-
-        dailyContactTestingNegativeResultConfirmationContainer.background =
-            if (viewState.confirmedNegativeDailyContactTestingResult) {
-                getDrawable(R.drawable.question_selected_background)
-            } else getDrawable(R.drawable.question_not_selected_background)
-
         if (viewState.showValidationProgress) {
             linkTestResultEnterCodeView.handleProgress()
             linkTestResultContinue.isEnabled = false
@@ -132,7 +96,6 @@ class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) 
             if (errorState.updated) {
                 when (errorState.error) {
                     INVALID, NO_CONNECTION, UNEXPECTED -> scrollToValidationError()
-                    NEITHER_PROVIDED, BOTH_PROVIDED -> scrollToInputError()
                 }
             }
         }
@@ -143,8 +106,6 @@ class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) 
             INVALID -> handleValidationError(getString(R.string.valid_auth_code_is_required))
             NO_CONNECTION -> handleValidationError(getString(R.string.link_test_result_error_no_connection))
             UNEXPECTED -> handleValidationError(getString(R.string.link_test_result_error_unknown))
-            NEITHER_PROVIDED -> handleInputError(getString(R.string.link_test_result_error_neither_input_provided))
-            BOTH_PROVIDED -> handleInputError(getString(R.string.link_test_result_error_both_inputs_provided))
         }
     }
 
@@ -159,23 +120,8 @@ class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) 
         linkTestResultScrollView.smoothScrollTo(0, linkTestResultEnterCodeView.top)
     }
 
-    private fun handleInputError(inputError: String) {
-        linkTestResultEnterCodeView.resetState()
-        inputErrorView.announceForAccessibility("${inputErrorView.errorTitle} $inputError")
-        inputErrorView.errorDescription = inputError
-        inputErrorView.visible()
-    }
-
-    private fun scrollToInputError() {
-        linkTestResultScrollView.smoothScrollTo(0, 0)
-    }
-
     private fun clearErrors() {
         linkTestResultEnterCodeView.resetState()
         inputErrorView.gone()
-    }
-
-    companion object {
-        private const val DAILY_CONTACT_TESTING_REQUEST = 1398
     }
 }

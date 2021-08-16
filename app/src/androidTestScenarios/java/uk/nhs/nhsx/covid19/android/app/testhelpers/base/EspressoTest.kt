@@ -28,9 +28,9 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 import uk.nhs.nhsx.covid19.android.app.util.ScreenshotTakingRule
 
 @RunWith(AndroidJUnit4::class)
-abstract class EspressoTest {
+abstract class EspressoTest : HasTestAppContext {
 
-    var testAppContext: TestApplicationContext = TestApplicationContext()
+    final override val testAppContext: TestApplicationContext = TestApplicationContext()
 
     open val configuration: TestConfiguration? = null
 

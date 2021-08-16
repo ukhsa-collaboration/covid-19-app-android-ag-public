@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.testordering.lfd
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.annotation.StringRes
 import kotlinx.android.synthetic.main.activity_order_lfd_test.alreadyHaveTestKitButton
 import kotlinx.android.synthetic.main.activity_order_lfd_test.orderTestButton
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
@@ -59,7 +60,7 @@ class OrderLfdTestActivity : BaseActivity(R.layout.activity_order_lfd_test) {
         }
     }
 
-    private fun handleOrderTest(urlId: Int) {
+    private fun handleOrderTest(@StringRes urlId: Int) {
         openInExternalBrowserForResult(getString(urlId), REQUEST_ORDER_TEST)
     }
 

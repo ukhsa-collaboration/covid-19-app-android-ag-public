@@ -4,31 +4,27 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.activity_testing_hub.itemBookTest
 import kotlinx.android.synthetic.main.activity_testing_hub.itemEnterTestResult
-import kotlinx.android.synthetic.main.activity_testing_hub.itemFindOutAboutTesting
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.BookATest
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.Finish
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.SymptomsAfterRiskyVenue
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.SymptomsAfterRiskyVenueActivity
-import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.ShowFindOutAboutTesting
-import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.ShowFindOutAboutTesting.DoNotShow
-import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.ShowFindOutAboutTesting.Show
-import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.ViewState
+import uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView.NavigationItemAttributes
+import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.BookTestButtonState
+import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.BookTestButtonState.LfdTest
+import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.BookTestButtonState.PcrTest
+import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.NavigationTarget
+import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.NavigationTarget.BookPcrTest
+import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.NavigationTarget.OrderLfdTest
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity.Companion.REQUEST_CODE_ORDER_A_TEST
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.openInExternalBrowserForResult
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
 class TestingHubActivity : BaseActivity(R.layout.activity_testing_hub) {
@@ -63,48 +59,56 @@ class TestingHubActivity : BaseActivity(R.layout.activity_testing_hub) {
     }
 
     private fun setUpViewModelListeners() {
-        viewModel.viewState().observe(this) {
-            renderViewState(it)
+        viewModel.viewState().observe(this) { viewState ->
+            handleBookTestButtonState(viewState.bookTestButtonState)
         }
 
         viewModel.navigationTarget().observe(this) { navigationTarget ->
             when (navigationTarget) {
-                BookATest -> startActivityForResult(
-                    TestOrderingActivity.getIntent(this),
-                    REQUEST_CODE_ORDER_A_TEST
-                )
-                SymptomsAfterRiskyVenue -> SymptomsAfterRiskyVenueActivity.start(
-                    this,
-                    shouldShowCancelConfirmationDialogOnCancelButtonClick = false
-                )
-                Finish -> finish()
-            }
-        }
-    }
-
-    private fun renderViewState(viewState: ViewState) {
-        itemBookTest.isVisible = viewState.showBookTestButton
-        handleFindOutAboutTesting(viewState.showFindOutAboutTestingButton)
-    }
-
-    private fun handleFindOutAboutTesting(showFindOutAboutTesting: ShowFindOutAboutTesting) {
-        when (showFindOutAboutTesting) {
-            is Show -> {
-                itemFindOutAboutTesting.visible()
-                itemFindOutAboutTesting.setOnSingleClickListener {
-                    openUrl(showFindOutAboutTesting.urlResId, useInternalBrowser = true)
+                BookPcrTest ->
+                    startActivityForResult(
+                        TestOrderingActivity.getIntent(this),
+                        REQUEST_CODE_ORDER_A_TEST
+                    )
+                is OrderLfdTest -> {
+                    openInExternalBrowserForResult(getString(navigationTarget.urlResId))
                     finish()
                 }
+                NavigationTarget.SymptomsAfterRiskyVenue ->
+                    SymptomsAfterRiskyVenueActivity.start(
+                        this,
+                        shouldShowCancelConfirmationDialogOnCancelButtonClick = false
+                    )
             }
-            DoNotShow -> itemFindOutAboutTesting.gone()
         }
+    }
+
+    private fun handleBookTestButtonState(buttonState: BookTestButtonState) {
+        when (buttonState) {
+            PcrTest -> handlePcrTestButtonState()
+            LfdTest -> handleLfdTestButtonState()
+        }
+    }
+
+    private fun handlePcrTestButtonState() {
+        itemBookTest.attributes = NavigationItemAttributes(
+            isExternalLink = false,
+            title = getString(R.string.testing_hub_book_test_title),
+            description = getString(R.string.testing_hub_book_test_description)
+        )
+        itemBookTest.setOnSingleClickListener { viewModel.onBookPcrTestClicked() }
+    }
+
+    private fun handleLfdTestButtonState() {
+        itemBookTest.attributes = NavigationItemAttributes(
+            isExternalLink = true,
+            title = getString(R.string.testing_hub_book_lfd_test_title),
+            description = getString(R.string.testing_hub_book_lfd_test_description)
+        )
+        itemBookTest.setOnSingleClickListener { viewModel.onOrderLfdTestClicked() }
     }
 
     private fun setUpOnClickListeners() {
-        itemBookTest.setOnSingleClickListener {
-            viewModel.onBookATestClicked()
-        }
-
         itemEnterTestResult.setOnSingleClickListener {
             val intent = Intent(this, LinkTestResultActivity::class.java)
             startActivityForResult(intent, REQUEST_CODE_ENTER_TEST_RESULT)

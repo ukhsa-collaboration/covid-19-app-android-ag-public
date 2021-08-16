@@ -5,14 +5,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jeroenmols.featureflag.framework.FeatureFlag.NEW_NO_SYMPTOMS_SCREEN
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.common.Lce
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.QuestionnaireIsolationHandler
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomAdvice
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
-import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.NoSymptoms
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.AdviceScreen
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.NewNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.ReviewSymptoms
-import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.SymptomsAdviceForIndexCaseThenNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import java.time.Clock
@@ -20,6 +25,7 @@ import javax.inject.Inject
 
 class QuestionnaireViewModel @Inject constructor(
     private val loadQuestionnaire: LoadQuestionnaire,
+    private val questionnaireIsolationHandler: QuestionnaireIsolationHandler,
     private val isolationStateMachine: IsolationStateMachine,
     private val clock: Clock
 ) : ViewModel() {
@@ -48,7 +54,7 @@ class QuestionnaireViewModel @Inject constructor(
                         result.value.riskThreshold,
                         result.value.symptomsOnsetWindowDays,
                         showError = false,
-                        showDialog = false
+                        showDialog = false,
                     )
                     viewState.postValue(Lce.Success(state))
                 }
@@ -71,8 +77,7 @@ class QuestionnaireViewModel @Inject constructor(
                 question
             }
         }
-        val updatedViewState =
-            currentViewState.copy(questions = updatedQuestions, showError = false)
+        val updatedViewState = currentViewState.copy(questions = updatedQuestions, showError = false)
         viewState.postValue(Lce.Success(updatedViewState))
     }
 
@@ -92,19 +97,25 @@ class QuestionnaireViewModel @Inject constructor(
     }
 
     fun onNoSymptomsClicked() {
-        updateShowDialogState(true)
+        updateShowDialogState(showDialog = true)
     }
 
     fun onNoSymptomsConfirmed() {
-        val isolationState = isolationStateMachine.readLogicalState()
-
-        val target = if (isolationState.hasActivePositiveTestResult(clock)) {
-            SymptomsAdviceForIndexCaseThenNoSymptoms
+        if (shouldShowNewNoSymptomsScreen()) {
+            navigationTarget.postValue(NewNoSymptoms)
         } else {
-            NoSymptoms
+            val noSymptomsAdvice = questionnaireIsolationHandler.computeAdvice(
+                riskThreshold = Float.MAX_VALUE,
+                selectedSymptoms = emptyList(),
+                onsetDate = SelectedDate.NotStated
+            )
+            navigationTarget.postValue(AdviceScreen(noSymptomsAdvice))
         }
-        navigationTarget.postValue(target)
     }
+
+    private fun shouldShowNewNoSymptomsScreen() =
+        RuntimeBehavior.isFeatureEnabled(NEW_NO_SYMPTOMS_SCREEN) &&
+                !isolationStateMachine.readLogicalState().isActiveIsolation(clock)
 
     fun onNoSymptomsDialogDismissed() {
         updateShowDialogState(false)
@@ -124,8 +135,8 @@ sealed class NavigationTarget {
         val symptomsOnsetWindowDays: Int
     ) : NavigationTarget()
 
-    object SymptomsAdviceForIndexCaseThenNoSymptoms : NavigationTarget()
-    object NoSymptoms : NavigationTarget()
+    data class AdviceScreen(val symptomAdvice: SymptomAdvice) : NavigationTarget()
+    object NewNoSymptoms : NavigationTarget()
 }
 
 data class QuestionnaireState(
@@ -133,5 +144,5 @@ data class QuestionnaireState(
     val riskThreshold: Float,
     val symptomsOnsetWindowDays: Int,
     val showError: Boolean,
-    val showDialog: Boolean
+    val showDialog: Boolean,
 )

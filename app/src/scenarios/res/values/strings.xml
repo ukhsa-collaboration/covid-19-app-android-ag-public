@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="field_tests" translatable="false">Field Tests</string>
-    <string name="show_string_ids">Show String Ids</string>
+    <string name="show_string_ids" translatable="false">Show String Ids</string>
+    <string name="component_test_screen_title" translatable="false">Component Test Screen</string>
+    <string name="analytics_report_title_items" translatable="false">Analytics Report: Raw Items</string>
+    <string name="analytics_report_title_payload" translatable="false">Analytics Report: Payload</string>
+    <string name="component_test_title_1" translatable="false">Test Accordion Section 1</string>
+    <string name="component_test_title_2" translatable="false">Test Accordion Section 2</string>
+    <string name="accordion_button_test_title_plain_text_with_id" translatable="false">Plain text content (has id)</string>
+    <string name="accordion_button_test_title_plain_text" translatable="false">Plain text content</string>
+    <string name="accordion_button_test_title_paragraph_bullets" translatable="false">Paragraph with bullets</string>
+    <string name="accordion_button_test_title_paragraph_no_bullets" translatable="false">Paragraph with no bullets, long title example: Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt, explicabo</string>
+    <string name="accordion_button_test_title_inner_components" translatable="false">Subview with inner controls and id</string>
 </resources>

@@ -19,10 +19,9 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.BookATest
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.Finish
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.SymptomsAfterRiskyVenue
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.NavigationTarget
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.NavigationTarget.BookTest
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.NavigationTarget.Finish
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.ViewState
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.ViewState.KnownVisit
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.ViewState.UnknownVisit
@@ -93,27 +92,31 @@ class VenueAlertBookTestViewModelTest {
 
     @Test
     fun `navigation target is book a test`() {
-        every { evaluateVenueAlertNavigation.invoke() } returns BookATest
+        every { evaluateVenueAlertNavigation.invoke() } returns EvaluateVenueAlertNavigation.NavigationTarget.BookATest
 
         testSubject.onBookATestClicked()
 
         verifyOrder {
             analyticsEventProcessor.track(SelectedTakeTestM2Journey)
             riskyVenueAlertProvider setProperty "riskyVenueAlert" value null
-            navigationEventObserver.onChanged(BookATest)
+            navigationEventObserver.onChanged(
+                BookTest(navigationTarget = EvaluateVenueAlertNavigation.NavigationTarget.BookATest)
+            )
         }
     }
 
     @Test
     fun `navigation target is SymptomsAfterRiskyVenue`() {
-        every { evaluateVenueAlertNavigation.invoke() } returns SymptomsAfterRiskyVenue
+        every { evaluateVenueAlertNavigation.invoke() } returns EvaluateVenueAlertNavigation.NavigationTarget.SymptomsAfterRiskyVenue
 
         testSubject.onBookATestClicked()
 
         verifyOrder {
             analyticsEventProcessor.track(SelectedTakeTestM2Journey)
             riskyVenueAlertProvider setProperty "riskyVenueAlert" value null
-            navigationEventObserver.onChanged(SymptomsAfterRiskyVenue)
+            navigationEventObserver.onChanged(
+                BookTest(navigationTarget = EvaluateVenueAlertNavigation.NavigationTarget.SymptomsAfterRiskyVenue)
+            )
         }
     }
 

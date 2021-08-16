@@ -1,13 +1,19 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
 import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockTestResultViewModel
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
+import uk.nhs.nhsx.covid19.android.app.testhelpers.assertInternalBrowserIsOpened
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.ShareKeys
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
@@ -26,6 +32,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidWill
 class TestResultActivityStateTest : EspressoTest() {
     val context = testAppContext.app
     private val testResultRobot = TestResultRobot(context)
+    private val browserRobot = BrowserRobot()
 
     private fun getString(resourceId: Int): String =
         context.resources.getString(resourceId)
@@ -51,12 +58,12 @@ class TestResultActivityStateTest : EspressoTest() {
     private fun checkGoodNewsState(
         state: TestResultViewState,
         hasCloseToolbar: Boolean,
-        iconDrawableRes: Int?,
-        titleStringResource: Int = -1,
-        subtitleStringResource: Int,
-        actionButtonStringResource: Int,
-        vararg paragraphResources: Int,
-        goodNewsInfoStringResource: Int,
+        @DrawableRes iconDrawableRes: Int?,
+        @StringRes titleStringResource: Int = -1,
+        @StringRes subtitleStringResource: Int,
+        @StringRes actionButtonStringResource: Int,
+        @StringRes vararg paragraphResources: Int,
+        @StringRes goodNewsInfoStringResource: Int,
         hasGoodNewsLink: Boolean
 
     ) {
@@ -88,15 +95,17 @@ class TestResultActivityStateTest : EspressoTest() {
         state: TestResultViewState,
         days: Int,
         hasCloseToolbar: Boolean,
-        iconDrawableRes: Int,
-        isolationRequestInfoStringResource: Int,
-        isolationRequestInfoColorResource: Int,
-        title1: Int,
+        @DrawableRes iconDrawableRes: Int,
+        @StringRes isolationRequestInfoStringResource: Int,
+        @StringRes isolationRequestInfoColorResource: Int,
+        @StringRes title1: Int,
         title3Visible: Boolean,
-        title3: Int = -1,
-        actionButtonStringResource: Int,
+        @StringRes title3: Int = -1,
+        @StringRes actionButtonStringResource: Int,
         exposureLinksVisible: Boolean,
-        vararg paragraphResources: Int
+        @StringRes onlineServiceLinkText: Int,
+        @StringRes onlineServiceLinkUrl: Int,
+        @StringRes vararg paragraphResources: Int
     ) {
         setState(state, days)
 
@@ -132,6 +141,17 @@ class TestResultActivityStateTest : EspressoTest() {
 
             if (exposureLinksVisible) checkExposureFaqsLinkVisible()
             else checkExposureFaqsLinkNotVisible()
+
+            checkOnlineServiceLinkText(onlineServiceLinkText)
+
+            runWithFeatureEnabled(USE_WEB_VIEW_FOR_INTERNAL_BROWSER) {
+                assertInternalBrowserIsOpened(getString(onlineServiceLinkUrl)) {
+                    clickServiceLink()
+                    waitFor { browserRobot.checkActivityIsDisplayed() }
+                    browserRobot.clickCloseButton()
+                }
+            }
+
             checkIsolationRequestActionButton(actionButtonStringResource)
         }
     }
@@ -163,7 +183,9 @@ class TestResultActivityStateTest : EspressoTest() {
             title1 = R.string.test_result_positive_continue_self_isolation_title_1,
             actionButtonStringResource = R.string.back_to_home,
             title3Visible = false,
-            exposureLinksVisible = false
+            exposureLinksVisible = false,
+            onlineServiceLinkText = R.string.test_result_negative_continue_self_isolate_nhs_guidance_label,
+            onlineServiceLinkUrl = R.string.url_nhs_guidance
         )
     }
 
@@ -172,7 +194,7 @@ class TestResultActivityStateTest : EspressoTest() {
         checkGoodNewsState(
             state = NegativeWontBeInIsolation,
             hasCloseToolbar = false,
-            iconDrawableRes = R.drawable.ic_isolation_negative_or_finished,
+            iconDrawableRes = R.drawable.ic_isolation_expired_or_over,
             titleStringResource = R.string.expiration_notification_title,
             subtitleStringResource = R.string.test_result_negative_no_self_isolation_subtitle_text,
             actionButtonStringResource = R.string.continue_button,
@@ -195,6 +217,8 @@ class TestResultActivityStateTest : EspressoTest() {
             title3Visible = false,
             actionButtonStringResource = R.string.continue_button,
             exposureLinksVisible = true,
+            onlineServiceLinkText = R.string.nhs_111_online_service,
+            onlineServiceLinkUrl = R.string.url_nhs_111_online,
             paragraphResources = intArrayOf(
                 R.string.test_result_positive_continue_self_isolate_explanation_1,
                 R.string.test_result_positive_continue_self_isolate_explanation_2,
@@ -216,6 +240,8 @@ class TestResultActivityStateTest : EspressoTest() {
             title3Visible = false,
             actionButtonStringResource = R.string.continue_button,
             exposureLinksVisible = true,
+            onlineServiceLinkText = R.string.nhs_111_online_service,
+            onlineServiceLinkUrl = R.string.url_nhs_111_online,
             paragraphResources = intArrayOf(R.string.test_result_positive_continue_self_isolate_no_change_explanation_1)
         )
     }
@@ -233,6 +259,8 @@ class TestResultActivityStateTest : EspressoTest() {
             title3Visible = false,
             actionButtonStringResource = R.string.continue_button,
             exposureLinksVisible = true,
+            onlineServiceLinkText = R.string.nhs_111_online_service,
+            onlineServiceLinkUrl = R.string.url_nhs_111_online,
             paragraphResources = intArrayOf(
                 R.string.test_result_negative_then_positive_continue_explanation,
                 R.string.exposure_faqs_title
@@ -268,6 +296,8 @@ class TestResultActivityStateTest : EspressoTest() {
             title3Visible = false,
             actionButtonStringResource = R.string.continue_button,
             exposureLinksVisible = false,
+            onlineServiceLinkText = R.string.nhs_111_online_service,
+            onlineServiceLinkUrl = R.string.url_nhs_111_online,
             paragraphResources = intArrayOf(R.string.test_result_positive_then_negative_explanation)
         )
     }
@@ -286,6 +316,8 @@ class TestResultActivityStateTest : EspressoTest() {
             title3 = R.string.test_result_positive_self_isolate_and_book_test_title_3,
             actionButtonStringResource = R.string.book_follow_up_test,
             exposureLinksVisible = true,
+            onlineServiceLinkText = R.string.nhs_111_online_service,
+            onlineServiceLinkUrl = R.string.url_nhs_111_online,
             paragraphResources = intArrayOf(R.string.test_result_positive_self_isolate_and_book_test_explanation_1)
         )
     }
@@ -318,6 +350,8 @@ class TestResultActivityStateTest : EspressoTest() {
             title3Visible = false,
             actionButtonStringResource = R.string.book_free_test,
             exposureLinksVisible = false,
+            onlineServiceLinkText = R.string.test_result_void_continue_self_isolate_nhs_guidance_label,
+            onlineServiceLinkUrl = R.string.url_nhs_guidance,
             paragraphResources = intArrayOf(R.string.test_result_void_continue_self_isolate_explanation)
         )
     }

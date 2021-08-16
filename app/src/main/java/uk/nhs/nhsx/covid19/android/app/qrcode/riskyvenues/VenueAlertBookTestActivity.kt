@@ -11,10 +11,10 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.BookATest
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.Finish
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.SymptomsAfterRiskyVenue
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.NavigationTarget.BookTest
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.NavigationTarget.Finish
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.ViewState.UnknownVisit
-import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
@@ -34,10 +34,12 @@ class VenueAlertBookTestActivity : BaseActivity(R.layout.activity_venue_alert_bo
             }
         }
 
-        viewModel.navigationEvent().observe(this) { navigationTarget ->
-            when (navigationTarget) {
-                BookATest -> navigateToBookATest()
-                SymptomsAfterRiskyVenue -> navigateToSymptomsConfirmation()
+        viewModel.navigationEvent().observe(this) {
+            when (it) {
+                is BookTest -> when (it.navigationTarget) {
+                    BookATest -> navigateToBookATest()
+                    SymptomsAfterRiskyVenue -> navigateToSymptomsConfirmation()
+                }
                 Finish -> finish()
             }
         }

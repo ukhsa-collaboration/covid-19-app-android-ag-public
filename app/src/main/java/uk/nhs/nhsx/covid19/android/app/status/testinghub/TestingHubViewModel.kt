@@ -1,30 +1,25 @@
 package uk.nhs.nhsx.covid19.android.app.status.testinghub
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import uk.nhs.nhsx.covid19.android.app.R.string
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.BookATest
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
-import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
-import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.ShowFindOutAboutTesting.DoNotShow
-import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.ShowFindOutAboutTesting.Show
+import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.BookTestButtonState.LfdTest
+import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.BookTestButtonState.PcrTest
+import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.NavigationTarget.BookPcrTest
+import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.NavigationTarget.OrderLfdTest
+import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubViewModel.NavigationTarget.SymptomsAfterRiskyVenue
 import uk.nhs.nhsx.covid19.android.app.util.DistrictAreaStringProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
-import java.time.Clock
 import javax.inject.Inject
 
 class TestingHubViewModel @Inject constructor(
-    private val isolationStateMachine: IsolationStateMachine,
-    private val lastVisitedBookTestTypeVenueDateProvider: LastVisitedBookTestTypeVenueDateProvider,
     private val districtAreaStringProvider: DistrictAreaStringProvider,
-    private val evaluateVenueAlertNavigation: EvaluateVenueAlertNavigation,
-    private val clock: Clock,
+    private val evaluateBookTestNavigation: EvaluateBookTestNavigation,
+    private val canBookPcrTest: CanBookPcrTest,
 ) : ViewModel() {
 
     private val viewStateLiveData = MutableLiveData<ViewState>()
@@ -34,41 +29,41 @@ class TestingHubViewModel @Inject constructor(
     fun navigationTarget(): LiveData<NavigationTarget> = navigationTarget
 
     fun onResume() {
+        viewStateLiveData.postValue(ViewState(bookTestButtonState = evaluateBookTestButtonState()))
+    }
+
+    private fun evaluateBookTestButtonState(): BookTestButtonState =
+        if (canBookPcrTest()) PcrTest else LfdTest
+
+    fun onOrderLfdTestClicked() {
         viewModelScope.launch {
-            val isolationState = isolationStateMachine.readLogicalState()
-            viewStateLiveData.postValue(
-                ViewState(
-                    showBookTestButton = canOrderTest(isolationState),
-                    showFindOutAboutTestingButton = shouldShowFindOutAboutTestingButton(isolationState)
-                )
-            )
+            val urlResId = districtAreaStringProvider.provide(R.string.url_nhs_get_tested)
+            navigationTarget.postValue(OrderLfdTest(urlResId))
         }
     }
 
-    fun onBookATestClicked() {
-        if (lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk()) {
-            navigationTarget.postValue(evaluateVenueAlertNavigation())
-        } else {
-            navigationTarget.postValue(BookATest)
-        }
+    fun onBookPcrTestClicked() {
+        navigationTarget.postValue(evaluateBookTestNavigation().toTestingHubNavigationTarget())
     }
 
-    private fun canOrderTest(isolationState: IsolationLogicalState) =
-        lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() ||
-            isolationState.isActiveIsolation(clock)
-
-    private suspend fun shouldShowFindOutAboutTestingButton(isolationState: IsolationLogicalState) =
-        if (!isolationState.isActiveIsolation(clock)) {
-            Show(districtAreaStringProvider.provide(string.url_latest_advice))
-        } else DoNotShow
+    private fun EvaluateBookTestNavigation.NavigationTarget.toTestingHubNavigationTarget(): NavigationTarget =
+        when (this) {
+            EvaluateBookTestNavigation.NavigationTarget.BookPcrTest -> BookPcrTest
+            EvaluateBookTestNavigation.NavigationTarget.SymptomsAfterRiskyVenue -> SymptomsAfterRiskyVenue
+        }
 
     data class ViewState(
-        val showBookTestButton: Boolean,
-        val showFindOutAboutTestingButton: ShowFindOutAboutTesting,
+        val bookTestButtonState: BookTestButtonState
     )
 
-    sealed class ShowFindOutAboutTesting {
-        data class Show(val urlResId: Int) : ShowFindOutAboutTesting()
-        object DoNotShow : ShowFindOutAboutTesting()
+    sealed class BookTestButtonState {
+        object PcrTest : BookTestButtonState()
+        object LfdTest : BookTestButtonState()
+    }
+
+    sealed class NavigationTarget {
+        object BookPcrTest : NavigationTarget()
+        data class OrderLfdTest(@StringRes val urlResId: Int) : NavigationTarget()
+        object SymptomsAfterRiskyVenue : NavigationTarget()
     }
 }

@@ -1,66 +1,52 @@
 package uk.nhs.nhsx.covid19.android.app.analytics
 
+import android.content.SharedPreferences
 import com.squareup.moshi.Moshi
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
-import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CODE_CHECK_IN
-import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTest
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectation
 import java.time.Instant
 import kotlin.test.assertEquals
 
-class NextAnalyticsWindowToSubmitStorageTest {
+class NextAnalyticsWindowToSubmitStorageTest : ProviderTest<NextAnalyticsWindowToSubmitStorage, Instant?>() {
 
-    private val moshi = Moshi.Builder()
-        .add(InstantAdapter())
-        .build()
+    private val oldestLogEntryInstant = mockk<GetOldestLogEntryInstant>()
+    override val getTestSubject: (Moshi, SharedPreferences) -> NextAnalyticsWindowToSubmitStorage =
+        { moshi, sharedPreferences -> NextAnalyticsWindowToSubmitStorage(oldestLogEntryInstant, moshi, sharedPreferences) }
+    override val property = NextAnalyticsWindowToSubmitStorage::windowStartDate
+    override val key = NextAnalyticsWindowToSubmitStorage.VALUE_KEY
+    override val defaultValue: Instant?
+        get() = oldestLogEntryInstant()
+    override val expectations: List<ProviderTestExpectation<Instant?>> = listOf(
+        ProviderTestExpectation(json = jsonInstant, objectValue = instant)
+    )
 
-    private val nextAnalyticsWindowToSubmitJsonStorage = mockk<NextAnalyticsWindowToSubmitJsonStorage>(relaxUnitFun = true)
-    private val analyticsLogStorage = mockk<AnalyticsLogStorage>()
-
-    private val testSubject = NextAnalyticsWindowToSubmitStorage(nextAnalyticsWindowToSubmitJsonStorage, analyticsLogStorage, moshi)
-
-    @Test
-    fun `test serialize`() {
-        testSubject.windowStartDate = instant
-
-        verify {
-            nextAnalyticsWindowToSubmitJsonStorage.value = jsonInstant
-        }
+    @BeforeEach
+    fun setUpMock() {
+        every { oldestLogEntryInstant() } returns null
     }
 
     @Test
     fun `returns null if no events and no window is stored`() {
-        every { analyticsLogStorage.value } returns listOf()
-        every { nextAnalyticsWindowToSubmitJsonStorage.value } returns null
+        sharedPreferencesReturns(null)
 
         assertEquals(null, testSubject.windowStartDate)
     }
 
     @Test
-    fun `returns value if window is stored`() {
-        every { analyticsLogStorage.value } returns listOf()
-        every { nextAnalyticsWindowToSubmitJsonStorage.value } returns jsonInstant
+    fun `returns instant of oldest log entry if no window is stored`() {
+        every { oldestLogEntryInstant() } returns instant
+        sharedPreferencesReturns(null)
 
         assertEquals(instant, testSubject.windowStartDate)
     }
 
-    @Test
-    fun `returns value of oldest event if now window is stored`() {
-        every { analyticsLogStorage.value } returns listOf(
-            AnalyticsLogEntry(instant.plusSeconds(6), AnalyticsLogItem.Event(QR_CODE_CHECK_IN)),
-            AnalyticsLogEntry(instant, AnalyticsLogItem.Event(QR_CODE_CHECK_IN)),
-            AnalyticsLogEntry(instant.plusSeconds(30), AnalyticsLogItem.Event(QR_CODE_CHECK_IN)),
-        )
-        every { nextAnalyticsWindowToSubmitJsonStorage.value } returns null
-
-        assertEquals(instant, testSubject.windowStartDate)
+    companion object {
+        private const val jsonInstant =
+            """"2020-10-10T08:00:00Z""""
+        private val instant = Instant.parse("2020-10-10T08:00:00Z")
     }
-
-    private val instant = Instant.parse("2020-10-10T08:00:00Z")
-    private val jsonInstant =
-        """
-            "2020-10-10T08:00:00Z"
-        """.trimIndent()
 }

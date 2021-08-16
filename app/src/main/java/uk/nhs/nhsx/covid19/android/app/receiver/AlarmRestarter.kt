@@ -14,6 +14,8 @@ import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAl
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationAlarmController
 import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingActivationReminderProvider
 import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.MigrateContactTracingActivationReminderProvider
+import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubReminderAlarmController
+import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubReminderTimeProvider
 import java.time.Instant
 import javax.inject.Inject
 
@@ -37,6 +39,12 @@ class AlarmRestarter : BroadcastReceiver() {
     @Inject
     lateinit var exposureNotificationRetryAlarmController: ExposureNotificationRetryAlarmController
 
+    @Inject
+    lateinit var isolationHubReminderTimeProvider: IsolationHubReminderTimeProvider
+
+    @Inject
+    lateinit var isolationHubReminderAlarmController: IsolationHubReminderAlarmController
+
     override fun onReceive(context: Context, intent: Intent) {
         context.appComponent.inject(this)
 
@@ -56,6 +64,10 @@ class AlarmRestarter : BroadcastReceiver() {
         contactTracingActivationReminderProvider.reminder?.let {
             val alarmTime = Instant.ofEpochMilli(it.alarmTime)
             exposureNotificationReminderAlarmController.setup(alarmTime)
+        }
+
+        isolationHubReminderTimeProvider.value?.let { alarmTimeInMillis ->
+            isolationHubReminderAlarmController.setup(alarmTimeInMillis)
         }
     }
 }

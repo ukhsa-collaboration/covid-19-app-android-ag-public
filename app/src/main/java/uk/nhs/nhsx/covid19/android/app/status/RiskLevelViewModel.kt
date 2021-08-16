@@ -18,7 +18,7 @@ class RiskLevelViewModel @Inject constructor(
     fun onHandleRiskLevel() {
         viewModelScope.launch {
             showMassTestingLiveData.postValue(
-                localAuthorityPostCodeProvider.getPostCodeDistrict()?.let { it == ENGLAND } ?: false
+                localAuthorityPostCodeProvider.getPostCodeDistrict() == ENGLAND
             )
         }
     }

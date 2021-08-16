@@ -1,19 +1,20 @@
 package uk.nhs.nhsx.covid19.android.app.flow.functionalities
 
-import org.awaitility.kotlin.await
-import org.awaitility.kotlin.until
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfo
-import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
-import uk.nhs.nhsx.covid19.android.app.testhelpers.AWAIT_AT_MOST_SECONDS
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.EncounterDetectionRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationAgeLimitRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationVaccinationStatusRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.RiskyContactIsolationAdviceRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
-import java.util.concurrent.TimeUnit.SECONDS
 
 class RiskyContact(
     private val espressoTest: EspressoTest
 ) {
-    private val encounterDetectionRobot = EncounterDetectionRobot()
+    private val exposureNotificationRobot = ExposureNotificationRobot()
+    private val ageLimitRobot = ExposureNotificationAgeLimitRobot()
+    private val vaccinationStatusRobot = ExposureNotificationVaccinationStatusRobot()
+    private val riskyContactIsolationAdviceRobot = RiskyContactIsolationAdviceRobot()
 
     fun triggerViaCircuitBreaker(runBackgroundTasks: () -> Unit) {
         val exposureCircuitBreakerInfo = ExposureCircuitBreakerInfo(
@@ -31,16 +32,60 @@ class RiskyContact(
 
     fun triggerViaBroadcastReceiver() {
         espressoTest.testAppContext.sendExposureStateUpdatedBroadcast()
-
-        waitFor { encounterDetectionRobot.clickIUnderstandButton() }
     }
 
-    fun acknowledge() {
-        espressoTest.waitFor { encounterDetectionRobot.clickIUnderstandButton() }
+    fun acknowledgeIsolatingViaNotMinorNotVaccinated(alreadyIsolating: Boolean = false) {
+        waitFor { exposureNotificationRobot.clickContinueButton() }
 
-        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
-            (espressoTest.testAppContext.getCurrentLogicalState() as PossiblyIsolating)
-                .isActiveContactCase(espressoTest.testAppContext.clock)
+        waitFor { ageLimitRobot.checkActivityIsDisplayed() }
+        ageLimitRobot.clickYesButton()
+        ageLimitRobot.clickContinueButton()
+
+        waitFor { vaccinationStatusRobot.checkActivityIsDisplayed() }
+        vaccinationStatusRobot.clickDosesNoButton()
+        vaccinationStatusRobot.clickContinueButton()
+
+        waitFor { riskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        if (alreadyIsolating) {
+            riskyContactIsolationAdviceRobot.clickPrimaryBackToHome()
+        } else {
+            riskyContactIsolationAdviceRobot.clickSecondaryBackToHome()
+        }
+    }
+
+    fun acknowledgeIsolationViaOptOutMinor(alreadyIsolating: Boolean = false) {
+        waitFor { exposureNotificationRobot.clickContinueButton() }
+
+        waitFor { ageLimitRobot.checkActivityIsDisplayed() }
+        ageLimitRobot.clickNoButton()
+        ageLimitRobot.clickContinueButton()
+
+        waitFor { riskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        if (alreadyIsolating) {
+            riskyContactIsolationAdviceRobot.clickPrimaryBackToHome()
+        } else {
+            riskyContactIsolationAdviceRobot.clickSecondaryBackToHome()
+        }
+    }
+
+    fun acknowledgeIsolationViaOptOutFullyVaccinated(alreadyIsolating: Boolean = false) {
+        waitFor { exposureNotificationRobot.clickContinueButton() }
+
+        waitFor { ageLimitRobot.checkActivityIsDisplayed() }
+        ageLimitRobot.clickYesButton()
+        ageLimitRobot.clickContinueButton()
+
+        waitFor { vaccinationStatusRobot.checkActivityIsDisplayed() }
+        vaccinationStatusRobot.clickDosesYesButton()
+        waitFor { vaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
+        vaccinationStatusRobot.clickDateYesButton()
+        vaccinationStatusRobot.clickContinueButton()
+
+        waitFor { riskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        if (alreadyIsolating) {
+            riskyContactIsolationAdviceRobot.clickPrimaryBackToHome()
+        } else {
+            riskyContactIsolationAdviceRobot.clickSecondaryBackToHome()
         }
     }
 }

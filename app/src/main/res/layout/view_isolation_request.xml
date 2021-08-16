@@ -74,7 +74,7 @@
 
         <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
             android:id="@+id/exposureFaqsLink"
-            style="@style/LinkTextWithIcon"
+            style="@style/LinkText.WithIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/exposure_faqs"
@@ -92,7 +92,7 @@
 
         <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
             android:id="@+id/isolationRequestOnlineServiceLink"
-            style="@style/LinkTextWithIcon"
+            style="@style/LinkText.WithIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="16dp"

@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.browser
 
+import android.net.Uri
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
@@ -18,7 +19,7 @@ class BrowserActivityTest : EspressoTest() {
     @Test
     fun startActivityWithUrl_shouldDisplayActivity() {
         startTestActivity<BrowserActivity> {
-            putExtra("EXTRA_URL", "www.google.com")
+            data = Uri.parse("www.google.com")
         }
 
         waitFor { browserRobot.checkActivityIsDisplayed() }

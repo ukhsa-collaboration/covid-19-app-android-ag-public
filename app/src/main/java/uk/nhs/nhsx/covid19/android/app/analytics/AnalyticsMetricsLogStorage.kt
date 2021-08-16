@@ -1,44 +1,23 @@
 package uk.nhs.nhsx.covid19.android.app.analytics
 
 import android.content.SharedPreferences
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
-import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
-import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
-import java.lang.reflect.Type
+import uk.nhs.nhsx.covid19.android.app.util.Provider
+import uk.nhs.nhsx.covid19.android.app.util.listStorage
 import java.time.Instant
 import javax.inject.Inject
 
 @Deprecated(message = "That class is deprecated and will be removed in the future")
 class AnalyticsMetricsLogStorage @Inject constructor(
-    private val analyticsMetricsLogJsonStorage: AnalyticsMetricsLogJsonStorage,
-    private val moshi: Moshi
-) {
-
-    private val analyticsMetricsLogSerializationAdapter: JsonAdapter<List<MetricsLogEntry>> =
-        moshi.adapter(listOfMetricsLogEntriesType)
+    override val moshi: Moshi,
+    override val sharedPreferences: SharedPreferences
+) : Provider {
 
     private val lock = Object()
 
-    var value: List<MetricsLogEntry>
-        get() = synchronized(lock) {
-            analyticsMetricsLogJsonStorage.value?.let {
-                runCatching {
-                    analyticsMetricsLogSerializationAdapter.fromJson(it)
-                }
-                    .getOrElse {
-                        Timber.e(it)
-                        listOf()
-                    } // TODO add crash analytics and come up with a more sophisticated solution
-            } ?: listOf()
-        }
-        set(value) = synchronized(lock) {
-            analyticsMetricsLogJsonStorage.value =
-                analyticsMetricsLogSerializationAdapter.toJson(value)
-        }
+    var value: List<MetricsLogEntry> by listStorage(ANALYTICS_METRICS_LOG_KEY, default = emptyList())
 
     fun add(metricsLogEntry: MetricsLogEntry) = synchronized(lock) {
         val updatedList = value.toMutableList().apply {
@@ -57,20 +36,7 @@ class AnalyticsMetricsLogStorage @Inject constructor(
     }
 
     companion object {
-        val listOfMetricsLogEntriesType: Type = Types.newParameterizedType(
-            List::class.java,
-            MetricsLogEntry::class.java
-        )
-    }
-}
-
-class AnalyticsMetricsLogJsonStorage @Inject constructor(sharedPreferences: SharedPreferences) {
-    private val prefs = sharedPreferences.with<String>(VALUE_KEY)
-
-    var value: String? by prefs
-
-    companion object {
-        const val VALUE_KEY = "ANALYTICS_METRICS_LOG_KEY"
+        const val ANALYTICS_METRICS_LOG_KEY = "ANALYTICS_METRICS_LOG_KEY"
     }
 }
 

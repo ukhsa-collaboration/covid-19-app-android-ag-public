@@ -2,13 +2,10 @@ package uk.nhs.nhsx.covid19.android.app.about
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.jeroenmols.featureflag.framework.FeatureFlag.DAILY_CONTACT_TESTING
-import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -24,6 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.asLogical
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
@@ -40,7 +38,8 @@ class MyDataViewModelTest {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val stateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
-    private val lastVisitedBookTestTypeVenueDateProvider = mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxUnitFun = true)
+    private val lastVisitedBookTestTypeVenueDateProvider =
+        mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-22T10:00:00Z"), ZoneOffset.UTC)
 
     private val testSubject = MyDataViewModel(
@@ -55,19 +54,12 @@ class MyDataViewModelTest {
 
     @Before
     fun setUp() {
-        FeatureFlagTestHelper.enableFeatureFlag(DAILY_CONTACT_TESTING)
-
         testSubject.myDataState().observeForever(userDataStateObserver)
 
         every { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue } returns LastVisitedBookTestTypeVenueDate(
             lastRiskyVenueVisit,
             RiskyVenueConfigurationDurationDays(optionToBookATest = 10)
         )
-    }
-
-    @After
-    fun tearDown() {
-        FeatureFlagTestHelper.clearFeatureFlags()
     }
 
     @Test
@@ -104,11 +96,11 @@ class MyDataViewModelTest {
     }
 
     @Test
-    fun `loading user data returns exposure notification details and dailyContactTestingOptInDate when previously in contact case`() {
+    fun `loading user data returns exposure notification details and opt-out date when previously in contact case`() {
         val contactExposureDate = contactCaseExposureDate.minusDays(12)
         val contactNotificationDate = contactCaseNotificationDate.minusDays(12)
         val contactExpiryDate = contactExposureDate.plusDays(5)
-        val dailyContactTestingOptInDate = dailyContactTestingOptInDate.minusDays(12)
+        val optOutOfContactIsolationDate = optOutOfContactIsolationDate.minusDays(12)
         val indexSelfAssessmentDate = selfAssessmentDate.minusDays(12)
         val indexSymptomsOnsetDate = symptomsOnsetDate.minusDays(12)
         val indexExpiryDate = indexCaseExpiryDate.minusDays(12)
@@ -120,7 +112,7 @@ class MyDataViewModelTest {
                     exposureDate = contactExposureDate,
                     notificationDate = contactNotificationDate,
                     expiryDate = contactExpiryDate,
-                    dailyContactTestingOptInDate = dailyContactTestingOptInDate
+                    optOutOfContactIsolation = OptOutOfContactIsolation(optOutOfContactIsolationDate)
                 ),
                 indexInfo = IndexCase(
                     isolationTrigger = SelfAssessment(
@@ -142,7 +134,7 @@ class MyDataViewModelTest {
                         contactCaseEncounterDate = contactExposureDate,
                         contactCaseNotificationDate = contactNotificationDate,
                         indexCaseSymptomOnsetDate = indexSymptomsOnsetDate,
-                        dailyContactTestingOptInDate = dailyContactTestingOptInDate
+                        optOutOfContactIsolationDate = optOutOfContactIsolationDate
                     ),
                     lastRiskyVenueVisitDate = lastRiskyVenueVisit,
                     acknowledgedTestResult = acknowledgedTestResult
@@ -152,7 +144,7 @@ class MyDataViewModelTest {
     }
 
     @Test
-    fun `loading user data doesn't return exposure notification details and dailyContactTestingOptInDate when previously in contact case`() {
+    fun `loading user data doesn't return exposure notification details when previously in contact case`() {
         setIsolationState(IsolationState(isolationConfiguration = DurationDays()))
 
         testSubject.onResume()
@@ -185,7 +177,7 @@ class MyDataViewModelTest {
 
     private val contactCaseExposureDate = LocalDate.parse("2020-05-19")
     private val contactCaseNotificationDate = LocalDate.parse("2020-05-20")
-    private val dailyContactTestingOptInDate = LocalDate.parse("2020-05-21")
+    private val optOutOfContactIsolationDate = LocalDate.parse("2020-05-21")
     private val contactCaseExpiryDate = LocalDate.parse("2020-05-24")
     private val selfAssessmentDate = LocalDate.parse("2020-05-15")
     private val symptomsOnsetDate = LocalDate.parse("2020-05-14")
@@ -197,7 +189,7 @@ class MyDataViewModelTest {
             exposureDate = contactCaseExposureDate,
             notificationDate = contactCaseNotificationDate,
             expiryDate = contactCaseExpiryDate,
-            dailyContactTestingOptInDate = dailyContactTestingOptInDate
+            optOutOfContactIsolation = OptOutOfContactIsolation(optOutOfContactIsolationDate)
         ),
         indexInfo = IndexCase(
             isolationTrigger = SelfAssessment(
@@ -215,7 +207,7 @@ class MyDataViewModelTest {
             contactCaseEncounterDate = contactCaseExposureDate,
             contactCaseNotificationDate = contactCaseNotificationDate,
             indexCaseSymptomOnsetDate = symptomsOnsetDate,
-            dailyContactTestingOptInDate = dailyContactTestingOptInDate
+            optOutOfContactIsolationDate = optOutOfContactIsolationDate,
         ),
         lastRiskyVenueVisitDate = lastRiskyVenueVisit,
         acknowledgedTestResult = acknowledgedTestResult

@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.di
 
 import dagger.Component
+import uk.nhs.nhsx.covid19.android.app.AnalyticsReportActivity
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.about.EditPostalDistrictActivity
 import uk.nhs.nhsx.covid19.android.app.about.VenueHistoryActivity
@@ -15,6 +16,7 @@ import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationActivity
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationChecker
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
+import uk.nhs.nhsx.covid19.android.app.common.ClearOutdatedData
 import uk.nhs.nhsx.covid19.android.app.common.DownloadTasksWorker
 import uk.nhs.nhsx.covid19.android.app.common.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableExposureNotificationsActivity
@@ -25,9 +27,11 @@ import uk.nhs.nhsx.covid19.android.app.di.module.ApiModule
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
 import uk.nhs.nhsx.covid19.android.app.di.module.ViewModelModule
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationAgeLimitActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationBroadcastReceiver
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWorker
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfoProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysReminderActivity
@@ -62,15 +66,18 @@ import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsProvider
 import uk.nhs.nhsx.covid19.android.app.settings.languages.LanguagesActivity
 import uk.nhs.nhsx.covid19.android.app.settings.myarea.MyAreaActivity
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
+import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.MigrateIsolationState
 import uk.nhs.nhsx.covid19.android.app.status.DebugFragment
 import uk.nhs.nhsx.covid19.android.app.status.DownloadAreaInfoWorker
-import uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessageActivity
 import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusBaseActivity
 import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingHubActivity
+import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubActivity
+import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubReminderReceiver
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.GetLocalMessageFromStorage
+import uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessageActivity
 import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitKeysProgressActivity
@@ -78,7 +85,6 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingProgressActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.lfd.OrderLfdTestActivity
-import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.DailyContactTestingConfirmationActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultOnsetDateActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultSymptomsActivity
@@ -100,14 +106,14 @@ import javax.inject.Singleton
 )
 interface ApplicationComponent {
     fun inject(baseActivity: BaseActivity)
-    fun inject(activity: MainActivity)
-    fun inject(activity: PermissionActivity)
-    fun inject(activity: PostCodeActivity)
-    fun inject(activity: StatusActivity)
-    fun inject(activity: StatusBaseActivity)
-    fun inject(activity: EnableBluetoothActivity)
-    fun inject(activity: EnableLocationActivity)
-    fun inject(activity: EnableExposureNotificationsActivity)
+    fun inject(mainActivity: MainActivity)
+    fun inject(permissionActivity: PermissionActivity)
+    fun inject(postCodeActivity: PostCodeActivity)
+    fun inject(statusActivity: StatusActivity)
+    fun inject(statusBaseActivity: StatusBaseActivity)
+    fun inject(enableBluetoothActivity: EnableBluetoothActivity)
+    fun inject(enableLocationActivity: EnableLocationActivity)
+    fun inject(enableExposureNotificationsActivity: EnableExposureNotificationsActivity)
     fun inject(riskLevelActivity: RiskLevelActivity)
     fun inject(downloadAreaInfoWorker: DownloadAreaInfoWorker)
     fun inject(qrScannerActivity: QrScannerActivity)
@@ -122,7 +128,6 @@ interface ApplicationComponent {
     fun inject(submitAnalyticsAlarmReceiver: SubmitAnalyticsAlarmReceiver)
     fun inject(alarmRestarter: AlarmRestarter)
     fun inject(qrCodeScanResultActivity: QrCodeScanResultActivity)
-    fun inject(encounterDetectionActivity: EncounterDetectionActivity)
     fun inject(testResultActivity: TestResultActivity)
     fun inject(submitKeysProgressActivity: SubmitKeysProgressActivity)
     fun inject(exposureNotificationBroadcastReceiver: ExposureNotificationBroadcastReceiver)
@@ -153,7 +158,6 @@ interface ApplicationComponent {
     fun inject(batteryOptimizationActivity: BatteryOptimizationActivity)
     fun inject(welcomeActivity: WelcomeActivity)
     fun inject(redirectToIsolationPaymentWebsiteActivity: RedirectToIsolationPaymentWebsiteActivity)
-    fun inject(dailyContactTestingConfirmationActivity: DailyContactTestingConfirmationActivity)
     fun inject(myAreaActivity: MyAreaActivity)
     fun inject(shareKeysInformationActivity: ShareKeysInformationActivity)
     fun inject(shareKeysReminderActivity: ShareKeysReminderActivity)
@@ -164,8 +168,15 @@ interface ApplicationComponent {
     fun inject(localMessageActivity: LocalMessageActivity)
     fun inject(symptomsAfterRiskyVenueActivity: SymptomsAfterRiskyVenueActivity)
     fun inject(orderLfdTestActivity: OrderLfdTestActivity)
+    fun inject(isolationHubActivity: IsolationHubActivity)
+    fun inject(exposureNotificationAgeLimitActivity: ExposureNotificationAgeLimitActivity)
+    fun inject(exposureNotificationVaccinationStatusActivity: ExposureNotificationVaccinationStatusActivity)
+    fun inject(isolationHubReminderReceiver: IsolationHubReminderReceiver)
+    fun inject(riskyContactIsolationAdviceActivity: RiskyContactIsolationAdviceActivity)
 
     fun inject(testResultViewModel: BaseTestResultViewModel)
+
+    fun inject(analyticsReportActivity: AnalyticsReportActivity)
 
     fun provideAppAvailabilityListener(): AppAvailabilityListener
     fun providePeriodicTasks(): PeriodicTasks
@@ -179,8 +190,10 @@ interface ApplicationComponent {
     fun provideVisitedVenuesStorage(): VisitedVenuesStorage
     fun provideKeySharingInfoProvider(): KeySharingInfoProvider
     fun provideMigrateIsolationState(): MigrateIsolationState
+    fun provideIsolationStateMachine(): IsolationStateMachine
     fun provideRemoteServiceExceptionHandler(): RemoteServiceExceptionHandler
     fun provideCrashReportProvider(): CrashReportProvider
     fun provideAnimationsProvider(): AnimationsProvider
     fun provideGetLocalMessageFromStorage(): GetLocalMessageFromStorage
+    fun provideClearOutdatedData(): ClearOutdatedData
 }

@@ -83,6 +83,17 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="QA QR Scanner settings" />
+
+            <CheckBox
+                android:id="@+id/qrScannerFirstVenueAutomated"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Automated venue scanning" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Language" />
 
             <androidx.appcompat.widget.AppCompatSpinner
@@ -175,7 +186,7 @@
                     style="@style/PrimaryButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="StatusScreen" />
+                    android:text="Status Screen" />
 
                 <Button
                     android:id="@+id/shareFlow"
@@ -183,7 +194,34 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Share flow" />
+
+                <Button
+                    android:id="@+id/qrScanSettings"
+                    style="@style/PrimaryButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="QR Scan Test Settings" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/titleAnalytics"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Analytics" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/analyticsData"
+                    style="@style/PrimaryButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Show raw analytics data" />
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/titleScreens"

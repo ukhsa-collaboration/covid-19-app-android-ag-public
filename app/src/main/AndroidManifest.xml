@@ -43,115 +43,176 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".onboarding.WelcomeActivity"
-            android:label="@string/onboarding_welcome_title"/>
-        <activity android:name=".edgecases.AgeRestrictionActivity"
-            android:label="@string/onboarding_age_restriction_title"/>
+        <activity
+            android:name=".onboarding.WelcomeActivity"
+            android:label="@string/onboarding_welcome_title" />
+        <activity
+            android:name=".edgecases.AgeRestrictionActivity"
+            android:label="@string/onboarding_age_restriction_title" />
         <activity
             android:name=".onboarding.postcode.PostCodeActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:label="@string/post_code_title"/>
-        <activity android:name=".onboarding.PermissionActivity"
-            android:label="@string/permission_title"/>
-        <activity android:name=".status.StatusActivity"
-            android:label="@string/app_name"/>
-        <activity android:name=".edgecases.DeviceNotSupportedActivity"
-            android:label="@string/cant_run_app"/>
-        <activity android:name=".common.EnableBluetoothActivity"
-            android:label="@string/enable_bluetooth_title"/>
-        <activity android:name=".common.EnableLocationActivity"
-            android:label="@string/enable_location_service_title"/>
-        <activity android:name=".common.EnableExposureNotificationsActivity"
-            android:label="@string/enable_exposure_notifications_title"/>
-        <activity android:name=".qrcode.QrScannerActivity"
-            android:label="@string/scan_qr_code_to_check_in"/>
-        <activity android:name=".qrcode.QrCodeScanResultActivity"/>
-        <activity android:name=".questionnaire.selection.QuestionnaireActivity"
-            android:label="@string/select_symptoms"/>
-        <activity android:name=".questionnaire.review.NoSymptomsActivity"
-            android:label="@string/title_no_coronavirus_symptoms"/>
-        <activity android:name=".questionnaire.review.ReviewSymptomsActivity"
-            android:label="@string/questionnaire_review_symptoms"/>
-        <activity android:name=".testordering.TestOrderingActivity"
-            android:label="@string/book_free_test"/>
+            android:label="@string/post_code_title"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".onboarding.PermissionActivity"
+            android:label="@string/permission_title" />
+        <activity
+            android:name=".status.StatusActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".edgecases.DeviceNotSupportedActivity"
+            android:label="@string/cant_run_app" />
+        <activity
+            android:name=".common.EnableBluetoothActivity"
+            android:label="@string/enable_bluetooth_title" />
+        <activity
+            android:name=".common.EnableLocationActivity"
+            android:label="@string/enable_location_service_title" />
+        <activity
+            android:name=".common.EnableExposureNotificationsActivity"
+            android:label="@string/enable_exposure_notifications_title" />
+        <activity
+            android:name=".qrcode.QrScannerActivity"
+            android:label="@string/scan_qr_code_to_check_in" />
+        <activity android:name=".qrcode.QrCodeScanResultActivity" />
+        <activity
+            android:name=".questionnaire.selection.QuestionnaireActivity"
+            android:label="@string/select_symptoms" />
+        <activity
+            android:name=".questionnaire.review.NoSymptomsActivity"
+            android:label="@string/title_no_coronavirus_symptoms" />
+        <activity
+            android:name=".questionnaire.review.ReviewSymptomsActivity"
+            android:label="@string/questionnaire_review_symptoms" />
+        <activity
+            android:name=".testordering.TestOrderingActivity"
+            android:label="@string/book_free_test" />
         <activity android:name=".questionnaire.review.SymptomsAdviceIsolateActivity" />
-        <activity android:name=".state.IsolationExpirationActivity"
-            android:label="@string/expiration_notification_title"/>
-        <activity android:name=".onboarding.DataAndPrivacyActivity"
-            android:label="@string/onboarding_privacy_title"/>
-        <activity android:name=".about.MoreAboutAppActivity"
-            android:label="@string/about_this_app_title"/>
-        <activity android:name=".testordering.TestResultActivity"/>
-        <activity android:name=".testordering.SubmitKeysProgressActivity"
-            android:label="@string/empty_accessibility_announcement"/>
-        <activity android:name=".exposure.encounter.EncounterDetectionActivity"/>
-        <activity android:name=".qrcode.QrCodeHelpActivity"
-            android:label="@string/qr_code_help_more_information"/>
-        <activity android:name=".about.mydata.MyDataActivity"
+        <activity
+            android:name=".state.IsolationExpirationActivity"
+            android:label="@string/expiration_notification_title" />
+        <activity
+            android:name=".onboarding.DataAndPrivacyActivity"
+            android:label="@string/onboarding_privacy_title" />
+        <activity
+            android:name=".about.MoreAboutAppActivity"
+            android:label="@string/about_this_app_title" />
+        <activity android:name=".testordering.TestResultActivity" />
+        <activity
+            android:name=".testordering.SubmitKeysProgressActivity"
+            android:label="@string/empty_accessibility_announcement" />
+        <activity
+            android:name=".qrcode.QrCodeHelpActivity"
+            android:label="@string/qr_code_help_more_information" />
+        <activity
+            android:name=".about.mydata.MyDataActivity"
             android:label="@string/settings_my_data" />
-        <activity android:name=".about.EditPostalDistrictActivity"
-            android:label="@string/edit_postcode_district_title"/>
-        <activity android:name=".testordering.TestOrderingProgressActivity"
-            android:label="@string/loading"/>
+        <activity
+            android:name=".about.EditPostalDistrictActivity"
+            android:label="@string/edit_postcode_district_title" />
+        <activity
+            android:name=".testordering.TestOrderingProgressActivity"
+            android:label="@string/loading" />
         <activity android:name=".availability.AppAvailabilityActivity" />
-        <activity android:name=".qrcode.riskyvenues.VenueAlertInformActivity"
-            android:label="@string/venue_alert_title"/>
-        <activity android:name=".qrcode.riskyvenues.VenueAlertBookTestActivity"
-            android:label="@string/venue_alert_m2_title"/>
-        <activity android:name=".status.RiskLevelActivity"
-            android:label="@string/risk_level_title"/>
-        <activity android:name=".exposure.sharekeys.ShareKeysInformationActivity"
-            android:label="@string/submit_keys_information_title"/>
-        <activity android:name=".testordering.linktestresult.LinkTestResultActivity"
-            android:label="@string/status_option_link_test_result"/>
-        <activity android:name=".testordering.linktestresult.LinkTestResultSymptomsActivity"
-            android:label="@string/link_test_result_symptoms_information_title"/>
-        <activity android:name=".testordering.linktestresult.LinkTestResultOnsetDateActivity"
-            android:label="@string/link_test_result_symptoms_information_title"/>
-        <activity android:name=".payment.IsolationPaymentActivity"
-            android:label="@string/isolation_payment_heading"/>
-        <activity android:name=".availability.UpdateRecommendedActivity"
-            android:label=""/>
-        <activity android:name=".onboarding.PolicyUpdateActivity"
-            android:label="@string/updated_privacy_title"/>
-        <activity android:name=".common.postcode.LocalAuthorityActivity"
-            android:label="@string/local_authority_title"/>
-        <activity android:name=".common.postcode.LocalAuthorityInformationActivity"
-            android:label="@string/local_authority_information_title"/>
-        <activity android:name=".battery.BatteryOptimizationActivity"
-            android:label="@string/battery_optimization_title"/>
+        <activity
+            android:name=".qrcode.riskyvenues.VenueAlertInformActivity"
+            android:label="@string/venue_alert_title" />
+        <activity
+            android:name=".qrcode.riskyvenues.VenueAlertBookTestActivity"
+            android:label="@string/venue_alert_m2_title" />
+        <activity
+            android:name=".status.RiskLevelActivity"
+            android:label="@string/risk_level_title" />
+        <activity
+            android:name=".exposure.sharekeys.ShareKeysInformationActivity"
+            android:label="@string/submit_keys_information_title" />
+        <activity
+            android:name=".testordering.linktestresult.LinkTestResultActivity"
+            android:label="@string/status_option_link_test_result" />
+        <activity
+            android:name=".testordering.linktestresult.LinkTestResultSymptomsActivity"
+            android:label="@string/link_test_result_symptoms_information_title" />
+        <activity
+            android:name=".testordering.linktestresult.LinkTestResultOnsetDateActivity"
+            android:label="@string/link_test_result_symptoms_information_title" />
+        <activity
+            android:name=".payment.IsolationPaymentActivity"
+            android:label="@string/isolation_payment_heading" />
+        <activity
+            android:name=".availability.UpdateRecommendedActivity"
+            android:label="" />
+        <activity
+            android:name=".onboarding.PolicyUpdateActivity"
+            android:label="@string/updated_privacy_title" />
+        <activity
+            android:name=".common.postcode.LocalAuthorityActivity"
+            android:label="@string/local_authority_title" />
+        <activity
+            android:name=".common.postcode.LocalAuthorityInformationActivity"
+            android:label="@string/local_authority_information_title" />
+        <activity
+            android:name=".battery.BatteryOptimizationActivity"
+            android:label="@string/battery_optimization_title" />
         <activity android:name=".payment.RedirectToIsolationPaymentWebsiteActivity" />
-        <activity android:name=".settings.SettingsActivity"
-            android:label="@string/settings_title"/>
-        <activity android:name=".about.VenueHistoryActivity"
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:label="@string/settings_title" />
+        <activity
+            android:name=".about.VenueHistoryActivity"
             android:label="@string/title_venue_history" />
-        <activity android:name=".settings.languages.LanguagesActivity"
-            android:label="@string/language_title"/>
-        <activity android:name=".testordering.linktestresult.DailyContactTestingConfirmationActivity"
-            android:label="@string/daily_contact_testing_confirmation_title"/>
-        <activity android:name=".settings.myarea.MyAreaActivity"
-            android:label="@string/settings_my_area_title"/>
-        <activity android:name=".exposure.sharekeys.ShareKeysResultActivity"
-            android:label="@string/share_keys_success_title"/>
-        <activity android:name=".exposure.sharekeys.ShareKeysReminderActivity"
-            android:label="@string/share_keys_reminder_title"/>
-        <activity android:name=".status.contacttracinghub.ContactTracingHubActivity"
-            android:label="@string/contact_tracing_hub_title"/>
-        <activity android:name=".status.testinghub.TestingHubActivity"
-            android:label="@string/testing_hub_title"/>
-        <activity android:name=".testordering.unknownresult.UnknownTestResultActivity"
-            android:label="@string/unknown_test_result_please_update_app"/>
-        <activity android:name=".exposure.sharekeys.BookFollowUpTestActivity"
-            android:label="@string/book_follow_up_test_title"/>
-        <activity android:name=".settings.animations.AnimationsActivity"
-            android:label="@string/animations_settings_title"/>
-        <activity android:name=".qrcode.riskyvenues.SymptomsAfterRiskyVenueActivity"
-            android:label="@string/symptoms_after_risky_venue_title"/>
+        <activity
+            android:name=".settings.languages.LanguagesActivity"
+            android:label="@string/language_title" />
+        <activity
+            android:name=".settings.myarea.MyAreaActivity"
+            android:label="@string/settings_my_area_title" />
+        <activity
+            android:name=".exposure.sharekeys.ShareKeysResultActivity"
+            android:label="@string/share_keys_success_title" />
+        <activity
+            android:name=".exposure.sharekeys.ShareKeysReminderActivity"
+            android:label="@string/share_keys_reminder_title" />
+        <activity
+            android:name=".status.contacttracinghub.ContactTracingHubActivity"
+            android:label="@string/contact_tracing_hub_title" />
+        <activity
+            android:name=".status.testinghub.TestingHubActivity"
+            android:label="@string/testing_hub_title" />
+        <activity
+            android:name=".testordering.unknownresult.UnknownTestResultActivity"
+            android:label="@string/unknown_test_result_please_update_app" />
+        <activity
+            android:name=".exposure.sharekeys.BookFollowUpTestActivity"
+            android:label="@string/book_follow_up_test_title" />
+        <activity
+            android:name=".settings.animations.AnimationsActivity"
+            android:label="@string/animations_settings_title" />
+        <activity
+            android:name=".qrcode.riskyvenues.SymptomsAfterRiskyVenueActivity"
+            android:label="@string/symptoms_after_risky_venue_title" />
         <activity android:name=".status.localmessage.LocalMessageActivity" />
-        <activity android:name=".testordering.lfd.OrderLfdTestActivity"
-            android:label="@string/book_free_lfd_test_title"/>
-        <activity android:name=".status.contacttracinghub.WhenNotToPauseContactTracingActivity"
-            android:label="@string/when_not_to_pause_contact_tracing_title"/>
+        <activity
+            android:name=".testordering.lfd.OrderLfdTestActivity"
+            android:label="@string/book_free_lfd_test_title" />
+        <activity
+            android:name=".status.contacttracinghub.WhenNotToPauseContactTracingActivity"
+            android:label="@string/when_not_to_pause_contact_tracing_title" />
+        <activity
+            android:name=".status.isolationhub.IsolationHubActivity"
+            android:label="@string/isolation_hub_title" />
+        <activity
+            android:name=".exposure.encounter.ExposureNotificationActivity"
+            android:label="@string/exposure_notification_title" />
+        <activity
+            android:name=".exposure.encounter.ExposureNotificationAgeLimitActivity"
+            android:label="@string/exposure_notification_age_title" />
+        <activity
+            android:name=".exposure.encounter.ExposureNotificationVaccinationStatusActivity"
+            android:label="@string/exposure_notification_vaccination_status_title" />
+        <activity
+            android:name=".questionnaire.NewNoSymptomsActivity"
+            android:label="@string/new_no_symptoms_title" />
+        <activity android:name=".exposure.encounter.RiskyContactIsolationAdviceActivity" />
 
         <!-- Receivers -->
         <receiver
@@ -169,6 +230,7 @@
         <receiver android:name=".receiver.ExposureNotificationRetryReceiver" />
         <receiver android:name=".receiver.SubmitAnalyticsAlarmReceiver" />
         <receiver android:name=".analytics.AnalyticsAggregatorReceiver" />
+        <receiver android:name=".status.isolationhub.IsolationHubReminderReceiver" />
         <receiver android:name=".receiver.AlarmRestarter">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

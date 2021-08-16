@@ -7,6 +7,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTr
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import java.time.Clock
@@ -38,15 +39,15 @@ class IsolationHelper(
             expiryDate = expiryDate
         )
 
-    fun contactCaseWithDct(
+    fun contactCaseWithOptOutDate(
         exposureDate: LocalDate = LocalDate.now(clock).minusDays(2),
-        dailyContactTestingOptInDate: LocalDate
+        optOutOfContactIsolation: LocalDate
     ): ContactCase =
         ContactCase(
             exposureDate = exposureDate,
             notificationDate = exposureDate.plusDays(1),
-            expiryDate = dailyContactTestingOptInDate,
-            dailyContactTestingOptInDate = dailyContactTestingOptInDate
+            expiryDate = optOutOfContactIsolation,
+            optOutOfContactIsolation = OptOutOfContactIsolation(optOutOfContactIsolation)
         )
 
     fun selfAssessment(

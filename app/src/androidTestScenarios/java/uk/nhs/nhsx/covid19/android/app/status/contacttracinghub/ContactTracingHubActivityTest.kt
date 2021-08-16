@@ -125,6 +125,7 @@ class ContactTracingHubActivityTest : EspressoTest() {
         setScreenOrientation(PORTRAIT)
 
         waitFor { exposureNotificationReminderRobot.checkDialogIsDisplayed() }
+        waitFor { exposureNotificationReminderRobot.checkCancelButtonIsDisplayed() }
         exposureNotificationReminderRobot.clickCancelButton()
 
         waitFor { contactTracingHubRobot.checkActivityIsDisplayed() }

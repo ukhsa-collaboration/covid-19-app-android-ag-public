@@ -8,11 +8,14 @@ import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction
+import uk.nhs.nhsx.covid19.android.app.remote.MockLocalMessagesApi
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BatteryOptimizationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ContactTracingHubRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityInformationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalMessageRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PolicyUpdateRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PostCodeRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
@@ -26,6 +29,8 @@ class MainActivityFlowTest : EspressoTest() {
     private val batteryOptimizationRobot = BatteryOptimizationRobot()
     private val postCodeRobot = PostCodeRobot()
     private val contactTracingHubRobot = ContactTracingHubRobot()
+    private val isolationHubRobot = IsolationHubRobot()
+    private val localMessageRobot = LocalMessageRobot()
 
     @After
     fun tearDown() {
@@ -133,6 +138,39 @@ class MainActivityFlowTest : EspressoTest() {
 
         waitFor { contactTracingHubRobot.checkActivityIsDisplayed() }
         waitFor { contactTracingHubRobot.checkContactTracingToggledOnIsDisplayed() }
+    }
+
+    @Test
+    fun whenStartedFromIsolationHubReminderNotification_navigateToIsolationHub_tapBack_navigateToStatusActivity() {
+        setupOnboardingComplete()
+
+        startTestActivity<MainActivity> {
+            putExtra(NotificationProvider.TAPPED_ON_ISOLATION_HUB_REMINDER_NOTIFICATION, true)
+        }
+
+        waitFor { isolationHubRobot.checkActivityIsDisplayed() }
+
+        testAppContext.device.pressBack()
+
+        statusRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    fun whenStartedFromLocalMessagesNotification_navigateToLocalMessages_tapBack_navigateToStatusActivity() {
+        setupOnboardingComplete()
+        testAppContext.setLocalAuthority("E07000240")
+        testAppContext.setPostCode("AL1")
+        testAppContext.getLocalMessagesProvider().localMessages = MockLocalMessagesApi.successResponse
+
+        startTestActivity<MainActivity> {
+            putExtra(NotificationProvider.TAPPED_ON_LOCAL_MESSAGE_NOTIFICATION, true)
+        }
+
+        waitFor { localMessageRobot.checkActivityIsDisplayed() }
+
+        testAppContext.device.pressBack()
+
+        statusRobot.checkActivityIsDisplayed()
     }
 
     @Test

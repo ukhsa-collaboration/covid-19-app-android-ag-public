@@ -1,70 +1,51 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
-import com.squareup.moshi.Moshi
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfoProvider.Companion.EXPOSURE_CIRCUIT_BREAKER_INFO_KEY
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTest
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectation
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectationDirection.JSON_TO_OBJECT
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
-import kotlin.test.assertEquals
 
-class ExposureCircuitBreakerInfoProviderTest {
+class ExposureCircuitBreakerInfoProviderTest : ProviderTest<ExposureCircuitBreakerInfoProvider, List<ExposureCircuitBreakerInfo>>() {
 
-    private val storage = mockk<ExposureCircuitBreakerInfoStorage>(relaxed = true)
-    private val moshi = Moshi.Builder().build()
+    override val getTestSubject = ::ExposureCircuitBreakerInfoProvider
+    override val property = ExposureCircuitBreakerInfoProvider::info
+    override val key = EXPOSURE_CIRCUIT_BREAKER_INFO_KEY
+    override val defaultValue: List<ExposureCircuitBreakerInfo> = emptyList()
+    override val expectations: List<ProviderTestExpectation<List<ExposureCircuitBreakerInfo>>> = listOf(
+        ProviderTestExpectation(json = ITEM_WITHOUT_TOKEN, objectValue = listOf(itemWithoutToken), direction = JSON_TO_OBJECT),
+        ProviderTestExpectation(json = MULTIPLE_ITEMS_JSON, objectValue = listOf(itemWithoutToken, itemWithToken), direction = JSON_TO_OBJECT)
+    )
 
     @Test
     fun `add exposure circuit breaker info item`() {
-        every { storage.value } returns ITEM_WITHOUT_TOKEN
-
-        val testSubject = ExposureCircuitBreakerInfoProvider(storage, moshi)
+        sharedPreferencesReturns(ITEM_WITHOUT_TOKEN)
 
         testSubject.add(itemWithToken)
 
-        verify { storage.value = MULTIPLE_ITEMS_JSON }
+        assertSharedPreferenceSetsValue(MULTIPLE_ITEMS_JSON)
     }
 
     @Test
     fun `remove exposure circuit breaker info item`() {
-        every { storage.value } returns MULTIPLE_ITEMS_JSON
+        sharedPreferencesReturns(MULTIPLE_ITEMS_JSON)
 
-        val testSubject = ExposureCircuitBreakerInfoProvider(storage, moshi)
         testSubject.remove(itemWithoutToken)
 
-        verify { storage.value = ITEM_WITH_TOKEN }
+        assertSharedPreferenceSetsValue(ITEM_WITH_TOKEN)
     }
 
     @Test
     fun `set approval token for polling`() {
-        every { storage.value } returns MULTIPLE_ITEMS_JSON
+        sharedPreferencesReturns(MULTIPLE_ITEMS_JSON)
 
-        val testSubject = ExposureCircuitBreakerInfoProvider(storage, moshi)
         testSubject.setApprovalToken(itemWithoutToken, "new_token")
 
-        verify { storage.value = MULTIPLE_ITEMS_WITH_TOKEN_JSON }
-    }
-
-    @Test
-    fun `read empty storage`() {
-        every { storage.value } returns null
-
-        val testSubject = ExposureCircuitBreakerInfoProvider(storage, moshi)
-        val actual = testSubject.info
-
-        assertEquals(listOf(), actual)
-    }
-
-    @Test
-    fun `read corrupt storage`() {
-        every { storage.value } returns "sdsfljghsfgyldfjg"
-
-        val testSubject = ExposureCircuitBreakerInfoProvider(storage, moshi)
-        val actual = testSubject.info
-
-        assertEquals(listOf(), actual)
+        assertSharedPreferenceSetsValue(MULTIPLE_ITEMS_WITH_TOKEN_JSON)
     }
 
     companion object {

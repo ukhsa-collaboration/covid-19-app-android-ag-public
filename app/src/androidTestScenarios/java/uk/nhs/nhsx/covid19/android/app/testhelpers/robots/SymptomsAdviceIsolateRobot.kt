@@ -104,7 +104,7 @@ class SymptomsAdviceIsolateRobot {
 
     private fun checkNoIndexCaseThenSelfAssessmentNoImpactOnIsolationIsDisplayed(remainingDaysInIsolation: Int) {
         checkCloseIconInToolbarIsDisplayed()
-        checkPreDaysTextViewIsDisplayed(R.string.self_isolate_for)
+        checkPreDaysTextViewIsDisplayed(R.string.continue_to_self_isolate_for)
         checkDaysUntilExpirationTextViewIsDisplayed(
             context.resources.getQuantityString(
                 R.plurals.state_isolation_days,

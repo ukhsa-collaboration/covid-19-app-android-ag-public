@@ -48,8 +48,6 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
     private val downloadLocalMessagesWorkMock = mockk<DownloadLocalMessagesWork>()
     private val downloadAndProcessRiskyVenuesMock = mockk<DownloadAndProcessRiskyVenues>(relaxUnitFun = true)
     private val downloadAndProcessKeysMock = mockk<DownloadAndProcessKeys>(relaxUnitFun = true)
-    private val clearOutdatedDataAndUpdateIsolationConfigurationMock =
-        mockk<ClearOutdatedDataAndUpdateIsolationConfiguration>(relaxUnitFun = true)
     private val exposureNotificationWorkMock = mockk<ExposureNotificationWork>(relaxUnitFun = true)
     private val notificationProviderMock = mockk<NotificationProvider>(relaxUnitFun = true)
     private val submitAnalyticsMock = mockk<SubmitAnalytics>(relaxUnitFun = true)
@@ -58,7 +56,10 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
         mockk<HasSuccessfullyProcessedNewExposureProvider>(relaxUnitFun = true)
     private val notificationMock = mockk<Notification>()
     private val showShareKeysReminderNotificationIfNeededMock = mockk<ShowShareKeysReminderNotificationIfNeeded>()
-    private val processRemoteServiceExceptionCrashReportMock = mockk<ProcessRemoteServiceExceptionCrashReport>(relaxUnitFun = true)
+    private val processRemoteServiceExceptionCrashReportMock =
+        mockk<ProcessRemoteServiceExceptionCrashReport>(relaxUnitFun = true)
+    private val updateConfigurationsMock = mockk<UpdateConfigurations>(relaxUnitFun = true)
+    private val clearOutdatedDataMock = mockk<ClearOutdatedData>(relaxUnitFun = true)
 
     private var result: Result? = null
 
@@ -72,7 +73,6 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
             downloadLocalMessagesWork = downloadLocalMessagesWorkMock
             downloadAndProcessRiskyVenues = downloadAndProcessRiskyVenuesMock
             downloadAndProcessKeys = downloadAndProcessKeysMock
-            clearOutdatedDataAndUpdateIsolationConfiguration = clearOutdatedDataAndUpdateIsolationConfigurationMock
             exposureNotificationWork = exposureNotificationWorkMock
             notificationProvider = notificationProviderMock
             submitAnalytics = submitAnalyticsMock
@@ -80,6 +80,8 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
             hasSuccessfullyProcessedNewExposureProvider = hasSuccessfullyProcessedNewExposureProviderMock
             showShareKeysReminderNotificationIfNeeded = showShareKeysReminderNotificationIfNeededMock
             processRemoteServiceExceptionCrashReport = processRemoteServiceExceptionCrashReportMock
+            updateConfigurations = updateConfigurationsMock
+            clearOutdatedData = clearOutdatedDataMock
         }
     )
 
@@ -87,7 +89,6 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
     override fun setUp() {
         super.setUp()
         coEvery { getAvailabilityStatusMock.invoke() } returns mockk()
-        coEvery { clearOutdatedDataAndUpdateIsolationConfigurationMock.invoke() } returns mockk()
         coEvery { exposureNotificationWorkMock.evaluateRisk() } returns mockk()
         coEvery { exposureNotificationWorkMock.handleUnprocessedRequests() } returns mockk()
         coEvery { downloadAndProcessKeysMock.invoke() } returns mockk()
@@ -131,34 +132,36 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
     }
 
     @Test
-    fun `app is available calls cleanup, tracking and download tasks when last attempt to process new exposure was successful`() = runBlocking {
-        givenFeatureSubmitAnalyticsViaAlarmManagerIsDisabled()
-        givenAppIsAvailable()
-        givenOnboardingIsCompleted()
-        givenHasSuccessfullyProcessedNewExposure()
+    fun `app is available calls cleanup, tracking and download tasks when last attempt to process new exposure was successful`() =
+        runBlocking {
+            givenFeatureSubmitAnalyticsViaAlarmManagerIsDisabled()
+            givenAppIsAvailable()
+            givenOnboardingIsCompleted()
+            givenHasSuccessfullyProcessedNewExposure()
 
-        whenDoingWork()
+            whenDoingWork()
 
-        thenBackgroundTaskCompletionEventIsTracked()
-        thenUpdatingDatabaseNotificationIsProvided()
-        thenAllTasksAreInvokedInTheRightOrder(shouldInvokeHandleNewExposure = false)
-        thenWorkHasSucceeded()
-    }
+            thenBackgroundTaskCompletionEventIsTracked()
+            thenUpdatingDatabaseNotificationIsProvided()
+            thenAllTasksAreInvokedInTheRightOrder(shouldInvokeHandleNewExposure = false)
+            thenWorkHasSucceeded()
+        }
 
     @Test
-    fun `app is available calls cleanup, tracking and download tasks when last attempt to process new exposure failed`() = runBlocking {
-        givenFeatureSubmitAnalyticsViaAlarmManagerIsDisabled()
-        givenAppIsAvailable()
-        givenOnboardingIsCompleted()
-        givenHasNotSuccessfullyProcessedNewExposure()
+    fun `app is available calls cleanup, tracking and download tasks when last attempt to process new exposure failed`() =
+        runBlocking {
+            givenFeatureSubmitAnalyticsViaAlarmManagerIsDisabled()
+            givenAppIsAvailable()
+            givenOnboardingIsCompleted()
+            givenHasNotSuccessfullyProcessedNewExposure()
 
-        whenDoingWork()
+            whenDoingWork()
 
-        thenBackgroundTaskCompletionEventIsTracked()
-        thenUpdatingDatabaseNotificationIsProvided()
-        thenAllTasksAreInvokedInTheRightOrder(shouldInvokeHandleNewExposure = true)
-        thenWorkHasSucceeded()
-    }
+            thenBackgroundTaskCompletionEventIsTracked()
+            thenUpdatingDatabaseNotificationIsProvided()
+            thenAllTasksAreInvokedInTheRightOrder(shouldInvokeHandleNewExposure = true)
+            thenWorkHasSucceeded()
+        }
 
     @Test
     fun `worker does not send analytics when feature flag is enabled`() = runBlocking {
@@ -221,7 +224,8 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
 
     private fun thenAllTasksAreInvokedInTheRightOrder(shouldInvokeHandleNewExposure: Boolean) {
         coVerifyOrder {
-            clearOutdatedDataAndUpdateIsolationConfigurationMock()
+            updateConfigurationsMock()
+            clearOutdatedDataMock()
             if (shouldInvokeHandleNewExposure) exposureNotificationWorkMock.evaluateRisk()
             exposureNotificationWorkMock.handleUnprocessedRequests()
             downloadAndProcessKeysMock()

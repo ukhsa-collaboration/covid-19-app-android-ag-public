@@ -17,8 +17,12 @@ class ExposureNotificationPermissionHelper @AssistedInject constructor(
 ) {
 
     fun onActivityResult(requestCode: Int, resultCode: Int) {
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_START_EXPOSURE_NOTIFICATION) {
-            startExposureNotifications()
+        if (requestCode == REQUEST_CODE_START_EXPOSURE_NOTIFICATION) {
+            if (resultCode == Activity.RESULT_OK) {
+                startExposureNotifications()
+            } else {
+                callback.onPermissionDenied()
+            }
         }
     }
 
@@ -45,6 +49,7 @@ class ExposureNotificationPermissionHelper @AssistedInject constructor(
     interface Callback {
         fun onExposureNotificationsEnabled()
         fun onPermissionRequired(permissionRequest: (Activity) -> Unit)
+        fun onPermissionDenied()
         fun onError(error: Throwable)
     }
 

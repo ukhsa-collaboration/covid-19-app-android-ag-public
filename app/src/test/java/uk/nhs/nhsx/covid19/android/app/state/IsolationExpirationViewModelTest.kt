@@ -8,15 +8,10 @@ import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
-import java.time.temporal.ChronoUnit.DAYS
 
 class IsolationExpirationViewModelTest {
 
@@ -26,29 +21,13 @@ class IsolationExpirationViewModelTest {
     private val stateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
 
     private val fixedClock = Clock.fixed(Instant.parse("2020-09-01T10:00:00Z"), ZoneOffset.UTC)
+    private val isolationHelper = IsolationHelper(fixedClock)
 
     private val viewStateObserver = mockk<Observer<IsolationExpirationViewModel.ViewState>>(relaxed = true)
 
     private val testSubject = IsolationExpirationViewModel(
         stateMachine,
         fixedClock
-    )
-
-    private val isolationStateIndexCase = IsolationState(
-        isolationConfiguration = DurationDays(),
-        indexInfo = IndexCase(
-            isolationTrigger = SelfAssessment(selfAssessmentDate = isolationStart),
-            expiryDate = isolationStart.plus(7, DAYS),
-        )
-    )
-
-    private val isolationStateNotInIndexCase = IsolationState(
-        isolationConfiguration = DurationDays(),
-        contactCase = ContactCase(
-            exposureDate = isolationStart,
-            notificationDate = isolationStart,
-            expiryDate = isolationStart.plus(7, DAYS),
-        )
     )
 
     @Test
@@ -62,13 +41,13 @@ class IsolationExpirationViewModelTest {
 
     @Test
     fun `check after now in index case and show temperature notice`() = runBlocking {
-        every { stateMachine.readLogicalState() } returns isolationStateIndexCase.asLogical()
+        val expired = false
+        every { stateMachine.readLogicalState() } returns isolationHelper.selfAssessment(expired).asIsolation().asLogical()
 
         testSubject.viewState().observeForever(viewStateObserver)
 
         testSubject.checkState("2020-09-02")
 
-        val expired = false
         val expiryDate = LocalDate.parse("2020-09-02")
         val showTemperatureNotice = true
 
@@ -77,13 +56,13 @@ class IsolationExpirationViewModelTest {
 
     @Test
     fun `check before now in index case and show temperature notice`() = runBlocking {
-        every { stateMachine.readLogicalState() } returns isolationStateIndexCase.asLogical()
+        val expired = true
+        every { stateMachine.readLogicalState() } returns isolationHelper.selfAssessment(expired).asIsolation().asLogical()
 
         testSubject.viewState().observeForever(viewStateObserver)
 
         testSubject.checkState("2020-08-31")
 
-        val expired = true
         val expiryDate = LocalDate.parse("2020-08-31")
         val showTemperatureNotice = true
 
@@ -92,13 +71,13 @@ class IsolationExpirationViewModelTest {
 
     @Test
     fun `check after now not in index case and don't show temperature notice`() = runBlocking {
-        every { stateMachine.readLogicalState() } returns isolationStateNotInIndexCase.asLogical()
+        val expired = false
+        every { stateMachine.readLogicalState() } returns isolationHelper.contactCase(expired).asIsolation().asLogical()
 
         testSubject.viewState().observeForever(viewStateObserver)
 
         testSubject.checkState("2020-09-02")
 
-        val expired = false
         val expiryDate = LocalDate.parse("2020-09-02")
         val showTemperatureNotice = false
 
@@ -106,9 +85,23 @@ class IsolationExpirationViewModelTest {
     }
 
     @Test
+    fun `check before now not in index case and don't show temperature notice`() = runBlocking {
+        val expired = true
+        every { stateMachine.readLogicalState() } returns isolationHelper.contactCase(expired).asIsolation().asLogical()
+
+        testSubject.viewState().observeForever(viewStateObserver)
+
+        testSubject.checkState("2020-08-31")
+
+        val expiryDate = LocalDate.parse("2020-08-31")
+        val showTemperatureNotice = false
+
+        verify { viewStateObserver.onChanged(IsolationExpirationViewModel.ViewState(expired, expiryDate, showTemperatureNotice)) }
+    }
+
+    @Test
     fun `check after now not in isolation and don't show temperature notice`() = runBlocking {
-        every { stateMachine.readLogicalState() } returns
-            IsolationState(isolationConfiguration = DurationDays()).asLogical()
+        every { stateMachine.readLogicalState() } returns isolationHelper.neverInIsolation().asLogical()
 
         testSubject.viewState().observeForever(viewStateObserver)
 
@@ -126,9 +119,5 @@ class IsolationExpirationViewModelTest {
         testSubject.acknowledgeIsolationExpiration()
 
         verify { stateMachine.acknowledgeIsolationExpiration() }
-    }
-
-    companion object {
-        private val isolationStart = LocalDate.parse("2020-08-30")!!
     }
 }

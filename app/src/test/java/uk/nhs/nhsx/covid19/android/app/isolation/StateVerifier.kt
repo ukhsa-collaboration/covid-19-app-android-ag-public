@@ -51,11 +51,11 @@ class StateVerifier(
         val shouldHaveActiveContactCase = expectedState.contact.isolationState == ACTIVE
         assertEquals(shouldHaveActiveContactCase, logicalState.hasActiveContactCase(), "shouldHaveActiveContactCase")
 
-        val shouldHaveBeenTerminatedByDCT = expectedState.contact.terminatedDueToDCT
+        val shouldHaveBeenTerminatedEarly = expectedState.contact.terminatedEarly
         assertEquals(
-            shouldHaveBeenTerminatedByDCT,
-            logicalState.contactCaseHasBeenTerminatedByDCT(),
-            "shouldHaveBeenTerminatedByDCT"
+            shouldHaveBeenTerminatedEarly,
+            logicalState.contactCaseHasBeenTerminatedEarly(),
+            "shouldHaveBeenTerminatedEarly"
         )
 
         val shouldHaveExpiredIndexCase = expectedState.combinedIndexIsolationState.contains(FINISHED) &&
@@ -116,9 +116,9 @@ class StateVerifier(
             is NeverIsolating -> false
         }
 
-    private fun IsolationMachineState.contactCaseHasBeenTerminatedByDCT(): Boolean =
+    private fun IsolationMachineState.contactCaseHasBeenTerminatedEarly(): Boolean =
         when (this) {
-            is PossiblyIsolating -> contactCase?.dailyContactTestingOptInDate != null
+            is PossiblyIsolating -> contactCase?.optOutOfContactIsolation?.date != null
             is NeverIsolating -> false
         }
 

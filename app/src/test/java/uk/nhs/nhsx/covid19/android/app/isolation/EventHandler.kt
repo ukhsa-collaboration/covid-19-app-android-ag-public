@@ -3,28 +3,26 @@ package uk.nhs.nhsx.covid19.android.app.isolation
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.contactIsolationEnded
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.indexIsolationEnded
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedConfirmedPositiveTest
-import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedConfirmedPositiveTestWithEndDateOlderThanAssumedSymptomOnsetDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedConfirmedPositiveTestWithEndDateOlderThanRememberedNegativeTestEndDate
-import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedConfirmedPositiveTestWithIsolationPeriodOlderThanAssumedSymptomOnsetDate
+import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedConfirmedPositiveTestWithIsolationPeriodOlderThanAssumedIsolationStartDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTest
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTestWithEndDateNDaysNewerThanRememberedUnconfirmedTestEndDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTestWithEndDateNDaysNewerThanRememberedUnconfirmedTestEndDateButOlderThanAssumedSymptomOnsetDayIfAny
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTestWithEndDateNewerThanAssumedSymptomOnsetDateAndAssumedSymptomOnsetDateNewerThanPositiveTestEndDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTestWithEndDateOlderThanAssumedSymptomOnsetDate
-import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTestWithEndDateOlderThanRememberedUnconfirmedTestEndDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTestWithEndDateOlderThanRememberedUnconfirmedTestEndDateAndOlderThanAssumedSymptomOnsetDayIfAny
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedUnconfirmedPositiveTest
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDateAndOlderThanAssumedSymptomOnsetDayIfAny
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedUnconfirmedPositiveTestWithEndDateOlderThanAssumedSymptomOnsetDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedUnconfirmedPositiveTestWithEndDateOlderThanRememberedNegativeTestEndDate
-import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedUnconfirmedPositiveTestWithIsolationPeriodOlderThanAssumedSymptomOnsetDate
+import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedUnconfirmedPositiveTestWithIsolationPeriodOlderThanAssumedIsolationStartDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedVoidTest
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.retentionPeriodEnded
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.riskyContact
-import uk.nhs.nhsx.covid19.android.app.isolation.Event.riskyContactWithExposureDayOlderThanIsolationTerminationDueToDCT
+import uk.nhs.nhsx.covid19.android.app.isolation.Event.riskyContactWithExposureDayOlderThanEarlyIsolationTermination
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.selfDiagnosedSymptomatic
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.selfDiagnosedSymptomaticWithAssumedOnsetDateOlderThanPositiveTestEndDate
-import uk.nhs.nhsx.covid19.android.app.isolation.Event.terminateRiskyContactDueToDCT
+import uk.nhs.nhsx.covid19.android.app.isolation.Event.terminatedRiskyContactEarly
 import uk.nhs.nhsx.covid19.android.app.isolation.StateStorage4_10Representation.Companion.DEFAULT_CONFIRMATORY_DAY_LIMIT
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
@@ -39,8 +37,8 @@ import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.NEGATIVE
+import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.util.isBeforeOrEqual
 import uk.nhs.nhsx.covid19.android.app.util.selectEarliest
 import java.time.Instant
@@ -68,10 +66,10 @@ class EventHandler(
                 sendExposureNotification(exposureDate)
             }
 
-            riskyContactWithExposureDayOlderThanIsolationTerminationDueToDCT -> {
+            riskyContactWithExposureDayOlderThanEarlyIsolationTermination -> {
                 val isolationState = isolationTestContext.getCurrentLogicalState()
                 assertTrue(isolationState is PossiblyIsolating)
-                val contactCaseOptInDate = isolationState.contactCase?.dailyContactTestingOptInDate
+                val contactCaseOptInDate = isolationState.contactCase?.optOutOfContactIsolation?.date
                 assertNotNull(contactCaseOptInDate)
 
                 val exposureDate = contactCaseOptInDate.minusDays(1)
@@ -87,8 +85,9 @@ class EventHandler(
                 isolationStateMachine.processEvent(OnPositiveSelfAssessment(SelectedDate.ExplicitDate(onsetDate)))
             }
 
-            terminateRiskyContactDueToDCT -> {
-                isolationStateMachine.optInToDailyContactTesting()
+            terminatedRiskyContactEarly -> {
+                val exposureDate = today.minus(1, DAYS)
+                isolationStateMachine.optOutOfContactIsolation(exposureDate)
             }
 
             receivedConfirmedPositiveTest -> {
@@ -105,15 +104,8 @@ class EventHandler(
                 )
             }
 
-            receivedConfirmedPositiveTestWithEndDateOlderThanAssumedSymptomOnsetDate -> {
-                val endDate = getRememberedOnsetDate().minusDays(1)
-                isolationStateMachine.processEvent(
-                    OnTestResultAcknowledge(createPositiveConfirmedTestResult(endDate))
-                )
-            }
-
-            receivedConfirmedPositiveTestWithIsolationPeriodOlderThanAssumedSymptomOnsetDate -> {
-                val endDate = getRememberedOnsetDate()
+            receivedConfirmedPositiveTestWithIsolationPeriodOlderThanAssumedIsolationStartDate -> {
+                val endDate = getIsolationStartDate()
                     .minusDays(isolationConfiguration.indexCaseSinceTestResultEndDate.toLong() + 1)
                 isolationStateMachine.processEvent(
                     OnTestResultAcknowledge(createPositiveConfirmedTestResult(endDate))
@@ -141,8 +133,8 @@ class EventHandler(
                 )
             }
 
-            receivedUnconfirmedPositiveTestWithIsolationPeriodOlderThanAssumedSymptomOnsetDate -> {
-                val endDate = getRememberedOnsetDate()
+            receivedUnconfirmedPositiveTestWithIsolationPeriodOlderThanAssumedIsolationStartDate -> {
+                val endDate = getIsolationStartDate()
                     .minusDays(isolationConfiguration.indexCaseSinceTestResultEndDate.toLong() + 1)
                 isolationStateMachine.processEvent(
                     OnTestResultAcknowledge(createPositiveUnconfirmedTestResult(endDate))
@@ -166,16 +158,6 @@ class EventHandler(
                 val endDate = testResult?.testEndDate?.plusDays(1)
                     ?: today.minusDays(1)
                 assertTrue(endDate.isBeforeOrEqual(today), "testEndDate is in the future (testEndDate: $endDate)")
-                isolationStateMachine.processEvent(
-                    OnTestResultAcknowledge(createNegativeTestResult(endDate))
-                )
-            }
-
-            receivedNegativeTestWithEndDateOlderThanRememberedUnconfirmedTestEndDate -> {
-                val testResult = getRememberedTestResult()
-                assertFalse(testResult.isConfirmed(), "Test result is unexpectedly confirmed")
-
-                val endDate = testResult.testEndDate.minus(1, DAYS)
                 isolationStateMachine.processEvent(
                     OnTestResultAcknowledge(createNegativeTestResult(endDate))
                 )
@@ -297,6 +279,12 @@ class EventHandler(
                 )
             }
         }
+    }
+
+    private fun getIsolationStartDate(): LocalDate {
+        val isolationState = isolationTestContext.getCurrentLogicalState()
+        assertTrue(isolationState is PossiblyIsolating)
+        return isolationState.startDate
     }
 
     private fun getRememberedOnsetDate(): LocalDate {

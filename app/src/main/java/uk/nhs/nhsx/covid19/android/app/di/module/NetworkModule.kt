@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.di.module
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.EnumJsonAdapter
 import dagger.Module
@@ -184,7 +185,15 @@ class NetworkModule(
     @Provides
     @Singleton
     fun provideMoshi(): Moshi {
-        return Moshi.Builder()
+        return moshi
+    }
+
+    companion object {
+        const val DISTRIBUTION_REMOTE = "DISTRIBUTION_REMOTE"
+        const val API_REMOTE = "API_REMOTE"
+        const val CACHE_SIZE_BYTES: Long = 1024 * 1024 * 2
+        @VisibleForTesting
+        val moshi = Moshi.Builder()
             .add(LocalDateAdapter())
             .add(InstantAdapter())
             .add(TranslatableStringAdapter())
@@ -200,11 +209,5 @@ class NetworkModule(
             .add(LocalInformationAdapter())
             .add(AnalyticsLogStorage.analyticsLogItemAdapter)
             .build()
-    }
-
-    companion object {
-        const val DISTRIBUTION_REMOTE = "DISTRIBUTION_REMOTE"
-        const val API_REMOTE = "API_REMOTE"
-        const val CACHE_SIZE_BYTES: Long = 1024 * 1024 * 2
     }
 }

@@ -19,28 +19,12 @@ class LinkTestResultRobot {
             .check(matches(isDisplayed()))
     }
 
-    fun checkDailyContactTestingContainerIsDisplayed() {
-        onView(withId(R.id.dailyContactTestingNegativeResultConfirmationContainer))
-            .perform(scrollTo())
-            .check(matches(isDisplayed()))
-    }
-
-    fun checkDailyContactTestingContainerIsNotDisplayed() {
-        onView(withId(R.id.dailyContactTestingNegativeResultConfirmationContainer))
-            .check(matches(not(isDisplayed())))
-    }
-
     fun enterCtaToken(ctaToken: String) {
         onView(withId(R.id.enterCodeEditText)).perform(
             scrollTo(),
             replaceText(ctaToken)
         )
         closeSoftKeyboard()
-    }
-
-    fun selectDailyContactTestingOptIn() {
-        onView(withId(R.id.dailyContactTestingNegativeResultConfirmationContainer))
-            .perform(scrollTo(), click())
     }
 
     fun clickContinue() {

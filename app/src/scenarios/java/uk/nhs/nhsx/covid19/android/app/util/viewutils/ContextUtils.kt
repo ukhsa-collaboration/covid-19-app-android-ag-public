@@ -21,7 +21,11 @@ fun Context.updateBaseContextLocale(locale: Locale): Context {
 
 fun TypedArray.getString(context: Context, @StyleableRes resourceId: Int): String {
     val textId = getResourceId(resourceId, R.string.empty)
-    return context.overriddenResources.getString(textId)
+    return try {
+        context.overriddenResources.getString(textId)
+    } catch (nullPointerException: NullPointerException) {
+        context.getString(textId)
+    }
 }
 
 fun purgeLokalise(context: Context) =

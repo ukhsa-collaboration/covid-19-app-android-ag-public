@@ -49,6 +49,10 @@ class ContactTracingHubViewModel @AssistedInject constructor(
                 permissionRequestLiveData.postValue(Request(permissionRequest))
             }
 
+            override fun onPermissionDenied() {
+                Timber.d("Permission to start contact tracing denied")
+            }
+
             override fun onError(error: Throwable) {
                 Timber.e(error, "Could not start exposure notifications")
                 permissionRequestLiveData.postValue(Error(error.message ?: "Error starting contact tracing"))

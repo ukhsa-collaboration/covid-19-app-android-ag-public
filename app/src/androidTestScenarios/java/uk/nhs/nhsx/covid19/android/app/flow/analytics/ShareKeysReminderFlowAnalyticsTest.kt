@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.flow.analytics.ShareKeysReminderFlowAnalyticsTest.KeySharingReminderTestFlow.CONSENT_AND_SUCCESS
 import uk.nhs.nhsx.covid19.android.app.flow.analytics.ShareKeysReminderFlowAnalyticsTest.KeySharingReminderTestFlow.CONSENT_BUT_FAILURE
 import uk.nhs.nhsx.covid19.android.app.flow.analytics.ShareKeysReminderFlowAnalyticsTest.KeySharingReminderTestFlow.NO_CONSENT
@@ -38,6 +39,8 @@ class ShareKeysReminderFlowAnalyticsTest : AnalyticsTest() {
     }
 
     private fun receivePositiveTestResultAfterSelfDiagnosisAndDeclineSharingKeysInitially(reminderFlow: KeySharingReminderTestFlow) {
+        startTestActivity<MainActivity>()
+
         // Current date: 2nd Jan -> Analytics packet for: 1st Jan
         // Starting state: App running normally, not in isolation
         assertAnalyticsPacketIsNormal()

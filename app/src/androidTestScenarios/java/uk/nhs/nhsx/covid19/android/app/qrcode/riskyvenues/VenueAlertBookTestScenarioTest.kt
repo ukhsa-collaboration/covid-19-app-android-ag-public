@@ -14,7 +14,6 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.NoSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.OrderLfdTestRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QuestionnaireRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ReviewSymptomsRobot
@@ -33,7 +32,6 @@ class VenueAlertBookTestScenarioTest : EspressoTest() {
     private val symptomsAfterRiskyVenueVisitRobot = SymptomsAfterRiskyVenueRobot()
     private val testOrderingRobot = TestOrderingRobot()
     private val questionnaireRobot = QuestionnaireRobot()
-    private val noSymptomsRobot = NoSymptomsRobot()
     private val reviewSymptomsRobot = ReviewSymptomsRobot()
     private val symptomsAdviceIsolateRobot = SymptomsAdviceIsolateRobot()
     private val orderLfdTestRobot = OrderLfdTestRobot()
@@ -57,34 +55,36 @@ class VenueAlertBookTestScenarioTest : EspressoTest() {
 
         startVenueAlertBookTestActivity()
 
-        venueAlertBookTestRobot.checkActivityIsDisplayed()
+        waitFor { venueAlertBookTestRobot.checkActivityIsDisplayed() }
         venueAlertBookTestRobot.clickBookTestButton()
 
-        symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed()
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed() }
 
         symptomsAfterRiskyVenueVisitRobot.clickCancelButton()
         waitFor { symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsDisplayed() }
 
         setScreenOrientation(LANDSCAPE)
-        symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsDisplayed()
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsDisplayed() }
         setScreenOrientation(PORTRAIT)
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsDisplayed() }
 
         symptomsAfterRiskyVenueVisitRobot.clickDialogStayButton()
-        symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsNotDisplayed()
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsNotDisplayed() }
 
         testAppContext.device.pressBack()
         waitFor { symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsDisplayed() }
 
         setScreenOrientation(LANDSCAPE)
-        symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsDisplayed()
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsDisplayed() }
         setScreenOrientation(PORTRAIT)
 
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsDisplayed() }
         symptomsAfterRiskyVenueVisitRobot.clickDialogStayButton()
-        symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsNotDisplayed()
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsNotDisplayed() }
 
         setScreenOrientation(LANDSCAPE)
 
-        symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsNotDisplayed()
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsNotDisplayed() }
 
         symptomsAfterRiskyVenueVisitRobot.clickCancelButton()
         waitFor { symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsDisplayed() }
@@ -98,10 +98,10 @@ class VenueAlertBookTestScenarioTest : EspressoTest() {
 
         startVenueAlertBookTestActivity()
 
-        venueAlertBookTestRobot.checkActivityIsDisplayed()
+        waitFor { venueAlertBookTestRobot.checkActivityIsDisplayed() }
         venueAlertBookTestRobot.clickBookTestButton()
 
-        testOrderingRobot.checkActivityIsDisplayed()
+        waitFor { testOrderingRobot.checkActivityIsDisplayed() }
     }
 
     @Test
@@ -111,17 +111,17 @@ class VenueAlertBookTestScenarioTest : EspressoTest() {
 
         startVenueAlertBookTestActivity()
 
-        venueAlertBookTestRobot.checkActivityIsDisplayed()
+        waitFor { venueAlertBookTestRobot.checkActivityIsDisplayed() }
         venueAlertBookTestRobot.clickBookTestButton()
 
-        symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed()
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed() }
 
         setScreenOrientation(LANDSCAPE)
-        symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed()
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed() }
 
         testAppContext.device.pressBack()
 
-        symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsDisplayed()
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkCancelDialogIsDisplayed() }
     }
 
     @Test
@@ -130,31 +130,31 @@ class VenueAlertBookTestScenarioTest : EspressoTest() {
 
         startVenueAlertBookTestActivity()
 
-        venueAlertBookTestRobot.checkActivityIsDisplayed()
+        waitFor { venueAlertBookTestRobot.checkActivityIsDisplayed() }
         venueAlertBookTestRobot.clickBookTestButton()
 
-        symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed()
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed() }
         symptomsAfterRiskyVenueVisitRobot.clickHasSymptomsButton()
 
-        questionnaireRobot.checkActivityIsDisplayed()
+        waitFor { questionnaireRobot.checkActivityIsDisplayed() }
         questionnaireRobot.selectSymptomsAtPositions(2)
         questionnaireRobot.reviewSymptoms()
 
-        reviewSymptomsRobot.checkActivityIsDisplayed()
+        waitFor { reviewSymptomsRobot.checkActivityIsDisplayed() }
         reviewSymptomsRobot.selectCannotRememberDate()
         reviewSymptomsRobot.confirmSelection()
 
-        symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
-        symptomsAdviceIsolateRobot.checkViewState(
+        waitFor { symptomsAdviceIsolateRobot.checkActivityIsDisplayed() }
+        waitFor { symptomsAdviceIsolateRobot.checkViewState(
             NoIndexCaseThenIsolationDueToSelfAssessment(testAppContext.getRemainingDaysInIsolation())
-        )
+        ) }
         symptomsAdviceIsolateRobot.clickBottomActionButton()
 
-        testOrderingRobot.checkActivityIsDisplayed()
+        waitFor { testOrderingRobot.checkActivityIsDisplayed() }
 
         orderTest()
 
-        statusRobot.checkActivityIsDisplayed()
+        waitFor { statusRobot.checkActivityIsDisplayed() }
     }
 
     @Test
@@ -162,22 +162,23 @@ class VenueAlertBookTestScenarioTest : EspressoTest() {
         testAppContext.setState(isolationHelper.contactCase().asIsolation())
         startVenueAlertBookTestActivity()
 
-        venueAlertBookTestRobot.checkActivityIsDisplayed()
+        waitFor { venueAlertBookTestRobot.checkActivityIsDisplayed() }
         venueAlertBookTestRobot.clickBookTestButton()
 
-        symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed()
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed() }
         symptomsAfterRiskyVenueVisitRobot.clickHasSymptomsButton()
 
-        questionnaireRobot.checkActivityIsDisplayed()
-        questionnaireRobot.selectNoSymptoms()
+        waitFor { questionnaireRobot.checkActivityIsDisplayed() }
+        questionnaireRobot.clickNoSymptoms()
 
         waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
         waitFor { questionnaireRobot.continueOnDiscardSymptomsDialog() }
 
-        noSymptomsRobot.confirmNoSymptomsScreenIsDisplayed()
-        noSymptomsRobot.clickReturnToHomeScreen()
+        waitFor { symptomsAdviceIsolateRobot.checkActivityIsDisplayed() }
 
-        statusRobot.checkActivityIsDisplayed()
+        symptomsAdviceIsolateRobot.clickBottomActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
     }
 
     @Test
@@ -188,20 +189,20 @@ class VenueAlertBookTestScenarioTest : EspressoTest() {
 
             startVenueAlertBookTestActivity()
 
-            venueAlertBookTestRobot.checkActivityIsDisplayed()
+            waitFor { venueAlertBookTestRobot.checkActivityIsDisplayed() }
             venueAlertBookTestRobot.clickBookTestButton()
 
-            symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed()
+            waitFor { symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed() }
             symptomsAfterRiskyVenueVisitRobot.clickNoSymptomsButton()
 
-            orderLfdTestRobot.checkActivityIsDisplayed()
+            waitFor { orderLfdTestRobot.checkActivityIsDisplayed() }
             orderLfdTestRobot.clickOrderTestButton()
 
-            browserRobot.checkActivityIsDisplayed()
+            waitFor { browserRobot.checkActivityIsDisplayed() }
 
             testAppContext.device.pressBack()
 
-            statusRobot.checkActivityIsDisplayed()
+            waitFor { statusRobot.checkActivityIsDisplayed() }
         }
     }
 
@@ -211,17 +212,17 @@ class VenueAlertBookTestScenarioTest : EspressoTest() {
 
         startVenueAlertBookTestActivity()
 
-        venueAlertBookTestRobot.checkActivityIsDisplayed()
+        waitFor { venueAlertBookTestRobot.checkActivityIsDisplayed() }
         venueAlertBookTestRobot.clickBookTestButton()
 
-        symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed()
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed() }
         symptomsAfterRiskyVenueVisitRobot.clickNoSymptomsButton()
 
-        orderLfdTestRobot.checkActivityIsDisplayed()
+        waitFor { orderLfdTestRobot.checkActivityIsDisplayed() }
 
         orderLfdTestRobot.clickIAlreadyHaveKitButton()
 
-        statusRobot.checkActivityIsDisplayed()
+        waitFor { statusRobot.checkActivityIsDisplayed() }
     }
 
     private fun startVenueAlertBookTestActivity() =

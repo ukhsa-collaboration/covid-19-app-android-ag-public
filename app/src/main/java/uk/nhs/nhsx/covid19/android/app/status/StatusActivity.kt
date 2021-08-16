@@ -3,18 +3,19 @@ package uk.nhs.nhsx.covid19.android.app.status
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.view.isVisible
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_status.contactTracingActiveView
 import kotlinx.android.synthetic.main.activity_status.contactTracingStoppedView
 import kotlinx.android.synthetic.main.activity_status.contactTracingView
 import kotlinx.android.synthetic.main.activity_status.isolationView
 import kotlinx.android.synthetic.main.activity_status.localMessageBanner
 import kotlinx.android.synthetic.main.activity_status.optionAboutTheApp
-import kotlinx.android.synthetic.main.activity_status.optionIsolationPayment
+import kotlinx.android.synthetic.main.activity_status.optionIsolationHub
 import kotlinx.android.synthetic.main.activity_status.optionLinkTestResult
-import kotlinx.android.synthetic.main.activity_status.optionReadAdvice
 import kotlinx.android.synthetic.main.activity_status.optionReportSymptoms
 import kotlinx.android.synthetic.main.activity_status.optionSettings
 import kotlinx.android.synthetic.main.activity_status.optionTestingHub
@@ -28,30 +29,32 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.about.MoreAboutAppActivity
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.assistedViewModel
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EncounterDetectionActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysReminderActivity
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction
-import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
+import uk.nhs.nhsx.covid19.android.app.remote.data.NotificationMessage
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
-import uk.nhs.nhsx.covid19.android.app.remote.data.NotificationMessage
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ContactTracingHub
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ExposureConsent
+import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.InAppReview
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.IsolationExpiration
+import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.IsolationHub
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.LocalMessage
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ShareKeys
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.TestResult
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.UnknownTestResult
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.VenueAlert
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.None
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.Isolating
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.NotIsolating
@@ -61,13 +64,13 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewS
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Risk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
 import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingHubActivity
+import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubActivity
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessageActivity
 import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.unknownresult.UnknownTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import uk.nhs.nhsx.covid19.android.app.widgets.IsolationStatusView
@@ -80,11 +83,8 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
     lateinit var statusViewModelFactory: StatusViewModel.Factory
 
     private val statusViewModel: StatusViewModel by assistedViewModel {
-        statusViewModelFactory.create(
-            contactTracingHubAction = intent.getSerializableExtra(CONTACT_TRACING_HUB_ACTION_EXTRA) as? ContactTracingHubAction,
-            showLocalMessageScreen = intent.getBooleanExtra(STARTED_FROM_LOCAL_MESSAGE_NOTIFICATION, false),
-            startedFromRiskyVenueNotificationWithType = intent.getSerializableExtra(STARTED_FROM_RISKY_VENUE_NOTIFICATION_WITH_TYPE) as? RiskyVenueMessageType
-        )
+        val extras = intent.getParcelableExtra(STATUS_ACTIVITY_ACTION) as? StatusActivityAction ?: None
+        statusViewModelFactory.create(extras)
     }
 
     @Inject
@@ -101,8 +101,6 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         startListeningForNavigationTarget()
 
         setClickListeners()
-
-        checkIfInAppReviewShouldBeDisplayed()
     }
 
     private fun startListeningToExposureNotificationPermissionState() {
@@ -123,7 +121,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
                 )
                 TestResult -> startActivity<TestResultActivity>()
                 UnknownTestResult -> startActivity<UnknownTestResultActivity>()
-                ExposureConsent -> EncounterDetectionActivity.start(this)
+                is ExposureConsent -> ExposureNotificationActivity.start(this)
                 is ShareKeys -> {
                     if (it.reminder) {
                         startActivity<ShareKeysReminderActivity>()
@@ -139,6 +137,8 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
                 }
                 is ContactTracingHub -> ContactTracingHubActivity.start(this, it.shouldTurnOnContactTracing)
                 LocalMessage -> startActivity<LocalMessageActivity>()
+                IsolationHub -> startActivity<IsolationHubActivity>()
+                InAppReview -> statusViewModel.attemptToStartAppReviewFlow(this)
             }
         }
     }
@@ -152,7 +152,6 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
                 viewState.animationsEnabled
             )
             handleRiskyPostCodeViewState(viewState.areaRiskState)
-            handleIsolationPaymentState(viewState.showIsolationPaymentButton)
             handleReportSymptomsState(viewState.showReportSymptomsButton)
             handleLocalMessageState(viewState.localMessage)
         }
@@ -167,19 +166,6 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         optionReportSymptoms.isVisible = showReportSymptomsButton
     }
 
-    private fun handleIsolationPaymentState(showIsolationPaymentButton: Boolean) {
-        optionIsolationPayment.isVisible = showIsolationPaymentButton
-    }
-
-    private fun checkIfInAppReviewShouldBeDisplayed() {
-        val startedFromVenueCheckInSuccess =
-            intent.getBooleanExtra(STARTED_FROM_VENUE_CHECK_IN_SUCCESS, false)
-
-        if (startedFromVenueCheckInSuccess) {
-            statusViewModel.attemptToStartAppReviewFlow(this)
-        }
-    }
-
     private fun setClickListeners() {
         optionReportSymptoms.setOnSingleClickListener {
             optionReportSymptoms.isEnabled = false
@@ -191,6 +177,11 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
             startActivity<TestingHubActivity>()
         }
 
+        optionIsolationHub.setOnSingleClickListener {
+            optionIsolationHub.isEnabled = false
+            startActivity<IsolationHubActivity>()
+        }
+
         optionVenueCheckIn.setOnSingleClickListener {
             optionVenueCheckIn.isEnabled = false
             QrScannerActivity.start(this)
@@ -199,12 +190,6 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         optionAboutTheApp.setOnSingleClickListener {
             optionAboutTheApp.isEnabled = false
             MoreAboutAppActivity.start(this)
-        }
-
-        optionIsolationPayment.setOnSingleClickListener {
-            optionIsolationPayment.isEnabled = false
-            statusViewModel.optionIsolationPaymentClicked()
-            startActivity<IsolationPaymentActivity>()
         }
 
         optionLinkTestResult.setOnSingleClickListener {
@@ -258,20 +243,6 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
                 showIsolationView(isolationState, currentDate, exposureNotificationsEnabled, animationsEnabled)
             }
         }
-        setUpReadSelfIsolationAdviceOption(isolationState)
-    }
-
-    private fun setUpReadSelfIsolationAdviceOption(isolationState: IsolationViewState) {
-        when (isolationState) {
-            is Isolating -> {
-                optionReadAdvice.setOnSingleClickListener {
-                    optionReadAdvice.isEnabled = false
-                    openUrl(isolationState.isolationAdvice, useInternalBrowser = true)
-                }
-                optionReadAdvice.visible()
-            }
-            NotIsolating -> optionReadAdvice.gone()
-        }
     }
 
     private fun handleRiskyPostCodeViewState(riskyPostCodeViewState: RiskyPostCodeViewState) {
@@ -301,6 +272,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
 
         contactTracingView.gone()
         isolationView.visible()
+        optionIsolationHub.visible()
     }
 
     private fun showDefaultView(exposureNotificationsEnabled: Boolean, animationsEnabled: Boolean) {
@@ -312,6 +284,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         isolationView.gone()
         contactTracingView.visible()
         optionReportSymptoms.visible()
+        optionIsolationHub.gone()
     }
 
     override fun onResume() {
@@ -325,12 +298,11 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
     }
 
     private fun resetButtonEnabling() {
-        optionReadAdvice.isEnabled = true
         optionReportSymptoms.isEnabled = true
         optionTestingHub.isEnabled = true
+        optionIsolationHub.isEnabled = true
         optionVenueCheckIn.isEnabled = true
         optionAboutTheApp.isEnabled = true
-        optionIsolationPayment.isEnabled = true
         optionLinkTestResult.isEnabled = true
         optionSettings.isEnabled = true
         optionToggleContactTracing.isEnabled = true
@@ -352,43 +324,37 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
     companion object {
         var isVisible = false
 
-        fun start(
-            context: Context,
-            startedFromVenueCheckInSuccess: Boolean = false,
-            contactTracingHubAction: ContactTracingHubAction? = null,
-            startedFromLocalMessageNotification: Boolean = false,
-            startedFromRiskyVenueNotificationWithType: RiskyVenueMessageType? = null
-        ) {
-            context.startActivity(
-                getIntent(
-                    context,
-                    startedFromVenueCheckInSuccess,
-                    contactTracingHubAction,
-                    startedFromLocalMessageNotification,
-                    startedFromRiskyVenueNotificationWithType
-                )
-            )
+        fun start(context: Context, statusActivityAction: StatusActivityAction = None) {
+            context.startActivity(getIntent(context, statusActivityAction))
         }
 
-        private fun getIntent(
-            context: Context,
-            startedFromVenueCheckInSuccess: Boolean,
-            contactTracingHubAction: ContactTracingHubAction?,
-            startedFromLocalMessageNotification: Boolean,
-            startedFromRiskyVenueNotificationWithType: RiskyVenueMessageType?
-        ) =
+        private fun getIntent(context: Context, statusActivityAction: StatusActivityAction) =
             Intent(context, StatusActivity::class.java)
                 .apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    putExtra(STARTED_FROM_VENUE_CHECK_IN_SUCCESS, startedFromVenueCheckInSuccess)
-                    putExtra(CONTACT_TRACING_HUB_ACTION_EXTRA, contactTracingHubAction)
-                    putExtra(STARTED_FROM_LOCAL_MESSAGE_NOTIFICATION, startedFromLocalMessageNotification)
-                    putExtra(STARTED_FROM_RISKY_VENUE_NOTIFICATION_WITH_TYPE, startedFromRiskyVenueNotificationWithType)
+                    putExtra(STATUS_ACTIVITY_ACTION, statusActivityAction)
                 }
 
-        const val STARTED_FROM_VENUE_CHECK_IN_SUCCESS = "STARTED_FROM_VENUE_CHECK_IN_SUCCESS"
-        const val CONTACT_TRACING_HUB_ACTION_EXTRA = "CONTACT_TRACING_HUB_ACTION_EXTRA"
-        const val STARTED_FROM_LOCAL_MESSAGE_NOTIFICATION = "STARTED_FROM_LOCAL_MESSAGE_NOTIFICATION"
-        const val STARTED_FROM_RISKY_VENUE_NOTIFICATION_WITH_TYPE = "STARTED_FROM_RISKY_VENUE_NOTIFICATION_WITH_TYPE"
+        const val STATUS_ACTIVITY_ACTION = "STATUS_ACTIVITY_ACTION"
+    }
+
+    sealed class StatusActivityAction : Parcelable {
+        @Parcelize
+        data class NavigateToContactTracingHub(val action: ContactTracingHubAction) : StatusActivityAction()
+
+        @Parcelize
+        object StartInAppReview : StatusActivityAction()
+
+        @Parcelize
+        object NavigateToLocalMessage : StatusActivityAction()
+
+        @Parcelize
+        data class ProcessRiskyVenueAlert(val type: RiskyVenueMessageType) : StatusActivityAction()
+
+        @Parcelize
+        object NavigateToIsolationHub : StatusActivityAction()
+
+        @Parcelize
+        object None : StatusActivityAction()
     }
 }

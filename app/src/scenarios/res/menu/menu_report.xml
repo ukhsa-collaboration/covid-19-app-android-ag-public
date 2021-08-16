@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".DebugActivity">
+
+    <item
+        android:id="@+id/actionExport"
+        android:icon="@null"
+        android:orderInCategory="100"
+        android:title="Export"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/actionToggleView"
+        android:icon="@null"
+        android:orderInCategory="100"
+        android:title="Display payload"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/actionFormat"
+        android:icon="@null"
+        android:orderInCategory="100"
+        android:title="Format"
+        app:showAsAction="never" />
+
+</menu>

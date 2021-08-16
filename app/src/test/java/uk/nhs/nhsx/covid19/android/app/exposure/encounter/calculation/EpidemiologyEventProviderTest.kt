@@ -1,128 +1,136 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation
 
+import android.content.SharedPreferences
 import com.google.android.gms.nearby.exposurenotification.ExposureWindow
 import com.google.android.gms.nearby.exposurenotification.Infectiousness
 import com.google.android.gms.nearby.exposurenotification.ScanInstance
 import com.squareup.moshi.Moshi
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider.Companion.EPIDEMIOLOGY_EVENT
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventPayload
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventPayloadScanInstance
 import uk.nhs.nhsx.covid19.android.app.remote.data.Infectiousness.HIGH
-import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTest
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectation
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectationDirection.JSON_TO_OBJECT
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import kotlin.test.assertEquals
 
-class EpidemiologyEventProviderTest {
+class EpidemiologyEventProviderTest : ProviderTest<EpidemiologyEventProvider, List<EpidemiologyEvent>>() {
 
-    private val storage = mockk<EpidemiologyEventStorage>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-12-18T14:38:40.180Z"), ZoneOffset.UTC)
-    private val moshi = Moshi.Builder().add(InstantAdapter()).build()
-
-    val testSubject = EpidemiologyEventProvider(storage, fixedClock, moshi)
+    override val getTestSubject: (Moshi, SharedPreferences) -> EpidemiologyEventProvider =
+        { moshi, sharedPreferences -> EpidemiologyEventProvider(fixedClock, moshi, sharedPreferences) }
+    override val property = EpidemiologyEventProvider::epidemiologyEvents
+    override val key = EPIDEMIOLOGY_EVENT
+    override val defaultValue: List<EpidemiologyEvent> = emptyList()
+    override val expectations: List<ProviderTestExpectation<List<EpidemiologyEvent>>> = listOf(
+        ProviderTestExpectation(json = oldEpidemiologyEvent1Json, objectValue = listOf(epidemiologyEvent1), direction = JSON_TO_OBJECT),
+        ProviderTestExpectation(json = epidemiologyEvent1Json, objectValue = listOf(epidemiologyEvent1), direction = JSON_TO_OBJECT),
+        ProviderTestExpectation(json = epidemiologyEvent2Json, objectValue = listOf(epidemiologyEvent2), direction = JSON_TO_OBJECT),
+        ProviderTestExpectation(json = epidemiologyEvents1And3And4Json, objectValue = listOf(epidemiologyEvent1, epidemiologyEvent3, epidemiologyEvent4), direction = JSON_TO_OBJECT)
+    )
 
     @Test
     fun `test adding single risky epidemiology event`() {
-        every { storage.value } returns epidemiologyEvent1Json
+        sharedPreferencesReturns(epidemiologyEvent1Json)
 
         testSubject.addRiskyEpidemiologyEvents(listOf(epidemiologyEvent2))
 
-        verify { storage.value = epidemiologyEvents1And2Json }
+        assertSharedPreferenceSetsValue(epidemiologyEvents1And2Json)
     }
 
     @Test
     fun `test adding single non risky epidemiology event with storage limit 2`() {
-        every { storage.value } returns epidemiologyEvents1And2Json
+        sharedPreferencesReturns(epidemiologyEvents1And2Json)
 
         testSubject.addNonRiskyEpidemiologyEvents(
             listOf(epidemiologyEvent3),
             storageLimit = 2
         )
 
-        verify { storage.value = epidemiologyEvents1And2And3Json }
+        assertSharedPreferenceSetsValue(epidemiologyEvents1And2And3Json)
     }
 
     @Test
     fun `test adding two non risky epidemiology events with storage limit 2`() {
-        every { storage.value } returns epidemiologyEvents1And2Json
+        sharedPreferencesReturns(epidemiologyEvents1And2Json)
 
         testSubject.addNonRiskyEpidemiologyEvents(
             listOf(epidemiologyEvent3, epidemiologyEvent4),
             storageLimit = 2
         )
 
-        verify { storage.value = epidemiologyEvents1And3And4Json }
+        assertSharedPreferenceSetsValue(epidemiologyEvents1And3And4Json)
     }
 
     @Test
     fun `test adding three non risky epidemiology events with storage limit 2`() {
-        every { storage.value } returns epidemiologyEvents1And2Json
+        sharedPreferencesReturns(epidemiologyEvents1And2Json)
 
         testSubject.addNonRiskyEpidemiologyEvents(
             listOf(epidemiologyEvent3, epidemiologyEvent4, epidemiologyEvent5),
             storageLimit = 2
         )
 
-        verify { storage.value = epidemiologyEvents1And4And5Json }
+        assertSharedPreferenceSetsValue(epidemiologyEvents1And4And5Json)
     }
 
     @Test
     fun `test clearing epidemiology events with date of oldest event keeps newer one`() {
-        every { storage.value } returns epidemiologyEvents1And2Json
+        sharedPreferencesReturns(epidemiologyEvents1And2Json)
 
         testSubject.clearOnAndBefore(event1LocalDate)
 
-        verify { storage.value = epidemiologyEvent2Json }
+        assertSharedPreferenceSetsValue(epidemiologyEvent2Json)
     }
 
     @Test
     fun `test clearing epidemiology events with date of oldest event + 1 day removes it`() {
-        every { storage.value } returns epidemiologyEvents1And2Json
+        sharedPreferencesReturns(epidemiologyEvents1And2Json)
 
         testSubject.clearOnAndBefore(event1LocalDate.plusDays(1))
 
-        verify { storage.value = epidemiologyEvent2Json }
+        assertSharedPreferenceSetsValue(epidemiologyEvent2Json)
     }
 
     @Test
     fun `test clearing epidemiology events with date of newest event - 1 keeps it`() {
-        every { storage.value } returns epidemiologyEvents1And2Json
+        sharedPreferencesReturns(epidemiologyEvents1And2Json)
 
         testSubject.clearOnAndBefore(event2LocalDate.minusDays(1))
 
-        verify { storage.value = epidemiologyEvent2Json }
+        assertSharedPreferenceSetsValue(epidemiologyEvent2Json)
     }
 
     @Test
     fun `can migrate`() {
-        every { storage.value } returns oldEpidemiologyEvent1Json
+        sharedPreferencesReturns(oldEpidemiologyEvent1Json)
 
         testSubject.addRiskyEpidemiologyEvents(listOf(epidemiologyEvent2))
 
-        verify { storage.value = epidemiologyEvents1And2Json }
+        assertSharedPreferenceSetsValue(epidemiologyEvents1And2Json)
     }
 
     @Test
     fun `test clearing epidemiology events with date of newest event removes all`() {
-        every { storage.value } returns epidemiologyEvents1And2Json
+        sharedPreferencesReturns(epidemiologyEvents1And2Json)
 
         testSubject.clearOnAndBefore(event2LocalDate)
 
-        verify { storage.value = "[]" }
+        assertSharedPreferenceSetsValue("[]")
     }
 
     @Test
     fun `test clearing epidemiology events with date of newest event + 1 day removes all`() {
-        every { storage.value } returns epidemiologyEvents1And2Json
+        sharedPreferencesReturns(epidemiologyEvents1And2Json)
 
         testSubject.clearOnAndBefore(event2LocalDate.plusDays(1))
 
-        verify { storage.value = "[]" }
+        assertSharedPreferenceSetsValue("[]")
     }
 
     @Test
@@ -217,30 +225,35 @@ class EpidemiologyEventProviderTest {
 
         private fun createNonRiskyEpidemiologyEvent(
             riskScore: Double,
-            scanInstances: List<EpidemiologyEventPayloadScanInstance>
+            isConsideredRisky: Boolean = false,
+            date: String = event2Date,
+            riskCalculationVersion: Int = 2,
+            scanInstances: List<EpidemiologyEventPayloadScanInstance> = emptyList()
         ) =
             EpidemiologyEvent(
                 payload = EpidemiologyEventPayload(
-                    date = Instant.parse(event2Date),
+                    date = Instant.parse(date),
                     infectiousness = HIGH,
                     scanInstances = scanInstances,
                     riskScore = riskScore,
-                    riskCalculationVersion = 2,
-                    isConsideredRisky = false
+                    riskCalculationVersion = riskCalculationVersion,
+                    isConsideredRisky = isConsideredRisky
                 )
             )
 
+        private val epidemiologyEvent1 = createNonRiskyEpidemiologyEvent(10.0, true, event1Date, 1)
+
         private val epidemiologyEvent2 = createNonRiskyEpidemiologyEvent(
-            2.0,
-            listOf(
+            riskScore = 2.0,
+            scanInstances = listOf(
                 EpidemiologyEventPayloadScanInstance(1, 0, 1)
             )
         )
 
-        private val epidemiologyEvent3 = createNonRiskyEpidemiologyEvent(3.0, emptyList())
+        private val epidemiologyEvent3 = createNonRiskyEpidemiologyEvent(3.0)
 
-        private val epidemiologyEvent4 = createNonRiskyEpidemiologyEvent(4.0, emptyList())
+        private val epidemiologyEvent4 = createNonRiskyEpidemiologyEvent(4.0)
 
-        private val epidemiologyEvent5 = createNonRiskyEpidemiologyEvent(5.0, emptyList())
+        private val epidemiologyEvent5 = createNonRiskyEpidemiologyEvent(5.0)
     }
 }

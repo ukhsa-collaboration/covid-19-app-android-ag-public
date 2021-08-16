@@ -38,6 +38,8 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTask.PERIODIC_TASKS
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
+import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
@@ -54,6 +56,9 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
 
     @Inject
     lateinit var debugViewModelFactory: ViewModelFactory<DebugViewModel>
+
+    @Inject
+    lateinit var exposureNotificationApi: ExposureNotificationApi
 
     private val debugViewModel: DebugViewModel by viewModels { debugViewModelFactory }
 
@@ -160,7 +165,11 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
         }
 
         sendExposureNotification.setOnSingleClickListener {
-            debugViewModel.sendExposureNotification()
+            if (exposureNotificationApi is MockExposureNotificationApi) {
+                debugViewModel.sendExposureNotification()
+            } else {
+                Toast.makeText(context, "Use Mock Exposure Notifications", Toast.LENGTH_LONG).show()
+            }
         }
 
         riskyVenueM1.setOnSingleClickListener {

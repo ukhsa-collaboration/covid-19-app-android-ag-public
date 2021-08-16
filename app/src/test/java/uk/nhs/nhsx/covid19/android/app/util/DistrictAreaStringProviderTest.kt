@@ -19,7 +19,7 @@ class DistrictAreaStringProviderTest {
     fun `provide for Wales returns modified resource id`() = runBlocking {
         coEvery { localAuthorityPostCodeProvider.getPostCodeDistrict() } returns PostCodeDistrict.WALES
 
-        val actual = testSubject.provide(R.string.privacy_notice)
+        val actual = testSubject.provide(R.string.url_privacy_notice)
 
         val expected = R.string.url_privacy_notice_wls
 

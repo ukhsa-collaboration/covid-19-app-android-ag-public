@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.isolation
 
+import android.content.SharedPreferences
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Moshi.Builder
 import com.squareup.moshi.adapters.EnumJsonAdapter
@@ -15,7 +16,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage
-import uk.nhs.nhsx.covid19.android.app.state.StateStringStorage
+import uk.nhs.nhsx.covid19.android.app.state.StateStorage.Companion.ISOLATION_STATE_KEY
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler
 import uk.nhs.nhsx.covid19.android.app.util.adapters.ColorSchemeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.ContentBlockTypeAdapter
@@ -35,13 +36,16 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 
 class IsolationTestContext {
-    private val stateStringStorage = InMemoryStateStringStorage()
 
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>(relaxUnitFun = true)
-    private val stateStorage = StateStorage(stateStringStorage, isolationConfigurationProvider, provideMoshi())
+    private val sharedPreferences: SharedPreferences = mockk()
+
+    private val stateStorage = StateStorage(isolationConfigurationProvider, provideMoshi(), sharedPreferences)
 
     init {
         every { isolationConfigurationProvider.durationDays } returns DurationDays()
+        every { sharedPreferences.edit() } returns mockk(relaxed = true)
+        every { sharedPreferences.all[ISOLATION_STATE_KEY] } returns null
     }
 
     private lateinit var localAuthority: String
@@ -68,7 +72,8 @@ class IsolationTestContext {
         createSelfAssessmentIndexCase = CreateSelfAssessmentIndexCase(),
         trackTestResultAnalyticsOnReceive = mockk(relaxUnitFun = true),
         trackTestResultAnalyticsOnAcknowledge = mockk(relaxUnitFun = true),
-
+        scheduleIsolationHubReminder = mockk(relaxUnitFun = true),
+        isolationHubReminderAlarmController = mockk(relaxUnitFun = true)
     )
 
     private val resetStateIfNeeded = ResetIsolationStateIfNeeded(
@@ -113,8 +118,8 @@ class IsolationTestContext {
         return isolationStateMachine.readLogicalState()
     }
 
-    fun getStateStringStorage(): StateStringStorage {
-        return stateStringStorage
+    fun setStateStringStorage(json: String) {
+        every { sharedPreferences.all[ISOLATION_STATE_KEY] } returns json
     }
 
     fun advanceClock(secondsToAdvance: Long) {
@@ -146,8 +151,4 @@ class MockClock(var currentInstant: Instant? = null) : Clock() {
     fun reset() {
         currentInstant = null
     }
-}
-
-class InMemoryStateStringStorage : StateStringStorage {
-    override var prefsValue: String? = null
 }

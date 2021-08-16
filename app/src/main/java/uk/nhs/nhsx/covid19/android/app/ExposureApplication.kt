@@ -85,9 +85,11 @@ open class ExposureApplication : Application(), Configuration.Provider, Lifecycl
         migrateIsolationState()
 
         initializeWorkManager()
+
         if (!isRunningTest) {
             startPeriodicTasks()
         }
+
         appComponent.provideExposureNotificationRetryAlarmController().onAppCreated()
         if (RuntimeBehavior.isFeatureEnabled(SUBMIT_ANALYTICS_VIA_ALARM_MANAGER)) {
             appComponent.provideSubmitAnalyticsAlarmController().onAppCreated()
@@ -116,6 +118,7 @@ open class ExposureApplication : Application(), Configuration.Provider, Lifecycl
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onApplicationStart() {
+        appComponent.provideClearOutdatedData().invoke()
         appComponent.provideApplicationStartAreaRiskUpdater().updateIfNecessary()
     }
 

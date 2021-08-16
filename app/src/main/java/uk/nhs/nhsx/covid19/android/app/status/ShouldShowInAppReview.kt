@@ -19,9 +19,9 @@ class ShouldShowInAppReview @Inject constructor(
         }
 
         val earliestVisit =
-            visits.minBy { it.from.atZone(clock.zone).truncatedTo(ChronoUnit.DAYS) }
+            visits.minByOrNull { it.from.atZone(clock.zone).truncatedTo(ChronoUnit.DAYS) }
         val latestVisit =
-            visits.maxBy { it.from.atZone(clock.zone).truncatedTo(ChronoUnit.DAYS) }
+            visits.maxByOrNull { it.from.atZone(clock.zone).truncatedTo(ChronoUnit.DAYS) }
 
         val daysBetween = ChronoUnit.DAYS.between(earliestVisit!!.from, latestVisit!!.from)
 

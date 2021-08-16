@@ -1,7 +1,7 @@
 apply plugin: 'jacoco'
 
 jacoco {
-    toolVersion = "0.8.6"
+    toolVersion = project.jacoco_version
     // Custom reports directory can be specified like this:
     // reportsDir = file("$buildDir/customJacocoReportDir")
 }

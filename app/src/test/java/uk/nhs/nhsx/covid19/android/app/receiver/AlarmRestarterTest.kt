@@ -22,6 +22,8 @@ class AlarmRestarterTest : FieldInjectionUnitTest() {
         migrateContactTracingActivationReminderProvider = mockk(relaxUnitFun = true)
         contactTracingActivationReminderProvider = mockk()
         exposureNotificationRetryAlarmController = mockk(relaxed = true)
+        isolationHubReminderTimeProvider = mockk(relaxUnitFun = true)
+        isolationHubReminderAlarmController = mockk(relaxUnitFun = true)
     }
 
     private val intent = mockk<Intent>()
@@ -31,6 +33,7 @@ class AlarmRestarterTest : FieldInjectionUnitTest() {
         super.setUp()
         every { intent.action } returns Intent.ACTION_BOOT_COMPLETED
         every { testSubject.contactTracingActivationReminderProvider.reminder } returns null
+        every { testSubject.isolationHubReminderTimeProvider.value } returns null
     }
 
     @Test
@@ -123,6 +126,26 @@ class AlarmRestarterTest : FieldInjectionUnitTest() {
                 submitAnalyticsAlarmController.onDeviceRebooted()
                 isolationExpirationAlarmController.onDeviceRebooted()
                 migrateContactTracingActivationReminderProvider()
+            }
+            verify(exactly = 0) { exposureNotificationReminderAlarmController.setup(any()) }
+        }
+    }
+
+    @Test
+    fun `when time stored in IsolationHubReminderTimeProvider then set up isolation hub reminder`() {
+        val expectedTime = 123L
+
+        every { testSubject.isolationHubReminderTimeProvider.value } returns expectedTime
+
+        testSubject.onReceive(context, intent)
+
+        with(testSubject) {
+            verify {
+                exposureNotificationRetryAlarmController.onDeviceRebooted()
+                submitAnalyticsAlarmController.onDeviceRebooted()
+                isolationExpirationAlarmController.onDeviceRebooted()
+                migrateContactTracingActivationReminderProvider()
+                isolationHubReminderAlarmController.setup(expectedTime)
             }
             verify(exactly = 0) { exposureNotificationReminderAlarmController.setup(any()) }
         }

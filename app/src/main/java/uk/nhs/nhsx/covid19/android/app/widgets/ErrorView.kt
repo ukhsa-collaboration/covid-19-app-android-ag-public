@@ -53,7 +53,7 @@ class ErrorView @JvmOverloads constructor(
         context.theme.obtainStyledAttributes(attrs, R.styleable.ErrorView, 0, 0)
             .apply {
                 errorTitle = getString(context, R.styleable.ErrorView_error_title)
-                errorDescription = getString(R.styleable.ErrorView_error_description)
+                errorDescription = getString(context, R.styleable.ErrorView_error_description)
                 recycle()
             }
     }

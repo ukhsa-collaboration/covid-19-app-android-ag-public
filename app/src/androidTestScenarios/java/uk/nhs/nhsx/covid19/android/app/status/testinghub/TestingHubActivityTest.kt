@@ -1,83 +1,48 @@
 package uk.nhs.nhsx.covid19.android.app.status.testinghub
 
+import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_EXTERNAL_BROWSER
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDate
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueConfigurationDurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
-import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAfterRiskyVenueRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestingHubRobot
-import java.time.LocalDate
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.BookTestTypeVenueVisitSetupHelper
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
 
-class TestingHubActivityTest : EspressoTest() {
-
+class TestingHubActivityTest : EspressoTest(), IsolationSetupHelper, BookTestTypeVenueVisitSetupHelper {
     private val testingHubRobot = TestingHubRobot()
     private val testOrderingRobot = TestOrderingRobot()
     private val symptomsAfterRiskyVenueRobot = SymptomsAfterRiskyVenueRobot()
-    private val isolationHelper = IsolationHelper(testAppContext.clock)
+    private val browserRobot = BrowserRobot()
+    override val isolationHelper = IsolationHelper(testAppContext.clock)
 
     @Test
-    fun whenInActiveIsolation_showBookTestButton_doNotShowFindOutAboutTesting() {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+    fun whenInContactIsolation_andNoBookTestTypeVenueVisitStored_clickOrderPcrTestButton_shouldNavigateToBookAPcrTest() {
+        givenContactIsolation()
+        givenNoBookTestTypeVenueVisitStored()
 
         startTestActivity<TestingHubActivity>()
 
         testingHubRobot.checkActivityIsDisplayed()
-        testingHubRobot.checkBookTestIsDisplayed()
-        testingHubRobot.checkFindOutAboutTestingIsNotDisplayed()
+        testingHubRobot.checkBookPcrTestIsDisplayed()
+
+        testingHubRobot.clickBookTest()
+
+        testOrderingRobot.checkActivityIsDisplayed()
     }
 
     @Test
-    fun whenNotIsolating_showFindOutAboutTesting_doNotShowBookTestButton() {
-        testAppContext.setState(isolationHelper.neverInIsolation())
+    fun whenInContactIsolation_andBookTestTypeVenueVisitStored_clickOrderPcrTestButton_shouldNavigateToSymptomsCheck() {
+        givenContactIsolation()
+        givenBookTestTypeVenueVisitStored()
 
         startTestActivity<TestingHubActivity>()
 
         testingHubRobot.checkActivityIsDisplayed()
-        testingHubRobot.checkBookTestIsNotDisplayed()
-        testingHubRobot.checkFindOutAboutTestingIsDisplayed()
-    }
-
-    @Test
-    fun whenLastVisitedBookTestTypeVenueAtRisk_withNoActiveIsolation_orderTestButtonShouldBeDisplayed() {
-        testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue =
-            LastVisitedBookTestTypeVenueDate(
-                LocalDate.now(),
-                RiskyVenueConfigurationDurationDays(optionToBookATest = 10)
-            )
-
-        startTestActivity<TestingHubActivity>()
-
-        testingHubRobot.checkActivityIsDisplayed()
-        testingHubRobot.checkBookTestIsDisplayed()
-        testingHubRobot.checkFindOutAboutTestingIsDisplayed()
-    }
-
-    @Test
-    fun whenLastVisitedBookTestTypeVenueNotAtRisk_withNoActiveIsolation_orderTestButtonShouldBeDisplayed() {
-        testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue = null
-
-        startTestActivity<TestingHubActivity>()
-
-        testingHubRobot.checkActivityIsDisplayed()
-        testingHubRobot.checkBookTestIsNotDisplayed()
-        testingHubRobot.checkFindOutAboutTestingIsDisplayed()
-    }
-
-    @Test
-    fun whenLastVisitedBookTestTypeVenueAtRisk_withNoActiveIsolation_clickOrderTestButton_shouldNavigateToSymptomsCheck() {
-        testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue =
-            LastVisitedBookTestTypeVenueDate(
-                LocalDate.now(),
-                RiskyVenueConfigurationDurationDays(optionToBookATest = 10)
-            )
-
-        startTestActivity<TestingHubActivity>()
-
-        testingHubRobot.checkActivityIsDisplayed()
-        testingHubRobot.checkBookTestIsDisplayed()
+        testingHubRobot.checkBookPcrTestIsDisplayed()
 
         testingHubRobot.clickBookTest()
 
@@ -85,14 +50,29 @@ class TestingHubActivityTest : EspressoTest() {
     }
 
     @Test
-    fun whenLastVisitedVenueNotAtRisk_whenInActiveIsolationFromContactCase_clickOrderTestButton_shouldNavigateToBookTest() {
-        testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue = null
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+    fun whenNotIsolating_andBookTestTypeVenueVisitStored_clickOrderPcrTestButton_shouldNavigateToSymptomsCheck() {
+        givenNeverInIsolation()
+        givenBookTestTypeVenueVisitStored()
 
         startTestActivity<TestingHubActivity>()
 
         testingHubRobot.checkActivityIsDisplayed()
-        testingHubRobot.checkBookTestIsDisplayed()
+        testingHubRobot.checkBookPcrTestIsDisplayed()
+
+        testingHubRobot.clickBookTest()
+
+        symptomsAfterRiskyVenueRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    fun whenInSelfAssessmentIsolation_andNoBookTestTypeVenueVisitStored_clickOrderPcrTestButton_shouldNavigateToBookAPcrTest() {
+        givenSelfAssessmentIsolation()
+        givenNoBookTestTypeVenueVisitStored()
+
+        startTestActivity<TestingHubActivity>()
+
+        testingHubRobot.checkActivityIsDisplayed()
+        testingHubRobot.checkBookPcrTestIsDisplayed()
 
         testingHubRobot.clickBookTest()
 
@@ -100,17 +80,34 @@ class TestingHubActivityTest : EspressoTest() {
     }
 
     @Test
-    fun whenInActiveIsolationFromSelfAssessment_clickOrderTestButton_shouldNavigateToBookTest() {
-        testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
-        testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue = null
+    fun whenInContactIsolation_andNoBookTestTypeVenueVisitStored_clickBookPcrTestButton_shouldNavigateToBookAPcrTest() {
+        givenContactIsolation()
+        givenNoBookTestTypeVenueVisitStored()
 
         startTestActivity<TestingHubActivity>()
 
         testingHubRobot.checkActivityIsDisplayed()
-        testingHubRobot.checkBookTestIsDisplayed()
+        testingHubRobot.checkBookPcrTestIsDisplayed()
 
         testingHubRobot.clickBookTest()
 
         testOrderingRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    fun whenNotIsolating_andNoBookTestTypeVenueVisitStored_clickBookLfdTestButton_shouldOpenWebsiteInExternalBrowser() {
+        runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
+            givenNeverInIsolation()
+            givenNoBookTestTypeVenueVisitStored()
+
+            startTestActivity<TestingHubActivity>()
+
+            testingHubRobot.checkActivityIsDisplayed()
+            testingHubRobot.checkBookLfdTestIsDisplayed()
+
+            testingHubRobot.clickBookTest()
+
+            waitFor { browserRobot.checkActivityIsDisplayed() }
+        }
     }
 }

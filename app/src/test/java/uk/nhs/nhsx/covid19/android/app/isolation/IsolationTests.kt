@@ -47,14 +47,14 @@ class IsolationTests(
 
         private fun getTransitionsForManualTest(): Iterable<Array<Any>> {
             val initialState = State(
-                contact = ContactCaseState.noIsolation,
+                contact = ContactCaseState.isolating,
                 symptomatic = SymptomaticCaseState.noIsolation,
-                positiveTest = PositiveTestCaseState.notIsolatingAndHasNegativeTest
+                positiveTest = PositiveTestCaseState.isolatingWithUnconfirmedTest
             )
             val event =
-                Event.receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDateAndOlderThanAssumedSymptomOnsetDayIfAny
+                Event.terminatedRiskyContactEarly
             val finalState = State(
-                contact = ContactCaseState.noIsolation,
+                contact = ContactCaseState.notIsolatingAndHadRiskyContactIsolationTerminatedEarly,
                 symptomatic = SymptomaticCaseState.noIsolation,
                 positiveTest = PositiveTestCaseState.isolatingWithUnconfirmedTest
             )
@@ -176,13 +176,13 @@ class IsolationTests(
         ),
         Transition(
             initialState = State(
-                contact = ContactCaseState.notIsolatingAndHadRiskyContactIsolationTerminatedDueToDCT,
+                contact = ContactCaseState.notIsolatingAndHadRiskyContactIsolationTerminatedEarly,
                 symptomatic = SymptomaticCaseState.notIsolatingAndHadSymptomsPreviously,
                 positiveTest = PositiveTestCaseState.notIsolatingAndHasNegativeTest
             ),
             event = Event.receivedUnconfirmedPositiveTestWithEndDateOlderThanAssumedSymptomOnsetDate,
             finalState = State(
-                contact = ContactCaseState.notIsolatingAndHadRiskyContactIsolationTerminatedDueToDCT,
+                contact = ContactCaseState.notIsolatingAndHadRiskyContactIsolationTerminatedEarly,
                 symptomatic = SymptomaticCaseState.notIsolatingAndHadSymptomsPreviously,
                 positiveTest = PositiveTestCaseState.notIsolatingAndHasNegativeTest
             )
@@ -197,6 +197,32 @@ class IsolationTests(
             finalState = State(
                 contact = ContactCaseState.isolating,
                 symptomatic = SymptomaticCaseState.notIsolatingAndHadSymptomsPreviously,
+                positiveTest = PositiveTestCaseState.notIsolatingAndHasNegativeTest
+            )
+        ),
+        Transition(
+            initialState = State(
+                contact = ContactCaseState.noIsolation,
+                symptomatic = SymptomaticCaseState.noIsolation,
+                positiveTest = PositiveTestCaseState.notIsolatingAndHasNegativeTest
+            ),
+            event = Event.receivedConfirmedPositiveTestWithIsolationPeriodOlderThanAssumedIsolationStartDate,
+            finalState = State(
+                contact = ContactCaseState.noIsolation,
+                symptomatic = SymptomaticCaseState.noIsolation,
+                positiveTest = PositiveTestCaseState.notIsolatingAndHasNegativeTest
+            )
+        ),
+        Transition(
+            initialState = State(
+                contact = ContactCaseState.noIsolation,
+                symptomatic = SymptomaticCaseState.noIsolation,
+                positiveTest = PositiveTestCaseState.notIsolatingAndHasNegativeTest
+            ),
+            event = Event.receivedUnconfirmedPositiveTestWithIsolationPeriodOlderThanAssumedIsolationStartDate,
+            finalState = State(
+                contact = ContactCaseState.noIsolation,
+                symptomatic = SymptomaticCaseState.noIsolation,
                 positiveTest = PositiveTestCaseState.notIsolatingAndHasNegativeTest
             )
         ),

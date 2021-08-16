@@ -9,7 +9,6 @@ import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DeclaredNegativeResultFromDct
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ReceivedUnconfirmedPositiveTestResult
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
@@ -32,10 +31,13 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.PositiveTestResult
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.HandleTestResult
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.SendExposedNotification
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.DoNotTransition
+import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubReminderAlarmController
+import uk.nhs.nhsx.covid19.android.app.status.isolationhub.ScheduleIsolationHubReminder
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
@@ -68,6 +70,8 @@ class IsolationStateMachineTest {
     private val createSelfAssessmentIndexCase = mockk<CreateSelfAssessmentIndexCase>()
     private val trackTestResultAnalyticsOnReceive = mockk<TrackTestResultAnalyticsOnReceive>(relaxUnitFun = true)
     private val trackTestResultAnalyticsOnAcknowledge = mockk<TrackTestResultAnalyticsOnAcknowledge>(relaxUnitFun = true)
+    private val scheduleIsolationHubReminder = mockk<ScheduleIsolationHubReminder>(relaxUnitFun = true)
+    private val isolationHubReminderAlarmController = mockk<IsolationHubReminderAlarmController>(relaxUnitFun = true)
 
     private val durationDays = DurationDays()
 
@@ -113,7 +117,10 @@ class IsolationStateMachineTest {
 
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertNull(sideEffect)
-        verify(exactly = 1) { analyticsEventProcessor.track(StartedIsolation) }
+        verify {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState = currentState,
@@ -155,7 +162,10 @@ class IsolationStateMachineTest {
 
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertNull(sideEffect)
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateDefaultChecks()
     }
@@ -196,7 +206,10 @@ class IsolationStateMachineTest {
 
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertNull(sideEffect)
-        verify(exactly = 1) { analyticsEventProcessor.track(StartedIsolation) }
+        verify {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState = currentState,
@@ -437,7 +450,10 @@ class IsolationStateMachineTest {
         verify { trackTestResultAnalyticsOnReceive.invoke(testResult, INSIDE_APP) }
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateDefaultChecks()
     }
@@ -468,8 +484,11 @@ class IsolationStateMachineTest {
         assertEquals(HandleTestResult(testResult, testOrderType = INSIDE_APP), sideEffect)
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify(exactly = 0) { analyticsEventProcessor.track(ReceivedUnconfirmedPositiveTestResult) }
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(ReceivedUnconfirmedPositiveTestResult)
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateDefaultChecks()
     }
@@ -507,6 +526,7 @@ class IsolationStateMachineTest {
         assertEquals(SendExposedNotification, sideEffect)
         verify(exactly = 1) { exposureNotificationHandler.show() }
         verify(exactly = 1) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) { scheduleIsolationHubReminder() }
 
         newStateIsolationChecks(
             currentState = currentState,
@@ -533,7 +553,10 @@ class IsolationStateMachineTest {
 
         assertEquals(expected, actual)
         assertNull(sideEffect)
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateDefaultChecks()
     }
@@ -557,7 +580,10 @@ class IsolationStateMachineTest {
 
         assertEquals(expected, actual)
         assertNull(sideEffect)
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateDefaultChecks()
     }
@@ -590,7 +616,10 @@ class IsolationStateMachineTest {
         )
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertEquals(SendExposedNotification, sideEffect)
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState = case,
@@ -614,7 +643,10 @@ class IsolationStateMachineTest {
         assertEquals(case, actual)
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertEquals(null, sideEffect)
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState = case,
@@ -638,7 +670,10 @@ class IsolationStateMachineTest {
         assertEquals(initialState, actual)
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertNull(sideEffect)
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState = initialState,
@@ -677,7 +712,10 @@ class IsolationStateMachineTest {
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertEquals(SendExposedNotification, sideEffect)
         verify(exactly = 1) { exposureNotificationHandler.show() }
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState = initialState,
@@ -714,7 +752,10 @@ class IsolationStateMachineTest {
         verify { trackTestResultAnalyticsOnReceive.invoke(testResult, INSIDE_APP) }
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState = state,
@@ -751,7 +792,10 @@ class IsolationStateMachineTest {
         verify { trackTestResultAnalyticsOnReceive.invoke(testResult, INSIDE_APP) }
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState = state,
@@ -788,7 +832,10 @@ class IsolationStateMachineTest {
         verify { trackTestResultAnalyticsOnReceive.invoke(testResult, INSIDE_APP) }
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState = state,
@@ -826,7 +873,10 @@ class IsolationStateMachineTest {
         verify { trackTestResultAnalyticsOnReceive.invoke(testResult, INSIDE_APP) }
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState = isolation,
@@ -877,7 +927,10 @@ class IsolationStateMachineTest {
 
         assertEquals(expected, actual)
         assertNull(sideEffect)
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState = isolation,
@@ -927,7 +980,10 @@ class IsolationStateMachineTest {
 
         assertEquals(expected, actual)
         assertNull(sideEffect)
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState = isolation,
@@ -985,7 +1041,10 @@ class IsolationStateMachineTest {
         verify { trackTestResultAnalyticsOnReceive.invoke(testResult, INSIDE_APP) }
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState = isolation,
@@ -1043,7 +1102,10 @@ class IsolationStateMachineTest {
         verify { trackTestResultAnalyticsOnReceive.invoke(testResult, INSIDE_APP) }
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState = isolation,
@@ -1101,7 +1163,10 @@ class IsolationStateMachineTest {
         verify { trackTestResultAnalyticsOnReceive.invoke(testResult, INSIDE_APP) }
         verify { unacknowledgedTestResultsProvider.add(testResult) }
         verify { storageBasedUserInbox.notifyChanges() }
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState = isolation,
@@ -1150,7 +1215,10 @@ class IsolationStateMachineTest {
         verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentState.asLogical(), testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateDefaultChecks()
     }
@@ -1192,7 +1260,10 @@ class IsolationStateMachineTest {
         verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentState.asLogical(), testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
         verify(exactly = 0) { keySharingInfoProvider setProperty "keySharingInfo" value any<KeySharingInfo>() }
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateDefaultChecks()
     }
@@ -1238,7 +1309,10 @@ class IsolationStateMachineTest {
         verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentState.asLogical(), testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState = currentState,
@@ -1296,6 +1370,7 @@ class IsolationStateMachineTest {
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
         verify { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) { scheduleIsolationHubReminder() }
 
         newStateIsolationChecks(
             currentState = currentState,
@@ -1352,7 +1427,10 @@ class IsolationStateMachineTest {
         verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentState.asLogical(), testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateDefaultChecks()
     }
@@ -1419,7 +1497,10 @@ class IsolationStateMachineTest {
         verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentState.asLogical(), testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateIsolationChecks(
             currentState,
@@ -1489,7 +1570,10 @@ class IsolationStateMachineTest {
         verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentState.asLogical(), testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
-        verify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        verify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateDefaultChecks()
     }
@@ -1513,7 +1597,10 @@ class IsolationStateMachineTest {
         testSubject.reset()
 
         assertEquals(IsolationState(isolationConfiguration = durationDays), testSubject.readState())
-        coVerify(exactly = 0) { analyticsEventProcessor.track(StartedIsolation) }
+        coVerify(exactly = 0) {
+            analyticsEventProcessor.track(StartedIsolation)
+            scheduleIsolationHubReminder()
+        }
 
         newStateDefaultChecks()
     }
@@ -1587,17 +1674,15 @@ class IsolationStateMachineTest {
     }
 
     @Test
-    fun `when in contact case only and opt-in to daily contact testing, transition to default and store contact case isolation and opt-in date`() {
-        val startDate = LocalDate.now(fixedClock).minus(3, ChronoUnit.DAYS)
-        val notificationDate = LocalDate.now(fixedClock).minus(2, ChronoUnit.DAYS)
-        val expiryDate = LocalDate.now(fixedClock).plusDays(12)
+    fun `when in contact case isolation and opting out of contact isolation then expire contact isolation and store encounter date in contact case`() {
+        val encounterDate = LocalDate.now(fixedClock).minus(3, ChronoUnit.DAYS)
         val contactCaseOnlyIsolation = IsolationState(
             isolationConfiguration = durationDays,
             contactCase = ContactCase(
-                exposureDate = startDate,
-                notificationDate = notificationDate,
-                expiryDate = expiryDate,
-                dailyContactTestingOptInDate = null
+                exposureDate = encounterDate,
+                notificationDate = LocalDate.now(fixedClock).minus(2, ChronoUnit.DAYS),
+                expiryDate = LocalDate.now(fixedClock).plusDays(12),
+                optOutOfContactIsolation = null
             )
         )
 
@@ -1605,55 +1690,18 @@ class IsolationStateMachineTest {
 
         val testSubject = createIsolationStateMachine(fixedClock)
 
-        testSubject.optInToDailyContactTesting()
+        testSubject.optOutOfContactIsolation(encounterDate)
 
         val actual = testSubject.readState()
         val expected = contactCaseOnlyIsolation.copy(
             contactCase = contactCaseOnlyIsolation.contactCase!!.copy(
-                expiryDate = LocalDate.now(fixedClock),
-                dailyContactTestingOptInDate = LocalDate.now(fixedClock)
+                expiryDate = encounterDate,
+                optOutOfContactIsolation = OptOutOfContactIsolation(encounterDate)
             ),
             hasAcknowledgedEndOfIsolation = true
         )
 
-        verify(exactly = 1) { analyticsEventProcessor.track(DeclaredNegativeResultFromDct) }
-
         assertEquals(expected, actual)
-    }
-
-    @Test
-    fun `when other than contact case only and opt-in to daily contact testing do not transition`() {
-        val startDate = LocalDate.now(fixedClock).minus(3, ChronoUnit.DAYS)
-        val notificationDate = LocalDate.now(fixedClock).minus(2, ChronoUnit.DAYS)
-        val expiryDate = LocalDate.now(fixedClock).plusDays(12)
-        val combinedIsolation = IsolationState(
-            isolationConfiguration = durationDays,
-            indexInfo = IndexCase(
-                isolationTrigger = SelfAssessment(
-                    selfAssessmentDate = LocalDate.parse("2020-05-22"),
-                    onsetDate = LocalDate.parse("2020-05-20")
-                ),
-                expiryDate = expiryDate.minusDays(3),
-            ),
-            contactCase = ContactCase(
-                exposureDate = startDate,
-                notificationDate = notificationDate,
-                expiryDate = expiryDate,
-                dailyContactTestingOptInDate = null
-            )
-        )
-
-        every { stateProvider.state } returns combinedIsolation
-
-        val testSubject = createIsolationStateMachine(fixedClock)
-
-        testSubject.optInToDailyContactTesting()
-
-        verify(exactly = 0) { analyticsEventProcessor.track(DeclaredNegativeResultFromDct) }
-
-        val actual = testSubject.readState()
-
-        assertEquals(expected = combinedIsolation, actual)
     }
 
     @Test
@@ -1719,6 +1767,7 @@ class IsolationStateMachineTest {
     private fun newStateDefaultChecks() {
         verify { alarmController.cancelExpirationCheckIfAny() }
         verify { exposureNotificationHandler.cancel() }
+        verify { isolationHubReminderAlarmController.cancel() }
     }
 
     private fun newStateIsolationChecks(currentState: IsolationState, newState: IsolationState) {
@@ -1802,6 +1851,8 @@ class IsolationStateMachineTest {
             createSelfAssessmentIndexCase,
             trackTestResultAnalyticsOnReceive,
             trackTestResultAnalyticsOnAcknowledge,
+            scheduleIsolationHubReminder,
+            isolationHubReminderAlarmController
         )
     }
 }

@@ -5,6 +5,7 @@ import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.util.isEqualOrAfter
+import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -23,26 +24,28 @@ class EvaluateIfConsideredRisky @Inject constructor(
         calculatedRisk: Double,
         riskThreshold: Double
     ): Boolean {
-        Timber.d("ExposureWindowWithRisk: with risk $calculatedRisk isRecentExposure: ${exposureWindow.isRecentExposure()} and isAfterPotentialDailyContactTestingOptIn: ${exposureWindow.isAfterPotentialDailyContactTestingOptIn()}")
+        Timber.d("ExposureWindowWithRisk: with risk $calculatedRisk isRecentExposure: ${exposureWindow.isRecentExposure()} and isAfterPotentialContactIsolationOptOut: ${exposureWindow.isAfterPotentialContactIsolationOptOut()}")
         return exposureWindow.isConsideredRisky(calculatedRisk, riskThreshold)
     }
 
     private fun ExposureWindow.isConsideredRisky(calculatedRisk: Double, riskThreshold: Double): Boolean {
         return isRecentExposure() &&
-            isAfterPotentialDailyContactTestingOptIn() &&
-            calculatedRisk >= riskThreshold
+                isAfterPotentialContactIsolationOptOut() &&
+                calculatedRisk >= riskThreshold
     }
 
     private fun ExposureWindow.isRecentExposure(): Boolean {
         val contactCaseIsolationDuration = isolationConfigurationProvider.durationDays.contactCase.toLong()
         val oldestPossibleContactCaseIsolationDate =
             LocalDate.now(clock).minusDays(contactCaseIsolationDuration).atStartOfDay()
-        val encounterDate: LocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(dateMillisSinceEpoch), ZoneOffset.UTC)
+        val encounterDate: LocalDateTime =
+            LocalDateTime.ofInstant(Instant.ofEpochMilli(dateMillisSinceEpoch), ZoneOffset.UTC)
         return encounterDate.isEqualOrAfter(oldestPossibleContactCaseIsolationDate)
     }
 
-    private fun ExposureWindow.isAfterPotentialDailyContactTestingOptIn(): Boolean =
-        isolationStateMachine.readState().contactCase?.dailyContactTestingOptInDate?.let { optInDate ->
-            dateMillisSinceEpoch >= optInDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+    private fun ExposureWindow.isAfterPotentialContactIsolationOptOut(): Boolean =
+        isolationStateMachine.readState().contactCase?.optOutOfContactIsolation?.date?.let { optOutDate ->
+            val exposureDate = Instant.ofEpochMilli(dateMillisSinceEpoch).toLocalDate(clock.zone)
+            exposureDate > optOutDate
         } ?: true
 }

@@ -58,9 +58,6 @@ class DownloadTasksWorker(
     lateinit var downloadAndProcessKeys: DownloadAndProcessKeys
 
     @Inject
-    lateinit var clearOutdatedDataAndUpdateIsolationConfiguration: ClearOutdatedDataAndUpdateIsolationConfiguration
-
-    @Inject
     lateinit var exposureNotificationWork: ExposureNotificationWork
 
     @Inject
@@ -81,6 +78,12 @@ class DownloadTasksWorker(
     @Inject
     lateinit var processRemoteServiceExceptionCrashReport: ProcessRemoteServiceExceptionCrashReport
 
+    @Inject
+    lateinit var updateConfigurations: UpdateConfigurations
+
+    @Inject
+    lateinit var clearOutdatedData: ClearOutdatedData
+
     override suspend fun doWork(): Result {
         applicationContext.appComponent.inject(this)
         Timber.d("Running DownloadTasksWorker")
@@ -93,7 +96,8 @@ class DownloadTasksWorker(
             return Result.failure()
         }
 
-        clearOutdatedDataAndUpdateIsolationConfiguration()
+        updateConfigurations()
+        clearOutdatedData()
 
         if (hasSuccessfullyProcessedNewExposureProvider.value == false) {
             exposureNotificationWork.evaluateRisk()

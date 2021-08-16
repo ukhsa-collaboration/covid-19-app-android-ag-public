@@ -20,6 +20,5 @@ class EvaluateVenueAlertNavigation @Inject constructor(
     sealed class NavigationTarget {
         object BookATest : NavigationTarget()
         object SymptomsAfterRiskyVenue : NavigationTarget()
-        object Finish : NavigationTarget()
     }
 }

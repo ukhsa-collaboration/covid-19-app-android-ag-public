@@ -43,12 +43,12 @@ data class State(
 
 enum class ContactCaseState(
     val isolationState: IsolationState,
-    val terminatedDueToDCT: Boolean = false
+    val terminatedEarly: Boolean = false
 ) {
     noIsolation(NONE),
     isolating(ACTIVE),
     notIsolatingAndHadRiskyContactPreviously(FINISHED),
-    notIsolatingAndHadRiskyContactIsolationTerminatedDueToDCT(FINISHED, true)
+    notIsolatingAndHadRiskyContactIsolationTerminatedEarly(FINISHED, true)
 }
 
 enum class SymptomaticCaseState(
@@ -87,26 +87,24 @@ enum class TestType {
 enum class Event {
     // External:
     riskyContact,
-    riskyContactWithExposureDayOlderThanIsolationTerminationDueToDCT,
+    riskyContactWithExposureDayOlderThanEarlyIsolationTermination,
 
     selfDiagnosedSymptomatic,
     selfDiagnosedSymptomaticWithAssumedOnsetDateOlderThanPositiveTestEndDate,
 
-    terminateRiskyContactDueToDCT,
+    terminatedRiskyContactEarly,
 
     receivedConfirmedPositiveTest,
     receivedConfirmedPositiveTestWithEndDateOlderThanRememberedNegativeTestEndDate,
-    receivedConfirmedPositiveTestWithEndDateOlderThanAssumedSymptomOnsetDate,
-    receivedConfirmedPositiveTestWithIsolationPeriodOlderThanAssumedSymptomOnsetDate,
+    receivedConfirmedPositiveTestWithIsolationPeriodOlderThanAssumedIsolationStartDate,
 
     receivedUnconfirmedPositiveTest,
     receivedUnconfirmedPositiveTestWithEndDateOlderThanRememberedNegativeTestEndDate,
-    receivedUnconfirmedPositiveTestWithEndDateOlderThanAssumedSymptomOnsetDate,
-    receivedUnconfirmedPositiveTestWithIsolationPeriodOlderThanAssumedSymptomOnsetDate,
     receivedUnconfirmedPositiveTestWithEndDateNDaysOlderThanRememberedNegativeTestEndDateAndOlderThanAssumedSymptomOnsetDayIfAny,
+    receivedUnconfirmedPositiveTestWithEndDateOlderThanAssumedSymptomOnsetDate,
+    receivedUnconfirmedPositiveTestWithIsolationPeriodOlderThanAssumedIsolationStartDate,
 
     receivedNegativeTest,
-    receivedNegativeTestWithEndDateOlderThanRememberedUnconfirmedTestEndDate,
     receivedNegativeTestWithEndDateOlderThanAssumedSymptomOnsetDate,
     receivedNegativeTestWithEndDateNDaysNewerThanRememberedUnconfirmedTestEndDate,
     receivedNegativeTestWithEndDateOlderThanRememberedUnconfirmedTestEndDateAndOlderThanAssumedSymptomOnsetDayIfAny,

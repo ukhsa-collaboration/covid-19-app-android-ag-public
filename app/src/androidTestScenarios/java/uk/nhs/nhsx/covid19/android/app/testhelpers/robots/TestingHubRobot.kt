@@ -6,6 +6,7 @@ import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
 
@@ -15,33 +16,18 @@ class TestingHubRobot {
         checkActivityTitleIsDisplayed(R.string.testing_hub_title)
     }
 
-    fun checkBookTestIsDisplayed() {
-        onView(withId(R.id.itemBookTest))
+    fun checkBookPcrTestIsDisplayed() {
+        onView(withText(R.string.testing_hub_book_test_title))
             .check(matches(isDisplayed()))
     }
 
-    fun checkBookTestIsNotDisplayed() {
-        onView(withId(R.id.itemBookTest))
-            .check(matches(not(isDisplayed())))
+    fun checkBookLfdTestIsDisplayed() {
+        onView(withText(R.string.testing_hub_book_lfd_test_title))
+            .check(matches(isDisplayed()))
     }
 
     fun clickBookTest() {
         onView(withId(R.id.itemBookTest))
-            .perform(scrollTo(), click())
-    }
-
-    fun checkFindOutAboutTestingIsDisplayed() {
-        onView(withId(R.id.itemFindOutAboutTesting))
-            .check(matches(isDisplayed()))
-    }
-
-    fun checkFindOutAboutTestingIsNotDisplayed() {
-        onView(withId(R.id.itemFindOutAboutTesting))
-            .check(matches(not(isDisplayed())))
-    }
-
-    fun clickFindOutAboutTesting() {
-        onView(withId(R.id.itemFindOutAboutTesting))
             .perform(scrollTo(), click())
     }
 

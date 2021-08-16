@@ -79,7 +79,6 @@ data class Metrics(
     var acknowledgedStartOfIsolationDueToRiskyContact: Int = 0,
     var hasRiskyContactNotificationsEnabledBackgroundTick: Int = 0,
     var totalRiskyContactReminderNotifications: Int = 0,
-    var declaredNegativeResultFromDCT: Int = 0,
     var didHaveSymptomsBeforeReceivedTestResult: Int = 0,
     var didRememberOnsetSymptomsDateBeforeReceivedTestResult: Int = 0,
     var didAskForSymptomsOnPositiveTestEntry: Int = 0,
@@ -110,4 +109,6 @@ data class Metrics(
     var selectedHasNoSymptomsM2Journey: Int = 0,
     var selectedLFDTestOrderingM2Journey: Int = 0,
     var selectedHasLFDTestM2Journey: Int = 0,
+    var optedOutForContactIsolation: Int = 0,
+    var optedOutForContactIsolationBackgroundTick: Int = 0,
 )

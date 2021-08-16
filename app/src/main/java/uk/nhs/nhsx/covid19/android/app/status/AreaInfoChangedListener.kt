@@ -2,13 +2,14 @@ package uk.nhs.nhsx.covid19.android.app.status
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import uk.nhs.nhsx.covid19.android.app.status.RiskyPostCodeIndicatorProvider.Companion.RISKY_POST_CODE_INDICATOR_KEY
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessagesProvider
 
 class AreaInfoChangedListener(private val onChange: () -> Unit) :
     OnSharedPreferenceChangeListener {
 
     private val areaInfoKeys = setOf(
-        RiskyPostCodeIndicatorStorage.VALUE_KEY,
+        RISKY_POST_CODE_INDICATOR_KEY,
         LocalMessagesProvider.VALUE_KEY
     )
 

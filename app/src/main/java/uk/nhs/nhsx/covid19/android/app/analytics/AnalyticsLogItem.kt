@@ -47,7 +47,6 @@ enum class RegularAnalyticsEventType(
     LAUNCHED_ISOLATION_PAYMENTS_APPLICATION({ it.launchedIsolationPaymentsApplication++ }),
     LAUNCHED_TEST_ORDERING({ it.launchedTestOrdering++ }),
     RECEIVED_UNCONFIRMED_POSITIVE_TEST_RESULT({ it.receivedUnconfirmedPositiveTestResult++ }),
-    DECLARED_NEGATIVE_RESULT_FROM_DCT({ it.declaredNegativeResultFromDCT++ }),
     DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT({ it.didHaveSymptomsBeforeReceivedTestResult++ }),
     DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT({ it.didRememberOnsetSymptomsDateBeforeReceivedTestResult++ }),
     DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY({ it.didAskForSymptomsOnPositiveTestEntry++ }),
@@ -75,6 +74,7 @@ enum class RegularAnalyticsEventType(
     SELECTED_HAS_NO_SYMPTOMS_M2_JOURNEY({ it.selectedHasNoSymptomsM2Journey++ }),
     SELECTED_LFD_TEST_ORDERING_M2_JOURNEY({ it.selectedLFDTestOrderingM2Journey++ }),
     SELECTED_HAS_LFD_TEST_M2_JOURNEY({ it.selectedHasLFDTestM2Journey++ }),
+    OPTED_OUT_FOR_CONTACT_ISOLATION({ it.optedOutForContactIsolation++ }),
 }
 
 @JsonClass(generateAdapter = true)
@@ -98,6 +98,7 @@ data class BackgroundTaskTicks(
     var isIsolatingForUnconfirmedTestBackgroundTick: Boolean = false,
     var hasReceivedRiskyVenueM2WarningBackgroundTick: Boolean = false,
     var isDisplayingLocalInfoBackgroundTick: Boolean = false,
+    var optedOutForContactIsolationBackgroundTick: Boolean = false,
 ) {
     fun applyToMetrics(metrics: Metrics) {
         metrics.totalBackgroundTasks++
@@ -120,5 +121,6 @@ data class BackgroundTaskTicks(
         metrics.haveActiveIpcTokenBackgroundTick += haveActiveIpcTokenBackgroundTick.toInt()
         metrics.hasReceivedRiskyVenueM2WarningBackgroundTick += hasReceivedRiskyVenueM2WarningBackgroundTick.toInt()
         metrics.isDisplayingLocalInfoBackgroundTick += isDisplayingLocalInfoBackgroundTick.toInt()
+        metrics.optedOutForContactIsolationBackgroundTick += optedOutForContactIsolationBackgroundTick.toInt()
     }
 }

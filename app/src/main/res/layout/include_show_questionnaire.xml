@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/questionnaireScrollView"
     style="@style/ScrollContainer"
     android:layout_width="match_parent"
@@ -23,8 +23,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_horizontal_reduced_relative"
             android:layout_marginTop="@dimen/vertical_margin"
-            app:error_title="@string/error_title"
-            app:error_description="@string/questionnaire_no_symptom_selected" />
+            app:error_description="@string/questionnaire_no_symptom_selected"
+            app:error_title="@string/error_title" />
 
         <TextView
             android:id="@+id/textStep"
@@ -72,13 +72,12 @@
             android:layout_marginStart="@dimen/margin_horizontal_reduced_relative"
             android:text="@string/continue_button" />
 
-        <uk.nhs.nhsx.covid19.android.app.widgets.UnderlinedTextView
-            android:id="@+id/textNoSymptoms"
-            style="@style/LinkText"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/noSymptomsButton"
+            style="@style/SecondaryButton"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_horizontal_reduced_relative"
-            android:gravity="center"
             android:text="@string/questionnaire_no_symptoms" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

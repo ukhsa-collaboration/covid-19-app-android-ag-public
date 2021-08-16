@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.testordering.lfd
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -42,6 +43,6 @@ class OrderLfdTestViewModel @Inject constructor(
 }
 
 sealed class NavigationTarget {
-    data class OrderTest(val url: Int) : NavigationTarget()
+    data class OrderTest(@StringRes val url: Int) : NavigationTarget()
     object Home : NavigationTarget()
 }

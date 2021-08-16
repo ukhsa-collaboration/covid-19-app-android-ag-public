@@ -34,12 +34,6 @@ enum class FeatureFlag(
         "Enable in-app battery optimization request",
         defaultValue = false
     ),
-    DAILY_CONTACT_TESTING(
-        "feature.dailyContactTesting",
-        "Daily Contact Testing",
-        "Enable daily contact testing enhancements",
-        defaultValue = false
-    ),
     SUBMIT_ANALYTICS_VIA_ALARM_MANAGER(
         "feature.submitAnalyticsViaAlarmManager",
         "Submit analytics via alarm manager",
@@ -50,6 +44,12 @@ enum class FeatureFlag(
         "feature.remoteServiceExceptionCrashAnalytics",
         "Enable RemoteServiceException crash analytics",
         "Store and send RemoteServiceException crash analytics data",
+        defaultValue = false
+    ),
+    NEW_NO_SYMPTOMS_SCREEN(
+        "feature.NewNoSymptomsScreen",
+        "New no symptoms screen",
+        "Show new no symptoms screen",
         defaultValue = false
     )
 }

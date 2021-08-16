@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.about
 
 import androidx.test.platform.app.InstrumentationRegistry
-import com.jeroenmols.featureflag.framework.FeatureFlag.DAILY_CONTACT_TESTING
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -36,7 +35,7 @@ class MyDataActivityTest : EspressoTest() {
     private val moreAboutAppRobot = MoreAboutAppRobot()
     private val myDataRobot = MyDataRobot()
 
-    private val latestRiskyVenueVisitDate = LocalDate.parse("2020-07-25")
+    private val latestRiskyVenueVisitDate = LocalDate.now(testAppContext.clock)
     private val isolationHelper = IsolationHelper(testAppContext.clock)
 
     @Before
@@ -264,7 +263,6 @@ class MyDataActivityTest : EspressoTest() {
         waitFor { myDataRobot.checkEncounterIsDisplayed() }
         myDataRobot.checkExposureNotificationIsDisplayed()
         myDataRobot.checkExposureNotificationDateIsDisplayed()
-        waitFor { myDataRobot.checkDailyContactTestingOptInDateIsNotDisplayed() }
     }
 
     @Test
@@ -281,7 +279,6 @@ class MyDataActivityTest : EspressoTest() {
         myDataRobot.checkActivityIsDisplayed()
 
         waitFor { myDataRobot.checkSymptomsAreDisplayed() }
-        waitFor { myDataRobot.checkDailyContactTestingOptInDateIsNotDisplayed() }
     }
 
     @Test
@@ -294,7 +291,25 @@ class MyDataActivityTest : EspressoTest() {
 
         waitFor { myDataRobot.checkLastDayOfIsolationIsDisplayed() }
         waitFor { myDataRobot.checkExposureNotificationDateIsDisplayed() }
-        waitFor { myDataRobot.checkDailyContactTestingOptInDateIsNotDisplayed() }
+    }
+
+    @Test
+    fun whenContactCase_expiredDueToOptOutOfContactIsolation_showOptOutDate() {
+        val exposureDate = LocalDate.now(testAppContext.clock)
+        val contactCase = isolationHelper.contactCaseWithOptOutDate(
+            exposureDate,
+            optOutOfContactIsolation = exposureDate
+        ).asIsolation()
+
+        testAppContext.setState(contactCase)
+
+        startTestActivity<MyDataActivity>()
+
+        myDataRobot.checkActivityIsDisplayed()
+
+        waitFor { myDataRobot.checkEncounterIsDisplayed() }
+        waitFor { myDataRobot.checkExposureNotificationDateIsDisplayed() }
+        waitFor { myDataRobot.checkOptOutOfContactIsolationDateIsDisplayed() }
     }
 
     @Test
@@ -306,7 +321,6 @@ class MyDataActivityTest : EspressoTest() {
         myDataRobot.checkActivityIsDisplayed()
 
         waitFor { myDataRobot.checkLastDayOfIsolationIsNotDisplayed() }
-        waitFor { myDataRobot.checkDailyContactTestingOptInDateIsNotDisplayed() }
     }
 
     @Test
@@ -318,27 +332,5 @@ class MyDataActivityTest : EspressoTest() {
         myDataRobot.checkActivityIsDisplayed()
 
         waitFor { myDataRobot.checkLastDayOfIsolationIsNotDisplayed() }
-        waitFor { myDataRobot.checkDailyContactTestingOptInDateIsNotDisplayed() }
-    }
-
-    @Test
-    fun previouslyIsolatedAsContactCaseOnly_optedInToDailyContactTesting_showDailyContactTestingOptInDate() {
-        FeatureFlagTestHelper.enableFeatureFlag(DAILY_CONTACT_TESTING)
-
-        testAppContext.setState(
-            isolationHelper.contactCaseWithDct(
-                dailyContactTestingOptInDate = LocalDate.now(testAppContext.clock)
-            ).asIsolation()
-        )
-
-        startTestActivity<MyDataActivity>()
-
-        myDataRobot.checkActivityIsDisplayed()
-
-        waitFor { myDataRobot.checkLastDayOfIsolationIsNotDisplayed() }
-        waitFor { myDataRobot.checkEncounterIsDisplayed() }
-        waitFor { myDataRobot.checkExposureNotificationIsDisplayed() }
-        waitFor { myDataRobot.checkExposureNotificationDateIsDisplayed() }
-        waitFor { myDataRobot.checkDailyContactTestingOptInDateIsDisplayed() }
     }
 }

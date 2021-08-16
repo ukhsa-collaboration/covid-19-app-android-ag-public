@@ -28,7 +28,6 @@ sealed class AnalyticsEvent {
     object LaunchedTestOrdering : AnalyticsEvent()
     data class ExposureWindowsMatched(val totalRiskyExposures: Int, val totalNonRiskyExposures: Int) : AnalyticsEvent()
     object ReceivedUnconfirmedPositiveTestResult : AnalyticsEvent()
-    object DeclaredNegativeResultFromDct : AnalyticsEvent()
     object DidHaveSymptomsBeforeReceivedTestResult : AnalyticsEvent()
     object DidRememberOnsetSymptomsDateBeforeReceivedTestResult : AnalyticsEvent()
     object DidAskForSymptomsOnPositiveTestEntry : AnalyticsEvent()
@@ -56,4 +55,5 @@ sealed class AnalyticsEvent {
     object SelectedHasNoSymptomsM2Journey : AnalyticsEvent()
     object SelectedLfdTestOrderingM2Journey : AnalyticsEvent()
     object SelectedHasLfdTestM2Journey : AnalyticsEvent()
+    object OptedOutForContactIsolation : AnalyticsEvent()
 }

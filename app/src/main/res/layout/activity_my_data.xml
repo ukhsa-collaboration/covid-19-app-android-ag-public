@@ -53,12 +53,6 @@
                 app:myDataSectionTitle="@string/title_last_test_result_taken" />
 
             <uk.nhs.nhsx.covid19.android.app.about.mydata.MyDataSectionView
-                android:id="@+id/dailyContactTestingSection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:myDataSectionTitle="@string/user_data_daily_contact_testing_title" />
-
-            <uk.nhs.nhsx.covid19.android.app.about.mydata.MyDataSectionView
                 android:id="@+id/selfIsolationSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveWillBeInIsolation
@@ -25,6 +26,8 @@ class TestResultScenarioAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun enterPositiveLFDTest_isolateForUnconfirmed_confirmByPCRTest_isolateForConfirmed() {
+        startTestActivity<MainActivity>()
+
         // Current date: 1st Jan
         // Starting state: App running normally, not in isolation
         runBackgroundTasks()
@@ -113,6 +116,8 @@ class TestResultScenarioAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun enterNegativePCRTest_receiveOldPositiveLFDTest_isolateAndShareKeys() {
+        startTestActivity<MainActivity>()
+
         // Current date: 1st Jan
         // Starting state: App running normally, not in isolation
         runBackgroundTasks()
@@ -162,6 +167,8 @@ class TestResultScenarioAnalyticsTest : AnalyticsTest() {
         isConfirmatoryTestOutsideDayLimit: Boolean = false,
         expectedField: KMutableProperty1<Metrics, Int>
     ) {
+        startTestActivity<MainActivity>()
+
         // Current date: 1st Jan
         // Starting state: App running normally, not in isolation
         // Enters positive LFD test result

@@ -25,7 +25,7 @@ object RuntimeBehavior {
 
     fun isFeatureEnabled(feature: Feature): Boolean {
         return providers.filter { it.hasFeature(feature) }
-            .minBy(FeatureFlagProvider::priority)
+            .minByOrNull(FeatureFlagProvider::priority)
             ?.isFeatureEnabled(feature)
             ?: feature.defaultValue
     }

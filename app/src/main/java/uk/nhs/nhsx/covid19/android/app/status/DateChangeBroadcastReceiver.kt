@@ -5,9 +5,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.PRIVATE
 
 open class DateChangeBroadcastReceiver : BroadcastReceiver(), DateChangeReceiver {
-    protected var callback: (() -> Unit)? = null
+    @VisibleForTesting(otherwise = PRIVATE)
+    internal var callback: (() -> Unit)? = null
 
     override fun onReceive(context: Context?, intent: Intent?) {
         callback?.invoke()

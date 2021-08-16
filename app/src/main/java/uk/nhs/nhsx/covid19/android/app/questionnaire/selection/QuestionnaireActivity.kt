@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.activity_questionnaire.textErrorTitle
 import kotlinx.android.synthetic.main.include_show_questionnaire.buttonReviewSymptoms
 import kotlinx.android.synthetic.main.include_show_questionnaire.errorPanel
 import kotlinx.android.synthetic.main.include_show_questionnaire.questionsRecyclerView
-import kotlinx.android.synthetic.main.include_show_questionnaire.textNoSymptoms
+import kotlinx.android.synthetic.main.include_show_questionnaire.noSymptomsButton
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
@@ -26,6 +26,7 @@ import uk.nhs.nhsx.covid19.android.app.common.Lce.Error
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Loading
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Success
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.questionnaire.NewNoSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
@@ -33,9 +34,9 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivi
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity.Companion.EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
-import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.NoSymptoms
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.AdviceScreen
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.NewNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.ReviewSymptoms
-import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.SymptomsAdviceForIndexCaseThenNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.adapter.QuestionnaireViewAdapter
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.ScrollableLayoutManager
@@ -78,32 +79,30 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
     }
 
     private fun setupViewModelListeners() {
-        viewModel.viewState().observe(
-            this,
-            { viewState ->
-                when (viewState) {
-                    is Success -> handleSuccess(viewState.data)
-                    is Error -> showErrorState()
-                    is Loading -> showLoadingSpinner()
-                }
+        viewModel.viewState().observe(this) { viewState ->
+            when (viewState) {
+                is Success -> handleSuccess(viewState.data)
+                is Error -> showErrorState()
+                is Loading -> showLoadingSpinner()
             }
-        )
+        }
 
-        viewModel.navigationTarget().observe(
-            this,
-            { navigationTarget ->
-                when (navigationTarget) {
-                    NoSymptoms -> {
-                        finish()
-                        startActivity<NoSymptomsActivity>()
+        viewModel.navigationTarget().observe(this) { navigationTarget ->
+            when (navigationTarget) {
+                is ReviewSymptoms -> startReviewSymptomsActivity(navigationTarget)
+                is AdviceScreen ->
+                    if (navigationTarget.symptomAdvice is IsolationSymptomAdvice) {
+                        SymptomsAdviceIsolateActivity.start(this, navigationTarget.symptomAdvice)
+                    } else {
+                        startActivity<NoSymptomsActivity> {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        }
                     }
-                    is ReviewSymptoms -> startReviewSymptomsActivity(navigationTarget)
-                    SymptomsAdviceForIndexCaseThenNoSymptoms -> {
-                        SymptomsAdviceIsolateActivity.start(this, IsolationSymptomAdvice.IndexCaseThenNoSymptoms)
-                    }
+                NewNoSymptoms -> startActivity<NewNoSymptomsActivity> {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
             }
-        )
+        }
     }
 
     private fun startReviewSymptomsActivity(reviewSymptomsNavigationTarget: ReviewSymptoms) {
@@ -163,7 +162,7 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
             viewModel.loadQuestionnaire()
         }
 
-        textNoSymptoms.setOnSingleClickListener {
+        noSymptomsButton.setOnSingleClickListener {
             viewModel.onNoSymptomsClicked()
         }
 

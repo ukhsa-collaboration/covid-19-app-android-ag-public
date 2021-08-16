@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:contentDescription="@null"
-            tools:src="@drawable/ic_isolation_negative_or_finished" />
+            tools:src="@drawable/ic_isolation_expired_or_over" />
 
         <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
             android:id="@+id/goodNewsTitle"
@@ -57,7 +57,7 @@
 
         <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
             android:id="@+id/goodNewsOnlineServiceLink"
-            style="@style/LinkTextWithIcon"
+            style="@style/LinkText.WithIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nhs_111_online_service"

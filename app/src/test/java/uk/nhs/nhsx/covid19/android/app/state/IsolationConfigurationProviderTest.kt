@@ -1,80 +1,44 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
-import com.squareup.moshi.Moshi
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import kotlin.test.assertEquals
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider.Companion.DURATION_DAYS_KEY
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTest
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectation
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectationDirection.JSON_TO_OBJECT
 
-class IsolationConfigurationProviderTest {
+class IsolationConfigurationProviderTest : ProviderTest<IsolationConfigurationProvider, DurationDays>() {
 
-    private val moshi = Moshi.Builder().build()
-
-    private val isolationConfigurationJsonProvider =
-        mockk<IsolationConfigurationJsonProvider>(relaxed = true)
-
-    private val testSubject = IsolationConfigurationProvider(
-        isolationConfigurationJsonProvider,
-        moshi
+    override val getTestSubject = ::IsolationConfigurationProvider
+    override val property = IsolationConfigurationProvider::durationDays
+    override val key = DURATION_DAYS_KEY
+    override val defaultValue = DurationDays()
+    override val expectations: List<ProviderTestExpectation<DurationDays>> = listOf(
+        ProviderTestExpectation(json = durationDaysJson, objectValue = durationDays),
+        ProviderTestExpectation(json = durationDaysJsonWithoutHousekeepingPeriod, objectValue = durationDaysDefaultHousekeepingPeriod, direction = JSON_TO_OBJECT)
     )
 
-    @Test
-    fun `verify serialization`() {
-        every { isolationConfigurationJsonProvider.durationJson } returns durationDaysJson
+    companion object {
+        private val durationDays = DurationDays(
+            contactCase = 32,
+            indexCaseSinceSelfDiagnosisOnset = 7,
+            indexCaseSinceSelfDiagnosisUnknownOnset = 5,
+            maxIsolation = 21,
+            pendingTasksRetentionPeriod = 8,
+            indexCaseSinceTestResultEndDate = 11
+        )
 
-        val parsedDurationDays = testSubject.durationDays
+        private const val durationDaysJson =
+            """{"contactCase":32,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21,"pendingTasksRetentionPeriod":8,"indexCaseSinceTestResultEndDate":11}"""
 
-        assertEquals(durationDays, parsedDurationDays)
+        private val durationDaysDefaultHousekeepingPeriod = DurationDays(
+            contactCase = 32,
+            indexCaseSinceSelfDiagnosisOnset = 7,
+            indexCaseSinceSelfDiagnosisUnknownOnset = 5,
+            maxIsolation = 21,
+            pendingTasksRetentionPeriod = 14
+        )
+
+        private const val durationDaysJsonWithoutHousekeepingPeriod =
+            """{"contactCase":32,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21}"""
     }
-
-    @Test
-    fun `verify serialization without housekeeping period`() {
-        every { isolationConfigurationJsonProvider.durationJson } returns durationDaysJsonWithoutHousekeepingPeriod
-
-        val parsedDurationDays = testSubject.durationDays
-
-        assertEquals(durationDaysDefaultHousekeepingPeriod, parsedDurationDays)
-    }
-
-    @Test
-    fun `verify deserialization`() {
-
-        testSubject.durationDays = durationDays
-
-        verify { isolationConfigurationJsonProvider.durationJson = durationDaysJson }
-    }
-
-    @Test
-    fun `on exception will return default values`() {
-        every { isolationConfigurationJsonProvider.durationJson } returns """wrong_format"""
-
-        val parsedDurationDays = testSubject.durationDays
-
-        assertEquals(DurationDays(), parsedDurationDays)
-    }
-
-    private val durationDays = DurationDays(
-        contactCase = 32,
-        indexCaseSinceSelfDiagnosisOnset = 7,
-        indexCaseSinceSelfDiagnosisUnknownOnset = 5,
-        maxIsolation = 21,
-        pendingTasksRetentionPeriod = 8,
-        indexCaseSinceTestResultEndDate = 11
-    )
-
-    private val durationDaysJson =
-        """{"contactCase":32,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21,"pendingTasksRetentionPeriod":8,"indexCaseSinceTestResultEndDate":11}"""
-
-    private val durationDaysDefaultHousekeepingPeriod = DurationDays(
-        contactCase = 32,
-        indexCaseSinceSelfDiagnosisOnset = 7,
-        indexCaseSinceSelfDiagnosisUnknownOnset = 5,
-        maxIsolation = 21,
-        pendingTasksRetentionPeriod = 14
-    )
-
-    private val durationDaysJsonWithoutHousekeepingPeriod =
-        """{"contactCase":32,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21}"""
 }

@@ -1,58 +1,42 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
-import com.squareup.moshi.Moshi
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
+import org.junit.jupiter.api.Test
+import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingTokensProvider.Companion.TEST_ORDERING_TOKENS_KEY
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTest
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectation
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectationDirection.JSON_TO_OBJECT
 import java.time.Instant
-import kotlin.test.assertEquals
 
-class TestOrderingTokensProviderTest {
+class TestOrderingTokensProviderTest : ProviderTest<TestOrderingTokensProvider, List<TestOrderPollingConfig>>() {
 
-    private val testOrderingTokensStorage = mockk<TestOrderingTokensStorage>(relaxed = true)
-    private val moshi = Moshi.Builder().add(InstantAdapter()).build()
+    override val getTestSubject = ::TestOrderingTokensProvider
+    override val property = TestOrderingTokensProvider::configs
+    override val key = TEST_ORDERING_TOKENS_KEY
+    override val defaultValue: List<TestOrderPollingConfig> = emptyList()
+    override val expectations: List<ProviderTestExpectation<List<TestOrderPollingConfig>>> = listOf(
+        ProviderTestExpectation(
+            json = POLLING_CONFIG_JSON,
+            objectValue = listOf(POLLING_CONFIG),
+            direction = JSON_TO_OBJECT
+        )
+    )
 
     @Test
     fun `add test ordering token`() {
-        every { testOrderingTokensStorage.value } returns ""
+        sharedPreferencesReturns("")
 
-        val testSubject = TestOrderingTokensProvider(testOrderingTokensStorage, moshi)
         testSubject.add(POLLING_CONFIG)
 
-        verify { testOrderingTokensStorage.value = POLLING_CONFIG_JSON }
-    }
-
-    @Test
-    fun `read empty test ordering token storage`() {
-        every { testOrderingTokensStorage.value } returns null
-
-        val testSubject = TestOrderingTokensProvider(testOrderingTokensStorage, moshi)
-        val receivedConfig = testSubject.configs
-
-        assertEquals(0, receivedConfig.size)
-    }
-
-    @Test
-    fun `read test ordering token storage`() {
-        every { testOrderingTokensStorage.value } returns POLLING_CONFIG_JSON
-
-        val testSubject = TestOrderingTokensProvider(testOrderingTokensStorage, moshi)
-        val receivedConfig = testSubject.configs
-
-        assertEquals(1, receivedConfig.size)
-        assertEquals(POLLING_CONFIG, receivedConfig[0])
+        assertSharedPreferenceSetsValue(POLLING_CONFIG_JSON)
     }
 
     @Test
     fun `read deleting ordering token storage`() {
-        every { testOrderingTokensStorage.value } returns POLLING_CONFIG_JSON
+        sharedPreferencesReturns(POLLING_CONFIG_JSON)
 
-        val testSubject = TestOrderingTokensProvider(testOrderingTokensStorage, moshi)
         testSubject.remove(POLLING_CONFIG)
 
-        verify { testOrderingTokensStorage.value = "[]" }
+        assertSharedPreferenceSetsValue("[]")
     }
 
     companion object {

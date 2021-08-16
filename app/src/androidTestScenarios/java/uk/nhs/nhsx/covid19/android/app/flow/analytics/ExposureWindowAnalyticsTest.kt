@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.flow.analytics
 import com.google.android.gms.nearby.exposurenotification.ScanInstance
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.SymptomsAndOnsetFlowConfiguration
@@ -29,9 +30,12 @@ class ExposureWindowAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun submitsExposureWindowData_whenUserHasRiskyContact() = runBlocking {
+        startTestActivity<MainActivity>()
+
         testAppContext.epidemiologyDataApi.clear()
 
         riskyContact.triggerViaBroadcastReceiver()
+        riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinated()
 
         val expectedEvents = getEncounterEpidemiologyEvents()
 
@@ -40,7 +44,10 @@ class ExposureWindowAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun submitsExposureWindowData_whenUserReceivesPositiveTest() = runBlocking {
+        startTestActivity<MainActivity>()
+
         riskyContact.triggerViaBroadcastReceiver()
+        riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinated()
 
         testAppContext.epidemiologyDataApi.clear()
 

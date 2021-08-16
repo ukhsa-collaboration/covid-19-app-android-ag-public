@@ -8,8 +8,10 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
+import uk.nhs.nhsx.covid19.android.app.testordering.GetHighestPriorityTestResult.HighestPriorityTestResult.FoundTestResult
+import uk.nhs.nhsx.covid19.android.app.testordering.GetHighestPriorityTestResult.HighestPriorityTestResult.NoTestResult
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class GetHighestPriorityTestResultTest {
     private val unacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>()
@@ -17,10 +19,10 @@ class GetHighestPriorityTestResultTest {
     private val getHighestPriorityTestResult = GetHighestPriorityTestResult(unacknowledgedTestResultsProvider)
 
     @Test
-    fun `when no unacknowledged test results stored then return null`() {
+    fun `when no unacknowledged test results stored then return NoTestResult`() {
         every { unacknowledgedTestResultsProvider.testResults } returns listOf()
 
-        assertNull(getHighestPriorityTestResult())
+        assertEquals(expected = NoTestResult, getHighestPriorityTestResult())
     }
 
     @Test
@@ -29,7 +31,8 @@ class GetHighestPriorityTestResultTest {
 
         val result = getHighestPriorityTestResult()
 
-        assertEquals(expected = POSITIVE, result?.testResult)
+        assertTrue(result is FoundTestResult)
+        assertEquals(expected = POSITIVE, result.testResult.testResult)
     }
 
     @Test
@@ -38,7 +41,8 @@ class GetHighestPriorityTestResultTest {
 
         val result = getHighestPriorityTestResult()
 
-        assertEquals(expected = PLOD, result?.testResult)
+        assertTrue(result is FoundTestResult)
+        assertEquals(expected = PLOD, result.testResult.testResult)
     }
 
     @Test
@@ -47,7 +51,8 @@ class GetHighestPriorityTestResultTest {
 
         val result = getHighestPriorityTestResult()
 
-        assertEquals(expected = NEGATIVE, result?.testResult)
+        assertTrue(result is FoundTestResult)
+        assertEquals(expected = NEGATIVE, result.testResult.testResult)
     }
 
     @Test
@@ -56,7 +61,8 @@ class GetHighestPriorityTestResultTest {
 
         val result = getHighestPriorityTestResult()
 
-        assertEquals(expected = VOID, result?.testResult)
+        assertTrue(result is FoundTestResult)
+        assertEquals(expected = VOID, result.testResult.testResult)
     }
 
     private fun getTestResults(vararg testResult: VirologyTestResult): List<ReceivedTestResult> =

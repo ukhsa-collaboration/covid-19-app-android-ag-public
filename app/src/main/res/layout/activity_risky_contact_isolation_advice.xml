@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_toolbar_background" />
+
+    <ScrollView
+        android:id="@+id/riskyContactIsolationAdviceContainer"
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingVertical="@dimen/vertical_margin_large">
+
+            <ImageView
+                android:id="@+id/riskyContactIsolationAdviceIcon"
+                style="@style/GoneInLandscape"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_isolation_contact" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                android:id="@+id/riskyContactIsolationAdviceTitle"
+                style="@style/TitleIsolation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:textAlignment="center"
+                tools:text="@string/risky_contact_isolation_advice_self_isolate_for" />
+
+            <TextView
+                android:id="@+id/riskyContactIsolationAdviceRemainingDaysInIsolation"
+                style="@style/Title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="56sp"
+                tools:text="7 days" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.StateInfoView
+                android:id="@+id/riskyContactIsolationAdviceStateInfoView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:background="@color/surface_background"
+                app:stateColor="@color/amber"
+                tools:stateText="@string/risky_contact_isolation_advice_new_isolation_information" />
+
+            <LinearLayout
+                android:id="@+id/adviceContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/vertical_margin"
+                android:orientation="vertical" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                android:id="@+id/riskyContactIsolationAdviceCommonQuestions"
+                style="@style/LinkText.WithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/risky_contact_isolation_advice_faq_button_title"
+                app:linkUrl="@string/url_common_questions" />
+
+            <TextView
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/risky_contact_isolation_advice_further_nhs_guidance" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                style="@style/LinkText.WithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/risky_contact_isolation_advice_nhs_guidance_link_text"
+                app:linkUrl="@string/url_nhs_guidance" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/primaryActionButton"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                tools:text="@string/risky_contact_isolation_advice_book_pcr_test" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/secondaryActionButton"
+                style="@style/TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/risky_contact_isolation_advice_go_back_to_home"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

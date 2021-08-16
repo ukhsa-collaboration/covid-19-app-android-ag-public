@@ -34,12 +34,6 @@
             android:text="Last Risky Venue Visit Date"
             />
         <androidx.appcompat.widget.AppCompatCheckBox
-            android:id="@+id/mockDailyContactTestingOptInDateForIsolation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Daily Contact Testing Opt In Date For Isolation"
-            />
-        <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/mockAcknowledgedTestResult"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

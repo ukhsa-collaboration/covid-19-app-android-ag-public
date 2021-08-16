@@ -16,6 +16,7 @@ object StrongBoxEncryptedSharedPreferencesMigrationManager {
         newSharedPreferences.edit {
             allPrefs.forEach { entry ->
                 val key = entry.key
+                @Suppress("UNCHECKED_CAST")
                 when (val value = entry.value) {
                     is String -> putString(key, value)
                     is Float -> putFloat(key, value)

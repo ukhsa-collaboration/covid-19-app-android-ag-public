@@ -7,8 +7,8 @@ import com.squareup.moshi.Moshi
 import org.junit.Assume
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.contactIsolationEnded
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.indexIsolationEnded
-import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedConfirmedPositiveTestWithEndDateOlderThanAssumedSymptomOnsetDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedConfirmedPositiveTestWithEndDateOlderThanRememberedNegativeTestEndDate
+import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedConfirmedPositiveTestWithIsolationPeriodOlderThanAssumedIsolationStartDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTestWithEndDateNDaysNewerThanRememberedUnconfirmedTestEndDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTestWithEndDateNDaysNewerThanRememberedUnconfirmedTestEndDateButOlderThanAssumedSymptomOnsetDayIfAny
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTestWithEndDateNewerThanAssumedSymptomOnsetDateAndAssumedSymptomOnsetDateNewerThanPositiveTestEndDate
@@ -26,6 +26,7 @@ import uk.nhs.nhsx.covid19.android.app.isolation.TestType.POSITIVE_UNCONFIRMED
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateJson
 import uk.nhs.nhsx.covid19.android.app.state.SymptomaticCase
 import uk.nhs.nhsx.covid19.android.app.state.assumedDaysFromOnsetToSelfAssessment
@@ -76,7 +77,7 @@ class StateStorage4_10Representation(
         fun setupState(state: State, event: Event?) {
             val isolationState = computeIsolationState(state, event)
             val isolationStateJson = stateSerializationAdapter.toJson(isolationState)
-            isolationTestContext.getStateStringStorage().prefsValue = isolationStateJson
+            isolationTestContext.setStateStringStorage(isolationStateJson)
 
             // Invalidate state machine to make it read the updated state from the storage
             isolationTestContext.getIsolationStateMachine().invalidateStateMachine()
@@ -125,7 +126,7 @@ class StateStorage4_10Representation(
                         symptomaticCase = createSymptomaticCase(positiveTestCase.testEndDate.minusDays(1))
                     }
                 }
-                receivedConfirmedPositiveTestWithEndDateOlderThanAssumedSymptomOnsetDate -> {
+                receivedConfirmedPositiveTestWithIsolationPeriodOlderThanAssumedIsolationStartDate -> {
                     if (state.contact.isolationState == ACTIVE && state.symptomatic == notIsolatingAndHadSymptomsPreviously) {
                         // Let contact case isolation overlap with isolation triggered by symptoms/received test result
                         contactCase = createOverlappingContactCase()
@@ -226,8 +227,8 @@ class StateStorage4_10Representation(
                 NONE -> null
                 ACTIVE -> createCurrentContactCase()
                 FINISHED -> {
-                    if (state.contact.terminatedDueToDCT) {
-                        createContactCaseTerminatedByDCT()
+                    if (state.contact.terminatedEarly) {
+                        createContactCaseTerminatedEarly()
                     } else {
                         createOldContactCase()
                     }
@@ -246,12 +247,12 @@ class StateStorage4_10Representation(
                     .minusDays(isolationConfiguration.contactCase.toLong() + 1)
             )
 
-        private fun createContactCaseTerminatedByDCT(): ContactCase =
+        private fun createContactCaseTerminatedEarly(): ContactCase =
             ContactCase(
                 exposureDate = today.minusDays(6),
                 notificationDate = today.minusDays(5),
-                expiryDate = today.minusDays(2),
-                dailyContactTestingOptInDate = today.minusDays(2)
+                expiryDate = today.minusDays(6),
+                optOutOfContactIsolation = OptOutOfContactIsolation(today.minusDays(6))
             )
 
         private fun createContactCase(exposureDate: LocalDate): ContactCase =

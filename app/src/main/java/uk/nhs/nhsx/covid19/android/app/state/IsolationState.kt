@@ -17,7 +17,6 @@ import uk.nhs.nhsx.covid19.android.app.util.selectNewest
 import java.time.Clock
 import java.time.LocalDate
 
-const val assumedDaysFromOnsetToTestResult: Long = 3
 const val assumedDaysFromOnsetToSelfAssessment: Long = 2
 
 interface IsolationInfo {
@@ -82,13 +81,18 @@ data class IsolationState(
     data class ContactCase(
         val exposureDate: LocalDate,
         val notificationDate: LocalDate,
-        val dailyContactTestingOptInDate: LocalDate? = null,
+        val optOutOfContactIsolation: OptOutOfContactIsolation? = null,
         override val expiryDate: LocalDate
     ) : IsolationPeriod {
 
         override val startDate: LocalDate
             get() = notificationDate
     }
+
+    @JsonClass(generateAdapter = true)
+    data class OptOutOfContactIsolation(
+        val date: LocalDate,
+    )
 
     interface TestResultOwner {
         val testResult: AcknowledgedTestResult?
@@ -120,10 +124,10 @@ data class IsolationState(
             val assumedOnsetDateForExposureKeys: LocalDate
                 get() = when (isolationTrigger) {
                     is PositiveTestResult ->
-                        isolationTrigger.testEndDate.minusDays(assumedDaysFromOnsetToTestResult)
+                        isolationTrigger.testEndDate
                     is SelfAssessment ->
                         if (testResult != null && testResult.testEndDate.isBefore(isolationTrigger.assumedOnsetDate))
-                            testResult.testEndDate.minusDays(assumedDaysFromOnsetToTestResult)
+                            testResult.testEndDate
                         else
                             isolationTrigger.assumedOnsetDate
                 }

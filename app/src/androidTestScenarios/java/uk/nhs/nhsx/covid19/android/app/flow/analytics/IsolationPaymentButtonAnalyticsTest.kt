@@ -7,6 +7,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit.DAYS
@@ -14,6 +15,7 @@ import java.time.temporal.ChronoUnit.DAYS
 class IsolationPaymentButtonAnalyticsTest : AnalyticsTest() {
 
     private val statusRobot = StatusRobot()
+    private val isolationHubRobot = IsolationHubRobot()
 
     @Test
     fun increasesSelectedIsolationPaymentsButtonOnButtonClick() {
@@ -35,7 +37,10 @@ class IsolationPaymentButtonAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
         }
 
-        statusRobot.clickFinancialSupport()
+        statusRobot.clickIsolationHub()
+
+        isolationHubRobot.checkActivityIsDisplayed()
+        isolationHubRobot.clickItemIsolationPayment()
 
         assertOnFields {
             assertEquals(1, Metrics::selectedIsolationPaymentsButton)

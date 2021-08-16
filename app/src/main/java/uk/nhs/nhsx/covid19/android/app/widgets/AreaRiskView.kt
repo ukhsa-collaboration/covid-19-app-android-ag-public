@@ -21,6 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.RED
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.YELLOW
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getThemeColor
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getThemeDrawableResId
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpButtonType
@@ -61,7 +62,7 @@ class AreaRiskView @JvmOverloads constructor(
             0,
             0
         ).apply {
-            text = getString(R.styleable.AreaRiskView_areaRiskText)
+            text = getString(context, R.styleable.AreaRiskView_areaRiskText)
 
             recycle()
         }

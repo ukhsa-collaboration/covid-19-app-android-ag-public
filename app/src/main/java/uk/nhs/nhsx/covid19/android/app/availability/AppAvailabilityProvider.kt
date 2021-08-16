@@ -5,27 +5,17 @@ import android.os.Build
 import com.squareup.moshi.Moshi
 import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.remote.data.AppAvailabilityResponse
-import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
+import uk.nhs.nhsx.covid19.android.app.util.Provider
+import uk.nhs.nhsx.covid19.android.app.util.storage
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AppAvailabilityProvider @Inject constructor(
-    sharedPreferences: SharedPreferences,
-    private val moshi: Moshi
-) {
-    var appAvailability: AppAvailabilityResponse?
-        get() = runCatching {
-            appAvailabilityStorage?.let {
-                moshi.adapter<AppAvailabilityResponse>(AppAvailabilityResponse::class.java)
-                    .fromJson(it)
-            }
-        }.getOrNull()
-        set(value) {
-            appAvailabilityStorage =
-                moshi.adapter<AppAvailabilityResponse>(AppAvailabilityResponse::class.java)
-                    .toJson(value)
-        }
+    override val moshi: Moshi,
+    override val sharedPreferences: SharedPreferences
+) : Provider {
+    var appAvailability: AppAvailabilityResponse? by storage(APP_AVAILABILITY_RESPONSE)
 
     fun isAppAvailable(): Boolean {
         val appAvailability = appAvailability
@@ -42,10 +32,7 @@ class AppAvailabilityProvider @Inject constructor(
             BuildConfig.VERSION_CODE < it.recommendedAppVersion.value
         } ?: false
 
-    private val appAvailabilityPrefs = sharedPreferences.with<String>(APP_AVAILABILITY_RESPONSE)
-    private var appAvailabilityStorage: String? by appAvailabilityPrefs
-
     companion object {
-        private const val APP_AVAILABILITY_RESPONSE = "APP_AVAILABILITY_RESPONSE"
+        const val APP_AVAILABILITY_RESPONSE = "APP_AVAILABILITY_RESPONSE"
     }
 }

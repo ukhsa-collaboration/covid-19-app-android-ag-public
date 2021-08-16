@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.lifecycle.observe
 import kotlinx.android.synthetic.main.activity_my_area.localAuthorityOption
 import kotlinx.android.synthetic.main.activity_my_area.postCodeDistrictOption
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar

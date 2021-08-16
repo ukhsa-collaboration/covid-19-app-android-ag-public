@@ -56,21 +56,6 @@ class StatusRobot {
             .perform(NestedScrollViewScrollToAction(), click())
     }
 
-    fun clickReadAdvice() {
-        onView(withId(R.id.optionReadAdvice))
-            .perform(NestedScrollViewScrollToAction(), click())
-    }
-
-    fun checkReadAdviceIsDisplayed() {
-        onView(withId(R.id.optionReadAdvice))
-            .check(matches(isDisplayed()))
-    }
-
-    fun checkReadAdviceIsNotDisplayed() {
-        onView(withId(R.id.optionReadAdvice))
-            .check(matches(not(isDisplayed())))
-    }
-
     fun checkNoAnimationIsDisplayed(isIsolating: Boolean) {
         val staticImageResId = if (isIsolating) R.id.imgCircleIsolationStatic else R.id.imgCircleStatic
         onView(withId(staticImageResId)).check(matches(isDisplayed()))
@@ -88,11 +73,6 @@ class StatusRobot {
 
     fun clickTestingHub() {
         onView(withId(R.id.optionTestingHub))
-            .perform(NestedScrollViewScrollToAction(), click())
-    }
-
-    fun clickFinancialSupport() {
-        onView(withId(R.id.optionIsolationPayment))
             .perform(NestedScrollViewScrollToAction(), click())
     }
 
@@ -116,9 +96,9 @@ class StatusRobot {
             .perform(click())
     }
 
-    fun checkReadAdviceIsEnabled() {
-        onView(withId(R.id.optionReadAdvice))
-            .check(matches(isEnabled()))
+    fun clickIsolationHub() {
+        onView(withId(R.id.optionIsolationHub))
+            .perform(NestedScrollViewScrollToAction(), click())
     }
 
     fun checkVenueCheckInIsEnabled() {
@@ -128,11 +108,6 @@ class StatusRobot {
 
     fun checkReportSymptomsIsEnabled() {
         onView(withId(R.id.optionReportSymptoms))
-            .check(matches(isEnabled()))
-    }
-
-    fun checkFinancialSupportIsEnabled() {
-        onView(withId(R.id.optionIsolationPayment))
             .check(matches(isEnabled()))
     }
 
@@ -163,6 +138,11 @@ class StatusRobot {
 
     fun checkTestingHubIsEnabled() {
         onView(withId(R.id.optionTestingHub))
+            .check(matches(isEnabled()))
+    }
+
+    fun checkIsolationHubIsEnabled() {
+        onView(withId(R.id.optionIsolationHub))
             .check(matches(isEnabled()))
     }
 
@@ -200,16 +180,6 @@ class StatusRobot {
             .check(matches(isDisplayed()))
     }
 
-    fun checkIsolationPaymentButtonIsDisplayed() {
-        onView(withId(R.id.optionIsolationPayment))
-            .check(matches(isDisplayed()))
-    }
-
-    fun checkIsolationPaymentButtonIsNotDisplayed() {
-        onView(withId(R.id.optionIsolationPayment))
-            .check(matches(not(isDisplayed())))
-    }
-
     fun checkErrorIsDisplayed() {
         onView(withId(com.google.android.material.R.id.snackbar_text))
             .check(matches(isDisplayed()))
@@ -231,6 +201,16 @@ class StatusRobot {
 
     fun checkLocalMessageBannerIsNotDisplayed() {
         onView(withId(R.id.localMessageBanner))
+            .check(matches(not(isDisplayed())))
+    }
+
+    fun checkIsolationHubIsDisplayed() {
+        onView(withId(R.id.optionIsolationHub))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkIsolationHubIsNotDisplayed() {
+        onView(withId(R.id.optionIsolationHub))
             .check(matches(not(isDisplayed())))
     }
 }

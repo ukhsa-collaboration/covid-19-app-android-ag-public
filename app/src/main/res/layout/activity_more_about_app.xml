@@ -51,13 +51,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="8dp"
-                    app:rawText="@string/about_no_vaccination_status_text"
                     app:layout_constraintStart_toEndOf="@id/line_no_vaccination_status"
-                    app:layout_constraintTop_toBottomOf="@id/noVaccinationStatusTitle" />
+                    app:layout_constraintTop_toBottomOf="@id/noVaccinationStatusTitle"
+                    app:rawText="@string/about_no_vaccination_status_text" />
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                     android:id="@+id/linkNoVaccinationStatus"
-                    style="@style/LinkTextWithIcon"
+                    style="@style/LinkText.WithIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
@@ -100,9 +100,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="8dp"
-                    app:rawText="@string/about_how_this_app_works_text"
                     app:layout_constraintStart_toEndOf="@id/line_how_app_works"
-                    app:layout_constraintTop_toBottomOf="@id/howItWorksTitle" />
+                    app:layout_constraintTop_toBottomOf="@id/howItWorksTitle"
+                    app:rawText="@string/about_how_this_app_works_text" />
 
                 <TextView
                     android:id="@+id/visitText"
@@ -120,7 +120,7 @@
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                     android:id="@+id/linkHowTheAppWorks"
-                    style="@style/LinkTextWithIcon"
+                    style="@style/LinkText.WithIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
@@ -215,7 +215,7 @@
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                     android:id="@+id/linkTermsOfUse"
-                    style="@style/LinkTextWithIcon"
+                    style="@style/LinkText.WithIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
@@ -227,7 +227,7 @@
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                     android:id="@+id/linkPrivacyNotice"
-                    style="@style/LinkTextWithIcon"
+                    style="@style/LinkText.WithIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
@@ -239,7 +239,7 @@
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                     android:id="@+id/linkAccessibilityStatement"
-                    style="@style/LinkTextWithIcon"
+                    style="@style/LinkText.WithIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
@@ -287,7 +287,7 @@
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                     android:id="@+id/linkCommonQuestions"
-                    style="@style/LinkTextWithIcon"
+                    style="@style/LinkText.WithIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
@@ -472,7 +472,7 @@
 
                     <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                         android:id="@+id/linkFeedbackInformation"
-                        style="@style/LinkTextWithIcon"
+                        style="@style/LinkText.WithIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"

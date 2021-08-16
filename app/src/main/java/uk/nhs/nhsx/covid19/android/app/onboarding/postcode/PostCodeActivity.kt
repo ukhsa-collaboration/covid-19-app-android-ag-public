@@ -18,8 +18,9 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityActivity
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Invalid
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.ParseJsonError
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Unsupported
-import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Valid
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
+import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeViewModel.NavigationTarget.LocalAuthority
+import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setToolbar
@@ -57,15 +58,22 @@ class PostCodeActivity : BaseActivity(R.layout.activity_post_code) {
             viewModel.validateMainPostCode(postCodeView.postCodeDistrict)
         }
 
-        viewModel.postCodeValidationResult().observe(this) { validationResult ->
-            when (validationResult) {
-                is Valid -> {
-                    val intent = LocalAuthorityActivity.getIntent(this, validationResult.postCode)
+        viewModel.navigationTarget().observe(this) { navigationTarget ->
+            when (navigationTarget) {
+                is LocalAuthority -> {
+                    val intent = LocalAuthorityActivity.getIntent(this, navigationTarget.postCode)
                     startActivityForResult(intent, LOCAL_AUTHORITY_REQUEST)
                 }
+                else -> Unit
+            }
+        }
+
+        viewModel.postCodeValidationError().observe(this) { validationResult ->
+            when (validationResult) {
                 ParseJsonError -> Timber.d("Error parsing localAuthorities.json")
                 Invalid -> postCodeView.showErrorState()
                 Unsupported -> postCodeView.showPostCodeNotSupportedErrorState()
+                else -> Unit
             }
         }
     }
@@ -78,7 +86,7 @@ class PostCodeActivity : BaseActivity(R.layout.activity_post_code) {
                 MainActivity.start(this)
                 finish()
             } else {
-                PermissionActivity.start(this)
+                startActivity<PermissionActivity>()
             }
         }
     }

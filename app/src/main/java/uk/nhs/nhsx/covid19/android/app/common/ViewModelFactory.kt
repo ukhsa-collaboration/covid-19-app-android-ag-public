@@ -18,6 +18,7 @@ class ViewModelFactory<VM : ViewModel> @Inject constructor(private val viewModel
 inline fun <reified T : ViewModel> FragmentActivity.assistedViewModel(
     crossinline viewModelProducer: (SavedStateHandle) -> T
 ) = viewModels<T> {
+    @Suppress("UNCHECKED_CAST")
     object : AbstractSavedStateViewModelFactory(this, intent.extras) {
         override fun <T : ViewModel> create(key: String, modelClass: Class<T>, handle: SavedStateHandle) =
             viewModelProducer(handle) as T

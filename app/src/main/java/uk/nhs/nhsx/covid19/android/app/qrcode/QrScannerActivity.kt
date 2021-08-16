@@ -54,7 +54,7 @@ import javax.inject.Inject
 class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
 
     @Inject
-    lateinit var factory: ViewModelFactory<QrScannerViewModel>
+    lateinit var factory: ViewModelFactory<BaseQrScannerViewModel>
 
     @Inject
     lateinit var permissionsManager: PermissionsManager
@@ -62,13 +62,13 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
     @Inject
     lateinit var barcodeDetectorBuilder: BarcodeDetectorBuilder
 
-    private val viewModel: QrScannerViewModel by viewModels { factory }
+    private val viewModel: BaseQrScannerViewModel by viewModels { factory }
 
     private var barcodeDetector: Detector<Barcode>? = null
     private var cameraSource: CameraSource? = null
 
-    public override fun onCreate(bundle: Bundle?) {
-        super.onCreate(bundle)
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
         viewModel.getQrCodeScanResult().observe(

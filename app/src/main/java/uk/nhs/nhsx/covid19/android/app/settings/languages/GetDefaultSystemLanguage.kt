@@ -18,6 +18,7 @@ class GetDefaultSystemLanguage @Inject constructor(
                     .toTypedArray()
                 Resources.getSystem().configuration.locales.getFirstMatch(supportedLocales)
             } else {
+                @Suppress("DEPRECATION")
                 Resources.getSystem().configuration.locale
             }
         return preferredLocale?.language.let { preferredLanguage ->

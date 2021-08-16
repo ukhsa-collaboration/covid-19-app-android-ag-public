@@ -1,70 +1,77 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
+import android.content.SharedPreferences
 import com.squareup.moshi.Moshi
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
-import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
-import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
+import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider.Companion.UNACKNOWLEDGED_TEST_RESULTS_KEY
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTest
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectation
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectationDirection.JSON_TO_OBJECT
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
-import kotlin.test.assertEquals
 
-class UnacknowledgedTestResultsProviderTest {
+class UnacknowledgedTestResultsProviderTest :
+    ProviderTest<UnacknowledgedTestResultsProvider, List<ReceivedTestResult>>() {
 
-    private val unacknowledgedTestResultsStorage = mockk<UnacknowledgedTestResultsStorage>(relaxed = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-10-07T00:05:00.00Z"), ZoneOffset.UTC)
-    private val moshi = Moshi.Builder()
-        .add(InstantAdapter())
-        .add(LocalDateAdapter())
-        .build()
 
-    private val testSubject = UnacknowledgedTestResultsProvider(
-        unacknowledgedTestResultsStorage,
-        fixedClock,
-        moshi
+    override val getTestSubject: (Moshi, SharedPreferences) -> UnacknowledgedTestResultsProvider =
+        { moshi, sharedPreferences -> UnacknowledgedTestResultsProvider(fixedClock, moshi, sharedPreferences) }
+    override val property = UnacknowledgedTestResultsProvider::testResults
+    override val key = UNACKNOWLEDGED_TEST_RESULTS_KEY
+    override val defaultValue: List<ReceivedTestResult> = emptyList()
+    override val expectations: List<ProviderTestExpectation<List<ReceivedTestResult>>> = listOf(
+        ProviderTestExpectation(
+            json = SINGLE_TEST_RESULT_WITHOUT_REQUIRES_CONFIRMATORY_TEST_JSON,
+            objectValue = singleTestResultWithoutRequiresConfirmatoryTest,
+            direction = JSON_TO_OBJECT
+        ),
+        ProviderTestExpectation(
+            json = MULTIPLE_TEST_RESULTS_JSON,
+            objectValue = multipleTestResults,
+            direction = JSON_TO_OBJECT
+        )
     )
 
     @Test
     fun `add PCR test result`() {
         testSubject.add(SINGLE_RECEIVED_LAB_RESULT_TEST_RESULT)
 
-        verify { unacknowledgedTestResultsStorage.value = SINGLE_LAB_RESULT_TEST_RESULT_JSON }
+        assertSharedPreferenceSetsValue(SINGLE_LAB_RESULT_TEST_RESULT_JSON)
     }
 
     @Test
     fun `add assisted LFD test result`() {
         testSubject.add(SINGLE_RECEIVED_RAPID_RESULT_TEST_RESULT)
 
-        verify { unacknowledgedTestResultsStorage.value = SINGLE_RAPID_RESULT_TEST_RESULT_JSON }
+        assertSharedPreferenceSetsValue(SINGLE_RAPID_RESULT_TEST_RESULT_JSON)
     }
 
     @Test
     fun `add unassisted LFD test result`() {
         testSubject.add(SINGLE_RECEIVED_RAPID_SELF_REPORTED_TEST_RESULT)
 
-        verify { unacknowledgedTestResultsStorage.value = SINGLE_RAPID_SELF_REPORTED_TEST_RESULT_JSON }
+        assertSharedPreferenceSetsValue(SINGLE_RAPID_SELF_REPORTED_TEST_RESULT_JSON)
     }
 
     @Test
     fun `stores the day limit for a positive unconfirmed test result`() {
         testSubject.add(SINGLE_RAPID_RESULT_UNCONFIRMED_POSITIVE_TEST_RESULT)
 
-        verify { unacknowledgedTestResultsStorage.value = SINGLE_RAPID_RESULT_UNCONFIRMED_TEST_JSON }
+        assertSharedPreferenceSetsValue(SINGLE_RAPID_RESULT_UNCONFIRMED_TEST_JSON)
     }
 
     @Test
     fun `set explicit symptoms onset date`() {
-        every { unacknowledgedTestResultsStorage.value } returns SINGLE_LAB_RESULT_TEST_RESULT_JSON
+        sharedPreferencesReturns(SINGLE_LAB_RESULT_TEST_RESULT_JSON)
 
         testSubject.setSymptomsOnsetDate(
             SINGLE_RECEIVED_LAB_RESULT_TEST_RESULT,
@@ -73,12 +80,12 @@ class UnacknowledgedTestResultsProviderTest {
             )
         )
 
-        verify { unacknowledgedTestResultsStorage.value = SINGLE_LAB_RESULT_TEST_RESULT_WITH_EXPLICIT_ONSET_DATE_JSON }
+        assertSharedPreferenceSetsValue(SINGLE_LAB_RESULT_TEST_RESULT_WITH_EXPLICIT_ONSET_DATE_JSON)
     }
 
     @Test
     fun `set cannot remember symptoms onset date`() {
-        every { unacknowledgedTestResultsStorage.value } returns SINGLE_LAB_RESULT_TEST_RESULT_JSON
+        sharedPreferencesReturns(SINGLE_LAB_RESULT_TEST_RESULT_JSON)
 
         testSubject.setSymptomsOnsetDate(
             SINGLE_RECEIVED_LAB_RESULT_TEST_RESULT,
@@ -87,120 +94,43 @@ class UnacknowledgedTestResultsProviderTest {
             )
         )
 
-        verify { unacknowledgedTestResultsStorage.value = SINGLE_LAB_RESULT_TEST_RESULT_WITH_CANNOT_REMEMBER_ONSET_DATE_JSON }
+        assertSharedPreferenceSetsValue(SINGLE_LAB_RESULT_TEST_RESULT_WITH_CANNOT_REMEMBER_ONSET_DATE_JSON)
     }
 
     @Test
     fun `remove test result`() {
-        every { unacknowledgedTestResultsStorage.value } returns SINGLE_LAB_RESULT_TEST_RESULT_JSON
+        sharedPreferencesReturns(SINGLE_LAB_RESULT_TEST_RESULT_JSON)
 
         testSubject.remove(SINGLE_RECEIVED_LAB_RESULT_TEST_RESULT)
 
-        verify { unacknowledgedTestResultsStorage.value = EMPTY_JSON }
+        assertSharedPreferenceSetsValue(EMPTY_JSON)
     }
 
     @Test
     fun `clear no test results`() {
-        every { unacknowledgedTestResultsStorage.value } returns MULTIPLE_TEST_RESULTS_JSON
+        sharedPreferencesReturns(MULTIPLE_TEST_RESULTS_JSON)
 
         testSubject.clearBefore(LocalDate.of(1970, 1, 1))
 
-        verify { unacknowledgedTestResultsStorage.value = MULTIPLE_TEST_RESULTS_JSON.replace("\n", "") }
+        assertSharedPreferenceSetsValue(MULTIPLE_TEST_RESULTS_JSON.replace("\n", ""))
     }
 
     @Test
     fun `clear some test results`() {
-        every { unacknowledgedTestResultsStorage.value } returns MULTIPLE_TEST_RESULTS_JSON
+        sharedPreferencesReturns(MULTIPLE_TEST_RESULTS_JSON)
 
         testSubject.clearBefore(LocalDate.of(1971, 1, 2))
 
-        verify {
-            unacknowledgedTestResultsStorage.value =
-                """[{"diagnosisKeySubmissionToken":"token3","testEndDate":"1972-01-01T00:00:00Z","testResult":"NEGATIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":false}]""".trimIndent()
-        }
+        assertSharedPreferenceSetsValue("""[{"diagnosisKeySubmissionToken":"token3","testEndDate":"1972-01-01T00:00:00Z","testResult":"NEGATIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":false}]""")
     }
 
     @Test
     fun `clear all test results`() {
-        every { unacknowledgedTestResultsStorage.value } returns MULTIPLE_TEST_RESULTS_JSON
+        sharedPreferencesReturns(MULTIPLE_TEST_RESULTS_JSON)
 
         testSubject.clearBefore(LocalDate.of(1972, 1, 2))
 
-        verify { unacknowledgedTestResultsStorage.value = EMPTY_JSON }
-    }
-
-    @Test
-    fun `with storage without requiresConfirmatoryTest`() {
-        every { unacknowledgedTestResultsStorage.value } returns SINGLE_TEST_RESULT_WITHOUT_REQUIRES_CONFIRMATORY_TEST_JSON
-
-        val receivedTestResults = testSubject.testResults
-
-        val expectedResult = listOf(
-            ReceivedTestResult(
-                "token",
-                Instant.parse("1970-01-01T00:00:00Z"),
-                POSITIVE,
-                RAPID_RESULT,
-                diagnosisKeySubmissionSupported = false,
-                requiresConfirmatoryTest = false
-            )
-        )
-
-        assertEquals(expectedResult, receivedTestResults)
-    }
-
-    @Test
-    fun `with storage`() {
-        every { unacknowledgedTestResultsStorage.value } returns MULTIPLE_TEST_RESULTS_JSON
-
-        val receivedTestResults = testSubject.testResults
-
-        val expectedResult = listOf(
-            ReceivedTestResult(
-                "token1",
-                Instant.parse("1970-01-01T00:00:00Z"),
-                POSITIVE,
-                RAPID_SELF_REPORTED,
-                diagnosisKeySubmissionSupported = false,
-                requiresConfirmatoryTest = true
-            ),
-            ReceivedTestResult(
-                "token2",
-                Instant.parse("1971-01-01T00:00:00Z"),
-                VOID,
-                RAPID_RESULT,
-                diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = true
-            ),
-            ReceivedTestResult(
-                "token3",
-                Instant.parse("1972-01-01T00:00:00Z"),
-                NEGATIVE,
-                LAB_RESULT,
-                diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
-            )
-        )
-
-        assertEquals(expectedResult, receivedTestResults)
-    }
-
-    @Test
-    fun `with empty storage`() {
-        every { unacknowledgedTestResultsStorage.value } returns null
-
-        val receivedTestResults = testSubject.testResults
-
-        assertEquals(emptyList(), receivedTestResults)
-    }
-
-    @Test
-    fun `with corrupt storage`() {
-        every { unacknowledgedTestResultsStorage.value } returns "sdsfljghsfgyldfjg"
-
-        val receivedTestResults = testSubject.testResults
-
-        assertEquals(emptyList(), receivedTestResults)
+        assertSharedPreferenceSetsValue(EMPTY_JSON)
     }
 
     companion object {
@@ -296,6 +226,42 @@ class UnacknowledgedTestResultsProviderTest {
             diagnosisKeySubmissionSupported = true,
             requiresConfirmatoryTest = true,
             confirmatoryDayLimit = 0
+        )
+        private val singleTestResultWithoutRequiresConfirmatoryTest = listOf(
+            ReceivedTestResult(
+                "token",
+                Instant.parse("1970-01-01T00:00:00Z"),
+                POSITIVE,
+                RAPID_RESULT,
+                diagnosisKeySubmissionSupported = false,
+                requiresConfirmatoryTest = false
+            )
+        )
+        private val multipleTestResults = listOf(
+            ReceivedTestResult(
+                "token1",
+                Instant.parse("1970-01-01T00:00:00Z"),
+                POSITIVE,
+                RAPID_SELF_REPORTED,
+                diagnosisKeySubmissionSupported = false,
+                requiresConfirmatoryTest = true
+            ),
+            ReceivedTestResult(
+                "token2",
+                Instant.parse("1971-01-01T00:00:00Z"),
+                VOID,
+                RAPID_RESULT,
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = true
+            ),
+            ReceivedTestResult(
+                "token3",
+                Instant.parse("1972-01-01T00:00:00Z"),
+                NEGATIVE,
+                LAB_RESULT,
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
+            )
         )
     }
 }

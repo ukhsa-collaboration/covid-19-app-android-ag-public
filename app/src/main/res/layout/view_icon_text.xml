@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <ImageView
+        android:id="@+id/iconViewImage"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/ic_onboarding_circle"
+        android:contentDescription="@null"
+        android:scaleType="centerInside"
+        tools:src="@drawable/ic_get_free_test" />
+
+    <TextView
+        android:id="@+id/iconViewText"
+        style="@style/Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        tools:text="@string/risky_contact_isolation_advice_new_isolation_testing_advice" />
+</merge>

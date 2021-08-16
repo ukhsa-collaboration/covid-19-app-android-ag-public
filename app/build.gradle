@@ -80,6 +80,10 @@ android {
         // testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
+    sourceSets {
+        main.res.srcDirs = ['src/main/res', 'src/main/accordion_contents/res']
+    }
+
     adbOptions {
         installOptions '-g', '-r'
     }
@@ -124,6 +128,7 @@ android {
             testLogging.exceptionFormat = TestExceptionFormat.FULL
             testLogging.showStandardStreams = true
             systemProperty "isolationModel.repo", findProperty("isolationModel.repo")
+            useJUnitPlatform()
         }
         // execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
@@ -200,6 +205,7 @@ def moshi_version = "1.9.2"
 def okhttp_version = "4.8.0"
 def configuration_version = "1.0.27-SNAPSHOT"
 def dagger_version = "2.31.2"
+def junit5_version = "5.7.2"
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
@@ -221,6 +227,7 @@ dependencies {
     implementation "androidx.preference:preference-ktx:1.1.1"
     implementation 'androidx.security:security-crypto:1.0.0-rc03'
     implementation 'com.tinder.statemachine:statemachine:0.2.0'
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
 
     implementation 'com.google.android.gms:play-services-base:17.3.0'
     implementation 'com.google.android.gms:play-services-tasks:17.1.0'
@@ -249,8 +256,10 @@ dependencies {
     testImplementation 'androidx.arch.core:core-testing:2.1.0'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     testImplementation 'junit:junit:4.13.1'
-    testImplementation platform("org.junit:junit-bom:5.7.2")
+    testImplementation platform("org.junit:junit-bom:$junit5_version")
     testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit5_version"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$junit5_version"
     testImplementation 'io.mockk:mockk:1.10.0'
     testImplementation 'org.assertj:assertj-core:3.16.1'
     testImplementation 'org.awaitility:awaitility-kotlin:3.1.6'

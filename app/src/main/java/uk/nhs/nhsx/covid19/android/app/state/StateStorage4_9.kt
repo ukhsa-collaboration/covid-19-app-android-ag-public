@@ -4,10 +4,8 @@ package uk.nhs.nhsx.covid19.android.app.state
 
 import android.content.SharedPreferences
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
@@ -18,7 +16,8 @@ import uk.nhs.nhsx.covid19.android.app.state.State4_9.Isolation4_9.IndexCase4_9
 import uk.nhs.nhsx.covid19.android.app.state.StateJson4_9.Companion.stateMoshiAdapter4_9
 import uk.nhs.nhsx.covid19.android.app.state.StateJson4_9.DefaultJson4_9
 import uk.nhs.nhsx.covid19.android.app.state.StateJson4_9.IsolationJson4_9
-import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
+import uk.nhs.nhsx.covid19.android.app.util.Provider
+import uk.nhs.nhsx.covid19.android.app.util.listStorage
 import uk.nhs.nhsx.covid19.android.app.util.selectEarliest
 import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Instant
@@ -29,53 +28,27 @@ import javax.inject.Inject
 
 @Deprecated("Not used anymore since 4.10. Use StateStorage instead.")
 class StateStorage4_9 @Inject constructor(
-    private val stateStringStorage: StateStringStorage4_9,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
-    moshi: Moshi
-) {
-
-    private val type = Types.newParameterizedType(
-        List::class.java,
-        StateJson4_9::class.java
-    )
-    private val stateSerializationAdapter: JsonAdapter<List<StateJson4_9>> = moshi
+    _moshi: Moshi,
+    override val sharedPreferences: SharedPreferences
+) : Provider {
+    override val moshi: Moshi = _moshi
         .newBuilder()
         .add(stateMoshiAdapter4_9)
         .build()
-        .adapter(type)
 
+    private var storedStates: List<StateJson4_9>? by listStorage(STATE_KEY)
     val state: State4_9?
-        get() =
-            stateStringStorage.prefsValue?.let {
-                runCatching {
-                    val fromJson = stateSerializationAdapter.fromJson(it)
-                    fromJson?.lastOrNull()?.toState(isolationConfigurationProvider.durationDays)
-                }
-                    .getOrElse {
-                        Timber.e(it)
-                        null
-                    }
-            }
+        get() = storedStates?.lastOrNull()?.toState(isolationConfigurationProvider.durationDays)
 
     fun clear() {
-        stateStringStorage.prefsValue = null
+        storedStates = null
     }
 
     companion object {
         const val assumedDaysFromOnsetToSelfAssessment4_9: Long = 2
+        const val STATE_KEY = "STATE_KEY"
     }
-}
-
-@Deprecated("Not used anymore since 4.10. Use StateStringStorage instead.")
-class StateStringStorage4_9 @Inject constructor(sharedPreferences: SharedPreferences) {
-
-    companion object {
-        private const val VALUE_KEY = "STATE_KEY"
-    }
-
-    private val prefs = sharedPreferences.with<String>(VALUE_KEY)
-
-    var prefsValue: String? by prefs
 }
 
 @Deprecated("Not used anymore since 4.10")

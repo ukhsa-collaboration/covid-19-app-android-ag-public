@@ -4,16 +4,20 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.webkit.URLUtil
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import kotlinx.android.synthetic.main.activity_browser.browserCloseButton
+import kotlinx.android.synthetic.main.activity_browser.browserFeedbackText
 import kotlinx.android.synthetic.main.activity_browser.webView
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 
 class BrowserActivity : BaseActivity(R.layout.activity_browser) {
     @SuppressLint("SetJavaScriptEnabled")
@@ -22,23 +26,27 @@ class BrowserActivity : BaseActivity(R.layout.activity_browser) {
 
         WebView.setWebContentsDebuggingEnabled(true)
 
-        val url = intent.getStringExtra(EXTRA_URL)
-        webView.settings.javaScriptEnabled = true
-        webView.webViewClient = WebViewClient()
-        url?.let {
-            webView.loadUrl(url)
+        val url = intent.dataString
+        if (URLUtil.isValidUrl(url)) {
+            webView.visible()
+            webView.settings.javaScriptEnabled = true
+            webView.webViewClient = WebViewClient()
+            url?.let {
+                webView.loadUrl(url)
+            }
+        } else {
+            browserFeedbackText.visible()
+            browserFeedbackText.text = url
         }
 
         browserCloseButton.setOnSingleClickListener {
             finish()
         }
 
-        setCloseToolbar(toolbar, R.string.test_ordering_title)
+        setCloseToolbar(toolbar, R.string.empty)
     }
 
     companion object {
-        private const val EXTRA_URL = "EXTRA_URL"
-
         fun start(context: Context, url: String) =
             context.startActivity(getIntent(context, url))
 
@@ -47,6 +55,6 @@ class BrowserActivity : BaseActivity(R.layout.activity_browser) {
 
         private fun getIntent(context: Context, url: String) =
             Intent(context, BrowserActivity::class.java)
-                .putExtra(EXTRA_URL, url)
+                .setData(Uri.parse(url))
     }
 }

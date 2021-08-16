@@ -8,9 +8,13 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 
-abstract class ScenarioDialogFragment(private val positiveAction: (() -> Unit)) : DialogFragment() {
+abstract class ScenarioDialogFragment(
+    private val positiveAction: (() -> Unit),
+    private val dismissAction: (() -> Unit)? = null
+) : DialogFragment() {
     protected abstract val title: String
     protected abstract val layoutId: Int
+    protected var inflatedView: View? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
@@ -18,10 +22,12 @@ abstract class ScenarioDialogFragment(private val positiveAction: (() -> Unit)) 
             val builder = AlertDialog.Builder(it).apply {
                 setTitle(title)
                 setView(it.createView())
-                setPositiveButton(android.R.string.ok) { dialog, id ->
+
+                setPositiveButton(android.R.string.ok) { _, _ ->
                     positiveAction.invoke()
                 }
                 setNegativeButton(android.R.string.cancel) { dialog, _ ->
+                    dismissAction?.invoke()
                     dialog.dismiss()
                 }
             }
@@ -33,7 +39,7 @@ abstract class ScenarioDialogFragment(private val positiveAction: (() -> Unit)) 
     private fun Context.createView(): View =
         LayoutInflater.from(this).inflate(layoutId, null).apply {
             setUp(this)
-        }
+        }.apply { inflatedView = this }
 
     protected fun Boolean.toViewState(): Int =
         if (this) View.VISIBLE else View.INVISIBLE

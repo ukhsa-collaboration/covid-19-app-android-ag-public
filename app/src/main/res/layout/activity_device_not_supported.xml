@@ -54,7 +54,7 @@
                 android:text="@string/device_not_supported_next_steps_text" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
-                style="@style/LinkTextWithIcon"
+                style="@style/LinkText.WithIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"

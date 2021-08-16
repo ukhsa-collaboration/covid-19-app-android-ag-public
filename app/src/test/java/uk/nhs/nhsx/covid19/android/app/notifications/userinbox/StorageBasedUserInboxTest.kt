@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertStorage.Companion.RISKY_VENUE_ID
+import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertProvider.Companion.RISKY_VENUE
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.ShouldShowEncounterDetectionActivityProvider.Companion.SHOULD_SHOW_ENCOUNTER_DETECTION_ACTIVITY
 
 class StorageBasedUserInboxTest {
@@ -49,13 +49,13 @@ class StorageBasedUserInboxTest {
     }
 
     @Test
-    fun `trigger callback if shared preference with key RISKY_VENUE_ID changed`() {
+    fun `trigger callback if shared preference with key RISKY_VENUE changed`() {
         val storageChangeListener = mockk<UserInboxStorageChangeListener>(relaxed = true)
 
         val testSubject = createUserInboxStorageListener()
         testSubject.setStorageChangeListener(storageChangeListener)
 
-        testSubject.onSharedPreferenceChanged(sharedPreferences, RISKY_VENUE_ID)
+        testSubject.onSharedPreferenceChanged(sharedPreferences, RISKY_VENUE)
 
         verify { storageChangeListener.notifyChanged() }
     }

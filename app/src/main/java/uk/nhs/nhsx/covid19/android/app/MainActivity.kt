@@ -24,6 +24,12 @@ import uk.nhs.nhsx.covid19.android.app.onboarding.WelcomeActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeActivity
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.NavigateToContactTracingHub
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.NavigateToIsolationHub
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.NavigateToLocalMessage
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.None
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.ProcessRiskyVenueAlert
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -62,22 +68,36 @@ class MainActivity : AppCompatActivity() {
 
     private fun startStatusActivity() {
         NotificationManagerCompat.from(this).cancel(NotificationProvider.EXPOSURE_REMINDER_NOTIFICATION_ID)
-        StatusActivity.start(
-            this,
-            contactTracingHubAction = getContactTracingHubActionIfPresent(),
-            startedFromLocalMessageNotification = getStartedFromLocalMessageNotification(),
-            startedFromRiskyVenueNotificationWithType = getStartedFromRiskyVenueNotificationWithType()
-        )
+        StatusActivity.start(this, getStatusActivityAction())
     }
 
-    private fun getContactTracingHubActionIfPresent() =
-        intent.getSerializableExtra(NotificationProvider.CONTACT_TRACING_HUB_ACTION) as? ContactTracingHubAction
+    private fun getStatusActivityAction(): StatusActivityAction {
+        val contactTracingHubAction =
+            intent.getSerializableExtra(NotificationProvider.CONTACT_TRACING_HUB_ACTION) as? ContactTracingHubAction
+        if (contactTracingHubAction != null) {
+            return NavigateToContactTracingHub(contactTracingHubAction)
+        }
 
-    private fun getStartedFromLocalMessageNotification() =
-        intent.getBooleanExtra(NotificationProvider.TAPPED_ON_LOCAL_MESSAGE_NOTIFICATION, false)
+        val startedFromLocalMessageNotification =
+            intent.getBooleanExtra(NotificationProvider.TAPPED_ON_LOCAL_MESSAGE_NOTIFICATION, false)
+        if (startedFromLocalMessageNotification) {
+            return NavigateToLocalMessage
+        }
 
-    private fun getStartedFromRiskyVenueNotificationWithType() =
-        intent.getSerializableExtra(NotificationProvider.RISKY_VENUE_NOTIFICATION_TAPPED_WITH_TYPE) as? RiskyVenueMessageType
+        val riskyVenueNotificationType =
+            intent.getSerializableExtra(NotificationProvider.RISKY_VENUE_NOTIFICATION_TAPPED_WITH_TYPE) as? RiskyVenueMessageType
+        if (riskyVenueNotificationType != null) {
+            return ProcessRiskyVenueAlert(riskyVenueNotificationType)
+        }
+
+        val startedFromIsolationHubReminder =
+            intent.getBooleanExtra(NotificationProvider.TAPPED_ON_ISOLATION_HUB_REMINDER_NOTIFICATION, false)
+        if (startedFromIsolationHubReminder) {
+            return NavigateToIsolationHub
+        }
+
+        return None
+    }
 
     companion object {
         fun start(context: Context) =

@@ -16,7 +16,6 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestio
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireButDidNotStartIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInReminderScreen
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInTheInitialFlow
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DeclaredNegativeResultFromDct
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaBanner
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessRiskyVenueM2Notification
@@ -31,6 +30,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResul
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeResultReceived
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.OptedOutForContactIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveLabResultAfterPositiveLFD
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveLabResultAfterPositiveSelfRapidTest
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveResultReceived
@@ -61,7 +61,6 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPL
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_REMINDER_SCREEN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW
-import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DECLARED_NEGATIVE_RESULT_FROM_DCT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_RISKY_VENUE_M2_NOTIFICATION
@@ -76,6 +75,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGAT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_OUTSIDE_TIME_LIMIT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_WITHIN_TIME_LIMIT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.OPTED_OUT_FOR_CONTACT_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_LAB_RESULT_AFTER_POSITIVE_LFD
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_RESULT_RECEIVED
@@ -1153,6 +1153,52 @@ class AnalyticsEventProcessorTest {
         }
     }
 
+    @Test
+    fun `on background completed does set optedOutForContactIsolationBackgroundTick when contact isolation opt-out date is stored`() =
+        runBlocking {
+            coEvery { stateStorage.state.contactCase?.optOutOfContactIsolation } returns mockk()
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                hasHadRiskyContactBackgroundTick = true,
+                                optedOutForContactIsolationBackgroundTick = true
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed does not set optedOutForContactIsolationBackgroundTick when no contact isolation opt-out date is stored`() =
+        runBlocking {
+            coEvery { stateStorage.state.contactCase?.optOutOfContactIsolation } returns null
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                hasHadRiskyContactBackgroundTick = true, // Due to contactCase being mocked
+                                optedOutForContactIsolationBackgroundTick = false
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
     //endregion
 
     //region network stats
@@ -1266,11 +1312,6 @@ class AnalyticsEventProcessorTest {
     @Test
     fun `track totalRiskyContactReminderNotifications`() = runBlocking {
         verifyTrackRegularAnalyticsEvent(RiskyContactReminderNotification, RISKY_CONTACT_REMINDER_NOTIFICATION)
-    }
-
-    @Test
-    fun `track declaredNegativeResultFromDct`() = runBlocking {
-        verifyTrackRegularAnalyticsEvent(DeclaredNegativeResultFromDct, DECLARED_NEGATIVE_RESULT_FROM_DCT)
     }
 
     @Test
@@ -1486,6 +1527,14 @@ class AnalyticsEventProcessorTest {
         verifyTrackRegularAnalyticsEvent(
             SelectedHasLfdTestM2Journey,
             SELECTED_HAS_LFD_TEST_M2_JOURNEY
+        )
+    }
+
+    @Test
+    fun `track optedOutForContactIsolation`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            OptedOutForContactIsolation,
+            OPTED_OUT_FOR_CONTACT_ISOLATION
         )
     }
 

@@ -1,13 +1,10 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
+import android.content.SharedPreferences
 import com.squareup.moshi.Moshi
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.BeforeEach
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
@@ -15,62 +12,32 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTr
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
-import uk.nhs.nhsx.covid19.android.app.state.StateStorageTest.Operation.READ
-import uk.nhs.nhsx.covid19.android.app.state.StateStorageTest.Operation.WRITE
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
+import uk.nhs.nhsx.covid19.android.app.state.StateStorage.Companion.ISOLATION_STATE_KEY
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionStatus.COMPLETED_AND_CONFIRMED
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
-import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
-import uk.nhs.nhsx.covid19.android.app.util.adapters.LocalDateAdapter
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTest
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectation
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectationDirection.JSON_TO_OBJECT
 import java.time.LocalDate
-import kotlin.test.assertEquals
 
-@RunWith(Parameterized::class)
-class StateStorageTest(private val testParameters: StateRepresentationTest) {
+class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
 
-    private val moshi = Moshi.Builder()
-        .add(LocalDateAdapter())
-        .add(InstantAdapter())
-        .build()
-
-    private val statusStringStorage = mockk<SharedPrefsStateStringStorage>(relaxUnitFun = true)
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
 
-    private val testSubject =
-        StateStorage(
-            statusStringStorage,
-            isolationConfigurationProvider,
-            moshi
-        )
+    override val getTestSubject: (Moshi, SharedPreferences) -> StateStorage = { moshi, sharedPreferences -> StateStorage(isolationConfigurationProvider, moshi, sharedPreferences) }
+    override val property = StateStorage::state
+    override val key = ISOLATION_STATE_KEY
+    override val defaultValue by lazy { IsolationState(isolationConfigurationProvider.durationDays) }
+    override val expectations: List<ProviderTestExpectation<IsolationState>> = generateParameters()
 
     private val durationDays = DurationDays()
 
-    @Before
-    fun setUp() {
+    @BeforeEach
+    fun setUpMock() {
         every { isolationConfigurationProvider.durationDays } returns durationDays
-    }
-
-    @Test
-    fun test() {
-        when (testParameters.operation) {
-            READ -> read(testParameters.stateRepresentation)
-            WRITE -> write(testParameters.stateRepresentation)
-        }
-    }
-
-    private fun read(stateRepresentation: StateRepresentation) {
-        every { statusStringStorage.prefsValue } returns stateRepresentation.json
-
-        val parsedState = testSubject.state
-
-        assertEquals(stateRepresentation.state, parsedState)
-    }
-
-    private fun write(stateRepresentation: StateRepresentation) {
-        testSubject.state = stateRepresentation.state
-
-        verify { statusStringStorage setProperty "prefsValue" value stateRepresentation.json }
     }
 
     data class StateRepresentation(
@@ -79,31 +46,17 @@ class StateStorageTest(private val testParameters: StateRepresentationTest) {
         val state: IsolationState
     )
 
-    enum class Operation {
-        READ,
-        WRITE
-    }
-
-    data class StateRepresentationTest(
-        val stateRepresentation: StateRepresentation,
-        val operation: Operation
-    ) {
-        override fun toString(): String {
-            return """$operation: ${stateRepresentation.name}"""
-        }
-    }
-
     companion object {
         private const val CONFIGURATION =
             """{"contactCase":11,"indexCaseSinceSelfDiagnosisOnset":11,"indexCaseSinceSelfDiagnosisUnknownOnset":9,"maxIsolation":21,"pendingTasksRetentionPeriod":14,"indexCaseSinceTestResultEndDate":11}"""
 
         private const val CONTACT_EXPOSURE_DATE = "2020-01-09"
         private const val CONTACT_NOTIFICATION_DATE = "2020-01-08"
-        private const val CONTACT_DCT_OPT_IN_DATE = "2020-01-07"
+        private const val CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE = "2020-01-07"
         private const val CONTACT_EXPIRY_DATE = "2020-01-06"
-        private const val CONTACT_WITH_DCT =
-            """{"exposureDate":"$CONTACT_EXPOSURE_DATE","notificationDate":"$CONTACT_NOTIFICATION_DATE","dailyContactTestingOptInDate":"$CONTACT_DCT_OPT_IN_DATE","expiryDate":"$CONTACT_EXPIRY_DATE"}"""
-        private const val CONTACT_WITHOUT_DCT =
+        private const val CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION =
+            """{"exposureDate":"$CONTACT_EXPOSURE_DATE","notificationDate":"$CONTACT_NOTIFICATION_DATE","optOutOfContactIsolation":{"date":"$CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE"},"expiryDate":"$CONTACT_EXPIRY_DATE"}"""
+        private const val CONTACT_WITHOUT_OPT_OUT_OF_CONTACT_ISOLATION =
             """{"exposureDate":"$CONTACT_EXPOSURE_DATE","notificationDate":"$CONTACT_NOTIFICATION_DATE","expiryDate":"$CONTACT_EXPIRY_DATE"}"""
 
         private const val TEST_END_DATE = "2020-01-05"
@@ -166,24 +119,24 @@ class StateStorageTest(private val testParameters: StateRepresentationTest) {
                 )
             ),
             StateRepresentation(
-                name = "isolating with contact case with DCT",
+                name = "isolating with contact case with contact isolation opt-out",
                 json =
-                    """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITH_DCT,"hasAcknowledgedEndOfIsolation":true,"version":1}""",
+                    """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION,"hasAcknowledgedEndOfIsolation":true,"version":1}""",
                 state = IsolationState(
                     isolationConfiguration = DurationDays(),
                     contactCase = ContactCase(
                         exposureDate = LocalDate.parse(CONTACT_EXPOSURE_DATE),
                         notificationDate = LocalDate.parse(CONTACT_NOTIFICATION_DATE),
-                        dailyContactTestingOptInDate = LocalDate.parse(CONTACT_DCT_OPT_IN_DATE),
+                        optOutOfContactIsolation = OptOutOfContactIsolation(LocalDate.parse(CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE)),
                         expiryDate = LocalDate.parse(CONTACT_EXPIRY_DATE)
                     ),
                     hasAcknowledgedEndOfIsolation = true
                 )
             ),
             StateRepresentation(
-                name = "isolating with contact case without DCT",
+                name = "isolating with contact case without contact isolation opt-out",
                 json =
-                    """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITHOUT_DCT,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
+                    """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITHOUT_OPT_OUT_OF_CONTACT_ISOLATION,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
                     isolationConfiguration = DurationDays(),
                     contactCase = ContactCase(
@@ -286,22 +239,14 @@ class StateStorageTest(private val testParameters: StateRepresentationTest) {
             StateRepresentation(
                 name = "isolating for all reasons",
                 json =
-                    """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITH_DCT,"testResult":$POSITIVE_TEST_RESULT,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"indexExpiryDate":"$INDEX_EXPIRY_DATE","hasAcknowledgedEndOfIsolation":true,"version":1}""",
+                    """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION,"testResult":$POSITIVE_TEST_RESULT,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"indexExpiryDate":"$INDEX_EXPIRY_DATE","hasAcknowledgedEndOfIsolation":true,"version":1}""",
                 state = IsolationState(
                     isolationConfiguration = DurationDays(),
                     contactCase = ContactCase(
-                        exposureDate = LocalDate.parse(
-                            CONTACT_EXPOSURE_DATE
-                        ),
-                        notificationDate = LocalDate.parse(
-                            CONTACT_NOTIFICATION_DATE
-                        ),
-                        dailyContactTestingOptInDate = LocalDate.parse(
-                            CONTACT_DCT_OPT_IN_DATE
-                        ),
-                        expiryDate = LocalDate.parse(
-                            CONTACT_EXPIRY_DATE
-                        )
+                        exposureDate = LocalDate.parse(CONTACT_EXPOSURE_DATE),
+                        notificationDate = LocalDate.parse(CONTACT_NOTIFICATION_DATE),
+                        optOutOfContactIsolation = OptOutOfContactIsolation(LocalDate.parse(CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE)),
+                        expiryDate = LocalDate.parse(CONTACT_EXPIRY_DATE)
                     ),
                     indexInfo = IndexCase(
                         isolationTrigger = SelfAssessment(
@@ -379,13 +324,13 @@ class StateStorageTest(private val testParameters: StateRepresentationTest) {
             StateRepresentation(
                 name = "isolating with contact case and self-assessment but index expiry date missing",
                 json =
-                    """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITH_DCT,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
+                    """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
                     isolationConfiguration = DurationDays(),
                     contactCase = ContactCase(
                         exposureDate = LocalDate.parse(CONTACT_EXPOSURE_DATE),
                         notificationDate = LocalDate.parse(CONTACT_NOTIFICATION_DATE),
-                        dailyContactTestingOptInDate = LocalDate.parse(CONTACT_DCT_OPT_IN_DATE),
+                        optOutOfContactIsolation = OptOutOfContactIsolation(LocalDate.parse(CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE)),
                         expiryDate = LocalDate.parse(CONTACT_EXPIRY_DATE)
                     ),
                     hasAcknowledgedEndOfIsolation = false
@@ -418,16 +363,11 @@ class StateStorageTest(private val testParameters: StateRepresentationTest) {
             )
         )
 
-        @JvmStatic
-        @Parameterized.Parameters(name = "{0}")
-        fun generateParameters(): Iterable<StateRepresentationTest> =
-            readWriteRepresentations.flatMap { stateRepresentation ->
-                listOf(
-                    StateRepresentationTest(stateRepresentation, READ),
-                    StateRepresentationTest(stateRepresentation, WRITE)
-                )
+        fun generateParameters(): List<ProviderTestExpectation<IsolationState>> =
+            readWriteRepresentations.map { stateRepresentation ->
+                ProviderTestExpectation(json = stateRepresentation.json, objectValue = stateRepresentation.state)
             } + readOnlyStateRepresentations.map { stateRepresentation ->
-                StateRepresentationTest(stateRepresentation, READ)
+                ProviderTestExpectation(json = stateRepresentation.json, objectValue = stateRepresentation.state, direction = JSON_TO_OBJECT)
             }
     }
 }

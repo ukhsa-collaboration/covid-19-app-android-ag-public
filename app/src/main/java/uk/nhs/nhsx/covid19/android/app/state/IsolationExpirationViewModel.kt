@@ -22,7 +22,7 @@ class IsolationExpirationViewModel @Inject constructor(
             val expired = LocalDate.now(clock).isEqualOrAfter(isolationExpiryDate)
 
             val isolationState = isolationStateMachine.readLogicalState()
-            val showTemperatureNotice = isolationState.isActiveIndexCase(clock)
+            val showTemperatureNotice = isolationState.remembersIndexCase()
             viewState.postValue(ViewState(expired, isolationExpiryDate, showTemperatureNotice))
         }
     }

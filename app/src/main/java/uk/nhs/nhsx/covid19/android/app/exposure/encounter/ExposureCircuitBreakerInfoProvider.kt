@@ -1,43 +1,25 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
 import android.content.SharedPreferences
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
-import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
-import java.lang.reflect.Type
+import uk.nhs.nhsx.covid19.android.app.util.Provider
+import uk.nhs.nhsx.covid19.android.app.util.listStorage
 import javax.inject.Inject
 
 class ExposureCircuitBreakerInfoProvider @Inject constructor(
-    private val exposureCircuitBreakerInfoStorage: ExposureCircuitBreakerInfoStorage,
-    moshi: Moshi
-) {
-
-    private val exposureCircuitBreakerInfoAdapter: JsonAdapter<List<ExposureCircuitBreakerInfo>> =
-        moshi.adapter(exposureCircuitBreakerInfoType)
+    override val moshi: Moshi,
+    override val sharedPreferences: SharedPreferences
+) : Provider {
 
     private val lock = Object()
 
+    private var storedInfo: List<ExposureCircuitBreakerInfo> by listStorage(EXPOSURE_CIRCUIT_BREAKER_INFO_KEY, default = emptyList())
+
     var info: List<ExposureCircuitBreakerInfo>
-        get() {
-            return synchronized(lock) {
-                exposureCircuitBreakerInfoStorage.value?.let {
-                    runCatching {
-                        exposureCircuitBreakerInfoAdapter.fromJson(it)
-                    }
-                        .getOrElse {
-                            Timber.e(it)
-                            listOf()
-                        } // TODO add crash analytics and come up with a more sophisticated solution
-                } ?: listOf()
-            }
-        }
+        get() = storedInfo
         private set(tokens) {
-            return synchronized(lock) {
-                exposureCircuitBreakerInfoStorage.value = exposureCircuitBreakerInfoAdapter.toJson(tokens)
-            }
+            storedInfo = tokens
         }
 
     fun add(exposureCircuitBreakerInfo: ExposureCircuitBreakerInfo) =
@@ -63,20 +45,7 @@ class ExposureCircuitBreakerInfoProvider @Inject constructor(
         }
 
     companion object {
-        val exposureCircuitBreakerInfoType: Type = Types.newParameterizedType(
-            List::class.java,
-            ExposureCircuitBreakerInfo::class.java
-        )
-    }
-}
-
-class ExposureCircuitBreakerInfoStorage @Inject constructor(sharedPreferences: SharedPreferences) {
-    private val prefs = sharedPreferences.with<String>(VALUE_KEY)
-
-    var value: String? by prefs
-
-    companion object {
-        const val VALUE_KEY = "EXPOSURE_CIRCUIT_BREAKER_INFO_KEY"
+        const val EXPOSURE_CIRCUIT_BREAKER_INFO_KEY = "EXPOSURE_CIRCUIT_BREAKER_INFO_KEY"
     }
 }
 

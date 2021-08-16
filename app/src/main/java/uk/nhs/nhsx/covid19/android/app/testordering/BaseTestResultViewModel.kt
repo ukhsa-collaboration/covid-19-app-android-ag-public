@@ -13,8 +13,6 @@ abstract class BaseTestResultViewModel : ViewModel() {
     protected val navigationEventLiveData = SingleLiveEvent<NavigationEvent>()
     fun navigationEvent(): LiveData<NavigationEvent> = navigationEventLiveData
 
-    abstract fun onCreate()
-
     abstract fun onActionButtonClicked()
 
     abstract fun onBackPressed()

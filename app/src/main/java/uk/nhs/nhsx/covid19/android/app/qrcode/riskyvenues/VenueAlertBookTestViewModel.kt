@@ -10,8 +10,8 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedTakeTest
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget
-import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.Finish
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.NavigationTarget.BookTest
+import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.NavigationTarget.Finish
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.ViewState.KnownVisit
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.ViewState.UnknownVisit
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
@@ -50,7 +50,7 @@ class VenueAlertBookTestViewModel @Inject constructor(
     fun onBookATestClicked() {
         analyticsEventProcessor.track(SelectedTakeTestM2Journey)
         acknowledgeVenueAlert()
-        navigationEventLiveData.postValue(evaluateVenueAlertNavigation())
+        navigationEventLiveData.postValue(BookTest(evaluateVenueAlertNavigation()))
     }
 
     fun onReturnToHomeClicked() {
@@ -62,5 +62,10 @@ class VenueAlertBookTestViewModel @Inject constructor(
     sealed class ViewState {
         data class KnownVisit(val venue: VenueVisit) : ViewState()
         object UnknownVisit : ViewState()
+    }
+
+    sealed class NavigationTarget {
+        data class BookTest(val navigationTarget: EvaluateVenueAlertNavigation.NavigationTarget) : NavigationTarget()
+        object Finish : NavigationTarget()
     }
 }

@@ -20,13 +20,11 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaBanner
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessRiskyVenueM2Notification
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolationPaymentsButton
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationPermissionHelper
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
-import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction.NAVIGATE_AND_TURN_ON
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.StorageBasedUserInbox
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInbox
@@ -38,26 +36,31 @@ import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.Sho
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowUnknownTestResult
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxStorageChangeListener
-import uk.nhs.nhsx.covid19.android.app.payment.CanClaimIsolationPayment
-import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
-import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
-import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
-import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.NotificationMessage
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
+import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
 import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ContactTracingHub
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ExposureConsent
+import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.InAppReview
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.IsolationExpiration
+import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.IsolationHub
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.LocalMessage
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ShareKeys
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.TestResult
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.UnknownTestResult
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.VenueAlert
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.NavigateToContactTracingHub
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.NavigateToIsolationHub
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.NavigateToLocalMessage
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.None
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.ProcessRiskyVenueAlert
+import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.StartInAppReview
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.Isolating
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.NotIsolating
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.PermissionRequestResult.Error
@@ -83,8 +86,6 @@ class StatusViewModel @AssistedInject constructor(
     private val districtAreaStringProvider: DistrictAreaStringProvider,
     private val shouldShowInAppReview: ShouldShowInAppReview,
     private val lastAppRatingStartedDateProvider: LastAppRatingStartedDateProvider,
-    private val canClaimIsolationPayment: CanClaimIsolationPayment,
-    private val isolationPaymentTokenStateProvider: IsolationPaymentTokenStateProvider,
     private val analyticsEventProcessor: AnalyticsEventProcessor,
     private val animationsProvider: AnimationsProvider,
     private val clock: Clock,
@@ -92,15 +93,15 @@ class StatusViewModel @AssistedInject constructor(
     private val areSystemLevelAnimationsEnabled: AreSystemLevelAnimationsEnabled,
     private val getLocalMessageFromStorage: GetLocalMessageFromStorage,
     exposureNotificationPermissionHelperFactory: ExposureNotificationPermissionHelper.Factory,
-    @Assisted val contactTracingHubAction: ContactTracingHubAction?,
-    @Assisted val showLocalMessageScreen: Boolean,
-    @Assisted val startedFromRiskyVenueNotificationWithType: RiskyVenueMessageType?
+    @Assisted val statusActivityAction: StatusActivityAction,
 ) : ViewModel() {
 
     var contactTracingSwitchedOn = false
     var contactTracingHubActionHandled = false
     var showLocalMessageScreenHandled = false
+    var showIsolationHubReminderHandled = false
     var didTrackRiskyVenueM2NotificationAnalytics = false
+    var showInAppReviewHandled = false
 
     private val viewStateLiveData = MutableLiveData<ViewState>()
     val viewState = distinctUntilChanged(viewStateLiveData)
@@ -113,14 +114,6 @@ class StatusViewModel @AssistedInject constructor(
 
     private val areaInfoChangedListener = AreaInfoChangedListener {
         updateViewState()
-    }
-
-    private val isolationPaymentTokenStateListener: (IsolationPaymentTokenState) -> Unit = {
-        val updatedState =
-            viewStateLiveData.value?.copy(showIsolationPaymentButton = mustShowIsolationPaymentButton())
-        if (updatedState != null) {
-            viewStateLiveData.postValue(updatedState)
-        }
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -141,6 +134,10 @@ class StatusViewModel @AssistedInject constructor(
 
                 override fun onPermissionRequired(permissionRequest: (Activity) -> Unit) {
                     permissionRequestLiveData.postValue(Request(permissionRequest))
+                }
+
+                override fun onPermissionDenied() {
+                    Timber.d("Permission to start contact tracing denied")
                 }
 
                 override fun onError(error: Throwable) {
@@ -164,7 +161,6 @@ class StatusViewModel @AssistedInject constructor(
         sharedPreferences.registerOnSharedPreferenceChangeListener(
             areaInfoChangedListener
         )
-        isolationPaymentTokenStateProvider.addTokenStateListener(isolationPaymentTokenStateListener)
         storageBasedUserInbox.setStorageChangeListener(userInboxStorageChangeListener)
     }
 
@@ -172,7 +168,6 @@ class StatusViewModel @AssistedInject constructor(
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(
             areaInfoChangedListener
         )
-        isolationPaymentTokenStateProvider.removeTokenStateListener(isolationPaymentTokenStateListener)
         storageBasedUserInbox.removeStorageChangeListener()
     }
 
@@ -191,7 +186,6 @@ class StatusViewModel @AssistedInject constructor(
                 currentDate = currentDate,
                 areaRiskState = getAreaRiskViewState(),
                 isolationState = getIsolationViewState(isolationState),
-                showIsolationPaymentButton = mustShowIsolationPaymentButton(),
                 showReportSymptomsButton = canReportSymptoms(isolationState),
                 exposureNotificationsEnabled = exposureNotificationManager.isEnabled(),
                 animationsEnabled = animationsProvider.inAppAnimationEnabled && areSystemLevelAnimationsEnabled(),
@@ -229,9 +223,6 @@ class StatusViewModel @AssistedInject constructor(
         }
     }
 
-    private fun mustShowIsolationPaymentButton(): Boolean =
-        canClaimIsolationPayment() && isolationPaymentTokenStateProvider.tokenState is Token
-
     fun attemptToStartAppReviewFlow(activity: Activity) {
         viewModelScope.launch {
             if (shouldShowInAppReview()) {
@@ -256,49 +247,80 @@ class StatusViewModel @AssistedInject constructor(
     }
 
     private fun checkShouldShowInformationScreen() {
-        if (startedFromRiskyVenueNotificationWithType == BOOK_TEST && !didTrackRiskyVenueM2NotificationAnalytics) {
-            didTrackRiskyVenueM2NotificationAnalytics = true
-            analyticsEventProcessor.track(DidAccessRiskyVenueM2Notification)
+        val navigatedViaActions = checkNavigationViaActions()
+        if (!navigatedViaActions) {
+            checkNavigationViaUserInbox()
         }
+    }
 
-        if (contactTracingHubAction != null && !contactTracingHubActionHandled) {
-            contactTracingHubActionHandled = true
-            navigationTarget.postValue(ContactTracingHub(shouldTurnOnContactTracing = contactTracingHubAction == NAVIGATE_AND_TURN_ON))
-            return
-        }
-
-        if (showLocalMessageScreen && !showLocalMessageScreenHandled) {
-            showLocalMessageScreenHandled = true
-            analyticsEventProcessor.track(DidAccessLocalInfoScreenViaNotification)
-            navigationTarget.postValue(LocalMessage)
-            return
-        }
-
-        val target = when (val item = userInbox.fetchInbox()) {
-            is ShowIsolationExpiration -> IsolationExpiration(item.expirationDate)
-            is ShowTestResult -> {
-                notificationProvider.cancelTestResult()
-                TestResult
+    private fun checkNavigationViaActions(): Boolean {
+        when (statusActivityAction) {
+            is NavigateToContactTracingHub ->
+                if (!contactTracingHubActionHandled) {
+                    contactTracingHubActionHandled = true
+                    navigationTarget.postValue(
+                        ContactTracingHub(shouldTurnOnContactTracing = statusActivityAction.action == NAVIGATE_AND_TURN_ON)
+                    )
+                    return true
+                }
+            NavigateToIsolationHub -> {
+                if (!showIsolationHubReminderHandled) {
+                    showIsolationHubReminderHandled = true
+                    navigationTarget.postValue(IsolationHub)
+                    return true
+                }
             }
-            is ShowUnknownTestResult -> UnknownTestResult
-            is ShowVenueAlert -> VenueAlert(item.venueId, item.messageType)
-            is ShowEncounterDetection -> ExposureConsent
-            is ContinueInitialKeySharing -> ShareKeys(reminder = false)
-            is ShowKeySharingReminder -> ShareKeys(reminder = true)
-            null -> null
+            NavigateToLocalMessage -> {
+                if (!showLocalMessageScreenHandled) {
+                    showLocalMessageScreenHandled = true
+                    analyticsEventProcessor.track(DidAccessLocalInfoScreenViaNotification)
+                    navigationTarget.postValue(LocalMessage)
+                    return true
+                }
+            }
+            is ProcessRiskyVenueAlert -> {
+                if (statusActivityAction.type == BOOK_TEST && !didTrackRiskyVenueM2NotificationAnalytics) {
+                    didTrackRiskyVenueM2NotificationAnalytics = true
+                    analyticsEventProcessor.track(DidAccessRiskyVenueM2Notification)
+                }
+            }
+            StartInAppReview -> {
+                if (!showInAppReviewHandled) {
+                    showInAppReviewHandled = true
+                    navigationTarget.postValue(InAppReview)
+                    return true
+                }
+            }
+            None -> {
+            }
         }
+        return false
+    }
 
-        if (target != null) {
-            navigationTarget.postValue(target)
+    private fun checkNavigationViaUserInbox() {
+        viewModelScope.launch {
+            val target = when (val item = userInbox.fetchInbox()) {
+                is ShowIsolationExpiration -> IsolationExpiration(item.expirationDate)
+                is ShowTestResult -> {
+                    notificationProvider.cancelTestResult()
+                    TestResult
+                }
+                is ShowUnknownTestResult -> UnknownTestResult
+                is ShowVenueAlert -> VenueAlert(item.venueId, item.messageType)
+                is ShowEncounterDetection -> ExposureConsent
+                is ContinueInitialKeySharing -> ShareKeys(reminder = false)
+                is ShowKeySharingReminder -> ShareKeys(reminder = true)
+                null -> null
+            }
+
+            if (target != null) {
+                navigationTarget.postValue(target)
+            }
         }
     }
 
     private fun canReportSymptoms(isolationState: IsolationLogicalState): Boolean =
         isolationState.canReportSymptoms(clock)
-
-    fun optionIsolationPaymentClicked() {
-        analyticsEventProcessor.track(SelectedIsolationPaymentsButton)
-    }
 
     fun localMessageBannerClicked() {
         analyticsEventProcessor.track(DidAccessLocalInfoScreenViaBanner)
@@ -321,7 +343,6 @@ class StatusViewModel @AssistedInject constructor(
         val currentDate: LocalDate,
         val areaRiskState: RiskyPostCodeViewState,
         val isolationState: IsolationViewState,
-        val showIsolationPaymentButton: Boolean,
         val showReportSymptomsButton: Boolean,
         val exposureNotificationsEnabled: Boolean,
         val animationsEnabled: Boolean,
@@ -344,11 +365,7 @@ class StatusViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(
-            contactTracingHubAction: ContactTracingHubAction?,
-            showLocalMessageScreen: Boolean,
-            startedFromRiskyVenueNotificationWithType: RiskyVenueMessageType?
-        ): StatusViewModel
+        fun create(statusActivityAction: StatusActivityAction): StatusViewModel
     }
 }
 
@@ -361,4 +378,6 @@ sealed class NavigationTarget {
     data class VenueAlert(val venueId: String, val messageType: RiskyVenueMessageType) : NavigationTarget()
     data class ContactTracingHub(val shouldTurnOnContactTracing: Boolean) : NavigationTarget()
     object LocalMessage : NavigationTarget()
+    object IsolationHub : NavigationTarget()
+    object InAppReview : NavigationTarget()
 }

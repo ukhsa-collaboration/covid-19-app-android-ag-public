@@ -1,24 +1,20 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
-import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.CompleteOnboarding
-import uk.nhs.nhsx.covid19.android.app.onboarding.WelcomeActivity
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
-import kotlin.test.assertTrue
+import kotlin.test.assertEquals
 
 class OnboardingAnalyticsTest : AnalyticsTest() {
 
     private val completeOnboarding = CompleteOnboarding()
 
-    @Before
-    override fun setUp() {
-        super.setUp()
-        startTestActivity<WelcomeActivity>()
-    }
-
     @Test
     fun completeOnboardingMetricsPresent() {
+        testAppContext.setOnboardingCompleted(false)
+
+        startTestActivity<MainActivity>()
         completeOnboarding.onboard()
 
         assertOnLastFields {
@@ -26,6 +22,6 @@ class OnboardingAnalyticsTest : AnalyticsTest() {
         }
 
         val lastRequest = testAppContext.analyticsApi.lastRequest().getOrAwaitValue()
-        assertTrue(lastRequest.analyticsWindow.startDate == lastRequest.analyticsWindow.endDate)
+        assertEquals(lastRequest.analyticsWindow.startDate, lastRequest.analyticsWindow.endDate)
     }
 }

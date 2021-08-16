@@ -1,57 +1,36 @@
 package uk.nhs.nhsx.covid19.android.app.util.crashreporting
 
-import com.squareup.moshi.Moshi
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
+import org.junit.jupiter.api.Test
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTest
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectation
+import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectationDirection.OBJECT_TO_JSON
 
-class CrashReportProviderTest {
+class CrashReportProviderTest : ProviderTest<CrashReportProvider, CrashReport?>() {
 
-    private val moshi = Moshi.Builder().build()
-
-    private val mockSynchronousCrashReportStorage =
-        mockk<SynchronousCrashReportStorage>(relaxed = true)
-
-    private val testSubject = CrashReportProvider(
-        mockSynchronousCrashReportStorage,
-        moshi
+    override val getTestSubject = ::CrashReportProvider
+    override val property = CrashReportProvider::crashReport
+    override val key = CrashReportProvider.VALUE_KEY
+    override val defaultValue: CrashReport? = null
+    override val expectations: List<ProviderTestExpectation<CrashReport?>> = listOf(
+        ProviderTestExpectation(json = crashReportJson, objectValue = crashReport),
+        ProviderTestExpectation(json = null, objectValue = null, direction = OBJECT_TO_JSON)
     )
 
     @Test
-    fun `verify deserialization`() {
-        every { mockSynchronousCrashReportStorage.value } returns crashReportJson
+    fun `clear sets crash report to null`() {
+        testSubject.clear()
 
-        val parsedCrashReport = testSubject.crashReport
-
-        assertEquals(crashReport, parsedCrashReport)
+        assertSharedPreferenceSetsValue(null)
     }
 
-    @Test
-    fun `verify serialization`() {
+    companion object {
+        private val crashReport = CrashReport(
+            exception = "android.app.RemoteServiceException",
+            threadName = "main",
+            stackTrace = "stackTrace"
+        )
 
-        testSubject.crashReport = crashReport
-
-        verify { mockSynchronousCrashReportStorage.value = crashReportJson }
+        private const val crashReportJson =
+            """{"exception":"android.app.RemoteServiceException","threadName":"main","stackTrace":"stackTrace"}"""
     }
-
-    @Test
-    fun `on exception will return null`() {
-        every { mockSynchronousCrashReportStorage.value } returns "wrong_format"
-
-        val parsedCrashReport = testSubject.crashReport
-
-        assertNull(parsedCrashReport)
-    }
-
-    private val crashReport = CrashReport(
-        exception = "android.app.RemoteServiceException",
-        threadName = "main",
-        stackTrace = "stackTrace"
-    )
-
-    private val crashReportJson =
-        """{"exception":"android.app.RemoteServiceException","threadName":"main","stackTrace":"stackTrace"}"""
 }

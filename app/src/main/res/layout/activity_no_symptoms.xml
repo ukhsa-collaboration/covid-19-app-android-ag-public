@@ -46,7 +46,7 @@
 
             <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                 android:id="@+id/noSymptomsGettingTestedLink"
-                style="@style/LinkTextWithIcon"
+                style="@style/LinkText.WithIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"
@@ -64,7 +64,7 @@
 
             <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
                 android:id="@+id/noSymptomsOnlineServiceLink"
-                style="@style/LinkTextWithIcon"
+                style="@style/LinkText.WithIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/vertical_margin"

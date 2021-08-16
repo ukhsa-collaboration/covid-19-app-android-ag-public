@@ -14,7 +14,6 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPL
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_REMINDER_SCREEN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW
-import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DECLARED_NEGATIVE_RESULT_FROM_DCT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_RISKY_VENUE_M2_NOTIFICATION
@@ -29,6 +28,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGAT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_OUTSIDE_TIME_LIMIT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_WITHIN_TIME_LIMIT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.OPTED_OUT_FOR_CONTACT_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_LAB_RESULT_AFTER_POSITIVE_LFD
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_RESULT_RECEIVED
@@ -361,14 +361,6 @@ class MetricsTest {
     }
 
     @Test
-    fun `add declaredNegativeResultFromDCT for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            Event(DECLARED_NEGATIVE_RESULT_FROM_DCT),
-            Metrics().copy(declaredNegativeResultFromDCT = expectedLogEventCount)
-        )
-    }
-
-    @Test
     fun `add didHaveSymptomsBeforeReceivedTestResult for events in same analytics window`() = runBlocking {
         `test aggregation of analytics metrics`(
             Event(DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT),
@@ -584,6 +576,14 @@ class MetricsTest {
         )
     }
 
+    @Test
+    fun `add optedOutForContactIsolation for events in same analytics window`() = runBlocking {
+        `test aggregation of analytics metrics`(
+            Event(OPTED_OUT_FOR_CONTACT_ISOLATION),
+            Metrics().copy(optedOutForContactIsolation = expectedLogEventCount)
+        )
+    }
+
     //endregion
 
     //region background ticks
@@ -757,6 +757,19 @@ class MetricsTest {
                     )
                 ),
                 totalBackgroundTasksMetric.copy(isDisplayingLocalInfoBackgroundTick = expectedLogEventCount)
+            )
+        }
+
+    @Test
+    fun `add optedOutForContactIsolationBackgroundTick for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                BackgroundTaskCompletion(
+                    BackgroundTaskTicks(
+                        optedOutForContactIsolationBackgroundTick = true
+                    )
+                ),
+                totalBackgroundTasksMetric.copy(optedOutForContactIsolationBackgroundTick = expectedLogEventCount)
             )
         }
 

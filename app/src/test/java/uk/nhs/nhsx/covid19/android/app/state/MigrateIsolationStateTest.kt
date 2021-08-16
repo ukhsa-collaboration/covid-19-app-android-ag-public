@@ -14,6 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTr
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Default4_9
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Isolation4_9
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Isolation4_9.ContactCase4_9
@@ -202,7 +203,7 @@ class MigrateIsolationStateTest {
             contactCase = ContactCase(
                 exposureDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
                 notificationDate = oldContactCase.notificationDate!!.toLocalDate(fixedClock.zone),
-                dailyContactTestingOptInDate = oldContactCase.dailyContactTestingOptInDate,
+                optOutOfContactIsolation = oldContactCase.dailyContactTestingOptInDate?.let { OptOutOfContactIsolation(it) },
                 expiryDate = oldContactCase.expiryDate
             ),
             indexInfo = IndexCase(
@@ -249,7 +250,7 @@ class MigrateIsolationStateTest {
                 exposureDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
                 // We fall back to exposure date when notification date is null
                 notificationDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
-                dailyContactTestingOptInDate = null,
+                optOutOfContactIsolation = null,
                 expiryDate = oldContactCase.expiryDate
             ),
             hasAcknowledgedEndOfIsolation = false
@@ -282,7 +283,7 @@ class MigrateIsolationStateTest {
             contactCase = ContactCase(
                 exposureDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
                 notificationDate = oldContactCase.notificationDate!!.toLocalDate(fixedClock.zone),
-                dailyContactTestingOptInDate = null,
+                optOutOfContactIsolation = null,
                 expiryDate = oldContactCase.expiryDate
             ),
             hasAcknowledgedEndOfIsolation = false
@@ -323,7 +324,7 @@ class MigrateIsolationStateTest {
             contactCase = ContactCase(
                 exposureDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
                 notificationDate = oldContactCase.notificationDate!!.toLocalDate(fixedClock.zone),
-                dailyContactTestingOptInDate = null,
+                optOutOfContactIsolation = null,
                 expiryDate = oldContactCase.expiryDate
             ),
             indexInfo = NegativeTest(
@@ -500,7 +501,7 @@ class MigrateIsolationStateTest {
             contactCase = ContactCase(
                 exposureDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
                 notificationDate = oldContactCase.notificationDate!!.toLocalDate(fixedClock.zone),
-                dailyContactTestingOptInDate = null,
+                optOutOfContactIsolation = null,
                 expiryDate = oldContactCase.expiryDate
             ),
             indexInfo = IndexCase(

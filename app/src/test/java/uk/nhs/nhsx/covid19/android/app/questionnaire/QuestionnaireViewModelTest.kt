@@ -2,6 +2,8 @@ package uk.nhs.nhsx.covid19.android.app.questionnaire
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import com.jeroenmols.featureflag.framework.FeatureFlag.NEW_NO_SYMPTOMS_SCREEN
+import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -10,25 +12,33 @@ import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyOrder
 import kotlinx.coroutines.runBlocking
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.Lce
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
 import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoIsolationSymptomAdvice.NoSymptoms
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.QuestionnaireIsolationHandler
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.LoadQuestionnaire
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget
-import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.NoSymptoms
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.AdviceScreen
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.NewNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.ReviewSymptoms
-import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.SymptomsAdviceForIndexCaseThenNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireState
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireViewModel
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
 import uk.nhs.nhsx.covid19.android.app.remote.data.QuestionnaireResponse
-import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import java.time.Clock
+import java.time.Instant
+import java.time.ZoneOffset
 
 class QuestionnaireViewModelTest {
 
@@ -36,17 +46,29 @@ class QuestionnaireViewModelTest {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val loadQuestionnaire = mockk<LoadQuestionnaire>()
-    private val isolationStateMachine = mockk<IsolationStateMachine>()
-    private val clock = mockk<Clock>()
+    private val questionnaireIsolationHandler = mockk<QuestionnaireIsolationHandler>()
     private val loadQuestionnaireResultObserver = mockk<Observer<Lce<QuestionnaireState>>>(relaxUnitFun = true)
+    private val isolationStateMachine = mockk<IsolationStateMachine>()
+    private val fixedClock = Clock.fixed(Instant.parse("2020-01-01T10:00:00Z"), ZoneOffset.UTC)
     private val navigationTargetObserver = mockk<Observer<NavigationTarget>>(relaxUnitFun = true)
 
-    private val testSubject = QuestionnaireViewModel(loadQuestionnaire, isolationStateMachine, clock)
+    private val testSubject =
+        QuestionnaireViewModel(loadQuestionnaire, questionnaireIsolationHandler, isolationStateMachine, fixedClock)
+
+    @Before
+    fun setUp() {
+        FeatureFlagTestHelper.disableFeatureFlag(NEW_NO_SYMPTOMS_SCREEN)
+        testSubject.navigationTarget().observeForever(navigationTargetObserver)
+        testSubject.viewState().observeForever(loadQuestionnaireResultObserver)
+    }
+
+    @After
+    fun tearDown() {
+        FeatureFlagTestHelper.clearFeatureFlags()
+    }
 
     @Test
     fun `load questionnaire returns success`() = runBlocking {
-        testSubject.viewState().observeForever(loadQuestionnaireResultObserver)
-
         coEvery { loadQuestionnaire.invoke() } returns Success(
             QuestionnaireResponse(
                 listOf(),
@@ -66,7 +88,7 @@ class QuestionnaireViewModelTest {
                         riskThreshold = 100.0f,
                         symptomsOnsetWindowDays = 14,
                         showError = false,
-                        showDialog = false
+                        showDialog = false,
                     )
                 )
             )
@@ -75,8 +97,6 @@ class QuestionnaireViewModelTest {
 
     @Test
     fun `load questionnaire multiple times does not fire multiple requests`() = runBlocking {
-        testSubject.viewState().observeForever(loadQuestionnaireResultObserver)
-
         coEvery { loadQuestionnaire.invoke() } returns Success(
             QuestionnaireResponse(
                 listOf(),
@@ -98,7 +118,7 @@ class QuestionnaireViewModelTest {
                         riskThreshold = 100.0f,
                         symptomsOnsetWindowDays = 14,
                         showError = false,
-                        showDialog = false
+                        showDialog = false,
                     )
                 )
             )
@@ -107,8 +127,6 @@ class QuestionnaireViewModelTest {
 
     @Test
     fun `load questionnaire returns failure`() = runBlocking {
-        testSubject.viewState().observeForever(loadQuestionnaireResultObserver)
-
         val testException = Exception("Test error")
 
         coEvery { loadQuestionnaire.invoke() } returns Failure(testException)
@@ -135,11 +153,10 @@ class QuestionnaireViewModelTest {
                     1.0f,
                     14,
                     showError = true,
-                    showDialog = false
+                    showDialog = false,
                 )
             )
         )
-        testSubject.viewState().observeForever(loadQuestionnaireResultObserver)
 
         testSubject.toggleQuestion(question)
 
@@ -155,7 +172,7 @@ class QuestionnaireViewModelTest {
                         1.0f,
                         14,
                         showError = false,
-                        showDialog = false
+                        showDialog = false,
                     )
                 )
             )
@@ -175,12 +192,10 @@ class QuestionnaireViewModelTest {
                     1.0f,
                     14,
                     showError = false,
-                    showDialog = false
+                    showDialog = false,
                 )
             )
         )
-        testSubject.viewState().observeForever(loadQuestionnaireResultObserver)
-        testSubject.navigationTarget().observeForever(navigationTargetObserver)
 
         testSubject.onButtonReviewSymptomsClicked()
 
@@ -192,7 +207,7 @@ class QuestionnaireViewModelTest {
                         1.0f,
                         14,
                         showError = true,
-                        showDialog = false
+                        showDialog = false,
                     )
                 )
             )
@@ -212,12 +227,11 @@ class QuestionnaireViewModelTest {
             1.0f,
             14,
             showError = false,
-            showDialog = false
+            showDialog = false,
         )
         val response = Lce.Success(viewState)
 
         testSubject.viewState.postValue(response)
-        testSubject.navigationTarget().observeForever(navigationTargetObserver)
 
         testSubject.onButtonReviewSymptomsClicked()
 
@@ -237,87 +251,96 @@ class QuestionnaireViewModelTest {
             1.0f,
             14,
             showError = false,
-            showDialog = true
+            showDialog = true,
         )
         val response = Lce.Success(viewState)
         testSubject.viewState.postValue(response)
 
         testSubject.onNoSymptomsDialogDismissed()
 
-        testSubject.viewState().observeForever(loadQuestionnaireResultObserver)
         verify {
             loadQuestionnaireResultObserver.onChanged(Lce.Success(viewState.copy(showDialog = false)))
         }
     }
 
     @Test
-    fun `when isolating due to positive test result and user confirms no symptoms`() {
+    fun `when no symptoms confirmed, feature flag disabled navigate to advice screen`() {
         val viewState = QuestionnaireState(
             questions = emptyList(),
             1.0f,
             14,
             showError = false,
-            showDialog = true
+            showDialog = true,
         )
         val response = Lce.Success(viewState)
         testSubject.viewState.postValue(response)
 
-        val mockedLogicalState = mockk<IsolationLogicalState>()
-        every { mockedLogicalState.hasActivePositiveTestResult(clock) } returns true
-        every { isolationStateMachine.readLogicalState() } returns mockedLogicalState
+        every {
+            questionnaireIsolationHandler.computeAdvice(
+                riskThreshold = Float.MAX_VALUE,
+                selectedSymptoms = emptyList(),
+                onsetDate = SelectedDate.NotStated
+            )
+        } returns NoSymptoms
 
-        testSubject.onNoSymptomsConfirmed()
+        runWithFeature(NEW_NO_SYMPTOMS_SCREEN, enabled = false) {
+            testSubject.onNoSymptomsConfirmed()
+        }
 
-        testSubject.navigationTarget().observeForever(navigationTargetObserver)
-        verify { navigationTargetObserver.onChanged(SymptomsAdviceForIndexCaseThenNoSymptoms) }
+        verify { navigationTargetObserver.onChanged(AdviceScreen(NoSymptoms)) }
     }
 
     @Test
-    fun `when isolating for other reason than positive test result and user confirms no symptoms`() {
+    fun `when no symptoms confirmed, feature flag enabled and user is in isolation navigate to advice screen`() {
+        every { isolationStateMachine.readLogicalState().isActiveIsolation(fixedClock) } returns true
         val viewState = QuestionnaireState(
             questions = emptyList(),
             1.0f,
             14,
             showError = false,
-            showDialog = true
+            showDialog = true,
         )
-
         val response = Lce.Success(viewState)
         testSubject.viewState.postValue(response)
 
-        val mockedLogicalState = mockk<IsolationLogicalState>()
-        every { mockedLogicalState.hasActivePositiveTestResult(clock) } returns false
-        every { isolationStateMachine.readLogicalState() } returns mockedLogicalState
+        every {
+            questionnaireIsolationHandler.computeAdvice(
+                riskThreshold = Float.MAX_VALUE,
+                selectedSymptoms = emptyList(),
+                onsetDate = SelectedDate.NotStated
+            )
+        } returns NoSymptoms
 
-        testSubject.onNoSymptomsConfirmed()
+        runWithFeatureEnabled(NEW_NO_SYMPTOMS_SCREEN) {
+            testSubject.onNoSymptomsConfirmed()
+        }
 
-        testSubject.navigationTarget().observeForever(navigationTargetObserver)
-
-        verify { navigationTargetObserver.onChanged(NoSymptoms) }
+        verify { navigationTargetObserver.onChanged(AdviceScreen(NoSymptoms)) }
     }
 
     @Test
-    fun `when not isolating and user confirms no symptoms`() {
-        val viewState = QuestionnaireState(
-            questions = emptyList(),
-            1.0f,
-            14,
-            showError = false,
-            showDialog = true
-        )
-
+    fun `when no symptoms clicked then show confirmation dialog`() {
+        val viewState = QuestionnaireState(questions = emptyList(), 1.0f, 14, showError = false, showDialog = false)
         val response = Lce.Success(viewState)
         testSubject.viewState.postValue(response)
 
-        val mockedLogicalState = mockk<IsolationLogicalState>()
-        every { mockedLogicalState.hasActivePositiveTestResult(any()) } returns false
-        every { isolationStateMachine.readLogicalState() } returns mockedLogicalState
+        testSubject.onNoSymptomsClicked()
 
-        testSubject.onNoSymptomsConfirmed()
+        val updatedViewState = viewState.copy(showDialog = true)
+        verify { loadQuestionnaireResultObserver.onChanged(Lce.Success(updatedViewState)) }
+        verify(exactly = 0) { navigationTargetObserver.onChanged(any()) }
+    }
 
-        testSubject.navigationTarget().observeForever(navigationTargetObserver)
+    @Test
+    fun `when no symptoms confirmed, feature flag enabled and user is not in active isolation then emit NewNoSymptoms as navigation target`() {
+        every { isolationStateMachine.readLogicalState().isActiveIsolation(fixedClock) } returns false
 
-        verify { navigationTargetObserver.onChanged(NoSymptoms) }
+        runWithFeatureEnabled(NEW_NO_SYMPTOMS_SCREEN, clearFeatureFlags = true) {
+            testSubject.onNoSymptomsConfirmed()
+        }
+
+        verify { navigationTargetObserver.onChanged(NewNoSymptoms) }
+        verify(exactly = 0) { loadQuestionnaireResultObserver.onChanged(any()) }
     }
 
     private fun question(name: String, checked: Boolean): Question {

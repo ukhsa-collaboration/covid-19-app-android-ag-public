@@ -40,7 +40,7 @@ class IndexCaseTest {
         val testResult = createTestResult(testEndDate)
         val indexCase = IndexCase(isolationTrigger, testResult, expiryDate)
 
-        assertEquals(LocalDate.of(2020, 1, 3), indexCase.assumedOnsetDateForExposureKeys)
+        assertEquals(LocalDate.of(2020, 1, 6), indexCase.assumedOnsetDateForExposureKeys)
     }
 
     @Test
@@ -71,7 +71,7 @@ class IndexCaseTest {
         val isolationTrigger = PositiveTestResult(testEndDate)
         val indexCase = IndexCase(isolationTrigger, null, expiryDate)
 
-        assertEquals(LocalDate.of(2020, 1, 7), indexCase.assumedOnsetDateForExposureKeys)
+        assertEquals(LocalDate.of(2020, 1, 10), indexCase.assumedOnsetDateForExposureKeys)
     }
 
     private fun createTestResult(testEndDate: LocalDate) = AcknowledgedTestResult(

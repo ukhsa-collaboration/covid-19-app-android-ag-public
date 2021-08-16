@@ -2,8 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.jeroenmols.featureflag.framework.FeatureFlag
-import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -11,7 +9,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyOrder
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -37,9 +34,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValid
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.CtaTokenValidationResult.UnparsableTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.CtaTokenValidator.ValidationErrorType
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.ErrorState
-import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.BOTH_PROVIDED
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.INVALID
-import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.NEITHER_PROVIDED
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.NO_CONNECTION
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.UNEXPECTED
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultState
@@ -65,153 +60,42 @@ class LinkTestResultViewModelTest {
         ctaTokenValidator,
         isolationStateMachine,
         linkTestResultOnsetDateNeededChecker,
-        receivedUnknownTestResultProvider,
-        fixedClock
+        receivedUnknownTestResultProvider
     )
 
     private val viewStateObserver = mockk<Observer<LinkTestResultState>>(relaxed = true)
-    private val confirmedDailyContactTestingNegativeObserver = mockk<Observer<Unit>>(relaxed = true)
     private val validationOnsetDateNeeded = mockk<Observer<ReceivedTestResult>>(relaxed = true)
     private val validationCompletedObserver = mockk<Observer<Unit>>(relaxed = true)
 
     @Before
     fun setUp() {
         testSubject.viewState().observeForever(viewStateObserver)
-        testSubject.confirmedDailyContactTestingNegative().observeForever(confirmedDailyContactTestingNegativeObserver)
         testSubject.validationOnsetDateNeeded().observeForever(validationOnsetDateNeeded)
         testSubject.validationCompleted().observeForever(validationCompletedObserver)
+
+        setIsolationState(indexAndContactCaseIsolation)
+        testSubject.fetchInitialViewState()
     }
-
-    @After
-    fun tearDown() {
-        FeatureFlagTestHelper.clearFeatureFlags()
-    }
-
-    @Test
-    fun `display daily contact testing content when contact case only and feature flag enabled`() =
-        runBlocking {
-            enableShowDailyContactTesting()
-
-            verify { isolationStateMachine.readLogicalState() }
-
-            verify {
-                viewStateObserver.onChanged(LinkTestResultState(showDailyContactTesting = true))
-            }
-        }
-
-    @Test
-    fun `do not display daily contact testing content when not exclusively contact case isolation and feature flag enabled`() =
-        runBlocking {
-            FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.DAILY_CONTACT_TESTING)
-            setIsolationState(indexAndContactCaseIsolation)
-
-            testSubject.fetchInitialViewState()
-
-            verify { isolationStateMachine.readLogicalState() }
-
-            verify { viewStateObserver.onChanged(LinkTestResultState(showDailyContactTesting = false)) }
-        }
-
-    @Test
-    fun `do not display daily contact testing content when contact case only and feature flag disabled`() =
-        runBlocking {
-            FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.DAILY_CONTACT_TESTING)
-            setIsolationState(contactCaseOnlyIsolation)
-
-            testSubject.fetchInitialViewState()
-
-            verify { isolationStateMachine.readLogicalState() }
-
-            verify { viewStateObserver.onChanged(LinkTestResultState(showDailyContactTesting = false)) }
-        }
-
-    @Test
-    fun `continue button clicked with both negative DCT confirmation selected and CTA token entered should return input error state`() =
-        runBlocking {
-            enableShowDailyContactTesting()
-
-            testSubject.ctaToken = "test"
-            testSubject.onDailyContactTestingOptInChecked()
-            testSubject.onContinueButtonClicked()
-
-            verifyOrder {
-                viewStateObserver.onChanged(LinkTestResultState(showDailyContactTesting = true))
-                viewStateObserver.onChanged(
-                    LinkTestResultState(
-                        showDailyContactTesting = true,
-                        confirmedNegativeDailyContactTestingResult = true
-                    )
-                )
-                viewStateObserver.onChanged(
-                    LinkTestResultState(
-                        showDailyContactTesting = true,
-                        confirmedNegativeDailyContactTestingResult = true,
-                        errorState = ErrorState(BOTH_PROVIDED)
-                    )
-                )
-            }
-        }
 
     @Test
     fun `continue button clicked with CTA token entered should return start validation`() =
         runBlocking {
-            enableShowDailyContactTesting()
-
             setResult(POSITIVE, LAB_RESULT)
 
             testSubject.ctaToken = "test"
             testSubject.onContinueButtonClicked()
 
             verifyOrder {
-                viewStateObserver.onChanged(LinkTestResultState(showDailyContactTesting = true))
+                viewStateObserver.onChanged(LinkTestResultState())
                 viewStateObserver.onChanged(
-                    LinkTestResultState(showDailyContactTesting = true, showValidationProgress = true)
+                    LinkTestResultState(showValidationProgress = true)
                 )
             }
             coVerify { ctaTokenValidator.validate("test") }
         }
 
     @Test
-    fun `continue button clicked with only negative DCT confirmation provided should emit confirmation event`() =
-        runBlocking {
-            enableShowDailyContactTesting()
-
-            testSubject.ctaToken = ""
-            testSubject.onDailyContactTestingOptInChecked()
-            testSubject.onContinueButtonClicked()
-
-            verifyOrder {
-                viewStateObserver.onChanged(LinkTestResultState(showDailyContactTesting = true))
-                viewStateObserver.onChanged(
-                    LinkTestResultState(
-                        showDailyContactTesting = true,
-                        confirmedNegativeDailyContactTestingResult = true
-                    )
-                )
-            }
-            verify { confirmedDailyContactTestingNegativeObserver.onChanged(null) }
-        }
-
-    @Test
-    fun `continue button clicked with neither negative DCT confirmation nor CTA token entered should return input error state`() =
-        runBlocking {
-            enableShowDailyContactTesting()
-
-            testSubject.ctaToken = ""
-            testSubject.onContinueButtonClicked()
-
-            verify {
-                viewStateObserver.onChanged(
-                    LinkTestResultState(
-                        showDailyContactTesting = true,
-                        errorState = ErrorState(NEITHER_PROVIDED)
-                    )
-                )
-            }
-        }
-
-    @Test
-    fun `continue button clicked with DCT not showing should start validation`() =
+    fun `continue button should start validation`() =
         runBlocking {
             setIsolationState(indexAndContactCaseIsolation)
             setResult(POSITIVE, LAB_RESULT)
@@ -226,8 +110,6 @@ class LinkTestResultViewModelTest {
 
     @Test
     fun `successful cta token validation, onset date needed`() = runBlocking {
-        disableShowDailyContactTesting()
-
         val testResultResponse = setResult(
             POSITIVE,
             RAPID_RESULT,
@@ -268,8 +150,6 @@ class LinkTestResultViewModelTest {
 
     @Test
     fun `successful cta token validation, onset date not needed`() = runBlocking {
-        disableShowDailyContactTesting()
-
         val testResultResponse = setResult(NEGATIVE, LAB_RESULT)
         val testResult = ReceivedTestResult(
             testResultResponse.diagnosisKeySubmissionToken,
@@ -302,8 +182,6 @@ class LinkTestResultViewModelTest {
 
     @Test
     fun `cta token invalid`() = runBlocking {
-        disableShowDailyContactTesting()
-
         coEvery { ctaTokenValidator.validate(any()) } returns Failure(ValidationErrorType.INVALID)
 
         testSubject.ctaToken = "ctaToken"
@@ -324,8 +202,6 @@ class LinkTestResultViewModelTest {
 
     @Test
     fun `cta token validation without internet connection`() = runBlocking {
-        disableShowDailyContactTesting()
-
         coEvery { ctaTokenValidator.validate(any()) } returns Failure(ValidationErrorType.NO_CONNECTION)
 
         testSubject.ctaToken = "ctaToken"
@@ -346,8 +222,6 @@ class LinkTestResultViewModelTest {
 
     @Test
     fun `cta token validation returns unknown test result`() = runBlocking {
-        disableShowDailyContactTesting()
-
         coEvery { ctaTokenValidator.validate(any()) } returns UnparsableTestResult
 
         testSubject.ctaToken = "ctaToken"
@@ -363,8 +237,6 @@ class LinkTestResultViewModelTest {
 
     @Test
     fun `cta token validation returns unexpected error`() = runBlocking {
-        disableShowDailyContactTesting()
-
         coEvery { ctaTokenValidator.validate(any()) } returns Failure(ValidationErrorType.UNEXPECTED)
 
         testSubject.ctaToken = "ctaToken"
@@ -406,29 +278,10 @@ class LinkTestResultViewModelTest {
         return testResultResponse
     }
 
-    private fun enableShowDailyContactTesting() {
-        FeatureFlagTestHelper.enableFeatureFlag(FeatureFlag.DAILY_CONTACT_TESTING)
-        setIsolationState(contactCaseOnlyIsolation)
-
-        testSubject.fetchInitialViewState()
-    }
-
-    private fun disableShowDailyContactTesting() {
-        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.DAILY_CONTACT_TESTING)
-        setIsolationState(indexAndContactCaseIsolation)
-
-        testSubject.fetchInitialViewState()
-    }
-
     private fun setIsolationState(isolationState: IsolationState) {
         every { isolationStateMachine.readState() } returns isolationState
         every { isolationStateMachine.readLogicalState() } returns isolationState.asLogical()
     }
-
-    private val contactCaseOnlyIsolation = IsolationState(
-        isolationConfiguration = DurationDays(),
-        contactCase = isolationHelper.contactCase()
-    )
 
     private val indexAndContactCaseIsolation = IsolationState(
         isolationConfiguration = DurationDays(),

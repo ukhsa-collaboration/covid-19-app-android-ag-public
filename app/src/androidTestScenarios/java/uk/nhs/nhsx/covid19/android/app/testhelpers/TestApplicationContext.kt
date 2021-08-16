@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import androidx.annotation.StringRes
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -62,8 +63,6 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.MigrateIsolationState
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect
-import uk.nhs.nhsx.covid19.android.app.state.SharedPrefsStateStringStorage
-import uk.nhs.nhsx.covid19.android.app.state.StateStringStorage4_9
 import uk.nhs.nhsx.covid19.android.app.status.DateChangeBroadcastReceiver
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
 import uk.nhs.nhsx.covid19.android.app.util.AndroidStrongBoxSupport
@@ -218,6 +217,7 @@ class TestApplicationContext {
         setLocationEnabled(true)
         setPolicyUpdateAccepted(true)
         FeatureFlagTestHelper.clearFeatureFlags()
+        hideNotifications()
         closeNotificationPanel()
 
         if (resetLocale) {
@@ -225,6 +225,10 @@ class TestApplicationContext {
         }
 
         component.provideIsolationStateMachine().reset()
+    }
+
+    private fun hideNotifications() {
+        NotificationManagerCompat.from(app).cancelAll()
     }
 
     fun setBluetoothEnabled(isEnabled: Boolean) {
@@ -297,12 +301,6 @@ class TestApplicationContext {
 
     fun getCurrentLogicalState(): IsolationLogicalState =
         component.provideIsolationStateMachine().readLogicalState()
-
-    fun getStateStringStorage4_9(): StateStringStorage4_9 =
-        component.provideStateStringStorage4_9()
-
-    fun getStateStringStorage(): SharedPrefsStateStringStorage =
-        component.provideStateStringStorage()
 
     fun getMigrateIsolationState(): MigrateIsolationState =
         component.provideMigrateIsolationState()
@@ -412,6 +410,7 @@ class TestApplicationContext {
 
     companion object {
         const val ENGLISH_LOCAL_AUTHORITY = "E07000063"
+        const val WELSH_LOCAL_AUTHORITY = "W06000008"
     }
 }
 
