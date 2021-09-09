@@ -116,7 +116,7 @@ class ScenariosExposureApplication : ExposureApplication() {
                         applicationScope,
                         getExposureNotificationApi(useMockExposureApi, clock),
                         AndroidBluetoothStateProvider(),
-                        AndroidLocationStateProvider(),
+                        AndroidLocationStateProvider(this),
                         encryptedStorage.sharedPreferences,
                         encryptedStorage.encryptedFile,
                         qrCodesSignatureKey,

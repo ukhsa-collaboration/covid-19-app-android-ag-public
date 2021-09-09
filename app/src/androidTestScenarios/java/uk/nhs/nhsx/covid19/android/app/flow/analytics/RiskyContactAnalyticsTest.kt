@@ -62,6 +62,7 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
 
     @Test
     fun notIsolating_riskyContact_declareNotFullyVaccinated_isolationAcknowledged() {
+        givenLocalAuthorityIsInEngland()
         assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(riskyContact::acknowledgeIsolatingViaNotMinorNotVaccinated)
     }
 
@@ -89,6 +90,7 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
 
     @Test
     fun isolating_riskyContact_declareNotFullyVaccinated_isolationAcknowledged() {
+        givenLocalAuthorityIsInEngland()
         givenSelfAssessmentIsolation()
         assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
             acknowledgement = {

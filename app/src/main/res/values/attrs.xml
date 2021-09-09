@@ -121,6 +121,10 @@
         <attr name="accordionTitle" format="string" />
         <attr name="accordionExpanded" format="boolean" />
         <attr name="accordionContent" format="reference" />
+        <attr name="accordionIconType">
+            <flag name="plus_minus" value="1" />
+            <flag name="chevron" value="2" />
+        </attr>
     </declare-styleable>
     <declare-styleable name="PrivacyView">
         <attr name="privacyText" format="string" />

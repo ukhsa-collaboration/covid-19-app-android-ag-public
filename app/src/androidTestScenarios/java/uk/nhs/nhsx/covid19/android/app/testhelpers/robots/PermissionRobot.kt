@@ -10,7 +10,7 @@ import uk.nhs.nhsx.covid19.android.app.R
 class PermissionRobot {
 
     fun checkActivityIsDisplayed() {
-        onView(withId(R.id.permissionContinue))
+        onView(withId(R.id.permissionTitle))
             .check(matches(isDisplayed()))
     }
 

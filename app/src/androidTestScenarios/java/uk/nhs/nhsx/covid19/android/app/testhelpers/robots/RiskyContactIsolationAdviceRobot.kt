@@ -41,7 +41,7 @@ class RiskyContactIsolationAdviceRobot {
             }
         checkAdvice(
             stringResId = R.string.risky_contact_isolation_advice_minors_testing_advice,
-            drawableRes = R.drawable.ic_get_free_test
+            drawableRes = R.drawable.ic_social_distancing
         )
         checkAdvice(
             stringResId = R.string.risky_contact_isolation_advice_minors_show_to_adult_advice,
@@ -78,7 +78,40 @@ class RiskyContactIsolationAdviceRobot {
         )
         checkAdvice(
             stringResId = R.string.risky_contact_isolation_advice_already_vaccinated_testing_advice,
-            drawableRes = R.drawable.ic_get_free_test
+            drawableRes = R.drawable.ic_social_distancing
+        )
+        onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
+            .perform(scrollTo())
+            .check(matches(withText(R.string.risky_contact_isolation_advice_faq_button_title)))
+        onView(withId(R.id.primaryActionButton))
+            .perform(scrollTo())
+            .check(matches(withText(R.string.risky_contact_isolation_advice_book_pcr_test)))
+        onView(withId(R.id.secondaryActionButton))
+            .perform(scrollTo())
+            .check(matches(withText(R.string.risky_contact_isolation_advice_go_back_to_home)))
+    }
+
+    fun checkIsInNotIsolatingAsMedicallyExemptViewState() {
+        onView(withId(R.id.riskyContactIsolationAdviceTitle))
+            .perform(scrollTo())
+            .check(matches(withText(R.string.risky_contact_isolation_advice_medically_exempt_heading)))
+
+        onView(withId(R.id.riskyContactIsolationAdviceRemainingDaysInIsolation))
+            .check(matches(not(isDisplayed())))
+
+        onView(withId(R.id.riskyContactIsolationAdviceStateInfoView))
+            .perform(scrollTo())
+            .apply {
+                check(matches(withStateStringResource(R.string.risky_contact_isolation_advice_medically_exempt_information)))
+                check(matches(withStateColor(R.color.amber)))
+            }
+        checkAdvice(
+            stringResId = R.string.risky_contact_isolation_advice_medically_exempt_research,
+            drawableRes = R.drawable.ic_info
+        )
+        checkAdvice(
+            stringResId = R.string.risky_contact_isolation_advice_medically_exempt_advice,
+            drawableRes = R.drawable.ic_social_distancing
         )
         onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
             .perform(scrollTo())
@@ -147,10 +180,6 @@ class RiskyContactIsolationAdviceRobot {
                 check(matches(withStateStringResource(R.string.risky_contact_isolation_advice_already_isolating_information)))
                 check(matches(withStateColor(R.color.amber)))
             }
-        checkAdvice(
-            stringResId = R.string.risky_contact_isolation_advice_already_isolating_testing_advice,
-            drawableRes = R.drawable.ic_get_free_test
-        )
         checkAdvice(
             stringResId = R.string.risky_contact_isolation_advice_already_isolating_stay_at_home_advice,
             drawableRes = R.drawable.ic_stay_at_home

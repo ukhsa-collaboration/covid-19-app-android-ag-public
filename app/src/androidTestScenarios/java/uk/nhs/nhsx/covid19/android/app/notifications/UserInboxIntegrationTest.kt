@@ -42,7 +42,6 @@ class UserInboxIntegrationTest : EspressoTest() {
     fun testOrderOfUserInboxItems() {
         val expiredSelfAssessment = isolationHelper.selfAssessment(expired = true)
         val expiredIsolation = expiredSelfAssessment.asIsolation()
-        val expirationDate = expiredSelfAssessment.expiryDate
         val venueId = "venue-id"
         val testResult = ReceivedTestResult(
             "abc",
@@ -74,9 +73,9 @@ class UserInboxIntegrationTest : EspressoTest() {
 
         val thirdInboxItem = testSubject.fetchInbox()
         assertThat(thirdInboxItem).isInstanceOf(ShowIsolationExpiration::class.java)
-        assertEquals(expirationDate, (thirdInboxItem as ShowIsolationExpiration).expirationDate)
+        testAppContext.setState(expiredIsolation.copy(hasAcknowledgedEndOfIsolation = true))
 
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
         val fourthInboxItem = testSubject.fetchInbox()
         assertThat(fourthInboxItem).isInstanceOf(ShowEncounterDetection::class.java)
         testAppContext.getShouldShowEncounterDetectionActivityProvider().value = null

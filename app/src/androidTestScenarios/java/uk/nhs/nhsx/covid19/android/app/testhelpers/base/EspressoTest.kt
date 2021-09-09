@@ -14,7 +14,6 @@ import org.junit.runners.Parameterized
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_SUCCEED
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.report.config.FontScale.DEFAULT
-import uk.nhs.nhsx.covid19.android.app.report.config.FontScale.SMALL
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
 import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
@@ -25,6 +24,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.AWAIT_AT_MOST_SECONDS
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryRule
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
+import uk.nhs.nhsx.covid19.android.app.util.FAKE_LOCALE_NAME_FOR_STRING_IDS
 import uk.nhs.nhsx.covid19.android.app.util.ScreenshotTakingRule
 
 @RunWith(AndroidJUnit4::class)
@@ -91,72 +91,78 @@ abstract class EspressoTest : HasTestAppContext {
             return if (isRunningReporterTool()) {
                 listOf(
                     TestConfiguration(PORTRAIT, DEFAULT, LIGHT),
-                    TestConfiguration(LANDSCAPE, SMALL, DARK),
+                    TestConfiguration(LANDSCAPE, DEFAULT, DARK),
                     TestConfiguration(
                         PORTRAIT,
-                        SMALL,
+                        DEFAULT,
                         LIGHT,
                         languageCode = "ar"
                     ),
                     TestConfiguration(
                         PORTRAIT,
-                        SMALL,
+                        DEFAULT,
                         LIGHT,
                         languageCode = "bn"
                     ),
                     TestConfiguration(
                         PORTRAIT,
-                        SMALL,
+                        DEFAULT,
                         LIGHT,
                         languageCode = "cy"
                     ),
                     TestConfiguration(
                         PORTRAIT,
-                        SMALL,
+                        DEFAULT,
                         LIGHT,
                         languageCode = "gu"
                     ),
                     TestConfiguration(
                         PORTRAIT,
-                        SMALL,
+                        DEFAULT,
                         LIGHT,
                         languageCode = "pa"
                     ),
                     TestConfiguration(
                         PORTRAIT,
-                        SMALL,
+                        DEFAULT,
                         LIGHT,
                         languageCode = "ro"
                     ),
                     TestConfiguration(
                         PORTRAIT,
-                        SMALL,
+                        DEFAULT,
                         LIGHT,
                         languageCode = "tr"
                     ),
                     TestConfiguration(
                         PORTRAIT,
-                        SMALL,
+                        DEFAULT,
                         LIGHT,
                         languageCode = "ur"
                     ),
                     TestConfiguration(
                         PORTRAIT,
-                        SMALL,
+                        DEFAULT,
                         LIGHT,
                         languageCode = "zh"
                     ),
                     TestConfiguration(
                         PORTRAIT,
-                        SMALL,
+                        DEFAULT,
                         LIGHT,
                         languageCode = "pl"
                     ),
                     TestConfiguration(
                         PORTRAIT,
-                        SMALL,
+                        DEFAULT,
                         LIGHT,
                         languageCode = "so"
+                    ),
+                    TestConfiguration(
+                        PORTRAIT,
+                        DEFAULT,
+                        LIGHT,
+                        languageCode = FAKE_LOCALE_NAME_FOR_STRING_IDS
                     )
                 )
             } else {

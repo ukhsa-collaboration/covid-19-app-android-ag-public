@@ -7,6 +7,9 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import kotlinx.android.synthetic.main.activity_exposure_notification.selfIsolationWarning
+import kotlinx.android.synthetic.main.activity_exposure_notification.testingInformationContainer
+import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
 
 class ExposureNotificationRobot {
@@ -19,5 +22,23 @@ class ExposureNotificationRobot {
     fun clickContinueButton() {
         onView(withId(R.id.primaryActionButton))
             .perform(scrollTo(), click())
+    }
+
+    fun checkEncounterDateIsDisplayed(date: String) {
+        val expectedText = context.getString(R.string.contact_case_exposure_info_screen_exposure_date, date)
+        onView(withId(R.id.closeContactDate))
+            .check(matches(withText(expectedText)))
+    }
+
+    fun checkTestingAndIsolationAdviceIsDisplayed(displayed: Boolean) {
+        onView(withId(R.id.selfIsolationWarning)).apply {
+            if (displayed) perform(scrollTo())
+        }
+            .check(if (displayed) matches(isDisplayed()) else matches(not(isDisplayed())))
+
+        onView(withId(R.id.testingInformationContainer)).apply {
+            if (displayed) perform(scrollTo())
+        }
+            .check(if (displayed) matches(isDisplayed()) else matches(not(isDisplayed())))
     }
 }

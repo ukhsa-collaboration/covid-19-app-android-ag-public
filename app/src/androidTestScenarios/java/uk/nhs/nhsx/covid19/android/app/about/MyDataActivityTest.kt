@@ -15,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RES
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
@@ -200,16 +201,14 @@ class MyDataActivityTest : EspressoTest() {
     ) {
         when (testResult) {
             POSITIVE -> testAppContext.setState(
-                isolationHelper.positiveTest(
-                    AcknowledgedTestResult(
-                        testEndDate = LocalDate.now(),
-                        testResult = RelevantVirologyTestResult.POSITIVE,
-                        testKitType = testKitType,
-                        requiresConfirmatoryTest = requiresConfirmatoryTest,
-                        acknowledgedDate = LocalDate.now(),
-                        confirmedDate = completedDate,
-                        confirmatoryTestCompletionStatus = confirmatoryTestCompletionStatus
-                    )
+                AcknowledgedTestResult(
+                    testEndDate = LocalDate.now(),
+                    testResult = RelevantVirologyTestResult.POSITIVE,
+                    testKitType = testKitType,
+                    requiresConfirmatoryTest = requiresConfirmatoryTest,
+                    acknowledgedDate = LocalDate.now(),
+                    confirmedDate = completedDate,
+                    confirmatoryTestCompletionStatus = confirmatoryTestCompletionStatus
                 ).asIsolation()
             )
 
@@ -219,19 +218,17 @@ class MyDataActivityTest : EspressoTest() {
                 }
 
                 testAppContext.setState(
-                    isolationHelper.negativeTest(
-                        AcknowledgedTestResult(
-                            testEndDate = LocalDate.now(),
-                            testResult = RelevantVirologyTestResult.NEGATIVE,
-                            testKitType = testKitType,
-                            requiresConfirmatoryTest = requiresConfirmatoryTest,
-                            acknowledgedDate = LocalDate.now()
-                        )
+                    AcknowledgedTestResult(
+                        testEndDate = LocalDate.now(),
+                        testResult = RelevantVirologyTestResult.NEGATIVE,
+                        testKitType = testKitType,
+                        requiresConfirmatoryTest = requiresConfirmatoryTest,
+                        acknowledgedDate = LocalDate.now()
                     ).asIsolation()
                 )
             }
 
-            VOID -> throw IllegalArgumentException("$testResult is not supported since it is never stored after being acknowledged")
+            VOID, PLOD -> throw IllegalArgumentException("$testResult is not supported since it is never stored after being acknowledged")
         }
 
         startTestActivity<MyDataActivity>()
@@ -254,7 +251,7 @@ class MyDataActivityTest : EspressoTest() {
 
     @Test
     fun displayEncounterInIsolationWithNotificationDate() {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
 
         startTestActivity<MyDataActivity>()
 
@@ -283,7 +280,7 @@ class MyDataActivityTest : EspressoTest() {
 
     @Test
     fun contactCaseOnly_notOptedInToDailyContactTesting_displayLastDayOfIsolationInIsolation() {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
 
         startTestActivity<MyDataActivity>()
 
@@ -296,7 +293,7 @@ class MyDataActivityTest : EspressoTest() {
     @Test
     fun whenContactCase_expiredDueToOptOutOfContactIsolation_showOptOutDate() {
         val exposureDate = LocalDate.now(testAppContext.clock)
-        val contactCase = isolationHelper.contactCaseWithOptOutDate(
+        val contactCase = isolationHelper.contactWithOptOutDate(
             exposureDate,
             optOutOfContactIsolation = exposureDate
         ).asIsolation()
@@ -314,7 +311,7 @@ class MyDataActivityTest : EspressoTest() {
 
     @Test
     fun doNotDisplayLastDayOfIsolationWhenIsolationIsExpired() {
-        testAppContext.setState(isolationHelper.contactCase(expired = true).asIsolation())
+        testAppContext.setState(isolationHelper.contact(expired = true).asIsolation())
 
         startTestActivity<MyDataActivity>()
 

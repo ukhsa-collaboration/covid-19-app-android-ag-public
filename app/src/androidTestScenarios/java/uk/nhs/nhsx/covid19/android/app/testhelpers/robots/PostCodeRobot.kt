@@ -29,7 +29,7 @@ class PostCodeRobot {
     }
 
     fun checkActivityIsDisplayed() {
-        checkContinueButtonIsDisplayed()
+        onView(withId(R.id.postCodeView)).check(matches(isDisplayed()))
     }
 
     fun checkContinueButtonIsDisplayed() {

@@ -24,18 +24,20 @@ class IsolationConfigurationProviderTest : ProviderTest<IsolationConfigurationPr
             indexCaseSinceSelfDiagnosisUnknownOnset = 5,
             maxIsolation = 21,
             pendingTasksRetentionPeriod = 8,
-            indexCaseSinceTestResultEndDate = 11
+            indexCaseSinceTestResultEndDate = 11,
+            testResultPollingTokenRetentionPeriod = 28,
         )
 
         private const val durationDaysJson =
-            """{"contactCase":32,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21,"pendingTasksRetentionPeriod":8,"indexCaseSinceTestResultEndDate":11}"""
+            """{"contactCase":32,"indexCaseSinceSelfDiagnosisOnset":7,"indexCaseSinceSelfDiagnosisUnknownOnset":5,"maxIsolation":21,"pendingTasksRetentionPeriod":8,"indexCaseSinceTestResultEndDate":11,"testResultPollingTokenRetentionPeriod":28}"""
 
         private val durationDaysDefaultHousekeepingPeriod = DurationDays(
             contactCase = 32,
             indexCaseSinceSelfDiagnosisOnset = 7,
             indexCaseSinceSelfDiagnosisUnknownOnset = 5,
             maxIsolation = 21,
-            pendingTasksRetentionPeriod = 14
+            pendingTasksRetentionPeriod = 14,
+            testResultPollingTokenRetentionPeriod = 28
         )
 
         private const val durationDaysJsonWithoutHousekeepingPeriod =

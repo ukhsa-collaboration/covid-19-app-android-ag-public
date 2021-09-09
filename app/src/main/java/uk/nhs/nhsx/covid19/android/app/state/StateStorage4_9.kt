@@ -7,7 +7,6 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
-import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Default4_9
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Isolation4_9
@@ -18,12 +17,8 @@ import uk.nhs.nhsx.covid19.android.app.state.StateJson4_9.DefaultJson4_9
 import uk.nhs.nhsx.covid19.android.app.state.StateJson4_9.IsolationJson4_9
 import uk.nhs.nhsx.covid19.android.app.util.Provider
 import uk.nhs.nhsx.covid19.android.app.util.listStorage
-import uk.nhs.nhsx.covid19.android.app.util.selectEarliest
-import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneOffset
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @Deprecated("Not used anymore since 4.10. Use StateStorage instead.")
@@ -267,59 +262,5 @@ sealed class State4_9 {
             val expiryDate: LocalDate,
             val dailyContactTestingOptInDate: LocalDate? = null,
         )
-
-        private fun isContactCaseOnly(): Boolean =
-            contactCase != null && indexCase == null
-
-        private fun isIndexCaseOnly(): Boolean =
-            indexCase != null && contactCase == null
-
-        private fun isIndexCase(): Boolean =
-            indexCase != null
-
-        private fun isContactCase(): Boolean =
-            contactCase != null
-
-        private fun isBothCases(): Boolean =
-            isIndexCase() && isContactCase()
-
-        private fun capExpiryDate(potentialExpiryDate: LocalDate): LocalDate {
-            val latestPossibleExpiryDate = isolationStart.plus(
-                isolationConfiguration.maxIsolation.toLong(),
-                ChronoUnit.DAYS
-            ).toLocalDate(ZoneOffset.UTC)
-            return selectEarliest(latestPossibleExpiryDate, potentialExpiryDate)
-        }
-
-        private fun latestExpiryDate(
-            indexCase: IndexCase4_9,
-            contactCase: ContactCase4_9
-        ): LocalDate {
-            return if (indexCase.expiryDate.isAfter(contactCase.expiryDate)) {
-                indexCase.expiryDate
-            } else {
-                contactCase.expiryDate
-            }
-        }
-
-        val expiryDate: LocalDate
-            get() {
-                val potentialExpiryDate = when {
-                    isBothCases() -> {
-                        latestExpiryDate(indexCase!!, contactCase!!)
-                    }
-                    isIndexCaseOnly() -> {
-                        indexCase!!.expiryDate
-                    }
-                    isContactCaseOnly() -> {
-                        contactCase!!.expiryDate
-                    }
-                    else -> {
-                        Timber.e("Unknown expiryDate")
-                        LocalDate.now().plusDays(1)
-                    }
-                }
-                return capExpiryDate(potentialExpiryDate)
-            }
     }
 }

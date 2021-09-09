@@ -1,10 +1,9 @@
 package uk.nhs.nhsx.covid19.android.app.about.mydata
 
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import java.time.Clock
 import java.time.LocalDate
@@ -20,7 +19,7 @@ class MyDataViewModel @Inject constructor(
         val updatedViewState = MyDataState(
             isolationState = getIsolationState(),
             lastRiskyVenueVisitDate = getLastRiskyVenueVisitDate(),
-            acknowledgedTestResult = stateMachine.readState().indexInfo?.testResult
+            acknowledgedTestResult = stateMachine.readState().testResult
         )
         if (myDataStateLiveData.value != updatedViewState) {
             myDataStateLiveData.postValue(updatedViewState)
@@ -37,7 +36,7 @@ class MyDataViewModel @Inject constructor(
                     else isolationState.lastDayOfIsolation,
                     contactCaseEncounterDate = isolationState.contactCase?.exposureDate,
                     contactCaseNotificationDate = isolationState.contactCase?.notificationDate,
-                    indexCaseSymptomOnsetDate = ((isolationState.indexInfo as? IndexCase)?.isolationTrigger as? SelfAssessment)?.assumedOnsetDate,
+                    indexCaseSymptomOnsetDate = (isolationState.indexInfo as? IndexCase)?.selfAssessment?.assumedOnsetDate,
                     optOutOfContactIsolationDate = isolationState.contactCase?.optOutOfContactIsolation?.date
                 )
         }

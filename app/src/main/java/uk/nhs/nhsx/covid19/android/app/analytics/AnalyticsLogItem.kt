@@ -99,6 +99,8 @@ data class BackgroundTaskTicks(
     var hasReceivedRiskyVenueM2WarningBackgroundTick: Boolean = false,
     var isDisplayingLocalInfoBackgroundTick: Boolean = false,
     var optedOutForContactIsolationBackgroundTick: Boolean = false,
+    var appIsUsableBackgroundTick: Boolean = false,
+    var appIsContactTraceableBackgroundTick: Boolean = false
 ) {
     fun applyToMetrics(metrics: Metrics) {
         metrics.totalBackgroundTasks++
@@ -122,5 +124,7 @@ data class BackgroundTaskTicks(
         metrics.hasReceivedRiskyVenueM2WarningBackgroundTick += hasReceivedRiskyVenueM2WarningBackgroundTick.toInt()
         metrics.isDisplayingLocalInfoBackgroundTick += isDisplayingLocalInfoBackgroundTick.toInt()
         metrics.optedOutForContactIsolationBackgroundTick += optedOutForContactIsolationBackgroundTick.toInt()
+        metrics.appIsUsableBackgroundTick += appIsUsableBackgroundTick.toInt()
+        metrics.appIsContactTraceableBackgroundTick += appIsContactTraceableBackgroundTick.toInt()
     }
 }

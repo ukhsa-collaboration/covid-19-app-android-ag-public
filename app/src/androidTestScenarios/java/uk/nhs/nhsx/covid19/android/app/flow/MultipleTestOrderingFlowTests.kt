@@ -10,6 +10,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
+import uk.nhs.nhsx.covid19.android.app.state.addTestResult
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
@@ -188,14 +189,15 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
     @Test
     fun startIndexCaseWithPositiveTestResult_receiveNegativeTestResult_shouldStayInIsolation() {
         testAppContext.setState(
-            isolationHelper.selfAssessment(
-                testResult = AcknowledgedTestResult(
-                    testEndDate = LocalDate.now(),
-                    testResult = RelevantVirologyTestResult.POSITIVE,
-                    testKitType = LAB_RESULT,
-                    acknowledgedDate = LocalDate.now()
+            isolationHelper.selfAssessment().asIsolation()
+                .addTestResult(
+                    testResult = AcknowledgedTestResult(
+                        testEndDate = LocalDate.now(),
+                        testResult = RelevantVirologyTestResult.POSITIVE,
+                        testKitType = LAB_RESULT,
+                        acknowledgedDate = LocalDate.now()
+                    )
                 )
-            ).asIsolation()
         )
 
         startTestActivity<StatusActivity>()

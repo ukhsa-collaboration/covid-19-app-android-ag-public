@@ -18,9 +18,8 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
+import uk.nhs.nhsx.covid19.android.app.state.addTestResult
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
@@ -86,7 +85,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         receiveConfirmedTestResult(
             NEGATIVE,
             diagnosisKeySubmissionSupported = true,
-            testEndDate = ((isolation.indexInfo as IndexCase).isolationTrigger as SelfAssessment).assumedOnsetDate
+            testEndDate = isolation.selfAssessment!!.assumedOnsetDate
                 .atStartOfDay().toInstant(ZoneOffset.UTC)
                 .minus(1, ChronoUnit.DAYS)
         )
@@ -539,7 +538,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = false)
-        waitFor { testResultRobot.checkActivityDisplaysNegativeNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -558,7 +557,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysNegativeNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -577,11 +576,11 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         receiveConfirmedTestResult(
             NEGATIVE,
             diagnosisKeySubmissionSupported = true,
-            testEndDate = ((state.indexInfo as IndexCase).isolationTrigger as SelfAssessment).assumedOnsetDate
+            testEndDate = state.selfAssessment!!.assumedOnsetDate
                 .atStartOfDay().toInstant(ZoneOffset.UTC)
                 .minus(1, ChronoUnit.DAYS)
         )
-        waitFor { testResultRobot.checkActivityDisplaysNegativeNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -666,7 +665,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysNegativeNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -791,7 +790,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysNegativeNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -927,7 +926,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysNegativeNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -1124,7 +1123,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         val isolationStart =
             if (expired) previousIsolationStart
             else isolationStart
-        val state = isolationHelper.selfAssessment(selfAssessmentDate = isolationStart)
+        val state = SelfAssessment(selfAssessmentDate = isolationStart)
             .asIsolation(hasAcknowledgedEndOfIsolation = expired)
         testAppContext.setState(state)
         return state
@@ -1142,9 +1141,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         )
 
         testAppContext.setState(
-            isolationHelper.positiveTest(
-                testResult = previousTest
-            ).asIsolation(hasAcknowledgedEndOfIsolation = true)
+            previousTest.asIsolation(hasAcknowledgedEndOfIsolation = true)
         )
 
         return previousTest
@@ -1162,9 +1159,8 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         )
 
         testAppContext.setState(
-            isolationHelper.selfAssessment(
-                testResult = previousTest
-            ).asIsolation()
+            isolationHelper.selfAssessment().asIsolation()
+                .addTestResult(previousTest)
         )
 
         return previousTest
@@ -1177,13 +1173,12 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         val previousTest = previousNegativeTest()
 
         testAppContext.setState(
-            isolationHelper.selfAssessment(
-                testResult = previousTest,
+            SelfAssessment(
                 selfAssessmentDate = selfAssessmentDate,
                 onsetDate = onsetDate
-            ).copy(
-                expiryDate = previousTest.testEndDate
-            ).asIsolation(hasAcknowledgedEndOfIsolation = true)
+            )
+                .asIsolation(hasAcknowledgedEndOfIsolation = true)
+                .addTestResult(testResult = previousTest)
         )
 
         return previousTest
@@ -1194,7 +1189,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
         testAppContext.setState(
             isolationHelper.neverInIsolation().copy(
-                indexInfo = NegativeTest(previousTest)
+                testResult = previousTest
             ).copy(hasAcknowledgedEndOfIsolation = true)
         )
 
@@ -1203,7 +1198,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     private fun setContactCaseIsolation() {
         testAppContext.setState(
-            isolationHelper.contactCase(
+            isolationHelper.contact(
                 exposureDate = isolationStart,
                 notificationDate = isolationStart
             ).asIsolation()
@@ -1214,16 +1209,14 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testAppContext.setState(
             IsolationState(
                 isolationConfiguration = DurationDays(),
-                contactCase = isolationHelper.contactCase(
+                contact = isolationHelper.contact(
                     exposureDate = isolationStart,
                     notificationDate = isolationStart
                 ),
-                indexInfo = isolationHelper.positiveTest(
-                    previousTest(
-                        testResult = RelevantVirologyTestResult.POSITIVE,
-                        requiresConfirmatoryTest = requiresConfirmatoryTest,
-                        testEndDate = isolationStart.minusDays(12)
-                    )
+                testResult = previousTest(
+                    testResult = RelevantVirologyTestResult.POSITIVE,
+                    requiresConfirmatoryTest = requiresConfirmatoryTest,
+                    testEndDate = isolationStart.minusDays(12)
                 )
             )
         )
@@ -1234,13 +1227,11 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testAppContext.setState(
             IsolationState(
                 isolationConfiguration = DurationDays(),
-                contactCase = isolationHelper.contactCase(
+                contact = isolationHelper.contact(
                     exposureDate = isolationStart,
                     notificationDate = isolationStart
                 ),
-                indexInfo = isolationHelper.negativeTest(
-                    previousNegativeTest
-                )
+                testResult = previousNegativeTest
             )
         )
         return previousNegativeTest
@@ -1347,14 +1338,14 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     private fun checkNoRelevantTestResult() {
-        val relevantTestResult = testAppContext.getCurrentState().indexInfo?.testResult
+        val relevantTestResult = testAppContext.getCurrentState().testResult
         assertNull(relevantTestResult)
     }
 
     private fun checkRelevantTestResultUpdated(
         testResponse: TestResponse
     ) {
-        val relevantTestResult = testAppContext.getCurrentState().indexInfo?.testResult
+        val relevantTestResult = testAppContext.getCurrentState().testResult
         assertNotNull(relevantTestResult)
         checkRelevantTestResultUpdated(testResponse, relevantTestResult)
         assertNull(relevantTestResult.confirmedDate)
@@ -1365,7 +1356,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         confirmedDate: LocalDate,
         confirmatoryTestCompletionStatus: ConfirmatoryTestCompletionStatus
     ) {
-        val relevantTestResult = testAppContext.getCurrentState().indexInfo?.testResult
+        val relevantTestResult = testAppContext.getCurrentState().testResult
         assertNotNull(relevantTestResult)
         checkRelevantTestResultUpdated(testResponse, relevantTestResult)
         assertEquals(confirmedDate, relevantTestResult.confirmedDate)
@@ -1386,7 +1377,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         acknowledgedTestResult: AcknowledgedTestResult,
         confirmatoryTestCompletionStatus: ConfirmatoryTestCompletionStatus? = null
     ) {
-        val relevantTestResult = testAppContext.getCurrentState().indexInfo?.testResult
+        val relevantTestResult = testAppContext.getCurrentState().testResult
         val confirmedDateShouldBeNull = confirmatoryTestCompletionStatus == null
         assertNotNull(relevantTestResult)
         assertEquals(acknowledgedTestResult.testEndDate, relevantTestResult.testEndDate)

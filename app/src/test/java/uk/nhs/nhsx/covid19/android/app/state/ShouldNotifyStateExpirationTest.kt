@@ -4,9 +4,6 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.ShouldNotifyStateExpiration.ShouldNotifyStateExpirationResult.DoNotNotify
 import uk.nhs.nhsx.covid19.android.app.state.ShouldNotifyStateExpiration.ShouldNotifyStateExpirationResult.Notify
 import java.time.Clock
@@ -21,6 +18,7 @@ class ShouldNotifyStateExpirationTest {
     private val calculateExpirationNotificationTime = mockk<CalculateExpirationNotificationTime>()
     private val now = Instant.parse("2020-05-21T10:00:00Z")
     private val fixedClock = Clock.fixed(now, ZoneOffset.UTC)
+    private val isolationHelper = IsolationLogicalHelper(fixedClock)
 
     private val shouldNotifyStateExpiration = ShouldNotifyStateExpiration(
         isolationStateMachine,
@@ -30,8 +28,7 @@ class ShouldNotifyStateExpirationTest {
 
     @Test
     fun `do not notify when never isolating`() = runBlocking {
-        every { isolationStateMachine.readLogicalState() } returns
-            IsolationState(isolationConfiguration = DurationDays()).asLogical()
+        every { isolationStateMachine.readLogicalState() } returns isolationHelper.neverInIsolation()
 
         val result = shouldNotifyStateExpiration()
 
@@ -83,13 +80,9 @@ class ShouldNotifyStateExpirationTest {
 
     private fun setIsolation(expiryDate: LocalDate, hasAcknowledgedEndOfIsolation: Boolean) {
         every { isolationStateMachine.readLogicalState() } returns
-            IsolationState(
-                isolationConfiguration = DurationDays(),
-                indexInfo = IndexCase(
-                    isolationTrigger = SelfAssessment(selfAssessmentDate = LocalDate.now(fixedClock)),
-                    expiryDate = expiryDate
-                ),
-                hasAcknowledgedEndOfIsolation = hasAcknowledgedEndOfIsolation
-            ).asLogical()
+            isolationHelper.selfAssessment(
+                selfAssessmentDate = LocalDate.now(fixedClock),
+                expiryDate = expiryDate
+            ).asIsolation(hasAcknowledgedEndOfIsolation = hasAcknowledgedEndOfIsolation)
     }
 }

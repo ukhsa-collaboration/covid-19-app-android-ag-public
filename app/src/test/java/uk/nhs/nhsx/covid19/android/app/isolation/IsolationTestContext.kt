@@ -10,7 +10,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogStorage
 import uk.nhs.nhsx.covid19.android.app.common.ResetIsolationStateIfNeeded
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CalculateKeySubmissionDateRange
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.state.CreateSelfAssessmentIndexCase
+import uk.nhs.nhsx.covid19.android.app.state.CalculateIndexExpiryDate
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
@@ -18,6 +18,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage.Companion.ISOLATION_STATE_KEY
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler
+import uk.nhs.nhsx.covid19.android.app.state.WouldTestIsolationEndBeforeOrOnStartOfExistingIsolation
 import uk.nhs.nhsx.covid19.android.app.util.adapters.ColorSchemeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.ContentBlockTypeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
@@ -60,7 +61,11 @@ class IsolationTestContext {
                 isolationConfigurationProvider,
                 clock
             ),
-            CreateSelfAssessmentIndexCase(),
+            WouldTestIsolationEndBeforeOrOnStartOfExistingIsolation(
+                CalculateIndexExpiryDate(clock),
+                clock
+            ),
+            createIsolationLogicalState(clock),
             clock
         ),
         storageBasedUserInbox = mockk(relaxUnitFun = true),
@@ -69,7 +74,7 @@ class IsolationTestContext {
         analyticsEventProcessor = mockk(relaxUnitFun = true),
         exposureNotificationHandler = mockk(relaxUnitFun = true),
         keySharingInfoProvider = mockk(relaxUnitFun = true),
-        createSelfAssessmentIndexCase = CreateSelfAssessmentIndexCase(),
+        createIsolationLogicalState = createIsolationLogicalState(clock),
         trackTestResultAnalyticsOnReceive = mockk(relaxUnitFun = true),
         trackTestResultAnalyticsOnAcknowledge = mockk(relaxUnitFun = true),
         scheduleIsolationHubReminder = mockk(relaxUnitFun = true),

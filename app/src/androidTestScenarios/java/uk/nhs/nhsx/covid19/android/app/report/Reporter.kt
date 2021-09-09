@@ -20,10 +20,11 @@ import uk.nhs.nhsx.covid19.android.app.report.output.Step
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.takeScreenshot
+import uk.nhs.nhsx.covid19.android.app.util.FAKE_LOCALE_NAME_FOR_STRING_IDS
 import java.io.File
 
 interface Reporter {
-    fun step(stepName: String, stepDescription: String)
+    fun step(stepName: String, stepDescription: String, isDialog: Boolean = false)
 
     enum class Kind(val description: String) {
         FLOW("Flow"), SCREEN("Screen")
@@ -87,14 +88,14 @@ class AndroidReporter internal constructor(
 
     private fun resetSystemFontScaling() = adjustFontScale(FontScale.DEFAULT)
 
-    override fun step(stepName: String, stepDescription: String) {
+    override fun step(stepName: String, stepDescription: String, isDialog: Boolean) {
         val orientationName = configuration.orientation.exportName
         val fontScaleName = configuration.fontScale.exportName
         val themeName = configuration.theme.exportName
-        val languageCode = configuration.languageCode
+        val languageCode = if (configuration.languageCode == FAKE_LOCALE_NAME_FOR_STRING_IDS) "key" else configuration.languageCode
         val filename = "$orientationName-$fontScaleName-$themeName-$stepName-$languageCode"
 
-        val outputFilename = takeScreenshot(filename, screenshotFolderName)
+        val outputFilename = takeScreenshot(filename, screenshotFolderName, isDialog = isDialog)
         if (outputFilename != null) {
             val tags = listOf(orientationName, fontScaleName, themeName, languageCode)
             val screenshot = Screenshot("$screenshotFolderName/$outputFilename", tags)
@@ -147,7 +148,7 @@ class AndroidReporter internal constructor(
 }
 
 class DummyReporter : Reporter {
-    override fun step(stepName: String, stepDescription: String) {
+    override fun step(stepName: String, stepDescription: String, isDialog: Boolean) {
     }
 }
 

@@ -169,7 +169,7 @@ open class ExposureApplication : Application(), Configuration.Provider, Lifecycl
                     applicationScope,
                     exposureNotificationApi,
                     AndroidBluetoothStateProvider(),
-                    AndroidLocationStateProvider(),
+                    AndroidLocationStateProvider(this),
                     encryptedStorage.sharedPreferences,
                     encryptedStorage.encryptedFile,
                     qrCodesSignatureKey,

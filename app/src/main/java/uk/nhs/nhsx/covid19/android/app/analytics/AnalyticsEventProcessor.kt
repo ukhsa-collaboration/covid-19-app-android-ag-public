@@ -106,10 +106,12 @@ import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
+import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
+import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
-import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
+import uk.nhs.nhsx.covid19.android.app.state.CreateIsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.GetLocalMessageFromStorage
@@ -124,6 +126,7 @@ import javax.inject.Singleton
 class AnalyticsEventProcessor @Inject constructor(
     private val analyticsLogStorage: AnalyticsLogStorage,
     private val stateStorage: StateStorage,
+    private val createIsolationLogicalState: CreateIsolationLogicalState,
     private val exposureNotificationApi: ExposureNotificationApi,
     private val appAvailabilityProvider: AppAvailabilityProvider,
     private val networkTrafficStats: NetworkTrafficStats,
@@ -132,6 +135,8 @@ class AnalyticsEventProcessor @Inject constructor(
     private val lastVisitedBookTestTypeVenueDateProvider: LastVisitedBookTestTypeVenueDateProvider,
     private val onboardingCompletedProvider: OnboardingCompletedProvider,
     private val getLocalMessageFromStorage: GetLocalMessageFromStorage,
+    @Named(AppModule.BLUETOOTH_STATE_NAME) private val bluetoothAvailabilityStateProvider: AvailabilityStateProvider,
+    @Named(AppModule.LOCATION_STATE_NAME) private val locationAvailabilityStateProvider: AvailabilityStateProvider,
     @Named(AppModule.APPLICATION_SCOPE) private val analyticsEventScope: CoroutineScope,
     private val clock: Clock
 ) {
@@ -224,7 +229,14 @@ class AnalyticsEventProcessor @Inject constructor(
 
             runningNormallyBackgroundTick = exposureNotificationApi.isRunningNormally()
 
-            val currentState = IsolationLogicalState.from(stateStorage.state)
+            val bluetoothState = bluetoothAvailabilityStateProvider.getState()
+            val locationState = locationAvailabilityStateProvider.getState()
+            val locationServiceIsEnabledOrIsNotRequired = locationState == ENABLED || exposureNotificationApi.deviceSupportsLocationlessScanning()
+
+            appIsUsableBackgroundTick = bluetoothState == ENABLED && locationServiceIsEnabledOrIsNotRequired
+            appIsContactTraceableBackgroundTick = exposureNotificationApi.isRunningNormally()
+
+            val currentState = createIsolationLogicalState(stateStorage.state)
 
             if (currentState.isActiveIsolation(clock)) {
                 isIsolatingBackgroundTick = true
@@ -268,6 +280,6 @@ class AnalyticsEventProcessor @Inject constructor(
             isDisplayingLocalInfoBackgroundTick = getLocalMessageFromStorage() != null
 
             optedOutForContactIsolationBackgroundTick =
-                stateStorage.state.contactCase?.optOutOfContactIsolation != null
+                stateStorage.state.contact?.optOutOfContactIsolation != null
         }
 }

@@ -9,7 +9,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import uk.nhs.nhsx.covid19.android.app.exposure.setTemporaryExposureKeyHistoryResolutionRequired
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
@@ -20,7 +19,7 @@ import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
 import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState
+import uk.nhs.nhsx.covid19.android.app.state.addTestResult
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
@@ -52,7 +51,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
         description = "User receives positive confirmatory test result while in isolation",
         kind = SCREEN
     ) {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
@@ -99,7 +98,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
         description = "User receives negative confirmatory test result while in isolation when at index case only",
         kind = SCREEN
     ) {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
@@ -167,15 +166,16 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
     @Test
     fun showIsolationScreenWhenReceivingPositiveConfirmatoryAndThenNegativeConfirmatoryTestResult() {
         testAppContext.setState(
-            isolationHelper.selfAssessment(
-                testResult = AcknowledgedTestResult(
-                    testEndDate = LocalDate.now(),
-                    testResult = RelevantVirologyTestResult.POSITIVE,
-                    testKitType = LAB_RESULT,
-                    requiresConfirmatoryTest = false,
-                    acknowledgedDate = LocalDate.now()
+            isolationHelper.selfAssessment().asIsolation()
+                .addTestResult(
+                    testResult = AcknowledgedTestResult(
+                        testEndDate = LocalDate.now(),
+                        testResult = RelevantVirologyTestResult.POSITIVE,
+                        testKitType = LAB_RESULT,
+                        requiresConfirmatoryTest = false,
+                        acknowledgedDate = LocalDate.now()
+                    )
                 )
-            ).asIsolation()
         )
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
@@ -206,18 +206,13 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
     @Test
     fun showIsolationScreenWhenReceivingNegativeConfirmatoryAndThenPositiveConfirmatoryTestResultAndSharingKeys() {
         testAppContext.setState(
-            IsolationState(
-                isolationConfiguration = DurationDays(),
-                indexInfo = isolationHelper.negativeTest(
-                    testResult = AcknowledgedTestResult(
-                        testEndDate = LocalDate.now(),
-                        testResult = RelevantVirologyTestResult.NEGATIVE,
-                        testKitType = LAB_RESULT,
-                        requiresConfirmatoryTest = false,
-                        acknowledgedDate = LocalDate.now()
-                    )
-                )
-            )
+            AcknowledgedTestResult(
+                testEndDate = LocalDate.now(),
+                testResult = RelevantVirologyTestResult.NEGATIVE,
+                testKitType = LAB_RESULT,
+                requiresConfirmatoryTest = false,
+                acknowledgedDate = LocalDate.now()
+            ).asIsolation()
         )
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
@@ -360,7 +355,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
         description = "User receives void confirmatory test result while in isolation",
         kind = SCREEN
     ) {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(
@@ -467,7 +462,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
     @Test
     fun onActivityResultTestOrderingOk_navigateToStatus() {
         runWithIntents {
-            testAppContext.setState(isolationHelper.contactCase().asIsolation())
+            testAppContext.setState(isolationHelper.contact().asIsolation())
 
             testAppContext.getUnacknowledgedTestResultsProvider().add(
                 ReceivedTestResult(
@@ -494,7 +489,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
     @Test
     fun onActivityResultTestOrderingNotOk_finish() {
         runWithIntents {
-            testAppContext.setState(isolationHelper.contactCase().asIsolation())
+            testAppContext.setState(isolationHelper.contact().asIsolation())
 
             testAppContext.getUnacknowledgedTestResultsProvider().add(
                 ReceivedTestResult(
@@ -520,7 +515,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
     @Test
     fun onBackPressed_navigate() {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
             ReceivedTestResult(

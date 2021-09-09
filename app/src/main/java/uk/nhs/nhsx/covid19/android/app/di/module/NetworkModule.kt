@@ -19,6 +19,7 @@ import uk.nhs.covid19.config.EnvironmentConfiguration
 import uk.nhs.covid19.config.Remote
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogStorage
 import uk.nhs.nhsx.covid19.android.app.analytics.NetworkStatsInterceptor
+import uk.nhs.nhsx.covid19.android.app.analytics.StripOutLastModifiedHeaderInterceptor
 import uk.nhs.nhsx.covid19.android.app.di.module.SignatureValidationInterceptor.Companion.HEADER_REQUEST_ID
 import uk.nhs.nhsx.covid19.android.app.network.TrafficLengthObfuscationInterceptor
 import uk.nhs.nhsx.covid19.android.app.remote.UserAgentInterceptor
@@ -78,6 +79,7 @@ class NetworkModule(
     fun provideDistributionOkHttpClient(
         base64Decoder: Base64Decoder,
         networkStatsInterceptor: NetworkStatsInterceptor,
+        stripOutLastModifiedHeaderInterceptor: StripOutLastModifiedHeaderInterceptor,
         applicationContext: Context
     ): OkHttpClient {
         val signatureValidationInterceptor = createSignatureValidationInterceptor(
@@ -91,6 +93,7 @@ class NetworkModule(
             interceptors,
             networkStatsInterceptor,
             trafficLengthObfuscationInterceptor = null,
+            stripOutLastModifiedHeaderInterceptor,
             applicationContext
         )
     }
@@ -103,6 +106,7 @@ class NetworkModule(
         networkStatsInterceptor: NetworkStatsInterceptor,
         userAgentInterceptor: UserAgentInterceptor,
         trafficLengthObfuscationInterceptor: TrafficLengthObfuscationInterceptor,
+        stripOutLastModifiedHeaderInterceptor: StripOutLastModifiedHeaderInterceptor,
         applicationContext: Context
     ): OkHttpClient {
         val signatureValidationInterceptor = createSignatureValidationInterceptor(
@@ -116,6 +120,7 @@ class NetworkModule(
             listOf(userAgentInterceptor) + interceptors,
             networkStatsInterceptor,
             trafficLengthObfuscationInterceptor,
+            stripOutLastModifiedHeaderInterceptor,
             applicationContext
         )
     }
@@ -136,6 +141,7 @@ class NetworkModule(
         interceptors: List<Interceptor>,
         networkStatsInterceptor: NetworkStatsInterceptor,
         trafficLengthObfuscationInterceptor: TrafficLengthObfuscationInterceptor?,
+        stripOutLastModifiedHeaderInterceptor: StripOutLastModifiedHeaderInterceptor,
         applicationContext: Context
     ): OkHttpClient {
         val certificatePinnerBuilder = CertificatePinner.Builder().apply {
@@ -174,6 +180,7 @@ class NetworkModule(
                 trafficLengthObfuscationInterceptor?.let { addInterceptor(it) }
             }
             .addInterceptor(networkStatsInterceptor)
+            .addNetworkInterceptor(stripOutLastModifiedHeaderInterceptor)
             .apply {
                 interceptors.forEach {
                     addInterceptor(it)
@@ -191,7 +198,7 @@ class NetworkModule(
     companion object {
         const val DISTRIBUTION_REMOTE = "DISTRIBUTION_REMOTE"
         const val API_REMOTE = "API_REMOTE"
-        const val CACHE_SIZE_BYTES: Long = 1024 * 1024 * 2
+        const val CACHE_SIZE_BYTES: Long = 1024 * 1024 * 5
         @VisibleForTesting
         val moshi = Moshi.Builder()
             .add(LocalDateAdapter())

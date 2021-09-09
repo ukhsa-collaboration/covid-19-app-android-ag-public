@@ -14,6 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.di.ApplicationComponent
 import uk.nhs.nhsx.covid19.android.app.di.MockViewModelModule
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
+import uk.nhs.nhsx.covid19.android.app.di.module.QrScannerViewModelModule
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfoProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfoProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertProvider
@@ -40,7 +41,8 @@ import javax.inject.Singleton
         AppModule::class,
         NetworkModule::class,
         ManagedApiModule::class,
-        MockViewModelModule::class
+        MockViewModelModule::class,
+        QrScannerViewModelModule::class
     ]
 )
 interface TestAppComponent : ApplicationComponent {

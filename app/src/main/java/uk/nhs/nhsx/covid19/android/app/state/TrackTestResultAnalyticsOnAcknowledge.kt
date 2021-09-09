@@ -18,6 +18,7 @@ import javax.inject.Inject
 
 class TrackTestResultAnalyticsOnAcknowledge @Inject constructor(
     private val analyticsEventProcessor: AnalyticsEventProcessor,
+    private val wouldTestIsolationEndBeforeOrOnStartOfExistingIsolation: WouldTestIsolationEndBeforeOrOnStartOfExistingIsolation,
     private val clock: Clock,
 ) {
 
@@ -33,7 +34,7 @@ class TrackTestResultAnalyticsOnAcknowledge @Inject constructor(
         ) return
 
         // Abort for received test results that would have been ignored even if they arrived in the right order
-        if (wouldTestIsolationEndBeforeOrOnStartOfExistingIsolation(receivedTestResult, currentState, clock) ||
+        if (wouldTestIsolationEndBeforeOrOnStartOfExistingIsolation(receivedTestResult, currentState) ||
             isReceivedPositiveIndicativeResultNewerThanSymptoms(receivedTestResult, currentState)
         ) return
 

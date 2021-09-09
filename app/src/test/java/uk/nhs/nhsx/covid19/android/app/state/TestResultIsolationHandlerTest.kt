@@ -7,6 +7,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CalculateKeySubmissionDateRange
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.SubmissionDateRange
+import uk.nhs.nhsx.covid19.android.app.isolation.createIsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
@@ -14,11 +15,8 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.PositiveTestResult
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.DoNotTransition
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.Transition
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
@@ -35,13 +33,10 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit.DAYS
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class TestResultIsolationHandlerTest {
 
     private val calculateKeySubmissionDateRange = mockk<CalculateKeySubmissionDateRange>(relaxUnitFun = true)
-    private val createSelfAssessmentIndexCase = mockk<CreateSelfAssessmentIndexCase>()
 
     private val now: Instant = Instant.parse("2020-07-26T12:00:00Z")!!
     private val fixedClock = Clock.fixed(now, ZoneOffset.UTC)
@@ -51,7 +46,11 @@ class TestResultIsolationHandlerTest {
 
     private val testSubject = TestResultIsolationHandler(
         calculateKeySubmissionDateRange,
-        createSelfAssessmentIndexCase,
+        WouldTestIsolationEndBeforeOrOnStartOfExistingIsolation(
+            CalculateIndexExpiryDate(fixedClock),
+            fixedClock
+        ),
+        createIsolationLogicalState(fixedClock),
         fixedClock
     )
 
@@ -125,7 +124,7 @@ class TestResultIsolationHandlerTest {
     @Test
     fun `when in isolation as index case with self-assessment, positive indicative test result is ignored`() {
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            isolationSelfAssessment().asLogical(),
+            isolationSelfAssessment(),
             positiveTestResultIndicative,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -136,7 +135,7 @@ class TestResultIsolationHandlerTest {
     @Test
     fun `when in isolation as index case without self-assessment, positive indicative test result is ignored`() {
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            isolationPositiveTest(positiveTestResultConfirmed.toAcknowledgedTestResult()).asLogical(),
+            isolationPositiveTest(positiveTestResultConfirmed.toAcknowledgedTestResult()),
             positiveTestResultIndicative,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -148,12 +147,12 @@ class TestResultIsolationHandlerTest {
     fun `when in isolation as index and contact case, positive indicative test result is ignored`() {
         val state = IsolationState(
             isolationConfiguration = DurationDays(),
-            contactCase = contactCase(),
-            indexInfo = selfAssessment()
+            contact = contactCase(),
+            selfAssessment = selfAssessment()
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             positiveTestResultIndicative,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -165,7 +164,7 @@ class TestResultIsolationHandlerTest {
     fun `when in isolation as index case, with previous positive confirmed test result from current isolation, positive confirmed test result is ignored`() {
         val state = isolationPositiveTest(
             acknowledgedTestResult(result = RelevantVirologyTestResult.POSITIVE, isConfirmed = true)
-        ).asLogical()
+        )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
             state,
@@ -184,12 +183,12 @@ class TestResultIsolationHandlerTest {
     fun `when in isolation as index case with self-assessment, positive confirmed test result is stored`() {
         val state = isolationSelfAssessment()
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             positiveTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
-        val expectedState = state.addTestResultToIndexCase(
+        val expectedState = state.addTestResult(
             testResult = positiveTestResultConfirmed.toAcknowledgedTestResult()
         )
         val expectedKeySharingInfo = KeySharingInfo(
@@ -203,19 +202,19 @@ class TestResultIsolationHandlerTest {
     fun `when in isolation as index and contact case, positive confirmed test result removes contact case`() {
         val state = IsolationState(
             isolationConfiguration = DurationDays(),
-            contactCase = contactCase(),
-            indexInfo = selfAssessment()
+            contact = contactCase(),
+            selfAssessment = selfAssessment()
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             positiveTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
         val expectedState = state
-            .copy(contactCase = null)
-            .addTestResultToIndexCase(positiveTestResultConfirmed.toAcknowledgedTestResult())
+            .copy(contact = null)
+            .addTestResult(positiveTestResultConfirmed.toAcknowledgedTestResult())
         val expectedKeySharingInfo = KeySharingInfo(
             diagnosisKeySubmissionToken = positiveTestResultConfirmed.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
@@ -229,17 +228,13 @@ class TestResultIsolationHandlerTest {
 
         val state = isolationContactCase()
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
         val expectedState = state.copy(
-            indexInfo = IndexCase(
-                isolationTrigger = PositiveTestResult(testEndDate = LocalDate.parse("2020-08-02")),
-                testResult = testResult.toAcknowledgedTestResult(),
-                expiryDate = LocalDate.parse("2020-08-13")
-            )
+            testResult = testResult.toAcknowledgedTestResult()
         )
 
         assertEquals(Transition(expectedState, keySharingInfo = null), result)
@@ -249,7 +244,7 @@ class TestResultIsolationHandlerTest {
     fun `when in isolation as contact case, positive confirmed test result adds index case to isolation and removes contact case`() {
         val state = isolationContactCase()
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             positiveTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -272,13 +267,13 @@ class TestResultIsolationHandlerTest {
         val state = isolationPositiveTest(relevantTestResult)
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             positiveTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
         val confirmedDate = positiveTestResultConfirmed.testEndDate(fixedClock)
-        val expectedState = state.addTestResultToIndexCase(
+        val expectedState = state.addTestResult(
             testResult = relevantTestResult.copy(confirmedDate = confirmedDate, confirmatoryTestCompletionStatus = COMPLETED_AND_CONFIRMED)
         )
 
@@ -292,7 +287,7 @@ class TestResultIsolationHandlerTest {
     @Test
     fun `when not in isolation, positive indicative test result triggers isolation`() {
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            neverIsolating().asLogical(),
+            neverIsolating(),
             positiveTestResultIndicative,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -302,14 +297,12 @@ class TestResultIsolationHandlerTest {
         )
 
         assertEquals(Transition(expectedState, keySharingInfo = null), result)
-        val transition = result as Transition
-        assertTrue(transition.newState.asLogical().isActiveIsolation(fixedClock))
     }
 
     @Test
     fun `when not in isolation, positive indicative test result with key sharing supported triggers isolation and adds KeySharingInfo`() {
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            neverIsolating().asLogical(),
+            neverIsolating(),
             positiveTestResultIndicativeWithKeySharingSupported,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -324,8 +317,6 @@ class TestResultIsolationHandlerTest {
         )
 
         assertEquals(Transition(expectedState, keySharingInfo = expectedKeySharingInfo), result)
-        val transition = result as Transition
-        assertTrue(transition.newState.asLogical().isActiveIsolation(fixedClock))
     }
 
     @Test
@@ -335,7 +326,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             positiveTestResultIndicative,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -350,7 +341,7 @@ class TestResultIsolationHandlerTest {
     @Test
     fun `when not in isolation, without previous test result, positive indicative test result triggers isolation`() {
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            neverIsolating().asLogical(),
+            neverIsolating(),
             positiveTestResultIndicative,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -372,7 +363,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             positiveTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -391,7 +382,7 @@ class TestResultIsolationHandlerTest {
     fun `when not in isolation, with expired index case, with relevant negative, positive confirmed test result triggers isolation`() {
         val state = isolationSelfAssessment(
             selfAssessmentDate = indexCaseStartDate.minus(13, DAYS)
-        ).addTestResultToIndexCase(
+        ).addTestResult(
             acknowledgedTestResult(
                 result = RelevantVirologyTestResult.NEGATIVE,
                 isConfirmed = true
@@ -399,7 +390,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             positiveTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -419,12 +410,12 @@ class TestResultIsolationHandlerTest {
     fun `when not in isolation, with expired contact case, with relevant negative, positive confirmed test result triggers isolation`() {
         val state = IsolationState(
             isolationConfiguration = DurationDays(),
-            contactCase = contactCase(encounterDate = encounterDate.minus(13, DAYS)),
-            indexInfo = negativeTest(acknowledgedTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true))
+            contact = contactCase(encounterDate = encounterDate.minus(13, DAYS)),
+            testResult = acknowledgedTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true)
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             positiveTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -443,8 +434,8 @@ class TestResultIsolationHandlerTest {
     fun `when not in isolation, with expired contact case, with relevant negative, positive confirmed test result triggers isolation, test result with explicit onset date`() {
         val state = IsolationState(
             isolationConfiguration = DurationDays(),
-            contactCase = contactCase(encounterDate = encounterDate.minus(13, DAYS)),
-            indexInfo = negativeTest(acknowledgedTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true))
+            contact = contactCase(encounterDate = encounterDate.minus(13, DAYS)),
+            testResult = acknowledgedTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true)
         )
         val testResult = positiveTestResultConfirmed.copy(
             symptomsOnsetDate = SymptomsDate(
@@ -453,21 +444,18 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
         val expectedState = IsolationState(
             isolationConfiguration = isolationConfiguration,
-            indexInfo = IndexCase(
-                isolationTrigger = SelfAssessment(
-                    selfAssessmentDate = LocalDate.now(fixedClock),
-                    onsetDate = LocalDate.parse("2020-08-01")
-                ),
-                testResult = testResult.toAcknowledgedTestResult(),
-                expiryDate = LocalDate.parse("2020-08-12")
-            )
+            selfAssessment = SelfAssessment(
+                selfAssessmentDate = LocalDate.now(fixedClock),
+                onsetDate = LocalDate.parse("2020-08-01")
+            ),
+            testResult = testResult.toAcknowledgedTestResult()
         )
         val expectedKeySharingInfo = KeySharingInfo(
             diagnosisKeySubmissionToken = testResult.diagnosisKeySubmissionToken!!,
@@ -480,8 +468,8 @@ class TestResultIsolationHandlerTest {
     fun `when not in isolation, with expired contact case, with relevant negative, positive confirmed test result triggers isolation, test result with cannot remember onset date`() {
         val state = IsolationState(
             isolationConfiguration = DurationDays(),
-            contactCase = contactCase(encounterDate = encounterDate.minus(13, DAYS)),
-            indexInfo = negativeTest(acknowledgedTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true))
+            contact = contactCase(encounterDate = encounterDate.minus(13, DAYS)),
+            testResult = acknowledgedTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true)
         )
         val testResult = positiveTestResultConfirmed.copy(
             symptomsOnsetDate = SymptomsDate(
@@ -490,20 +478,14 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
         val expectedState = IsolationState(
             isolationConfiguration = isolationConfiguration,
-            indexInfo = IndexCase(
-                isolationTrigger = SelfAssessment(
-                    selfAssessmentDate = LocalDate.now(fixedClock)
-                ),
-                testResult = testResult.toAcknowledgedTestResult(),
-                expiryDate = LocalDate.parse("2020-08-05")
-            )
+            testResult = testResult.toAcknowledgedTestResult()
         )
         val expectedKeySharingInfo = KeySharingInfo(
             diagnosisKeySubmissionToken = testResult.diagnosisKeySubmissionToken!!,
@@ -517,12 +499,12 @@ class TestResultIsolationHandlerTest {
         val state = isolationSelfAssessment(selfAssessmentDate = indexCaseStartDate.minus(13, DAYS))
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             positiveTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
-        val expectedState = state.addTestResultToIndexCase(
+        val expectedState = state.addTestResult(
             positiveTestResultConfirmed.toAcknowledgedTestResult()
         )
         val expectedKeySharingInfo = KeySharingInfo(
@@ -539,7 +521,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             positiveTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -602,10 +584,10 @@ class TestResultIsolationHandlerTest {
         )
 
         val receivedTestResult = positiveTestResult(receivedTestConfirmed)
-            .copy(testEndDate = state.contactCase!!.startDate.minus(11, DAYS).toInstant())
+            .copy(testEndDate = state.contact!!.notificationDate.minus(11, DAYS).toInstant())
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             receivedTestResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -659,7 +641,7 @@ class TestResultIsolationHandlerTest {
             .copy(testEndDate = state.selfAssessmentSymptomsOnsetInstant().minus(11, DAYS))
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             receivedTestResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -760,7 +742,7 @@ class TestResultIsolationHandlerTest {
             .copy(testEndDate = relevantTestDate.minus(11, DAYS))
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             receivedTestResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -820,12 +802,12 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
-        val expectedState = state.addTestResultToIndexCase(
+        val expectedState = state.addTestResult(
             testResult = testResult.toAcknowledgedTestResult()
         )
         val expectedKeySharingInfo =
@@ -946,7 +928,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -958,7 +940,7 @@ class TestResultIsolationHandlerTest {
                 )
             else testResult.toAcknowledgedTestResult()
 
-        val expectedState = state.addTestResultToIndexCase(
+        val expectedState = state.addTestResult(
             testResult = expectedTestResult
         )
         val expectedKeySharingInfo =
@@ -1080,7 +1062,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -1213,7 +1195,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -1225,7 +1207,7 @@ class TestResultIsolationHandlerTest {
                 )
             else testResult.toAcknowledgedTestResult()
 
-        val expectedState = state.addTestResultToIndexCase(expectedTestResult)
+        val expectedState = state.addTestResult(expectedTestResult)
         val expectedKeySharingInfo =
             if (testResult.isConfirmed())
                 KeySharingInfo(
@@ -1252,69 +1234,21 @@ class TestResultIsolationHandlerTest {
                 result = RelevantVirologyTestResult.NEGATIVE,
                 isConfirmed = true,
                 testEndDate = relevantTestDate
-            ),
-            testExpiresIndexCase = true
+            )
         )
 
         val testResult = positiveTestResultConfirmed.copy(
             testEndDate = relevantTestDate.minus(1, DAYS)
         )
 
-        every {
-            createSelfAssessmentIndexCase(
-                state.asLogical(),
-                (state.indexInfo as IndexCase).isolationTrigger as SelfAssessment,
-                discardTestResultIfPresent = true
-            )
-        } returns selfAssessment(selfAssessmentDate)
-
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
         val expectedState = isolationSelfAssessmentAndTest(
             selfAssessmentDate = selfAssessmentDate,
-            testResult = testResult.toAcknowledgedTestResult()
-        )
-        val expectedKeySharingInfo = KeySharingInfo(
-            diagnosisKeySubmissionToken = testResult.diagnosisKeySubmissionToken!!,
-            acknowledgedDate = Instant.now(fixedClock)
-        )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
-    }
-
-    @Test
-    fun `when not in isolation, with expired index case without self-assessment, with relevant negative, positive confirmed test result older than relevant test and newer than isolation replaces index case`() {
-        val relevantTestDate = testEndDate.minus(5, DAYS)
-        val positiveTestEndDate = relevantTestDate.minus(4, DAYS)
-
-        // This simulates the case where we first receive a positive indicative and then a negative test
-        val state = IsolationState(
-            isolationConfiguration = DurationDays(),
-            indexInfo = IndexCase(
-                isolationTrigger = PositiveTestResult(positiveTestEndDate.toLocalDate(fixedClock.zone)),
-                testResult = acknowledgedTestResult(
-                    result = RelevantVirologyTestResult.NEGATIVE,
-                    isConfirmed = true,
-                    testEndDate = relevantTestDate
-                ),
-                expiryDate = relevantTestDate.toLocalDate(fixedClock.zone)
-            )
-        )
-
-        val testResult = positiveTestResultConfirmed.copy(
-            testEndDate = relevantTestDate.minus(1, DAYS)
-        )
-
-        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
-            testResult,
-            testAcknowledgedDate = Instant.now(fixedClock)
-        )
-
-        val expectedState = isolationPositiveTest(
             testResult = testResult.toAcknowledgedTestResult()
         )
         val expectedKeySharingInfo = KeySharingInfo(
@@ -1359,19 +1293,14 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
         val expectedTestResult = testResult.toAcknowledgedTestResult().copy(confirmedDate = negativeTestResult.testEndDate, confirmatoryTestCompletionStatus = COMPLETED)
-        val isolationDuration = DurationDays().indexCaseSinceTestResultEndDate.toLong()
         val expectedState = state.copy(
-            indexInfo = IndexCase(
-                testResult = expectedTestResult,
-                isolationTrigger = PositiveTestResult(testResult.testEndDate.toLocalDate(fixedClock.zone)),
-                expiryDate = testResult.testEndDate.plus(isolationDuration, DAYS).toLocalDate(fixedClock.zone)
-            ),
+            testResult = expectedTestResult
         )
 
         assertEquals(Transition(expectedState, keySharingInfo = null), result)
@@ -1383,8 +1312,7 @@ class TestResultIsolationHandlerTest {
         val state = isolationSelfAssessmentAndTest(
             selfAssessmentDate = indexCaseStartDate,
             onsetDate = indexCaseStartDate,
-            testResult = negativeTestResult,
-            testExpiresIndexCase = true
+            testResult = negativeTestResult
         )
 
         val testResult = positiveTestResultIndicative.copy(
@@ -1393,54 +1321,22 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
-        val expectedTestResult = testResult.toAcknowledgedTestResult().copy(confirmedDate = negativeTestResult.testEndDate, confirmatoryTestCompletionStatus = COMPLETED)
-        val isolationDuration = DurationDays().indexCaseSinceTestResultEndDate.toLong()
+        val expectedTestResult = testResult.toAcknowledgedTestResult()
+            .copy(
+                confirmedDate = negativeTestResult.testEndDate,
+                confirmatoryTestCompletionStatus = COMPLETED
+            )
         val expectedState = state.copy(
-            indexInfo = IndexCase(
-                testResult = expectedTestResult,
-                isolationTrigger = PositiveTestResult(testResult.testEndDate.toLocalDate(fixedClock.zone)),
-                expiryDate = testResult.testEndDate.plus(isolationDuration, DAYS).toLocalDate(fixedClock.zone)
-            ),
+            testResult = expectedTestResult,
+            selfAssessment = null
         )
 
         assertEquals(Transition(expectedState, keySharingInfo = null), result)
-    }
-
-    @Test
-    fun `when not in isolation, with expired index case without self-assessment, with relevant negative, positive indicative test result older than relevant test and newer than isolation is ignored`() {
-        val relevantTestDate = testEndDate.minus(5, DAYS)
-        val positiveTestEndDate = relevantTestDate.minus(4, DAYS)
-
-        // This simulates the case where we first receive a positive indicative and then a negative test
-        val state = IsolationState(
-            isolationConfiguration = DurationDays(),
-            indexInfo = IndexCase(
-                isolationTrigger = PositiveTestResult(positiveTestEndDate.toLocalDate(fixedClock.zone)),
-                testResult = acknowledgedTestResult(
-                    result = RelevantVirologyTestResult.NEGATIVE,
-                    isConfirmed = true,
-                    testEndDate = relevantTestDate
-                ),
-                expiryDate = relevantTestDate.toLocalDate(fixedClock.zone)
-            )
-        )
-
-        val testResult = positiveTestResultIndicative.copy(
-            testEndDate = relevantTestDate.minus(1, DAYS)
-        )
-
-        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
-            testResult,
-            testAcknowledgedDate = Instant.now(fixedClock)
-        )
-
-        assertEquals(DoNotTransition(preventKeySubmission = true, keySharingInfo = null), result)
     }
 
     @Test
@@ -1453,8 +1349,7 @@ class TestResultIsolationHandlerTest {
                 result = RelevantVirologyTestResult.NEGATIVE,
                 isConfirmed = true,
                 testEndDate = relevantTestDate
-            ),
-            testExpiresIndexCase = true
+            )
         )
 
         val testResult = positiveTestResultIndicative.copy(
@@ -1462,7 +1357,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -1494,12 +1389,10 @@ class TestResultIsolationHandlerTest {
         val state = isolationContactCase(
             encounterDate = relevantTestDate.minus(2, DAYS).toLocalDate(fixedClock.zone)
         ).copy(
-            indexInfo = NegativeTest(
-                acknowledgedTestResult(
-                    result = RelevantVirologyTestResult.NEGATIVE,
-                    isConfirmed = true,
-                    testEndDate = relevantTestDate
-                )
+            testResult = acknowledgedTestResult(
+                result = RelevantVirologyTestResult.NEGATIVE,
+                isConfirmed = true,
+                testEndDate = relevantTestDate
             )
         )
 
@@ -1508,7 +1401,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -1547,12 +1440,10 @@ class TestResultIsolationHandlerTest {
         val state = isolationContactCase(
             encounterDate = relevantTestDate.minus(2, DAYS).toLocalDate(fixedClock.zone)
         ).copy(
-            indexInfo = NegativeTest(
-                acknowledgedTestResult(
-                    result = RelevantVirologyTestResult.NEGATIVE,
-                    isConfirmed = true,
-                    testEndDate = relevantTestDate
-                )
+            testResult = acknowledgedTestResult(
+                result = RelevantVirologyTestResult.NEGATIVE,
+                isConfirmed = true,
+                testEndDate = relevantTestDate
             )
         )
 
@@ -1561,7 +1452,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -1596,7 +1487,7 @@ class TestResultIsolationHandlerTest {
             .copy(testEndDate = now.minus(20, DAYS))
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             receivedTestResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -1610,7 +1501,6 @@ class TestResultIsolationHandlerTest {
                 )
             else null
         assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
-        assertFalse((result as Transition).newState.asLogical().isActiveIsolation(fixedClock))
     }
 
     //endregion
@@ -1622,12 +1512,10 @@ class TestResultIsolationHandlerTest {
     fun `when in isolation as index and contact case, with relevant positive unconfirmed, new negative confirmed test result within prescribed day limit replaces index case`() {
         val state = IsolationState(
             isolationConfiguration = DurationDays(),
-            contactCase = contactCase(),
-            indexInfo = positiveTest(
-                testResult = acknowledgedTestResult(
-                    result = RelevantVirologyTestResult.POSITIVE,
-                    isConfirmed = false
-                )
+            contact = contactCase(),
+            testResult = acknowledgedTestResult(
+                result = RelevantVirologyTestResult.POSITIVE,
+                isConfirmed = false
             )
         )
 
@@ -1636,13 +1524,13 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
         val expectedState = state.copy(
-            indexInfo = negativeTest(testResult = testResult.toAcknowledgedTestResult())
+            testResult = testResult.toAcknowledgedTestResult()
         )
 
         assertEquals(Transition(expectedState, keySharingInfo = null), result)
@@ -1658,13 +1546,14 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
         val expectedState = state.copy(
-            indexInfo = negativeTest(testResult = negativeTestResultConfirmed.toAcknowledgedTestResult())
+            selfAssessment = null,
+            testResult = negativeTestResultConfirmed.toAcknowledgedTestResult(),
         )
 
         assertEquals(Transition(expectedState, keySharingInfo = null), result)
@@ -1672,8 +1561,9 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `when in isolation as index case only, with relevant positive unconfirmed, new negative confirmed test result outside prescribed day limit updates index case's completed date`() {
+        val previousTestResult = positiveTestResultIndicative.toAcknowledgedTestResult()
         val state = isolationPositiveTest(
-            testResult = positiveTestResultIndicative.toAcknowledgedTestResult()
+            testResult = previousTestResult
         )
 
         val testResult = negativeTestResultConfirmed.copy(
@@ -1682,14 +1572,17 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
-        val expectedTestResult = (state.indexInfo as IndexCase).testResult!!.copy(confirmedDate = testResult.testEndDate.toLocalDate(fixedClock.zone), confirmatoryTestCompletionStatus = COMPLETED)
+        val expectedTestResult = previousTestResult.copy(
+            confirmedDate = testResult.testEndDate.toLocalDate(fixedClock.zone),
+            confirmatoryTestCompletionStatus = COMPLETED
+        )
         val expectedState = state.copy(
-            indexInfo = (state.indexInfo as IndexCase).copy(testResult = expectedTestResult)
+            testResult = expectedTestResult
         )
 
         assertEquals(Transition(expectedState, keySharingInfo = null), result)
@@ -1697,10 +1590,11 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `when not in isolation, with expired unconfirmed positive test, new negative confirmed test result outside prescribed day limit updates index case's completed date`() {
+        val previousTestResult = positiveTestResultIndicative
+            .copy(testEndDate = testEndDate.minus(13, DAYS))
+            .toAcknowledgedTestResult()
         val state = isolationPositiveTest(
-            testResult = positiveTestResultIndicative
-                .copy(testEndDate = testEndDate.minus(13, DAYS))
-                .toAcknowledgedTestResult()
+            testResult = previousTestResult
         )
 
         val testResult = negativeTestResultConfirmed.copy(
@@ -1709,14 +1603,17 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
-        val expectedTestResult = (state.indexInfo as IndexCase).testResult!!.copy(confirmedDate = testResult.testEndDate.toLocalDate(fixedClock.zone), confirmatoryTestCompletionStatus = COMPLETED)
+        val expectedTestResult = previousTestResult.copy(
+            confirmedDate = testResult.testEndDate.toLocalDate(fixedClock.zone),
+            confirmatoryTestCompletionStatus = COMPLETED
+        )
         val expectedState = state.copy(
-            indexInfo = (state.indexInfo as IndexCase).copy(testResult = expectedTestResult)
+            testResult = expectedTestResult
         )
 
         assertEquals(Transition(expectedState, keySharingInfo = null), result)
@@ -1724,8 +1621,9 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `when in isolation as index case only, with relevant positive unconfirmed with confirmatory day limit of -1, new negative confirmed test result updates index case's completed date`() {
+        val previousTestResult = positiveTestResultIndicative.toAcknowledgedTestResult().copy(confirmatoryDayLimit = -1)
         val state = isolationPositiveTest(
-            testResult = positiveTestResultIndicative.toAcknowledgedTestResult().copy(confirmatoryDayLimit = -1)
+            testResult = previousTestResult
         )
 
         val testResult = negativeTestResultConfirmed.copy(
@@ -1733,14 +1631,17 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
-        val expectedTestResult = (state.indexInfo as IndexCase).testResult!!.copy(confirmedDate = testResult.testEndDate.toLocalDate(fixedClock.zone), confirmatoryTestCompletionStatus = COMPLETED)
+        val expectedTestResult = previousTestResult.copy(
+            confirmedDate = testResult.testEndDate.toLocalDate(fixedClock.zone),
+            confirmatoryTestCompletionStatus = COMPLETED
+        )
         val expectedState = state.copy(
-            indexInfo = (state.indexInfo as IndexCase).copy(testResult = expectedTestResult)
+            testResult = expectedTestResult
         )
 
         assertEquals(Transition(expectedState, keySharingInfo = null), result)
@@ -1750,24 +1651,22 @@ class TestResultIsolationHandlerTest {
     fun `when in isolation as contact case, with expired index case, with relevant positive unconfirmed, new negative confirmed test result replaces index case`() {
         val state = IsolationState(
             isolationConfiguration = DurationDays(),
-            contactCase = contactCase(),
-            indexInfo = positiveTest(
-                testResult = acknowledgedTestResult(
-                    result = RelevantVirologyTestResult.POSITIVE,
-                    isConfirmed = false,
-                    testEndDate = testEndDate.minus(12, DAYS)
-                )
+            contact = contactCase(),
+            testResult = acknowledgedTestResult(
+                result = RelevantVirologyTestResult.POSITIVE,
+                isConfirmed = false,
+                testEndDate = testEndDate.minus(12, DAYS)
             )
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
         val expectedState = state.copy(
-            indexInfo = negativeTest(testResult = negativeTestResultConfirmed.toAcknowledgedTestResult())
+            testResult = negativeTestResultConfirmed.toAcknowledgedTestResult()
         )
 
         assertEquals(Transition(expectedState, keySharingInfo = null), result)
@@ -1780,7 +1679,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -1789,44 +1688,38 @@ class TestResultIsolationHandlerTest {
     }
 
     @Test
-    fun `when in isolation as index case only, without relevant positive confirmed, new negative confirmed test result expires index case`() {
+    fun `when in isolation as index case only, without relevant positive confirmed, new negative confirmed test result is stored`() {
         val state = isolationSelfAssessment()
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
         val expectedState = state.copy(
-            indexInfo = (state.indexInfo as IndexCase).copy(
-                testResult = negativeTestResultConfirmed.toAcknowledgedTestResult(),
-                expiryDate = negativeTestResultConfirmed.testEndDate.toLocalDate(fixedClock.zone)
-            )
+            testResult = negativeTestResultConfirmed.toAcknowledgedTestResult()
         )
 
         assertEquals(Transition(expectedState, keySharingInfo = null), result)
     }
 
     @Test
-    fun `when in isolation as contact and index case, without relevant positive confirmed, new negative confirmed test result expires index case`() {
+    fun `when in isolation as contact and index case, without relevant positive confirmed, new negative confirmed test result is stored`() {
         val state = IsolationState(
             isolationConfiguration = DurationDays(),
-            contactCase = contactCase(),
-            indexInfo = selfAssessment()
+            contact = contactCase(),
+            selfAssessment = selfAssessment()
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
         val expectedState = state.copy(
-            indexInfo = (state.indexInfo as IndexCase).copy(
-                testResult = negativeTestResultConfirmed.toAcknowledgedTestResult(),
-                expiryDate = negativeTestResultConfirmed.testEndDate.toLocalDate(fixedClock.zone)
-            )
+            testResult = negativeTestResultConfirmed.toAcknowledgedTestResult()
         )
 
         assertEquals(Transition(expectedState, keySharingInfo = null), result)
@@ -1837,13 +1730,13 @@ class TestResultIsolationHandlerTest {
         val state = isolationContactCase()
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
         val expectedState = state.copy(
-            indexInfo = negativeTest(negativeTestResultConfirmed.toAcknowledgedTestResult())
+            testResult = negativeTestResultConfirmed.toAcknowledgedTestResult()
         )
 
         assertEquals(Transition(expectedState, keySharingInfo = null), result)
@@ -1856,7 +1749,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -1871,12 +1764,12 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
-        val expectedState = state.addTestResultToIndexCase(
+        val expectedState = state.addTestResult(
             negativeTestResultConfirmed.toAcknowledgedTestResult()
         )
 
@@ -1890,12 +1783,11 @@ class TestResultIsolationHandlerTest {
             testResult = acknowledgedTestResult(
                 result = RelevantVirologyTestResult.NEGATIVE,
                 isConfirmed = true
-            ),
-            testExpiresIndexCase = true
+            )
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -1914,20 +1806,18 @@ class TestResultIsolationHandlerTest {
 
         val state = IsolationState(
             isolationConfiguration = DurationDays(),
-            contactCase = contactCase(),
-            indexInfo = positiveTest(
-                testResult = acknowledgedTestResult(
-                    result = RelevantVirologyTestResult.POSITIVE,
-                    isConfirmed = false,
-                    testEndDate = relevantTestDate
-                )
+            contact = contactCase(),
+            testResult = acknowledgedTestResult(
+                result = RelevantVirologyTestResult.POSITIVE,
+                isConfirmed = false,
+                testEndDate = relevantTestDate
             )
         )
 
         val testResult = negativeTestResultConfirmed.copy(testEndDate = relevantTestDate.minus(1, DAYS))
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -1950,7 +1840,7 @@ class TestResultIsolationHandlerTest {
         val testResult = negativeTestResultConfirmed.copy(testEndDate = relevantTestDate.minus(1, DAYS))
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -1966,12 +1856,11 @@ class TestResultIsolationHandlerTest {
     fun `when in isolation as index and contact case, with relevant positive unconfirmed, negative confirmed test result older than symptoms onset is ignored`() {
         val state = IsolationState(
             isolationConfiguration = DurationDays(),
-            contactCase = contactCase(),
-            indexInfo = selfAssessmentAndTest(
-                testResult = acknowledgedTestResult(
-                    result = RelevantVirologyTestResult.POSITIVE,
-                    isConfirmed = false
-                )
+            contact = contactCase(),
+            selfAssessment = selfAssessment(selfAssessmentDate = indexCaseStartDate),
+            testResult = acknowledgedTestResult(
+                result = RelevantVirologyTestResult.POSITIVE,
+                isConfirmed = false
             )
         )
 
@@ -1980,7 +1869,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2002,7 +1891,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2019,7 +1908,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2031,8 +1920,8 @@ class TestResultIsolationHandlerTest {
     fun `when in isolation as contact and index case, without relevant positive confirmed, negative confirmed test result older than symptoms onset date is ignored`() {
         val state = IsolationState(
             isolationConfiguration = DurationDays(),
-            contactCase = contactCase(),
-            indexInfo = selfAssessment()
+            contact = contactCase(),
+            selfAssessment = selfAssessment()
         )
 
         val testResult = negativeTestResultConfirmed.copy(
@@ -2040,7 +1929,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2059,7 +1948,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             testResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2077,7 +1966,7 @@ class TestResultIsolationHandlerTest {
         val state = isolationSelfAssessment()
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             voidTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2090,7 +1979,7 @@ class TestResultIsolationHandlerTest {
         val state = isolationContactCase()
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             voidTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2102,12 +1991,12 @@ class TestResultIsolationHandlerTest {
     fun `when in isolation as contact and index case, void confirmed test result is ignored`() {
         val state = IsolationState(
             isolationConfiguration = DurationDays(),
-            contactCase = contactCase(),
-            indexInfo = selfAssessment()
+            contact = contactCase(),
+            selfAssessment = selfAssessment()
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             voidTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2120,7 +2009,7 @@ class TestResultIsolationHandlerTest {
         val state = neverIsolating()
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             voidTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2137,7 +2026,7 @@ class TestResultIsolationHandlerTest {
         val state = isolationSelfAssessment()
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             plodTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2150,7 +2039,7 @@ class TestResultIsolationHandlerTest {
         val state = isolationContactCase()
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             plodTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2162,12 +2051,12 @@ class TestResultIsolationHandlerTest {
     fun `when in isolation as contact and index case, plod confirmed test result is ignored`() {
         val state = IsolationState(
             isolationConfiguration = DurationDays(),
-            contactCase = contactCase(),
-            indexInfo = selfAssessment()
+            contact = contactCase(),
+            selfAssessment = selfAssessment()
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             plodTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2180,7 +2069,7 @@ class TestResultIsolationHandlerTest {
         val state = neverIsolating()
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             plodTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2245,12 +2134,12 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             positiveTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
-        val expectedState = state.addTestResultToIndexCase(
+        val expectedState = state.addTestResult(
             testResult = positiveTestResultConfirmed.toAcknowledgedTestResult()
         )
 
@@ -2282,12 +2171,12 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             receivedTestResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
-        val expectedState = state.addTestResultToIndexCase(
+        val expectedState = state.addTestResult(
             testResult = receivedTestResult.toAcknowledgedTestResult()
         )
 
@@ -2319,12 +2208,12 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             receivedTestResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
-        val expectedState = state.addTestResultToIndexCase(
+        val expectedState = state.addTestResult(
             testResult = receivedTestResult.toAcknowledgedTestResult()
         )
 
@@ -2352,12 +2241,12 @@ class TestResultIsolationHandlerTest {
         val receivedTestResult = positiveTestResultConfirmed.copy(testEndDate = receivedTestEndDate)
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             receivedTestResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
-        val expectedState = state.addTestResultToIndexCase(
+        val expectedState = state.addTestResult(
             testResult = relevantTestResult.copy(
                 confirmedDate = receivedTestEndDate.toLocalDate(fixedClock.zone),
                 confirmatoryTestCompletionStatus = COMPLETED_AND_CONFIRMED
@@ -2404,7 +2293,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             positiveTestResultIndicative.copy(testEndDate = receivedTestEndDate),
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2433,7 +2322,7 @@ class TestResultIsolationHandlerTest {
         val receivedTestResult = positiveTestResultConfirmed.copy(testEndDate = receivedTestEndDate)
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             receivedTestResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2479,7 +2368,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             positiveTestResultIndicative.copy(testEndDate = receivedTestEndDate),
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2508,12 +2397,12 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             receivedTestResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
-        val expectedState = state.addTestResultToIndexCase(
+        val expectedState = state.addTestResult(
             testResult = receivedTestResult.toAcknowledgedTestResult(
                 confirmedDate = previousTestEndDate.toLocalDate(fixedClock.zone)
             )
@@ -2543,12 +2432,12 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             receivedTestResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
-        val expectedState = state.addTestResultToIndexCase(
+        val expectedState = state.addTestResult(
             testResult = receivedTestResult.toAcknowledgedTestResult()
         )
 
@@ -2595,7 +2484,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2623,7 +2512,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed.copy(testEndDate = receivedTestEndDate),
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2655,7 +2544,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed.copy(testEndDate = receivedTestEndDate),
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2697,16 +2586,8 @@ class TestResultIsolationHandlerTest {
             testResult = relevantTestResult
         )
 
-        every {
-            createSelfAssessmentIndexCase(
-                state.asLogical(),
-                (state.indexInfo as IndexCase).isolationTrigger as SelfAssessment,
-                discardTestResultIfPresent = true
-            )
-        } returns selfAssessment(selfAssessmentDate = symptomsOnsetDate, onsetDate = symptomsOnsetDate)
-
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed.copy(testEndDate = receivedTestEndDate),
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2738,16 +2619,8 @@ class TestResultIsolationHandlerTest {
             testResult = relevantTestResult
         )
 
-        every {
-            createSelfAssessmentIndexCase(
-                state.asLogical(),
-                (state.indexInfo as IndexCase).isolationTrigger as SelfAssessment,
-                discardTestResultIfPresent = true
-            )
-        } returns selfAssessment(selfAssessmentDate = symptomsOnsetDate, onsetDate = symptomsOnsetDate)
-
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed.copy(testEndDate = receivedTestEndDate),
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2799,16 +2672,8 @@ class TestResultIsolationHandlerTest {
             testResult = relevantTestResult
         )
 
-        every {
-            createSelfAssessmentIndexCase(
-                state.asLogical(),
-                (state.indexInfo as IndexCase).isolationTrigger as SelfAssessment,
-                discardTestResultIfPresent = true
-            )
-        } returns selfAssessment(selfAssessmentDate = symptomsOnsetDate, onsetDate = symptomsOnsetDate)
-
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed.copy(testEndDate = receivedTestEndDate),
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2872,7 +2737,7 @@ class TestResultIsolationHandlerTest {
         )
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed.copy(testEndDate = receivedTestEndDate),
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -2924,16 +2789,8 @@ class TestResultIsolationHandlerTest {
             testResult = relevantTestResult
         )
 
-        every {
-            createSelfAssessmentIndexCase(
-                state.asLogical(),
-                (state.indexInfo as IndexCase).isolationTrigger as SelfAssessment,
-                discardTestResultIfPresent = true
-            )
-        } returns selfAssessment(selfAssessmentDate = symptomsOnsetDate, onsetDate = symptomsOnsetDate)
-
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             negativeTestResultConfirmed.copy(testEndDate = receivedTestEndDate),
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -3058,18 +2915,10 @@ class TestResultIsolationHandlerTest {
             testResult = relevantTestResult
         )
 
-        every {
-            createSelfAssessmentIndexCase(
-                state.asLogical(),
-                (state.indexInfo as IndexCase).isolationTrigger as SelfAssessment,
-                discardTestResultIfPresent = true
-            )
-        } returns selfAssessment(selfAssessmentDate = symptomsOnsetDate, onsetDate = symptomsOnsetDate)
-
         val receivedTestResult = negativeTestResultConfirmed.copy(testEndDate = receivedTestEndDate)
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             receivedTestResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -3077,8 +2926,7 @@ class TestResultIsolationHandlerTest {
         val expectedState = isolationSelfAssessmentAndTest(
             selfAssessmentDate = symptomsOnsetDate,
             onsetDate = symptomsOnsetDate,
-            testResult = receivedTestResult.toAcknowledgedTestResult(),
-            testExpiresIndexCase = true
+            testResult = receivedTestResult.toAcknowledgedTestResult()
         )
 
         assertEquals(Transition(expectedState, keySharingInfo = null), result)
@@ -3103,18 +2951,10 @@ class TestResultIsolationHandlerTest {
             testResult = relevantTestResult
         )
 
-        every {
-            createSelfAssessmentIndexCase(
-                state.asLogical(),
-                (state.indexInfo as IndexCase).isolationTrigger as SelfAssessment,
-                discardTestResultIfPresent = true
-            )
-        } returns selfAssessment(selfAssessmentDate = symptomsOnsetDate, onsetDate = symptomsOnsetDate)
-
         val receivedTestResult = negativeTestResultConfirmed.copy(testEndDate = receivedTestEndDate)
 
         val result = testSubject.computeTransitionWithTestResultAcknowledgment(
-            state.asLogical(),
+            state,
             receivedTestResult,
             testAcknowledgedDate = Instant.now(fixedClock)
         )
@@ -3153,23 +2993,19 @@ class TestResultIsolationHandlerTest {
         )
 
     private fun IsolationState.selfAssessmentSymptomsOnsetInstant(): Instant =
-        ((indexInfo as IndexCase).isolationTrigger as SelfAssessment)
-            .assumedOnsetDate.atStartOfDay().toInstant(ZoneOffset.UTC)
+        selfAssessment!!.assumedOnsetDate.atStartOfDay().toInstant(ZoneOffset.UTC)
 
     private fun neverIsolating(): IsolationState =
         IsolationState(isolationConfiguration = DurationDays())
 
-    private fun neverIsolatingWithNegativeTest(testResult: AcknowledgedTestResult): IsolationState =
-        IsolationState(
-            isolationConfiguration = DurationDays(),
-            indexInfo = negativeTest(testResult)
-        )
-
-    private fun negativeTest(testResult: AcknowledgedTestResult): NegativeTest {
+    private fun neverIsolatingWithNegativeTest(testResult: AcknowledgedTestResult): IsolationState {
         if (testResult.testResult != RelevantVirologyTestResult.NEGATIVE) {
             throw IllegalArgumentException("This function can only be called with a negative test result")
         }
-        return NegativeTest(testResult)
+        return IsolationState(
+            isolationConfiguration = DurationDays(),
+            testResult = testResult
+        )
     }
 
     private fun isolationSelfAssessment(
@@ -3178,55 +3014,36 @@ class TestResultIsolationHandlerTest {
     ): IsolationState =
         IsolationState(
             isolationConfiguration = DurationDays(),
-            indexInfo = selfAssessment(selfAssessmentDate, onsetDate)
+            selfAssessment = selfAssessment(selfAssessmentDate, onsetDate)
         )
 
     private fun selfAssessment(
         selfAssessmentDate: LocalDate = indexCaseStartDate,
         onsetDate: LocalDate? = null
-    ): IndexCase =
-        IndexCase(
-            isolationTrigger = SelfAssessment(selfAssessmentDate, onsetDate),
-            expiryDate = selfAssessmentDate.plusDays(9)
-        )
+    ): SelfAssessment =
+        SelfAssessment(selfAssessmentDate, onsetDate)
 
     private fun isolationPositiveTest(
         testResult: AcknowledgedTestResult,
-    ): IsolationState =
-        IsolationState(
+    ): IsolationState {
+        if (testResult.testResult != RelevantVirologyTestResult.POSITIVE) {
+            throw IllegalArgumentException("This function can only be called with a positive test result")
+        }
+        return IsolationState(
             isolationConfiguration = DurationDays(),
-            indexInfo = positiveTest(testResult)
+            testResult = testResult
         )
-
-    private fun positiveTest(
-        testResult: AcknowledgedTestResult,
-    ): IndexCase =
-        IndexCase(
-            isolationTrigger = PositiveTestResult(testResult.testEndDate),
-            testResult = testResult,
-            expiryDate = testResult.testEndDate.plusDays(11)
-        )
-
-    private fun selfAssessmentAndTest(
-        selfAssessmentDate: LocalDate = indexCaseStartDate,
-        onsetDate: LocalDate? = null,
-        testResult: AcknowledgedTestResult,
-        testExpiresIndexCase: Boolean = false
-    ): IndexCase {
-        val indexCase = selfAssessment(selfAssessmentDate, onsetDate).addTestResult(testResult)
-        return if (testExpiresIndexCase) indexCase.copy(expiryDate = testResult.testEndDate)
-        else indexCase
     }
 
     private fun isolationSelfAssessmentAndTest(
         selfAssessmentDate: LocalDate = indexCaseStartDate,
         onsetDate: LocalDate? = null,
-        testResult: AcknowledgedTestResult,
-        testExpiresIndexCase: Boolean = false
+        testResult: AcknowledgedTestResult
     ): IsolationState =
         IsolationState(
             isolationConfiguration = DurationDays(),
-            indexInfo = selfAssessmentAndTest(selfAssessmentDate, onsetDate, testResult, testExpiresIndexCase)
+            selfAssessment = selfAssessment(selfAssessmentDate, onsetDate),
+            testResult = testResult
         )
 
     private fun isolationContactCase(
@@ -3234,16 +3051,15 @@ class TestResultIsolationHandlerTest {
     ): IsolationState =
         IsolationState(
             isolationConfiguration = DurationDays(),
-            contactCase = contactCase(encounterDate)
+            contact = contactCase(encounterDate)
         )
 
     private fun contactCase(
         encounterDate: LocalDate = this.encounterDate
-    ): ContactCase =
-        ContactCase(
+    ): Contact =
+        Contact(
             exposureDate = encounterDate,
-            notificationDate = encounterDate,
-            expiryDate = encounterDate.plus(11, DAYS)
+            notificationDate = encounterDate
         )
 
     private fun ReceivedTestResult.toAcknowledgedTestResult(

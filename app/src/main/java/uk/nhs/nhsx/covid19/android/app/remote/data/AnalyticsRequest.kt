@@ -111,4 +111,6 @@ data class Metrics(
     var selectedHasLFDTestM2Journey: Int = 0,
     var optedOutForContactIsolation: Int = 0,
     var optedOutForContactIsolationBackgroundTick: Int = 0,
+    var appIsUsableBackgroundTick: Int = 0,
+    var appIsContactTraceableBackgroundTick: Int = 0
 )

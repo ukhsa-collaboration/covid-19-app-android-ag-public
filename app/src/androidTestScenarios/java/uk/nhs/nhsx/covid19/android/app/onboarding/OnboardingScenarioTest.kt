@@ -107,7 +107,8 @@ class OnboardingScenarioTest(override val configuration: TestConfiguration) : Es
 
         step(
             "Confirm age",
-            "The user is asked to confirm they are older than 16 years. The user confirms to be older than 16."
+            "The user is asked to confirm they are older than 16 years. The user confirms to be older than 16.",
+            isDialog = true
         )
 
         welcomeRobot.clickConfirmAgePositive()

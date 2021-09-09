@@ -18,9 +18,8 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsViewModel.ViewState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import java.time.LocalDate
@@ -43,25 +42,19 @@ class SettingsViewModelTest {
     private val contactCaseExposureDate = LocalDate.parse("2020-05-19")
     private val contactCaseNotificationDate = LocalDate.parse("2020-05-20")
     private val dailyContactTestingOptInDate = LocalDate.parse("2020-05-21")
-    private val contactCaseExpiryDate = LocalDate.parse("2020-05-24")
     private val selfAssessmentDate = LocalDate.parse("2020-05-15")
     private val symptomsOnsetDate = LocalDate.parse("2020-05-14")
-    private val indexCaseExpiryDate = LocalDate.parse("2020-05-23")
 
     private val contactAndIndexIsolation = IsolationState(
         isolationConfiguration = DurationDays(),
-        contactCase = ContactCase(
+        contact = Contact(
             exposureDate = contactCaseExposureDate,
             notificationDate = contactCaseNotificationDate,
-            expiryDate = contactCaseExpiryDate,
             optOutOfContactIsolation = OptOutOfContactIsolation(dailyContactTestingOptInDate)
         ),
-        indexInfo = IndexCase(
-            isolationTrigger = SelfAssessment(
-                selfAssessmentDate = selfAssessmentDate,
-                onsetDate = symptomsOnsetDate
-            ),
-            expiryDate = indexCaseExpiryDate
+        selfAssessment = SelfAssessment(
+            selfAssessmentDate = selfAssessmentDate,
+            onsetDate = symptomsOnsetDate
         )
     )
 

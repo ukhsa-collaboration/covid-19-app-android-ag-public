@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
-import androidx.annotation.VisibleForTesting
 import androidx.work.ListenableWorker
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonEncodingException
@@ -10,26 +9,20 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodePro
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultRequestBody
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultResponse
-import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork.ReceivedVirologyTestResult.NoTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork.ReceivedVirologyTestResult.ParsableTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork.ReceivedVirologyTestResult.UnparsableTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.unknownresult.ReceivedUnknownTestResultProvider
-import java.time.Clock
-import java.time.Instant
-import java.time.temporal.ChronoUnit.DAYS
 import javax.inject.Inject
 
 class DownloadVirologyTestResultWork @Inject constructor(
     private val virologyTestingApi: VirologyTestingApi,
     private val testOrderingTokensProvider: TestOrderingTokensProvider,
     private val stateMachine: IsolationStateMachine,
-    private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider,
-    private val receivedUnknownTestResultProvider: ReceivedUnknownTestResultProvider,
-    private val clock: Clock
+    private val receivedUnknownTestResultProvider: ReceivedUnknownTestResultProvider
 ) {
 
     suspend operator fun invoke(): ListenableWorker.Result {
@@ -37,11 +30,6 @@ class DownloadVirologyTestResultWork @Inject constructor(
 
         configs.forEach { config ->
             try {
-                // FIXME: move into separate class
-                if (removeIfOld(config)) {
-                    return@forEach
-                }
-
                 val pollingToken = config.testResultPollingToken
 
                 when (val receivedTestResultResponse = fetchVirologyTestResult(pollingToken)) {
@@ -95,19 +83,6 @@ class DownloadVirologyTestResultWork @Inject constructor(
                 UnparsableTestResult
             }
         } ?: NoTestResult
-
-    @VisibleForTesting
-    fun removeIfOld(config: TestOrderPollingConfig): Boolean {
-        val houseKeepingDeletionPeriod =
-            isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
-        val configExpiryInstant = config.startedAt.plus(houseKeepingDeletionPeriod.toLong(), DAYS)
-        val now = Instant.now(clock)
-        if (now.isAfter(configExpiryInstant)) {
-            testOrderingTokensProvider.remove(config)
-            return true
-        }
-        return false
-    }
 
     sealed class ReceivedVirologyTestResult {
         data class ParsableTestResult(

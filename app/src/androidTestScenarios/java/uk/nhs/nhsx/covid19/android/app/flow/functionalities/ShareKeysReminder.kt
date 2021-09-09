@@ -28,7 +28,7 @@ class ShareKeysReminder(private val testAppContext: TestApplicationContext) {
 
         if (shouldConsentToShareKeys) {
             if (keySharingFinishesSuccessfully) {
-                shareKeysReminderRobot.clickShareResultsButton()
+                waitFor { shareKeysReminderRobot.clickShareResultsButton() }
                 waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
                 shareKeysResultRobot.clickActionButton()
             } else {

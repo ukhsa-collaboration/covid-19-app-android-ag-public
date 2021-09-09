@@ -12,7 +12,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.isDisplayed
 class WelcomeRobot {
 
     fun checkActivityIsDisplayed() {
-        onView(withId(R.id.confirmOnboarding))
+        onView(withId(R.id.welcomeTitle))
             .check(matches(isDisplayed()))
     }
 

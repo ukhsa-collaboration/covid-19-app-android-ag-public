@@ -443,6 +443,10 @@ class TestBluetoothStateProvider : AvailabilityStateProvider {
 
     override fun stop(context: Context) {
     }
+
+    override fun getState(isDebug: Boolean): AvailabilityState {
+        return bluetoothStateMutable.value!!
+    }
 }
 
 class TestLocationStateProvider : AvailabilityStateProvider {
@@ -455,6 +459,10 @@ class TestLocationStateProvider : AvailabilityStateProvider {
     }
 
     override fun stop(context: Context) {
+    }
+
+    override fun getState(isDebug: Boolean): AvailabilityState {
+        return locationStateMutable.value!!
     }
 }
 

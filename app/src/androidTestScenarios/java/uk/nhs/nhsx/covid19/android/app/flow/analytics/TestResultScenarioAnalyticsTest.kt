@@ -125,7 +125,7 @@ class TestResultScenarioAnalyticsTest : AnalyticsTest() {
         // Enters negative PCR test result on 1st Jan
         manualTestResultEntry.enterNegative()
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation() }
         testResultRobot.clickGoodNewsActionButton()
 
         // Current date: 2nd Jan -> Analytics packet for: 1st Jan

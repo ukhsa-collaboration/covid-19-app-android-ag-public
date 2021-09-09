@@ -22,7 +22,7 @@ import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
 import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext.Companion.ENGLISH_LOCAL_AUTHORITY
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -81,7 +81,7 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
             stepDescription = "User is presented a screen where they can confirm symptoms"
         )
 
-        linkTestResultSymptomsRobot.clickNo()
+        waitFor { linkTestResultSymptomsRobot.clickNo() }
 
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
 
@@ -112,7 +112,7 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
 
         linkTestResultRobot.clickContinue()
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation() }
 
         step(
             stepName = "Negative test result",
@@ -323,10 +323,9 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
 
     private val contactCaseOnlyIsolation = IsolationState(
         isolationConfiguration = DurationDays(),
-        contactCase = ContactCase(
+        contact = Contact(
             exposureDate = LocalDate.now().minus(2, DAYS),
-            notificationDate = LocalDate.now().minus(2, DAYS),
-            expiryDate = LocalDate.now().plusDays(12)
+            notificationDate = LocalDate.now().minus(2, DAYS)
         )
     )
 }

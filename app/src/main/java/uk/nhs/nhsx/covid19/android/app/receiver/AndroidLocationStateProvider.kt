@@ -12,14 +12,14 @@ import androidx.lifecycle.Transformations.distinctUntilChanged
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
 
-class AndroidLocationStateProvider : AvailabilityStateProvider,
+class AndroidLocationStateProvider(val applicationContext: Context) : AvailabilityStateProvider,
     BroadcastReceiver() {
     private val locationStateMutable = MutableLiveData<AvailabilityState>()
 
     override val availabilityState: LiveData<AvailabilityState> = distinctUntilChanged(locationStateMutable)
 
     override fun start(context: Context) {
-        locationStateMutable.postValue(determineLocationAvailabilityState(context))
+        locationStateMutable.postValue(determineLocationAvailabilityState())
         context.registerReceiver(this, IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION))
     }
 
@@ -27,18 +27,22 @@ class AndroidLocationStateProvider : AvailabilityStateProvider,
         context.unregisterReceiver(this)
     }
 
-    private fun isLocationEnabled(context: Context): Boolean {
-        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
+    override fun getState(isDebug: Boolean): AvailabilityState {
+        return determineLocationAvailabilityState()
+    }
+
+    private fun isLocationEnabled(): Boolean {
+        val locationManager = applicationContext.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
         return locationManager != null && LocationManagerCompat.isLocationEnabled(locationManager)
     }
 
-    private fun determineLocationAvailabilityState(context: Context) =
-        if (isLocationEnabled(context)) ENABLED else DISABLED
+    private fun determineLocationAvailabilityState() =
+        if (isLocationEnabled()) ENABLED else DISABLED
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != LocationManager.PROVIDERS_CHANGED_ACTION) {
             return
         }
-        locationStateMutable.postValue(determineLocationAvailabilityState(context))
+        locationStateMutable.postValue(determineLocationAvailabilityState())
     }
 }

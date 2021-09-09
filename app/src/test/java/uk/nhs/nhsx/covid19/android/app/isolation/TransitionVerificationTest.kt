@@ -5,6 +5,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import kotlin.test.assertFails
 
 /**
@@ -80,8 +81,11 @@ class TransitionVerificationTest(
         }
     }
 
-    private fun errorMessage() =
-        """
+    private fun errorMessage(): String {
+        val currentState = testAppContext.getCurrentState()
+        val currentLogicalState = testAppContext.getCurrentLogicalState()
+
+        return """
         
         Error testing verification (represented by ${initialStateRepresentation::class.simpleName})
         
@@ -89,13 +93,17 @@ class TransitionVerificationTest(
             $initialState
         
         Current isolation state:
-            ${testAppContext.getCurrentState()}
+            $currentState
             
         Current contact case:
-            ${testAppContext.getCurrentState().contactCase}
+            ${(currentLogicalState as? PossiblyIsolating)?.contactCase}
             
         Current index info:
-            ${testAppContext.getCurrentState().indexInfo}
+            ${(currentLogicalState as? PossiblyIsolating)?.indexInfo}
+
+        Current test result:
+            ${currentState.testResult}
         
         """.trimIndent()
+    }
 }

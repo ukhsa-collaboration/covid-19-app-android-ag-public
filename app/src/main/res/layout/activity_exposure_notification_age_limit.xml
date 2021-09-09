@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <include layout="@layout/view_toolbar_primary" />
 
     <androidx.core.widget.NestedScrollView
-        style="@style/ScrollContainer"
         android:id="@+id/ageLimitScrollView"
+        style="@style/ScrollContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -33,6 +33,7 @@
 
             <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
                 style="@style/Title1"
+                android:id="@+id/ageLimitTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_large"
@@ -40,40 +41,42 @@
                 android:textAlignment="center" />
 
             <TextView
+                android:id="@+id/ageLimitSubtitle"
                 style="@style/Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_large"
                 android:layout_marginBottom="4dp"
-                android:text="@string/exposure_notification_age_description" />
+                android:text="@string/exposure_notification_age_description"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.ErrorView
+                android:id="@+id/ageLimitErrorView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/ageLimitErrorView"
                 android:layout_marginTop="@dimen/vertical_margin"
-                app:error_title="@string/exposure_notification_age_error_title"
-                app:error_description="@string/exposure_notification_age_error_description"
                 android:visibility="gone"
-                tools:visibility="visible"
-                />
+                app:error_description="@string/exposure_notification_age_error_description"
+                app:error_title="@string/exposure_notification_age_error_title"
+                tools:visibility="visible" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                android:id="@+id/exposureNotificationAgeLimitDate"
                 style="@style/Title2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_large"
-                android:text="@string/exposure_notification_age_subtitle" />
+                tools:text="@string/exposure_notification_age_subtitle" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup
+                android:id="@+id/ageLimitBinaryRadioGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/ageLimitBinaryRadioGroup"
-                app:option1Text="@string/exposure_notification_age_option1_text"
-                app:option2Text="@string/exposure_notification_age_option2_text"
                 app:option1ContentDescription="@string/exposure_notification_age_yes_content_description"
+                app:option1Text="@string/exposure_notification_age_option1_text"
                 app:option2ContentDescription="@string/exposure_notification_age_no_content_description"
-                />
+                app:option2Text="@string/exposure_notification_age_option2_text" />
 
             <View
                 android:layout_width="match_parent"

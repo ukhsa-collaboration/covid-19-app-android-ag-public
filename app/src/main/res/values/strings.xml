@@ -33,7 +33,7 @@
     <string name="url_order_test_privacy_wls">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information/testing-for-coronavirus-privacy-information</string>
     <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="url_latest_government_guidance_wls">https://gov.wales/self-isolation</string>
-    <string name="url_nhs_guidance_wls" formatted="false">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
+    <string formatted="false" name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
 
     <!-- Plurals -->
     <plurals name="state_isolation_days">
@@ -51,6 +51,18 @@
     <plurals name="resume_contact_tracing_hours">
         <item quantity="one">%d hour</item>
         <item quantity="other">%d hours</item>
+    </plurals>
+    <plurals name="contact_case_start_isolation_how_we_calculate_isolation_days_isolation_period">
+        <item quantity="one">You should self-isolate for %d full day after the date of close contact.</item>
+        <item quantity="other">You should self-isolate for %d full days after the date of close contact.</item>
+    </plurals>
+    <plurals name="contact_case_start_isolation_how_we_calculate_isolation_days_days_since_encounter">
+        <item quantity="one">You came into close contact with someone %d day ago who has since reported a positive COVID-19 test result in the app.</item>
+        <item quantity="other">You came into close contact with someone %d days ago who has since reported a positive COVID-19 test result in the app.</item>
+    </plurals>
+    <plurals name="contact_case_start_isolation_how_we_calculate_isolation_days_remaining_days">
+        <item quantity="one">Your remaining self-isolation period is %d day.</item>
+        <item quantity="other">Your remaining self-isolation period is %d days.</item>
     </plurals>
 
     <!-- Regular strings -->
@@ -238,7 +250,7 @@
     <string name="expiration_notification_title">Good News!</string>
     <string name="expiration_notification_description_passed">You have been released from isolation since the %s at 23:59</string>
     <string name="expiration_notification_recommendation">For further advice, please visit:</string>
-    <string name="expiration_temperature_hint">However, if you have a high temperature, you are advised to continue to self-isolate until it returns to normal</string>
+    <string name="expiration_temperature_hint">However, if you have a high temperature, continue to self-isolate until it returns to normal</string>
     <string name="button_agree">I agree</string>
     <string name="terms_of_use_onboarding">Terms of use</string>
     <string name="about_this_app_title">About this app</string>
@@ -255,7 +267,7 @@
     <string name="about_software_information_text_app_manufacturer">Manufacturer and maintainer</string>
     <string name="about_software_information_text_app_manufacturer_value">NHS Test &amp; Trace\nDepartment of Health and Social Care\n39 Victoria Street\nWestminster\nLondon\nSW1H 0EU\nUK</string>
     <string name="test_result_positive_no_self_isolation_subtitle">Although you tested positive, your period for self-isolation is over</string>
-    <string name="test_result_no_self_isolation_description">However, if you have a high temperature, you are advised to continue to self-isolate until it returns to normal</string>
+    <string name="test_result_no_self_isolation_description">However, if you have a high temperature, continue to self-isolate until it returns to normal</string>
     <string name="for_further_advice_visit">For further advice, please visit:</string>
     <string name="test_result_your_test_result">Your test result</string>
     <string name="test_result_positive_continue_self_isolation_title_1">Continue to self-isolate for</string>
@@ -430,7 +442,7 @@
     <string name="test_result_void_no_self_isolation_subtitle">We could not tell if you had coronavirus</string>
     <string name="test_result_negative_no_self_isolation_explanation">The test result shows that at the time of testing, you did not have the virus. If you do develop symptoms, report them on this app. If you are under 18, you are advised to show this message to a trusted adult.</string>
     <string name="test_result_negative_no_self_isolation_subtitle">Your self-isolation has now finished</string>
-    <string name="test_result_positive_no_self_isolation_description">However, if you have a high temperature, you are advised to continue to self-isolate until it returns to normal</string>
+    <string name="test_result_positive_no_self_isolation_description">However, if you have a high temperature, continue to self-isolate until it returns to normal</string>
     <string name="isolation_payment_privacy_notice_title">Any data used in the application process is described in the privacy notice:</string>
     <string name="isolation_payment_privacy_notice_link_text">Contact tracing privacy notice</string>
     <string name="isolation_payment_privacy_notice_link_url">https://sip.test-and-trace.nhs.uk/privacy-policy</string>
@@ -634,6 +646,10 @@
     <string name="isolation_hub_book_test_description">You may be at risk of spreading coronavirus (COVID-19)</string>
     <string name="isolation_hub_financial_support_title">Check if you’re eligible for financial support</string>
     <string name="isolation_hub_financial_support_description">Learn about applying for a financial support payment while self-isolating</string>
+    <string name="self_isolation_hub_get_isolation_note_title">Get an isolation note</string>
+    <string name="self_isolation_hub_get_isolation_note_description">If you need an isolation note to show your employer</string>
+    <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
+    <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="testing_hub_helpful_information_heading">[to be deleted]</string>
     <string name="testing_hub_accordion_test_result_types_to_enter_title">[to be deleted]</string>
     <string name="testing_hub_accordion_test_result_types_to_enter_paragraph_1">[to be deleted]</string>
@@ -690,18 +706,23 @@
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">Book a free PCR test to see if you have COVID-19.</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">You are at high risk of catching and spreading COVID-19, even if you don\'t have any symptoms. By staying at home you can help keep yourself and others safe.</string>
     <string name="risky_contact_isolation_advice_continue_isolataion_for">Continue to self-isolate for</string>
-    <string name="risky_contact_isolation_advice_already_isolating_information">The app has detected that you have been in contact with someone who has coronavirus (COVID-19)</string>
+    <string name="risky_contact_isolation_advice_already_isolating_information">If you have not already done so, you can book a free PCR test from ‘Testing for COVID-19’ on the home screen.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">If you have not already done so, you can book a free PCR test from ‘Testing for COVID-19’ on the home screen.</string>
-    <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">You are at high risk of catching and spreading COVID-19, even if you don\'t have any symptoms. By staying at home you can help keep yourself and others safe.</string>
-    <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">I understand</string>
+    <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">You are at high risk of having and spreading COVID-19, even if you don’t have any symptoms. By staying at home you can help keep yourself and others safe.</string>
+    <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">Back to home screen</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">You do not need to self-isolate</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">You are advised to book a free PCR test</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">Research has shown the vaccines help reduce your risk of catching and spreading COVID-19.</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">It is still important to reduce your contact with others and book a free PCR test.</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">It is still important to reduce your contact with others.</string>
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">You do not need to self-isolate</string>
     <string name="risky_contact_isolation_advice_minors_information">You are advised to book a free PCR test</string>
-    <string name="risky_contact_isolation_advice_minors_testing_advice">It is still important to reduce your contact with others and book a free PCR test.</string>
+    <string name="risky_contact_isolation_advice_minors_testing_advice">It is still important to reduce your contact with others.</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">You are advised to show this message to a trusted adult.</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_heading">You do not need to self-isolate</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">You are advised to book a free PCR test</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_research">Research has shown the vaccines help reduce your risk of catching and spreading COVID-19.</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_reduce_risk_with_vaccination">As more people are vaccinated, the risk to those wo are medically exempt is lower.</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_advice">It is still important to reduce your contact with others.</string>
     <string name="exposure_notification_title">The app has detected that you have been near someone who tested positive for coronavirus (COVID-19)</string>
     <string name="exposure_notification_warning">You may need to self-isolate depending on your age or vaccination status</string>
     <string name="exposure_notification_testing_information">If you have symptoms, select “Check symptoms” on the home screen and get a test.</string>
@@ -709,9 +730,12 @@
     <string name="exposure_notification_age_heading">Your age</string>
     <string name="exposure_notification_age_description">We will only use your answers to check if you may need to self–isolate.</string>
     <string name="exposure_notification_age_subtitle">Were you aged 18 or over on 16 February 2021?</string>
+    <string name="exposure_notification_age_subtitle_template">Were you aged 18 or over on %s?</string>
     <string name="exposure_notification_age_title">Your age</string>
-    <string name="exposure_notification_age_yes_content_description">Yes, I was aged 18 or over on 16 February 2021</string>
-    <string name="exposure_notification_age_no_content_description">No, I was not aged 18 or over on 16 February 2021</string>
+    <string name="exposure_notification_age_yes_content_description">[to be deleted]</string>
+    <string name="exposure_notification_age_yes_content_description_template">Yes, I was aged 18 or over on %s</string>
+    <string name="exposure_notification_age_no_content_description">[to be deleted]</string>
+    <string name="exposure_notification_age_no_content_description_template">No, I was not aged 18 or over on %s</string>
     <string name="exposure_notification_age_option1_text">Yes</string>
     <string name="exposure_notification_age_option2_text">No</string>
     <string name="exposure_notification_age_error_title">Error</string>
@@ -754,6 +778,21 @@
     <string name="new_no_symptoms_section6_title">new_no_symptoms_section6_title</string>
     <string name="new_no_symptoms_section6_text">new_no_symptoms_section6_text</string>
     <string name="new_no_symptoms_action_button_text">new_no_symptoms_action_button_text</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading">How close contact is calculated</string>
+    <string name="contact_case_exposure_info_screen_exposure_date">Close contact happened on %s</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_body">The app uses Bluetooth to check if your phone has been in close contact with others.\n\nClose contact means you were within 2 metres of someone for 15 minutes or more.\n\nThe app is anonymous and does not use GPS or venue check-in to track your location, so your privacy is protected.</string>
+    <string name="contact_case_start_isolation_how_we_calculate_isolation_days_title">How self-isolation days are calculated</string>
+    <string name="exposure_notification_clinical_trial_question">Are you taking part in an MHRA-approved COVID-19 vaccine clinical trial?</string>
+    <string name="exposure_notification_clinical_trial_yes">Yes</string>
+    <string name="exposure_notification_clinical_trial_no">No</string>
+    <string name="exposure_notification_clinical_trial_yes_content_description">Yes I am taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
+    <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
+    <string name="exposure_notification_medically_exempt_question">Are you medically exempt from receiving a COVID-19 vaccine?</string>
+    <string name="exposure_notification_medically_exempt_yes">Yes</string>
+    <string name="exposure_notification_medically_exempt_no">No</string>
+    <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="exposure_notification_medically_exempt_description">This means you have proof that you are not able to get vaccinated for medical reasons</string>
     <string name="advisory_risky_contact_newly_isolating_further_advice">[to be deleted]</string>
     <string name="advisory_risky_contact_nhs_guidance_label">[to be deleted]</string>
     <string name="exposure_notification_advised_to_self_isolate_for">Self-isolate for</string>

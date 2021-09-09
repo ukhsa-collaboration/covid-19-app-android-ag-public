@@ -13,6 +13,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import uk.nhs.nhsx.covid19.android.app.util.uiLongFormat
 import java.time.LocalDate
+import kotlin.test.assertTrue
 
 class ExposureNotificationVaccinationStatusActivityTest : EspressoTest(), IsolationSetupHelper,
     LocalAuthoritySetupHelper {
@@ -20,7 +21,26 @@ class ExposureNotificationVaccinationStatusActivityTest : EspressoTest(), Isolat
     override val isolationHelper = IsolationHelper(testAppContext.clock)
 
     @Test
+    fun whenNotInIndexCase_subtitleIsDisplayed() {
+        givenContactIsolation()
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        waitFor { vaccinationStatusRobot.checkActivityIsDisplayed() }
+        vaccinationStatusRobot.checkSubtitleDisplayed(displayed = true)
+    }
+
+    @Test
+    fun whenInIndexCase_subtitleIsNotDisplayed() {
+        givenSelfAssessmentAndContactIsolation()
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        waitFor { vaccinationStatusRobot.checkActivityIsDisplayed() }
+        vaccinationStatusRobot.checkSubtitleDisplayed(displayed = false)
+    }
+
+    @Test
     fun whenUserClicksContinue_errorIsDisplayed() {
+        givenContactIsolation()
         startTestActivity<ExposureNotificationVaccinationStatusActivity>()
 
         waitFor { vaccinationStatusRobot.checkActivityIsDisplayed() }
@@ -108,6 +128,139 @@ class ExposureNotificationVaccinationStatusActivityTest : EspressoTest(), Isolat
     }
 
     @Test
+    fun whenInEngland_whenAllDosesIsYes_whenFourthQuestionIsAnswered_answerToFirstQuestionChangedToNo_secondQuestionHasNoOptionSelected() {
+        givenLocalAuthorityIsInEngland()
+        givenContactIsolation()
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        waitFor { vaccinationStatusRobot.checkActivityIsDisplayed() }
+
+        vaccinationStatusRobot.clickDosesYesButton()
+
+        waitFor { vaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
+
+        vaccinationStatusRobot.clickDateNoButton()
+        vaccinationStatusRobot.clickClinicalTrialNoButton()
+        vaccinationStatusRobot.clickMedicallyExemptNoButton()
+
+        vaccinationStatusRobot.clickDosesNoButton()
+
+        waitFor { vaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(false) }
+
+        waitFor { vaccinationStatusRobot.checkMedicallyExemptNothingSelected() }
+    }
+
+    @Test
+    fun whenInWales_verifyMedicallyExemptQuestionIsNotDisplayed() {
+        givenLocalAuthorityIsInWales()
+        givenContactIsolation()
+
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        waitFor { vaccinationStatusRobot.checkActivityIsDisplayed() }
+
+        vaccinationStatusRobot.clickDosesYesButton()
+
+        waitFor { vaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
+
+        vaccinationStatusRobot.clickDateNoButton()
+
+        waitFor { vaccinationStatusRobot.checkClinicalTrialQuestionContainerDisplayed(true) }
+
+        vaccinationStatusRobot.clickClinicalTrialNoButton()
+
+        waitFor { vaccinationStatusRobot.checkMedicallyExemptQuestionContainerDisplayed(false) }
+    }
+
+    @Test
+    fun whenInEngland_verifyMedicallyExemptQuestionIsDisplayed() {
+        givenLocalAuthorityIsInEngland()
+        givenContactIsolation()
+
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        waitFor { vaccinationStatusRobot.checkActivityIsDisplayed() }
+
+        vaccinationStatusRobot.clickDosesYesButton()
+
+        waitFor { vaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
+
+        vaccinationStatusRobot.clickDateNoButton()
+
+        waitFor { vaccinationStatusRobot.checkClinicalTrialQuestionContainerDisplayed(true) }
+
+        vaccinationStatusRobot.clickClinicalTrialNoButton()
+
+        waitFor { vaccinationStatusRobot.checkMedicallyExemptQuestionContainerDisplayed(true) }
+    }
+
+    @Test
+    fun whenInEngland_verifyClinicalTrialQuestionIsNotDisplayed() {
+        givenLocalAuthorityIsInEngland()
+        givenContactIsolation()
+
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        waitFor { vaccinationStatusRobot.checkActivityIsDisplayed() }
+
+        vaccinationStatusRobot.clickDosesNoButton()
+
+        waitFor { vaccinationStatusRobot.checkClinicalTrialQuestionContainerDisplayed(false) }
+    }
+
+    @Test
+    fun whenInEngland_selectNoToMedicallyExemptQuestion_verifyClinicalTrialQuestionIsDisplayed() {
+        givenLocalAuthorityIsInEngland()
+        givenContactIsolation()
+
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        waitFor { vaccinationStatusRobot.checkActivityIsDisplayed() }
+
+        vaccinationStatusRobot.clickDosesNoButton()
+
+        waitFor { vaccinationStatusRobot.checkMedicallyExemptQuestionContainerDisplayed(true) }
+
+        vaccinationStatusRobot.clickMedicallyExemptNoButton()
+
+        waitFor { vaccinationStatusRobot.checkClinicalTrialQuestionContainerDisplayed(true) }
+    }
+
+    @Test
+    fun whenInWales_whenSelectNoToDosesQuestion_verifyClinicalTrialQuestionIsDisplayed() {
+        givenLocalAuthorityIsInWales()
+        givenContactIsolation()
+
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        waitFor { vaccinationStatusRobot.checkActivityIsDisplayed() }
+
+        vaccinationStatusRobot.clickDosesNoButton()
+
+        waitFor { vaccinationStatusRobot.checkClinicalTrialQuestionContainerDisplayed(true) }
+    }
+
+    @Test
+    fun whenSelectYesToDosesQuestion_andNoToVaccinationDate_dateQuestionIsDisplayed() {
+        givenContactIsolation()
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        waitFor { vaccinationStatusRobot.checkActivityIsDisplayed() }
+
+        vaccinationStatusRobot.clickDosesYesButton()
+
+        waitFor { vaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
+
+        vaccinationStatusRobot.clickDateNoButton()
+
+        waitFor { vaccinationStatusRobot.checkClinicalTrialQuestionContainerDisplayed(true) }
+
+        val expectedDate = LocalDate.now(testAppContext.clock).minusDays(17)
+        val expectedDateString = expectedDate.uiLongFormat(testAppContext.app)
+        waitFor { vaccinationStatusRobot.checkDosesDateQuestionDisplayedWithDate(expectedDateString) }
+    }
+
+    @Test
     fun approvedVaccineUrlIsEnglandSpecificForUserWithEnglishLocalAuthority() {
         givenLocalAuthorityIsInEngland()
         givenContactIsolation()
@@ -129,5 +282,12 @@ class ExposureNotificationVaccinationStatusActivityTest : EspressoTest(), Isolat
         assertBrowserIsOpened(R.string.exposure_notification_vaccination_status_all_doses_question_link_url_wls) {
             vaccinationStatusRobot.clickApprovedVaccinesLink()
         }
+    }
+
+    @Test
+    fun whenNotInContactIsolation_activityFinishes() {
+        val activity = startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        waitFor { assertTrue(activity!!.isDestroyed) }
     }
 }

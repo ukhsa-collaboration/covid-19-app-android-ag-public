@@ -17,9 +17,8 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.Explici
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.NotStated
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.HandleAcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.HandleTestResult
@@ -85,7 +84,7 @@ class IsolationStateMachine @Inject constructor(
     private val analyticsEventProcessor: AnalyticsEventProcessor,
     private val exposureNotificationHandler: ExposureNotificationHandler,
     private val keySharingInfoProvider: KeySharingInfoProvider,
-    private val createSelfAssessmentIndexCase: CreateSelfAssessmentIndexCase,
+    private val createIsolationLogicalState: CreateIsolationLogicalState,
     private val trackTestResultAnalyticsOnReceive: TrackTestResultAnalyticsOnReceive,
     private val trackTestResultAnalyticsOnAcknowledge: TrackTestResultAnalyticsOnAcknowledge,
     private val scheduleIsolationHubReminder: ScheduleIsolationHubReminder,
@@ -103,36 +102,28 @@ class IsolationStateMachine @Inject constructor(
                     return@on dontTransition()
                 }
 
-                val exposureDay = it.exposureDate.toLocalDate(ZoneOffset.UTC)
-                val potentialContactExpiryDate = exposureDay
-                    .plusDays(isolationConfiguration.contactCase.toLong())
-
-                val currentLogicalState = IsolationLogicalState.from(this)
-                val contactCase = with(
-                    ContactCase(
-                        exposureDate = exposureDay,
+                val newState = copy(
+                    contact = Contact(
+                        exposureDate = it.exposureDate.toLocalDate(ZoneOffset.UTC),
                         notificationDate = LocalDate.now(clock),
-                        expiryDate = potentialContactExpiryDate,
                         optOutOfContactIsolation = null
                     )
-                ) {
-                    this.copy(expiryDate = currentLogicalState.capExpiryDate(this))
-                }
+                )
+                val newLogicalState = createIsolationLogicalState(newState)
 
-                if (contactCase.hasExpired(clock)) {
-                    dontTransition()
-                } else {
-                    val newState = updateHasAcknowledgedEndOfIsolation(
+                if (newLogicalState.isActiveContactCase(clock)) {
+                    val newStateWithAcknowledgement = updateHasAcknowledgedEndOfIsolation(
                         currentState = this,
-                        newState = copy(contactCase = contactCase)
+                        newState = newState
                     )
-                    transitionTo(newState, SendExposedNotification)
+                    transitionTo(newStateWithAcknowledgement, SendExposedNotification)
+                } else {
+                    dontTransition()
                 }
             }
 
             on<OnPositiveSelfAssessment> {
-                val isolationLogicalState = IsolationLogicalState.from(this)
-                var newState = handlePositiveSelfAssessment(it.onsetDate, isolationLogicalState)
+                var newState = handlePositiveSelfAssessment(it.onsetDate, currentState = this)
                 if (newState != null) {
                     newState = updateHasAcknowledgedEndOfIsolation(
                         currentState = this,
@@ -149,17 +140,19 @@ class IsolationStateMachine @Inject constructor(
             }
 
             on<OnTestResultAcknowledge> {
-                val isolationLogicalState = IsolationLogicalState.from(this)
                 val transition = testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
-                    isolationLogicalState,
+                    currentState = this,
                     it.testResult,
                     testAcknowledgedDate = Instant.now(clock)
                 )
-                val sideEffect =
-                    HandleAcknowledgedTestResult(isolationLogicalState, it.testResult, transition.keySharingInfo)
+                val sideEffect = HandleAcknowledgedTestResult(
+                    createIsolationLogicalState(this),
+                    it.testResult,
+                    transition.keySharingInfo
+                )
                 when (transition) {
                     is TransitionDueToTestResult.Transition -> {
-                        val newLogicalState = IsolationLogicalState.from(transition.newState)
+                        val newLogicalState = createIsolationLogicalState(transition.newState)
                         val hasExpiredIsolation = newLogicalState is PossiblyIsolating &&
                                 !newLogicalState.isActiveIsolation(clock)
                         val newState = transition.newState.copy(hasAcknowledgedEndOfIsolation = hasExpiredIsolation)
@@ -171,8 +164,7 @@ class IsolationStateMachine @Inject constructor(
 
             on<OnOptOutOfContactIsolation> {
                 var newState = this.copy(
-                    contactCase = this.contactCase!!.copy(
-                        expiryDate = it.encounterDate,
+                    contact = this.contact!!.copy(
                         optOutOfContactIsolation = OptOutOfContactIsolation(date = it.encounterDate)
                     )
                 )
@@ -181,7 +173,7 @@ class IsolationStateMachine @Inject constructor(
             }
 
             on<OnAcknowledgeIsolationExpiration> {
-                when (IsolationLogicalState.from(this)) {
+                when (createIsolationLogicalState(this)) {
                     is PossiblyIsolating -> transitionTo(this.copy(hasAcknowledgedEndOfIsolation = true))
                     is NeverIsolating -> dontTransition()
                 }
@@ -189,8 +181,8 @@ class IsolationStateMachine @Inject constructor(
 
             on<OnReset> {
                 val isolationConfiguration = isolationConfigurationProvider.durationDays
-                val isolationLogicalState = NeverIsolating(isolationConfiguration, negativeTest = null)
-                transitionTo(isolationLogicalState.toIsolationState())
+                val isolationState = IsolationState(isolationConfiguration)
+                transitionTo(isolationState)
             }
         }
 
@@ -198,9 +190,9 @@ class IsolationStateMachine @Inject constructor(
             val validTransition = it as? Transition.Valid ?: return@onTransition
 
             val currentState = stateStorage.state
-            val currentLogicalState = IsolationLogicalState.from(currentState)
+            val currentLogicalState = createIsolationLogicalState(currentState)
             val newState = validTransition.toState
-            val newLogicalState = IsolationLogicalState.from(newState)
+            val newLogicalState = createIsolationLogicalState(newState)
             val willBeInIsolation = newLogicalState.isActiveIsolation(clock)
 
             if (newState == currentState) {
@@ -265,7 +257,7 @@ class IsolationStateMachine @Inject constructor(
     }
 
     fun readLogicalState(): IsolationLogicalState = synchronized(this) {
-        return IsolationLogicalState.from(readState())
+        return createIsolationLogicalState(readState())
     }
 
     fun processEvent(event: Event): Transition<IsolationState, Event, SideEffect> = synchronized(this) {
@@ -310,10 +302,10 @@ class IsolationStateMachine @Inject constructor(
             return newState
         }
 
-        val currentLogicalState = IsolationLogicalState.from(currentState)
+        val currentLogicalState = createIsolationLogicalState(currentState)
         val isInIsolation = currentLogicalState.isActiveIsolation(clock)
 
-        val newLogicalState = IsolationLogicalState.from(newState)
+        val newLogicalState = createIsolationLogicalState(newState)
         val willBeInIsolation = newLogicalState.isActiveIsolation(clock)
 
         return if (!isInIsolation && willBeInIsolation)
@@ -326,51 +318,52 @@ class IsolationStateMachine @Inject constructor(
 
     private fun handlePositiveSelfAssessment(
         selectedDate: SelectedDate,
-        currentState: IsolationLogicalState
+        currentState: IsolationState
     ): IsolationState? {
+        val currentLogicalState = createIsolationLogicalState(currentState)
+
         // If it should not be possible to report symptoms or onset date not stated, abort
-        if (!currentState.canReportSymptoms(clock) || selectedDate == NotStated) {
+        if (!currentLogicalState.canReportSymptoms(clock) || selectedDate == NotStated) {
             return null
         }
 
-        val indexCase =
-            if (currentState.hasActivePositiveTestResult(clock)) {
+        val selfAssessmentDate = LocalDate.now(clock)
+
+        val newState =
+            if (currentLogicalState.hasActivePositiveTestResult(clock)) {
                 val selfAssessment = SelfAssessment(
-                    selfAssessmentDate = LocalDate.now(clock),
+                    selfAssessmentDate = selfAssessmentDate,
                     onsetDate = if (selectedDate is ExplicitDate) selectedDate.date else null
                 )
-                val testResult = currentState.toIsolationState().indexInfo!!.testResult!!
 
-                if (selfAssessment.assumedOnsetDate.isAfter(testResult.testEndDate)) {
-                    createSelfAssessmentIndexCase(currentState, selfAssessment, discardTestResultIfPresent = false)
-                } else currentState.toIsolationState().indexInfo as? IndexCase
+                if (selfAssessment.assumedOnsetDate.isAfter(currentState.testResult!!.testEndDate)) {
+                    currentState.copy(selfAssessment = selfAssessment)
+                } else {
+                    currentState
+                }
             } else {
                 when (selectedDate) {
                     NotStated -> null
-                    is ExplicitDate -> createSelfAssessmentIndexCase(
-                        currentState,
-                        onsetDate = selectedDate.date,
-                        discardTestResultIfPresent = true
-                    )
-                    CannotRememberDate -> createSelfAssessmentIndexCase(
-                        currentState,
-                        onsetDate = null,
-                        discardTestResultIfPresent = true
-                    )
+                    is ExplicitDate ->
+                        currentState.copy(
+                            selfAssessment = SelfAssessment(selfAssessmentDate, onsetDate = selectedDate.date),
+                            testResult = null
+                        )
+                    CannotRememberDate ->
+                        currentState.copy(
+                            selfAssessment = SelfAssessment(selfAssessmentDate, onsetDate = null),
+                            testResult = null
+                        )
                 }
             }
-        return if (indexCase == null || indexCase.hasExpired(clock)) null
-        else currentState.toIsolationState().copy(indexInfo = indexCase)
-    }
 
-    private fun createSelfAssessmentIndexCase(
-        currentState: IsolationLogicalState,
-        onsetDate: LocalDate?,
-        discardTestResultIfPresent: Boolean
-    ): IndexCase =
-        createSelfAssessmentIndexCase(
-            currentState,
-            SelfAssessment(selfAssessmentDate = LocalDate.now(clock), onsetDate),
-            discardTestResultIfPresent
-        )
+        if (newState == null) {
+            return null
+        }
+
+        val newLogicalState = createIsolationLogicalState(newState)
+
+        return if (newLogicalState.isActiveIndexCase(clock)) newState
+        else null
+    }
 }

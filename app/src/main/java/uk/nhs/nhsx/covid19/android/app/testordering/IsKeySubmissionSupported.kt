@@ -16,7 +16,7 @@ class IsKeySubmissionSupported @Inject constructor(
         testResult.diagnosisKeySubmissionSupported && !shouldPreventKeySubmission(testResult)
 
     private fun shouldPreventKeySubmission(testResult: ReceivedTestResult): Boolean {
-        val currentState = isolationStateMachine.readLogicalState()
+        val currentState = isolationStateMachine.readState()
         val transition = testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
             currentState,
             testResult,

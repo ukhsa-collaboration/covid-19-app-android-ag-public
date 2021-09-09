@@ -8,10 +8,9 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AcknowledgedStar
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.ShouldShowEncounterDetectionActivityProvider
-import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
-import uk.nhs.nhsx.covid19.android.app.state.asLogical
 import uk.nhs.nhsx.covid19.android.app.status.isolationhub.ScheduleIsolationHubReminder
 import java.time.Clock
 import java.time.Instant
@@ -27,7 +26,7 @@ class AcknowledgeRiskyContactTest {
     private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxed = true)
     private val scheduleIsolationHubReminder = mockk<ScheduleIsolationHubReminder>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-01-01T10:00:00Z"), ZoneOffset.UTC)
-    private val isolationHelper = IsolationHelper(fixedClock)
+    private val isolationHelper = IsolationLogicalHelper(fixedClock)
 
     private val acknowledgeRiskyContact = AcknowledgeRiskyContact(
         exposureNotificationRetryAlarmController,
@@ -41,7 +40,7 @@ class AcknowledgeRiskyContactTest {
     @Test
     fun `when acknowledging contact case isolation and already isolating for different reason then do not schedule isolation hub reminder notification`() {
         every { isolationStateMachine.readLogicalState() } returns
-                isolationHelper.selfAssessment().asIsolation().asLogical()
+                isolationHelper.selfAssessment().asIsolation()
 
         acknowledgeRiskyContact()
 
@@ -54,7 +53,7 @@ class AcknowledgeRiskyContactTest {
     @Test
     fun `when acknowledging contact case isolation and currently only isolating due to contact case then schedule isolation hub reminder notification`() {
         every { isolationStateMachine.readLogicalState() } returns
-                isolationHelper.contactCase().asIsolation().asLogical()
+                isolationHelper.contactCase().asIsolation()
 
         acknowledgeRiskyContact()
 

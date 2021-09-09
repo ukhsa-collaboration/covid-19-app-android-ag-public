@@ -4,7 +4,6 @@ import androidx.work.ListenableWorker
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonEncodingException
-import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder
@@ -20,7 +19,6 @@ import uk.nhs.nhsx.covid19.android.app.analytics.TestOrderType.INSIDE_APP
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
@@ -31,43 +29,33 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultRequestBody
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultResponse
-import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.unknownresult.ReceivedUnknownTestResultProvider
-import java.time.Clock
 import java.time.Instant
-import java.time.ZoneId
 import java.time.temporal.ChronoUnit.DAYS
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class DownloadVirologyTestResultWorkTest {
 
     private val virologyTestingApi = mockk<VirologyTestingApi>()
     private val testOrderTokensProvider = mockk<TestOrderingTokensProvider>(relaxUnitFun = true)
     private val stateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
-    private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
     private val localAuthorityPostCodeProvider = mockk<LocalAuthorityPostCodeProvider>()
     private val receivedUnknownTestResultProvider = mockk<ReceivedUnknownTestResultProvider>(relaxUnitFun = true)
-    private val clock = Clock.fixed(from, ZoneId.systemDefault())
 
     val testSubject = DownloadVirologyTestResultWork(
         virologyTestingApi,
         testOrderTokensProvider,
         stateMachine,
-        isolationConfigurationProvider,
         localAuthorityPostCodeProvider,
         receivedUnknownTestResultProvider,
-        clock
     )
 
     // FIXME: add additional tests
 
     @Before
     fun setUp() {
-        every { isolationConfigurationProvider.durationDays } returns DurationDays()
         coEvery { localAuthorityPostCodeProvider.getPostCodeDistrict() } returns ENGLAND
     }
 
@@ -291,36 +279,6 @@ class DownloadVirologyTestResultWorkTest {
         )
         verify { stateMachine.processEvent(OnTestResult(testResult2, testOrderType = INSIDE_APP)) }
         verify { stateMachine.processEvent(OnTestResult(testResult1, testOrderType = INSIDE_APP)) }
-    }
-
-    @Test
-    fun `remove test ordering token if it is too old`() {
-        every { isolationConfigurationProvider.durationDays } returns DurationDays(
-            pendingTasksRetentionPeriod = 7
-        )
-        val config =
-            TestOrderPollingConfig(from.minus(8, DAYS), "token", "submission_token")
-
-        val result = testSubject.removeIfOld(config)
-
-        assertTrue(result)
-
-        verify { testOrderTokensProvider.remove(config) }
-    }
-
-    @Test
-    fun `do not remove test ordering token if it is not too old`() {
-        every { isolationConfigurationProvider.durationDays } returns DurationDays(
-            pendingTasksRetentionPeriod = 7
-        )
-        val config =
-            TestOrderPollingConfig(from.minus(6, DAYS), "token", "submission_token")
-
-        val result = testSubject.removeIfOld(config)
-
-        assertFalse(result)
-
-        verify { testOrderTokensProvider wasNot called }
     }
 
     @Test

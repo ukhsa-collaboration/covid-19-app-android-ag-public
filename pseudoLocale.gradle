@@ -1,12 +1,36 @@
 task generatePseudoLocaleForStringIds {
     def strings = new XmlParser().parse("app/src/main/res/values/strings.xml")
 
+    def exportFormatPatternsString = { input ->
+        def regex = ~"%[^\\s%]*[aAbBcCdeEfgGhHosStTxX]"
+        def allMatches = new ArrayList<String>()
+        def matcher = regex.matcher(input)
+        while (matcher.find()) {
+            allMatches.add(matcher.group());
+        }
+        return allMatches.join(" ")
+    }
+
     // update regular strings
-    strings.string.each { it.value = it.@name }
+    strings.string.each { str ->
+        def formatPatterns = exportFormatPatternsString(str.text())
+        if (formatPatterns == "") {
+            str.value = str.@name
+        } else {
+            str.value = "${str.@name} (${formatPatterns})"
+        }
+    }
 
     // update plurals
     strings.plurals.each { plurals ->
-        plurals.item.each { it.value = plurals.@name + "|" + it.@quantity }
+        plurals.item.each { plural ->
+            def formatPatterns = exportFormatPatternsString(plural.text())
+            if (formatPatterns == "") {
+                plural.value = "${plurals.@name}|${plural.@quantity}"
+            } else {
+                plural.value = "${plurals.@name}|${plural.@quantity} ($formatPatterns)"
+            }
+        }
     }
 
     def outputDir = new File("app/src/scenarios/res/values-non")

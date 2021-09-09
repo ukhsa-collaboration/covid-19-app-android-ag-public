@@ -7,7 +7,7 @@ import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_SUCCEED
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.testhelpers.assertBrowserIsOpened
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ProgressRobot
@@ -24,10 +24,9 @@ class RedirectToIsolationPaymentWebsiteActivityTest : EspressoTest() {
         testAppContext.setState(
             IsolationState(
                 isolationConfiguration = DurationDays(),
-                contactCase = ContactCase(
+                contact = Contact(
                     exposureDate = LocalDate.now().minus(3, DAYS),
-                    notificationDate = LocalDate.now().minus(2, DAYS),
-                    expiryDate = LocalDate.now().plus(1, DAYS)
+                    notificationDate = LocalDate.now().minus(2, DAYS)
                 )
             )
         )

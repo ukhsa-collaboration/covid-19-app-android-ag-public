@@ -30,6 +30,7 @@ class ExposureWindowAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun submitsExposureWindowData_whenUserHasRiskyContact() = runBlocking {
+        givenLocalAuthorityIsInEngland()
         startTestActivity<MainActivity>()
 
         testAppContext.epidemiologyDataApi.clear()
@@ -44,6 +45,7 @@ class ExposureWindowAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun submitsExposureWindowData_whenUserReceivesPositiveTest() = runBlocking {
+        givenLocalAuthorityIsInEngland()
         startTestActivity<MainActivity>()
 
         riskyContact.triggerViaBroadcastReceiver()

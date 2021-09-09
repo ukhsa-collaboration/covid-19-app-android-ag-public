@@ -18,7 +18,7 @@ class OptOutOfContactIsolationTest {
     @Test
     fun `calls optOutOfContactIsolation on isolation state machine and tracks optedOutForContactIsolation analytics event`() {
         val expectedDate: LocalDate = mockk()
-        every { isolationStateMachine.readState().contactCase?.exposureDate } returns expectedDate
+        every { isolationStateMachine.readState().contact?.exposureDate } returns expectedDate
 
         optOutOfContactIsolation()
 
@@ -30,7 +30,7 @@ class OptOutOfContactIsolationTest {
 
     @Test
     fun `does not call optOutOfContactIsolation or track analytics event if there is no contact case`() {
-        every { isolationStateMachine.readState().contactCase } returns null
+        every { isolationStateMachine.readState().contact } returns null
 
         optOutOfContactIsolation()
 

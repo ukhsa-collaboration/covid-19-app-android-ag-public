@@ -10,6 +10,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import java.time.LocalDate
 import java.time.ZoneOffset
 
@@ -114,24 +115,29 @@ class IsolationTests(
     }
 
     // In order to print the full url to a rule definition, add the global gradle property "isolationModel.repo=http://url-to-repo..."
-    private fun errorMessage() =
-        """
-        
-        Error testing transition (represented by ${initialStateRepresentation::class.simpleName})
-        
-        Initial:   ${transition.initialState}
-        Event:     ${transition.event}
-        Expected:  ${transition.finalState}
-        Reference: ${System.getProperty("isolationModel.repo") ?: "https://isolationModel.repo"}/blob/${source.commit}/${source.referenceBasePath}/${transition.reference!!.file}#L${transition.reference.line}
-
-        ContactCase:    ${isolationTestContext.getCurrentState().contactCase}
-        
-        IndexInfo:      ${isolationTestContext.getCurrentState().indexInfo}
-                
-        Clock:          ${isolationTestContext.clock.currentInstant}
-        Configuration:  ${isolationTestContext.getCurrentState().isolationConfiguration}
-
+    private fun errorMessage(): String {
+        val currentState = isolationTestContext.getCurrentState()
+        val currentLogicalState = isolationTestContext.getCurrentLogicalState()
+        return """
+            
+            Error testing transition (represented by ${initialStateRepresentation::class.simpleName})
+            
+            Initial:   ${transition.initialState}
+            Event:     ${transition.event}
+            Expected:  ${transition.finalState}
+            Reference: ${System.getProperty("isolationModel.repo") ?: "https://isolationModel.repo"}/blob/${source.commit}/${source.referenceBasePath}/${transition.reference!!.file}#L${transition.reference.line}
+    
+            ContactCase:    ${(currentLogicalState as? PossiblyIsolating)?.contactCase}
+            
+            IndexInfo:      ${(currentLogicalState as? PossiblyIsolating)?.indexInfo}
+            
+            Test result:    ${currentState.testResult}
+                    
+            Clock:          ${isolationTestContext.clock.currentInstant}
+            Configuration:  ${currentState.isolationConfiguration}
+    
         """.trimIndent()
+    }
 
     private fun skipUnsupportedTransition(transition: Transition) {
         Assume.assumeFalse(
@@ -197,32 +203,6 @@ class IsolationTests(
             finalState = State(
                 contact = ContactCaseState.isolating,
                 symptomatic = SymptomaticCaseState.notIsolatingAndHadSymptomsPreviously,
-                positiveTest = PositiveTestCaseState.notIsolatingAndHasNegativeTest
-            )
-        ),
-        Transition(
-            initialState = State(
-                contact = ContactCaseState.noIsolation,
-                symptomatic = SymptomaticCaseState.noIsolation,
-                positiveTest = PositiveTestCaseState.notIsolatingAndHasNegativeTest
-            ),
-            event = Event.receivedConfirmedPositiveTestWithIsolationPeriodOlderThanAssumedIsolationStartDate,
-            finalState = State(
-                contact = ContactCaseState.noIsolation,
-                symptomatic = SymptomaticCaseState.noIsolation,
-                positiveTest = PositiveTestCaseState.notIsolatingAndHasNegativeTest
-            )
-        ),
-        Transition(
-            initialState = State(
-                contact = ContactCaseState.noIsolation,
-                symptomatic = SymptomaticCaseState.noIsolation,
-                positiveTest = PositiveTestCaseState.notIsolatingAndHasNegativeTest
-            ),
-            event = Event.receivedUnconfirmedPositiveTestWithIsolationPeriodOlderThanAssumedIsolationStartDate,
-            finalState = State(
-                contact = ContactCaseState.noIsolation,
-                symptomatic = SymptomaticCaseState.noIsolation,
                 positiveTest = PositiveTestCaseState.notIsolatingAndHasNegativeTest
             )
         ),

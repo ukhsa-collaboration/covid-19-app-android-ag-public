@@ -25,7 +25,7 @@ import uk.nhs.nhsx.covid19.android.app.isolation.TestType.POSITIVE_CONFIRMED
 import uk.nhs.nhsx.covid19.android.app.isolation.TestType.POSITIVE_UNCONFIRMED
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateJson
 import uk.nhs.nhsx.covid19.android.app.state.SymptomaticCase
@@ -88,12 +88,6 @@ class StateStorage4_10Representation(
             var symptomaticCase = computeSymptomaticCase(state)
             var positiveTestCase = computePositiveTestCase(state)
 
-            var indexExpiryDate = when {
-                state.indexIsolationHasBeenTerminatedByNegativeTest -> positiveTestCase!!.testEndDate
-                symptomaticCase != null -> symptomaticCase.selfDiagnosisDate.plusDays(isolationConfiguration.indexCaseSinceSelfDiagnosisUnknownOnset.toLong())
-                else -> positiveTestCase?.testEndDate?.plusDays(isolationConfiguration.indexCaseSinceTestResultEndDate.toLong())
-            }
-
             // Special handling for time-based events
             @Suppress("NON_EXHAUSTIVE_WHEN")
             when (event) {
@@ -106,11 +100,17 @@ class StateStorage4_10Representation(
                 }
                 indexIsolationEnded -> {
                     // Let indexCase expire earlier than contact case
-                    indexExpiryDate = indexExpiryDate?.minusDays(4)
+                    symptomaticCase = symptomaticCase?.copy(
+                        selfDiagnosisDate = symptomaticCase.selfDiagnosisDate.minusDays(4),
+                        onsetDate = symptomaticCase.onsetDate?.minusDays(4)
+                    )
+                    positiveTestCase = positiveTestCase?.copy(
+                        testEndDate = positiveTestCase.testEndDate.minusDays(4)
+                    )
                 }
                 contactIsolationEnded -> {
                     // Let contact case expire earlier than index case
-                    contactCase = contactCase?.copy(expiryDate = contactCase.expiryDate.minusDays(4))
+                    contactCase = contactCase?.copy(exposureDate = contactCase.exposureDate.minusDays(4))
                 }
                 receivedUnconfirmedPositiveTestWithEndDateOlderThanAssumedSymptomOnsetDate -> {
                     if (state.contact.isolationState == ACTIVE) {
@@ -152,14 +152,14 @@ class StateStorage4_10Representation(
                     // Create test older than onset date and more than CONFIRMATORY_DAY_LIMIT in the past
                     val testEndDate =
                         symptomaticCase?.selfDiagnosisDate?.minusDays(assumedDaysFromOnsetToSelfAssessment + DEFAULT_CONFIRMATORY_DAY_LIMIT + 1)
-                            ?: today.minusDays(DEFAULT_CONFIRMATORY_DAY_LIMIT + 1)
+                            ?: computeTestEndDate(state.positiveTest.isolationState).minusDays(DEFAULT_CONFIRMATORY_DAY_LIMIT + 1)
                     positiveTestCase = computePositiveTestCase(state, testEndDate)
                 }
                 receivedNegativeTestWithEndDateNDaysNewerThanRememberedUnconfirmedTestEndDateButOlderThanAssumedSymptomOnsetDayIfAny -> {
                     // Create test results with enough distance to the onsetDay (if available) to be able to receive another test result in between
                     val testEndDate =
                         symptomaticCase?.selfDiagnosisDate?.minusDays(assumedDaysFromOnsetToSelfAssessment + DEFAULT_CONFIRMATORY_DAY_LIMIT + 2)
-                            ?: today.minusDays(DEFAULT_CONFIRMATORY_DAY_LIMIT + 2)
+                            ?: computeTestEndDate(state.positiveTest.isolationState).minusDays(DEFAULT_CONFIRMATORY_DAY_LIMIT + 2)
                     positiveTestCase = computePositiveTestCase(state, testEndDate)
                 }
                 receivedNegativeTestWithEndDateNewerThanAssumedSymptomOnsetDateAndAssumedSymptomOnsetDateNewerThanPositiveTestEndDate -> {
@@ -175,7 +175,6 @@ class StateStorage4_10Representation(
                 contact = contactCase,
                 testResult = positiveTestCase,
                 symptomatic = symptomaticCase,
-                indexExpiryDate = indexExpiryDate,
                 hasAcknowledgedEndOfIsolation = false
             )
         }
@@ -222,7 +221,7 @@ class StateStorage4_10Representation(
                     today.minusDays(isolationConfiguration.indexCaseSinceTestResultEndDate.toLong() + 1)
             }
 
-        private fun computeContactCase(state: State) =
+        private fun computeContactCase(state: State): Contact? =
             when (state.contact.isolationState) {
                 NONE -> null
                 ACTIVE -> createCurrentContactCase()
@@ -235,34 +234,32 @@ class StateStorage4_10Representation(
                 }
             }
 
-        private fun createCurrentContactCase(): ContactCase =
+        private fun createCurrentContactCase(): Contact =
             createContactCase(exposureDate = today.minusDays(1))
 
-        private fun createOverlappingContactCase(): ContactCase =
+        private fun createOverlappingContactCase(): Contact =
             createContactCase(exposureDate = today.minusDays(6))
 
-        private fun createOldContactCase(): ContactCase =
+        private fun createOldContactCase(): Contact =
             createContactCase(
                 exposureDate = today
                     .minusDays(isolationConfiguration.contactCase.toLong() + 1)
             )
 
-        private fun createContactCaseTerminatedEarly(): ContactCase =
-            ContactCase(
+        private fun createContactCaseTerminatedEarly(): Contact =
+            Contact(
                 exposureDate = today.minusDays(6),
                 notificationDate = today.minusDays(5),
-                expiryDate = today.minusDays(6),
                 optOutOfContactIsolation = OptOutOfContactIsolation(today.minusDays(6))
             )
 
-        private fun createContactCase(exposureDate: LocalDate): ContactCase =
-            ContactCase(
+        private fun createContactCase(exposureDate: LocalDate): Contact =
+            Contact(
                 exposureDate = exposureDate,
-                notificationDate = exposureDate.plus(1, DAYS),
-                expiryDate = exposureDate.plusDays(isolationConfiguration.contactCase.toLong())
+                notificationDate = exposureDate.plus(1, DAYS)
             )
 
-        private fun computeSymptomaticCase(state: State) =
+        private fun computeSymptomaticCase(state: State): SymptomaticCase? =
             when (state.symptomatic.isolationState) {
                 NONE -> null
                 ACTIVE -> createCurrentSymptomaticCase()

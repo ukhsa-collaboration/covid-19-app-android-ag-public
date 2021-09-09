@@ -6,9 +6,9 @@ import uk.nhs.nhsx.covid19.android.app.isolation.IsolationState.NONE
 import uk.nhs.nhsx.covid19.android.app.isolation.TestType.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.isolation.TestType.POSITIVE_CONFIRMED
 import uk.nhs.nhsx.covid19.android.app.isolation.TestType.POSITIVE_UNCONFIRMED
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import kotlin.test.assertEquals
@@ -83,7 +83,7 @@ class StateVerifier(
     }
 
     private fun verifyTestResult(state: State) {
-        val acknowledgedTestResult = isolationTestContext.getCurrentState().indexInfo?.testResult
+        val acknowledgedTestResult = isolationTestContext.getCurrentState().testResult
         when (state.positiveTest.testType) {
             TestType.NONE -> assertNull(acknowledgedTestResult, "Expected no test result to be stored")
             NEGATIVE -> {

@@ -26,7 +26,9 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityActivity
 import uk.nhs.nhsx.covid19.android.app.di.module.ApiModule
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
+import uk.nhs.nhsx.covid19.android.app.di.module.QrScannerViewModelModule
 import uk.nhs.nhsx.covid19.android.app.di.module.ViewModelModule
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationAgeLimitActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationBroadcastReceiver
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusActivity
@@ -101,7 +103,8 @@ import javax.inject.Singleton
         AppModule::class,
         NetworkModule::class,
         ApiModule::class,
-        ViewModelModule::class
+        ViewModelModule::class,
+        QrScannerViewModelModule::class
     ]
 )
 interface ApplicationComponent {
@@ -169,6 +172,7 @@ interface ApplicationComponent {
     fun inject(symptomsAfterRiskyVenueActivity: SymptomsAfterRiskyVenueActivity)
     fun inject(orderLfdTestActivity: OrderLfdTestActivity)
     fun inject(isolationHubActivity: IsolationHubActivity)
+    fun inject(exposureNotificationActivity: ExposureNotificationActivity)
     fun inject(exposureNotificationAgeLimitActivity: ExposureNotificationAgeLimitActivity)
     fun inject(exposureNotificationVaccinationStatusActivity: ExposureNotificationVaccinationStatusActivity)
     fun inject(isolationHubReminderReceiver: IsolationHubReminderReceiver)

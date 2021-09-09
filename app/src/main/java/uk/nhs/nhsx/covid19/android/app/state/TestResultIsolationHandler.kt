@@ -7,12 +7,8 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.PositiveTestResult
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.IsolationUpdate.Complete
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.IsolationUpdate.CompleteAndDeleteSymptoms
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.IsolationUpdate.Confirm
@@ -30,7 +26,6 @@ import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionSt
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.toRelevantVirologyTestResult
-import uk.nhs.nhsx.covid19.android.app.util.selectEarliest
 import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Clock
 import java.time.Instant
@@ -39,18 +34,23 @@ import javax.inject.Inject
 
 class TestResultIsolationHandler @Inject constructor(
     private val calculateKeySubmissionDateRange: CalculateKeySubmissionDateRange,
-    private val createSelfAssessmentIndexCase: CreateSelfAssessmentIndexCase,
+    private val wouldTestIsolationEndBeforeOrOnStartOfExistingIsolation: WouldTestIsolationEndBeforeOrOnStartOfExistingIsolation,
+    private val createIsolationLogicalState: CreateIsolationLogicalState,
     private val clock: Clock
 ) {
 
     fun computeTransitionWithTestResultAcknowledgment(
-        currentState: IsolationLogicalState,
+        currentState: IsolationState,
         receivedTestResult: ReceivedTestResult,
         testAcknowledgedDate: Instant
     ): TransitionDueToTestResult {
-        val isolationUpdate = computeIsolationUpdate(currentState, receivedTestResult, testAcknowledgedDate)
+        val isolationUpdate = computeIsolationUpdate(
+            createIsolationLogicalState(currentState),
+            receivedTestResult,
+            testAcknowledgedDate
+        )
         return applyIsolationUpdate(
-            currentState.toIsolationState(),
+            currentState,
             receivedTestResult,
             isolationUpdate,
             testAcknowledgedDate
@@ -97,7 +97,7 @@ class TestResultIsolationHandler @Inject constructor(
                 when {
                     // If the app knows about an existing (active or expired) isolation, and “positive test isolation end
                     // date” <= “assumed isolation start date”, then test is considered “too old”
-                    wouldTestIsolationEndBeforeOrOnStartOfExistingIsolation(receivedTestResult, currentState, clock) -> Ignore
+                    wouldTestIsolationEndBeforeOrOnStartOfExistingIsolation(receivedTestResult, currentState) -> Ignore
 
                     hasBecomeSymptomaticAfterPositiveTest(currentState) ->
                         computeIsolationUpdateWhenSymptomaticAfterPositiveThenPositive(currentState, testInfo)
@@ -121,25 +121,25 @@ class TestResultIsolationHandler @Inject constructor(
                     // date” < “existing positive test end date”, then the newly entered positive test should be used for
                     // isolation
                     receivedTestResult.isOlderThanPositive(previousTestResult) ->
-                        when (indexCase?.isolationTrigger) {
-                            is PositiveTestResult ->
-                                getConfirmedDateIfNeeded(receivedTestResult, previousTestResult)?.let { confirmedDate ->
-                                    Overwrite(testInfo.confirm(confirmedDate))
-                                } ?: Overwrite(testInfo)
-                            is SelfAssessment ->
+                        when {
+                            indexCase?.isSelfAssessment() == true ->
                                 getConfirmedDateIfNeeded(receivedTestResult, previousTestResult)?.let { confirmedDate ->
                                     Update(testInfo.confirm(confirmedDate))
                                 } ?: Update(testInfo)
+                            indexCase?.testResult?.isPositive() == true ->
+                                getConfirmedDateIfNeeded(receivedTestResult, previousTestResult)?.let { confirmedDate ->
+                                    Overwrite(testInfo.confirm(confirmedDate))
+                                } ?: Overwrite(testInfo)
                             // This is not possible because it would mean index info is NegativeTest, so
-                            // previousTestResult.isPositive() would return false
+                            // isOlderThanPositive() would return false
                             else -> Overwrite(testInfo)
                         }
 
                     // If the app knows about an existing negative test and “positive test end date” < “negative test end date”
                     receivedTestResult.isOlderThanNegative(previousTestResult) ->
                         if (receivedTestResult.isConfirmed()) {
-                            when (indexCase?.isolationTrigger) {
-                                is SelfAssessment -> Update(testInfo)
+                            when {
+                                indexCase?.isSelfAssessment() == true -> Update(testInfo)
                                 else -> Overwrite(testInfo)
                             }
                         } else if (isTestOlderThanSelfAssessmentSymptoms(receivedTestResult, currentState, clock, defaultIfNoSymptoms = true) &&
@@ -279,8 +279,13 @@ class TestResultIsolationHandler @Inject constructor(
                 }
             NEGATIVE ->
                 when (isolationUpdate) {
-                    is Update -> newState.expireIndexCaseWithNegativeTestResult(isolationUpdate.testInfoResult.acknowledgedTestResult)
-                    is Overwrite -> newState.copy(indexInfo = NegativeTest(isolationUpdate.testInfoResult.acknowledgedTestResult))
+                    is Update -> newState.copy(
+                        testResult = isolationUpdate.testInfoResult.acknowledgedTestResult
+                    )
+                    is Overwrite -> newState.copy(
+                        selfAssessment = null,
+                        testResult = isolationUpdate.testInfoResult.acknowledgedTestResult
+                    )
                     is Confirm -> {
                         Timber.e("Cannot confirm using a negative test result")
                         newState
@@ -438,92 +443,14 @@ class TestResultIsolationHandler @Inject constructor(
     }
 
     private fun IsolationState.clearContactCase(): IsolationState =
-        copy(contactCase = null)
-
-    private fun IsolationState.expireIndexCaseWithNegativeTestResult(testResult: AcknowledgedTestResult): IsolationState {
-        val newIndexInfo = when {
-            indexInfo is IndexCase && indexInfo.isolationTrigger is SelfAssessment -> {
-                indexInfo.copy(
-                    testResult = testResult,
-                    expiryDate = selectEarliest(indexInfo.expiryDate, testResult.testEndDate)
-                )
-            }
-            else -> NegativeTest(testResult)
-        }
-        return copy(indexInfo = newIndexInfo)
-    }
-
-    private fun createIndexCaseWithPositiveTestResult(
-        currentState: IsolationState,
-        testResult: AcknowledgedTestResult
-    ): IndexCase {
-        val isolationConfiguration = currentState.isolationConfiguration
-        val expiryDateBasedOnTest =
-            getIsolationExpiryDateBasedOnTestEndDate(testResult.testEndDate, isolationConfiguration)
-        val currentLogicalState = IsolationLogicalState.from(currentState)
-
-        return IndexCase(
-            isolationTrigger = PositiveTestResult(testResult.testEndDate),
-            testResult = testResult,
-            expiryDate = expiryDateBasedOnTest
-        ).capExpiryDate(currentLogicalState)
-    }
-
-    private fun createIndexCaseWithPositiveTestResult(
-        currentState: IsolationState,
-        testInfo: TestInfo
-    ): IndexCase {
-        val isolationConfiguration = currentState.isolationConfiguration
-        val expiryDateBasedOnTest =
-            getIsolationExpiryDateBasedOnTest(testInfo.receivedTestResult, isolationConfiguration, clock)
-        val currentLogicalState = IsolationLogicalState.from(currentState)
-
-        return IndexCase(
-            isolationTrigger = IndexCaseIsolationTrigger.from(
-                testInfo.receivedTestResult,
-                triggerDate = LocalDate.now(clock),
-                clock
-            )!!,
-            testResult = testInfo.acknowledgedTestResult,
-            expiryDate = expiryDateBasedOnTest
-        ).capExpiryDate(currentLogicalState)
-    }
+        copy(contact = null)
 
     private fun updateIndexCaseWithPositiveTestResult(
         currentState: IsolationState,
         testInfoResult: TestInfo
     ): IsolationState =
-        // If we already have an index case...
-        if (currentState.indexInfo is IndexCase) {
-
-            // If it was a self-assessment with a negative test result, the test result may have prematurely expired the
-            // index case. Now we need to re-calculate the expiration date as it would have been if we had not received
-            // the negative test result => simply create the self-assessment again and add the positive test result to it
-            if (currentState.indexInfo.isolationTrigger is SelfAssessment &&
-                currentState.indexInfo.testResult?.testResult == RelevantVirologyTestResult.NEGATIVE
-            ) {
-                currentState.copy(
-                    // Re-create the self-assessment based on the original trigger
-                    indexInfo = createSelfAssessmentIndexCase(
-                        currentState = IsolationLogicalState.from(currentState),
-                        selfAssessment = currentState.indexInfo.isolationTrigger,
-                        discardTestResultIfPresent = true
-                    ).copy(
-                        // Add the test result to it
-                        testResult = testInfoResult.acknowledgedTestResult
-                    )
-                )
-
-                // Otherwise simply add the test to it
-            } else {
-                currentState.copy(
-                    indexInfo = currentState.indexInfo.copy(
-                        testResult = testInfoResult.acknowledgedTestResult
-                    )
-                )
-            }
-
-            // Otherwise, replace with a new index case
+        if (currentState.selfAssessment != null) {
+            currentState.copy(testResult = testInfoResult.acknowledgedTestResult)
         } else {
             replaceIndexCaseWithPositiveTestResult(currentState, testInfoResult)
         }
@@ -532,93 +459,52 @@ class TestResultIsolationHandler @Inject constructor(
         currentState: IsolationState,
         testInfoResult: TestInfo
     ): IsolationState =
-        currentState.copy(indexInfo = createIndexCaseWithPositiveTestResult(currentState, testInfoResult))
+        currentState.copy(
+            testResult = testInfoResult.acknowledgedTestResult,
+            selfAssessment = createSelfAssessmentFromTestResult(
+                testInfoResult.receivedTestResult,
+                testInfoResult.acknowledgedTestResult.acknowledgedDate
+            )
+        )
 
     private fun confirmTestResult(
         currentState: IsolationState,
         confirmedDate: LocalDate
     ): IsolationState =
-        if (currentState.indexInfo is IndexCase && currentState.indexInfo.testResult != null) {
+        if (currentState.testResult != null && currentState.testResult.isPositive()) {
             currentState.copy(
-                indexInfo = currentState.indexInfo.copy(
-                    testResult = currentState.indexInfo.testResult?.confirm(confirmedDate)
-                )
+                testResult = currentState.testResult.confirm(confirmedDate),
             )
         } else {
-            Timber.e("There is no test result to confirm")
+            Timber.e("There is no positive test result to confirm. Test result: ${currentState.testResult}")
             currentState
         }
 
     private fun completeTestResult(
         currentState: IsolationState,
         completedDate: LocalDate
-    ): IsolationState {
-        val indexInfo = currentState.indexInfo
-        return if (indexInfo is IndexCase) {
+    ): IsolationState =
+        if (currentState.testResult != null && currentState.testResult.isPositive()) {
             currentState.copy(
-                indexInfo = indexInfo.copy(
-                    testResult = indexInfo.testResult?.complete(completedDate)
-                )
+                testResult = currentState.testResult.complete(completedDate),
             )
         } else {
+            Timber.e("There is no positive test result to confirm. Test result: ${currentState.testResult}")
             currentState
         }
-    }
 
     private fun completeTestResultAndDeleteSymptoms(
         currentState: IsolationState,
         completedDate: LocalDate
     ): IsolationState =
-        (currentState.indexInfo as? IndexCase)?.testResult?.let { previousTestResult ->
-            currentState.copy(
-                indexInfo = createIndexCaseWithPositiveTestResult(
-                    currentState,
-                    testResult = previousTestResult.complete(completedDate)
-                )
-            )
-        } ?: currentState
+        completeTestResult(currentState, completedDate)
+            .copy(selfAssessment = null)
 
-    private fun deleteSymptoms(currentState: IsolationState): IsolationState {
-        val previousTestResult = (currentState.indexInfo as? IndexCase)?.testResult
-        return when (previousTestResult?.testResult) {
-            RelevantVirologyTestResult.POSITIVE ->
-                currentState.copy(
-                    indexInfo = createIndexCaseWithPositiveTestResult(
-                        currentState,
-                        testResult = previousTestResult
-                    )
-                )
-            RelevantVirologyTestResult.NEGATIVE ->
-                currentState.copy(
-                    indexInfo = NegativeTest(previousTestResult)
-                )
-            else -> currentState.copy(indexInfo = null)
-        }
-    }
+    private fun deleteSymptoms(currentState: IsolationState): IsolationState =
+        currentState.copy(selfAssessment = null)
 
     private fun deleteTest(currentState: IsolationState): IsolationState =
-        when (currentState.indexInfo) {
-            is NegativeTest -> currentState.copy(indexInfo = null)
-            is IndexCase -> {
-                when (currentState.indexInfo.isolationTrigger) {
-                    is SelfAssessment -> {
-                        currentState.copy(
-                            // Re-create the self-assessment based on the original trigger
-                            indexInfo = createSelfAssessmentIndexCase(
-                                currentState = IsolationLogicalState.from(currentState),
-                                selfAssessment = currentState.indexInfo.isolationTrigger,
-                                discardTestResultIfPresent = true
-                            )
-                        )
-                    }
-                    is PositiveTestResult -> currentState.copy(indexInfo = null)
-                }
-            }
-            else -> currentState
-        }
-
-    private fun IndexCase.capExpiryDate(logicalState: IsolationLogicalState): IndexCase =
-        copy(expiryDate = logicalState.capExpiryDate(this))
+        currentState.copy(testResult = null)
 
     private data class TestInfo(
         val receivedTestResult: ReceivedTestResult,

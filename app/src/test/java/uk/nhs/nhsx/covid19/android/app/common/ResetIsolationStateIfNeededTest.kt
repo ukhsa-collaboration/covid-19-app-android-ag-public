@@ -9,12 +9,12 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalHelper
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo.NegativeTest
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.asLogical
+import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
@@ -27,16 +27,21 @@ class ResetIsolationStateIfNeededTest {
     private val fixedClock = Clock.fixed(Instant.parse("2020-07-28T01:00:00.00Z"), ZoneOffset.UTC)
     private val durationDays = DurationDays()
     private val retentionPeriod = durationDays.pendingTasksRetentionPeriod
-    private val mockIsolationStateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
-    private val mockUnacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>(relaxUnitFun = true)
-    private val mockIsolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
+    private val isolationStateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
+    private val unacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>(relaxUnitFun = true)
+    private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
+    private val isolationLogicalHelper = IsolationLogicalHelper(fixedClock, durationDays)
+
     private val testSubject = ResetIsolationStateIfNeeded(
-        mockIsolationStateMachine, mockUnacknowledgedTestResultsProvider, mockIsolationConfigurationProvider, fixedClock
+        isolationStateMachine,
+        unacknowledgedTestResultsProvider,
+        isolationConfigurationProvider,
+        fixedClock
     )
 
     @Before
     fun setUp() {
-        every { mockIsolationConfigurationProvider.durationDays } returns durationDays
+        every { isolationConfigurationProvider.durationDays } returns durationDays
     }
 
     @Test
@@ -45,9 +50,9 @@ class ResetIsolationStateIfNeededTest {
             .minusDays(retentionPeriod.toLong() + 1)
 
         setIsolationState(
-            IsolationState(
+            NeverIsolating(
                 isolationConfiguration = durationDays,
-                indexInfo = NegativeTest(
+                negativeTest = NegativeTest(
                     AcknowledgedTestResult(
                         testEndDate = testEndDate,
                         acknowledgedDate = testEndDate.plusDays(1),
@@ -62,10 +67,10 @@ class ResetIsolationStateIfNeededTest {
 
         testSubject()
 
-        val retentionPeriod = mockIsolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
+        val retentionPeriod = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
         val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
-        verify { mockUnacknowledgedTestResultsProvider.clearBefore(expectedDate) }
-        verify { mockIsolationStateMachine.reset() }
+        verify { unacknowledgedTestResultsProvider.clearBefore(expectedDate) }
+        verify { isolationStateMachine.reset() }
     }
 
     @Test
@@ -74,9 +79,9 @@ class ResetIsolationStateIfNeededTest {
             .minusDays(retentionPeriod.toLong())
 
         setIsolationState(
-            IsolationState(
-                isolationConfiguration = DurationDays(),
-                indexInfo = NegativeTest(
+            NeverIsolating(
+                isolationConfiguration = durationDays,
+                negativeTest = NegativeTest(
                     AcknowledgedTestResult(
                         testEndDate = testEndDate,
                         acknowledgedDate = testEndDate.plusDays(1),
@@ -93,8 +98,28 @@ class ResetIsolationStateIfNeededTest {
 
         val retentionPeriod = durationDays.pendingTasksRetentionPeriod
         val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
-        verify { mockUnacknowledgedTestResultsProvider.clearBefore(expectedDate) }
-        verify(exactly = 0) { mockIsolationStateMachine.reset() }
+        verify { unacknowledgedTestResultsProvider.clearBefore(expectedDate) }
+        verify(exactly = 0) { isolationStateMachine.reset() }
+    }
+
+    @Test
+    fun `keeps isolation and tests results when isolation is active`() = runBlocking {
+        setIsolationState(isolationLogicalHelper.selfAssessment().asIsolation())
+
+        testSubject()
+
+        verify(exactly = 0) { unacknowledgedTestResultsProvider.clearBefore(any()) }
+        verify(exactly = 0) { isolationStateMachine.reset() }
+    }
+
+    @Test
+    fun `keeps isolation and test results when isolation is expired but not outdated`() = runBlocking {
+        setIsolationState(expiredIsolation(isOutdated = false))
+
+        testSubject()
+
+        verify(exactly = 0) { unacknowledgedTestResultsProvider.clearBefore(any()) }
+        verify(exactly = 0) { isolationStateMachine.reset() }
     }
 
     @Test
@@ -105,24 +130,17 @@ class ResetIsolationStateIfNeededTest {
 
         val retentionPeriod = durationDays.pendingTasksRetentionPeriod
         val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
-        verify { mockUnacknowledgedTestResultsProvider.clearBefore(expectedDate) }
-        verify { mockIsolationStateMachine.reset() }
+        verify { unacknowledgedTestResultsProvider.clearBefore(expectedDate) }
+        verify { isolationStateMachine.reset() }
     }
 
-    private fun setIsolationState(isolationState: IsolationState) {
-        every { mockIsolationStateMachine.readState() } returns isolationState
-        every { mockIsolationStateMachine.readLogicalState() } returns isolationState.asLogical()
+    private fun setIsolationState(isolationState: IsolationLogicalState) {
+        every { isolationStateMachine.readLogicalState() } returns isolationState
     }
 
-    private fun expiredIsolation(isOutdated: Boolean): IsolationState {
+    private fun expiredIsolation(isOutdated: Boolean): IsolationLogicalState {
         val expiryDate = LocalDate.now(fixedClock).minusDays(if (isOutdated) 15 else 7)
         val selfAssessmentDate = expiryDate.minusDays(9)
-        return IsolationState(
-            isolationConfiguration = DurationDays(),
-            indexInfo = IndexCase(
-                isolationTrigger = SelfAssessment(selfAssessmentDate),
-                expiryDate = expiryDate
-            )
-        )
+        return isolationLogicalHelper.selfAssessment(selfAssessmentDate).asIsolation()
     }
 }

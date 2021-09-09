@@ -80,7 +80,7 @@ class TestingHubScenarioTest : EspressoTest() {
 
     @Test
     fun activeIsolationAsContactCase_withRiskyVenueNotification_thenNavigateToSymptomsScreen_thenShouldShowBookATest_shouldShowStatusActivity() {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
         testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue =
             LastVisitedBookTestTypeVenueDate(
                 latestDate = LocalDate.now(testAppContext.clock),
@@ -114,7 +114,7 @@ class TestingHubScenarioTest : EspressoTest() {
 
     @Test
     fun activeIsolationAsContactCase_withNoRiskyVenueNotification_thenNavigateToBookATest_shouldShowStatusActivity() {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
         testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue = null
 
         startTestActivity<StatusActivity>()
@@ -218,7 +218,7 @@ class TestingHubScenarioTest : EspressoTest() {
 
     @Test
     fun activeIsolationAsContactCase_withRiskyVenueNotification_thenNavigateToSymptomsScreen_thenClicksCancel_shouldShowTestingHub() {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
         testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue =
             LastVisitedBookTestTypeVenueDate(
                 latestDate = LocalDate.now(testAppContext.clock),

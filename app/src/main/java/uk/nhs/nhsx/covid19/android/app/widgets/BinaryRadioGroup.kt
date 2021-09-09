@@ -44,6 +44,16 @@ class BinaryRadioGroup @JvmOverloads constructor(
             }
         }
 
+    fun setOption1Text(text: String, contentDescription: String) {
+        binaryRadioButtonOption1.text = text
+        binaryRadioButtonOption1.contentDescription = contentDescription
+    }
+
+    fun setOption2Text(text: String, contentDescription: String) {
+        binaryRadioButtonOption2.text = text
+        binaryRadioButtonOption2.contentDescription = contentDescription
+    }
+
     private fun initializeViews() {
         LayoutInflater.from(context).inflate(R.layout.view_binary_radio_group, this, true)
 

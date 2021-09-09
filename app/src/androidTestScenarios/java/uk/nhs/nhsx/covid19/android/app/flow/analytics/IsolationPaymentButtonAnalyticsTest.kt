@@ -5,7 +5,7 @@ import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
@@ -23,10 +23,9 @@ class IsolationPaymentButtonAnalyticsTest : AnalyticsTest() {
         testAppContext.setState(
             IsolationState(
                 isolationConfiguration = DurationDays(),
-                contactCase = ContactCase(
-                    exposureDate = LocalDate.now().minus(10, DAYS),
-                    notificationDate = LocalDate.now().minus(2, DAYS),
-                    expiryDate = LocalDate.now().plusDays(30)
+                contact = Contact(
+                    exposureDate = LocalDate.now().minus(3, DAYS),
+                    notificationDate = LocalDate.now().minus(2, DAYS)
                 )
             )
         )

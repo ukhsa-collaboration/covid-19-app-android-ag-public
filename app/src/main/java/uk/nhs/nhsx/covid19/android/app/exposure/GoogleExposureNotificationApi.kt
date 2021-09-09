@@ -8,11 +8,12 @@ import com.google.android.gms.nearby.exposurenotification.DiagnosisKeysDataMappi
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatus
 import com.google.android.gms.nearby.exposurenotification.ExposureWindow
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
+import java.io.File
+import java.time.Duration
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
-import java.io.File
 
 class GoogleExposureNotificationApi(context: Context) : ExposureNotificationApi {
 
@@ -70,7 +71,9 @@ class GoogleExposureNotificationApi(context: Context) : ExposureNotificationApi 
             }
 
     override suspend fun provideDiagnosisKeys(files: List<File>) {
-        exposureNotificationClient.provideDiagnosisKeys(files).await()
+        withTimeout(API_PROVIDE_KEYS_TIMEOUT) {
+            exposureNotificationClient.provideDiagnosisKeys(files).await()
+        }
     }
 
     override suspend fun getExposureWindows(): List<ExposureWindow> =
@@ -106,6 +109,7 @@ class GoogleExposureNotificationApi(context: Context) : ExposureNotificationApi 
         )
 
     companion object {
-        const val API_TIMEOUT = 10_000L
+        private val API_TIMEOUT = Duration.ofSeconds(10).toMillis()
+        private val API_PROVIDE_KEYS_TIMEOUT = Duration.ofMinutes(15).toMillis()
     }
 }

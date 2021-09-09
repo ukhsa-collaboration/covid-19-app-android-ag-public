@@ -183,9 +183,9 @@ class DebugViewModel @Inject constructor(
         isolationStateMachine.processEvent(OnPositiveSelfAssessment(CannotRememberDate))
     }
 
-    fun setContactState() {
+    fun setContactState(dayOffset: Long) {
         isolationStateMachine.reset()
-        sendExposureNotification()
+        sendExposureNotification(dayOffset)
     }
 
     fun setRiskyVenue(type: RiskyVenueMessageType) {
@@ -266,10 +266,10 @@ class DebugViewModel @Inject constructor(
         }
     }
 
-    fun sendExposureNotification() {
+    fun sendExposureNotification(dayOffset: Long) {
         if (exposureNotificationApi is MockExposureNotificationApi) {
             val exposureWindow = ExposureWindow.Builder()
-                .setDateMillisSinceEpoch(Instant.now(clock).minus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).toEpochMilli())
+                .setDateMillisSinceEpoch(Instant.now(clock).minus(dayOffset, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS).toEpochMilli())
                 .setInfectiousness(Infectiousness.HIGH)
                 .setScanInstances(
                     listOf(

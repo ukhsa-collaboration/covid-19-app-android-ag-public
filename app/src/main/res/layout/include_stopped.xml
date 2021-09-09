@@ -5,20 +5,12 @@
     android:layout_height="400dp">
 
     <ImageView
-        android:layout_width="144dp"
-        android:layout_height="144dp"
-        android:layout_gravity="center"
-        android:contentDescription="@null"
-        android:scaleType="fitXY"
-        android:src="@drawable/ic_stroked_circle_grey" />
-
-    <ImageView
         android:layout_width="82dp"
         android:layout_height="82dp"
         android:layout_gravity="center"
         android:contentDescription="@null"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_stroked_circle_grey" />
+        android:src="@drawable/ic_stroked_circle_red" />
 
     <ImageView
         android:layout_width="60dp"
@@ -26,7 +18,7 @@
         android:layout_gravity="center"
         android:contentDescription="@null"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_circle_grey" />
+        android:src="@drawable/ic_circle_red" />
 
     <ImageView
         android:layout_width="wrap_content"

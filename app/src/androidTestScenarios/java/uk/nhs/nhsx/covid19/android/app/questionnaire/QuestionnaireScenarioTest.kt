@@ -35,7 +35,7 @@ import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -191,7 +191,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
         description = "User is in contact case isolation, selects symptoms that do not result in isolation due to self-assessment and is asked to continue isolating",
         kind = FLOW
     ) {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
 
         completeQuestionnaire(selectMainSymptom = false)
 
@@ -447,10 +447,9 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
         testAppContext.setState(
             IsolationState(
                 isolationConfiguration = DurationDays(),
-                contactCase = ContactCase(
-                    exposureDate = LocalDate.parse("2020-05-19"),
-                    notificationDate = LocalDate.now(),
-                    expiryDate = LocalDate.now().plusDays(5)
+                contact = Contact(
+                    exposureDate = LocalDate.now().minusDays(1),
+                    notificationDate = LocalDate.now()
                 )
             )
         )
@@ -479,10 +478,9 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
         testAppContext.setState(
             IsolationState(
                 isolationConfiguration = DurationDays(),
-                contactCase = ContactCase(
-                    exposureDate = LocalDate.parse("2020-05-19"),
-                    notificationDate = LocalDate.now(),
-                    expiryDate = LocalDate.now().plusDays(5)
+                contact = Contact(
+                    exposureDate = LocalDate.now().minusDays(1),
+                    notificationDate = LocalDate.now()
                 )
             )
         )
@@ -719,6 +717,6 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
             testKitType = LAB_RESULT,
             acknowledgedDate = LocalDate.now(testAppContext.clock)
         )
-        testAppContext.setState(isolationHelper.positiveTest(testResult).asIsolation())
+        testAppContext.setState(testResult.asIsolation())
     }
 }

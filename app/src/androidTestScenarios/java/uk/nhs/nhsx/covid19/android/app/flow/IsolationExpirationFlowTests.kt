@@ -10,9 +10,11 @@ import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntr
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.receiver.ExpirationCheckReceiver
+import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationAlarmController
-import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
@@ -23,15 +25,16 @@ import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit.DAYS
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class IsolationExpirationFlowTests : AnalyticsTest() {
 
     private val selfDiagnosis = SelfDiagnosis(this)
     private val manualTestResultEntry = ManualTestResultEntry(testAppContext)
     private val isolationChecker = IsolationChecker(testAppContext)
-    private val isolationHelper = IsolationHelper(testAppContext.clock)
     private val isolationExpirationRobot = IsolationExpirationRobot()
     private val statusRobot = StatusRobot()
 
@@ -83,11 +86,7 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
         testAppContext.clock.currentInstant = Instant.parse("2020-01-01T20:00:00Z")
 
         val expiryDate = LocalDate.now(testAppContext.clock).plus(1, DAYS)
-        testAppContext.setState(
-            isolationHelper.selfAssessment()
-                .copy(expiryDate = expiryDate)
-                .asIsolation()
-        )
+        setIsolationWithExpiryDate(expiryDate)
 
         startTestActivity<StatusActivity>()
 
@@ -126,11 +125,7 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
     @RetryFlakyTest
     fun startIndexCase_indexExpires_acknowledgeExpiration_notInIsolation() {
         val expiryDate = LocalDate.now(testAppContext.clock)
-        testAppContext.setState(
-            isolationHelper.selfAssessment()
-                .copy(expiryDate = expiryDate)
-                .asIsolation()
-        )
+        setIsolationWithExpiryDate(expiryDate)
 
         startTestActivity<StatusActivity>()
 
@@ -149,6 +144,22 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
         startTestActivity<StatusActivity>()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    private fun setIsolationWithExpiryDate(expiryDate: LocalDate) {
+        val selfAssessmentDate = LocalDate.now(testAppContext.clock)
+            .plusDays(
+                DAYS.between(LocalDate.now(testAppContext.clock), expiryDate) -
+                    DurationDays().indexCaseSinceSelfDiagnosisUnknownOnset.toLong()
+            )
+
+        testAppContext.setState(
+            SelfAssessment(selfAssessmentDate).asIsolation()
+        )
+
+        val logicalState = testAppContext.getIsolationStateMachine().readLogicalState()
+        assertTrue(logicalState is PossiblyIsolating)
+        assertEquals(expiryDate, logicalState.expiryDate)
     }
 
     private fun cancelAlarm(intent: PendingIntent?) {

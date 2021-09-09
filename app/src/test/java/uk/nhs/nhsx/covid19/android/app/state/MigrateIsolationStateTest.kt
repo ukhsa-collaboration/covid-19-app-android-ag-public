@@ -9,11 +9,8 @@ import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.PositiveTestResult
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Default4_9
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Isolation4_9
@@ -104,13 +101,11 @@ class MigrateIsolationStateTest {
 
         val expectedIsolationState = IsolationState(
             isolationConfiguration = durationDays,
-            indexInfo = NegativeTest(
-                testResult = AcknowledgedTestResult(
-                    testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone),
-                    testResult = oldTestResult.testResult,
-                    testKitType = oldTestResult.testKitType,
-                    acknowledgedDate = oldTestResult.acknowledgedDate.toLocalDate(fixedClock.zone),
-                )
+            testResult = AcknowledgedTestResult(
+                testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone),
+                testResult = oldTestResult.testResult,
+                testKitType = oldTestResult.testKitType,
+                acknowledgedDate = oldTestResult.acknowledgedDate.toLocalDate(fixedClock.zone),
             )
         )
         thenMigrateTo(expectedIsolationState)
@@ -145,18 +140,15 @@ class MigrateIsolationStateTest {
 
         val expectedIsolationState = IsolationState(
             isolationConfiguration = durationDays,
-            indexInfo = IndexCase(
-                isolationTrigger = SelfAssessment(
-                    selfAssessmentDate = oldIndexCase.symptomsOnsetDate.plusDays(2),
-                    onsetDate = null
-                ),
-                testResult = AcknowledgedTestResult(
-                    testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone),
-                    testResult = oldTestResult.testResult,
-                    testKitType = oldTestResult.testKitType,
-                    acknowledgedDate = oldTestResult.acknowledgedDate.toLocalDate(fixedClock.zone),
-                ),
-                expiryDate = oldIndexCase.expiryDate
+            selfAssessment = SelfAssessment(
+                selfAssessmentDate = oldIndexCase.symptomsOnsetDate.plusDays(2),
+                onsetDate = null
+            ),
+            testResult = AcknowledgedTestResult(
+                testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone),
+                testResult = oldTestResult.testResult,
+                testKitType = oldTestResult.testKitType,
+                acknowledgedDate = oldTestResult.acknowledgedDate.toLocalDate(fixedClock.zone),
             ),
             hasAcknowledgedEndOfIsolation = false
         )
@@ -200,24 +192,20 @@ class MigrateIsolationStateTest {
 
         val expectedIsolationState = IsolationState(
             isolationConfiguration = durationDays,
-            contactCase = ContactCase(
+            contact = Contact(
                 exposureDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
                 notificationDate = oldContactCase.notificationDate!!.toLocalDate(fixedClock.zone),
                 optOutOfContactIsolation = oldContactCase.dailyContactTestingOptInDate?.let { OptOutOfContactIsolation(it) },
-                expiryDate = oldContactCase.expiryDate
             ),
-            indexInfo = IndexCase(
-                isolationTrigger = SelfAssessment(
-                    selfAssessmentDate = oldIndexCase.symptomsOnsetDate.plusDays(2),
-                    onsetDate = null
-                ),
-                testResult = AcknowledgedTestResult(
-                    testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone),
-                    testResult = oldTestResult.testResult,
-                    testKitType = oldTestResult.testKitType,
-                    acknowledgedDate = oldTestResult.acknowledgedDate.toLocalDate(fixedClock.zone),
-                ),
-                expiryDate = oldIndexCase.expiryDate
+            selfAssessment = SelfAssessment(
+                selfAssessmentDate = oldIndexCase.symptomsOnsetDate.plusDays(2),
+                onsetDate = null
+            ),
+            testResult = AcknowledgedTestResult(
+                testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone),
+                testResult = oldTestResult.testResult,
+                testKitType = oldTestResult.testKitType,
+                acknowledgedDate = oldTestResult.acknowledgedDate.toLocalDate(fixedClock.zone),
             ),
             hasAcknowledgedEndOfIsolation = true
         )
@@ -246,12 +234,11 @@ class MigrateIsolationStateTest {
 
         val expectedIsolationState = IsolationState(
             isolationConfiguration = durationDays,
-            contactCase = ContactCase(
+            contact = Contact(
                 exposureDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
                 // We fall back to exposure date when notification date is null
                 notificationDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
-                optOutOfContactIsolation = null,
-                expiryDate = oldContactCase.expiryDate
+                optOutOfContactIsolation = null
             ),
             hasAcknowledgedEndOfIsolation = false
         )
@@ -280,11 +267,10 @@ class MigrateIsolationStateTest {
 
         val expectedIsolationState = IsolationState(
             isolationConfiguration = durationDays,
-            contactCase = ContactCase(
+            contact = Contact(
                 exposureDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
                 notificationDate = oldContactCase.notificationDate!!.toLocalDate(fixedClock.zone),
-                optOutOfContactIsolation = null,
-                expiryDate = oldContactCase.expiryDate
+                optOutOfContactIsolation = null
             ),
             hasAcknowledgedEndOfIsolation = false
         )
@@ -321,19 +307,16 @@ class MigrateIsolationStateTest {
 
         val expectedIsolationState = IsolationState(
             isolationConfiguration = durationDays,
-            contactCase = ContactCase(
+            contact = Contact(
                 exposureDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
                 notificationDate = oldContactCase.notificationDate!!.toLocalDate(fixedClock.zone),
-                optOutOfContactIsolation = null,
-                expiryDate = oldContactCase.expiryDate
+                optOutOfContactIsolation = null
             ),
-            indexInfo = NegativeTest(
-                testResult = AcknowledgedTestResult(
-                    testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone),
-                    testResult = oldTestResult.testResult,
-                    testKitType = oldTestResult.testKitType,
-                    acknowledgedDate = oldTestResult.acknowledgedDate.toLocalDate(fixedClock.zone),
-                ),
+            testResult = AcknowledgedTestResult(
+                testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone),
+                testResult = oldTestResult.testResult,
+                testKitType = oldTestResult.testKitType,
+                acknowledgedDate = oldTestResult.acknowledgedDate.toLocalDate(fixedClock.zone),
             ),
             hasAcknowledgedEndOfIsolation = false
         )
@@ -360,12 +343,9 @@ class MigrateIsolationStateTest {
 
         val expectedIsolationState = IsolationState(
             isolationConfiguration = durationDays,
-            indexInfo = IndexCase(
-                isolationTrigger = SelfAssessment(
-                    selfAssessmentDate = oldIndexCase.symptomsOnsetDate.plusDays(2),
-                    onsetDate = null
-                ),
-                expiryDate = oldIndexCase.expiryDate
+            selfAssessment = SelfAssessment(
+                selfAssessmentDate = oldIndexCase.symptomsOnsetDate.plusDays(2),
+                onsetDate = null
             ),
             hasAcknowledgedEndOfIsolation = false
         )
@@ -400,18 +380,15 @@ class MigrateIsolationStateTest {
 
         val expectedIsolationState = IsolationState(
             isolationConfiguration = durationDays,
-            indexInfo = IndexCase(
-                isolationTrigger = SelfAssessment(
-                    selfAssessmentDate = oldIndexCase.symptomsOnsetDate.plusDays(2),
-                    onsetDate = null
-                ),
-                testResult = AcknowledgedTestResult(
-                    testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone),
-                    testResult = oldTestResult.testResult,
-                    testKitType = oldTestResult.testKitType,
-                    acknowledgedDate = oldTestResult.acknowledgedDate.toLocalDate(fixedClock.zone),
-                ),
-                expiryDate = oldIndexCase.expiryDate
+            selfAssessment = SelfAssessment(
+                selfAssessmentDate = oldIndexCase.symptomsOnsetDate.plusDays(2),
+                onsetDate = null
+            ),
+            testResult = AcknowledgedTestResult(
+                testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone),
+                testResult = oldTestResult.testResult,
+                testKitType = oldTestResult.testKitType,
+                acknowledgedDate = oldTestResult.acknowledgedDate.toLocalDate(fixedClock.zone),
             ),
             hasAcknowledgedEndOfIsolation = false
         )
@@ -446,17 +423,11 @@ class MigrateIsolationStateTest {
 
         val expectedIsolationState = IsolationState(
             isolationConfiguration = durationDays,
-            indexInfo = IndexCase(
-                isolationTrigger = PositiveTestResult(
-                    testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone)
-                ),
-                testResult = AcknowledgedTestResult(
-                    testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone),
-                    testResult = oldTestResult.testResult,
-                    testKitType = oldTestResult.testKitType,
-                    acknowledgedDate = oldTestResult.acknowledgedDate.toLocalDate(fixedClock.zone),
-                ),
-                expiryDate = oldIndexCase.expiryDate
+            testResult = AcknowledgedTestResult(
+                testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone),
+                testResult = oldTestResult.testResult,
+                testKitType = oldTestResult.testKitType,
+                acknowledgedDate = oldTestResult.acknowledgedDate.toLocalDate(fixedClock.zone),
             ),
             hasAcknowledgedEndOfIsolation = false
         )
@@ -498,24 +469,20 @@ class MigrateIsolationStateTest {
 
         val expectedIsolationState = IsolationState(
             isolationConfiguration = durationDays,
-            contactCase = ContactCase(
+            contact = Contact(
                 exposureDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
                 notificationDate = oldContactCase.notificationDate!!.toLocalDate(fixedClock.zone),
                 optOutOfContactIsolation = null,
-                expiryDate = oldContactCase.expiryDate
             ),
-            indexInfo = IndexCase(
-                isolationTrigger = SelfAssessment(
-                    selfAssessmentDate = oldIndexCase.symptomsOnsetDate.plusDays(2),
-                    onsetDate = null
-                ),
-                testResult = AcknowledgedTestResult(
-                    testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone),
-                    testResult = oldTestResult.testResult,
-                    testKitType = oldTestResult.testKitType,
-                    acknowledgedDate = oldTestResult.acknowledgedDate.toLocalDate(fixedClock.zone),
-                ),
-                expiryDate = oldIndexCase.expiryDate
+            selfAssessment = SelfAssessment(
+                selfAssessmentDate = oldIndexCase.symptomsOnsetDate.plusDays(2),
+                onsetDate = null
+            ),
+            testResult = AcknowledgedTestResult(
+                testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone),
+                testResult = oldTestResult.testResult,
+                testKitType = oldTestResult.testKitType,
+                acknowledgedDate = oldTestResult.acknowledgedDate.toLocalDate(fixedClock.zone),
             ),
             hasAcknowledgedEndOfIsolation = false
         )
@@ -568,12 +535,9 @@ class MigrateIsolationStateTest {
 
         val expectedIsolationState = IsolationState(
             isolationConfiguration = durationDays,
-            indexInfo = IndexCase(
-                isolationTrigger = SelfAssessment(
-                    selfAssessmentDate = oldIndexCase.symptomsOnsetDate.plusDays(2),
-                    onsetDate = null
-                ),
-                expiryDate = oldIndexCase.expiryDate
+            selfAssessment = SelfAssessment(
+                selfAssessmentDate = oldIndexCase.symptomsOnsetDate.plusDays(2),
+                onsetDate = null
             )
         )
         thenMigrateTo(expectedIsolationState)

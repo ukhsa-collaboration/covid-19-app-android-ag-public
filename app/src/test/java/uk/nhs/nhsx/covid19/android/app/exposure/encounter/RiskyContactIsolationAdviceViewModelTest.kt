@@ -10,6 +10,7 @@ import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.FULLY_VACCINATED
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.MEDICALLY_EXEMPT
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.MINOR
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.NONE
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.NavigationTarget
@@ -19,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationA
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.AlreadyIsolating
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NewlyIsolating
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsFullyVaccinated
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsMedicallyExempt
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsMinor
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -27,6 +29,7 @@ import java.time.Instant
 import java.time.ZoneOffset
 
 class RiskyContactIsolationAdviceViewModelTest {
+
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -72,6 +75,15 @@ class RiskyContactIsolationAdviceViewModelTest {
     }
 
     @Test
+    fun `when in active index case, and receive MEDICALLY_EXEMPT, then emit AlreadyIsolating`() {
+        every { isolationLogicalState.isActiveIndexCase(fixedClock) } returns true
+
+        createTestSubject(optOutOfContactIsolationExtra = MEDICALLY_EXEMPT)
+
+        verify { viewStateObserver.onChanged(AlreadyIsolating(expectedDaysInIsolation.toInt())) }
+    }
+
+    @Test
     fun `when in not active index case then emit NewlyIsolating`() {
         every { isolationLogicalState.isActiveIndexCase(fixedClock) } returns false
 
@@ -92,6 +104,13 @@ class RiskyContactIsolationAdviceViewModelTest {
         createTestSubject(optOutOfContactIsolationExtra = FULLY_VACCINATED)
 
         verify { viewStateObserver.onChanged(NotIsolatingAsFullyVaccinated) }
+    }
+
+    @Test
+    fun `when medically exempt then emit NotIsolatingAsMedicallyExempt`() {
+        createTestSubject(optOutOfContactIsolationExtra = MEDICALLY_EXEMPT)
+
+        verify { viewStateObserver.onChanged(NotIsolatingAsMedicallyExempt) }
     }
 
     @Test

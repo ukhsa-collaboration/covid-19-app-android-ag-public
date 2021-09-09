@@ -2,8 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.state
 
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IsolationPeriod.Companion.mergeNewestOverlapping
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.MergedIsolationPeriod
+import uk.nhs.nhsx.covid19.android.app.state.IsolationPeriod.Companion.mergeNewestOverlapping
 import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

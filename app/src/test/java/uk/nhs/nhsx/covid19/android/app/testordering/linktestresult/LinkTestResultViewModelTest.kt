@@ -25,7 +25,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResult
-import uk.nhs.nhsx.covid19.android.app.state.asLogical
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationStateMachineSetupHelper
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
@@ -44,17 +44,17 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 
-class LinkTestResultViewModelTest {
+class LinkTestResultViewModelTest : IsolationStateMachineSetupHelper {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val ctaTokenValidator = mockk<CtaTokenValidator>(relaxed = true)
-    private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
+    override val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val linkTestResultOnsetDateNeededChecker = mockk<LinkTestResultOnsetDateNeededChecker>(relaxed = true)
-    private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
+    override val clock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)!!
     private val receivedUnknownTestResultProvider = mockk<ReceivedUnknownTestResultProvider>(relaxUnitFun = true)
-    private val isolationHelper = IsolationHelper(fixedClock)
+    private val isolationHelper = IsolationHelper(clock)
 
     private val testSubject = LinkTestResultViewModel(
         ctaTokenValidator,
@@ -73,7 +73,7 @@ class LinkTestResultViewModelTest {
         testSubject.validationOnsetDateNeeded().observeForever(validationOnsetDateNeeded)
         testSubject.validationCompleted().observeForever(validationCompletedObserver)
 
-        setIsolationState(indexAndContactCaseIsolation)
+        givenIsolationState(indexAndContactCaseIsolation)
         testSubject.fetchInitialViewState()
     }
 
@@ -97,7 +97,7 @@ class LinkTestResultViewModelTest {
     @Test
     fun `continue button should start validation`() =
         runBlocking {
-            setIsolationState(indexAndContactCaseIsolation)
+            givenIsolationState(indexAndContactCaseIsolation)
             setResult(POSITIVE, LAB_RESULT)
 
             testSubject.ctaToken = "test"
@@ -278,23 +278,16 @@ class LinkTestResultViewModelTest {
         return testResultResponse
     }
 
-    private fun setIsolationState(isolationState: IsolationState) {
-        every { isolationStateMachine.readState() } returns isolationState
-        every { isolationStateMachine.readLogicalState() } returns isolationState.asLogical()
-    }
-
     private val indexAndContactCaseIsolation = IsolationState(
         isolationConfiguration = DurationDays(),
-        contactCase = isolationHelper.contactCase(),
-        indexInfo = isolationHelper.positiveTest(
-            AcknowledgedTestResult(
-                testEndDate = LocalDate.now(fixedClock),
-                acknowledgedDate = LocalDate.now(fixedClock),
-                testResult = RelevantVirologyTestResult.POSITIVE,
-                testKitType = LAB_RESULT,
-                requiresConfirmatoryTest = false,
-                confirmedDate = null
-            )
+        contact = isolationHelper.contact(),
+        testResult = AcknowledgedTestResult(
+            testEndDate = LocalDate.now(clock),
+            acknowledgedDate = LocalDate.now(clock),
+            testResult = RelevantVirologyTestResult.POSITIVE,
+            testKitType = LAB_RESULT,
+            requiresConfirmatoryTest = false,
+            confirmedDate = null
         )
     )
 }

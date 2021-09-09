@@ -139,12 +139,12 @@ class EvaluateIfConsideredRiskyTest {
     }
 
     private fun setUpExpiredContactCaseDueToContactIsolationOptOut() {
-        val expiredContactCaseDueToContactIsolationOptOut = isolationHelper.contactCaseWithOptOutDate(
+        val expiredContactCaseDueToContactIsolationOptOut = isolationHelper.contactWithOptOutDate(
             optOutOfContactIsolation = baseDate.toLocalDate(ZoneOffset.UTC)
         ).asIsolation()
 
         every { isolationStateMachine.readState() } returns expiredContactCaseDueToContactIsolationOptOut
     }
 
-    private val contactCaseIsolation = isolationHelper.contactCase().asIsolation()
+    private val contactCaseIsolation = isolationHelper.contact().asIsolation()
 }

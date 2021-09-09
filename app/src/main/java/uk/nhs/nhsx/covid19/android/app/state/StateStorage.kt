@@ -4,16 +4,10 @@ import android.content.SharedPreferences
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.PositiveTestResult
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionStatus.COMPLETED_AND_CONFIRMED
-import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.NEGATIVE
-import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.util.Provider
 import uk.nhs.nhsx.covid19.android.app.util.storage
 import java.time.LocalDate
@@ -45,10 +39,9 @@ private const val LATEST_ISOLATION_STATE_JSON_VERSION = 1
 @JsonClass(generateAdapter = true)
 data class IsolationStateJson(
     val configuration: DurationDays,
-    val contact: ContactCase? = null,
+    val contact: Contact? = null,
     val testResult: AcknowledgedTestResult? = null,
     val symptomatic: SymptomaticCase? = null,
-    val indexExpiryDate: LocalDate? = null, // TODO@splitIndexCase: remove
     val hasAcknowledgedEndOfIsolation: Boolean = false,
     val version: Int = LATEST_ISOLATION_STATE_JSON_VERSION
 )
@@ -62,20 +55,23 @@ data class SymptomaticCase(
 private fun IsolationState.toStateJson(): IsolationStateJson =
     IsolationStateJson(
         configuration = isolationConfiguration,
-        contact = contactCase,
-        testResult = indexInfo?.testResult,
-        symptomatic = indexInfo?.toSymptomaticCase(),
-        indexExpiryDate = (indexInfo as? IndexCase)?.expiryDate,
+        contact = contact,
+        testResult = testResult,
+        symptomatic = selfAssessment?.toSymptomaticCase(),
         hasAcknowledgedEndOfIsolation = hasAcknowledgedEndOfIsolation
     )
 
-private fun IndexInfo.toSymptomaticCase(): SymptomaticCase? =
-    if (this is IndexCase && isolationTrigger is SelfAssessment)
-        SymptomaticCase(
-            selfDiagnosisDate = isolationTrigger.selfAssessmentDate,
-            onsetDate = isolationTrigger.onsetDate
-        )
-    else null
+private fun SelfAssessment.toSymptomaticCase(): SymptomaticCase =
+    SymptomaticCase(
+        selfDiagnosisDate = selfAssessmentDate,
+        onsetDate = onsetDate
+    )
+
+private fun SymptomaticCase.toSelfAssessment(): SelfAssessment =
+    SelfAssessment(
+        selfAssessmentDate = selfDiagnosisDate,
+        onsetDate = onsetDate
+    )
 
 private fun IsolationStateJson.toMigratedState(): IsolationState {
     val migratedTestResult = if (testResult?.confirmatoryTestCompletionStatus == null && testResult?.confirmedDate != null) {
@@ -88,32 +84,11 @@ private fun IsolationStateJson.toMigratedState(): IsolationState {
 
 private fun IsolationStateJson.isolationState(
     testResult: AcknowledgedTestResult?
-): IsolationState {
-    val indexIsolationTrigger =
-        if (symptomatic != null)
-            SelfAssessment(
-                selfAssessmentDate = symptomatic.selfDiagnosisDate,
-                onsetDate = symptomatic.onsetDate
-            )
-        else if (testResult != null && testResult.testResult == POSITIVE)
-            PositiveTestResult(testEndDate = testResult.testEndDate)
-        else null
-
-    val indexInfo =
-        if (indexIsolationTrigger != null && indexExpiryDate != null /*TODO@splitIndexCase: remove indexExpiryDate != null*/)
-            IndexCase(
-                isolationTrigger = indexIsolationTrigger,
-                testResult = testResult,
-                expiryDate = indexExpiryDate
-            )
-        else if (testResult?.testResult == NEGATIVE)
-            NegativeTest(testResult)
-        else null
-
-    return IsolationState(
+): IsolationState =
+    IsolationState(
         isolationConfiguration = configuration,
-        indexInfo = indexInfo,
-        contactCase = contact,
+        selfAssessment = symptomatic?.toSelfAssessment(),
+        testResult = testResult,
+        contact = contact,
         hasAcknowledgedEndOfIsolation = hasAcknowledgedEndOfIsolation
     )
-}

@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler
@@ -24,7 +23,7 @@ class IsKeySubmissionSupportedTest {
     private val isKeySubmissionSupported =
         IsKeySubmissionSupported(isolationStateMachine, testResultIsolationHandler, fixedClock)
 
-    private val expectedCurrentIsolationState = mockk<IsolationLogicalState>()
+    private val expectedCurrentIsolationState = mockk<IsolationState>()
     private val expectedNewIsolationState = mockk<IsolationState>()
     private val expectedTestResult = mockk<ReceivedTestResult>()
 
@@ -38,7 +37,7 @@ class IsKeySubmissionSupportedTest {
     @Test
     fun `when test result supports key submission but key submission should be prevented then return false`() {
         every { expectedTestResult.diagnosisKeySubmissionSupported } returns true
-        every { isolationStateMachine.readLogicalState() } returns expectedCurrentIsolationState
+        every { isolationStateMachine.readState() } returns expectedCurrentIsolationState
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                 expectedCurrentIsolationState,
@@ -53,7 +52,7 @@ class IsKeySubmissionSupportedTest {
     @Test
     fun `when test result supports key submission and key submission not prevented then return true`() {
         every { expectedTestResult.diagnosisKeySubmissionSupported } returns true
-        every { isolationStateMachine.readLogicalState() } returns expectedCurrentIsolationState
+        every { isolationStateMachine.readState() } returns expectedCurrentIsolationState
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                 expectedCurrentIsolationState,
@@ -68,7 +67,7 @@ class IsKeySubmissionSupportedTest {
     @Test
     fun `when test result supports key submission and state transition imminent then return true`() {
         every { expectedTestResult.diagnosisKeySubmissionSupported } returns true
-        every { isolationStateMachine.readLogicalState() } returns expectedCurrentIsolationState
+        every { isolationStateMachine.readState() } returns expectedCurrentIsolationState
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                 expectedCurrentIsolationState,

@@ -40,6 +40,8 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
         waitFor { exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed() }
         exposureNotificationVaccinationStatusRobot.clickDosesNoButton()
+        exposureNotificationVaccinationStatusRobot.clickMedicallyExemptNoButton()
+        exposureNotificationVaccinationStatusRobot.clickClinicalTrialNoButton()
         exposureNotificationVaccinationStatusRobot.clickContinueButton()
 
         waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
@@ -52,6 +54,8 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
     @Test
     fun whenUserClicksContinue_navigateToAgeLimitActivity_userCanComeBack() {
+        givenContactIsolation()
+
         startTestActivity<ExposureNotificationActivity>()
 
         exposureNotificationRobot.checkActivityIsDisplayed()
@@ -106,6 +110,8 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
     @Test
     fun whenErrorIsShownOnAgeLimitScreen_thenValidAnswerSelected_thenClickContinue_thenNavigateBack_errorIsNotShown_andSelectedValueStored() {
+        givenContactIsolation()
+
         startTestActivity<ExposureNotificationAgeLimitActivity>()
 
         waitFor { exposureNotificationAgeLimitRobot.checkActivityIsDisplayed() }
@@ -163,7 +169,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
     }
 
     @Test
-    fun givenContactIsolation_whenSelectingYesToAgeLimitQuestionAndYesToVaccinatedQuestionAndNoToDateQuestionAndClickingConfirm_thenNavigatesToNewlyIsolatingScreen() {
+    fun givenContactIsolation_whenSelectingYesToAgeLimitQuestionAndYesToVaccinatedQuestionAndNoToDateQuestionAndClickingConfirm_thenErrorIsShown() {
         givenContactIsolation()
 
         startTestActivity<ExposureNotificationActivity>()
@@ -188,8 +194,247 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
         exposureNotificationVaccinationStatusRobot.clickContinueButton()
 
+        exposureNotificationVaccinationStatusRobot.checkErrorVisible(true)
+    }
+
+    @Test
+    fun givenContactIsolation_whenSelectingYesToAgeLimit_thenYesToAllDoses_thenNoToDate_thenYesToClinicalTrial_navigatesToNotIsolatingAsFullyVaccinatedScreen() {
+        givenContactIsolation()
+
+        startTestActivity<ExposureNotificationActivity>()
+
+        exposureNotificationRobot.checkActivityIsDisplayed()
+
+        exposureNotificationRobot.clickContinueButton()
+
+        waitFor { exposureNotificationAgeLimitRobot.checkActivityIsDisplayed() }
+
+        exposureNotificationAgeLimitRobot.clickYesButton()
+
+        exposureNotificationAgeLimitRobot.clickContinueButton()
+
+        waitFor { exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed() }
+
+        exposureNotificationVaccinationStatusRobot.clickDosesYesButton()
+
+        waitFor { exposureNotificationVaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
+
+        exposureNotificationVaccinationStatusRobot.clickDateNoButton()
+
+        exposureNotificationVaccinationStatusRobot.clickClinicalTrialYesButton()
+
+        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+
+        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState()
+    }
+
+    @Test
+    fun givenIsInWales_inContactIsolation_whenYesToFullyVaccinated_thenNoToDate_thenNoToClinicalTrial_navigatesToIsolationScreen() {
+        givenLocalAuthorityIsInWales()
+        givenContactIsolation()
+
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
+
+        exposureNotificationVaccinationStatusRobot.clickDosesYesButton()
+
+        waitFor { exposureNotificationVaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
+
+        exposureNotificationVaccinationStatusRobot.clickDateNoButton()
+
+        exposureNotificationVaccinationStatusRobot.clickClinicalTrialNoButton()
+
+        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+
         waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(remainingDaysInIsolation = 9)
+    }
+
+    @Test
+    fun givenIsInWales_inContactIsolation_whenYesToFullyVaccinated_thenNoToDate_thenYesToClinicalTrial_navigatesToNotIsolatingAsFullyVaccinatedScreen() {
+        givenLocalAuthorityIsInWales()
+        givenContactIsolation()
+
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
+
+        exposureNotificationVaccinationStatusRobot.clickDosesYesButton()
+
+        waitFor { exposureNotificationVaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
+
+        exposureNotificationVaccinationStatusRobot.clickDateNoButton()
+
+        exposureNotificationVaccinationStatusRobot.clickClinicalTrialYesButton()
+
+        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+
+        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState()
+    }
+
+    @Test
+    fun givenIsInWales_inContactIsolation_whenNoToFullyVaccinated_thenNoToClinicalTrial_navigatesToIsolationScreen() {
+        givenLocalAuthorityIsInWales()
+        givenContactIsolation()
+
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
+
+        exposureNotificationVaccinationStatusRobot.clickDosesNoButton()
+
+        waitFor { exposureNotificationVaccinationStatusRobot.checkClinicalTrialQuestionContainerDisplayed(true) }
+
+        exposureNotificationVaccinationStatusRobot.clickClinicalTrialNoButton()
+
+        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+
+        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(remainingDaysInIsolation = 9)
+    }
+
+    @Test
+    fun givenIsInWales_inContactIsolation_whenNoToFullyVaccinated_thenYesToClinicalTrial_navigatesToNotIsolatingAsFullyVaccinatedScreen() {
+        givenLocalAuthorityIsInWales()
+        givenContactIsolation()
+
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
+
+        exposureNotificationVaccinationStatusRobot.clickDosesNoButton()
+
+        waitFor { exposureNotificationVaccinationStatusRobot.checkClinicalTrialQuestionContainerDisplayed(true) }
+
+        exposureNotificationVaccinationStatusRobot.clickClinicalTrialYesButton()
+
+        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+
+        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState()
+    }
+
+    @Test
+    fun givenIsInEngland_inContactIsolation_whenNoToFullyVaccinated_thenYesToMedicallyExempt_navigatesToNotIsolatingAsMedicallyExemptScreen() {
+        givenLocalAuthorityIsInEngland()
+        givenContactIsolation()
+
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
+
+        exposureNotificationVaccinationStatusRobot.clickDosesNoButton()
+
+        exposureNotificationVaccinationStatusRobot.clickMedicallyExemptYesButton()
+
+        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+
+        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMedicallyExemptViewState()
+    }
+
+    @Test
+    fun givenIsInEngland_inContactIsolation_whenNoToFullyVaccinated_thenNoToMedicallyExempt_thenNoToClinicalTrial_navigatesToIsolating() {
+        givenLocalAuthorityIsInEngland()
+        givenContactIsolation()
+
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
+
+        exposureNotificationVaccinationStatusRobot.clickDosesNoButton()
+
+        exposureNotificationVaccinationStatusRobot.clickMedicallyExemptNoButton()
+
+        exposureNotificationVaccinationStatusRobot.clickClinicalTrialNoButton()
+
+        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+
+        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(remainingDaysInIsolation = 9)
+    }
+
+    @Test
+    fun givenIsInEngland_inContactIsolation_whenNoToFullyVaccinated_thenNoToMedicallyExempt_thenYesToClinicalTrial_navigatesToNotIsolatingAsFullyVaccinatedScreen() {
+        givenLocalAuthorityIsInEngland()
+        givenContactIsolation()
+
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
+
+        exposureNotificationVaccinationStatusRobot.clickDosesNoButton()
+
+        exposureNotificationVaccinationStatusRobot.clickMedicallyExemptNoButton()
+
+        exposureNotificationVaccinationStatusRobot.clickClinicalTrialYesButton()
+
+        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+
+        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState()
+    }
+
+    @Test
+    fun givenIsInEngland_inContactIsolation_whenYesToFullyVaccinated_thenNoToDate_thenNoToClinicalTrial_thenNoToMedicallyExempt_navigatesToIsolationScreen() {
+        givenLocalAuthorityIsInEngland()
+        givenContactIsolation()
+
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
+
+        waitFor { exposureNotificationVaccinationStatusRobot.clickDosesYesButton() }
+
+        waitFor { exposureNotificationVaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
+
+        exposureNotificationVaccinationStatusRobot.clickDateNoButton()
+
+        exposureNotificationVaccinationStatusRobot.clickClinicalTrialNoButton()
+
+        exposureNotificationVaccinationStatusRobot.clickMedicallyExemptNoButton()
+
+        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+
+        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(remainingDaysInIsolation = 9)
+    }
+
+    @Test
+    fun givenIsInEngland_inContactIsolation_whenYesToFullyVaccinated_thenNoToDate_thenNoToClinicalTrial_thenYesToExempt_navigatesToNotIsolatingAsMedicallyExempt() {
+        givenLocalAuthorityIsInEngland()
+        givenContactIsolation()
+
+        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+
+        exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
+
+        exposureNotificationVaccinationStatusRobot.clickDosesYesButton()
+
+        waitFor { exposureNotificationVaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
+
+        exposureNotificationVaccinationStatusRobot.clickDateNoButton()
+
+        exposureNotificationVaccinationStatusRobot.clickClinicalTrialNoButton()
+
+        exposureNotificationVaccinationStatusRobot.clickMedicallyExemptYesButton()
+
+        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+
+        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMedicallyExemptViewState()
     }
 }

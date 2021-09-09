@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/vaccineDateQuestionContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+        android:id="@+id/vaccineDateQuestion"
+        style="@style/Title2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/vertical_margin"
+        tools:text="@string/exposure_notification_vaccination_status_date_question" />
+
+    <uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup
+        android:id="@+id/vaccineDateBinaryRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:option1ContentDescription="@string/exposure_notification_vaccination_status_date_yes_content_description"
+        app:option1Text="@string/exposure_notification_vaccination_status_date_yes"
+        app:option2ContentDescription="@string/exposure_notification_vaccination_status_date_no_content_description"
+        app:option2Text="@string/exposure_notification_vaccination_status_date_no" />
+</LinearLayout>

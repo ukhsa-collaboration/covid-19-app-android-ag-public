@@ -1,6 +1,6 @@
 {
   "source" : {
-    "commit" : "5410ea0",
+    "commit" : "175464b",
     "referenceBasePath" : "NHS-COVID-19\/Core\/Sources"
   },
   "transitions" : [
@@ -872,23 +872,6 @@
       }
     },
     {
-      "event" : "receivedConfirmedPositiveTestWithIsolationPeriodOlderThanAssumedIsolationStartDate",
-      "finalState" : {
-        "contact" : "noIsolation",
-        "positiveTest" : "notIsolatingAndHasNegativeTest",
-        "symptomatic" : "noIsolation"
-      },
-      "initialState" : {
-        "contact" : "noIsolation",
-        "positiveTest" : "notIsolatingAndHasNegativeTest",
-        "symptomatic" : "noIsolation"
-      },
-      "reference" : {
-        "file" : "BehaviourModels\/IsolationModelCurrentRuleSet.swift",
-        "line" : 288
-      }
-    },
-    {
       "event" : "receivedUnconfirmedPositiveTest",
       "finalState" : {
         "contact" : "noIsolation",
@@ -937,23 +920,6 @@
       "reference" : {
         "file" : "BehaviourModels\/IsolationModelCurrentRuleSet.swift",
         "line" : 382
-      }
-    },
-    {
-      "event" : "receivedUnconfirmedPositiveTestWithIsolationPeriodOlderThanAssumedIsolationStartDate",
-      "finalState" : {
-        "contact" : "noIsolation",
-        "positiveTest" : "notIsolatingAndHasNegativeTest",
-        "symptomatic" : "noIsolation"
-      },
-      "initialState" : {
-        "contact" : "noIsolation",
-        "positiveTest" : "notIsolatingAndHasNegativeTest",
-        "symptomatic" : "noIsolation"
-      },
-      "reference" : {
-        "file" : "BehaviourModels\/IsolationModelCurrentRuleSet.swift",
-        "line" : 496
       }
     },
     {

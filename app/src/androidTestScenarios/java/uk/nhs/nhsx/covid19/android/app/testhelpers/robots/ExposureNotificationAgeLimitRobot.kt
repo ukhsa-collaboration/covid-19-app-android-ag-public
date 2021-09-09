@@ -6,6 +6,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isChecked
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.testhelpers.nestedScrollTo
@@ -13,7 +14,19 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.nestedScrollTo
 class ExposureNotificationAgeLimitRobot {
 
     fun checkActivityIsDisplayed() {
-        checkActivityTitleIsDisplayed(R.string.exposure_notification_age_title)
+        onView(withId(R.id.ageLimitTitle))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkDateLabel(expectedDate: String) {
+        onView(withId(R.id.exposureNotificationAgeLimitDate))
+            .check(
+                matches(
+                    withText(
+                        context.getString(R.string.exposure_notification_age_subtitle_template, expectedDate)
+                    )
+                )
+            )
     }
 
     fun clickYesButton() {
@@ -26,9 +39,11 @@ class ExposureNotificationAgeLimitRobot {
             .perform(click())
     }
 
-    fun checkErrorVisible(visible: Boolean) {
-        onView(withId(R.id.ageLimitErrorView))
-            .check(matches(if (visible) isDisplayed() else not(isDisplayed())))
+    fun checkErrorVisible(shouldBeVisible: Boolean) {
+        onView(withId(R.id.ageLimitErrorView)).apply {
+            if (shouldBeVisible) perform(nestedScrollTo())
+        }
+            .check(matches(if (shouldBeVisible) isDisplayed() else not(isDisplayed())))
     }
 
     fun checkNothingSelected() {
@@ -55,5 +70,12 @@ class ExposureNotificationAgeLimitRobot {
     fun clickContinueButton() {
         onView(withId(R.id.continueButton))
             .perform(nestedScrollTo(), click())
+    }
+
+    fun checkSubtitleDisplayed(displayed: Boolean) {
+        onView(withId(R.id.ageLimitSubtitle)).apply {
+            if (displayed) perform(nestedScrollTo())
+        }
+            .check(matches(if (displayed) isDisplayed() else not(isDisplayed())))
     }
 }

@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isChecked
 import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
@@ -12,8 +13,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.testhelpers.NestedScrollViewScrollToAction
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.setChecked
+import uk.nhs.nhsx.covid19.android.app.testhelpers.nestedScrollTo
 
 class ExposureNotificationVaccinationStatusRobot {
 
@@ -45,22 +46,50 @@ class ExposureNotificationVaccinationStatusRobot {
         )
     )
 
+    private val clinicalTrialYesButton = onView(
+        allOf(
+            withId(R.id.binaryRadioButtonOption1),
+            isDescendantOfA(withId(R.id.clinicalTrialBinaryRadioGroup))
+        )
+    )
+
+    private val clinicalTrialNoButton = onView(
+        allOf(
+            withId(R.id.binaryRadioButtonOption2),
+            isDescendantOfA(withId(R.id.clinicalTrialBinaryRadioGroup))
+        )
+    )
+
+    private val medicallyExemptYesButton = onView(
+        allOf(
+            withId(R.id.binaryRadioButtonOption1),
+            isDescendantOfA(withId(R.id.medicallyExemptBinaryRadioGroup))
+        )
+    )
+
+    private val medicallyExemptNoButton = onView(
+        allOf(
+            withId(R.id.binaryRadioButtonOption2),
+            isDescendantOfA(withId(R.id.medicallyExemptBinaryRadioGroup))
+        )
+    )
+
     fun checkActivityIsDisplayed() {
         onView(withText(R.string.exposure_notification_vaccination_status_title))
             .check(matches(isDisplayed()))
     }
 
-    fun checkErrorVisible(visible: Boolean) {
+    fun checkErrorVisible(shouldBeVisible: Boolean) {
         onView(withId(R.id.vaccinationStatusErrorView))
-            .check(matches(if (visible) isDisplayed() else not(isDisplayed())))
+            .check(matches(if (shouldBeVisible) isDisplayed() else not(isDisplayed())))
     }
 
     fun clickDosesYesButton() {
-        dosesYesButton.perform(NestedScrollViewScrollToAction(), setChecked(true))
+        dosesYesButton.perform(nestedScrollTo(), setChecked(true))
     }
 
     fun clickDosesNoButton() {
-        dosesNoButton.perform(NestedScrollViewScrollToAction(), setChecked(true))
+        dosesNoButton.perform(nestedScrollTo(), setChecked(true))
     }
 
     fun checkDosesNothingSelected() {
@@ -68,65 +97,115 @@ class ExposureNotificationVaccinationStatusRobot {
         dosesNoButton.check(matches(isNotChecked()))
     }
 
+    fun checkMedicallyExemptNothingSelected() {
+        medicallyExemptYesButton.check(matches(isNotChecked()))
+        medicallyExemptNoButton.check(matches(isNotChecked()))
+    }
+
     fun checkDosesYesSelected() {
         dosesYesButton
-            .perform(NestedScrollViewScrollToAction())
+            .perform(nestedScrollTo())
             .check(matches(isChecked()))
         dosesNoButton
-            .perform(NestedScrollViewScrollToAction())
+            .perform(nestedScrollTo())
             .check(matches(isNotChecked()))
     }
 
     fun checkDosesNoSelected() {
         dosesNoButton
-            .perform(NestedScrollViewScrollToAction())
+            .perform(nestedScrollTo())
             .check(matches(isChecked()))
         dosesYesButton
-            .perform(NestedScrollViewScrollToAction())
+            .perform(nestedScrollTo())
             .check(matches(isNotChecked()))
     }
 
     fun clickDateYesButton() {
-        dateYesButton.perform(NestedScrollViewScrollToAction(), click())
+        dateYesButton.perform(nestedScrollTo(), click())
     }
 
     fun clickDateNoButton() {
-        dateNoButton.perform(NestedScrollViewScrollToAction(), click())
+        dateNoButton.perform(nestedScrollTo(), click())
     }
 
     fun checkDateNothingSelected() {
         dateYesButton
-            .perform(NestedScrollViewScrollToAction())
+            .perform(nestedScrollTo())
             .check(matches(isNotChecked()))
         dateNoButton
-            .perform(NestedScrollViewScrollToAction())
+            .perform(nestedScrollTo())
             .check(matches(isNotChecked()))
     }
 
     fun clickContinueButton() {
         onView(withId(R.id.vaccinationStatusContinueButton))
-            .perform(NestedScrollViewScrollToAction(), click())
+            .perform(nestedScrollTo(), click())
     }
 
     fun checkDosesDateQuestionContainerDisplayed(displayed: Boolean) {
         onView(withId(R.id.vaccineDateQuestionContainer)).apply {
             if (displayed) {
-                perform(NestedScrollViewScrollToAction())
+                perform(nestedScrollTo())
             }
         }
-            .check(matches(if (displayed) isDisplayed() else not(isDisplayed())))
+            .check(if (displayed) matches(isDisplayed()) else doesNotExist())
     }
 
     fun checkDosesDateQuestionDisplayedWithDate(expectedDate: String) {
         onView(withId(R.id.vaccineDateQuestion))
-            .perform(NestedScrollViewScrollToAction())
-            .check(matches(withText(
-                context.getString(R.string.exposure_notification_vaccination_status_date_question, expectedDate)
-            )))
+            .perform(nestedScrollTo())
+            .check(
+                matches(
+                    withText(
+                        context.getString(R.string.exposure_notification_vaccination_status_date_question, expectedDate)
+                    )
+                )
+            )
     }
 
     fun clickApprovedVaccinesLink() {
         onView(withId(R.id.approvedVaccinesLink))
-            .perform(NestedScrollViewScrollToAction(), click())
+            .perform(nestedScrollTo(), click())
+    }
+
+    fun checkClinicalTrialQuestionContainerDisplayed(displayed: Boolean) {
+        onView(withText(R.string.exposure_notification_clinical_trial_question)).apply {
+            if (displayed) {
+                perform(nestedScrollTo())
+            }
+        }
+            .check(if (displayed) matches(isDisplayed()) else doesNotExist())
+    }
+
+    fun checkMedicallyExemptQuestionContainerDisplayed(displayed: Boolean) {
+        onView(withId(R.id.medicallyExemptQuestionContainer)).apply {
+            if (displayed) {
+                perform(nestedScrollTo())
+            }
+        }
+            .check(if (displayed) matches(isDisplayed()) else doesNotExist())
+    }
+
+    fun clickClinicalTrialYesButton() {
+        clinicalTrialYesButton.perform(nestedScrollTo(), click())
+    }
+
+    fun clickClinicalTrialNoButton() {
+        clinicalTrialNoButton.perform(nestedScrollTo(), click())
+    }
+
+    fun clickMedicallyExemptYesButton() {
+        medicallyExemptYesButton.perform(nestedScrollTo(), click())
+    }
+
+    fun clickMedicallyExemptNoButton() {
+        medicallyExemptNoButton.perform(nestedScrollTo(), click())
+    }
+
+    fun checkSubtitleDisplayed(displayed: Boolean) {
+        onView(withId(R.id.vaccinationStatusSubtitle)).apply {
+            if (displayed) perform(nestedScrollTo())
+        }
+            .check(matches(if (displayed) isDisplayed() else not(isDisplayed())))
     }
 }

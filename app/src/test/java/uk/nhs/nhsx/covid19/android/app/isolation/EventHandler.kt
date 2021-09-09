@@ -30,9 +30,8 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
@@ -154,7 +153,7 @@ class EventHandler(
             }
 
             receivedNegativeTest -> {
-                val testResult = isolationTestContext.getCurrentState().indexInfo?.testResult
+                val testResult = isolationTestContext.getCurrentState().testResult
                 val endDate = testResult?.testEndDate?.plusDays(1)
                     ?: today.minusDays(1)
                 assertTrue(endDate.isBeforeOrEqual(today), "testEndDate is in the future (testEndDate: $endDate)")
@@ -292,13 +291,13 @@ class EventHandler(
         assertTrue(isolationState is PossiblyIsolating)
         val indexInfo = isolationState.indexInfo
         assertTrue(indexInfo is IndexCase)
-        val isolationTrigger = indexInfo.isolationTrigger
-        assertTrue(isolationTrigger is SelfAssessment)
-        return isolationTrigger.assumedOnsetDate
+        val selfAssessment = indexInfo.selfAssessment
+        assertNotNull(selfAssessment)
+        return selfAssessment.assumedOnsetDate
     }
 
     private fun getOnsetDateIfAny(): LocalDate? {
-        return ((isolationTestContext.getCurrentState().indexInfo as? IndexCase)?.isolationTrigger as? SelfAssessment)?.assumedOnsetDate
+        return isolationTestContext.getCurrentState().selfAssessment?.assumedOnsetDate
     }
 
     private fun getRememberedPositiveTestResult(): AcknowledgedTestResult {
@@ -314,7 +313,7 @@ class EventHandler(
     }
 
     private fun getRememberedTestResult(): AcknowledgedTestResult {
-        val rememberedTest = isolationTestContext.getCurrentState().indexInfo?.testResult
+        val rememberedTest = isolationTestContext.getCurrentState().testResult
         assertNotNull(rememberedTest, "Did not find stored test result")
         return rememberedTest
     }

@@ -1,12 +1,11 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IsolationPeriod
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo.NegativeTest
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
-import uk.nhs.nhsx.covid19.android.app.util.selectEarliest
 import java.time.Clock
 import java.time.LocalDate
 
@@ -16,7 +15,6 @@ import java.time.LocalDate
 sealed class IsolationLogicalState {
     abstract val isolationConfiguration: DurationDays
 
-    abstract fun toIsolationState(): IsolationState
     abstract fun remembersIndexCase(): Boolean
     abstract fun remembersIndexCaseWithSelfAssessment(): Boolean
     abstract fun remembersContactCase(): Boolean
@@ -27,7 +25,6 @@ sealed class IsolationLogicalState {
     abstract fun getActiveIndexCase(clock: Clock): IndexCase?
     abstract fun getActiveContactCase(clock: Clock): ContactCase?
     abstract fun getTestResult(): AcknowledgedTestResult?
-    abstract fun capExpiryDate(isolationPeriod: IsolationPeriod): LocalDate
 
     fun isActiveContactCaseOnly(clock: Clock): Boolean =
         isActiveContactCase(clock) && !isActiveIndexCase(clock)
@@ -85,13 +82,6 @@ sealed class IsolationLogicalState {
         val negativeTest: NegativeTest?
     ) : IsolationLogicalState() {
 
-        override fun toIsolationState(): IsolationState =
-            IsolationState(
-                isolationConfiguration,
-                indexInfo = negativeTest,
-                contactCase = null
-            )
-
         override fun remembersContactCase(): Boolean = false
         override fun remembersIndexCase(): Boolean = false
         override fun remembersIndexCaseWithSelfAssessment(): Boolean = false
@@ -104,43 +94,55 @@ sealed class IsolationLogicalState {
 
         override fun getTestResult(): AcknowledgedTestResult? =
             negativeTest?.testResult
+    }
 
-        override fun capExpiryDate(isolationPeriod: IsolationPeriod): LocalDate =
-            isolationPeriod.capExpiryDate(isolationConfiguration)
+    data class ContactCase(
+        val exposureDate: LocalDate,
+        val notificationDate: LocalDate,
+        val optOutOfContactIsolation: OptOutOfContactIsolation? = null,
+        override val expiryDate: LocalDate
+    ) : IsolationPeriod {
+        override val startDate: LocalDate
+            get() = notificationDate
+    }
+
+    interface TestResultOwner {
+        val testResult: AcknowledgedTestResult?
+    }
+
+    sealed class IndexInfo : TestResultOwner {
+
+        data class NegativeTest(override val testResult: AcknowledgedTestResult) : IndexInfo()
+
+        data class IndexCase(
+            val selfAssessment: SelfAssessment? = null,
+            override val testResult: AcknowledgedTestResult? = null,
+            override val startDate: LocalDate,
+            override val expiryDate: LocalDate
+        ) : IndexInfo(), IsolationPeriod {
+
+            fun isSelfAssessment(): Boolean =
+                selfAssessment != null
+
+            fun getSelfAssessmentOnsetDate(): LocalDate? =
+                selfAssessment?.assumedOnsetDate
+        }
     }
 
     /**
      * The app knows about a previous isolation, which might be expired
      */
     data class PossiblyIsolating(
-        val isolationState: IsolationState
+        override val isolationConfiguration: DurationDays,
+        val indexInfo: IndexInfo? = null,
+        val contactCase: ContactCase? = null,
+        val hasAcknowledgedEndOfIsolation: Boolean = false,
+        override val startDate: LocalDate,
+        override val expiryDate: LocalDate
     ) : IsolationLogicalState(),
-        IsolationInfo by isolationState,
         IsolationPeriod {
 
-        override val startDate: LocalDate
-        override val expiryDate: LocalDate
-        val lastDayOfIsolation: LocalDate
-
-        init {
-            val isolationPeriods = mutableListOf<IsolationPeriod>().apply {
-                if (indexInfo is IndexCase) {
-                    add(indexInfo)
-                }
-                if (contactCase != null) {
-                    add(contactCase)
-                }
-            }
-
-            val isolationPeriod = IsolationPeriod.mergeNewestOverlapping(isolationPeriods)
-                ?: throw IllegalArgumentException("Cannot instantiate using an isolation that has neither an index nor a contact case")
-
-            startDate = isolationPeriod.startDate
-            expiryDate = isolationPeriod.capExpiryDate(isolationConfiguration)
-            lastDayOfIsolation = expiryDate.minusDays(1)
-        }
-
-        override fun toIsolationState(): IsolationState = isolationState
+        val lastDayOfIsolation: LocalDate = expiryDate.minusDays(1)
 
         override fun isActiveIsolation(clock: Clock): Boolean =
             !hasExpired(clock)
@@ -172,23 +174,5 @@ sealed class IsolationLogicalState {
 
         override fun getTestResult(): AcknowledgedTestResult? =
             indexInfo?.testResult
-
-        override fun capExpiryDate(isolationPeriod: IsolationPeriod): LocalDate {
-            val mergedIsolation =
-                IsolationPeriod.mergeNewestOverlapping(listOf(this, isolationPeriod)) ?: isolationPeriod
-            val maxExpiryDate = mergedIsolation.capExpiryDate(isolationConfiguration)
-            return selectEarliest(maxExpiryDate, isolationPeriod.expiryDate)
-        }
-    }
-
-    companion object {
-        fun from(isolationState: IsolationState): IsolationLogicalState =
-            if (isolationState.indexInfo !is IndexCase && isolationState.contactCase == null)
-                NeverIsolating(
-                    isolationConfiguration = isolationState.isolationConfiguration,
-                    negativeTest = isolationState.indexInfo as? NegativeTest
-                )
-            else
-                PossiblyIsolating(isolationState)
     }
 }

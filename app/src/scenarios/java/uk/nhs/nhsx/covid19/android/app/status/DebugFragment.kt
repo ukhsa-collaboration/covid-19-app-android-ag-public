@@ -14,10 +14,12 @@ import androidx.fragment.app.viewModels
 import androidx.work.WorkInfo.State.ENQUEUED
 import androidx.work.WorkInfo.State.RUNNING
 import androidx.work.WorkManager
+import kotlinx.android.synthetic.scenarios.fragment_debug.contactDayOffset
 import kotlinx.android.synthetic.scenarios.fragment_debug.contactState
 import kotlinx.android.synthetic.scenarios.fragment_debug.defaultState
 import kotlinx.android.synthetic.scenarios.fragment_debug.exportKeys
 import kotlinx.android.synthetic.scenarios.fragment_debug.importKeys
+import kotlinx.android.synthetic.scenarios.fragment_debug.exposureDayOffset
 import kotlinx.android.synthetic.scenarios.fragment_debug.indexState
 import kotlinx.android.synthetic.scenarios.fragment_debug.offsetDaysView
 import kotlinx.android.synthetic.scenarios.fragment_debug.riskyPostCode
@@ -161,12 +163,12 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
         }
 
         contactState.setOnSingleClickListener {
-            debugViewModel.setContactState()
+            debugViewModel.setContactState(contactDayOffset.text.toString().toLong())
         }
 
         sendExposureNotification.setOnSingleClickListener {
             if (exposureNotificationApi is MockExposureNotificationApi) {
-                debugViewModel.sendExposureNotification()
+                debugViewModel.sendExposureNotification(exposureDayOffset.text.toString().toLong())
             } else {
                 Toast.makeText(context, "Use Mock Exposure Notifications", Toast.LENGTH_LONG).show()
             }

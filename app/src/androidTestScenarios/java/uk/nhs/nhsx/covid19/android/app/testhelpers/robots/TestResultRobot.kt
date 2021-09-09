@@ -29,8 +29,8 @@ class TestResultRobot(
     private val context: Context
 ) {
 
-    fun checkActivityDisplaysNegativeNotInIsolation() {
-        onView(withText(R.string.test_result_negative_no_self_isolation_subtitle_text))
+    fun checkActivityDisplaysNegativeAlreadyNotInIsolation() {
+        onView(withText(R.string.test_result_negative_already_not_in_isolation_subtitle))
             .check(matches(isDisplayed()))
         onView(withText(R.string.test_result_no_self_isolation_description))
             .check(matches(isDisplayed()))

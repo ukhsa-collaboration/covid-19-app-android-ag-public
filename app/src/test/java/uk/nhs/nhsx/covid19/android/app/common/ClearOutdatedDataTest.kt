@@ -23,6 +23,7 @@ class ClearOutdatedDataTest {
     private val lastVisitedBookTestTypeVenueDateProvider =
         mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxUnitFun = true)
     private val clearOutdatedKeySharingInfo = mockk<ClearOutdatedKeySharingInfo>(relaxUnitFun = true)
+    private val clearOutdatedTestOrderPollingConfigs = mockk<ClearOutdatedTestOrderPollingConfigs>(relaxUnitFun = true)
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
     private val epidemiologyEventProvider = mockk<EpidemiologyEventProvider>(relaxUnitFun = true)
     private val exposureNotificationTokensProvider = mockk<ExposureNotificationTokensProvider>(relaxUnitFun = true)
@@ -33,6 +34,7 @@ class ClearOutdatedDataTest {
         resetIsolationStateIfNeeded,
         lastVisitedBookTestTypeVenueDateProvider,
         clearOutdatedKeySharingInfo,
+        clearOutdatedTestOrderPollingConfigs,
         isolationConfigurationProvider,
         epidemiologyEventProvider,
         exposureNotificationTokensProvider,
@@ -65,6 +67,7 @@ class ClearOutdatedDataTest {
         verifyOrder {
             resetIsolationStateIfNeeded()
             clearOutdatedKeySharingInfo()
+            clearOutdatedTestOrderPollingConfigs()
             epidemiologyEventProvider.clearOnAndBefore(expectedLocalDateForEpidemiologyEventCleanUp)
             analyticsLogStorage.removeBeforeOrEqual(expectedInstantForAnalyticsLogsCleanUp)
             exposureNotificationTokensProvider.clear()
@@ -81,6 +84,7 @@ class ClearOutdatedDataTest {
             resetIsolationStateIfNeeded()
             lastVisitedBookTestTypeVenueDateProvider setProperty "lastVisitedVenue" value null
             clearOutdatedKeySharingInfo()
+            clearOutdatedTestOrderPollingConfigs()
             epidemiologyEventProvider.clearOnAndBefore(expectedLocalDateForEpidemiologyEventCleanUp)
             analyticsLogStorage.removeBeforeOrEqual(expectedInstantForAnalyticsLogsCleanUp)
             exposureNotificationTokensProvider.clear()

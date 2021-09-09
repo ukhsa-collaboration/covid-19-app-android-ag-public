@@ -4,7 +4,8 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
-import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
+import uk.nhs.nhsx.covid19.android.app.state.CreateIsolationLogicalState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.DoNotTransition
@@ -25,6 +26,7 @@ class EvaluateTestResultViewState @Inject constructor(
     private val computeTestResultViewStateOnPositive: ComputeTestResultViewStateOnPositive,
     private val computeTestResultViewStateOnNegative: ComputeTestResultViewStateOnNegative,
     private val computeTestResultViewStateOnVoid: ComputeTestResultViewStateOnVoid,
+    private val createIsolationLogicalState: CreateIsolationLogicalState,
     private val clock: Clock,
 ) {
     operator fun invoke(): ViewState =
@@ -34,31 +36,34 @@ class EvaluateTestResultViewState @Inject constructor(
         }
 
     private fun computeViewState(testResult: ReceivedTestResult): ViewState {
-        val currentState = stateMachine.readLogicalState()
+        val currentState = stateMachine.readState()
         val newState = computeIsolationLogicalStateAfterTestResult(currentState, testResult)
 
+        val currentLogicalState = createIsolationLogicalState(currentState)
+        val newLogicalState = createIsolationLogicalState(newState)
+
         val testResultViewState = when (testResult.testResult) {
-            POSITIVE -> computeTestResultViewStateOnPositive(currentState, newState, testResult)
-            NEGATIVE -> computeTestResultViewStateOnNegative(currentState, newState)
-            VOID -> computeTestResultViewStateOnVoid(currentState)
+            POSITIVE -> computeTestResultViewStateOnPositive(currentLogicalState, newLogicalState, testResult)
+            NEGATIVE -> computeTestResultViewStateOnNegative(currentLogicalState, newLogicalState)
+            VOID -> computeTestResultViewStateOnVoid(currentLogicalState)
             PLOD -> PlodWillContinueWithCurrentState
         }
-        val remainingDaysInIsolation = stateMachine.remainingDaysInIsolation(newState).toInt()
+        val remainingDaysInIsolation = stateMachine.remainingDaysInIsolation(newLogicalState).toInt()
 
         return ViewState(testResultViewState, remainingDaysInIsolation)
     }
 
     private fun computeIsolationLogicalStateAfterTestResult(
-        currentState: IsolationLogicalState,
+        currentState: IsolationState,
         testResult: ReceivedTestResult
-    ): IsolationLogicalState {
+    ): IsolationState {
         val transition = testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
             currentState,
             testResult,
             testAcknowledgedDate = Instant.now(clock)
         )
         return when (transition) {
-            is Transition -> IsolationLogicalState.from(transition.newState)
+            is Transition -> transition.newState
             is DoNotTransition -> currentState
         }
     }

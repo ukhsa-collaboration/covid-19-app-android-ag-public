@@ -35,9 +35,9 @@ class ComputeTestResultViewStateOnNegative @Inject constructor(
         newState: IsolationLogicalState
     ): Boolean {
         val currentStateTestResultIsNotCompleted =
-            currentState.toIsolationState().indexInfo?.testResult?.confirmatoryTestCompletionStatus == null
+            currentState.getTestResult()?.confirmatoryTestCompletionStatus == null
         val newStateTestResultIsCompleted =
-            newState.toIsolationState().indexInfo?.testResult?.confirmatoryTestCompletionStatus != null
+            newState.getTestResult()?.confirmatoryTestCompletionStatus != null
         return currentStateTestResultIsNotCompleted && newStateTestResultIsCompleted
     }
 }

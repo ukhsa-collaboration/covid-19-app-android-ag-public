@@ -3,12 +3,8 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.PositiveTestResult
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Default4_9
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Isolation4_9
@@ -76,7 +72,7 @@ class MigrateIsolationState @Inject constructor(
     private fun createNeverIsolating(testResult: AcknowledgedTestResult?): IsolationState =
         IsolationState(
             isolationConfiguration = isolationConfigurationProvider.durationDays,
-            indexInfo = handleNoIndexCase(testResult)
+            testResult = handleNoIndexCase(testResult)
         )
 
     private fun Isolation4_9.toIsolationState(
@@ -85,16 +81,16 @@ class MigrateIsolationState @Inject constructor(
     ): IsolationState =
         IsolationState(
             isolationConfiguration = isolationConfiguration,
-            indexInfo = indexCase?.toIndexCase(testResult)
-                ?: handleNoIndexCase(testResult),
-            contactCase = contactCase?.toContactCase(),
+            selfAssessment = indexCase?.toSelfAssessment(testResult),
+            testResult = testResult,
+            contact = contactCase?.toContactCase(),
             hasAcknowledgedEndOfIsolation = expirationAcknowledged
         )
 
-    private fun handleNoIndexCase(testResult: AcknowledgedTestResult?): NegativeTest? =
+    private fun handleNoIndexCase(testResult: AcknowledgedTestResult?): AcknowledgedTestResult? =
         when {
             testResult == null -> null
-            testResult.testResult == NEGATIVE -> NegativeTest(testResult)
+            testResult.testResult == NEGATIVE -> testResult
             else -> {
                 if (testResult.testResult == POSITIVE) {
                     Timber.e("Found a $POSITIVE test result but no index case. This is not possible. Falling back to null index case => test information will be lost")
@@ -105,22 +101,15 @@ class MigrateIsolationState @Inject constructor(
             }
         }
 
-    private fun IndexCase4_9.toIndexCase(testResult: AcknowledgedTestResult?): IndexCase =
-        IndexCase(
-            isolationTrigger = this.toIsolationTrigger(testResult),
-            testResult = testResult,
-            expiryDate = expiryDate
-        )
-
-    private fun IndexCase4_9.toIsolationTrigger(testResult: AcknowledgedTestResult?): IndexCaseIsolationTrigger =
+    private fun IndexCase4_9.toSelfAssessment(testResult: AcknowledgedTestResult?): SelfAssessment? =
         if (!selfAssessment && testResult != null && testResult.testResult == POSITIVE) {
-            PositiveTestResult(
-                testEndDate = testResult.testEndDate
-            )
+            // The index case is entirely due to a positive test; no self-assessment
+            null
         } else {
             if (!selfAssessment) {
                 Timber.e("An index case was found but selfAssessment is false and there is no positive test result. This is not be possible. Falling back to self-assessment index case")
             }
+
             // We're storing more specific information now that we cannot deduce from the old information.
             // We'll assume the user selected "cannot remember symptoms onset date" when performing the self-assessment
             SelfAssessment(
@@ -129,13 +118,12 @@ class MigrateIsolationState @Inject constructor(
             )
         }
 
-    private fun ContactCase4_9.toContactCase(): ContactCase =
-        ContactCase(
+    private fun ContactCase4_9.toContactCase(): Contact =
+        Contact(
             exposureDate = startDate.toLocalDate(clock.zone),
             notificationDate = notificationDate?.toLocalDate(clock.zone)
                 // Fall back to exposure date if notification date is not available
                 ?: startDate.toLocalDate(clock.zone),
             optOutOfContactIsolation = dailyContactTestingOptInDate?.let { OptOutOfContactIsolation(it) },
-            expiryDate = expiryDate
         )
 }

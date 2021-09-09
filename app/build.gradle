@@ -133,6 +133,11 @@ android {
         // execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
 
+    lintOptions {
+        disable 'TypographyFractions','TypographyQuotes'
+        check 'AccessibilityLabel'
+    }
+
     signingConfigs {
         production {
             keyAlias System.getenv('PRODUCTION_UPLOAD_SIGNING_KEY_ALIAS') ?: 'dummy-keystore'
@@ -156,7 +161,7 @@ android {
         scenarios {
             dimension "version"
             applicationIdSuffix ".internal"
-            versionNameSuffix "-internal (${buildNumber})"
+            versionNameSuffix " (${buildNumber})"
             signingConfig scenariosSigning
         }
         production {
@@ -293,6 +298,10 @@ dependencies {
     api 'io.jsonwebtoken:jjwt-api:0.11.2'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
     runtimeOnly('io.jsonwebtoken:jjwt-orgjson:0.11.2')
+
+    if (System.getProperty("idea.active") != "true") {
+        lintChecks project(":custom-a11y-rules")
+    }
 }
 
 afterEvaluate {

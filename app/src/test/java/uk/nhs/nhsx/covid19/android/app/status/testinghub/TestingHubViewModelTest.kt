@@ -23,6 +23,7 @@ class TestingHubViewModelTest {
     private val districtAreaStringProvider = mockk<DistrictAreaStringProvider>()
     private val evaluateBookTestNavigation = mockk<EvaluateBookTestNavigation>()
     private val canBookPcrTest = mockk<CanBookPcrTest>()
+
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxUnitFun = true)
     private val navigationTargetObserver = mockk<Observer<NavigationTarget>>(relaxUnitFun = true)
 

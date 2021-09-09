@@ -10,7 +10,7 @@ class OptOutOfContactIsolation @Inject constructor(
     private val analyticsEventProcessor: AnalyticsEventProcessor
 ) {
     operator fun invoke() {
-        isolationStateMachine.readState().contactCase?.exposureDate?.let {
+        isolationStateMachine.readState().contact?.exposureDate?.let {
             analyticsEventProcessor.track(OptedOutForContactIsolation)
             isolationStateMachine.optOutOfContactIsolation(it)
         }

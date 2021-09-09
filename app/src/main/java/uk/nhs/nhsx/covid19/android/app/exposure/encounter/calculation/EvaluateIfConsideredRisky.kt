@@ -44,7 +44,7 @@ class EvaluateIfConsideredRisky @Inject constructor(
     }
 
     private fun ExposureWindow.isAfterPotentialContactIsolationOptOut(): Boolean =
-        isolationStateMachine.readState().contactCase?.optOutOfContactIsolation?.date?.let { optOutDate ->
+        isolationStateMachine.readState().contact?.optOutOfContactIsolation?.date?.let { optOutDate ->
             val exposureDate = Instant.ofEpochMilli(dateMillisSinceEpoch).toLocalDate(clock.zone)
             exposureDate > optOutDate
         } ?: true

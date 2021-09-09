@@ -166,6 +166,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResul
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultOnsetDateActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.unknownresult.UnknownTestResultActivity
+import uk.nhs.nhsx.covid19.android.app.util.FAKE_LOCALE_NAME_FOR_STRING_IDS
 import uk.nhs.nhsx.covid19.android.app.util.crashreporting.CrashReport
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.purgeLokalise
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
@@ -582,6 +583,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
 
         addScreenButton("Exposure Notification Screen") {
+            createExposureNotification()
             ExposureNotificationActivity.start(this)
         }
 
@@ -824,11 +826,12 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
 
         addScreenButton("Exposure Notification Age Limit") {
+            createExposureNotification()
             startActivity<ExposureNotificationAgeLimitActivity>()
         }
 
         addScreenButton("Exposure Notification Vaccination Status") {
-            appComponent.provideIsolationStateMachine().processEvent(OnExposedNotification(Instant.now()))
+            createExposureNotification()
             startActivity<ExposureNotificationVaccinationStatusActivity>()
         }
 
@@ -846,6 +849,12 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             val isolationStateMachine = appComponent.provideIsolationStateMachine()
             isolationStateMachine.reset()
             RiskyContactIsolationAdviceActivity.startAsFullyVaccinated(this)
+        }
+
+        addScreenButton("Risky Contact Advice - Medically exempt (resets state)") {
+            val isolationStateMachine = appComponent.provideIsolationStateMachine()
+            isolationStateMachine.reset()
+            RiskyContactIsolationAdviceActivity.startAsMedicallyExempt(this)
         }
 
         addScreenButton("Risky Contact Advice - New isolation (resets state)") {
@@ -866,6 +875,12 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             startActivity<NewNoSymptomsActivity>()
         }
     }
+
+    private fun createExposureNotification() =
+        appComponent.provideIsolationStateMachine().apply {
+            reset()
+            processEvent(OnExposedNotification(Instant.now()))
+        }
 
     private fun playDefaultSoundAndVibrate() {
         val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -1065,7 +1080,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         const val OFFSET_DAYS = "OFFSET_DAYS"
         const val FILE_SELECT_CODE = 10011
         private val stringIdsSupportedLanguageItem =
-            SupportedLanguageItem(nameResId = R.string.show_string_ids, code = "non")
+            SupportedLanguageItem(nameResId = R.string.show_string_ids, code = FAKE_LOCALE_NAME_FOR_STRING_IDS)
 
         fun start(context: Context) = context.startActivity(getIntent(context))
 

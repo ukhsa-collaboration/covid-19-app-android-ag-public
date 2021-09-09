@@ -3,15 +3,14 @@ package uk.nhs.nhsx.covid19.android.app.exposure
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CalculateKeySubmissionDateRange
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.SubmissionDateRange
-import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CalculateKeySubmissionDateRange
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import java.time.Instant
 import java.time.LocalDate
@@ -23,7 +22,7 @@ class TransmissionRiskLevelApplierTest {
     private val stateMachine = mockk<IsolationStateMachine>()
     private val calculateKeySubmissionDateRange = mockk<CalculateKeySubmissionDateRange>()
 
-    private val testSubject: TransmissionRiskLevelApplier = TransmissionRiskLevelApplier(
+    private val testSubject = TransmissionRiskLevelApplier(
         stateMachine,
         calculateKeySubmissionDateRange
     )
@@ -97,26 +96,22 @@ class TransmissionRiskLevelApplierTest {
     }
 
     private fun givenIndexCaseWithOnsetDate(symptomsOnsetDate: LocalDate) {
-        val isolation = IsolationState(
-            indexInfo = IndexCase(
-                isolationTrigger = SelfAssessment(
+        every { stateMachine.readState() } returns
+            IsolationState(
+                selfAssessment = SelfAssessment(
                     selfAssessmentDate = LocalDate.parse("2020-07-21"),
-                    symptomsOnsetDate
+                    onsetDate = symptomsOnsetDate
                 ),
-                expiryDate = LocalDate.parse("2020-07-27")
-            ),
-            isolationConfiguration = DurationDays()
-        )
-        every { stateMachine.readState() } returns isolation
+                isolationConfiguration = DurationDays()
+            )
     }
 
     private fun givenIsolationWithoutIndexCase() {
         every { stateMachine.readState() } returns
             IsolationState(
-                contactCase = ContactCase(
+                contact = Contact(
                     exposureDate = LocalDate.parse("2020-07-21"),
-                    notificationDate = LocalDate.parse("2020-07-21"),
-                    expiryDate = LocalDate.parse("2020-08-01")
+                    notificationDate = LocalDate.parse("2020-07-21")
                 ),
                 isolationConfiguration = DurationDays()
             )

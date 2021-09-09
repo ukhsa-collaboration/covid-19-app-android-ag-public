@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.Companion.OPT_OUT_OF_CONTACT_ISOLATION_EXTRA
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.FULLY_VACCINATED
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.MEDICALLY_EXEMPT
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.MINOR
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.NONE
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
@@ -34,6 +35,16 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
 
         robot.checkActivityIsDisplayed()
         robot.checkIsInNotIsolatingAsFullyVaccinatedViewState()
+    }
+
+    @Test
+    fun startRiskyContactIsolationAdviceAsMedicallyExempt() {
+        startTestActivity<RiskyContactIsolationAdviceActivity> {
+            putExtra(OPT_OUT_OF_CONTACT_ISOLATION_EXTRA, MEDICALLY_EXEMPT)
+        }
+
+        robot.checkActivityIsDisplayed()
+        robot.checkIsInNotIsolatingAsMedicallyExemptViewState()
     }
 
     @Test

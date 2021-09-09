@@ -51,11 +51,10 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsProvider
-import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalHelper
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
-import uk.nhs.nhsx.covid19.android.app.state.asLogical
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ContactTracingHub
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ExposureConsent
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.InAppReview
@@ -114,7 +113,7 @@ class StatusViewModelTest {
     private val areSystemLevelAnimationsEnabled = mockk<AreSystemLevelAnimationsEnabled>(relaxUnitFun = true)
 
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-22T10:00:00Z"), ZoneOffset.UTC)
-    private val isolationHelper = IsolationHelper(fixedClock)
+    private val isolationHelper = IsolationLogicalHelper(fixedClock)
 
     private lateinit var testSubject: StatusViewModel
 
@@ -284,7 +283,7 @@ class StatusViewModelTest {
     @Test
     fun `get isolation advice when not in default state`() {
         val contactCase = isolationHelper.contactCase()
-        val isolationState = contactCase.asIsolation().asLogical()
+        val isolationState = contactCase.asIsolation()
 
         every { isolationStateMachine.readLogicalState() } returns isolationState
         coEvery { districtAreaUrlProvider.provide(R.string.url_latest_advice_in_isolation) } returns 0
@@ -717,7 +716,7 @@ class StatusViewModelTest {
         private const val DEFAULT_POST_CODE = "A1"
         private val DEFAULT_INFORMATION_SCREEN_STATE = null
         private val DEFAULT_ISOLATION_VIEW_STATE = NotIsolating
-        private val DEFAULT_ISOLATION_STATE = IsolationState(isolationConfiguration = DurationDays()).asLogical()
+        private val DEFAULT_ISOLATION_STATE = NeverIsolating(isolationConfiguration = DurationDays(), negativeTest = null)
         private const val DEFAULT_LATEST_ADVICE_URL_RES_ID = 0
     }
 }

@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/medicallyExemptQuestionContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+        android:id="@+id/medicallyExemptQuestion"
+        style="@style/Title2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/vertical_margin"
+        android:text="@string/exposure_notification_medically_exempt_question" />
+
+    <TextView
+        style="@style/Body1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/vertical_margin"
+        android:text="@string/exposure_notification_medically_exempt_description" />
+
+    <uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup
+        android:id="@+id/medicallyExemptBinaryRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:option1ContentDescription="@string/exposure_notification_medically_exempt_yes_content_description"
+        app:option1Text="@string/exposure_notification_medically_exempt_yes"
+        app:option2ContentDescription="@string/exposure_notification_medically_exempt_no_content_description"
+        app:option2Text="@string/exposure_notification_medically_exempt_no" />
+</LinearLayout>

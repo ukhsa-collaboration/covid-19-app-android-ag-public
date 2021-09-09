@@ -24,7 +24,7 @@ class IsolationHubScenarioTest : EspressoTest() {
     @Test
     fun whenInActiveIsolationAndNoBookTestTypeVenueVisitStored_bookATest_navigateToStatusActivity() {
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_INTERNAL_BROWSER) {
-            testAppContext.setState(isolationHelper.contactCase().asIsolation())
+            testAppContext.setState(isolationHelper.contact().asIsolation())
 
             startTestActivity<StatusActivity>()
 

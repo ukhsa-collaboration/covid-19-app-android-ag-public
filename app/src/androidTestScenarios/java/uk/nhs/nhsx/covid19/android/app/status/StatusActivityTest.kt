@@ -238,7 +238,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     fun whenIsolating_withAnimationDisabled_shouldShowStaticImage() {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
 
         startTestActivity<StatusActivity>()
 
@@ -254,7 +254,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     fun whenIsolating_withAnimationDisabled_contactTracingOff_shouldNotShowStaticImage() {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
         testAppContext.getExposureNotificationApi().setEnabled(false)
 
         startTestActivity<StatusActivity>()
@@ -356,7 +356,7 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun whenUserIsContactCase_reportSymptomsButtonShouldBeDisplayed() {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
 
         startTestActivity<StatusActivity>()
 
@@ -379,14 +379,12 @@ class StatusActivityTest : EspressoTest() {
     @Test
     fun whenUserIsIndexCaseTriggeredByPositiveTestResultWithUnknownOnsetDate_reportSymptomsButtonShouldBeDisplayed() {
         testAppContext.setState(
-            isolationHelper.positiveTest(
-                AcknowledgedTestResult(
-                    testEndDate = LocalDate.now(testAppContext.clock),
-                    testResult = POSITIVE,
-                    testKitType = LAB_RESULT,
-                    acknowledgedDate = LocalDate.now(testAppContext.clock),
-                    requiresConfirmatoryTest = false
-                )
+            AcknowledgedTestResult(
+                testEndDate = LocalDate.now(testAppContext.clock),
+                testResult = POSITIVE,
+                testKitType = LAB_RESULT,
+                acknowledgedDate = LocalDate.now(testAppContext.clock),
+                requiresConfirmatoryTest = false
             ).asIsolation()
         )
 

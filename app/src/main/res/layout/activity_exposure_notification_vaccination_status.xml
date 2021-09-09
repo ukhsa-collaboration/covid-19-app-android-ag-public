@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <include layout="@layout/view_toolbar_primary" />
 
     <androidx.core.widget.NestedScrollView
-        style="@style/ScrollContainer"
         android:id="@+id/vaccinationStatusScrollView"
+        style="@style/ScrollContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -40,86 +40,31 @@
                 android:textAlignment="center" />
 
             <TextView
+                android:id="@+id/vaccinationStatusSubtitle"
                 style="@style/Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_large"
                 android:layout_marginBottom="4dp"
-                android:text="@string/exposure_notification_vaccination_status_description" />
+                android:text="@string/exposure_notification_vaccination_status_description"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.ErrorView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/vaccinationStatusErrorView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"
-                app:error_title="@string/exposure_notification_vaccination_status_error_title"
-                app:error_description="@string/exposure_notification_vaccination_status_error_description"
                 android:visibility="gone"
-                tools:visibility="visible"
-                />
-
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
-                style="@style/Title2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:text="@string/exposure_notification_vaccination_status_all_doses_question" />
-
-            <TextView
-                style="@style/Body1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:text="@string/exposure_notification_vaccination_status_all_doses_question_description"
-                />
-
-            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
-                android:id="@+id/approvedVaccinesLink"
-                style="@style/LinkText.WithIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin_small"
-                android:text="@string/exposure_notification_vaccination_status_all_doses_question_link_text"
-                app:linkUrl="@string/exposure_notification_vaccination_status_all_doses_question_link_url"
-                />
-
-            <uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/allDosesBinaryRadioGroup"
-                app:option1Text="@string/exposure_notification_vaccination_status_all_doses_yes"
-                app:option2Text="@string/exposure_notification_vaccination_status_all_doses_no"
-                app:option1ContentDescription="@string/exposure_notification_vaccination_status_all_doses_yes_content_description"
-                app:option2ContentDescription="@string/exposure_notification_vaccination_status_all_doses_no_content_description"
-                />
+                app:error_description="@string/exposure_notification_vaccination_status_error_description"
+                app:error_title="@string/exposure_notification_vaccination_status_error_title"
+                tools:visibility="visible" />
 
             <LinearLayout
+                android:id="@+id/questionsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/vaccineDateQuestionContainer"
-                android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible"
-                >
-
-                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
-                    style="@style/Title2"
-                    android:id="@+id/vaccineDateQuestion"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/vertical_margin"
-                    tools:text="@string/exposure_notification_vaccination_status_date_question" />
-
-                <uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/vaccineDateBinaryRadioGroup"
-                    app:option1Text="@string/exposure_notification_vaccination_status_date_yes"
-                    app:option2Text="@string/exposure_notification_vaccination_status_date_no"
-                    app:option1ContentDescription="@string/exposure_notification_vaccination_status_date_yes_content_description"
-                    app:option2ContentDescription="@string/exposure_notification_vaccination_status_date_no_content_description"
-                    />
-            </LinearLayout>
+                android:orientation="vertical" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/vaccinationStatusContinueButton"

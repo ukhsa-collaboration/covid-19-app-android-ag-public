@@ -25,6 +25,8 @@
     <color name="focus_yellow">#FFEB3B</color>
 
     <!-- style colors -->
+    <color name="home_screen_icon_stopped">@color/style_red</color>
+
     <color name="style_purple">#8666B3</color>
     <color name="style_orange">#DB985A</color>
     <color name="style_yellow">#DBB75A</color>

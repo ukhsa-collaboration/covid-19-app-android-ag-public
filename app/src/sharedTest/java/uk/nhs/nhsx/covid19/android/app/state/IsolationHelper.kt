@@ -1,15 +1,10 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.PositiveTestResult
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import java.time.Clock
 import java.time.LocalDate
 
@@ -21,107 +16,72 @@ class IsolationHelper(
     fun neverInIsolation(): IsolationState =
         IsolationState(isolationConfiguration)
 
-    fun contactCase(expired: Boolean = false): ContactCase {
+    fun contact(expired: Boolean = false): Contact {
         val exposureDate = LocalDate.now(clock).minusDays(
             2 + if (expired) isolationConfiguration.contactCase.toLong() else 0
         )
-        return contactCase(exposureDate)
+        return contact(exposureDate)
     }
 
-    fun contactCase(
+    fun contact(
         exposureDate: LocalDate,
-        notificationDate: LocalDate = exposureDate.plusDays(1),
-        expiryDate: LocalDate = exposureDate.plusDays(isolationConfiguration.contactCase.toLong())
-    ): ContactCase =
-        ContactCase(
+        notificationDate: LocalDate = exposureDate.plusDays(1)
+    ): Contact =
+        Contact(
             exposureDate = exposureDate,
-            notificationDate = notificationDate,
-            expiryDate = expiryDate
+            notificationDate = notificationDate
         )
 
-    fun contactCaseWithOptOutDate(
+    fun contactWithOptOutDate(
         exposureDate: LocalDate = LocalDate.now(clock).minusDays(2),
         optOutOfContactIsolation: LocalDate
-    ): ContactCase =
-        ContactCase(
+    ): Contact =
+        Contact(
             exposureDate = exposureDate,
             notificationDate = exposureDate.plusDays(1),
-            expiryDate = optOutOfContactIsolation,
             optOutOfContactIsolation = OptOutOfContactIsolation(optOutOfContactIsolation)
         )
 
     fun selfAssessment(
         expired: Boolean = false,
-        onsetDate: LocalDate? = null,
-        testResult: AcknowledgedTestResult? = null
-    ): IndexCase {
+        onsetDate: LocalDate? = null
+    ): SelfAssessment {
         val selfAssessmentDate = LocalDate.now(clock).minusDays(
             2 + if (expired) isolationConfiguration.indexCaseSinceSelfDiagnosisUnknownOnset.toLong() else 0
         )
-        return selfAssessment(selfAssessmentDate, onsetDate, testResult)
-    }
-
-    fun selfAssessment(
-        selfAssessmentDate: LocalDate,
-        onsetDate: LocalDate? = null,
-        testResult: AcknowledgedTestResult? = null,
-        expiryDate: LocalDate =
-            if (onsetDate != null) onsetDate.plusDays(isolationConfiguration.indexCaseSinceSelfDiagnosisOnset.toLong())
-            else selfAssessmentDate.plusDays(isolationConfiguration.indexCaseSinceSelfDiagnosisUnknownOnset.toLong())
-    ): IndexCase =
-        IndexCase(
-            isolationTrigger = SelfAssessment(selfAssessmentDate, onsetDate),
-            testResult = testResult,
-            expiryDate = expiryDate
-        )
-
-    fun positiveTest(
-        testResult: AcknowledgedTestResult
-    ): IndexCase {
-        if (testResult.testResult != RelevantVirologyTestResult.POSITIVE) {
-            throw IllegalArgumentException("This function can only be called with a positive test result")
-        }
-        val testEndDay = testResult.testEndDate
-        return IndexCase(
-            isolationTrigger = PositiveTestResult(testEndDay),
-            testResult = testResult,
-            expiryDate = testEndDay.plusDays(isolationConfiguration.indexCaseSinceTestResultEndDate.toLong())
-        )
-    }
-
-    fun negativeTest(testResult: AcknowledgedTestResult): NegativeTest {
-        if (testResult.testResult != RelevantVirologyTestResult.NEGATIVE) {
-            throw IllegalArgumentException("This function can only be called with a negative test result")
-        }
-        return NegativeTest(testResult)
+        return SelfAssessment(selfAssessmentDate, onsetDate)
     }
 }
 
-fun IsolationState.addTestResultToIndexCase(testResult: AcknowledgedTestResult): IsolationState =
-    copy(indexInfo = (indexInfo as IndexCase).addTestResult(testResult))
-
-fun IndexCase.addTestResult(testResult: AcknowledgedTestResult): IndexCase =
+fun IsolationState.addTestResult(testResult: AcknowledgedTestResult): IsolationState =
     copy(testResult = testResult)
 
-fun ContactCase.asIsolation(
+fun Contact.asIsolation(
     hasAcknowledgedEndOfIsolation: Boolean = false,
     isolationConfiguration: DurationDays = DurationDays()
 ): IsolationState =
     IsolationState(
         isolationConfiguration,
-        contactCase = this,
+        contact = this,
         hasAcknowledgedEndOfIsolation = hasAcknowledgedEndOfIsolation
     )
 
-fun IndexInfo.asIsolation(
+fun SelfAssessment.asIsolation(
     hasAcknowledgedEndOfIsolation: Boolean = false,
     isolationConfiguration: DurationDays = DurationDays()
 ): IsolationState =
     IsolationState(
         isolationConfiguration,
-        indexInfo = this,
+        selfAssessment = this,
         hasAcknowledgedEndOfIsolation = hasAcknowledgedEndOfIsolation
     )
 
-fun IsolationState.asLogical(): IsolationLogicalState =
-    IsolationLogicalState.from(this)
+fun AcknowledgedTestResult.asIsolation(
+    hasAcknowledgedEndOfIsolation: Boolean = false,
+    isolationConfiguration: DurationDays = DurationDays()
+): IsolationState =
+    IsolationState(
+        isolationConfiguration,
+        testResult = this,
+        hasAcknowledgedEndOfIsolation = hasAcknowledgedEndOfIsolation
+    )

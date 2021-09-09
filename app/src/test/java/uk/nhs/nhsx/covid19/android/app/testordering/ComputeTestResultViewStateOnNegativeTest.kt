@@ -6,8 +6,6 @@ import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo
 import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionStatus.COMPLETED
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeNotInIsolation
@@ -83,13 +81,9 @@ class ComputeTestResultViewStateOnNegativeTest {
         setUpIsolationStateCompletionStatus(newState, shouldBeCompleted = true)
     }
 
-    private fun setUpIsolationStateCompletionStatus(state: IsolationLogicalState, shouldBeCompleted: Boolean) {
-        val isolationState = mockk<IsolationState>()
-        val indexInfo = mockk<IndexInfo>()
+    private fun setUpIsolationStateCompletionStatus(isolationLogicalState: IsolationLogicalState, shouldBeCompleted: Boolean) {
         val testResult = mockk<AcknowledgedTestResult>()
-        every { state.toIsolationState() } returns isolationState
-        every { isolationState.indexInfo } returns indexInfo
-        every { indexInfo.testResult } returns testResult
+        every { isolationLogicalState.getTestResult() } returns testResult
         every { testResult.confirmatoryTestCompletionStatus } returns if (shouldBeCompleted) COMPLETED else null
     }
 }

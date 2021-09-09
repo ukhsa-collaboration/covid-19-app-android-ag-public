@@ -46,6 +46,8 @@
 
     <color name="links_toolbar_color">@color/nhs_blue</color>
 
+    <color name="home_screen_icon_stopped">@color/error_red</color>
+
     <color name="medium_grey">#4C6272</color>
     <color name="almost_white">#FAFAFA</color>
 

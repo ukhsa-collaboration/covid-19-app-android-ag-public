@@ -66,7 +66,9 @@ import kotlin.test.assertEquals
 class MetricsTest {
     private val expectedLogEventCount = 9
     private val totalBackgroundTasksMetric =
-        Metrics().copy(totalBackgroundTasks = expectedLogEventCount)
+        Metrics().copy(
+            totalBackgroundTasks = expectedLogEventCount
+        )
 
     //region network stats
 
@@ -505,20 +507,22 @@ class MetricsTest {
     }
 
     @Test
-    fun `add negativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            Event(NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_WITHIN_TIME_LIMIT),
-            Metrics().copy(negativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit = expectedLogEventCount)
-        )
-    }
+    fun `add negativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                Event(NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_WITHIN_TIME_LIMIT),
+                Metrics().copy(negativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit = expectedLogEventCount)
+            )
+        }
 
     @Test
-    fun `add negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit for events in same analytics window`() = runBlocking {
-        `test aggregation of analytics metrics`(
-            Event(NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_OUTSIDE_TIME_LIMIT),
-            Metrics().copy(negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit = expectedLogEventCount)
-        )
-    }
+    fun `add negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit for events in same analytics window`() =
+        runBlocking {
+            `test aggregation of analytics metrics`(
+                Event(NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_OUTSIDE_TIME_LIMIT),
+                Metrics().copy(negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit = expectedLogEventCount)
+            )
+        }
 
     @Test
     fun `add didAccessRiskyVenueM2Notification for events in same analytics window`() = runBlocking {

@@ -99,6 +99,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.TOTAL
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.VOID_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
+import uk.nhs.nhsx.covid19.android.app.isolation.createIsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.Companion.ISOLATION_STATE_CHANNEL_ID
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
@@ -107,12 +108,16 @@ import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Unresolved
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
+import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
+import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
+import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.GetLocalMessageFromStorage
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
@@ -126,7 +131,7 @@ import java.time.ZoneOffset
 class AnalyticsEventProcessorTest {
 
     private val analyticsLogStorage = mockk<AnalyticsLogStorage>(relaxed = true)
-    private val stateStorage = mockk<StateStorage>(relaxed = true)
+    private val stateStorage = mockk<StateStorage>(relaxUnitFun = true)
     private val exposureNotificationApi = mockk<ExposureNotificationApi>()
     private val appAvailabilityProvider = mockk<AppAvailabilityProvider>()
     private val networkTrafficStats = mockk<NetworkTrafficStats>()
@@ -138,12 +143,15 @@ class AnalyticsEventProcessorTest {
     private val getLocalMessageFromStorage = mockk<GetLocalMessageFromStorage>()
     private val testCoroutineScope = TestCoroutineScope()
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
+    private val bluetoothAvailabilityStateProvider = mockk<AvailabilityStateProvider>()
+    private val locationAvailabilityStateProvider = mockk<AvailabilityStateProvider>()
 
     private val isolationHelper = IsolationHelper(fixedClock)
 
     private val testSubject = AnalyticsEventProcessor(
         analyticsLogStorage,
         stateStorage,
+        createIsolationLogicalState(fixedClock),
         exposureNotificationApi,
         appAvailabilityProvider,
         networkTrafficStats,
@@ -152,6 +160,8 @@ class AnalyticsEventProcessorTest {
         lastVisitedBookTestTypeVenueDateProvider,
         onboardingCompletedProvider,
         getLocalMessageFromStorage,
+        bluetoothAvailabilityStateProvider,
+        locationAvailabilityStateProvider,
         testCoroutineScope,
         fixedClock
     )
@@ -167,9 +177,99 @@ class AnalyticsEventProcessorTest {
         every { lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue } returns null
         every { onboardingCompletedProvider.value } returns true
         coEvery { getLocalMessageFromStorage.invoke() } returns null
+        every { bluetoothAvailabilityStateProvider.getState() } returns ENABLED
+        every { locationAvailabilityStateProvider.getState() } returns ENABLED
     }
 
     //region background ticks
+
+    @Test
+    fun `on background completed when bluetooth is off`() = runBlocking {
+        every { bluetoothAvailabilityStateProvider.getState() } returns DISABLED
+
+        testSubject.track(BackgroundTaskCompletion)
+
+        verify {
+            analyticsLogStorage.add(
+                AnalyticsLogEntry(
+                    instant = Instant.now(fixedClock),
+                    logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                        backgroundTaskTicks = BackgroundTaskTicks(
+                            runningNormallyBackgroundTick = true,
+                            appIsUsableBackgroundTick = false,
+                            appIsContactTraceableBackgroundTick = true
+                        )
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `on background completed when location is off and device does not support locationless scanning`() = runBlocking {
+        every { exposureNotificationApi.deviceSupportsLocationlessScanning() } returns false
+        every { locationAvailabilityStateProvider.getState() } returns DISABLED
+
+        testSubject.track(BackgroundTaskCompletion)
+
+        verify {
+            analyticsLogStorage.add(
+                AnalyticsLogEntry(
+                    instant = Instant.now(fixedClock),
+                    logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                        backgroundTaskTicks = BackgroundTaskTicks(
+                            runningNormallyBackgroundTick = true,
+                            appIsUsableBackgroundTick = false,
+                            appIsContactTraceableBackgroundTick = true
+                        )
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `on background completed when location is off and device supports locationless scanning`() = runBlocking {
+        every { exposureNotificationApi.deviceSupportsLocationlessScanning() } returns true
+        every { locationAvailabilityStateProvider.getState() } returns DISABLED
+
+        testSubject.track(BackgroundTaskCompletion)
+
+        verify {
+            analyticsLogStorage.add(
+                AnalyticsLogEntry(
+                    instant = Instant.now(fixedClock),
+                    logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                        backgroundTaskTicks = BackgroundTaskTicks(
+                            runningNormallyBackgroundTick = true,
+                            appIsUsableBackgroundTick = true,
+                            appIsContactTraceableBackgroundTick = true
+                        )
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `on background completed when app is usable and contact traceable`() = runBlocking {
+        testSubject.track(BackgroundTaskCompletion)
+
+        verify {
+            analyticsLogStorage.add(
+                AnalyticsLogEntry(
+                    instant = Instant.now(fixedClock),
+                    logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                        backgroundTaskTicks = BackgroundTaskTicks(
+                            runningNormallyBackgroundTick = true,
+                            appIsUsableBackgroundTick = true,
+                            appIsContactTraceableBackgroundTick = true
+                        )
+                    )
+                )
+            )
+        }
+    }
 
     @Test
     fun `do not process any items when onboarding is not completed`() = runBlocking {
@@ -208,7 +308,9 @@ class AnalyticsEventProcessorTest {
                     instant = Instant.now(fixedClock),
                     logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                         backgroundTaskTicks = BackgroundTaskTicks(
-                            runningNormallyBackgroundTick = true
+                            runningNormallyBackgroundTick = true,
+                            appIsUsableBackgroundTick = true,
+                            appIsContactTraceableBackgroundTick = true
                         )
                     )
                 )
@@ -229,6 +331,8 @@ class AnalyticsEventProcessorTest {
                     logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                         backgroundTaskTicks = BackgroundTaskTicks(
                             runningNormallyBackgroundTick = true,
+                            appIsUsableBackgroundTick = true,
+                            appIsContactTraceableBackgroundTick = true,
                             hasRiskyContactNotificationsEnabledBackgroundTick = true
                         )
                     )
@@ -249,7 +353,9 @@ class AnalyticsEventProcessorTest {
                     instant = Instant.now(fixedClock),
                     logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                         backgroundTaskTicks = BackgroundTaskTicks(
-                            runningNormallyBackgroundTick = true
+                            runningNormallyBackgroundTick = true,
+                            appIsUsableBackgroundTick = true,
+                            appIsContactTraceableBackgroundTick = true
                         )
                     )
                 )
@@ -260,10 +366,10 @@ class AnalyticsEventProcessorTest {
     @Test
     fun `on background completed when user is isolating due to contact`() = runBlocking {
         every { stateStorage.state } returns
-            IsolationState(
-                isolationConfiguration = DurationDays(),
-                contactCase = isolationHelper.contactCase()
-            )
+                IsolationState(
+                    isolationConfiguration = DurationDays(),
+                    contact = isolationHelper.contact()
+                )
 
         testSubject.track(BackgroundTaskCompletion)
 
@@ -274,6 +380,8 @@ class AnalyticsEventProcessorTest {
                     logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                         backgroundTaskTicks = BackgroundTaskTicks(
                             runningNormallyBackgroundTick = true,
+                            appIsUsableBackgroundTick = true,
+                            appIsContactTraceableBackgroundTick = true,
                             isIsolatingBackgroundTick = true,
                             isIsolatingForHadRiskyContactBackgroundTick = true,
                             hasHadRiskyContactBackgroundTick = true
@@ -287,10 +395,10 @@ class AnalyticsEventProcessorTest {
     @Test
     fun `on background completed when user was isolating due to contact`() = runBlocking {
         every { stateStorage.state } returns
-            IsolationState(
-                isolationConfiguration = DurationDays(),
-                contactCase = isolationHelper.contactCase(expired = true)
-            )
+                IsolationState(
+                    isolationConfiguration = DurationDays(),
+                    contact = isolationHelper.contact(expired = true)
+                )
 
         testSubject.track(BackgroundTaskCompletion)
 
@@ -301,6 +409,8 @@ class AnalyticsEventProcessorTest {
                     logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                         backgroundTaskTicks = BackgroundTaskTicks(
                             runningNormallyBackgroundTick = true,
+                            appIsUsableBackgroundTick = true,
+                            appIsContactTraceableBackgroundTick = true,
                             hasHadRiskyContactBackgroundTick = true
                         )
                     )
@@ -313,10 +423,10 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user is isolating due to self assessment`() =
         runBlocking {
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = isolationHelper.selfAssessment()
-                )
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        selfAssessment = isolationHelper.selfAssessment()
+                    )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -327,6 +437,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
@@ -342,11 +454,11 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user is isolating due to self assessment and contact`() =
         runBlocking {
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    contactCase = isolationHelper.contactCase(),
-                    indexInfo = isolationHelper.selfAssessment()
-                )
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        contact = isolationHelper.contact(),
+                        selfAssessment = isolationHelper.selfAssessment()
+                    )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -357,6 +469,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
                                 isIsolatingForHadRiskyContactBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
@@ -374,10 +488,10 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user was isolating due to self assessment`() =
         runBlocking {
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = isolationHelper.selfAssessment(expired = true)
-                )
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        selfAssessment = isolationHelper.selfAssessment(expired = true)
+                    )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -388,6 +502,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 hasSelfDiagnosedBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true
                             )
@@ -401,9 +517,9 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user is isolating due to self assessment and last test result is positive, PCR, and acknowledged during current isolation`() =
         runBlocking {
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = isolationHelper.selfAssessment(
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        selfAssessment = isolationHelper.selfAssessment(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock),
                             acknowledgedDate = LocalDate.now(fixedClock).minusDays(1),
@@ -413,7 +529,6 @@ class AnalyticsEventProcessorTest {
                             confirmedDate = null
                         )
                     )
-                )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -424,6 +539,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
@@ -441,9 +558,9 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user is isolating due to self assessment and last test result is positive, assisted LFD, and acknowledged during current isolation`() =
         runBlocking {
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = isolationHelper.selfAssessment(
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        selfAssessment = isolationHelper.selfAssessment(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock),
                             acknowledgedDate = LocalDate.now(fixedClock).minusDays(1),
@@ -453,7 +570,6 @@ class AnalyticsEventProcessorTest {
                             confirmedDate = null
                         )
                     )
-                )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -464,6 +580,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
@@ -481,9 +599,9 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user is isolating due to self assessment and last test result is positive, unassisted LFD, and acknowledged during current isolation`() =
         runBlocking {
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = isolationHelper.selfAssessment(
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        selfAssessment = isolationHelper.selfAssessment(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock),
                             acknowledgedDate = LocalDate.now(fixedClock).minusDays(1),
@@ -491,7 +609,6 @@ class AnalyticsEventProcessorTest {
                             testKitType = RAPID_SELF_REPORTED
                         )
                     )
-                )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -502,6 +619,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
@@ -519,9 +638,9 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user is isolating due to self assessment and last test result is positive, PCR, and acknowledged on isolation start date`() =
         runBlocking {
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = isolationHelper.selfAssessment(
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        selfAssessment = isolationHelper.selfAssessment(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock).minusDays(2),
                             acknowledgedDate = LocalDate.now(fixedClock).minusDays(2),
@@ -531,7 +650,6 @@ class AnalyticsEventProcessorTest {
                             confirmedDate = null
                         )
                     )
-                )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -542,6 +660,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
@@ -559,9 +679,9 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user is isolating due to self assessment and last test result is positive, assisted LFD, and acknowledged on isolation start date`() =
         runBlocking {
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = isolationHelper.selfAssessment(
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        selfAssessment = isolationHelper.selfAssessment(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock).minusDays(2),
                             acknowledgedDate = LocalDate.now(fixedClock).minusDays(2),
@@ -571,7 +691,6 @@ class AnalyticsEventProcessorTest {
                             confirmedDate = null
                         )
                     )
-                )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -582,6 +701,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
@@ -599,9 +720,9 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user is isolating due to self assessment and last test result is positive, unassisted LFD, and acknowledged on isolation start date`() =
         runBlocking {
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = isolationHelper.selfAssessment(
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        selfAssessment = isolationHelper.selfAssessment(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock).minusDays(2),
                             acknowledgedDate = LocalDate.now(fixedClock).minusDays(2),
@@ -609,7 +730,6 @@ class AnalyticsEventProcessorTest {
                             testKitType = RAPID_SELF_REPORTED
                         )
                     )
-                )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -620,6 +740,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
@@ -638,10 +760,9 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             val isolationStart = LocalDate.now(fixedClock).minusDays(1)
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = isolationHelper.selfAssessment(
-                        selfAssessmentDate = isolationStart,
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        selfAssessment = SelfAssessment(selfAssessmentDate = isolationStart),
                         testResult = AcknowledgedTestResult(
                             testEndDate = isolationStart.minusDays(2),
                             acknowledgedDate = isolationStart,
@@ -651,7 +772,6 @@ class AnalyticsEventProcessorTest {
                             confirmedDate = null
                         )
                     )
-                )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -662,6 +782,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
@@ -680,10 +802,9 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             val isolationStart = LocalDate.now(fixedClock).minusDays(1)
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = isolationHelper.selfAssessment(
-                        selfAssessmentDate = isolationStart,
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        selfAssessment = SelfAssessment(selfAssessmentDate = isolationStart),
                         testResult = AcknowledgedTestResult(
                             testEndDate = isolationStart.minusDays(2),
                             acknowledgedDate = isolationStart.minusDays(2),
@@ -693,7 +814,6 @@ class AnalyticsEventProcessorTest {
                             confirmedDate = null
                         )
                     )
-                )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -704,6 +824,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
@@ -721,10 +843,9 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user was isolating due to self assessment and last test result is positive`() =
         runBlocking {
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = isolationHelper.selfAssessment(
-                        expired = true,
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        selfAssessment = isolationHelper.selfAssessment(expired = true),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock),
                             acknowledgedDate = LocalDate.now(fixedClock),
@@ -734,7 +855,6 @@ class AnalyticsEventProcessorTest {
                             confirmedDate = null
                         )
                     )
-                )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -745,6 +865,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 hasSelfDiagnosedBackgroundTick = true,
                                 hasTestedPositiveBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true
@@ -759,10 +881,9 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user is isolating without self assessment and last test result is positive and PCR`() =
         runBlocking {
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = isolationHelper.positiveTest(
-                        AcknowledgedTestResult(
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock),
                             acknowledgedDate = LocalDate.now(fixedClock),
                             testResult = POSITIVE,
@@ -771,7 +892,6 @@ class AnalyticsEventProcessorTest {
                             confirmedDate = null
                         )
                     )
-                )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -782,6 +902,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForTestedPositiveBackgroundTick = true,
@@ -797,10 +919,9 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user is isolating without self assessment and last test result is positive and assisted LFD`() =
         runBlocking {
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = isolationHelper.positiveTest(
-                        AcknowledgedTestResult(
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock),
                             acknowledgedDate = LocalDate.now(fixedClock),
                             testResult = POSITIVE,
@@ -809,7 +930,6 @@ class AnalyticsEventProcessorTest {
                             confirmedDate = null
                         )
                     )
-                )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -820,6 +940,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForTestedLFDPositiveBackgroundTick = true,
@@ -835,10 +957,9 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user is isolating for positive unconfirmed LFD`() =
         runBlocking {
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = isolationHelper.positiveTest(
-                        AcknowledgedTestResult(
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock),
                             acknowledgedDate = LocalDate.now(fixedClock),
                             testResult = POSITIVE,
@@ -847,7 +968,6 @@ class AnalyticsEventProcessorTest {
                             confirmedDate = null
                         )
                     )
-                )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -858,6 +978,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForTestedSelfRapidPositiveBackgroundTick = true,
@@ -874,10 +996,9 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user is isolating for positive confirmed LFD`() =
         runBlocking {
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = isolationHelper.positiveTest(
-                        AcknowledgedTestResult(
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock),
                             acknowledgedDate = LocalDate.now(fixedClock),
                             testResult = POSITIVE,
@@ -887,7 +1008,6 @@ class AnalyticsEventProcessorTest {
                             confirmatoryTestCompletionStatus = COMPLETED_AND_CONFIRMED
                         )
                     )
-                )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -898,6 +1018,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForTestedLFDPositiveBackgroundTick = true,
@@ -913,11 +1035,10 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user is isolating as contact, was isolating without self assessment and last test result is positive`() =
         runBlocking {
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    contactCase = isolationHelper.contactCase(),
-                    indexInfo = isolationHelper.positiveTest(
-                        AcknowledgedTestResult(
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        contact = isolationHelper.contact(),
+                        testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock).minusDays(12),
                             acknowledgedDate = LocalDate.now(fixedClock).minusDays(12),
                             testResult = POSITIVE,
@@ -926,7 +1047,6 @@ class AnalyticsEventProcessorTest {
                             confirmedDate = null
                         )
                     )
-                )
             testSubject.track(BackgroundTaskCompletion)
 
             verify {
@@ -936,6 +1056,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
                                 isIsolatingForHadRiskyContactBackgroundTick = true,
                                 hasHadRiskyContactBackgroundTick = true,
@@ -952,10 +1074,9 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user was isolating without self assessment and last test result is positive`() =
         runBlocking {
             every { stateStorage.state } returns
-                IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = isolationHelper.positiveTest(
-                        AcknowledgedTestResult(
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock).minusDays(12),
                             acknowledgedDate = LocalDate.now(fixedClock).minusDays(12),
                             testResult = POSITIVE,
@@ -964,7 +1085,6 @@ class AnalyticsEventProcessorTest {
                             confirmedDate = null
                         )
                     )
-                )
             testSubject.track(BackgroundTaskCompletion)
 
             verify {
@@ -974,6 +1094,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 hasTestedPositiveBackgroundTick = true,
                                 hasSelfDiagnosedPositiveBackgroundTick = true
                             )
@@ -994,7 +1116,9 @@ class AnalyticsEventProcessorTest {
                         instant = Instant.now(fixedClock),
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
-                                runningNormallyBackgroundTick = true
+                                runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true
                             )
                         )
                     )
@@ -1017,6 +1141,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = false,
+                                appIsContactTraceableBackgroundTick = false,
+                                appIsUsableBackgroundTick = true,
                                 encounterDetectionPausedBackgroundTick = true
                             )
                         )
@@ -1038,6 +1164,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 haveActiveIpcTokenBackgroundTick = true
                             )
                         )
@@ -1059,6 +1187,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 haveActiveIpcTokenBackgroundTick = false
                             )
                         )
@@ -1070,7 +1200,6 @@ class AnalyticsEventProcessorTest {
     @Test
     fun `on background completed updates haveActiveIpcTokenBackgroundTick when token is unresolved`() =
         runBlocking {
-
             testSubject.track(BackgroundTaskCompletion)
 
             verify {
@@ -1080,6 +1209,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 haveActiveIpcTokenBackgroundTick = false
                             )
                         )
@@ -1102,6 +1233,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 hasReceivedRiskyVenueM2WarningBackgroundTick = true
                             )
                         )
@@ -1124,6 +1257,8 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 hasReceivedRiskyVenueM2WarningBackgroundTick = false
                             )
                         )
@@ -1133,30 +1268,9 @@ class AnalyticsEventProcessorTest {
         }
 
     @Test
-    fun `on background completed does set isDisplayingLocalInfoBackgroundTick when localInfo is available`() = runBlocking {
-        coEvery { getLocalMessageFromStorage.invoke() } returns mockk()
-
-        testSubject.track(BackgroundTaskCompletion)
-
-        verify {
-            analyticsLogStorage.add(
-                AnalyticsLogEntry(
-                    instant = Instant.now(fixedClock),
-                    logItem = AnalyticsLogItem.BackgroundTaskCompletion(
-                        backgroundTaskTicks = BackgroundTaskTicks(
-                            runningNormallyBackgroundTick = true,
-                            isDisplayingLocalInfoBackgroundTick = true
-                        )
-                    )
-                )
-            )
-        }
-    }
-
-    @Test
-    fun `on background completed does set optedOutForContactIsolationBackgroundTick when contact isolation opt-out date is stored`() =
+    fun `on background completed does set isDisplayingLocalInfoBackgroundTick when localInfo is available`() =
         runBlocking {
-            coEvery { stateStorage.state.contactCase?.optOutOfContactIsolation } returns mockk()
+            coEvery { getLocalMessageFromStorage.invoke() } returns mockk()
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -1167,6 +1281,38 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
+                                isDisplayingLocalInfoBackgroundTick = true,
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed does set optedOutForContactIsolationBackgroundTick when contact isolation opt-out date is stored`() =
+        runBlocking {
+            every { stateStorage.state } returns
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        contact = isolationHelper.contactWithOptOutDate(
+                            optOutOfContactIsolation = LocalDate.now(fixedClock)
+                        )
+                    )
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
                                 hasHadRiskyContactBackgroundTick = true,
                                 optedOutForContactIsolationBackgroundTick = true
                             )
@@ -1179,7 +1325,11 @@ class AnalyticsEventProcessorTest {
     @Test
     fun `on background completed does not set optedOutForContactIsolationBackgroundTick when no contact isolation opt-out date is stored`() =
         runBlocking {
-            coEvery { stateStorage.state.contactCase?.optOutOfContactIsolation } returns null
+            every { stateStorage.state } returns
+                    IsolationState(
+                        isolationConfiguration = DurationDays(),
+                        contact = isolationHelper.contact(expired = true)
+                    )
 
             testSubject.track(BackgroundTaskCompletion)
 
@@ -1190,7 +1340,9 @@ class AnalyticsEventProcessorTest {
                         logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                             backgroundTaskTicks = BackgroundTaskTicks(
                                 runningNormallyBackgroundTick = true,
-                                hasHadRiskyContactBackgroundTick = true, // Due to contactCase being mocked
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
+                                hasHadRiskyContactBackgroundTick = true,
                                 optedOutForContactIsolationBackgroundTick = false
                             )
                         )

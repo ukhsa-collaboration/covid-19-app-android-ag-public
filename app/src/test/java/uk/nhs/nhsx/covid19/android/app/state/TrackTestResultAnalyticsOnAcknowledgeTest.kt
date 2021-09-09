@@ -1,8 +1,10 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveLFDOutsideTimeLimit
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveLFDWithinTimeLimit
@@ -11,7 +13,6 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResul
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveLabResultAfterPositiveLFD
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.PositiveLabResultAfterPositiveSelfRapidTest
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
@@ -31,18 +32,28 @@ import java.time.temporal.ChronoUnit.DAYS
 class TrackTestResultAnalyticsOnAcknowledgeTest {
 
     private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxUnitFun = true)
+    private val wouldTestIsolationEndBeforeOrOnStartOfExistingIsolation = mockk<WouldTestIsolationEndBeforeOrOnStartOfExistingIsolation>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(Instant.parse("2021-05-01T10:00:00Z"), ZoneOffset.UTC)
-    private val isolationHelper = IsolationHelper(fixedClock)
+    private val isolationHelper = IsolationLogicalHelper(fixedClock)
 
     private val trackTestResultAnalyticsOnAcknowledge =
-        TrackTestResultAnalyticsOnAcknowledge(analyticsEventProcessor, fixedClock)
+        TrackTestResultAnalyticsOnAcknowledge(
+            analyticsEventProcessor,
+            wouldTestIsolationEndBeforeOrOnStartOfExistingIsolation,
+            fixedClock
+        )
+
+    @Before
+    fun setUp() {
+        givenTestIsolationWouldNotEndBeforeOrOnStartOfExistingIsolation()
+    }
 
     //region early return conditions
 
     @Test
     fun `do not track anything if currently not isolating`() = runBlocking {
         whenTrackingTestResultsAnalyticsOnAcknowledgement(
-            currentState = isolationHelper.neverInIsolation().asLogical(),
+            currentState = isolationHelper.neverInIsolation(),
             receivedTestResult = receivedTestResult(
                 Instant.now(fixedClock),
                 LAB_RESULT,
@@ -56,14 +67,10 @@ class TrackTestResultAnalyticsOnAcknowledgeTest {
     @Test
     fun `do not track anything if isolating with self assessment without test`() = runBlocking {
         whenTrackingTestResultsAnalyticsOnAcknowledgement(
-            currentState = IsolationState(
-                isolationConfiguration = DurationDays(),
-                indexInfo = isolationHelper.selfAssessment(
-                    expired = false,
-                    onsetDate = null,
-                    testResult = null
-                )
-            ).asLogical(),
+            currentState = isolationHelper.selfAssessment(
+                expired = false,
+                onsetDate = null
+            ).asIsolation(),
             receivedTestResult = receivedTestResult(
                 Instant.now(fixedClock),
                 LAB_RESULT,
@@ -76,6 +83,8 @@ class TrackTestResultAnalyticsOnAcknowledgeTest {
 
     @Test
     fun `do not track anything if new test isolation would end before current isolation started`() = runBlocking {
+        givenTestIsolationWouldEndBeforeOrOnStartOfExistingIsolation()
+
         whenTrackingTestResultsAnalyticsOnAcknowledgement(
             currentState = positiveAcknowledgedTestResult(RAPID_RESULT, withinConfirmatoryDayLimit = true)
                 .asIsolation(),
@@ -92,14 +101,10 @@ class TrackTestResultAnalyticsOnAcknowledgeTest {
     @Test
     fun `do not track anything if receiving a positive indicative after symptoms`() = runBlocking {
         whenTrackingTestResultsAnalyticsOnAcknowledgement(
-            currentState = IsolationState(
-                isolationConfiguration = DurationDays(),
-                indexInfo = isolationHelper.selfAssessment(
-                    expired = false,
-                    onsetDate = LocalDate.now(fixedClock).minusDays(3),
-                    testResult = null
-                )
-            ).asLogical(),
+            currentState = isolationHelper.selfAssessment(
+                expired = false,
+                onsetDate = LocalDate.now(fixedClock).minusDays(3),
+            ).asIsolation(),
             receivedTestResult = receivedTestResult(
                 testEndDate = Instant.now(fixedClock),
                 testKitType = RAPID_RESULT,
@@ -564,6 +569,14 @@ class TrackTestResultAnalyticsOnAcknowledgeTest {
 
     //region helpers
 
+    private fun givenTestIsolationWouldEndBeforeOrOnStartOfExistingIsolation() {
+        every { wouldTestIsolationEndBeforeOrOnStartOfExistingIsolation(any(), any()) } returns true
+    }
+
+    private fun givenTestIsolationWouldNotEndBeforeOrOnStartOfExistingIsolation() {
+        every { wouldTestIsolationEndBeforeOrOnStartOfExistingIsolation(any(), any()) } returns false
+    }
+
     private fun whenTrackingTestResultsAnalyticsOnAcknowledgement(
         currentState: IsolationLogicalState,
         receivedTestResult: ReceivedTestResult
@@ -571,16 +584,9 @@ class TrackTestResultAnalyticsOnAcknowledgeTest {
         trackTestResultAnalyticsOnAcknowledge(currentState, receivedTestResult)
     }
 
-    private fun AcknowledgedTestResult.asIsolation(): IsolationLogicalState {
-        val indexInfo =
-            if (isPositive()) isolationHelper.positiveTest(this)
-            else isolationHelper.negativeTest(this)
-
-        return IsolationState(
-            isolationConfiguration = DurationDays(),
-            indexInfo = indexInfo
-        ).asLogical()
-    }
+    private fun AcknowledgedTestResult.asIsolation(): IsolationLogicalState =
+        if (isPositive()) isolationHelper.positiveTest(this).asIsolation()
+        else isolationHelper.negativeTest(this).asIsolation()
 
     private fun positiveAcknowledgedTestResult(
         testKitType: VirologyTestKitType,

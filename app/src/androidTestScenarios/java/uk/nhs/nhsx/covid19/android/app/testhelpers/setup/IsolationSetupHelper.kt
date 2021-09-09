@@ -14,7 +14,7 @@ interface IsolationSetupHelper : HasTestAppContext {
     }
 
     fun givenContactIsolation() {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
     }
 
     fun givenSelfAssessmentIsolation() {
@@ -25,8 +25,8 @@ interface IsolationSetupHelper : HasTestAppContext {
         testAppContext.setState(
             IsolationState(
                 isolationConfiguration = DurationDays(),
-                indexInfo = isolationHelper.selfAssessment(),
-                contactCase = isolationHelper.contactCase()
+                selfAssessment = isolationHelper.selfAssessment(),
+                contact = isolationHelper.contact()
             )
         )
     }

@@ -43,6 +43,8 @@ class RiskyContact(
 
         waitFor { vaccinationStatusRobot.checkActivityIsDisplayed() }
         vaccinationStatusRobot.clickDosesNoButton()
+        vaccinationStatusRobot.clickMedicallyExemptNoButton()
+        vaccinationStatusRobot.clickClinicalTrialNoButton()
         vaccinationStatusRobot.clickContinueButton()
 
         waitFor { riskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }

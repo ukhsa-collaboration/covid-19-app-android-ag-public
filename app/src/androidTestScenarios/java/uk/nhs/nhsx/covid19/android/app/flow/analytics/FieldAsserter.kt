@@ -56,6 +56,8 @@ class FieldAsserter(private val implicitlyAssertNotPresent: Boolean = true) {
         map.remove(Metrics::totalAlarmManagerBackgroundTasks)
         map.remove(Metrics::hasRiskyContactNotificationsEnabledBackgroundTick)
         map.remove(Metrics::totalRiskyContactReminderNotifications)
+        map.remove(Metrics::appIsUsableBackgroundTick)
+        map.remove(Metrics::appIsContactTraceableBackgroundTick)
         return map
     }
 

@@ -9,7 +9,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations.distinctUntilChanged
-import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
@@ -19,14 +18,17 @@ class AndroidBluetoothStateProvider : AvailabilityStateProvider,
     private val bluetoothStateMutable = SingleLiveEvent<AvailabilityState>()
 
     private fun updateState() {
-        val isEmulator = BuildConfig.DEBUG && BluetoothAdapter.getDefaultAdapter() == null
-        val currentState =
-            if (BluetoothAdapter.getDefaultAdapter()?.isEnabled == true || isEmulator) {
-                ENABLED
-            } else {
-                DISABLED
-            }
+        val currentState = getState()
         bluetoothStateMutable.postValue(currentState)
+    }
+
+    override fun getState(isDebug: Boolean): AvailabilityState {
+        val isEmulator = isDebug && BluetoothAdapter.getDefaultAdapter() == null
+        return if (BluetoothAdapter.getDefaultAdapter()?.isEnabled == true || isEmulator) {
+            ENABLED
+        } else {
+            DISABLED
+        }
     }
 
     override val availabilityState: LiveData<AvailabilityState> = distinctUntilChanged(bluetoothStateMutable)

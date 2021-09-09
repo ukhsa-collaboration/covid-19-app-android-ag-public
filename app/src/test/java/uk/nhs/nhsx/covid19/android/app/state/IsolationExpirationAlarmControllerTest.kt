@@ -24,7 +24,7 @@ class IsolationExpirationAlarmControllerTest {
     private val broadcastProvider = mockk<BroadcastProvider>()
     private val calculateExpirationNotificationTime = mockk<CalculateExpirationNotificationTime>()
     private val fixedClock = Clock.fixed(Instant.parse("2020-07-18T10:00:00Z"), ZoneOffset.UTC)
-    private val isolationHelper = IsolationHelper(fixedClock)
+    private val isolationHelper = IsolationLogicalHelper(fixedClock)
 
     private val testSubject = IsolationExpirationAlarmController(
         context,
@@ -87,11 +87,11 @@ class IsolationExpirationAlarmControllerTest {
     fun `setupExpirationCheck with new expired isolation state and current state not in isolation does not schedule alarm`() {
         val expiryDate = LocalDate.now(fixedClock)
 
-        val currentState = isolationHelper.neverInIsolation().asLogical()
+        val currentState = isolationHelper.neverInIsolation()
         val newIsolation = isolationHelper.selfAssessment(
             selfAssessmentDate = LocalDate.parse("2020-07-18"),
             expiryDate = expiryDate
-        ).asIsolation().asLogical()
+        ).asIsolation()
 
         testSubject.setupExpirationCheck(currentState, newIsolation)
 
@@ -109,11 +109,11 @@ class IsolationExpirationAlarmControllerTest {
     fun `setupExpirationCheck with new isolation state and current state not in isolation schedules alarm with proper time`() {
         val expiryDate = LocalDate.parse("2020-07-20")
 
-        val currentState = isolationHelper.neverInIsolation().asLogical()
+        val currentState = isolationHelper.neverInIsolation()
         val newIsolation = isolationHelper.selfAssessment(
             selfAssessmentDate = LocalDate.parse("2020-07-18"),
             expiryDate = expiryDate
-        ).asIsolation().asLogical()
+        ).asIsolation()
 
         val alarmInstant = Instant.parse("2020-07-19T20:00:00Z")
         every { calculateExpirationNotificationTime(expiryDate) } returns alarmInstant
@@ -148,12 +148,12 @@ class IsolationExpirationAlarmControllerTest {
         val currentState = isolationHelper.selfAssessment(
             selfAssessmentDate = LocalDate.parse("2020-07-18"),
             expiryDate = oldExpiryDate
-        ).asIsolation().asLogical()
+        ).asIsolation()
 
         val newIsolation = isolationHelper.selfAssessment(
             selfAssessmentDate = LocalDate.parse("2020-07-18"),
             expiryDate = newExpiryDate
-        ).asIsolation().asLogical()
+        ).asIsolation()
 
         val alarmInstant = Instant.parse("2020-07-19T20:00:00Z")
         every { calculateExpirationNotificationTime(newExpiryDate) } returns alarmInstant
@@ -187,12 +187,12 @@ class IsolationExpirationAlarmControllerTest {
         val currentState = isolationHelper.selfAssessment(
             selfAssessmentDate = LocalDate.parse("2020-07-18"),
             expiryDate = expiryDate
-        ).asIsolation().asLogical()
+        ).asIsolation()
 
         val newIsolation = isolationHelper.selfAssessment(
             selfAssessmentDate = LocalDate.parse("2020-07-18"),
             expiryDate = expiryDate
-        ).asIsolation().asLogical()
+        ).asIsolation()
 
         testSubject.setupExpirationCheck(currentState, newIsolation)
 

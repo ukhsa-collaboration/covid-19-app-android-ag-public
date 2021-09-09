@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
-    <solid android:color="#212B32" />
+    <solid android:color="@color/home_screen_icon_stopped" />
 </shape>
 

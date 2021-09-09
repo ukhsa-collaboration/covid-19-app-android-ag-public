@@ -4,6 +4,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
+import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
@@ -47,9 +48,7 @@ class LinkTestResultFlowTests : EspressoTest() {
     @Test
     fun startIndexCase_linkPositiveTestResult_shouldContinueIsolation() {
         testAppContext.setState(
-            isolationHelper.selfAssessment()
-                .copy(expiryDate = LocalDate.now().plus(7, ChronoUnit.DAYS))
-                .asIsolation()
+            isolationHelper.selfAssessment().asIsolation()
         )
 
         startTestActivity<StatusActivity>()
@@ -92,13 +91,10 @@ class LinkTestResultFlowTests : EspressoTest() {
 
         val contactDate = contactInstant.toLocalDate(testAppContext.clock.zone)
         testAppContext.setState(
-            isolationHelper
-                .contactCase(
-                    exposureDate = contactDate,
-                    notificationDate = contactDate,
-                    expiryDate = contactDate.plusDays(10)
-                )
-                .asIsolation()
+            isolationHelper.contact(
+                exposureDate = contactDate,
+                notificationDate = contactDate,
+            ).asIsolation()
         )
 
         startTestActivity<StatusActivity>()
@@ -143,14 +139,12 @@ class LinkTestResultFlowTests : EspressoTest() {
 
         val contactDate = contactInstant.toLocalDate(testAppContext.clock.zone)
         testAppContext.setState(
-            isolationHelper
-                .contactCase(
-                    exposureDate = contactDate,
-                    notificationDate = contactDate,
-                    expiryDate = contactDate.plusDays(10)
-                )
-                .asIsolation()
+            isolationHelper.contact(
+                exposureDate = contactDate,
+                notificationDate = contactDate
+            ).asIsolation()
         )
+        val contactExpiryDate = contactDate.plusDays(DurationDays().contactCase.toLong())
 
         startTestActivity<StatusActivity>()
 
@@ -168,8 +162,12 @@ class LinkTestResultFlowTests : EspressoTest() {
 
         linkTestResultSymptomsRobot.clickNo()
 
+        val remainingDaysInIsolation = ChronoUnit.DAYS.between(
+            LocalDate.now(testAppContext.clock),
+            contactExpiryDate
+        ).toInt()
         waitFor {
-            testResultRobot.checkActivityDisplaysPositiveContinueIsolation(remainingDaysInIsolation = 8)
+            testResultRobot.checkActivityDisplaysPositiveContinueIsolation(remainingDaysInIsolation)
         }
 
         testResultRobot.clickIsolationActionButton()

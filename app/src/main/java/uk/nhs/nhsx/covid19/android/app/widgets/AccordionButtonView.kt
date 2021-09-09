@@ -20,6 +20,8 @@ import kotlinx.android.synthetic.main.view_accordion.view.titleViewIcon
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.overriddenResources
+import uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView.AccordionIconType.CHEVRON
+import uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView.AccordionIconType.PLUS_MINUS
 
 open class AccordionButtonView @JvmOverloads constructor(
     context: Context,
@@ -33,7 +35,23 @@ open class AccordionButtonView @JvmOverloads constructor(
             updateContentVisibility()
         }
 
+    private var iconType: AccordionIconType = PLUS_MINUS
+        set(value) {
+            field = value
+            updateContentVisibility()
+        }
+
     private val accessibleView: View by lazy { accordionTitle }
+
+    private val expandIcon: Int get() = when (iconType) {
+        PLUS_MINUS -> R.drawable.ic_accordion_expand
+        CHEVRON -> R.drawable.ic_accordion_expand_chevron
+    }
+
+    private val collapseIcon: Int get() = when (iconType) {
+        PLUS_MINUS -> R.drawable.ic_accordion_collapse
+        CHEVRON -> R.drawable.ic_accordion_collapse_chevron
+    }
 
     init {
         initializeViews()
@@ -59,15 +77,19 @@ open class AccordionButtonView @JvmOverloads constructor(
             val contentRef = getResourceId(R.styleable.AccordionButtonView_accordionContent, -1)
             LayoutInflater.from(context).inflate(contentRef, accordionContent, true)
             isExpanded = getBoolean(R.styleable.AccordionButtonView_accordionExpanded, DEFAULT_STATE)
+
+            val iconTypeInt = getInteger(R.styleable.AccordionButtonView_accordionIconType, 1)
+            iconType = AccordionIconType.from(iconTypeInt)
+
             recycle()
         }
     }
 
     private fun updateContentVisibility() {
         if (isExpanded) {
-            titleViewIcon.setImageResource(R.drawable.ic_accordion_collapse)
+            titleViewIcon.setImageResource(collapseIcon)
         } else {
-            titleViewIcon.setImageResource(R.drawable.ic_accordion_expand)
+            titleViewIcon.setImageResource(expandIcon)
         }
 
         accordionContent.isVisible = isExpanded
@@ -131,6 +153,21 @@ open class AccordionButtonView @JvmOverloads constructor(
         super.onRestoreInstanceState(state)
 
         isExpanded = savedState?.isExpanded ?: DEFAULT_STATE
+    }
+
+    private enum class AccordionIconType {
+        PLUS_MINUS,
+        CHEVRON;
+
+        companion object {
+            fun from(i: Int): AccordionIconType {
+                return when (i) {
+                    1 -> PLUS_MINUS
+                    2 -> CHEVRON
+                    else -> throw IllegalArgumentException("This value is not supported for AccordionIconType: $i")
+                }
+            }
+        }
     }
 
     companion object {

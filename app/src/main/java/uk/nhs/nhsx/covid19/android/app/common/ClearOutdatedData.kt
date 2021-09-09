@@ -10,13 +10,14 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
+import java.time.temporal.ChronoUnit.DAYS
 import javax.inject.Inject
 
 class ClearOutdatedData @Inject constructor(
     private val resetIsolationStateIfNeeded: ResetIsolationStateIfNeeded,
     private val lastVisitedBookTestTypeVenueDateProvider: LastVisitedBookTestTypeVenueDateProvider,
     private val clearOutdatedKeySharingInfo: ClearOutdatedKeySharingInfo,
+    private val clearOutdatedTestOrderPollingConfigs: ClearOutdatedTestOrderPollingConfigs,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val epidemiologyEventProvider: EpidemiologyEventProvider,
     private val exposureNotificationTokensProvider: ExposureNotificationTokensProvider,
@@ -35,6 +36,7 @@ class ClearOutdatedData @Inject constructor(
             }
 
             clearOutdatedKeySharingInfo()
+            clearOutdatedTestOrderPollingConfigs()
 
             val retentionPeriodDays = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
             clearOldEpidemiologyEvents(retentionPeriodDays)
@@ -49,8 +51,8 @@ class ClearOutdatedData @Inject constructor(
     }
 
     private fun clearOutdatedAnalyticsLogs(retentionPeriodDays: Int) {
-        val startOfToday = Instant.now(clock).truncatedTo(ChronoUnit.DAYS)
-        val outdatedThreshold = startOfToday.minus(retentionPeriodDays.toLong(), ChronoUnit.DAYS)
+        val startOfToday = Instant.now(clock).truncatedTo(DAYS)
+        val outdatedThreshold = startOfToday.minus(retentionPeriodDays.toLong(), DAYS)
         analyticsLogStorage.removeBeforeOrEqual(outdatedThreshold)
     }
 

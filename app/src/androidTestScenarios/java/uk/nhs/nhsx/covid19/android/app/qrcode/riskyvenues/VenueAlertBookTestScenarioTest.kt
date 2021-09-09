@@ -107,7 +107,7 @@ class VenueAlertBookTestScenarioTest : EspressoTest() {
     @Test
     fun whenNotInActiveIndexCaseIsolation_navigateToSymptomsAfterRiskyVenue_withScreenRotation_pressBack_canOpenCancelDialog() {
         setScreenOrientation(PORTRAIT)
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
 
         startVenueAlertBookTestActivity()
 
@@ -126,7 +126,7 @@ class VenueAlertBookTestScenarioTest : EspressoTest() {
 
     @Test
     fun whenNotInActiveIndexCaseIsolation_navigateToSymptomsAfterRiskyVenue_clickHasSymptoms_completeQuestionnaire_orderTest_shouldShowStatusActivity() {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
 
         startVenueAlertBookTestActivity()
 
@@ -159,7 +159,7 @@ class VenueAlertBookTestScenarioTest : EspressoTest() {
 
     @Test
     fun whenNotInActiveIndexCaseIsolation_navigateToSymptomsAfterRiskyVenue_clickHasSymptoms_reportNoSymptomsInQuestionnaire_shouldShowStatusActivity() {
-        testAppContext.setState(isolationHelper.contactCase().asIsolation())
+        testAppContext.setState(isolationHelper.contact().asIsolation())
         startVenueAlertBookTestActivity()
 
         waitFor { venueAlertBookTestRobot.checkActivityIsDisplayed() }

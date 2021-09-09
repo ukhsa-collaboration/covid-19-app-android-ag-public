@@ -3,7 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.about
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MyDataRobot
@@ -30,7 +30,7 @@ class UserDataFlowTest : EspressoTest() {
 
         waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
-        val expectedExpiryDate = "24 Dec 2020"
+        val expectedExpiryDate = "21 Dec 2020"
 
         statusRobot.checkIsolationSubtitleIsDisplayedWithText(testAppContext.app, expectedExpiryDate)
 
@@ -50,10 +50,9 @@ class UserDataFlowTest : EspressoTest() {
         private val startDate = startInstant.toLocalDate(ZoneOffset.UTC)
         private val contactCaseIsolation = IsolationState(
             isolationConfiguration = DurationDays(),
-            contactCase = ContactCase(
+            contact = Contact(
                 exposureDate = startDate,
                 notificationDate = startDate,
-                expiryDate = startDate.plusDays(14)
             )
         )
     }

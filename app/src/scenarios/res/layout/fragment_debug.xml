@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/debugOptionsContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -90,19 +89,77 @@
         android:layout_height="wrap_content"
         android:text="Index (resets state)" />
 
-    <Button
-        android:id="@+id/contactState"
-        style="@style/PrimaryButton"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Contact (resets state)" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/sendExposureNotification"
-        style="@style/PrimaryButton"
+        <Button
+            android:id="@+id/contactState"
+            style="@style/PrimaryButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="Contact (resets state)" />
+
+        <LinearLayout
+            android:paddingStart="5dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Days ago"
+                android:textAlignment="center"
+                android:textSize="10dp" />
+
+            <EditText
+                android:id="@+id/contactDayOffset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:text="1" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send Exposure Notification" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/sendExposureNotification"
+            style="@style/PrimaryButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="Send Exposure Notification" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingStart="5dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAlignment="center"
+                android:text="Days ago"
+                android:textSize="10dp" />
+
+            <EditText
+                android:id="@+id/exposureDayOffset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:text="1" />
+        </LinearLayout>
+    </LinearLayout>
 
     <Button
         android:id="@+id/riskyVenueM1"

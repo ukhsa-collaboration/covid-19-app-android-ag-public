@@ -14,5 +14,6 @@ data class DurationDays(
     val indexCaseSinceSelfDiagnosisUnknownOnset: Int = 9,
     val maxIsolation: Int = 21,
     val pendingTasksRetentionPeriod: Int = 14,
-    val indexCaseSinceTestResultEndDate: Int = 11
+    val indexCaseSinceTestResultEndDate: Int = 11,
+    val testResultPollingTokenRetentionPeriod: Int = 28,
 )

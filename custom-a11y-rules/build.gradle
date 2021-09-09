@@ -1,0 +1,38 @@
+plugins {
+    id 'java-library'
+    id 'kotlin'
+}
+
+repositories {
+    google()
+    jcenter()
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
+}
+
+jar {
+    manifest {
+        attributes("Lint-Registry-v2": "uk.nhs.nhsx.covid19.android.a11y.NhsIssueRegistry")
+    }
+}
+
+def lintVersion = "27.2.0"
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.13.1'
+    compileOnly "com.android.tools.lint:lint-api:$lintVersion"
+    compileOnly "com.android.tools.lint:lint-checks:$lintVersion"
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.61"
+    testImplementation "com.android.tools.lint:lint-tests:$lintVersion"
+}
+
+configurations {
+    lintChecks
+}
+
+dependencies {
+    lintChecks files(jar)
+}

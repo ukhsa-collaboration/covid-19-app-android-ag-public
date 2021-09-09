@@ -144,14 +144,12 @@ class FlowTests : EspressoTest(), LocalAuthoritySetupHelper {
     fun startIndexCaseWithPositiveIndicative_receiveExposureNotification_inIndexAndContactIsolation() {
         val dateNow = LocalDate.now()
         testAppContext.setState(
-            isolationHelper.positiveTest(
-                AcknowledgedTestResult(
-                    testEndDate = LocalDate.now(),
-                    testResult = RelevantVirologyTestResult.POSITIVE,
-                    testKitType = RAPID_RESULT,
-                    requiresConfirmatoryTest = true,
-                    acknowledgedDate = LocalDate.now()
-                )
+            AcknowledgedTestResult(
+                testEndDate = LocalDate.now(),
+                testResult = RelevantVirologyTestResult.POSITIVE,
+                testKitType = RAPID_RESULT,
+                requiresConfirmatoryTest = true,
+                acknowledgedDate = LocalDate.now()
             ).asIsolation()
         )
 
@@ -181,14 +179,12 @@ class FlowTests : EspressoTest(), LocalAuthoritySetupHelper {
     @Test
     fun startIndexCaseWithPositiveConfirmed_receiveExposureNotification_remainIndexCase() {
         testAppContext.setState(
-            isolationHelper.positiveTest(
-                AcknowledgedTestResult(
-                    testEndDate = LocalDate.now(),
-                    testResult = RelevantVirologyTestResult.POSITIVE,
-                    testKitType = RAPID_RESULT,
-                    requiresConfirmatoryTest = false,
-                    acknowledgedDate = LocalDate.now()
-                )
+            AcknowledgedTestResult(
+                testEndDate = LocalDate.now(),
+                testResult = RelevantVirologyTestResult.POSITIVE,
+                testKitType = RAPID_RESULT,
+                requiresConfirmatoryTest = false,
+                acknowledgedDate = LocalDate.now()
             ).asIsolation()
         )
 

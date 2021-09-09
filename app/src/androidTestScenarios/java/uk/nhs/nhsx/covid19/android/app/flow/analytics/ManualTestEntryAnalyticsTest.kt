@@ -169,7 +169,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         // Starting state: App running normally, not in isolation
         runBackgroundTasks()
 
-        // Enters positive LFD test result on 2nd Jan
+        // Enters positive test result on 2nd Jan
         // Isolation end date: 13th Jan
         manualTestResultEntry.enterPositive(
             testKitType,
@@ -188,10 +188,10 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
                 assertEquals(1, Metrics::didAskForSymptomsOnPositiveTestEntry)
                 if (symptomsAndOnsetFlowConfiguration.didHaveSymptoms) {
                     assertEquals(1, Metrics::didHaveSymptomsBeforeReceivedTestResult)
-                    assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-                    assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
                 }
                 if (symptomsAndOnsetFlowConfiguration.didRememberOnsetSymptomsDate) {
+                    assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+                    assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
                     assertEquals(1, Metrics::didRememberOnsetSymptomsDateBeforeReceivedTestResult)
                 }
             }
@@ -222,7 +222,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             if (requiresConfirmatoryTest) {
                 assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
             }
-            if (symptomsAndOnsetFlowConfiguration?.didHaveSymptoms == true) {
+            if (symptomsAndOnsetFlowConfiguration?.didRememberOnsetSymptomsDate == true) {
                 assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
                 assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             }
@@ -233,7 +233,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(hasTestedPositiveBackgroundTickMetric)
             assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
-            if (symptomsAndOnsetFlowConfiguration?.didHaveSymptoms == true) {
+            if (symptomsAndOnsetFlowConfiguration?.didRememberOnsetSymptomsDate == true) {
                 assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             }
         }

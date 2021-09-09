@@ -23,13 +23,12 @@ class AndroidLocationStateProviderTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val testSubject = AndroidLocationStateProvider()
-
     private val context = mockk<Context>(relaxed = true)
-    private val intent = mockk<Intent>(relaxed = true)
-    private val locationManager = mockk<LocationManager>(relaxed = true)
+    private val testSubject = AndroidLocationStateProvider(context)
+    private val intent = mockk<Intent>(relaxUnitFun = true)
+    private val locationManager = mockk<LocationManager>(relaxUnitFun = true)
 
-    private val availabilityState = mockk<Observer<AvailabilityState>>(relaxed = true)
+    private val availabilityState = mockk<Observer<AvailabilityState>>(relaxUnitFun = true)
 
     @Before
     fun setUp() {
@@ -40,6 +39,8 @@ class AndroidLocationStateProviderTest {
 
     @Test
     fun `start broadcasts state and registers receiver`() = runBlocking {
+        every { locationManager.isProviderEnabled(any()) } returns true
+
         testSubject.start(context)
 
         verify(exactly = 1) { availabilityState.onChanged(any()) }

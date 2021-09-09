@@ -7,11 +7,8 @@ import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.PositiveTestResult
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexCaseIsolationTrigger.SelfAssessment
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.IndexCase
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.IndexInfo.NegativeTest
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage.Companion.ISOLATION_STATE_KEY
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
@@ -48,16 +45,18 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
 
     companion object {
         private const val CONFIGURATION =
-            """{"contactCase":11,"indexCaseSinceSelfDiagnosisOnset":11,"indexCaseSinceSelfDiagnosisUnknownOnset":9,"maxIsolation":21,"pendingTasksRetentionPeriod":14,"indexCaseSinceTestResultEndDate":11}"""
+            """{"contactCase":11,"indexCaseSinceSelfDiagnosisOnset":11,"indexCaseSinceSelfDiagnosisUnknownOnset":9,"maxIsolation":21,"pendingTasksRetentionPeriod":14,"indexCaseSinceTestResultEndDate":11,"testResultPollingTokenRetentionPeriod":28}"""
 
         private const val CONTACT_EXPOSURE_DATE = "2020-01-09"
         private const val CONTACT_NOTIFICATION_DATE = "2020-01-08"
         private const val CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE = "2020-01-07"
         private const val CONTACT_EXPIRY_DATE = "2020-01-06"
-        private const val CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION =
+        private const val CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION_AND_EXPIRY_DATE =
             """{"exposureDate":"$CONTACT_EXPOSURE_DATE","notificationDate":"$CONTACT_NOTIFICATION_DATE","optOutOfContactIsolation":{"date":"$CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE"},"expiryDate":"$CONTACT_EXPIRY_DATE"}"""
+        private const val CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION =
+            """{"exposureDate":"$CONTACT_EXPOSURE_DATE","notificationDate":"$CONTACT_NOTIFICATION_DATE","optOutOfContactIsolation":{"date":"$CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE"}}"""
         private const val CONTACT_WITHOUT_OPT_OUT_OF_CONTACT_ISOLATION =
-            """{"exposureDate":"$CONTACT_EXPOSURE_DATE","notificationDate":"$CONTACT_NOTIFICATION_DATE","expiryDate":"$CONTACT_EXPIRY_DATE"}"""
+            """{"exposureDate":"$CONTACT_EXPOSURE_DATE","notificationDate":"$CONTACT_NOTIFICATION_DATE"}"""
 
         private const val TEST_END_DATE = "2020-01-05"
         private const val TEST_ACKNOWLEDGED_DATE = "2020-01-04"
@@ -115,7 +114,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                     """{"configuration":$CONFIGURATION,"testResult":$NEGATIVE_TEST_RESULT,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
                     isolationConfiguration = DurationDays(),
-                    indexInfo = NegativeTest(negativeTestResult)
+                    testResult = negativeTestResult
                 )
             ),
             StateRepresentation(
@@ -124,11 +123,10 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                     """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION,"hasAcknowledgedEndOfIsolation":true,"version":1}""",
                 state = IsolationState(
                     isolationConfiguration = DurationDays(),
-                    contactCase = ContactCase(
+                    contact = Contact(
                         exposureDate = LocalDate.parse(CONTACT_EXPOSURE_DATE),
                         notificationDate = LocalDate.parse(CONTACT_NOTIFICATION_DATE),
                         optOutOfContactIsolation = OptOutOfContactIsolation(LocalDate.parse(CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE)),
-                        expiryDate = LocalDate.parse(CONTACT_EXPIRY_DATE)
                     ),
                     hasAcknowledgedEndOfIsolation = true
                 )
@@ -139,10 +137,9 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                     """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITHOUT_OPT_OUT_OF_CONTACT_ISOLATION,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
                     isolationConfiguration = DurationDays(),
-                    contactCase = ContactCase(
+                    contact = Contact(
                         exposureDate = LocalDate.parse(CONTACT_EXPOSURE_DATE),
                         notificationDate = LocalDate.parse(CONTACT_NOTIFICATION_DATE),
-                        expiryDate = LocalDate.parse(CONTACT_EXPIRY_DATE)
                     ),
                     hasAcknowledgedEndOfIsolation = false
                 )
@@ -150,15 +147,12 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
             StateRepresentation(
                 name = "isolating with self-assessment with onset date",
                 json =
-                    """{"configuration":$CONFIGURATION,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"indexExpiryDate":"$INDEX_EXPIRY_DATE","hasAcknowledgedEndOfIsolation":false,"version":1}""",
+                    """{"configuration":$CONFIGURATION,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
                     isolationConfiguration = DurationDays(),
-                    indexInfo = IndexCase(
-                        isolationTrigger = SelfAssessment(
-                            selfAssessmentDate = LocalDate.parse(SYMPTOMATIC_SELF_DIAGNOSIS_DATE),
-                            onsetDate = LocalDate.parse(SYMPTOMATIC_ONSET_DATE)
-                        ),
-                        expiryDate = LocalDate.parse(INDEX_EXPIRY_DATE)
+                    selfAssessment = SelfAssessment(
+                        selfAssessmentDate = LocalDate.parse(SYMPTOMATIC_SELF_DIAGNOSIS_DATE),
+                        onsetDate = LocalDate.parse(SYMPTOMATIC_ONSET_DATE)
                     ),
                     hasAcknowledgedEndOfIsolation = false
                 )
@@ -166,14 +160,11 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
             StateRepresentation(
                 name = "isolating with self-assessment without onset date",
                 json =
-                    """{"configuration":$CONFIGURATION,"symptomatic":$SYMPTOMATIC_WITHOUT_ONSET,"indexExpiryDate":"$INDEX_EXPIRY_DATE","hasAcknowledgedEndOfIsolation":false,"version":1}""",
+                    """{"configuration":$CONFIGURATION,"symptomatic":$SYMPTOMATIC_WITHOUT_ONSET,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
                     isolationConfiguration = DurationDays(),
-                    indexInfo = IndexCase(
-                        isolationTrigger = SelfAssessment(
-                            selfAssessmentDate = LocalDate.parse(SYMPTOMATIC_SELF_DIAGNOSIS_DATE)
-                        ),
-                        expiryDate = LocalDate.parse(INDEX_EXPIRY_DATE)
+                    selfAssessment = SelfAssessment(
+                        selfAssessmentDate = LocalDate.parse(SYMPTOMATIC_SELF_DIAGNOSIS_DATE)
                     ),
                     hasAcknowledgedEndOfIsolation = false
                 )
@@ -181,87 +172,67 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
             StateRepresentation(
                 name = "isolating with self-assessment and positive test",
                 json =
-                    """{"configuration":$CONFIGURATION,"testResult":$POSITIVE_TEST_RESULT,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"indexExpiryDate":"$INDEX_EXPIRY_DATE","hasAcknowledgedEndOfIsolation":false,"version":1}""",
+                    """{"configuration":$CONFIGURATION,"testResult":$POSITIVE_TEST_RESULT,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
                     isolationConfiguration = DurationDays(),
-                    indexInfo = IndexCase(
-                        isolationTrigger = SelfAssessment(
-                            selfAssessmentDate = LocalDate.parse(
-                                SYMPTOMATIC_SELF_DIAGNOSIS_DATE
-                            ),
-                            onsetDate = LocalDate.parse(SYMPTOMATIC_ONSET_DATE)
+                    selfAssessment = SelfAssessment(
+                        selfAssessmentDate = LocalDate.parse(
+                            SYMPTOMATIC_SELF_DIAGNOSIS_DATE
                         ),
-                        testResult = positiveTestResult,
-                        expiryDate = LocalDate.parse(INDEX_EXPIRY_DATE)
+                        onsetDate = LocalDate.parse(SYMPTOMATIC_ONSET_DATE)
                     ),
+                    testResult = positiveTestResult,
                     hasAcknowledgedEndOfIsolation = false
                 )
             ),
             StateRepresentation(
                 name = "isolating with self-assessment and negative test",
                 json =
-                    """{"configuration":$CONFIGURATION,"testResult":$NEGATIVE_TEST_RESULT,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"indexExpiryDate":"$INDEX_EXPIRY_DATE","hasAcknowledgedEndOfIsolation":false,"version":1}""",
+                    """{"configuration":$CONFIGURATION,"testResult":$NEGATIVE_TEST_RESULT,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
                     isolationConfiguration = DurationDays(),
-                    indexInfo = IndexCase(
-                        isolationTrigger = SelfAssessment(
-                            selfAssessmentDate = LocalDate.parse(
-                                SYMPTOMATIC_SELF_DIAGNOSIS_DATE
-                            ),
-                            onsetDate = LocalDate.parse(
-                                SYMPTOMATIC_ONSET_DATE
-                            )
+                    selfAssessment = SelfAssessment(
+                        selfAssessmentDate = LocalDate.parse(
+                            SYMPTOMATIC_SELF_DIAGNOSIS_DATE
                         ),
-                        testResult = negativeTestResult,
-                        expiryDate = LocalDate.parse(INDEX_EXPIRY_DATE)
+                        onsetDate = LocalDate.parse(
+                            SYMPTOMATIC_ONSET_DATE
+                        )
                     ),
+                    testResult = negativeTestResult,
                     hasAcknowledgedEndOfIsolation = false
                 )
             ),
             StateRepresentation(
                 name = "isolating with positive test",
                 json =
-                    """{"configuration":$CONFIGURATION,"testResult":$POSITIVE_TEST_RESULT,"indexExpiryDate":"$INDEX_EXPIRY_DATE","hasAcknowledgedEndOfIsolation":false,"version":1}""",
+                    """{"configuration":$CONFIGURATION,"testResult":$POSITIVE_TEST_RESULT,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
                     isolationConfiguration = DurationDays(),
-                    indexInfo = IndexCase(
-                        isolationTrigger = PositiveTestResult(
-                            positiveTestResult.testEndDate
-                        ),
-                        testResult = positiveTestResult,
-                        expiryDate = LocalDate.parse(
-                            INDEX_EXPIRY_DATE
-                        )
-                    ),
+                    testResult = positiveTestResult,
                     hasAcknowledgedEndOfIsolation = false
                 )
             ),
             StateRepresentation(
                 name = "isolating for all reasons",
                 json =
-                    """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION,"testResult":$POSITIVE_TEST_RESULT,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"indexExpiryDate":"$INDEX_EXPIRY_DATE","hasAcknowledgedEndOfIsolation":true,"version":1}""",
+                    """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION,"testResult":$POSITIVE_TEST_RESULT,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"hasAcknowledgedEndOfIsolation":true,"version":1}""",
                 state = IsolationState(
                     isolationConfiguration = DurationDays(),
-                    contactCase = ContactCase(
+                    contact = Contact(
                         exposureDate = LocalDate.parse(CONTACT_EXPOSURE_DATE),
                         notificationDate = LocalDate.parse(CONTACT_NOTIFICATION_DATE),
                         optOutOfContactIsolation = OptOutOfContactIsolation(LocalDate.parse(CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE)),
-                        expiryDate = LocalDate.parse(CONTACT_EXPIRY_DATE)
                     ),
-                    indexInfo = IndexCase(
-                        isolationTrigger = SelfAssessment(
-                            selfAssessmentDate = LocalDate.parse(
-                                SYMPTOMATIC_SELF_DIAGNOSIS_DATE
-                            ),
-                            onsetDate = LocalDate.parse(
-                                SYMPTOMATIC_ONSET_DATE
-                            )
+                    selfAssessment = SelfAssessment(
+                        selfAssessmentDate = LocalDate.parse(
+                            SYMPTOMATIC_SELF_DIAGNOSIS_DATE
                         ),
-                        testResult = positiveTestResult,
-                        expiryDate = LocalDate.parse(
-                            INDEX_EXPIRY_DATE
+                        onsetDate = LocalDate.parse(
+                            SYMPTOMATIC_ONSET_DATE
                         )
                     ),
+                    testResult = positiveTestResult,
                     hasAcknowledgedEndOfIsolation = true
                 )
             )
@@ -274,76 +245,35 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
             StateRepresentation(
                 name = "isolating with positive test from v1 to v2",
                 json =
-                    """{"configuration":$CONFIGURATION,"testResult":$POSITIVE_TEST_RESULT_V1,"indexExpiryDate":"$INDEX_EXPIRY_DATE","hasAcknowledgedEndOfIsolation":false,"version":1}""",
+                    """{"configuration":$CONFIGURATION,"testResult":$POSITIVE_TEST_RESULT_V1,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
                     isolationConfiguration = DurationDays(),
-                    indexInfo = IndexCase(
-                        isolationTrigger = PositiveTestResult(
-                            positiveTestResult.testEndDate
-                        ),
-                        testResult = positiveTestResult,
-                        expiryDate = LocalDate.parse(
-                            INDEX_EXPIRY_DATE
-                        )
-                    ),
+                    testResult = positiveTestResult,
                     hasAcknowledgedEndOfIsolation = false
                 )
             ),
-            // We cannot handle this => discard symptoms
+            // Discard expiry dates
             StateRepresentation(
-                name = "isolating with self-assessment but index expiry date missing",
+                name = "isolating for all reasons with expiry dates",
                 json =
-                    """{"configuration":$CONFIGURATION,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
+                    """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION,"testResult":$POSITIVE_TEST_RESULT,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"hasAcknowledgedEndOfIsolation":true,"version":1}""",
                 state = IsolationState(
                     isolationConfiguration = DurationDays(),
-                    hasAcknowledgedEndOfIsolation = false
-                )
-            ),
-            // We cannot handle this => discard symptoms and test
-            StateRepresentation(
-                name = "isolating with self-assessment and positive test but index expiry date missing",
-                json =
-                    """{"configuration":$CONFIGURATION,"testResult":$POSITIVE_TEST_RESULT,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
-                state = IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    hasAcknowledgedEndOfIsolation = false
-                )
-            ),
-            // We cannot handle this => discard symptoms, keep test
-            StateRepresentation(
-                name = "isolating with self-assessment and negative test but index expiry date missing",
-                json =
-                    """{"configuration":$CONFIGURATION,"testResult":$NEGATIVE_TEST_RESULT,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
-                state = IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    indexInfo = NegativeTest(negativeTestResult),
-                    hasAcknowledgedEndOfIsolation = false
-                )
-            ),
-            // We cannot handle this => discard symptoms
-            StateRepresentation(
-                name = "isolating with contact case and self-assessment but index expiry date missing",
-                json =
-                    """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
-                state = IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    contactCase = ContactCase(
+                    contact = Contact(
                         exposureDate = LocalDate.parse(CONTACT_EXPOSURE_DATE),
                         notificationDate = LocalDate.parse(CONTACT_NOTIFICATION_DATE),
-                        optOutOfContactIsolation = OptOutOfContactIsolation(LocalDate.parse(CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE)),
-                        expiryDate = LocalDate.parse(CONTACT_EXPIRY_DATE)
+                        optOutOfContactIsolation = OptOutOfContactIsolation(LocalDate.parse(CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE))
                     ),
-                    hasAcknowledgedEndOfIsolation = false
-                )
-            ),
-            // We cannot handle this => discard test
-            StateRepresentation(
-                name = "isolating with positive test but index expiry date missing",
-                json =
-                    """{"configuration":$CONFIGURATION,"testResult":$POSITIVE_TEST_RESULT,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
-                state = IsolationState(
-                    isolationConfiguration = DurationDays(),
-                    hasAcknowledgedEndOfIsolation = false
+                    selfAssessment = SelfAssessment(
+                        selfAssessmentDate = LocalDate.parse(
+                            SYMPTOMATIC_SELF_DIAGNOSIS_DATE
+                        ),
+                        onsetDate = LocalDate.parse(
+                            SYMPTOMATIC_ONSET_DATE
+                        )
+                    ),
+                    testResult = positiveTestResult,
+                    hasAcknowledgedEndOfIsolation = true
                 )
             ),
             StateRepresentation(

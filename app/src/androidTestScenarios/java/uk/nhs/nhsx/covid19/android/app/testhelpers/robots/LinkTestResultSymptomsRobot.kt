@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -19,11 +20,11 @@ class LinkTestResultSymptomsRobot {
 
     fun clickYes() {
         onView(withId(id.linkTestResultSymptomsButtonYes))
-            .perform(click())
+            .perform(scrollTo(), click())
     }
 
     fun clickNo() {
         onView(withId(id.linkTestResultSymptomsButtonNo))
-            .perform(click())
+            .perform(scrollTo(), click())
     }
 }

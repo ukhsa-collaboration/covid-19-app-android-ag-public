@@ -14,13 +14,11 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
 import uk.nhs.nhsx.covid19.android.app.common.Result.Success
 import uk.nhs.nhsx.covid19.android.app.payment.RedirectToIsolationPaymentWebsiteViewModel.ViewState
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationPaymentUrlRequest
 import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationPaymentUrlResponse
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.state.asLogical
+import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -37,6 +35,7 @@ class RedirectToIsolationPaymentWebsiteViewModelTest {
     private val loadPaymentUrlResultObserver = mockk<Observer<ViewState>>(relaxed = true)
     private val analyticsEventProcessorMock = mockk<AnalyticsEventProcessor>(relaxed = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-20T10:00:00Z"), ZoneOffset.UTC)
+    private val isolationLogicalHelper = IsolationLogicalHelper(fixedClock)
 
     private val testSubject = RedirectToIsolationPaymentWebsiteViewModel(
         requestIsolationPaymentUrl,
@@ -44,15 +43,6 @@ class RedirectToIsolationPaymentWebsiteViewModelTest {
         isolationStateMachine,
         analyticsEventProcessorMock,
         fixedClock
-    )
-
-    private val isolationStateContactCase = IsolationState(
-        isolationConfiguration = DurationDays(),
-        contactCase = ContactCase(
-            exposureDate = LocalDate.parse("2020-05-14"),
-            notificationDate = LocalDate.parse("2020-05-15"),
-            expiryDate = LocalDate.parse("2020-05-21")
-        )
     )
 
     @Test
@@ -63,15 +53,20 @@ class RedirectToIsolationPaymentWebsiteViewModelTest {
         coEvery {
             requestIsolationPaymentUrl.invoke(
                 IsolationPaymentUrlRequest(
-                    "abc",
-                    Instant.parse("2020-05-14T00:00:00Z"),
-                    Instant.parse("2020-05-21T00:00:00Z")
+                    ipcToken = "abc",
+                    riskyEncounterDate = Instant.parse("2020-05-14T00:00:00Z"),
+                    isolationPeriodEndDate = Instant.parse("2020-05-21T00:00:00Z")
                 )
             )
         } returns Success(
             IsolationPaymentUrlResponse(websiteUrlWithQuery = "https://website/abc")
         )
-        every { isolationStateMachine.readLogicalState() } returns isolationStateContactCase.asLogical()
+        every { isolationStateMachine.readLogicalState() } returns
+            isolationLogicalHelper.contactCase(
+                exposureDate = LocalDate.parse("2020-05-14"),
+                notificationDate = LocalDate.parse("2020-05-15"),
+                expiryDate = LocalDate.parse("2020-05-21")
+            ).asIsolation()
 
         testSubject.loadIsolationPaymentUrl()
 
@@ -90,7 +85,7 @@ class RedirectToIsolationPaymentWebsiteViewModelTest {
 
         val testException = Exception("Test error")
 
-        every { isolationStateMachine.readLogicalState() } returns IsolationState(isolationConfiguration = DurationDays()).asLogical()
+        every { isolationStateMachine.readLogicalState() } returns isolationLogicalHelper.neverInIsolation()
         coEvery { requestIsolationPaymentUrl.invoke(any()) } returns Failure(testException)
 
         testSubject.loadIsolationPaymentUrl()

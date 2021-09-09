@@ -6,7 +6,7 @@ import org.junit.Assert
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.ContactCase
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
@@ -43,11 +43,10 @@ class StateStorageSerializationTest {
 
         val original = IsolationStateJson(
             configuration = DurationDays(),
-            contact = ContactCase(
+            contact = Contact(
                 exposureDate = LocalDate.now(fixedClock).minusDays(1),
                 notificationDate = LocalDate.now(fixedClock).minusDays(2),
                 optOutOfContactIsolation = OptOutOfContactIsolation(LocalDate.now(fixedClock).minusDays(3)),
-                expiryDate = LocalDate.now(fixedClock).minusDays(4)
             ),
             testResult = AcknowledgedTestResult(
                 testEndDate = LocalDate.now(fixedClock).minusDays(5),
@@ -61,7 +60,6 @@ class StateStorageSerializationTest {
                 selfDiagnosisDate = LocalDate.now(fixedClock).minusDays(8),
                 onsetDate = LocalDate.now(fixedClock).minusDays(9)
             ),
-            indexExpiryDate = LocalDate.now(fixedClock).minusDays(10),
             hasAcknowledgedEndOfIsolation = true
         )
         val res = testSubject.toJson(original)
@@ -75,10 +73,9 @@ class StateStorageSerializationTest {
 
         val original = IsolationStateJson(
             configuration = DurationDays(),
-            contact = ContactCase(
+            contact = Contact(
                 exposureDate = LocalDate.now(fixedClock).minusDays(1),
                 notificationDate = LocalDate.now(fixedClock).minusDays(2),
-                expiryDate = LocalDate.now(fixedClock).minusDays(4)
             ),
             testResult = AcknowledgedTestResult(
                 testEndDate = LocalDate.now(fixedClock).minusDays(5),
@@ -90,7 +87,6 @@ class StateStorageSerializationTest {
             symptomatic = SymptomaticCase(
                 selfDiagnosisDate = LocalDate.now(fixedClock).minusDays(8)
             ),
-            indexExpiryDate = LocalDate.now(fixedClock).minusDays(10),
             hasAcknowledgedEndOfIsolation = false
         )
         val res = testSubject.toJson(original)

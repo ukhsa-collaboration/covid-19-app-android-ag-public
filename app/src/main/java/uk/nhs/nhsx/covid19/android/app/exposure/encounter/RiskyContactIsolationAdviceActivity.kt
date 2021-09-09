@@ -20,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.assistedViewModel
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.FULLY_VACCINATED
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.MEDICALLY_EXEMPT
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.MINOR
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.NONE
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.NavigationTarget.BookPcrTest
@@ -28,6 +29,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationA
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.AlreadyIsolating
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NewlyIsolating
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsFullyVaccinated
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsMedicallyExempt
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsMinor
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
@@ -97,6 +99,7 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
             is AlreadyIsolating -> handleAlreadyIsolating(viewState.remainingDaysInIsolation)
             NotIsolatingAsMinor -> handleNotIsolatingAsMinor()
             NotIsolatingAsFullyVaccinated -> handleNotIsolatingAsFullyVaccinated()
+            NotIsolatingAsMedicallyExempt -> handleNotIsolatingAsMedicallyExempt()
         }
     }
 
@@ -133,7 +136,6 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
             getString(R.string.risky_contact_isolation_advice_already_isolating_information)
 
         adviceContainer.removeAllViews()
-        addAdvice(R.string.risky_contact_isolation_advice_already_isolating_testing_advice, R.drawable.ic_get_free_test)
         addAdvice(
             R.string.risky_contact_isolation_advice_already_isolating_stay_at_home_advice,
             R.drawable.ic_stay_at_home
@@ -159,7 +161,7 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
         addAdvice(R.string.risky_contact_isolation_advice_already_vaccinated_vaccine_research, R.drawable.ic_info)
         addAdvice(
             R.string.risky_contact_isolation_advice_already_vaccinated_testing_advice,
-            R.drawable.ic_get_free_test
+            R.drawable.ic_social_distancing
         )
 
         setupActionButtonsForNotIsolating()
@@ -174,8 +176,23 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
             getString(R.string.risky_contact_isolation_advice_minors_information)
 
         adviceContainer.removeAllViews()
-        addAdvice(R.string.risky_contact_isolation_advice_minors_testing_advice, R.drawable.ic_get_free_test)
+        addAdvice(R.string.risky_contact_isolation_advice_minors_testing_advice, R.drawable.ic_social_distancing)
         addAdvice(R.string.risky_contact_isolation_advice_minors_show_to_adult_advice, R.drawable.ic_family)
+
+        setupActionButtonsForNotIsolating()
+        setAccessibilityTitle(isIsolating = false)
+    }
+
+    private fun handleNotIsolatingAsMedicallyExempt() {
+        riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_book_test)
+        riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_medically_exempt_heading)
+        riskyContactIsolationAdviceRemainingDaysInIsolation.gone()
+        riskyContactIsolationAdviceStateInfoView.stateText =
+            getString(R.string.risky_contact_isolation_advice_medically_exempt_information)
+
+        adviceContainer.removeAllViews()
+        addAdvice(R.string.risky_contact_isolation_advice_medically_exempt_research, R.drawable.ic_info)
+        addAdvice(R.string.risky_contact_isolation_advice_medically_exempt_advice, R.drawable.ic_social_distancing)
 
         setupActionButtonsForNotIsolating()
         setAccessibilityTitle(isIsolating = false)
@@ -217,6 +234,10 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
             start(context, FULLY_VACCINATED)
         }
 
+        fun startAsMedicallyExempt(context: Context) {
+            start(context, MEDICALLY_EXEMPT)
+        }
+
         private fun start(context: Context, optOutOfContactIsolationExtra: OptOutOfContactIsolationExtra) {
             context.startActivity(getIntent(context, optOutOfContactIsolationExtra))
         }
@@ -232,6 +253,6 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
     }
 
     enum class OptOutOfContactIsolationExtra {
-        NONE, MINOR, FULLY_VACCINATED
+        NONE, MINOR, FULLY_VACCINATED, MEDICALLY_EXEMPT
     }
 }

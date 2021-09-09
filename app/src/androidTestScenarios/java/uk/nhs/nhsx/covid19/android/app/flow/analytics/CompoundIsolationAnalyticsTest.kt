@@ -12,6 +12,7 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun selfDiagnose_thenRiskyContact_isolatingForBothReasons() {
+        givenLocalAuthorityIsInEngland()
         startTestActivity<MainActivity>()
         // Current date: 1st Jan
         // Starting state: App running normally, not in isolation

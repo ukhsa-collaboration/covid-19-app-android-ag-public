@@ -7,6 +7,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -14,6 +15,7 @@ import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
+import kotlin.test.assertEquals
 
 class AndroidBluetoothStateProviderTest {
 
@@ -24,12 +26,15 @@ class AndroidBluetoothStateProviderTest {
 
     private val context = mockk<Context>(relaxed = true)
     private val intent = mockk<Intent>(relaxed = true)
+    private val defaultAdapter = mockk<BluetoothAdapter>()
 
     private val availabilityState = mockk<Observer<AvailabilityState>>(relaxed = true)
 
     @Before
     fun setUp() {
         testSubject.availabilityState.observeForever(availabilityState)
+        mockkStatic(BluetoothAdapter::class)
+        every { BluetoothAdapter.getDefaultAdapter() } returns null
     }
 
     @Test
@@ -46,6 +51,40 @@ class AndroidBluetoothStateProviderTest {
 
         verify(exactly = 0) { availabilityState.onChanged(any()) }
         verify { context.unregisterReceiver(testSubject) }
+    }
+
+    @Test
+    fun `is enabled when bluetooth is on`() = runBlocking {
+        every { BluetoothAdapter.getDefaultAdapter() } returns defaultAdapter
+        every { defaultAdapter.isEnabled } returns true
+
+        val state = testSubject.getState(isDebug = true)
+
+        assertEquals(ENABLED, state)
+    }
+
+    @Test
+    fun `is disabled when bluetooth is off`() = runBlocking {
+        every { BluetoothAdapter.getDefaultAdapter() } returns defaultAdapter
+        every { defaultAdapter.isEnabled } returns false
+
+        val state = testSubject.getState(isDebug = true)
+
+        assertEquals(DISABLED, state)
+    }
+
+    @Test
+    fun `is disabled when there is no bluetooth adapter`() = runBlocking {
+        val state = testSubject.getState(isDebug = false)
+
+        assertEquals(DISABLED, state)
+    }
+
+    @Test
+    fun `is enabled when running on emulator`() = runBlocking {
+        val state = testSubject.getState(isDebug = true)
+
+        assertEquals(ENABLED, state)
     }
 
     @Test

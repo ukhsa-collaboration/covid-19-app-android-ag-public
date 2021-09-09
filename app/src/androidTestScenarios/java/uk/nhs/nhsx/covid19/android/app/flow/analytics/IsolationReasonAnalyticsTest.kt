@@ -72,6 +72,7 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun hasHadRiskyContactBackgroundTickIsPresentWhenIsolatingAndFor14DaysAfter() {
+        givenLocalAuthorityIsInEngland()
         startTestActivity<MainActivity>()
 
         // Current date: 2nd Jan -> Analytics packet for: 1st Jan
