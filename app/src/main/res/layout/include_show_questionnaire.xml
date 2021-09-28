@@ -74,7 +74,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/noSymptomsButton"
-            style="@style/SecondaryButton"
+            style="@style/TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_horizontal_reduced_relative"

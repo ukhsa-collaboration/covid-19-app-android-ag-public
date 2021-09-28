@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.activity_isolation_hub.itemBookTest
+import kotlinx.android.synthetic.main.activity_isolation_hub.itemIsolationNote
 import kotlinx.android.synthetic.main.activity_isolation_hub.itemIsolationPayment
 import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
@@ -14,10 +15,12 @@ import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.SymptomsAfterRiskyVenueActivity
 import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubViewModel.NavigationTarget.BookTest
+import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubViewModel.NavigationTarget.IsolationNote
 import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubViewModel.NavigationTarget.IsolationPayment
 import uk.nhs.nhsx.covid19.android.app.status.testinghub.EvaluateBookTestNavigation.NavigationTarget.BookPcrTest
 import uk.nhs.nhsx.covid19.android.app.status.testinghub.EvaluateBookTestNavigation.NavigationTarget.SymptomsAfterRiskyVenue
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
@@ -77,6 +80,10 @@ class IsolationHubActivity : BaseActivity(R.layout.activity_isolation_hub) {
                     val intent = Intent(this, IsolationPaymentActivity::class.java)
                     startActivityForResult(intent, IsolationPaymentActivity.REQUEST_CODE_URL_FETCHED)
                 }
+                is IsolationNote -> {
+                    openUrl(it.isolationNoteUrl, useInternalBrowser = false)
+                    finish()
+                }
             }
         }
     }
@@ -88,6 +95,10 @@ class IsolationHubActivity : BaseActivity(R.layout.activity_isolation_hub) {
 
         itemBookTest.setOnSingleClickListener {
             viewModel.onItemBookTestClicked()
+        }
+
+        itemIsolationNote.setOnSingleClickListener {
+            viewModel.onItemIsolationNoteClicked()
         }
     }
 }

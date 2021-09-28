@@ -15,6 +15,7 @@ import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
+import uk.nhs.nhsx.covid19.android.app.util.isEmulator
 import kotlin.test.assertEquals
 
 class AndroidBluetoothStateProviderTest {
@@ -35,6 +36,8 @@ class AndroidBluetoothStateProviderTest {
         testSubject.availabilityState.observeForever(availabilityState)
         mockkStatic(BluetoothAdapter::class)
         every { BluetoothAdapter.getDefaultAdapter() } returns null
+        mockkStatic("uk.nhs.nhsx.covid19.android.app.util.IsEmulatorKt")
+        every { isEmulator() } returns false
     }
 
     @Test
@@ -82,6 +85,7 @@ class AndroidBluetoothStateProviderTest {
 
     @Test
     fun `is enabled when running on emulator`() = runBlocking {
+        every { isEmulator() } returns true
         val state = testSubject.getState(isDebug = true)
 
         assertEquals(ENABLED, state)

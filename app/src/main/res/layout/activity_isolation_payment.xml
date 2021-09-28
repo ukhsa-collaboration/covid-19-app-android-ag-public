@@ -83,7 +83,7 @@
 
             <Button
                 android:id="@+id/isolationPaymentButton"
-                style="@style/PrimaryButtonWithIcon"
+                style="@style/PrimaryButton.WithIcon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"

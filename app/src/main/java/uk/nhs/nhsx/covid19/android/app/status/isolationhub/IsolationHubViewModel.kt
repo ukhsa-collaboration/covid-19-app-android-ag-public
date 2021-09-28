@@ -1,10 +1,13 @@
 package uk.nhs.nhsx.covid19.android.app.status.isolationhub
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessSelfIsolationNoteLink
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolationPaymentsButton
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
@@ -12,9 +15,11 @@ import uk.nhs.nhsx.covid19.android.app.payment.CanClaimIsolationPayment
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
 import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubViewModel.NavigationTarget.BookTest
+import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubViewModel.NavigationTarget.IsolationNote
 import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubViewModel.NavigationTarget.IsolationPayment
 import uk.nhs.nhsx.covid19.android.app.status.testinghub.CanBookPcrTest
 import uk.nhs.nhsx.covid19.android.app.status.testinghub.EvaluateBookTestNavigation
+import uk.nhs.nhsx.covid19.android.app.util.DistrictAreaStringProvider
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import javax.inject.Inject
 
@@ -25,6 +30,7 @@ class IsolationHubViewModel @Inject constructor(
     private val canClaimIsolationPayment: CanClaimIsolationPayment,
     private val evaluateBookTestNavigation: EvaluateBookTestNavigation,
     private val notificationProvider: NotificationProvider,
+    private val districtAreaStringProvider: DistrictAreaStringProvider
 ) : ViewModel() {
 
     private val viewStateLiveData = MutableLiveData<ViewState>()
@@ -57,6 +63,14 @@ class IsolationHubViewModel @Inject constructor(
         navigationTargetLiveData.postValue(BookTest(evaluateBookTestNavigation()))
     }
 
+    fun onItemIsolationNoteClicked() {
+        viewModelScope.launch {
+            analyticsEventProcessor.track(DidAccessSelfIsolationNoteLink)
+            val districtAwareIsolationHubUrl = districtAreaStringProvider.provide(R.string.link_isolation_note)
+            navigationTargetLiveData.postValue(IsolationNote(districtAwareIsolationHubUrl))
+        }
+    }
+
     private fun mustShowIsolationPaymentButton(): Boolean =
         canClaimIsolationPayment() && isolationPaymentTokenStateProvider.tokenState is Token
 
@@ -68,5 +82,6 @@ class IsolationHubViewModel @Inject constructor(
     sealed class NavigationTarget {
         object IsolationPayment : NavigationTarget()
         data class BookTest(val navigationTarget: EvaluateBookTestNavigation.NavigationTarget) : NavigationTarget()
+        data class IsolationNote(@StringRes val isolationNoteUrl: Int) : NavigationTarget()
     }
 }

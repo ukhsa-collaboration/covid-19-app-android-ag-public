@@ -15,6 +15,8 @@ import kotlinx.android.synthetic.main.view_post_code.view.errorTextTitle
 import kotlinx.android.synthetic.main.view_post_code.view.postCodeEditText
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.invisible
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.smoothScrollToAndThen
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 
@@ -73,6 +75,12 @@ class PostCodeView @JvmOverloads constructor(
         errorInfoContainer.visible()
         errorIndicatorLeft.visible()
         errorTextTitle.text = errorText
+    }
+
+    fun resetErrorState() {
+        errorInfoContainer.gone()
+        postCodeEditText.setBackgroundResource(R.drawable.edit_text_background)
+        errorIndicatorLeft.invisible()
     }
 
     private fun configureLayout() {

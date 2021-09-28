@@ -515,7 +515,7 @@
     <string name="share_keys_reminder_share_button">Hysbysu eraill</string>
     <string name="share_keys_reminder_title">Nodyn atgoffa i hysbysu eraill</string>
     <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/regular-rapid-coronavirus-tests-if-you-do-not-have-symptoms/</string>
-    <string name="url_nhs_get_tested_wls">https://gov.wales/get-tested-coronavirus-covid-19</string>
+    <string name="url_nhs_get_tested_wls">https://llyw.cymru/cael-prawf-coronafeirws-covid-19?_ga=2.119681037.461135782.1628007884-2142473961.1612823651</string>
     <string name="camera_active_accessibility_announcement">Mae\'r camera\'n weithredol. Anelwch ef at boster cod QR swyddogol y GIG i fewngofnodi i leoliad</string>
     <string name="contact_tracing_hub_consider_pausing_text">eich bod yn storio eich ffôn mewn locer neu ardal gymunol\n\neich bod yn gweithio y tu ôl i sgrîn dryloyw sefydlog ac wedi\'ch amddiffyn yn llawn rhag pobl eraill\n\neich bod yn weithiwr ym maes iechyd a gofal cymdeithasol ac yn gwisgo PPE o safon feddygol, er enghraifft masg llawfeddygol\n\neich bod yn weithiwr gofal iechyd sy\'n gweithio mewn adeilad gofal iechyd fel ysbyty neu feddygfa Teulu</string>
     <string name="contact_tracing_hub_consider_pausing_title">Mae olrhain cysylltiadau\'n helpu i\'ch gwarchod chi ac eraill rhag coronafeirws (COVID-19).\n\nNi ddylech chi oedi wrth olrhain cysylltiadauoni bai:</string>
@@ -722,7 +722,7 @@
     <string name="order_lfd_after_risky_contact_toolbar_title">Cael pecyn prawf am ddim</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">Yn ôl i’r sgrîn gartref</string>
     <string name="risky_contact_isolation_advice_already_isolating_information">Os nad ydych chi eisoes wedi gwneud hynny, gallwch archebu prawf PCR am ddim trwy \'Profi am COVID-19’ ar y sgrin gartref.</string>
-    <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">Mae gennych risg uchel o ddal a lledaenu COVID-19, hyd yn oed os nad oes symptomau arnoch. Trwy aros gartref gallwch gadw eich hun a phobl eraill yn ddiogel.</string>
+    <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">Mae gennych risg uchel o ledaenu COVID-19. Trwy aros gartref, gallwch eich cadw eich hun ac eraill yn ddiogel.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">Os nad ydych chi eisoes wedi gwneud hynny, gallwch archebu prawf PCR am ddim trwy \'Profi am COVID-19’ ar y sgrin gartref.</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">Cynghorwn chi i archebu prawf PCR am ddim</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Does dim angen i chi hunanynysu</string>
@@ -756,4 +756,17 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">Ewch am brawf</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">Os na wnaethoch hynny\'n barod, rydym yn eich cynghori i archebu prawf PCR am ddim cyn gynted â phosibl. Ar ôl eich prawf cyntaf, dylech hefyd archebu ail brawf PCR ar gyfer %s</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">Rydym yn eich cynghori i archebu prawf PCR am ddim cyn gynted â phosibl. Ar ôl eich prawf cyntaf, dylech hefyd archebu ail brawf PCR ar gyfer %s</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">Rydym yn eich cynghori i archebu prawf PCR am ddim cyn gynted â phosibl. Ar ôl eich prawf cyntaf, dylech hefyd archebu ail brawf PCR ar gyfer %s</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">Rydym yn eich cynghori i archebu prawf PCR am ddim cyn gynted â phosibl. Ar ôl eich prawf cyntaf, dylech hefyd archebu ail brawf PCR ar gyfer %s</string>
+    <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
+    <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_group">Er tegwch a chydraddoldeb, os na allwch gael y brechiad am resymau meddygol, does dim angen i chi hunanynysu.</string>
+    <string name="self_isolation_hub_get_isolation_note_description">Os oes angen nodyn ynysu arnoch I\'w ddangos i\'ch cyflogwr</string>
+    <string name="self_isolation_hub_get_isolation_note_title">Cael nodyn ynysu</string>
+    <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
+    <string name="exposure_notification_clinical_trial_yes_content_description">Yes I am taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
+    <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
 </resources>

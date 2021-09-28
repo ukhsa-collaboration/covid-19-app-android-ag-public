@@ -117,7 +117,12 @@ class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) 
     }
 
     private fun scrollToValidationError() {
-        linkTestResultScrollView.smoothScrollTo(0, linkTestResultEnterCodeView.top)
+        linkTestResultScrollView.post {
+            linkTestResultScrollView.smoothScrollTo(
+                0,
+                linkTestResultEnterCodeView.top
+            )
+        }
     }
 
     private fun clearErrors() {

@@ -36,6 +36,7 @@ class DistrictAreaStringProvider @Inject constructor(
             R.string.url_latest_government_guidance to R.string.url_latest_government_guidance_wls,
             R.string.url_nhs_guidance to R.string.url_nhs_guidance_wls,
             R.string.exposure_notification_vaccination_status_all_doses_question_link_url to R.string.exposure_notification_vaccination_status_all_doses_question_link_url_wls,
+            R.string.link_isolation_note to R.string.link_isolation_note_wls
         )
     }
 }

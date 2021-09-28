@@ -21,11 +21,13 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultRequestBody
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResultResponse
 import java.io.IOException
+import java.time.Clock
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.UUID
+import javax.inject.Inject
 
-class MockVirologyTestingApi : VirologyTestingApi {
+class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTestingApi {
     var pollingTestResultHttpStatusCode = 200
     var pollingToken = "1234"
     var testResponseForPollingToken = mutableMapOf(pollingToken to TestResponse(POSITIVE, LAB_RESULT))
@@ -62,7 +64,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                     ?: throw IOException("No test result for token")
 
             VirologyTestResultResponse(
-                testEndDate = testEndDate ?: Instant.now(),
+                testEndDate = testEndDate ?: Instant.now(clock),
                 testResult = testResponse.testResult,
                 testKit = testResponse.testKitType,
                 diagnosisKeySubmissionSupported = testResponse.diagnosisKeySubmissionSupported,
@@ -97,7 +99,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
-                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now(clock).minus(2, ChronoUnit.DAYS),
                         testResult = POSITIVE,
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = true,
@@ -110,7 +112,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
-                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now(clock).minus(2, ChronoUnit.DAYS),
                         testResult = POSITIVE,
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = false,
@@ -123,7 +125,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
-                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now(clock).minus(2, ChronoUnit.DAYS),
                         testResult = POSITIVE,
                         testKit = RAPID_RESULT,
                         diagnosisKeySubmissionSupported = true,
@@ -136,7 +138,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
-                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now(clock).minus(2, ChronoUnit.DAYS),
                         testResult = POSITIVE,
                         testKit = RAPID_RESULT,
                         diagnosisKeySubmissionSupported = true,
@@ -149,7 +151,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
-                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now(clock).minus(2, ChronoUnit.DAYS),
                         testResult = POSITIVE,
                         testKit = RAPID_RESULT,
                         diagnosisKeySubmissionSupported = false,
@@ -162,7 +164,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
-                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now(clock).minus(2, ChronoUnit.DAYS),
                         testResult = POSITIVE,
                         testKit = RAPID_SELF_REPORTED,
                         diagnosisKeySubmissionSupported = true,
@@ -175,7 +177,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
-                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now(clock).minus(2, ChronoUnit.DAYS),
                         testResult = POSITIVE,
                         testKit = RAPID_SELF_REPORTED,
                         diagnosisKeySubmissionSupported = true,
@@ -188,7 +190,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
-                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now(clock).minus(2, ChronoUnit.DAYS),
                         testResult = NEGATIVE,
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = true,
@@ -201,7 +203,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
-                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now(clock).minus(2, ChronoUnit.DAYS),
                         testResult = NEGATIVE,
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = false,
@@ -214,7 +216,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
-                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now(clock).minus(2, ChronoUnit.DAYS),
                         testResult = NEGATIVE,
                         testKit = RAPID_RESULT,
                         diagnosisKeySubmissionSupported = true,
@@ -227,7 +229,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
-                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now(clock).minus(2, ChronoUnit.DAYS),
                         testResult = VOID,
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = true,
@@ -240,7 +242,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
-                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now(clock).minus(2, ChronoUnit.DAYS),
                         testResult = VOID,
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = false,
@@ -253,7 +255,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
-                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now(clock).minus(2, ChronoUnit.DAYS),
                         testResult = VOID,
                         testKit = RAPID_RESULT,
                         diagnosisKeySubmissionSupported = true,
@@ -266,7 +268,7 @@ class MockVirologyTestingApi : VirologyTestingApi {
                 Response.success(
                     VirologyCtaExchangeResponse(
                         diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
-                        testEndDate = testEndDate ?: Instant.now().minus(2, ChronoUnit.DAYS),
+                        testEndDate = testEndDate ?: Instant.now(clock).minus(2, ChronoUnit.DAYS),
                         testResult = PLOD,
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = true,

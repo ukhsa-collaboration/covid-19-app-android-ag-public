@@ -24,10 +24,10 @@ class PostCodeViewModel @Inject constructor(
 
     fun validateMainPostCode(postCode: String) {
         viewModelScope.launch {
-            when (val result = localAuthorityPostCodeValidator.validate(postCode)) {
-                is Valid -> navigationTarget.postValue(LocalAuthority(postCode))
-                else -> postCodeValidationErrorLiveData.postValue(result)
-            }
+            val result = localAuthorityPostCodeValidator.validate(postCode)
+            if (result is Valid)
+                navigationTarget.postValue(LocalAuthority(postCode))
+            postCodeValidationErrorLiveData.postValue(result)
         }
     }
 

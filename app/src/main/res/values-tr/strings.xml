@@ -197,7 +197,7 @@
     <string name="message_no_coronavirus_symptoms">Listelenen belirtilerden hiçbirine sahip olmasanız dahi bir koronavirüs testi yaptırabilirsiniz.\n\nSizin için mevcut olan koronavirüs testi seçenekleri hakkında daha fazla bilgi edinin:</string>
     <string name="questionnaire_change_announcement">%1$s belirtisini değiştir</string>
     <string name="state_index_take_coronavirus_test">Ücretsiz bir koronavirüs testi yaptırın</string>
-    <string name="state_test_negative_info">Koronavirüs test sonucunuz negatif ancak yine de belirti geliştirmeniz mümkün. Dolayısıyla karantinada kalmalısınız</string>
+    <string name="state_test_negative_info">Koronavirüs test sonucunuz negatif ancak yine de belirti geliştirmeniz mümkün. Dolayısıyla karantinada kalmalısınız izolat /ă</string>
     <string name="test_result_negative_continue_self_isolate_explanation">Test sonucunuz, test yapıldığında virüsle enfekte olmadığınızı gösteriyor. Size e-posta veya SMS mesajı yoluyla daha fazla bilgi gönderildi.\n\n18 yaşından küçükseniz, bu mesajı güvendiğiniz bir yetişkine göstermeniz önerilir.</string>
     <string name="isolation_until_date">şu zamana kadar: %1$s, 23:59</string>
     <string name="questionnaire_review_one_of_two">Adım 1 / 2</string>
@@ -622,8 +622,8 @@
     <string name="accessibility_announcement_accordion_collapse_action">gizle</string>
     <string name="accessibility_announcement_accordion_expand_action">göster</string>
     <string name="book_follow_up_test_nhs_guidance_label">NHS yönergesi</string>
-    <string name="contact_case_exposure_info_screen_exposure_date">%s tarihinde yakın temas gerçekleşti</string>
-    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_body">Uygulama, başkalarıyla yakın temasta bulunup bulunmadığınızı kontrol etmek için  telefonunuzun Bluetooth işlevini kullanır.\n\nYakın temas, birisinin 15 dakika boyunca 2 metre yakınında bulunmuş olmanız anlamına gelir.\n\nUygulama, anonimdir ve konumunuzu izlemek için GPS ya da mekana giriş yapma özelliklerini kullanmaz; dolayısıyla gizliliğiniz korunur.</string>
+    <string name="contact_case_exposure_info_screen_exposure_date">%s tarihinde yakın temas meydana geldi</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_body">Uygulama, başkalarıyla yakın temasta bulunup bulunmadığınızı kontrol etmek için  telefonunuzun Bluetooth işlevini kullanır.\n\nYakın temas, birisinin 15 dakika boyunca ya da daha uzun bir süreyle 2 metre yakınında bulunmuş olmanız anlamına gelir.\n\nUygulama, anonimdir ve konumunuzu izlemek için GPS ya da mekana giriş yapma özelliklerini kullanmaz; dolayısıyla gizliliğiniz korunur.</string>
     <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading">Yakın temas nasıl hesaplanır?</string>
     <string name="contact_case_start_isolation_how_we_calculate_isolation_days_title">Karantina günleri nasıl hesaplanır?</string>
     <string name="continue_to_self_isolate_for">Kişisel karantinaya devam edilecek süre</string>
@@ -695,7 +695,7 @@
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">Ana ekrana geri dön</string>
     <string name="risky_contact_isolation_advice_already_isolating_information">Henüz yapmadıysanız, ana ekrandaki \'COVID-19 için test\' bölümünden ücretsiz bir PCR testi için rezervasyon yapabilirsiniz.</string>
-    <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">Herhangi bir belirtiniz olmasa bile, COVID-19\'a yakalanma ve virüsü yayma riskiniz yüksektir. Evde kalarak kendinizi ve başkalarını güvende tutmaya yardımcı olabilirsiniz.</string>
+    <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">COVID-19\'u yayma riskiniz yüksek. Evde kalarak hem kendinizin hem de diğer insanların güvende olmasına yardımcı olabilirsiniz.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">Henüz yapmadıysanız, ana ekrandaki \'COVID-19 için test\' bölümünden ücretsiz bir PCR testi için rezervasyon yapabilirsiniz.</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">Ücretsiz bir PCR testi için rezervasyon yapmanız tavsiye edilir</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Kendinizi karantinaya almanız gerekmiyor</string>
@@ -729,4 +729,17 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">Bir test yaptırın</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">Hali hazırda yapmadıysanız, en kısa zamanda ücretsiz bir PCR testi için rezervasyon yapmanız tavsiye edilmektedir. İlk testinizden sonra, aynı zamanda %s tarihi için de ikinci bir PCR testi rezervasyonu yapmanız tavsiye edilmektedir.</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">En kısa zamanda ücretsiz bir PCR testi için rezervasyon yapmanız tavsiye edilmektedir. İlk testinizden sonra, aynı zamanda %s tarihi için de ikinci bir PCR testi rezervasyonu yapmanız tavsiye edilmektedir.</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">En kısa zamanda ücretsiz bir PCR testi için rezervasyon yapmanız tavsiye edilmektedir. İlk testinizden sonra, aynı zamanda %s tarihi için de ikinci bir PCR testi rezervasyonu yapmanız tavsiye edilmektedir.</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">En kısa zamanda ücretsiz bir PCR testi için rezervasyon yapmanız tavsiye edilmektedir. İlk testinizden sonra, aynı zamanda %s tarihi için de ikinci bir PCR testi rezervasyonu yapmanız tavsiye edilmektedir.</string>
+    <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
+    <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_group">Hakkaniyet ve eşitlik adına; eğer tıbbi sebeplerden dolayı aşı olamıyorsanız, kendinizi karantinaya almanız gerekmez.</string>
+    <string name="self_isolation_hub_get_isolation_note_description">İşvereninize göstermek için bir karantina notuna ihtiyacınız varsa</string>
+    <string name="self_isolation_hub_get_isolation_note_title">Bir Karantina notu edinin</string>
+    <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
+    <string name="exposure_notification_clinical_trial_yes_content_description">Yes I am taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
+    <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
 </resources>

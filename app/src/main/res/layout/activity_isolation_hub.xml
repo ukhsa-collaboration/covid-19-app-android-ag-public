@@ -36,6 +36,15 @@
                 app:navigationItemIsExternalLink="false"
                 app:navigationItemTitle="@string/isolation_hub_financial_support_title" />
 
+            <uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView
+                android:id="@+id/itemIsolationNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                app:navigationItemDescription="@string/self_isolation_hub_get_isolation_note_description"
+                app:navigationItemIsExternalLink="true"
+                app:navigationItemTitle="@string/self_isolation_hub_get_isolation_note_title" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

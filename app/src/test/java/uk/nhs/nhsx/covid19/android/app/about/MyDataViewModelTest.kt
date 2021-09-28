@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.about
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -67,8 +68,8 @@ class MyDataViewModelTest : IsolationStateMachineSetupHelper {
         testSubject.onResume()
 
         verify { userDataStateObserver.onChanged(expectedInitialUserDataState) }
-        verify(exactly = 0) { venueVisitsEditModeChangedObserver.onChanged(any()) }
-        verify(exactly = 0) { allUserDataDeletedObserver.onChanged(any()) }
+        verify { venueVisitsEditModeChangedObserver wasNot called }
+        verify { allUserDataDeletedObserver wasNot called }
     }
 
     @Test
@@ -79,8 +80,8 @@ class MyDataViewModelTest : IsolationStateMachineSetupHelper {
         testSubject.onResume()
 
         verify(exactly = 1) { userDataStateObserver.onChanged(any()) }
-        verify(exactly = 0) { venueVisitsEditModeChangedObserver.onChanged(any()) }
-        verify(exactly = 0) { allUserDataDeletedObserver.onChanged(any()) }
+        verify { venueVisitsEditModeChangedObserver wasNot called }
+        verify { allUserDataDeletedObserver wasNot called }
     }
 
     @Test
@@ -89,8 +90,8 @@ class MyDataViewModelTest : IsolationStateMachineSetupHelper {
 
         testSubject.onResume()
 
-        verify(exactly = 0) { venueVisitsEditModeChangedObserver.onChanged(any()) }
-        verify(exactly = 0) { allUserDataDeletedObserver.onChanged(any()) }
+        verify { venueVisitsEditModeChangedObserver wasNot called }
+        verify { allUserDataDeletedObserver wasNot called }
     }
 
     @Test

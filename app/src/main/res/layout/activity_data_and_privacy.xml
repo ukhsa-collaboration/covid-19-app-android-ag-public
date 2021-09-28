@@ -106,7 +106,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonNoThanks"
-                style="@style/SecondaryButton"
+                style="@style/TextButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/onboarding_no_thanks_announcement"

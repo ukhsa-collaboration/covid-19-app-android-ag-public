@@ -89,7 +89,9 @@ class TestApplicationContext {
     val app: ExposureApplication = ApplicationProvider.getApplicationContext()
     val riskyVenuesApi = MockRiskyVenuesApi()
 
-    val virologyTestingApi = MockVirologyTestingApi()
+    val clock = MockClock()
+
+    val virologyTestingApi = MockVirologyTestingApi(clock)
 
     val isolationPaymentApi = MockIsolationPaymentApi()
 
@@ -115,11 +117,9 @@ class TestApplicationContext {
 
     val uuidGenerator = MockUUIDGenerator()
 
-    val clock = MockClock()
-
     internal val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-    private val exposureNotificationApi = MockExposureNotificationApi(clock)
+    private val exposureNotificationApi = MockExposureNotificationApi(app, clock, simulateGoogleEN = false)
 
     private val bluetoothStateProvider = TestBluetoothStateProvider()
 
@@ -146,7 +146,7 @@ class TestApplicationContext {
     private val signatureKey = SignatureKey(
         id = "3",
         pemRepresentation =
-            """
+        """
             -----BEGIN PUBLIC KEY-----
             MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEVs/o5+uQbTjL3chynL4wXgUg2R9
             q9UU8I5mEovUf86QZ7kOBIjJwqnzD1omageEHWwHdBO6B+dFabmdT9POxg==

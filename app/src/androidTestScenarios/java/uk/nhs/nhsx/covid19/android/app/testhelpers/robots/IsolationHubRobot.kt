@@ -43,4 +43,14 @@ class IsolationHubRobot {
         onView(withId(R.id.itemIsolationPayment))
             .perform(click())
     }
+
+    fun checkItemIsolationNoteIsDisplayed() {
+        onView(withId(R.id.itemIsolationNote))
+            .check(matches(isDisplayed()))
+    }
+
+    fun clickItemIsolationNote() {
+        onView(withId(R.id.itemIsolationNote))
+            .perform(click())
+    }
 }

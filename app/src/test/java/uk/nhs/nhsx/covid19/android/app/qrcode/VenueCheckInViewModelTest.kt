@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.qrcode
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import io.mockk.called
 import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
@@ -113,7 +114,7 @@ class VenueCheckInViewModelTest {
 
         testSubject.onResume()
 
-        verify(exactly = 0) { isViewStateCameraPermissionNotGrantedObserver.onChanged(any()) }
+        verify { isViewStateCameraPermissionNotGrantedObserver wasNot called }
     }
 
     companion object {

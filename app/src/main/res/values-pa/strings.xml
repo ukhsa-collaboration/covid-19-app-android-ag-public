@@ -498,7 +498,7 @@
     <string name="share_keys_reminder_privacy_banner">ਕਿਸੇ ਨੂੰ ਨਹੀਂ ਪਤਾ ਹੋਵੇਗਾ ਕਿ ਸੂਚਨਾ ਤੁਹਾਡੇ ਨਾਲ ਸੰਬੰਧਿਤ ਹੈ</string>
     <string name="share_keys_reminder_share_button">ਦੂਜਿਆਂ ਨੂੰ ਸੂਚਿਤ ਕਰੋ</string>
     <string name="share_keys_reminder_title">ਦੂਜਿਆਂ ਨੂੰ ਸੂਚਿਤ ਕਰਨ ਲਈ ਇੱਕ ਰੀਮਾਂਈਂਡਰ</string>
-    <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
+    <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/regular-rapid-coronavirus-tests-if-you-do-not-have-symptoms/</string>
     <string name="url_nhs_get_tested_wls">https://gov.wales/get-tested-coronavirus-covid-19</string>
     <string name="camera_active_accessibility_announcement">ਕੈਮਰਾ ਸਰਗਰਮ ਹੈ। ਇਸ ਨੂੰ ਸਥਾਨ \'ਤੇ ਚੈੱਕ-ਇਨ ਕਰਨ ਲਈ ਅਧਿਕਾਰਤ NHS QR ਕੋਡ ਪੋਸਟਰ ਵੱਲ ਲਿਜਾਓ।</string>
     <string name="contact_tracing_hub_consider_pausing_text">ਆਪਣੇ ਫੋਨ ਨੂੰ ਲਾਕਰ ਜਾਂ ਭਾਈਚਾਰਕ ਖੇਤਰ ਵਿੱਚ ਸਟੋਰ ਕਰਦੇ ਹੋ\n\nਕਿਸੇ ਫਿਕਸ ਕੀਤੀ ਪਾਰਦਰਸ਼ੀ ਸਕ੍ਰੀਨ ਦੇ ਪਿੱਛੇ ਕੰਮ ਕਰ ਰਹੇ ਹੋ ਅਤੇ ਦੂਜੇ ਲੋਕਾਂ ਤੋਂ ਪੂਰੀ ਤਰ੍ਹਾਂ ਸੁਰੱਖਿਅਤ ਹੋ\n\nਸਿਹਤ ਅਤੇ ਸਮਾਜਕ ਦੇਖਭਾਲ ਵਿੱਚ ਇੱਕ ਕਰਮਚਾਰੀ ਹੋ ਅਤੇ ਮੈਡੀਕਲ ਗ੍ਰੇਡ PPE ਜਿਵੇਂ ਕਿ ਇੱਕ ਸਰਜੀਕਲ ਮਾਸਕ ਪਹਿਨਿਆ ਹੋਇਆ ਹੈ\n\nਕਿਸੇ ਸਿਹਤ-ਸੰਭਾਲ ਇਮਾਰਤ, ਜਿਵੇਂ ਕਿ ਕਿਸੇ ਹਸਪਤਾਲ ਜਾਂ ਜੀਪੀ ਸਰਜਰੀ ਵਿੱਚ ਕੰਮ ਕਰ ਰਹੇ ਇੱਕ ਸਿਹਤ-ਸੰਭਾਲ ਕਰਮਚਾਰੀ ਹੋ</string>
@@ -694,7 +694,7 @@
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">ਵਾਪਸ ਮੁੱਖ ਸਕ੍ਰੀਨ \'ਤੇ</string>
     <string name="risky_contact_isolation_advice_already_isolating_information">ਜੇ ਤੁਸੀਂ ਪਹਿਲਾਂ ਹੀ ਇਹ ਨਹੀਂ ਕਰ ਲਿਆ ਹੈ, ਤਾਂ ਤੁਸੀਂ ਹੋਮ ਸਕ੍ਰੀਨ \'ਤੇ \'COVID-19 ਲਈ ਟੈਸਟ\' ਤੋਂ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰ ਸਕਦੇ ਹੋ।</string>
-    <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">ਤੁਹਾਨੂੰ COVID-19 ਦੀ ਪਕੜ ਵਿੱਚ ਆਉਣ ਅਤੇ ਇਸਨੂੰ ਫੈਲਾਉਣ ਦਾ ਉੱਚ ਜੋਖਮ ਹੈ, ਭਾਵੇਂ ਤੁਹਾਨੂੰ ਕੋਈ ਲੱਛਣ ਨਾ ਹੋਣ। ਘਰ ਰਹਿ ਕੇ ਤੁਸੀਂ ਆਪਣੇ-ਆਪ ਨੂੰ ਅਤੇ ਦੂਜਿਆਂ ਨੂੰ ਸੁਰੱਖਿਅਤ ਰੱਖਣ ਵਿੱਚ ਮਦਦ ਕਰ ਸਕਦੇ ਹੋ।</string>
+    <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">ਤੁਸੀਂ COVID-19 ਫੈਲਣ ਦੇ ਉੱਚ ਜੋਖਮ ਹੇਠ ਆਉਂਦੇ ਹਨ। ਘਰ ਵਿੱਚ ਰਹਿ ਕੇ ਤੁਸੀਂ ਆਪਣੇ ਆਪ ਅਤੇ ਦੂਜਿਆਂ ਨੂੰ ਸੁਰੱਖਿਅਤ ਰੱਖਣ ਵਿੱਚ ਮਦਦ ਕਰ ਸਕਦੇ ਹੋ।</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">ਜੇ ਤੁਸੀਂ ਪਹਿਲਾਂ ਹੀ ਇਹ ਨਹੀਂ ਕਰ ਲਿਆ ਹੈ, ਤਾਂ ਤੁਸੀਂ ਹੋਮ ਸਕ੍ਰੀਨ \'ਤੇ \'COVID-19 ਲਈ ਟੈਸਟ\' ਤੋਂ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰ ਸਕਦੇ ਹੋ।</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">ਤੁਹਾਨੂੰ ਇੱਕ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰਨ ਦੀ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">ਤੁਹਾਨੂੰ ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖਣ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ</string>
@@ -708,7 +708,7 @@
     <string name="risky_contact_isolation_advice_medically_exempt_advice">ਦੂਜਿਆਂ ਨਾਲ ਆਪਣੇ ਸੰਪਰਕ ਨੂੰ ਘਟਾਉਣਾ ਅਜੇ ਵੀ ਮਹੱਤਵਪੂਰਨ ਹੈ।</string>
     <string name="risky_contact_isolation_advice_medically_exempt_heading">ਤੁਹਾਨੂੰ ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖਣ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ</string>
     <string name="risky_contact_isolation_advice_medically_exempt_information">ਤੁਹਾਨੂੰ ਇੱਕ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰਨ ਦੀ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_research">ਖੋਜ ਨੇ ਦਿਖਾਇਆ ਹੈ ਕਿ ਟੀਕੇ COVID-19 ਦੀ ਪਕੜ ਵਿੱਚ ਆਉਣ ਅਤੇ ਇਸਨੂੰ ਫੈਲਾਉਣ ਦੇ ਤੁਹਾਡੇ ਜੋਖਮ ਨੂੰ ਘਟਾਉਣ ਵਿੱਚ ਸਹਾਇਤਾ ਕਰਦੇ ਹਨ।</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_research">ਖੋਜ ਨੇ ਦਰਸਾਇਆ ਹੈ ਕਿ ਵੈਕਸੀਨ COVID-19 ਦੀ ਲਾਗ ਲੱਗਣ ਅਤੇ ਇਸ ਨੂੰ ਫੈਲਾਉਣ ਦੇ ਜੋਖਮ ਨੂੰ ਘੱਟ ਕਰਦੀ ਹੈ।</string>
     <string name="risky_contact_isolation_advice_minors_information">ਤੁਹਾਨੂੰ ਇੱਕ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰਨ ਦੀ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ।</string>
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">ਤੁਹਾਨੂੰ ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖਣ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">ਤੁਹਾਨੂੰ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ ਕਿ ਤੁਸੀਂ ਇਹ ਸੁਨੇਹਾ ਕਿਸੇ ਭਰੋਸੇਮੰਦ ਬਾਲਗ ਨੂੰ ਦਿਖਾਓ।</string>
@@ -728,4 +728,17 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">ਟੈਸਟ ਕਰਵਾਓ</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">ਜੇ ਤੁਸੀਂ ਪਹਿਲਾਂ ਹੀ ਅਜਿਹਾ ਨਹੀਂ ਕੀਤਾ ਹੈ, ਤਾਂ ਤੁਹਾਨੂੰ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ ਕਿ ਜਿੰਨੀ ਛੇਤੀ ਹੋ ਸਕੇ ਇੱਕ ਮੁਫਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰਵਾਓ। ਆਪਣੇ ਪਹਿਲੇ ਟੈਸਟ ਤੋਂ ਬਾਅਦ, ਤੁਹਾਨੂੰ %s ਲਈ ਦੂਜਾ PCR ਟੈਸਟ ਵੀ ਬੁੱਕ ਕਰਵਾਉਣਾ ਚਾਹੀਦਾ ਹੈ।</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">ਤੁਹਾਨੂੰ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ ਕਿ ਜਿੰਨੀ ਛੇਤੀ ਹੋ ਸਕੇ ਇੱਕ ਮੁਫਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰਵਾਓ। ਆਪਣੇ ਪਹਿਲੇ ਟੈਸਟ ਤੋਂ ਬਾਅਦ, ਤੁਹਾਨੂੰ %s ਲਈ ਦੂਜਾ PCR ਟੈਸਟ ਵੀ ਬੁੱਕ ਕਰਵਾਉਣਾ ਚਾਹੀਦਾ ਹੈ।</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">ਤੁਹਾਨੂੰ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ ਕਿ ਜਿੰਨੀ ਛੇਤੀ ਹੋ ਸਕੇ ਇੱਕ ਮੁਫਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰਵਾਓ। ਆਪਣੇ ਪਹਿਲੇ ਟੈਸਟ ਤੋਂ ਬਾਅਦ, ਤੁਹਾਨੂੰ %s ਲਈ ਦੂਜਾ PCR ਟੈਸਟ ਵੀ ਬੁੱਕ ਕਰਵਾਉਣਾ ਚਾਹੀਦਾ ਹੈ।</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">ਤੁਹਾਨੂੰ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ ਕਿ ਜਿੰਨੀ ਛੇਤੀ ਹੋ ਸਕੇ ਇੱਕ ਮੁਫਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰਵਾਓ। ਆਪਣੇ ਪਹਿਲੇ ਟੈਸਟ ਤੋਂ ਬਾਅਦ, ਤੁਹਾਨੂੰ %s ਲਈ ਦੂਜਾ PCR ਟੈਸਟ ਵੀ ਬੁੱਕ ਕਰਵਾਉਣਾ ਚਾਹੀਦਾ ਹੈ।</string>
+    <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
+    <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_group">ਨਿਰਪੱਖਤਾ ਅਤੇ ਸਮਾਨਤਾ ਲਈ, ਜੇ ਤੁਸੀਂ ਡਾਕਟਰੀ ਕਾਰਨਾਂ ਕਰਕੇ ਟੀਕਾ ਲਗਵਾਉਣ ਵਿੱਚ ਅਸਮਰੱਥ ਹੋ ਤਾਂ ਤੁਹਾਨੂੰ ਸਵੈ-ਇਕਾਂਤਵਾਸ ਦੀ ਲੋੜ ਨਹੀਂ।</string>
+    <string name="self_isolation_hub_get_isolation_note_description">ਜੇ ਤੁਹਾਨੂੰ ਆਪਣੇ ਮਾਲਕ ਨੂੰ ਦਿਖਾਉਣ ਲਈ ਆਈਸੋਲੇਸ਼ਨ ਨੋਟ ਦੀ ਲੋੜ ਹੈ</string>
+    <string name="self_isolation_hub_get_isolation_note_title">ਇਕਾਂਤਵਾਸ ਨੋਟ ਪ੍ਰਾਪਤ ਕਰੋ</string>
+    <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
+    <string name="exposure_notification_clinical_trial_yes_content_description">Yes I am taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
+    <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
 </resources>

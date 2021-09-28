@@ -75,6 +75,7 @@ enum class RegularAnalyticsEventType(
     SELECTED_LFD_TEST_ORDERING_M2_JOURNEY({ it.selectedLFDTestOrderingM2Journey++ }),
     SELECTED_HAS_LFD_TEST_M2_JOURNEY({ it.selectedHasLFDTestM2Journey++ }),
     OPTED_OUT_FOR_CONTACT_ISOLATION({ it.optedOutForContactIsolation++ }),
+    DID_ACCESS_SELF_ISOLATION_NOTE_LINK({ it.didAccessSelfIsolationNoteLink++ }),
 }
 
 @JsonClass(generateAdapter = true)

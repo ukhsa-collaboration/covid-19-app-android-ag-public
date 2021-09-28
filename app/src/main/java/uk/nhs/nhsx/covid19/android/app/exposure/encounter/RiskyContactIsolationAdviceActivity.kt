@@ -19,6 +19,9 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.assistedViewModel
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.Default
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.WalesWithinAdviceWindow
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.FULLY_VACCINATED
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.MEDICALLY_EXEMPT
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.MINOR
@@ -33,11 +36,13 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationA
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsMinor
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
+import uk.nhs.nhsx.covid19.android.app.util.uiLongFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
+import java.time.LocalDate
 import javax.inject.Inject
 
 class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky_contact_isolation_advice) {
@@ -95,15 +100,18 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
 
     private fun renderViewState(viewState: ViewState) {
         when (viewState) {
-            is NewlyIsolating -> handleNewlyIsolating(viewState.remainingDaysInIsolation)
-            is AlreadyIsolating -> handleAlreadyIsolating(viewState.remainingDaysInIsolation)
-            NotIsolatingAsMinor -> handleNotIsolatingAsMinor()
-            NotIsolatingAsFullyVaccinated -> handleNotIsolatingAsFullyVaccinated()
+            is NewlyIsolating -> handleNewlyIsolating(viewState.remainingDaysInIsolation, viewState.testingAdviceToShow)
+            is AlreadyIsolating -> handleAlreadyIsolating(
+                viewState.remainingDaysInIsolation,
+                viewState.testingAdviceToShow
+            )
+            is NotIsolatingAsMinor -> handleNotIsolatingAsMinor(viewState.testingAdviceToShow)
+            is NotIsolatingAsFullyVaccinated -> handleNotIsolatingAsFullyVaccinated(viewState.testingAdviceToShow)
             NotIsolatingAsMedicallyExempt -> handleNotIsolatingAsMedicallyExempt()
         }
     }
 
-    private fun handleNewlyIsolating(days: Int) {
+    private fun handleNewlyIsolating(days: Int, testingAdviceToShow: TestingAdviceToShow) {
         riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_contact)
         riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_self_isolate_for)
         riskyContactIsolationAdviceRemainingDaysInIsolation.text =
@@ -112,7 +120,17 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
             getString(R.string.risky_contact_isolation_advice_new_isolation_information)
 
         adviceContainer.removeAllViews()
-        addAdvice(R.string.risky_contact_isolation_advice_new_isolation_testing_advice, R.drawable.ic_get_free_test)
+        if (testingAdviceToShow == Default) {
+            addAdvice(
+                R.string.risky_contact_isolation_advice_new_isolation_testing_advice,
+                R.drawable.ic_get_free_test
+            )
+        } else if (testingAdviceToShow is WalesWithinAdviceWindow) {
+            addTestingAdviceWithDate(
+                R.string.contact_case_start_isolation_list_item_testing_with_date,
+                testingAdviceToShow.date
+            )
+        }
         addAdvice(R.string.risky_contact_isolation_advice_new_isolation_stay_at_home_advice, R.drawable.ic_stay_at_home)
 
         riskyContactIsolationAdviceCommonQuestions.gone()
@@ -127,7 +145,7 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
         setAccessibilityTitle(isIsolating = true)
     }
 
-    private fun handleAlreadyIsolating(days: Int) {
+    private fun handleAlreadyIsolating(days: Int, testingAdviceToShow: TestingAdviceToShow) {
         riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_contact)
         riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_continue_isolataion_for)
         riskyContactIsolationAdviceRemainingDaysInIsolation.text =
@@ -136,6 +154,12 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
             getString(R.string.risky_contact_isolation_advice_already_isolating_information)
 
         adviceContainer.removeAllViews()
+        if (testingAdviceToShow is WalesWithinAdviceWindow) {
+            addTestingAdviceWithDate(
+                R.string.contact_case_continue_isolation_list_item_testing_with_date,
+                testingAdviceToShow.date
+            )
+        }
         addAdvice(
             R.string.risky_contact_isolation_advice_already_isolating_stay_at_home_advice,
             R.drawable.ic_stay_at_home
@@ -150,7 +174,12 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
         setAccessibilityTitle(isIsolating = true)
     }
 
-    private fun handleNotIsolatingAsFullyVaccinated() {
+    private fun addTestingAdviceWithDate(@StringRes stringResId: Int, testAdviceDate: LocalDate) {
+        val formattedDate = testAdviceDate.uiLongFormat(this)
+        addAdvice(getString(stringResId, formattedDate), R.drawable.ic_get_free_test)
+    }
+
+    private fun handleNotIsolatingAsFullyVaccinated(testingAdviceToShow: TestingAdviceToShow) {
         riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_book_test)
         riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required)
         riskyContactIsolationAdviceRemainingDaysInIsolation.gone()
@@ -163,12 +192,18 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
             R.string.risky_contact_isolation_advice_already_vaccinated_testing_advice,
             R.drawable.ic_social_distancing
         )
+        if (testingAdviceToShow is WalesWithinAdviceWindow) {
+            addTestingAdviceWithDate(
+                R.string.contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date,
+                testingAdviceToShow.date
+            )
+        }
 
         setupActionButtonsForNotIsolating()
         setAccessibilityTitle(isIsolating = false)
     }
 
-    private fun handleNotIsolatingAsMinor() {
+    private fun handleNotIsolatingAsMinor(testingAdviceToShow: TestingAdviceToShow) {
         riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_book_test)
         riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_minors_no_self_isolation_required)
         riskyContactIsolationAdviceRemainingDaysInIsolation.gone()
@@ -176,6 +211,12 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
             getString(R.string.risky_contact_isolation_advice_minors_information)
 
         adviceContainer.removeAllViews()
+        if (testingAdviceToShow is WalesWithinAdviceWindow) {
+            addTestingAdviceWithDate(
+                R.string.contact_case_no_isolation_under_age_limit_list_item_testing_with_date,
+                testingAdviceToShow.date
+            )
+        }
         addAdvice(R.string.risky_contact_isolation_advice_minors_testing_advice, R.drawable.ic_social_distancing)
         addAdvice(R.string.risky_contact_isolation_advice_minors_show_to_adult_advice, R.drawable.ic_family)
 
@@ -192,6 +233,7 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
 
         adviceContainer.removeAllViews()
         addAdvice(R.string.risky_contact_isolation_advice_medically_exempt_research, R.drawable.ic_info)
+        addAdvice(R.string.risky_contact_isolation_advice_medically_exempt_group, R.drawable.ic_group_of_people)
         addAdvice(R.string.risky_contact_isolation_advice_medically_exempt_advice, R.drawable.ic_social_distancing)
 
         setupActionButtonsForNotIsolating()
@@ -212,6 +254,9 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
 
     private fun addAdvice(@StringRes stringResId: Int, @DrawableRes drawableResId: Int) =
         adviceContainer.addView(IconTextView(this, stringResId, drawableResId))
+
+    private fun addAdvice(text: String, @DrawableRes drawableResId: Int) =
+        adviceContainer.addView(IconTextView(this, text, drawableResId))
 
     private fun setAccessibilityTitle(isIsolating: Boolean) {
         title = if (isIsolating) {

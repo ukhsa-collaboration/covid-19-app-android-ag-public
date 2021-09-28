@@ -99,11 +99,12 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonCancelCheckIn"
-                style="@style/SecondaryButton"
+                style="@style/TextButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/horizontal_margin_in_scroll_container"
                 android:text="@string/qr_code_cancel_check_in"
+                android:textStyle="bold"
                 tools:text="@string/qr_code_cancel_check_in" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.UnderlinedTextView

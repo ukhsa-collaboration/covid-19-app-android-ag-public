@@ -28,6 +28,7 @@ import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
 import uk.nhs.nhsx.covid19.android.app.di.module.QrScannerViewModelModule
 import uk.nhs.nhsx.covid19.android.app.di.module.ViewModelModule
+import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationAgeLimitActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationBroadcastReceiver
@@ -200,4 +201,5 @@ interface ApplicationComponent {
     fun provideAnimationsProvider(): AnimationsProvider
     fun provideGetLocalMessageFromStorage(): GetLocalMessageFromStorage
     fun provideClearOutdatedData(): ClearOutdatedData
+    fun provideExposureNotificationApi(): ExposureNotificationApi
 }

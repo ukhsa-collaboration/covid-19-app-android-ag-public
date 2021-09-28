@@ -5,6 +5,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.HasTestAppContext
+import java.time.LocalDate
 
 interface IsolationSetupHelper : HasTestAppContext {
     val isolationHelper: IsolationHelper
@@ -13,20 +14,22 @@ interface IsolationSetupHelper : HasTestAppContext {
         testAppContext.setState(isolationHelper.neverInIsolation())
     }
 
-    fun givenContactIsolation() {
-        testAppContext.setState(isolationHelper.contact().asIsolation())
+    fun givenContactIsolation(exposureDaysAgo: Long = 2) {
+        val exposureDate = LocalDate.now(testAppContext.clock).minusDays(exposureDaysAgo)
+        testAppContext.setState(isolationHelper.contact(exposureDate = exposureDate).asIsolation())
     }
 
     fun givenSelfAssessmentIsolation() {
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
     }
 
-    fun givenSelfAssessmentAndContactIsolation() {
+    fun givenSelfAssessmentAndContactIsolation(exposureDaysAgo: Long = 2) {
+        val exposureDate = LocalDate.now(testAppContext.clock).minusDays(exposureDaysAgo)
         testAppContext.setState(
             IsolationState(
                 isolationConfiguration = DurationDays(),
                 selfAssessment = isolationHelper.selfAssessment(),
-                contact = isolationHelper.contact()
+                contact = isolationHelper.contact(exposureDate = exposureDate)
             )
         )
     }

@@ -331,7 +331,7 @@
     <string name="ask_me_later">আমাকে পরে স্মরণ করিয়ে দেবেন</string>
     <string name="notification_text_recommended_app_update">আরো তথ্যের জন্য এখানে ট্যাপ করুন।</string>
     <string name="notification_title_recommended_app_update">দয়া করে আপনার এনএইচএস কোভিড-১৯ অ্যাপটি হালনাগাদ করুন</string>
-    <string name="test_ordering_getting_tested_description">নিজের জন্য একটি পরীক্ষা বুকিং করুন\' বেছে নিলে তা আপনাকে সরকারের করোনাভাইরাস পরীক্ষার ওয়েবসাইটে নিয়ে যাবে যেখানে পরীক্ষার বন্দোবস্ত করার জন্য আপনাকে কিছু ব্যক্তিগত তথ্য (যেমন আপনার ঠিকানা) পূরণ করতে বলা হবে। আপনি ওয়েবসাইটে যে তথ্য দেবেন তার কোনকিছুই শেয়ার করা হবে না।\n\nএকটি ডিজিটাল \'টোকেন\' তৈরি হবে যা আপনার ফলাফল অ্যাপটিতে পৌঁছে দিতে আমাদের সহায়তা করবে।</string>
+    <string name="test_ordering_getting_tested_description">\'নিজের জন্য একটি পরীক্ষা বুকিং করুন\' বেছে নিলে তা আপনাকে সরকারের করোনাভাইরাস পরীক্ষার ওয়েবসাইটে নিয়ে যাবে যেখানে পরীক্ষার বন্দোবস্ত করার জন্য আপনাকে কিছু ব্যক্তিগত তথ্য (যেমন আপনার ঠিকানা) পূরণ করতে বলা হবে। আপনি ওয়েবসাইটে যে তথ্য দেবেন তার কোনকিছুই শেয়ার করা হবে না।\n\nএকটি ডিজিটাল \'টোকেন\' তৈরি হবে যা আপনার ফলাফল অ্যাপটিতে পৌঁছে দিতে আমাদের সহায়তা করবে।</string>
     <string name="update_in_play_store">এখনই আপনার অ্যাপটি হালনাগাদ করুন</string>
     <string name="updated_privacy_control_text">NHS COVID-19 অ্যাপটি ব্যবহার করার জন্য আপনাকে ধন্যবাদ। \n\nনতুন নীতির সাথে সামঞ্জস্য রাখতে আমরা অ্যাপটিতে পরিবর্তন এনেছি। যারা পুরোপুরি টিকা নিয়েছে বা যাদের বয়স ১৮ বছরের কম তারা কোভিড-১৯-এ আক্রান্ত হিসাবে সনাক্ত হওয়া কারো সংস্পর্শে এসে থাকলে তাদের আর স্ব-বিচ্ছিন্ন থাকার পরামর্শ দেওয়া হচ্ছে না, তবে পরীক্ষা করাতে বলা হচ্ছে। \n\nআপনি যদি আক্রান্ত কারোর সংস্পর্শে আসার ফলে ইতিমধ্যেই স্ব-বিচ্ছিন্ন থাকতে শুরু করে থাকেন এবং সম্পূর্ণভাবে টিকাপ্রাপ্ত হন বা আপনার ১৮ বছরের কম বয়স হয়, তাহলে আপনার স্ব-বিচ্ছিন্ন থাকা অব্যাহত রাখতে হবে না। আপনার যদি উপসর্গ থাকে অথবা পরীক্ষায় পজিটিভ ধরা পড়ে, তাহলে আপনার স্ব-বিচ্ছিন্ন থাকার সময়কাল পূর্ণ করা উচিত।\n\nআপনার ডিভাইসে অ্যাপটি রাখুন যাতে সর্বশেষ পরামর্শ পেয়ে নিজেকে হালনাগাদ রাখতে পারেন ও কোভিড-১৯ এর বিস্তার থামাতে সাহায্য করতে পারেন। \n\nএসব পরিবর্তন প্রতিফলিত করার জন্য ব্যবহারের শর্তাবলী ও গোপনীয়তার বিজ্ঞপ্তি হালনাগাদ করা হয়েছে।</string>
     <string name="updated_privacy_title">আমাদের নীতিমালায় পরিবর্তনসমূহ</string>
@@ -694,7 +694,7 @@
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">হোম স্ক্রিনে ফিরে যান</string>
     <string name="risky_contact_isolation_advice_already_isolating_information">আপনি ইতিমধ্যে তা না করে থাকলে হোম স্ক্রিনে \'কোভিড-১৯ পরীক্ষা\'-তে গিয়ে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করতে পারেন।</string>
-    <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">আপনার কোনো উপসর্গ না থাকলেও আপনি কোভিড-১৯-এ আক্রান্ত হওয়ার ও তা ছড়ানোর উচ্চ ঝুঁকিতে রয়েছেন। বাড়িতে অবস্থান করার মাধ্যমে আপনি নিজেকে ও অন্যদের নিরাপদে রাখতে সহায়তা করতে পারেন।</string>
+    <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">আপনি কোভিড-১৯ ছড়ানোর উচ্চ ঝুঁকিতে রয়েছেন। বাড়িতে অবস্থান করে আপনি নিজেকে ও অন্যদের সুরক্ষিত রাখতে সহায়তা করতে পারেন।</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">আপনি ইতিমধ্যে তা না করে থাকলে হোম স্ক্রিনে \'কোভিড-১৯ পরীক্ষা\'-তে গিয়ে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করতে পারেন।</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">আপনাকে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করার পরামর্শ দেওয়া হচ্ছে</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">আপনার স্ব-বিচ্ছিন্ন থাকার দরকার নাই</string>
@@ -728,4 +728,17 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">পরীক্ষা করান</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">আপনি এখনও না করে থাকলে, যত তাড়াতাড়ি সম্ভব আপনাকে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করতে পরামর্শ দেওয়া হচ্ছে। প্রথম পরীক্ষা করার পর, %s তারিখের জন্য আপনার দ্বিতীয় পিসিআর পরীক্ষা বুক করা উচিত।</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">যত তাড়াতাড়ি সম্ভব আপনাকে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করতে পরামর্শ দেওয়া হচ্ছে। প্রথম পরীক্ষা করার পর, %s তারিখের জন্য আপনার দ্বিতীয় পিসিআর পরীক্ষা বুক করা উচিত।</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">যত তাড়াতাড়ি সম্ভব আপনাকে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করতে পরামর্শ দেওয়া হচ্ছে। প্রথম পরীক্ষা করার পর, %s তারিখের জন্য আপনার দ্বিতীয় পিসিআর পরীক্ষা বুক করা উচিত।</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">যত তাড়াতাড়ি সম্ভব আপনাকে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করতে পরামর্শ দেওয়া হচ্ছে। প্রথম পরীক্ষা করার পর, %s তারিখের জন্য আপনার দ্বিতীয় পিসিআর পরীক্ষা বুক করা উচিত।</string>
+    <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
+    <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_group">চিকিৎসাগত কারণে আপনি টিকা নিতে অপারগ হলে ন্যায্যতা ও সমতার খাতিরে আপনার স্ববিচ্ছিন্ন থাকার দরকার নাই।</string>
+    <string name="self_isolation_hub_get_isolation_note_description">আপনার নিয়োগকর্তাকে দেখানোর জন্য যদি আপনার স্ব-বিচ্ছিন্ন থাকা বিষয়ে কোনো নোট দরকার হয়</string>
+    <string name="self_isolation_hub_get_isolation_note_title">স্ব-বিচ্ছিন্ন থাকা বিষয়ে নোট সংগ্রহ করুন</string>
+    <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
+    <string name="exposure_notification_clinical_trial_yes_content_description">Yes I am taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
+    <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
 </resources>

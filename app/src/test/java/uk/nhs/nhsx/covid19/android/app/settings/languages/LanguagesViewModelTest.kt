@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.settings.languages
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -63,9 +64,9 @@ class LanguagesViewModelTest {
         )
 
         verify { viewStateObserver.onChanged(expected) }
-        verify(exactly = 0) { systemLanguageSelectedObserver.onChanged(any()) }
-        verify(exactly = 0) { supportedLanguageSelectedObserver.onChanged(any()) }
-        verify(exactly = 0) { languageSwitchedToObserver.onChanged(any()) }
+        verify { systemLanguageSelectedObserver wasNot Called }
+        verify { supportedLanguageSelectedObserver wasNot Called }
+        verify { languageSwitchedToObserver wasNot Called }
     }
 
     @Test
@@ -83,9 +84,9 @@ class LanguagesViewModelTest {
         )
 
         verify { viewStateObserver.onChanged(expected) }
-        verify(exactly = 0) { systemLanguageSelectedObserver.onChanged(any()) }
-        verify(exactly = 0) { supportedLanguageSelectedObserver.onChanged(any()) }
-        verify(exactly = 0) { languageSwitchedToObserver.onChanged(any()) }
+        verify { systemLanguageSelectedObserver wasNot Called }
+        verify { supportedLanguageSelectedObserver wasNot Called }
+        verify { languageSwitchedToObserver wasNot Called }
     }
 
     @Test
@@ -107,7 +108,7 @@ class LanguagesViewModelTest {
         verify { systemLanguageSelectedObserver.onChanged(Unit) }
         verify(exactly = 0) { supportedLanguageSelectedObserver.onChanged(any()) }
         verify(exactly = 0) { applicationLocaleProvider.languageCode = null }
-        verify(exactly = 0) { languageSwitchedToObserver.onChanged(any()) }
+        verify { languageSwitchedToObserver wasNot Called }
     }
 
     @Test
@@ -165,7 +166,7 @@ class LanguagesViewModelTest {
         verify(exactly = 0) { systemLanguageSelectedObserver.onChanged(null) }
         verify(exactly = 0) { supportedLanguageSelectedObserver.onChanged(any()) }
         verify(exactly = 0) { applicationLocaleProvider.languageCode = null }
-        verify(exactly = 0) { languageSwitchedToObserver.onChanged(any()) }
+        verify { languageSwitchedToObserver wasNot Called }
     }
 
     @Test
@@ -187,7 +188,7 @@ class LanguagesViewModelTest {
         verify(exactly = 0) { systemLanguageSelectedObserver.onChanged(null) }
         verify { supportedLanguageSelectedObserver.onChanged(BENGALI_IN_ENGLISH_NOT_SELECTED) }
         verify(exactly = 0) { applicationLocaleProvider setProperty "languageCode" value any<String>() }
-        verify(exactly = 0) { languageSwitchedToObserver.onChanged(any()) }
+        verify { languageSwitchedToObserver wasNot Called }
     }
 
     @Test
@@ -247,7 +248,7 @@ class LanguagesViewModelTest {
         verify(exactly = 0) { systemLanguageSelectedObserver.onChanged(null) }
         verify(exactly = 0) { supportedLanguageSelectedObserver.onChanged(any()) }
         verify(exactly = 0) { applicationLocaleProvider setProperty "languageCode" value any<String>() }
-        verify(exactly = 0) { languageSwitchedToObserver.onChanged(any()) }
+        verify { languageSwitchedToObserver wasNot Called }
     }
 
     private fun setUpObservers() {

@@ -60,11 +60,11 @@
                 app:error_title="@string/exposure_notification_vaccination_status_error_title"
                 tools:visibility="visible" />
 
-            <LinearLayout
-                android:id="@+id/questionsContainer"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/questionsRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                tools:listitem="@layout/binary_question_fully_vaccinated" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/vaccinationStatusContinueButton"

@@ -18,6 +18,7 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityActivity
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Invalid
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.ParseJsonError
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Unsupported
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Valid
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeViewModel.NavigationTarget.LocalAuthority
 import uk.nhs.nhsx.covid19.android.app.startActivity
@@ -73,7 +74,7 @@ class PostCodeActivity : BaseActivity(R.layout.activity_post_code) {
                 ParseJsonError -> Timber.d("Error parsing localAuthorities.json")
                 Invalid -> postCodeView.showErrorState()
                 Unsupported -> postCodeView.showPostCodeNotSupportedErrorState()
-                else -> Unit
+                is Valid -> postCodeView.resetErrorState()
             }
         }
     }

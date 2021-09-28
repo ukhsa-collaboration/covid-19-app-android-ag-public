@@ -1,6 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.Default
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.WalesWithinAdviceWindow
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -11,6 +13,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.RiskyContactIsolationA
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
+import java.time.LocalDate
 
 class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, IsolationSetupHelper {
 
@@ -45,7 +48,10 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
         exposureNotificationVaccinationStatusRobot.clickContinueButton()
 
         waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInAlreadyIsolatingViewState(remainingDaysInIsolation = 11)
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInAlreadyIsolatingViewState(
+            remainingDaysInIsolation = 11,
+            testingAdviceToShow = Default
+        )
         exposureNotificationRiskyContactIsolationAdviceRobot.clickPrimaryBackToHome()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
@@ -54,6 +60,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
     @Test
     fun whenUserClicksContinue_navigateToAgeLimitActivity_userCanComeBack() {
+        givenLocalAuthorityIsInEngland()
         givenContactIsolation()
 
         startTestActivity<ExposureNotificationActivity>()
@@ -89,6 +96,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
     @Test
     fun givenContactIsolation_whenSelectingNoToAgeLimitQuestionAndClickingConfirm_thenNavigatesToIsolatingScreenOptingOut() {
+        givenLocalAuthorityIsInEngland()
         givenContactIsolation()
 
         startTestActivity<ExposureNotificationActivity>()
@@ -105,11 +113,12 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
         waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMinorViewState()
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMinorViewState(testingAdviceToShow = Default)
     }
 
     @Test
     fun whenErrorIsShownOnAgeLimitScreen_thenValidAnswerSelected_thenClickContinue_thenNavigateBack_errorIsNotShown_andSelectedValueStored() {
+        givenLocalAuthorityIsInEngland()
         givenContactIsolation()
 
         startTestActivity<ExposureNotificationAgeLimitActivity>()
@@ -139,6 +148,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
     @Test
     fun givenContactIsolation_whenSelectingYesToAgeLimitAndVaccinationQuestionsAndClickingConfirm_thenNavigatesToNotIsolatingAsFullyVaccinatedScreen() {
+        givenLocalAuthorityIsInEngland()
         givenContactIsolation()
 
         startTestActivity<ExposureNotificationActivity>()
@@ -165,11 +175,14 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
         waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState()
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
+            testingAdviceToShow = Default
+        )
     }
 
     @Test
     fun givenContactIsolation_whenSelectingYesToAgeLimitQuestionAndYesToVaccinatedQuestionAndNoToDateQuestionAndClickingConfirm_thenErrorIsShown() {
+        givenLocalAuthorityIsInEngland()
         givenContactIsolation()
 
         startTestActivity<ExposureNotificationActivity>()
@@ -199,6 +212,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
     @Test
     fun givenContactIsolation_whenSelectingYesToAgeLimit_thenYesToAllDoses_thenNoToDate_thenYesToClinicalTrial_navigatesToNotIsolatingAsFullyVaccinatedScreen() {
+        givenLocalAuthorityIsInEngland()
         givenContactIsolation()
 
         startTestActivity<ExposureNotificationActivity>()
@@ -227,7 +241,9 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
         waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState()
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
+            testingAdviceToShow = Default
+        )
     }
 
     @Test
@@ -251,7 +267,10 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
         waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(remainingDaysInIsolation = 9)
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(
+            remainingDaysInIsolation = 9,
+            testingAdviceToShow = WalesWithinAdviceWindow(date = LocalDate.now(testAppContext.clock).plusDays(6))
+        )
     }
 
     @Test
@@ -275,7 +294,9 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
         waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState()
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
+            testingAdviceToShow = WalesWithinAdviceWindow(date = LocalDate.now(testAppContext.clock).plusDays(6))
+        )
     }
 
     @Test
@@ -297,7 +318,10 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
         waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(remainingDaysInIsolation = 9)
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(
+            remainingDaysInIsolation = 9,
+            testingAdviceToShow = WalesWithinAdviceWindow(date = LocalDate.now(testAppContext.clock).plusDays(6))
+        )
     }
 
     @Test
@@ -319,7 +343,9 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
         waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState()
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
+            testingAdviceToShow = WalesWithinAdviceWindow(date = LocalDate.now(testAppContext.clock).plusDays(6))
+        )
     }
 
     @Test
@@ -361,7 +387,10 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
         waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(remainingDaysInIsolation = 9)
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(
+            remainingDaysInIsolation = 9,
+            testingAdviceToShow = Default
+        )
     }
 
     @Test
@@ -383,7 +412,9 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
         waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState()
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
+            testingAdviceToShow = Default
+        )
     }
 
     @Test
@@ -409,7 +440,10 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
         waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(remainingDaysInIsolation = 9)
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(
+            remainingDaysInIsolation = 9,
+            testingAdviceToShow = Default
+        )
     }
 
     @Test

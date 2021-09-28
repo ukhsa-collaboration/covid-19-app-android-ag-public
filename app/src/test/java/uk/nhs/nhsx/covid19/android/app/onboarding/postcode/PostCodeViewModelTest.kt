@@ -44,7 +44,7 @@ class PostCodeViewModelTest {
         testSubject.validateMainPostCode(postCode)
 
         verify { navigationTargetObserver.onChanged(LocalAuthority(postCode)) }
-        verify(exactly = 0) { postCodeValidationErrorViewState.onChanged(any()) }
+        verify { postCodeValidationErrorViewState.onChanged(Valid(postCode, emptyList())) }
     }
 
     @Test

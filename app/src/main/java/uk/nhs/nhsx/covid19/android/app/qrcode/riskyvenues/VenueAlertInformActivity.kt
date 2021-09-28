@@ -4,14 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_venue_alert_inform.buttonReturnToHomeScreen
+import kotlinx.android.synthetic.main.view_toolbar_background.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformViewModel.ViewState.UnknownVisit
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
@@ -25,9 +26,11 @@ class VenueAlertInformActivity : BaseActivity(R.layout.activity_venue_alert_info
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
+        setCloseToolbar(toolbar, titleResId = R.string.empty, closeIndicator = R.drawable.ic_close_primary)
+
         viewModel.venueVisitState().observe(
             this,
-            Observer { viewState ->
+            { viewState ->
                 if (viewState == UnknownVisit) {
                     finish()
                 }

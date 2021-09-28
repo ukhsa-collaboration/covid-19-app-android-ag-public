@@ -19,21 +19,28 @@ class IconTextView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-    @StringRes var stringResId: Int = -1
+    var text: String = ""
         private set
 
-    @DrawableRes var drawableResId: Int = -1
+    @DrawableRes
+    var drawableResId: Int = -1
         private set
 
-    constructor(context: Context, @StringRes stringResId: Int, @DrawableRes drawableResId: Int) : this(context) {
-        this.stringResId = stringResId
+    constructor(context: Context, text: String, @DrawableRes drawableResId: Int) : this(context) {
+        this.text = text
         this.drawableResId = drawableResId
 
         View.inflate(context, R.layout.view_icon_text, this)
-        iconViewText.text = context.getString(stringResId)
+        iconViewText.text = text
         iconViewImage.setImageResource(drawableResId)
         configureLayoutParams()
     }
+
+    constructor(context: Context, @StringRes stringResId: Int, @DrawableRes drawableResId: Int) : this(
+        context,
+        context.getString(stringResId),
+        drawableResId
+    )
 
     private fun configureLayoutParams() {
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)

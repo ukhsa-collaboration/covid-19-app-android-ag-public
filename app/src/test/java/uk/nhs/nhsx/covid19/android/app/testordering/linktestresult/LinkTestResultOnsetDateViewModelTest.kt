@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import io.mockk.called
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
@@ -127,7 +128,7 @@ class LinkTestResultOnsetDateViewModelTest {
 
         verify { viewStateObserver.onChanged(expectedState) }
         verify(exactly = 0) { analyticsEventProcessor.track(DidRememberOnsetSymptomsDateBeforeReceivedTestResult) }
-        verify(exactly = 0) { continueEventObserver.onChanged(any()) }
+        verify { continueEventObserver wasNot called }
     }
 
     @Test

@@ -33,6 +33,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AndroidLocationStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
 import uk.nhs.nhsx.covid19.android.app.status.ScenariosDateChangeBroadcastReceiver
 import uk.nhs.nhsx.covid19.android.app.util.AndroidUUIDGenerator
+import uk.nhs.nhsx.covid19.android.app.util.isEmulator
 import uk.nhs.nhsx.covid19.android.app.util.workarounds.ConcurrentModificationExceptionWorkaround
 import java.time.Clock
 
@@ -60,7 +61,7 @@ class ScenariosExposureApplication : ExposureApplication() {
         val selectedEnvironmentIndex = debugSharedPreferences.getInt(SELECTED_ENVIRONMENT, 0)
             .coerceIn(0, environments.size - 1)
         val useMockedExposureNotifications =
-            debugSharedPreferences.getBoolean(USE_MOCKED_EXPOSURE_NOTIFICATION, false)
+            debugSharedPreferences.getBoolean(USE_MOCKED_EXPOSURE_NOTIFICATION, isEmulator())
         val useMockNetwork = selectedEnvironmentIndex == mockEnvironmentIndex
         setApplicationComponent(useMockNetwork, useMockedExposureNotifications)
     }
@@ -138,7 +139,12 @@ class ScenariosExposureApplication : ExposureApplication() {
     }
 
     private fun getExposureNotificationApi(useMockExposureApi: Boolean, clock: Clock) =
-        if (useMockExposureApi) MockExposureNotificationApi(clock) else GoogleExposureNotificationApi(
+        if (useMockExposureApi) MockExposureNotificationApi(
+            this,
+            clock,
+            simulateGoogleEN = true,
+            sharedPreferences = getSharedPreferences(DebugActivity.DEBUG_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        ) else GoogleExposureNotificationApi(
             this
         )
 

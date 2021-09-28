@@ -4,23 +4,23 @@
 
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".ScenariosExposureApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:name,android:theme"
-        android:requestLegacyExternalStorage="true">
+        tools:replace="android:name,android:theme">
 
         <activity
             android:name=".MainActivity"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.Launcher"
-            android:label="@string/empty_accessibility_announcement"
             tools:node="replace" />
 
         <activity
@@ -36,9 +36,9 @@
 
         <activity
             android:name=".featureflag.testsettings.TestSettingsActivity"
-            android:theme="@style/AppTheme"
             android:label="@string/empty_accessibility_announcement"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
 
         <activity
             android:name=".browser.BrowserActivity"
@@ -47,10 +47,20 @@
 
         <activity
             android:name=".exposure.MockExposureNotificationActivationActivity"
-            android:label="@string/empty_accessibility_announcement"/>
+            android:label="@string/empty_accessibility_announcement" />
 
-        <activity android:name=".ComponentsActivity" android:label="@string/empty_accessibility_announcement"/>
-        <activity android:name=".AnalyticsReportActivity" android:label="@string/empty_accessibility_announcement"/>
+        <activity
+            android:name=".ComponentsActivity"
+            android:label="@string/empty_accessibility_announcement" />
+        <activity
+            android:name=".AnalyticsReportActivity"
+            android:label="@string/empty_accessibility_announcement" />
+        <activity
+            android:name=".exposure.EnableExposureNotificationActivity"
+            android:label="@string/empty_accessibility_announcement" />
+        <activity
+            android:name=".exposure.AllowShareKeysActivity"
+            android:label="@string/empty_accessibility_announcement" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

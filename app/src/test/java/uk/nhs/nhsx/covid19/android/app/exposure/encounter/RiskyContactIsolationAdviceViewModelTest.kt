@@ -2,12 +2,15 @@ package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.Default
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.UnknownExposureDate
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.FULLY_VACCINATED
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.MEDICALLY_EXEMPT
@@ -37,14 +40,17 @@ class RiskyContactIsolationAdviceViewModelTest {
     private val navigationTargetObserver = mockk<Observer<NavigationTarget>>(relaxUnitFun = true)
     private val isolationLogicalState = mockk<IsolationLogicalState>()
     private val isolationStateMachine = mockk<IsolationStateMachine>()
+    private val evaluateTestingAdviceToShow = mockk<EvaluateTestingAdviceToShow>()
     private val fixedClock = Clock.fixed(Instant.parse("2020-01-01T10:00:00Z"), ZoneOffset.UTC)
     private val expectedDaysInIsolation = 5L
+    private val expectedTestingAdviceToShow = Default
 
     @Before
     fun setUp() {
         every { isolationStateMachine.readLogicalState() } returns isolationLogicalState
         every { isolationStateMachine.remainingDaysInIsolation(isolationLogicalState) } returns expectedDaysInIsolation
         every { isolationLogicalState.isActiveIndexCase(fixedClock) } returns false
+        coEvery { evaluateTestingAdviceToShow(fixedClock) } returns expectedTestingAdviceToShow
     }
 
     @Test
@@ -53,7 +59,9 @@ class RiskyContactIsolationAdviceViewModelTest {
 
         createTestSubject(optOutOfContactIsolationExtra = NONE)
 
-        verify { viewStateObserver.onChanged(AlreadyIsolating(expectedDaysInIsolation.toInt())) }
+        verify {
+            viewStateObserver.onChanged(AlreadyIsolating(expectedDaysInIsolation.toInt(), expectedTestingAdviceToShow))
+        }
     }
 
     @Test
@@ -62,7 +70,9 @@ class RiskyContactIsolationAdviceViewModelTest {
 
         createTestSubject(optOutOfContactIsolationExtra = FULLY_VACCINATED)
 
-        verify { viewStateObserver.onChanged(AlreadyIsolating(expectedDaysInIsolation.toInt())) }
+        verify {
+            viewStateObserver.onChanged(AlreadyIsolating(expectedDaysInIsolation.toInt(), expectedTestingAdviceToShow))
+        }
     }
 
     @Test
@@ -71,7 +81,9 @@ class RiskyContactIsolationAdviceViewModelTest {
 
         createTestSubject(optOutOfContactIsolationExtra = MINOR)
 
-        verify { viewStateObserver.onChanged(AlreadyIsolating(expectedDaysInIsolation.toInt())) }
+        verify {
+            viewStateObserver.onChanged(AlreadyIsolating(expectedDaysInIsolation.toInt(), expectedTestingAdviceToShow))
+        }
     }
 
     @Test
@@ -80,7 +92,9 @@ class RiskyContactIsolationAdviceViewModelTest {
 
         createTestSubject(optOutOfContactIsolationExtra = MEDICALLY_EXEMPT)
 
-        verify { viewStateObserver.onChanged(AlreadyIsolating(expectedDaysInIsolation.toInt())) }
+        verify {
+            viewStateObserver.onChanged(AlreadyIsolating(expectedDaysInIsolation.toInt(), expectedTestingAdviceToShow))
+        }
     }
 
     @Test
@@ -89,21 +103,23 @@ class RiskyContactIsolationAdviceViewModelTest {
 
         createTestSubject(optOutOfContactIsolationExtra = NONE)
 
-        verify { viewStateObserver.onChanged(NewlyIsolating(expectedDaysInIsolation.toInt())) }
+        verify {
+            viewStateObserver.onChanged(NewlyIsolating(expectedDaysInIsolation.toInt(), expectedTestingAdviceToShow))
+        }
     }
 
     @Test
     fun `when minor then emit NotIsolatingAsMinor`() {
         createTestSubject(optOutOfContactIsolationExtra = MINOR)
 
-        verify { viewStateObserver.onChanged(NotIsolatingAsMinor) }
+        verify { viewStateObserver.onChanged(NotIsolatingAsMinor(expectedTestingAdviceToShow)) }
     }
 
     @Test
     fun `when fully vaccinated then emit NotIsolatingAsFullyVaccinated`() {
         createTestSubject(optOutOfContactIsolationExtra = FULLY_VACCINATED)
 
-        verify { viewStateObserver.onChanged(NotIsolatingAsFullyVaccinated) }
+        verify { viewStateObserver.onChanged(NotIsolatingAsFullyVaccinated(expectedTestingAdviceToShow)) }
     }
 
     @Test
@@ -111,6 +127,15 @@ class RiskyContactIsolationAdviceViewModelTest {
         createTestSubject(optOutOfContactIsolationExtra = MEDICALLY_EXEMPT)
 
         verify { viewStateObserver.onChanged(NotIsolatingAsMedicallyExempt) }
+    }
+
+    @Test
+    fun `when exposure date is unknown then navigate to home`() {
+        coEvery { evaluateTestingAdviceToShow(fixedClock) } returns UnknownExposureDate
+
+        createTestSubject(optOutOfContactIsolationExtra = FULLY_VACCINATED)
+
+        verify { navigationTargetObserver.onChanged(Home) }
     }
 
     @Test
@@ -133,7 +158,12 @@ class RiskyContactIsolationAdviceViewModelTest {
 
     private fun createTestSubject(optOutOfContactIsolationExtra: OptOutOfContactIsolationExtra): RiskyContactIsolationAdviceViewModel {
         val testSubject =
-            RiskyContactIsolationAdviceViewModel(isolationStateMachine, optOutOfContactIsolationExtra, fixedClock)
+            RiskyContactIsolationAdviceViewModel(
+                isolationStateMachine,
+                optOutOfContactIsolationExtra,
+                evaluateTestingAdviceToShow,
+                fixedClock
+            )
 
         testSubject.viewState().observeForever(viewStateObserver)
         testSubject.navigationTarget().observeForever(navigationTargetObserver)

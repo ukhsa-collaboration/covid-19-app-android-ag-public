@@ -33,4 +33,33 @@ class PostCodeAndLocalAuthorityFlowTest : EspressoTest() {
 
         waitFor { permissionRobot.checkActivityIsDisplayed() }
     }
+
+    @Test
+    fun clickContinue_errorIsVisible_completePostcodeAndPressBack_errorIsNotVisible() {
+        startTestActivity<PostCodeActivity>()
+
+        postCodeRobot.checkActivityIsDisplayed()
+
+        waitFor { postCodeRobot.checkContinueButtonIsDisplayed() }
+
+        postCodeRobot.clickContinue()
+
+        postCodeRobot.checkErrorTitleIsDisplayed()
+
+        postCodeRobot.enterPostCode(postCode)
+
+        waitFor { postCodeRobot.checkEditTextIs(postCode) }
+
+        waitFor { postCodeRobot.checkContinueButtonIsDisplayed() }
+
+        waitFor { postCodeRobot.clickContinue() }
+
+        waitFor { localAuthorityRobot.checkActivityIsDisplayed() }
+
+        testAppContext.device.pressBack()
+
+        postCodeRobot.checkActivityIsDisplayed()
+
+        postCodeRobot.checkErrorContainerIsNotDisplayed()
+    }
 }

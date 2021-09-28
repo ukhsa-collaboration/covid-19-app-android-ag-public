@@ -120,8 +120,6 @@ class FlowTests : EspressoTest(), LocalAuthoritySetupHelper {
 
     @Test
     fun startIndexCaseWithSelfAssessment_receiveExposureNotification_inIndexAndContactIsolation() {
-        val dateNow = LocalDate.now()
-
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()

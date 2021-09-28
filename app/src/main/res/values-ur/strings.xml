@@ -60,7 +60,7 @@
     <string name="test_result_positive_no_self_isolation_subtitle">اگرچہ آپ کا ٹیسٹ مثبت آیا تھا، آپ کی ذاتی علیحدگی کی مدت پوری ہو چکی ہے</string>
     <string name="state_test_positive_info">آپ کے کوروناوائرس کے ٹیسٹ کا نتیجہ مثبت ہے۔</string>
     <string name="state_test_void_info">ہم بتا نہیں سکے کہ آپ کو کوروناوائرس لاحق تھا</string>
-    <string name="test_result_void_continue_self_isolate_explanation">یہ سمجھنے کے لئے کہ ایپ خود کو تنہائی میں رکھنے  کے دنوں کا حساب کیسے دیتی ہے ،عمومی سوالنامہ دیکھیں۔\n\nجب آپ کا ٹیسٹ کیا گیا تو ہم یہ نہیں بتا سکے کہ آپ کو کوروناوائرس تھا اور آپ کو دوبارہ ٹیسٹ کروانا چاہئے۔ اگر آپ کی عمر 18 سال سے کم ہے تو آپ کو مشورہ دیا جاتا ہے کہ یہ پیغام کسی قابل اعتماد بالغ کو دکھائیں۔</string>
+    <string name="test_result_void_continue_self_isolate_explanation">یہ سمجھنے کے لئے کہ ایپ خود کو تنہائی میں رکھنے  کے دنوں کا حساب کیسے دیتی ہے، عمومی سوالنامہ دیکھیں۔\n\nجب آپ کا ٹیسٹ کیا گیا تو ہم یہ نہیں بتا سکے کہ آپ کو کوروناوائرس تھا اور آپ کو دوبارہ ٹیسٹ کروانا چاہئے۔ اگر آپ کی عمر 18 سال سے کم ہے تو آپ کو مشورہ دیا جاتا ہے کہ یہ پیغام کسی قابل اعتماد بالغ کو دکھائیں۔</string>
     <string name="questionnaire_review_symptoms">علامات پر نظر ثانی کریں</string>
     <string name="questionnaire_review_symptoms_title">اپنے جوابات پر نظر ثانی کریں</string>
     <string name="questionnaire_positive_symptoms_review_message">آپ نے ان علامات پر \'ہاں\' کہا:</string>
@@ -646,13 +646,13 @@
     <string name="exposure_notification_medically_exempt_no">نہیں</string>
     <string name="exposure_notification_medically_exempt_question">کیا آپ COVID-19 ویکسین حاصل کرنے سے طبی طور پر مستثنیٰ ہیں؟</string>
     <string name="exposure_notification_medically_exempt_yes">ہاں</string>
-    <string name="exposure_notification_testing_information">اگر آپ کو علامات ہوں تو ہوم اسکرین پر \'علامات کی جانچ کریں\' منتخب کریں اور ایک ٹیسٹ کروائیں ۔</string>
+    <string name="exposure_notification_testing_information">اگر آپ کو علامات ہوں تو ہوم اسکرین پر \'علامات کی جانچ کریں\' منتخب کریں اور ایک ٹیسٹ کروائیں۔</string>
     <string name="exposure_notification_title">ایپ نے دریافت کیا ہے کہ آپ کسی ایسے شخص کے قریب رہے ہیں جس کے کورونا وائرس (COVID-19) کی جانچ کا نتیجہ مثبت آیا ہے</string>
     <string name="exposure_notification_vaccination_status_all_doses_no">نہیں</string>
     <string name="exposure_notification_vaccination_status_all_doses_no_content_description">نہیں، مجھے COVID-19 کے مکمل ٹیکے نہیں لگے ہیں</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question">کیا آپ کوویڈ 19 کے خلاف مکمل طور پر ویکسین دی گئی ہے؟</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_description">اسے لازمی طور پر ایک ایسا ٹیکہ ہونا چاہیے جس کا استعمال برطانیہ میں منظور شدہ ہو۔</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">منظور شدہ ٹیکوں کے بارے میں مزید پڑھیں</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question">کیا آپ کو کوویڈ 19 کے خلاف مکمل طور پر ویکسین دی گئی ہے؟</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_description">یہ لازمی طور پر ایک ایسی ویکسین ہونی چاہیے جس کا استعمال برطانیہ میں منظور شدہ ہو</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">منظور شدہ ویکسینز کے بارے میں مزید پڑھیں</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/coronavirus-vaccination/coronavirus-vaccine/</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url_wls">https://gov.wales/get-your-covid-19-vaccine</string>
     <string name="exposure_notification_vaccination_status_all_doses_yes">ہاں</string>
@@ -694,7 +694,7 @@
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">ہوم اسکرین پر واپس جائیں</string>
     <string name="risky_contact_isolation_advice_already_isolating_information">اگر آپ نے اب تک یہ کام نہیں کیا ہے تو آپ کوئی مفت PCR جانچ ہوم اسکرین پر \' COVID-19 کے لیے جانچ\' سے بک کر سکتے ہیں۔</string>
-    <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">آپ COVID-19 کی زد میں آنے اور اسے پھیلانے کے زیادہ خطرے میں مبتلا ہیں، چاہے آپ میں کوئی علامات نہ ہوں۔ گھر پر رہ کر آپ خود کو اور دوسروں کو محفوظ رکھنے میں مدد کر سکتے ہیں۔</string>
+    <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">آپ کا COVID-19 پھیلانے کا زیادہ خطرہ ہے۔ گھر میں رہ کر آپ اپنے آپ کو اور دوسروں کو محفوظ رکھنے میں مدد  دے سکتے ہیں۔</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">اگر آپ نے اب تک یہ کام نہیں کیا ہے تو آپ کوئی مفت PCR جانچ ہوم اسکرین پر \' COVID-19 کے لیے جانچ\' سے بک کر سکتے ہیں۔</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">آپ کو ایک مفت PCR جانچ بک کرانے کی صلاح دی جاتی ہے</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">آپ کو خود کو علیحدہ کرنے کی ضرورت نہیں ہے</string>
@@ -728,4 +728,17 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">ٹیسٹ کریں</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">اگر آپ نے پہلے ایسا نہیں کیا ہے، تو آپ کو مشورہ دیا جاتا ہے کہ جتنی  جلد ممکن ہو مفت PCR ٹیسٹ بُک کروائیں۔ اپنے پہلے ٹیسٹ کے بعد، آپ کو %s کے لیے ایک دوسرا PCR ٹیسٹ بھی بُک کروانا چاہیے</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">آپ کو مشورہ دیا جاتا ہے کہ جتنی  جلد ممکن ہو مفت PCR ٹیسٹ بُک کروائیں۔ اپنے پہلے ٹیسٹ کے بعد، آپ کو %s کے لیے ایک دوسرا PCR ٹیسٹ بھی بُک کروانا چاہیے</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">آپ کو مشورہ دیا جاتا ہے کہ جتنی  جلد ممکن ہو مفت PCR ٹیسٹ بُک کروائیں۔ اپنے پہلے ٹیسٹ کے بعد، آپ کو %s کے لیے ایک دوسرا PCR ٹیسٹ بھی بُک کروانا چاہیے</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">آپ کو مشورہ دیا جاتا ہے کہ جتنی  جلد ممکن ہو مفت PCR ٹیسٹ بُک کروائیں۔ اپنے پہلے ٹیسٹ کے بعد، آپ کو %s کے لیے ایک دوسرا PCR ٹیسٹ بھی بُک کروانا چاہیے</string>
+    <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
+    <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_group">انصاف اور برابری کے لیے، اگر آپ طبی وجوہات کی بنا پر ویکسین حاصل کرنے سے قاصر ہیں تو آپ کو خود کو تنہا رکھنے کی ضرورت نہیں ہے۔</string>
+    <string name="self_isolation_hub_get_isolation_note_description">اگر آپ کو اپنے آجر(ایمپلائر) کو دکھانے کے لیے آئیسولیشن نوٹ کی ضرورت ہے تو</string>
+    <string name="self_isolation_hub_get_isolation_note_title">آئیسولیشن نوٹ حاصل کریں</string>
+    <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
+    <string name="exposure_notification_clinical_trial_yes_content_description">Yes I am taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
+    <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
 </resources>

@@ -1,12 +1,15 @@
 package uk.nhs.nhsx.covid19.android.app.status.isolationhub
 
+import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_EXTERNAL_BROWSER
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationPaymentRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAfterRiskyVenueRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.BookTestTypeVenueVisitSetupHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
 
@@ -15,6 +18,7 @@ class IsolationHubActivityTest : EspressoTest(), IsolationSetupHelper, BookTestT
     private val symptomsAfterRiskyVenueRobot = SymptomsAfterRiskyVenueRobot()
     private val testOrderingRobot = TestOrderingRobot()
     private val isolationPaymentRobot = IsolationPaymentRobot()
+    private val browserRobot = BrowserRobot()
     override val isolationHelper = IsolationHelper(testAppContext.clock)
 
     //region Book a test button
@@ -124,6 +128,23 @@ class IsolationHubActivityTest : EspressoTest(), IsolationSetupHelper, BookTestT
         isolationHubRobot.clickItemIsolationPayment()
 
         isolationPaymentRobot.checkActivityIsDisplayed()
+    }
+    //endregion
+
+    //region Isolation note button
+    @Test
+    fun whenInIsolation_showIsolationNoteButton_tapButton_navigateToIsolationNote() {
+        runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
+            givenContactIsolation()
+
+            startTestActivity<IsolationHubActivity>()
+
+            isolationHubRobot.checkActivityIsDisplayed()
+            isolationHubRobot.checkItemIsolationNoteIsDisplayed()
+            isolationHubRobot.clickItemIsolationNote()
+
+            browserRobot.checkActivityIsDisplayed()
+        }
     }
     //endregion
 }

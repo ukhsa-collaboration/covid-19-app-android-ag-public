@@ -3,9 +3,13 @@ package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.launch
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.UnknownExposureDate
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.FULLY_VACCINATED
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.MEDICALLY_EXEMPT
@@ -24,6 +28,7 @@ import java.time.Clock
 class RiskyContactIsolationAdviceViewModel @AssistedInject constructor(
     private val isolationStateMachine: IsolationStateMachine,
     @Assisted private val optOutOfContactIsolation: OptOutOfContactIsolationExtra,
+    private val evaluateTestingAdviceToShow: EvaluateTestingAdviceToShow,
     private val clock: Clock
 ) : ViewModel() {
 
@@ -34,24 +39,31 @@ class RiskyContactIsolationAdviceViewModel @AssistedInject constructor(
     fun navigationTarget(): LiveData<NavigationTarget> = navigationTargetLiveData
 
     init {
-        val viewState = evaluateViewState()
-        viewStateLiveData.postValue(viewState)
+        viewModelScope.launch {
+            evaluateViewState()
+        }
     }
 
-    private fun evaluateViewState(): ViewState {
+    private suspend fun evaluateViewState() {
+        val testingAdviceToShow = evaluateTestingAdviceToShow(clock)
+        if (testingAdviceToShow == UnknownExposureDate) {
+            navigationTargetLiveData.postValue(Home)
+            return
+        }
         val state = isolationStateMachine.readLogicalState()
         val isAlreadyIsolating = state.isActiveIndexCase(clock)
         val remainingDaysInIsolation = isolationStateMachine.remainingDaysInIsolation(state).toInt()
-        return if (isAlreadyIsolating) {
-            AlreadyIsolating(remainingDaysInIsolation)
+        val viewState = if (isAlreadyIsolating) {
+            AlreadyIsolating(remainingDaysInIsolation, testingAdviceToShow)
         } else {
             when (optOutOfContactIsolation) {
-                MINOR -> NotIsolatingAsMinor
-                FULLY_VACCINATED -> NotIsolatingAsFullyVaccinated
+                MINOR -> NotIsolatingAsMinor(testingAdviceToShow)
+                FULLY_VACCINATED -> NotIsolatingAsFullyVaccinated(testingAdviceToShow)
                 MEDICALLY_EXEMPT -> NotIsolatingAsMedicallyExempt
-                NONE -> NewlyIsolating(remainingDaysInIsolation)
+                NONE -> NewlyIsolating(remainingDaysInIsolation, testingAdviceToShow)
             }
         }
+        viewStateLiveData.postValue(viewState)
     }
 
     fun onBackToHomeClicked() {
@@ -63,10 +75,10 @@ class RiskyContactIsolationAdviceViewModel @AssistedInject constructor(
     }
 
     sealed class ViewState {
-        data class NewlyIsolating(val remainingDaysInIsolation: Int) : ViewState()
-        data class AlreadyIsolating(val remainingDaysInIsolation: Int) : ViewState()
-        object NotIsolatingAsFullyVaccinated : ViewState()
-        object NotIsolatingAsMinor : ViewState()
+        data class NewlyIsolating(val remainingDaysInIsolation: Int, val testingAdviceToShow: TestingAdviceToShow) : ViewState()
+        data class AlreadyIsolating(val remainingDaysInIsolation: Int, val testingAdviceToShow: TestingAdviceToShow) : ViewState()
+        data class NotIsolatingAsFullyVaccinated(val testingAdviceToShow: TestingAdviceToShow) : ViewState()
+        data class NotIsolatingAsMinor(val testingAdviceToShow: TestingAdviceToShow) : ViewState()
         object NotIsolatingAsMedicallyExempt : ViewState()
     }
 

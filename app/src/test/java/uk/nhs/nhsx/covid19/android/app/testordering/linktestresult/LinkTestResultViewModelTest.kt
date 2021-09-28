@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -145,7 +146,7 @@ class LinkTestResultViewModelTest : IsolationStateMachineSetupHelper {
             viewStateObserver.onChanged(LinkTestResultState(showValidationProgress = true))
             validationOnsetDateNeeded.onChanged(testResult)
         }
-        verify(exactly = 0) { validationCompletedObserver.onChanged(any()) }
+        verify { validationCompletedObserver wasNot called }
     }
 
     @Test
@@ -231,7 +232,7 @@ class LinkTestResultViewModelTest : IsolationStateMachineSetupHelper {
 
         verifyOrder {
             receivedUnknownTestResultProvider setProperty "value" value true
-            validationCompletedObserver.onChanged(any())
+            validationCompletedObserver.onChanged(null)
         }
     }
 

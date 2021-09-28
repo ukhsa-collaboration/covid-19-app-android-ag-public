@@ -15,6 +15,7 @@ import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInTheInitialFlow
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysBaseActivity.Companion.REQUEST_CODE_SUBMIT_KEYS
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationViewModel.ShareKeysInformationNavigateTo.BookFollowUpTestActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysNavigateTo.Finish
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysNavigateTo.ShareKeysResultActivity
@@ -88,11 +89,11 @@ class ShareKeysInformationViewModelTest {
     fun `onActivityResult after key submission with result canceled`() {
         every { keySharingInfo.wasAcknowledgedMoreThan24HoursAgo(fixedClock) } returns true
 
-        testSubject.onActivityResult(ShareKeysInformationActivity.REQUEST_CODE_SUBMIT_KEYS, RESULT_CANCELED)
+        testSubject.onActivityResult(REQUEST_CODE_SUBMIT_KEYS, RESULT_CANCELED)
 
         verifyOrder {
             fetchKeysFlow.onActivityResult(
-                ShareKeysInformationActivity.REQUEST_CODE_SUBMIT_KEYS,
+                REQUEST_CODE_SUBMIT_KEYS,
                 RESULT_CANCELED
             )
             keySharingInfoProvider.reset()
@@ -104,10 +105,10 @@ class ShareKeysInformationViewModelTest {
 
     @Test
     fun `onActivityResult after successful key submission navigates to ShareKeysResultActivity without follow-up test`() {
-        testSubject.onActivityResult(ShareKeysInformationActivity.REQUEST_CODE_SUBMIT_KEYS, RESULT_OK)
+        testSubject.onActivityResult(REQUEST_CODE_SUBMIT_KEYS, RESULT_OK)
 
         verifyOrder {
-            fetchKeysFlow.onActivityResult(ShareKeysInformationActivity.REQUEST_CODE_SUBMIT_KEYS, RESULT_OK)
+            fetchKeysFlow.onActivityResult(REQUEST_CODE_SUBMIT_KEYS, RESULT_OK)
             keySharingInfoProvider.reset()
             navigationObserver.onChanged(ShareKeysResultActivity(bookFollowUpTest = false))
         }
@@ -117,10 +118,10 @@ class ShareKeysInformationViewModelTest {
 
     @Test
     fun `onActivityResult after successful key submission navigates to ShareKeysResultActivity with follow-up test`() {
-        testSubjectWithBookFollowUpTest.onActivityResult(ShareKeysInformationActivity.REQUEST_CODE_SUBMIT_KEYS, RESULT_OK)
+        testSubjectWithBookFollowUpTest.onActivityResult(REQUEST_CODE_SUBMIT_KEYS, RESULT_OK)
 
         verifyOrder {
-            fetchKeysFlow.onActivityResult(ShareKeysInformationActivity.REQUEST_CODE_SUBMIT_KEYS, RESULT_OK)
+            fetchKeysFlow.onActivityResult(REQUEST_CODE_SUBMIT_KEYS, RESULT_OK)
             keySharingInfoProvider.reset()
             navigationObserver.onChanged(ShareKeysResultActivity(bookFollowUpTest = true))
         }

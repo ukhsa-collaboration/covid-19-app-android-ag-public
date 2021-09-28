@@ -40,7 +40,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/orderTestButton"
-                style="@style/PrimaryButtonWithIcon"
+                style="@style/PrimaryButton.WithIcon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"

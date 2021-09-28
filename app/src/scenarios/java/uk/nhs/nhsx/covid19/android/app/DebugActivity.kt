@@ -168,6 +168,7 @@ import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResul
 import uk.nhs.nhsx.covid19.android.app.testordering.unknownresult.UnknownTestResultActivity
 import uk.nhs.nhsx.covid19.android.app.util.FAKE_LOCALE_NAME_FOR_STRING_IDS
 import uk.nhs.nhsx.covid19.android.app.util.crashreporting.CrashReport
+import uk.nhs.nhsx.covid19.android.app.util.isEmulator
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.purgeLokalise
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import java.time.Instant
@@ -351,7 +352,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
     private fun setupExposureNotificationCheckbox() {
         val useMockedExposureNotifications =
-            debugSharedPreferences.getBoolean(USE_MOCKED_EXPOSURE_NOTIFICATION, false)
+            debugSharedPreferences.getBoolean(USE_MOCKED_EXPOSURE_NOTIFICATION, isEmulator())
         exposureNotificationMocks.isChecked = useMockedExposureNotifications
 
         exposureNotificationMocks.setOnCheckedChangeListener { _, isChecked ->

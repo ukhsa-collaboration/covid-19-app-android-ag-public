@@ -12,6 +12,7 @@ import androidx.lifecycle.Transformations.distinctUntilChanged
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
+import uk.nhs.nhsx.covid19.android.app.util.isEmulator
 
 class AndroidBluetoothStateProvider : AvailabilityStateProvider,
     BroadcastReceiver() {
@@ -23,8 +24,7 @@ class AndroidBluetoothStateProvider : AvailabilityStateProvider,
     }
 
     override fun getState(isDebug: Boolean): AvailabilityState {
-        val isEmulator = isDebug && BluetoothAdapter.getDefaultAdapter() == null
-        return if (BluetoothAdapter.getDefaultAdapter()?.isEnabled == true || isEmulator) {
+        return if (BluetoothAdapter.getDefaultAdapter()?.isEnabled == true || (isEmulator() && isDebug)) {
             ENABLED
         } else {
             DISABLED

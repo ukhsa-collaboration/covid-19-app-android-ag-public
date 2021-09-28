@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import io.mockk.called
 import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyOrder
@@ -34,18 +35,19 @@ class LinkTestResultSymptomsViewModelTest {
         testSubject.onCreate()
 
         verify { analyticsEventProcessor.track(DidAskForSymptomsOnPositiveTestEntry) }
-        verify(exactly = 0) { confirmSymptomsObserver.onChanged(any()) }
+        verify { confirmSymptomsObserver wasNot called }
     }
 
     @Test
-    fun `repeatedly calling onCreate should trigger analytics event DidAskForSymptomsOnPositiveTestEntry only once`() = runBlocking {
-        testSubject.onCreate()
-        testSubject.onCreate()
-        testSubject.onCreate()
+    fun `repeatedly calling onCreate should trigger analytics event DidAskForSymptomsOnPositiveTestEntry only once`() =
+        runBlocking {
+            testSubject.onCreate()
+            testSubject.onCreate()
+            testSubject.onCreate()
 
-        verify(exactly = 1) { analyticsEventProcessor.track(DidAskForSymptomsOnPositiveTestEntry) }
-        verify(exactly = 0) { confirmSymptomsObserver.onChanged(any()) }
-    }
+            verify(exactly = 1) { analyticsEventProcessor.track(DidAskForSymptomsOnPositiveTestEntry) }
+            verify { confirmSymptomsObserver wasNot called }
+        }
 
     @Test
     fun `onConfirmSymptomsClicked should trigger analytics event DidHaveSymptomsBeforeReceivedTestResult and emit confirmSymptoms event`() =

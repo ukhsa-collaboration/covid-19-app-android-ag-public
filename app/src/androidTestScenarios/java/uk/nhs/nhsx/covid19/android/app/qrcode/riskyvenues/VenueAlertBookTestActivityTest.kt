@@ -81,6 +81,21 @@ class VenueAlertBookTestActivityTest : EspressoTest() {
     }
 
     @Test
+    fun venueScreenFinishedWhenClickingCloseButton() {
+        testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", BOOK_TEST)
+
+        val activity = startActivity("1")
+
+        venueAlertBookTestRobot.checkActivityIsDisplayed()
+        venueAlertBookTestRobot.clickCloseButton()
+
+        waitFor { assertTrue(activity!!.isDestroyed) }
+
+        val item = testAppContext.getUserInbox().fetchInbox()
+        assertNull(item)
+    }
+
+    @Test
     fun whenActiveIndexCaseIsolation_clickingBookTest_navigateToBookTestScreen() {
         testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", BOOK_TEST)
 

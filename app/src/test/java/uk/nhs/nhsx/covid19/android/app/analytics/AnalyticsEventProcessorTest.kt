@@ -19,6 +19,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShare
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaBanner
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessRiskyVenueM2Notification
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessSelfIsolationNoteLink
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAskForSymptomsOnPositiveTestEntry
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidHaveSymptomsBeforeReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidRememberOnsetSymptomsDateBeforeReceivedTestResult
@@ -64,6 +65,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSE
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_NOTIFICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_RISKY_VENUE_M2_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_SELF_ISOLATION_NOTE_LINK
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT
@@ -1687,6 +1689,14 @@ class AnalyticsEventProcessorTest {
         verifyTrackRegularAnalyticsEvent(
             OptedOutForContactIsolation,
             OPTED_OUT_FOR_CONTACT_ISOLATION
+        )
+    }
+
+    @Test
+    fun `track didAccessSelfIsolationNoteLink`() = runBlocking {
+        verifyTrackRegularAnalyticsEvent(
+            DidAccessSelfIsolationNoteLink,
+            DID_ACCESS_SELF_ISOLATION_NOTE_LINK
         )
     }
 

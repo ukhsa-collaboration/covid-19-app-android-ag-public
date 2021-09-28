@@ -12,6 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/vertical_margin"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:text="@string/exposure_notification_clinical_trial_question" />
 
     <uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup

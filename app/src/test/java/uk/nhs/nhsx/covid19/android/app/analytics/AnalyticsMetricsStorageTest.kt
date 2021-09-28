@@ -106,7 +106,8 @@ class AnalyticsMetricsStorageTest : ProviderTest<AnalyticsMetricsStorage, Metric
             "optedOutForContactIsolation":84,
             "optedOutForContactIsolationBackgroundTick":85,
             "appIsUsableBackgroundTick":86,
-            "appIsContactTraceableBackgroundTick":87
+            "appIsContactTraceableBackgroundTick":87,
+            "didAccessSelfIsolationNoteLink":88
             }
             """.trimIndent().replace("\n", "")
         private val metrics = Metrics(
@@ -195,7 +196,8 @@ class AnalyticsMetricsStorageTest : ProviderTest<AnalyticsMetricsStorage, Metric
             optedOutForContactIsolation = 84,
             optedOutForContactIsolationBackgroundTick = 85,
             appIsUsableBackgroundTick = 86,
-            appIsContactTraceableBackgroundTick = 87
+            appIsContactTraceableBackgroundTick = 87,
+            didAccessSelfIsolationNoteLink = 88,
         )
     }
 }

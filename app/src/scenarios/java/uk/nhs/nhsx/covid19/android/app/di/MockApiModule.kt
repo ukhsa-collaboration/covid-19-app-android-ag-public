@@ -39,6 +39,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenueConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenuesCircuitBreakerApi
 import uk.nhs.nhsx.covid19.android.app.remote.VirologyTestingApi
+import java.time.Clock
 import javax.inject.Singleton
 
 @Module
@@ -74,8 +75,8 @@ class MockApiModule {
 
     @Provides
     @Singleton
-    fun provideVirologyTestingApi(): VirologyTestingApi =
-        MockVirologyTestingApi()
+    fun provideVirologyTestingApi(clock: Clock): VirologyTestingApi =
+        MockVirologyTestingApi(clock)
 
     @Provides
     @Singleton

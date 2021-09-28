@@ -1,49 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/ScrollContainer"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <include layout="@layout/view_toolbar_background" />
+
+    <ScrollView
+        style="@style/ScrollContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="@dimen/margin_horizontal"
-        android:paddingTop="@dimen/vertical_margin_large">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <ImageView
-            android:id="@+id/imageCoronavirus"
-            style="@style/GoneInLandscape"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/vertical_margin_large"
-            android:contentDescription="@null"
-            android:src="@drawable/coronavirus" />
-
-        <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
-            android:id="@+id/titleVenueReportedCase"
-            style="@style/Title1"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/vertical_margin_large"
-            android:gravity="center"
-            android:text="@string/venue_alert_title" />
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingTop="@dimen/vertical_margin_large">
 
-        <TextView
-            android:id="@+id/messageExplanation"
-            style="@style/Body1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/vertical_margin"
-            android:text="@string/venue_alert_explanation" />
+            <ImageView
+                android:id="@+id/imageCoronavirus"
+                style="@style/GoneInLandscape"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:contentDescription="@null"
+                android:src="@drawable/coronavirus" />
 
-        <Button
-            android:id="@+id/buttonReturnToHomeScreen"
-            style="@style/PrimaryButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/vertical_margin_large"
-            android:text="@string/back_to_home" />
-    </LinearLayout>
-</ScrollView>
+            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                android:id="@+id/titleVenueReportedCase"
+                style="@style/Title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:gravity="center"
+                android:text="@string/venue_alert_title" />
+
+            <TextView
+                android:id="@+id/messageExplanation"
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/venue_alert_explanation" />
+
+            <Button
+                android:id="@+id/buttonReturnToHomeScreen"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/vertical_margin_large"
+                android:text="@string/back_to_home" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

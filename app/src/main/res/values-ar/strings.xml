@@ -649,7 +649,7 @@
     <string name="accessibility_announcement_accordion_collapse_action">طيّ</string>
     <string name="accessibility_announcement_accordion_expand_action">توسيع</string>
     <string name="book_follow_up_test_nhs_guidance_label">إرشادات هيئة الخدمات الصحية الوطنية (NHS)</string>
-    <string name="contact_case_exposure_info_screen_exposure_date">حدث اتصال وثيق في %s</string>
+    <string name="contact_case_exposure_info_screen_exposure_date">حدثت المخالطة عن كثب في %s</string>
     <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_body">يستخدم التطبيق خاصية البلوتوث لمعرفة ما إذا قد وُجد هاتفك متقاربًا عن كثب مع هواتف أخرى.\n\nتعني المخالطة عن كثب أنك كنت موجودًا على مسافة فاصلة في حدود 2 متر من شخصٍ ما لمدة 15 دقيقة أو أكثر.\n\nلا يكشف التطبيق عن الهوية ولا يستخدم نظام تحديد المواقع العالمي (GPS) ولا يستخدم خاصية تسجيل الدخول إلى مكانٍ ما لتتبع موقعك؛ وذلك لحماية خصوصيتك.</string>
     <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading">كيفية حساب مسافة المخالطة عن كثب</string>
     <string name="contact_case_start_isolation_how_we_calculate_isolation_days_title">كيفية حساب أيام العزل الذاتي</string>
@@ -701,7 +701,7 @@
     <string name="isolation_hub_accordion_how_to_self_isolate_link_2_title">ابحث عن الموقع الإلكتروني للسلطة المحلية لديك</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_links_subheading">هل تبحث عن المزيد من النصائح؟</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_paragraph_1">ابق في منزلك للحدِّ من انتشار فيروس كورونا (كوفيد-19).\n\nما يتعين عليك فعله في حال طُلب منك الخضوع للعزل الذاتي:</string>
-    <string name="isolation_hub_accordion_how_to_self_isolate_paragraph_2">عدم مغادرة المنزل لأي سببٍ من الأسباب - إذا كنت بحاجةٍ إلى الطعام أو الدواء، فيمكنك طلبهما عبر الإنترنت أو بواسطة الهاتف، أو تستطيع أن \nتطلب توصيلهما إلى منزلك من الأصدقاء والعائلة. تعرّف على المزيد من المعلومات بشأن الدعم العملي المُقدَّم لك في القسم التالي\n\nعدم استقبال أي زائرين في منزلك، بما في ذلك الأصدقاء والعائلة - باستثناء الزائرين لأغراض تقديم الرعاية الأساسية\n\nمحاولة تجنّب ملامسة أي شخصٍ تعيش معه قدر الإمكان\n\nممارسة التمارين الرياضية في منزلك أو حديقتك الخاصة، وعدم مغادرة المنزل لممارسة التمارين الرياضية</string>
+    <string name="isolation_hub_accordion_how_to_self_isolate_paragraph_2">عدم مغادرة المنزل لأي سببٍ من الأسباب - إذا كنت بحاجةٍ إلى الطعام أو الدواء، فيمكنك طلبهما عبر الإنترنت أو بواسطة الهاتف، أو تستطيع أن\nتطلب توصيلهما إلى منزلك من الأصدقاء والعائلة. تعرّف على المزيد من المعلومات بشأن الدعم العملي المُقدَّم لك في القسم التالي\n\nعدم استقبال أي زائرين في منزلك، بما في ذلك الأصدقاء والعائلة - باستثناء الزائرين لأغراض تقديم الرعاية الأساسية\n\nمحاولة تجنّب ملامسة أي شخصٍ تعيش معه قدر الإمكان\n\nممارسة التمارين الرياضية في منزلك أو حديقتك الخاصة، وعدم مغادرة المنزل لممارسة التمارين الرياضية</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_paragraph_3">إذا كنت تعيش في منزلٍ واحدٍ مع أشخاص آخرين:</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_paragraph_4">ابقَ بعيدًا قدر الإمكان عن أفراد الأسرة الآخرين، لا سيّما إذا كانوا مُعرَّضين بشدة لمخاطر الإصابة\n\nتجنّب استخدام المساحات المشتركة متى كان ذلك ممكنًا\n\nاصطحب وجباتك إلى غرفتك الخاصة لتناولها\n\nارتدِ غطاءً للوجه أو قناعًا جراحيًّا عند تمضية الوقت في المناطق المشتركة في منزلك</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_title">كيفية العزل الذاتي</string>
@@ -722,7 +722,7 @@
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">الرجوع إلى الشاشة الرئيسية</string>
     <string name="risky_contact_isolation_advice_already_isolating_information">يمكنك حجز أحد اختبارات PCR المجانية من زرِّ \"إجراء اختبار فيروس كوفيد-19\" الموجود على الشاشة الرئيسية؛ إذا لم يكن قد سبق لك القيام بذلك بالفعل.</string>
-    <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">ثمة احتمالٌ كبيرٌ بإمكانية إصابتك بفيروس كوفيد-19 أو التسبّب في تفشيه، حتى إذا لم يظهر عليك أيّ أعراضٍ. من شأن البقاء في المنزل أن يساعد في الحفاظ على سلامتك وسلامة الآخرين على السواء.</string>
+    <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">من المُحتمل بدرجة كبيرة أن تتسبّب في تفشي فيروس كوفيد-19. من شأن بقائك في المنزل أن يساعد في الحفاظ على سلامتك وسلامة الآخرين على السواء.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">يمكنك حجز أحد اختبارات PCR المجانية من زرِّ \"إجراء اختبار فيروس كوفيد-19\" الموجود على الشاشة الرئيسية؛ إذا لم يكن قد سبق لك القيام بذلك بالفعل.</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">ننصحك بحجز أحد اختبارات PCR المجانية</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">لا تحتاج إلى تطبيق العزل الذاتي</string>
@@ -735,7 +735,7 @@
     <string name="risky_contact_isolation_advice_go_back_to_home">الرجوع إلى الشاشة الرئيسية</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">ما زال من الأهمية بمكانٍ الحدّ من مخالطة الآخرين قدر الإمكان.</string>
     <string name="risky_contact_isolation_advice_medically_exempt_heading">لا تحتاج إلى تطبيق العزل الذاتي</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_information">ننصحك بحجز أحد اختبارات PCR المجانية</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">نوصيك بحجز أحد اختبارات PCR المجانية</string>
     <string name="risky_contact_isolation_advice_medically_exempt_research">لقد أظهرت الأبحاث أن اللقاحات تساعد في الحدِّ من خطر الإصابة بفيروس كوفيد-19 وتقليل احتمالية نشره.</string>
     <string name="risky_contact_isolation_advice_minors_information">نوصيك بحجز أحد اختبارات PCR المجانية</string>
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">لا تحتاج إلى تطبيق العزل الذاتي</string>
@@ -756,4 +756,17 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">إجراء اختبارٍ</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">إذا لم يكن قد سبق لك القيام بذلك بالفعل، نوصيك بحجز أحد اختبارات PCR المجانية في أقرب وقتٍ ممكنٍ. بعد الاختبار الأول لك، ينبغي لك أيضًا حجز اختبار PCR ثانٍ في %s</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">نوصيك بحجز أحد اختبارات PCR المجانية في أقرب وقتٍ ممكنٍ. بعد الاختبار الأول لك، ينبغي لك أيضًا حجز اختبار PCR ثانٍ في %s</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">نوصيك بحجز أحد اختبارات PCR المجانية في أقرب وقتٍ ممكنٍ. بعد الاختبار الأول لك، ينبغي لك أيضًا حجز اختبار PCR ثانٍ في %s</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">نوصيك بحجز أحد اختبارات PCR المجانية في أقرب وقتٍ ممكنٍ. بعد الاختبار الأول لك، ينبغي لك أيضًا حجز اختبار PCR ثانٍ في %s</string>
+    <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
+    <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_group">من منطلق الإنصاف والمساواة، لا تحتاج إلى تطبيق العزل الذاتي إذا كان يتعذّر عليك الحصول على اللقاح لأسبابٍ طبيةٍ.</string>
+    <string name="self_isolation_hub_get_isolation_note_description">عند حاجتك إلى إشعارٍ بالعزل لتقديمه إلى صاحب العمل لديك</string>
+    <string name="self_isolation_hub_get_isolation_note_title">الحصول على إشعارٍ بالعزل</string>
+    <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
+    <string name="exposure_notification_clinical_trial_yes_content_description">Yes I am taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
+    <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
 </resources>

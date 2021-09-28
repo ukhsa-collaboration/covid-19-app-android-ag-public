@@ -34,7 +34,9 @@
             android:authorities="${applicationId}.workmanager-init"
             tools:node="remove" />
 
-        <activity android:name=".MainActivity" android:label="@string/empty_accessibility_announcement">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -75,8 +77,9 @@
         <activity
             android:name=".qrcode.QrScannerActivity"
             android:label="@string/scan_qr_code_to_check_in" />
-        <activity android:name=".qrcode.QrCodeScanResultActivity"
-            android:label="@string/empty_accessibility_announcement"/>
+        <activity
+            android:name=".qrcode.QrCodeScanResultActivity"
+            android:label="@string/empty_accessibility_announcement" />
         <activity
             android:name=".questionnaire.selection.QuestionnaireActivity"
             android:label="@string/select_symptoms" />
@@ -89,8 +92,9 @@
         <activity
             android:name=".testordering.TestOrderingActivity"
             android:label="@string/book_free_test" />
-        <activity android:name=".questionnaire.review.SymptomsAdviceIsolateActivity"
-            android:label="@string/empty_accessibility_announcement"/>
+        <activity
+            android:name=".questionnaire.review.SymptomsAdviceIsolateActivity"
+            android:label="@string/empty_accessibility_announcement" />
         <activity
             android:name=".state.IsolationExpirationActivity"
             android:label="@string/expiration_notification_title" />
@@ -102,7 +106,7 @@
             android:label="@string/about_this_app_title" />
         <activity
             android:name=".testordering.TestResultActivity"
-            android:label="@string/empty_accessibility_announcement"/>
+            android:label="@string/empty_accessibility_announcement" />
         <activity
             android:name=".testordering.SubmitKeysProgressActivity"
             android:label="@string/empty_accessibility_announcement" />
@@ -120,7 +124,7 @@
             android:label="@string/loading" />
         <activity
             android:name=".availability.AppAvailabilityActivity"
-            android:label="@string/empty_accessibility_announcement"/>
+            android:label="@string/empty_accessibility_announcement" />
         <activity
             android:name=".qrcode.riskyvenues.VenueAlertInformActivity"
             android:label="@string/venue_alert_title" />
@@ -162,7 +166,7 @@
             android:label="@string/battery_optimization_title" />
         <activity
             android:name=".payment.RedirectToIsolationPaymentWebsiteActivity"
-            android:label="@string/empty_accessibility_announcement"/>
+            android:label="@string/empty_accessibility_announcement" />
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/settings_title" />
@@ -201,7 +205,7 @@
             android:label="@string/symptoms_after_risky_venue_title" />
         <activity
             android:name=".status.localmessage.LocalMessageActivity"
-            android:label="@string/empty_accessibility_announcement"/>
+            android:label="@string/empty_accessibility_announcement" />
         <activity
             android:name=".testordering.lfd.OrderLfdTestActivity"
             android:label="@string/book_free_lfd_test_title" />
@@ -225,7 +229,7 @@
             android:label="@string/new_no_symptoms_title" />
         <activity
             android:name=".exposure.encounter.RiskyContactIsolationAdviceActivity"
-            android:label="@string/empty_accessibility_announcement"/>
+            android:label="@string/empty_accessibility_announcement" />
 
         <!-- Receivers -->
         <receiver

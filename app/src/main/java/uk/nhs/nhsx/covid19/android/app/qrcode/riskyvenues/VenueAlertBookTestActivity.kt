@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import kotlinx.android.synthetic.main.activity_venue_alert_book_test.buttonBookTest
 import kotlinx.android.synthetic.main.activity_venue_alert_book_test.buttonReturnToHomeScreen
+import kotlinx.android.synthetic.main.view_toolbar_background.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
@@ -16,6 +17,7 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestView
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.NavigationTarget.Finish
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.ViewState.UnknownVisit
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
@@ -28,6 +30,9 @@ class VenueAlertBookTestActivity : BaseActivity(R.layout.activity_venue_alert_bo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+
+        setCloseToolbar(toolbar, titleResId = R.string.empty, closeIndicator = R.drawable.ic_close_primary)
+
         viewModel.venueVisitState().observe(this) { viewState ->
             if (viewState == UnknownVisit) {
                 finish()

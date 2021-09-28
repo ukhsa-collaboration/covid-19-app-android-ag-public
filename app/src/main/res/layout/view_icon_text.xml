@@ -20,5 +20,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        tools:text="@string/risky_contact_isolation_advice_new_isolation_testing_advice" />
+        tools:text="@string/contact_case_start_isolation_list_item_testing" />
 </merge>

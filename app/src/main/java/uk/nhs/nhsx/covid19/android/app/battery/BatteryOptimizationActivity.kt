@@ -31,7 +31,8 @@ class BatteryOptimizationActivity : BaseActivity(R.layout.activity_battery_optim
 
         setCloseToolbar(
             toolbar,
-            R.string.empty
+            R.string.empty,
+            closeIndicator = R.drawable.ic_close_primary
         ) {
             viewModel.onIgnoreBatteryOptimizationAcknowledged()
         }

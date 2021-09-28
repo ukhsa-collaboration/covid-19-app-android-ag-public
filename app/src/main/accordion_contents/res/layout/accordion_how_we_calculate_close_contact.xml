@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Body1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:text="@string/contact_case_exposure_info_screen_how_close_contacts_are_calculated_body" />
+    app:rawText="@string/contact_case_exposure_info_screen_how_close_contacts_are_calculated_body" />

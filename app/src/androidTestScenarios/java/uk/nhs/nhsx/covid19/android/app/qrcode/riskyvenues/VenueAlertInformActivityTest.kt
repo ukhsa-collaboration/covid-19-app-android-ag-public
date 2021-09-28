@@ -72,6 +72,19 @@ class VenueAlertInformActivityTest : EspressoTest() {
     }
 
     @Test
+    fun venueScreenFinishesWhenClickingCloseButton() {
+        testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", INFORM)
+
+        val activity = startActivity("1")
+        venueAlertInformRobot.clickCloseButton()
+
+        waitFor { assertTrue(activity!!.isDestroyed) }
+
+        val item = testAppContext.getUserInbox().fetchInbox()
+        assertNull(item)
+    }
+
+    @Test
     fun venueScreenFinishesWhenClickingBackButton() {
         testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", INFORM)
 

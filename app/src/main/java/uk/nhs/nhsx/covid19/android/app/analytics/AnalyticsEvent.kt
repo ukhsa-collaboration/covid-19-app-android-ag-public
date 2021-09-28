@@ -56,4 +56,5 @@ sealed class AnalyticsEvent {
     object SelectedLfdTestOrderingM2Journey : AnalyticsEvent()
     object SelectedHasLfdTestM2Journey : AnalyticsEvent()
     object OptedOutForContactIsolation : AnalyticsEvent()
+    object DidAccessSelfIsolationNoteLink : AnalyticsEvent()
 }

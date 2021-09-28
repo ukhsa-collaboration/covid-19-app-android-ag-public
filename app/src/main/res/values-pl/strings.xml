@@ -136,7 +136,7 @@
     <string name="qr_code_permission_denied_action">Wyraź zgodę na uprawnienia aparatu fotograficznego</string>
     <string name="qr_code_cancel_check_in">Niepoprawne zameldowanie? Dotknij, aby usunąć.</string>
     <string name="book_free_test">Zamów bezpłatny test</string>
-    <string name="book_free_test_now">Zamów dla siebie test</string>
+    <string name="book_free_test_now">Zamów test dla siebie</string>
     <string name="status_option_report_symptoms">Sprawdzanie objawów</string>
     <string name="status_option_read_latest_advice">Informacje o przeprowadzaniu testów</string>
     <string name="status_option_read_self_isolation_advice">Zapoznaj się z wytycznymi dotyczącymi izolacji</string>
@@ -347,7 +347,7 @@
     <string name="ask_me_later">Zapytaj mnie później</string>
     <string name="notification_text_recommended_app_update">Dotknij tutaj, aby uzyskać więcej informacji.</string>
     <string name="notification_title_recommended_app_update">Proszę zaktualizować swoją aplikację NHS COVID-19 do najnowszej wersji</string>
-    <string name="test_ordering_getting_tested_description">Wybranie opcji \"zarezerwuj test dla siebie\" przeniesie Cię na rządową stronę poświęconą testom na koronawirusa, gdzie zostaniesz poproszony o wypełnienie niektórych danych osobowych (takich jak Twój adres), aby otrzymać test. Żadne informacje, które podasz na stronie nie będą udostępniane.\n\nZostanie utworzony cyfrowy \'token\', który pomoże nam odzyskać Twoje wyniki i włączyć je do aplikacji.</string>
+    <string name="test_ordering_getting_tested_description">Wybranie opcji \"zamów test dla siebie\" przeniesie Cię na rządową stronę poświęconą testom na koronawirusa, gdzie zostaniesz poproszony(-a) o wypełnienie niektórych danych osobowych (takich jak Twój adres), aby otrzymać test. Żadne informacje, które podasz na stronie nie będą udostępniane.\n\nZostanie utworzony cyfrowy \'token\', który pomoże nam odzyskać Twoje wyniki i włączyć je do aplikacji.</string>
     <string name="update_in_play_store">Zaktualizuj swoją aplikację teraz</string>
     <string name="updated_privacy_control_text">Dziękujemy za korzystanie z aplikacji NHS COVID-19. \n\nWprowadziliśmy zmiany w aplikacji zgodnie z nowymi wytycznymi. Osoby w pełni zaszczepione lub które nie ukończyły 18 lat nie będą już otrzymywać zalecenia samoizolacji, jeżeli miały kontakt z kimś, kto uzyskał dodatni wynik testu na COVID-19, ale zaleca się im wykonanie testu.\n\nJeśli już przebywasz na samoizolacji, ponieważ miałeś(-aś) kontakt z osobą zakażoną, a jesteś w pełni zaszczepiony(-a) lub nie ukończyłeś(-aś) 18 lat, nie musisz pozostawać w samoizolacji. Jeśli masz objawy zakażenia lub posiadasz dodatni wynik testu, zaleca się pozostanie w samoizolacji.\n\nZachowaj aplikację na swoim urządzeniu, aby otrzymywać aktualne porady i pomagać w zatrzymaniu rozprzestrzeniania się COVID-19.\n\nRegulamin korzystania oraz informacja o ochronie prywatności zostały zaktualizowane zgodnie z tymi zmianami.</string>
     <string name="updated_privacy_title">Zmiany w naszej polityce</string>
@@ -716,7 +716,7 @@
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">Powrót do strony głównej</string>
     <string name="risky_contact_isolation_advice_already_isolating_information">Jeżeli jeszcze nie zamówiłeś(-aś) bezpłatnego testu PCR, możesz to zrobić wchodząc w opcję „Testy na COVID-19” na stronie głównej aplikacji.</string>
-    <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">Nawet jeśli nie masz żadnych objawów, możesz przechodzić COVID-19 i zarażać inne osoby. Zostając w domu, możesz pomóc chronić siebie i innych.</string>
+    <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">Istnieje wysokie ryzyko, że zarazisz inne osoby COVID-19. Pozostając w domu, możesz pomóc chronić siebie i innych.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">Jeżeli jeszcze nie zamówiłeś(-aś) bezpłatnego testu PCR, możesz to zrobić wchodząc w opcję „Testy na COVID-19” na stronie głównej aplikacji.</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">Zaleca się zamówienie bezpłatnego testu PCR</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Nie musisz poddawać się samoizolacji</string>
@@ -750,4 +750,17 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">Poddaj się testowi</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">Jeżeli nie masz jeszcze darmowego testu PCR, zalecamy aby jak najszybciej  go zamówić. Po wykonaniu pierwszego testu musisz również zamówić drugi test PCR i przeprowadzić go w dniu %s.</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">Zaleca się, aby jak najszybciej zamówić bezpłatny test PCR. Po wykonaniu pierwszego testu musisz również zamówić drugi test PCR i przeprowadzić go w dniu %s.</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">Zaleca się, aby jak najszybciej zamówić bezpłatny test PCR. Po wykonaniu pierwszego testu musisz również zamówić drugi test PCR i przeprowadzić go w dniu %s.</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">Zaleca się, aby jak najszybciej zamówić bezpłatny test PCR. Po wykonaniu pierwszego testu musisz również zamówić drugi test PCR i przeprowadzić go w dniu %s.</string>
+    <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
+    <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_group">Zgodnie z zasadami sprawiedliwości i równości, jeżeli nie możesz zaszczepić się ze względów medycznych, nie musisz pozostawać w samoizolacji.</string>
+    <string name="self_isolation_hub_get_isolation_note_description">Jeżeli potrzebujesz zaświadczenia o izolacji w celu okazania pracodawcy</string>
+    <string name="self_isolation_hub_get_isolation_note_title">Otrzymaj zaświadczenie o izolacji</string>
+    <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
+    <string name="exposure_notification_clinical_trial_yes_content_description">Yes I am taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
+    <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
 </resources>
