@@ -646,8 +646,8 @@
     <string name="isolation_hub_book_test_description">You may be at risk of spreading coronavirus (COVID-19)</string>
     <string name="isolation_hub_financial_support_title">Check if you’re eligible for financial support</string>
     <string name="isolation_hub_financial_support_description">Learn about applying for a financial support payment while self-isolating</string>
-    <string name="self_isolation_hub_get_isolation_note_title">Get an isolation note</string>
-    <string name="self_isolation_hub_get_isolation_note_description">If you need an isolation note to show your employer</string>
+    <string name="self_isolation_hub_get_isolation_note_title">Get an isolation note to show your employer</string>
+    <string name="self_isolation_hub_get_isolation_note_description">The app does not hold or share your personal information with this service, so you will need to enter your details</string>
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="testing_hub_helpful_information_heading">[to be deleted]</string>
@@ -802,6 +802,13 @@
     <string name="advisory_risky_contact_nhs_guidance_label">[to be deleted]</string>
     <string name="exposure_notification_advised_to_self_isolate_for">Self-isolate for</string>
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
+    <string name="contact_case_summary_title">Check your answers</string>
+    <string name="contact_case_summary_heading">Check your answers</string>
+    <string name="contact_case_summary_submit_button">Submit answers</string>
+    <string name="contact_case_summary_change_age_button">Change</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
+    <string name="contact_case_summary_change_vaccination_status_button">Change</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
     <string name="contact_case_continue_isolation_list_item_testing">You are advised to book a free PCR test as soon as possible. After your first test, you should also book a second PCR test as soon as possible.</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing">You are advised to book a free PCR test as soon as possible. After your first test, you should also book a second PCR test as soon as possible.</string>
     <string name="contact_case_no_isolation_under_age_limit_list_item_testing">You are advised to book a free PCR test as soon as possible. After your first test, you should also book a second PCR test as soon as possible.</string>

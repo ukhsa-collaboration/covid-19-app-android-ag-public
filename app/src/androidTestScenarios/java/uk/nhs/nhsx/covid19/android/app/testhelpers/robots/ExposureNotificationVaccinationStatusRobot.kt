@@ -102,6 +102,11 @@ class ExposureNotificationVaccinationStatusRobot {
         medicallyExemptNoButton.check(matches(isNotChecked()))
     }
 
+    fun checkMedicallyExemptYesSelected() {
+        medicallyExemptYesButton.check(matches(isChecked()))
+        medicallyExemptNoButton.check(matches(isNotChecked()))
+    }
+
     fun checkDosesYesSelected() {
         dosesYesButton
             .perform(nestedScrollTo())
@@ -133,6 +138,15 @@ class ExposureNotificationVaccinationStatusRobot {
             .perform(nestedScrollTo())
             .check(matches(isNotChecked()))
         dateNoButton
+            .perform(nestedScrollTo())
+            .check(matches(isNotChecked()))
+    }
+
+    fun checkDateNoSelected() {
+        dateNoButton
+            .perform(nestedScrollTo())
+            .check(matches(isChecked()))
+        dateYesButton
             .perform(nestedScrollTo())
             .check(matches(isNotChecked()))
     }
@@ -175,6 +189,15 @@ class ExposureNotificationVaccinationStatusRobot {
             }
         }
             .check(if (displayed) matches(isDisplayed()) else doesNotExist())
+    }
+
+    fun checkClinicalTrialNoSelected() {
+        clinicalTrialNoButton
+            .perform(nestedScrollTo())
+            .check(matches(isChecked()))
+        clinicalTrialYesButton
+            .perform(nestedScrollTo())
+            .check(matches(isNotChecked()))
     }
 
     fun checkMedicallyExemptQuestionContainerDisplayed(displayed: Boolean) {

@@ -757,10 +757,17 @@
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">Zgodnie z zasadami sprawiedliwości i równości, jeżeli nie możesz zaszczepić się ze względów medycznych, nie musisz pozostawać w samoizolacji.</string>
-    <string name="self_isolation_hub_get_isolation_note_description">Jeżeli potrzebujesz zaświadczenia o izolacji w celu okazania pracodawcy</string>
-    <string name="self_isolation_hub_get_isolation_note_title">Otrzymaj zaświadczenie o izolacji</string>
+    <string name="self_isolation_hub_get_isolation_note_description">Aplikacja nie przechowuje ani nie udostępnia Twoich danych osobowych w ramach tej usługi, dlatego musisz wpisać swoje dane.</string>
+    <string name="self_isolation_hub_get_isolation_note_title">Otrzymaj zaświadczenie o izolacji w celu okazania pracodawcy</string>
     <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
     <string name="exposure_notification_clinical_trial_yes_content_description">Yes I am taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="contact_case_summary_change_age_button">Zmień</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_button">Zmień</string>
+    <string name="contact_case_summary_heading">Sprawdź swoje odpowiedzi</string>
+    <string name="contact_case_summary_submit_button">Wyślij odpowiedzi</string>
+    <string name="contact_case_summary_title">Sprawdź swoje odpowiedzi</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
 </resources>

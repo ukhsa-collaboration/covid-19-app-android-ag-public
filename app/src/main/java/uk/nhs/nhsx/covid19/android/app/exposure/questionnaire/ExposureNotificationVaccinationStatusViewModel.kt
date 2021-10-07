@@ -1,4 +1,4 @@
-package uk.nhs.nhsx.covid19.android.app.exposure.encounter
+package uk.nhs.nhsx.covid19.android.app.exposure.questionnaire
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,16 +9,20 @@ import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.Finish
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.FullyVaccinated
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.Isolating
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.MedicallyExempt
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.QuestionType.CLINICAL_TRIAL
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.QuestionType.DOSE_DATE
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.QuestionType.FULLY_VACCINATED
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.QuestionType.MEDICALLY_EXEMPT
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.SelectionOutcome.FollowupQuestion
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.SelectionOutcome.Navigation
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.Finish
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.Review
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.SelectionOutcome.FollowupQuestion
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.SelectionOutcome.Completion
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.OptOutResponseEntry
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.AgeLimitQuestionType.IsAdult
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.ClinicalTrial
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.DoseDate
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.FullyVaccinated
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.MedicallyExempt
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ReviewData
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionnaireOutcome
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup.BinaryRadioGroupOption
@@ -29,8 +33,6 @@ import uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup.BinaryRadioGroup
 import uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup.BinaryRadioGroupOption.OPTION_2 as NO
 
 class ExposureNotificationVaccinationStatusViewModel @Inject constructor(
-    private val acknowledgeRiskyContact: AcknowledgeRiskyContact,
-    private val optOutOfContactIsolation: OptOutOfContactIsolation,
     private val getLastDoseDateLimit: GetLastDoseDateLimit,
     private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider,
     private val isolationStateMachine: IsolationStateMachine,
@@ -43,20 +45,20 @@ class ExposureNotificationVaccinationStatusViewModel @Inject constructor(
     fun navigate(): LiveData<NavigationTarget> = navigateLiveData
 
     private val englishQuestionnaire = QuestionNode(
-        FULLY_VACCINATED,
+        FullyVaccinated,
         yes = FollowupQuestion(
             QuestionNode(
-                DOSE_DATE,
-                yes = Navigation(FullyVaccinated),
+                DoseDate,
+                yes = Completion(QuestionnaireOutcome.FullyVaccinated),
                 no = FollowupQuestion(
                     QuestionNode(
-                        CLINICAL_TRIAL,
-                        yes = Navigation(FullyVaccinated),
+                        ClinicalTrial,
+                        yes = Completion(QuestionnaireOutcome.FullyVaccinated),
                         no = FollowupQuestion(
                             QuestionNode(
-                                MEDICALLY_EXEMPT,
-                                yes = Navigation(MedicallyExempt),
-                                no = Navigation(Isolating)
+                                MedicallyExempt,
+                                yes = Completion(QuestionnaireOutcome.MedicallyExempt),
+                                no = Completion(QuestionnaireOutcome.NotExempt)
                             ),
                         )
                     )
@@ -65,13 +67,13 @@ class ExposureNotificationVaccinationStatusViewModel @Inject constructor(
         ),
         no = FollowupQuestion(
             QuestionNode(
-                MEDICALLY_EXEMPT,
-                yes = Navigation(MedicallyExempt),
+                MedicallyExempt,
+                yes = Completion(QuestionnaireOutcome.MedicallyExempt),
                 no = FollowupQuestion(
                     QuestionNode(
-                        CLINICAL_TRIAL,
-                        yes = Navigation(FullyVaccinated),
-                        no = Navigation(Isolating)
+                        ClinicalTrial,
+                        yes = Completion(QuestionnaireOutcome.FullyVaccinated),
+                        no = Completion(QuestionnaireOutcome.NotExempt)
                     )
                 )
             )
@@ -79,25 +81,25 @@ class ExposureNotificationVaccinationStatusViewModel @Inject constructor(
     )
 
     private val welshQuestionnaire = QuestionNode(
-        FULLY_VACCINATED,
+        FullyVaccinated,
         yes = FollowupQuestion(
             QuestionNode(
-                DOSE_DATE,
-                yes = Navigation(FullyVaccinated),
+                DoseDate,
+                yes = Completion(QuestionnaireOutcome.FullyVaccinated),
                 no = FollowupQuestion(
                     QuestionNode(
-                        CLINICAL_TRIAL,
-                        yes = Navigation(FullyVaccinated),
-                        no = Navigation(Isolating)
+                        ClinicalTrial,
+                        yes = Completion(QuestionnaireOutcome.FullyVaccinated),
+                        no = Completion(QuestionnaireOutcome.NotExempt)
                     )
                 )
             )
         ),
         no = FollowupQuestion(
             QuestionNode(
-                CLINICAL_TRIAL,
-                yes = Navigation(FullyVaccinated),
-                no = Navigation(Isolating)
+                ClinicalTrial,
+                yes = Completion(QuestionnaireOutcome.FullyVaccinated),
+                no = Completion(QuestionnaireOutcome.NotExempt)
             )
         )
     )
@@ -132,19 +134,19 @@ class ExposureNotificationVaccinationStatusViewModel @Inject constructor(
     }
 
     fun onFullyVaccinatedOptionChanged(option: BinaryRadioGroupOption) {
-        updateViewState(FULLY_VACCINATED, option)
+        updateViewState(FullyVaccinated, option)
     }
 
     fun onLastDoseDateOptionChanged(option: BinaryRadioGroupOption) {
-        updateViewState(DOSE_DATE, option)
+        updateViewState(DoseDate, option)
     }
 
     fun onClinicalTrialOptionChanged(option: BinaryRadioGroupOption) {
-        updateViewState(CLINICAL_TRIAL, option)
+        updateViewState(ClinicalTrial, option)
     }
 
     fun onMedicallyExemptOptionChanged(option: BinaryRadioGroupOption) {
-        updateViewState(MEDICALLY_EXEMPT, option)
+        updateViewState(MedicallyExempt, option)
     }
 
     private fun updateViewState(questionType: QuestionType, option: BinaryRadioGroupOption) {
@@ -162,33 +164,29 @@ class ExposureNotificationVaccinationStatusViewModel @Inject constructor(
         return mutableListOf<Answer>().apply {
             addAll(answers.subList(0, questionToUpdateIndex))
             add(updatedAnswer)
-            if (updatedAnswer.answer == YES && updatedAnswer.questionNode.yes is FollowupQuestion) {
-                add(Answer(updatedAnswer.questionNode.yes.questionNode, answer = null))
-            } else if (updatedAnswer.answer == NO && updatedAnswer.questionNode.no is FollowupQuestion) {
-                add(Answer(updatedAnswer.questionNode.no.questionNode, answer = null))
-            }
+            updatedAnswer.getNextAnswer()?.let { add(it) }
         }
     }
 
     fun onClickContinue() {
         viewModelScope.launch {
             val lastAnswer = answers.last()
-            val navigationTarget =
-                if (lastAnswer.answer == YES && lastAnswer.questionNode.yes is Navigation) {
-                    lastAnswer.questionNode.yes.navigationTarget
-                } else if (lastAnswer.answer == NO && lastAnswer.questionNode.no is Navigation) {
-                    lastAnswer.questionNode.no.navigationTarget
-                } else {
-                    null
+            val questionnaireOutcome = lastAnswer.getOutcome()
+            if (questionnaireOutcome != null) {
+                val vaccinationStatusResponses = answers.map {
+                    OptOutResponseEntry(
+                        it.questionNode.questionType,
+                        it.answer == BinaryRadioGroupOption.OPTION_1
+                    )
                 }
 
-            if (navigationTarget != null) {
-                acknowledgeRiskyContact()
-                if (navigationTarget is FullyVaccinated || navigationTarget is MedicallyExempt) {
-                    optOutOfContactIsolation()
-                }
                 viewStateLiveData.postValue(viewStateLiveData.value?.copy(showError = false))
-                navigateToNextScreen(navigationTarget)
+                val reviewData = ReviewData(
+                    questionnaireOutcome,
+                    ageResponse = OptOutResponseEntry(IsAdult, true),
+                    vaccinationStatusResponses = vaccinationStatusResponses
+                )
+                navigateToNextScreen(Review(reviewData))
             } else {
                 viewStateLiveData.postValue(viewStateLiveData.value?.copy(showError = true))
             }
@@ -214,29 +212,36 @@ class ExposureNotificationVaccinationStatusViewModel @Inject constructor(
         val showSubtitle: Boolean
     )
 
-    enum class QuestionType {
-        FULLY_VACCINATED, DOSE_DATE, CLINICAL_TRIAL, MEDICALLY_EXEMPT
-    }
-
-    data class Question(val questionType: QuestionType, val state: BinaryRadioGroupOption?)
+    data class Question(val questionType: VaccinationStatusQuestionType, val state: BinaryRadioGroupOption?)
 
     sealed class SelectionOutcome {
         data class FollowupQuestion(val questionNode: QuestionNode) : SelectionOutcome()
-        data class Navigation(val navigationTarget: NavigationTarget) : SelectionOutcome()
+        data class Completion(val questionnaireOutcome: QuestionnaireOutcome) : SelectionOutcome()
     }
 
     data class QuestionNode(
-        val questionType: QuestionType,
+        val questionType: VaccinationStatusQuestionType,
         val yes: SelectionOutcome,
         val no: SelectionOutcome
-    )
+    ) {
+        fun getFinalQuestionOrNull(answer: BinaryRadioGroupOption?): QuestionnaireOutcome? =
+            if (answer == YES && yes is Completion) yes.questionnaireOutcome
+            else if (answer == NO && no is Completion) no.questionnaireOutcome
+            else null
 
-    data class Answer(val questionNode: QuestionNode, val answer: BinaryRadioGroupOption?)
+        fun getNextAnswerOrNull(answer: BinaryRadioGroupOption?): Answer? =
+            if (answer == YES && yes is FollowupQuestion) Answer(yes.questionNode, answer = null)
+            else if (answer == NO && no is FollowupQuestion) Answer(no.questionNode, answer = null)
+            else null
+    }
+
+    data class Answer(val questionNode: QuestionNode, val answer: BinaryRadioGroupOption?) {
+        fun getOutcome(): QuestionnaireOutcome? = questionNode.getFinalQuestionOrNull(answer)
+        fun getNextAnswer(): Answer? = questionNode.getNextAnswerOrNull(answer)
+    }
 
     sealed class NavigationTarget {
-        object FullyVaccinated : NavigationTarget()
-        object Isolating : NavigationTarget()
-        object MedicallyExempt : NavigationTarget()
         object Finish : NavigationTarget()
+        data class Review(val reviewData: ReviewData) : NavigationTarget()
     }
 }

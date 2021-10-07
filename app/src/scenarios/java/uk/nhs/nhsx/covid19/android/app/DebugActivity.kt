@@ -87,9 +87,17 @@ import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockQrScannerViewModel
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockQrScannerViewModel.Options
 import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationActivity
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationAgeLimitActivity
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationAgeLimitActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ExposureNotificationReviewActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.OptOutResponseEntry
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.AgeLimitQuestionType.IsAdult
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.DoseDate
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionnaireOutcome.FullyVaccinated
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionnaireOutcome.MedicallyExempt
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ReviewData
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.BookFollowUpTestActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
@@ -828,12 +836,12 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
         addScreenButton("Exposure Notification Age Limit") {
             createExposureNotification()
-            startActivity<ExposureNotificationAgeLimitActivity>()
+            ExposureNotificationAgeLimitActivity.start(this)
         }
 
         addScreenButton("Exposure Notification Vaccination Status") {
             createExposureNotification()
-            startActivity<ExposureNotificationVaccinationStatusActivity>()
+            ExposureNotificationVaccinationStatusActivity.start(this)
         }
 
         addScreenButton("Self-isolation hub") {
@@ -859,9 +867,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
 
         addScreenButton("Risky Contact Advice - New isolation (resets state)") {
-            val isolationStateMachine = appComponent.provideIsolationStateMachine()
-            isolationStateMachine.reset()
-            isolationStateMachine.processEvent(OnExposedNotification(Instant.now()))
+            resetIsolationStateAndEnterContactIsolation()
             RiskyContactIsolationAdviceActivity.start(this)
         }
 
@@ -875,6 +881,28 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         addScreenButton("New no symptoms") {
             startActivity<NewNoSymptomsActivity>()
         }
+
+        addScreenButton("Risky contact review") {
+            resetIsolationStateAndEnterContactIsolation()
+            ExposureNotificationReviewActivity.start(
+                this,
+                reviewData = ReviewData(
+                    questionnaireOutcome = MedicallyExempt,
+                    ageResponse = OptOutResponseEntry(questionType = IsAdult, true),
+                    vaccinationStatusResponses = listOf(
+                        OptOutResponseEntry(questionType = VaccinationStatusQuestionType.FullyVaccinated, true),
+                        OptOutResponseEntry(questionType = DoseDate, false),
+                        OptOutResponseEntry(questionType = VaccinationStatusQuestionType.MedicallyExempt, true),
+                    )
+                )
+            )
+        }
+    }
+
+    private fun resetIsolationStateAndEnterContactIsolation() {
+        val isolationStateMachine = appComponent.provideIsolationStateMachine()
+        isolationStateMachine.reset()
+        isolationStateMachine.processEvent(OnExposedNotification(Instant.now()))
     }
 
     private fun createExposureNotification() =

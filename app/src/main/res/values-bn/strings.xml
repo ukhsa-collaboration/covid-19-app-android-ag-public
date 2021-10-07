@@ -735,10 +735,17 @@
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">চিকিৎসাগত কারণে আপনি টিকা নিতে অপারগ হলে ন্যায্যতা ও সমতার খাতিরে আপনার স্ববিচ্ছিন্ন থাকার দরকার নাই।</string>
-    <string name="self_isolation_hub_get_isolation_note_description">আপনার নিয়োগকর্তাকে দেখানোর জন্য যদি আপনার স্ব-বিচ্ছিন্ন থাকা বিষয়ে কোনো নোট দরকার হয়</string>
-    <string name="self_isolation_hub_get_isolation_note_title">স্ব-বিচ্ছিন্ন থাকা বিষয়ে নোট সংগ্রহ করুন</string>
+    <string name="self_isolation_hub_get_isolation_note_description">এই অ্যাপ আপনার ব্যক্তিগত তথ্য জমা করে রাখে না বা এই পরিষেবার সাথে শেয়ার করে না, তাই আপনার তথ্যাদি আপনাকে প্রবেশ করাতে হবে</string>
+    <string name="self_isolation_hub_get_isolation_note_title">আপনার নিয়োগদাতাকে দেখানোর জন্য বিচ্ছিন্ন থাকা সংক্রান্ত একটি নোট নিন</string>
     <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
     <string name="exposure_notification_clinical_trial_yes_content_description">Yes I am taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="contact_case_summary_change_age_button">বদলান</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_button">বদলান</string>
+    <string name="contact_case_summary_heading">আপনার উত্তর যাচাই করুন</string>
+    <string name="contact_case_summary_submit_button">উত্তর জমা দিন</string>
+    <string name="contact_case_summary_title">আপনার উত্তর যাচাই করুন</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
 </resources>

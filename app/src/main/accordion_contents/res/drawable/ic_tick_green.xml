@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="33dp"
+    android:height="29dp"
+    android:viewportWidth="33"
+    android:viewportHeight="29"
+    android:autoMirrored="true">
+  <path
+      android:pathData="M22.8,10L14.3,18.4L10,14.2"
+      android:strokeWidth="4"
+      android:fillColor="#00000000"
+      android:strokeColor="@color/nhs_button_green"
+      android:strokeLineCap="round"/>
+</vector>

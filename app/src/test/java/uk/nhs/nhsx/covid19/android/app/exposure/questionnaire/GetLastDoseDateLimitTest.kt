@@ -1,8 +1,9 @@
-package uk.nhs.nhsx.covid19.android.app.exposure.encounter
+package uk.nhs.nhsx.covid19.android.app.exposure.questionnaire
 
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.GetRiskyContactEncounterDate
 import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

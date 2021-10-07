@@ -1,9 +1,10 @@
-package uk.nhs.nhsx.covid19.android.app.exposure.encounter
+package uk.nhs.nhsx.covid19.android.app.exposure.questionnaire
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.GetRiskyContactEncounterDate
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject

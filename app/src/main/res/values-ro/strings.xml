@@ -742,10 +742,17 @@
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">În scopuri de echitate și egalitate, dacă nu vă puteți vaccina din motive medicale, nu trebuie să vă autoizolați.</string>
-    <string name="self_isolation_hub_get_isolation_note_description">În cazul în care aveți nevoie de o adeverință de izolare pentru a o prezenta angajatorului</string>
-    <string name="self_isolation_hub_get_isolation_note_title">Obțineți o adeverință de izolare</string>
+    <string name="self_isolation_hub_get_isolation_note_description">Aplicația nu stochează și nu partajează informațiile dvs. personale cu acest serviciu, prin urmare este necesar să vă introduceți datele</string>
+    <string name="self_isolation_hub_get_isolation_note_title">Obțineți o adeverință de izolare pentru a o prezenta angajatorului</string>
     <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
     <string name="exposure_notification_clinical_trial_yes_content_description">Yes I am taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="contact_case_summary_change_age_button">Modificare</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_button">Modificare</string>
+    <string name="contact_case_summary_heading">Verificați răspunsurile</string>
+    <string name="contact_case_summary_submit_button">Trimiteți răspunsurile</string>
+    <string name="contact_case_summary_title">Verificați răspunsurile</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
 </resources>

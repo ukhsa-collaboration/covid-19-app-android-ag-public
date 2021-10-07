@@ -1,5 +1,7 @@
-package uk.nhs.nhsx.covid19.android.app.exposure.encounter
+package uk.nhs.nhsx.covid19.android.app.exposure.questionnaire
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
@@ -15,10 +17,9 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.Finish
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.FullyVaccinated
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.Isolating
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.MedicallyExempt
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.Finish
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.Review
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ExposureNotificationReviewActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
@@ -92,11 +93,21 @@ class ExposureNotificationVaccinationStatusActivity :
 
         viewModel.navigate().observe(this) { navigationTarget ->
             when (navigationTarget) {
-                FullyVaccinated -> RiskyContactIsolationAdviceActivity.startAsFullyVaccinated(this)
-                Isolating -> RiskyContactIsolationAdviceActivity.start(this)
-                MedicallyExempt -> RiskyContactIsolationAdviceActivity.startAsMedicallyExempt(this)
+                is Review -> ExposureNotificationReviewActivity.start(this, navigationTarget.reviewData)
                 Finish -> finish()
             }
         }
+    }
+
+    companion object {
+        fun start(context: Context, clearTop: Boolean = false) =
+            context.startActivity(getIntent(context, clearTop))
+
+        private fun getIntent(context: Context, clearTop: Boolean) =
+            Intent(context, ExposureNotificationVaccinationStatusActivity::class.java).apply {
+                if (clearTop) {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                }
+            }
     }
 }

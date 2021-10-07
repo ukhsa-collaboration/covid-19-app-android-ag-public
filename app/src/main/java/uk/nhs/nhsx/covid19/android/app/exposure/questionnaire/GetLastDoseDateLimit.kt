@@ -1,5 +1,6 @@
-package uk.nhs.nhsx.covid19.android.app.exposure.encounter
+package uk.nhs.nhsx.covid19.android.app.exposure.questionnaire
 
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.GetRiskyContactEncounterDate
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject

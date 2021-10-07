@@ -77,6 +77,7 @@ import uk.nhs.nhsx.covid19.android.app.util.StrongBoxMigrationRetryStorage
 import uk.nhs.nhsx.covid19.android.app.util.getPrivateProperty
 import java.time.Clock
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.Locale
@@ -407,6 +408,10 @@ class TestApplicationContext {
         getCurrentState()
         runBackgroundTasks()
     }
+
+    suspend fun getAgeLimitBeforeEncounter(): LocalDate? = component.getAgeLimitBeforeEncounter().invoke()
+
+    fun getLastDoseDateLimit(): LocalDate? = component.getLastDoseDateLimit().invoke()
 
     companion object {
         const val ENGLISH_LOCAL_AUTHORITY = "E07000063"

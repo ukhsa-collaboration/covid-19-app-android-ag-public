@@ -219,10 +219,10 @@
             android:name=".exposure.encounter.ExposureNotificationActivity"
             android:label="@string/exposure_notification_title" />
         <activity
-            android:name=".exposure.encounter.ExposureNotificationAgeLimitActivity"
+            android:name=".exposure.questionnaire.ExposureNotificationAgeLimitActivity"
             android:label="@string/exposure_notification_age_title" />
         <activity
-            android:name=".exposure.encounter.ExposureNotificationVaccinationStatusActivity"
+            android:name=".exposure.questionnaire.ExposureNotificationVaccinationStatusActivity"
             android:label="@string/exposure_notification_vaccination_status_title" />
         <activity
             android:name=".questionnaire.NewNoSymptomsActivity"
@@ -230,6 +230,9 @@
         <activity
             android:name=".exposure.encounter.RiskyContactIsolationAdviceActivity"
             android:label="@string/empty_accessibility_announcement" />
+        <activity
+            android:name=".exposure.questionnaire.review.ExposureNotificationReviewActivity"
+            android:label="@string/contact_case_summary_title" />
 
         <!-- Receivers -->
         <receiver

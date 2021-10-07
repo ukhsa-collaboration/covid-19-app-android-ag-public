@@ -1,4 +1,4 @@
-package uk.nhs.nhsx.covid19.android.app.exposure.encounter
+package uk.nhs.nhsx.covid19.android.app.exposure.questionnaire
 
 import io.mockk.every
 import io.mockk.mockk

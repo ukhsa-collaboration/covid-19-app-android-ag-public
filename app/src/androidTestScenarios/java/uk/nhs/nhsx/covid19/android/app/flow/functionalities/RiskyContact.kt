@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.flow.functionalities
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfo
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationAgeLimitRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationReviewRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationVaccinationStatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.RiskyContactIsolationAdviceRobot
@@ -14,6 +15,7 @@ class RiskyContact(
     private val exposureNotificationRobot = ExposureNotificationRobot()
     private val ageLimitRobot = ExposureNotificationAgeLimitRobot()
     private val vaccinationStatusRobot = ExposureNotificationVaccinationStatusRobot()
+    private val reviewRobot = ExposureNotificationReviewRobot(espressoTest.testAppContext)
     private val riskyContactIsolationAdviceRobot = RiskyContactIsolationAdviceRobot()
 
     fun triggerViaCircuitBreaker(runBackgroundTasks: () -> Unit) {
@@ -47,12 +49,9 @@ class RiskyContact(
         vaccinationStatusRobot.clickClinicalTrialNoButton()
         vaccinationStatusRobot.clickContinueButton()
 
-        waitFor { riskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
-        if (alreadyIsolating) {
-            riskyContactIsolationAdviceRobot.clickPrimaryBackToHome()
-        } else {
-            riskyContactIsolationAdviceRobot.clickSecondaryBackToHome()
-        }
+        clickSubmitButtonOnReviewScreen()
+
+        clickBackToHomeOnIsolationAdviceScreen(alreadyIsolating)
     }
 
     fun acknowledgeIsolationViaOptOutMinor(alreadyIsolating: Boolean = false) {
@@ -62,12 +61,9 @@ class RiskyContact(
         ageLimitRobot.clickNoButton()
         ageLimitRobot.clickContinueButton()
 
-        waitFor { riskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
-        if (alreadyIsolating) {
-            riskyContactIsolationAdviceRobot.clickPrimaryBackToHome()
-        } else {
-            riskyContactIsolationAdviceRobot.clickSecondaryBackToHome()
-        }
+        clickSubmitButtonOnReviewScreen()
+
+        clickBackToHomeOnIsolationAdviceScreen(alreadyIsolating)
     }
 
     fun acknowledgeIsolationViaOptOutFullyVaccinated(alreadyIsolating: Boolean = false) {
@@ -83,11 +79,22 @@ class RiskyContact(
         vaccinationStatusRobot.clickDateYesButton()
         vaccinationStatusRobot.clickContinueButton()
 
+        clickSubmitButtonOnReviewScreen()
+
+        clickBackToHomeOnIsolationAdviceScreen(alreadyIsolating)
+    }
+
+    private fun clickBackToHomeOnIsolationAdviceScreen(alreadyIsolating: Boolean) {
         waitFor { riskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
         if (alreadyIsolating) {
             riskyContactIsolationAdviceRobot.clickPrimaryBackToHome()
         } else {
             riskyContactIsolationAdviceRobot.clickSecondaryBackToHome()
         }
+    }
+
+    private fun clickSubmitButtonOnReviewScreen() {
+        waitFor { reviewRobot.checkActivityIsDisplayed() }
+        reviewRobot.clickSubmitButton()
     }
 }

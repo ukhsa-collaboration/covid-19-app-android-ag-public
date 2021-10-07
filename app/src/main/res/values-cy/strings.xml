@@ -659,9 +659,9 @@
     <string name="exposure_notification_age_description">Ni fyddwn yn defnyddio’ch atebion ond i wirio a allai fod angen i chi hunanynysu.</string>
     <string name="exposure_notification_age_error_description">I barhau, mae angen i chi ddewis ateb</string>
     <string name="exposure_notification_age_error_title">Gwall</string>
-    <string name="exposure_notification_age_heading">Eich oed</string>
+    <string name="exposure_notification_age_heading">Eich oedran</string>
     <string name="exposure_notification_age_no_content_description_template">Nac oeddwn, doeddwn i ddim yn 18 oed neu\'n hŷn ar %s?</string>
-    <string name="exposure_notification_age_option1_text">Ydw</string>
+    <string name="exposure_notification_age_option1_text">Oeddwn</string>
     <string name="exposure_notification_age_option2_text">Na</string>
     <string name="exposure_notification_age_subtitle">Oeddech chi\'n 18 neu\'n hŷn ar 16 Chwefror 2021?</string>
     <string name="exposure_notification_age_subtitle_template">Oeddech chi\'n 18 oed neu\'n hŷn ar %s?</string>
@@ -763,10 +763,17 @@
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">Er tegwch a chydraddoldeb, os na allwch gael y brechiad am resymau meddygol, does dim angen i chi hunanynysu.</string>
-    <string name="self_isolation_hub_get_isolation_note_description">Os oes angen nodyn ynysu arnoch I\'w ddangos i\'ch cyflogwr</string>
-    <string name="self_isolation_hub_get_isolation_note_title">Cael nodyn ynysu</string>
+    <string name="self_isolation_hub_get_isolation_note_description">Nid yw\'r ap yn dal nac yn rhannu eich gwybodaeth bersonol gyda\'r gwasanaeth hwn, felly bydd angen i chi nodi\'ch manylion</string>
+    <string name="self_isolation_hub_get_isolation_note_title">Mynnwch nodyn ynysu i ddangos i\'ch cyflogwr</string>
     <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
     <string name="exposure_notification_clinical_trial_yes_content_description">Yes I am taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="contact_case_summary_change_age_button">Newid</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_button">Newid</string>
+    <string name="contact_case_summary_heading">Gwiriwch eich atebion</string>
+    <string name="contact_case_summary_submit_button">Cyflwynwch eich atebion</string>
+    <string name="contact_case_summary_title">Gwiriwch eich atebion</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
 </resources>

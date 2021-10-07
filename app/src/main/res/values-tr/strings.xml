@@ -651,7 +651,7 @@
     <string name="exposure_notification_title">Uygulama, koronavirüs (COVID-19) test sonucu pozitif olan birisinin yakınında bulunduğunuzu tespit etti.</string>
     <string name="exposure_notification_vaccination_status_all_doses_no">Hayır</string>
     <string name="exposure_notification_vaccination_status_all_doses_no_content_description">Hayır, COVID-19\'a karşı bütün aşı dozlarımı olmadım</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question">COVID-19\'a karşı bütün aşı dozlarınızı oldunuz mu?</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question">COVID-19’a karşı bütün doz aşılarınızı oldunuz mu?</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_description">Bunun, Birleşik Krallık\'ta kullanım için onaylanmış bir aşı olması gerekir.</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_text">Onaylı aşılar hakkında daha fazla bilgi edinin</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/coronavirus-vaccination/coronavirus-vaccine/</string>
@@ -661,7 +661,7 @@
     <string name="exposure_notification_vaccination_status_button">Onayla</string>
     <string name="exposure_notification_vaccination_status_date_no">Hayır</string>
     <string name="exposure_notification_vaccination_status_date_no_content_description">Hayır, son aşı dozumu %s tarihinden önce olmadım.</string>
-    <string name="exposure_notification_vaccination_status_date_question">\"Son aşı dozunuzu %s tarihinden önce mi oldunuz?</string>
+    <string name="exposure_notification_vaccination_status_date_question">Son doz aşınızı %s tarihinde veya öncesinde mi oldunuz?</string>
     <string name="exposure_notification_vaccination_status_date_yes">Evet</string>
     <string name="exposure_notification_vaccination_status_date_yes_content_description">Evet, son aşı dozumu %s tarihinden önce oldum.</string>
     <string name="exposure_notification_vaccination_status_description">Yanıtlarınızı sadece kendinizi karantinaya almanız gerekip gerekmediğini kontrol etmek için kullanacağız.</string>
@@ -685,7 +685,7 @@
     <string name="isolation_hub_accordion_isolation_practical_support_title">Karantinadayken pratik destek</string>
     <string name="isolation_hub_advice_and_support_heading">Tavsiye ve destek</string>
     <string name="isolation_hub_book_test_description">COVID-19\'u (koronavirüs) yayma riski taşıyor olabilirsiniz</string>
-    <string name="isolation_hub_book_test_title">Karantinadayken ücretsiz bir test için rezervasyon yapın</string>
+    <string name="isolation_hub_book_test_title">Karantinadayken ücretsiz test yaptırmak için randevu alın</string>
     <string name="isolation_hub_financial_support_description">Karantinadayken finansal destek ödemesi alma hakkında bilgi edinin</string>
     <string name="isolation_hub_financial_support_title">Finansal destek için uygunluğunuzu kontrol edin</string>
     <string name="notification_channel_isolation_hub_reminder_description">These notifications inform about available resources when self isolating</string>
@@ -736,10 +736,17 @@
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">Hakkaniyet ve eşitlik adına; eğer tıbbi sebeplerden dolayı aşı olamıyorsanız, kendinizi karantinaya almanız gerekmez.</string>
-    <string name="self_isolation_hub_get_isolation_note_description">İşvereninize göstermek için bir karantina notuna ihtiyacınız varsa</string>
-    <string name="self_isolation_hub_get_isolation_note_title">Bir Karantina notu edinin</string>
+    <string name="self_isolation_hub_get_isolation_note_description">Uygulama kişisel bilgilerinizi bu hizmetle paylaşmadığından bilgilerinizi kendiniz girmeniz gerekecek</string>
+    <string name="self_isolation_hub_get_isolation_note_title">İşvereninize vermek üzere karantina belgesi alın</string>
     <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
     <string name="exposure_notification_clinical_trial_yes_content_description">Yes I am taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="contact_case_summary_change_age_button">Değiştir</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_button">Değiştir</string>
+    <string name="contact_case_summary_heading">Yanıtlarınızı kontrol edin</string>
+    <string name="contact_case_summary_submit_button">Yanıtları ilet</string>
+    <string name="contact_case_summary_title">Yanıtlarınızı kontrol edin</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
 </resources>

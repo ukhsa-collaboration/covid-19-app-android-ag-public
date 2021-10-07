@@ -1,4 +1,4 @@
-package uk.nhs.nhsx.covid19.android.app.exposure.encounter
+package uk.nhs.nhsx.covid19.android.app.exposure.questionnaire
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
@@ -12,17 +12,19 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.NavigationTarget
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.Finish
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.FullyVaccinated
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.Isolating
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.MedicallyExempt
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.Question
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.QuestionType.CLINICAL_TRIAL
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.QuestionType.DOSE_DATE
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.QuestionType.FULLY_VACCINATED
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.QuestionType.MEDICALLY_EXEMPT
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.ViewState
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.NavigationTarget
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.Finish
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.Review
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.Question
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.ViewState
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.OptOutResponseEntry
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.AgeLimitQuestionType.IsAdult
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.ClinicalTrial
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.DoseDate
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.FullyVaccinated
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.MedicallyExempt
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionnaireOutcome
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ReviewData
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import java.time.Clock
@@ -37,8 +39,6 @@ class ExposureNotificationVaccinationStatusViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val mockAcknowledgeRiskyContact: AcknowledgeRiskyContact = mockk(relaxUnitFun = true)
-    private val mockOptOutOfContactIsolation: OptOutOfContactIsolation = mockk(relaxUnitFun = true)
     private val mockGetLastDoseDateLimit: GetLastDoseDateLimit = mockk(relaxed = true)
     private val mockLocalAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider = mockk(relaxUnitFun = true)
 
@@ -67,7 +67,7 @@ class ExposureNotificationVaccinationStatusViewModelTest {
         testSubject.onClickContinue()
 
         val expectedViewState = ViewState(
-            questions = listOf(Question(FULLY_VACCINATED, YES), Question(DOSE_DATE, null)),
+            questions = listOf(Question(FullyVaccinated, YES), Question(DoseDate, null)),
             showError = false,
             date = expectedLastDoseDateLimit,
             showSubtitle = true
@@ -81,7 +81,7 @@ class ExposureNotificationVaccinationStatusViewModelTest {
         testSubject.onClickContinue()
 
         val expectedViewState = ViewState(
-            questions = listOf(Question(FULLY_VACCINATED, null)),
+            questions = listOf(Question(FullyVaccinated, null)),
             showError = true,
             date = expectedLastDoseDateLimit,
             showSubtitle = true
@@ -97,8 +97,8 @@ class ExposureNotificationVaccinationStatusViewModelTest {
 
         val expectedViewState = ViewState(
             questions = listOf(
-                Question(FULLY_VACCINATED, YES),
-                Question(DOSE_DATE, null)
+                Question(FullyVaccinated, YES),
+                Question(DoseDate, null)
             ),
             showError = true,
             date = expectedLastDoseDateLimit,
@@ -116,9 +116,9 @@ class ExposureNotificationVaccinationStatusViewModelTest {
 
         val expectedViewState = ViewState(
             questions = listOf(
-                Question(FULLY_VACCINATED, YES),
-                Question(DOSE_DATE, NO),
-                Question(CLINICAL_TRIAL, null)
+                Question(FullyVaccinated, YES),
+                Question(DoseDate, NO),
+                Question(ClinicalTrial, null)
             ),
             showError = true,
             date = expectedLastDoseDateLimit,
@@ -139,10 +139,10 @@ class ExposureNotificationVaccinationStatusViewModelTest {
 
         val expectedViewState = ViewState(
             questions = listOf(
-                Question(FULLY_VACCINATED, YES),
-                Question(DOSE_DATE, NO),
-                Question(CLINICAL_TRIAL, NO),
-                Question(MEDICALLY_EXEMPT, null)
+                Question(FullyVaccinated, YES),
+                Question(DoseDate, NO),
+                Question(ClinicalTrial, NO),
+                Question(MedicallyExempt, null)
             ),
             showError = true,
             date = expectedLastDoseDateLimit,
@@ -161,8 +161,8 @@ class ExposureNotificationVaccinationStatusViewModelTest {
 
         val expectedViewState = ViewState(
             questions = listOf(
-                Question(FULLY_VACCINATED, NO),
-                Question(CLINICAL_TRIAL, null)
+                Question(FullyVaccinated, NO),
+                Question(ClinicalTrial, null)
             ),
             showError = true,
             date = expectedLastDoseDateLimit,
@@ -182,9 +182,9 @@ class ExposureNotificationVaccinationStatusViewModelTest {
 
         val expectedViewState = ViewState(
             questions = listOf(
-                Question(FULLY_VACCINATED, NO),
-                Question(MEDICALLY_EXEMPT, NO),
-                Question(CLINICAL_TRIAL, null)
+                Question(FullyVaccinated, NO),
+                Question(MedicallyExempt, NO),
+                Question(ClinicalTrial, null)
             ),
             showError = true,
             date = expectedLastDoseDateLimit,
@@ -202,7 +202,7 @@ class ExposureNotificationVaccinationStatusViewModelTest {
         testSubject.onClickContinue()
 
         val expectedViewState = ViewState(
-            questions = listOf(Question(FULLY_VACCINATED, NO), Question(MEDICALLY_EXEMPT, null)),
+            questions = listOf(Question(FullyVaccinated, NO), Question(MedicallyExempt, null)),
             showError = true,
             date = expectedLastDoseDateLimit,
             showSubtitle = true
@@ -212,29 +212,46 @@ class ExposureNotificationVaccinationStatusViewModelTest {
     }
 
     @Test
-    fun `when all doses option selected yes, date option selected yes, on click continue navigates to result, acknowledges risky contact and opts out of contact isolation`() {
+    fun `when all doses option selected yes, date option selected yes, on click continue navigates to review`() {
         testSubject.onFullyVaccinatedOptionChanged(YES)
         testSubject.onLastDoseDateOptionChanged(YES)
         testSubject.onClickContinue()
 
+        val expected = listOf(
+            OptOutResponseEntry(FullyVaccinated, true),
+            OptOutResponseEntry(DoseDate, true)
+        )
+
         verify {
-            navigateObserver.onChanged(FullyVaccinated)
-            mockAcknowledgeRiskyContact()
-            mockOptOutOfContactIsolation()
+            navigateObserver.onChanged(
+                createNavigationState(
+                    questionnaireOutcome = QuestionnaireOutcome.FullyVaccinated,
+                    vaccinationStatusResponse = expected
+                )
+            )
         }
     }
 
     @Test
-    fun `when all doses option selected yes, date option selected no, clinical trial option selected yes, on click continue acknowledges risky contact and opts out of contact isolation`() {
+    fun `when all doses option selected yes, date option selected no, clinical trial option selected yes, on click continue navigates to review`() {
         testSubject.onFullyVaccinatedOptionChanged(YES)
         testSubject.onLastDoseDateOptionChanged(NO)
         testSubject.onClinicalTrialOptionChanged(YES)
         testSubject.onClickContinue()
 
+        val expected = listOf(
+            OptOutResponseEntry(FullyVaccinated, true),
+            OptOutResponseEntry(DoseDate, false),
+            OptOutResponseEntry(ClinicalTrial, true)
+        )
+
         verify {
-            navigateObserver.onChanged(FullyVaccinated)
-            mockAcknowledgeRiskyContact()
-            mockOptOutOfContactIsolation()
+            navigateObserver.onChanged(
+                createNavigationState(
+                    questionnaireOutcome = QuestionnaireOutcome.FullyVaccinated,
+                    vaccinationStatusResponse = expected
+                )
+            )
         }
     }
 
@@ -247,7 +264,7 @@ class ExposureNotificationVaccinationStatusViewModelTest {
         testSubject.onClinicalTrialOptionChanged(NO)
         testSubject.onFullyVaccinatedOptionChanged(NO)
 
-        val expected = listOf(Question(FULLY_VACCINATED, NO), Question(MEDICALLY_EXEMPT, null))
+        val expected = listOf(Question(FullyVaccinated, NO), Question(MedicallyExempt, null))
 
         verify { viewStateObserver.onChanged(createViewState(questions = expected)) }
     }
@@ -261,7 +278,7 @@ class ExposureNotificationVaccinationStatusViewModelTest {
         testSubject.onClinicalTrialOptionChanged(NO)
         testSubject.onLastDoseDateOptionChanged(YES)
 
-        val questionsAfterDoseDateYes = listOf(Question(FULLY_VACCINATED, YES), Question(DOSE_DATE, YES))
+        val questionsAfterDoseDateYes = listOf(Question(FullyVaccinated, YES), Question(DoseDate, YES))
 
         verify { viewStateObserver.onChanged(createViewState(questions = questionsAfterDoseDateYes)) }
     }
@@ -276,10 +293,11 @@ class ExposureNotificationVaccinationStatusViewModelTest {
         testSubject.onMedicallyExemptOptionChanged(YES)
         testSubject.onClinicalTrialOptionChanged(YES)
 
-        val expected = listOf(Question(FULLY_VACCINATED, YES), Question(DOSE_DATE, NO), Question(CLINICAL_TRIAL, YES))
+        val expected = listOf(Question(FullyVaccinated, YES), Question(DoseDate, NO), Question(ClinicalTrial, YES))
 
         verify { viewStateObserver.onChanged(createViewState(questions = expected)) }
     }
+
     @Test
     fun `when in Wales, dose date selected no, clinical selected no, dose date option changed to yes should clear clinical trial option`() {
         coEvery { mockLocalAuthorityPostCodeProvider.getPostCodeDistrict() } returns WALES
@@ -289,7 +307,7 @@ class ExposureNotificationVaccinationStatusViewModelTest {
         testSubject.onClinicalTrialOptionChanged(NO)
         testSubject.onLastDoseDateOptionChanged(YES)
 
-        val expected = listOf(Question(FULLY_VACCINATED, YES), Question(DOSE_DATE, YES))
+        val expected = listOf(Question(FullyVaccinated, YES), Question(DoseDate, YES))
 
         verify { viewStateObserver.onChanged(createViewState(questions = expected)) }
     }
@@ -302,7 +320,7 @@ class ExposureNotificationVaccinationStatusViewModelTest {
         testSubject.onMedicallyExemptOptionChanged(NO)
         testSubject.onFullyVaccinatedOptionChanged(YES)
 
-        val expected = listOf(Question(FULLY_VACCINATED, YES), Question(DOSE_DATE, null))
+        val expected = listOf(Question(FullyVaccinated, YES), Question(DoseDate, null))
 
         verify { viewStateObserver.onChanged(createViewState(questions = expected)) }
     }
@@ -316,13 +334,13 @@ class ExposureNotificationVaccinationStatusViewModelTest {
         testSubject.onClinicalTrialOptionChanged(YES)
         testSubject.onMedicallyExemptOptionChanged(YES)
 
-        val expected = listOf(Question(FULLY_VACCINATED, NO), Question(MEDICALLY_EXEMPT, YES))
+        val expected = listOf(Question(FullyVaccinated, NO), Question(MedicallyExempt, YES))
 
         verify { viewStateObserver.onChanged(createViewState(questions = expected)) }
     }
 
     @Test
-    fun `when in Wales, all doses option selected yes, date option selected no, clinical trial option selected no, on click continue acknowledges risky contact and goes into isolation`() {
+    fun `when in Wales, all doses option selected yes, date option selected no, clinical trial option selected no, on click continue navigates to review`() {
         coEvery { mockLocalAuthorityPostCodeProvider.getPostCodeDistrict() } returns WALES
 
         testSubject.onFullyVaccinatedOptionChanged(YES)
@@ -330,41 +348,55 @@ class ExposureNotificationVaccinationStatusViewModelTest {
         testSubject.onClinicalTrialOptionChanged(NO)
         testSubject.onClickContinue()
 
-        verify { navigateObserver.onChanged(Isolating) }
-        verify { mockAcknowledgeRiskyContact() }
-        verify(exactly = 0) { mockOptOutOfContactIsolation() }
+        val expected = listOf(
+            OptOutResponseEntry(FullyVaccinated, true),
+            OptOutResponseEntry(DoseDate, false),
+            OptOutResponseEntry(ClinicalTrial, false)
+        )
+
+        verify {
+            navigateObserver.onChanged(createNavigationState(QuestionnaireOutcome.NotExempt, expected))
+        }
     }
 
     @Test
-    fun `when in Wales, all doses option selected no, clinical trial option selected no, on click continue acknowledges risky contact and goes into isolation`() {
+    fun `when in Wales, all doses option selected no, clinical trial option selected no, on click continue navigates to review`() {
         coEvery { mockLocalAuthorityPostCodeProvider.getPostCodeDistrict() } returns WALES
 
         testSubject.onFullyVaccinatedOptionChanged(NO)
         testSubject.onClinicalTrialOptionChanged(NO)
         testSubject.onClickContinue()
 
-        verify { navigateObserver.onChanged(Isolating) }
-        verify { mockAcknowledgeRiskyContact() }
-        verify(exactly = 0) { mockOptOutOfContactIsolation() }
+        val expected = listOf(
+            OptOutResponseEntry(FullyVaccinated, false),
+            OptOutResponseEntry(ClinicalTrial, false)
+        )
+
+        verify {
+            navigateObserver.onChanged(createNavigationState(QuestionnaireOutcome.NotExempt, expected))
+        }
     }
 
     @Test
-    fun `when in Wales, all doses option selected no, clinical trial option selected yes, on click continue acknowledges risky contact and opts out of contact isolation`() {
+    fun `when in Wales, all doses option selected no, clinical trial option selected yes, on click continue navigates to review`() {
         coEvery { mockLocalAuthorityPostCodeProvider.getPostCodeDistrict() } returns WALES
 
         testSubject.onFullyVaccinatedOptionChanged(NO)
         testSubject.onClinicalTrialOptionChanged(YES)
         testSubject.onClickContinue()
 
+        val expected = listOf(
+            OptOutResponseEntry(FullyVaccinated, false),
+            OptOutResponseEntry(ClinicalTrial, true)
+        )
+
         verify {
-            navigateObserver.onChanged(FullyVaccinated)
-            mockAcknowledgeRiskyContact()
-            mockOptOutOfContactIsolation()
+            navigateObserver.onChanged(createNavigationState(QuestionnaireOutcome.FullyVaccinated, expected))
         }
     }
 
     @Test
-    fun `when in England, all doses selected yes, date selected no, clinical trial selected no, medically exempt yes, on click continue acknowledges risky contact and opts out of isolation`() {
+    fun `when in England, all doses selected yes, date selected no, clinical trial selected no, medically exempt yes, on click continue navigates to review`() {
         coEvery { mockLocalAuthorityPostCodeProvider.getPostCodeDistrict() } returns ENGLAND
 
         testSubject.onFullyVaccinatedOptionChanged(YES)
@@ -373,15 +405,20 @@ class ExposureNotificationVaccinationStatusViewModelTest {
         testSubject.onMedicallyExemptOptionChanged(YES)
         testSubject.onClickContinue()
 
+        val expected = listOf(
+            OptOutResponseEntry(FullyVaccinated, true),
+            OptOutResponseEntry(DoseDate, false),
+            OptOutResponseEntry(ClinicalTrial, false),
+            OptOutResponseEntry(MedicallyExempt, true)
+        )
+
         verify {
-            navigateObserver.onChanged(MedicallyExempt)
-            mockAcknowledgeRiskyContact()
-            mockOptOutOfContactIsolation()
+            navigateObserver.onChanged(createNavigationState(QuestionnaireOutcome.MedicallyExempt, expected))
         }
     }
 
     @Test
-    fun `when in England, all doses selected yes, date selected no, clinical trial selected no, medically exempt no, on click continue acknowledges risky contact and goes into isolation`() {
+    fun `when in England, all doses selected yes, date selected no, clinical trial selected no, medically exempt no, on click continue navigates to review`() {
         coEvery { mockLocalAuthorityPostCodeProvider.getPostCodeDistrict() } returns ENGLAND
 
         testSubject.onFullyVaccinatedOptionChanged(YES)
@@ -390,28 +427,38 @@ class ExposureNotificationVaccinationStatusViewModelTest {
         testSubject.onMedicallyExemptOptionChanged(NO)
         testSubject.onClickContinue()
 
-        verify { navigateObserver.onChanged(Isolating) }
-        verify { mockAcknowledgeRiskyContact() }
-        verify(exactly = 0) { mockOptOutOfContactIsolation() }
+        val expected = listOf(
+            OptOutResponseEntry(FullyVaccinated, true),
+            OptOutResponseEntry(DoseDate, false),
+            OptOutResponseEntry(ClinicalTrial, false),
+            OptOutResponseEntry(MedicallyExempt, false)
+        )
+
+        verify {
+            navigateObserver.onChanged(createNavigationState(QuestionnaireOutcome.NotExempt, expected))
+        }
     }
 
     @Test
-    fun `when in England, all doses option selected no, medically exempt option selected yes, on click continue acknowledges risky contact and opts out of contact isolation`() {
+    fun `when in England, all doses option selected no, medically exempt option selected yes, on click continue navigates to review`() {
         coEvery { mockLocalAuthorityPostCodeProvider.getPostCodeDistrict() } returns ENGLAND
 
         testSubject.onFullyVaccinatedOptionChanged(NO)
         testSubject.onMedicallyExemptOptionChanged(YES)
         testSubject.onClickContinue()
 
+        val expected = listOf(
+            OptOutResponseEntry(FullyVaccinated, false),
+            OptOutResponseEntry(MedicallyExempt, true)
+        )
+
         verify {
-            navigateObserver.onChanged(MedicallyExempt)
-            mockAcknowledgeRiskyContact()
-            mockOptOutOfContactIsolation()
+            navigateObserver.onChanged(createNavigationState(QuestionnaireOutcome.MedicallyExempt, expected))
         }
     }
 
     @Test
-    fun `when in England, all doses option selected no, medically exempt option selected no, clinical trial selected yes on click continue acknowledges risky contact and opts out of contact isolation`() {
+    fun `when in England, all doses option selected no, medically exempt option selected no, clinical trial selected yes, on click continue navigates to review`() {
         coEvery { mockLocalAuthorityPostCodeProvider.getPostCodeDistrict() } returns ENGLAND
 
         testSubject.onFullyVaccinatedOptionChanged(NO)
@@ -419,15 +466,19 @@ class ExposureNotificationVaccinationStatusViewModelTest {
         testSubject.onClinicalTrialOptionChanged(YES)
         testSubject.onClickContinue()
 
+        val expected = listOf(
+            OptOutResponseEntry(FullyVaccinated, false),
+            OptOutResponseEntry(MedicallyExempt, false),
+            OptOutResponseEntry(ClinicalTrial, true)
+        )
+
         verify {
-            navigateObserver.onChanged(FullyVaccinated)
-            mockAcknowledgeRiskyContact()
-            mockOptOutOfContactIsolation()
+            navigateObserver.onChanged(createNavigationState(QuestionnaireOutcome.FullyVaccinated, expected))
         }
     }
 
     @Test
-    fun `when in England, all doses option selected no, medically exempt option selected no, clinical trial selected no on click continue acknowledges risky contact and goes into isolation`() {
+    fun `when in England, all doses option selected no, medically exempt option selected no, clinical trial selected no, on click continue navigates to review`() {
         coEvery { mockLocalAuthorityPostCodeProvider.getPostCodeDistrict() } returns ENGLAND
 
         testSubject.onFullyVaccinatedOptionChanged(NO)
@@ -435,9 +486,15 @@ class ExposureNotificationVaccinationStatusViewModelTest {
         testSubject.onClinicalTrialOptionChanged(NO)
         testSubject.onClickContinue()
 
-        verify { navigateObserver.onChanged(Isolating) }
-        verify { mockAcknowledgeRiskyContact() }
-        verify(exactly = 0) { mockOptOutOfContactIsolation() }
+        val expected = listOf(
+            OptOutResponseEntry(FullyVaccinated, false),
+            OptOutResponseEntry(MedicallyExempt, false),
+            OptOutResponseEntry(ClinicalTrial, false)
+        )
+
+        verify {
+            navigateObserver.onChanged(createNavigationState(QuestionnaireOutcome.NotExempt, expected))
+        }
     }
 
     @Test
@@ -448,7 +505,7 @@ class ExposureNotificationVaccinationStatusViewModelTest {
         setUpTestSubject()
 
         val expectedViewState = ViewState(
-            questions = listOf(Question(FULLY_VACCINATED, state = null)),
+            questions = listOf(Question(FullyVaccinated, state = null)),
             date = expectedDate,
             showSubtitle = true
         )
@@ -473,7 +530,7 @@ class ExposureNotificationVaccinationStatusViewModelTest {
         testSubject.onClickContinue()
 
         val expectedViewState = ViewState(
-            questions = listOf(Question(FULLY_VACCINATED, YES), Question(DOSE_DATE, null)),
+            questions = listOf(Question(FullyVaccinated, YES), Question(DoseDate, null)),
             showError = false,
             date = expectedLastDoseDateLimit,
             showSubtitle = false
@@ -484,8 +541,6 @@ class ExposureNotificationVaccinationStatusViewModelTest {
 
     private fun setUpTestSubject(): ExposureNotificationVaccinationStatusViewModel {
         return ExposureNotificationVaccinationStatusViewModel(
-            mockAcknowledgeRiskyContact,
-            mockOptOutOfContactIsolation,
             mockGetLastDoseDateLimit,
             mockLocalAuthorityPostCodeProvider,
             isolationStateMachine,
@@ -503,4 +558,17 @@ class ExposureNotificationVaccinationStatusViewModelTest {
             date = expectedLastDoseDateLimit,
             showSubtitle = true
         )
+
+    private fun createNavigationState(
+        questionnaireOutcome: QuestionnaireOutcome,
+        vaccinationStatusResponse: List<OptOutResponseEntry>
+    ): Review {
+        return Review(
+            ReviewData(
+                questionnaireOutcome,
+                ageResponse = OptOutResponseEntry(IsAdult, true),
+                vaccinationStatusResponses = vaccinationStatusResponse
+            )
+        )
+    }
 }

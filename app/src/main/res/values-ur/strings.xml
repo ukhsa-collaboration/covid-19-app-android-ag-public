@@ -631,7 +631,7 @@
     <string name="exposure_notification_age_description">ہم آپ کے جوابات کا استعمال صرف اس بات کی جانچ کے لیے کریں گے کہ آیا آپ کو خود کو علیحدہ کرنے کی ضرورت پڑ سکتی ہے۔</string>
     <string name="exposure_notification_age_error_description">جاری رکھنے کے لیے، آپ کو ایک جواب منتخب کرنے کی ضرورت ہے</string>
     <string name="exposure_notification_age_error_title">غلطی</string>
-    <string name="exposure_notification_age_heading">آپ کی عمر</string>
+    <string name="exposure_notification_age_heading">ٓپ کی عمر</string>
     <string name="exposure_notification_age_no_content_description_template">جی نہیں، %s کو میری عمر 18 سال یا اس سے زیادہ نہیں تھی</string>
     <string name="exposure_notification_age_option1_text">ہاں</string>
     <string name="exposure_notification_age_option2_text">نہیں</string>
@@ -735,10 +735,17 @@
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">انصاف اور برابری کے لیے، اگر آپ طبی وجوہات کی بنا پر ویکسین حاصل کرنے سے قاصر ہیں تو آپ کو خود کو تنہا رکھنے کی ضرورت نہیں ہے۔</string>
-    <string name="self_isolation_hub_get_isolation_note_description">اگر آپ کو اپنے آجر(ایمپلائر) کو دکھانے کے لیے آئیسولیشن نوٹ کی ضرورت ہے تو</string>
-    <string name="self_isolation_hub_get_isolation_note_title">آئیسولیشن نوٹ حاصل کریں</string>
+    <string name="self_isolation_hub_get_isolation_note_description">یہ ایپ آپ کی ذاتی معلومات اپنے پاس نہیں رکھتا یا اس سروس کو فراہم نہیں کرتا، چنانچہ آپ کو اپنی تفصیلات داخل کرنے کی ضرورت ہو گی</string>
+    <string name="self_isolation_hub_get_isolation_note_title">اپنے آجر(ایمپلائر) کو دکھانے کے لیے آئیسولیشن نوٹ حاصل کریں</string>
     <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
     <string name="exposure_notification_clinical_trial_yes_content_description">Yes I am taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="contact_case_summary_change_age_button">تبدیل کریں</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_button">تبدیل کریں</string>
+    <string name="contact_case_summary_heading">اپنے جوابات چیک کریں</string>
+    <string name="contact_case_summary_submit_button">جوابات پیش کریں</string>
+    <string name="contact_case_summary_title">اپنے جوابات چیک کریں</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
 </resources>

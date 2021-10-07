@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/itemAnswerCardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/question_not_selected_background"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp">
+
+        <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            android:id="@+id/responseGroupTitle"
+            style="@style/Title2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:paddingVertical="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/responseGroupChanger"
+            tools:text="@string/exposure_notification_age_heading" />
+
+        <uk.nhs.nhsx.covid19.android.app.widgets.UnderlinedTextView
+            android:id="@+id/responseGroupChanger"
+            style="@style/LinkText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/questionnaire_change" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include layout="@layout/view_divider" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/responseGroupUserInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:itemCount="2"
+        tools:listitem="@layout/item_opt_out_response" />
+
+</LinearLayout>

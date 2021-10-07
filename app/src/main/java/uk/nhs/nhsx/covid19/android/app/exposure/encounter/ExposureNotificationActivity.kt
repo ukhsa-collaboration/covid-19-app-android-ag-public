@@ -14,6 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.ViewState
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationAgeLimitActivity
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.util.uiLongFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
@@ -32,7 +33,7 @@ class ExposureNotificationActivity : BaseActivity(R.layout.activity_exposure_not
         viewModel.updateViewState()
 
         primaryActionButton.setOnSingleClickListener {
-            startActivity<ExposureNotificationAgeLimitActivity>()
+            ExposureNotificationAgeLimitActivity.start(this)
         }
 
         viewModel.viewState.observe(this) { viewState ->

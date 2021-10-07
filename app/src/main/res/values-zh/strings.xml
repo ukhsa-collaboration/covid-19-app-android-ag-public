@@ -624,7 +624,7 @@
     <string name="exposure_notification_age_description">我们将只通过您的回答来查看您是否需要自我隔离</string>
     <string name="exposure_notification_age_error_description">您需要选择一个答案才能继续</string>
     <string name="exposure_notification_age_error_title">错误</string>
-    <string name="exposure_notification_age_heading">您的年龄</string>
+    <string name="exposure_notification_age_heading">年龄</string>
     <string name="exposure_notification_age_no_content_description_template">不是，我 %s 还未满 18 周岁</string>
     <string name="exposure_notification_age_option1_text">是</string>
     <string name="exposure_notification_age_option2_text">否</string>
@@ -728,10 +728,17 @@
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">为了遵照公平和平等的原则，如果您因为医学原因而不能接种疫苗，则不需要自我隔离。</string>
-    <string name="self_isolation_hub_get_isolation_note_description">您是否需要一份隔离证明出示给您的雇主</string>
-    <string name="self_isolation_hub_get_isolation_note_title">获取隔离证明</string>
+    <string name="self_isolation_hub_get_isolation_note_description">该应用不会保存或与他人分享您的个人信息，因此请输入您的详细信息</string>
+    <string name="self_isolation_hub_get_isolation_note_title">向雇主出示隔离证明</string>
     <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
     <string name="exposure_notification_clinical_trial_yes_content_description">Yes I am taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="contact_case_summary_change_age_button">修改</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_button">修改</string>
+    <string name="contact_case_summary_heading">核实信息</string>
+    <string name="contact_case_summary_submit_button">提交信息</string>
+    <string name="contact_case_summary_title">核实信息</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
 </resources>

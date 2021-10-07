@@ -1,4 +1,4 @@
-package uk.nhs.nhsx.covid19.android.app.exposure.encounter
+package uk.nhs.nhsx.covid19.android.app.exposure.questionnaire
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,17 +7,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.Question
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.QuestionType.CLINICAL_TRIAL
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.QuestionType.DOSE_DATE
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.QuestionType.FULLY_VACCINATED
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationVaccinationStatusViewModel.QuestionType.MEDICALLY_EXEMPT
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.VaccinationStatusQuestionnaireAdapter.QuestionnaireViewHolder
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.VaccinationStatusQuestionnaireAdapter.VaccinationStatusQuestion
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.VaccinationStatusQuestionnaireAdapter.VaccinationStatusQuestion.ClinicalTrial
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.VaccinationStatusQuestionnaireAdapter.VaccinationStatusQuestion.DoseDate
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.VaccinationStatusQuestionnaireAdapter.VaccinationStatusQuestion.FullyVaccinated
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.VaccinationStatusQuestionnaireAdapter.VaccinationStatusQuestion.MedicallyExempt
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.Question
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.VaccinationStatusQuestionnaireAdapter.QuestionnaireViewHolder
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.VaccinationStatusQuestionnaireAdapter.VaccinationStatusQuestion
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.VaccinationStatusQuestionnaireAdapter.VaccinationStatusQuestion.ClinicalTrial
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.VaccinationStatusQuestionnaireAdapter.VaccinationStatusQuestion.DoseDate
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.VaccinationStatusQuestionnaireAdapter.VaccinationStatusQuestion.FullyVaccinated
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.VaccinationStatusQuestionnaireAdapter.VaccinationStatusQuestion.MedicallyExempt
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType
 import uk.nhs.nhsx.covid19.android.app.util.uiLongFormat
 import uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
 import uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup
@@ -171,8 +168,8 @@ class VaccinationStatusQuestionnaireAdapter(
 
 fun Question.toVaccinationStatusQuestion(date: LocalDate): VaccinationStatusQuestion =
     when (questionType) {
-        FULLY_VACCINATED -> FullyVaccinated(state)
-        DOSE_DATE -> DoseDate(state, date)
-        CLINICAL_TRIAL -> ClinicalTrial(state)
-        MEDICALLY_EXEMPT -> MedicallyExempt(state)
+        VaccinationStatusQuestionType.ClinicalTrial -> ClinicalTrial(state)
+        VaccinationStatusQuestionType.DoseDate -> DoseDate(state, date)
+        VaccinationStatusQuestionType.FullyVaccinated -> FullyVaccinated(state)
+        VaccinationStatusQuestionType.MedicallyExempt -> MedicallyExempt(state)
     }

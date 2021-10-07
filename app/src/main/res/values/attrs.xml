@@ -18,7 +18,7 @@
     </declare-styleable>
     <declare-styleable name="StatusOptionView">
         <attr name="optionIcon" format="reference" />
-        <attr name="optionIconBackgroundColor" format="reference"/>
+        <attr name="optionIconBackgroundColor" format="reference" />
         <attr name="optionText" format="string" />
         <attr name="optionExternalLink" format="boolean" />
     </declare-styleable>
@@ -115,7 +115,7 @@
     <declare-styleable name="ParagraphsContainer">
         <attr name="rawText" format="string" />
         <attr name="showBulletPoints" format="boolean" />
-        <attr name="paddingBetweenItems" format="dimension"/>
+        <attr name="paddingBetweenItems" format="dimension" />
     </declare-styleable>
     <declare-styleable name="AccordionButtonView">
         <attr name="accordionTitle" format="string" />
@@ -142,5 +142,10 @@
         <attr name="option2Text" format="string" />
         <attr name="option1ContentDescription" format="string" />
         <attr name="option2ContentDescription" format="string" />
+    </declare-styleable>
+    <declare-styleable name="OptOutResponseGroup">
+        <attr name="groupTitle" format="string" />
+        <attr name="groupChangeButtonText" format="string" />
+        <attr name="groupChangeButtonContentDescription" format="string" />
     </declare-styleable>
 </resources>

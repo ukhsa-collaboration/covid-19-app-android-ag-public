@@ -1,4 +1,4 @@
-package uk.nhs.nhsx.covid19.android.app.exposure.encounter
+package uk.nhs.nhsx.covid19.android.app.exposure.questionnaire
 
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.OptedOutForContactIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor

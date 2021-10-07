@@ -16,6 +16,8 @@ import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.di.module.NetworkModule
 import uk.nhs.nhsx.covid19.android.app.di.module.QrScannerViewModelModule
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfoProvider
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.GetAgeLimitBeforeEncounter
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.GetLastDoseDateLimit
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfoProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.RiskyVenueAlertProvider
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.ShouldShowEncounterDetectionActivityProvider
@@ -82,6 +84,10 @@ interface TestAppComponent : ApplicationComponent {
     fun getDownloadVirologyTestResultWork(): DownloadVirologyTestResultWork
 
     fun getPolicyUpdateStorage(): PolicyUpdateStorage
+
+    fun getAgeLimitBeforeEncounter(): GetAgeLimitBeforeEncounter
+
+    fun getLastDoseDateLimit(): GetLastDoseDateLimit
 
     @Singleton
     fun getIsolationPaymentTokenStateProvider(): IsolationPaymentTokenStateProvider

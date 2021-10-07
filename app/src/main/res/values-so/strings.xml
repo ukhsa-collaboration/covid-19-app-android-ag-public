@@ -736,10 +736,17 @@
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">Si loo helo caddaalad iyo sinnaan, haddii aadan awoodin inaad hesho tallaalka sababo caafimaad awgood uma baahnid inaad is-go\'doomiso.</string>
-    <string name="self_isolation_hub_get_isolation_note_description">Haddii aad u baahan tahay warqad is-go\'doomin si aad u tusto loo-shaqeeyahaaga</string>
-    <string name="self_isolation_hub_get_isolation_note_title">Hel warqad is-go\'doomin</string>
+    <string name="self_isolation_hub_get_isolation_note_description">App-ka ma hayo ama manala wadaago macluumaadkaaga shakhsi adeeggan, markaa waxaad u baahan doontaa inaad galiso faahfaahintaada</string>
+    <string name="self_isolation_hub_get_isolation_note_title">Hel warqad is-go\'doomin ah si aad u tusto loo-shaqeeyahaaga</string>
     <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
     <string name="exposure_notification_clinical_trial_yes_content_description">Yes I am taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
+    <string name="contact_case_summary_change_age_button">Beddel</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_button">Beddel</string>
+    <string name="contact_case_summary_heading">Eeg jawaabahaaga</string>
+    <string name="contact_case_summary_submit_button">Gudbi jawaabaha</string>
+    <string name="contact_case_summary_title">Eeg jawaabahaaga</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
 </resources>

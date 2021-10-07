@@ -10,6 +10,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import org.hamcrest.Matchers.allOf
 import uk.nhs.nhsx.covid19.android.app.R
 
 class SymptomsAfterRiskyVenueRobot {
@@ -32,13 +33,13 @@ class SymptomsAfterRiskyVenueRobot {
     }
 
     fun checkCancelDialogIsDisplayed() {
-        onView(withText(R.string.symptoms_after_risky_venue_cancel_dialog_title))
+        onView(withId(R.id.alertMultilineTitle))
             .inRoot(isDialog())
-            .check(matches(isDisplayed()))
+            .check(matches(allOf(isDisplayed(), withText(R.string.symptoms_after_risky_venue_cancel_dialog_title))))
     }
 
     fun checkCancelDialogIsNotDisplayed() {
-        onView(withText(R.string.symptoms_after_risky_venue_cancel_dialog_title))
+        onView(withId(R.id.alertMultilineTitle))
             .check(doesNotExist())
     }
 
