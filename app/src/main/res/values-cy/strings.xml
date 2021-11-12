@@ -299,7 +299,7 @@
     <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="status_option_link_test_result">Nodwch ganlyniad y prawf</string>
     <string name="about_software_information_text_app_version">Fersiwn yr ap</string>
-    <string name="about_software_information_text_app_manufacturer_value">NHS Test &amp; Trace\nDepartment of Health and Social Care\n39 Victoria Street\nWestminster\nLondon\nSW1H 0EU\nUK</string>
+    <string name="about_software_information_text_app_manufacturer_value">UK Health Security Agency\nNobel House\n17 Smith Square\nLondon\nSW1P 3HX\nUK</string>
     <string name="postcode_not_supported">Yn anffodus, nid yw\'r ap hwn yn cael ei gefnogi yn eich rhanbarth. Lawrlwythwch yr ap ar gyfer eich rhanbarth neu\'ch gwlad.</string>
     <string name="accessibility_announcement_button">%s, Botwm</string>
     <string name="accessibility_announcement_link">%s, Linc</string>
@@ -661,7 +661,7 @@
     <string name="exposure_notification_age_error_title">Gwall</string>
     <string name="exposure_notification_age_heading">Eich oedran</string>
     <string name="exposure_notification_age_no_content_description_template">Nac oeddwn, doeddwn i ddim yn 18 oed neu\'n hŷn ar %s?</string>
-    <string name="exposure_notification_age_option1_text">Oeddwn</string>
+    <string name="exposure_notification_age_option1_text">Ydw</string>
     <string name="exposure_notification_age_option2_text">Na</string>
     <string name="exposure_notification_age_subtitle">Oeddech chi\'n 18 neu\'n hŷn ar 16 Chwefror 2021?</string>
     <string name="exposure_notification_age_subtitle_template">Oeddech chi\'n 18 oed neu\'n hŷn ar %s?</string>
@@ -679,8 +679,8 @@
     <string name="exposure_notification_vaccination_status_all_doses_no">Na</string>
     <string name="exposure_notification_vaccination_status_all_doses_no_content_description">Nac ydw, dydw i ddim wedi fy mrechu\'n llawn rhag COVID-19</string>
     <string name="exposure_notification_vaccination_status_all_doses_question">Ydych chi wedi\'ch brechu\'n llawn rhag COVID-19?</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_description">Rhaid i\'r brechlyn fod yn un sydd wedi\'i gymeradwyo i\'w ddefnyddio yn y DU.</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">Darllenwch fwy am frechlynnau sydd wedi\'u cymeradwyo</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_description">Mae hyn yn golygu eich bod wedi cael pob dos o frechlyn sydd wedi ei gymeradwyo yn y Deyrnas Unedig.</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">Brechlynnau a gymeradwyir yn y DU</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/coronavirus-vaccination/coronavirus-vaccine/</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url_wls">https://llyw.cymru/cael-brechlyn-rhag-covid-19</string>
     <string name="exposure_notification_vaccination_status_all_doses_yes">Ydw</string>
@@ -688,7 +688,7 @@
     <string name="exposure_notification_vaccination_status_button">Cadarnhau</string>
     <string name="exposure_notification_vaccination_status_date_no">Na</string>
     <string name="exposure_notification_vaccination_status_date_no_content_description">Na, chefais i ddim fy nôs diwethaf ar neu cyn %s</string>
-    <string name="exposure_notification_vaccination_status_date_question">Wnaethoch chi gael eich dôs diwethaf ar neu cyn %s?</string>
+    <string name="exposure_notification_vaccination_status_date_question">A oeddech chi wedi’ch brechu\'n llawn ar neu cyn %s?</string>
     <string name="exposure_notification_vaccination_status_date_yes">Ydw</string>
     <string name="exposure_notification_vaccination_status_date_yes_content_description">Do, cefais fy nôs diwethaf ar neu cyn %s</string>
     <string name="exposure_notification_vaccination_status_description">Ni fyddwn yn defnyddio’ch atebion ond i wirio a allai fod angen i chi hunanynysu.</string>
@@ -770,10 +770,10 @@
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
     <string name="contact_case_summary_change_age_button">Newid</string>
-    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Newidiwch eich statws brechu</string>
     <string name="contact_case_summary_change_vaccination_status_button">Newid</string>
     <string name="contact_case_summary_heading">Gwiriwch eich atebion</string>
     <string name="contact_case_summary_submit_button">Cyflwynwch eich atebion</string>
     <string name="contact_case_summary_title">Gwiriwch eich atebion</string>
-    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">Newidiwch eich oed</string>
 </resources>

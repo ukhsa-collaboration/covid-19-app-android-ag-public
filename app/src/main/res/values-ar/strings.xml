@@ -299,7 +299,7 @@
     <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="status_option_link_test_result">أدخل نتيجة الاختبار</string>
     <string name="about_software_information_text_app_version">نسخة التطبيق</string>
-    <string name="about_software_information_text_app_manufacturer_value">NHS Test &amp; Trace\nDepartment of Health and Social Care\n39 Victoria Street\nWestminster\nLondon\nSW1H 0EU\nUK</string>
+    <string name="about_software_information_text_app_manufacturer_value">UK Health Security Agency\nNobel House\n17 Smith Square\nLondon\nSW1P 3HX\nUK</string>
     <string name="postcode_not_supported">للأسف، هذا التطبيق غير مدعومٍ في منطقتك. يرجى تنزيل التطبيق المناسب لمنطقتك أو دولتك.</string>
     <string name="accessibility_announcement_button">%s، الزر</string>
     <string name="accessibility_announcement_link">%s، الرابط</string>
@@ -679,8 +679,8 @@
     <string name="exposure_notification_vaccination_status_all_doses_no">لا</string>
     <string name="exposure_notification_vaccination_status_all_doses_no_content_description">لا، لم أحصل على كل الجرعات من اللقاح ضد فيروس كوفيد-19</string>
     <string name="exposure_notification_vaccination_status_all_doses_question">هل حصلت على كل الجرعات من اللقاح ضد فيروس كوفيد-19؟</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_description">يجب أن يكون هذا اللقاح قد تم اعتماده للاستخدام في أنحاء المملكة المتحدة.</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">قراءة المزيد عن اللقاحات المُعتمدة</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_description">هذا يعني أنك قد تلقيت جميع جرعات اللقاح المعتمدة من المملكة المتحدة.</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">لقاحات معتمدة من المملكة المتحدة</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/coronavirus-vaccination/coronavirus-vaccine/</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url_wls">https://gov.wales/get-your-covid-19-vaccine</string>
     <string name="exposure_notification_vaccination_status_all_doses_yes">نعم</string>
@@ -688,7 +688,7 @@
     <string name="exposure_notification_vaccination_status_button">تأكيد</string>
     <string name="exposure_notification_vaccination_status_date_no">لا</string>
     <string name="exposure_notification_vaccination_status_date_no_content_description">لا، لم أحصل على الجرعة الأخيرة لي من اللقاح في %s أو قبل ذلك</string>
-    <string name="exposure_notification_vaccination_status_date_question">هل حصلت على الجرعة الأخيرة لك من اللقاح في %s أو قبل ذلك؟</string>
+    <string name="exposure_notification_vaccination_status_date_question">هل تم تطعيمك بالكامل في أو قبل %s؟</string>
     <string name="exposure_notification_vaccination_status_date_yes">نعم</string>
     <string name="exposure_notification_vaccination_status_date_yes_content_description">نعم، حصلت على الجرعة الأخيرة لي من اللقاح في %s أو قبل ذلك</string>
     <string name="exposure_notification_vaccination_status_description">يُرجى العلم بأننا سنستخدم إجاباتك فقط للتحقق من مدى حاجتك لتطبيق العزل الذاتي.</string>
@@ -756,9 +756,9 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">إجراء اختبارٍ</string>
-    <string name="contact_case_continue_isolation_list_item_testing_with_date">إذا لم يكن قد سبق لك القيام بذلك بالفعل، نوصيك بحجز أحد اختبارات PCR المجانية في أقرب وقتٍ ممكنٍ. بعد الاختبار الأول لك، ينبغي لك أيضًا حجز اختبار PCR ثانٍ في %s</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">إذا لم يكن قد سبق لك القيام بذلك بالفعل، نوصيك بحجز أحد اختبارات PCR المجانية في أقرب وقتٍ ممكنٍ. بعد الاختبار الأول لك، ينبغي لك أيضًا حجز اختبار PCR ثانٍ في %s.</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">نوصيك بحجز أحد اختبارات PCR المجانية في أقرب وقتٍ ممكنٍ. بعد الاختبار الأول لك، ينبغي لك أيضًا حجز اختبار PCR ثانٍ في %s</string>
-    <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">نوصيك بحجز أحد اختبارات PCR المجانية في أقرب وقتٍ ممكنٍ. بعد الاختبار الأول لك، ينبغي لك أيضًا حجز اختبار PCR ثانٍ في %s</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">نوصيك بحجز أحد اختبارات PCR المجانية في أقرب وقتٍ ممكنٍ. بعد الاختبار الأول لك، ينبغي لك أيضًا حجز اختبار PCR ثانٍ في %s.</string>
     <string name="contact_case_start_isolation_list_item_testing_with_date">نوصيك بحجز أحد اختبارات PCR المجانية في أقرب وقتٍ ممكنٍ. بعد الاختبار الأول لك، ينبغي لك أيضًا حجز اختبار PCR ثانٍ في %s</string>
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
@@ -770,10 +770,10 @@
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
     <string name="contact_case_summary_change_age_button">تغيير</string>
-    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">تغيير حالة التطعيم الخاصة بك</string>
     <string name="contact_case_summary_change_vaccination_status_button">تغيير</string>
     <string name="contact_case_summary_heading">مراجعة إجاباتك</string>
     <string name="contact_case_summary_submit_button">إرسال الإجابات</string>
     <string name="contact_case_summary_title">مراجعة إجاباتك</string>
-    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">تغيير عمرك</string>
 </resources>

@@ -265,7 +265,7 @@
     <string name="about_software_information_text_app_version">App version</string>
     <string name="about_software_information_text_app_date_of_release">Date of release</string>
     <string name="about_software_information_text_app_manufacturer">Manufacturer and maintainer</string>
-    <string name="about_software_information_text_app_manufacturer_value">NHS Test &amp; Trace\nDepartment of Health and Social Care\n39 Victoria Street\nWestminster\nLondon\nSW1H 0EU\nUK</string>
+    <string name="about_software_information_text_app_manufacturer_value">UK Health Security Agency\nNobel House\n17 Smith Square\nLondon\nSW1P 3HX\nUK</string>
     <string name="test_result_positive_no_self_isolation_subtitle">Although you tested positive, your period for self-isolation is over</string>
     <string name="test_result_no_self_isolation_description">However, if you have a high temperature, continue to self-isolate until it returns to normal</string>
     <string name="for_further_advice_visit">For further advice, please visit:</string>
@@ -751,13 +751,13 @@
     <string name="exposure_notification_vaccination_status_error_title">Error</string>
     <string name="exposure_notification_vaccination_status_error_description">To continue, you need to select an answer</string>
     <string name="exposure_notification_vaccination_status_all_doses_question">Are you fully vaccinated against COVID-19?</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_description">This must be a vaccine that has been approved for use in the UK.</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">Read more about approved vaccines</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_description">This means you have had all doses of a UK-approved vaccine.</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">UK-approved vaccines</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/coronavirus-vaccination/coronavirus-vaccine/</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url_wls">https://gov.wales/get-your-covid-19-vaccine</string>
     <string name="exposure_notification_vaccination_status_all_doses_yes_content_description">Yes I am fully vaccinated against COVID-19</string>
     <string name="exposure_notification_vaccination_status_all_doses_no_content_description">No I am not fully vaccinated against COVID-19</string>
-    <string name="exposure_notification_vaccination_status_date_question">Did you receive your last dose on or before %s?</string>
+    <string name="exposure_notification_vaccination_status_date_question">Were you fully vaccinated on or before %s?</string>
     <string name="exposure_notification_vaccination_status_date_yes_content_description">Yes, I received my last dose on or before %s</string>
     <string name="exposure_notification_vaccination_status_date_no_content_description">No I did not receive my last dose on or before %s</string>
     <string name="exposure_notification_vaccination_status_title">Vaccination status</string>
@@ -809,8 +809,4 @@
     <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
     <string name="contact_case_summary_change_vaccination_status_button">Change</string>
     <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
-    <string name="contact_case_continue_isolation_list_item_testing">You are advised to book a free PCR test as soon as possible. After your first test, you should also book a second PCR test as soon as possible.</string>
-    <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing">You are advised to book a free PCR test as soon as possible. After your first test, you should also book a second PCR test as soon as possible.</string>
-    <string name="contact_case_no_isolation_under_age_limit_list_item_testing">You are advised to book a free PCR test as soon as possible. After your first test, you should also book a second PCR test as soon as possible.</string>
-    <string name="contact_case_start_isolation_list_item_testing">You are advised to book a free PCR test as soon as possible. After your first test, you should also book a second PCR test as soon as possible</string>
 </resources>

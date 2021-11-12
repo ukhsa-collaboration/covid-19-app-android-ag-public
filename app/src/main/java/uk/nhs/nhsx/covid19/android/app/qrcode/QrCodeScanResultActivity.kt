@@ -81,7 +81,7 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
             }
         }
 
-        viewModel.onCreate(intent.getParcelableExtra(SCAN_RESULT) as QrCodeScanResult)
+        viewModel.onCreate(intent.getParcelableExtra(SCAN_RESULT)!!)
     }
 
     override fun onResume() {

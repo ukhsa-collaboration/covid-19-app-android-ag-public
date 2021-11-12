@@ -279,7 +279,7 @@
     <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="status_option_link_test_result">输入您的测试代码</string>
     <string name="about_software_information_text_app_version">应用程序版本</string>
-    <string name="about_software_information_text_app_manufacturer_value">NHS Test &amp; Trace\nDepartment of Health and Social Care\n39 Victoria Street\nWestminster\nLondon\nSW1H 0EU\nUK</string>
+    <string name="about_software_information_text_app_manufacturer_value">UK Health Security Agency\nNobel House\n17 Smith Square\nLondon\nSW1P 3HX\nUK</string>
     <string name="postcode_not_supported">很遗憾，您所在地区不支持该应用程序 请下载您所在地区或国家的应用程序。</string>
     <string name="accessibility_announcement_button">%s ，按钮</string>
     <string name="accessibility_announcement_link">%s ，链接</string>
@@ -644,8 +644,8 @@
     <string name="exposure_notification_vaccination_status_all_doses_no">否</string>
     <string name="exposure_notification_vaccination_status_all_doses_no_content_description">不是，我尚未完全接种新冠病毒疫苗</string>
     <string name="exposure_notification_vaccination_status_all_doses_question">您是否已完全接种新冠病毒疫苗?</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_description">该疫苗必须是英国批准使用的疫苗。</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">阅读更多关于批准疫苗的信息</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_description">这意味着您已经接种了所有剂量的英国批准的疫苗。</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">英国批准的疫苗</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/coronavirus-vaccination/coronavirus-vaccine/</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url_wls">https://gov.wales/get-your-covid-19-vaccine</string>
     <string name="exposure_notification_vaccination_status_all_doses_yes">是</string>
@@ -653,7 +653,7 @@
     <string name="exposure_notification_vaccination_status_button">确认</string>
     <string name="exposure_notification_vaccination_status_date_no">否</string>
     <string name="exposure_notification_vaccination_status_date_no_content_description">不是，在%s当天或之前我尚未接种最后一剂</string>
-    <string name="exposure_notification_vaccination_status_date_question">您在 %s 当天或之前是否已接种最后一剂疫苗？</string>
+    <string name="exposure_notification_vaccination_status_date_question">你是否在%s或之前完全接种了疫苗？</string>
     <string name="exposure_notification_vaccination_status_date_yes">是</string>
     <string name="exposure_notification_vaccination_status_date_yes_content_description">是的，在%s当天或之前我已接种最后一剂一秒</string>
     <string name="exposure_notification_vaccination_status_description">我们将只通过您的回答来查看您是否需要自我隔离。</string>
@@ -735,10 +735,10 @@
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
     <string name="contact_case_summary_change_age_button">修改</string>
-    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">更改疫苗接种状态</string>
     <string name="contact_case_summary_change_vaccination_status_button">修改</string>
     <string name="contact_case_summary_heading">核实信息</string>
     <string name="contact_case_summary_submit_button">提交信息</string>
     <string name="contact_case_summary_title">核实信息</string>
-    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">更改年龄</string>
 </resources>

@@ -285,7 +285,7 @@
     <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="status_option_link_test_result">পরীক্ষার ফলাফল প্রবেশ করান</string>
     <string name="about_software_information_text_app_version">অ্যাপের সংস্করণ</string>
-    <string name="about_software_information_text_app_manufacturer_value">NHS Test &amp; Trace\nDepartment of Health and Social Care\n39 Victoria Street\nWestminster\nLondon\nSW1H 0EU\nUK</string>
+    <string name="about_software_information_text_app_manufacturer_value">UK Health Security Agency\nNobel House\n17 Smith Square\nLondon\nSW1P 3HX\nUK</string>
     <string name="postcode_not_supported">দুর্ভাগ্যজনকভাবে, এই অ্যাপটি আপনার অঞ্চলে সমর্থিত নয়।আপনার অঞ্চল অথবা দেশের জন্যে অনুগ্রহ করে এই অ্যাপটি ডাউনলোড করুন।</string>
     <string name="accessibility_announcement_button">%s, বোতাম</string>
     <string name="accessibility_announcement_link">%s, লিঙ্ক</string>
@@ -651,8 +651,8 @@
     <string name="exposure_notification_vaccination_status_all_doses_no">না</string>
     <string name="exposure_notification_vaccination_status_all_doses_no_content_description">না, আমি কোভিড-১৯ এর টিকা দেওয়া পুরোপুরি সম্পন্ন করিনি</string>
     <string name="exposure_notification_vaccination_status_all_doses_question">আপনি কি কোভিড-১৯ এর টিকা দেওয়া পুরোপুরি সম্পন্ন করেছেন?</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_description">টিকাটি অবশ্যই যুক্তরাজ্যে ব্যবহারের জন্য অনুমোদিত হতে হবে।</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">অনুমোদিত টিকার ব্যাপারে আরো পড়ুন</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_description">এর অর্থ আপনি একটি UK অনুমোদিত টিকার সমস্ত ডোজ নিয়েছেন।</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">UK অনুমোদিত টিকাসমূহ</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/coronavirus-vaccination/coronavirus-vaccine/</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url_wls">https://gov.wales/get-your-covid-19-vaccine</string>
     <string name="exposure_notification_vaccination_status_all_doses_yes">হ্যাঁ</string>
@@ -660,7 +660,7 @@
     <string name="exposure_notification_vaccination_status_button">সুনিশ্চিত করুন</string>
     <string name="exposure_notification_vaccination_status_date_no">না</string>
     <string name="exposure_notification_vaccination_status_date_no_content_description">না, আমি %s তারিখে বা তার আগে আমার শেষ ডোজ নিইনি</string>
-    <string name="exposure_notification_vaccination_status_date_question">আপনি কি %s তারিখে বা তার আগে আপনার শেষ ডোজটি নিয়েছেন?</string>
+    <string name="exposure_notification_vaccination_status_date_question">আপনি কি %s এ বা তার আগে সম্পূর্ণ রূপে টিকাপ্রাপ্ত ছিলেন?</string>
     <string name="exposure_notification_vaccination_status_date_yes">হ্যাঁ</string>
     <string name="exposure_notification_vaccination_status_date_yes_content_description">হ্যাঁ, আমি %s তারিখে বা তার আগে আমার শেষ ডোজ নিয়েছি</string>
     <string name="exposure_notification_vaccination_status_description">আপনার স্ব-বিচ্ছিন্ন থাকা দরকার কিনা তা যাচাই করার জন্যই কেবল আমরা আপনার উত্তর ব্যবহার করব।</string>
@@ -742,10 +742,10 @@
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
     <string name="contact_case_summary_change_age_button">বদলান</string>
-    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">আপনার টিকার স্থিতি পরিবর্তন করুন</string>
     <string name="contact_case_summary_change_vaccination_status_button">বদলান</string>
     <string name="contact_case_summary_heading">আপনার উত্তর যাচাই করুন</string>
     <string name="contact_case_summary_submit_button">উত্তর জমা দিন</string>
     <string name="contact_case_summary_title">আপনার উত্তর যাচাই করুন</string>
-    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">আপনার বয়স পরিবর্তন করুন</string>
 </resources>

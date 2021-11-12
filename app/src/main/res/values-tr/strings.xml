@@ -284,7 +284,7 @@
     <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="status_option_link_test_result">Test sonucunu girin</string>
     <string name="about_software_information_text_app_version">Uygulama Sürümü</string>
-    <string name="about_software_information_text_app_manufacturer_value">NHS Test &amp; Trace\nDepartment of Health and Social Care\n39 Victoria Street\nWestminster\nLondon\nSW1H 0EU\nUK</string>
+    <string name="about_software_information_text_app_manufacturer_value">UK Health Security Agency\nNobel House\n17 Smith Square\nLondon\nSW1P 3HX\nUK</string>
     <string name="postcode_not_supported">Ne yazık ki bu uygulama bulunduğunuz bölgede desteklenmiyor. Lütfen bölgeniz veya ülkeniz için sunulan uygulamayı indirin.</string>
     <string name="accessibility_announcement_button">%s , Düğme</string>
     <string name="accessibility_announcement_link">%s , Bağlantı</string>
@@ -652,8 +652,8 @@
     <string name="exposure_notification_vaccination_status_all_doses_no">Hayır</string>
     <string name="exposure_notification_vaccination_status_all_doses_no_content_description">Hayır, COVID-19\'a karşı bütün aşı dozlarımı olmadım</string>
     <string name="exposure_notification_vaccination_status_all_doses_question">COVID-19’a karşı bütün doz aşılarınızı oldunuz mu?</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_description">Bunun, Birleşik Krallık\'ta kullanım için onaylanmış bir aşı olması gerekir.</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">Onaylı aşılar hakkında daha fazla bilgi edinin</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_description">Bu, Birleşik Krallık tarafından onaylanan aşılardan birinin bütün dozlarını yaptırdığınız anlamına gelir.</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">Birleşik Krallık’ın onayladığı aşılar</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/coronavirus-vaccination/coronavirus-vaccine/</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url_wls">https://gov.wales/get-your-covid-19-vaccine</string>
     <string name="exposure_notification_vaccination_status_all_doses_yes">Evet</string>
@@ -661,7 +661,7 @@
     <string name="exposure_notification_vaccination_status_button">Onayla</string>
     <string name="exposure_notification_vaccination_status_date_no">Hayır</string>
     <string name="exposure_notification_vaccination_status_date_no_content_description">Hayır, son aşı dozumu %s tarihinden önce olmadım.</string>
-    <string name="exposure_notification_vaccination_status_date_question">Son doz aşınızı %s tarihinde veya öncesinde mi oldunuz?</string>
+    <string name="exposure_notification_vaccination_status_date_question">%s tarihinde veya öncesinde tam aşılı mıydınız?</string>
     <string name="exposure_notification_vaccination_status_date_yes">Evet</string>
     <string name="exposure_notification_vaccination_status_date_yes_content_description">Evet, son aşı dozumu %s tarihinden önce oldum.</string>
     <string name="exposure_notification_vaccination_status_description">Yanıtlarınızı sadece kendinizi karantinaya almanız gerekip gerekmediğini kontrol etmek için kullanacağız.</string>
@@ -743,10 +743,10 @@
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
     <string name="contact_case_summary_change_age_button">Değiştir</string>
-    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Aşı durumunu değiştir</string>
     <string name="contact_case_summary_change_vaccination_status_button">Değiştir</string>
     <string name="contact_case_summary_heading">Yanıtlarınızı kontrol edin</string>
     <string name="contact_case_summary_submit_button">Yanıtları ilet</string>
     <string name="contact_case_summary_title">Yanıtlarınızı kontrol edin</string>
-    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">Yaşını değiştir</string>
 </resources>

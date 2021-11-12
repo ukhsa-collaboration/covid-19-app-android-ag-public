@@ -283,7 +283,7 @@
     <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="status_option_link_test_result">ਆਪਣਾ ਟੈਸਟ ਨਤੀਜਾ ਦਰਜ ਕਰੋ</string>
     <string name="about_software_information_text_app_version">ਐਪ ਸੰਸਕਰਣ</string>
-    <string name="about_software_information_text_app_manufacturer_value">NHS Test &amp; Trace\nDepartment of Health and Social Care\n39 Victoria Street\nWestminster\nLondon\nSW1H 0EU\nUK</string>
+    <string name="about_software_information_text_app_manufacturer_value">UK Health Security Agency\nNobel House\n17 Smith Square\nLondon\nSW1P 3HX\nUK</string>
     <string name="postcode_not_supported">ਬਦਕਿਸਮਤੀ ਨਾਲ ਤੁਹਾਡੇ ਖੇਤਰ ਵਿੱਚ ਇਸ ਐਪ ਲਈ ਸਹਾਇਤਾ ਨਹੀਂ ਕੀਤੀ ਜਾਂਦੀ। ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਖੇਤਰ ਜਾਂ ਦੇਸ਼ ਲਈ ਐਪ ਡਾਊਨਲੋਡ ਕਰੋ।</string>
     <string name="accessibility_announcement_button">%s , ਬਟਨ</string>
     <string name="accessibility_announcement_link">%s , ਲਿੰਕ</string>
@@ -651,8 +651,8 @@
     <string name="exposure_notification_vaccination_status_all_doses_no">ਨਹੀਂ</string>
     <string name="exposure_notification_vaccination_status_all_doses_no_content_description">ਨਹੀਂ, ਮੇਰਾ COVID-19 ਦੇ ਵਿਰੁੱਧ ਪੂਰਾ ਟੀਕਾਕਰਨ ਨਹੀਂ ਹੋਇਆ ਹੈ</string>
     <string name="exposure_notification_vaccination_status_all_doses_question">ਕੀ ਤੁਹਾਡਾ COVID-19 ਦੇ ਵਿਰੁੱਧ ਪੂਰਾ ਟੀਕਾਕਰਨ ਹੋ ਗਿਆ ਹੈ?</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_description">ਇਹ ਲਾਜ਼ਮੀ ਤੌਰ \'ਤੇ ਅਜਿਹਾ ਟੀਕਾ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ ਜਿਸ ਨੂੰ ਯੂਕੇ ਵਿੱਚ ਵਰਤੋਂ ਲਈ ਮਨਜ਼ੂਰ ਕੀਤਾ ਗਿਆ ਹੈ।</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">ਮਨਜੂਰਸ਼ੁਦਾ ਟੀਕਿਆਂ ਬਾਰੇ ਹੋਰ ਪੜ੍ਹੋ</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_description">ਇਸਦਾ ਮਤਲਬ ਹੈ ਕਿ ਤੁਸੀਂ ਸਾਰੀਆਂ ਖੁਰਾਕਾਂ ਯੂਕੇ ਦੁਆਰਾ ਪ੍ਰਵਾਨਿਤ ਵੈਕਸੀਨ ਦੀਆਂ ਲਈਆਂ ਸਨ।</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">ਯੂਕੇ ਦੁਆਰਾ ਪ੍ਰਵਾਨਿਤ ਵੈਕਸੀਨਾਂ</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/coronavirus-vaccination/coronavirus-vaccine/</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url_wls">https://gov.wales/get-your-covid-19-vaccine</string>
     <string name="exposure_notification_vaccination_status_all_doses_yes">ਹਾਂ</string>
@@ -660,7 +660,7 @@
     <string name="exposure_notification_vaccination_status_button">ਪੁਸ਼ਟੀ ਕਰੋ</string>
     <string name="exposure_notification_vaccination_status_date_no">ਨਹੀਂ</string>
     <string name="exposure_notification_vaccination_status_date_no_content_description">ਨਹੀਂ, ਮੈਨੂੰ ਮੇਰੀ ਆਖਰੀ ਖੁਰਾਕ %s ਨੂੰ ਜਾਂ ਇਸ ਤੋਂ ਪਹਿਲਾਂ ਨਹੀਂ ਮਿਲੀ ਸੀ</string>
-    <string name="exposure_notification_vaccination_status_date_question">ਕੀ ਤੁਹਾਨੂੰ ਤੁਹਾਡੀ ਆਖਰੀ ਖੁਰਾਕ %s ਨੂੰ ਜਾਂ ਇਸ ਤੋਂ ਪਹਿਲਾਂ ਮਿਲ ਗਈ ਸੀ?</string>
+    <string name="exposure_notification_vaccination_status_date_question">ਕੀ ਤੁਹਾਡਾ %s ਨੂੰ ਜਾਂ ਇਸ ਤੋਂ ਪਹਿਲਾਂ ਪੂਰੀ ਤਰ੍ਹਾਂ ਟੀਕਾਕਰਨ ਹੋ ਗਿਆ ਸੀ?</string>
     <string name="exposure_notification_vaccination_status_date_yes">ਹਾਂ</string>
     <string name="exposure_notification_vaccination_status_date_yes_content_description">ਹਾਂ, ਮੈਨੂੰ ਮੇਰੀ ਆਖਰੀ ਖੁਰਾਕ %s ਨੂੰ ਜਾਂ ਇਸ ਤੋਂ ਪਹਿਲਾਂ ਮਿਲ ਗਈ ਸੀ</string>
     <string name="exposure_notification_vaccination_status_description">ਅਸੀਂ ਤੁਹਾਡੇ ਜਵਾਬਾਂ ਦੀ ਵਰਤੋਂ ਸਿਰਫ ਇਹ ਜਾਂਚ ਕਰਨ ਲਈ ਕਰਾਂਗੇ ਕਿ ਕੀ ਤੁਹਾਨੂੰ ਆਪਣੇ ਆਪ ਨੂੰ ਅਲੱਗ ਰੱਖਣ ਦੀ ਲੋੜ ਹੈ।</string>
@@ -742,10 +742,10 @@
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
     <string name="contact_case_summary_change_age_button">ਬਦਲੋ</string>
-    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">ਆਪਣੀ ਟੀਕਾਕਰਣ ਸਥਿਤੀ ਨੂੰ ਬਦਲੋ</string>
     <string name="contact_case_summary_change_vaccination_status_button">ਬਦਲੋ</string>
     <string name="contact_case_summary_heading">ਆਪਣੇ ਜਵਾਬ ਜਾਂਚੋ</string>
     <string name="contact_case_summary_submit_button">ਜਵਾਬ ਭਰੋ</string>
     <string name="contact_case_summary_title">ਆਪਣੇ ਜਵਾਬ ਜਾਂਚੋ</string>
-    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">ਆਪਣੀ ਉਮਰ ਬਦਲੋ</string>
 </resources>

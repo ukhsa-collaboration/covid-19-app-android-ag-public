@@ -282,7 +282,7 @@
     <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="status_option_link_test_result">તમારા ટેસ્ટ પરિણામને દાખલ કરો</string>
     <string name="about_software_information_text_app_version">એપ આવૃત્તિ</string>
-    <string name="about_software_information_text_app_manufacturer_value">NHS Test &amp; Trace\nDepartment of Health and Social Care\n39 Victoria Street\nWestminster\nLondon\nSW1H 0EU\nUK</string>
+    <string name="about_software_information_text_app_manufacturer_value">UK Health Security Agency\nNobel House\n17 Smith Square\nLondon\nSW1P 3HX\nUK</string>
     <string name="postcode_not_supported">કમનસીબે આ એપને તમારા ક્ષેત્રમાં સપોર્ટ મળતો નથી. તમારા ક્ષેત્ર અથવા દેશ માટે કૃપા કરી આ એપને ડાઉનલોડ કરો.</string>
     <string name="accessibility_announcement_button">%s , બટન</string>
     <string name="accessibility_announcement_link">%s, લિંક</string>
@@ -651,8 +651,8 @@
     <string name="exposure_notification_vaccination_status_all_doses_no">ના</string>
     <string name="exposure_notification_vaccination_status_all_doses_no_content_description">ના, મને COVID-19 સામે ફૂલ વેક્સિન આપવામાં નથી આવી</string>
     <string name="exposure_notification_vaccination_status_all_doses_question">શું તમને COVID-19 સામે સંપૂર્ણ રસી અપાય છે?</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_description">આ એ વેક્સિન હોવી જોય કે જેને યુકેમાં ઉપયોગ માટે મંજૂરી આપવામાં આવી છે.</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">માન્ય વેક્સિન વિશે વધુ વાંચો</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_description">આનો અર્થ એ છે કે તમે UK દ્વારા માન્ય રસીના બધા ડોઝ લઈ લીધા છે.</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">UK દ્વારા માન્ય રસીઓ</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/coronavirus-vaccination/coronavirus-vaccine/</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url_wls">https://gov.wales/get-your-covid-19-vaccine</string>
     <string name="exposure_notification_vaccination_status_all_doses_yes">હા</string>
@@ -660,7 +660,7 @@
     <string name="exposure_notification_vaccination_status_button">પુષ્ટિ કરો</string>
     <string name="exposure_notification_vaccination_status_date_no">ના</string>
     <string name="exposure_notification_vaccination_status_date_no_content_description">ના, મને મારો છેલ્લો ડોઝ %s પર અથવા તે પહેલાં મળ્યો નથી</string>
-    <string name="exposure_notification_vaccination_status_date_question">શું તમે તમારો છેલ્લો ડોઝ %s પર અથવા તે પહેલાં મેળવ્યો હતો?</string>
+    <string name="exposure_notification_vaccination_status_date_question">%sના રોજ કે તે પહેલાં તમે સંપૂર્ણ રસીકરણ કરાવી લીધું હતું?</string>
     <string name="exposure_notification_vaccination_status_date_yes">હા</string>
     <string name="exposure_notification_vaccination_status_date_yes_content_description">હા મને %s પર અથવા તે પહેલાં મારો છેલ્લો ડોઝ મળ્યો</string>
     <string name="exposure_notification_vaccination_status_description">અમે તમારા જવાબોનો ઉપયોગ ફક્ત તે તપાસ માટે કરીશું કે તમારે સેલ્ફ-આઇસોલેટ થવાની જરૂર પડી શકે કે નહીં.</string>
@@ -742,10 +742,10 @@
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
     <string name="contact_case_summary_change_age_button">બદલો</string>
-    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">તમારા રસીકરણની સ્થિતિ બદલો</string>
     <string name="contact_case_summary_change_vaccination_status_button">બદલો</string>
     <string name="contact_case_summary_heading">તમારા જવાબો ચેક કરો</string>
     <string name="contact_case_summary_submit_button">જવાબો મોકલો</string>
     <string name="contact_case_summary_title">તમારા જવાબો ચેક કરો</string>
-    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">તમારી ઉંમર બદલો</string>
 </resources>

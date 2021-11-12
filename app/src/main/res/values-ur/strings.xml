@@ -283,7 +283,7 @@
     <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="status_option_link_test_result">اپنے ٹیسٹ کا نتیجہ داخل کریں</string>
     <string name="about_software_information_text_app_version">ایپ ورژن</string>
-    <string name="about_software_information_text_app_manufacturer_value">NHS Test &amp; Trace\nDepartment of Health and Social Care\n39 Victoria Street\nWestminster\nLondon\nSW1H 0EU\nUK</string>
+    <string name="about_software_information_text_app_manufacturer_value">UK Health Security Agency\nNobel House\n17 Smith Square\nLondon\nSW1P 3HX\nUK</string>
     <string name="postcode_not_supported">بدقسمتی سے یہ ایپ آپ کے علاقے میں استعمال کیا جانا مُمکن نہیں۔ برائے مہربانی اپنے علاقے یا مُلک کے لئے ایپ ڈاؤن لوڈ کریں۔</string>
     <string name="accessibility_announcement_button">%s ، بٹن</string>
     <string name="accessibility_announcement_link">%s ، لنک</string>
@@ -651,8 +651,8 @@
     <string name="exposure_notification_vaccination_status_all_doses_no">نہیں</string>
     <string name="exposure_notification_vaccination_status_all_doses_no_content_description">نہیں، مجھے COVID-19 کے مکمل ٹیکے نہیں لگے ہیں</string>
     <string name="exposure_notification_vaccination_status_all_doses_question">کیا آپ کو کوویڈ 19 کے خلاف مکمل طور پر ویکسین دی گئی ہے؟</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_description">یہ لازمی طور پر ایک ایسی ویکسین ہونی چاہیے جس کا استعمال برطانیہ میں منظور شدہ ہو</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">منظور شدہ ویکسینز کے بارے میں مزید پڑھیں</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_description">اس کا مطلب ہے کہ آپ یوکے کے منظور شدہ کسی ٹیکے کی تمام خوراکیں لے چکے ہیں۔</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">یوکے کے منظور شدہ ٹیکے</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/coronavirus-vaccination/coronavirus-vaccine/</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url_wls">https://gov.wales/get-your-covid-19-vaccine</string>
     <string name="exposure_notification_vaccination_status_all_doses_yes">ہاں</string>
@@ -660,7 +660,7 @@
     <string name="exposure_notification_vaccination_status_button">تصدیق کریں</string>
     <string name="exposure_notification_vaccination_status_date_no">نہیں</string>
     <string name="exposure_notification_vaccination_status_date_no_content_description">نہیں، میں نے اپنی آخری خوراک%s کو یا اس سے قبل حاصل نہیں کی</string>
-    <string name="exposure_notification_vaccination_status_date_question">کیا آپ نے اپنی آخری خوراک %s کو یا اس سے قبل حاصل کی؟</string>
+    <string name="exposure_notification_vaccination_status_date_question">کیا آپ کو %s کو یا اس سے پہلے پوری طرح ٹیکا لگ چکا تھا؟</string>
     <string name="exposure_notification_vaccination_status_date_yes">ہاں</string>
     <string name="exposure_notification_vaccination_status_date_yes_content_description">ہاں، میں نے اپنی آخری خوراک %s کو یا اس سے قبل حاصل کی</string>
     <string name="exposure_notification_vaccination_status_description">ہم آپ کے جوابات کا استعمال صرف اس بات کی جانچ کے لیے کریں گے کہ آیا آپ کو خود کو علیحدہ کرنے کی ضرورت ہو سکتی ہے۔</string>
@@ -742,10 +742,10 @@
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
     <string name="contact_case_summary_change_age_button">تبدیل کریں</string>
-    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">اپنی ویکسینیشن کی حالت تبدیل کریں</string>
     <string name="contact_case_summary_change_vaccination_status_button">تبدیل کریں</string>
     <string name="contact_case_summary_heading">اپنے جوابات چیک کریں</string>
     <string name="contact_case_summary_submit_button">جوابات پیش کریں</string>
     <string name="contact_case_summary_title">اپنے جوابات چیک کریں</string>
-    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">اپنی عمر تبدیل کریں</string>
 </resources>

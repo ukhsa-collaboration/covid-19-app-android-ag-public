@@ -40,7 +40,7 @@
     <string name="about_provide_feedback_link">Macluumaadka jawaab celinta</string>
     <string name="about_software_information_text_app_date_of_release">Taariikhda la sosaaray</string>
     <string name="about_software_information_text_app_manufacturer">Soo saaraha iyo dayactirka</string>
-    <string name="about_software_information_text_app_manufacturer_value">NHS Test &amp; Trace\nDepartment of Health and Social Care\n39 Victoria Street\nWestminster\nLondon\nSW1H 0EU\nUK</string>
+    <string name="about_software_information_text_app_manufacturer_value">UK Health Security Agency\nNobel House\n17 Smith Square\nLondon\nSW1P 3HX\nUK</string>
     <string name="about_software_information_text_app_name">Magaca app</string>
     <string name="about_software_information_text_app_version">Nooca App-ka</string>
     <string name="about_software_information_title">Macluumaadka software-ka</string>
@@ -652,8 +652,8 @@
     <string name="exposure_notification_vaccination_status_all_doses_no">Maya</string>
     <string name="exposure_notification_vaccination_status_all_doses_no_content_description">Maya ma wada qaadanin tallaalkayga COVID-19</string>
     <string name="exposure_notification_vaccination_status_all_doses_question">Ma wada qaadatay tallaalkaaga COVID-19?</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_description">Kani waa inuu ahaadaa tallaal loo oggolaaday in laga isticmaalo gudaha UK.</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">Akhri wax dheeraad ah oo ku saabsan tallaalada la oggolaaday</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_description">Tani waxay ka dhigan tahay inaad qaadatay dhammaan garojooyinka tallaalka UK ansixisay.</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">Tallaalada ay ansixisay UK</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/coronavirus-vaccination/coronavirus-vaccine/</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url_wls">https://gov.wales/get-your-covid-19-vaccine</string>
     <string name="exposure_notification_vaccination_status_all_doses_yes">Haa</string>
@@ -661,7 +661,7 @@
     <string name="exposure_notification_vaccination_status_button">Hubi</string>
     <string name="exposure_notification_vaccination_status_date_no">Maya</string>
     <string name="exposure_notification_vaccination_status_date_no_content_description">Maya maan helin tallaalkii  ugu dambeeyay maalinta ama ka hor %s?</string>
-    <string name="exposure_notification_vaccination_status_date_question">Ma heshay tallaalkii ugu dambeeyay maalinta ama ka hor %s?</string>
+    <string name="exposure_notification_vaccination_status_date_question">Miyaa si buuxda laguu tallaalay %s ama ka hor?</string>
     <string name="exposure_notification_vaccination_status_date_yes">Haa</string>
     <string name="exposure_notification_vaccination_status_date_yes_content_description">Haa waan helay tallaalkii i ugu dambeeyay maalinta ama ka hor %s?</string>
     <string name="exposure_notification_vaccination_status_description">Waxaannu kaliya u isticmaali doonnaa jawaabahaaga si aan u hubinno haddii aad u baahan tahay inaad is-go\'doomiso.</string>
@@ -743,10 +743,10 @@
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
     <string name="contact_case_summary_change_age_button">Beddel</string>
-    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Beddel heerka tallaalkaaga</string>
     <string name="contact_case_summary_change_vaccination_status_button">Beddel</string>
     <string name="contact_case_summary_heading">Eeg jawaabahaaga</string>
     <string name="contact_case_summary_submit_button">Gudbi jawaabaha</string>
     <string name="contact_case_summary_title">Eeg jawaabahaaga</string>
-    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">Beddel da\'daada</string>
 </resources>

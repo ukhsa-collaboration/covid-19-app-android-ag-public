@@ -287,7 +287,7 @@
     <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="status_option_link_test_result">Introduceți codul testului dvs</string>
     <string name="about_software_information_text_app_version">Versiunea aplicației</string>
-    <string name="about_software_information_text_app_manufacturer_value">NHS Test &amp; Trace\nDepartment of Health and Social Care\n39 Victoria Street\nWestminster\nLondon\nSW1H 0EU\nUK</string>
+    <string name="about_software_information_text_app_manufacturer_value">UK Health Security Agency\nNobel House\n17 Smith Square\nLondon\nSW1P 3HX\nUK</string>
     <string name="postcode_not_supported">Din păcate, această aplicație nu este acceptată în regiunea dvs. Vă rugăm să descărcați aplicația pentru regiunea sau țara dvs.</string>
     <string name="accessibility_announcement_button">%s, Buton</string>
     <string name="accessibility_announcement_link">%s, Link</string>
@@ -647,7 +647,7 @@
     <string name="exposure_notification_age_title">Vârsta dvs.</string>
     <string name="exposure_notification_age_yes_content_description_template">Da, aveam minim 18 ani pe %s</string>
     <string name="exposure_notification_clinical_trial_no">Nu</string>
-    <string name="exposure_notification_clinical_trial_question">Participați la vrun studiu clinic privind vaccinul COVID-19 aprobat de MHRA?</string>
+    <string name="exposure_notification_clinical_trial_question">Participați la vreun studiu clinic privind vaccinul COVID-19 aprobat de MHRA?</string>
     <string name="exposure_notification_clinical_trial_yes">Da</string>
     <string name="exposure_notification_medically_exempt_description">Aceasta înseamnă că aveți dovezi că nu vă puteți vaccina din motive medicale.</string>
     <string name="exposure_notification_medically_exempt_no">Nu</string>
@@ -658,8 +658,8 @@
     <string name="exposure_notification_vaccination_status_all_doses_no">Nu</string>
     <string name="exposure_notification_vaccination_status_all_doses_no_content_description">Nu, nu m-am vaccinat cu ambele doze împotriva COVID-19</string>
     <string name="exposure_notification_vaccination_status_all_doses_question">V-ați vaccinat cu ambele doze împotriva COVID-19?</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_description">Vaccinul folosit trebuie să fie un vaccin aprobat spre utilizare în Marea Britanie.</string>
-    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">Citiți mai multe despre vaccinurile aprobate</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_description">Aceasta înseamnă că v-au fost administrate toate dozele unui vaccin aprobat în Regatul Unit.</string>
+    <string name="exposure_notification_vaccination_status_all_doses_question_link_text">Vaccinuri aprobate în Regatul Unit.</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/coronavirus-vaccination/coronavirus-vaccine/</string>
     <string name="exposure_notification_vaccination_status_all_doses_question_link_url_wls">https://gov.wales/get-your-covid-19-vaccine</string>
     <string name="exposure_notification_vaccination_status_all_doses_yes">Da</string>
@@ -667,7 +667,7 @@
     <string name="exposure_notification_vaccination_status_button">Confirmare</string>
     <string name="exposure_notification_vaccination_status_date_no">Nu</string>
     <string name="exposure_notification_vaccination_status_date_no_content_description">Nu, nu am primit cea mai recentă doză la sau înainte %s</string>
-    <string name="exposure_notification_vaccination_status_date_question">Ați primit cea mai recentă doză de vaccin la sau înainte de %s?</string>
+    <string name="exposure_notification_vaccination_status_date_question">Vi se administrase schema completă de vaccinare la sau înainte de data de %s?</string>
     <string name="exposure_notification_vaccination_status_date_yes">Da</string>
     <string name="exposure_notification_vaccination_status_date_yes_content_description">Da, am primit cea mai recentă doză la sau înainte %s</string>
     <string name="exposure_notification_vaccination_status_description">Vom folosi răspunsurile dvs. exclusiv pentru a verifica dacă trebuie să vă autoizolați.</string>
@@ -749,10 +749,10 @@
     <string name="exposure_notification_medically_exempt_no_content_description">No I am not medically exempt from receiving a COVID-19 vaccine</string>
     <string name="exposure_notification_medically_exempt_yes_content_description">Yes I am medically exempt from receiving a COVID-19 vaccine</string>
     <string name="contact_case_summary_change_age_button">Modificare</string>
-    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Modificați statutul dvs. de vaccinare</string>
     <string name="contact_case_summary_change_vaccination_status_button">Modificare</string>
     <string name="contact_case_summary_heading">Verificați răspunsurile</string>
     <string name="contact_case_summary_submit_button">Trimiteți răspunsurile</string>
     <string name="contact_case_summary_title">Verificați răspunsurile</string>
-    <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
+    <string name="contact_case_summary_change_age_accessiblity_button">Modificați vârsta dvs.</string>
 </resources>

@@ -64,12 +64,12 @@ def versionNameValue = new File('app/versionName').text.trim()
 def releaseDate = new Date().format('MM/yyyy')
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "uk.nhs.covid19"
         minSdkVersion 23
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionName versionNameValue
         versionCode buildNumber
         testInstrumentationRunner "uk.nhs.nhsx.covid19.android.app.util.DoReToAwareAndroidJUnitRunner"
