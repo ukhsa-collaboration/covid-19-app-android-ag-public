@@ -4,13 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import kotlinx.android.synthetic.main.activity_venue_alert_book_test.buttonBookTest
-import kotlinx.android.synthetic.main.activity_venue_alert_book_test.buttonReturnToHomeScreen
-import kotlinx.android.synthetic.main.view_toolbar_background.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityVenueAlertBookTestBinding
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.BookATest
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.EvaluateVenueAlertNavigation.NavigationTarget.SymptomsAfterRiskyVenue
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestViewModel.NavigationTarget.BookTest
@@ -21,17 +19,24 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
-class VenueAlertBookTestActivity : BaseActivity(R.layout.activity_venue_alert_book_test) {
+class VenueAlertBookTestActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<VenueAlertBookTestViewModel>
     private val viewModel: VenueAlertBookTestViewModel by viewModels { factory }
+    private lateinit var binding: ActivityVenueAlertBookTestBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityVenueAlertBookTestBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        setCloseToolbar(toolbar, titleResId = R.string.empty, closeIndicator = R.drawable.ic_close_primary)
+        setCloseToolbar(
+            binding.primaryToolbar.toolbar,
+            titleResId = R.string.empty,
+            closeIndicator = R.drawable.ic_close_primary
+        )
 
         viewModel.venueVisitState().observe(this) { viewState ->
             if (viewState == UnknownVisit) {
@@ -57,12 +62,15 @@ class VenueAlertBookTestActivity : BaseActivity(R.layout.activity_venue_alert_bo
             viewModel.updateVenueVisitState(extraVenueId)
         }
 
-        buttonBookTest.setOnSingleClickListener {
-            viewModel.onBookATestClicked()
-        }
+        with(binding) {
 
-        buttonReturnToHomeScreen.setOnSingleClickListener {
-            viewModel.onReturnToHomeClicked()
+            buttonBookTest.setOnSingleClickListener {
+                viewModel.onBookATestClicked()
+            }
+
+            buttonReturnToHomeScreen.setOnSingleClickListener {
+                viewModel.onReturnToHomeClicked()
+            }
         }
     }
 

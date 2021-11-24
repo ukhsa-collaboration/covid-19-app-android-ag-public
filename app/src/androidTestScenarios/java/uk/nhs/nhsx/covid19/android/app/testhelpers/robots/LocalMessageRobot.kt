@@ -18,13 +18,13 @@ import uk.nhs.nhsx.covid19.android.app.R.string
 import uk.nhs.nhsx.covid19.android.app.remote.data.ContentBlock
 import uk.nhs.nhsx.covid19.android.app.testhelpers.NestedScrollViewScrollToAction
 import uk.nhs.nhsx.covid19.android.app.testhelpers.clickChildViewWithId
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.withViewAtPosition
 
-class LocalMessageRobot {
-    fun checkActivityIsDisplayed() {
-        onView(withId(R.id.localMessageContainer))
-            .check(matches(isDisplayed()))
-    }
+class LocalMessageRobot : HasActivity {
+
+    override val containerId: Int
+        get() = R.id.localMessageContainer
 
     fun checkTitleIsDisplayed(title: String) {
         onView(withId(R.id.titleLocalMessage))

@@ -6,7 +6,7 @@
     android:animateLayoutChanges="true"
     android:background="@color/background">
 
-<uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+<uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
     android:id="@+id/dateHeader"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

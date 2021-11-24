@@ -32,6 +32,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutReason.QUESTIONNAIRE
 import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.OnTestResultAcknowledge
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
@@ -86,7 +87,7 @@ class EventHandler(
 
             terminatedRiskyContactEarly -> {
                 val exposureDate = today.minus(1, DAYS)
-                isolationStateMachine.optOutOfContactIsolation(exposureDate)
+                isolationStateMachine.optOutOfContactIsolation(exposureDate, reason = QUESTIONNAIRE)
             }
 
             receivedConfirmedPositiveTest -> {

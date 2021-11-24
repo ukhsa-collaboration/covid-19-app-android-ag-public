@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ShareCompat.IntentBuilder
 import androidx.core.content.FileProvider
@@ -14,32 +16,11 @@ import androidx.fragment.app.viewModels
 import androidx.work.WorkInfo.State.ENQUEUED
 import androidx.work.WorkInfo.State.RUNNING
 import androidx.work.WorkManager
-import kotlinx.android.synthetic.scenarios.fragment_debug.contactDayOffset
-import kotlinx.android.synthetic.scenarios.fragment_debug.contactState
-import kotlinx.android.synthetic.scenarios.fragment_debug.defaultState
-import kotlinx.android.synthetic.scenarios.fragment_debug.exportKeys
-import kotlinx.android.synthetic.scenarios.fragment_debug.importKeys
-import kotlinx.android.synthetic.scenarios.fragment_debug.exposureDayOffset
-import kotlinx.android.synthetic.scenarios.fragment_debug.indexState
-import kotlinx.android.synthetic.scenarios.fragment_debug.offsetDaysView
-import kotlinx.android.synthetic.scenarios.fragment_debug.riskyPostCode
-import kotlinx.android.synthetic.scenarios.fragment_debug.riskyVenueM1
-import kotlinx.android.synthetic.scenarios.fragment_debug.riskyVenueM2
-import kotlinx.android.synthetic.scenarios.fragment_debug.sendExposureNotification
-import kotlinx.android.synthetic.scenarios.fragment_debug.sendNegativeTestResult
-import kotlinx.android.synthetic.scenarios.fragment_debug.sendPlodTestResult
-import kotlinx.android.synthetic.scenarios.fragment_debug.sendPositiveTestResult
-import kotlinx.android.synthetic.scenarios.fragment_debug.sendUnconfirmedPositiveTestResult
-import kotlinx.android.synthetic.scenarios.fragment_debug.sendUnknownTestResult
-import kotlinx.android.synthetic.scenarios.fragment_debug.sendVoidTestResult
-import kotlinx.android.synthetic.scenarios.fragment_debug.startDownloadTask
-import kotlinx.android.synthetic.scenarios.fragment_debug.submitAnalyticsUsingAlarmManager
-import kotlinx.android.synthetic.scenarios.fragment_debug.submitKeys
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTask.PERIODIC_TASKS
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.FragmentDebugBinding
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
@@ -54,7 +35,7 @@ import uk.nhs.nhsx.covid19.android.app.widgets.OffsetDaysView.OnOffsetDaysChange
 import java.io.File
 import javax.inject.Inject
 
-class DebugFragment : Fragment(R.layout.fragment_debug) {
+class DebugFragment : Fragment() {
 
     @Inject
     lateinit var debugViewModelFactory: ViewModelFactory<DebugViewModel>
@@ -64,9 +45,22 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
 
     private val debugViewModel: DebugViewModel by viewModels { debugViewModelFactory }
 
+    private var _binding: FragmentDebugBinding? = null
+    private val binding get() = _binding!!
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         context.appComponent.inject(this)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentDebugBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -103,7 +97,7 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
         observeDownloadTaskStatus()
     }
 
-    private fun showDebugOptions() {
+    private fun showDebugOptions() = with(binding) {
         offsetDaysView.setListener(object : OnOffsetDaysChangedListener {
             override fun offsetChanged(offsetDays: Long) {
                 debugViewModel.onOffsetDaysChanged(offsetDays)
@@ -195,7 +189,7 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
         WorkManager.getInstance(requireContext())
             .getWorkInfosForUniqueWorkLiveData(PERIODIC_TASKS.workName)
             .observe(viewLifecycleOwner) {
-                val startDownloadTask = startDownloadTask ?: return@observe
+                val startDownloadTask = binding.startDownloadTask
                 it?.let { workInfos ->
                     if (workInfos.any { workInfo -> workInfo.state == ENQUEUED }) {
                         startDownloadTask.isEnabled = true

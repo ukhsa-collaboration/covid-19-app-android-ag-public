@@ -36,14 +36,6 @@ class PostCodeRobot {
         onView(withId(R.id.postCodeContinue)).check(matches(isDisplayed()))
     }
 
-    fun checkTitleIsDisplayed() {
-        onView(withText(R.string.post_code_title)).check(matches(isDisplayed()))
-    }
-
-    fun checkExampleIsDisplayed() {
-        onView(withText(R.string.post_code_example)).check(matches(isDisplayed()))
-    }
-
     fun checkErrorContainerIsNotDisplayed() {
         onView(withId(R.id.errorInfoContainer)).check(matches(not(isDisplayed())))
     }

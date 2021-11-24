@@ -10,14 +10,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_venue_history.venueHistoryEmpty
-import kotlinx.android.synthetic.main.activity_venue_history.venueHistoryList
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.about.VenueHistoryViewModel.VenueHistoryState
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityVenueHistoryBinding
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
@@ -26,12 +24,14 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
-class VenueHistoryActivity : BaseActivity(R.layout.activity_venue_history) {
+class VenueHistoryActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<VenueHistoryViewModel>
 
     private val viewModel: VenueHistoryViewModel by viewModels { factory }
+
+    private lateinit var binding: ActivityVenueHistoryBinding
 
     private lateinit var venueVisitsViewAdapter: VenueVisitsViewAdapter
 
@@ -45,13 +45,37 @@ class VenueHistoryActivity : BaseActivity(R.layout.activity_venue_history) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityVenueHistoryBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        setNavigateUpToolbar(toolbar, R.string.title_venue_history, upIndicator = R.drawable.ic_arrow_back_white)
-        toolbar.setPaddingRelative(toolbar.paddingStart, toolbar.paddingTop, 16.dpToPx.toInt(), toolbar.paddingBottom)
+        with(binding) {
 
-        venueHistoryList.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+            setNavigateUpToolbar(
+                primaryToolbar.toolbar,
+                R.string.title_venue_history,
+                upIndicator = R.drawable.ic_arrow_back_white
+            )
+
+            setupToolbarPadding()
+
+            venueHistoryList.addItemDecoration(
+                DividerItemDecoration(
+                    this@VenueHistoryActivity,
+                    DividerItemDecoration.VERTICAL
+                )
+            )
+        }
 
         setupViewModelListeners()
+    }
+
+    private fun setupToolbarPadding() = with(binding.primaryToolbar.toolbar) {
+        setPaddingRelative(
+            paddingStart,
+            paddingTop,
+            16.dpToPx.toInt(),
+            paddingBottom
+        )
     }
 
     override fun onResume() {
@@ -93,24 +117,25 @@ class VenueHistoryActivity : BaseActivity(R.layout.activity_venue_history) {
         }
     }
 
-    private fun updateVenueVisitsContainer(venueVisitEntries: List<VenueVisitListItem>, isInEditMode: Boolean) {
-        if (venueVisitEntries.isNullOrEmpty()) {
-            editButton?.gone()
-            venueHistoryList.gone()
-            venueHistoryEmpty.visible()
-        } else {
-            editButton?.visible()
-            venueHistoryList.visible()
-            venueHistoryEmpty.gone()
+    private fun updateVenueVisitsContainer(venueVisitEntries: List<VenueVisitListItem>, isInEditMode: Boolean) =
+        with(binding) {
+            if (venueVisitEntries.isNullOrEmpty()) {
+                editButton?.gone()
+                venueHistoryList.gone()
+                venueHistoryEmpty.visible()
+            } else {
+                editButton?.visible()
+                venueHistoryList.visible()
+                venueHistoryEmpty.gone()
 
-            setUpVenueVisitsAdapter(venueVisitEntries, isInEditMode)
+                setUpVenueVisitsAdapter(venueVisitEntries, isInEditMode)
 
-            editButton?.title = getEditButtonText(isInEditMode)
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                editButton?.contentDescription = getEditVenueVisitsContentDescription(isInEditMode)
+                editButton?.title = getEditButtonText(isInEditMode)
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    editButton?.contentDescription = getEditVenueVisitsContentDescription(isInEditMode)
+                }
             }
         }
-    }
 
     private fun onVenueVisitsEditModeChanged(isInEditMode: Boolean) {
         val announcement = getEditVenueVisitsContentDescription(isInEditMode)
@@ -128,11 +153,11 @@ class VenueHistoryActivity : BaseActivity(R.layout.activity_venue_history) {
     private fun setUpVenueVisitsAdapter(
         venueVisitEntries: List<VenueVisitListItem>,
         showDeleteIcon: Boolean
-    ) {
+    ) = with(binding) {
         venueVisitsViewAdapter = VenueVisitsViewAdapter(venueVisitEntries, showDeleteIcon) { venueVisit ->
             viewModel.onDeleteVenueVisitDataClicked(venueVisit)
         }
-        venueHistoryList.layoutManager = LinearLayoutManager(this)
+        venueHistoryList.layoutManager = LinearLayoutManager(this@VenueHistoryActivity)
         venueHistoryList.adapter = venueVisitsViewAdapter
     }
 

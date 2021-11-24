@@ -3,12 +3,10 @@ package uk.nhs.nhsx.covid19.android.app.widgets
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.view_default_state.view.imgCirclePulseAnim
-import kotlinx.android.synthetic.main.view_default_state.view.imgCircleSmallPulseAnim
-import kotlinx.android.synthetic.main.view_default_state.view.imgCircleStatic
-import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.ViewDefaultStateBinding
 
 class DefaultStatusView @JvmOverloads constructor(
     context: Context,
@@ -17,19 +15,25 @@ class DefaultStatusView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr),
     PulseAnimationView {
 
+    private val binding = ViewDefaultStateBinding.inflate(LayoutInflater.from(context), this)
+
     var isAnimationEnabled = false
         set(value) {
             field = value
-            updateAnimations(
-                context = context,
-                isAnimationEnabled = isAnimationEnabled,
-                animatedView = imgCirclePulseAnim,
-                smallAnimatedView = imgCircleSmallPulseAnim,
-            )
-            imgCircleStatic.isVisible = !isAnimationEnabled
+
+            with(binding) {
+
+                updateAnimations(
+                    context = context,
+                    isAnimationEnabled = isAnimationEnabled,
+                    animatedView = imgCirclePulseAnim,
+                    smallAnimatedView = imgCircleSmallPulseAnim,
+                )
+                imgCircleStatic.isVisible = !isAnimationEnabled
+            }
         }
 
-    init {
-        LayoutInflater.from(context).inflate(R.layout.view_default_state, this, true)
-    }
+    fun focusOnActiveLabel() = binding.contactTracingActiveLabel.performAccessibilityAction(
+        AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null
+    )
 }

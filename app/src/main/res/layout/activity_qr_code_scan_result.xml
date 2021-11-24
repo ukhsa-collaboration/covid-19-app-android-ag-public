@@ -61,7 +61,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 tools:src="@drawable/ic_qr_code_failure" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:id="@+id/titleTextView"
                 style="@style/VenueSuccessTitle"
                 android:layout_width="match_parent"
@@ -74,7 +74,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Thank you for checking in to The Drapers Arms" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:id="@+id/successVenueDateTime"
                 style="@style/VenueDateTimeText"
                 android:layout_width="match_parent"

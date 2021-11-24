@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/view_toolbar_background" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/view_toolbar_background" />
 
     <ScrollView
         style="@style/ScrollContainer"
@@ -30,7 +30,7 @@
                 android:contentDescription="@null"
                 android:src="@drawable/coronavirus" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:id="@+id/venueAlertM2title"
                 style="@style/Title1"
                 android:layout_width="match_parent"
@@ -47,13 +47,12 @@
                 android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/venue_alert_m2_paragraph_above_description" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+            <uk.nhs.nhsx.covid19.android.app.widgets.BulletedParagraphsContainer
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
                 android:layout_marginTop="@dimen/vertical_margin"
-                app:rawText="@string/venue_alert_m2_details"
-                app:showBulletPoints="true" />
+                app:rawText="@string/venue_alert_m2_details" />
 
             <TextView
                 style="@style/Body1"

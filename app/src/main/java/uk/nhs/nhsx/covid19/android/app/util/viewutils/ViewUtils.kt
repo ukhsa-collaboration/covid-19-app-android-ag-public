@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RadioButton
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog.Builder
 import androidx.core.widget.NestedScrollView
@@ -44,6 +45,16 @@ fun NestedScrollView.smoothScrollToAndThen(
     runAfterScroll: () -> Unit
 ) {
     smoothScrollTo(x, y, scrollDuration)
+    postDelayed(runAfterScroll, scrollDuration.toLong())
+}
+
+fun ScrollView.smoothScrollToAndThen(
+    x: Int,
+    y: Int,
+    scrollDuration: Int = 250,
+    runAfterScroll: () -> Unit
+) {
+    smoothScrollTo(x, y)
     postDelayed(runAfterScroll, scrollDuration.toLong())
 }
 

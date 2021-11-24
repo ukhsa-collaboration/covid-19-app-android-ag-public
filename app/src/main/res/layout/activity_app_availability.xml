@@ -1,5 +1,4 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,7 +18,7 @@
             android:paddingHorizontal="@dimen/margin_horizontal"
             android:paddingVertical="@dimen/vertical_margin_large">
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:id="@+id/titleText"
                 style="@style/Title1"
                 android:layout_width="match_parent"

@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
-import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
 import uk.nhs.nhsx.covid19.android.app.util.uiLongFormat

@@ -6,17 +6,11 @@ import android.os.Bundle
 import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.activity_exposure_notification_age_limit.ageLimitBinaryRadioGroup
-import kotlinx.android.synthetic.main.activity_exposure_notification_age_limit.ageLimitErrorView
-import kotlinx.android.synthetic.main.activity_exposure_notification_age_limit.ageLimitScrollView
-import kotlinx.android.synthetic.main.activity_exposure_notification_age_limit.ageLimitSubtitle
-import kotlinx.android.synthetic.main.activity_exposure_notification_age_limit.continueButton
-import kotlinx.android.synthetic.main.activity_exposure_notification_age_limit.exposureNotificationAgeLimitDate
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityExposureNotificationAgeLimitBinding
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationAgeLimitViewModel.NavigationTarget.Finish
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationAgeLimitViewModel.NavigationTarget.Review
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationAgeLimitViewModel.NavigationTarget.VaccinationStatus
@@ -34,30 +28,37 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import java.time.LocalDate
 import javax.inject.Inject
 
-class ExposureNotificationAgeLimitActivity : BaseActivity(R.layout.activity_exposure_notification_age_limit) {
+class ExposureNotificationAgeLimitActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<ExposureNotificationAgeLimitViewModel>
 
     private val viewModel: ExposureNotificationAgeLimitViewModel by viewModels { factory }
 
+    private lateinit var binding: ActivityExposureNotificationAgeLimitBinding
+
     private var hasScrolledToError = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityExposureNotificationAgeLimitBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        setNavigateUpToolbar(
-            toolbar,
-            R.string.exposure_notification_age_title,
-            upIndicator = R.drawable.ic_arrow_back_white
-        )
+        with(binding) {
 
-        ageLimitBinaryRadioGroup.setOnValueChangedListener(viewModel::onAgeLimitOptionChanged)
+            setNavigateUpToolbar(
+                primaryToolbar.toolbar,
+                R.string.exposure_notification_age_title,
+                upIndicator = R.drawable.ic_arrow_back_white
+            )
 
-        continueButton.setOnSingleClickListener {
-            hasScrolledToError = false
-            viewModel.onClickContinue()
+            ageLimitBinaryRadioGroup.setOnValueChangedListener(viewModel::onAgeLimitOptionChanged)
+
+            continueButton.setOnSingleClickListener {
+                hasScrolledToError = false
+                viewModel.onClickContinue()
+            }
         }
 
         setUpViewModelListeners()
@@ -68,7 +69,7 @@ class ExposureNotificationAgeLimitActivity : BaseActivity(R.layout.activity_expo
         viewModel.updateViewState()
     }
 
-    private fun showError(isVisible: Boolean) {
+    private fun showError(isVisible: Boolean) = with(binding) {
         if (isVisible) {
             ageLimitErrorView.visible()
             if (!hasScrolledToError) {
@@ -86,21 +87,25 @@ class ExposureNotificationAgeLimitActivity : BaseActivity(R.layout.activity_expo
     private fun updateDateLabel(dateLimit: LocalDate) {
         val formattedDate = dateLimit.uiLongFormat(this)
 
-        exposureNotificationAgeLimitDate.text =
-            getString(R.string.exposure_notification_age_subtitle_template, formattedDate)
+        with(binding) {
+            exposureNotificationAgeLimitDate.text =
+                getString(R.string.exposure_notification_age_subtitle_template, formattedDate)
 
-        ageLimitBinaryRadioGroup.setOptionContentDescriptions(
-            getString(R.string.exposure_notification_age_yes_content_description_template, formattedDate),
-            getString(R.string.exposure_notification_age_no_content_description_template, formattedDate)
-        )
+            ageLimitBinaryRadioGroup.setOptionContentDescriptions(
+                getString(R.string.exposure_notification_age_yes_content_description_template, formattedDate),
+                getString(R.string.exposure_notification_age_no_content_description_template, formattedDate)
+            )
+        }
     }
 
     private fun setUpViewModelListeners() {
         viewModel.viewState().observe(this) { viewState ->
-            ageLimitSubtitle.isVisible = viewState.showSubtitle
-            showError(viewState.hasError)
-            updateDateLabel(viewState.date)
-            ageLimitBinaryRadioGroup.selectedOption = viewState.ageLimitSelection
+            with(binding) {
+                ageLimitSubtitle.isVisible = viewState.showSubtitle
+                showError(viewState.hasError)
+                updateDateLabel(viewState.date)
+                ageLimitBinaryRadioGroup.selectedOption = viewState.ageLimitSelection
+            }
         }
 
         viewModel.navigationTarget().observe(this) { navigationTarget ->

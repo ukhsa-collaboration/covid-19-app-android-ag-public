@@ -4,36 +4,41 @@ import android.app.Dialog
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import kotlinx.android.synthetic.main.activity_animations.homeScreenAnimationStatus
-import kotlinx.android.synthetic.main.activity_animations.homeScreenAnimationSwitch
-import kotlinx.android.synthetic.main.activity_animations.optionHomeScreenAnimation
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityAnimationsBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setMultilineTitle
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
-class AnimationsActivity : BaseActivity(R.layout.activity_animations) {
+class AnimationsActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<AnimationsViewModel>
     private val viewModel: AnimationsViewModel by viewModels { factory }
     private var currentDialog: Dialog? = null
 
+    private lateinit var binding: ActivityAnimationsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityAnimationsBinding.inflate(layoutInflater)
 
-        startListeningToViewState()
+        with(binding) {
 
-        setNavigateUpToolbar(toolbar, titleResId = R.string.animations_settings_title)
+            setContentView(root)
 
-        optionHomeScreenAnimation.setOnSingleClickListener {
-            viewModel.onAnimationToggleClicked()
+            startListeningToViewState()
+
+            setNavigateUpToolbar(primaryToolbar.toolbar, titleResId = R.string.animations_settings_title)
+
+            optionHomeScreenAnimation.setOnSingleClickListener {
+                viewModel.onAnimationToggleClicked()
+            }
         }
     }
 
@@ -60,7 +65,7 @@ class AnimationsActivity : BaseActivity(R.layout.activity_animations) {
         }
     }
 
-    private fun handleAnimationState(animationsEnabled: Boolean) {
+    private fun handleAnimationState(animationsEnabled: Boolean) = with(binding) {
         homeScreenAnimationSwitch.isChecked = animationsEnabled
         val animationStatusText =
             if (animationsEnabled) {

@@ -8,19 +8,10 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.daysToIsolateContainer
-import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.daysUntilExpirationTextView
-import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.exposureFaqsLinkTextView
-import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.postDaysTextView
-import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.preDaysTextView
-import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.stateActionButton
-import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.stateExplanation
-import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.stateIcon
-import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.stateInfoView
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivitySymptomsAdviceIsolateBinding
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsDidUpdateIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenNoSymptoms
@@ -33,11 +24,15 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 import uk.nhs.nhsx.covid19.android.app.widgets.StateInfoParams
 
-class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_advice_isolate) {
+class SymptomsAdviceIsolateActivity : BaseActivity() {
+
+    private lateinit var binding: ActivitySymptomsAdviceIsolateBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivitySymptomsAdviceIsolateBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val isolationSymptomAdvice = intent.getParcelableExtra<IsolationSymptomAdvice>(EXTRA_ISOLATION_SYMPTOM_ADVICE)
 
@@ -48,7 +43,7 @@ class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_ad
 
         handleIsolationSymptomAdvice(isolationSymptomAdvice)
 
-        daysToIsolateContainer.setUpAccessibilityHeading()
+        binding.daysToIsolateContainer.setUpAccessibilityHeading()
     }
 
     private fun handleIsolationSymptomAdvice(isolationSymptomAdvice: IsolationSymptomAdvice) {
@@ -183,11 +178,11 @@ class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_ad
         @StringRes buttonText: Int,
         showCloseButtonInToolbar: Boolean = false,
         buttonAction: () -> Unit
-    ) {
+    ) = with(binding) {
         if (showCloseButtonInToolbar) {
-            setCloseToolbar(toolbar, R.string.empty, R.drawable.ic_close_primary)
+            setCloseToolbar(primaryToolbar.toolbar, R.string.empty, R.drawable.ic_close_primary)
 
-            toolbar.setNavigationOnClickListener {
+            primaryToolbar.toolbar.setNavigationOnClickListener {
                 navigateToStatusActivity()
             }
         }
@@ -205,12 +200,12 @@ class SymptomsAdviceIsolateActivity : BaseActivity(R.layout.activity_symptoms_ad
         stateActionButton.setOnSingleClickListener(buttonAction)
     }
 
-    private fun setupIsolationDescriptionView(isolationDescription: IsolationDescription) {
+    private fun setupIsolationDescriptionView(isolationDescription: IsolationDescription) = with(binding) {
         showTextIfPresent(preDaysTextView, isolationDescription.preBigText)
         showTextIfPresent(daysUntilExpirationTextView, isolationDescription.bigText)
         showTextIfPresent(postDaysTextView, isolationDescription.postBigText)
 
-        setAccessibilityTitle(isolationDescription.accessibilityTitle(this))
+        setAccessibilityTitle(isolationDescription.accessibilityTitle(this@SymptomsAdviceIsolateActivity))
     }
 
     private fun showTextIfPresent(view: TextView, stringResId: Int?) {

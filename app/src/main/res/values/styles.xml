@@ -87,6 +87,11 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="OptionDivider" parent="Body1.Bold">
+        <item name="android:textColor">@color/secondary_text_grey</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
     <!-- Used for supporting information, i.e. page numbers and menu section -->
     <style name="Body2">
         <item name="android:textColor">?android:textColorSecondary</item>

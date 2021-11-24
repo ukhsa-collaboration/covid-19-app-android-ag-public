@@ -115,6 +115,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RES
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.state.CreateIsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutReason.QUESTIONNAIRE
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.GetLocalMessageFromStorage
 import uk.nhs.nhsx.covid19.android.app.util.defaultFalse
@@ -283,6 +284,6 @@ class AnalyticsEventProcessor @Inject constructor(
             isDisplayingLocalInfoBackgroundTick = getLocalMessageFromStorage() != null
 
             optedOutForContactIsolationBackgroundTick =
-                stateStorage.state.contact?.optOutOfContactIsolation != null
+                stateStorage.state.contact?.optOutOfContactIsolation?.reason == QUESTIONNAIRE
         }
 }

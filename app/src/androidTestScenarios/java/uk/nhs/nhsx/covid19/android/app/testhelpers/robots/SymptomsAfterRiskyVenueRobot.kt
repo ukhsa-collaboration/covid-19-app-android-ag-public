@@ -12,11 +12,11 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers.allOf
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 
-class SymptomsAfterRiskyVenueRobot {
-    fun checkActivityIsDisplayed() {
-        checkActivityTitleIsDisplayed(R.string.symptoms_after_risky_venue_title)
-    }
+class SymptomsAfterRiskyVenueRobot : HasActivity {
+    override val containerId: Int
+        get() = R.id.symptomsTitle
 
     fun clickHasSymptomsButton() {
         onView(withId(R.id.hasSymptomsButton))

@@ -4,25 +4,29 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import kotlinx.android.synthetic.main.activity_share_keys_result.actionButton
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityShareKeysResultBinding
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
-class ShareKeysResultActivity : BaseActivity(R.layout.activity_share_keys_result) {
+class ShareKeysResultActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<ShareKeysResultViewModel>
     private val viewModel: ShareKeysResultViewModel by viewModels { factory }
 
+    private lateinit var binding: ActivityShareKeysResultBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityShareKeysResultBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         viewModel.onCreate()
 
@@ -33,13 +37,16 @@ class ShareKeysResultActivity : BaseActivity(R.layout.activity_share_keys_result
 
     private fun setUpActionButton(bookFollowUpTest: Boolean) {
         val buttonTextResId = if (bookFollowUpTest) R.string.continue_button else R.string.back_to_home
-        actionButton.text = getString(buttonTextResId)
 
-        actionButton.setOnSingleClickListener {
-            if (bookFollowUpTest) {
-                navigateToBookFollowUpTestActivity()
-            } else {
-                navigateToStatusActivity()
+        with(binding) {
+            actionButton.text = getString(buttonTextResId)
+
+            actionButton.setOnSingleClickListener {
+                if (bookFollowUpTest) {
+                    navigateToBookFollowUpTestActivity()
+                } else {
+                    navigateToStatusActivity()
+                }
             }
         }
     }

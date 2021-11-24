@@ -1,18 +1,21 @@
 package uk.nhs.nhsx.covid19.android.app.questionnaire
 
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_new_no_symptoms.backToHomeButton
-import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityNewNoSymptomsBinding
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 
-class NewNoSymptomsActivity : BaseActivity(R.layout.activity_new_no_symptoms) {
+class NewNoSymptomsActivity : BaseActivity() {
+
+    private lateinit var binding: ActivityNewNoSymptomsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityNewNoSymptomsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        backToHomeButton.setOnSingleClickListener {
+        binding.backToHomeButton.setOnSingleClickListener {
             navigateToStatusActivity()
         }
     }

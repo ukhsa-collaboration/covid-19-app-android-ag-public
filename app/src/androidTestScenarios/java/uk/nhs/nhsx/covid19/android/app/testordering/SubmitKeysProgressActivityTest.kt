@@ -12,29 +12,6 @@ class SubmitKeysProgressActivityTest : EspressoTest() {
     private val submitKeysProgressRobot = ProgressRobot()
 
     @Test
-    fun startActivityWithoutExtras() {
-        startTestActivity<SubmitKeysProgressActivity>()
-    }
-
-    @Test
-    fun startActivityWithExposureKeysExtra() {
-        startTestActivity<SubmitKeysProgressActivity> {
-            putParcelableArrayListExtra("EXPOSURE_KEYS_TO_SUBMIT", ArrayList<NHSTemporaryExposureKey>())
-        }
-    }
-
-    @Test
-    fun startActivityWithAllExtrasAndFailingSubmissionApi_showsError() {
-        MockApiModule.behaviour.responseType = ALWAYS_FAIL
-        startTestActivity<SubmitKeysProgressActivity> {
-            putParcelableArrayListExtra("EXPOSURE_KEYS_TO_SUBMIT", ArrayList<NHSTemporaryExposureKey>())
-            putExtra("SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN", "test")
-        }
-
-        submitKeysProgressRobot.checkErrorIsDisplayed()
-    }
-
-    @Test
     fun startActivityWithAllExtrasAndFailingDelayedSubmissionApi_showsLoading() {
         MockApiModule.behaviour.responseType = ALWAYS_FAIL
         MockApiModule.behaviour.delayMillis = 500

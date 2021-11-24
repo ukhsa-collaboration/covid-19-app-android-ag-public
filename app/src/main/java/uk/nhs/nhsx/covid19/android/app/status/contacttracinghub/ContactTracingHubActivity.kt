@@ -4,16 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_contact_tracing_hub.contactTracingHubContainer
-import kotlinx.android.synthetic.main.activity_contact_tracing_hub.contactTracingStatus
-import kotlinx.android.synthetic.main.activity_contact_tracing_hub.encounterDetectionSwitch
-import kotlinx.android.synthetic.main.activity_contact_tracing_hub.optionContactTracing
-import kotlinx.android.synthetic.main.activity_contact_tracing_hub.optionWhenNotToPause
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.assistedViewModel
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityContactTracingHubBinding
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.ExposureNotificationReminderDialog
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.PermissionRequestResult.Error
@@ -24,7 +19,7 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpButtonType
 import javax.inject.Inject
 
-class ContactTracingHubActivity : BaseActivity(R.layout.activity_contact_tracing_hub) {
+class ContactTracingHubActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ContactTracingHubViewModel.Factory
@@ -32,6 +27,8 @@ class ContactTracingHubActivity : BaseActivity(R.layout.activity_contact_tracing
     private val viewModel: ContactTracingHubViewModel by assistedViewModel {
         factory.create(intent.getBooleanExtra(SHOULD_TURN_ON_CONTACT_TRACING, false))
     }
+
+    private lateinit var binding: ActivityContactTracingHubBinding
 
     /**
      * Exposure notification dialog currently displayed, or null if none are displayed
@@ -41,18 +38,24 @@ class ContactTracingHubActivity : BaseActivity(R.layout.activity_contact_tracing
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityContactTracingHubBinding.inflate(layoutInflater)
 
-        startListeningToViewState()
+        with(binding) {
 
-        setNavigateUpToolbar(toolbar, titleResId = R.string.contact_tracing_hub_title)
+            setContentView(binding.root)
 
-        optionWhenNotToPause.setUpButtonType(getString(R.string.contact_tracing_when_not_to_pause_option))
+            startListeningToViewState()
+
+            setNavigateUpToolbar(primaryToolbar.toolbar, titleResId = R.string.contact_tracing_hub_title)
+
+            optionWhenNotToPause.setUpButtonType(getString(R.string.contact_tracing_when_not_to_pause_option))
+        }
 
         setupOnClickListeners()
         viewModel.onCreate()
     }
 
-    private fun setupOnClickListeners() {
+    private fun setupOnClickListeners() = with(binding) {
         optionContactTracing.setOnSingleClickListener {
             viewModel.onContactTracingToggleClicked()
         }
@@ -66,7 +69,8 @@ class ContactTracingHubActivity : BaseActivity(R.layout.activity_contact_tracing
         viewModel.permissionRequest().observe(this) { result ->
             when (result) {
                 is Request -> result.callback(this)
-                is Error -> Snackbar.make(contactTracingHubContainer, result.message, Snackbar.LENGTH_SHORT).show()
+                is Error ->
+                    Snackbar.make(binding.contactTracingHubContainer, result.message, Snackbar.LENGTH_SHORT).show()
             }
         }
 
@@ -82,7 +86,7 @@ class ContactTracingHubActivity : BaseActivity(R.layout.activity_contact_tracing
         }
     }
 
-    private fun handleExposureNotificationState(exposureNotificationEnabled: Boolean) {
+    private fun handleExposureNotificationState(exposureNotificationEnabled: Boolean) = with(binding) {
         encounterDetectionSwitch.isChecked = exposureNotificationEnabled
         val contactTracingStatusResId =
             if (exposureNotificationEnabled) {

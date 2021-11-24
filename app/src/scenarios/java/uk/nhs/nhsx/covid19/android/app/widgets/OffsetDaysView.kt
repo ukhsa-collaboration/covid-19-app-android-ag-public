@@ -5,16 +5,11 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.SharedPreferences
 import android.util.AttributeSet
-import android.view.View
+import android.view.LayoutInflater
 import android.widget.LinearLayout
-import kotlinx.android.synthetic.scenarios.view_offset_days.view.currentAppDate
-import kotlinx.android.synthetic.scenarios.view_offset_days.view.currentOffset
-import kotlinx.android.synthetic.scenarios.view_offset_days.view.decreaseDays
-import kotlinx.android.synthetic.scenarios.view_offset_days.view.increaseDays
-import kotlinx.android.synthetic.scenarios.view_offset_days.view.resetDays
 import uk.nhs.nhsx.covid19.android.app.DebugActivity
 import uk.nhs.nhsx.covid19.android.app.DebugActivity.Companion
-import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.ViewOffsetDaysBinding
 import uk.nhs.nhsx.covid19.android.app.status.DateChangeReceiver
 import uk.nhs.nhsx.covid19.android.app.status.ScenariosDateChangeBroadcastReceiver
 import java.time.Clock
@@ -27,6 +22,8 @@ class OffsetDaysView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
+    private val binding = ViewOffsetDaysBinding.inflate(LayoutInflater.from(context), this)
+
     private var offsetDaysChangedListener: OnOffsetDaysChangedListener? = null
 
     private var dateChangeReceiver: DateChangeReceiver? = null
@@ -34,7 +31,6 @@ class OffsetDaysView @JvmOverloads constructor(
     private lateinit var debugSharedPreferences: SharedPreferences
 
     init {
-        View.inflate(context, R.layout.view_offset_days, this)
         orientation = VERTICAL
 
         getActivity()?.let {
@@ -46,7 +42,7 @@ class OffsetDaysView @JvmOverloads constructor(
         }
     }
 
-    private fun initializeViews() {
+    private fun initializeViews() = with(binding) {
         /* ktlint-disable */
         decreaseDays.setOnClickListener {
             setOffsetDays(getOffsetDays() - 1)
@@ -69,7 +65,7 @@ class OffsetDaysView @JvmOverloads constructor(
         (dateChangeReceiver as? ScenariosDateChangeBroadcastReceiver)?.trigger()
     }
 
-    private fun updateTextViews(offsetDays: Long) {
+    private fun updateTextViews(offsetDays: Long) = with(binding) {
         currentOffset.text = offsetDays.toString()
         currentAppDate.text = "Current app date: ${computeAppDate(offsetDays)}"
     }

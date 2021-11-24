@@ -20,7 +20,6 @@
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
     <string name="url_latest_government_guidance">https://www.gov.uk/government/publications/covid-19-stay-at-home-guidance/stay-at-home-guidance-for-households-with-possible-coronavirus-covid-19-infection</string>
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
-
     <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_terms_of_use_wls">https://covid19.nhs.uk/our-policies.html</string>
     <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/</string>
@@ -75,7 +74,7 @@
     <string name="loading">Loading…</string>
     <string name="remove">Remove</string>
     <string name="empty" translatable="false" />
-    <string name="onboarding_exposure_notifications_description">The app will send you an alert if you have been in close contact with someone who has tested positive for the virus.\n\nTo enable contact tracing for this app you need to allow ‘Exposure Notifications’.\n\nIf you change your mind, you can change your permissions in settings at any time.</string>
+    <string name="onboarding_exposure_notifications_description">The app will send you an alert if you have been in close contact with someone who has tested positive for the virus.\n\nTo enable contact tracing for this app you need to allow ‘Exposure Notifications’.\n\nTo get alerts you need to allow notifications.\n\nIf you change your mind, you can change your permissions in settings at any time.</string>
     <string name="permission_title">Contact tracing</string>
     <string name="exposure_notifications_rationale_title">Contact tracing helps prevent the spread of coronavirus (COVID-19)</string>
     <string name="privacy_notice">Privacy notice</string>
@@ -180,27 +179,12 @@
     <string name="link_test_result_text">[to be deleted]</string>
     <string name="link_test_result_enter_code_title">Enter your test code</string>
     <string name="link_test_result_enter_code_example">Example: 7g8s3stn</string>
-    <string name="link_test_result_daily_contact_testing_title">If you are doing daily contact testing</string>
-    <string name="link_test_result_daily_contact_testing_subtitle">It is important to report your result in the app:</string>
-    <string name="link_test_result_daily_contact_testing_description_list_header">In addition:</string>
-    <string name="link_test_result_daily_contact_testing_description_list_text">If you have a positive result, enter the code you will have received in the box above and self-isolate\n\nIf you have a negative result, you do not receive a code. You need to tell us you have a negative result below and continue</string>
-    <string name="link_test_result_daily_contact_testing_negative_result_confirmation">I have a negative test result from daily contact testing</string>
     <string name="link_test_result_error_both_inputs_provided">You cannot enter a test result code and confirm that you have a negative test result at the same time.</string>
-    <string name="link_test_result_error_neither_input_provided">You need to either enter a code or tell us you have a negative result from daily contact testing.</string>
-    <string name="daily_contact_testing_confirmation_title">[%key_id:74418310%]</string>
-    <string name="daily_contact_testing_confirmation_heading">Confirm you are doing daily contact testing</string>
-    <string name="daily_contact_testing_confirmation_intro">You should only continue if you are already taking part in daily contact testing.</string>
-    <string name="daily_contact_testing_confirmation_continue_paragraph_header">Once you continue, you will need to:</string>
-    <string name="daily_contact_testing_confirmation_continue_paragraph_text">complete the daily contact testing programme\n\nenter any positive result code in the app and self-isolate\n\nrestart daily contact testing if you are notified of a new close contact</string>
-    <string name="daily_contact_testing_confirmation_no_longer_paragraph_header">You will no longer:</string>
-    <string name="daily_contact_testing_confirmation_no_longer_paragraph_text">be asked by this app to self-isolate\n\nneed to enter any further negative results from daily contact testing into this app\n\nbe able to apply for support payments</string>
-    <string name="daily_contact_testing_confirmation_dialog_title">Confirm you’ve submitted your first negative test result</string>
-    <string name="daily_contact_testing_confirmation_dialog_text">You need to have received at least one negative test result from daily contact testing. After you confirm, you will no longer be told to self-isolate through the app.</string>
     <string name="link_test_result_error_no_connection">No internet. Please connect to your network or WiFi and try again.</string>
     <string name="link_test_result_error_unknown">Something went wrong. Please try again.</string>
     <string name="link_test_result_symptoms_information_title">Symptoms information</string>
     <string name="link_test_result_symptoms_title">Did you have any of the following coronavirus symptoms?</string>
-    <string name="link_test_result_symptoms_list">A high temperature (fever)\n\nA new continuous cough\n\nA change to your sense of smell or taste</string>
+    <string name="link_test_result_symptoms_list">A high temperature\n\nA new continuous cough\n\nA change to your sense of smell or taste</string>
     <string name="link_test_result_symptoms_yes">Yes</string>
     <string name="link_test_result_symptoms_yes_accessibility">Yes, I had symptoms.</string>
     <string name="link_test_result_symptoms_no">No</string>
@@ -210,7 +194,7 @@
     <string name="questionnaire_2_of_2">Step 2 of 2</string>
     <string name="questionnaire_review_two_of_two">Step 2 of 2</string>
     <string name="questionnaire_title">Do you have any of these symptoms of COVID-19?</string>
-    <string name="questionnaire_description">Select all that apply.</string>
+    <string name="questionnaire_description">Select all that apply, even if they are mild.</string>
     <string name="questionnaire_error_description">Before trying again, please check that your phone’s mobile data settings are on, check your Wi-Fi connection (if you’re using one) and make sure that Airplane Mode is off.</string>
     <string name="questionnaire_no_symptoms">I have different symptoms</string>
     <string name="questionnaire_discard_symptoms_dialog_title">Confirm you do not have any of these symptoms</string>
@@ -250,7 +234,7 @@
     <string name="expiration_notification_title">Good News!</string>
     <string name="expiration_notification_description_passed">You have been released from isolation since the %s at 23:59</string>
     <string name="expiration_notification_recommendation">For further advice, please visit:</string>
-    <string name="expiration_temperature_hint">However, if you have a high temperature, continue to self-isolate until it returns to normal</string>
+    <string name="expiration_temperature_hint">If you feel unwell, stay at home until you are feeling better</string>
     <string name="button_agree">I agree</string>
     <string name="terms_of_use_onboarding">Terms of use</string>
     <string name="about_this_app_title">About this app</string>
@@ -267,7 +251,7 @@
     <string name="about_software_information_text_app_manufacturer">Manufacturer and maintainer</string>
     <string name="about_software_information_text_app_manufacturer_value">UK Health Security Agency\nNobel House\n17 Smith Square\nLondon\nSW1P 3HX\nUK</string>
     <string name="test_result_positive_no_self_isolation_subtitle">Although you tested positive, your period for self-isolation is over</string>
-    <string name="test_result_no_self_isolation_description">However, if you have a high temperature, continue to self-isolate until it returns to normal</string>
+    <string name="test_result_no_self_isolation_description">If you feel unwell, stay at home until you are feeling better</string>
     <string name="for_further_advice_visit">For further advice, please visit:</string>
     <string name="test_result_your_test_result">Your test result</string>
     <string name="test_result_positive_continue_self_isolation_title_1">Continue to self-isolate for</string>
@@ -314,8 +298,6 @@
     <string name="about_contact_isolation_opt_out_date">Close contact isolation exemption date</string>
     <string name="title_last_day_of_isolation">Self-isolation</string>
     <string name="user_data_risky_venue_visit_date_title">Venue of risk</string>
-    <string name="user_data_daily_contact_testing_title">[%key_id:74418310%]</string>
-    <string name="user_data_daily_contact_testing_text">Confirmed participation</string>
     <string name="about_delete_your_data_title">Deleting your data will reset the app</string>
     <string name="about_delete_positive_text">Delete data</string>
     <string name="about_positive">Positive</string>
@@ -442,7 +424,7 @@
     <string name="test_result_void_no_self_isolation_subtitle">We could not tell if you had coronavirus</string>
     <string name="test_result_negative_no_self_isolation_explanation">The test result shows that at the time of testing, you did not have the virus. If you do develop symptoms, report them on this app. If you are under 18, you are advised to show this message to a trusted adult.</string>
     <string name="test_result_negative_no_self_isolation_subtitle">Your self-isolation has now finished</string>
-    <string name="test_result_positive_no_self_isolation_description">However, if you have a high temperature, continue to self-isolate until it returns to normal</string>
+    <string name="test_result_positive_no_self_isolation_description">If you feel unwell, stay at home until you are feeling better</string>
     <string name="isolation_payment_privacy_notice_title">Any data used in the application process is described in the privacy notice:</string>
     <string name="isolation_payment_privacy_notice_link_text">Contact tracing privacy notice</string>
     <string name="isolation_payment_privacy_notice_link_url">https://sip.test-and-trace.nhs.uk/privacy-policy</string>
@@ -510,7 +492,6 @@
     <string name="about_test_follow_up_state_pending">Pending</string>
     <string name="about_test_follow_up_state_complete">Complete</string>
     <string name="about_test_follow_up_state_not_required">Not required</string>
-    <string name="link_test_result_daily_contact_testing_description">If you have a positive result, enter the code you will have received in the box above and self-isolate\n\nIf you have a negative result, you do not receive a code. You need to tell us you have a negative result below and continue</string>
     <string name="unsupported_device">A restriction in your settings (for example, if this is a company phone).\n\nAnother app on your phone is using the same technology and stopping this app from working.</string>
     <string name="settings_my_area">Area data</string>
     <string name="settings_my_data">Other data</string>
@@ -607,8 +588,8 @@
     <string name="qr_code_help_poster_content_description_hospitality_welsh">Here is an example of a Welsh Higher Risk Venue NHS QR code poster</string>
     <string name="symptoms_after_risky_venue_heading">The type of test depends on whether you have symptoms</string>
     <string name="symptoms_after_risky_venue_paragraph_above_description">The main symptoms of coronavirus (COVID-19) are:</string>
-    <string name="symptoms_after_risky_venue_description">A high temperature (fever)\n\nA new continuous cough\n\nA change to your sense of smell or taste</string>
-    <string name="symptoms_after_risky_venue_paragraph_below_description">If you think you may have COVID-19 symptoms, select ‘Check symptoms‘ below. Call 119 for more information or advice.</string>
+    <string name="symptoms_after_risky_venue_description">A high temperature\n\nA new continuous cough\n\nA change to your sense of smell or taste</string>
+    <string name="symptoms_after_risky_venue_paragraph_below_description">If you think you may have COVID-19 symptoms, even if they are mild, select \'Check symptoms\' below. Call 119 for more information or advice.</string>
     <string name="symptoms_after_risky_venue_positive_button">Check symptoms</string>
     <string name="symptoms_after_risky_venue_negative_button">I do not have any of these symptoms</string>
     <string name="symptoms_after_risky_venue_title">Do you have symptoms?</string>

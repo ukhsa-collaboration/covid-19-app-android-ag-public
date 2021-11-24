@@ -27,7 +27,7 @@
                 android:layout_marginVertical="@dimen/vertical_margin_extra_large"
                 android:src="@drawable/ic_isolation_book_test" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:id="@+id/otherSymptomsTitle"
                 style="@style/Title1"
                 android:layout_width="match_parent"
@@ -43,7 +43,7 @@
                 android:layout_marginTop="@dimen/vertical_margin_large"
                 android:text="@string/new_no_symptoms_introduction" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Body1.Bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
                 android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/new_no_symptoms_section1_text" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Body1.Bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
                 android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/new_no_symptoms_section2_text" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Body1.Bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
                 android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/new_no_symptoms_section3_text" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Body1.Bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
                 android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/new_no_symptoms_section4_text" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Body1.Bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -141,7 +141,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Body1.Bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

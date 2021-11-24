@@ -20,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsola
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutReason
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.HandleAcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.HandleTestResult
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.SendExposedNotification
@@ -52,7 +53,7 @@ data class OnTestResultAcknowledge(
 ) : Event()
 
 private object OnReset : Event()
-private data class OnOptOutOfContactIsolation(val encounterDate: LocalDate) : Event()
+private data class OnOptOutOfContactIsolation(val encounterDate: LocalDate, val reason: OptOutReason) : Event()
 private object OnAcknowledgeIsolationExpiration : Event()
 
 sealed class SideEffect {
@@ -162,10 +163,10 @@ class IsolationStateMachine @Inject constructor(
                 }
             }
 
-            on<OnOptOutOfContactIsolation> {
+            on<OnOptOutOfContactIsolation> { optOutEvent ->
                 var newState = this.copy(
                     contact = this.contact!!.copy(
-                        optOutOfContactIsolation = OptOutOfContactIsolation(date = it.encounterDate)
+                        optOutOfContactIsolation = OptOutOfContactIsolation(date = optOutEvent.encounterDate, reason = optOutEvent.reason)
                     )
                 )
                 newState = updateHasAcknowledgedEndOfIsolation(currentState = this, newState)
@@ -277,8 +278,8 @@ class IsolationStateMachine @Inject constructor(
         stateMachine.transition(OnReset)
     }
 
-    fun optOutOfContactIsolation(encounterDate: LocalDate) {
-        stateMachine.transition(OnOptOutOfContactIsolation(encounterDate))
+    fun optOutOfContactIsolation(encounterDate: LocalDate, reason: OptOutReason) {
+        stateMachine.transition(OnOptOutOfContactIsolation(encounterDate, reason))
     }
 
     fun acknowledgeIsolationExpiration() {
@@ -366,4 +367,6 @@ class IsolationStateMachine @Inject constructor(
         return if (newLogicalState.isActiveIndexCase(clock)) newState
         else null
     }
+
+    fun isActiveContactCaseOnly(clock: Clock): Boolean = readLogicalState().isActiveContactCaseOnly(clock)
 }

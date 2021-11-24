@@ -11,10 +11,10 @@ import io.mockk.verifyOrder
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.exposure.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.AcknowledgeRiskyContact
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.GetAgeLimitBeforeEncounter
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.GetLastDoseDateLimit
-import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ExposureNotificationReviewViewModel.NavigationTarget
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ExposureNotificationReviewViewModel.NavigationTarget.AgeLimit
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ExposureNotificationReviewViewModel.NavigationTarget.IsolationAdvice
@@ -24,6 +24,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.Questionnai
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionnaireOutcome.MedicallyExempt
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionnaireOutcome.Minor
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionnaireOutcome.NotExempt
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutReason.QUESTIONNAIRE
 import java.time.LocalDate
 
 class ExposureNotificationReviewViewModelTest {
@@ -126,7 +127,7 @@ class ExposureNotificationReviewViewModelTest {
         testSubject.onSubmitClicked()
 
         verifyOrder {
-            optOutOfContactIsolation()
+            optOutOfContactIsolation(reason = QUESTIONNAIRE)
             acknowledgeRiskyContact()
             navigationObserver.onChanged(IsolationAdvice(questionnaireOutcome = expectedOutcome))
         }

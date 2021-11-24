@@ -3,13 +3,13 @@ package uk.nhs.nhsx.covid19.android.app.about.mydata
 import android.content.Context
 import android.util.AttributeSet
 import android.util.TypedValue
-import android.view.View
+import android.view.LayoutInflater
 import android.widget.LinearLayout
-import kotlinx.android.synthetic.main.view_my_data_section.view.myDataSectionTitle
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.ViewMyDataSectionBinding
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 
 class MyDataSectionView @JvmOverloads constructor(
     context: Context,
@@ -18,6 +18,7 @@ class MyDataSectionView @JvmOverloads constructor(
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
     private var sectionItems = mutableListOf<MyDataSectionItemView>()
+    private val binding = ViewMyDataSectionBinding.inflate(LayoutInflater.from(context), this)
 
     init {
         initializeViews()
@@ -42,14 +43,13 @@ class MyDataSectionView @JvmOverloads constructor(
     }
 
     private fun initializeViews() {
-        View.inflate(context, R.layout.view_my_data_section, this)
         configureLayout()
     }
 
     private fun applyAttributes(context: Context, attrs: AttributeSet?) {
         context.theme.obtainStyledAttributes(attrs, R.styleable.MyDataSectionView, 0, 0).apply {
             val title = getString(context, R.styleable.MyDataSectionView_myDataSectionTitle)
-            myDataSectionTitle.text = title
+            binding.myDataSectionTitle.text = title
             recycle()
         }
     }

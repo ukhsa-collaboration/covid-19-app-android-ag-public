@@ -7,6 +7,7 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
+import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -17,24 +18,25 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.qrcode.uiDate
 import uk.nhs.nhsx.covid19.android.app.testhelpers.clickChildViewWithId
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
+import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
 import uk.nhs.nhsx.covid19.android.app.testhelpers.withViewAtPosition
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import java.time.LocalDate
 
 class VenueHistoryRobot(
     private val context: Context
-) {
+) : HasActivity {
 
-    fun checkActivityIsDisplayed() {
-        checkActivityTitleIsDisplayed(R.string.title_venue_history)
-    }
+    override val containerId: Int
+        get() = R.id.venueHistoryContainer
 
-    fun checkEditButtonIsDisplayed() {
+    fun checkEditButtonIsDisplayed() = waitFor {
         onView(withId(R.id.menuEditAction))
             .check(matches(withText(R.string.edit)))
     }
 
-    fun checkDoneButtonIsDisplayed() {
+    fun checkDoneButtonIsDisplayed() = waitFor {
         onView(withId(R.id.menuEditAction))
             .check(matches(withText(R.string.done_button_text)))
     }
@@ -49,7 +51,7 @@ class VenueHistoryRobot(
             .perform(click())
     }
 
-    fun checkDateIsDisplayedAtPosition(date: LocalDate, position: Int) {
+    fun checkDateIsDisplayedAtPosition(date: LocalDate, position: Int) = waitFor {
         val formattedDate = date.uiFormat(context)
         onView(withId(R.id.venueHistoryList))
             .check(
@@ -126,8 +128,9 @@ class VenueHistoryRobot(
             )
     }
 
-    fun checkConfirmDeletionDialogIsDisplayed() {
+    fun checkConfirmDeletionDialogIsDisplayed() = waitFor {
         onView(withText(R.string.delete_single_venue_visit_title))
+            .inRoot(isDialog())
             .check(matches(isDisplayed()))
     }
 

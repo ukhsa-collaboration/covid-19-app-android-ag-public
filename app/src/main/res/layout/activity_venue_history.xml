@@ -6,9 +6,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/view_toolbar_primary" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/view_toolbar_primary" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/venueHistoryContainer"
         style="@style/ScrollContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

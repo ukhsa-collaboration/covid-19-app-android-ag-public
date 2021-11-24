@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/view_toolbar_primary" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/view_toolbar_primary" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollViewReviewSymptoms"
@@ -62,7 +62,7 @@
                     android:contentDescription="@string/questionnaire_review_two_of_two"
                     android:text="@string/questionnaire_2_of_2" />
 
-                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                     android:id="@+id/textReviewSymptomsTitle"
                     style="@style/Title1"
                     android:layout_width="match_parent"
@@ -106,7 +106,7 @@
                     android:orientation="vertical"
                     android:paddingVertical="8dp">
 
-                    <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                    <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                         android:id="@+id/textReviewDate"
                         style="@style/Title3"
                         android:layout_width="match_parent"

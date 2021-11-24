@@ -37,33 +37,6 @@ import co.lokalise.android.sdk.core.LokalisePreferences
 import com.google.android.material.snackbar.Snackbar
 import com.jeroenmols.featureflag.framework.RuntimeFeatureFlagProvider
 import com.jeroenmols.featureflag.framework.TestSetting
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
-import kotlinx.android.synthetic.scenarios.activity_debug.analyticsData
-import kotlinx.android.synthetic.scenarios.activity_debug.buttonFeatureFlags
-import kotlinx.android.synthetic.scenarios.activity_debug.environmentSpinner
-import kotlinx.android.synthetic.scenarios.activity_debug.exposureNotificationMocks
-import kotlinx.android.synthetic.scenarios.activity_debug.languageSpinner
-import kotlinx.android.synthetic.scenarios.activity_debug.localiseHeadingContainer
-import kotlinx.android.synthetic.scenarios.activity_debug.lokaliseContent
-import kotlinx.android.synthetic.scenarios.activity_debug.lokaliseHeadingIcon
-import kotlinx.android.synthetic.scenarios.activity_debug.lokaliseVersion
-import kotlinx.android.synthetic.scenarios.activity_debug.mockSettings
-import kotlinx.android.synthetic.scenarios.activity_debug.qrScannerFirstVenueAutomated
-import kotlinx.android.synthetic.scenarios.activity_debug.scenarioMain
-import kotlinx.android.synthetic.scenarios.activity_debug.scenarioOnboarding
-import kotlinx.android.synthetic.scenarios.activity_debug.scenarios
-import kotlinx.android.synthetic.scenarios.activity_debug.scenariosGroup
-import kotlinx.android.synthetic.scenarios.activity_debug.screenButtonContainer
-import kotlinx.android.synthetic.scenarios.activity_debug.screenFilter
-import kotlinx.android.synthetic.scenarios.activity_debug.shareFlow
-import kotlinx.android.synthetic.scenarios.activity_debug.statusScreen
-import kotlinx.android.synthetic.scenarios.activity_debug.titleScenarios
-import kotlinx.android.synthetic.scenarios.activity_debug.titleScreens
-import kotlinx.android.synthetic.scenarios.include_lokalise_options.apiIdError
-import kotlinx.android.synthetic.scenarios.include_lokalise_options.lokaliseProgress
-import kotlinx.android.synthetic.scenarios.include_lokalise_options.projectIdError
-import kotlinx.android.synthetic.scenarios.include_lokalise_options.purgeLokalise
-import kotlinx.android.synthetic.scenarios.include_lokalise_options.updateFromLokalise
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -82,20 +55,20 @@ import uk.nhs.nhsx.covid19.android.app.common.EnableLocationActivity
 import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityActivity
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityInformationActivity
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityDebugBinding
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockQrScannerViewModel
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockQrScannerViewModel.Options
 import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationAgeLimitActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusActivity
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ExposureNotificationReviewActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.OptOutResponseEntry
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.AgeLimitQuestionType.IsAdult
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.DoseDate
-import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionnaireOutcome.FullyVaccinated
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionnaireOutcome.MedicallyExempt
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ReviewData
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.BookFollowUpTestActivity
@@ -183,19 +156,23 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
+class DebugActivity : AppCompatActivity() {
 
     private lateinit var debugSharedPreferences: SharedPreferences
 
     private lateinit var appLocaleProvider: ApplicationLocaleProvider
 
+    private lateinit var binding: ActivityDebugBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
+        binding = ActivityDebugBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         appLocaleProvider = applicationContext.appComponent.provideApplicationLocaleProvider()
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.primaryToolbar.toolbar)
 
         debugSharedPreferences = getSharedPreferences(DEBUG_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
@@ -221,12 +198,12 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
     }
 
     private fun setupAnalyticsData() {
-        analyticsData.setOnSingleClickListener {
+        binding.analyticsData.setOnSingleClickListener {
             startActivity<AnalyticsReportActivity>()
         }
     }
 
-    private fun setupQrScannerSettings() {
+    private fun setupQrScannerSettings() = with(binding) {
         MockQrScannerViewModel.currentOptions = Options(useMock = false)
         qrScannerFirstVenueAutomated.isChecked = false
         qrScannerFirstVenueAutomated.setOnCheckedChangeListener(qrScannerCheckChangeListener)
@@ -241,7 +218,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
             }
         }
 
-    private fun showQrScannerDialog() {
+    private fun showQrScannerDialog() = with(binding) {
         dialog = QrScannerDialogFragment(
             positiveAction = {
                 if (MockQrScannerViewModel.currentOptions.venueList.size == 0) {
@@ -272,51 +249,51 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun setupUpdateTranslationsFromLokalise() {
-        with(LokaliseSettings) {
-            apiIdError.isVisible = apiKey == ""
-            projectIdError.isVisible = projectId == ""
-        }
+    private fun setupUpdateTranslationsFromLokalise() = with(binding) {
+            lokaliseContent.apiIdError.isVisible = LokaliseSettings.apiKey == ""
+            lokaliseContent.projectIdError.isVisible = LokaliseSettings.projectId == ""
 
         localiseHeadingContainer.setOnSingleClickListener {
-            if (lokaliseContent.visibility == View.GONE) {
+            if (lokaliseContent.root.visibility == View.GONE) {
                 lokaliseHeadingIcon.setImageDrawable(getDrawable(android.R.drawable.arrow_up_float))
-                lokaliseContent.visibility = View.VISIBLE
+                lokaliseContent.root.visibility = View.VISIBLE
             } else {
                 lokaliseHeadingIcon.setImageDrawable(getDrawable(android.R.drawable.arrow_down_float))
-                lokaliseContent.visibility = View.GONE
+                lokaliseContent.root.visibility = View.GONE
             }
         }
         updateLokaliseVersion()
-        updateFromLokalise.setOnSingleClickListener {
+        lokaliseContent.updateFromLokalise.setOnSingleClickListener {
             LokaliseSDK.clearCallbacks()
             LokaliseSDK.addCallback { previousVersion, newVersion ->
                 Timber.d("LokaliseSDK On translations updated from $previousVersion to $newVersion")
                 Snackbar.make(scenarios, "Updated to version $newVersion", Snackbar.LENGTH_LONG).show()
                 updateLokaliseVersion()
             }
-            updateFromLokalise.visibility = View.GONE
-            lokaliseProgress.visibility = View.VISIBLE
-            lokaliseProgress.animate()
+            lokaliseContent.updateFromLokalise.visibility = View.GONE
+            lokaliseContent.lokaliseProgress.visibility = View.VISIBLE
+            lokaliseContent.lokaliseProgress.animate()
             LokaliseSDK.updateTranslations()
         }
 
-        purgeLokalise.setOnSingleClickListener {
+        lokaliseContent.purgeLokalise.setOnSingleClickListener {
             LokaliseSDK.clearCallbacks()
-            purgeLokalise(this)
+            purgeLokalise(this@DebugActivity)
             updateLokaliseVersion()
         }
     }
 
     private fun updateLokaliseVersion() = runOnUiThread {
-        updateFromLokalise.visibility = View.VISIBLE
-        lokaliseProgress.visibility = View.GONE
-        lokaliseVersion.text = LokalisePreferences(this).BUNDLE_ID.get().toString()
+        with(binding) {
+            lokaliseContent.updateFromLokalise.visibility = View.VISIBLE
+            lokaliseContent.lokaliseProgress.visibility = View.GONE
+            lokaliseVersion.text = LokalisePreferences(this@DebugActivity).BUNDLE_ID.get().toString()
+        }
     }
 
-    private fun setupEnvironmentSpinner() {
+    private fun setupEnvironmentSpinner() = with(binding) {
         val environments = scenariosApp.environments
-        val environmentsAdapter = EnvironmentAdapter(this, environments)
+        val environmentsAdapter = EnvironmentAdapter(this@DebugActivity, environments)
 
         environmentSpinner.adapter = environmentsAdapter
         val selectedEnvironment = debugSharedPreferences.getInt(SELECTED_ENVIRONMENT, 0)
@@ -347,18 +324,18 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
 
     @SuppressLint("SetTextI18n")
     private fun refreshMockSettingsLabel() = with(MockApiModule.behaviour) {
-        mockSettings.text = "$responseType after ${delayMillis}ms"
+        binding.mockSettings.text = "$responseType after ${delayMillis}ms"
     }
 
     private fun setupMockBehaviour() {
-        mockSettings.setOnSingleClickListener {
+        binding.mockSettings.setOnSingleClickListener {
             MockApiDialogFragment {
                 refreshMockSettingsLabel()
             }.show(supportFragmentManager, "MockApiDialogFragment")
         }
     }
 
-    private fun setupExposureNotificationCheckbox() {
+    private fun setupExposureNotificationCheckbox() = with(binding) {
         val useMockedExposureNotifications =
             debugSharedPreferences.getBoolean(USE_MOCKED_EXPOSURE_NOTIFICATION, isEmulator())
         exposureNotificationMocks.isChecked = useMockedExposureNotifications
@@ -370,9 +347,9 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
     }
 
-    private fun setupLanguageSpinner() {
+    private fun setupLanguageSpinner() = with(binding) {
         val supportedLanguageItems = getSupportedLanguageItems()
-        languageSpinner.adapter = LanguageAdapter(this, supportedLanguageItems)
+        languageSpinner.adapter = LanguageAdapter(this@DebugActivity, supportedLanguageItems)
 
         val previouslySelectedLanguageItem = appLocaleProvider.getUserSelectedLanguage().toSupportedLanguageItem()
         val indexOfPreviouslySelectedLanguageItem = supportedLanguageItems.indexOf(previouslySelectedLanguageItem)
@@ -403,33 +380,32 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
     }
 
     private fun setupFeatureFlagButton() {
-        buttonFeatureFlags.setOnSingleClickListener {
+        binding.buttonFeatureFlags.setOnSingleClickListener {
             startActivity(Intent(this, TestSettingsActivity::class.java))
         }
     }
 
-    private fun setupScenariosButtons(hidden: Boolean = false) {
+    private fun setupScenariosButtons(hidden: Boolean = false) = with(binding) {
         titleScenarios.setOnSingleClickListener {
             if (scenariosGroup.visibility == View.VISIBLE) {
                 scenariosGroup.visibility = View.GONE
-                titleScenarios.text = "Scenarios ..."
             } else {
                 scenariosGroup.visibility = View.VISIBLE
-                titleScenarios.text = "Scenarios"
             }
+            titleScenarios.text = SCENARIOS
         }
 
         if (hidden) {
             scenariosGroup.visibility = View.GONE
-            titleScenarios.text = "Scenarios ..."
+            titleScenarios.text = SCENARIOS
         }
 
         scenarioMain.setOnSingleClickListener {
-            MainActivity.start(this)
+            MainActivity.start(this@DebugActivity)
         }
 
         scenarioOnboarding.setOnSingleClickListener {
-            WelcomeActivity.start(this)
+            WelcomeActivity.start(this@DebugActivity)
         }
 
         statusScreen.setOnSingleClickListener {
@@ -444,7 +420,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
     }
 
-    private fun setupScreenFilter(withText: String? = null) {
+    private fun setupScreenFilter(withText: String? = null) = with(binding) {
         screenFilter.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
                 Unit
@@ -474,7 +450,7 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
     }
 
     private fun setupScreenButtons() {
-        screenButtonContainer.removeAllViews()
+        binding.screenButtonContainer.removeAllViews()
 
         addScreenButton("Isolation Payment") {
             startActivity<IsolationPaymentActivity>()
@@ -872,9 +848,11 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         }
 
         addScreenButton("Risky Contact Advice - Continue isolation (resets state)") {
-            val isolationStateMachine = appComponent.provideIsolationStateMachine()
-            isolationStateMachine.reset()
-            isolationStateMachine.processEvent(OnPositiveSelfAssessment(SelectedDate.CannotRememberDate))
+            appComponent.provideIsolationStateMachine().run {
+                reset()
+                processEvent(OnPositiveSelfAssessment(SelectedDate.CannotRememberDate))
+                processEvent(OnExposedNotification(Instant.now()))
+            }
             RiskyContactIsolationAdviceActivity.start(this)
         }
 
@@ -941,9 +919,9 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
     private fun addScreenButton(
         title: String,
         action: () -> Unit
-    ) {
-        if (!title.toLowerCase().contains(screenFilter.text.toString().toLowerCase())) return
-        val button = Button(ContextThemeWrapper(this, R.style.PrimaryButton))
+    ) = with(binding) {
+        if (!title.lowercase().contains(screenFilter.text.toString().lowercase())) return
+        val button = Button(ContextThemeWrapper(this@DebugActivity, R.style.PrimaryButton))
         button.text = title
         button.setOnSingleClickListener { action() }
         screenButtonContainer.addView(button)
@@ -1100,9 +1078,10 @@ class DebugActivity : AppCompatActivity(R.layout.activity_debug) {
         )
     )
 
-    private var dialog: ScenarioDialogFragment? = null
+    private var dialog: ScenarioDialogFragment<*>? = null
 
     companion object {
+        private const val SCENARIOS = "Scenarios ..."
         const val DEBUG_PREFERENCES_NAME = "debugPreferences"
         const val SELECTED_ENVIRONMENT = "SELECTED_ENVIRONMENT"
         const val USE_MOCKED_EXPOSURE_NOTIFICATION = "USE_MOCKED_EXPOSURE_NOTIFICATION"

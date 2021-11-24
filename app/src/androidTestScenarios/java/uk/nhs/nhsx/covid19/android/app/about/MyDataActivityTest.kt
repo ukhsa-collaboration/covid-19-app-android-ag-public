@@ -279,7 +279,7 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
-    fun contactCaseOnly_notOptedInToDailyContactTesting_displayLastDayOfIsolationInIsolation() {
+    fun contactCaseOnly_displayLastDayOfIsolationInIsolation() {
         testAppContext.setState(isolationHelper.contact().asIsolation())
 
         startTestActivity<MyDataActivity>()

@@ -16,20 +16,11 @@ import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.activity_qr_code_scan_result.actionButton
-import kotlinx.android.synthetic.main.activity_qr_code_scan_result.animationIcon
-import kotlinx.android.synthetic.main.activity_qr_code_scan_result.buttonCancelCheckIn
-import kotlinx.android.synthetic.main.activity_qr_code_scan_result.errorResultIcon
-import kotlinx.android.synthetic.main.activity_qr_code_scan_result.qrCodeHelpContainer
-import kotlinx.android.synthetic.main.activity_qr_code_scan_result.qrScanHelpLink
-import kotlinx.android.synthetic.main.activity_qr_code_scan_result.subtitleTextView
-import kotlinx.android.synthetic.main.activity_qr_code_scan_result.successVenueDateTime
-import kotlinx.android.synthetic.main.activity_qr_code_scan_result.titleTextView
-import kotlinx.android.synthetic.main.activity_qr_code_scan_result.topCloseButton
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityQrCodeScanResultBinding
 import uk.nhs.nhsx.covid19.android.app.permissions.PermissionsManager
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueCheckInViewModel.ViewState
 import uk.nhs.nhsx.covid19.android.app.startActivity
@@ -44,7 +35,7 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import java.time.LocalDateTime
 import javax.inject.Inject
 
-class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_result) {
+class QrCodeScanResultActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<VenueCheckInViewModel>
@@ -54,9 +45,13 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
 
     private val viewModel: VenueCheckInViewModel by viewModels { factory }
 
+    private lateinit var binding: ActivityQrCodeScanResultBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityQrCodeScanResultBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         viewModel.getVisitRemovedResult().observe(this) {
             finish()
@@ -90,57 +85,58 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
     }
 
     private fun setTitleForAccessibility(@StringRes id: Int) {
-        titleTextView.setText(id)
+        binding.titleTextView.setText(id)
         setTitle(id)
     }
 
-    private fun handleSuccess(venueName: String, currentDateTime: LocalDateTime, playAnimation: Boolean) {
-        animationIcon.visible()
-        errorResultIcon.gone()
-        if (playAnimation && !animationsDisabled(this)) {
-            val animation =
-                ContextCompat.getDrawable(baseContext, R.drawable.check_in_success_animation) as AnimationDrawable
-            val listenableAnimation = ListenableAnimationDrawable(animation) {
-                viewModel.onAnimationCompleted()
+    private fun handleSuccess(venueName: String, currentDateTime: LocalDateTime, playAnimation: Boolean) =
+        with(binding) {
+            animationIcon.visible()
+            errorResultIcon.gone()
+            if (playAnimation && !animationsDisabled(this@QrCodeScanResultActivity)) {
+                val animation =
+                    ContextCompat.getDrawable(baseContext, R.drawable.check_in_success_animation) as AnimationDrawable
+                val listenableAnimation = ListenableAnimationDrawable(animation) {
+                    viewModel.onAnimationCompleted()
+                }
+
+                animationIcon.setImageDrawable(listenableAnimation)
+                listenableAnimation.isOneShot = true
+                listenableAnimation.start()
+            } else {
+                animationIcon.setImageResource(R.drawable.tick_final_2083)
             }
 
-            animationIcon.setImageDrawable(listenableAnimation)
-            listenableAnimation.isOneShot = true
-            listenableAnimation.start()
-        } else {
-            animationIcon.setImageResource(R.drawable.tick_final_2083)
-        }
-
-        val titleText = getString(R.string.qr_code_success_title_and_venue_name, venueName)
-        val spannable = SpannableString(titleText)
-        spannable.setSpan(
-            StyleSpan(Typeface.BOLD),
-            titleText.indexOf(venueName),
-            titleText.indexOf(venueName) + venueName.length,
-            Spannable.SPAN_INCLUSIVE_INCLUSIVE
-        )
-        titleTextView.text = spannable
-        title = titleText
-        successVenueDateTime.text = currentDateTime.uiFormat(this@QrCodeScanResultActivity)
-        subtitleTextView.setText(R.string.qr_code_success_subtitle)
-        actionButton.setText(R.string.back_to_home)
-        actionButton.setOnSingleClickListener {
-            StatusActivity.start(
-                this@QrCodeScanResultActivity,
-                statusActivityAction = StartInAppReview
+            val titleText = getString(R.string.qr_code_success_title_and_venue_name, venueName)
+            val spannable = SpannableString(titleText)
+            spannable.setSpan(
+                StyleSpan(Typeface.BOLD),
+                titleText.indexOf(venueName),
+                titleText.indexOf(venueName) + venueName.length,
+                Spannable.SPAN_INCLUSIVE_INCLUSIVE
             )
+            titleTextView.text = spannable
+            title = titleText
+            successVenueDateTime.text = currentDateTime.uiFormat(this@QrCodeScanResultActivity)
+            subtitleTextView.setText(R.string.qr_code_success_subtitle)
+            actionButton.setText(R.string.back_to_home)
+            actionButton.setOnSingleClickListener {
+                StatusActivity.start(
+                    this@QrCodeScanResultActivity,
+                    statusActivityAction = StartInAppReview
+                )
+            }
+            buttonCancelCheckIn.visible()
+            buttonCancelCheckIn.setOnSingleClickListener {
+                viewModel.removeLastVisit()
+            }
+            topCloseButton.gone()
+            successVenueDateTime.visible()
+            qrCodeHelpContainer.gone()
+            qrScanHelpLink.gone()
         }
-        buttonCancelCheckIn.visible()
-        buttonCancelCheckIn.setOnSingleClickListener {
-            viewModel.removeLastVisit()
-        }
-        topCloseButton.gone()
-        successVenueDateTime.visible()
-        qrCodeHelpContainer.gone()
-        qrScanHelpLink.gone()
-    }
 
-    private fun handleCameraPermissionNotGrantedState() {
+    private fun handleCameraPermissionNotGrantedState() = with(binding) {
         animationIcon.gone()
         errorResultIcon.visible()
         errorResultIcon.setImageResource(R.drawable.ic_camera)
@@ -167,7 +163,7 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
         qrScanHelpLink.gone()
     }
 
-    private fun handleInvalidContentState() {
+    private fun handleInvalidContentState() = with(binding) {
         qrScanHelpLink.visible()
         animationIcon.gone()
         errorResultIcon.visible()
@@ -187,7 +183,7 @@ class QrCodeScanResultActivity : BaseActivity(R.layout.activity_qr_code_scan_res
         qrCodeHelpContainer.visible()
     }
 
-    private fun handleScanningNotSupportedState() {
+    private fun handleScanningNotSupportedState() = with(binding) {
         animationIcon.gone()
         errorResultIcon.visible()
         errorResultIcon.setImageResource(R.drawable.ic_qr_code_failure)

@@ -5,21 +5,20 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.matcher.ViewMatchers
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.R.id
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 
-class OrderLfdTestRobot {
+class OrderLfdTestRobot : HasActivity {
 
-    fun checkActivityIsDisplayed() {
-        checkActivityTitleIsDisplayed(R.string.book_free_lfd_test_title)
-    }
+    override val containerId: Int
+        get() = R.id.testOrderingContent
 
     fun clickOrderTestButton() {
-        onView(ViewMatchers.withId(id.orderTestButton))
+        onView(ViewMatchers.withId(R.id.orderTestButton))
             .perform(scrollTo(), click())
     }
 
     fun clickIAlreadyHaveKitButton() {
-        onView(ViewMatchers.withId(id.alreadyHaveTestKitButton))
+        onView(ViewMatchers.withId(R.id.alreadyHaveTestKitButton))
             .perform(scrollTo(), click())
     }
 }

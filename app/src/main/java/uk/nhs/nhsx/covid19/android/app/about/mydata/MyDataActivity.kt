@@ -4,20 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import kotlinx.android.synthetic.main.activity_my_data.exposureNotificationSection
-import kotlinx.android.synthetic.main.activity_my_data.lastTestResultSection
-import kotlinx.android.synthetic.main.activity_my_data.noRecordsView
-import kotlinx.android.synthetic.main.activity_my_data.riskyVenueSection
-import kotlinx.android.synthetic.main.activity_my_data.selfIsolationSection
-import kotlinx.android.synthetic.main.activity_my_data.symptomsInformationSection
-import kotlinx.android.synthetic.main.activity_my_data.viewContent
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.about.mydata.BaseMyDataViewModel.IsolationViewState
 import uk.nhs.nhsx.covid19.android.app.about.mydata.BaseMyDataViewModel.MyDataState
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityMyDataBinding
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
@@ -32,18 +25,26 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import java.time.LocalDate
 import javax.inject.Inject
 
-class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
+class MyDataActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<BaseMyDataViewModel>
 
     private val viewModel: BaseMyDataViewModel by viewModels { factory }
 
+    private lateinit var binding: ActivityMyDataBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityMyDataBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        setNavigateUpToolbar(toolbar, R.string.settings_my_data, upIndicator = R.drawable.ic_arrow_back_white)
+        setNavigateUpToolbar(
+            binding.primaryToolbar.toolbar,
+            R.string.settings_my_data,
+            upIndicator = R.drawable.ic_arrow_back_white
+        )
 
         setupViewModelListeners()
     }
@@ -60,7 +61,7 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
         }
     }
 
-    private fun renderViewState(viewState: MyDataState) {
+    private fun renderViewState(viewState: MyDataState) = with(binding) {
         if (viewState.isolationState == null &&
             viewState.lastRiskyVenueVisitDate == null &&
             viewState.acknowledgedTestResult == null
@@ -76,7 +77,7 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
         }
     }
 
-    private fun handleAcknowledgedTestResult(acknowledgedTestResult: AcknowledgedTestResult?) {
+    private fun handleAcknowledgedTestResult(acknowledgedTestResult: AcknowledgedTestResult?) = with(binding) {
         lastTestResultSection.clear()
         if (acknowledgedTestResult != null) {
             lastTestResultSection.addItems(
@@ -108,7 +109,7 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
         }
     }
 
-    private fun handleIsolationState(isolationViewState: IsolationViewState?) {
+    private fun handleIsolationState(isolationViewState: IsolationViewState?) = with(binding) {
         selfIsolationSection.clear()
         symptomsInformationSection.clear()
         exposureNotificationSection.clear()
@@ -140,7 +141,7 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
         }
     }
 
-    private fun handleLastRiskyVenueVisitDate(date: LocalDate?) {
+    private fun handleLastRiskyVenueVisitDate(date: LocalDate?) = with(binding) {
         riskyVenueSection.clear()
         if (date != null) {
             riskyVenueSection.addItems(riskyVenueSectionItem(date))
@@ -160,7 +161,7 @@ class MyDataActivity : BaseActivity(R.layout.activity_my_data) {
             RAPID_SELF_REPORTED -> getString(R.string.about_lfd_self_reported)
         }
 
-    private fun checkSectionItemOrientation() {
+    private fun checkSectionItemOrientation() = with(binding) {
         isFontScalingIncreased().also {
             lastTestResultSection.setSectionItemStackVertically(it)
             selfIsolationSection.setSectionItemStackVertically(it)

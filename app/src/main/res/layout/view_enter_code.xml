@@ -20,7 +20,7 @@
         android:layout_marginStart="12dp"
         android:orientation="vertical">
 
-        <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+        <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
             android:id="@+id/enterCodeTitle"
             style="@style/Title3"
             android:layout_width="wrap_content"

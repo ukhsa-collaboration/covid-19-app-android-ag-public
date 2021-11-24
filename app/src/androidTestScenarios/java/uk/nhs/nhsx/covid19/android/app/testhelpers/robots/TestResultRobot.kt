@@ -427,13 +427,13 @@ class TestResultRobot(
         onView(
             Matchers.allOf(
                 Matchers.instanceOf(AppCompatImageButton::class.java),
-                withParent(withId(R.id.toolbar))
+                withParent(withId(R.id.primaryToolbar))
             )
         ).check(matches(withContentDescription(R.string.close)))
     }
 
     fun checkNoCloseToolbarOption() {
-        onView(withId(R.id.toolbar))
+        onView(withId(R.id.primaryToolbar))
             .check(matches(hasChildCount(0)))
     }
 }

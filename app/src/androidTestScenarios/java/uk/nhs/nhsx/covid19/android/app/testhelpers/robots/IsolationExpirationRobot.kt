@@ -8,15 +8,14 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import java.time.LocalDate
 
-class IsolationExpirationRobot {
+class IsolationExpirationRobot : HasActivity {
 
-    fun checkActivityIsDisplayed() {
-        onView(withId(R.id.isolationExpirationContainer))
-            .check(matches(isDisplayed()))
-    }
+    override val containerId: Int
+        get() = R.id.isolationExpirationContainer
 
     fun checkIsolationWillFinish(expiryDate: LocalDate) {
         val willFinishText = context.getString(

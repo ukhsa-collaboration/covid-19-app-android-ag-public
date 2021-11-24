@@ -1,15 +1,12 @@
 package uk.nhs.nhsx.covid19.android.app.questionnaire.selection.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.item_question.view.checkboxQuestion
-import kotlinx.android.synthetic.main.item_question.view.questionContainer
-import kotlinx.android.synthetic.main.item_question.view.textQuestionDescription
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.ItemQuestionBinding
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.adapter.QuestionnaireViewAdapter.QuestionnaireViewHolder
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
@@ -22,14 +19,18 @@ class QuestionnaireViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestionnaireViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return QuestionnaireViewHolder(inflater.inflate(R.layout.item_question, parent, false))
+        val itemBinding = ItemQuestionBinding.inflate(inflater, parent, false)
+        return QuestionnaireViewHolder(itemBinding)
     }
 
     override fun onBindViewHolder(holder: QuestionnaireViewHolder, position: Int) =
         holder.bind(getItem(position), listener)
 
-    class QuestionnaireViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(question: Question, listener: (Question) -> Unit) = with(itemView) {
+    class QuestionnaireViewHolder(
+        private val itemBinding: ItemQuestionBinding
+    ) : RecyclerView.ViewHolder(itemBinding.root) {
+
+        fun bind(question: Question, listener: (Question) -> Unit) = with(itemBinding) {
             checkboxQuestion.text = question.symptom.title.translate()
             textQuestionDescription.text = question.symptom.description.translate()
             checkboxQuestion.isChecked = question.isChecked
@@ -38,7 +39,7 @@ class QuestionnaireViewAdapter(
             } else {
                 R.drawable.question_not_selected_background
             }
-            questionContainer.background = context.getDrawable(background)
+            questionContainer.background = root.context.getDrawable(background)
 
             questionContainer.setOnSingleClickListener {
                 listener(question)

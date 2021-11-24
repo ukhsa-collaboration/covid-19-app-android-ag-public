@@ -10,7 +10,7 @@
     android:orientation="vertical"
     tools:context=".onboarding.postcode.PostCodeActivity">
 
-    <include layout="@layout/include_onboarding_toolbar" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/include_onboarding_toolbar" />
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -45,7 +45,7 @@
                 android:paddingStart="@dimen/margin_horizontal_reduced"
                 android:paddingEnd="@dimen/margin_horizontal" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Title3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

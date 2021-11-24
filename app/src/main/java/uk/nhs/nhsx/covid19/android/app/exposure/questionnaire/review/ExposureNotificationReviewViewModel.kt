@@ -9,11 +9,12 @@ import dagger.assisted.AssistedInject
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.AcknowledgeRiskyContact
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.GetAgeLimitBeforeEncounter
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.GetLastDoseDateLimit
-import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.OptOutOfContactIsolation
+import uk.nhs.nhsx.covid19.android.app.exposure.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ExposureNotificationReviewViewModel.NavigationTarget.AgeLimit
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ExposureNotificationReviewViewModel.NavigationTarget.IsolationAdvice
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ExposureNotificationReviewViewModel.NavigationTarget.VaccinationStatus
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionnaireOutcome.NotExempt
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutReason.QUESTIONNAIRE
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import java.time.LocalDate
 
@@ -40,8 +41,8 @@ class ExposureNotificationReviewViewModel @AssistedInject constructor(
     }
 
     fun onSubmitClicked() {
-        if (reviewData.questionnaireOutcome != NotExempt) {
-            optOutOfContactIsolation()
+        if (reviewData.questionnaireOutcome !is NotExempt) {
+            optOutOfContactIsolation(reason = QUESTIONNAIRE)
         }
         acknowledgeRiskyContact()
         navigationLiveData.postValue(IsolationAdvice(questionnaireOutcome = reviewData.questionnaireOutcome))

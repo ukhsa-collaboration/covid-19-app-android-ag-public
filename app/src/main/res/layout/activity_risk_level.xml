@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/view_toolbar_primary" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/view_toolbar_primary" />
 
     <ScrollView
         style="@style/ScrollContainer"
@@ -32,7 +32,7 @@
                 android:contentDescription="@null"
                 tools:src="@drawable/ic_map_risk_green" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:id="@+id/titleRiskLevel"
                 style="@style/Title1"
                 android:layout_width="match_parent"
@@ -40,7 +40,7 @@
                 android:layout_marginTop="@dimen/vertical_margin_large"
                 tools:text="SW12 area risk level is LOW" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:id="@+id/subtitleRiskLevel"
                 style="@style/Title3"
                 android:layout_width="match_parent"
@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                     style="@style/Title1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

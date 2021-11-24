@@ -197,7 +197,7 @@ class AnalyticsMetricsStorageTest : ProviderTest<AnalyticsMetricsStorage, Metric
             optedOutForContactIsolationBackgroundTick = 85,
             appIsUsableBackgroundTick = 86,
             appIsContactTraceableBackgroundTick = 87,
-            didAccessSelfIsolationNoteLink = 88,
+            didAccessSelfIsolationNoteLink = 88
         )
     }
 }

@@ -50,7 +50,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
         waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
         exposureNotificationReviewRobot.clickSubmitButton()
 
-        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInAlreadyIsolatingViewState(
             remainingDaysInIsolation = 7,
             testingAdviceToShow = Default
@@ -196,7 +196,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
         exposureNotificationReviewRobot.clickSubmitButton()
 
-        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMinorViewState(Default)
     }
 
@@ -221,7 +221,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
         exposureNotificationReviewRobot.clickSubmitButton()
 
-        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(Default)
     }
 

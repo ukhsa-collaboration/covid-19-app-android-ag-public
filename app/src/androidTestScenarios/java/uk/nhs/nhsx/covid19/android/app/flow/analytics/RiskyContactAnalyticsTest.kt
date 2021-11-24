@@ -17,11 +17,7 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
         acknowledgement: () -> Unit,
         hasOptedOutOfContactIsolation: Boolean = false
     ) {
-        startTestActivity<MainActivity>()
-        assertAnalyticsPacketIsNormal()
-
-        riskyContact.triggerViaCircuitBreaker(this::advanceToNextBackgroundTaskExecution)
-        acknowledgement()
+        triggerRiskyContactAndAcknowledge(acknowledgement)
 
         assertOnFields(implicitlyAssertNotPresent = false) {
             assertEquals(1, Metrics::acknowledgedStartOfIsolationDueToRiskyContact)
@@ -40,6 +36,14 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
 
             assertAnalyticsPacketIsNormal()
         }
+    }
+
+    private fun triggerRiskyContactAndAcknowledge(acknowledgement: () -> Unit) {
+        startTestActivity<MainActivity>()
+        assertAnalyticsPacketIsNormal()
+
+        riskyContact.triggerViaCircuitBreaker(this::advanceToNextBackgroundTaskExecution)
+        acknowledgement()
     }
 
     private fun remembersIsolation() = testAppContext.getIsolationStateMachine().readLogicalState() is PossiblyIsolating
@@ -79,6 +83,7 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
 
     @Test
     fun isolating_riskyContact_declareFullyVaccinated_isolationAcknowledged_andOptedOutOfContactIsolation() {
+        givenLocalAuthorityIsInEngland()
         givenSelfAssessmentIsolation()
         assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
             acknowledgement = {

@@ -4,14 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.activity_exposure_notification_review.reviewYourAgeGroup
-import kotlinx.android.synthetic.main.activity_exposure_notification_review.reviewYourVaccinationStatusGroup
-import kotlinx.android.synthetic.main.activity_exposure_notification_review.submitExposureQuestionnaire
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.assistedViewModel
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityExposureNotificationReviewBinding
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationAgeLimitActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusActivity
@@ -26,7 +23,7 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
-class ExposureNotificationReviewActivity : BaseActivity(R.layout.activity_exposure_notification_review) {
+class ExposureNotificationReviewActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ExposureNotificationReviewViewModel.Factory
@@ -35,13 +32,16 @@ class ExposureNotificationReviewActivity : BaseActivity(R.layout.activity_exposu
         factory.create(intent.getParcelableExtra(EXTRA_REVIEW_DATA)!!)
     }
 
+    private lateinit var binding: ActivityExposureNotificationReviewBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         appComponent.inject(this)
+        binding = ActivityExposureNotificationReviewBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setNavigateUpToolbar(
-            toolbar,
+            binding.primaryToolbar.toolbar,
             R.string.contact_case_summary_title,
             upIndicator = R.drawable.ic_arrow_back_white
         )
@@ -61,17 +61,20 @@ class ExposureNotificationReviewActivity : BaseActivity(R.layout.activity_exposu
         }
 
         viewModel.viewState.observe(this) {
-            reviewYourAgeGroup.setResponses(
-                listOf(it.ageLimitResponse),
-                ageLimitDate = it.ageLimitDate,
-                lastDoseDateLimit = it.lastDoseDateLimit
-            )
-            reviewYourVaccinationStatusGroup.isVisible = it.vaccinationStatusResponse.isNotEmpty()
-            reviewYourVaccinationStatusGroup.setResponses(
-                it.vaccinationStatusResponse,
-                ageLimitDate = it.ageLimitDate,
-                lastDoseDateLimit = it.lastDoseDateLimit
-            )
+            with(binding) {
+
+                reviewYourAgeGroup.setResponses(
+                    listOf(it.ageLimitResponse),
+                    ageLimitDate = it.ageLimitDate,
+                    lastDoseDateLimit = it.lastDoseDateLimit
+                )
+                reviewYourVaccinationStatusGroup.isVisible = it.vaccinationStatusResponse.isNotEmpty()
+                reviewYourVaccinationStatusGroup.setResponses(
+                    it.vaccinationStatusResponse,
+                    ageLimitDate = it.ageLimitDate,
+                    lastDoseDateLimit = it.lastDoseDateLimit
+                )
+            }
         }
     }
 
@@ -80,11 +83,11 @@ class ExposureNotificationReviewActivity : BaseActivity(R.layout.activity_exposu
             FullyVaccinated -> RiskyContactIsolationAdviceActivity.startAsFullyVaccinated(this)
             MedicallyExempt -> RiskyContactIsolationAdviceActivity.startAsMedicallyExempt(this)
             Minor -> RiskyContactIsolationAdviceActivity.startAsMinor(this)
-            NotExempt -> RiskyContactIsolationAdviceActivity.start(this)
+            is NotExempt -> RiskyContactIsolationAdviceActivity.start(this)
         }
     }
 
-    private fun setUpOnClickListeners() {
+    private fun setUpOnClickListeners() = with(binding) {
         submitExposureQuestionnaire.setOnSingleClickListener {
             viewModel.onSubmitClicked()
         }

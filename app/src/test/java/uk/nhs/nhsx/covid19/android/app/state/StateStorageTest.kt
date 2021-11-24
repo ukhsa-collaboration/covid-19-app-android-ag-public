@@ -10,6 +10,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESUL
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutReason.QUESTIONNAIRE
 import uk.nhs.nhsx.covid19.android.app.state.StateStorage.Companion.ISOLATION_STATE_KEY
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionStatus.COMPLETED_AND_CONFIRMED
@@ -54,7 +55,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
         private const val CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION_AND_EXPIRY_DATE =
             """{"exposureDate":"$CONTACT_EXPOSURE_DATE","notificationDate":"$CONTACT_NOTIFICATION_DATE","optOutOfContactIsolation":{"date":"$CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE"},"expiryDate":"$CONTACT_EXPIRY_DATE"}"""
         private const val CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION =
-            """{"exposureDate":"$CONTACT_EXPOSURE_DATE","notificationDate":"$CONTACT_NOTIFICATION_DATE","optOutOfContactIsolation":{"date":"$CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE"}}"""
+            """{"exposureDate":"$CONTACT_EXPOSURE_DATE","notificationDate":"$CONTACT_NOTIFICATION_DATE","optOutOfContactIsolation":{"date":"$CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE","reason":"QUESTIONNAIRE"}}"""
         private const val CONTACT_WITHOUT_OPT_OUT_OF_CONTACT_ISOLATION =
             """{"exposureDate":"$CONTACT_EXPOSURE_DATE","notificationDate":"$CONTACT_NOTIFICATION_DATE"}"""
 
@@ -126,7 +127,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                     contact = Contact(
                         exposureDate = LocalDate.parse(CONTACT_EXPOSURE_DATE),
                         notificationDate = LocalDate.parse(CONTACT_NOTIFICATION_DATE),
-                        optOutOfContactIsolation = OptOutOfContactIsolation(LocalDate.parse(CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE)),
+                        optOutOfContactIsolation = OptOutOfContactIsolation(LocalDate.parse(CONTACT_OPT_OUT_OF_CONTACT_ISOLATION_DATE), reason = QUESTIONNAIRE),
                     ),
                     hasAcknowledgedEndOfIsolation = true
                 )

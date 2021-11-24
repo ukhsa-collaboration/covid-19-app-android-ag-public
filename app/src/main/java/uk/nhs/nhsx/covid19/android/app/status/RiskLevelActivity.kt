@@ -7,27 +7,13 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.activity_risk_level.buttonRiskLevelLink
-import kotlinx.android.synthetic.main.activity_risk_level.imageRiskLevel
-import kotlinx.android.synthetic.main.activity_risk_level.massTestingContainer
-import kotlinx.android.synthetic.main.activity_risk_level.policyItemsContainer
-import kotlinx.android.synthetic.main.activity_risk_level.riskLevelFooter
-import kotlinx.android.synthetic.main.activity_risk_level.riskLevelInformation
-import kotlinx.android.synthetic.main.activity_risk_level.subtitleRiskLevel
-import kotlinx.android.synthetic.main.activity_risk_level.titleRiskLevel
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.R.drawable
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
+import uk.nhs.nhsx.covid19.android.app.common.LocaleProvider
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
-import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.AMBER
-import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.BLACK
-import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.GREEN
-import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.MAROON
-import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.NEUTRAL
-import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.RED
-import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.YELLOW
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityRiskLevelBinding
+import uk.nhs.nhsx.covid19.android.app.remote.data.ColorSchemeToImageResource
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Risk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
@@ -39,22 +25,34 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpOpensInBrowserWarning
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import uk.nhs.nhsx.covid19.android.app.widgets.PolicyItemView
-import uk.nhs.nhsx.covid19.android.app.widgets.setRawText
 import javax.inject.Inject
 
-class RiskLevelActivity : BaseActivity(R.layout.activity_risk_level) {
+class RiskLevelActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<RiskLevelViewModel>
 
+    @Inject
+    lateinit var transformer: ColorSchemeToImageResource
+
+    @Inject
+    lateinit var localeProvider: LocaleProvider
+
     private val viewModel: RiskLevelViewModel by viewModels { factory }
+
+    private lateinit var binding: ActivityRiskLevelBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityRiskLevelBinding.inflate(layoutInflater)
+
+        with(binding) {
+
+        setContentView(root)
 
         setCloseToolbar(
-            toolbar,
+            primaryToolbar.toolbar,
             R.string.risk_level_title
         )
 
@@ -63,7 +61,7 @@ class RiskLevelActivity : BaseActivity(R.layout.activity_risk_level) {
         riskyPostCodeViewState?.let {
             when (it) {
                 is Risk -> {
-                    viewModel.showMassTesting().observe(this) { shouldShowMassTesting ->
+                    viewModel.showMassTesting().observe(this@RiskLevelActivity) { shouldShowMassTesting ->
                         massTestingContainer.isVisible = shouldShowMassTesting
                     }
                     handleRiskLevel(it)
@@ -73,23 +71,17 @@ class RiskLevelActivity : BaseActivity(R.layout.activity_risk_level) {
         }
 
         buttonRiskLevelLink.setUpOpensInBrowserWarning()
+        }
     }
 
-    private fun handleRiskLevel(risk: Risk) {
-        when (risk.riskIndicator.colorSchemeV2 ?: risk.riskIndicator.colorScheme) {
-            NEUTRAL -> imageRiskLevel.setImageResource(drawable.ic_map_risk_neutral)
-            GREEN -> imageRiskLevel.setImageResource(drawable.ic_map_risk_green)
-            YELLOW -> imageRiskLevel.setImageResource(drawable.ic_map_risk_yellow)
-            AMBER -> imageRiskLevel.setImageResource(drawable.ic_map_risk_amber)
-            RED -> imageRiskLevel.setImageResource(drawable.ic_map_risk_red)
-            MAROON -> imageRiskLevel.setImageResource(drawable.ic_map_risk_maroon)
-            BLACK -> imageRiskLevel.setImageResource(drawable.ic_map_risk_black)
-        }
+    private fun handleRiskLevel(risk: Risk) = with(binding) {
+        val colorScheme = risk.riskIndicator.colorSchemeV2 ?: risk.riskIndicator.colorScheme
+        imageRiskLevel.setImageResource(transformer(colorScheme))
 
         buttonRiskLevelLink.text = risk.riskIndicator.linkTitle.translate()
 
         buttonRiskLevelLink.setOnSingleClickListener {
-            openUrl(risk.riskIndicator.linkUrl.translate())
+            openUrl(risk.riskIndicator.linkUrl.translate(localeProvider.default()))
         }
 
         val policyData = risk.riskIndicator.policyData
@@ -113,7 +105,7 @@ class RiskLevelActivity : BaseActivity(R.layout.activity_risk_level) {
             subtitleRiskLevel.text = policyData.heading.translate()
             val topMargin = 16.dpToPx.toInt()
             for ((index, policy) in policyData.policies.withIndex()) {
-                val policyItemView = PolicyItemView(this)
+                val policyItemView = PolicyItemView(this@RiskLevelActivity)
                 policyItemView.setPolicyItem(policy)
                 policyItemsContainer.addView(policyItemView)
                 if (index > 0) {

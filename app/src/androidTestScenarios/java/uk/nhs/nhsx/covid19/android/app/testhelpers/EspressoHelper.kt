@@ -24,6 +24,8 @@ import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ScrollToAction
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
@@ -303,3 +305,13 @@ fun waitFor(idleTime: Long = AWAIT_AT_MOST_SECONDS, assertion: () -> Unit) {
         it is EspressoException
     } untilAsserted assertion
 }
+
+fun <T : Any> T.verifyForOrientations(handler: T.() -> Unit) {
+    setScreenOrientation(LANDSCAPE)
+    handler(this)
+
+    setScreenOrientation(PORTRAIT)
+    handler(this)
+}
+
+fun scrollThenClick(): ViewAction = compose(scrollTo(), click())

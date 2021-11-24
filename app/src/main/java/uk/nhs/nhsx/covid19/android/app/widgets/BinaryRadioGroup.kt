@@ -10,9 +10,8 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import kotlinx.android.parcel.Parcelize
-import kotlinx.android.synthetic.main.view_binary_radio_group.view.binaryRadioButtonOption1
-import kotlinx.android.synthetic.main.view_binary_radio_group.view.binaryRadioButtonOption2
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.ViewBinaryRadioGroupBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 import uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup.BinaryRadioGroupOption.OPTION_1
 import uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup.BinaryRadioGroupOption.OPTION_2
@@ -22,6 +21,8 @@ class BinaryRadioGroup @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
 ) : LinearLayout(context, attrs, defStyleAttr) {
+
+    private val binding = ViewBinaryRadioGroupBinding.inflate(LayoutInflater.from(context), this, true)
 
     init {
         initializeViews()
@@ -44,24 +45,22 @@ class BinaryRadioGroup @JvmOverloads constructor(
             }
         }
 
-    fun setOption1Text(text: String, contentDescription: String) {
+    fun setOption1Text(text: String, contentDescription: String) = with(binding) {
         binaryRadioButtonOption1.text = text
         binaryRadioButtonOption1.contentDescription = contentDescription
     }
 
-    fun setOption2Text(text: String, contentDescription: String) {
+    fun setOption2Text(text: String, contentDescription: String) = with(binding) {
         binaryRadioButtonOption2.text = text
         binaryRadioButtonOption2.contentDescription = contentDescription
     }
 
-    private fun initializeViews() {
-        LayoutInflater.from(context).inflate(R.layout.view_binary_radio_group, this, true)
-
+    private fun initializeViews() = with(binding) {
         binaryRadioButtonOption1.setOnCheckedChangeListener(createOnCheckedChangeListener(OPTION_1))
         binaryRadioButtonOption2.setOnCheckedChangeListener(createOnCheckedChangeListener(OPTION_2))
     }
 
-    private fun applyAttributes(context: Context, attrs: AttributeSet?) {
+    private fun applyAttributes(context: Context, attrs: AttributeSet?) = with(binding) {
         context.theme.obtainStyledAttributes(attrs, R.styleable.BinaryRadioGroup, 0, 0)
             .apply {
                 val option1Text = getString(context, R.styleable.BinaryRadioGroup_option1Text)
@@ -82,12 +81,13 @@ class BinaryRadioGroup @JvmOverloads constructor(
         this.listener = listener
     }
 
-    fun setOptionContentDescriptions(option1ContentDescription: String, option2ContentDescription: String) {
-        binaryRadioButtonOption1.contentDescription = option1ContentDescription
-        binaryRadioButtonOption2.contentDescription = option2ContentDescription
-    }
+    fun setOptionContentDescriptions(option1ContentDescription: String, option2ContentDescription: String) =
+        with(binding) {
+            binaryRadioButtonOption1.contentDescription = option1ContentDescription
+            binaryRadioButtonOption2.contentDescription = option2ContentDescription
+        }
 
-    private fun updateButtonSelection() {
+    private fun updateButtonSelection() = with(binding) {
         binaryRadioButtonOption1.setOnCheckedChangeListener(null)
         binaryRadioButtonOption1.isChecked = selectedOption == OPTION_1
         val radioBackground1 =

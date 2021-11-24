@@ -9,15 +9,13 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 
-class LinkTestResultRobot {
+class LinkTestResultRobot : HasActivity {
 
-    fun checkActivityIsDisplayed() {
-        onView(withId(R.id.linkTestResultContinue))
-            .check(matches(isDisplayed()))
-    }
+    override val containerId: Int
+        get() = R.id.linkTestResultContinue
 
     fun enterCtaToken(ctaToken: String) {
         onView(withId(R.id.enterCodeEditText)).perform(
@@ -49,16 +47,6 @@ class LinkTestResultRobot {
 
     fun checkValidationErrorUnexpectedIsDisplayed() {
         onView(withText(R.string.link_test_result_error_unknown))
-            .check(matches(isDisplayed()))
-    }
-
-    fun checkInputErrorNeitherProvidedIsDisplayed() {
-        onView(withText(R.string.link_test_result_error_neither_input_provided))
-            .check(matches(isDisplayed()))
-    }
-
-    fun checkInputErrorBothProvidedIsDisplayed() {
-        onView(withText(R.string.link_test_result_error_both_inputs_provided))
             .check(matches(isDisplayed()))
     }
 }

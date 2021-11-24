@@ -7,8 +7,6 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import kotlinx.android.synthetic.main.activity_exposure_notification.selfIsolationWarning
-import kotlinx.android.synthetic.main.activity_exposure_notification.testingInformationContainer
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
 

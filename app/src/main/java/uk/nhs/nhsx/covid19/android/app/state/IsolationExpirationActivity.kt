@@ -5,32 +5,33 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
-import kotlinx.android.synthetic.main.activity_isolation_expiration.buttonReturnToHomeScreen
-import kotlinx.android.synthetic.main.activity_isolation_expiration.expirationDescription
-import kotlinx.android.synthetic.main.activity_isolation_expiration.temperatureNoticeView
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityIsolationExpirationBinding
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import java.time.LocalDate
 import javax.inject.Inject
 
-class IsolationExpirationActivity : BaseActivity(R.layout.activity_isolation_expiration) {
+class IsolationExpirationActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<IsolationExpirationViewModel>
 
     private val viewModel: IsolationExpirationViewModel by viewModels { factory }
 
+    private lateinit var binding: ActivityIsolationExpirationBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityIsolationExpirationBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        buttonReturnToHomeScreen.setOnSingleClickListener {
+        binding.buttonReturnToHomeScreen.setOnSingleClickListener {
             viewModel.acknowledgeIsolationExpiration()
             StatusActivity.start(this)
         }
@@ -51,13 +52,8 @@ class IsolationExpirationActivity : BaseActivity(R.layout.activity_isolation_exp
         viewModel.acknowledgeIsolationExpiration()
     }
 
-    private fun registerViewModelListeners() {
-        viewModel.viewState().observe(
-            this,
-            Observer {
-                displayExpirationDescription(it.expired, it.expiryDate, it.showTemperatureNotice)
-            }
-        )
+    private fun registerViewModelListeners() = viewModel.viewState().observe(this) {
+        displayExpirationDescription(it.expired, it.expiryDate, it.showTemperatureNotice)
     }
 
     private fun displayExpirationDescription(
@@ -68,12 +64,12 @@ class IsolationExpirationActivity : BaseActivity(R.layout.activity_isolation_exp
         val lastDayOfIsolation = expiryDate.minusDays(1)
         val pattern =
             if (expired) R.string.expiration_notification_description_passed else R.string.your_isolation_will_finish
-        expirationDescription.text = getString(
+        binding.expirationDescription.text = getString(
             pattern,
             lastDayOfIsolation.uiFormat(this)
         )
 
-        temperatureNoticeView.isVisible = showTemperatureNotice
+        binding.temperatureNoticeView.isVisible = showTemperatureNotice
     }
 
     companion object {

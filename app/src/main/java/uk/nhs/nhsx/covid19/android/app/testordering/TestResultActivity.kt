@@ -8,30 +8,11 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.activity_test_result.goodNewsContainer
-import kotlinx.android.synthetic.main.activity_test_result.isolationRequestContainer
-import kotlinx.android.synthetic.main.view_good_news.goodNewsActionButton
-import kotlinx.android.synthetic.main.view_good_news.goodNewsIcon
-import kotlinx.android.synthetic.main.view_good_news.goodNewsInfoView
-import kotlinx.android.synthetic.main.view_good_news.goodNewsOnlineServiceLink
-import kotlinx.android.synthetic.main.view_good_news.goodNewsParagraphContainer
-import kotlinx.android.synthetic.main.view_good_news.goodNewsSubtitle
-import kotlinx.android.synthetic.main.view_good_news.goodNewsTitle
-import kotlinx.android.synthetic.main.view_isolation_request.accessibilityContainer
-import kotlinx.android.synthetic.main.view_isolation_request.exposureFaqsLink
-import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestActionButton
-import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestImage
-import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestInfoView
-import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestOnlineServiceLink
-import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestParagraphContainer
-import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestTitle1
-import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestTitle2
-import kotlinx.android.synthetic.main.view_isolation_request.isolationRequestTitle3
-import kotlinx.android.synthetic.main.view_toolbar_background.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityTestResultBinding
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.Finish
@@ -57,16 +38,20 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
-class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
+class TestResultActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<BaseTestResultViewModel>
 
     private val viewModel: BaseTestResultViewModel by viewModels { factory }
 
+    private lateinit var binding: ActivityTestResultBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityTestResultBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         startViewModelListeners()
     }
@@ -139,7 +124,7 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
 
     private fun setCloseToolbar() {
         setCloseToolbar(
-            toolbar,
+            binding.primaryToolbar.toolbar,
             R.string.empty,
             R.drawable.ic_close_primary
         )
@@ -150,23 +135,25 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         title1: String,
         title2: String,
         title3: String? = null
-    ) {
+    ) = with(binding.isolationRequestContainer) {
+
         isolationRequestTitle1.text = title1
         isolationRequestTitle2.text = title2
         isolationRequestTitle3.text = title3
         isolationRequestTitle3.isVisible = title3 != null
 
-        with("$title1 $title2 ${title3.orEmpty()}") {
-            title = this
-            accessibilityContainer.contentDescription = this
-            accessibilityContainer.setUpAccessibilityHeading()
-        }
         listOf(
             isolationRequestTitle1,
             isolationRequestTitle2,
             isolationRequestTitle3
         ).forEach {
             it.contentDescription = null
+        }
+
+        with("$title1 $title2 ${title3.orEmpty()}") {
+            title = this
+            accessibilityContainer.contentDescription = this
+            accessibilityContainer.setUpAccessibilityHeading()
         }
     }
 
@@ -183,39 +170,42 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         @StringRes onlineServiceLinkText: Int = R.string.nhs_111_online_service,
         @StringRes onlineServiceLinkUrl: Int = R.string.url_nhs_111_online,
         @StringRes vararg paragraphResources: Int
-    ) {
+    ) = with(binding) {
         if (hasCloseToolbar) {
             setCloseToolbar()
         }
-        goodNewsContainer.gone()
-        isolationRequestContainer.visible()
-        exposureFaqsLink.isVisible = exposureLinksVisible
+        goodNewsContainer.root.gone()
+        with(isolationRequestContainer) {
 
-        isolationRequestImage.setImageResource(iconResource)
+            root.visible()
+            exposureFaqsLink.isVisible = exposureLinksVisible
 
-        setSelfIsolateTitles(
-            getString(selfIsolationLabel),
-            resources.getQuantityString(
-                R.plurals.state_isolation_days,
-                remainingDaysInIsolation,
-                remainingDaysInIsolation
-            ),
-            if (additionalIsolationInfoText == null) null else getString(additionalIsolationInfoText)
-        )
+            isolationRequestImage.setImageResource(iconResource)
 
-        isolationRequestInfoView.apply {
-            this.stateText = getString(stateText)
-            this.stateColor = getColor(stateColor)
-        }
+            setSelfIsolateTitles(
+                getString(selfIsolationLabel),
+                resources.getQuantityString(
+                    R.plurals.state_isolation_days,
+                    remainingDaysInIsolation,
+                    remainingDaysInIsolation
+                ),
+                if (additionalIsolationInfoText == null) null else getString(additionalIsolationInfoText)
+            )
 
-        isolationRequestParagraphContainer.addAllParagraphs(paragraphResources.map { getString(it) })
+            isolationRequestContainer.isolationRequestInfoView.apply {
+                this.stateText = getString(stateText)
+                this.stateColor = getColor(stateColor)
+            }
 
-        isolationRequestOnlineServiceLink.setDisplayText(onlineServiceLinkText)
-        isolationRequestOnlineServiceLink.setLinkUrl(onlineServiceLinkUrl)
+            isolationRequestParagraphContainer.addAllParagraphs(paragraphResources.map { getString(it) })
 
-        isolationRequestActionButton.apply {
-            text = getString(actionButtonStringResource)
-            setOnSingleClickListener { viewModel.onActionButtonClicked() }
+            isolationRequestOnlineServiceLink.setDisplayText(onlineServiceLinkText)
+            isolationRequestOnlineServiceLink.setLinkUrl(onlineServiceLinkUrl)
+
+            isolationRequestActionButton.apply {
+                text = getString(actionButtonStringResource)
+                setOnSingleClickListener { viewModel.onActionButtonClicked() }
+            }
         }
     }
 
@@ -326,13 +316,13 @@ class TestResultActivity : BaseActivity(R.layout.activity_test_result) {
         @StringRes goodNewsInfoViewResource: Int = R.string.test_result_no_self_isolation_description,
         @StringRes actionButtonStringResource: Int = R.string.continue_button,
         @StringRes vararg paragraphResources: Int = intArrayOf(R.string.for_further_advice_visit)
-    ) {
+    ) = with(binding.goodNewsContainer) {
         if (hasCloseToolbar) setCloseToolbar()
 
         goodNewsOnlineServiceLink.isVisible = hasGoodNewsLink
 
-        goodNewsContainer.visible()
-        isolationRequestContainer.gone()
+        root.visible()
+        binding.isolationRequestContainer.root.gone()
 
         if (iconResource == null) {
             goodNewsIcon.gone()

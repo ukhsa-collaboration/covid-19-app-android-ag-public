@@ -4,7 +4,7 @@
     android:orientation="vertical"
     tools:parentTag="android.widget.LinearLayout">
 
-    <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+    <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
         android:id="@+id/myDataSectionTitle"
         style="@style/Body1"
         android:layout_width="wrap_content"

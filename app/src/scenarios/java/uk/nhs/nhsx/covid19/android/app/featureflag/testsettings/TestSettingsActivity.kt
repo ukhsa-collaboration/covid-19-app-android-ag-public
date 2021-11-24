@@ -3,15 +3,18 @@ package uk.nhs.nhsx.covid19.android.app.featureflag.testsettings
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityTestSettingsBinding
 
 private const val TAG_TEST_SETTING = "TAG_TEST_SETTING"
 
-class TestSettingsActivity :
-    AppCompatActivity(R.layout.activity_test_settings),
-    TestSettingsFragment.TestSettingsListener {
+class TestSettingsActivity : AppCompatActivity(), TestSettingsFragment.TestSettingsListener {
+
+    private lateinit var binding: ActivityTestSettingsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityTestSettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         if (supportFragmentManager.findFragmentByTag(TAG_TEST_SETTING) == null) {
             val settingsFragment =

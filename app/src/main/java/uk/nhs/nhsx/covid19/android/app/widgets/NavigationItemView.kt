@@ -4,12 +4,10 @@ import android.R.attr
 import android.content.Context
 import android.util.AttributeSet
 import android.util.TypedValue
-import android.view.View
+import android.view.LayoutInflater
 import android.widget.LinearLayout
-import kotlinx.android.synthetic.main.view_navigation_item.view.navigationItemDescription
-import kotlinx.android.synthetic.main.view_navigation_item.view.navigationItemIndicator
-import kotlinx.android.synthetic.main.view_navigation_item.view.navigationItemTitle
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.ViewNavigationItemBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpButtonType
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpLinkTypeWithBrowserWarning
@@ -20,13 +18,17 @@ class NavigationItemView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
+    private val binding = ViewNavigationItemBinding.inflate(LayoutInflater.from(context), this)
+
     var attributes: NavigationItemAttributes = NavigationItemAttributes()
         set(value) {
             field = value
             with(attributes) {
                 setNavigationIndicator(isExternalLink)
-                navigationItemTitle.text = title
-                navigationItemDescription.text = description
+                with(binding) {
+                    navigationItemTitle.text = title
+                    navigationItemDescription.text = description
+                }
             }
             updateAccessibilityAnnouncement()
         }
@@ -37,7 +39,7 @@ class NavigationItemView @JvmOverloads constructor(
         updateAccessibilityAnnouncement()
     }
 
-    private fun updateAccessibilityAnnouncement() {
+    private fun updateAccessibilityAnnouncement() = with(binding) {
         val accessibilityText = "${navigationItemTitle.text}. ${navigationItemDescription.text}"
         if (attributes.isExternalLink) {
             setUpLinkTypeWithBrowserWarning(accessibilityText)
@@ -47,7 +49,6 @@ class NavigationItemView @JvmOverloads constructor(
     }
 
     private fun initializeViews() {
-        View.inflate(context, R.layout.view_navigation_item, this)
         configureLayout()
     }
 
@@ -71,7 +72,7 @@ class NavigationItemView @JvmOverloads constructor(
         val navigationIndicator = if (isExternalLink) R.drawable.ic_external_link else R.drawable.ic_chevron_right
         val navigationIndicatorDrawable = context.getDrawable(navigationIndicator)
         navigationIndicatorDrawable?.isAutoMirrored = true
-        navigationItemIndicator.setImageDrawable(navigationIndicatorDrawable)
+        binding.navigationItemIndicator.setImageDrawable(navigationIndicatorDrawable)
     }
 
     private fun configureLayout() {

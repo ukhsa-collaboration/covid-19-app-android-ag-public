@@ -30,7 +30,7 @@ class TestingHubViewModelTest {
     private val testSubject = TestingHubViewModel(
         districtAreaStringProvider,
         evaluateBookTestNavigation,
-        canBookPcrTest,
+        canBookPcrTest
     )
 
     private val expectedUrlResId = 123

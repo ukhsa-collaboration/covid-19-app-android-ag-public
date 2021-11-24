@@ -8,14 +8,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager.MATCH_DEFAULT_ONLY
 import android.os.Bundle
-import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_edge_case.edgeCaseContainer
-import kotlinx.android.synthetic.main.activity_edge_case.edgeCaseText
-import kotlinx.android.synthetic.main.activity_edge_case.edgeCaseTitle
-import kotlinx.android.synthetic.main.activity_edge_case.takeActionButton
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityEdgeCaseBinding
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule.Companion.BLUETOOTH_STATE_NAME
 import uk.nhs.nhsx.covid19.android.app.packagemanager.PackageManager
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
@@ -24,7 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 import javax.inject.Named
 
-class EnableBluetoothActivity : BaseActivity(R.layout.activity_edge_case) {
+class EnableBluetoothActivity : BaseActivity() {
 
     @Inject
     @Named(BLUETOOTH_STATE_NAME)
@@ -33,26 +29,30 @@ class EnableBluetoothActivity : BaseActivity(R.layout.activity_edge_case) {
     @Inject
     lateinit var packageManager: PackageManager
 
+    private lateinit var binding: ActivityEdgeCaseBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityEdgeCaseBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        edgeCaseTitle.text = getString(R.string.enable_bluetooth_title)
-        edgeCaseText.text = getString(R.string.enable_bluetooth_rationale)
+        with(binding) {
 
-        takeActionButton.text = getString(R.string.allow_bluetooth)
-        takeActionButton.setOnSingleClickListener {
-            navigateToBluetoothSettings()
+            edgeCaseTitle.text = getString(R.string.enable_bluetooth_title)
+            edgeCaseText.text = getString(R.string.enable_bluetooth_rationale)
+
+            takeActionButton.text = getString(R.string.allow_bluetooth)
+            takeActionButton.setOnSingleClickListener {
+                navigateToBluetoothSettings()
+            }
         }
 
-        bluetoothStateProvider.availabilityState.observe(
-            this,
-            Observer { state ->
-                if (state == ENABLED) {
-                    finish()
-                }
+        bluetoothStateProvider.availabilityState.observe(this) { state ->
+            if (state == ENABLED) {
+                finish()
             }
-        )
+        }
     }
 
     override fun onResume() {
@@ -90,7 +90,7 @@ class EnableBluetoothActivity : BaseActivity(R.layout.activity_edge_case) {
     }
 
     private fun showBluetoothSettingsNavigationFailedMessage() {
-        Snackbar.make(edgeCaseContainer, R.string.enable_bluetooth_error_hint, Snackbar.LENGTH_LONG).show()
+        Snackbar.make(binding.edgeCaseContainer, R.string.enable_bluetooth_error_hint, Snackbar.LENGTH_LONG).show()
     }
 
     companion object {

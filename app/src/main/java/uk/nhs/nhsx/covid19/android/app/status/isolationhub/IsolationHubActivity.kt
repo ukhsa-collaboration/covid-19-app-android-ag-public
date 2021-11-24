@@ -4,14 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.activity_isolation_hub.itemBookTest
-import kotlinx.android.synthetic.main.activity_isolation_hub.itemIsolationNote
-import kotlinx.android.synthetic.main.activity_isolation_hub.itemIsolationPayment
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityIsolationHubBinding
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.SymptomsAfterRiskyVenueActivity
 import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubViewModel.NavigationTarget.BookTest
@@ -25,7 +22,9 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
-class IsolationHubActivity : BaseActivity(R.layout.activity_isolation_hub) {
+class IsolationHubActivity : BaseActivity() {
+
+    private lateinit var binding: ActivityIsolationHubBinding
 
     @Inject
     lateinit var factory: ViewModelFactory<IsolationHubViewModel>
@@ -34,8 +33,14 @@ class IsolationHubActivity : BaseActivity(R.layout.activity_isolation_hub) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityIsolationHubBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        setNavigateUpToolbar(toolbar, R.string.isolation_hub_title, upIndicator = R.drawable.ic_arrow_back_white)
+        setNavigateUpToolbar(
+            binding.titleToolbar.root,
+            R.string.isolation_hub_title,
+            upIndicator = R.drawable.ic_arrow_back_white
+        )
 
         startListeningToViewState()
 
@@ -54,10 +59,10 @@ class IsolationHubActivity : BaseActivity(R.layout.activity_isolation_hub) {
     }
 
     private fun startListeningToViewState() {
-        viewModel.viewState().observe(this) { viewState ->
-            with(viewState) {
-                itemIsolationPayment.isVisible = showIsolationPaymentButton
-                itemBookTest.isVisible = showBookTestButton
+        viewModel.viewState().observe(this) { state ->
+            with(binding) {
+                itemIsolationPayment.isVisible = state.showIsolationPaymentButton
+                itemBookTest.isVisible = state.showBookTestButton
             }
         }
 
@@ -88,7 +93,7 @@ class IsolationHubActivity : BaseActivity(R.layout.activity_isolation_hub) {
         }
     }
 
-    private fun setUpClickListeners() {
+    private fun setUpClickListeners() = with(binding) {
         itemIsolationPayment.setOnSingleClickListener {
             viewModel.onItemIsolationPaymentClicked()
         }

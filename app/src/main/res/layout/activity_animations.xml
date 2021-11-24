@@ -6,7 +6,7 @@
     android:id="@+id/animationsContainer"
     android:orientation="vertical">
 
-    <include layout="@layout/view_toolbar_primary" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/view_toolbar_primary" />
 
     <LinearLayout
         android:id="@+id/optionHomeScreenAnimation"
@@ -49,7 +49,7 @@
             android:paddingHorizontal="@dimen/margin_horizontal"
             android:paddingVertical="@dimen/vertical_margin">
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Title3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

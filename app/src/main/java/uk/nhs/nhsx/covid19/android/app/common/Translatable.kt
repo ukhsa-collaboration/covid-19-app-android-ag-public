@@ -4,13 +4,20 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 import uk.nhs.nhsx.covid19.android.app.SupportedLanguage
 import java.util.Locale
+import javax.inject.Inject
 
 interface Translatable<T> : Parcelable {
     val translations: Map<String, T>
 
-    fun translateOrNull(): T? {
-        val languageAndRegion = Locale.getDefault().toLanguageTag()
-        val languageCodeOnly = Locale.getDefault().language
+    @Deprecated(
+        message = "Utilises static Locale call, making testing difficult.  Please pass in the Locale to use",
+        replaceWith = ReplaceWith("translateOrNull(locale)")
+    )
+    fun translateOrNull(): T? = translateOrNull(Locale.getDefault())
+
+    fun translateOrNull(locale: Locale): T? {
+        val languageAndRegion = locale.toLanguageTag()
+        val languageCodeOnly = locale.language
 
         if (!isLanguageSupported(languageCodeOnly)) {
             return translations[fallbackLanguageAndRegion] ?: translations[fallbackLanguage]
@@ -50,5 +57,14 @@ data class TranslatableString(override val translations: Map<String, String>) : 
     fun replace(oldValue: String, newValue: String): TranslatableString =
         TranslatableString(translations.mapValues { it.value.replace(oldValue, newValue) })
 
+    @Deprecated(
+        message = "Utilises static Locale call, making testing difficult.  Please pass in the Locale to use",
+        replaceWith = ReplaceWith("translate(locale)")
+    )
     fun translate(): String = translateOrNull() ?: ""
+    fun translate(locale: Locale): String = translateOrNull(locale) ?: ""
+}
+
+class LocaleProvider @Inject constructor() {
+    fun default() = Locale.getDefault()
 }

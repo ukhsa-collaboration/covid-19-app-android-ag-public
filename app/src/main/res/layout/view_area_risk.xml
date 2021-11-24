@@ -15,7 +15,7 @@
         android:scaleType="centerInside"
         tools:src="@drawable/ic_location_white" />
 
-    <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+    <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
         android:id="@+id/areaRiskText"
         style="@style/Body1"
         android:layout_width="wrap_content"

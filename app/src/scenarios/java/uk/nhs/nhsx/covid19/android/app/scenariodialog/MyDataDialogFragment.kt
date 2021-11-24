@@ -1,16 +1,9 @@
 package uk.nhs.nhsx.covid19.android.app.scenariodialog
 
-import android.view.View
-import android.view.ViewGroup
+import android.view.LayoutInflater
 import android.widget.CompoundButton
-import androidx.appcompat.widget.SwitchCompat
-import kotlinx.android.synthetic.scenarios.dialog_user_data.view.mockAcknowledgedTestResult
-import kotlinx.android.synthetic.scenarios.dialog_user_data.view.mockIsolationState
-import kotlinx.android.synthetic.scenarios.dialog_user_data.view.mockLastRiskyVenueVisitDate
-import kotlinx.android.synthetic.scenarios.dialog_user_data.view.optionalContainer
-import kotlinx.android.synthetic.scenarios.dialog_user_data.view.useMock
-import uk.nhs.nhsx.covid19.android.app.R.layout
 import uk.nhs.nhsx.covid19.android.app.about.mydata.BaseMyDataViewModel.IsolationViewState
+import uk.nhs.nhsx.covid19.android.app.databinding.DialogUserDataBinding
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockMyDataViewModel
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
@@ -18,32 +11,26 @@ import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.P
 import java.time.LocalDate
 
 class MyDataDialogFragment(positiveAction: (() -> Unit)) :
-    ScenarioDialogFragment(positiveAction) {
+    ScenarioDialogFragment<DialogUserDataBinding>(positiveAction) {
     override val title: String = "User Data Config"
-    override val layoutId = layout.dialog_user_data
 
-    private lateinit var useMockSwitch: SwitchCompat
-    private lateinit var optionalViews: ViewGroup
-
-    override fun setUp(view: View) = with(view) {
-        useMockSwitch = useMock
-        optionalViews = optionalContainer
-
+    override fun setupBinding(inflater: LayoutInflater) = DialogUserDataBinding.inflate(inflater)
+    override fun setupView() {
         setUpUseMock()
-        setUpConfiguration(this)
+        setUpConfiguration()
     }
 
-    private fun setUpUseMock() = with(useMockSwitch) {
+    private fun setUpUseMock() = with(binding.useMock) {
         setOnCheckedChangeListener { _: CompoundButton, checked: Boolean ->
             MockMyDataViewModel.currentOptions =
                 MockMyDataViewModel.currentOptions.copy(useMock = checked)
-            optionalViews.visibility = checked.toViewState()
+            binding.optionalContainer.visibility = checked.toViewState()
         }
         isChecked = MockMyDataViewModel.currentOptions.useMock
     }
 
-    private fun setUpConfiguration(view: View) {
-        with(view.mockIsolationState) {
+    private fun setUpConfiguration() {
+        with(binding.mockIsolationState) {
             isChecked = MockMyDataViewModel.currentOptions.isolationViewState != null
             setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
@@ -64,7 +51,7 @@ class MyDataDialogFragment(positiveAction: (() -> Unit)) :
             }
         }
 
-        with(view.mockLastRiskyVenueVisitDate) {
+        with(binding.mockLastRiskyVenueVisitDate) {
             isChecked = MockMyDataViewModel.currentOptions.lastRiskyVenueVisitDate != null
             setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
@@ -79,7 +66,7 @@ class MyDataDialogFragment(positiveAction: (() -> Unit)) :
             }
         }
 
-        with(view.mockAcknowledgedTestResult) {
+        with(binding.mockAcknowledgedTestResult) {
             isChecked = MockMyDataViewModel.currentOptions.acknowledgedTestResult != null
             setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {

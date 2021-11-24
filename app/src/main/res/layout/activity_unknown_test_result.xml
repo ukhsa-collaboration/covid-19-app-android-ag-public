@@ -1,11 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/unknownTestResultContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/view_toolbar_background" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/view_toolbar_background" />
 
     <ScrollView
         style="@style/ScrollContainer"
@@ -28,7 +27,7 @@
                 android:contentDescription="@null"
                 android:src="@drawable/update_app_recommended" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:id="@+id/unknown_test_result_title"
                 style="@style/Title1"
                 android:layout_width="match_parent"

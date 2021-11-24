@@ -8,6 +8,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutReason.QUESTIONNAIRE
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
@@ -16,6 +17,7 @@ import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class StateStorageSerializationTest {
@@ -99,5 +101,30 @@ class StateStorageSerializationTest {
         assertFailsWith<JsonDataException> {
             testSubject.fromJson("""{"corruptString":"invalidValue"}""")
         }
+    }
+
+    @Test
+    fun `deserialize contact case with opt-out defaults if no reason exists`() {
+        val configuration =
+            """{"contactCase":11,"indexCaseSinceSelfDiagnosisOnset":11,"indexCaseSinceSelfDiagnosisUnknownOnset":9,"maxIsolation":21,"pendingTasksRetentionPeriod":14,"indexCaseSinceTestResultEndDate":11,"testResultPollingTokenRetentionPeriod":28}"""
+        val exposureDate = "2020-01-09"
+        val notificationDate = "2020-01-08"
+        val optOutOfContactIsolationDate = "2020-01-07"
+        val contactWithOptOutOfContactIsolation =
+            """{"exposureDate":"$exposureDate","notificationDate":"$notificationDate","optOutOfContactIsolation":{"date":"$optOutOfContactIsolationDate"}}"""
+        val state =
+            """{"configuration":$configuration,"contact":$contactWithOptOutOfContactIsolation,"hasAcknowledgedEndOfIsolation":true,"version":1}"""
+
+        val isolationStateJson = testSubject.fromJson(state)
+        val expected = IsolationStateJson(
+            configuration = DurationDays(),
+            contact = Contact(
+                exposureDate = LocalDate.parse(exposureDate),
+                notificationDate = LocalDate.parse(notificationDate),
+                optOutOfContactIsolation = OptOutOfContactIsolation(LocalDate.parse(optOutOfContactIsolationDate), reason = QUESTIONNAIRE),
+            ),
+            hasAcknowledgedEndOfIsolation = true
+        )
+        assertEquals(expected, isolationStateJson)
     }
 }

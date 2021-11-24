@@ -14,8 +14,9 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 
-class IsolationHubScenarioTest : EspressoTest(), IsolationSetupHelper {
+class IsolationHubScenarioTest : EspressoTest(), IsolationSetupHelper, LocalAuthoritySetupHelper {
 
     private val statusRobot = StatusRobot()
     private val isolationHubRobot = IsolationHubRobot()
@@ -28,15 +29,13 @@ class IsolationHubScenarioTest : EspressoTest(), IsolationSetupHelper {
     fun whenInActiveIsolationAndNoBookTestTypeVenueVisitStored_bookATest_navigateToStatusActivity() {
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_INTERNAL_BROWSER) {
             givenContactIsolation()
+            navigateToIsolationHub()
 
-            startTestActivity<StatusActivity>()
-
-            statusRobot.checkActivityIsDisplayed()
-            statusRobot.clickIsolationHub()
-
-            isolationHubRobot.checkActivityIsDisplayed()
-            isolationHubRobot.checkItemBookTestIsDisplayed()
-            isolationHubRobot.clickItemBookATest()
+            with(isolationHubRobot) {
+                checkActivityIsDisplayed()
+                checkItemBookTestIsDisplayed()
+                clickItemBookATest()
+            }
 
             testOrderingRobot.checkActivityIsDisplayed()
             testOrderingRobot.clickOrderTestButton()
@@ -51,11 +50,7 @@ class IsolationHubScenarioTest : EspressoTest(), IsolationSetupHelper {
     @Test
     fun whenInIsolation_clickIsolationNoteItem_openBrowserWithCorrectUrl() {
         givenContactIsolation()
-
-        startTestActivity<StatusActivity>()
-
-        statusRobot.checkActivityIsDisplayed()
-        statusRobot.clickIsolationHub()
+        navigateToIsolationHub()
 
         isolationHubRobot.checkActivityIsDisplayed()
         isolationHubRobot.checkItemIsolationNoteIsDisplayed()
@@ -69,19 +64,24 @@ class IsolationHubScenarioTest : EspressoTest(), IsolationSetupHelper {
     fun whenInIsolation_clickIsolationNoteItem_closeBrowser_shouldShowStatusActivity() {
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
             givenContactIsolation()
+            navigateToIsolationHub()
 
-            startTestActivity<StatusActivity>()
-
-            statusRobot.checkActivityIsDisplayed()
-            statusRobot.clickIsolationHub()
-
-            isolationHubRobot.checkActivityIsDisplayed()
-            isolationHubRobot.checkItemIsolationNoteIsDisplayed()
-            isolationHubRobot.clickItemIsolationNote()
+            with(isolationHubRobot) {
+                checkActivityIsDisplayed()
+                checkItemIsolationNoteIsDisplayed()
+                clickItemIsolationNote()
+            }
 
             browserRobot.clickCloseButton()
 
             statusRobot.checkActivityIsDisplayed()
         }
+    }
+
+    private fun navigateToIsolationHub() {
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+        statusRobot.clickIsolationHub()
     }
 }

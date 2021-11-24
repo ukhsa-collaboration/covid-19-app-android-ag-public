@@ -4,10 +4,10 @@ import android.R.attr
 import android.content.Context
 import android.util.AttributeSet
 import android.util.TypedValue
-import android.view.View
+import android.view.LayoutInflater
 import android.widget.LinearLayout
-import kotlinx.android.synthetic.main.view_local_message_banner.view.bannerTitle
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.ViewLocalMessageBannerBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpButtonType
 
 class LocalMessageBannerView @JvmOverloads constructor(
@@ -16,10 +16,13 @@ class LocalMessageBannerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
+    private val binding: ViewLocalMessageBannerBinding =
+        ViewLocalMessageBannerBinding.inflate(LayoutInflater.from(context), this)
+
     var title: String? = ""
         set(value) {
             field = value
-            bannerTitle.text = value
+            binding.bannerTitle.text = value
             setUpAccessibility()
         }
 
@@ -33,7 +36,6 @@ class LocalMessageBannerView @JvmOverloads constructor(
     }
 
     private fun initializeViews() {
-        View.inflate(context, R.layout.view_local_message_banner, this)
         configureLayout()
     }
 

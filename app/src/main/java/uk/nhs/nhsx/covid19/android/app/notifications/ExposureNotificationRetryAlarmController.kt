@@ -11,6 +11,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationRetryReceive
 import uk.nhs.nhsx.covid19.android.app.util.BroadcastProvider
 import java.time.Clock
 import java.time.Instant
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -22,7 +23,7 @@ class ExposureNotificationRetryAlarmController @Inject constructor(
     private val notificationProvider: NotificationProvider,
     private val shouldShowEncounterDetectionActivityProvider: ShouldShowEncounterDetectionActivityProvider,
     private val analyticsEventProcessor: AnalyticsEventProcessor,
-    private val clock: Clock,
+    private val clock: DeviceClock,
     private val broadcastProvider: BroadcastProvider,
 ) {
 
@@ -101,4 +102,19 @@ class ExposureNotificationRetryAlarmController @Inject constructor(
     companion object {
         const val EXPOSURE_NOTIFICATION_RETRY_ALARM_INTENT_ID = 1339
     }
+}
+
+/* In the scenarios app, a fake clock is used which allows you to time travel without going to the device settings.
+ *  But the AlarmManager and WorkManager which don't know anything about this internal clock are used to schedule tasks.
+ *   The DeviceClock here allows the scenarios app to use the device clock when time travelling and scheduling tasks rather than the fake one
+ */
+
+class DeviceClock @Inject constructor() : Clock() {
+    private val clock: Clock get() = systemDefaultZone()
+
+    override fun getZone(): ZoneId = clock.zone
+
+    override fun withZone(zone: ZoneId?): Clock = clock.withZone(zone)
+
+    override fun instant(): Instant = clock.instant()
 }

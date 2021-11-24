@@ -8,17 +8,6 @@ import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.NestedScrollView
-import kotlinx.android.synthetic.main.activity_questionnaire.buttonTryAgain
-import kotlinx.android.synthetic.main.activity_questionnaire.errorStateContainer
-import kotlinx.android.synthetic.main.activity_questionnaire.loadingContainer
-import kotlinx.android.synthetic.main.activity_questionnaire.questionListContainer
-import kotlinx.android.synthetic.main.activity_questionnaire.textErrorMessage
-import kotlinx.android.synthetic.main.activity_questionnaire.textErrorTitle
-import kotlinx.android.synthetic.main.include_show_questionnaire.buttonReviewSymptoms
-import kotlinx.android.synthetic.main.include_show_questionnaire.errorPanel
-import kotlinx.android.synthetic.main.include_show_questionnaire.questionsRecyclerView
-import kotlinx.android.synthetic.main.include_show_questionnaire.noSymptomsButton
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
@@ -26,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.common.Lce.Error
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Loading
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Success
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityQuestionnaireBinding
 import uk.nhs.nhsx.covid19.android.app.questionnaire.NewNoSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoSymptomsActivity
@@ -47,7 +37,7 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.smoothScrollToAndThen
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
-class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
+class QuestionnaireActivity : BaseActivity() {
 
     private lateinit var questionnaireViewAdapter: QuestionnaireViewAdapter
 
@@ -56,6 +46,7 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
 
     private val viewModel: QuestionnaireViewModel by viewModels { factory }
 
+    private lateinit var binding: ActivityQuestionnaireBinding
     private lateinit var nestedScrollView: NestedScrollView
 
     /**
@@ -65,12 +56,14 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setCloseToolbar(toolbar, R.string.select_symptoms)
-
         appComponent.inject(this)
+        binding = ActivityQuestionnaireBinding.inflate(layoutInflater)
 
-        nestedScrollView = questionListContainer as NestedScrollView
+        with(binding) {
+            setContentView(root)
+            setCloseToolbar(primaryToolbar.toolbar, R.string.select_symptoms)
+            nestedScrollView = questionListContainer.questionnaireScrollView
+        }
 
         setupListeners()
         setupAdapter()
@@ -135,12 +128,13 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
                 question?.let { questionnaireViewAdapter.currentList.indexOf(question) } ?: -1
 
             if (index >= 0) {
-                (questionsRecyclerView.layoutManager as ScrollableLayoutManager).scrollToIndex(index)
+                (binding.questionListContainer.questionsRecyclerView.layoutManager as ScrollableLayoutManager)
+                    .scrollToIndex(index)
             }
         }
     }
 
-    private fun handleSuccess(state: QuestionnaireState) {
+    private fun handleSuccess(state: QuestionnaireState) = with(binding.questionListContainer) {
         showQuestionnaire(state.questions)
 
         if (state.showError) {
@@ -157,40 +151,43 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
         }
     }
 
-    private fun setupListeners() {
+    private fun setupListeners() = with(binding) {
         buttonTryAgain.setOnSingleClickListener {
             viewModel.loadQuestionnaire()
         }
 
-        noSymptomsButton.setOnSingleClickListener {
-            viewModel.onNoSymptomsClicked()
-        }
+        with(questionListContainer) {
 
-        buttonReviewSymptoms.setOnSingleClickListener {
-            viewModel.onButtonReviewSymptomsClicked()
+            noSymptomsButton.setOnSingleClickListener {
+                viewModel.onNoSymptomsClicked()
+            }
+
+            buttonReviewSymptoms.setOnSingleClickListener {
+                viewModel.onButtonReviewSymptomsClicked()
+            }
         }
     }
 
-    private fun showLoadingSpinner() {
+    private fun showLoadingSpinner() = with(binding) {
         loadingContainer.visible()
         errorStateContainer.gone()
-        questionListContainer.gone()
+        questionListContainer.root.gone()
 
         setAccessibilityTitle(R.string.loading)
     }
 
-    private fun showErrorState() {
+    private fun showErrorState() = with(binding) {
         errorStateContainer.visible()
         loadingContainer.gone()
-        questionListContainer.gone()
+        questionListContainer.root.gone()
 
         setAccessibilityTitle("${textErrorTitle.text}. ${textErrorMessage.text}")
     }
 
-    private fun showQuestionnaire(questions: List<Question>) {
+    private fun showQuestionnaire(questions: List<Question>) = with(binding) {
         setAccessibilityTitle(R.string.select_symptoms)
 
-        questionListContainer.visible()
+        questionListContainer.root.visible()
         loadingContainer.gone()
         errorStateContainer.gone()
         submitQuestions(questions)
@@ -223,13 +220,13 @@ class QuestionnaireActivity : BaseActivity(R.layout.activity_questionnaire) {
             .show()
     }
 
-    private fun setupAdapter() {
+    private fun setupAdapter() = with(binding.questionListContainer) {
         questionnaireViewAdapter = QuestionnaireViewAdapter {
             viewModel.toggleQuestion(it)
         }
         questionsRecyclerView.layoutManager =
             ScrollableLayoutManager(
-                this,
+                this@QuestionnaireActivity,
                 nestedScrollView,
                 questionsRecyclerView
             )

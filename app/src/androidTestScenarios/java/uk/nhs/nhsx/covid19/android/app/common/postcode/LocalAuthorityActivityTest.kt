@@ -76,6 +76,7 @@ class LocalAuthorityActivityTest(override val configuration: TestConfiguration) 
 
         // "S12000026": { "name": "Scottish Borders", "country": "Scotland" }
         localAuthorityRobot.selectLocalAuthority("Scottish Borders")
+        localAuthorityRobot.clickConfirm()
         localAuthorityRobot.checkLocalAuthorityNotSupportedErrorIsDisplayed()
 
         step(
@@ -88,7 +89,7 @@ class LocalAuthorityActivityTest(override val configuration: TestConfiguration) 
 
         // "E06000057": { "name": "Northumberland", "country": "England" }
         localAuthorityRobot.selectLocalAuthority("Northumberland")
-        localAuthorityRobot.checkErrorIsNotDisplayed()
+        localAuthorityRobot.checkLocalAuthorityNotSupportedErrorIsDisplayed()
 
         step(
             stepName = "Select supported local authority",

@@ -44,4 +44,35 @@ class EditPostalDistrictAndLocalAuthorityFlowTest : EspressoTest() {
 
         waitFor { myAreaRobot.checkActivityIsDisplayed() }
     }
+
+    @Test
+   fun clickContinue_errorIsVisible_completePostcodeAndPressBack_errorIsNotVisible() {
+        startTestActivity<SettingsActivity>()
+
+        waitFor { settingsRobot.checkActivityIsDisplayed() }
+
+        settingsRobot.clickMyAreaSetting()
+
+        waitFor { myAreaRobot.checkActivityIsDisplayed() }
+
+        myAreaRobot.clickEditButton()
+
+        waitFor { editPostalDistrictRobot.checkActivityIsDisplayed() }
+
+        editPostalDistrictRobot.clickSavePostDistrictCode()
+
+        waitFor { editPostalDistrictRobot.checkErrorTitleForInvalidPostCodeIsDisplayed() }
+
+        editPostalDistrictRobot.enterPostDistrictCode(postCode)
+
+        editPostalDistrictRobot.clickSavePostDistrictCode()
+
+        waitFor { localAuthorityRobot.checkActivityIsDisplayed() }
+
+        testAppContext.device.pressBack()
+
+        waitFor { editPostalDistrictRobot.checkActivityIsDisplayed() }
+
+        waitFor { editPostalDistrictRobot.checkErrorContainerIsNotDisplayed() }
+    }
 }

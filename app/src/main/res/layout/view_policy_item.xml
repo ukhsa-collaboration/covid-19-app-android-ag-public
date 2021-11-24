@@ -19,7 +19,7 @@
         android:layout_marginTop="8dp"
         android:orientation="vertical">
 
-        <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+        <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
             android:id="@+id/policyItemHeading"
             style="@style/Title3"
             android:layout_width="wrap_content"

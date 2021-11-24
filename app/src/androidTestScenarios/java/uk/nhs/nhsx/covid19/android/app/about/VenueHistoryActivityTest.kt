@@ -5,12 +5,10 @@ import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
-import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
-import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.VenueHistoryRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
+import uk.nhs.nhsx.covid19.android.app.testhelpers.verifyForOrientations
 import java.time.Instant
 import java.time.LocalDate
 
@@ -50,87 +48,72 @@ class VenueHistoryActivityTest : EspressoTest() {
     }
 
     @Test
-    fun testActivity() {
+    fun testActivity() = with(venueHistoryRobot) {
         startTestActivity<VenueHistoryActivity>()
 
-        venueHistoryRobot.checkActivityIsDisplayed()
+        checkActivityIsDisplayed()
 
-        venueHistoryRobot.checkDateIsDisplayedAtPosition(LocalDate.parse("2020-07-26"), 0)
-        venueHistoryRobot.checkVisitIsDisplayedAtPosition(visitD, 1)
-        venueHistoryRobot.checkVisitIsDisplayedAtPosition(visitC, 2)
-        venueHistoryRobot.checkDateIsDisplayedAtPosition(LocalDate.parse("2020-07-25"), 3)
-        venueHistoryRobot.checkVisitIsDisplayedAtPosition(visitB, 4)
-        venueHistoryRobot.checkVisitIsDisplayedAtPosition(visitA, 5)
+        checkVisitPositions()
     }
 
     @Test
     @RetryFlakyTest
-    fun testDeletion() {
+    fun testDeletion() = with(venueHistoryRobot) {
         startTestActivity<VenueHistoryActivity>()
+        checkActivityIsDisplayed()
 
-        venueHistoryRobot.checkActivityIsDisplayed()
+        checkVisitPositions()
 
-        venueHistoryRobot.checkDateIsDisplayedAtPosition(LocalDate.parse("2020-07-26"), 0)
-        venueHistoryRobot.checkVisitIsDisplayedAtPosition(visitD, 1)
-        venueHistoryRobot.checkVisitIsDisplayedAtPosition(visitC, 2)
-        venueHistoryRobot.checkDateIsDisplayedAtPosition(LocalDate.parse("2020-07-25"), 3)
-        venueHistoryRobot.checkVisitIsDisplayedAtPosition(visitB, 4)
-        venueHistoryRobot.checkVisitIsDisplayedAtPosition(visitA, 5)
+        checkEditButtonIsDisplayed()
+        clickEditButton()
+        checkDoneButtonIsDisplayed()
 
-        waitFor { venueHistoryRobot.checkEditButtonIsDisplayed() }
+        checkVisitPositions()
 
-        venueHistoryRobot.clickEditButton()
+        checkDeleteIconIsDisplayedAtPosition(1)
+        checkDeleteIconIsDisplayedAtPosition(2)
+        checkDeleteIconIsDisplayedAtPosition(4)
+        checkDeleteIconIsDisplayedAtPosition(5)
 
-        waitFor { venueHistoryRobot.checkDoneButtonIsDisplayed() }
+        clickDeleteIconOnPosition(1)
 
-        venueHistoryRobot.checkDateIsDisplayedAtPosition(LocalDate.parse("2020-07-26"), 0)
-        venueHistoryRobot.checkVisitIsDisplayedAtPosition(visitD, 1)
-        venueHistoryRobot.checkVisitIsDisplayedAtPosition(visitC, 2)
-        venueHistoryRobot.checkDateIsDisplayedAtPosition(LocalDate.parse("2020-07-25"), 3)
-        venueHistoryRobot.checkVisitIsDisplayedAtPosition(visitB, 4)
-        venueHistoryRobot.checkVisitIsDisplayedAtPosition(visitA, 5)
+        verifyForOrientations {
+            checkConfirmDeletionDialogIsDisplayed()
+        }
 
-        venueHistoryRobot.checkDeleteIconIsDisplayedAtPosition(1)
-        venueHistoryRobot.checkDeleteIconIsDisplayedAtPosition(2)
-        venueHistoryRobot.checkDeleteIconIsDisplayedAtPosition(4)
-        venueHistoryRobot.checkDeleteIconIsDisplayedAtPosition(5)
+        clickConfirmDeletionInDialog()
 
-        venueHistoryRobot.clickDeleteIconOnPosition(1)
-
-        waitFor { venueHistoryRobot.checkConfirmDeletionDialogIsDisplayed() }
-
-        setScreenOrientation(LANDSCAPE)
-
-        waitFor { venueHistoryRobot.checkConfirmDeletionDialogIsDisplayed() }
-
-        setScreenOrientation(PORTRAIT)
-
-        waitFor { venueHistoryRobot.checkConfirmDeletionDialogIsDisplayed() }
-
-        venueHistoryRobot.clickConfirmDeletionInDialog()
-
-        waitFor { venueHistoryRobot.checkDoneButtonIsDisplayed() }
+        checkDoneButtonIsDisplayed()
 
         deleteVenueVisitOnPosition(1)
 
-        waitFor { venueHistoryRobot.checkDateIsDisplayedAtPosition(LocalDate.parse("2020-07-25"), 0) }
-        venueHistoryRobot.checkVisitIsDisplayedAtPosition(visitB, 1)
-        venueHistoryRobot.checkVisitIsDisplayedAtPosition(visitA, 2)
+        checkDateIsDisplayedAtPosition(LocalDate.parse("2020-07-25"), 0)
+        checkVisitIsDisplayedAtPosition(visitB, 1)
+        checkVisitIsDisplayedAtPosition(visitA, 2)
 
         deleteVenueVisitOnPosition(1)
 
         deleteVenueVisitOnPosition(1)
 
-        waitFor { venueHistoryRobot.checkDoneButtonIsNotDisplayed() }
+        checkDoneButtonIsNotDisplayed()
 
-        venueHistoryRobot.checkEmptyStateIsDisplayed()
+        checkEmptyStateIsDisplayed()
     }
 
-    private fun deleteVenueVisitOnPosition(position: Int) {
-        venueHistoryRobot.clickDeleteIconOnPosition(position)
+    private fun checkVisitPositions() = with(venueHistoryRobot) {
+        checkDateIsDisplayedAtPosition(LocalDate.parse("2020-07-26"), 0)
+        checkVisitIsDisplayedAtPosition(visitD, 1)
+        checkVisitIsDisplayedAtPosition(visitC, 2)
+        checkDateIsDisplayedAtPosition(LocalDate.parse("2020-07-25"), 3)
+        checkVisitIsDisplayedAtPosition(visitB, 4)
+        checkVisitIsDisplayedAtPosition(visitA, 5)
+    }
 
-        waitFor { venueHistoryRobot.checkConfirmDeletionDialogIsDisplayed() }
+    private fun deleteVenueVisitOnPosition(position: Int) = with(venueHistoryRobot) {
+        clickDeleteIconOnPosition(position)
 
-        venueHistoryRobot.clickConfirmDeletionInDialog()
+        checkConfirmDeletionDialogIsDisplayed()
+
+        clickConfirmDeletionInDialog()
     }
 }

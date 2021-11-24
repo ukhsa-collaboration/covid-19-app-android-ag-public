@@ -22,8 +22,7 @@
             android:layout_height="wrap_content"
             android:animateLayoutChanges="false"
             android:clipChildren="false"
-            android:clipToPadding="false"
-            android:paddingHorizontal="@dimen/margin_horizontal_small">
+            android:clipToPadding="false">
 
             <uk.nhs.nhsx.covid19.android.app.widgets.AreaRiskView
                 android:id="@+id/riskAreaView"
@@ -93,18 +92,19 @@
                 app:layout_constraintTop_toBottomOf="@+id/stateContainer"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginStart="-16dp"
-                android:layout_marginEnd="-16dp"
                 android:clipToPadding="false"
                 android:visibility="gone"
                 tools:visibility="visible"/>
 
             <LinearLayout
                 android:id="@+id/mainActionsContainer"
+                style="@style/mainContainerStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingVertical="@dimen/vertical_margin"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/localMessageBanner">

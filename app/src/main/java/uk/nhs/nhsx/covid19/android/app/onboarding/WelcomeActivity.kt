@@ -7,21 +7,23 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import kotlinx.android.synthetic.main.activity_welcome.confirmOnboarding
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityWelcomeBinding
 import uk.nhs.nhsx.covid19.android.app.edgecases.AgeRestrictionActivity
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
-class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
+class WelcomeActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<WelcomeViewModel>
 
     private val viewModel: WelcomeViewModel by viewModels { factory }
+
+    private lateinit var binding: ActivityWelcomeBinding
 
     /**
      * Dialog currently displayed, or null if none are displayed
@@ -30,8 +32,9 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         appComponent.inject(this)
+        binding = ActivityWelcomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         viewModel.getShowDialog().observe(this) { showDialog ->
             if (showDialog) {
@@ -39,7 +42,7 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
             }
         }
 
-        confirmOnboarding.setOnSingleClickListener {
+        binding.confirmOnboarding.setOnSingleClickListener {
             viewModel.onConfirmOnboardingClicked()
         }
     }

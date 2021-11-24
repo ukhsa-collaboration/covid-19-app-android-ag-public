@@ -16,9 +16,9 @@ import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.VaccinationStatusQ
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.VaccinationStatusQuestionnaireAdapter.VaccinationStatusQuestion.MedicallyExempt
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType
 import uk.nhs.nhsx.covid19.android.app.util.uiLongFormat
-import uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
 import uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup
 import uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup.BinaryRadioGroupOption
+import uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
 import java.time.LocalDate
 
 class VaccinationStatusQuestionnaireAdapter(
@@ -65,7 +65,7 @@ class VaccinationStatusQuestionnaireAdapter(
 
             val formattedDate = question.date.uiLongFormat(itemView.context)
 
-            val lastDoseDateQuestion = itemView.findViewById<AccessibilityTextView>(R.id.vaccineDateQuestion)
+            val lastDoseDateQuestion = itemView.findViewById<HeadingTextView>(R.id.vaccineDateQuestion)
             lastDoseDateQuestion.text = itemView.context.getString(
                 R.string.exposure_notification_vaccination_status_date_question,
                 formattedDate

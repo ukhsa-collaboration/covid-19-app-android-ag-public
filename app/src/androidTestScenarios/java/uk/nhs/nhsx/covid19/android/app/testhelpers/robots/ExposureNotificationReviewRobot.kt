@@ -18,15 +18,15 @@ import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionTyp
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.DoseDate
 import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testhelpers.nestedScrollTo
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.withViewAtPosition
 import uk.nhs.nhsx.covid19.android.app.util.uiLongFormat
 import java.time.LocalDate
 
-class ExposureNotificationReviewRobot(val testAppContext: TestApplicationContext) {
+class ExposureNotificationReviewRobot(val testAppContext: TestApplicationContext) : HasActivity {
 
-    fun checkActivityIsDisplayed() {
-        checkActivityTitleIsDisplayed(R.string.contact_case_summary_title)
-    }
+    override val containerId: Int
+        get() = R.id.reviewScrollView
 
     fun clickSubmitButton() {
         onView(withId(R.id.submitExposureQuestionnaire))

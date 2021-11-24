@@ -2,42 +2,45 @@ package uk.nhs.nhsx.covid19.android.app.availability
 
 import android.os.Bundle
 import androidx.activity.viewModels
-import kotlinx.android.synthetic.main.activity_update_recommended.askMeLater
-import kotlinx.android.synthetic.main.activity_update_recommended.updateInStore
-import kotlinx.android.synthetic.main.activity_update_recommended.updateRecommendationDescription
-import kotlinx.android.synthetic.main.activity_update_recommended.updateRecommendationTitle
 import uk.nhs.nhsx.covid19.android.app.MainActivity
-import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityUpdateRecommendedBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
-class UpdateRecommendedActivity : BaseActivity(R.layout.activity_update_recommended) {
+class UpdateRecommendedActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<UpdateRecommendedViewModel>
 
     private val viewModel: UpdateRecommendedViewModel by viewModels { factory }
 
+    private lateinit var binding: ActivityUpdateRecommendedBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityUpdateRecommendedBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        updateInStore.setOnSingleClickListener {
-            openAppStore()
-            finish()
-        }
+        with(binding) {
 
-        askMeLater.setOnSingleClickListener {
-            finishAndNavigate()
-        }
+            updateInStore.setOnSingleClickListener {
+                openAppStore()
+                finish()
+            }
 
-        viewModel.observeRecommendationInfo().observe(this) {
-            updateRecommendationDescription.text = it.description
-            updateRecommendationTitle.text = it.title
-            title = it.title
+            askMeLater.setOnSingleClickListener {
+                finishAndNavigate()
+            }
+
+            viewModel.observeRecommendationInfo().observe(this@UpdateRecommendedActivity) {
+                updateRecommendationDescription.text = it.description
+                updateRecommendationTitle.text = it.title
+                title = it.title
+            }
         }
 
         viewModel.fetchRecommendationInfo()

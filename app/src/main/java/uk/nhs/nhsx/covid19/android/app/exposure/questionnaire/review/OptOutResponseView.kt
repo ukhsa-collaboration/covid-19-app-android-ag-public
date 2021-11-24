@@ -5,11 +5,8 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.item_opt_out_response.view.optOutAnswerIcon
-import kotlinx.android.synthetic.main.item_opt_out_response.view.optOutAnswerText
-import kotlinx.android.synthetic.main.item_opt_out_response.view.optOutQuestion
-import kotlinx.android.synthetic.main.item_opt_out_response.view.responseItemDivider
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.ItemOptOutResponseBinding
 
 class OptOutResponseView @JvmOverloads constructor(
     context: Context,
@@ -18,31 +15,29 @@ class OptOutResponseView @JvmOverloads constructor(
     defStyleRes: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
 
+    private val binding = ItemOptOutResponseBinding.inflate(LayoutInflater.from(context), this, true)
+
     private var question: String = ""
         set(value) {
             field = value
-            optOutQuestion.text = question
+            binding.optOutQuestion.text = question
         }
 
     private var response: Boolean = false
         set(value) {
             field = value
             val optOutAnswerIconResId = if (response) R.drawable.ic_tick_green else R.drawable.ic_cross_red
-            optOutAnswerIcon.setImageResource(optOutAnswerIconResId)
+            binding.optOutAnswerIcon.setImageResource(optOutAnswerIconResId)
         }
 
     private var responseText: String = ""
         set(value) {
             field = value
-            optOutAnswerText.text = responseText
+            binding.optOutAnswerText.text = responseText
         }
 
     fun setShouldShowDivider(shouldShowDivider: Boolean) {
-        responseItemDivider.isVisible = shouldShowDivider
-    }
-
-    init {
-        LayoutInflater.from(context).inflate(R.layout.item_opt_out_response, this)
+        binding.responseItemDivider.root.isVisible = shouldShowDivider
     }
 
     fun setResponse(entry: OptOutResponse) {

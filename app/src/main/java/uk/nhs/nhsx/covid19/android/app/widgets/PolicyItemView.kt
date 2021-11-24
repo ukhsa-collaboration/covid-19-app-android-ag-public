@@ -2,12 +2,10 @@ package uk.nhs.nhsx.covid19.android.app.widgets
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
+import android.view.LayoutInflater
 import android.widget.LinearLayout
-import kotlinx.android.synthetic.main.view_policy_item.view.policyIcon
-import kotlinx.android.synthetic.main.view_policy_item.view.policyItemContent
-import kotlinx.android.synthetic.main.view_policy_item.view.policyItemHeading
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.ViewPolicyItemBinding
 import uk.nhs.nhsx.covid19.android.app.remote.data.Policy
 import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyIcon.BARS_AND_PUBS
 import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyIcon.BUSINESSES
@@ -37,8 +35,9 @@ class PolicyItemView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
+    private val binding = ViewPolicyItemBinding.inflate(LayoutInflater.from(context), this)
+
     init {
-        View.inflate(context, R.layout.view_policy_item, this)
         configureLayout()
     }
 
@@ -73,8 +72,10 @@ class PolicyItemView @JvmOverloads constructor(
         val heading = policy.policyHeading.translate()
         val content = policy.policyContent.translate()
 
-        policyIcon.setImageResource(iconRes)
-        policyItemHeading.text = heading
-        policyItemContent.text = content
+        with(binding) {
+            policyIcon.setImageResource(iconRes)
+            policyItemHeading.text = heading
+            policyItemContent.text = content
+        }
     }
 }

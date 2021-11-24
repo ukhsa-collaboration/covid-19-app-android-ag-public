@@ -11,13 +11,12 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers.allOf
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.NthChildOf
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 
-class SettingsRobot {
+class SettingsRobot : HasActivity {
 
-    fun checkActivityIsDisplayed() {
-        onView(withId(R.id.settingsContainer))
-            .check(matches(isDisplayed()))
-    }
+    override val containerId: Int
+        get() = R.id.settingsContainer
 
     fun checkLanguageSubtitleMatches(@StringRes languageName: Int) {
         onView(

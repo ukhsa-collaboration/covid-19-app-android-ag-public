@@ -22,5 +22,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <include
+        android:id="@+id/venueVisitContentItem"
         layout="@layout/item_venue_visit_content"/>
 </LinearLayout>

@@ -4,13 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
-import kotlinx.android.synthetic.main.activity_symptoms_after_risky_venue.hasSymptomsButton
-import kotlinx.android.synthetic.main.activity_symptoms_after_risky_venue.noSymptomsButton
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.assistedViewModel
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivitySymptomsAfterRiskyVenueBinding
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.NavigationTarget.Finish
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.NavigationTarget.Home
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.NavigationTarget.OrderLfdTest
@@ -24,8 +22,9 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setMultilineTitle
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
-class SymptomsAfterRiskyVenueActivity : BaseActivity(R.layout.activity_symptoms_after_risky_venue) {
+class SymptomsAfterRiskyVenueActivity : BaseActivity() {
 
+    private lateinit var binding: ActivitySymptomsAfterRiskyVenueBinding
     private var cancelDialog: AlertDialog? = null
 
     @Inject
@@ -41,8 +40,10 @@ class SymptomsAfterRiskyVenueActivity : BaseActivity(R.layout.activity_symptoms_
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivitySymptomsAfterRiskyVenueBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        setCancelToolbar(toolbar, R.string.symptoms_after_risky_venue_title)
+        setCancelToolbar(binding.primaryToolbar.toolbar, R.string.symptoms_after_risky_venue_title)
 
         setupViewModelListeners()
 
@@ -82,7 +83,7 @@ class SymptomsAfterRiskyVenueActivity : BaseActivity(R.layout.activity_symptoms_
         }
     }
 
-    private fun setupOnClickListeners() {
+    private fun setupOnClickListeners() = with(binding) {
         hasSymptomsButton.setOnSingleClickListener(viewModel::onHasSymptomsClicked)
         noSymptomsButton.setOnSingleClickListener(viewModel::onHasNoSymptomsClicked)
     }

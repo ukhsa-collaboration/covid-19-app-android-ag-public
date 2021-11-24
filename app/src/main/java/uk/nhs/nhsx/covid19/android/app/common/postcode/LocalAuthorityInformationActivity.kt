@@ -2,18 +2,21 @@ package uk.nhs.nhsx.covid19.android.app.common.postcode
 
 import android.content.Intent
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_local_authority_information.buttonContinue
 import uk.nhs.nhsx.covid19.android.app.MainActivity
-import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityLocalAuthorityInformationBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 
-class LocalAuthorityInformationActivity : BaseActivity(R.layout.activity_local_authority_information) {
+class LocalAuthorityInformationActivity : BaseActivity() {
+
+    private lateinit var binding: ActivityLocalAuthorityInformationBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityLocalAuthorityInformationBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        buttonContinue.setOnSingleClickListener {
+        binding.buttonContinue.setOnSingleClickListener {
             val intent = LocalAuthorityActivity.getIntent(this, backAllowed = false)
             startActivityForResult(intent, LOCAL_AUTHORITY_REQUEST)
         }

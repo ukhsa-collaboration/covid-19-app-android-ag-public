@@ -5,14 +5,8 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.view_isolation_status.view.imgCircleIsolationStatic
-import kotlinx.android.synthetic.main.view_isolation_status.view.imgCirclePulseAnim
-import kotlinx.android.synthetic.main.view_isolation_status.view.imgCircleSmallPulseAnim
-import kotlinx.android.synthetic.main.view_isolation_status.view.isolationCountdownView
-import kotlinx.android.synthetic.main.view_isolation_status.view.isolationDaysToGo
-import kotlinx.android.synthetic.main.view_isolation_status.view.subTitleIsolationCountdown
-import kotlinx.android.synthetic.main.view_isolation_status.view.titleDaysToGo
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.ViewIsolationStatusBinding
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.Isolating
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
@@ -29,28 +23,30 @@ class IsolationStatusView @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr),
     PulseAnimationView {
 
+    private val binding = ViewIsolationStatusBinding.inflate(LayoutInflater.from(context), this)
+
     private var daysToGo = 0
 
     var animationState = ANIMATION_ENABLED_EN_ENABLED
         set(value) {
             field = value
-            updateAnimations(
-                context = context,
-                isAnimationEnabled = value == ANIMATION_ENABLED_EN_ENABLED,
-                animatedView = imgCirclePulseAnim,
-                smallAnimatedView = imgCircleSmallPulseAnim,
-            )
-            imgCircleIsolationStatic.isVisible = when (value) {
-                ANIMATION_DISABLED_EN_ENABLED -> true
-                ANIMATION_ENABLED_EN_ENABLED, ANIMATION_DISABLED_EN_DISABLED -> false
+
+            with(binding) {
+
+                updateAnimations(
+                    context = context,
+                    isAnimationEnabled = value == ANIMATION_ENABLED_EN_ENABLED,
+                    animatedView = imgCirclePulseAnim,
+                    smallAnimatedView = imgCircleSmallPulseAnim,
+                )
+                imgCircleIsolationStatic.isVisible = when (value) {
+                    ANIMATION_DISABLED_EN_ENABLED -> true
+                    ANIMATION_ENABLED_EN_ENABLED, ANIMATION_DISABLED_EN_DISABLED -> false
+                }
             }
         }
 
-    init {
-        LayoutInflater.from(context).inflate(R.layout.view_isolation_status, this, true)
-    }
-
-    fun initialize(isolation: Isolating, currentDate: LocalDate) {
+    fun initialize(isolation: Isolating, currentDate: LocalDate) = with(binding) {
         setUpAccessibilityHeading()
 
         val totalDurationInDays = ChronoUnit.DAYS.between(

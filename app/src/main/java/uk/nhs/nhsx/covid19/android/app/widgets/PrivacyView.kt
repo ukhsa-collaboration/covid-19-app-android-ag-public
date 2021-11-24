@@ -8,8 +8,8 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import kotlinx.android.synthetic.main.view_privacy_protected.view.privacyTextDescription
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.ViewPrivacyProtectedBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 
 class PrivacyView @JvmOverloads constructor(
@@ -19,15 +19,16 @@ class PrivacyView @JvmOverloads constructor(
     defStyleRes: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
 
+    private val binding = ViewPrivacyProtectedBinding.inflate(LayoutInflater.from(context), this, true)
+
     private var text: String = ""
         set(value) {
             field = value
-            privacyTextDescription.text = value
+            binding.privacyTextDescription.text = value
             this.contentDescription = value
         }
 
     init {
-        inflateLayout()
         orientation = VERTICAL
         context.theme.obtainStyledAttributes(
             attrs,
@@ -40,8 +41,4 @@ class PrivacyView @JvmOverloads constructor(
             recycle()
         }
     }
-
-    private fun inflateLayout(): LinearLayout =
-        (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
-            .inflate(R.layout.view_privacy_protected, this, true) as LinearLayout
 }

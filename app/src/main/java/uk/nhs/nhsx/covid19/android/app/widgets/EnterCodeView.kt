@@ -1,22 +1,19 @@
 package uk.nhs.nhsx.covid19.android.app.widgets
 
 import android.content.Context
+import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.accessibility.AccessibilityEvent
 import android.widget.LinearLayout
-import kotlinx.android.synthetic.main.view_enter_code.view.enterCodeEditText
-import kotlinx.android.synthetic.main.view_enter_code.view.enterCodeErrorIndicator
-import kotlinx.android.synthetic.main.view_enter_code.view.enterCodeErrorText
-import kotlinx.android.synthetic.main.view_enter_code.view.enterCodeProgress
-import kotlinx.android.synthetic.main.view_enter_code.view.enterCodeText
-import kotlinx.android.synthetic.main.view_enter_code.view.enterCodeTitle
+import android.widget.TextView
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.R.drawable
+import uk.nhs.nhsx.covid19.android.app.databinding.ViewEnterCodeBinding
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.invisible
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
-import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 
 class EnterCodeView @JvmOverloads constructor(
     context: Context,
@@ -28,12 +25,12 @@ class EnterCodeView @JvmOverloads constructor(
     var errorText: String? = ""
         set(value) {
             field = value
-            enterCodeErrorText.text = errorText
+            binding.enterCodeErrorText.text = errorText
         }
 
-    init {
-        LayoutInflater.from(context).inflate(R.layout.view_enter_code, this, true)
+    private val binding = ViewEnterCodeBinding.inflate(LayoutInflater.from(context), this)
 
+    init {
         applyAttributes(context, attrs)
     }
 
@@ -45,21 +42,29 @@ class EnterCodeView @JvmOverloads constructor(
         showProgressState()
     }
 
-    fun resetState() {
+    fun resetState() = with(binding) {
         enterCodeErrorIndicator.invisible()
         enterCodeErrorText.gone()
         enterCodeEditText.setBackgroundResource(drawable.edit_text_background)
         enterCodeProgress.gone()
     }
 
-    private fun showProgressState() {
+    fun setEnterCodeEditText(content: String?, bufferType: TextView.BufferType) {
+        binding.enterCodeEditText.setText(content, bufferType)
+    }
+
+    fun addEnterCodeEditTextWatcher(watcher: TextWatcher) {
+        binding.enterCodeEditText.addTextChangedListener(watcher)
+    }
+
+    private fun showProgressState() = with(binding) {
         enterCodeErrorIndicator.invisible()
         enterCodeErrorText.gone()
         enterCodeEditText.setBackgroundResource(drawable.edit_text_background)
         enterCodeProgress.visible()
     }
 
-    private fun showErrorState() {
+    private fun showErrorState() = with(binding) {
         enterCodeErrorIndicator.visible()
         enterCodeErrorText.visible()
         enterCodeEditText.setBackgroundResource(drawable.edit_text_background_error)
@@ -79,8 +84,8 @@ class EnterCodeView @JvmOverloads constructor(
             val attrExample = getString(context, R.styleable.EnterCodeView_example)
             errorText = getString(context, R.styleable.EnterCodeView_errorText)
 
-            enterCodeTitle.text = attrTitle
-            enterCodeText.text = attrExample
+            binding.enterCodeTitle.text = attrTitle
+            binding.enterCodeText.text = attrExample
 
             recycle()
         }

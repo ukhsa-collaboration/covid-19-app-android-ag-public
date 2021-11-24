@@ -11,7 +11,6 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import kotlinx.android.synthetic.main.activity_symptoms_advice_isolate.stateExplanation
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice
@@ -23,13 +22,12 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvi
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.containsStringResourceAt
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateColor
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateStringResource
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 
-class SymptomsAdviceIsolateRobot {
+class SymptomsAdviceIsolateRobot : HasActivity {
 
-    fun checkActivityIsDisplayed() {
-        onView(withId(R.id.symptomsAdviceIsolateContainer))
-            .check(matches(isDisplayed()))
-    }
+    override val containerId: Int
+        get() = R.id.symptomsAdviceIsolateContainer
 
     fun checkViewState(isolationSymptomAdvice: IsolationSymptomAdvice) {
         when (isolationSymptomAdvice) {

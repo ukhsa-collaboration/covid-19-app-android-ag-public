@@ -32,7 +32,7 @@
                 android:contentDescription="@null"
                 android:src="@drawable/ic_onboarding_welcome" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:id="@+id/welcomeTitle"
                 style="@style/Title1"
                 android:layout_width="wrap_content"
@@ -64,7 +64,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                     android:id="@+id/notificationTitle"
                     style="@style/Title3"
                     android:layout_width="0dp"
@@ -99,7 +99,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/notificationText" />
 
-                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                     android:id="@+id/venueCheckInTitle"
                     style="@style/Title3"
                     android:layout_width="0dp"
@@ -134,7 +134,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/venueCheckInText" />
 
-                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                     android:id="@+id/checkSymptomsTitle"
                     style="@style/Title3"
                     android:layout_width="0dp"
@@ -169,7 +169,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/checkSymptomsText" />
 
-                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                     android:id="@+id/isolationCountdownTitle"
                     style="@style/Title3"
                     android:layout_width="0dp"

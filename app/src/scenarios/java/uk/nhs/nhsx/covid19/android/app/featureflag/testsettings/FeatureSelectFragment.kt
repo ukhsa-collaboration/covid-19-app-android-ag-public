@@ -16,11 +16,24 @@ import com.jeroenmols.featureflag.framework.FeatureFlag
 import com.jeroenmols.featureflag.framework.FeatureFlagProvider
 import com.jeroenmols.featureflag.framework.RuntimeFeatureFlagProvider
 import com.jeroenmols.featureflag.framework.TestSetting
-import kotlinx.android.synthetic.scenarios.fragment_feature_flag.recyclerView
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.FragmentFeatureFlagBinding
 import kotlin.system.exitProcess
 
-internal class FeatureSelectFragment : Fragment(R.layout.fragment_feature_flag) {
+internal class FeatureSelectFragment : Fragment() {
+
+    private var _binding: FragmentFeatureFlagBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentFeatureFlagBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     override fun onResume() {
         super.onResume()
@@ -34,22 +47,25 @@ internal class FeatureSelectFragment : Fragment(R.layout.fragment_feature_flag) 
             runtimeFeatureFlagProvider.setFeatureEnabled(feature, enabled)
             requestRestart()
         }
-        if (useTestSettings()) {
-            recyclerView.adapter =
-                FeatureFlagViewAdapter(
-                    TestSetting.values(),
-                    runtimeFeatureFlagProvider,
-                    checkedListener
-                )
-        } else {
-            recyclerView.adapter =
-                FeatureFlagViewAdapter(
-                    FeatureFlag.values(),
-                    runtimeFeatureFlagProvider,
-                    checkedListener
-                )
+
+        with(binding) {
+            if (useTestSettings()) {
+                recyclerView.adapter =
+                    FeatureFlagViewAdapter(
+                        TestSetting.values(),
+                        runtimeFeatureFlagProvider,
+                        checkedListener
+                    )
+            } else {
+                recyclerView.adapter =
+                    FeatureFlagViewAdapter(
+                        FeatureFlag.values(),
+                        runtimeFeatureFlagProvider,
+                        checkedListener
+                    )
+            }
+            recyclerView.layoutManager = LinearLayoutManager(context)
         }
-        recyclerView.layoutManager = LinearLayoutManager(context)
     }
 
     private fun useTestSettings() = arguments?.getBoolean(USE_TEST_SETTINGS, false) == true

@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.state
 
 import com.squareup.moshi.JsonClass
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutReason.QUESTIONNAIRE
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import java.time.LocalDate
 
@@ -42,6 +43,7 @@ data class IsolationState(
     @JsonClass(generateAdapter = true)
     data class OptOutOfContactIsolation(
         val date: LocalDate,
+        val reason: OptOutReason = QUESTIONNAIRE
     )
 
     data class SelfAssessment(
@@ -50,5 +52,9 @@ data class IsolationState(
     ) {
         val assumedOnsetDate: LocalDate
             get() = onsetDate ?: selfAssessmentDate.minusDays(assumedDaysFromOnsetToSelfAssessment)
+    }
+
+    enum class OptOutReason {
+        QUESTIONNAIRE
     }
 }

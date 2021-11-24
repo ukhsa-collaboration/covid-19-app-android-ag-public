@@ -36,7 +36,7 @@
             android:contentDescription="@string/questionnaire_review_one_of_two"
             android:text="@string/questionnaire_1_of_2" />
 
-        <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+        <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
             android:id="@+id/textSymptomsTitle"
             style="@style/Title1"
             android:layout_width="match_parent"

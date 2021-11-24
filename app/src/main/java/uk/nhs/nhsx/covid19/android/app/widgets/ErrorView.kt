@@ -3,10 +3,10 @@ package uk.nhs.nhsx.covid19.android.app.widgets
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.accessibility.AccessibilityEvent
 import android.widget.LinearLayout
-import kotlinx.android.synthetic.main.view_error.view.errorDescriptionView
-import kotlinx.android.synthetic.main.view_error.view.errorTitleView
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.ViewErrorBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 
@@ -17,16 +17,18 @@ class ErrorView @JvmOverloads constructor(
     defStyleRes: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
 
+    private val binding = ViewErrorBinding.inflate(LayoutInflater.from(context), this)
+
     var errorTitle: String? = ""
         set(value) {
             field = value
-            errorTitleView.text = errorTitle
+            binding.errorTitleView.text = errorTitle
         }
 
     var errorDescription: String? = ""
         set(value) {
             field = value
-            errorDescriptionView.text = errorDescription
+            binding.errorDescriptionView.text = errorDescription
         }
 
     init {
@@ -35,9 +37,6 @@ class ErrorView @JvmOverloads constructor(
     }
 
     private fun initializeViews() {
-        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        inflater.inflate(R.layout.view_error, this)
-
         val newPadding = 16.dpToPx.toInt()
         setPadding(newPadding, newPadding, newPadding, newPadding)
 
@@ -56,5 +55,10 @@ class ErrorView @JvmOverloads constructor(
                 errorDescription = getString(context, R.styleable.ErrorView_error_description)
                 recycle()
             }
+    }
+
+    fun setFocus() {
+        requestFocus()
+        sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
     }
 }

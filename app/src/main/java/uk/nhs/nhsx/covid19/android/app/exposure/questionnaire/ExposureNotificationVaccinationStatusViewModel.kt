@@ -6,13 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.Finish
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.NavigationTarget.Review
-import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.SelectionOutcome.FollowupQuestion
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.SelectionOutcome.Completion
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusViewModel.SelectionOutcome.FollowupQuestion
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.OptOutResponseEntry
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.AgeLimitQuestionType.IsAdult
@@ -21,8 +18,8 @@ import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionTyp
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.DoseDate
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.FullyVaccinated
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.MedicallyExempt
-import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ReviewData
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionnaireOutcome
+import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ReviewData
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup.BinaryRadioGroupOption
@@ -34,9 +31,9 @@ import uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup.BinaryRadioGroup
 
 class ExposureNotificationVaccinationStatusViewModel @Inject constructor(
     private val getLastDoseDateLimit: GetLastDoseDateLimit,
-    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider,
     private val isolationStateMachine: IsolationStateMachine,
-    private val clock: Clock
+    private val clock: Clock,
+    private val questionnaireFactory: QuestionnaireFactory
 ) : ViewModel() {
     private val viewStateLiveData = MutableLiveData<ViewState>()
     fun viewState(): LiveData<ViewState> = viewStateLiveData
@@ -44,75 +41,17 @@ class ExposureNotificationVaccinationStatusViewModel @Inject constructor(
     private var navigateLiveData = SingleLiveEvent<NavigationTarget>()
     fun navigate(): LiveData<NavigationTarget> = navigateLiveData
 
-    private val englishQuestionnaire = QuestionNode(
-        FullyVaccinated,
-        yes = FollowupQuestion(
-            QuestionNode(
-                DoseDate,
-                yes = Completion(QuestionnaireOutcome.FullyVaccinated),
-                no = FollowupQuestion(
-                    QuestionNode(
-                        ClinicalTrial,
-                        yes = Completion(QuestionnaireOutcome.FullyVaccinated),
-                        no = FollowupQuestion(
-                            QuestionNode(
-                                MedicallyExempt,
-                                yes = Completion(QuestionnaireOutcome.MedicallyExempt),
-                                no = Completion(QuestionnaireOutcome.NotExempt)
-                            ),
-                        )
-                    )
-                )
-            )
-        ),
-        no = FollowupQuestion(
-            QuestionNode(
-                MedicallyExempt,
-                yes = Completion(QuestionnaireOutcome.MedicallyExempt),
-                no = FollowupQuestion(
-                    QuestionNode(
-                        ClinicalTrial,
-                        yes = Completion(QuestionnaireOutcome.FullyVaccinated),
-                        no = Completion(QuestionnaireOutcome.NotExempt)
-                    )
-                )
-            )
-        )
-    )
-
-    private val welshQuestionnaire = QuestionNode(
-        FullyVaccinated,
-        yes = FollowupQuestion(
-            QuestionNode(
-                DoseDate,
-                yes = Completion(QuestionnaireOutcome.FullyVaccinated),
-                no = FollowupQuestion(
-                    QuestionNode(
-                        ClinicalTrial,
-                        yes = Completion(QuestionnaireOutcome.FullyVaccinated),
-                        no = Completion(QuestionnaireOutcome.NotExempt)
-                    )
-                )
-            )
-        ),
-        no = FollowupQuestion(
-            QuestionNode(
-                ClinicalTrial,
-                yes = Completion(QuestionnaireOutcome.FullyVaccinated),
-                no = Completion(QuestionnaireOutcome.NotExempt)
-            )
-        )
-    )
+    private val isActiveContactCaseOnly: Boolean
+        get() = isolationStateMachine.isActiveContactCaseOnly(clock)
 
     private var answers = listOf<Answer>()
 
     init {
         viewModelScope.launch {
-            val questionnaire = if (isWales()) welshQuestionnaire else englishQuestionnaire
+            val questionnaire = questionnaireFactory.create()
             answers = listOf(Answer(questionnaire, answer = null))
             val lastDoseDateLimit = getLastDoseDateLimit()
             if (lastDoseDateLimit != null) {
-                val isActiveContactCaseOnly = !isolationStateMachine.readLogicalState().isActiveIndexCase(clock)
                 viewStateLiveData.postValue(
                     ViewState(
                         questions = questionsToShow(),
@@ -191,14 +130,6 @@ class ExposureNotificationVaccinationStatusViewModel @Inject constructor(
                 viewStateLiveData.postValue(viewStateLiveData.value?.copy(showError = true))
             }
         }
-    }
-
-    private suspend fun getLocalAuthority(): PostCodeDistrict? {
-        return localAuthorityPostCodeProvider.getPostCodeDistrict()
-    }
-
-    private suspend fun isWales(): Boolean {
-        return getLocalAuthority() == WALES
     }
 
     private fun navigateToNextScreen(navigationTarget: NavigationTarget) {

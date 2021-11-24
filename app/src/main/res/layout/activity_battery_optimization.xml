@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/include_onboarding_toolbar" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/include_onboarding_toolbar" />
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -30,7 +30,7 @@
                 android:contentDescription="@null"
                 android:src="@drawable/ic_battery_optimization" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Title1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

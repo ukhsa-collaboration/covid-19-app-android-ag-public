@@ -58,7 +58,7 @@ class LocalAuthorityViewModel @Inject constructor(
                 if (result.localAuthorities.size == 1) {
                     selectedLocalAuthorityId = result.localAuthorities[0].id
                 }
-                val sortedLocalAuthorities = result.localAuthorities.sortedBy { it.localAuthority.name.toLowerCase() }
+                val sortedLocalAuthorities = result.localAuthorities.sortedBy { it.localAuthority.name.lowercase() }
                 localAuthorities.postValue(sortedLocalAuthorities)
             }
             viewState.postValue(ViewState(localAuthorityId = selectedLocalAuthorityId, errorState = NO_ERROR))
@@ -67,7 +67,7 @@ class LocalAuthorityViewModel @Inject constructor(
 
     fun selectLocalAuthority(localAuthorityId: String) {
         selectedLocalAuthorityId = localAuthorityId
-        viewState.postValue(validate())
+        viewState.postValue(updateState())
     }
 
     fun confirmLocalAuthority() {
@@ -84,6 +84,11 @@ class LocalAuthorityViewModel @Inject constructor(
             }
             finishActivity.postCall()
         }
+    }
+
+    private fun updateState(): ViewState {
+        return viewState.value?.copy(localAuthorityId = selectedLocalAuthorityId)
+            ?: ViewState(localAuthorityId = selectedLocalAuthorityId, errorState = NO_ERROR)
     }
 
     fun validate(): ViewState {

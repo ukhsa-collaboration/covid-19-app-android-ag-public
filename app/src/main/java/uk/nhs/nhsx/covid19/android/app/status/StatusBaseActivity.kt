@@ -14,7 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import javax.inject.Inject
 import javax.inject.Named
 
-abstract class StatusBaseActivity(contentView: Int) : BaseActivity(contentView) {
+abstract class StatusBaseActivity : BaseActivity() {
 
     @Inject
     @Named(BLUETOOTH_STATE_NAME)

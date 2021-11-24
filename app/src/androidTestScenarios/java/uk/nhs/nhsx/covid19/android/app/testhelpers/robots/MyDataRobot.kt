@@ -8,11 +8,12 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 
-class MyDataRobot {
-    fun checkActivityIsDisplayed() {
-        checkActivityTitleIsDisplayed(R.string.settings_my_data)
-    }
+class MyDataRobot : HasActivity {
+
+    override val containerId: Int
+        get() = R.id.myDataContainer
 
     fun checkLastTestResultIsDisplayed(
         shouldKitTypeBeVisible: Boolean = true,

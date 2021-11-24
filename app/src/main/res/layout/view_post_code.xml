@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+        <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
             android:id="@+id/postCodeTitle"
             style="@style/Title1"
             android:layout_width="wrap_content"

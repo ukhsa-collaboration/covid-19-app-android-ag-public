@@ -8,18 +8,11 @@ import android.view.accessibility.AccessibilityEvent
 import androidx.activity.viewModels
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker.Builder
-import kotlinx.android.synthetic.main.activity_link_test_result_onset_date.dateSelectionErrorBar
-import kotlinx.android.synthetic.main.activity_link_test_result_onset_date.linkTestResultOnsetDateCheckboxNoDate
-import kotlinx.android.synthetic.main.activity_link_test_result_onset_date.linkTestResultOnsetDateContinueButton
-import kotlinx.android.synthetic.main.activity_link_test_result_onset_date.linkTestResultOnsetDateErrorContainer
-import kotlinx.android.synthetic.main.activity_link_test_result_onset_date.linkTestResultOnsetDateSelectDateContainer
-import kotlinx.android.synthetic.main.activity_link_test_result_onset_date.linkTestResultScrollView
-import kotlinx.android.synthetic.main.activity_link_test_result_onset_date.textSelectDate
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityLinkTestResultOnsetDateBinding
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
@@ -37,8 +30,9 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-class LinkTestResultOnsetDateActivity : BaseActivity(R.layout.activity_link_test_result_onset_date) {
+class LinkTestResultOnsetDateActivity : BaseActivity() {
 
+    private lateinit var binding: ActivityLinkTestResultOnsetDateBinding
     private lateinit var calendarConstraints: CalendarConstraints
 
     @Inject
@@ -49,9 +43,11 @@ class LinkTestResultOnsetDateActivity : BaseActivity(R.layout.activity_link_test
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityLinkTestResultOnsetDateBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setToolbarNoNavigation(
-            toolbar,
+            binding.primaryToolbar.toolbar,
             R.string.link_test_result_symptoms_information_title
         )
 
@@ -65,7 +61,7 @@ class LinkTestResultOnsetDateActivity : BaseActivity(R.layout.activity_link_test
 
     override fun onBackPressed() = Unit
 
-    private fun setupListeners() {
+    private fun setupListeners() = with(binding) {
         linkTestResultOnsetDateSelectDateContainer.setOnSingleClickListener {
             viewModel.onDatePickerContainerClicked()
         }
@@ -78,7 +74,7 @@ class LinkTestResultOnsetDateActivity : BaseActivity(R.layout.activity_link_test
     }
 
     private fun setOnsetDateCheckboxNoDateListener() {
-        linkTestResultOnsetDateCheckboxNoDate.setOnCheckedChangeListener { _, isChecked ->
+        binding.linkTestResultOnsetDateCheckboxNoDate.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 viewModel.cannotRememberDateChecked()
             } else {
@@ -88,7 +84,7 @@ class LinkTestResultOnsetDateActivity : BaseActivity(R.layout.activity_link_test
     }
 
     private fun removeOnsetDateCheckboxNoDateListener() {
-        linkTestResultOnsetDateCheckboxNoDate.setOnCheckedChangeListener(null)
+        binding.linkTestResultOnsetDateCheckboxNoDate.setOnCheckedChangeListener(null)
     }
 
     private fun setupViewModelListeners() {
@@ -115,7 +111,7 @@ class LinkTestResultOnsetDateActivity : BaseActivity(R.layout.activity_link_test
         }
     }
 
-    private fun setOnsetErrorVisibility(showOnsetDateError: Boolean) {
+    private fun setOnsetErrorVisibility(showOnsetDateError: Boolean) = with(binding) {
         if (showOnsetDateError) {
             dateSelectionErrorBar.visible()
             linkTestResultOnsetDateErrorContainer.visible()
@@ -129,7 +125,7 @@ class LinkTestResultOnsetDateActivity : BaseActivity(R.layout.activity_link_test
         }
     }
 
-    private fun updateOnsetDate(onsetDate: SelectedDate) {
+    private fun updateOnsetDate(onsetDate: SelectedDate) = with(binding) {
         textSelectDate.text = when (onsetDate) {
             is NotStated, is CannotRememberDate -> getString(R.string.questionnaire_select_a_date)
             is ExplicitDate -> {

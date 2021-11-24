@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.scrollTo
@@ -9,10 +10,13 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.Visibility.GONE
 import androidx.test.espresso.matcher.ViewMatchers.hasChildCount
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.instanceOf
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow
@@ -21,13 +25,17 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceT
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.IconTextViewMatcher.Companion.withIconAndText
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateColor
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateStringResource
+import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
+import uk.nhs.nhsx.covid19.android.app.testhelpers.withDrawable
 import uk.nhs.nhsx.covid19.android.app.util.uiLongFormat
 
 class RiskyContactIsolationAdviceRobot {
 
     fun checkActivityIsDisplayed() {
-        onView(withId(R.id.riskyContactIsolationAdviceContainer))
-            .check(matches(isDisplayed()))
+        waitFor {
+            onView(withId(R.id.riskyContactIsolationAdviceContainer))
+                .check(matches(isDisplayed()))
+        }
     }
 
     fun checkIsInNotIsolatingAsMinorViewState(testingAdviceToShow: TestingAdviceToShow) {
@@ -283,5 +291,10 @@ class RiskyContactIsolationAdviceRobot {
             .perform(scrollTo())
             .check(matches(withText(R.string.risky_contact_isolation_advice_go_back_to_home)))
             .perform(click())
+    }
+
+    fun verifyCloseButton() {
+        onView(allOf(instanceOf(AppCompatImageButton::class.java), isDescendantOfA(withId(R.id.primaryToolbar))))
+            .check(matches(withDrawable(tint = R.color.nhs_blue, id = R.drawable.ic_close_primary)))
     }
 }

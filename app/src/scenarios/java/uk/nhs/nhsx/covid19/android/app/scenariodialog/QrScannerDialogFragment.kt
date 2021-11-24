@@ -3,30 +3,24 @@ package uk.nhs.nhsx.covid19.android.app.scenariodialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
-import android.view.View
+import android.view.LayoutInflater
 import androidx.appcompat.widget.AppCompatSpinner
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.scenarios.dialog_qr_scanner.view.addVenue
-import kotlinx.android.synthetic.scenarios.dialog_qr_scanner.view.autoLoop
-import kotlinx.android.synthetic.scenarios.dialog_qr_scanner.view.deleteSelected
-import kotlinx.android.synthetic.scenarios.dialog_qr_scanner.view.qrScanVenueId
-import kotlinx.android.synthetic.scenarios.dialog_qr_scanner.view.qrScanVenueName
-import kotlinx.android.synthetic.scenarios.dialog_qr_scanner.view.qrScanVenuePostcode
-import kotlinx.android.synthetic.scenarios.dialog_qr_scanner.view.scanList
-import kotlinx.android.synthetic.scenarios.dialog_qr_scanner.view.uploadCsv
 import uk.nhs.nhsx.covid19.android.app.DebugActivity
-import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.DialogQrScannerBinding
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockQrScannerViewModel
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import java.io.BufferedInputStream
 
 class QrScannerDialogFragment(positiveAction: (() -> Unit), dismissAction: (() -> Unit)) :
-    ScenarioDialogFragment(positiveAction, dismissAction) {
+    ScenarioDialogFragment<DialogQrScannerBinding>(positiveAction, dismissAction) {
     override val title: String = "Qr Scanner Config"
-    override val layoutId = R.layout.dialog_qr_scanner
 
-    override fun setUp(view: View): Unit = with(view) {
+    override fun setupBinding(inflater: LayoutInflater): DialogQrScannerBinding =
+        DialogQrScannerBinding.inflate(layoutInflater)
+
+    override fun setupView() = with(binding) {
         addVenue.setOnSingleClickListener {
             if (qrScanVenueName.text.toString().isNotBlank() &&
                 qrScanVenuePostcode.text.toString().isNotBlank() &&
@@ -75,7 +69,7 @@ class QrScannerDialogFragment(positiveAction: (() -> Unit), dismissAction: (() -
                 )
             } catch (ex: ActivityNotFoundException) {
                 Snackbar.make(
-                    this, "Please install a file manager.",
+                    root, "Please install a file manager.",
                     Snackbar.LENGTH_SHORT
                 ).show()
             }
@@ -109,6 +103,6 @@ class QrScannerDialogFragment(positiveAction: (() -> Unit), dismissAction: (() -
             }
             close()
         }
-        inflatedView?.scanList?.updateAdapter()
+        binding.scanList.updateAdapter()
     }
 }

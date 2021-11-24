@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/view_toolbar_primary" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/view_toolbar_primary" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/ageLimitScrollView"
@@ -31,7 +31,7 @@
                 android:contentDescription="@null"
                 android:src="@drawable/ic_isolation_continue" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Title1"
                 android:id="@+id/ageLimitTitle"
                 android:layout_width="match_parent"
@@ -61,7 +61,7 @@
                 app:error_title="@string/exposure_notification_age_error_title"
                 tools:visibility="visible" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:id="@+id/exposureNotificationAgeLimitDate"
                 style="@style/Title2"
                 android:layout_width="match_parent"

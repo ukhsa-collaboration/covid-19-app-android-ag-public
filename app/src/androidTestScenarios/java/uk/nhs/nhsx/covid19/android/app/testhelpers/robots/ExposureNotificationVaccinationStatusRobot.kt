@@ -15,6 +15,7 @@ import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.setChecked
 import uk.nhs.nhsx.covid19.android.app.testhelpers.nestedScrollTo
+import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
 
 class ExposureNotificationVaccinationStatusRobot {
 
@@ -75,8 +76,10 @@ class ExposureNotificationVaccinationStatusRobot {
     )
 
     fun checkActivityIsDisplayed() {
-        onView(withText(R.string.exposure_notification_vaccination_status_title))
-            .check(matches(isDisplayed()))
+        waitFor {
+            onView(withText(R.string.exposure_notification_vaccination_status_title))
+                .check(matches(isDisplayed()))
+        }
     }
 
     fun checkErrorVisible(shouldBeVisible: Boolean) {

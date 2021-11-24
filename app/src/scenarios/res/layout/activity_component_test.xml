@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
-    <include layout="@layout/view_toolbar_primary" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/view_toolbar_primary" />
 
     <ScrollView
         android:id="@+id/scenarios"
@@ -25,7 +25,7 @@
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/margin_horizontal">
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/Title4"
@@ -59,7 +59,7 @@
                 android:layout_marginBottom="@dimen/vertical_margin"
                 />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/Title2"

@@ -14,7 +14,10 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.overriddenResources
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.updateBaseContextLocale
 import javax.inject.Inject
 
-abstract class BaseActivity(contentView: Int) : AppCompatActivity(contentView) {
+abstract class BaseActivity : AppCompatActivity {
+
+    constructor(contentView: Int) : super(contentView)
+    constructor() : super()
 
     @Inject
     lateinit var applicationLocaleProvider: ApplicationLocaleProvider

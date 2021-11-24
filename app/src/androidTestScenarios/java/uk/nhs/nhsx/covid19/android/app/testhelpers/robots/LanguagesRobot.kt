@@ -19,13 +19,12 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.NestedScrollViewScrollToActio
 import uk.nhs.nhsx.covid19.android.app.testhelpers.allRecyclerViewItemsMatch
 import uk.nhs.nhsx.covid19.android.app.testhelpers.compose
 import uk.nhs.nhsx.covid19.android.app.testhelpers.recyclerViewItemDiscriminatorMatcher
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 
-class LanguagesRobot {
+class LanguagesRobot : HasActivity {
 
-    fun checkActivityIsDisplayed() {
-        onView(withId(R.id.languagesContainer))
-            .check(matches(isDisplayed()))
-    }
+    override val containerId: Int
+        get() = R.id.languagesContainer
 
     fun checkSystemLanguageNativeNameMatches(languageNativeName: String) {
         onView(

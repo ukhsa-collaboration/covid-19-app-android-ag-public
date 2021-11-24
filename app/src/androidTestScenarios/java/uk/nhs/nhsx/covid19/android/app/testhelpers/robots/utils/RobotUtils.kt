@@ -1,8 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
 import android.content.Context
-import androidx.annotation.StringRes
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.GeneralLocation.CENTER
 import androidx.test.espresso.action.GeneralLocation.TOP_CENTER
@@ -10,14 +8,13 @@ import androidx.test.espresso.action.GeneralSwipeAction
 import androidx.test.espresso.action.Press.FINGER
 import androidx.test.espresso.action.Swipe.SLOW
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.RootMatchers
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import org.hamcrest.CoreMatchers
-import org.hamcrest.Matchers
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
 import java.util.Locale
@@ -32,15 +29,6 @@ fun clickDialogNegativeButton() {
     onView(withId(android.R.id.button2))
         .inRoot(RootMatchers.isDialog())
         .perform(click())
-}
-
-fun checkActivityTitleIsDisplayed(@StringRes title: Int) {
-    onView(
-        Matchers.allOf(
-            Matchers.instanceOf(AppCompatTextView::class.java),
-            ViewMatchers.withParent(withId(R.id.toolbar))
-        )
-    ).check(ViewAssertions.matches(ViewMatchers.withText(title)))
 }
 
 fun datePickerSelectDayOfMonth(dayOfMonth: Int) {
@@ -58,9 +46,9 @@ private fun datePickerSelectDay(dayOfMonth: Int) {
         .perform(swipeUpFromCenter())
     onView(
         CoreMatchers.allOf(
-            ViewMatchers.isDescendantOfA(withId(R.id.mtrl_calendar_months)),
+            isDescendantOfA(withId(R.id.mtrl_calendar_months)),
             isCompletelyDisplayed(),
-            ViewMatchers.withText(dayOfMonth.toString())
+            withText(dayOfMonth.toString())
         )
     )
         .perform(click())

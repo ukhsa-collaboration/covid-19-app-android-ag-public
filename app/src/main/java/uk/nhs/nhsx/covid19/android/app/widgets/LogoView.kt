@@ -2,11 +2,11 @@ package uk.nhs.nhsx.covid19.android.app.widgets
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import kotlinx.android.synthetic.main.view_logo.view.daLogo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -17,6 +17,7 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodePro
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
+import uk.nhs.nhsx.covid19.android.app.databinding.ViewLogoBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -37,9 +38,12 @@ class LogoView @JvmOverloads constructor(
     @Inject
     lateinit var localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider
 
+    private val binding by lazy {
+        ViewLogoBinding.inflate(LayoutInflater.from(context), this, true)
+    }
+
     init {
         context.applicationContext.appComponent.inject(this)
-        View.inflate(context, R.layout.view_logo, this)
         getAttributes(attrs)
     }
 
@@ -64,16 +68,19 @@ class LogoView @JvmOverloads constructor(
         val postCodeDistrict = localAuthorityPostCodeProvider.getPostCodeDistrict()
 
         val logoWithDescription = LogoWithDescription.forDistrict(postCodeDistrict)
-        daLogo.setImageResource(logoWithDescription.logoImage)
 
-        val description = logoWithDescription.description
-        if (isAccessibilityHeadingCompat && description != null) {
-            daLogo.contentDescription = context.getString(description)
-            daLogo.isFocusable = true
-            setUpAccessibilityHeading()
-        } else {
-            daLogo.contentDescription = null
-            daLogo.isFocusable = false
+        with(binding) {
+            daLogo.setImageResource(logoWithDescription.logoImage)
+
+            val description = logoWithDescription.description
+            if (isAccessibilityHeadingCompat && description != null) {
+                daLogo.contentDescription = context.getString(description)
+                daLogo.isFocusable = true
+                setUpAccessibilityHeading()
+            } else {
+                daLogo.contentDescription = null
+                daLogo.isFocusable = false
+            }
         }
     }
 

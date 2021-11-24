@@ -26,7 +26,7 @@
                 android:contentDescription="@null"
                 android:src="@drawable/ic_share_keys_reminder" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Title1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
                 android:layout_marginVertical="@dimen/vertical_margin"
                 app:privacyText="@string/share_keys_reminder_privacy_banner" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Title3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

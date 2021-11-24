@@ -38,7 +38,7 @@ class LocalAuthorityViewModelTest {
     private val updateAreaRisk = mockk<UpdateAreaInfo>(relaxed = true)
 
     private val localAuthorities = mockk<Observer<List<LocalAuthorityWithId>>>(relaxed = true)
-    private val viewState = mockk<Observer<ViewState>>(relaxed = true)
+    private val viewState = mockk<Observer<ViewState>>(relaxUnitFun = true)
     private val finishActivity = mockk<Observer<Void>>(relaxed = true)
 
     private val testSubject = LocalAuthorityViewModel(
@@ -242,7 +242,7 @@ class LocalAuthorityViewModelTest {
             viewState.onChanged(
                 ViewState(
                     localAuthorityId = localAuthorityWithId.id,
-                    errorState = NOT_SUPPORTED
+                    errorState = NO_ERROR
                 )
             )
         }

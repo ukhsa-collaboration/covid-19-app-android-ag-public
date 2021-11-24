@@ -3,11 +3,10 @@ package uk.nhs.nhsx.covid19.android.app.about.mydata
 import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
-import android.view.View
+import android.view.LayoutInflater
 import android.widget.LinearLayout
-import kotlinx.android.synthetic.main.view_my_data_section_item.view.myDataSectionItemTitle
-import kotlinx.android.synthetic.main.view_my_data_section_item.view.myDataSectionItemValue
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.ViewMyDataSectionItemBinding
 
 class MyDataSectionItemView @JvmOverloads constructor(
     context: Context,
@@ -18,13 +17,13 @@ class MyDataSectionItemView @JvmOverloads constructor(
     var title: String? = ""
         set(value) {
             field = value
-            myDataSectionItemTitle.text = value
+            binding.myDataSectionItemTitle.text = value
         }
 
     var value: String? = ""
         set(value) {
             field = value
-            myDataSectionItemValue.text = value
+            binding.myDataSectionItemValue.text = value
         }
 
     var stackVertically: Boolean = false
@@ -33,8 +32,9 @@ class MyDataSectionItemView @JvmOverloads constructor(
             orientation = if (stackVertically) VERTICAL else HORIZONTAL
         }
 
+    private val binding = ViewMyDataSectionItemBinding.inflate(LayoutInflater.from(context), this)
+
     init {
-        View.inflate(context, R.layout.view_my_data_section_item, this)
         configureLayout()
     }
 

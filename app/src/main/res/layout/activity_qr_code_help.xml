@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/view_toolbar_primary" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/view_toolbar_primary" />
 
     <ScrollView
         style="@style/ScrollContainer"
@@ -20,7 +20,7 @@
             android:paddingTop="@dimen/vertical_margin"
             android:paddingBottom="@dimen/vertical_margin_extra_large">
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:id="@+id/qrCodeHelpTitle"
                 style="@style/Title3"
                 android:layout_width="match_parent"
@@ -34,7 +34,7 @@
                 android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/qr_code_help_how_it_works_text" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Title3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
                 android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/qr_code_help_how_to_scan_text" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Title3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
                 android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/qr_code_help_text" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Title3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
                 android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/qr_code_help_about_qr_code_text" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Title3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

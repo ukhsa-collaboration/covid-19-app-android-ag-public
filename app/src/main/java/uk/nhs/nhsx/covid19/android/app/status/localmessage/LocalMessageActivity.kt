@@ -4,14 +4,11 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.app.NotificationManagerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_local_message.backToHome
-import kotlinx.android.synthetic.main.activity_local_message.localMessageContentList
-import kotlinx.android.synthetic.main.activity_local_message.titleLocalMessage
-import kotlinx.android.synthetic.main.view_toolbar_background.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityLocalMessageBinding
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.ContentBlock
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.openUrl
@@ -19,19 +16,26 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
-class LocalMessageActivity : BaseActivity(R.layout.activity_local_message) {
+class LocalMessageActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<LocalMessageViewModel>
     private val viewModel: LocalMessageViewModel by viewModels { factory }
 
+    private lateinit var binding: ActivityLocalMessageBinding
     private lateinit var localMessageViewAdapter: LocalMessageViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityLocalMessageBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        setCloseToolbar(toolbar, closeIndicator = R.drawable.ic_close_primary, titleResId = R.string.empty)
+        setCloseToolbar(
+            binding.primaryToolbar.toolbar,
+            closeIndicator = R.drawable.ic_close_primary,
+            titleResId = R.string.empty
+        )
 
         registerViewModelListeners()
         registerButtonListeners()
@@ -45,7 +49,7 @@ class LocalMessageActivity : BaseActivity(R.layout.activity_local_message) {
         viewModel.viewState().observe(this) { localMessage ->
             if (localMessage != null) {
                 with(localMessage) {
-                    titleLocalMessage.text = head
+                    binding.titleLocalMessage.text = head
                     setAccessibilityTitle(head)
                     setUpLocalMessageAdapter(content)
                 }
@@ -60,14 +64,14 @@ class LocalMessageActivity : BaseActivity(R.layout.activity_local_message) {
     }
 
     private fun registerButtonListeners() {
-        backToHome.setOnSingleClickListener {
+        binding.backToHome.setOnSingleClickListener {
             finish()
         }
     }
 
-    private fun setUpLocalMessageAdapter(contentBlocks: List<ContentBlock>) {
+    private fun setUpLocalMessageAdapter(contentBlocks: List<ContentBlock>) = with(binding) {
         localMessageViewAdapter = LocalMessageViewAdapter(contentBlocks.filter { it.isDisplayable() }, ::openUrl)
-        localMessageContentList.layoutManager = LinearLayoutManager(this)
+        localMessageContentList.layoutManager = LinearLayoutManager(this@LocalMessageActivity)
         localMessageContentList.adapter = localMessageViewAdapter
     }
 }

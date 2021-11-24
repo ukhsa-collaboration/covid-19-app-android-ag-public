@@ -31,6 +31,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsola
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutReason.QUESTIONNAIRE
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.HandleTestResult
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.SendExposedNotification
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult
@@ -1407,7 +1408,6 @@ class IsolationStateMachineTest {
     fun `when in contact case isolation and opting out of contact isolation then expire contact isolation and store encounter date in contact case`() {
         val encounterDate = LocalDate.now(fixedClock).minus(3, ChronoUnit.DAYS)
         val notificationDate = LocalDate.now(fixedClock).minus(2, ChronoUnit.DAYS)
-        val expiryDate = LocalDate.now(fixedClock).plusDays(12)
         val contactCaseOnlyIsolation = IsolationState(
             isolationConfiguration = durationDays,
             contact = Contact(
@@ -1419,12 +1419,12 @@ class IsolationStateMachineTest {
         every { stateProvider.state } returns contactCaseOnlyIsolation
 
         val testSubject = createIsolationStateMachine(fixedClock)
-        testSubject.optOutOfContactIsolation(encounterDate)
+        testSubject.optOutOfContactIsolation(encounterDate, reason = QUESTIONNAIRE)
 
         val actual = testSubject.readState()
         val expected = contactCaseOnlyIsolation.copy(
             contact = contactCaseOnlyIsolation.contact!!.copy(
-                optOutOfContactIsolation = OptOutOfContactIsolation(encounterDate)
+                optOutOfContactIsolation = OptOutOfContactIsolation(encounterDate, reason = QUESTIONNAIRE)
             ),
             hasAcknowledgedEndOfIsolation = true
         )

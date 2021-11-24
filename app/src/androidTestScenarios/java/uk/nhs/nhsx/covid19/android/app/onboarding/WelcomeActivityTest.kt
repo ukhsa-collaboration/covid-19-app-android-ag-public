@@ -40,8 +40,8 @@ class WelcomeActivityTest : EspressoTest() {
         waitFor { welcomeRobot.checkActivityIsDisplayed() }
     }
 
-    @RetryFlakyTest
     @Test
+    @RetryFlakyTest
     fun onWelcomeActivity_userClicksConfirmAndSeesAgeConfirmationDialog() {
         startTestActivity<WelcomeActivity>()
 

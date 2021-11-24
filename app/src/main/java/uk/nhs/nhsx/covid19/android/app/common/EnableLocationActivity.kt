@@ -4,12 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS
-import androidx.lifecycle.Observer
-import kotlinx.android.synthetic.main.activity_edge_case.edgeCaseText
-import kotlinx.android.synthetic.main.activity_edge_case.edgeCaseTitle
-import kotlinx.android.synthetic.main.activity_edge_case.takeActionButton
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityEdgeCaseBinding
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule.Companion.LOCATION_STATE_NAME
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
@@ -17,37 +14,43 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 import javax.inject.Named
 
-class EnableLocationActivity : BaseActivity(R.layout.activity_edge_case) {
+class EnableLocationActivity : BaseActivity() {
 
     @Inject
     @Named(LOCATION_STATE_NAME)
     lateinit var locationStateProvider: AvailabilityStateProvider
 
+    private lateinit var binding: ActivityEdgeCaseBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityEdgeCaseBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         locationStateProvider.availabilityState.observe(
-            this,
-            Observer { isLocationEnabled ->
-                if (isLocationEnabled == ENABLED && !isFinishing) {
-                    finish()
-                }
+            this
+        ) { isLocationEnabled ->
+            if (isLocationEnabled == ENABLED && !isFinishing) {
+                finish()
             }
-        )
+        }
 
-        edgeCaseTitle.setText(R.string.enable_location_service_title)
-        edgeCaseText.setText(R.string.enable_location_service_rationale)
+        with(binding) {
 
-        takeActionButton.setText(R.string.go_to_your_settings)
-        takeActionButton.setOnSingleClickListener {
-            startActivity(
-                Intent(ACTION_LOCATION_SOURCE_SETTINGS).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                        Intent.FLAG_ACTIVITY_NO_HISTORY or
-                        Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
-                }
-            )
+            edgeCaseTitle.setText(R.string.enable_location_service_title)
+            edgeCaseText.setText(R.string.enable_location_service_rationale)
+
+            takeActionButton.setText(R.string.go_to_your_settings)
+            takeActionButton.setOnSingleClickListener {
+                startActivity(
+                    Intent(ACTION_LOCATION_SOURCE_SETTINGS).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                                Intent.FLAG_ACTIVITY_NO_HISTORY or
+                                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+                    }
+                )
+            }
         }
     }
 

@@ -6,7 +6,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/view_toolbar_background" />
+    <include
+        android:id="@+id/progressToolbar"
+        layout="@layout/view_toolbar_background" />
 
     <LinearLayout
         android:id="@+id/loadingProgress"
@@ -43,14 +45,14 @@
         tools:visibility="gone">
 
         <ImageView
-            style="@style/GoneInLandscape"
             android:id="@+id/imageError"
+            style="@style/GoneInLandscape"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:contentDescription="@null"
             android:src="@drawable/image_error" />
 
-        <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+        <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
             android:id="@+id/textErrorTitle"
             style="@style/Title1"
             android:layout_width="match_parent"

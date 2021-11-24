@@ -9,41 +9,47 @@ import android.os.Bundle
 import android.webkit.URLUtil
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import kotlinx.android.synthetic.main.activity_browser.browserCloseButton
-import kotlinx.android.synthetic.main.activity_browser.browserFeedbackText
-import kotlinx.android.synthetic.main.activity_browser.webView
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityBrowserBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 
-class BrowserActivity : BaseActivity(R.layout.activity_browser) {
+class BrowserActivity : BaseActivity() {
+
+    private lateinit var binding: ActivityBrowserBinding
+
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityBrowserBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         WebView.setWebContentsDebuggingEnabled(true)
 
         val url = intent.dataString
-        if (URLUtil.isValidUrl(url)) {
-            webView.visible()
-            webView.settings.javaScriptEnabled = true
-            webView.webViewClient = WebViewClient()
-            url?.let {
-                webView.loadUrl(url)
+
+        with(binding) {
+
+            if (URLUtil.isValidUrl(url)) {
+                webView.visible()
+                webView.settings.javaScriptEnabled = true
+                webView.webViewClient = WebViewClient()
+                url?.let {
+                    webView.loadUrl(url)
+                }
+            } else {
+                browserFeedbackText.visible()
+                browserFeedbackText.text = url
             }
-        } else {
-            browserFeedbackText.visible()
-            browserFeedbackText.text = url
-        }
 
-        browserCloseButton.setOnSingleClickListener {
-            finish()
-        }
+            browserCloseButton.setOnSingleClickListener {
+                finish()
+            }
 
-        setCloseToolbar(toolbar, R.string.empty)
+            setCloseToolbar(binding.primaryToolbar.toolbar, R.string.empty)
+        }
     }
 
     companion object {

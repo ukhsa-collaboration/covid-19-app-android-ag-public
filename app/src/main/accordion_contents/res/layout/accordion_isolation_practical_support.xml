@@ -9,23 +9,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/vertical_margin_small"
-        app:rawText="@string/isolation_hub_accordion_isolation_practical_support_paragraph_1"
-        app:showBulletPoints="false" />
+        app:rawText="@string/isolation_hub_accordion_isolation_practical_support_paragraph_1" />
 
-    <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+    <uk.nhs.nhsx.covid19.android.app.widgets.BulletedParagraphsContainer
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/vertical_margin"
-        app:rawText="@string/isolation_hub_accordion_isolation_practical_support_paragraph_2"
-        app:showBulletPoints="true" />
+        app:rawText="@string/isolation_hub_accordion_isolation_practical_support_paragraph_2" />
 
     <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
         style="@style/Body1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/vertical_margin"
-        app:rawText="@string/isolation_hub_accordion_isolation_practical_support_paragraph_3"
-        app:showBulletPoints="false" />
+        app:rawText="@string/isolation_hub_accordion_isolation_practical_support_paragraph_3" />
 
     <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
         style="@style/LinkText.WithIcon"

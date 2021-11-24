@@ -67,8 +67,8 @@ class EditPostalDistrictActivityTest : EspressoTest() {
 
         editPostalDistrictRobot.clickSavePostDistrictCode()
 
-        editPostalDistrictRobot.checkErrorContainerForNotSupportedPostCodeIsDisplayed()
-
         editPostalDistrictRobot.checkErrorTitleForNotSupportedPostCodeIsDisplayed()
+
+        editPostalDistrictRobot.checkErrorTitleForInvalidPostCodeIsDisplayed()
     }
 }

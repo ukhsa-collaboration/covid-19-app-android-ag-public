@@ -4,10 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import com.google.android.material.appbar.MaterialToolbar
-import kotlinx.android.synthetic.main.activity_post_code.postCodeContinue
-import kotlinx.android.synthetic.main.activity_post_code.postCodeView
-import kotlinx.android.synthetic.main.include_onboarding_toolbar.toolbar
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.R
@@ -19,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeVal
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.ParseJsonError
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Unsupported
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Valid
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityPostCodeBinding
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.postcode.PostCodeViewModel.NavigationTarget.LocalAuthority
 import uk.nhs.nhsx.covid19.android.app.startActivity
@@ -27,54 +24,60 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setToolbar
 import javax.inject.Inject
 
-class PostCodeActivity : BaseActivity(R.layout.activity_post_code) {
+class PostCodeActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<PostCodeViewModel>
 
     private val viewModel by viewModels<PostCodeViewModel> { factory }
 
+    private lateinit var binding: ActivityPostCodeBinding
     private var missingLocalAuthorityMapping: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityPostCodeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         missingLocalAuthorityMapping = intent.getBooleanExtra(EXTRA_MISSING_LOCAL_AUTHORITY_MAPPING, false)
 
-        if (missingLocalAuthorityMapping) {
-            setToolbar(
-                toolbar as MaterialToolbar,
-                R.string.empty
-            )
-        } else {
-            setNavigateUpToolbar(
-                toolbar as MaterialToolbar,
-                R.string.empty,
-                upIndicator = R.drawable.ic_arrow_back_primary
-            )
-        }
+        with(binding) {
 
-        postCodeContinue.setOnSingleClickListener {
-            viewModel.validateMainPostCode(postCodeView.postCodeDistrict)
-        }
-
-        viewModel.navigationTarget().observe(this) { navigationTarget ->
-            when (navigationTarget) {
-                is LocalAuthority -> {
-                    val intent = LocalAuthorityActivity.getIntent(this, navigationTarget.postCode)
-                    startActivityForResult(intent, LOCAL_AUTHORITY_REQUEST)
-                }
-                else -> Unit
+            if (missingLocalAuthorityMapping) {
+                setToolbar(
+                    primaryToolbar.toolbar,
+                    R.string.empty
+                )
+            } else {
+                setNavigateUpToolbar(
+                    primaryToolbar.toolbar,
+                    R.string.empty,
+                    upIndicator = R.drawable.ic_arrow_back_primary
+                )
             }
-        }
 
-        viewModel.postCodeValidationError().observe(this) { validationResult ->
-            when (validationResult) {
-                ParseJsonError -> Timber.d("Error parsing localAuthorities.json")
-                Invalid -> postCodeView.showErrorState()
-                Unsupported -> postCodeView.showPostCodeNotSupportedErrorState()
-                is Valid -> postCodeView.resetErrorState()
+            postCodeContinue.setOnSingleClickListener {
+                viewModel.validateMainPostCode(postCodeView.postCodeDistrict)
+            }
+
+            viewModel.navigationTarget().observe(this@PostCodeActivity) { navigationTarget ->
+                when (navigationTarget) {
+                    is LocalAuthority -> {
+                        val intent = LocalAuthorityActivity.getIntent(this@PostCodeActivity, navigationTarget.postCode)
+                        startActivityForResult(intent, LOCAL_AUTHORITY_REQUEST)
+                    }
+                    else -> Unit
+                }
+            }
+
+            viewModel.postCodeValidationError().observe(this@PostCodeActivity) { validationResult ->
+                when (validationResult) {
+                    ParseJsonError -> Timber.d("Error parsing localAuthorities.json")
+                    Invalid -> postCodeView.showErrorState()
+                    Unsupported -> postCodeView.showPostCodeNotSupportedErrorState()
+                    is Valid -> postCodeView.resetErrorState()
+                }
             }
         }
     }

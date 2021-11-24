@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/view_toolbar_primary" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/view_toolbar_primary" />
 
     <ScrollView
         android:id="@+id/linkTestResultScrollView"
@@ -22,7 +22,7 @@
             android:paddingHorizontal="@dimen/margin_horizontal_reduced"
             android:paddingVertical="@dimen/vertical_margin">
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:id="@+id/linkTestResultSymptomsTitle"
                 style="@style/Title1"
                 android:layout_width="match_parent"
@@ -31,14 +31,13 @@
                 android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
                 android:text="@string/link_test_result_symptoms_title" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+            <uk.nhs.nhsx.covid19.android.app.widgets.BulletedParagraphsContainer
                 android:id="@+id/linkTestResultSymptomsList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"
                 android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
-                app:rawText="@string/link_test_result_symptoms_list"
-                app:showBulletPoints="true" />
+                app:rawText="@string/link_test_result_symptoms_list" />
 
             <View
                 android:layout_width="wrap_content"

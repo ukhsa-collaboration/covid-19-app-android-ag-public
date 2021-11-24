@@ -19,7 +19,7 @@ import javax.inject.Inject
 class TestingHubViewModel @Inject constructor(
     private val districtAreaStringProvider: DistrictAreaStringProvider,
     private val evaluateBookTestNavigation: EvaluateBookTestNavigation,
-    private val canBookPcrTest: CanBookPcrTest,
+    private val canBookPcrTest: CanBookPcrTest
 ) : ViewModel() {
 
     private val viewStateLiveData = MutableLiveData<ViewState>()
@@ -53,7 +53,7 @@ class TestingHubViewModel @Inject constructor(
         }
 
     data class ViewState(
-        val bookTestButtonState: BookTestButtonState
+        val bookTestButtonState: BookTestButtonState,
     )
 
     sealed class BookTestButtonState {

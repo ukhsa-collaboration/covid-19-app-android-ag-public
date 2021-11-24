@@ -7,14 +7,10 @@ import android.widget.RadioButton
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.cancel
-import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.hours_12
-import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.hours_4
-import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.hours_8
-import kotlinx.android.synthetic.main.dialog_exposure_notification_reminder.minute_1
 import uk.nhs.nhsx.covid19.android.app.ExposureApplication
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.R.plurals
+import uk.nhs.nhsx.covid19.android.app.databinding.DialogExposureNotificationReminderBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import java.time.Duration
 
@@ -22,24 +18,27 @@ class ExposureNotificationReminderDialog(
     context: Context,
     private val scheduleExposureNotification: (duration: Duration) -> Unit
 ) : BottomSheetDialog(context) {
+
+    private lateinit var binding: DialogExposureNotificationReminderBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.dialog_exposure_notification_reminder)
+        binding = DialogExposureNotificationReminderBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initializeView()
         window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
-    private fun initializeView() {
-        minute_1.isVisible = ExposureApplication.isTestBuild
-        minute_1.setOnSingleClickListener {
+    private fun initializeView() = with(binding) {
+        minute1.isVisible = ExposureApplication.isTestBuild
+        minute1.setOnSingleClickListener {
             onRadioButtonClick(Duration.ofMinutes(1))
         }
 
-        updateResumeRadioButton(hours_4, 4)
-        updateResumeRadioButton(hours_8, 8)
-        updateResumeRadioButton(hours_12, 12)
+        updateResumeRadioButton(hours4, 4)
+        updateResumeRadioButton(hours8, 8)
+        updateResumeRadioButton(hours12, 12)
 
         cancel.setOnSingleClickListener { dismiss() }
     }

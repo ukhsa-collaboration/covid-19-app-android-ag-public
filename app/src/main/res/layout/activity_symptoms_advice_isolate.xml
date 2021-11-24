@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:id="@+id/symptomsAdviceIsolateContainer">
 
-    <include layout="@layout/view_toolbar_background" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/view_toolbar_background" />
 
     <ScrollView
         android:id="@+id/container"

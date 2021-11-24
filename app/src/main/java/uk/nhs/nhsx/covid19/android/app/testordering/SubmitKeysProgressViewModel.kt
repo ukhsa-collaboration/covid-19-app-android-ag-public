@@ -4,28 +4,42 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
-import uk.nhs.nhsx.covid19.android.app.common.Result
+import uk.nhs.nhsx.covid19.android.app.common.Lce
+import uk.nhs.nhsx.covid19.android.app.common.Result.Failure
+import uk.nhs.nhsx.covid19.android.app.common.Result.Success
 import uk.nhs.nhsx.covid19.android.app.exposure.SubmitTemporaryExposureKeys
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
-import javax.inject.Inject
 
-class SubmitKeysProgressViewModel @Inject constructor(
-    private val submitTemporaryExposureKeys: SubmitTemporaryExposureKeys
+class SubmitKeysProgressViewModel @AssistedInject constructor(
+    private val submitTemporaryExposureKeys: SubmitTemporaryExposureKeys,
+    @Assisted private val exposureKeys: List<NHSTemporaryExposureKey>,
+    @Assisted private val diagnosisKeySubmissionToken: String
 ) : ViewModel() {
 
-    private val submitKeysLiveData: MutableLiveData<Result<Unit>> = SingleLiveEvent()
-    fun submitKeysResult(): LiveData<Result<Unit>> = submitKeysLiveData
+    private val submitKeysLiveData: MutableLiveData<Lce<Unit>> = SingleLiveEvent()
+    fun submitKeysResult(): LiveData<Lce<Unit>> = submitKeysLiveData
 
-    fun submitKeys(
-        exposureKeys: List<NHSTemporaryExposureKey>,
-        diagnosisKeySubmissionToken: String
-    ) {
+    fun submitKeys() {
+        submitKeysLiveData.value = Lce.Loading
         viewModelScope.launch {
-            submitKeysLiveData.postValue(
-                submitTemporaryExposureKeys(exposureKeys, diagnosisKeySubmissionToken)
-            )
+            val viewState = when (val result = submitTemporaryExposureKeys(exposureKeys, diagnosisKeySubmissionToken)) {
+                is Failure -> Lce.Error(result.throwable)
+                is Success -> Lce.Success(Unit)
+            }
+            submitKeysLiveData.postValue(viewState)
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            exposureKeys: List<NHSTemporaryExposureKey>,
+            diagnosisKeySubmissionToken: String
+        ): SubmitKeysProgressViewModel
     }
 }

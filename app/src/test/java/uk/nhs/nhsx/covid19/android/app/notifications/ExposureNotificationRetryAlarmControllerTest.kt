@@ -15,9 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAl
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.ShouldShowEncounterDetectionActivityProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationRetryReceiver
 import uk.nhs.nhsx.covid19.android.app.util.BroadcastProvider
-import java.time.Clock
 import java.time.Instant
-import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 
 class ExposureNotificationRetryAlarmControllerTest {
@@ -28,7 +26,7 @@ class ExposureNotificationRetryAlarmControllerTest {
     private val shouldShowEncounterDetectionActivityProvider =
         mockk<ShouldShowEncounterDetectionActivityProvider>()
     private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxUnitFun = true)
-    private val fixedClock = Clock.fixed(Instant.parse("2021-01-10T10:00:00Z"), ZoneOffset.UTC)
+    private val clock = mockk<DeviceClock>(relaxUnitFun = true)
     private val broadcastProvider = mockk<BroadcastProvider>()
     private val pendingIntent = mockk<PendingIntent>()
 
@@ -38,13 +36,14 @@ class ExposureNotificationRetryAlarmControllerTest {
         notificationProvider,
         shouldShowEncounterDetectionActivityProvider,
         analyticsEventProcessor,
-        fixedClock,
+        clock,
         broadcastProvider,
     )
 
     @Before
     fun setUp() {
         every { broadcastProvider.getBroadcast(any(), any(), any(), any()) } returns pendingIntent
+        every { clock.instant() } returns Instant.parse("2021-01-10T10:00:00Z")
     }
 
     @Test
@@ -171,7 +170,7 @@ class ExposureNotificationRetryAlarmControllerTest {
             )
         }
 
-        val startIn4Hours = fixedClock.instant()
+        val startIn4Hours = clock.instant()
             .plus(4, ChronoUnit.HOURS)
             .toEpochMilli()
         verify {

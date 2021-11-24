@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dateAndPrivacyContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/include_onboarding_toolbar" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/include_onboarding_toolbar" />
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -29,14 +30,14 @@
                 android:contentDescription="@null"
                 android:src="@drawable/ic_onboarding_privacy" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Title1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_large"
                 android:text="@string/onboarding_privacy_title" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Title3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -50,7 +51,7 @@
                 android:layout_marginTop="@dimen/vertical_margin"
                 android:text="@string/onboarding_privacy_control_text" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Title3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

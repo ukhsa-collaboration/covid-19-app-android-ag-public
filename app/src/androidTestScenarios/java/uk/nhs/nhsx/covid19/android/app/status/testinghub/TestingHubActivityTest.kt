@@ -11,8 +11,10 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestingHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.BookTestTypeVenueVisitSetupHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 
-class TestingHubActivityTest : EspressoTest(), IsolationSetupHelper, BookTestTypeVenueVisitSetupHelper {
+class TestingHubActivityTest : EspressoTest(), IsolationSetupHelper, BookTestTypeVenueVisitSetupHelper,
+    LocalAuthoritySetupHelper {
     private val testingHubRobot = TestingHubRobot()
     private val testOrderingRobot = TestOrderingRobot()
     private val symptomsAfterRiskyVenueRobot = SymptomsAfterRiskyVenueRobot()

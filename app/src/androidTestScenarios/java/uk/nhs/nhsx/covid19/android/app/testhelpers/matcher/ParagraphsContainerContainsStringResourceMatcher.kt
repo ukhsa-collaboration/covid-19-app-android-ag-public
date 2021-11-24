@@ -2,12 +2,13 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers.matcher
 
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.core.view.children
-import kotlinx.android.synthetic.main.view_paragraph.view.paragraphText
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
+import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
 
 class ParagraphsContainerContainsStringResourceMatcher(@field:StringRes @param:StringRes private val expectedId: Int) :
@@ -23,12 +24,13 @@ class ParagraphsContainerContainsStringResourceMatcher(@field:StringRes @param:S
 
         if (target.childCount == 0) return false
 
-        target.children.forEach { childView ->
-            if (childView is LinearLayout) {
-                if (childView.paragraphText.text.contains(target.context.resources.getString(expectedId)))
+        target.children
+            .filter { it is LinearLayout }
+            .map { it.findViewById<TextView>(R.id.paragraphText) }
+            .forEach { textView ->
+                if (textView.text.contains(target.context.resources.getString(expectedId)))
                     return true
             }
-        }
 
         return false
     }

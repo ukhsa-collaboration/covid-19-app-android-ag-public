@@ -8,18 +8,17 @@ import androidx.appcompat.app.AppCompatActivity
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
-import kotlinx.android.synthetic.scenarios.activity_analytics_report.analyticsData
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventsGroup
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogEntry
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogStorage
 import uk.nhs.nhsx.covid19.android.app.analytics.CreateAnalyticsPayload
 import uk.nhs.nhsx.covid19.android.app.analytics.toAnalyticsWindow
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityAnalyticsReportBinding
 import uk.nhs.nhsx.covid19.android.app.remote.data.AnalyticsPayload
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import javax.inject.Inject
 
-class AnalyticsReportActivity : AppCompatActivity(R.layout.activity_analytics_report) {
+class AnalyticsReportActivity : AppCompatActivity() {
 
     @Inject
     lateinit var analyticsLogStorage: AnalyticsLogStorage
@@ -29,6 +28,8 @@ class AnalyticsReportActivity : AppCompatActivity(R.layout.activity_analytics_re
 
     @Inject
     lateinit var moshi: Moshi
+
+    private lateinit var binding: ActivityAnalyticsReportBinding
 
     private var showAsItems = true
     private val indent = "  "
@@ -69,11 +70,11 @@ class AnalyticsReportActivity : AppCompatActivity(R.layout.activity_analytics_re
         (if (formatted) entryAdapter.indent(indent) else entryAdapter).toJson(analyticsLogStorage.value.sortedBy { it.instant })
 
     private fun updateTitle() {
-        setNavigateUpToolbar(toolbar, getHeading(), upIndicator = R.drawable.ic_close_white)
+        setNavigateUpToolbar(binding.primaryToolbar.toolbar, getHeading(), upIndicator = R.drawable.ic_close_white)
     }
 
     private fun updateDataDump(formatted: Boolean = false) {
-        analyticsData.text = if (showAsItems)
+        binding.analyticsData.text = if (showAsItems)
             logAsEntryList(formatted)
         else
             logAsPayload(formatted)
@@ -83,6 +84,8 @@ class AnalyticsReportActivity : AppCompatActivity(R.layout.activity_analytics_re
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityAnalyticsReportBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         updateDataDump()
         updateTitle()
@@ -105,7 +108,7 @@ class AnalyticsReportActivity : AppCompatActivity(R.layout.activity_analytics_re
             R.id.actionExport -> {
                 val sendIntent = Intent()
                 sendIntent.action = Intent.ACTION_SEND
-                sendIntent.putExtra(Intent.EXTRA_TEXT, analyticsData.text)
+                sendIntent.putExtra(Intent.EXTRA_TEXT, binding.analyticsData.text)
                 sendIntent.type = "text/plain"
                 val shareIntent = Intent.createChooser(sendIntent, getString(getHeading()))
                 startActivity(shareIntent)

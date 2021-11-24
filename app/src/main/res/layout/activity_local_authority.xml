@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/view_toolbar_primary" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/view_toolbar_primary" />
 
     <ScrollView
         style="@style/ScrollContainer"
@@ -31,7 +31,7 @@
                 android:contentDescription="@null"
                 android:src="@drawable/ic_onboarding_postcode" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:id="@+id/titleLocalAuthority"
                 style="@style/Title1"
                 android:layout_width="match_parent"
@@ -40,7 +40,7 @@
                 android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
                 tools:text="The local authority for SL4 is Royal Borough of Windsor and Maidenhead" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:id="@+id/descriptionLocalAuthority"
                 style="@style/Body1"
                 android:layout_width="match_parent"

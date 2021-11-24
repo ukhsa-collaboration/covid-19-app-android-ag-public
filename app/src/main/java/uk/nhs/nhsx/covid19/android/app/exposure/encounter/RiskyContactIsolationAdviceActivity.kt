@@ -6,19 +6,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import kotlinx.android.synthetic.main.activity_risky_contact_isolation_advice.adviceContainer
-import kotlinx.android.synthetic.main.activity_risky_contact_isolation_advice.primaryActionButton
-import kotlinx.android.synthetic.main.activity_risky_contact_isolation_advice.riskyContactIsolationAdviceCommonQuestions
-import kotlinx.android.synthetic.main.activity_risky_contact_isolation_advice.riskyContactIsolationAdviceIcon
-import kotlinx.android.synthetic.main.activity_risky_contact_isolation_advice.riskyContactIsolationAdviceRemainingDaysInIsolation
-import kotlinx.android.synthetic.main.activity_risky_contact_isolation_advice.riskyContactIsolationAdviceStateInfoView
-import kotlinx.android.synthetic.main.activity_risky_contact_isolation_advice.riskyContactIsolationAdviceTitle
-import kotlinx.android.synthetic.main.activity_risky_contact_isolation_advice.secondaryActionButton
-import kotlinx.android.synthetic.main.view_toolbar_background.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.R.drawable
+import uk.nhs.nhsx.covid19.android.app.R.string
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.assistedViewModel
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityRiskyContactIsolationAdviceBinding
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.Default
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.WalesWithinAdviceWindow
@@ -40,12 +34,13 @@ import uk.nhs.nhsx.covid19.android.app.util.uiLongFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
 import java.time.LocalDate
 import javax.inject.Inject
 
-class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky_contact_isolation_advice) {
+class RiskyContactIsolationAdviceActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: RiskyContactIsolationAdviceViewModel.Factory
@@ -56,16 +51,27 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
         factory.create(optOutOfContactIsolationExtra)
     }
 
+    private lateinit var binding: ActivityRiskyContactIsolationAdviceBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityRiskyContactIsolationAdviceBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        setCloseToolbar(toolbar, R.string.empty, closeIndicator = R.drawable.ic_close_primary) {
-            navigateToStatusActivity()
-        }
+        configureToolbar()
 
         startListeningToViewState()
     }
+
+    private fun configureToolbar() =
+        setCloseToolbar(
+            binding.primaryToolbar.toolbar,
+            titleResId = string.empty,
+            closeIndicator = drawable.ic_close_primary
+        ) {
+            navigateToStatusActivity()
+        }
 
     private fun startListeningToViewState() {
         viewModel.viewState().observe(this) {
@@ -111,7 +117,7 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
         }
     }
 
-    private fun handleNewlyIsolating(days: Int, testingAdviceToShow: TestingAdviceToShow) {
+    private fun handleNewlyIsolating(days: Int, testingAdviceToShow: TestingAdviceToShow) = with(binding) {
         riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_contact)
         riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_self_isolate_for)
         riskyContactIsolationAdviceRemainingDaysInIsolation.text =
@@ -145,7 +151,7 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
         setAccessibilityTitle(isIsolating = true)
     }
 
-    private fun handleAlreadyIsolating(days: Int, testingAdviceToShow: TestingAdviceToShow) {
+    private fun handleAlreadyIsolating(days: Int, testingAdviceToShow: TestingAdviceToShow) = with(binding) {
         riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_contact)
         riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_continue_isolataion_for)
         riskyContactIsolationAdviceRemainingDaysInIsolation.text =
@@ -179,7 +185,7 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
         addAdvice(getString(stringResId, formattedDate), R.drawable.ic_get_free_test)
     }
 
-    private fun handleNotIsolatingAsFullyVaccinated(testingAdviceToShow: TestingAdviceToShow) {
+    private fun handleNotIsolatingAsFullyVaccinated(testingAdviceToShow: TestingAdviceToShow) = with(binding) {
         riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_book_test)
         riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required)
         riskyContactIsolationAdviceRemainingDaysInIsolation.gone()
@@ -203,7 +209,7 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
         setAccessibilityTitle(isIsolating = false)
     }
 
-    private fun handleNotIsolatingAsMinor(testingAdviceToShow: TestingAdviceToShow) {
+    private fun handleNotIsolatingAsMinor(testingAdviceToShow: TestingAdviceToShow) = with(binding) {
         riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_book_test)
         riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_minors_no_self_isolation_required)
         riskyContactIsolationAdviceRemainingDaysInIsolation.gone()
@@ -224,7 +230,7 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
         setAccessibilityTitle(isIsolating = false)
     }
 
-    private fun handleNotIsolatingAsMedicallyExempt() {
+    private fun handleNotIsolatingAsMedicallyExempt() = with(binding) {
         riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_book_test)
         riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_medically_exempt_heading)
         riskyContactIsolationAdviceRemainingDaysInIsolation.gone()
@@ -240,7 +246,7 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
         setAccessibilityTitle(isIsolating = false)
     }
 
-    private fun setupActionButtonsForNotIsolating() {
+    private fun setupActionButtonsForNotIsolating() = with(binding) {
         riskyContactIsolationAdviceCommonQuestions.visible()
         primaryActionButton.setText(R.string.risky_contact_isolation_advice_book_pcr_test)
         primaryActionButton.setOnSingleClickListener {
@@ -253,17 +259,24 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
     }
 
     private fun addAdvice(@StringRes stringResId: Int, @DrawableRes drawableResId: Int) =
-        adviceContainer.addView(IconTextView(this, stringResId, drawableResId))
+        binding.adviceContainer.addView(
+            IconTextView(
+                context = this,
+                stringResId = stringResId,
+                drawableResId = drawableResId
+            )
+        )
 
     private fun addAdvice(text: String, @DrawableRes drawableResId: Int) =
-        adviceContainer.addView(IconTextView(this, text, drawableResId))
+        binding.adviceContainer.addView(IconTextView(context = this, _text = text, _drawableResId = drawableResId))
 
-    private fun setAccessibilityTitle(isIsolating: Boolean) {
+    private fun setAccessibilityTitle(isIsolating: Boolean) = with(binding) {
         title = if (isIsolating) {
             "${riskyContactIsolationAdviceTitle.text} ${riskyContactIsolationAdviceRemainingDaysInIsolation.text}"
         } else {
             riskyContactIsolationAdviceTitle.text
         }
+        riskyContactIsolationAdviceRemainingDaysInIsolationContainer.setUpAccessibilityHeading()
     }
 
     companion object {
@@ -284,15 +297,26 @@ class RiskyContactIsolationAdviceActivity : BaseActivity(R.layout.activity_risky
         }
 
         private fun start(context: Context, optOutOfContactIsolationExtra: OptOutOfContactIsolationExtra) {
-            context.startActivity(getIntent(context, optOutOfContactIsolationExtra))
+            context.startActivity(getIntentAsNewClearedTask(context, optOutOfContactIsolationExtra))
         }
 
-        private fun getIntent(context: Context, optOutOfContactIsolationExtra: OptOutOfContactIsolationExtra) =
-            Intent(context, RiskyContactIsolationAdviceActivity::class.java)
-                .apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    putExtra(OPT_OUT_OF_CONTACT_ISOLATION_EXTRA, optOutOfContactIsolationExtra)
-                }
+        private fun getIntentAsNewClearedTask(
+            context: Context,
+            optOutOfContactIsolationExtra: OptOutOfContactIsolationExtra
+        ) = getIntent(
+            context,
+            optOutOfContactIsolationExtra,
+            intentFlags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        )
+
+        private fun getIntent(
+            context: Context,
+            optOutOfContactIsolationExtra: OptOutOfContactIsolationExtra,
+            intentFlags: Int
+        ) = Intent(context, RiskyContactIsolationAdviceActivity::class.java).apply {
+            this.flags = intentFlags
+            putExtra(OPT_OUT_OF_CONTACT_ISOLATION_EXTRA, optOutOfContactIsolationExtra)
+        }
 
         const val OPT_OUT_OF_CONTACT_ISOLATION_EXTRA = "OPT_OUT_OF_CONTACT_ISOLATION_EXTRA"
     }

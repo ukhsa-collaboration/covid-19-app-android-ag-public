@@ -8,13 +8,10 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 
-class AnimationsRobot {
-
-    fun checkActivityIsDisplayed() {
-        onView(withId(R.id.animationsContainer))
-            .check(matches(isDisplayed()))
-    }
+class AnimationsRobot : HasActivity {
+    override val containerId = R.id.animationsContainer
 
     fun clickToggle() {
         onView(withId(R.id.homeScreenAnimationSwitch))

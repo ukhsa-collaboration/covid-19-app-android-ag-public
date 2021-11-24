@@ -189,7 +189,7 @@
     <string name="questionnaire_1_of_2" tools:ignore="TypographyFractions">2 ਕਦਮਾਂ ਵਿੱਚੋਂ ਕਦਮ 1</string>
     <string name="questionnaire_2_of_2">2 ਕਦਮਾਂ ਵਿੱਚੋਂ ਕਦਮ 2</string>
     <string name="questionnaire_review_two_of_two">2 ਕਦਮਾਂ ਵਿੱਚੋਂ ਕਦਮ 2</string>
-    <string name="questionnaire_description">ਲਾਗੂ ਹੋਣ ਵਾਲੇ ਸਾਰੇ ਚੁਣੋ।</string>
+    <string name="questionnaire_description">ਲਾਗੂ ਹੋਣ ਵਾਲੇ ਸਾਰੇ ਚੁਣੋ, ਭਾਵੇਂ ਉਹ ਹਲਕੇ ਹੀ ਹੋਣ।</string>
     <string name="questionnaire_error_description">ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ, ਕਿਰਪਾ ਕਰਕੇ ਜਾਂਚ ਕਰੋ ਕਿ ਤੁਹਾਡੇ ਫੋਨ ਦੀ ਮੋਬਾਈਲ ਡਾਟਾ ਸੈਟਿੰਗ ਚਾਲੂ ਹੈ, ਆਪਣੇ ਵਾਈ-ਫਾਈ ਕਨੈਕਸ਼ਨ ਦੀ ਜਾਂਚ ਕਰੋ (ਜੇ ਇਸਤੇਮਾਲ ਕਰ ਰਹੇ ਹੋ) ਅਤੇ ਇਹ ਯਕੀਨੀ ਕਰੋ ਕਿ ਏਅਰਪਲੇਨ ਮੋਡ ਬੰਦ ਹੈ।</string>
     <string name="questionnaire_no_symptoms">ਮੈਨੂੰ ਵੱਖਰੇ ਲੱਛਣ ਹਨ</string>
     <string name="notification_text_risky_venue">ਹੋ ਸਕਦਾ ਹੈ ਕਿ ਤੁਸੀਂ ਕਿਸੇ ਅਜਿਹੀ ਜਗ੍ਹਾ \'ਤੇ COVID-19 ਦੇ ਸੰਪਰਕ ਵਿੱਚ ਆਏ ਹੋਵੋ ਜਿੱਥੇ ਤੁਸੀਂ ਹਾਲ ਹੀ ਵਿੱਚ ਚੈੱਕ-ਇਨ ਕੀਤਾ ਸੀ। ਸਲਾਹ ਲਈ ਇੱਥੇ ਟੈਪ ਕਰੋ।</string>
@@ -203,13 +203,13 @@
     <string name="expiration_notification_title">ਚੰਗੀ ਖਬਰ ਹੈ!</string>
     <string name="expiration_notification_description_passed">%s ਤੋਂ 23:59 ਵਜੇ ਤੁਹਾਨੂੰ ਆਈਸੋਲੇਸ਼ਨ ਤੋਂ ਮੁਕਤ ਕਰ ਦਿੱਤਾ ਗਿਆ ਸੀ</string>
     <string name="expiration_notification_recommendation">ਅਗਲੇਰੀ ਸਲਾਹ ਲਈ, ਕਿਰਪਾ ਕਰਕੇ ਸੰਪਰਕ ਕਰੋ:</string>
-    <string name="expiration_temperature_hint">ਹਾਲਾਂਕਿ, ਜੇਕਰ ਤੁਹਾਨੂੰ ਤੇਜ਼ ਬੁਖਾਰ ਹੈ, ਤਾਂ ਇਸਦੇ ਠੀਕ ਹੋਣ ਤੱਕ ਸੈਲਫ-ਆਈਸੋਲੇਸ਼ਨ ਨੂੰ ਜਾਰੀ ਰੱਖੋ</string>
+    <string name="expiration_temperature_hint">ਜੇ ਤੁਸੀਂ ਹਾਲੇ ਵੀ ਬਿਮਾਰ ਮਹਿਸੂਸ ਕਰਦੇ ਹੋ, ਤਾਂ ਉਦੋਂ ਤਕ ਘਰ ਵਿੱਚ ਰਹੋ ਜਦੋਂ ਤਕ ਤੁਸੀਂ ਬਿਹਤਰ ਮਹਿਸੂਸ ਨਹੀਂ ਕਰਦੇ ਹੋ</string>
     <string name="button_agree">ਮੈਂ ਸਹਿਮਤ ਹਾਂ</string>
     <string name="terms_of_use_onboarding">ਵਰਤੋਂ ਦੀਆਂ ਸ਼ਰਤਾਂ</string>
     <string name="about_common_questions_title">ਆਮ ਸਵਾਲ</string>
     <string name="about_common_questions_link">ਆਮ ਸਵਾਲ</string>
     <string name="about_accessibility_statement">ਪਹੁੰਚ ਸਟੇਟਮੈਂਟ</string>
-    <string name="test_result_no_self_isolation_description">ਹਾਲਾਂਕਿ, ਜੇਕਰ ਤੁਹਾਨੂੰ ਤੇਜ਼ ਬੁਖਾਰ ਹੈ, ਤਾਂ ਇਸਦੇ ਠੀਕ ਹੋਣ ਤੱਕ ਸੈਲਫ-ਆਈਸੋਲੇਸ਼ਨ ਨੂੰ ਜਾਰੀ ਰੱਖੋ</string>
+    <string name="test_result_no_self_isolation_description">ਜੇ ਤੁਸੀਂ ਹਾਲੇ ਵੀ ਬਿਮਾਰ ਮਹਿਸੂਸ ਕਰਦੇ ਹੋ, ਤਾਂ ਉਦੋਂ ਤਕ ਘਰ ਵਿੱਚ ਰਹੋ ਜਦੋਂ ਤਕ ਤੁਸੀਂ ਬਿਹਤਰ ਮਹਿਸੂਸ ਨਹੀਂ ਕਰਦੇ ਹੋ</string>
     <string name="for_further_advice_visit">ਅਗਲੇਰੀ ਸਲਾਹ ਲਈ, ਕਿਰਪਾ ਕਰਕੇ ਸੰਪਰਕ ਕਰੋ:</string>
     <string name="test_result_positive_continue_self_isolation_title_1">ਇਸ ਸਮੇਂ ਲਈ ਸੈਲਫ-ਆਈਸੋਲੇਸ਼ਨ ਵਿੱਚ ਰਹਿਣਾ ਜਾਰੀ ਰੱਖੋ</string>
     <string name="test_result_positive_continue_self_isolate_explanation">ਇਹ ਸਮਝਣ ਲਈ ਕਿ ਐਪ ਸਵੈ-ਇਕਾਂਤਵਾਸ ਦੇ ਦਿਨਾਂ ਦੀ ਗਣਨਾ ਕਿਵੇਂ ਕਰਦੀ ਹੈ, ਹੇਠ ਦਿੱਤੇ ਅਕਸਰ ਪੁੱਛੇ ਜਾਂਦੇ ਪ੍ਰਸ਼ਨਾਂ ਦੇ ਲਿੰਕ \'ਤੇ ਜਾਓ।\n\nਤੁਹਾਡੇ ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਇਹ ਦਿਖਾਉਂਦਾ ਹੈ ਕਿ ਟੈਸਟ ਕਰਵਾਉਣ ਸਮੇਂ ਤੁਹਾਡੇ ਸਰੀਰ ਅੰਦਰ ਵਾਇਰਸ ਸੀ। ਤੁਹਾਨੂੰ ਈਮੇਲ, ਟੈਕਸਟ ਜਾਂ ਫ਼ੋਨ ਰਾਹੀਂ ਜ਼ਿਆਦਾ ਜਾਣਕਾਰੀ ਭੇਜੀ ਗਈ ਹੈ। ਜੇ ਤੁਹਾਡੀ ਉਮਰ 18 ਸਾਲ ਤੋਂ ਘੱਟ ਹੈ ਤਾਂ ਤੁਹਾਨੂੰ ਇੱਕ ਭਰੋਸੇਮੰਦ ਬਾਲਗ ਨੂੰ ਇਹ ਸੰਦੇਸ਼ ਦਿਖਾਉਣ ਦੀ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ।</string>
@@ -323,7 +323,7 @@
     <string name="test_result_your_test_result">ਤੁਹਾਡਾ ਟੈਸਟ ਨਤੀਜਾ</string>
     <string name="test_result_negative_no_self_isolation_explanation">ਇਸ ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਇਹ ਦਿਖਾਉਂਦਾ ਹੈ ਕਿ ਟੈਸਟ ਕਰਵਾਉਣ ਸਮੇਂ ਤੁਹਾਡੇ ਅੰਦਰ ਵਾਇਰਸ ਨਹੀਂ ਸੀ। ਜੇ ਤੁਹਾਨੂੰ ਲੱਛਣ ਹੁੰਦੇ ਵੀ ਹਨ, ਤਾਂ ਇਸ ਐਪ ਤੇ ਉਨ੍ਹਾਂ ਬਾਰੇ ਰਿਪੋਰਟ ਕਰੋ। ਜੇ ਤੁਹਾਡੀ ਉਮਰ 18 ਸਾਲ ਤੋਂ ਘੱਟ ਹੈ ਤਾਂ ਤੁਹਾਨੂੰ ਇੱਕ ਭਰੋਸੇਮੰਦ ਬਾਲਗ ਨੂੰ ਇਹ ਸੰਦੇਸ਼ ਦਿਖਾਉਣ ਦੀ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ।</string>
     <string name="test_result_negative_no_self_isolation_subtitle">ਤੁਹਾਡਾ ਸੈਲਫ-ਆਈਸੋਲੇਸ਼ਨ ਹੁਣ ਖਤਮ ਹੋ ਗਿਆ ਹੈ</string>
-    <string name="test_result_positive_no_self_isolation_description">ਹਾਲਾਂਕਿ, ਜੇਕਰ ਤੁਹਾਨੂੰ ਤੇਜ਼ ਬੁਖਾਰ ਹੈ, ਤਾਂ ਇਸਦੇ ਠੀਕ ਹੋਣ ਤੱਕ ਸੈਲਫ-ਆਈਸੋਲੇਸ਼ਨ ਨੂੰ ਜਾਰੀ ਰੱਖੋ</string>
+    <string name="test_result_positive_no_self_isolation_description">ਜੇ ਤੁਸੀਂ ਬਿਮਾਰ ਮਹਿਸੂਸ ਕਰਦੇ ਹੋ, ਤਾਂ ਉਦੋਂ ਤਕ ਘਰ ਵਿੱਚ ਰਹੋ ਜਦੋਂ ਤਕ ਤੁਸੀਂ ਬਿਹਤਰ ਮਹਿਸੂਸ ਨਹੀਂ ਕਰਦੇ ਹੋ</string>
     <string name="test_result_negative_no_self_isolation_subtitle_text">ਤੁਹਾਡੇ ਕੋਰੋਨਾਵਾਇਰਸ ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਨੈਗੇਟਿਵ ਰਿਹਾ ਹੈ</string>
     <string name="notification_text_potential_exposure_explanation">ਚਿੰਤਾ ਨਾ ਕਰੋ, ਅਸੀਂ ਤੁਹਾਡੇ ਜ਼ੋਖਮ ਦਾ ਮੁਲਾਂਕਣ ਕਰ ਲਿਆ ਹੈ ਅਤੇ ਇਸ ਸਮੇਂ ਕਾਰਵਾਈ ਕਰਨ ਦੀ ਜ਼ਰੂਰਤ ਨਹੀਂ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਚੇਤੰਨ ਰਹਿਣਾ ਜਾਰੀ ਰੱਖੋ ਅਤੇ ਸਮਾਜਕ ਦੂਰੀ ਸਬੰਧੀ ਨਵੀਨਤਮ ਸਲਾਹ ਦੀ ਪਾਲਣਾ ਕਰੋ।</string>
     <string name="notification_title_potential_exposure_explanation">ਕੋਵਿਡ-19 ਸੰਪਰਕ ਚੈੱਕ ਸੰਪੂਰਨ</string>
@@ -411,34 +411,16 @@
     <string name="about_test_follow_up_state_not_required">ਲੋੜ ਨਹੀਂ</string>
     <string name="about_test_follow_up_state_pending">ਬਕਾਇਆ</string>
     <string name="book_follow_up_test">ਫਾਲੋਅੱਪ ਟੈਸਟ ਬੁੱਕ ਕਰੋ</string>
-    <string name="daily_contact_testing_confirmation_continue_paragraph_header">ਜਦੋਂ ਤੁਸੀਂ ਜਾਰੀ ਰੱਖਦੇ ਹੋ, ਤਾਂ ਤੁਹਾਨੂੰ:</string>
-    <string name="daily_contact_testing_confirmation_continue_paragraph_text">ਰੋਜ਼ਾਨਾ ਸੰਪਰਕ ਟੈਸਟਿੰਗ ਪ੍ਰੋਗਰਾਮ ਨੂੰ ਪੂਰਾ ਕਰਨ ਦੀ ਜ਼ਰੂਰਤ ਹੋਏਗੀ\n\nਐਪ ਵਿਚ ਕੋਈ ਸਕਾਰਾਤਮਕ ਨਤੀਜਾ ਕੋਡ ਦਾਖਲ ਕਰਕੇ ਅਤੇ ਆਪਣੇ ਆਪ ਨੂੰ ਅਲੱਗ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ\n\nਜੇਕਰ ਤੁਹਾਨੂੰ ਕਿਸੇ ਨਜ਼ਦੀਕੀ ਸੰਪਰਕ ਬਾਰੇ ਸੂਚਿਤ ਕੀਤਾ ਜਾਂਦਾ ਹੈ ਤਾਂ ਰੋਜ਼ਾਨਾ ਸੰਪਰਕ ਟੈਸਟਿੰਗ ਦੁਬਾਰਾ ਸ਼ੁਰੂ ਕਰਨੀ ਚਾਹੀਦੀ ਹੈ</string>
-    <string name="daily_contact_testing_confirmation_dialog_text">ਤੁਹਾਡੇ ਰੋਜ਼ਾਨਾ ਸੰਪਰਕ ਟੈਸਟਿੰਗ ਤੋਂ ਘੱਟੋ ਘੱਟ ਇੱਕ ਨੈਗੇਟਿਵ ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਆਉਣਾ ਚਾਹੀਦਾ ਹੈ। ਤੁਹਾਡੇ ਦੁਆਰਾ ਪੁਸ਼ਟੀ ਕਰਨ ਤੋਂ ਬਾਅਦ, ਤੁਹਾਨੂੰ ਹੁਣ ਐਪ ਰਾਹੀਂ ਆਪਣੇ ਆਪ ਨੂੰ ਅਲੱਗ ਕਰਨ ਲਈ ਨਹੀਂ ਕਿਹਾ ਜਾਵੇਗਾ।</string>
-    <string name="daily_contact_testing_confirmation_dialog_title">ਪੁਸ਼ਟੀ ਕਰੋ ਕਿ ਤੁਸੀਂ ਆਪਣਾ ਪਹਿਲਾ ਨੈਗੇਟਿਵ ਟੈਸਟ ਨਤੀਜਾ ਭੇਜਿਆ ਹੈ</string>
-    <string name="daily_contact_testing_confirmation_heading">ਤਸਦੀਕ ਕਰੋ ਕਿ ਤੁਸੀਂ ਰੋਜ਼ਾਨਾ ਸੰਪਰਕ ਟੈਸਟਿੰਗ ਕਰ ਰਹੇ ਹੋ</string>
-    <string name="daily_contact_testing_confirmation_intro">ਤੁਹਾਨੂੰ ਸਿਰਫ ਤਾਂ ਹੀ ਜਾਰੀ ਰੱਖਣਾ ਚਾਹੀਦਾ ਹੈ ਜੇ ਤੁਸੀਂ ਪਹਿਲਾਂ ਹੀ ਰੋਜ਼ਾਨਾ ਸੰਪਰਕ ਟੈਸਟਿੰਗ ਵਿੱਚ ਭਾਗ ਲੈ ਰਹੇ ਹੋ।</string>
-    <string name="daily_contact_testing_confirmation_no_longer_paragraph_header">ਤੁਹਾਨੂੰ ਹੁਣ:</string>
-    <string name="daily_contact_testing_confirmation_no_longer_paragraph_text">ਇਸ ਐਪ ਦੁਆਰਾ ਆਪਣੇ ਆਪ ਨੂੰ ਅਲੱਗ ਕਰਨ ਲਈ ਨਹੀਂ ਕਿਹਾ ਜਾਵੇਗਾ\n\nਇਸ ਐਪ ਵਿੱਚ ਰੋਜ਼ਾਨਾ ਸੰਪਰਕ ਟੈਸਟਿੰਗ ਦੇ ਕੋਈ ਹੋਰ ਨੈਗੇਟਿਵ ਨਤੀਜੇ ਭਰਨ ਦੀ ਜ਼ਰੂਰਤ ਨਹੀਂ ਹੈ\n\nਸਹਾਇਤਾ ਭੁਗਤਾਨਾਂ ਲਈ ਅਰਜ਼ੀ ਦੇਣ ਦੇ ਯੋਗ ਨਹੀਂ ਹੋਵੋਗੇ</string>
-    <string name="daily_contact_testing_confirmation_title">[%key_id:74418310%]</string>
     <string name="device_not_supported_next_steps_link_text">ਅਕਸਰ ਪੁੱਛੇ ਜਾਂਦੇ ਸਵਾਲ (FAQs) ਪੜ੍ਹੋ</string>
     <string name="device_not_supported_next_steps_link_url">https://faq.covid19.nhs.uk/article/KA-01386</string>
     <string name="device_not_supported_next_steps_text">ਐਪ ਦੀ ਵਰਤੋਂ ਕਰਨਾ ਜਾਰੀ ਰੱਖਣ ਲਈ ਤੁਸੀਂ ਕੀ ਕਰ ਸਕਦੇ ਹੋ ਇਸ ਬਾਰੇ ਪਤਾ ਲਗਾਓ।</string>
     <string name="device_not_supported_next_steps_title">ਅਗਲੇ ਕਦਮ</string>
     <string name="device_not_supported_reasons">ਤੁਹਾਡੇ ਫੋਨ ਤੇ ਸੀਮਿਤ ਸੈਟਿੰਗਜ਼ (ਮਿਸਾਲ ਵਜੋਂ, ਜੇ ਇਹ ਕੰਪਨੀ ਦਾ ਫੋਨ ਹੈ)\n\nਅਸਮਰਥਿਤ ਹਾਰਡਵੇਅਰ (ਉਦਾਹਰਣ ਲਈ, ਜੇ ਤੁਹਾਡਾ ਫੋਨ ਐਂਡਰਾਇਡ 6.0 ਜਾਂ ਇਸਤੋਂ ਉੱਚੇ ਦਾ ਸਮਰਥਨ ਨਹੀਂ ਕਰਦਾ)</string>
-    <string name="link_test_result_daily_contact_testing_description_list_text">ਜੇ ਤੁਹਾਡਾ ਨਤੀਜਾ ਪਾਜ਼ਿਟਿਵ ਹੈ, ਤਾਂ ਉੱਪਰ ਬਾਕਸ ਵਿੱਚ ਉਹ ਕੋਡ ਭਰੋ ਜੋ ਤੁਹਾਨੂੰ ਪ੍ਰਾਪਤ ਹੋਇਆ ਹੋਵੇਗਾ ਅਤੇ ਇਕਾਂਤਵਾਸ ਵਿੱਚ ਰਹੋ\n\nਜੇ ਤੁਹਾਡਾ ਨਤੀਜਾ ਨੈਗੇਟਿਵ ਹੈ, ਤਾਂ ਤੁਹਾਨੂੰ ਕੋਈ ਕੋਡ ਪ੍ਰਾਪਤ ਨਹੀਂ ਹੁੰਦਾ ਹੈ। ਤੁਹਾਨੂੰ ਹੇਠਾਂ ਸਾਨੂੰ ਦੱਸਣ ਦੀ ਲੋੜ ਹੈ ਕਿ ਤੁਹਾਡਾ ਨਤੀਜਾ ਨੈਗੇਟਿਵ ਹੈ ਅਤੇ ਜਾਰੀ ਰੱਖੋ।</string>
-    <string name="link_test_result_daily_contact_testing_negative_result_confirmation">ਰੋਜ਼ਾਨਾ ਸੰਪਰਕ ਟੈਸਟਿੰਗ ਦਾ ਮੇਰਾ ਨਤੀਜਾ ਨੈਗੇਟਿਵ ਹੈ</string>
-    <string name="link_test_result_daily_contact_testing_subtitle">ਐਪ ਵਿੱਚ ਆਪਣੇ ਨਤੀਜੇ ਦੀ ਰਿਪੋਰਟ ਕਰਨਾ ਮਹੱਤਵਪੂਰਨ ਹੈ:</string>
-    <string name="link_test_result_daily_contact_testing_title">ਜੇ ਤੁਸੀਂ ਰੋਜ਼ਾਨਾ ਸੰਪਰਕ ਟੈਸਟਿੰਗ ਕਰ ਰਹੇ ਹੋ</string>
     <string name="unsupported_device">ਤੁਹਾਡੀ ਸੈਟਿੰਗ ਵਿੱਚ ਪਾਬੰਦੀ (ਉਦਾਹਰਣ ਲਈ, ਜੇਕਰ ਇਹ ਕੰਪਨੀ ਦਾ ਫੋਨ ਹੋਵੇ)।\n\nਤੁਹਾਡੇ ਫੋਨ \'ਤੇ ਕੋਈ ਦੂਸਰੀ ਐਪ ਓਸੇ ਤਕਨੀਕ ਦੀ ਵਰਤੋਂ ਕਰ ਰਹੀ ਹੈ ਅਤੇ ਇਸ ਐਪ ਨੂੰ ਕੰਮ ਕਰਨ ਤੋਂ ਰੋਕ ਰਹੀ ਹੈ।</string>
-    <string name="user_data_daily_contact_testing_text">ਪੁਸ਼ਟੀ ਕੀਤੀ ਗਈ ਭਾਗੀਦਾਰੀ</string>
-    <string name="user_data_daily_contact_testing_title">[%key_id:74418310%]</string>
     <string name="ill_do_it_later">ਵਾਪਸ ਮੁੱਖ ਸਕ੍ਰੀਨ \'ਤੇ</string>
-    <string name="link_test_result_daily_contact_testing_description">ਜੇ ਤੁਹਾਡਾ ਨਤੀਜਾ ਪਾਜ਼ਿਟਿਵ ਹੈ, ਤਾਂ ਉੱਪਰ ਬਾਕਸ ਵਿੱਚ ਉਹ ਕੋਡ ਭਰੋ ਜੋ ਤੁਹਾਨੂੰ ਪ੍ਰਾਪਤ ਹੋਇਆ ਹੋਵੇਗਾ ਅਤੇ ਇਕਾਂਤਵਾਸ ਵਿੱਚ ਰਹੋ\n\nਜੇ ਤੁਹਾਡਾ ਨਤੀਜਾ ਨੈਗੇਟਿਵ ਹੈ, ਤਾਂ ਤੁਹਾਨੂੰ ਕੋਈ ਕੋਡ ਪ੍ਰਾਪਤ ਨਹੀਂ ਹੁੰਦਾ ਹੈ। ਤੁਹਾਨੂੰ ਹੇਠਾਂ ਸਾਨੂੰ ਦੱਸਣ ਦੀ ਲੋੜ ਹੈ ਕਿ ਤੁਹਾਡਾ ਨਤੀਜਾ ਨੈਗੇਟਿਵ ਹੈ ਅਤੇ ਜਾਰੀ ਰੱਖੋ।</string>
-    <string name="link_test_result_daily_contact_testing_description_list_header">ਇਸ ਤੋਂ ਇਲਾਵਾ:</string>
     <string name="link_test_result_error_both_inputs_provided">ਤੁਸੀਂ ਇੱਕੋ ਸਮੇਂ \'ਤੇ ਕੋਈ ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਕੋਡ ਦਾਖਲ ਕਰ ਕੇ ਇਹ ਪੁਸ਼ਟੀ ਨਹੀਂ ਕਰ ਸਕਦੇ ਹੋ ਕਿ ਤੁਹਾਡਾ ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਨੈਗੇਟਿਵ ਹੈ।</string>
-    <string name="link_test_result_error_neither_input_provided">ਤੁਹਾਨੂੰ ਜਾਂ ਤਾਂ ਕੋਈ ਕੋਡ ਦਾਖਲ ਕਰਨ ਦੀ ਲੋੜ ਹੈ ਜਾਂ ਸਾਨੂੰ ਇਹ ਦੱਸਣ ਦੀ ਲੋੜ ਹੈ ਕਿ ਤੁਹਾਡੇ ਰੋਜ਼ਾਨਾ ਸੰਪਰਕ ਟੈਸਟਿੰਗ ਦਾ ਨਤੀਜਾ ਨੈਗੇਟਿਵ ਹੈ।</string>
     <string name="link_test_result_onset_date_title">ਕੀ ਤੁਹਾਨੂੰ ਉਹ ਸਭ ਤੋਂ ਪੁਰਾਣੀ ਤਾਰੀਖ ਯਾਦ ਹੈ ਜਦੋਂ ਤੁਸੀਂ ਇਨ੍ਹਾਂ ਵਿੱਚੋਂ ਕਿਸੇ ਵੀ ਲੱਛਣ ਦਾ ਅਨੁਭਵ ਕਰਨਾ ਸ਼ੁਰੂ ਕੀਤਾ ਸੀ?</string>
-    <string name="link_test_result_symptoms_list">ਉੱਚ ਤਾਪਮਾਨ (ਬੁਖ਼ਾਰ)\n\nਨਵੀਂ ਲੱਗੀ ਨਿਰੰਤਰ ਆਉਂਦੀ ਖੰਘ\n\nਤੁਹਾਡੇ ਸੁੰਘਣ ਜਾਂ ਸੁਆਦ ਮਹਿਸੂਸ ਕਰਨ ਵਿੱਚ ਤਬਦੀਲੀ</string>
+    <string name="link_test_result_symptoms_list">ਤੇਜ਼ ਬੁਖ਼ਾਰ\nਨਵੀਂ ਨਿਰੰਤਰ ਖੰਘ\nਤੁਹਾਡੇ ਸੁੰਘਣ ਜਾਂ ਸੁਆਦ ਮਹਿਸੂਸ ਕਰਨ ਵਿੱਚ ਤਬਦੀਲੀ</string>
     <string name="link_test_result_symptoms_no">ਨਹੀਂ</string>
     <string name="link_test_result_symptoms_no_accessibility">ਨਹੀਂ, ਮੈਨੂੰ ਕੋਈ ਲੱਛਣ ਨਹੀਂ ਸਨ।</string>
     <string name="link_test_result_symptoms_title">ਕੀ ਤੁਹਾਡੇ ਵਿੱਚ ਹੇਠਾਂ ਦਿੱਤੇ ਕੋਰੋਨਾਵਾਇਰਸ ਦੇ ਲੱਛਣਾਂ ਵਿੱਚੋਂ ਕੋਈ ਲੱਛਣ ਹਨ?</string>
@@ -580,11 +562,11 @@
     <string name="symptoms_after_risky_venue_cancel_dialog_positive">ਛੱਡ ਦਿਓ</string>
     <string name="symptoms_after_risky_venue_cancel_dialog_text">ਜੇ ਤੁਸੀਂ \'ਛੱਡ ਦਿਓ\' ਨੂੰ ਟੈਪ ਕਰਦੇ ਹੋ ਤਾਂ ਤੁਸੀਂ ਇਸ ਪ੍ਰਕਿਰਿਆ ਨੂੰ ਬਾਅਦ ਵਿਚ ਦੁਬਾਰਾ ਚਾਲੂ ਕਰ ਸਕਦੇ ਹੋ ਅਤੇ ਹੋਮ ਸਕ੍ਰੀਨ ਤੋਂ \'COVID-19 ਲਈ ਟੈਸਟਿੰਗ\' ਚੁਣ ਕੇ ਟੈਸਟ ਬੁੱਕ ਕਰ ਸਕਦੇ ਹੋ।</string>
     <string name="symptoms_after_risky_venue_cancel_dialog_title">ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ ਛੱਡਣਾ ਚਾਹੁੰਦੇ ਹੋ?</string>
-    <string name="symptoms_after_risky_venue_description">ਉੱਚ ਤਾਪਮਾਨ (ਬੁਖ਼ਾਰ)\n\nਨਵੀਂ ਲੱਗੀ ਨਿਰੰਤਰ ਆਉਂਦੀ ਖੰਘ\n\nਤੁਹਾਡੇ ਸੁੰਘਣ ਜਾਂ ਸੁਆਦ ਮਹਿਸੂਸ ਕਰਨ ਵਿੱਚ ਤਬਦੀਲੀ</string>
+    <string name="symptoms_after_risky_venue_description">ਤੇਜ਼ ਬੁਖ਼ਾਰ\nਨਵੀਂ ਨਿਰੰਤਰ ਖੰਘ\nਤੁਹਾਡੇ ਸੁੰਘਣ ਜਾਂ ਸੁਆਦ ਮਹਿਸੂਸ ਕਰਨ ਵਿੱਚ ਤਬਦੀਲੀ</string>
     <string name="symptoms_after_risky_venue_heading">ਟੈਸਟ ਦੀ ਕਿਸਮ ਇਸ ਗੱਲ \'ਤੇ ਨਿਰਭਰ ਕਰਦੀ ਹੈ ਕਿ ਕੀ ਤੁਹਾਨੂੰ ਲੱਛਣ ਹਨ</string>
     <string name="symptoms_after_risky_venue_negative_button">ਮੈਨੂੰ ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੋਈ ਵੀ ਲੱਛਣ ਨਹੀਂ ਹੈ</string>
     <string name="symptoms_after_risky_venue_paragraph_above_description">ਕੋਰੋਨਾਵਾਇਰਸ (COVID-19) ਦੇ ਮੁੱਖ ਲੱਛਣ ਹਨ:</string>
-    <string name="symptoms_after_risky_venue_paragraph_below_description">ਜੇ ਤੁਹਾਨੂੰ ਲੱਗਦਾ ਹੈ ਕਿ ਤੁਹਾਨੂੰ COVID-19 ਦੇ ਲੱਛਣ ਹੋ ਸਕਦੇ ਹਨ, ਹੇਠਾਂ \'ਲੱਛਣਾਂ ਦੀ ਜਾਂਚ ਕਰੋ\' ਚੁਣੋ। ਹੋਰ ਜਾਣਕਾਰੀ ਜਾਂ ਸਲਾਹ ਲਈ 119 \'ਤੇ ਕਾਲ ਕਰੋ।</string>
+    <string name="symptoms_after_risky_venue_paragraph_below_description">ਜੇ ਤੁਹਾਨੂੰ ਲੱਗਦਾ ਹੈ ਕਿ ਤੁਹਾਨੂੰ COVID-19 ਲੱਛਣ ਹੋ ਸਕਦੇ ਹਨ, ਭਾਵੇਂ ਉਹ ਹਲਕੇ ਹੀ ਹੋਣ, ਤਾਂ ਹੇਠਾਂ \'ਲੱਛਣਾਂ ਦੀ ਜਾਂਚ ਕਰੋ\' ਚੁਣੋ। ਹੋਰ ਜਾਣਕਾਰੀ ਜਾਂ ਸਲਾਹ ਲਈ 119 \'ਤੇ ਕਾਲ ਕਰੋ।</string>
     <string name="symptoms_after_risky_venue_positive_button">ਲੱਛਣਾਂ ਦੀ ਜਾਂਚ ਕਰੋ</string>
     <string name="symptoms_after_risky_venue_title">ਕੀ ਤੁਹਾਨੂੰ ਲੱਛਣ ਹਨ?</string>
     <string name="test_ordering_lfd_already_have_test_kit_button_text">ਮੇਰੇ ਕੋਲ ਪਹਿਲਾਂ ਹੀ ਇੱਕ ਟੈਸਟ ਕਿੱਟ ਹੈ</string>
@@ -603,17 +585,9 @@
     <string name="when_to_pause_contact_tracing_header">ਤੁਹਾਨੂੰ ਸੰਪਰਕ ਟ੍ਰੇਸਿੰਗ ਨੂੰ ਸਿਰਫ ਉਦੋਂ ਰੋਕਣਾ ਚਾਹੀਦਾ ਹੈ ਜੇ ਤੁਸੀਂ:</string>
     <string name="when_to_pause_contact_tracing_reminder">ਇੱਕ ਵਾਰ ਜਦੋਂ ਤੁਸੀਂ ਇਸ ਸਥਿਤੀ ਵਿੱਚੋਂ ਬਾਹਰ ਨਿਕਲ ਜਾਂਦੇ ਹੋ ਤਾਂ ਸੰਪਰਕ ਟ੍ਰੇਸਿੰਗ ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰਨਾ ਯਾਦ ਰੱਖੋ।</string>
     <string name="when_to_pause_contact_tracing_title">ਤੁਹਾਨੂੰ ਸੰਪਰਕ ਟ੍ਰੇਸਿੰਗ ਨੂੰ ਸਿਰਫ ਉਦੋਂ ਰੋਕਣਾ ਚਾਹੀਦਾ ਹੈ ਜੇ ਤੁਸੀਂ:</string>
-    <plurals name="contact_case_start_isolation_how_we_calculate_isolation_days_days_since_encounter">
-        <item quantity="one" />
-        <item quantity="other" />
-    </plurals>
     <plurals name="contact_case_start_isolation_how_we_calculate_isolation_days_isolation_period">
         <item quantity="one">ਤੁਹਾਨੂੰ ਨਜ਼ਦੀਕੀ ਸੰਪਰਕ ਦੀ ਮਿਤੀ ਤੋਂ ਬਾਅਦ %d ਪੂਰੇ ਦਿਨ ਤੱਕ ਸਵੈ-ਇਕਾਂਤ ਰਹਿਣਾ ਚਾਹੀਦਾ ਹੈ।</item>
         <item quantity="other">ਤੁਹਾਨੂੰ ਨਜ਼ਦੀਕੀ ਸੰਪਰਕ ਦੀ ਮਿਤੀ ਤੋਂ ਬਾਅਦ %d ਪੂਰੇ ਦਿਨਾਂ ਤੱਕ ਸਵੈ-ਇਕਾਂਤ ਵਿੱਚ ਰਹਿਣਾ ਚਾਹੀਦਾ ਹੈ।</item>
-    </plurals>
-    <plurals name="contact_case_start_isolation_how_we_calculate_isolation_days_remaining_days">
-        <item quantity="one" />
-        <item quantity="other" />
     </plurals>
     <string name="about_contact_isolation_opt_out_date">ਨੇੜਲੇ ਸੰਪਰਕ ਕਰਕੇ ਅਲੱਗ ਰਹਿਣ ਤੋਂ ਛੋਟ ਦੀ ਮਿਤੀ</string>
     <string name="accessibility_accordion_role_description_collapsed">ਬਟਨ, ਸਮੇਟਿਆ ,%s</string>

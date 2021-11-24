@@ -1,6 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -19,7 +18,7 @@
             android:paddingHorizontal="@dimen/margin_horizontal"
             android:paddingVertical="@dimen/vertical_margin_large">
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 style="@style/Title1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -32,12 +31,11 @@
                 android:layout_marginTop="@dimen/vertical_margin_large"
                 android:text="@string/could_be_due_to_run_app" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+            <uk.nhs.nhsx.covid19.android.app.widgets.BulletedParagraphsContainer
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"
-                app:rawText="@string/device_not_supported_reasons"
-                app:showBulletPoints="true" />
+                app:rawText="@string/device_not_supported_reasons" />
 
             <TextView
                 style="@style/Title3"

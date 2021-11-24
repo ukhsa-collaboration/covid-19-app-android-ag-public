@@ -73,6 +73,9 @@
         android:id="@+id/qrScanVenuePostcode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 "
+        android:inputType="textCapCharacters"
+        android:maxLength="10"
         android:hint="Type postcode" />
 
     <LinearLayout

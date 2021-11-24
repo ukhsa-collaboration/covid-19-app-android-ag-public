@@ -112,10 +112,10 @@
     <declare-styleable name="LogoView">
         <attr name="isAccessibilityHeadingCompat" format="boolean" />
     </declare-styleable>
-    <declare-styleable name="ParagraphsContainer">
+    <declare-styleable name="BaseParagraphsContainer">
         <attr name="rawText" format="string" />
-        <attr name="showBulletPoints" format="boolean" />
         <attr name="paddingBetweenItems" format="dimension" />
+        <attr name="textColor" format="color" />
     </declare-styleable>
     <declare-styleable name="AccordionButtonView">
         <attr name="accordionTitle" format="string" />
@@ -147,5 +147,9 @@
         <attr name="groupTitle" format="string" />
         <attr name="groupChangeButtonText" format="string" />
         <attr name="groupChangeButtonContentDescription" format="string" />
+    </declare-styleable>
+    <declare-styleable name="IconTextView">
+        <attr name="text" format="string"/>
+        <attr name="drawable" format="reference"/>
     </declare-styleable>
 </resources>

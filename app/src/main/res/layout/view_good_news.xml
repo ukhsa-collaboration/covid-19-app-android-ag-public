@@ -21,7 +21,7 @@
             android:contentDescription="@null"
             tools:src="@drawable/ic_isolation_expired_or_over" />
 
-        <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+        <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
             android:id="@+id/goodNewsTitle"
             style="@style/Title1"
             android:layout_width="match_parent"
@@ -31,7 +31,7 @@
             android:textAlignment="center"
             android:textSize="56sp" />
 
-        <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+        <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
             android:id="@+id/goodNewsSubtitle"
             style="@style/TitleIsolation"
             android:layout_width="match_parent"

@@ -1,9 +1,19 @@
 package uk.nhs.nhsx.covid19.android.app.remote.data
 
 import android.os.Parcelable
+import androidx.annotation.DrawableRes
 import com.squareup.moshi.JsonClass
 import kotlinx.android.parcel.Parcelize
+import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
+import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.AMBER
+import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.BLACK
+import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.GREEN
+import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.MAROON
+import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.NEUTRAL
+import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.RED
+import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.YELLOW
+import javax.inject.Inject
 
 @Parcelize
 @JsonClass(generateAdapter = true)
@@ -108,4 +118,20 @@ enum class ColorScheme(
     MAROON(jsonName = "maroon"),
 
     BLACK(jsonName = "black"),
+}
+
+class ColorSchemeToImageResource @Inject constructor() {
+
+    @DrawableRes
+    operator fun invoke(scheme: ColorScheme): Int {
+        return when (scheme) {
+            NEUTRAL -> R.drawable.ic_map_risk_neutral
+            GREEN -> R.drawable.ic_map_risk_green
+            YELLOW -> R.drawable.ic_map_risk_yellow
+            AMBER -> R.drawable.ic_map_risk_amber
+            RED -> R.drawable.ic_map_risk_red
+            MAROON -> R.drawable.ic_map_risk_maroon
+            BLACK -> R.drawable.ic_map_risk_black
+        }
+    }
 }

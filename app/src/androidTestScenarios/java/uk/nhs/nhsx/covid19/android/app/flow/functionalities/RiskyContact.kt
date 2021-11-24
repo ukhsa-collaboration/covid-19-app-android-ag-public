@@ -85,7 +85,7 @@ class RiskyContact(
     }
 
     private fun clickBackToHomeOnIsolationAdviceScreen(alreadyIsolating: Boolean) {
-        waitFor { riskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        riskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
         if (alreadyIsolating) {
             riskyContactIsolationAdviceRobot.clickPrimaryBackToHome()
         } else {

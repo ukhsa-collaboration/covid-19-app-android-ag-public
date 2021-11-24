@@ -70,19 +70,7 @@ class IsolationHubViewModelTest {
 
         createTestSubjectAndStartListeningToLiveData()
 
-        val expectedViewState = ViewState(showIsolationPaymentButton = true, showBookTestButton = false)
-
-        verify { viewStateObserver.onChanged(expectedViewState) }
-    }
-
-    @Test
-    fun `isolation payment button is not displayed when user can not claim isolation payment`() {
-        every { canClaimIsolationPayment() } returns false
-        every { isolationPaymentTokenStateProvider.tokenState } returns Token("token")
-
-        createTestSubjectAndStartListeningToLiveData()
-
-        val expectedViewState = ViewState(showIsolationPaymentButton = false, showBookTestButton = false)
+        val expectedViewState = viewState(showIsolationPaymentButton = true)
 
         verify { viewStateObserver.onChanged(expectedViewState) }
     }
@@ -94,7 +82,7 @@ class IsolationHubViewModelTest {
 
         createTestSubjectAndStartListeningToLiveData()
 
-        val expectedViewState = ViewState(showIsolationPaymentButton = false, showBookTestButton = false)
+        val expectedViewState = viewState()
 
         verify { viewStateObserver.onChanged(expectedViewState) }
     }
@@ -105,18 +93,16 @@ class IsolationHubViewModelTest {
 
         createTestSubjectAndStartListeningToLiveData()
 
-        val expectedViewState = ViewState(showIsolationPaymentButton = false, showBookTestButton = true)
+        val expectedViewState = viewState(showBookTestButton = true)
 
         verify { viewStateObserver.onChanged(expectedViewState) }
     }
 
     @Test
-    fun `book a test button is not displayed when user can not book a PCR test`() {
-        coEvery { canBookPcrTest() } returns false
-
+    fun `no buttons are shown to the user`() {
         createTestSubjectAndStartListeningToLiveData()
 
-        val expectedViewState = ViewState(showIsolationPaymentButton = false, showBookTestButton = false)
+        val expectedViewState = viewState()
 
         verify { viewStateObserver.onChanged(expectedViewState) }
     }
@@ -174,4 +160,12 @@ class IsolationHubViewModelTest {
         testSubject.viewState().observeForever(viewStateObserver)
         testSubject.navigationTarget().observeForever(navigationTargetObserver)
     }
+
+    private fun viewState(
+        showIsolationPaymentButton: Boolean = false,
+        showBookTestButton: Boolean = false,
+    ) = ViewState(
+        showIsolationPaymentButton = showIsolationPaymentButton,
+        showBookTestButton = showBookTestButton
+    )
 }

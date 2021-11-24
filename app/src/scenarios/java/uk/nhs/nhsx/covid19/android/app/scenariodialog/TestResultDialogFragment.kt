@@ -2,58 +2,43 @@ package uk.nhs.nhsx.covid19.android.app.scenariodialog
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.CompoundButton
-import android.widget.EditText
-import androidx.appcompat.widget.AppCompatSpinner
-import androidx.appcompat.widget.SwitchCompat
-import kotlinx.android.synthetic.scenarios.dialog_test_result.view.configuration
-import kotlinx.android.synthetic.scenarios.dialog_test_result.view.remainingDaysInIsolation
-import kotlinx.android.synthetic.scenarios.dialog_test_result.view.optionalContainer
-import kotlinx.android.synthetic.scenarios.dialog_test_result.view.useMock
-import uk.nhs.nhsx.covid19.android.app.R.layout
 import uk.nhs.nhsx.covid19.android.app.ScenariosDebugAdapter
+import uk.nhs.nhsx.covid19.android.app.databinding.DialogTestResultBinding
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockTestResultViewModel
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState
 
 class TestResultDialogFragment(positiveAction: (() -> Unit)) :
-    ScenarioDialogFragment(positiveAction) {
+    ScenarioDialogFragment<DialogTestResultBinding>(positiveAction) {
     override val title: String = "Test Result Config"
-    override val layoutId = layout.dialog_test_result
-
-    private lateinit var useMockSwitch: SwitchCompat
-    private lateinit var configurationSpinner: AppCompatSpinner
-    private lateinit var remainingDaysInIsolationEditText: EditText
-    private lateinit var optionalViews: ViewGroup
 
     val viewStateOptions = TestResultViewState::class.nestedClasses
         .filter { it != TestResultViewState.ButtonAction::class }
         .map { it.simpleName ?: "" }
 
-    override fun setUp(view: View) = with(view) {
-        useMockSwitch = useMock
-        configurationSpinner = configuration
-        remainingDaysInIsolationEditText = remainingDaysInIsolation
-        optionalViews = optionalContainer
+    override fun setupBinding(inflater: LayoutInflater): DialogTestResultBinding =
+        DialogTestResultBinding.inflate(inflater)
 
+    override fun setupView() = with(binding) {
         setUpUseMock()
         setUpConfiguration()
         setUpRemainingDaysInIsolation()
     }
 
-    private fun setUpUseMock() = with(useMockSwitch) {
-        setOnCheckedChangeListener { _: CompoundButton, checked: Boolean ->
+    private fun setUpUseMock() = with(binding) {
+        useMock.setOnCheckedChangeListener { _: CompoundButton, checked: Boolean ->
             MockTestResultViewModel.currentOptions =
                 MockTestResultViewModel.currentOptions.copy(useMock = checked)
-            optionalViews.visibility = checked.toViewState()
+            optionalContainer.visibility = checked.toViewState()
         }
-        isChecked = MockTestResultViewModel.currentOptions.useMock
+        useMock.isChecked = MockTestResultViewModel.currentOptions.useMock
     }
 
-    private fun setUpRemainingDaysInIsolation() = with(remainingDaysInIsolationEditText) {
+    private fun setUpRemainingDaysInIsolation() = with(binding.remainingDaysInIsolation) {
         setText("${MockTestResultViewModel.currentOptions.remainingDaysInIsolation}")
 
         addTextChangedListener(object : TextWatcher {
@@ -64,17 +49,17 @@ class TestResultDialogFragment(positiveAction: (() -> Unit)) :
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 MockTestResultViewModel.currentOptions.copy(
                     remainingDaysInIsolation =
-                        try {
-                            s!!.toString().toInt()
-                        } catch (e: NumberFormatException) {
-                            MockTestResultViewModel.currentOptions.remainingDaysInIsolation
-                        }
+                    try {
+                        s!!.toString().toInt()
+                    } catch (e: NumberFormatException) {
+                        MockTestResultViewModel.currentOptions.remainingDaysInIsolation
+                    }
                 ).also { MockTestResultViewModel.currentOptions = it }
             }
         })
     }
 
-    private fun setUpConfiguration() = with(configurationSpinner) {
+    private fun setUpConfiguration() = with(binding.configuration) {
         adapter = ScenariosDebugAdapter(
             context, viewStateOptions
         )

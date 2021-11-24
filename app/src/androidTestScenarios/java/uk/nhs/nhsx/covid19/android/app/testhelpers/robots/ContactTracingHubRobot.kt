@@ -10,12 +10,12 @@ import androidx.test.espresso.matcher.ViewMatchers.isNotChecked
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 
-class ContactTracingHubRobot {
+class ContactTracingHubRobot : HasActivity {
 
-    fun checkActivityIsDisplayed() {
-        checkActivityTitleIsDisplayed(R.string.contact_tracing_hub_title)
-    }
+    override val containerId: Int
+        get() = R.id.optionContactTracing
 
     fun checkContactTracingToggledOnIsDisplayed() {
         onView(withId(R.id.contactTracingStatus))

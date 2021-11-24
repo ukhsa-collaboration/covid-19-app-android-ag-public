@@ -5,16 +5,11 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.TextView
 import androidx.activity.viewModels
-import kotlinx.android.synthetic.main.activity_link_test_result.inputErrorView
-import kotlinx.android.synthetic.main.activity_link_test_result.linkTestResultContinue
-import kotlinx.android.synthetic.main.activity_link_test_result.linkTestResultEnterCodeView
-import kotlinx.android.synthetic.main.activity_link_test_result.linkTestResultScrollView
-import kotlinx.android.synthetic.main.view_enter_code.enterCodeEditText
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityLinkTestResultBinding
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.INVALID
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultViewModel.LinkTestResultError.NO_CONNECTION
@@ -32,37 +27,44 @@ class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) 
 
     private val viewModel: LinkTestResultViewModel by viewModels { factory }
 
+    private lateinit var binding: ActivityLinkTestResultBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityLinkTestResultBinding.inflate(layoutInflater)
+        with(binding) {
 
-        setNavigateUpToolbar(
-            toolbar,
-            R.string.status_option_link_test_result,
-            upIndicator = R.drawable.ic_arrow_back_white
-        )
+            setContentView(root)
 
-        setupOnClickListeners()
+            setNavigateUpToolbar(
+                primaryToolbar.toolbar,
+                R.string.status_option_link_test_result,
+                upIndicator = R.drawable.ic_arrow_back_white
+            )
 
-        startListeningToViewState()
+            setupOnClickListeners()
 
-        enterCodeEditText.setText(viewModel.ctaToken, TextView.BufferType.EDITABLE)
+            startListeningToViewState()
 
-        enterCodeEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            linkTestResultEnterCodeView.setEnterCodeEditText(viewModel.ctaToken, TextView.BufferType.EDITABLE)
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            linkTestResultEnterCodeView.addEnterCodeEditTextWatcher(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun afterTextChanged(s: Editable?) {
-                viewModel.ctaToken = s.toString().trim().ifEmpty { null }
-            }
-        })
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                override fun afterTextChanged(s: Editable?) {
+                    viewModel.ctaToken = s.toString().trim().ifEmpty { null }
+                }
+            })
+        }
 
         viewModel.fetchInitialViewState()
     }
 
     private fun setupOnClickListeners() {
-        linkTestResultContinue.setOnSingleClickListener {
+        binding.linkTestResultContinue.setOnSingleClickListener {
             clearErrors()
             viewModel.onContinueButtonClicked()
         }
@@ -85,7 +87,7 @@ class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) 
         }
     }
 
-    private fun renderViewState(viewState: LinkTestResultState) {
+    private fun renderViewState(viewState: LinkTestResultState) = with(binding) {
         if (viewState.showValidationProgress) {
             linkTestResultEnterCodeView.handleProgress()
             linkTestResultContinue.isEnabled = false
@@ -109,14 +111,14 @@ class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) 
         }
     }
 
-    private fun handleValidationError(errorText: String) {
+    private fun handleValidationError(errorText: String) = with(binding) {
         inputErrorView.gone()
         linkTestResultEnterCodeView.errorText = errorText
         linkTestResultEnterCodeView.handleError()
         linkTestResultContinue.isEnabled = true
     }
 
-    private fun scrollToValidationError() {
+    private fun scrollToValidationError() = with(binding) {
         linkTestResultScrollView.post {
             linkTestResultScrollView.smoothScrollTo(
                 0,
@@ -125,7 +127,7 @@ class LinkTestResultActivity : BaseActivity(R.layout.activity_link_test_result) 
         }
     }
 
-    private fun clearErrors() {
+    private fun clearErrors() = with(binding) {
         linkTestResultEnterCodeView.resetState()
         inputErrorView.gone()
     }

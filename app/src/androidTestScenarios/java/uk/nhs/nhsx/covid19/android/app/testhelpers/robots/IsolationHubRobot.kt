@@ -7,12 +7,12 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 
-class IsolationHubRobot {
+class IsolationHubRobot : HasActivity {
 
-    fun checkActivityIsDisplayed() {
-        checkActivityTitleIsDisplayed(R.string.isolation_hub_title)
-    }
+    override val containerId: Int
+        get() = R.id.scrollContainer
 
     fun checkItemBookTestIsDisplayed() {
         onView(withId(R.id.itemBookTest))

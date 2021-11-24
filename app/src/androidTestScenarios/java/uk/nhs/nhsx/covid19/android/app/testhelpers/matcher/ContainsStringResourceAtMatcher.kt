@@ -2,14 +2,18 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers.matcher
 
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.annotation.StringRes
-import kotlinx.android.synthetic.main.view_paragraph.view.paragraphText
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
+import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
 
-class ContainsStringResourceAtMatcher(@field:StringRes @param:StringRes private val expectedId: Int, private val expectedIndex: Int) :
+class ContainsStringResourceAtMatcher(
+    @field:StringRes @param:StringRes private val expectedId: Int,
+    private val expectedIndex: Int
+) :
     TypeSafeMatcher<View?>(View::class.java) {
     var resourceName: String? = null
 
@@ -25,7 +29,11 @@ class ContainsStringResourceAtMatcher(@field:StringRes @param:StringRes private 
 
         with(target.getChildAt(expectedIndex)) {
             return this is LinearLayout &&
-                this.paragraphText.text.contains(target.context.resources.getString(expectedId))
+                    this.findViewById<TextView>(R.id.paragraphText).text.contains(
+                        target.context.resources.getString(
+                            expectedId
+                        )
+                    )
         }
     }
 

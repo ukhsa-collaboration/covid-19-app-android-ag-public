@@ -5,9 +5,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/view_toolbar_primary" />
+    <include android:id="@+id/titleToolbar" layout="@layout/view_toolbar_primary" />
 
     <ScrollView
+        android:id="@+id/scrollContainer"
         style="@style/ScrollContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -52,7 +53,7 @@
                 android:orientation="vertical"
                 android:paddingHorizontal="@dimen/margin_horizontal">
 
-                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                     style="@style/Body1.SecondaryTextColor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

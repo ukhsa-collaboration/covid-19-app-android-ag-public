@@ -4,31 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
-import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.view.isVisible
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.parcel.Parcelize
-import kotlinx.android.synthetic.main.activity_status.contactTracingActiveView
-import kotlinx.android.synthetic.main.activity_status.contactTracingStoppedView
-import kotlinx.android.synthetic.main.activity_status.contactTracingView
-import kotlinx.android.synthetic.main.activity_status.isolationView
-import kotlinx.android.synthetic.main.activity_status.localMessageBanner
-import kotlinx.android.synthetic.main.activity_status.optionAboutTheApp
-import kotlinx.android.synthetic.main.activity_status.optionIsolationHub
-import kotlinx.android.synthetic.main.activity_status.optionLinkTestResult
-import kotlinx.android.synthetic.main.activity_status.optionReportSymptoms
-import kotlinx.android.synthetic.main.activity_status.optionSettings
-import kotlinx.android.synthetic.main.activity_status.optionTestingHub
-import kotlinx.android.synthetic.main.activity_status.optionToggleContactTracing
-import kotlinx.android.synthetic.main.activity_status.optionVenueCheckIn
-import kotlinx.android.synthetic.main.activity_status.riskAreaView
-import kotlinx.android.synthetic.main.activity_status.statusContainer
-import kotlinx.android.synthetic.main.include_stopped.activateContactTracingButton
-import kotlinx.android.synthetic.main.view_default_state.contactTracingActiveLabel
-import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.about.MoreAboutAppActivity
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.common.LocaleProvider
 import uk.nhs.nhsx.covid19.android.app.common.assistedViewModel
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityStatusBinding
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysReminderActivity
@@ -77,10 +60,13 @@ import uk.nhs.nhsx.covid19.android.app.widgets.IsolationStatusView
 import java.time.LocalDate
 import javax.inject.Inject
 
-class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
+class StatusActivity : StatusBaseActivity() {
 
     @Inject
     lateinit var statusViewModelFactory: StatusViewModel.Factory
+
+    @Inject
+    lateinit var localeProvider: LocaleProvider
 
     private val statusViewModel: StatusViewModel by assistedViewModel {
         val extras = intent.getParcelableExtra(STATUS_ACTIVITY_ACTION) as? StatusActivityAction ?: None
@@ -90,9 +76,13 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
     @Inject
     lateinit var dateChangeReceiver: DateChangeReceiver
 
+    private lateinit var binding: ActivityStatusBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityStatusBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         startListeningToExposureNotificationPermissionState()
 
@@ -107,7 +97,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         statusViewModel.permissionRequest().observe(this) { result ->
             when (result) {
                 is Request -> result.callback(this)
-                is Error -> Snackbar.make(statusContainer, result.message, Snackbar.LENGTH_SHORT).show()
+                is Error -> Snackbar.make(binding.statusContainer, result.message, Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -157,16 +147,16 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         }
     }
 
-    private fun handleLocalMessageState(localMessage: NotificationMessage?) {
+    private fun handleLocalMessageState(localMessage: NotificationMessage?) = with(binding) {
         localMessageBanner.title = localMessage?.head
         localMessageBanner.isVisible = localMessage != null
     }
 
     private fun handleReportSymptomsState(showReportSymptomsButton: Boolean) {
-        optionReportSymptoms.isVisible = showReportSymptomsButton
+        binding.optionReportSymptoms.isVisible = showReportSymptomsButton
     }
 
-    private fun setClickListeners() {
+    private fun setClickListeners() = with(binding) {
         optionReportSymptoms.setOnSingleClickListener {
             optionReportSymptoms.isEnabled = false
             startActivity<QuestionnaireActivity>()
@@ -184,12 +174,12 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
 
         optionVenueCheckIn.setOnSingleClickListener {
             optionVenueCheckIn.isEnabled = false
-            QrScannerActivity.start(this)
+            QrScannerActivity.start(this@StatusActivity)
         }
 
         optionAboutTheApp.setOnSingleClickListener {
             optionAboutTheApp.isEnabled = false
-            MoreAboutAppActivity.start(this)
+            MoreAboutAppActivity.start(this@StatusActivity)
         }
 
         optionLinkTestResult.setOnSingleClickListener {
@@ -210,11 +200,11 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         riskAreaView.setOnSingleClickListener {
             riskAreaView.isEnabled = false
             statusViewModel.viewState.value?.let {
-                RiskLevelActivity.start(this, it.areaRiskState)
+                RiskLevelActivity.start(this@StatusActivity, it.areaRiskState)
             }
         }
 
-        activateContactTracingButton.setOnSingleClickListener {
+        contactTracingStoppedView.activateContactTracingButton.setOnSingleClickListener {
             statusViewModel.onActivateContactTracingButtonClicked()
         }
 
@@ -231,7 +221,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         animationsEnabled: Boolean
     ) {
         if (statusViewModel.contactTracingSwitchedOn) {
-            contactTracingActiveLabel.performAccessibilityAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null)
+            binding.contactTracingActiveView.focusOnActiveLabel()
             statusViewModel.contactTracingSwitchedOn = false
         }
 
@@ -245,7 +235,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         }
     }
 
-    private fun handleRiskyPostCodeViewState(riskyPostCodeViewState: RiskyPostCodeViewState) {
+    private fun handleRiskyPostCodeViewState(riskyPostCodeViewState: RiskyPostCodeViewState) = with(binding) {
         when (riskyPostCodeViewState) {
             is Risk -> {
                 riskAreaView.text = riskyPostCodeViewState.riskIndicator.name.translate()
@@ -261,7 +251,7 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         currentDate: LocalDate,
         exposureNotificationsEnabled: Boolean,
         animationsEnabled: Boolean
-    ) {
+    ) = with(binding) {
         isolationView.initialize(isolationState, currentDate)
         val animationState = when {
             animationsEnabled && exposureNotificationsEnabled -> IsolationStatusView.AnimationState.ANIMATION_ENABLED_EN_ENABLED
@@ -275,11 +265,11 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         optionIsolationHub.visible()
     }
 
-    private fun showDefaultView(exposureNotificationsEnabled: Boolean, animationsEnabled: Boolean) {
+    private fun showDefaultView(exposureNotificationsEnabled: Boolean, animationsEnabled: Boolean) = with(binding) {
         contactTracingActiveView.isVisible = exposureNotificationsEnabled
         contactTracingActiveView.isAnimationEnabled = animationsEnabled
 
-        contactTracingStoppedView.isVisible = !exposureNotificationsEnabled
+        contactTracingStoppedView.root.isVisible = !exposureNotificationsEnabled
 
         isolationView.gone()
         contactTracingView.visible()
@@ -297,16 +287,18 @@ class StatusActivity : StatusBaseActivity(R.layout.activity_status) {
         }
     }
 
-    private fun resetButtonEnabling() {
-        optionReportSymptoms.isEnabled = true
-        optionTestingHub.isEnabled = true
-        optionIsolationHub.isEnabled = true
-        optionVenueCheckIn.isEnabled = true
-        optionAboutTheApp.isEnabled = true
-        optionLinkTestResult.isEnabled = true
-        optionSettings.isEnabled = true
-        optionToggleContactTracing.isEnabled = true
-        riskAreaView.isEnabled = true
+    private fun resetButtonEnabling() = with(binding) {
+        arrayOf(
+            optionReportSymptoms,
+            optionTestingHub,
+            optionIsolationHub,
+            optionVenueCheckIn,
+            optionAboutTheApp,
+            optionLinkTestResult,
+            optionSettings,
+            optionToggleContactTracing,
+            riskAreaView,
+        ).forEach { it.isEnabled = true }
     }
 
     override fun onPause() {

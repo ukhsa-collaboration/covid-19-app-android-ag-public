@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -23,6 +24,7 @@ class WelcomeRobot {
 
     fun checkAgeConfirmationDialogIsDisplayed() {
         onView(withText(R.string.onboarding_age_confirmation_title))
+            .inRoot(isDialog())
             .check(matches(isDisplayed()))
     }
 

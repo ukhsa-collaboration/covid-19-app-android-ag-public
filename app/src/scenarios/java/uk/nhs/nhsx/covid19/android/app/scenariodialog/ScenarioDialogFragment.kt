@@ -1,27 +1,30 @@
 package uk.nhs.nhsx.covid19.android.app.scenariodialog
 
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import androidx.viewbinding.ViewBinding
 
-abstract class ScenarioDialogFragment(
+abstract class ScenarioDialogFragment<VB : ViewBinding>(
     private val positiveAction: (() -> Unit),
     private val dismissAction: (() -> Unit)? = null
 ) : DialogFragment() {
     protected abstract val title: String
-    protected abstract val layoutId: Int
-    protected var inflatedView: View? = null
+
+    private var _binding: VB? = null
+    protected val binding get() = _binding!!
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             // Use the Builder class for convenient dialog construction
             val builder = AlertDialog.Builder(it).apply {
                 setTitle(title)
-                setView(it.createView())
+                _binding = setupBinding(LayoutInflater.from(it))
+                setView(binding.root)
+                setupView()
 
                 setPositiveButton(android.R.string.ok) { _, _ ->
                     positiveAction.invoke()
@@ -36,13 +39,14 @@ abstract class ScenarioDialogFragment(
         } ?: throw IllegalStateException("Activity cannot be null")
     }
 
-    private fun Context.createView(): View =
-        LayoutInflater.from(this).inflate(layoutId, null).apply {
-            setUp(this)
-        }.apply { inflatedView = this }
+    abstract fun setupBinding(inflater: LayoutInflater): VB
+    abstract fun setupView()
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     protected fun Boolean.toViewState(): Int =
         if (this) View.VISIBLE else View.INVISIBLE
-
-    abstract fun setUp(view: View)
 }

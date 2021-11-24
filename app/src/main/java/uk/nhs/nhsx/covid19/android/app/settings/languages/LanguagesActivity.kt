@@ -5,55 +5,66 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_settings_language.languagesRecyclerView
-import kotlinx.android.synthetic.main.activity_settings_language.systemLanguage
-import kotlinx.android.synthetic.main.item_settings_language.view.languageNativeName
-import kotlinx.android.synthetic.main.item_settings_language.view.languageRadio
-import kotlinx.android.synthetic.main.item_settings_language.view.languageTranslatedName
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivitySettingsLanguageBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.mirrorSystemLayoutDirection
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
-class LanguagesActivity : BaseActivity(R.layout.activity_settings_language) {
+class LanguagesActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<LanguagesViewModel>
     private val viewModel: LanguagesViewModel by viewModels { factory }
 
     private lateinit var languagesViewAdapter: LanguagesViewAdapter
+    private lateinit var binding: ActivitySettingsLanguageBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivitySettingsLanguageBinding.inflate(layoutInflater)
 
-        setNavigateUpToolbar(toolbar, R.string.language, upIndicator = R.drawable.ic_arrow_back_white)
+        with(binding) {
 
-        languagesRecyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-        setUpLanguagesAdapter()
+            setContentView(root)
 
-        setUpSystemLanguage()
+            setNavigateUpToolbar(
+                primaryToolbar.toolbar,
+                R.string.language,
+                upIndicator = R.drawable.ic_arrow_back_white
+            )
 
-        setupViewModelListeners()
+            languagesRecyclerView.addItemDecoration(
+                DividerItemDecoration(
+                    this@LanguagesActivity,
+                    DividerItemDecoration.VERTICAL
+                )
+            )
+            setUpLanguagesAdapter()
 
-        setClickListeners()
+            setUpSystemLanguage()
 
-        viewModel.loadLanguages(this)
+            setupViewModelListeners()
+
+            setClickListeners()
+
+            viewModel.loadLanguages(this@LanguagesActivity)
+        }
     }
 
     private fun setUpLanguagesAdapter() {
         languagesViewAdapter = LanguagesViewAdapter { language -> viewModel.selectSupportedLanguage(language) }
 
-        languagesRecyclerView.layoutManager = LinearLayoutManager(this)
-        languagesRecyclerView.adapter = languagesViewAdapter
+        binding.languagesRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.languagesRecyclerView.adapter = languagesViewAdapter
     }
 
-    private fun setUpSystemLanguage() {
+    private fun setUpSystemLanguage() = with(binding) {
         val language = applicationLocaleProvider.getDefaultSystemLanguage()
         systemLanguage.languageNativeName.text = language.nativeLanguageName
         systemLanguage.languageTranslatedName.text = getString(language.languageName)
@@ -62,7 +73,7 @@ class LanguagesActivity : BaseActivity(R.layout.activity_settings_language) {
 
     private fun setupViewModelListeners() {
         viewModel.viewState().observe(this) { viewState ->
-            systemLanguage.languageRadio.isChecked = viewState.isSystemLanguageSelected
+            binding.systemLanguage.languageRadio.isChecked = viewState.isSystemLanguageSelected
             languagesViewAdapter.submitList(viewState.languages)
         }
 
@@ -82,7 +93,7 @@ class LanguagesActivity : BaseActivity(R.layout.activity_settings_language) {
     }
 
     private fun setClickListeners() {
-        systemLanguage.setOnSingleClickListener { viewModel.selectSystemLanguage() }
+        binding.systemLanguage.root.setOnSingleClickListener { viewModel.selectSystemLanguage() }
     }
 
     private fun showConfirmationDialog(language: String, selectLanguageAction: () -> Unit) {

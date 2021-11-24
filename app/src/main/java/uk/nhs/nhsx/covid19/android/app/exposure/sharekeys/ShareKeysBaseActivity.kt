@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.exposure.sharekeys
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.annotation.LayoutRes
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationViewModel.ShareKeysInformationNavigateTo
@@ -10,12 +9,14 @@ import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysNavigateTo.Fi
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitKeysProgressActivity
 
-abstract class ShareKeysBaseActivity(@LayoutRes contentView: Int) : BaseActivity(contentView) {
+abstract class ShareKeysBaseActivity : BaseActivity() {
     protected abstract val viewModel: ShareKeysBaseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inject()
+
+        setupBinding()
 
         setupViewModelListeners()
 
@@ -27,6 +28,8 @@ abstract class ShareKeysBaseActivity(@LayoutRes contentView: Int) : BaseActivity
     }
 
     protected abstract fun inject()
+
+    protected abstract fun setupBinding()
 
     protected open fun setupToolbar() = Unit
 

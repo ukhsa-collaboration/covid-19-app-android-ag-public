@@ -76,7 +76,7 @@ class IsolationHubViewModel @Inject constructor(
 
     data class ViewState(
         val showIsolationPaymentButton: Boolean,
-        val showBookTestButton: Boolean
+        val showBookTestButton: Boolean,
     )
 
     sealed class NavigationTarget {

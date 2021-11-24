@@ -44,11 +44,14 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
         waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationReviewRobot.verifyReviewViewState(ageResponse = false, vaccinationStatusResponses = emptyList())
+        exposureNotificationReviewRobot.verifyReviewViewState(
+            ageResponse = false,
+            vaccinationStatusResponses = emptyList()
+        )
 
         exposureNotificationReviewRobot.clickSubmitButton()
 
-        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMinorViewState(testingAdviceToShow = Default)
     }
@@ -85,7 +88,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
         exposureNotificationReviewRobot.clickSubmitButton()
 
-        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
             testingAdviceToShow = Default
@@ -127,7 +130,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
         exposureNotificationReviewRobot.clickSubmitButton()
 
-        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
             testingAdviceToShow = Default
@@ -145,36 +148,37 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
     }
 
     @Test
-    fun givenIsInEngland_inContactIsolation_whenNoToFullyVaccinated_thenNoToMedicallyExempt_thenNoToClinicalTrial_navigatesToIsolating() {
+    fun givenIsInEngland_inContactIsolation_whenNoToFullyVaccinated_thenNoToMedicallyExempt_thenNoToClinicalTrial_navToNewlyIsolating() {
         givenLocalAuthorityIsInEngland()
         givenContactIsolation()
 
         startTestActivity<ExposureNotificationVaccinationStatusActivity>()
 
-        exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
+        with(exposureNotificationVaccinationStatusRobot) {
+            checkActivityIsDisplayed()
+            clickDosesNoButton()
+            clickMedicallyExemptNoButton()
+            clickClinicalTrialNoButton()
+            clickContinueButton()
+        }
 
-        exposureNotificationVaccinationStatusRobot.clickDosesNoButton()
+        with(exposureNotificationReviewRobot) {
+            checkActivityIsDisplayed()
 
-        exposureNotificationVaccinationStatusRobot.clickMedicallyExemptNoButton()
-
-        exposureNotificationVaccinationStatusRobot.clickClinicalTrialNoButton()
-
-        exposureNotificationVaccinationStatusRobot.clickContinueButton()
-
-        waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
-
-        exposureNotificationReviewRobot.verifyReviewViewState(
-            vaccinationStatusResponses = listOf(
-                OptOutResponseEntry(questionType = FullyVaccinated, response = false),
-                OptOutResponseEntry(questionType = MedicallyExempt, response = false),
-                OptOutResponseEntry(questionType = ClinicalTrial, response = false)
+            verifyReviewViewState(
+                vaccinationStatusResponses = listOf(
+                    OptOutResponseEntry(questionType = FullyVaccinated, response = false),
+                    OptOutResponseEntry(questionType = MedicallyExempt, response = false),
+                    OptOutResponseEntry(questionType = ClinicalTrial, response = false)
+                )
             )
-        )
 
-        exposureNotificationReviewRobot.clickSubmitButton()
+            clickSubmitButton()
+        }
 
-        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(
             remainingDaysInIsolation = 9,
             testingAdviceToShow = Default
@@ -210,7 +214,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
         exposureNotificationReviewRobot.clickSubmitButton()
 
-        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
             testingAdviceToShow = Default
@@ -251,7 +255,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
         exposureNotificationReviewRobot.clickSubmitButton()
 
-        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(
             remainingDaysInIsolation = 9,
@@ -285,7 +289,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
         exposureNotificationReviewRobot.clickSubmitButton()
 
-        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMedicallyExemptViewState()
     }
@@ -324,7 +328,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
         exposureNotificationReviewRobot.clickSubmitButton()
 
-        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMedicallyExemptViewState()
     }
@@ -364,7 +368,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
         exposureNotificationReviewRobot.clickSubmitButton()
 
-        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(
             remainingDaysInIsolation = 9,
@@ -403,7 +407,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
         exposureNotificationReviewRobot.clickSubmitButton()
 
-        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
             testingAdviceToShow = WalesWithinAdviceWindow(date = LocalDate.now(testAppContext.clock).plusDays(6))
@@ -438,7 +442,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
         exposureNotificationReviewRobot.clickSubmitButton()
 
-        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(
             remainingDaysInIsolation = 9,
@@ -474,7 +478,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
         exposureNotificationReviewRobot.clickSubmitButton()
 
-        waitFor { exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed() }
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
             testingAdviceToShow = WalesWithinAdviceWindow(date = LocalDate.now(testAppContext.clock).plusDays(6))

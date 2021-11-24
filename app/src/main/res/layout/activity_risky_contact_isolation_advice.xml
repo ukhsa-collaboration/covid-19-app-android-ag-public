@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/view_toolbar_background" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/view_toolbar_background" />
 
     <ScrollView
         android:id="@+id/riskyContactIsolationAdviceContainer"
@@ -31,23 +31,31 @@
                 android:contentDescription="@null"
                 android:src="@drawable/ic_isolation_contact" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
-                android:id="@+id/riskyContactIsolationAdviceTitle"
-                style="@style/TitleIsolation"
+            <LinearLayout
+                android:id="@+id/riskyContactIsolationAdviceRemainingDaysInIsolationContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin_large"
-                android:textAlignment="center"
-                tools:text="@string/risky_contact_isolation_advice_self_isolate_for" />
+                android:focusable="true"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/riskyContactIsolationAdviceRemainingDaysInIsolation"
-                style="@style/Title1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:textSize="56sp"
-                tools:text="7 days" />
+                <TextView
+                    android:id="@+id/riskyContactIsolationAdviceTitle"
+                    style="@style/TitleIsolation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/vertical_margin_large"
+                    android:textAlignment="center"
+                    tools:text="@string/risky_contact_isolation_advice_self_isolate_for" />
+
+                <TextView
+                    android:id="@+id/riskyContactIsolationAdviceRemainingDaysInIsolation"
+                    style="@style/Title1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:textSize="56sp"
+                    tools:text="7 days" />
+            </LinearLayout>
 
             <uk.nhs.nhsx.covid19.android.app.widgets.StateInfoView
                 android:id="@+id/riskyContactIsolationAdviceStateInfoView"

@@ -13,17 +13,14 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
 import androidx.core.view.isVisible
 import kotlinx.android.parcel.Parcelize
-import kotlinx.android.synthetic.main.view_accordion.view.accordionContent
-import kotlinx.android.synthetic.main.view_accordion.view.accordionTitle
-import kotlinx.android.synthetic.main.view_accordion.view.titleTextView
-import kotlinx.android.synthetic.main.view_accordion.view.titleViewIcon
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.ViewAccordionBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.overriddenResources
 import uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView.AccordionIconType.CHEVRON
 import uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView.AccordionIconType.PLUS_MINUS
 
-open class AccordionButtonView @JvmOverloads constructor(
+class AccordionButtonView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -41,17 +38,21 @@ open class AccordionButtonView @JvmOverloads constructor(
             updateContentVisibility()
         }
 
-    private val accessibleView: View by lazy { accordionTitle }
+    private val accessibleView: View by lazy { binding.accordionTitle }
 
-    private val expandIcon: Int get() = when (iconType) {
-        PLUS_MINUS -> R.drawable.ic_accordion_expand
-        CHEVRON -> R.drawable.ic_accordion_expand_chevron
-    }
+    private val expandIcon: Int
+        get() = when (iconType) {
+            PLUS_MINUS -> R.drawable.ic_accordion_expand
+            CHEVRON -> R.drawable.ic_accordion_expand_chevron
+        }
 
-    private val collapseIcon: Int get() = when (iconType) {
-        PLUS_MINUS -> R.drawable.ic_accordion_collapse
-        CHEVRON -> R.drawable.ic_accordion_collapse_chevron
-    }
+    private val collapseIcon: Int
+        get() = when (iconType) {
+            PLUS_MINUS -> R.drawable.ic_accordion_collapse
+            CHEVRON -> R.drawable.ic_accordion_collapse_chevron
+        }
+
+    private val binding = ViewAccordionBinding.inflate(LayoutInflater.from(context), this)
 
     init {
         initializeViews()
@@ -60,7 +61,6 @@ open class AccordionButtonView @JvmOverloads constructor(
     }
 
     private fun initializeViews() {
-        View.inflate(context, R.layout.view_accordion, this)
         configureLayout()
     }
 
@@ -72,10 +72,10 @@ open class AccordionButtonView @JvmOverloads constructor(
             0
         ).apply {
             val title = getString(context, R.styleable.AccordionButtonView_accordionTitle)
-            titleTextView.text = title
+            binding.titleTextView.text = title
 
             val contentRef = getResourceId(R.styleable.AccordionButtonView_accordionContent, -1)
-            LayoutInflater.from(context).inflate(contentRef, accordionContent, true)
+            LayoutInflater.from(context).inflate(contentRef, binding.accordionContent, true)
             isExpanded = getBoolean(R.styleable.AccordionButtonView_accordionExpanded, DEFAULT_STATE)
 
             val iconTypeInt = getInteger(R.styleable.AccordionButtonView_accordionIconType, 1)
@@ -85,7 +85,7 @@ open class AccordionButtonView @JvmOverloads constructor(
         }
     }
 
-    private fun updateContentVisibility() {
+    private fun updateContentVisibility() = with(binding) {
         if (isExpanded) {
             titleViewIcon.setImageResource(collapseIcon)
         } else {
@@ -95,7 +95,7 @@ open class AccordionButtonView @JvmOverloads constructor(
         accordionContent.isVisible = isExpanded
     }
 
-    private fun configureLayout() {
+    private fun configureLayout() = with(binding) {
         /* ktlint-disable */
         accordionTitle.setOnClickListener {
             isExpanded = !isExpanded
@@ -118,7 +118,7 @@ open class AccordionButtonView @JvmOverloads constructor(
                         if (isExpanded) R.string.accessibility_accordion_role_description_expanded else R.string.accessibility_accordion_role_description_collapsed
 
                     info.contentDescription =
-                        context.overriddenResources.getString(roleDescription).format(titleTextView.text)
+                        context.overriddenResources.getString(roleDescription).format(binding.titleTextView.text)
                     info.isHeading = true
                     info.addAction(
                         AccessibilityActionCompat(

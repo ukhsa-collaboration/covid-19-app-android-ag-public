@@ -5,12 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.scenarios.fragment_test_settings.textViewTestSettingsFeatureToggle
-import kotlinx.android.synthetic.scenarios.fragment_test_settings.textViewTestSettingsTestSettings
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.databinding.FragmentTestSettingsBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 
 class TestSettingsFragment : Fragment(R.layout.fragment_test_settings) {
+
+    private var _binding: FragmentTestSettingsBinding? = null
+    private val binding get() = _binding!!
 
     interface TestSettingsListener {
         fun onFeatureToggleClicked()
@@ -23,17 +25,27 @@ class TestSettingsFragment : Fragment(R.layout.fragment_test_settings) {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ) = inflater.inflate(R.layout.fragment_test_settings, container, false)
+    ): View {
+        _binding = FragmentTestSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        textViewTestSettingsFeatureToggle.setOnSingleClickListener { testSettingListener?.onFeatureToggleClicked() }
-        textViewTestSettingsTestSettings.setOnSingleClickListener { testSettingListener?.onTestSettingClicked() }
+        with(binding) {
+            textViewTestSettingsFeatureToggle.setOnSingleClickListener { testSettingListener?.onFeatureToggleClicked() }
+            textViewTestSettingsTestSettings.setOnSingleClickListener { testSettingListener?.onTestSettingClicked() }
+        }
     }
 
     override fun onResume() {
         super.onResume()
         activity?.title = "Test Settings"
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

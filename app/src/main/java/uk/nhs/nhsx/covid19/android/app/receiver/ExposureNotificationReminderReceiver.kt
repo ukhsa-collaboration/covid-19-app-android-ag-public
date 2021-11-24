@@ -3,7 +3,11 @@ package uk.nhs.nhsx.covid19.android.app.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ScheduleContactTracingActivationAdditionalReminderIfNeeded
 import javax.inject.Inject
@@ -16,9 +20,16 @@ class ExposureNotificationReminderReceiver : BroadcastReceiver() {
     @Inject
     lateinit var scheduleContactTracingActivationAdditionalReminderIfNeeded: ScheduleContactTracingActivationAdditionalReminderIfNeeded
 
+    @Inject
+    lateinit var exposureNotificationApi: ExposureNotificationApi
+
     override fun onReceive(context: Context, intent: Intent) {
         context.appComponent.inject(this)
-        notificationProvider.showExposureNotificationReminder()
-        scheduleContactTracingActivationAdditionalReminderIfNeeded()
+        CoroutineScope(SupervisorJob()).launch {
+            if (!exposureNotificationApi.isEnabled()) {
+                notificationProvider.showExposureNotificationReminder()
+                scheduleContactTracingActivationAdditionalReminderIfNeeded()
+            }
+        }
     }
 }

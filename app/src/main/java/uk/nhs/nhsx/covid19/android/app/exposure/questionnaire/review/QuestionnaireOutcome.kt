@@ -10,6 +10,7 @@ sealed class QuestionnaireOutcome : Parcelable {
     object FullyVaccinated : QuestionnaireOutcome()
     @Parcelize
     object MedicallyExempt : QuestionnaireOutcome()
+
     @Parcelize
     object NotExempt : QuestionnaireOutcome()
 }

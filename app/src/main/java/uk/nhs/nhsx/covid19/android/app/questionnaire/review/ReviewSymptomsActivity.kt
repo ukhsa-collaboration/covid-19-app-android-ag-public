@@ -10,19 +10,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.datepicker.MaterialDatePicker.Builder
-import kotlinx.android.synthetic.main.activity_review_symptoms.buttonConfirmSymptoms
-import kotlinx.android.synthetic.main.activity_review_symptoms.checkboxNoDate
-import kotlinx.android.synthetic.main.activity_review_symptoms.dateSelectionErrorBar
-import kotlinx.android.synthetic.main.activity_review_symptoms.listReviewSymptoms
-import kotlinx.android.synthetic.main.activity_review_symptoms.reviewSymptomsErrorContainer
-import kotlinx.android.synthetic.main.activity_review_symptoms.scrollViewReviewSymptoms
-import kotlinx.android.synthetic.main.activity_review_symptoms.selectDateContainer
-import kotlinx.android.synthetic.main.activity_review_symptoms.textSelectDate
-import kotlinx.android.synthetic.main.view_toolbar_primary.toolbar
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.assistedViewModel
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityReviewSymptomsBinding
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.ExplicitDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.NotStated
@@ -40,7 +32,7 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
+class ReviewSymptomsActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ReviewSymptomsViewModel.Factory
@@ -55,12 +47,16 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
         )
     }
 
+    private lateinit var binding: ActivityReviewSymptomsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityReviewSymptomsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setNavigateUpToolbar(
-            toolbar,
+            binding.primaryToolbar.toolbar,
             R.string.questionnaire_review_symptoms,
             upIndicator = R.drawable.ic_arrow_back_white
         )
@@ -74,7 +70,11 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
             updateSymptoms(viewState.reviewSymptomItems)
             updateOnsetDate(viewState.onsetDate)
             setOnsetErrorVisibility(viewState.showOnsetDateError)
-            updateOnsetDatePicker(viewState.showOnsetDatePicker, viewState.symptomsOnsetWindowDays, viewState.datePickerSelection)
+            updateOnsetDatePicker(
+                viewState.showOnsetDatePicker,
+                viewState.symptomsOnsetWindowDays,
+                viewState.datePickerSelection
+            )
         }
 
         viewModel.navigateToSymptomAdviceScreen().observe(this) { symptomAdvice: SymptomAdvice ->
@@ -88,7 +88,11 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
         }
     }
 
-    private fun updateOnsetDatePicker(showOnsetDatePicker: Boolean, symptomsOnsetWindowDays: Int, datePickerSelection: Long) {
+    private fun updateOnsetDatePicker(
+        showOnsetDatePicker: Boolean,
+        symptomsOnsetWindowDays: Int,
+        datePickerSelection: Long
+    ) {
         if (!showOnsetDatePicker) {
             datePicker?.dismiss()
             return
@@ -111,7 +115,7 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
         this.datePicker = datePicker
     }
 
-    private fun setOnsetErrorVisibility(showOnsetDateError: Boolean) {
+    private fun setOnsetErrorVisibility(showOnsetDateError: Boolean) = with(binding) {
         if (showOnsetDateError) {
             reviewSymptomsErrorContainer.visible()
             dateSelectionErrorBar.visible()
@@ -124,7 +128,7 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
         }
     }
 
-    private fun updateOnsetDate(onsetDate: SelectedDate) {
+    private fun updateOnsetDate(onsetDate: SelectedDate) = with(binding) {
         textSelectDate.text = when (onsetDate) {
             NotStated, CannotRememberDate -> getString(R.string.questionnaire_select_a_date)
             is ExplicitDate -> {
@@ -135,7 +139,7 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
         }
     }
 
-    private fun setupListeners() {
+    private fun setupListeners() = with(binding) {
         selectDateContainer.setOnSingleClickListener {
             viewModel.onSelectDateClicked()
         }
@@ -153,13 +157,13 @@ class ReviewSymptomsActivity : BaseActivity(R.layout.activity_review_symptoms) {
         }
     }
 
-    private fun updateSymptoms(reviewSymptomItems: List<ReviewSymptomItem>) {
-        listReviewSymptoms.layoutManager = LinearLayoutManager(this)
+    private fun updateSymptoms(reviewSymptomItems: List<ReviewSymptomItem>) = with(binding) {
+        listReviewSymptoms.layoutManager = LinearLayoutManager(this@ReviewSymptomsActivity)
 
         if (listReviewSymptoms.itemDecorationCount == 0) {
             listReviewSymptoms.addItemDecoration(
                 DividerItemDecoration(
-                    this,
+                    this@ReviewSymptomsActivity,
                     DividerItemDecoration.VERTICAL
                 )
             )

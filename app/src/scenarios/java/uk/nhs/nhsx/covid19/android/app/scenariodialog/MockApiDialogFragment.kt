@@ -2,41 +2,37 @@ package uk.nhs.nhsx.covid19.android.app.scenariodialog
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.EditText
-import androidx.appcompat.widget.AppCompatSpinner
-import kotlinx.android.synthetic.scenarios.dialog_mock_api.view.mockSettingsDelay
-import kotlinx.android.synthetic.scenarios.dialog_mock_api.view.mockSettingsResponseType
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType
-import uk.nhs.nhsx.covid19.android.app.R.layout
 import uk.nhs.nhsx.covid19.android.app.ScenariosDebugAdapter
+import uk.nhs.nhsx.covid19.android.app.databinding.DialogMockApiBinding
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 
-class MockApiDialogFragment(positiveAction: (() -> Unit)) : ScenarioDialogFragment(positiveAction) {
+class MockApiDialogFragment(positiveAction: (() -> Unit)) :
+    ScenarioDialogFragment<DialogMockApiBinding>(positiveAction) {
+
     override val title: String = "Mock API Config"
-    override val layoutId = layout.dialog_mock_api
 
-    private lateinit var mockSettingsDelayText: EditText
-    private lateinit var mockSettingsResponseTypeSpinner: AppCompatSpinner
+    override fun setupBinding(inflater: LayoutInflater): DialogMockApiBinding =
+        DialogMockApiBinding.inflate(layoutInflater)
 
-    override fun setUp(view: View) = with(view) {
-        mockSettingsDelayText = mockSettingsDelay
-        mockSettingsResponseTypeSpinner = mockSettingsResponseType
+    override fun setupView() {
         setUpDelayText()
         setUpResponseType()
     }
 
     private fun updateMockDelay() {
         MockApiModule.behaviour.delayMillis = try {
-            mockSettingsDelayText.text.toString().toLong()
+            binding.mockSettingsDelay.text.toString().toLong()
         } catch (e: NumberFormatException) {
             MockApiModule.behaviour.delayMillis
         }
     }
 
-    private fun setUpDelayText() = with(mockSettingsDelayText) {
+    private fun setUpDelayText() = with(binding.mockSettingsDelay) {
         setText("${MockApiModule.behaviour.delayMillis}")
         addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
@@ -48,7 +44,7 @@ class MockApiDialogFragment(positiveAction: (() -> Unit)) : ScenarioDialogFragme
         })
     }
 
-    private fun setUpResponseType() = with(mockSettingsResponseTypeSpinner) {
+    private fun setUpResponseType() = with(binding.mockSettingsResponseType) {
         adapter = ScenariosDebugAdapter(
             context,
             MockApiResponseType.values().toList()

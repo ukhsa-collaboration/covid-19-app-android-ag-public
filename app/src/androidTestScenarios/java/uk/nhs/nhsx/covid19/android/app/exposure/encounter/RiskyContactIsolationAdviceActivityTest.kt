@@ -216,4 +216,11 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
         )
     }
     // endregion
+
+    @Test
+    fun toolbarNavigationIconIsCloseIcon() {
+        givenContactIsolation()
+        startTestActivity<RiskyContactIsolationAdviceActivity>()
+        robot.verifyCloseButton()
+    }
 }

@@ -7,7 +7,7 @@
     android:paddingHorizontal="16dp"
     android:paddingTop="@dimen/vertical_margin">
 
-    <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+    <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
         android:id="@+id/optOutQuestion"
         style="@style/Title3"
         android:layout_width="match_parent"

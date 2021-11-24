@@ -25,24 +25,18 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.core.util.forEach
 import androidx.core.util.isEmpty
-import androidx.lifecycle.Observer
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.Detector.Detections
 import com.google.android.gms.vision.Detector.Processor
 import com.google.android.gms.vision.barcode.Barcode
-import kotlinx.android.synthetic.main.activity_qr_code_scanner.moreInfoButton
-import kotlinx.android.synthetic.main.activity_qr_code_scanner.closeButton
-import kotlinx.android.synthetic.main.activity_qr_code_scanner.howToUseScannerHint
-import kotlinx.android.synthetic.main.activity_qr_code_scanner.scannerSurfaceView
-import kotlinx.android.synthetic.main.activity_qr_code_scanner.textHold
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.BuildConfig
-import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.R.string
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityQrCodeScannerBinding
 import uk.nhs.nhsx.covid19.android.app.permissions.PermissionsManager
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrCodeScanResult.Scanning
 import uk.nhs.nhsx.covid19.android.app.startActivity
@@ -51,7 +45,7 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import javax.inject.Inject
 
-class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
+class QrScannerActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<BaseQrScannerViewModel>
@@ -64,32 +58,38 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
 
     private val viewModel: BaseQrScannerViewModel by viewModels { factory }
 
+    private lateinit var binding: ActivityQrCodeScannerBinding
+
     private var barcodeDetector: Detector<Barcode>? = null
     private var cameraSource: CameraSource? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityQrCodeScannerBinding.inflate(layoutInflater)
 
-        viewModel.getQrCodeScanResult().observe(
-            this,
-            Observer { scanResult ->
+        with(binding) {
+
+            setContentView(binding.root)
+
+            viewModel.getQrCodeScanResult().observe(this@QrScannerActivity) { scanResult ->
                 Timber.d("getQrCodeScanResult: $scanResult")
                 if (scanResult == Scanning) {
                     textHold.text = getString(string.qr_code_scanning)
                     howToUseScannerHint.gone()
                 } else {
-                    QrCodeScanResultActivity.start(this, scanResult)
+                    QrCodeScanResultActivity.start(this@QrScannerActivity, scanResult)
                 }
             }
-        )
-        closeButton.setOnSingleClickListener { finish() }
-        moreInfoButton.setOnSingleClickListener {
-            startActivity<QrCodeHelpActivity>()
+
+            closeButton.setOnSingleClickListener { finish() }
+            moreInfoButton.setOnSingleClickListener {
+                startActivity<QrCodeHelpActivity>()
+            }
         }
     }
 
-    override fun onResume() {
+    override fun onResume() = with(binding) {
         super.onResume()
         textHold.text = getString(string.how_to_scan_qr_code)
         howToUseScannerHint.visible()
@@ -115,7 +115,7 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
 
     private fun tryResumeCamera() {
         if (!hasCameraPermission()) {
-            scannerSurfaceView.visibility = View.INVISIBLE
+            binding.scannerSurfaceView.visibility = View.INVISIBLE
             requestCameraPermission()
         } else {
             resumeCamera()
@@ -124,13 +124,13 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
 
     override fun onPause() {
         super.onPause()
-        scannerSurfaceView.stop()
+        binding.scannerSurfaceView.stop()
         barcodeDetector?.release()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        scannerSurfaceView.release()
+        binding.scannerSurfaceView.release()
 
         // We only want to remember that we have requested camera permissions past destruction if
         // the activity is being destroyed because of a change in configuration => in that case it's
@@ -159,8 +159,11 @@ class QrScannerActivity : BaseActivity(R.layout.activity_qr_code_scanner) {
             .build()
 
         val cameraSource = cameraSource ?: return
-        scannerSurfaceView.start(cameraSource)
-        scannerSurfaceView.visibility = View.VISIBLE
+
+        with(binding) {
+            scannerSurfaceView.start(cameraSource)
+            scannerSurfaceView.visibility = View.VISIBLE
+        }
 
         detector.setProcessor(
             object : Processor<Barcode> {

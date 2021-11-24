@@ -16,12 +16,11 @@ import androidx.test.platform.app.InstrumentationRegistry
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomViewHolder
 import uk.nhs.nhsx.covid19.android.app.testhelpers.NestedScrollViewScrollToAction
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 
-class ReviewSymptomsRobot {
-
-    fun checkActivityIsDisplayed() {
-        checkActivityTitleIsDisplayed(R.string.questionnaire_review_symptoms)
-    }
+class ReviewSymptomsRobot : HasActivity {
+    override val containerId: Int
+        get() = R.id.scrollViewReviewSymptoms
 
     fun selectCannotRememberDate() {
         onView(withId(R.id.checkboxNoDate))

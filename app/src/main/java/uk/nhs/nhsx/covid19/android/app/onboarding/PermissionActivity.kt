@@ -4,14 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import kotlinx.android.synthetic.main.activity_permission.permissionContinue
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationActivity
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableExposureNotificationsActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityPermissionBinding
 import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionViewModel.NavigationTarget.BatteryOptimization
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionViewModel.NavigationTarget.EnableExposureNotifications
@@ -23,17 +22,21 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.PermissionRequestR
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import javax.inject.Inject
 
-class PermissionActivity : BaseActivity(R.layout.activity_permission) {
+class PermissionActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory<PermissionViewModel>
     private val viewModel: PermissionViewModel by viewModels { factory }
 
+    private lateinit var binding: ActivityPermissionBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        binding = ActivityPermissionBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        permissionContinue.setOnSingleClickListener {
+        binding.permissionContinue.setOnSingleClickListener {
             viewModel.onContinueButtonClicked()
         }
 

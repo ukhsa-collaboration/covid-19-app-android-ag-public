@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+    <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
         style="@style/VenueSuccessTitle"
         android:id="@+id/successTitle"
         android:layout_width="match_parent"

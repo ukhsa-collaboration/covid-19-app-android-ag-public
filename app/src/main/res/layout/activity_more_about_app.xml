@@ -6,9 +6,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/view_toolbar_primary" />
+    <include android:id="@+id/primaryToolbar" layout="@layout/view_toolbar_primary" />
 
     <ScrollView
+        android:id="@+id/moreAboutAppContainer"
         style="@style/ScrollContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -35,7 +36,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                     android:id="@+id/noVaccinationStatusTitle"
                     style="@style/Title3"
                     android:layout_width="match_parent"
@@ -84,7 +85,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                     android:id="@+id/howItWorksTitle"
                     style="@style/Title3"
                     android:layout_width="match_parent"
@@ -147,7 +148,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                     android:id="@+id/aboutUserDataTitle"
                     style="@style/Title3"
                     android:layout_width="match_parent"
@@ -193,7 +194,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                     android:id="@+id/ourPoliciesTitle"
                     style="@style/Title3"
                     android:layout_width="match_parent"
@@ -265,7 +266,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                     android:id="@+id/commonQuestionsTitle"
                     style="@style/Title3"
                     android:layout_width="match_parent"
@@ -317,7 +318,7 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                    <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                         android:id="@+id/softwareInformationTitle"
                         style="@style/Title3"
                         android:layout_width="match_parent"
@@ -456,7 +457,7 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <uk.nhs.nhsx.covid19.android.app.widgets.AccessibilityTextView
+                    <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                         android:id="@+id/feedbackInformationTitle"
                         style="@style/Title3"
                         android:layout_width="match_parent"
