@@ -141,7 +141,7 @@
     <string name="go_back">ফিরে যান</string>
     <string name="remove">সরিয়ে ফেলুন</string>
     <string name="empty" translatable="false" />
-    <string name="onboarding_exposure_notifications_description">যদি আপনি ভাইরাস টেস্টে পজিটিভ হওয়া এমন কারো সাথে ঘনিষ্ঠ যোগাযোগ করে থাকেন তাহলে অ্যাপটি আপনাকে একটি সতর্কতা প্রেরণ করবে। \n\nএই অ্যাপের জন্য কন্ট্যাক্ট ট্রেসিং সক্ষম করার জন্য আপনাকে এই অনুমতিগুলি দিতে হবে: ‘এক্সপোজার নোটিফিকেশন্স’। \n\nআপনি যদি নিজের মতামত পরিবর্তন করেন তবে আপনি যে কোন সময় সেটিংসে আপনার অনুমতিগুলো পরিবর্তন করতে পারবেন।</string>
+    <string name="onboarding_exposure_notifications_description">যদি আপনি ভাইরাস টেস্টে পজিটিভ হওয়া এমন কারো সাথে ঘনিষ্ঠ যোগাযোগ করে থাকেন তাহলে অ্যাপটি আপনাকে একটি সতর্কতা প্রেরণ করবে। \n\nএই অ্যাপের জন্য কন্ট্যাক্ট ট্রেসিং সক্ষম করার জন্য আপনাকে এই অনুমতিগুলি দিতে হবে: ‘এক্সপোজার নোটিফিকেশন্স’। \n\nআপনি যদি নিজের মতামত পরিবর্তন করেন তবে আপনি যে কোন সময় সেটিংসে আপনার অনুমতিগুলো পরিবর্তন করতে পারবেন।\n\nআপনি যদি নিজের মতামত পরিবর্তন করেন তবে আপনি যে কোন সময় সেটিংসে আপনার অনুমতিগুলো পরিবর্তন করতে পারবেন।</string>
     <string name="privacy_notice">গোপনীয়তার বিজ্ঞপ্তি</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
     <string name="post_code_rationale">বিভিন্ন এলাকায় করোনাভাইরাস ছড়িয়ে পড়া সম্পর্কে জানতে এই পোস্টকোড ডিস্ট্রিক্ট সাহায্য করে। এটি নিশ্চিত করবে যে আপনার এলাকার জন্য আমরা সর্বোত্তম সম্ভাব্য জনস্বাস্থ্য বিষয়ক পরামর্শ দিতে পারি।\n\nচিন্তিত হবেন না। আপনার অবস্থান শনাক্ত করার জন্য আপনার পোস্টকোড ডিস্ট্রিক্ট ব্যবহার করা হবে না।</string>
@@ -155,9 +155,9 @@
     <string name="test_ordering_app_privacy_notice">অ্যাপের গোপনীয়তা বিজ্ঞপ্তি</string>
     <string name="test_ordering_book_test_for_someone_else">অন্য কারো জন্য পরীক্ষা করাতে বুকিং করুন</string>
     <string name="error_title">একটি সমস্যা আছে</string>
-    <string name="enable_exposure_notifications_title">এই অ্যাপ কার্যকর হতে হলে, আপনাকে অবশ্যই \'এক্সপোজার নোটিফিকেশন\' অনুমোদন করতে হবে</string>
-    <string name="enable_exposure_notifications_rationale">করোনাভাইরাসের টেস্টে পজিটিভ এসেছে এমন অন্যান্য অ্যাপ ব্যবহারকারীদের সংস্পর্শে আপনি এসেছেন কিনা তা আপনাকে জানাতে এই অ্যাপটি ‘এক্সপোজার নোটিফিকেশন্স’ ব্যবহার করে।\n\nআপনার ফোন এগুলোকে ‘এক্সপোজার নোটিফিকেশন্স’ বা ‘এক্সপোজার লগিং’ হিসাবে উল্লেখ করতে পারে।</string>
-    <string name="enable_exposure_notifications">এক্সপোজার নোটিফিকেশন চালু করুন</string>
+    <string name="enable_exposure_notifications_title">এই অ্যাপের কাজ করার জন্য ‘Exposure notifications’-কে অনুমতি দিন</string>
+    <string name="enable_exposure_notifications_rationale">COVID-19 এর জন্য পরীক্ষায় পজিটিভ ফল এসেছে এমন কারো সাথে আপনি ঘনিষ্ঠ সংস্পর্শে ছিলেন কিনা তা অ্যাপটি আপনাকে এইভাবে জানায়।\n\nআপনার ফোন এগুলিকে ‘Exposure notifications’ বা ‘Exposure logging’ বলতে পারে।\n\nআপনার ফোন সেটিংসে যান এবং \'অনুমতি দিন\' (Allow) এ পরিবর্তন করুন।</string>
+    <string name="enable_exposure_notifications">ফোন সেটিংস খুলুন</string>
     <string name="scan_qr_code_to_check_in">চেক ইন করতে কোনো অফিসিয়াল এনএইচএস কোড পোস্টার স্ক্যান করুন</string>
     <string name="how_to_scan_qr_code">এটা যেভাবে আমাদের নিরাপদ থাকতে সাহায্য করে</string>
     <string name="qr_code_success_title">সফল চেক-ইন</string>
@@ -420,7 +420,7 @@
     <string name="ill_do_it_later">হোম স্ক্রিনে ফিরে যান</string>
     <string name="link_test_result_error_both_inputs_provided">আপনি একই সময়ে পরীক্ষার ফলাফলের কোড প্রবেশ করতে এবং আপনার পরীক্ষার ফলাফল যে নেগেটিভ হয়েছে তা সুনিশ্চিত করতে পারবেন না।</string>
     <string name="link_test_result_onset_date_title">প্রথম কবে আপনি এসব উপসর্গ লক্ষ্য করেছেন তা কি আপনার মনে আছে?</string>
-    <string name="link_test_result_symptoms_list">একটি উচ্চ তাপমাত্রা\nএকটি নতুন একটানা কাশি\nআপনার গন্ধ বা স্বাদে একটি পরিবর্তন</string>
+    <string name="link_test_result_symptoms_list">একটি উচ্চ তাপমাত্রা\n\nএকটি নতুন একটানা কাশি\n\nআপনার গন্ধ বা স্বাদে একটি পরিবর্তন</string>
     <string name="link_test_result_symptoms_no">না</string>
     <string name="link_test_result_symptoms_no_accessibility">না, আমার উপসর্গ ছিল না।</string>
     <string name="link_test_result_symptoms_title">আপনার কী করোনাভাইরাসের নিম্নলিখিত কোনো উপসর্গ ছিল?</string>
@@ -438,7 +438,7 @@
     <string name="qr_code_help_how_to_scan_title">যেভাবে NHS QR কোড পোস্টার স্ক্যান করবেন</string>
     <string name="settings_my_area_local_authority">স্থানীয় কর্তৃপক্ষ</string>
     <string name="user_data_risky_venue_visit_date_title">যে তারিখে ঝুঁকিপূর্ণ স্থানে যাওয়া হয়েছিল</string>
-    <string name="venue_check_in_title">আরো তথ্যাদি</string>
+    <string name="venue_check_in_title" />
     <string name="about_my_data_last_day_of_isolation">স্ব-বিচ্ছিন্নতার শেষ দিন</string>
     <string name="about_my_data_last_visited">শেষবার গিয়েছেন</string>
     <string name="about_my_data_symptom_onset_date">শুরু করার তারিখ</string>
@@ -562,7 +562,7 @@
     <string name="symptoms_after_risky_venue_cancel_dialog_positive">বের হন</string>
     <string name="symptoms_after_risky_venue_cancel_dialog_text">আপনি \'বের হন\' ট্যাপ করলে পরবর্তীতে এই প্রক্রিয়া পুনরায় শুরু করতে এবং হোম স্ক্রিন থেকে \'কোভিড-১৯ পরীক্ষা\' সিলেক্ট করে একটি পরীক্ষা বুক করতে পারবেন।</string>
     <string name="symptoms_after_risky_venue_cancel_dialog_title">আপনি কি নিশ্চিত বের হতে চান?</string>
-    <string name="symptoms_after_risky_venue_description">একটি উচ্চ তাপমাত্রা\nএকটি নতুন একটানা কাশি\nআপনার গন্ধ বা স্বাদে একটি পরিবর্তন</string>
+    <string name="symptoms_after_risky_venue_description">একটি উচ্চ তাপমাত্রা\n\nএকটি নতুন একটানা কাশি\n\nআপনার গন্ধ বা স্বাদে একটি পরিবর্তন</string>
     <string name="symptoms_after_risky_venue_heading">উপসর্গ আছে কিনা তার উপর পরীক্ষার ধরণ নির্ভর করে</string>
     <string name="symptoms_after_risky_venue_negative_button">এগুলোর কোনো উপসর্গই আমার মধ্যে নাই</string>
     <string name="symptoms_after_risky_venue_paragraph_above_description">করোনাভাইরাসের (কোভিড-১৯) প্রধান প্রধান উপসর্গ হলো:</string>
@@ -642,7 +642,7 @@
     <string name="exposure_notification_vaccination_status_error_title">ত্রুটি</string>
     <string name="exposure_notification_vaccination_status_heading">আপনার টিকা দেওয়া হয়েছে কিনা</string>
     <string name="exposure_notification_vaccination_status_title">টিকাগ্রহণের অবস্থা</string>
-    <string name="exposure_notification_warning">আপনার বয়স বা টিকা দিয়েছেন কিনা উপর নির্ভর করে আপনাকে স্ব-বিচ্ছিন্ন থাকতে হতে পারে</string>
+    <string name="exposure_notification_warning">আপনাকে আপনার বয়স, টিকাকরণের স্থিতি, বা কন্ট্যাক্ট ট্রেসারদের নির্দেশের উপর নির্ভর করে নিজেকে বিচ্ছিন্ন রাখতে হতে পারে</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_1_title">সর্বশেষ সরকারি নির্দেশিকা পড়ুন</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_2_title">আপনার স্থানীয় কর্তৃপক্ষের ওয়েবসাইট হলো:</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_links_subheading">আরো পরামর্শ পেতে চান?</string>
@@ -670,10 +670,10 @@
     <string name="risky_contact_isolation_advice_already_isolating_information">আপনি ইতিমধ্যে তা না করে থাকলে হোম স্ক্রিনে \'কোভিড-১৯ পরীক্ষা\'-তে গিয়ে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করতে পারেন।</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">আপনি কোভিড-১৯ ছড়ানোর উচ্চ ঝুঁকিতে রয়েছেন। বাড়িতে অবস্থান করে আপনি নিজেকে ও অন্যদের সুরক্ষিত রাখতে সহায়তা করতে পারেন।</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">আপনি ইতিমধ্যে তা না করে থাকলে হোম স্ক্রিনে \'কোভিড-১৯ পরীক্ষা\'-তে গিয়ে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করতে পারেন।</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information">আপনাকে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করার পরামর্শ দেওয়া হচ্ছে</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">আপনার স্ব-বিচ্ছিন্ন থাকার দরকার নাই</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">অন্যদের সাথে আপনার সংস্পর্শ কমানো এখনও গুরুত্বপূর্ণ।</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">গবেষণায় দেখা গেছে যে টিকা নিলে আপনার কোভিড-১৯ আক্রান্ত হওয়ার ও ছড়ানোর ঝুঁকি হ্রাস পায়।</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information">আপনাকে দৃঢ়ভাবে একটি বিনামূল্যের PCR পরীক্ষা করানোর পরামর্শ দেওয়া হচ্ছে, এমন কি আপনার কোন উপসর্গ না থাকলেও</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">আপনাকে নিজেকে বিচ্ছিন্ন রাখতে হবে না, যদি না কন্ট্যাক্ট ট্রেসার সরাসরি তা করতে বলেন</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">অন্যদের সাথে সংস্পর্শ হ্রাস করা এখন গুরুত্বপূর্ণ, বিশেষ করে বয়স্ক ও ঝুঁকিপূর্ণদের ক্ষেত্রে।</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">COVID-19 এর বিস্তার থামাতে সাহায্য করুন গণ পরিবহনে, দোকান এবং জনবহুল স্থানে আপনার নাক ও মুখের ওপর একটি মুখের আবরণ পরে, এবং নিয়মিত আপনার হাত ধুয়ে।</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করুন</string>
     <string name="risky_contact_isolation_advice_continue_isolataion_for">অন্যদের সংস্পর্শ থেকে নিজেকে আলাদা রাখা অব্যাহত রাখুন</string>
     <string name="risky_contact_isolation_advice_faq_button_title">সাধারণ প্রশ্নাবলি</string>
@@ -681,12 +681,12 @@
     <string name="risky_contact_isolation_advice_go_back_to_home">হোম স্ক্রিনে ফিরে যান</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">অন্যদের সাথে আপনার সংস্পর্শ কমানো এখনও গুরুত্বপূর্ণ।</string>
     <string name="risky_contact_isolation_advice_medically_exempt_heading">আপনার স্ব-বিচ্ছিন্ন থাকার দরকার নাই</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_information">আপনাকে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করার পরামর্শ দেওয়া হচ্ছে</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">আপনাকে দৃঢ়ভাবে একটি বিনামূল্যের PCR পরীক্ষা করানোর পরামর্শ দেওয়া হচ্ছে, এমন কি আপনার কোন উপসর্গ না থাকলেও</string>
     <string name="risky_contact_isolation_advice_medically_exempt_research">গবেষণায় দেখা গেছে যে টিকা নিলে আপনার কোভিড-১৯ আক্রান্ত হওয়ার ও ছড়ানোর ঝুঁকি হ্রাস পায়।</string>
-    <string name="risky_contact_isolation_advice_minors_information">আপনাকে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করার পরামর্শ দেওয়া হচ্ছে</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">আপনার স্ব-বিচ্ছিন্ন থাকার দরকার নাই</string>
+    <string name="risky_contact_isolation_advice_minors_information">আপনাকে দৃঢ়ভাবে একটি বিনামূল্যের PCR পরীক্ষা করানোর পরামর্শ দেওয়া হচ্ছে, এমন কি আপনার কোন উপসর্গ না থাকলেও</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">আপনাকে নিজেকে বিচ্ছিন্ন রাখতে হবে না, যদি না কন্ট্যাক্ট ট্রেসার সরাসরি তা করতে বলেন</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">কোনো বিশ্বস্ত প্রাপ্তবয়স্ক ব্যক্তিকে এই বার্তা দেখানোর জন্য আপনাকে পরামর্শ দেওয়া হচ্ছে।</string>
-    <string name="risky_contact_isolation_advice_minors_testing_advice">অন্যদের সাথে আপনার সংস্পর্শ কমানো এখনও গুরুত্বপূর্ণ।</string>
+    <string name="risky_contact_isolation_advice_minors_testing_advice">COVID-19 এর বিস্তার থামাতে সাহায্য করুন গণ পরিবহনে, দোকান এবং জনবহুল স্থানে আপনার নাক ও মুখের ওপর একটি মুখের আবরণ পরে, এবং নিয়মিত আপনার হাত ধুয়ে।</string>
     <string name="risky_contact_isolation_advice_new_isolation_information">স্ব-বিচ্ছিন্ন থাকুন ও বিনামূল্যে একটি পিসিআর টেস্ট বুক করুন</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">আপনার কোনো উপসর্গ না থাকলেও আপনি কোভিড-১৯-এ আক্রান্ত হওয়ার ও তা ছড়ানোর উচ্চ ঝুঁকিতে রয়েছেন। বাড়িতে অবস্থান করার মাধ্যমে আপনি নিজেকে ও অন্যদের নিরাপদে রাখতে সহায়তা করতে পারেন।</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">আপনার কোভিড-১৯ আছে কিনা জানতে বিনামূল্যে একটি পিসিআর টেস্ট বুক করুন।</string>

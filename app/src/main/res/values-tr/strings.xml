@@ -140,7 +140,7 @@
     <string name="go_back">Geri git</string>
     <string name="remove">Kaldır</string>
     <string name="empty" translatable="false" />
-    <string name="onboarding_exposure_notifications_description">Eğer koronavirüs testi pozitif çıkmış olan birisi ile yakın bir temasınız olmuş ise, uygulama size bir uyarı gönderecektir.\n\nBu uygulamada temas takip olanağını etkinleştirmek için şunlara izin vermeniz gerekmektedir: Maruz Kalma Bildirimleri.\n\nEğer fikrinizi değiştirirseniz, ayarlardan izinlerinizi istediğiniz zaman değiştirebilirsiniz.</string>
+    <string name="onboarding_exposure_notifications_description">Eğer koronavirüs testi pozitif çıkmış olan birisi ile yakın bir temasınız olmuş ise, uygulama size bir uyarı gönderecektir.\n\nBu uygulamada temas takip olanağını etkinleştirmek için şunlara izin vermeniz gerekmektedir: Maruz Kalma Bildirimleri.\n\nVe bir uyarı almak için şuna izin vermeniz gerekmektedir bildirimler.\n\nEğer fikrinizi değiştirirseniz, ayarlardan izinlerinizi istediğiniz zaman değiştirebilirsiniz.</string>
     <string name="privacy_notice">Gizlilik bildirimi</string>
 
     <string name="nhs_111_online_service">NHS 111 online</string>
@@ -155,8 +155,8 @@
     <string name="test_ordering_app_privacy_notice">Uygulama gizlilik bildirimi</string>
     <string name="test_ordering_book_test_for_someone_else">Başkası için test rezervasyonu yaptırın</string>
     <string name="error_title">Bir problem var</string>
-    <string name="enable_exposure_notifications_title">Bu uygulamanın çalışması için \'Maruz Kalma Bildirimleri\'ne izin vermelisiniz</string>
-    <string name="enable_exposure_notifications_rationale">Bu uygulama, pozitif bir koronavirüs test sonucu bildirmiş olan diğer uygulama kullanıcıları ile yakın temasınız olmuş olup olmadığını size bildirmek için ‘Maruz Kalma Bildirimleri’ olanağını kullanmaktadır.\n\nTelefonunuzda bunlar ‘Maruz Kalma Bildirimleri’ ya da ‘Maruz Kalma Günlüğü’ olarak görülebilir.</string>
+    <string name="enable_exposure_notifications_title">Bu uygulamanın çalışabilmesi için \'Exposure \nNotifications’a izin verin</string>
+    <string name="enable_exposure_notifications_rationale">Uygulama bu sayede COVID-19 testi pozitif çıkmış biriyle yakın temasta bulunmuş olmanız halinde sizi haberdar etmektedir. \n\nTelefonunuzda bu bildirimler ‘Exposure notifications’ veya ‘Exposure logging’ olarak \ngeçebilir.\n\nTelefon ayarlarına gidip bildirimlere ‘İzin ver‘ (Allow) seçeneğini aktif hale getirin.</string>
     <string name="enable_exposure_notifications">Maruz kalma bildirimlerini etkinleştir</string>
     <string name="scan_qr_code_to_check_in">Mekana giriş yapmak için resmi bir NHS QR kodu posterini tarayın</string>
     <string name="how_to_scan_qr_code">Güvende kalmamıza nasıl yardımcı olur</string>
@@ -421,7 +421,7 @@
     <string name="ill_do_it_later">Ana ekrana geri dön</string>
     <string name="link_test_result_error_both_inputs_provided">Hem bir test sonuç kodu girip hem de negatif bir test sonucunuzun olduğunu aynı zamanda teyit edemezsiniz.</string>
     <string name="link_test_result_onset_date_title">Bu belirtileri ilk olarak ne zaman yaşamaya başladığınızı hatırlıyor musunuz?</string>
-    <string name="link_test_result_symptoms_list">Yüksek ateş\nSürekli öksürük\nTat veya koku alışınızda değişiklik</string>
+    <string name="link_test_result_symptoms_list">Yüksek ateş\n\nSürekli öksürük\n\nTat veya koku alışınızda değişiklik</string>
     <string name="link_test_result_symptoms_no">Hayır</string>
     <string name="link_test_result_symptoms_no_accessibility">Hayır, belirtilerim olmadı.</string>
     <string name="link_test_result_symptoms_title">Aşağıda belirtilen herhangi bir koronavirüs belirtisini yaşadınız mı?</string>
@@ -439,7 +439,7 @@
     <string name="qr_code_help_how_to_scan_title">NHS QR kodu posteri nasıl taratılır</string>
     <string name="settings_my_area_local_authority">Yerel yönetim</string>
     <string name="user_data_risky_venue_visit_date_title">RİSKLİ YERİ ZİYARET TARİHİ</string>
-    <string name="venue_check_in_title">Daha fazla bilgi</string>
+    <string name="venue_check_in_title" />
     <string name="about_my_data_last_day_of_isolation">Kişisel karantinanın son günü</string>
     <string name="about_my_data_last_visited">Son ziyaret tarihi</string>
     <string name="about_my_data_symptom_onset_date">Başlangıç tarihi</string>
@@ -563,7 +563,7 @@
     <string name="symptoms_after_risky_venue_cancel_dialog_positive">Ayrıl</string>
     <string name="symptoms_after_risky_venue_cancel_dialog_text">Ayrıl\'a dokunursanız, bu süreci daha sonra başlatabilir ve ana ekrandan \'COVID-19 için test\'i seçerek bir test için rezervasyon yaptırabilirsiniz.</string>
     <string name="symptoms_after_risky_venue_cancel_dialog_title">Ayrılmak istediğinizden emin misiniz?</string>
-    <string name="symptoms_after_risky_venue_description">Yüksek ateş\nSürekli öksürük\nTat veya koku alışınızda değişiklik</string>
+    <string name="symptoms_after_risky_venue_description">Yüksek ateş\n\nSürekli öksürük\n\nTat veya koku alışınızda değişiklik</string>
     <string name="symptoms_after_risky_venue_heading">Testin türü, belirtilerinizin olup olmadığına bağlıdır</string>
     <string name="symptoms_after_risky_venue_negative_button">Bu belirtilerden herhangi birine sahip değilim</string>
     <string name="symptoms_after_risky_venue_paragraph_above_description">Koronavirüsün (COVID-19) başlıca belirtileri şunlardır:</string>
@@ -651,7 +651,7 @@
     <string name="exposure_notification_vaccination_status_error_title">Hata</string>
     <string name="exposure_notification_vaccination_status_heading">Aşı durumunuz</string>
     <string name="exposure_notification_vaccination_status_title">Aşı durumunuz</string>
-    <string name="exposure_notification_warning">Yaşınıza ya da aşı durumunuza bağlı olarak kendinizi karantinaya almanız gerekebilir</string>
+    <string name="exposure_notification_warning">Yaşınıza ve aşı durumunuza göre ya da temaslı takibinden sorumlu filyasyon görevlileri tarafından verilen talimatlar doğrultusunda kendinizi karantinaya almanız gerekebilir</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_1_title">En son hükümet yönergelerini okuyun</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_2_title">Yerel yönetiminizin web sitesini bulun</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_links_subheading">Daha fazla tavsiyeye mi ihtiyacınız var?</string>
@@ -679,10 +679,10 @@
     <string name="risky_contact_isolation_advice_already_isolating_information">Henüz yapmadıysanız, ana ekrandaki \'COVID-19 için test\' bölümünden ücretsiz bir PCR testi için rezervasyon yapabilirsiniz.</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">COVID-19\'u yayma riskiniz yüksek. Evde kalarak hem kendinizin hem de diğer insanların güvende olmasına yardımcı olabilirsiniz.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">Henüz yapmadıysanız, ana ekrandaki \'COVID-19 için test\' bölümünden ücretsiz bir PCR testi için rezervasyon yapabilirsiniz.</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information">Ücretsiz bir PCR testi için rezervasyon yapmanız tavsiye edilir</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Kendinizi karantinaya almanız gerekmiyor</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">Başkalarıyla olan temasınızı azaltmanız halen önemlidir.</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">Yapılan araştırmalar, aşıların, COVID-19\'a yakalanma ve onu yayma riskinizi azalttığını göstermiştir.</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information">Hiçbir belirtiniz olmasa dahi, ücretsiz bir PCR testi için randevu almanız önemle tavsiye olunur</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Filyasyon ekibi tarafından aksi belirtilmediği sürece kendinizi karantinaya almanız gerekmeyebilir</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">Diğer insanlarla, özellikle yaşlı ve hassas durumdaki kimselerle olan temasınızı azaltmanız da önemlidir.</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">COVID-19\'un yayılmasını durdurmaya yardımcı olmak için, toplu taşıma araçlarında, alışveriş yerlerinde ve kalabalık yerlerde ağzınızı ve burnunuzu kapatacak şekilde maske takınız ve ellerinizi düzenli olarak yıkayınız.</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">Ücretsiz bir PCR testi için rezervasyon yapın</string>
     <string name="risky_contact_isolation_advice_continue_isolataion_for">Kişisel karantinaya devam edilecek süre</string>
     <string name="risky_contact_isolation_advice_faq_button_title">Sık sorulan sorular</string>
@@ -690,12 +690,12 @@
     <string name="risky_contact_isolation_advice_go_back_to_home">Ana ekrana geri dön</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">Başkalarıyla olan temasınızı azaltmanız halen önemlidir.</string>
     <string name="risky_contact_isolation_advice_medically_exempt_heading">Kendinizi karantinaya almanız gerekmiyor</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_information">Ücretsiz bir PCR testi için rezervasyon yapmanız tavsiye edilir</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">Hiçbir belirtiniz olmasa dahi, ücretsiz bir PCR testi için randevu almanız önemle tavsiye olunur</string>
     <string name="risky_contact_isolation_advice_medically_exempt_research">Yapılan araştırmalar, aşıların, COVID-19\'a yakalanma ve onu yayma riskinizi azalttığını göstermiştir.</string>
-    <string name="risky_contact_isolation_advice_minors_information">Ücretsiz bir PCR testi için rezervasyon yapmanız tavsiye edilir</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Kendinizi karantinaya almanız gerekmiyor</string>
+    <string name="risky_contact_isolation_advice_minors_information">Hiçbir belirtiniz olmasa dahi, ücretsiz bir PCR testi için randevu almanız önemle tavsiye olunur</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Filyasyon ekibi tarafından aksi belirtilmediği sürece kendinizi karantinaya almanız gerekmeyebilir</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">Bu mesajı güvenilir bir yetişkine göstermeniz tavsiye edilir.</string>
-    <string name="risky_contact_isolation_advice_minors_testing_advice">Başkalarıyla olan temasınızı azaltmanız halen önemlidir.</string>
+    <string name="risky_contact_isolation_advice_minors_testing_advice">COVID-19\'un yayılmasını durdurmaya yardımcı olmak için, toplu taşıma araçlarında, alışveriş yerlerinde ve kalabalık yerlerde ağzınızı ve burnunuzu kapatacak şekilde maske takınız ve ellerinizi düzenli olarak yıkayınız.</string>
     <string name="risky_contact_isolation_advice_new_isolation_information">Kendinizi karantinaya alın ve ücretsiz bir PCR testi için rezervasyon yapın</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">Herhangi bir belirtiniz olmasa bile, COVID-19\'a yakalanma ve virüsü yayma riskiniz yüksektir. Evde kalarak kendinizi ve başkalarını güvende tutmaya yardımcı olabilirsiniz.</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">COVID-19\'la enfekte olup olmadığınızı anlamak amacıyla ücretsiz bir PCR testi için rezervasyon yapın.</string>

@@ -140,7 +140,7 @@
     <string name="go_back">પાછા જાઓ</string>
     <string name="remove">હટાવો</string>
     <string name="empty" translatable="false" />
-    <string name="onboarding_exposure_notifications_description">જો તમે વાયરસ માટે સકારાત્મક પરીક્ષણ ધરાવનાર કોઈની સાથે ગાઢ સંપર્કમાં રહેલા હો તો, એપ્લિકેશન તમને ચેતવણી મોકલશે.\n\nઆ એપ્લિકેશન માટે કોંટેક્ટ ટ્રેસીંગને સક્ષમ કરવા માટે તમારે આની મંજૂરી આપવાની જરૂર છે એક્સપોઝર નોટિફિકેશન.\n\nજો તમે તમારો વિચાર બદલો છો, તો તમે કોઈપણ સમયે સેટિંગ્સમાં તમારી મંજૂરી બદલી શકો છો.</string>
+    <string name="onboarding_exposure_notifications_description">જો તમે વાયરસ માટે સકારાત્મક પરીક્ષણ ધરાવનાર કોઈની સાથે ગાઢ સંપર્કમાં રહેલા હો તો, એપ્લિકેશન તમને ચેતવણી મોકલશે.\n\nઆ એપ્લિકેશન માટે કોંટેક્ટ ટ્રેસીંગને સક્ષમ કરવા માટે તમારે આની મંજૂરી આપવાની જરૂર છે એક્સપોઝર નોટિફિકેશન.\n\nજો તમે તમારો વિચાર બદલો છો, તો તમે કોઈપણ સમયે સેટિંગ્સમાં તમારી મંજૂરી બદલી શકો છો.\n\nએપને યોગ્ય રીતે કાર્ય કરવા માટે, તમારે \'એક્સપોઝર નોટિફિકેશન\' ને મંજૂરી આપવી જરૂરી છે.</string>
     <string name="privacy_notice">ગોપનીયતા નોટિસ</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
     <string name="post_code_rationale">પોસ્ટકોડ જિલ્લો જુદા જુદા વિસ્તારોમાં કોરોનાવાયરસના ફેલાવાને સમજવામાં મદદ કરે છે. આ સુનિશ્ચિત કરે છે કે અમે તમારા વિસ્તાર માટે સંભવત: શ્રેષ્ઠ જાહેર સ્વાસ્થ્ય સલાહ આપી શકીએ.\n\nચિંતા કરશો નહીં. તમારા પોસ્ટકોડ જિલ્લાનો ઉપયોગ તમારું સ્થળ ટ્રેક કરવા માટે થશે નહીં.</string>
@@ -154,8 +154,8 @@
     <string name="test_ordering_app_privacy_notice">એપ ગોપનીયતા નોટિસ</string>
     <string name="test_ordering_book_test_for_someone_else">કોઈ અન્ય માટે ટેસ્ટ બુક કરો</string>
     <string name="error_title">એક પ્રોબલ્મ છે</string>
-    <string name="enable_exposure_notifications_title">આ એપ કામ કરે માટે તમારે \'એક્સપોઝર નોટિફિકેશન\' અલાઉ કરો</string>
-    <string name="enable_exposure_notifications_rationale">આ એપ ‘એક્સપોઝર નોટિફિકેશન’ નો ઉપયોગ તમને કોરોનાવાયરસ માટે સકારાત્મક પરીક્ષણ ધરાવનાર અન્ય એપ વપરાશકર્તાઓ સાથે તમે સંપર્કમાં આવેલ છો કે નહીં તે જણાવવા માટે કરે છે.\n\nતમારો ફોન આને એક્સપોઝર નોટિફિકેશન\' અથવા \'એક્સપોઝર લોગિંગ\' તરીકે વ્યાખ્યાયિત કરી શકે છે.</string>
+    <string name="enable_exposure_notifications_title">આ ઍપ કામ કરી શકે તે માટે ‘Exposure notifications’ને માન્ય કરો</string>
+    <string name="enable_exposure_notifications_rationale">આ રીતે ઍપ તમને કહે છે કે તમે એવી કોઈ વ્યક્તિ સાથે નજીકના સંપર્કમાં આવ્યા છો કે કેમ જેઓનો COVID-19 ટેસ્ટ પૉઝિટિવ આવ્યો હોય.\n\nતમારો ફોન આને ‘Exposure notifications’ અથવા ‘Exposure logging’ કહેતો હોય તેમ બની શકે છે.\n\nતમારા ફોનનાં સેટિંગ્ઝમાં જાઓ અને બદલીને \'માન્ય કરો\' (Allow) સેટ કરો.</string>
     <string name="enable_exposure_notifications">એક્સ્પોઝર નોટિફિકેશન સક્ષમ કરો</string>
     <string name="scan_qr_code_to_check_in">ચેક ઈન કરવા માટે ઓફિશ્યલ NHS QR કૉડ પોસ્ટર પર સ્કેન કરો</string>
     <string name="how_to_scan_qr_code">તે અમને કઈ રીતે સુરક્ષિત રાખવામાં મદદ કરે છે</string>
@@ -420,7 +420,7 @@
     <string name="ill_do_it_later">હોમ સ્ક્રીન પર પાછા</string>
     <string name="link_test_result_error_both_inputs_provided">તમે એક જ સમયે ટેસ્ટના પરિણામનો કોડ દાખલ કરી ન શકો અને પુષ્ટિ ન કરી શકો કે તમારા ટેસ્ટનું પરિણામ નૅગેટિવ છે.//કન્ફર્મ</string>
     <string name="link_test_result_onset_date_title">શું તમને સૌથી શરૂઆતની તારીખ યાદ છે જયારે તમે આમાંના કોઈપણ લક્ષણોનો અનુભવ કરવાનું શરૂ કર્યું હતું?</string>
-    <string name="link_test_result_symptoms_list">તાવ\nનવી સતત રહેતી ઉધરસ\nતમારી સૂંઘવા અથવા સ્વાદની ક્ષમતામા બદલાવ</string>
+    <string name="link_test_result_symptoms_list">તાવ\n\nનવી સતત રહેતી ઉધરસ\n\nતમારી સૂંઘવા અથવા સ્વાદની ક્ષમતામા બદલાવ</string>
     <string name="link_test_result_symptoms_no">ના</string>
     <string name="link_test_result_symptoms_no_accessibility">ના, મને લક્ષણો ન હતાં.</string>
     <string name="link_test_result_symptoms_title">શું તમને નીચેનામાંથી કોઈ પણ કોરોનાવાયરસ લક્ષણો થયા હતા?</string>
@@ -438,7 +438,7 @@
     <string name="qr_code_help_how_to_scan_title">NHS QR કોડ પોસ્ટર કેવી રીતે સ્કેન કરવું</string>
     <string name="settings_my_area_local_authority">લૉકલ ઑથોરિટી</string>
     <string name="user_data_risky_venue_visit_date_title">જોખમી જગ્યાની મુલાકાતની તારીખ</string>
-    <string name="venue_check_in_title">વધુ માહિતી</string>
+    <string name="venue_check_in_title" />
     <string name="about_my_data_last_day_of_isolation">સૅલ્ફ-આઇસોલેશનનો છેલ્લો દિવસ</string>
     <string name="about_my_data_last_visited">છેલ્લે ક્યારે મુલાકાત લીધી</string>
     <string name="about_my_data_symptom_onset_date">શરૂ થયાની તારીખ</string>
@@ -562,7 +562,7 @@
     <string name="symptoms_after_risky_venue_cancel_dialog_positive">બંધ કરો</string>
     <string name="symptoms_after_risky_venue_cancel_dialog_text">જો તમે \'બંધ\' કરો તો પછીથી એ ફરી શરું કરી શકો અને તમારી ટેસ્ટ \'કોવિડ-19 ટેસ્ટિંગ\' હોમ સ્ક્રિનમાંથી બૂક કરી શકો.</string>
     <string name="symptoms_after_risky_venue_cancel_dialog_title">તમને ખરેખર બંધ કરવું છે?</string>
-    <string name="symptoms_after_risky_venue_description">તાવ\nનવી સતત રહેતી ઉધરસ\nતમારી સૂંઘવા અથવા સ્વાદની ક્ષમતામા બદલાવ</string>
+    <string name="symptoms_after_risky_venue_description">તાવ\n\nનવી સતત રહેતી ઉધરસ\n\nતમારી સૂંઘવા અથવા સ્વાદની ક્ષમતામા બદલાવ</string>
     <string name="symptoms_after_risky_venue_heading">પરીક્ષણનો પ્રકાર એ વાત પર આધાર રાખે છે કે શું તમને લક્ષણો છે</string>
     <string name="symptoms_after_risky_venue_negative_button">મને આમાંના કોઈ લક્ષણો નથી</string>
     <string name="symptoms_after_risky_venue_paragraph_above_description">કોરોનાવાયરસ (કોવિડ-19) ના મુખ્ય લક્ષણો આ છે:</string>
@@ -642,7 +642,7 @@
     <string name="exposure_notification_vaccination_status_error_title">ભૂલ</string>
     <string name="exposure_notification_vaccination_status_heading">તમારી વેક્સિનની સ્થિતિ</string>
     <string name="exposure_notification_vaccination_status_title">રસીકરણની સ્થિતિ</string>
-    <string name="exposure_notification_warning">તમારે તમારી ઉંમર અથવા વેક્સિનની સ્થિતિના આધારે સેલ્ફ-આઇસોલેટ થવાની જરૂર પડી શકે છે</string>
+    <string name="exposure_notification_warning">તમારી ઉંમર, રસીકરણની સ્થિતિ અથવા કૉન્ટેક્ટ ટ્રેસર્સ તરફથી મળતી સૂચનાઓના આધારે તમારે સૅલ્ફ-આઇસોલેટ થવાની જરૂર પડી શકે છે</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_1_title">સરકારના નવીનતમ માર્ગદર્શન વાંચો</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_2_title">તમારી સ્થાનિક ઓથોરિટી વેબસાઇટ શોધો</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_links_subheading">વધુ માટે સલાહ શોધી રહ્યાં છો?</string>
@@ -670,10 +670,10 @@
     <string name="risky_contact_isolation_advice_already_isolating_information">જો તમે પહેલાથી આવું ન કર્યું હોય, તો તમે હોમ સ્ક્રીન પર ‘COVID-19 માટેનાં ટેસ્ટ’ પરથી મફત PCR ટેસ્ટ બુક કરી શકો છો</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">તમે કોવિડ-19 નો ફેલાવો કરવામાં બહુ જોખમી છો. ઘરે રહેવાથી તમે પોતાને અને બીજાઓને સુરક્ષિત રાખી શકો.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">જો તમે પહેલાથી આવું ન કર્યું હોય, તો તમે હોમ સ્ક્રીન પર ‘COVID-19 માટેનાં ટેસ્ટ’ પરથી મફત PCR ટેસ્ટ બુક કરી શકો છો</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information">તમને એક મફત PCR ટેસ્ટ બુક કરવાની સલાહ આપવામાં આવે છે</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">તમારે સેલ્ફ-આઇસોલેટ થવાની જરૂર નથી</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">અન્ય લોકો સાથે તમારો કૉન્ટેક્ટ ઓછો કરવો હજુ પણ મહત્વનું છે.</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">સંશોધનએ બતાવ્યું છે કે રસી તમને COVID-19 થવા અને ફેલાવવાનું જોખમ ઘટાડવામાં મદદ કરે છે.</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information">તમને કોઈ લક્ષણો ન હોય તો પણ તમે મફત PCR ટેસ્ટ બૂક કરાવો એવી તમને ભારપૂર્વક સલાહ આપવામાં આવે છે</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">તમારે સૅલ્ફ-આઇસોલેટ થવાની જરૂર નથી, સિવાય કે કૉન્ટેક્ટ ટ્રેસર્સ દ્વારા પ્રત્યક્ષપણે તમને કહેવામાં આવ્યું હોય</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">અન્ય લોકો સાથે તમારો સંપર્ક ઘટાડવો હજીયે મહત્ત્વપૂર્ણ છે, ખાસ કરીને વૃદ્ધ લોકો અને કમજોર લોકો.</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">જાહેર પરિવહનમાં, દુકાનો અને ભીડવાળી જગ્યાઓમાં તમારાં નાક અને મોં પર માસ્ક પહેરીને તથા નિયમિતપણે તમારા હાથ ધોઈને COVID-19નો ફેલાવો અટકાવવામાં મદદ કરો.</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">એક મફત PCR ટેસ્ટ ને બુક કરો</string>
     <string name="risky_contact_isolation_advice_continue_isolataion_for">સેલ્ફ-આઇસોલેશનમાં રહેવાનુ ચાલુ રાખો</string>
     <string name="risky_contact_isolation_advice_faq_button_title">સામાન્ય પ્રશ્નો</string>
@@ -681,12 +681,12 @@
     <string name="risky_contact_isolation_advice_go_back_to_home">હોમ સ્ક્રીન પર પાછા</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">અન્ય લોકો સાથે તમારો કૉન્ટેક્ટ ઓછો કરવો હજુ પણ મહત્વનું છે.</string>
     <string name="risky_contact_isolation_advice_medically_exempt_heading">તમારે સેલ્ફ-આઇસોલેટ થવાની જરૂર નથી</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_information">તમને એક મફત PCR ટેસ્ટ બુક કરવાની સલાહ આપવામાં આવે છે</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">તમને કોઈ લક્ષણો ન હોય તો પણ તમે મફત PCR ટેસ્ટ બૂક કરાવો એવી તમને ભારપૂર્વક સલાહ આપવામાં આવે છે</string>
     <string name="risky_contact_isolation_advice_medically_exempt_research">સંશોધનએ બતાવ્યું છે કે રસી તમને COVID-19 થવા અને ફેલાવવાનું જોખમ ઘટાડવામાં મદદ કરે છે.</string>
-    <string name="risky_contact_isolation_advice_minors_information">તમને એક મફત PCR ટેસ્ટ બુક કરવાની સલાહ આપવામાં આવે છે</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">તમારે  સેલ્ફ-આઇસોલેટ થવાની જરૂર નથી</string>
+    <string name="risky_contact_isolation_advice_minors_information">તમને કોઈ લક્ષણો ન હોય તો પણ તમે મફત PCR ટેસ્ટ બૂક કરાવો એવી તમને ભારપૂર્વક સલાહ આપવામાં આવે છે</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">તમારે સૅલ્ફ-આઇસોલેટ થવાની જરૂર નથી, સિવાય કે કૉન્ટેક્ટ ટ્રેસર્સ દ્વારા પ્રત્યક્ષપણે તમને કહેવામાં આવ્યું હોય</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">તમને સલાહ આપવામાં આવે છે કે તમારે આ સંદેશ એક વિશ્વસનીય પુખ્ત વ્યક્તિને બતાવો.</string>
-    <string name="risky_contact_isolation_advice_minors_testing_advice">અન્ય લોકો સાથે તમારો કૉન્ટેક્ટ ઓછો કરવો હજુ પણ મહત્વનું છે.</string>
+    <string name="risky_contact_isolation_advice_minors_testing_advice">જાહેર પરિવહનમાં, દુકાનો અને ભીડવાળી જગ્યાઓમાં તમારાં નાક અને મોં પર માસ્ક પહેરીને તથા નિયમિતપણે તમારા હાથ ધોઈને COVID-19નો ફેલાવો અટકાવવામાં મદદ કરો.</string>
     <string name="risky_contact_isolation_advice_new_isolation_information">સેલ્ફ-આઇસોલેટ થાવ અને મફત PCR ટેસ્ટ બુક કરો</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">તમે કોવિડ -19 થી સંક્રમિત થવાનું અને ફેલાવવાનું  જોખમ છે, પછી ભલે તમને કોઈ લક્ષણો ન હોય. ઘરે રહીને તમે તમારી જાતને અને અન્ય લોકોને સુરક્ષિત રાખવામાં મદદ કરી શકો છો.</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">તમે કોવિડ -19 થી સંક્રમિત થયા છો કે નહીં તે જોવા માટે એક મફત PCR ટેસ્ટ  બુક કરો.</string>

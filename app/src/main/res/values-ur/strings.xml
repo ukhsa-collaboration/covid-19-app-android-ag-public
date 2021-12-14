@@ -140,7 +140,7 @@
     <string name="go_back">واپس جائیں</string>
     <string name="remove">مٹائیں</string>
     <string name="empty" translatable="false" />
-    <string name="onboarding_exposure_notifications_description">اگر آپ کسی ایسے شخص سے قریبی رابطے میں رہے ہیں جس کا وائرس کا ٹیسٹ مثبت آیا ہو تو ایپ آپ کو اس کی اطلاع کرے گی۔ \n\nاس ایپ کے لئے کنٹیکٹ ٹریسنگ یعنی رابطوں کا پتہ لگانے کے لئے آپ کو درج ذیل کی اجازت دینے کی ضرورت ہےایکسپوژر نوٹیفیکیشنز۔ \n\nاگر آپ اپنا ارادہ تبدیل کرتے ہیں تو، آپ کسی بھی وقت ترتیبات یعنی سیٹنگز میں اپنی اجازتیں تبدیل کرسکتے ہیں۔</string>
+    <string name="onboarding_exposure_notifications_description">اگر آپ کسی ایسے شخص سے قریبی رابطے میں رہے ہیں جس کا وائرس کا ٹیسٹ مثبت آیا ہو تو ایپ آپ کو اس کی اطلاع کرے گی۔ \n\nاس ایپ کے لئے کنٹیکٹ ٹریسنگ یعنی رابطوں کا پتہ لگانے کے لئے آپ کو درج ذیل کی اجازت دینے کی ضرورت ہےایکسپوژر نوٹیفیکیشنز۔ \n\nاگر آپ اپنا ارادہ تبدیل کرتے ہیں تو، آپ کسی بھی وقت ترتیبات یعنی سیٹنگز میں اپنی اجازتیں تبدیل کرسکتے ہیں۔\n\nاگر آپ اپنا ارادہ تبدیل کرتے ہیں تو، آپ کسی بھی وقت ترتیبات یعنی سیٹنگز میں اپنی اجازتیں تبدیل کرسکتے ہیں۔</string>
     <string name="privacy_notice">رازداری کا نوٹس</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
     <string name="post_code_rationale">پوسٹ کوڈ کا ضلع مختلف علاقوں میں کوروناوائرس کے پھیلاؤ کے متعلق جاننے میں مدد دیتا ہے۔ اس سے یقینی بنایا جاتا ہے کہ ہم آپ کے علاقے میں عوامی صحت کا بہترین مشورہ دے سکیں۔\n\n فکر مند نہ ہوں۔ آپ کے پوسٹ کوڈ کا ضلع آپ کے مقام کا پتہ لگانے کے لئے استعمال نہیں کیا جائے گا۔</string>
@@ -154,8 +154,8 @@
     <string name="test_ordering_app_privacy_notice">ایپ کی رازداری کا نوٹس</string>
     <string name="test_ordering_book_test_for_someone_else">کسی اور کے لئے ٹیسٹ بک کروائیں</string>
     <string name="error_title">مسئلہ درپیش ہے</string>
-    <string name="enable_exposure_notifications_title">اس ایپ کو  کام کرنے کے لیے    ، آپ کو \' اَفشا کی اطلاعات\' کی اجازت دینی ہوگی</string>
-    <string name="enable_exposure_notifications_rationale">یہ ایپ \'سامنا ہونے کے نوٹیفیکیشنز\' کا استعمال اس لئے کرتی ہے کہ اگر آپ ایپ کا استعمال کرنے والے ایسے دوسرے شخص کے ساتھ رابطے میں آتے ہیں جنہوں نے اپنا کوروناوائرس کا ٹیسٹ مثبت ہونے کی اطلاع دی ہو تو آپ کو باخبر کیا جائے۔\n\n آپ کا فون ان کو \'سامنا ہونے کے نوٹیفیکیشنز\' یا ’سامنا ہونے کا اندراج‘ کے طور پر بیان کر سکتا ہے۔</string>
+    <string name="enable_exposure_notifications_title">اس ایپ کے کام کرنے کے لیے ‘Exposure notifications’ کی اجازت دیں</string>
+    <string name="enable_exposure_notifications_rationale">اس طرح یہ ایپ آپ کو بتاتی ہے کہ آیا آپ کسی ایسے شخص کے قریبی رابطہ میں رہے ہیں جس کی COVID-19 کی جانچ مثبت آئی ہے۔\n\nآپ کا فون انہیں ‘Exposure notifications’ یا ‘Exposure logging’ کہہ سکتا ہے۔\n\nاپنے فون کی ترتیبات میں جائیں اور \'اجازت دیں\' (Allow) میں بدل دیں۔</string>
     <string name="enable_exposure_notifications">سامنا ہونے کے نوٹیفیکیشنز فعال کریں</string>
     <string name="scan_qr_code_to_check_in">چیک ان کرنے کے لئےباضابطہ   NHS QR کوڈ پوسٹر اسکین کریں</string>
     <string name="how_to_scan_qr_code">محفوظ رہنے میں یہ کس طرح ہماری مدد کرتی ہے</string>
@@ -420,7 +420,7 @@
     <string name="ill_do_it_later">ہوم اسکرین پر واپس جائیں</string>
     <string name="link_test_result_error_both_inputs_provided">آپ  ایک ہی وقت میں ٹیسٹ کے نتائج کا کوڈ درج  اور اس کی تصدیق نہیں کرسکتے ہیں کہ آپ کے ٹیسٹ کا منفی نتیجہ ہے۔</string>
     <string name="link_test_result_onset_date_title">کیا آپ کو وہ ابتدائی تاریخ یاد ہے جب آپ نے ان علامات میں سے کسی کا سامنا کرنا شروع کیا تھا؟</string>
-    <string name="link_test_result_symptoms_list">تیز درجۂ حرارت\nنئی مسلسل کھانسی\nبو یا ذائقہ کے آپ کے شعور میں تبدیلی</string>
+    <string name="link_test_result_symptoms_list">تیز درجۂ حرارت\n\nنئی مسلسل کھانسی\n\nبو یا ذائقہ کے آپ کے شعور میں تبدیلی</string>
     <string name="link_test_result_symptoms_no">نہیں</string>
     <string name="link_test_result_symptoms_no_accessibility">نہیں، مجھے علامات درپیش نہیں تھیں۔</string>
     <string name="link_test_result_symptoms_title">کیا آپ کے اندر درج ذیل کرونا وائرس کی علامات  میں سے کوئی پائی جاتی ہیں ؟</string>
@@ -438,7 +438,7 @@
     <string name="qr_code_help_how_to_scan_title">NHS کا QR کوڈ پوسٹر کیسے اسکین کریں</string>
     <string name="settings_my_area_local_authority">لوکل اتھارٹی</string>
     <string name="user_data_risky_venue_visit_date_title">خطرے کے مقام پر موجودگی کی تاریخ</string>
-    <string name="venue_check_in_title">مزید معلومات</string>
+    <string name="venue_check_in_title" />
     <string name="about_my_data_last_day_of_isolation">خود تنہائی کا آخری دن</string>
     <string name="about_my_data_last_visited">آخری دورہ کیا</string>
     <string name="about_my_data_symptom_onset_date">تاریخ آغاز</string>
@@ -562,7 +562,7 @@
     <string name="symptoms_after_risky_venue_cancel_dialog_positive">جائیں</string>
     <string name="symptoms_after_risky_venue_cancel_dialog_text">اگر آپ \'جانے \' کو تھپتھپاتے ہیں تو آپ اس عمل کو بعد میں دوبارہ شروع کرسکتے ہیں اور ہوم اسکرین سے \'کوویڈ 19 کے لئے ٹیسٹنگ\' منتخب کرکے ٹیسٹ بک کرسکتے ہیں۔</string>
     <string name="symptoms_after_risky_venue_cancel_dialog_title">کیا آپ واقعی جانا چاہتے ہیں؟</string>
-    <string name="symptoms_after_risky_venue_description">تیز درجۂ حرارت\nنئی مسلسل کھانسی\nبو یا ذائقہ کے آپ کے شعور میں تبدیلی</string>
+    <string name="symptoms_after_risky_venue_description">تیز درجۂ حرارت\n\nنئی مسلسل کھانسی\n\nبو یا ذائقہ کے آپ کے شعور میں تبدیلی</string>
     <string name="symptoms_after_risky_venue_heading">ٹیسٹ کی قسم کا انحصار اس بات پر ہوتا ہے کہ آیا آپ کو علامات درپیش ہیں</string>
     <string name="symptoms_after_risky_venue_negative_button">مجھے ان میں سے کوئی علامت درپیش نہیں ہے۔</string>
     <string name="symptoms_after_risky_venue_paragraph_above_description">کورونا وائرس (COVID-19) کی اہم  علامات ہیں:</string>
@@ -650,7 +650,7 @@
     <string name="exposure_notification_vaccination_status_error_title">غلطی</string>
     <string name="exposure_notification_vaccination_status_heading">آپ کی ویکسینیشن کی حیثیت</string>
     <string name="exposure_notification_vaccination_status_title">ویکسینیشن کی حیثیت</string>
-    <string name="exposure_notification_warning">آپ کی عمر یا ویکسینیشن کی حیثیت پر انحصار کرتے ہوئے آپ کو خود کو علیحدہ کرنے کی ضرورت پڑ سکتی ہے</string>
+    <string name="exposure_notification_warning">آپ کو اپنی عمر، ٹیکاکاری کی کیفیت، یا کنٹیکٹ ٹریسرز کی ہدایات کے مطابق خود کو الگ تھلگ رکھنے کی ضرورت پڑ سکتی ہے</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_1_title">حکومت کی تازہ ترین رہنمائی پڑھیں</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_2_title">اپنی لوکل اتھارٹی کی ویب سائٹ تلاش کریں</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_links_subheading">مزید مشورے کی تلاش ہے؟</string>
@@ -678,10 +678,10 @@
     <string name="risky_contact_isolation_advice_already_isolating_information">اگر آپ نے اب تک یہ کام نہیں کیا ہے تو آپ کوئی مفت PCR جانچ ہوم اسکرین پر \' COVID-19 کے لیے جانچ\' سے بک کر سکتے ہیں۔</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">آپ کا COVID-19 پھیلانے کا زیادہ خطرہ ہے۔ گھر میں رہ کر آپ اپنے آپ کو اور دوسروں کو محفوظ رکھنے میں مدد  دے سکتے ہیں۔</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">اگر آپ نے اب تک یہ کام نہیں کیا ہے تو آپ کوئی مفت PCR جانچ ہوم اسکرین پر \' COVID-19 کے لیے جانچ\' سے بک کر سکتے ہیں۔</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information">آپ کو ایک مفت PCR جانچ بک کرانے کی صلاح دی جاتی ہے</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">آپ کو خود کو علیحدہ کرنے کی ضرورت نہیں ہے</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">ابھی بھی ضروری ہے کہ دوسروں کے ساتھ اپنے رابطے کو کم کریں۔</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">تحقیق سے ظاہر ہوا ہے کہ ویکسین COVID-19 ہونے اور اس کو پھیلانے کے آپ کے خطرے کو کم کرنے میں مدد کرتے ہیں</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information">آپ کو تاکید کے ساتھ صلاح دی جاتی ہے کہ ایک مفت PCR جانچ بک کرائیں، خواہ آپ میں کوئی علامات نہ پائی جاتی ہوں</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">آپ کو خود کو الگ تھلگ رکھنے کی ضرورت نہیں ہے، سوائے اس کے کہ کنٹیکٹ ٹریسرز کے ذریعہ آپ سے براہ راست کہا جائے</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">دوسرے لوگوں، خاص طور پر عمر رسیدہ اور ضرر پذیر افراد کے ساتھ اپنا رابطہ کم کرنا ابھی بھی ضروری ہے۔</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">پبلک ٹرانسپورٹ پر، دوکانوں اور بھیڑ بھاڑ والی جگہوں میں اپنی ناک اور منہ پر فیس کورنگ پہنتے ہوئے، اور برابر اپنے ہاتھ دھونے کے ذریعہ COVID-19 کے پھیلاؤ کو روکنے میں مدد کریں۔</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">کوئی مفت PCR جانچ بک کریں</string>
     <string name="risky_contact_isolation_advice_continue_isolataion_for">ذیل کے لئے ذاتی علیحدگی جاری رکھیں</string>
     <string name="risky_contact_isolation_advice_faq_button_title">عام سوالات</string>
@@ -689,12 +689,12 @@
     <string name="risky_contact_isolation_advice_go_back_to_home">ہوم اسکرین پر واپس جائیں</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">ابھی بھی ضروری ہے کہ دوسروں کے ساتھ اپنے رابطے کو کم کریں۔</string>
     <string name="risky_contact_isolation_advice_medically_exempt_heading">آپ کو خود کو علیحدہ کرنے کی ضرورت نہیں ہے</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_information">آپ کو ایک مفت PCR جانچ بک کرانے کا مشورہ دیا جاتا ہے</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">آپ کو تاکید کے ساتھ صلاح دی جاتی ہے کہ ایک مفت PCR جانچ بک کرائیں، خواہ آپ میں کوئی علامات نہ پائی جاتی ہوں</string>
     <string name="risky_contact_isolation_advice_medically_exempt_research">تحقیق سے ظاہر ہوا ہے کہ ٹیکے COVID-19 ہونے اور اس کو پھیلانے کے آپ کے خطرے کو کم کرنے میں مدد کرتے ہیں</string>
-    <string name="risky_contact_isolation_advice_minors_information">آپ کو ایک مفت PCR جانچ بک کرانے کا مشورہ دیا جاتا ہے</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">آپ کو خود کو علیحدہ کرنے کی ضرورت نہیں ہے</string>
+    <string name="risky_contact_isolation_advice_minors_information">آپ کو تاکید کے ساتھ صلاح دی جاتی ہے کہ ایک مفت PCR جانچ بک کرائیں، خواہ آپ میں کوئی علامات نہ پائی جاتی ہوں</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">آپ کو خود کو الگ تھلگ رکھنے کی ضرورت نہیں ہے، سوائے اس کے کہ کنٹیکٹ ٹریسرز کے ذریعہ آپ سے براہ راست کہا جائے</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">آپ کومشورہ دیا جاتا ہے کہ آپ اس پیغام کو کسی بھروسہ مند بالغ شخص کو دکھائیں۔</string>
-    <string name="risky_contact_isolation_advice_minors_testing_advice">ابھی بھی ضروری ہے کہ دوسروں کے ساتھ اپنے رابطے کو کم کریں۔</string>
+    <string name="risky_contact_isolation_advice_minors_testing_advice">پبلک ٹرانسپورٹ پر، دوکانوں اور بھیڑ بھاڑ والی جگہوں میں اپنی ناک اور منہ پر فیس کورنگ پہنتے ہوئے، اور برابر اپنے ہاتھ دھونے کے ذریعہ COVID-19 کے پھیلاؤ کو روکنے میں مدد کریں۔</string>
     <string name="risky_contact_isolation_advice_new_isolation_information">خود کو آئسولیٹ کریں اور ایک مفت PCR ٹیسٹ بک کریں</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">آپ COVID-19 کی زد میں آنے اور اسے پھیلانے کے زیادہ خطرے میں مبتلا ہیں، چاہے آپ میں کوئی علامات نہ ہوں۔ گھر پر رہ کر آپ خود کو اور دوسروں کو محفوظ رکھنے میں مدد کر سکتے ہیں۔</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">ایک مفت PCR ٹیسٹ بک کر کے دیکھیں کہ آیا آپ کو COVID-19 ہے۔</string>

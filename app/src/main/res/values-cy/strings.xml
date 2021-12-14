@@ -156,7 +156,7 @@
     <string name="go_back">Mynd yn ôl</string>
     <string name="remove">Dileu</string>
     <string name="empty" translatable="false" />
-    <string name="onboarding_exposure_notifications_description">Bydd yr ap yn anfon rhybudd atoch os ydych wedi bod mewn cysylltiad agos â rhywun sydd wedi profi\'n bositif am y feirws.\n\nEr mwyn galluogi olrhain cysylltiadau ar gyfer yr ap hwn mae angen i chi ganiatáu Hysbysiadau Cysylltiad.\n\nOs byddwch yn newid eich meddwl, gallwch newid y caniatâd yn Gosodiadau ar unrhyw adeg.</string>
+    <string name="onboarding_exposure_notifications_description">Bydd yr ap yn anfon rhybudd atoch os ydych wedi bod mewn cysylltiad agos â rhywun sydd wedi profi\'n bositif am y feirws.\n\nEr mwyn galluogi olrhain cysylltiadau ar gyfer yr ap hwn mae angen i chi ganiatáu Hysbysiadau Cysylltiad.\n\nI gael rhybudd mae angen i chi ganiatáu hysbysiadau.\n\nOs byddwch yn newid eich meddwl, gallwch newid y caniatâd yn Gosodiadau ar unrhyw adeg.</string>
     <string name="privacy_notice">Hysbysiad preifatrwydd</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
     <string name="post_code_rationale">Mae\'r ardal cod post yn helpu i ddysgu am ledaeniad y coronafeirws mewn gwahanol ardaloedd. Mae hyn yn sicrhau y gallwn roi\'r cyngor iechyd cyhoeddus gorau posibl ar gyfer eich ardal.\n\nPeidiwch â phoeni. Ni fydd eich ardal cod post yn cael ei defnyddio i dracio\'ch lleoliad.</string>
@@ -170,8 +170,8 @@
     <string name="test_ordering_app_privacy_notice">Hysbysiad preifatrwydd yr ap</string>
     <string name="test_ordering_book_test_for_someone_else">Archebu prawf i rywun arall</string>
     <string name="error_title">Mae yna broblem</string>
-    <string name="enable_exposure_notifications_title">Er mwyn i\'r ap hwn weithio, rhaid i chi ganiatáu \'Hysbysiadau Cysylltiad\'.</string>
-    <string name="enable_exposure_notifications_rationale">Mae’r ap hwn yn defnyddio ‘Hysbysiadau Cysylltiad’ i roi gwybod i chi a ydych wedi dod i gysylltiad â defnyddwyr eraill yr ap sydd wedi nodi eu bod wedi cael prawf positif am y coronafeirws.\n\nEfallai y bydd eich ffôn yn cyfeirio at y rhain fel ‘Hysbysiadau Cysylltiad’ (Exposure Notifications) neu ‘Cofnodi Cysylltiad’ (Exposure Logging).</string>
+    <string name="enable_exposure_notifications_title">Caniatáu ‘Hysbysiadau Cysylltiad’ (Exposure notifications) er mwyn i\'r ap yma weithio</string>
+    <string name="enable_exposure_notifications_rationale">Dyma sut mae’r ap yn rhoi gwybod i chi os ydych wedi bod mewn cysylltiad agos â rhywun sydd wedi profi\'n bositif am COVID-19.\n\nEfallai y bydd eich ffôn yn cyfeirio at y rhain fel ‘Hysbysiadau Cysylltiad’ (Exposure notifications) neu ‘Cofnodi Cysylltiad’ (Exposure logging).\n\nEwch i osodiadau eich ffon a newid i ‘Caniatáu’ (Allow).</string>
     <string name="enable_exposure_notifications">Caniatáu Hysbysiadau Cysylltiad</string>
     <string name="scan_qr_code_to_check_in">Sganio poster cod QR swyddogol y GIG i fewngofnodi</string>
     <string name="how_to_scan_qr_code">Sut y mae hyn yn helpu i\'n cadw ni\'n ddiogel</string>
@@ -436,7 +436,7 @@
     <string name="ill_do_it_later">Yn ôl i’r sgrîn gartref</string>
     <string name="link_test_result_error_both_inputs_provided">Allwch chi ddim cofnodi cod canlyniad prawf a chadarnhau eich bod wedi cael canlyniad prawf negatif ar yr un pryd.</string>
     <string name="link_test_result_onset_date_title">Ydych chi\'n cofio pa ddiwrnod y gwnaethoch chi ddechrau cael unrhyw un o\'r symptomau yma?</string>
-    <string name="link_test_result_symptoms_list">Tymheredd uchel\nPeswch parhaus o\'r newydd\nNewid yn eich synnwyr arogli neu flasu</string>
+    <string name="link_test_result_symptoms_list">Tymheredd uchel\n\nPeswch parhaus o\'r newydd\n\nNewid yn eich synnwyr arogli neu flasu</string>
     <string name="link_test_result_symptoms_no">Na</string>
     <string name="link_test_result_symptoms_no_accessibility">Nac oedd, doedd gen i ddim symptomau.</string>
     <string name="link_test_result_symptoms_title">Oedd gennych chi unrhyw un o\'r symptomau coronafeirws canlynol?</string>
@@ -454,7 +454,7 @@
     <string name="qr_code_help_how_to_scan_title">Sut i sganio poster cod QR y GIG</string>
     <string name="settings_my_area_local_authority">Awdurdod lleol</string>
     <string name="user_data_risky_venue_visit_date_title">DYDDIAD YN LLEOLIAD Y RISG</string>
-    <string name="venue_check_in_title">Mwy o wybodaeth</string>
+    <string name="venue_check_in_title" />
     <string name="about_my_data_last_day_of_isolation">Diwrnod olaf hunanynysu</string>
     <string name="about_my_data_last_visited">Ymweliad diwethaf</string>
     <string name="about_my_data_symptom_onset_date">Dyddiad dechrau</string>
@@ -578,7 +578,7 @@
     <string name="symptoms_after_risky_venue_cancel_dialog_positive">Gadael</string>
     <string name="symptoms_after_risky_venue_cancel_dialog_text">Os tapiwch ‘Gadael‘, gallwch ailddechrau\'r broses yma yn nes ymlaen ac archebu prawf trwy ddewis ‘Profi am COVID-19‘ ar y sgrîn gartref.</string>
     <string name="symptoms_after_risky_venue_cancel_dialog_title">A ydych yn siwr eich bod eisiau gadael?</string>
-    <string name="symptoms_after_risky_venue_description">Tymheredd uchel\nPeswch parhaus o\'r newydd\nNewid yn eich synnwyr arogli neu flasu</string>
+    <string name="symptoms_after_risky_venue_description">Tymheredd uchel\n\nPeswch parhaus o\'r newydd\n\nNewid yn eich synnwyr arogli neu flasu</string>
     <string name="symptoms_after_risky_venue_heading">Mae’r math o brawf yn dibynnu a oes symptomau arnoch ai peidio</string>
     <string name="symptoms_after_risky_venue_negative_button">Nid oes unrhyw un o’r symptomau hyn araf fi</string>
     <string name="symptoms_after_risky_venue_paragraph_above_description">Dyma brif symptomau coronafeirws (COVID-19):</string>
@@ -678,7 +678,7 @@
     <string name="exposure_notification_vaccination_status_error_title">Gwall</string>
     <string name="exposure_notification_vaccination_status_heading">Eich statws brechu</string>
     <string name="exposure_notification_vaccination_status_title">Statws brechu</string>
-    <string name="exposure_notification_warning">Efallai y bydd angen i chi hunanynysu, gan ddibynnu ar eich oed neu\'ch statws brechu</string>
+    <string name="exposure_notification_warning">Efallai y bydd angen i chi hunanynysu yn ddibynnol ar eich oed, statws brechu neu gyfarwyddiadau gan y rhai sy\'n olrhain cyswllt</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_1_title">Darllenwch ganllawiau diweddaraf y llywodraeth</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_2_title">Dod o hyd i wefan eich awdurdod lleol</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_links_subheading">Yn chwilio am ragor o gyngor?</string>
@@ -706,10 +706,10 @@
     <string name="risky_contact_isolation_advice_already_isolating_information">Os nad ydych chi eisoes wedi gwneud hynny, gallwch archebu prawf PCR am ddim trwy \'Profi am COVID-19’ ar y sgrin gartref.</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">Mae gennych risg uchel o ledaenu COVID-19. Trwy aros gartref, gallwch eich cadw eich hun ac eraill yn ddiogel.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">Os nad ydych chi eisoes wedi gwneud hynny, gallwch archebu prawf PCR am ddim trwy \'Profi am COVID-19’ ar y sgrin gartref.</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information">Cynghorwn chi i archebu prawf PCR am ddim</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Does dim angen i chi hunanynysu</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">Mae hi yn dal yn bwysig ichi leihau eich cysylltiad ag eraill.</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">Mae ymchwil wedi dangos bod y brechlynnau\'n helpu i leihau eich risg o ddal a lledaenu COVID-19.</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information">Fe’ch cynghorir yn gryf i archebu prawf PCR am ddim, hyd yn oed os nad oes gennych chi symptomau</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Efallai na fydd angen i chi hunanynysu, oni bai eich bod wedi cael gwybod hynny’n uniongyrchol gan y rhai sy\'n olrhain cyswllt</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">Mae’n dal i fod yn bwysig lleihau eich cyswllt ag eraill, yn arbennig yr henoed a phobl fregus.</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">Helpwch atal lledaeniad COVID-19 trwy wisgo gorchudd wyneb dros eich trwyn a’ch ceg ar drafnidiaeth gyhoeddus, mewn siopau a llefydd prysur, a golchi\'ch dwylo\'n rheolaidd.</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">Archebu prawf PCR am ddim</string>
     <string name="risky_contact_isolation_advice_continue_isolataion_for">Parhewch i hunanynysu am</string>
     <string name="risky_contact_isolation_advice_faq_button_title">Cwestiynau cyffredin</string>
@@ -717,12 +717,12 @@
     <string name="risky_contact_isolation_advice_go_back_to_home">Yn ôl i’r sgrîn gartref</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">Mae hi yn dal yn bwysig ichi leihau eich cysylltiad ag eraill.</string>
     <string name="risky_contact_isolation_advice_medically_exempt_heading">Does dim angen i chi hunanynysu</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_information">Cynghorwn chi i archebu prawf PCR am ddim</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">Fe’ch cynghorir yn gryf i archebu prawf PCR am ddim, hyd yn oed os nad oes gennych chi symptomau</string>
     <string name="risky_contact_isolation_advice_medically_exempt_research">Mae ymchwil wedi dangos bod y brechlynnau\'n helpu i leihau eich risg o ddal a lledaenu COVID-19.</string>
-    <string name="risky_contact_isolation_advice_minors_information">Cynghorwn chi i archebu prawf PCR am ddim</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Does dim angen i chi hunanynysu</string>
+    <string name="risky_contact_isolation_advice_minors_information">Fe’ch cynghorir yn gryf i archebu prawf PCR am ddim, hyd yn oed os nad oes gennych chi symptomau</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Nid oes angen i chi hunanynysu, oni bai eich bod wedi cael gwybod hynny’n uniongyrchol gan y rhai sy\'n olrhain cyswllt</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">Cynghorwn chi i ddangos y neges yma i oedolyn rydych yn ymddiried ynddo.</string>
-    <string name="risky_contact_isolation_advice_minors_testing_advice">Mae hi yn dal yn bwysig ichi leihau eich cysylltiad ag eraill.</string>
+    <string name="risky_contact_isolation_advice_minors_testing_advice">Helpwch atal lledaeniad COVID-19 trwy wisgo gorchudd wyneb dros eich trwyn a’ch ceg ar drafnidiaeth gyhoeddus, mewn siopau a llefydd prysur, a golchi\'ch dwylo\'n rheolaidd.</string>
     <string name="risky_contact_isolation_advice_new_isolation_information">Hunanynyswch ac archebu prawf PCR am ddim</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">Mae gennych risg uchel o ddal a lledaenu COVID-19, hyd yn oed os nad oes symptomau arnoch. Trwy aros gartref gallwch gadw eich hun a phobl eraill yn ddiogel.</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">Archebwch brawf PCR am ddim i weld a oes COVID-19 arnoch.</string>

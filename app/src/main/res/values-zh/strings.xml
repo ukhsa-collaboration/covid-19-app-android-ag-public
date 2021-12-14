@@ -136,7 +136,7 @@
     <string name="go_back">返回</string>
     <string name="remove">清除</string>
     <string name="empty" translatable="false" />
-    <string name="onboarding_exposure_notifications_description">如果您与冠状病毒检查呈阳性的人员有过密切接触，本应用程序将向您发送警报。\n\n为了启用本应用程序“对接触者进行跟踪”的功能，您需要允许 “暴露通知”。\n\n如果您改变主意，则可以随时更改设置的权限。</string>
+    <string name="onboarding_exposure_notifications_description">如果您与冠状病毒检查呈阳性的人员有过密切接触，本应用程序将向您发送警报。\n\n为了启用本应用程序“对接触者进行跟踪”的功能，您需要允许 “暴露通知”。\n\n如果您改变主意，则可以随时更改设置的权限。\n\n如果您改变主意，则可以随时更改设置的权限。</string>
     <string name="privacy_notice">隐私声明</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
     <string name="post_code_rationale">邮政编码区域有助于了解冠状病毒在不同地区的传播。 这样可以确保我们为您所在地区提供最佳的公共卫生建议。\n\n请放心。 您的邮政编码区域将不会用于追踪您的位置。</string>
@@ -150,8 +150,8 @@
     <string name="test_ordering_app_privacy_notice">应用程序隐私声明</string>
     <string name="test_ordering_book_test_for_someone_else">为其他人预定测试</string>
     <string name="error_title">出现问题</string>
-    <string name="enable_exposure_notifications_title">为了使本应用程序正常运行，您必须允许“暴露通知”。</string>
-    <string name="enable_exposure_notifications_rationale">本应用程序使用“暴露通知”功能来通知您是否与冠状病毒检测呈阳性的本应用程序的其他用户有过接触。 \n\n您的手机可能会将这一功能显示为“暴露通知”或“暴露记录”。</string>
+    <string name="enable_exposure_notifications_title">允许“Exposure notifications”，以便应用正常工作</string>
+    <string name="enable_exposure_notifications_rationale">如果您曾与COVID-19检测结果呈阳性的对象有过密切接触，此应用将通过这种方式告知您。\n\n手机可能会将该功能称为’Exposure notifications’或’Exposure logging’。\n\n请在手机设置中将其更改为“允许’(Allow)’。</string>
     <string name="enable_exposure_notifications">启用曝光通知</string>
     <string name="scan_qr_code_to_check_in">扫描 NHS 官方二维码海报进行登记</string>
     <string name="how_to_scan_qr_code">登记如何帮助我们保持安全</string>
@@ -416,7 +416,7 @@
     <string name="ill_do_it_later">返回主屏幕</string>
     <string name="link_test_result_error_both_inputs_provided">您无法在输入检测结果代码的同时，确认您的检测结果为阴性。</string>
     <string name="link_test_result_onset_date_title">您是否记得您开始出现这些症状的最早日期？</string>
-    <string name="link_test_result_symptoms_list">发烧\n出现连续性咳嗽\n嗅觉或味觉改变</string>
+    <string name="link_test_result_symptoms_list">发烧\n\n出现连续性咳嗽\n\n嗅觉或味觉改变</string>
     <string name="link_test_result_symptoms_no">否</string>
     <string name="link_test_result_symptoms_no_accessibility">不，我没有任何症状。</string>
     <string name="link_test_result_symptoms_title">您是否出现以下任何冠状病毒症状？</string>
@@ -434,7 +434,7 @@
     <string name="qr_code_help_how_to_scan_title">如何扫描 NHS 二维码图片</string>
     <string name="settings_my_area_local_authority">地方当局</string>
     <string name="user_data_risky_venue_visit_date_title">接触风险场所日期</string>
-    <string name="venue_check_in_title">更多信息</string>
+    <string name="venue_check_in_title" />
     <string name="about_my_data_last_day_of_isolation">自我隔离的最后日期</string>
     <string name="about_my_data_last_visited">上次访问</string>
     <string name="about_my_data_symptom_onset_date">开始日期</string>
@@ -558,7 +558,7 @@
     <string name="symptoms_after_risky_venue_cancel_dialog_positive">离开</string>
     <string name="symptoms_after_risky_venue_cancel_dialog_text">如果您点击“离开”，可在之后重新启动此过程并通过从主屏幕选择“新冠肺炎检测”来预订检测。</string>
     <string name="symptoms_after_risky_venue_cancel_dialog_title">是否确定要离开？</string>
-    <string name="symptoms_after_risky_venue_description">发烧\n出现连续性咳嗽\n嗅觉或味觉改变</string>
+    <string name="symptoms_after_risky_venue_description">发烧\n\n出现连续性咳嗽\n\n嗅觉或味觉改变</string>
     <string name="symptoms_after_risky_venue_heading">检测类型取决于您是否出现相关症状</string>
     <string name="symptoms_after_risky_venue_negative_button">我没有这些症状</string>
     <string name="symptoms_after_risky_venue_paragraph_above_description">新冠肺炎 (COVID-19) 的症状如下：</string>
@@ -643,7 +643,7 @@
     <string name="exposure_notification_vaccination_status_error_title">错误</string>
     <string name="exposure_notification_vaccination_status_heading">您的接种情况</string>
     <string name="exposure_notification_vaccination_status_title">接种情况</string>
-    <string name="exposure_notification_warning">根据您的年龄或者接种情况，您可能需要自我隔离</string>
+    <string name="exposure_notification_warning">您可能需要根据自己的年龄、接种情况或接触者追踪器的指示进行自我隔离</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_1_title">请参阅最新政府指南</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_2_title">查找地方政府网站</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_links_subheading">寻求更多建议，</string>
@@ -671,10 +671,10 @@
     <string name="risky_contact_isolation_advice_already_isolating_information">如果您还没有进行检测，可以在主屏幕“COVID-19 检测”中预约 PCR 检测。</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">您面临着传播新冠病毒的高风险。待在家中可以保护您和他人的安全。</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">如果您还没有进行检测，可以在主屏幕“COVID-19 检测”中预约 PCR 检测。</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information">建议您预约免费的 PCR 检测</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">您不需要自我隔离</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">减少与他人的接触仍然很重要。</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">研究表明，疫苗有助于降低您感染和传播新冠病毒的风险。</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information">强烈建议您预约免费的PCR检测，即使您没有任何症状</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">您无需自我隔离，除非接触者追踪器直接告知您如此行事</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">减少与他人的接触仍然很重要，特别是老人和弱势群体。</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">在公共交通工具上、商店和拥挤之地正确佩戴口罩并定期洗手，这有助于阻止COVID-19的传播。</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">预约免费的 PCR 检测</string>
     <string name="risky_contact_isolation_advice_continue_isolataion_for">继续自我隔离</string>
     <string name="risky_contact_isolation_advice_faq_button_title">常见问题</string>
@@ -682,12 +682,12 @@
     <string name="risky_contact_isolation_advice_go_back_to_home">返回主屏幕</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">减少与他人的接触仍然很重要。</string>
     <string name="risky_contact_isolation_advice_medically_exempt_heading">您不需要自我隔离</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_information">建议您预约免费的 PCR 检测</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">强烈建议您预约免费的PCR检测，即使您没有任何症状</string>
     <string name="risky_contact_isolation_advice_medically_exempt_research">研究表明，疫苗有助于降低您感染和传播新冠病毒的风险。</string>
-    <string name="risky_contact_isolation_advice_minors_information">建议您预约免费的 PCR 检测</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">您不需要自我隔离</string>
+    <string name="risky_contact_isolation_advice_minors_information">强烈建议您预约免费的PCR检测，即使您没有任何症状</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">您无需自我隔离，除非接触者追踪器直接告知您如此行事</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">建议您将此消息告知您信任的成年人。</string>
-    <string name="risky_contact_isolation_advice_minors_testing_advice">减少与他人的接触仍然很重要。</string>
+    <string name="risky_contact_isolation_advice_minors_testing_advice">在公共交通工具上、商店和拥挤之地正确佩戴口罩并定期洗手，这有助于阻止COVID-19的传播。</string>
     <string name="risky_contact_isolation_advice_new_isolation_information">自我隔离并预约免费的 PCR 检测。</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">即使您没有任何症状，您感染和传播新冠病毒的风险也很高。待在家中可以保护您和他人的安全。</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">预约免费 PCR 检测，查看您是否感染了新冠病毒。</string>

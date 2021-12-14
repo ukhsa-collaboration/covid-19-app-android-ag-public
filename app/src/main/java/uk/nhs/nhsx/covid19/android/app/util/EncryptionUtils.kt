@@ -9,6 +9,7 @@ import android.security.keystore.KeyProperties
 import androidx.annotation.RequiresApi
 import androidx.security.crypto.MasterKeys
 import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.BuildConfig
 import uk.nhs.nhsx.covid19.android.app.util.StrongBoxStatus.NOT_PRESENT
 import uk.nhs.nhsx.covid19.android.app.util.StrongBoxStatus.PRESENT_ALLOWED
 import uk.nhs.nhsx.covid19.android.app.util.StrongBoxStatus.PRESENT_DISALLOWED
@@ -61,6 +62,7 @@ object AndroidStrongBoxSupport : StrongBoxSupport {
     private const val PIXEL_4A = "sunfish"
     private const val PIXEL_4A_5G = "bramble"
     private const val PIXEL_5 = "redfin"
+    private const val SAMSUNG_S20_5G = "x1q"
 
     override fun getStrongBoxStatus(context: Context): StrongBoxStatus =
         if (hasStrongBox(context)) {
@@ -80,6 +82,7 @@ object AndroidStrongBoxSupport : StrongBoxSupport {
     private fun hasStrongBoxDisallowed() =
         when (Build.DEVICE) {
             PIXEL_3, PIXEL_3_XL, PIXEL_3A, PIXEL_3A_XL, PIXEL_4, PIXEL_4_XL, PIXEL_4A, PIXEL_4A_5G, PIXEL_5 -> true
+            SAMSUNG_S20_5G -> BuildConfig.DEBUG
             else -> false
         }.also {
             if (it) Timber.d("StrongBox disallowed device: ${Build.DEVICE}")

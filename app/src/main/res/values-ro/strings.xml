@@ -56,7 +56,7 @@
     <string name="you_do_not_appear_to_have_symptoms">Nu pare să aveți simptome de coronavirus</string>
     <string name="state_and_book_a_test">și rezervați un test</string>
     <string name="state_index_info">Este posibil să aveți corovavirus</string>
-    <string name="you_need_to_self_isolate">Trebuie să vă auto-izolați</string>
+    <string name="you_need_to_self_isolate">Trebuie să vă autoizolați</string>
     <string name="test_result_positive_no_self_isolation_subtitle">Deși ați fost testat/ ă pozitiv, perioada dvs. de auto-izolare s-a încheiat</string>
     <string name="state_test_positive_info">Rezultatul testului dvs. de coronavirus este pozitiv</string>
     <string name="state_test_void_info">Nu am putut stabili dacă aveați coronavirus la momentul testării</string>
@@ -129,9 +129,9 @@
         <item quantity="other">zile rămase</item>
     </plurals>
     <plurals name="isolation_view_accessibility_description" tools:ignore="MissingQuantity">
-        <item quantity="one">Trebuie să vă auto-izolați până pe %1$s la 23:59. Mai este %2$s zi rămasă până atunci.</item>
-        <item quantity="few">Trebuie să vă auto-izolați până pe %1$s la 23:59. Sunt %2$s zile rămase până atunci.</item>
-        <item quantity="other">Trebuie să vă auto-izolați până pe %1$s la 23:59. Sunt %2$s zile rămase până atunci.</item>
+        <item quantity="one">Trebuie să vă autoizolați până pe %1$s la 23:59. Mai este %2$s zi rămasă până atunci.</item>
+        <item quantity="few">Trebuie să vă autoizolați până pe %1$s la 23:59. Sunt %2$s zile rămase până atunci.</item>
+        <item quantity="other">Trebuie să vă autoizolați până pe %1$s la 23:59. Sunt %2$s zile rămase până atunci.</item>
     </plurals>
     <plurals name="resume_contact_tracing_hours">
         <item quantity="one">%d oră</item>
@@ -144,7 +144,7 @@
     <string name="go_back">Mers înapoi</string>
     <string name="remove">Eliminare</string>
     <string name="empty" translatable="false" />
-    <string name="onboarding_exposure_notifications_description">Aplicația vă va trimite o alertă dacă v-ați aflat în apropierea unei persoane care a fost testată pozitiv pentru virus.\n\nPentru a activa urmărirea contactelor pentru această aplicație, trebuie să permiteți notificări de expunere.\n\nDacă vă răzgândiți, puteți modifica permisiunile din setări în orice moment.</string>
+    <string name="onboarding_exposure_notifications_description">Aplicația vă va trimite o alertă dacă v-ați aflat în apropierea unei persoane care a fost testată pozitiv pentru virus.\n\nPentru a activa urmărirea contactelor pentru această aplicație, trebuie să permiteți notificări de expunere.\n\nDacă vă răzgândiți, puteți modifica permisiunile din setări în orice moment.\n\nDacă vă răzgândiți, puteți modifica permisiunile din setări în orice moment.</string>
     <string name="privacy_notice">Notificare de confidențialitate</string>
     <string name="nhs_111_online_service">NHS 111 online</string>
     <string name="post_code_rationale">Codul poștal al districtului ajută la anunțarea răspândirii coronavirusului în diverse zone.  Aceasta vă asigură că putem oferi cele mai bune sfaturi posibile de sănătate publică pentru zona dvs.\n\nNu vă faceți griji. Codul poștal al districtului dvs. nu va fi utilizat pentru a vă urmări locația.</string>
@@ -158,8 +158,8 @@
     <string name="test_ordering_app_privacy_notice">Notificare de confidențialitate a aplicației</string>
     <string name="test_ordering_book_test_for_someone_else">Rezervați un test pentru altcineva</string>
     <string name="error_title">Există o problemă</string>
-    <string name="enable_exposure_notifications_title">Pentru ca aplicația să funcționeze, trebuie să activați permisiunile în dispozitivul dvs.</string>
-    <string name="enable_exposure_notifications_rationale">Această aplicație folosește „Notificări de expunere” pentru a vă informa dacă ați intrat în contact cu alți utilizatori ai aplicației care au raportat un test pozitiv pentru Coronavirus.\n\nEste posibil ca telefonul dvs. să le numească „Notificări de expunere” sau „Înregistrare expunere”.</string>
+    <string name="enable_exposure_notifications_title">Permiteți „Exposure notifications” pentru ca această aplicație să funcționeze</string>
+    <string name="enable_exposure_notifications_rationale">Astfel aplicația vă va informa dacă ați intrat în contact direct cu o persoană testată pozitiv pentru COVID-19.\n\nEste posibil ca telefonul dvs. să denumească aceste ’Exposure notifications’ ca ’Exposure logging’.\n\nMergeți la setările telefonului și modificați la ’Permiteți’ (Allow).</string>
     <string name="enable_exposure_notifications">Activare notificări de expunere</string>
     <string name="scan_qr_code_to_check_in">Scanați un poster cu cod QR NHS oficial pentru a înregistra vizita</string>
     <string name="how_to_scan_qr_code">Cum contribuie acest lucru la siguranța noastră</string>
@@ -241,7 +241,7 @@
     <string name="self_isolate_for">Autoizolare pentru</string>
     <string name="isolate_after_corona_virus_symptoms">Pentru a înțelege modul în care aplicația calculează zilele de autoizolare, accesați linkul de mai jos la întrebările frecvente.\n\nSimptomele dvs. sugerează că este posibil să aveți coronavirus. Vă rugăm să vă izolați împreună cu toate persoanele din locuința dvs. Aceasta înseamnă să stați în casă fără vizitatori. Ar trebui să vă și rezervați imediat un test gratuit. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere.\n\nVă rugăm să stați acasă și să vă auto-izolați pentru a vă păstra pe dvs. și pe ceilalți în siguranță</string>
     <string name="isolate_after_no_corona_virus_symptoms">Nu pare că aveți simptome de COVID-19, însă poate dura până la apariția acestora.\n\nVă recomandăm să stați acasă, pentru a vă menține pe dvs. și pe ceilalți în siguranță.</string>
-    <string name="your_isolation_will_finish">Auto-izolarea dvs. va lua sfârșit pe %1$s la 23:59</string>
+    <string name="your_isolation_will_finish">Autoizolare dvs. va lua sfârșit pe %1$s la 23:59</string>
     <string name="qr_code_unsupported_title">Ne pare rău, telefonul dvs. nu acceptă check-in-ul în locație</string>
     <string name="qr_code_scanning">Scanare pentru un cod oficial NHS QR</string>
     <string name="i_understand">Înțeleg</string>
@@ -337,7 +337,7 @@
     <string name="notification_title_recommended_app_update">Vă rugăm să vă actualizați aplicația NHS COVID-19 cu ultima versiune</string>
     <string name="test_ordering_getting_tested_description">Alegerea „Rezervați un test pentru dvs.” vă va duce la website-ul guvernului pentru testarea coronavirusului, unde vi se va cere să completați câteva detalii personale (cum ar fi adresa dvs.) pentru a obține un test. Nimic din ce introduceți pe website nu va fi distribuit.\n\nVa fi creat un \"jeton\" (\"token\") digital care să ne ajute să vă obținem rezultatele înapoi în aplicație.</string>
     <string name="update_in_play_store">Actualizați aplicația acum</string>
-    <string name="updated_privacy_control_text">Vă mulțumim că utilizați aplicația NHS pentru COVID-19. \n\nAm făcut modificări în aplicație pentru a ne alinia la noua politică. Persoanelor vaccinate cu ambele doze sau sub 18 ani nu li se mai recomandă să se autoizoleze dacă au intrat în contact cu o persoană care a testat pozitiv pentru COVID-19, însă li se recomandă să se testeze.\n\nDacă vă autoizolați deja pentru că ați intrat în contact cu cineva infectat și sunteți vaccinat /ă cu ambele doze sau aveți sub 18 ani, nu trebuie să continuați autoizolarea. Dacă aveți simptome sau ați testat pozitiv, trebuie să finalizați perioada de autoizolare.\n\nPăstrați aplicația pe dispozitiv pentru a fi la curent cu cele mai recente recomandări și pentru a ajuta la oprirea răspândirii COVID-19.\n\nTermenii de utilizare și Notificarea privind confidențialitatea au fost actualizate pentru a reflecta aceste modificări.</string>
+    <string name="updated_privacy_control_text">Vă mulțumim că utilizați aplicația NHS pentru COVID-19. \n\nAm făcut modificări în aplicație pentru a ne alinia la noua politică. Persoanelor vaccinate cu ambele doze sau sub 18 ani nu li se mai recomandă să se autoizoleze dacă au intrat în contact cu o persoană care a testat pozitiv pentru COVID-19, însă li se recomandă să se testeze.\n\nDacă vă autoizolați deja pentru că ați intrat în contact cu cineva infectat și sunteți vaccinat /ă cu ambele doze sau aveți sub 18 ani, nu trebuie să continuați autoizolare. Dacă aveți simptome sau ați testat pozitiv, trebuie să finalizați perioada de autoizolare.\n\nPăstrați aplicația pe dispozitiv pentru a fi la curent cu cele mai recente recomandări și pentru a ajuta la oprirea răspândirii COVID-19.\n\nTermenii de utilizare și Notificarea privind confidențialitatea au fost actualizate pentru a reflecta aceste modificări.</string>
     <string name="updated_privacy_title">Schimbări în politicile noastre</string>
     <string name="checkin_information_title_new">Mai multe informații</string>
     <string name="confirm_and_start">Confirmare</string>
@@ -424,7 +424,7 @@
     <string name="ill_do_it_later">Înapoi la ecranul de pornire</string>
     <string name="link_test_result_error_both_inputs_provided">Nu puteți introduce un cod de rezultat al testului și confirma că rezultatul este negativ în același timp.</string>
     <string name="link_test_result_onset_date_title">Vă amintiți prima dată când ați început să aveți oricare dintre aceste simptome?</string>
-    <string name="link_test_result_symptoms_list">Temperatură ridicată\nTuse recentă continuă\nModificarea mirosului sau gustului</string>
+    <string name="link_test_result_symptoms_list">Temperatură ridicată\n\nTuse recentă continuă\n\nModificarea mirosului sau gustului</string>
     <string name="link_test_result_symptoms_no">Nu</string>
     <string name="link_test_result_symptoms_no_accessibility">Nu, nu am avut simptome.</string>
     <string name="link_test_result_symptoms_title">Ați avut vreunul dintre următoarele simptome de coronavirus?</string>
@@ -442,7 +442,7 @@
     <string name="qr_code_help_how_to_scan_title">Cum se scanează un afiș cu cod QR NHS</string>
     <string name="settings_my_area_local_authority">Autoritate locală</string>
     <string name="user_data_risky_venue_visit_date_title">DATA LA CARE AȚI VIZITAT FOCARUL</string>
-    <string name="venue_check_in_title">Mai multe informații</string>
+    <string name="venue_check_in_title" />
     <string name="about_my_data_last_day_of_isolation">Ultima zi de autoizolare</string>
     <string name="about_my_data_last_visited">Ultima vizită</string>
     <string name="about_my_data_symptom_onset_date">Data de început</string>
@@ -566,7 +566,7 @@
     <string name="symptoms_after_risky_venue_cancel_dialog_positive">Renunțați</string>
     <string name="symptoms_after_risky_venue_cancel_dialog_text">Dacă apăsați pe „Renunțați”, puteți reporni procesul mai târziu și rezerva un test, selectând „Testarea COVID-19” din ecranul de pornire.</string>
     <string name="symptoms_after_risky_venue_cancel_dialog_title">Sunteți sigur /ă că vreți să renunțați?</string>
-    <string name="symptoms_after_risky_venue_description">Temperatură ridicată\nTuse recentă continuă\nModificarea mirosului sau gustului</string>
+    <string name="symptoms_after_risky_venue_description">Temperatură ridicată\n\nTuse recentă continuă\n\nModificarea mirosului sau gustului</string>
     <string name="symptoms_after_risky_venue_heading">Tipul testului depinde de prezența sau absența simptomelor</string>
     <string name="symptoms_after_risky_venue_negative_button">Nu am niciunul dintre aceste simptome</string>
     <string name="symptoms_after_risky_venue_paragraph_above_description">Principalele simptome ale coronavirusului (COVID-19) sunt:</string>
@@ -657,7 +657,7 @@
     <string name="exposure_notification_vaccination_status_error_title">Eroare</string>
     <string name="exposure_notification_vaccination_status_heading">Situația vaccinării</string>
     <string name="exposure_notification_vaccination_status_title">Situația vaccinării</string>
-    <string name="exposure_notification_warning">Este posibil să fiți nevoit /ă să vă autoizolați în funcție de vârstă și de situația vaccinării.</string>
+    <string name="exposure_notification_warning">Este posibil să fie nevoie să vă auto-izolati, în funcție de vârstă, starea de vaccinare sau instrucțiunile de la directia de sănătate publică Test and Trace</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_1_title">Citiți ultimele instrucțiuni guvernamentale</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_2_title">Găsiți pagina web a autorității locale</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_links_subheading">Căutați mai multe recomandări?</string>
@@ -677,18 +677,18 @@
     <string name="isolation_hub_financial_support_description">Aflați mai multe despre cum să solicitați plata unei indemnizații de sprijin financiar în timpul perioadei de autoizolare</string>
     <string name="isolation_hub_financial_support_title">Verificați dacă sunteți eligibil /ă pentru sprijin financiar</string>
     <string name="notification_channel_isolation_hub_reminder_description">These notifications inform about available resources when self isolating</string>
-    <string name="notification_channel_isolation_hub_reminder_name">Asistență cu autoizolarea</string>
+    <string name="notification_channel_isolation_hub_reminder_name">Asistență cu autoizolare</string>
     <string name="notification_text_isolation_hub_reminder">Apăsați aici pentru recomandări și asistență.</string>
-    <string name="notification_title_isolation_hub_reminder">Asistență cu autoizolarea</string>
+    <string name="notification_title_isolation_hub_reminder">Asistență cu autoizolare</string>
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">Înapoi la ecranul de pornire</string>
     <string name="risky_contact_isolation_advice_already_isolating_information">Dacă nu ați făcut deja acest lucru, puteți rezerva un test gratuit PCR în secțiunea „Testarea pentru COVID-19” de pe ecranul de pornire</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">Prezentați risc ridicat de răspândire a COVID-19. Rămânând acasă, vă mențineți pe dvs. și pe ceilalți în siguranță.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">Dacă nu ați făcut deja acest lucru, puteți rezerva un test gratuit PCR în secțiunea „Testarea pentru COVID-19” de pe ecranul de pornire</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information">Vă recomandăm să rezervați un test PCR gratuit</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Nu trebuie să vă autoizolați</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">Este încă important să vă reduceți contactul cu ceilalți.</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">Cercetările au arătat că vaccinurile vă ajută să reduceți riscul de a lua și transmite COVID-19.</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information">Vi se recomandă insistent să rezervați un test PCR gratuit, chiar dacă nu aveți simptome</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Nu trebuie să vă auto-izolati, cu excepția cazului în care vi se spune direct de către directia de sănătate publică Test and Trace</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">În continuare, este important să reduceți contactul cu alte persoane, în special cele în vârstă și vulnerabile.</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">Ajutați la oprirea răspândirii COVID-19 prin purtarea mastii de protecție pe nas și pe gură în transportul public, în magazine și în locuri aglomerate și spălându-vă pe mâini în mod regulat.</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">Rezervați un test PCR gratuit</string>
     <string name="risky_contact_isolation_advice_continue_isolataion_for">Continuați să vă autoizolați pentru</string>
     <string name="risky_contact_isolation_advice_faq_button_title">Întrebări frecvente</string>
@@ -696,18 +696,18 @@
     <string name="risky_contact_isolation_advice_go_back_to_home">Înapoi la ecranul de pornire</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">Este încă important să vă reduceți contactul cu ceilalți.</string>
     <string name="risky_contact_isolation_advice_medically_exempt_heading">Nu trebuie să vă autoizolați</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_information">Vă recomandăm să rezervați un test PCR gratuit</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">Vi se recomandă insistent să rezervați un test PCR gratuit, chiar dacă nu aveți simptome</string>
     <string name="risky_contact_isolation_advice_medically_exempt_research">Cercetările au arătat că vaccinurile vă ajută să reduceți riscul de a lua și transmite COVID-19.</string>
-    <string name="risky_contact_isolation_advice_minors_information">Vă recomandăm să rezervați un test PCR gratuit</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Nu trebuie să vă autoizolați</string>
+    <string name="risky_contact_isolation_advice_minors_information">Vi se recomandă insistent să rezervați un test PCR gratuit, chiar dacă nu aveți simptome</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Nu trebuie să vă auto-izolati, cu excepția cazului în care vi se spune direct de către directia de sănătate publică Test and Trace</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">Vă recomandăm să arătați acest mesaj unui adult de încredere.</string>
-    <string name="risky_contact_isolation_advice_minors_testing_advice">Este încă important să vă reduceți contactul cu ceilalți.</string>
+    <string name="risky_contact_isolation_advice_minors_testing_advice">Ajutați la oprirea răspândirii COVID-19 prin purtarea mastii de protecție pe nas și pe gură în transportul public, în magazine și în locuri aglomerate și spălându-vă pe mâini în mod regulat.</string>
     <string name="risky_contact_isolation_advice_new_isolation_information">Autoizolați-vă și rezervați un test PCR gratuit</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">Prezentați un risc ridicat de a lua și transmite COVID-19, chiar dacă nu aveți niciun simptom. Stând acasă, vă puteți menține atât pe dvs., cât și pe ceilalți în siguranță.</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">Rezervați un test PCR gratuit pentru a verifica dacă aveți COVID-19.</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">Instrucțiuni NHS</string>
     <string name="risky_contact_isolation_advice_self_isolate_for">Autoizolare pentru</string>
-    <string name="status_option_isolation_hub">Autoizolarea</string>
+    <string name="status_option_isolation_hub">Autoizolare</string>
     <string name="test_result_negative_continue_self_isolate_nhs_guidance_label">Instrucțiuni NHS</string>
     <string name="test_result_void_continue_self_isolate_nhs_guidance_label">Instrucțiuni NHS</string>
     <string name="testing_hub_book_lfd_test_description">Aflați mai multe despre diferitele tipuri de teste pentru COVID-19 şi despre cum vă puteți testa</string>
