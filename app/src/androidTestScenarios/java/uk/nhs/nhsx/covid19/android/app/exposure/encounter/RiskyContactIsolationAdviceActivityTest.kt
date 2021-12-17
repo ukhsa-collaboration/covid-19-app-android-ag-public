@@ -8,6 +8,8 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationA
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.MEDICALLY_EXEMPT
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.MINOR
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.NONE
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.RiskyContactIsolationAdviceRobot
@@ -31,7 +33,7 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
         }
 
         robot.checkActivityIsDisplayed()
-        robot.checkIsInNotIsolatingAsMinorViewState(testingAdviceToShow = Default)
+        robot.checkIsInNotIsolatingAsMinorViewState(country = ENGLAND, testingAdviceToShow = Default)
     }
 
     @Test
@@ -44,7 +46,7 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
         }
 
         robot.checkActivityIsDisplayed()
-        robot.checkIsInNotIsolatingAsMinorViewState(testingAdviceToShow = Default)
+        robot.checkIsInNotIsolatingAsMinorViewState(country = WALES, testingAdviceToShow = Default)
     }
 
     @Test
@@ -59,7 +61,7 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
         val pcrAdviceDate = LocalDate.now(testAppContext.clock).plusDays(3)
 
         robot.checkActivityIsDisplayed()
-        robot.checkIsInNotIsolatingAsMinorViewState(testingAdviceToShow = WalesWithinAdviceWindow(date = pcrAdviceDate))
+        robot.checkIsInNotIsolatingAsMinorViewState(country = WALES, testingAdviceToShow = WalesWithinAdviceWindow(date = pcrAdviceDate))
     }
     // endregion
 
@@ -73,7 +75,7 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
         }
 
         robot.checkActivityIsDisplayed()
-        robot.checkIsInNotIsolatingAsFullyVaccinatedViewState(testingAdviceToShow = Default)
+        robot.checkIsInNotIsolatingAsFullyVaccinatedViewState(country = ENGLAND, testingAdviceToShow = Default)
     }
 
     @Test
@@ -86,7 +88,7 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
         }
 
         robot.checkActivityIsDisplayed()
-        robot.checkIsInNotIsolatingAsFullyVaccinatedViewState(testingAdviceToShow = Default)
+        robot.checkIsInNotIsolatingAsFullyVaccinatedViewState(country = WALES, testingAdviceToShow = Default)
     }
 
     @Test
@@ -101,7 +103,7 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
         val pcrAdviceDate = LocalDate.now(testAppContext.clock).plusDays(3)
 
         robot.checkActivityIsDisplayed()
-        robot.checkIsInNotIsolatingAsFullyVaccinatedViewState(testingAdviceToShow = WalesWithinAdviceWindow(date = pcrAdviceDate))
+        robot.checkIsInNotIsolatingAsFullyVaccinatedViewState(country = WALES, testingAdviceToShow = WalesWithinAdviceWindow(date = pcrAdviceDate))
     }
     // endregion
 

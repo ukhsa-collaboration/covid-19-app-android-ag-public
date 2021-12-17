@@ -22,6 +22,9 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.Default
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.WalesWithinAdviceWindow
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.IconTextViewMatcher.Companion.withIconAndText
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateColor
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateStringResource
@@ -38,10 +41,25 @@ class RiskyContactIsolationAdviceRobot {
         }
     }
 
-    fun checkIsInNotIsolatingAsMinorViewState(testingAdviceToShow: TestingAdviceToShow) {
+    fun checkIsInNotIsolatingAsMinorViewState(country: SupportedCountry, testingAdviceToShow: TestingAdviceToShow) {
+        val adviceValues = when (country) {
+            ENGLAND -> RiskyContactIsolationAdviceValues(
+                title = R.string.risky_contact_isolation_advice_minors_no_self_isolation_required,
+                banner = R.string.risky_contact_isolation_advice_minors_information,
+                adviceOne = R.string.risky_contact_isolation_advice_minors_testing_advice,
+                adviceTwo = R.string.risky_contact_isolation_advice_minors_show_to_adult_advice
+            )
+            WALES -> RiskyContactIsolationAdviceValues(
+                title = R.string.risky_contact_isolation_advice_minors_no_self_isolation_required_wls,
+                banner = R.string.risky_contact_isolation_advice_minors_information_wls,
+                adviceOne = R.string.risky_contact_isolation_advice_minors_testing_advice_wls,
+                adviceTwo = R.string.risky_contact_isolation_advice_minors_show_to_adult_advice_wls
+            )
+        }
+
         onView(withId(R.id.riskyContactIsolationAdviceTitle))
             .perform(scrollTo())
-            .check(matches(withText(R.string.risky_contact_isolation_advice_minors_no_self_isolation_required)))
+            .check(matches(withText(adviceValues.title)))
 
         onView(withId(R.id.riskyContactIsolationAdviceRemainingDaysInIsolation))
             .check(matches(not(isDisplayed())))
@@ -49,17 +67,17 @@ class RiskyContactIsolationAdviceRobot {
         onView(withId(R.id.riskyContactIsolationAdviceStateInfoView))
             .perform(scrollTo())
             .apply {
-                check(matches(withStateStringResource(R.string.risky_contact_isolation_advice_minors_information)))
+                check(matches(withStateStringResource(adviceValues.banner)))
                 check(matches(withStateColor(R.color.amber)))
             }
 
         checkAdviceList {
             checkAdvice(
-                stringResId = R.string.risky_contact_isolation_advice_minors_testing_advice,
+                stringResId = adviceValues.adviceOne,
                 drawableRes = R.drawable.ic_social_distancing
             )
             checkAdvice(
-                stringResId = R.string.risky_contact_isolation_advice_minors_show_to_adult_advice,
+                stringResId = adviceValues.adviceTwo,
                 drawableRes = R.drawable.ic_family
             )
             if (testingAdviceToShow is WalesWithinAdviceWindow) {
@@ -83,10 +101,25 @@ class RiskyContactIsolationAdviceRobot {
             .check(matches(withText(R.string.risky_contact_isolation_advice_go_back_to_home)))
     }
 
-    fun checkIsInNotIsolatingAsFullyVaccinatedViewState(testingAdviceToShow: TestingAdviceToShow) {
+    fun checkIsInNotIsolatingAsFullyVaccinatedViewState(country: SupportedCountry, testingAdviceToShow: TestingAdviceToShow) {
+        val adviceValues = when (country) {
+            ENGLAND -> RiskyContactIsolationAdviceValues(
+                title = R.string.risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required,
+                banner = R.string.risky_contact_isolation_advice_already_vaccinated_information,
+                adviceOne = R.string.risky_contact_isolation_advice_already_vaccinated_vaccine_research,
+                adviceTwo = R.string.risky_contact_isolation_advice_already_vaccinated_testing_advice
+            )
+            WALES -> RiskyContactIsolationAdviceValues(
+                title = R.string.risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required_wls,
+                banner = R.string.risky_contact_isolation_advice_already_vaccinated_information_wls,
+                adviceOne = R.string.risky_contact_isolation_advice_already_vaccinated_vaccine_research_wls,
+                adviceTwo = R.string.risky_contact_isolation_advice_already_vaccinated_testing_advice_wls
+            )
+        }
+
         onView(withId(R.id.riskyContactIsolationAdviceTitle))
             .perform(scrollTo())
-            .check(matches(withText(R.string.risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required)))
+            .check(matches(withText(adviceValues.title)))
 
         onView(withId(R.id.riskyContactIsolationAdviceRemainingDaysInIsolation))
             .check(matches(not(isDisplayed())))
@@ -94,17 +127,17 @@ class RiskyContactIsolationAdviceRobot {
         onView(withId(R.id.riskyContactIsolationAdviceStateInfoView))
             .perform(scrollTo())
             .apply {
-                check(matches(withStateStringResource(R.string.risky_contact_isolation_advice_already_vaccinated_information)))
+                check(matches(withStateStringResource(adviceValues.banner)))
                 check(matches(withStateColor(R.color.amber)))
             }
 
         checkAdviceList {
             checkAdvice(
-                stringResId = R.string.risky_contact_isolation_advice_already_vaccinated_vaccine_research,
+                stringResId = adviceValues.adviceOne,
                 drawableRes = R.drawable.ic_info
             )
             checkAdvice(
-                stringResId = R.string.risky_contact_isolation_advice_already_vaccinated_testing_advice,
+                stringResId = adviceValues.adviceTwo,
                 drawableRes = R.drawable.ic_social_distancing
             )
             if (testingAdviceToShow is WalesWithinAdviceWindow) {
@@ -297,4 +330,11 @@ class RiskyContactIsolationAdviceRobot {
         onView(allOf(instanceOf(AppCompatImageButton::class.java), isDescendantOfA(withId(R.id.primaryToolbar))))
             .check(matches(withDrawable(tint = R.color.nhs_blue, id = R.drawable.ic_close_primary)))
     }
+
+    private data class RiskyContactIsolationAdviceValues(
+        @StringRes val title: Int,
+        @StringRes val banner: Int,
+        @StringRes val adviceOne: Int,
+        @StringRes val adviceTwo: Int
+    )
 }

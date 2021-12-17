@@ -8,6 +8,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.UnknownExposureDate
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra
@@ -22,6 +23,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationA
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsFullyVaccinated
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsMedicallyExempt
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsMinor
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import java.time.Clock
 
@@ -29,7 +31,8 @@ class RiskyContactIsolationAdviceViewModel @AssistedInject constructor(
     private val isolationStateMachine: IsolationStateMachine,
     @Assisted private val optOutOfContactIsolation: OptOutOfContactIsolationExtra,
     private val evaluateTestingAdviceToShow: EvaluateTestingAdviceToShow,
-    private val clock: Clock
+    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider,
+    private val clock: Clock,
 ) : ViewModel() {
 
     private val viewStateLiveData = MutableLiveData<ViewState>()
@@ -57,8 +60,11 @@ class RiskyContactIsolationAdviceViewModel @AssistedInject constructor(
             AlreadyIsolating(remainingDaysInIsolation, testingAdviceToShow)
         } else {
             when (optOutOfContactIsolation) {
-                MINOR -> NotIsolatingAsMinor(testingAdviceToShow)
-                FULLY_VACCINATED -> NotIsolatingAsFullyVaccinated(testingAdviceToShow)
+                MINOR -> NotIsolatingAsMinor(localAuthorityPostCodeProvider.requirePostCodeDistrict().supportedCountry!!, testingAdviceToShow)
+                FULLY_VACCINATED -> NotIsolatingAsFullyVaccinated(
+                    localAuthorityPostCodeProvider.requirePostCodeDistrict().supportedCountry!!,
+                    testingAdviceToShow
+                )
                 MEDICALLY_EXEMPT -> NotIsolatingAsMedicallyExempt
                 NONE -> NewlyIsolating(remainingDaysInIsolation, testingAdviceToShow)
             }
@@ -75,10 +81,19 @@ class RiskyContactIsolationAdviceViewModel @AssistedInject constructor(
     }
 
     sealed class ViewState {
-        data class NewlyIsolating(val remainingDaysInIsolation: Int, val testingAdviceToShow: TestingAdviceToShow) : ViewState()
-        data class AlreadyIsolating(val remainingDaysInIsolation: Int, val testingAdviceToShow: TestingAdviceToShow) : ViewState()
-        data class NotIsolatingAsFullyVaccinated(val testingAdviceToShow: TestingAdviceToShow) : ViewState()
-        data class NotIsolatingAsMinor(val testingAdviceToShow: TestingAdviceToShow) : ViewState()
+        data class NewlyIsolating(val remainingDaysInIsolation: Int, val testingAdviceToShow: TestingAdviceToShow) :
+            ViewState()
+
+        data class AlreadyIsolating(val remainingDaysInIsolation: Int, val testingAdviceToShow: TestingAdviceToShow) :
+            ViewState()
+
+        data class NotIsolatingAsFullyVaccinated(
+            val country: SupportedCountry,
+            val testingAdviceToShow: TestingAdviceToShow
+        ) : ViewState()
+
+        data class NotIsolatingAsMinor(val country: SupportedCountry, val testingAdviceToShow: TestingAdviceToShow) :
+            ViewState()
         object NotIsolatingAsMedicallyExempt : ViewState()
     }
 

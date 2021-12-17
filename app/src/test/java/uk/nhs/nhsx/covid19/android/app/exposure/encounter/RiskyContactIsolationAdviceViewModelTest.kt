@@ -9,6 +9,7 @@ import io.mockk.verify
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.Default
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.UnknownExposureDate
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra
@@ -25,6 +26,8 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationA
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsFullyVaccinated
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsMedicallyExempt
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsMinor
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import java.time.Clock
@@ -41,6 +44,9 @@ class RiskyContactIsolationAdviceViewModelTest {
     private val isolationLogicalState = mockk<IsolationLogicalState>()
     private val isolationStateMachine = mockk<IsolationStateMachine>()
     private val evaluateTestingAdviceToShow = mockk<EvaluateTestingAdviceToShow>()
+    private var localAuthorityPostCodeProvider = mockk<LocalAuthorityPostCodeProvider> {
+        coEvery { requirePostCodeDistrict().supportedCountry } returns ENGLAND
+    }
     private val fixedClock = Clock.fixed(Instant.parse("2020-01-01T10:00:00Z"), ZoneOffset.UTC)
     private val expectedDaysInIsolation = 5L
     private val expectedTestingAdviceToShow = Default
@@ -109,17 +115,39 @@ class RiskyContactIsolationAdviceViewModelTest {
     }
 
     @Test
-    fun `when minor then emit NotIsolatingAsMinor`() {
+    fun `when minor then emit NotIsolatingAsMinor for England`() {
         createTestSubject(optOutOfContactIsolationExtra = MINOR)
 
-        verify { viewStateObserver.onChanged(NotIsolatingAsMinor(expectedTestingAdviceToShow)) }
+        verify { viewStateObserver.onChanged(NotIsolatingAsMinor(ENGLAND, expectedTestingAdviceToShow)) }
     }
 
     @Test
-    fun `when fully vaccinated then emit NotIsolatingAsFullyVaccinated`() {
+    fun `when minor then emit NotIsolatingAsMinor for Wales`() {
+        localAuthorityPostCodeProvider = mockk {
+            coEvery { requirePostCodeDistrict().supportedCountry } returns WALES
+        }
+
+        createTestSubject(optOutOfContactIsolationExtra = MINOR)
+
+        verify { viewStateObserver.onChanged(NotIsolatingAsMinor(WALES, expectedTestingAdviceToShow)) }
+    }
+
+    @Test
+    fun `when fully vaccinated then emit NotIsolatingAsFullyVaccinated for England`() {
         createTestSubject(optOutOfContactIsolationExtra = FULLY_VACCINATED)
 
-        verify { viewStateObserver.onChanged(NotIsolatingAsFullyVaccinated(expectedTestingAdviceToShow)) }
+        verify { viewStateObserver.onChanged(NotIsolatingAsFullyVaccinated(ENGLAND, expectedTestingAdviceToShow)) }
+    }
+
+    @Test
+    fun `when fully vaccinated then emit NotIsolatingAsFullyVaccinated for Wales`() {
+        localAuthorityPostCodeProvider = mockk {
+            coEvery { requirePostCodeDistrict().supportedCountry } returns WALES
+        }
+
+        createTestSubject(optOutOfContactIsolationExtra = FULLY_VACCINATED)
+
+        verify { viewStateObserver.onChanged(NotIsolatingAsFullyVaccinated(WALES, expectedTestingAdviceToShow)) }
     }
 
     @Test
@@ -162,6 +190,7 @@ class RiskyContactIsolationAdviceViewModelTest {
                 isolationStateMachine,
                 optOutOfContactIsolationExtra,
                 evaluateTestingAdviceToShow,
+                localAuthorityPostCodeProvider,
                 fixedClock
             )
 

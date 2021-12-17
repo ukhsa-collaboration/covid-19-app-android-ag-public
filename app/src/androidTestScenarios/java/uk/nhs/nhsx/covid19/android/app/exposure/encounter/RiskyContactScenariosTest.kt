@@ -8,6 +8,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionTyp
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.DoseDate
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.FullyVaccinated
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.MedicallyExempt
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -197,7 +198,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
         exposureNotificationReviewRobot.clickSubmitButton()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMinorViewState(Default)
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMinorViewState(country = ENGLAND, Default)
     }
 
     @Test
@@ -222,7 +223,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
         exposureNotificationReviewRobot.clickSubmitButton()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(Default)
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(ENGLAND, Default)
     }
 
     @Test

@@ -9,6 +9,8 @@ import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionTyp
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.DoseDate
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.FullyVaccinated
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.MedicallyExempt
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationAgeLimitRobot
@@ -53,7 +55,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMinorViewState(testingAdviceToShow = Default)
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMinorViewState(country = ENGLAND, testingAdviceToShow = Default)
     }
 
     @Test
@@ -91,6 +93,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
+            country = ENGLAND,
             testingAdviceToShow = Default
         )
     }
@@ -133,6 +136,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
+            country = ENGLAND,
             testingAdviceToShow = Default
         )
     }
@@ -217,6 +221,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
+            country = ENGLAND,
             testingAdviceToShow = Default
         )
     }
@@ -410,6 +415,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
+            country = WALES,
             testingAdviceToShow = WalesWithinAdviceWindow(date = LocalDate.now(testAppContext.clock).plusDays(6))
         )
     }
@@ -481,6 +487,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
+            country = WALES,
             testingAdviceToShow = WalesWithinAdviceWindow(date = LocalDate.now(testAppContext.clock).plusDays(6))
         )
     }

@@ -7,8 +7,6 @@ import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.R.drawable
-import uk.nhs.nhsx.covid19.android.app.R.string
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.assistedViewModel
@@ -28,6 +26,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationA
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsFullyVaccinated
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsMedicallyExempt
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsMinor
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.util.uiLongFormat
@@ -67,8 +66,8 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
     private fun configureToolbar() =
         setCloseToolbar(
             binding.primaryToolbar.toolbar,
-            titleResId = string.empty,
-            closeIndicator = drawable.ic_close_primary
+            titleResId = R.string.empty,
+            closeIndicator = R.drawable.ic_close_primary
         ) {
             navigateToStatusActivity()
         }
@@ -111,8 +110,18 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
                 viewState.remainingDaysInIsolation,
                 viewState.testingAdviceToShow
             )
-            is NotIsolatingAsMinor -> handleNotIsolatingAsMinor(viewState.testingAdviceToShow)
-            is NotIsolatingAsFullyVaccinated -> handleNotIsolatingAsFullyVaccinated(viewState.testingAdviceToShow)
+            is NotIsolatingAsMinor -> {
+                if (viewState.country == ENGLAND)
+                    handleNotIsolatingAsMinorForEngland()
+                else
+                    handleNotIsolatingAsMinorForWales(viewState.testingAdviceToShow)
+            }
+            is NotIsolatingAsFullyVaccinated -> {
+                if (viewState.country == ENGLAND)
+                    handleNotIsolatingAsFullyVaccinatedForEngland()
+                else
+                    handleNotIsolatingAsFullyVaccinatedForWales(viewState.testingAdviceToShow)
+            }
             NotIsolatingAsMedicallyExempt -> handleNotIsolatingAsMedicallyExempt()
         }
     }
@@ -185,7 +194,7 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
         addAdvice(getString(stringResId, formattedDate), R.drawable.ic_get_free_test)
     }
 
-    private fun handleNotIsolatingAsFullyVaccinated(testingAdviceToShow: TestingAdviceToShow) = with(binding) {
+    private fun handleNotIsolatingAsFullyVaccinatedForEngland() = with(binding) {
         riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_book_test)
         riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required)
         riskyContactIsolationAdviceRemainingDaysInIsolation.gone()
@@ -196,6 +205,24 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
         addAdvice(R.string.risky_contact_isolation_advice_already_vaccinated_vaccine_research, R.drawable.ic_info)
         addAdvice(
             R.string.risky_contact_isolation_advice_already_vaccinated_testing_advice,
+            R.drawable.ic_social_distancing
+        )
+
+        setupActionButtonsForNotIsolating()
+        setAccessibilityTitle(isIsolating = false)
+    }
+
+    private fun handleNotIsolatingAsFullyVaccinatedForWales(testingAdviceToShow: TestingAdviceToShow) = with(binding) {
+        riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_book_test)
+        riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required_wls)
+        riskyContactIsolationAdviceRemainingDaysInIsolation.gone()
+        riskyContactIsolationAdviceStateInfoView.stateText =
+            getString(R.string.risky_contact_isolation_advice_already_vaccinated_information_wls)
+
+        adviceContainer.removeAllViews()
+        addAdvice(R.string.risky_contact_isolation_advice_already_vaccinated_vaccine_research_wls, R.drawable.ic_info)
+        addAdvice(
+            R.string.risky_contact_isolation_advice_already_vaccinated_testing_advice_wls,
             R.drawable.ic_social_distancing
         )
         if (testingAdviceToShow is WalesWithinAdviceWindow) {
@@ -209,12 +236,27 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
         setAccessibilityTitle(isIsolating = false)
     }
 
-    private fun handleNotIsolatingAsMinor(testingAdviceToShow: TestingAdviceToShow) = with(binding) {
+    private fun handleNotIsolatingAsMinorForEngland() = with(binding) {
         riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_book_test)
         riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_minors_no_self_isolation_required)
         riskyContactIsolationAdviceRemainingDaysInIsolation.gone()
         riskyContactIsolationAdviceStateInfoView.stateText =
             getString(R.string.risky_contact_isolation_advice_minors_information)
+
+        adviceContainer.removeAllViews()
+        addAdvice(R.string.risky_contact_isolation_advice_minors_testing_advice, R.drawable.ic_social_distancing)
+        addAdvice(R.string.risky_contact_isolation_advice_minors_show_to_adult_advice, R.drawable.ic_family)
+
+        setupActionButtonsForNotIsolating()
+        setAccessibilityTitle(isIsolating = false)
+    }
+
+    private fun handleNotIsolatingAsMinorForWales(testingAdviceToShow: TestingAdviceToShow) = with(binding) {
+        riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_book_test)
+        riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_minors_no_self_isolation_required_wls)
+        riskyContactIsolationAdviceRemainingDaysInIsolation.gone()
+        riskyContactIsolationAdviceStateInfoView.stateText =
+            getString(R.string.risky_contact_isolation_advice_minors_information_wls)
 
         adviceContainer.removeAllViews()
         if (testingAdviceToShow is WalesWithinAdviceWindow) {
@@ -223,8 +265,8 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
                 testingAdviceToShow.date
             )
         }
-        addAdvice(R.string.risky_contact_isolation_advice_minors_testing_advice, R.drawable.ic_social_distancing)
-        addAdvice(R.string.risky_contact_isolation_advice_minors_show_to_adult_advice, R.drawable.ic_family)
+        addAdvice(R.string.risky_contact_isolation_advice_minors_testing_advice_wls, R.drawable.ic_social_distancing)
+        addAdvice(R.string.risky_contact_isolation_advice_minors_show_to_adult_advice_wls, R.drawable.ic_family)
 
         setupActionButtonsForNotIsolating()
         setAccessibilityTitle(isIsolating = false)
