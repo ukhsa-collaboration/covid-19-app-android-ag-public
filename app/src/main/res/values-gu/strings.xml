@@ -703,8 +703,8 @@
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">એક પરીક્ષણ કરાવો</string>
     <string name="contact_case_continue_isolation_list_item_testing_with_date">જો તમે ન કરી હોય તો, તમને જેમ બને એમ જલદી ફ્રિ PCR  ટેસ્ટ કરવાની સલાહ આપવામાં આવે છે. તમારે પહેલી ટેસ્ટ પછી તમે બીજી PCR ટેસ્ટ બૂક આ %s તારીખે કરાવી શકો.</string>
-    <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">તમને જેમ બને એમ જલદી ફ્રિ PCR  ટેસ્ટ કરવાની સલાહ આપવામાં આવે છે. તમારે પહેલી ટેસ્ટ પછી તમે બીજી PCR ટેસ્ટ બૂક આ %s તારીખે કરાવી શકો.</string>
-    <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">તમને જેમ બને એમ જલદી ફ્રિ PCR  ટેસ્ટ કરવાની સલાહ આપવામાં આવે છે. તમારે પહેલી ટેસ્ટ પછી તમે બીજી PCR ટેસ્ટ બૂક આ %s તારીખે કરાવી શકો.</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">તમને લક્ષણો હોય તો પણ મફત PCR ટેસ્ટ બૂક કરાવો.</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">તમને લક્ષણો હોય તો પણ મફત PCR ટેસ્ટ બૂક કરાવો.</string>
     <string name="contact_case_start_isolation_list_item_testing_with_date">તમને જેમ બને એમ જલદી ફ્રિ PCR  ટેસ્ટ કરવાની સલાહ આપવામાં આવે છે. તમારે પહેલી ટેસ્ટ પછી તમે બીજી PCR ટેસ્ટ બૂક આ %s તારીખે કરાવી શકો.</string>
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
@@ -722,12 +722,12 @@
     <string name="contact_case_summary_submit_button">જવાબો મોકલો</string>
     <string name="contact_case_summary_title">તમારા જવાબો ચેક કરો</string>
     <string name="contact_case_summary_change_age_accessiblity_button">તમારી ઉંમર બદલો</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information_wls">તમને કોઈ લક્ષણો ન હોય તો પણ તમે મફત PCR ટેસ્ટ બૂક કરાવો એવી તમને ભારપૂર્વક સલાહ આપવામાં આવે છે</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required_wls">તમારે સૅલ્ફ-આઇસોલેટ થવાની જરૂર નથી, સિવાય કે કૉન્ટેક્ટ ટ્રેસર્સ દ્વારા પ્રત્યક્ષપણે તમને કહેવામાં આવ્યું હોય</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice_wls">અન્ય લોકો સાથે તમારો સંપર્ક ઘટાડવો હજીયે મહત્ત્વપૂર્ણ છે, ખાસ કરીને વૃદ્ધ લોકો અને કમજોર લોકો.</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information_wls">જોખમ ઓછું કરવા માટે તમારે 7 દિવસો માટે રોજિંદો રૅપિડ લેટરલ ફ્લો ટેસ્ટ કરાવવો જોઈએ અને તે અંગે રિપોર્ટ આપવો જોઈએ</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required_wls">તમારો ટેસ્ટ પૉઝિટિવ આવે અથવા તમને લક્ષણો હોય તે સિવાય તમારે સૅલ્ફ-આઇસોલેટ થવાની જરૂર નથી</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice_wls">અન્યો સાથે, ખાસ કરીને વૃદ્ધ અને કમજોર લોકો સાથે સંપર્ક ઘટાડવા સહિતના રાષ્ટ્રીય નિર્દેશોનું પાલન કરવું હજીયે અગત્યનું છે.</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research_wls">જાહેર પરિવહનમાં, દુકાનો અને ભીડવાળી જગ્યાઓમાં તમારાં નાક અને મોં પર માસ્ક પહેરીને તથા નિયમિતપણે તમારા હાથ ધોઈને COVID-19નો ફેલાવો અટકાવવામાં મદદ કરો.</string>
-    <string name="risky_contact_isolation_advice_minors_information_wls">તમને કોઈ લક્ષણો ન હોય તો પણ તમે મફત PCR ટેસ્ટ બૂક કરાવો એવી તમને ભારપૂર્વક સલાહ આપવામાં આવે છે</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">તમારે સૅલ્ફ-આઇસોલેટ થવાની જરૂર નથી, સિવાય કે કૉન્ટેક્ટ ટ્રેસર્સ દ્વારા પ્રત્યક્ષપણે તમને કહેવામાં આવ્યું હોય</string>
+    <string name="risky_contact_isolation_advice_minors_information_wls">જોખમ ઓછું કરવા માટે તમારે 7 દિવસો માટે રોજિંદો રૅપિડ લેટરલ ફ્લો ટેસ્ટ કરાવવો જોઈએ અને તે અંગે રિપોર્ટ આપવો જોઈએ</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">તમારો ટેસ્ટ પૉઝિટિવ આવે અથવા તમને લક્ષણો હોય તે સિવાય તમારે સૅલ્ફ-આઇસોલેટ થવાની જરૂર નથી</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">તમને સલાહ આપવામાં આવે છે કે તમારે આ સંદેશ એક વિશ્વસનીય પુખ્ત વ્યક્તિને બતાવો.</string>
-    <string name="risky_contact_isolation_advice_minors_testing_advice_wls">જાહેર પરિવહનમાં, દુકાનો અને ભીડવાળી જગ્યાઓમાં તમારાં નાક અને મોં પર માસ્ક પહેરીને તથા નિયમિતપણે તમારા હાથ ધોઈને COVID-19નો ફેલાવો અટકાવવામાં મદદ કરો.</string>
+    <string name="risky_contact_isolation_advice_minors_testing_advice_wls">અન્યો સાથે, ખાસ કરીને વૃદ્ધ અને કમજોર લોકો સાથે સંપર્ક ઘટાડવા સહિતના રાષ્ટ્રીય નિર્દેશોનું પાલન કરવું હજીયે અગત્યનું છે.</string>
 </resources>

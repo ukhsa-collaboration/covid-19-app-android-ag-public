@@ -739,8 +739,8 @@
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">إجراء اختبارٍ</string>
     <string name="contact_case_continue_isolation_list_item_testing_with_date">إذا لم يكن قد سبق لك القيام بذلك بالفعل، نوصيك بحجز أحد اختبارات PCR المجانية في أقرب وقتٍ ممكنٍ. بعد الاختبار الأول لك، ينبغي لك أيضًا حجز اختبار PCR ثانٍ في %s.</string>
-    <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">نوصيك بحجز أحد اختبارات PCR المجانية في أقرب وقتٍ ممكنٍ. بعد الاختبار الأول لك، ينبغي لك أيضًا حجز اختبار PCR ثانٍ في %s</string>
-    <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">نوصيك بحجز أحد اختبارات PCR المجانية في أقرب وقتٍ ممكنٍ. بعد الاختبار الأول لك، ينبغي لك أيضًا حجز اختبار PCR ثانٍ في %s.</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">احجز اختبار PCR مجاني، إذا كانت لديك أعراض.</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">احجز اختبار PCR مجاني، إذا كانت لديك أعراض.</string>
     <string name="contact_case_start_isolation_list_item_testing_with_date">نوصيك بحجز أحد اختبارات PCR المجانية في أقرب وقتٍ ممكنٍ. بعد الاختبار الأول لك، ينبغي لك أيضًا حجز اختبار PCR ثانٍ في %s</string>
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
@@ -758,12 +758,12 @@
     <string name="contact_case_summary_submit_button">إرسال الإجابات</string>
     <string name="contact_case_summary_title">مراجعة إجاباتك</string>
     <string name="contact_case_summary_change_age_accessiblity_button">تغيير عمرك</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information_wls">يُنصح بشدة أن تحجز اختبار PCR مجاني، حتى لو لم تكن لديك أعراض.</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required_wls">لا تحتاج الى العزل الذاتي، إلا إذا تم إخبارك مباشرة بواسطة جهات تتبع الاتصال</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice_wls">لا يزال من المهم تقليل اختلاطك بالآخرين، وبصفة خاصة كبار السن والمعرضين للإصابة بالفيروس.</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information_wls">للحد من المخاطر، يجب عليك إجراء اختبار التدفق الجانبي السريع والإبلاغ عنه يوميا لمدة 7 أيام</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required_wls">لا تحتاج الى العزل الذاتي إلا إذا كانت نتيجة اختبارك إيجابية أو ظهرت عليك أعراض الفيروس</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice_wls">لا يزال من المهم اتباع الإرشادات الوطنية، بما في ذلك الحد من الاختلاط بالآخرين، وبصفة خاصة كبار السن والمعرضين للإصابة بالأمراض.</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research_wls">ساعد في وقف انتشار COVID-19 بارتداء غطاء وجه يغطي أنفك وفمك في وسائل المواصلات العامة، في المتاجر والأماكن المزدحمة وكذلك غسيل يديك بصورة منتظمة.</string>
-    <string name="risky_contact_isolation_advice_minors_information_wls">يُنصح بشدة أن تحجز اختبار PCR مجاني، حتى لو لم تكن لديك أعراض.</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">لا تحتاج الى العزل الذاتي، إلا إذا تم إخبارك مباشرة بواسطة جهات تتبع الاتصال</string>
+    <string name="risky_contact_isolation_advice_minors_information_wls">للحد من المخاطر، يجب عليك إجراء اختبار التدفق الجانبي السريع والإبلاغ عنه يوميا لمدة 7 أيام</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">لا تحتاج الى العزل الذاتي إلا إذا كانت نتيجة اختبارك إيجابية أو ظهرت عليك أعراض الفيروس</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">نوصيك بعرض هذه الرسالة على شخصٍ بالغٍ محل ثقةٍ لديك.</string>
-    <string name="risky_contact_isolation_advice_minors_testing_advice_wls">ساعد في وقف انتشار COVID-19 بارتداء غطاء وجه يغطي أنفك وفمك في وسائل المواصلات العامة، في المتاجر والأماكن المزدحمة وكذلك غسيل يديك بصورة منتظمة.</string>
+    <string name="risky_contact_isolation_advice_minors_testing_advice_wls">لا يزال من المهم اتباع الإرشادات الوطنية، بما في ذلك الحد من الاختلاط بالآخرين، وبصفة خاصة كبار السن والمعرضين للإصابة بالأمراض.</string>
 </resources>

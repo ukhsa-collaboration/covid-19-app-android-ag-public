@@ -704,7 +704,7 @@
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">进行检测</string>
     <string name="contact_case_continue_isolation_list_item_testing_with_date">如果您还没有进行检测，建议您尽快预约免费的 PCR 检测。第一次检测完成后，您应预约 %s 日的第二次 PCR 检测</string>
-    <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">建议您尽快预约免费的 PCR 检测。第一次检测完成后，您应预约 %s 日的第二次 PCR 检测</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">如果出现症状，请预约免费的PCR检测。</string>
     <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">建议您尽快预约免费的 PCR 检测。第一次检测完成后，您应预约 %s 日的第二次 PCR 检测</string>
     <string name="contact_case_start_isolation_list_item_testing_with_date">建议您尽快预约免费的 PCR 检测。第一次检测完成后，您应预约 %s 日的第二次 PCR 检测</string>
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
@@ -723,12 +723,12 @@
     <string name="contact_case_summary_submit_button">提交信息</string>
     <string name="contact_case_summary_title">核实信息</string>
     <string name="contact_case_summary_change_age_accessiblity_button">更改年龄</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information_wls">强烈建议您预约免费的PCR检测，即使您没有任何症状</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required_wls">您无需自我隔离，除非接触者追踪器直接告知您如此行事</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice_wls">减少与他人的接触仍然很重要，特别是老人和弱势群体。</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information_wls">为了降低风险，您应该每天进行快速侧流抗原检测并报告相应结果（持续7天）</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required_wls">除非检测结果为阳性或出现症状，否则无需自我隔离</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice_wls">遵守国家指导仍然至关重要，包括减少与他人（特别是老年人和弱势群体）的接触。</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research_wls">在公共交通工具上、商店和拥挤之地正确佩戴口罩并定期洗手，这有助于阻止COVID-19的传播。</string>
-    <string name="risky_contact_isolation_advice_minors_information_wls">强烈建议您预约免费的PCR检测，即使您没有任何症状</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">您无需自我隔离，除非接触者追踪器直接告知您如此行事</string>
+    <string name="risky_contact_isolation_advice_minors_information_wls">为了降低风险，您应该每天进行快速侧流抗原检测并报告相应结果（持续7天）</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">除非检测结果为阳性或出现症状，否则无需自我隔离</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">建议您将此消息告知您信任的成年人。</string>
-    <string name="risky_contact_isolation_advice_minors_testing_advice_wls">在公共交通工具上、商店和拥挤之地正确佩戴口罩并定期洗手，这有助于阻止COVID-19的传播。</string>
+    <string name="risky_contact_isolation_advice_minors_testing_advice_wls">遵守国家指导仍然至关重要，包括减少与他人（特别是老年人和弱势群体）的接触。</string>
 </resources>

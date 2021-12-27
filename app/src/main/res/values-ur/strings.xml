@@ -711,8 +711,8 @@
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">ٹیسٹ کریں</string>
     <string name="contact_case_continue_isolation_list_item_testing_with_date">اگر آپ نے پہلے ایسا نہیں کیا ہے، تو آپ کو مشورہ دیا جاتا ہے کہ جتنی  جلد ممکن ہو مفت PCR ٹیسٹ بُک کروائیں۔ اپنے پہلے ٹیسٹ کے بعد، آپ کو %s کے لیے ایک دوسرا PCR ٹیسٹ بھی بُک کروانا چاہیے</string>
-    <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">آپ کو مشورہ دیا جاتا ہے کہ جتنی  جلد ممکن ہو مفت PCR ٹیسٹ بُک کروائیں۔ اپنے پہلے ٹیسٹ کے بعد، آپ کو %s کے لیے ایک دوسرا PCR ٹیسٹ بھی بُک کروانا چاہیے</string>
-    <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">آپ کو مشورہ دیا جاتا ہے کہ جتنی  جلد ممکن ہو مفت PCR ٹیسٹ بُک کروائیں۔ اپنے پہلے ٹیسٹ کے بعد، آپ کو %s کے لیے ایک دوسرا PCR ٹیسٹ بھی بُک کروانا چاہیے</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">ایک مفت PCR ٹیسٹ بک کرائیں اگر آپ میں علامات پائی جاتی ہوں۔</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">ایک مفت PCR ٹیسٹ بک کرائیں اگر آپ میں علامات پائی جاتی ہوں۔</string>
     <string name="contact_case_start_isolation_list_item_testing_with_date">آپ کو مشورہ دیا جاتا ہے کہ جتنی  جلد ممکن ہو مفت PCR ٹیسٹ بُک کروائیں۔ اپنے پہلے ٹیسٹ کے بعد، آپ کو %s کے لیے ایک دوسرا PCR ٹیسٹ بھی بُک کروانا چاہیے</string>
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
@@ -730,12 +730,12 @@
     <string name="contact_case_summary_submit_button">جوابات پیش کریں</string>
     <string name="contact_case_summary_title">اپنے جوابات چیک کریں</string>
     <string name="contact_case_summary_change_age_accessiblity_button">اپنی عمر تبدیل کریں</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information_wls">آپ کو تاکید کے ساتھ صلاح دی جاتی ہے کہ ایک مفت PCR جانچ بک کرائیں، خواہ آپ میں کوئی علامات نہ پائی جاتی ہوں</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required_wls">آپ کو خود کو الگ تھلگ رکھنے کی ضرورت نہیں ہے، سوائے اس کے کہ کنٹیکٹ ٹریسرز کے ذریعہ آپ سے براہ راست کہا جائے</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice_wls">دوسرے لوگوں، خاص طور پر عمر رسیدہ اور ضرر پذیر افراد کے ساتھ اپنا رابطہ کم کرنا ابھی بھی ضروری ہے۔</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information_wls">خطرے کو کم کرنے کے لیے، آپ کو چاہیے کہ 7 دن تک روزانہ ریپڈ لیٹرل فلو ٹیسٹ کریں اور رپورٹ کریں</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required_wls">آپ کو خود کو الگ تھلگ رکھنے کی ضرورت نہیں ہے سوائے اس کے کہ آپ کی جانچ مثبت ہو یا آپ میں علامات پائی جاتی ہوں</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice_wls">قومی رہنمائی پر عمل کرنا اب بھی ضروری ہے، جس میں دوسروں، خاص طور پر عمر رسیدہ اور ضرر پذیر افراد، کے ساتھ رابطہ کو کم کرنا بھی شامل ہے۔</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research_wls">پبلک ٹرانسپورٹ پر، دوکانوں اور بھیڑ بھاڑ والی جگہوں میں اپنی ناک اور منہ پر فیس کورنگ پہنتے ہوئے، اور برابر اپنے ہاتھ دھونے کے ذریعہ COVID-19 کے پھیلاؤ کو روکنے میں مدد کریں۔</string>
-    <string name="risky_contact_isolation_advice_minors_information_wls">آپ کو تاکید کے ساتھ صلاح دی جاتی ہے کہ ایک مفت PCR جانچ بک کرائیں، خواہ آپ میں کوئی علامات نہ پائی جاتی ہوں</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">آپ کو خود کو الگ تھلگ رکھنے کی ضرورت نہیں ہے، سوائے اس کے کہ کنٹیکٹ ٹریسرز کے ذریعہ آپ سے براہ راست کہا جائے</string>
+    <string name="risky_contact_isolation_advice_minors_information_wls">خطرے کو کم کرنے کے لیے، آپ کو چاہیے کہ 7 دن تک روزانہ ریپڈ لیٹرل فلو ٹیسٹ کریں اور رپورٹ کریں</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">آپ کو خود کو الگ تھلگ رکھنے کی ضرورت نہیں ہے سوائے اس کے کہ آپ کی جانچ مثبت ہو یا آپ میں علامات پائی جاتی ہوں</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">آپ کومشورہ دیا جاتا ہے کہ آپ اس پیغام کو کسی بھروسہ مند بالغ شخص کو دکھائیں۔</string>
-    <string name="risky_contact_isolation_advice_minors_testing_advice_wls">پبلک ٹرانسپورٹ پر، دوکانوں اور بھیڑ بھاڑ والی جگہوں میں اپنی ناک اور منہ پر فیس کورنگ پہنتے ہوئے، اور برابر اپنے ہاتھ دھونے کے ذریعہ COVID-19 کے پھیلاؤ کو روکنے میں مدد کریں۔</string>
+    <string name="risky_contact_isolation_advice_minors_testing_advice_wls">قومی رہنمائی پر عمل کرنا اب بھی ضروری ہے، جس میں دوسروں، خاص طور پر عمر رسیدہ اور ضرر پذیر افراد، کے ساتھ رابطہ کو کم کرنا بھی شامل ہے۔</string>
 </resources>
