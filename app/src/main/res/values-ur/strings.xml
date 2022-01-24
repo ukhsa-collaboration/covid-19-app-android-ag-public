@@ -675,7 +675,7 @@
     <string name="notification_title_isolation_hub_reminder">خود تنہائی کے ساتھ مدد</string>
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">ہوم اسکرین پر واپس جائیں</string>
-    <string name="risky_contact_isolation_advice_already_isolating_information">اگر آپ نے اب تک یہ کام نہیں کیا ہے تو آپ کوئی مفت PCR جانچ ہوم اسکرین پر \' COVID-19 کے لیے جانچ\' سے بک کر سکتے ہیں۔</string>
+    <string name="risky_contact_isolation_advice_already_isolating_information">اگر آپ نے پہلے ایسا نہیں کیا ہے تو آپ کو چاہیے کہ جتنی جلدی ممکن ہو ایک مفت COVID-19 ٹیسٹ کریں</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">آپ کا COVID-19 پھیلانے کا زیادہ خطرہ ہے۔ گھر میں رہ کر آپ اپنے آپ کو اور دوسروں کو محفوظ رکھنے میں مدد  دے سکتے ہیں۔</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">اگر آپ نے اب تک یہ کام نہیں کیا ہے تو آپ کوئی مفت PCR جانچ ہوم اسکرین پر \' COVID-19 کے لیے جانچ\' سے بک کر سکتے ہیں۔</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">خطرے کو کم کرنے کے لیے، آپ کو چاہیے کہ 7 دن تک روزانہ ریپڈ لیٹرل فلو ٹیسٹ کریں اور رپورٹ کریں</string>
@@ -695,8 +695,8 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">آپ کو خود کو الگ تھلگ رکھنے کی ضرورت نہیں ہے سوائے اس کے کہ آپ کی جانچ مثبت ہو یا آپ میں علامات پائی جاتی ہوں</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">آپ کومشورہ دیا جاتا ہے کہ آپ اس پیغام کو کسی بھروسہ مند بالغ شخص کو دکھائیں۔</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">ایک مفت PCR ٹیسٹ بک کرائیں اگر آپ میں علامات پائی جاتی ہوں۔</string>
-    <string name="risky_contact_isolation_advice_new_isolation_information">خود کو آئسولیٹ کریں اور ایک مفت PCR ٹیسٹ بک کریں</string>
-    <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">آپ COVID-19 کی زد میں آنے اور اسے پھیلانے کے زیادہ خطرے میں مبتلا ہیں، چاہے آپ میں کوئی علامات نہ ہوں۔ گھر پر رہ کر آپ خود کو اور دوسروں کو محفوظ رکھنے میں مدد کر سکتے ہیں۔</string>
+    <string name="risky_contact_isolation_advice_new_isolation_information">خود کو الگ تھلگ رکھیں اور مفت COVID-19 ٹیسٹ کریں</string>
+    <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">آپ COVID-19 کی زد میں آنے اور اسے پھیلانے کے زیادہ خطرے میں مبتلا ہیں، چاہے آپ میں کوئی علامات نہ ہوں۔ گھر پر رہ کر آپ خود کو اور دوسروں کو محفوظ رکھنے میں مددکر سکتے ہیں۔</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">ایک مفت PCR ٹیسٹ بک کر کے دیکھیں کہ آیا آپ کو COVID-19 ہے۔</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">NHS کی رہنمائی</string>
     <string name="risky_contact_isolation_advice_self_isolate_for">ذیل کے لیے خود کو تنہا کریں</string>
@@ -710,10 +710,10 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">ٹیسٹ کریں</string>
-    <string name="contact_case_continue_isolation_list_item_testing_with_date">اگر آپ نے پہلے ایسا نہیں کیا ہے، تو آپ کو مشورہ دیا جاتا ہے کہ جتنی  جلد ممکن ہو مفت PCR ٹیسٹ بُک کروائیں۔ اپنے پہلے ٹیسٹ کے بعد، آپ کو %s کے لیے ایک دوسرا PCR ٹیسٹ بھی بُک کروانا چاہیے</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">ایک مفت PCR ٹیسٹ بک کرائیں اگر آپ میں علامات پائی جاتی ہوں۔</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">ایک مفت PCR ٹیسٹ بک کرائیں اگر آپ میں علامات پائی جاتی ہوں۔</string>
     <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">ایک مفت PCR ٹیسٹ بک کرائیں اگر آپ میں علامات پائی جاتی ہوں۔</string>
-    <string name="contact_case_start_isolation_list_item_testing_with_date">آپ کو مشورہ دیا جاتا ہے کہ جتنی  جلد ممکن ہو مفت PCR ٹیسٹ بُک کروائیں۔ اپنے پہلے ٹیسٹ کے بعد، آپ کو %s کے لیے ایک دوسرا PCR ٹیسٹ بھی بُک کروانا چاہیے</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">آپ کو صلاح دی جاتی ہے کہ جتنی جلدی ممکن ہو ایک مفت ریپڈ لیٹرل فلو ٹیسٹ کرائیں۔ آپ کو چاہیے کہ %s کو ایک دوسرا ریپڈ لیٹرل فلو ٹیسٹ بھی کرائیں۔</string>
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">انصاف اور برابری کے لیے، اگر آپ طبی وجوہات کی بنا پر ویکسین حاصل کرنے سے قاصر ہیں تو آپ کو خود کو تنہا رکھنے کی ضرورت نہیں ہے۔</string>
@@ -738,4 +738,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">آپ کو خود کو الگ تھلگ رکھنے کی ضرورت نہیں ہے سوائے اس کے کہ آپ کی جانچ مثبت ہو یا آپ میں علامات پائی جاتی ہوں</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">آپ کومشورہ دیا جاتا ہے کہ آپ اس پیغام کو کسی بھروسہ مند بالغ شخص کو دکھائیں۔</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">قومی رہنمائی پر عمل کرنا اب بھی ضروری ہے، جس میں دوسروں، خاص طور پر عمر رسیدہ اور ضرر پذیر افراد، کے ساتھ رابطہ کو کم کرنا بھی شامل ہے۔</string>
+    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">آپ کو صلاح دی جاتی ہے کہ جتنی جلدی ممکن ہو ایک مفت ریپڈ لیٹرل فلو ٹیسٹ کرائیں۔</string>
+    <string name="contact_case_start_isolation_primary_button_title_wales">ایک مفت ریپڈ لیٹرل فلو کٹ حاصل کریں</string>
 </resources>

@@ -682,7 +682,7 @@
     <string name="notification_title_isolation_hub_reminder">Asistență cu autoizolare</string>
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">Înapoi la ecranul de pornire</string>
-    <string name="risky_contact_isolation_advice_already_isolating_information">Dacă nu ați făcut deja acest lucru, puteți rezerva un test gratuit PCR în secțiunea „Testarea pentru COVID-19” de pe ecranul de pornire</string>
+    <string name="risky_contact_isolation_advice_already_isolating_information">Dacă nu ați făcut deja acest lucru, efectuați un test gratuit COVID-19 cât mai repede posibil</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">Prezentați risc ridicat de răspândire a COVID-19. Rămânând acasă, vă mențineți pe dvs. și pe ceilalți în siguranță.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">Dacă nu ați făcut deja acest lucru, puteți rezerva un test gratuit PCR în secțiunea „Testarea pentru COVID-19” de pe ecranul de pornire</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">Pentru reducerea riscurilor, efectuați zilnic un test rapid cu flux lateral timp de 7 zile</string>
@@ -702,7 +702,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Autoizolarea nu este necesară dacă nu ați fost testat(ă) pozitiv sau dacă nu aveți simptome</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">Vă recomandăm să arătați acest mesaj unui adult de încredere.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">Programați-vă la un test PCR gratuit dacă aveți simptome.</string>
-    <string name="risky_contact_isolation_advice_new_isolation_information">Autoizolați-vă și rezervați un test PCR gratuit</string>
+    <string name="risky_contact_isolation_advice_new_isolation_information">Autoizolați-vă și efectuați un test COVID-19 gratuit</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">Prezentați un risc ridicat de a lua și transmite COVID-19, chiar dacă nu aveți niciun simptom. Stând acasă, vă puteți menține atât pe dvs., cât și pe ceilalți în siguranță.</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">Rezervați un test PCR gratuit pentru a verifica dacă aveți COVID-19.</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">Instrucțiuni NHS</string>
@@ -717,10 +717,10 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">Testați-vă</string>
-    <string name="contact_case_continue_isolation_list_item_testing_with_date">Dacă nu ați făcut deja acest lucru, vă recomandăm să rezervați un test PCR gratuit cât mai curând posibil. După primul test, trebuie să rezervați și al doilea test PCR pentru %s</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">Programați-vă la un test PCR gratuit dacă aveți simptome.</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">Programați-vă la un test PCR gratuit dacă aveți simptome.</string>
     <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">Programați-vă la un test PCR gratuit dacă aveți simptome.</string>
-    <string name="contact_case_start_isolation_list_item_testing_with_date">Vă recomandăm să rezervați un test PCR gratuit cât mai curând posibil. După primul test, trebuie să rezervați și al doilea test PCR pentru %s</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">Este recomandat să efectuați un test rapid de flux lateral gratuit cât mai repede posibil. De asemenea, este necesară efectuarea unui al doilea test rapid de flux lateral pe %s.</string>
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">În scopuri de echitate și egalitate, dacă nu vă puteți vaccina din motive medicale, nu trebuie să vă autoizolați.</string>
@@ -745,4 +745,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">Autoizolarea nu este necesară dacă nu ați fost testat(ă) pozitiv sau dacă nu aveți simptome</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">Vă recomandăm să arătați acest mesaj unui adult de încredere.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">În continuare, este importantă respectarea directivelor naționale, inclusiv reducerea contactului cu alte persoane, mai ales cu cele în vârstă și vulnerabile.</string>
+    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">Este recomandat să efectuați un test rapid de flux lateral gratuit cât mai repede posibil.</string>
+    <string name="contact_case_start_isolation_primary_button_title_wales">Primiți un test rapid cu flux lateral gratuit</string>
 </resources>

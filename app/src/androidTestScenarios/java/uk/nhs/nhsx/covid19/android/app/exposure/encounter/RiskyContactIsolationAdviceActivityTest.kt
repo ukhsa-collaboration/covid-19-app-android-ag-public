@@ -11,8 +11,11 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationA
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
+import uk.nhs.nhsx.covid19.android.app.testhelpers.assertBrowserIsOpened
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.RiskyContactIsolationAdviceRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import java.time.LocalDate
@@ -20,6 +23,8 @@ import java.time.LocalDate
 class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHelper, LocalAuthoritySetupHelper {
 
     private val robot = RiskyContactIsolationAdviceRobot()
+    private val statusRobot = StatusRobot()
+    private val testOrderingRobot = TestOrderingRobot()
 
     override val isolationHelper = IsolationHelper(testAppContext.clock)
 
@@ -61,7 +66,10 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
         val pcrAdviceDate = LocalDate.now(testAppContext.clock).plusDays(3)
 
         robot.checkActivityIsDisplayed()
-        robot.checkIsInNotIsolatingAsMinorViewState(country = WALES, testingAdviceToShow = WalesWithinAdviceWindow(date = pcrAdviceDate))
+        robot.checkIsInNotIsolatingAsMinorViewState(
+            country = WALES,
+            testingAdviceToShow = WalesWithinAdviceWindow(date = pcrAdviceDate)
+        )
     }
     // endregion
 
@@ -103,7 +111,10 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
         val pcrAdviceDate = LocalDate.now(testAppContext.clock).plusDays(3)
 
         robot.checkActivityIsDisplayed()
-        robot.checkIsInNotIsolatingAsFullyVaccinatedViewState(country = WALES, testingAdviceToShow = WalesWithinAdviceWindow(date = pcrAdviceDate))
+        robot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
+            country = WALES,
+            testingAdviceToShow = WalesWithinAdviceWindow(date = pcrAdviceDate)
+        )
     }
     // endregion
 
@@ -181,7 +192,10 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
         }
 
         robot.checkActivityIsDisplayed()
-        robot.checkIsInNewlyIsolatingViewState(remainingDaysInIsolation = 9, testingAdviceToShow = Default)
+        robot.checkIsInNewlyIsolatingViewState(ENGLAND, remainingDaysInIsolation = 9, testingAdviceToShow = Default)
+
+        robot.clickPrimaryButton()
+        testOrderingRobot.checkActivityIsDisplayed()
     }
 
     @Test
@@ -195,9 +209,15 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
 
         robot.checkActivityIsDisplayed()
         robot.checkIsInNewlyIsolatingViewState(
+            WALES,
             remainingDaysInIsolation = 5,
             testingAdviceToShow = Default
         )
+
+        assertBrowserIsOpened("https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms") {
+            robot.clickPrimaryButton()
+        }
+        statusRobot.checkActivityIsDisplayed()
     }
 
     @Test
@@ -213,14 +233,21 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
 
         robot.checkActivityIsDisplayed()
         robot.checkIsInNewlyIsolatingViewState(
+            WALES,
             remainingDaysInIsolation = 6,
             testingAdviceToShow = WalesWithinAdviceWindow(date = pcrAdviceDate)
         )
+
+        assertBrowserIsOpened("https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms") {
+            robot.clickPrimaryButton()
+        }
+        statusRobot.checkActivityIsDisplayed()
     }
     // endregion
 
     @Test
     fun toolbarNavigationIconIsCloseIcon() {
+        givenLocalAuthorityIsInEngland()
         givenContactIsolation()
         startTestActivity<RiskyContactIsolationAdviceActivity>()
         robot.verifyCloseButton()

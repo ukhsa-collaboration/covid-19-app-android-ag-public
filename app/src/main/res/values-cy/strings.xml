@@ -703,7 +703,7 @@
     <string name="notification_title_isolation_hub_reminder">Help gyda hunanynysu</string>
     <string name="order_lfd_after_risky_contact_toolbar_title">Cael pecyn prawf am ddim</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">Yn ôl i’r sgrîn gartref</string>
-    <string name="risky_contact_isolation_advice_already_isolating_information">Os nad ydych chi eisoes wedi gwneud hynny, gallwch archebu prawf PCR am ddim trwy \'Profi am COVID-19’ ar y sgrin gartref.</string>
+    <string name="risky_contact_isolation_advice_already_isolating_information">Os nad ydych eisoes wedi gwneud hynny, dylech gymryd prawf COVID-19 am ddim cyn gynted â phosibl</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">Mae gennych risg uchel o ledaenu COVID-19. Trwy aros gartref, gallwch eich cadw eich hun ac eraill yn ddiogel.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">Os nad ydych chi eisoes wedi gwneud hynny, gallwch archebu prawf PCR am ddim trwy \'Profi am COVID-19’ ar y sgrin gartref.</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">Er mwyn lleihau risg, dylech gymryd ac adrodd ar brawf llif unffordd cyflym am 7 niwrnod</string>
@@ -723,7 +723,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Nid oes angen i chi hunanynysu oni bai eich bod yn profi\'n bositif neu os oes gennych chi symptomau</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">Cynghorwn chi i ddangos y neges yma i oedolyn rydych yn ymddiried ynddo.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">Archebwch brawf PCR am ddim os oes gennych chi symptomau.</string>
-    <string name="risky_contact_isolation_advice_new_isolation_information">Hunanynyswch ac archebu prawf PCR am ddim</string>
+    <string name="risky_contact_isolation_advice_new_isolation_information">Hunanynyswch a chymryd prawf COVID-19 am ddim</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">Mae gennych risg uchel o ddal a lledaenu COVID-19, hyd yn oed os nad oes symptomau arnoch. Trwy aros gartref gallwch gadw eich hun a phobl eraill yn ddiogel.</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">Archebwch brawf PCR am ddim i weld a oes COVID-19 arnoch.</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">Canllawiau’r GIG</string>
@@ -738,10 +738,10 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">Ewch am brawf</string>
-    <string name="contact_case_continue_isolation_list_item_testing_with_date">Os na wnaethoch hynny\'n barod, rydym yn eich cynghori i archebu prawf PCR am ddim cyn gynted â phosibl. Ar ôl eich prawf cyntaf, dylech hefyd archebu ail brawf PCR ar gyfer %s</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">Archebwch brawf PCR am ddim os oes gennych chi symptomau.</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">Archebwch brawf PCR am ddim os oes gennych chi symptomau.</string>
     <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">Archebwch brawf PCR am ddim os oes gennych chi symptomau.</string>
-    <string name="contact_case_start_isolation_list_item_testing_with_date">Rydym yn eich cynghori i archebu prawf PCR am ddim cyn gynted â phosibl. Ar ôl eich prawf cyntaf, dylech hefyd archebu ail brawf PCR ar gyfer %s</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">Fe’ch cynghorir i gymryd prawf llif unffordd cyflym am ddim cyn gynted â phosibl. Dylech hefyd gymryd ail brawf llif unffordd cyflym ar %s.</string>
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">Er tegwch a chydraddoldeb, os na allwch gael y brechiad am resymau meddygol, does dim angen i chi hunanynysu.</string>
@@ -766,4 +766,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">Nid oes angen i chi hunanynysu oni bai eich bod yn profi\'n bositif neu os oes gennych chi symptomau</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">Cynghorwn chi i ddangos y neges yma i oedolyn rydych yn ymddiried ynddo.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">Mae’n dal i fod yn bwysig dilyn canllawiau cenedlaethol, gan gynnwys lleihau eich cyswllt ag eraill, yn arbennig yr henoed a phobl fregus.</string>
+    <string name="contact_case_start_isolation_book_lfd_test_url">https://llyw.cymru/prawf-covid-19-cyflym-heb-symptomau</string>
+    <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">Fe’ch cynghorir i gymryd prawf llif unffordd cyflym am ddim cyn gynted â phosibl.</string>
+    <string name="contact_case_start_isolation_primary_button_title_wales">Casglwch becyn llif unffordd cyflym am ddim</string>
 </resources>

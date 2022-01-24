@@ -667,7 +667,7 @@
     <string name="notification_title_isolation_hub_reminder">ਸਵੈ-ਇਕਾਂਤ ਵਿੱਚ ਮਦਦ</string>
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">ਵਾਪਸ ਮੁੱਖ ਸਕ੍ਰੀਨ \'ਤੇ</string>
-    <string name="risky_contact_isolation_advice_already_isolating_information">ਜੇ ਤੁਸੀਂ ਪਹਿਲਾਂ ਹੀ ਇਹ ਨਹੀਂ ਕਰ ਲਿਆ ਹੈ, ਤਾਂ ਤੁਸੀਂ ਹੋਮ ਸਕ੍ਰੀਨ \'ਤੇ \'COVID-19 ਲਈ ਟੈਸਟ\' ਤੋਂ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰ ਸਕਦੇ ਹੋ।</string>
+    <string name="risky_contact_isolation_advice_already_isolating_information">ਜੇਕਰ ਤੁਸੀਂ ਪਹਿਲਾਂ ਹੀ ਨਹੀਂ ਕਰਵਾਇਆ ਹੈ, ਤਾਂ ਤੁਹਾਨੂੰ ਜਿੰਨੀ ਜਲਦੀ ਹੋ ਸਕੇ ਇੱਕ ਮੁਫ਼ਤ COVID-19 ਟੈਸਟ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">ਤੁਸੀਂ COVID-19 ਫੈਲਣ ਦੇ ਉੱਚ ਜੋਖਮ ਹੇਠ ਆਉਂਦੇ ਹਨ। ਘਰ ਵਿੱਚ ਰਹਿ ਕੇ ਤੁਸੀਂ ਆਪਣੇ ਆਪ ਅਤੇ ਦੂਜਿਆਂ ਨੂੰ ਸੁਰੱਖਿਅਤ ਰੱਖਣ ਵਿੱਚ ਮਦਦ ਕਰ ਸਕਦੇ ਹੋ।</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">ਜੇ ਤੁਸੀਂ ਪਹਿਲਾਂ ਹੀ ਇਹ ਨਹੀਂ ਕਰ ਲਿਆ ਹੈ, ਤਾਂ ਤੁਸੀਂ ਹੋਮ ਸਕ੍ਰੀਨ \'ਤੇ \'COVID-19 ਲਈ ਟੈਸਟ\' ਤੋਂ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰ ਸਕਦੇ ਹੋ।</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">ਜੋਖਮ ਨੂੰ ਘਟਾਉਣ ਲਈ, ਤੁਹਾਨੂੰ 7 ਦਿਨਾਂ ਲਈ ਰੋਜ਼ਾਨਾ ਰੈਪਿਡ ਲੈਟਰਲ ਫਲੋ ਟੈਸਟ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ ਅਤੇ ਇਸਦੀ ਰਿਪੋਰਟ ਕਰਨੀ ਚਾਹੀਦੀ ਹੈ</string>
@@ -687,7 +687,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">ਤੁਹਾਨੂੰ ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖਣ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ ਜਦ ਤੱਕ ਤੁਹਾਡਾ ਟੈਸਟ ਪਾਜ਼ਿਟਿਵ ਨਹੀਂ ਆਉਂਦਾ ਜਾਂ ਤੁਹਾਨੂੰ ਲੱਛਣ ਨਹੀਂ ਹਨ</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">ਤੁਹਾਨੂੰ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ ਕਿ ਤੁਸੀਂ ਇਹ ਸੁਨੇਹਾ ਕਿਸੇ ਭਰੋਸੇਮੰਦ ਬਾਲਗ ਨੂੰ ਦਿਖਾਓ।</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">ਜੇ ਤੁਹਾਨੂੰ ਲੱਛਣ ਹਨ ਤਾਂ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰੋ।</string>
-    <string name="risky_contact_isolation_advice_new_isolation_information">ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖੋ ਅਤੇ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰੋ</string>
+    <string name="risky_contact_isolation_advice_new_isolation_information">ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖੋ ਅਤੇ ਮੁਫ਼ਤ COVID-19 ਟੈਸਟ ਕਰਵਾਓ</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">ਤੁਹਾਨੂੰ COVID-19 ਦੀ ਪਕੜ ਵਿੱਚ ਆਉਣ ਅਤੇ ਇਸਨੂੰ ਫੈਲਾਉਣ ਦਾ ਉੱਚ ਜੋਖਮ ਹੈ, ਭਾਵੇਂ ਤੁਹਾਨੂੰ ਕੋਈ ਲੱਛਣ ਨਾ ਹੋਣ। ਘਰ ਰਹਿ ਕੇ ਤੁਸੀਂ ਆਪਣੇ-ਆਪ ਨੂੰ ਅਤੇ ਦੂਜਿਆਂ ਨੂੰ ਸੁਰੱਖਿਅਤ ਰੱਖਣ ਵਿੱਚ ਮਦਦ ਕਰ ਸਕਦੇ ਹੋ।</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">ਇਹ ਦੇਖਣ ਲਈ ਕਿ ਤੁਹਾਨੂੰ COVID-19 ਹੈ ਜਾਂ ਨਹੀਂ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰੋ।</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">NHS ਸੇਧ</string>
@@ -702,10 +702,10 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">ਟੈਸਟ ਕਰਵਾਓ</string>
-    <string name="contact_case_continue_isolation_list_item_testing_with_date">ਜੇ ਤੁਸੀਂ ਪਹਿਲਾਂ ਹੀ ਅਜਿਹਾ ਨਹੀਂ ਕੀਤਾ ਹੈ, ਤਾਂ ਤੁਹਾਨੂੰ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ ਕਿ ਜਿੰਨੀ ਛੇਤੀ ਹੋ ਸਕੇ ਇੱਕ ਮੁਫਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰਵਾਓ। ਆਪਣੇ ਪਹਿਲੇ ਟੈਸਟ ਤੋਂ ਬਾਅਦ, ਤੁਹਾਨੂੰ %s ਲਈ ਦੂਜਾ PCR ਟੈਸਟ ਵੀ ਬੁੱਕ ਕਰਵਾਉਣਾ ਚਾਹੀਦਾ ਹੈ।</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">ਜੇ ਤੁਹਾਨੂੰ ਲੱਛਣ ਹਨ ਤਾਂ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰੋ।</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">ਜੇ ਤੁਹਾਨੂੰ ਲੱਛਣ ਹਨ ਤਾਂ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰੋ।</string>
     <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">ਜੇ ਤੁਹਾਨੂੰ ਲੱਛਣ ਹਨ ਤਾਂ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰੋ।</string>
-    <string name="contact_case_start_isolation_list_item_testing_with_date">ਤੁਹਾਨੂੰ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ ਕਿ ਜਿੰਨੀ ਛੇਤੀ ਹੋ ਸਕੇ ਇੱਕ ਮੁਫਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰਵਾਓ। ਆਪਣੇ ਪਹਿਲੇ ਟੈਸਟ ਤੋਂ ਬਾਅਦ, ਤੁਹਾਨੂੰ %s ਲਈ ਦੂਜਾ PCR ਟੈਸਟ ਵੀ ਬੁੱਕ ਕਰਵਾਉਣਾ ਚਾਹੀਦਾ ਹੈ।</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">ਤੁਹਾਨੂੰ ਜਿੰਨੀ ਜਲਦੀ ਹੋ ਸਕੇ ਮੁਫ਼ਤ ਰੈਪਿਡ ਲੈਟਰਲ ਫਲੋ ਟੈਸਟ ਕਰਾਉਣ ਦੀ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ। ਤੁਹਾਨੂੰ %s ਨੂੰ ਇੱਕ ਦੂਸਰਾ ਰੈਪਿਡ ਲੈਟਰਲ ਫਲੋ ਟੈਸਟ ਵੀ ਕਰਾਉਣਾ ਚਾਹੀਦਾ ਹੈ।</string>
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">ਨਿਰਪੱਖਤਾ ਅਤੇ ਸਮਾਨਤਾ ਲਈ, ਜੇ ਤੁਸੀਂ ਡਾਕਟਰੀ ਕਾਰਨਾਂ ਕਰਕੇ ਟੀਕਾ ਲਗਵਾਉਣ ਵਿੱਚ ਅਸਮਰੱਥ ਹੋ ਤਾਂ ਤੁਹਾਨੂੰ ਸਵੈ-ਇਕਾਂਤਵਾਸ ਦੀ ਲੋੜ ਨਹੀਂ।</string>
@@ -730,4 +730,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">ਤੁਹਾਨੂੰ ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖਣ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ ਜਦ ਤੱਕ ਤੁਹਾਡਾ ਟੈਸਟ ਪਾਜ਼ਿਟਿਵ ਨਹੀਂ ਆਉਂਦਾ ਜਾਂ ਤੁਹਾਨੂੰ ਲੱਛਣ ਨਹੀਂ ਹਨ</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">ਤੁਹਾਨੂੰ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ ਕਿ ਤੁਸੀਂ ਇਹ ਸੁਨੇਹਾ ਕਿਸੇ ਭਰੋਸੇਮੰਦ ਬਾਲਗ ਨੂੰ ਦਿਖਾਓ।</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">ਰਾਸ਼ਟਰੀ ਸੇਧ ਦੀ ਪਾਲਣਾ ਕਰਨਾ ਹਾਲੇ ਵੀ ਮਹੱਤਵਪੂਰਨ ਹੈ ਜਿਸ ਵਿੱਚ ਦੂਜਿਆਂ, ਖ਼ਾਸ ਕਰਕੇ ਬਜ਼ੁਰਗਾਂ ਅਤੇ ਕਮਜ਼ੋਰ ਲੋਕਾਂ, ਨਾਲ ਆਪਣਾ ਸੰਪਰਕ ਘਟਾਉਣਾ ਸ਼ਾਮਲ ਹੈ।</string>
+    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">ਤੁਹਾਨੂੰ ਜਿੰਨੀ ਜਲਦੀ ਹੋ ਸਕੇ ਮੁਫ਼ਤ ਰੈਪਿਡ ਲੈਟਰਲ ਫਲੋ ਟੈਸਟ ਕਰਾਉਣ ਦੀ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ।</string>
+    <string name="contact_case_start_isolation_primary_button_title_wales">ਮੁਫ਼ਤ ਰੈਪਿਡ ਲੈਟਰਲ ਫਲੋ ਕਿੱਟ ਪ੍ਰਾਪਤ ਕਰੋ</string>
 </resources>

@@ -676,7 +676,7 @@
     <string name="notification_title_isolation_hub_reminder">Kişisel karantina konusunda yardım</string>
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">Ana ekrana geri dön</string>
-    <string name="risky_contact_isolation_advice_already_isolating_information">Henüz yapmadıysanız, ana ekrandaki \'COVID-19 için test\' bölümünden ücretsiz bir PCR testi için rezervasyon yapabilirsiniz.</string>
+    <string name="risky_contact_isolation_advice_already_isolating_information">Henüz yapmadıysanız, mümkün olan en yakın zamanda ücretsiz COVID-19 testi yapmalısınız</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">COVID-19\'u yayma riskiniz yüksek. Evde kalarak hem kendinizin hem de diğer insanların güvende olmasına yardımcı olabilirsiniz.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">Henüz yapmadıysanız, ana ekrandaki \'COVID-19 için test\' bölümünden ücretsiz bir PCR testi için rezervasyon yapabilirsiniz.</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">Riski azaltmak için 7 gün boyunca her gün hızlı antijen testi yaptırıp sonuçları bildirmelisiniz</string>
@@ -696,7 +696,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Test sonucunuz pozitif değilse ya da belirtileriniz yoksa evde kalıp kendinizi izole etmeniz gerekmez</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">Bu mesajı güvenilir bir yetişkine göstermeniz tavsiye edilir.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">Belirtileriniz varsa ücretsiz bir PCR testi için randevu alın.</string>
-    <string name="risky_contact_isolation_advice_new_isolation_information">Kendinizi karantinaya alın ve ücretsiz bir PCR testi için rezervasyon yapın</string>
+    <string name="risky_contact_isolation_advice_new_isolation_information">Kendinizi karantinaya alın ve ücretsiz bir COVID-19 testi yapın</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">Herhangi bir belirtiniz olmasa bile, COVID-19\'a yakalanma ve virüsü yayma riskiniz yüksektir. Evde kalarak kendinizi ve başkalarını güvende tutmaya yardımcı olabilirsiniz.</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">COVID-19\'la enfekte olup olmadığınızı anlamak amacıyla ücretsiz bir PCR testi için rezervasyon yapın.</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">NHS yönergesi</string>
@@ -711,10 +711,10 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">Bir test yaptırın</string>
-    <string name="contact_case_continue_isolation_list_item_testing_with_date">Hali hazırda yapmadıysanız, en kısa zamanda ücretsiz bir PCR testi için rezervasyon yapmanız tavsiye edilmektedir. İlk testinizden sonra, aynı zamanda %s tarihi için de ikinci bir PCR testi rezervasyonu yapmanız tavsiye edilmektedir.</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">Belirtileriniz varsa ücretsiz bir PCR testi için randevu alın.</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">Belirtileriniz varsa ücretsiz bir PCR testi için randevu alın.</string>
     <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">Belirtileriniz varsa ücretsiz bir PCR testi için randevu alın.</string>
-    <string name="contact_case_start_isolation_list_item_testing_with_date">En kısa zamanda ücretsiz bir PCR testi için rezervasyon yapmanız tavsiye edilmektedir. İlk testinizden sonra, aynı zamanda %s tarihi için de ikinci bir PCR testi rezervasyonu yapmanız tavsiye edilmektedir.</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">Mümkün olan en yakın zamanda ücretsiz hızlı antijen testi yapmanız tavsiye edilir. Ayrıca %s tarihinde ikinci bir hızlı antijen testi yapmalısınız.</string>
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">Hakkaniyet ve eşitlik adına; eğer tıbbi sebeplerden dolayı aşı olamıyorsanız, kendinizi karantinaya almanız gerekmez.</string>
@@ -739,4 +739,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">Test sonucunuz pozitif değilse ya da belirtileriniz yoksa evde kalıp kendinizi izole etmeniz gerekmez</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">Bu mesajı güvenilir bir yetişkine göstermeniz tavsiye edilir.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">Diğer insanlarla, özellikle yaşlı ve hassas durumdaki kişilerle olan temasınızı azaltmak dahil olmak üzere ulusal yönergelere uymanız da önemlidir.</string>
+    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">Mümkün olan en yakın zamanda ücretsiz hızlı antijen testi yapmanız tavsiye edilir.</string>
+    <string name="contact_case_start_isolation_primary_button_title_wales">Ücretsiz hızlı antijen test kiti edinin</string>
 </resources>

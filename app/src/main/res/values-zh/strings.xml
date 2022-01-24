@@ -668,7 +668,7 @@
     <string name="notification_title_isolation_hub_reminder">自我隔离中可寻求的支持</string>
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">返回主屏幕</string>
-    <string name="risky_contact_isolation_advice_already_isolating_information">如果您还没有进行检测，可以在主屏幕“COVID-19 检测”中预约 PCR 检测。</string>
+    <string name="risky_contact_isolation_advice_already_isolating_information">若您还未如此行事，请尽快进行免费的COVID-19检测</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">您面临着传播新冠病毒的高风险。待在家中可以保护您和他人的安全。</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">如果您还没有进行检测，可以在主屏幕“COVID-19 检测”中预约 PCR 检测。</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">为了降低风险，您应该每天进行快速侧流抗原检测并报告相应结果（持续7天）</string>
@@ -688,7 +688,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">除非检测结果为阳性或出现症状，否则无需自我隔离</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">建议您将此消息告知您信任的成年人。</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">如果出现症状，请预约免费的PCR检测。</string>
-    <string name="risky_contact_isolation_advice_new_isolation_information">自我隔离并预约免费的 PCR 检测。</string>
+    <string name="risky_contact_isolation_advice_new_isolation_information">自我隔离并进行COVID-19免费检测</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">即使您没有任何症状，您感染和传播新冠病毒的风险也很高。待在家中可以保护您和他人的安全。</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">预约免费 PCR 检测，查看您是否感染了新冠病毒。</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">NHS 指导</string>
@@ -703,10 +703,10 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">进行检测</string>
-    <string name="contact_case_continue_isolation_list_item_testing_with_date">如果您还没有进行检测，建议您尽快预约免费的 PCR 检测。第一次检测完成后，您应预约 %s 日的第二次 PCR 检测</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">如果出现症状，请预约免费的PCR检测。</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">如果出现症状，请预约免费的PCR检测。</string>
     <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">建议您尽快预约免费的 PCR 检测。第一次检测完成后，您应预约 %s 日的第二次 PCR 检测</string>
-    <string name="contact_case_start_isolation_list_item_testing_with_date">建议您尽快预约免费的 PCR 检测。第一次检测完成后，您应预约 %s 日的第二次 PCR 检测</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">建议您尽快进行免费快速侧流检测。您还应在 %s 进行第二次快速侧流检测。</string>
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">为了遵照公平和平等的原则，如果您因为医学原因而不能接种疫苗，则不需要自我隔离。</string>
@@ -731,4 +731,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">除非检测结果为阳性或出现症状，否则无需自我隔离</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">建议您将此消息告知您信任的成年人。</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">遵守国家指导仍然至关重要，包括减少与他人（特别是老年人和弱势群体）的接触。</string>
+    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">建议您尽快进行免费快速侧流检测。</string>
+    <string name="contact_case_start_isolation_primary_button_title_wales">获取免费快速侧流检测试剂盒</string>
 </resources>

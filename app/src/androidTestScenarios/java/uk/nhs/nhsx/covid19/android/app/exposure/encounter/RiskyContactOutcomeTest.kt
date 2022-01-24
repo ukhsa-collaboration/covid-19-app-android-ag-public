@@ -184,6 +184,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(
+            ENGLAND,
             remainingDaysInIsolation = 9,
             testingAdviceToShow = Default
         )
@@ -263,6 +264,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(
+            ENGLAND,
             remainingDaysInIsolation = 9,
             testingAdviceToShow = Default
         )
@@ -376,6 +378,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(
+            WALES,
             remainingDaysInIsolation = 9,
             testingAdviceToShow = WalesWithinAdviceWindow(date = LocalDate.now(testAppContext.clock).plusDays(6))
         )
@@ -451,6 +454,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(
+            WALES,
             remainingDaysInIsolation = 9,
             testingAdviceToShow = WalesWithinAdviceWindow(date = LocalDate.now(testAppContext.clock).plusDays(6))
         )

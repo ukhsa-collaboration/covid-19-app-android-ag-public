@@ -697,7 +697,7 @@
     <string name="notification_title_isolation_hub_reminder">Pomoc dotycząca samoizolacji</string>
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">Powrót do strony głównej</string>
-    <string name="risky_contact_isolation_advice_already_isolating_information">Jeżeli jeszcze nie zamówiłeś(-aś) bezpłatnego testu PCR, możesz to zrobić wchodząc w opcję „Testy na COVID-19” na stronie głównej aplikacji.</string>
+    <string name="risky_contact_isolation_advice_already_isolating_information">Jeśli jeszcze tego nie zrobiłeś(-aś), wykonaj możliwie najszybciej bezpłatny test na COVID-19</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">Istnieje wysokie ryzyko, że zarazisz inne osoby COVID-19. Pozostając w domu, możesz pomóc chronić siebie i innych.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">Jeżeli jeszcze nie zamówiłeś(-aś) bezpłatnego testu PCR, możesz to zrobić wchodząc w opcję „Testy na COVID-19” na stronie głównej aplikacji.</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">Aby zmniejszyć ryzyko, przez 7 dni należy codziennie wykonywać i zgłaszać szybkie testy przepływu bocznego</string>
@@ -717,7 +717,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Nie musisz się izolować, chyba że wynik testu jest pozytywny lub masz objawy</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">Radzimy aby pokazać tę wiadomość zaufanej osobie dorosłej.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">Zamów bezpłatny test PCR jeżeli masz objawy.</string>
-    <string name="risky_contact_isolation_advice_new_isolation_information">Rozpocznij samoizolację i zamów darmowy test PCR</string>
+    <string name="risky_contact_isolation_advice_new_isolation_information">Samoizoluj się i wykonaj bezpłatny test na COVID-19</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">Nawet jeśli nie masz żadnych objawów, możesz przechodzić COVID-19 i zarażać inne osoby. Zostając w domu, możesz pomóc chronić siebie i innych.</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">Zamów darmowy test PCR, aby sprawdzić, czy masz COVID-19</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">Wytyczne NHS</string>
@@ -732,10 +732,10 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">Poddaj się testowi</string>
-    <string name="contact_case_continue_isolation_list_item_testing_with_date">Jeżeli nie masz jeszcze darmowego testu PCR, zalecamy aby jak najszybciej  go zamówić. Po wykonaniu pierwszego testu musisz również zamówić drugi test PCR i przeprowadzić go w dniu %s.</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">Zamów bezpłatny test PCR jeżeli masz objawy.</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">Zamów bezpłatny test PCR jeżeli masz objawy.</string>
     <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">Zamów bezpłatny test PCR jeżeli masz objawy.</string>
-    <string name="contact_case_start_isolation_list_item_testing_with_date">Zaleca się, aby jak najszybciej zamówić bezpłatny test PCR. Po wykonaniu pierwszego testu musisz również zamówić drugi test PCR i przeprowadzić go w dniu %s.</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">Zaleca się możliwie najszybsze wykonanie bezpłatnego testu przepływu bocznego. Należy również wykonać drugi szybki test przepływu bocznego %s.</string>
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">Zgodnie z zasadami sprawiedliwości i równości, jeżeli nie możesz zaszczepić się ze względów medycznych, nie musisz pozostawać w samoizolacji.</string>
@@ -760,4 +760,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">Nie musisz się izolować, chyba że wynik testu jest pozytywny lub masz objawy</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">Radzimy aby pokazać tę wiadomość zaufanej osobie dorosłej.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">Nadal ważne jest by przestrzegać krajowych wytycznych, włącznie z ograniczeniem kontaktów z innymi, zwłaszcza z osobami starszymi i wymagającymi specjalnej troski.</string>
+    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">Zaleca się możliwie najszybsze wykonanie bezpłatnego testu przepływu bocznego.</string>
+    <string name="contact_case_start_isolation_primary_button_title_wales">Otrzymaj bezpłatny szybki test przepływu bocznego</string>
 </resources>

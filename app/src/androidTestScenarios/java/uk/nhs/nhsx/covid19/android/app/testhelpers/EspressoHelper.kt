@@ -66,8 +66,8 @@ fun getCurrentActivity(): Activity? {
     return currentActivity
 }
 
-fun assertBrowserIsOpened(@StringRes urResourceId: Int, action: () -> Unit) {
-    val url = context.getString(urResourceId)
+fun assertBrowserIsOpened(@StringRes urlResourceId: Int, action: () -> Unit) {
+    val url = context.getString(urlResourceId)
     assertBrowserIsOpened(url, action)
 }
 

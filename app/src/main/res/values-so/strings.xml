@@ -81,7 +81,7 @@
     <string name="enable_bluetooth_rationale">App-ku wuxuu adeegsadaa Bluetooth si uu u ogaado goorta uu u dhow yahay telefoon kale oo app-kan lagu rakibay. Haddii uu Bluetooth ka dansan yahay, app-kan ma shaqayn doono.\n\nApp-kan wuxuu isticmaalaa \'Bluetooth-ka Tamarta Yar\' - tiknooloojiyada batari kaydinta.\n\nFadlan aad qaybta isku-hagaajinta oo dar Bluetooth.</string>
     <string name="enable_bluetooth_title">Si uu app-kan u shaqeeyo, Bluetooth-ku marwalba wuxuu ubaahan yahay in uu shidnaado</string>
     <string name="enable_exposure_notifications">Fur goobaha teleefoonka</string>
-    <string name="enable_exposure_notifications_rationale">Tani waa sida uu app-ku kugu sheego haddii aad xiriir dhow la lahayd qof laga helay COVID-19.\n\nTaleefankaagu waxa laga yaabaa inuu waco \'Exposure notifications\' ama \'Exposure logging\'.\n\nAad goobaha telefoonkaaga oo u beddel \'Oggolw\' (Allow).</string>
+    <string name="enable_exposure_notifications_rationale">Tani waa sida uu app-ku kugu sheego haddii aad xiriir dhow la lahayd qof laga helay COVID-19.\n\nTaleefankaagu waxa laga yaabaa inuu waco \'Exposure notifications\' ama \'Exposure logging\'.\n\nAad goobaha telefoonkaaga oo u beddel \'Oggolow\' (Allow).</string>
     <string name="enable_exposure_notifications_title">Oggolow \'Exposure notifications\' si uu app-kaan u shaqeeyo</string>
     <string name="enable_location_service_rationale">Si aad uga shaqaysiiso Bluetooth-ka, waxaan kaaga baahanahay in aad telefoonkaaga ka daarto adeegyada goobta (location services).\n\nApp-kan ma isticmaalayo Bluetooth-ka ama goobtaada si uu kula socdo. Aqoonsigaaga shakhsiyeed wuxuu ahaan doonaa mid ilaalsan mar walba.\n\nHaddii aadan telefoonkaaga ka daarin adeegyada goobta (location services) app-kan ma shaqayn doono.\n\nSi aad ugu ogoolaato in app-kan uu shaqeeyo, fadlan aad qaybta isku-hagaajinta oo daar adeegyada goobta (location services)</string>
     <string name="enable_location_service_title">Waa inaad adeegyada goobta (location services) ka daartaa telefoonkaaga</string>
@@ -676,11 +676,11 @@
     <string name="notification_title_isolation_hub_reminder">Caawimaad is-go\'doominta</string>
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">Ku laabo shaashadda soo-dhoweynta</string>
-    <string name="risky_contact_isolation_advice_already_isolating_information">App-ka wuxuu ogaadey inaad u dhaweyd qof laga helay coronavirus (COVID-19)</string>
+    <string name="risky_contact_isolation_advice_already_isolating_information">Haddii aadan goor hore sidaa samaynin, waa inaad sida ugu dhakhsaha badan oo suurtagalka ah u qaadataa baatitaan COVID-19 oo bilaash ah</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">Waxaad halis weyn ugu jirtaa inaad faafiso COVID-19. Markaad guriga joogto waxaad gacan ka geysan kartaa inaad naftaada iyo dadka kaleba badbaadiso.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">Haddii aadan sidaas samayn, waxaad baaritaan PCR oo lacag la\'aan ah ee \'Baaritaanka COVID-19\' ka ballansan kartaa shaashadda soo-dhoweynta.</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">Si aad u yareyso khatarta, waa inaad qaadataa oo aad ka warbixsaa baaritaanka socdaalka dambe ee degdega oo maalinlaha ah ee 7 maalmood</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Uma baahnid in aad is-gooniyeeesho ilaa lagaa helo cudurka ama aad leedahay calaamado</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Uma baahnid inaad is-gooniyeeesho ilaa lagaa helo cudurka ama aad leedahay calaamado</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">Weli waa muhiim in la raaco hagida habraaca qaranka, oo ay ku jirto yareynta xiriirka dadka kale, gaar ahaan dadka waayeelka ah iyo kuwa nugul.</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">Qabso baaritaan PCR oo bilaash ah, xitaa haddii aad leedahay astaamo.</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">Ballanso baaritaan PCR oo lacag la\'aan ah</string>
@@ -696,7 +696,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Uma baahnid in aad is-gooniyeeesho ilaa lagaa helo cudurka ama aad leedahay calaamado</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">Waxaa lagugula talinayaa inaad fariintan tustid qof weyn oo aad ku kalsoon tahay.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">Qabso baaritaan PCR oo bilaash ah, xitaa haddii aad leedahay astaamo.</string>
-    <string name="risky_contact_isolation_advice_new_isolation_information">Is-go\'doomi oo ballanso baaritaan PCR oo lacag la\'aan ah</string>
+    <string name="risky_contact_isolation_advice_new_isolation_information">Is gooniyey oo qaado baaritaanka bilaashka ah ee COVID-19</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">Waxaad halis weyn ugu jirtaa inuu kugu dhaco iyo in aad faafiso COVID-19, xitaa haddii aadan lahayn wax astaamo ah. Markaad guriga joogto waxaad gacan ka geysan kartaa inaad naftaada iyo dadka kaleba badbaadiso.</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">Ballanso baaritaan PCR oo lacag la\'aan ah si aad u ogaato haddii aad leedahay COVID-19.</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">Hagaha NHS</string>
@@ -711,13 +711,13 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">Baaritaan mar</string>
-    <string name="contact_case_continue_isolation_list_item_testing_with_date">Haddii aadan hore u samayn, waxaa lagugula talinayaa inaad ballansato baaritaan PCR oo lacag la\'aan ah sida ugu dhaqsaha badan. Baaritaankaaga koowaad kadib, waa in aad sido kale ballansataa baaritaan PCR labaad ee %s</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">Qabso baaritaan PCR oo bilaash ah, xitaa haddii aad leedahay astaamo.</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">Qabso baaritaan PCR oo bilaash ah, xitaa haddii aad leedahay astaamo.</string>
     <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">Qabso baaritaan PCR oo bilaash ah, xitaa haddii aad leedahay astaamo.</string>
-    <string name="contact_case_start_isolation_list_item_testing_with_date">Waxaa lagugula talinaynaa in aad ballansato baaritaan PCR oo lacag la\'aan ah sida ugu dhaqsaha badan. Baaritaankaaga koowaad kadib, waa in aad sido kale ballansataa baaritaan PCR labaad ee %s</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">Waxaa laguula talinayaa inaad qaadato baaritaanka socdaalka isdabajooga degdegga ah sida ugu dhaqsaha badan uguna suuragalka ah. Waa inaad sidoo kale qaadataa baaritaanka socdaalka isdabajooga ee degdegga ah ee labaad ee %s.</string>
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_group">Si loo helo caddaalad iyo sinnaan, haddii aadan awoodin inaad hesho tallaalka sababo caafimaad awgood uma baahnid inaad is-go\'doomiso.</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_group">Si loo helo caddaalad iyo sinnaan, haddii aadan awoodin inaad hesho tallaalka sababo caafimaad awgood uma baahnid inaad is-gooniyeesho.</string>
     <string name="self_isolation_hub_get_isolation_note_description">App-ka ma hayo ama manala wadaago macluumaadkaaga shakhsi adeeggan, markaa waxaad u baahan doontaa inaad galiso faahfaahintaada</string>
     <string name="self_isolation_hub_get_isolation_note_title">Hel warqad is-go\'doomin ah si aad u tusto loo-shaqeeyahaaga</string>
     <string name="exposure_notification_clinical_trial_no_content_description">No I am not taking part in an MHRA-approved COVID-19 vaccine clinical trial</string>
@@ -739,4 +739,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">Uma baahnid in aad is-gooniyeeesho ilaa lagaa helo cudurka ama aad leedahay calaamado</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">Waxaa lagugula talinayaa inaad fariintan tustid qof weyn oo aad ku kalsoon tahay.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">Weli waa muhiim in la raaco hagida habraaca qaranka, oo ay ku jirto yareynta xiriirka dadka kale, gaar ahaan dadka waayeelka ah iyo kuwa nugul.</string>
+    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">Waxaa lagugula talinayaa inaad qaadato baaritaanka socdaalka isdabajooga degdegga ah ee bilaashka ah sida ugu dhaqsaha badan uguna suuragalka ah.</string>
+    <string name="contact_case_start_isolation_primary_button_title_wales">Hel xirmada baaritaanka fayraska degdeg bilaashka ah</string>
 </resources>

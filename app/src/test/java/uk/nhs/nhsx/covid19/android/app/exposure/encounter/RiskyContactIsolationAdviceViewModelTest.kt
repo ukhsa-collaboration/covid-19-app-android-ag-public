@@ -9,6 +9,7 @@ import io.mockk.verify
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.Default
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.UnknownExposureDate
@@ -18,6 +19,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationA
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.MINOR
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.NONE
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.NavigationTarget
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.NavigationTarget.BookLfdTest
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.NavigationTarget.BookPcrTest
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.NavigationTarget.Home
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState
@@ -110,7 +112,13 @@ class RiskyContactIsolationAdviceViewModelTest {
         createTestSubject(optOutOfContactIsolationExtra = NONE)
 
         verify {
-            viewStateObserver.onChanged(NewlyIsolating(expectedDaysInIsolation.toInt(), expectedTestingAdviceToShow))
+            viewStateObserver.onChanged(
+                NewlyIsolating(
+                    ENGLAND,
+                    expectedDaysInIsolation.toInt(),
+                    expectedTestingAdviceToShow
+                )
+            )
         }
     }
 
@@ -179,9 +187,18 @@ class RiskyContactIsolationAdviceViewModelTest {
     fun `onBookPcrTestClicked emit BookPcrTest navigation`() {
         val testSubject = createTestSubject(MINOR)
 
-        testSubject.onBookPcrTestTestClicked()
+        testSubject.onBookPcrTestClicked()
 
         verify { navigationTargetObserver.onChanged(BookPcrTest) }
+    }
+
+    @Test
+    fun `onBookLfdTestClicked emit BookLfdTest navigation`() {
+        val testSubject = createTestSubject(NONE)
+
+        testSubject.onBookLfdTestClicked()
+
+        verify { navigationTargetObserver.onChanged(BookLfdTest(R.string.contact_case_start_isolation_book_lfd_test_url)) }
     }
 
     private fun createTestSubject(optOutOfContactIsolationExtra: OptOutOfContactIsolationExtra): RiskyContactIsolationAdviceViewModel {

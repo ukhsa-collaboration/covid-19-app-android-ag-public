@@ -18,6 +18,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationA
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.MEDICALLY_EXEMPT
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.MINOR
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.NONE
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.NavigationTarget.BookLfdTest
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.NavigationTarget.BookPcrTest
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.NavigationTarget.Home
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState
@@ -31,6 +32,7 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.util.uiLongFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.openInExternalBrowserForResult
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
@@ -81,13 +83,17 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
             when (navigationTarget) {
                 BookPcrTest -> bookPcrTest()
                 Home -> navigateToStatusActivity()
+                is BookLfdTest -> bookLfdTest(navigationTarget.url)
             }
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == TestOrderingActivity.REQUEST_CODE_ORDER_A_TEST && resultCode == Activity.RESULT_OK) {
+        val orderedPcrTest =
+            requestCode == TestOrderingActivity.REQUEST_CODE_ORDER_A_TEST && resultCode == Activity.RESULT_OK
+        val orderedLfdTest = requestCode == REQUEST_ORDER_LFD
+        if (orderedPcrTest || orderedLfdTest) {
             navigateToStatusActivity()
         }
     }
@@ -103,9 +109,21 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
         )
     }
 
+    private fun bookLfdTest(@StringRes url: Int) {
+        openInExternalBrowserForResult(getString(url), REQUEST_ORDER_LFD)
+    }
+
     private fun renderViewState(viewState: ViewState) {
         when (viewState) {
-            is NewlyIsolating -> handleNewlyIsolating(viewState.remainingDaysInIsolation, viewState.testingAdviceToShow)
+            is NewlyIsolating -> {
+                if (viewState.country == ENGLAND)
+                    handleNewlyIsolatingForEngland(viewState.remainingDaysInIsolation)
+                else
+                    handleNewlyIsolatingForWales(
+                        viewState.remainingDaysInIsolation,
+                        viewState.testingAdviceToShow
+                    )
+            }
             is AlreadyIsolating -> handleAlreadyIsolating(
                 viewState.remainingDaysInIsolation,
                 viewState.testingAdviceToShow
@@ -126,39 +144,78 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
         }
     }
 
-    private fun handleNewlyIsolating(days: Int, testingAdviceToShow: TestingAdviceToShow) = with(binding) {
-        riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_contact)
-        riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_self_isolate_for)
-        riskyContactIsolationAdviceRemainingDaysInIsolation.text =
-            resources.getQuantityString(R.plurals.state_isolation_days, days, days)
-        riskyContactIsolationAdviceStateInfoView.stateText =
-            getString(R.string.risky_contact_isolation_advice_new_isolation_information)
+    private fun handleNewlyIsolatingForEngland(days: Int) =
+        with(binding) {
+            riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_contact)
+            riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_self_isolate_for)
+            riskyContactIsolationAdviceRemainingDaysInIsolation.text =
+                resources.getQuantityString(R.plurals.state_isolation_days, days, days)
+            riskyContactIsolationAdviceStateInfoView.stateText =
+                getString(R.string.risky_contact_isolation_advice_new_isolation_information)
 
-        adviceContainer.removeAllViews()
-        if (testingAdviceToShow == Default) {
+            adviceContainer.removeAllViews()
             addAdvice(
                 R.string.risky_contact_isolation_advice_new_isolation_testing_advice,
                 R.drawable.ic_get_free_test
             )
-        } else if (testingAdviceToShow is WalesWithinAdviceWindow) {
-            addTestingAdviceWithDate(
-                R.string.contact_case_start_isolation_list_item_testing_with_date,
-                testingAdviceToShow.date
+            addAdvice(
+                R.string.risky_contact_isolation_advice_new_isolation_stay_at_home_advice,
+                R.drawable.ic_stay_at_home
             )
-        }
-        addAdvice(R.string.risky_contact_isolation_advice_new_isolation_stay_at_home_advice, R.drawable.ic_stay_at_home)
 
-        riskyContactIsolationAdviceCommonQuestions.gone()
-        primaryActionButton.setText(R.string.risky_contact_isolation_advice_book_pcr_test)
-        primaryActionButton.setOnSingleClickListener {
-            viewModel.onBookPcrTestTestClicked()
+            riskyContactIsolationAdviceCommonQuestions.gone()
+
+            primaryActionButton.setText(R.string.risky_contact_isolation_advice_book_pcr_test)
+            primaryActionButton.setOnSingleClickListener {
+                viewModel.onBookPcrTestClicked()
+            }
+
+            secondaryActionButton.setOnSingleClickListener {
+                viewModel.onBackToHomeClicked()
+            }
+            secondaryActionButton.visible()
+            setAccessibilityTitle(isIsolating = true)
         }
-        secondaryActionButton.setOnSingleClickListener {
-            viewModel.onBackToHomeClicked()
+
+    private fun handleNewlyIsolatingForWales(days: Int, testingAdviceToShow: TestingAdviceToShow) =
+        with(binding) {
+            riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_contact)
+            riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_self_isolate_for)
+            riskyContactIsolationAdviceRemainingDaysInIsolation.text =
+                resources.getQuantityString(R.plurals.state_isolation_days, days, days)
+            riskyContactIsolationAdviceStateInfoView.stateText =
+                getString(R.string.risky_contact_isolation_advice_new_isolation_information)
+
+            adviceContainer.removeAllViews()
+            if (testingAdviceToShow == Default) {
+                addAdvice(
+                    R.string.contact_case_start_isolation_list_item_testing_once_asap_wales,
+                    R.drawable.ic_get_free_test
+                )
+            } else if (testingAdviceToShow is WalesWithinAdviceWindow) {
+                addTestingAdviceWithDate(
+                    R.string.contact_case_start_isolation_list_item_testing_with_date,
+                    testingAdviceToShow.date
+                )
+            }
+            addAdvice(
+                R.string.risky_contact_isolation_advice_new_isolation_stay_at_home_advice,
+                R.drawable.ic_stay_at_home
+            )
+
+            riskyContactIsolationAdviceCommonQuestions.gone()
+
+            primaryActionButton.setText(R.string.contact_case_start_isolation_primary_button_title_wales)
+            primaryActionButton.setOnSingleClickListener {
+                viewModel.onBookLfdTestClicked()
+            }
+
+            secondaryActionButton.setOnSingleClickListener {
+                viewModel.onBackToHomeClicked()
+            }
+            secondaryActionButton.visible()
+            setAccessibilityTitle(isIsolating = true)
         }
-        secondaryActionButton.visible()
-        setAccessibilityTitle(isIsolating = true)
-    }
 
     private fun handleAlreadyIsolating(days: Int, testingAdviceToShow: TestingAdviceToShow) = with(binding) {
         riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_contact)
@@ -292,7 +349,7 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
         riskyContactIsolationAdviceCommonQuestions.visible()
         primaryActionButton.setText(R.string.risky_contact_isolation_advice_book_pcr_test)
         primaryActionButton.setOnSingleClickListener {
-            viewModel.onBookPcrTestTestClicked()
+            viewModel.onBookPcrTestClicked()
         }
         secondaryActionButton.setOnSingleClickListener {
             viewModel.onBackToHomeClicked()
@@ -361,6 +418,7 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
         }
 
         const val OPT_OUT_OF_CONTACT_ISOLATION_EXTRA = "OPT_OUT_OF_CONTACT_ISOLATION_EXTRA"
+        const val REQUEST_ORDER_LFD = 1002
     }
 
     enum class OptOutOfContactIsolationExtra {

@@ -683,15 +683,15 @@
     <string name="risky_contact_isolation_advice_further_nhs_guidance">For further advice, please visit:</string>
     <string name="risky_contact_isolation_advice_faq_button_title">Common questions</string>
     <string name="risky_contact_isolation_advice_self_isolate_for">Self-isolate for</string>
-    <string name="risky_contact_isolation_advice_new_isolation_information">Self-isolate and book a free PCR test</string>
-    <string name="contact_case_start_isolation_list_item_testing_with_date">You are advised to book a free PCR test as soon as possible. After your first test, you should also book a second PCR test for %s.</string>
-    <string name="contact_case_continue_isolation_list_item_testing_with_date">If you have not already done so, you are advised to book a free PCR test as soon as possible. After your first test, you should also book a second PCR test for %s.</string>
+    <string name="risky_contact_isolation_advice_new_isolation_information">Self-isolate and take a free COVID-19 test</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">You are advised to take a free rapid lateral flow test as soon as possible. You should also take a second rapid lateral flow test on the %s.</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">Book a free PCR test if you have symptoms.</string>
     <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">Book a free PCR test if you have symptoms.</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">Book a free PCR test if you have symptoms.</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">Book a free PCR test to see if you have COVID-19.</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">You are at high risk of catching and spreading COVID-19, even if you don’t have any symptoms. By staying at home you can help keep yourself and others safe.</string>
     <string name="risky_contact_isolation_advice_continue_isolataion_for">Continue to self-isolate for</string>
-    <string name="risky_contact_isolation_advice_already_isolating_information">If you have not already done so, you can book a free PCR test from ‘Testing for COVID-19’ on the home screen.</string>
+    <string name="risky_contact_isolation_advice_already_isolating_information">If you have not already done so, you should take a free COVID-19 test as soon as possible</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">If you have not already done so, you can book a free PCR test from ‘Testing for COVID-19’ on the home screen.</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">You are at high risk of spreading COVID-19. By staying at home you can help keep yourself and others safe.</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">Back to home screen</string>
@@ -797,4 +797,7 @@
     <string name="contact_case_summary_change_age_accessiblity_button">Change your age</string>
     <string name="contact_case_summary_change_vaccination_status_button">Change</string>
     <string name="contact_case_summary_change_vaccination_status_accessiblity_button">Change your vaccination status</string>
+    <string name="contact_case_start_isolation_primary_button_title_wales">Get a free rapid lateral flow kit</string>
+    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">You are advised to take a free rapid lateral flow test as soon as possible.</string>
 </resources>

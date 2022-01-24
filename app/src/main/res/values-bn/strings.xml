@@ -667,7 +667,7 @@
     <string name="notification_title_isolation_hub_reminder">স্ব-বিচ্ছিন্ন থাকার ব্যাপারে সহায়তা</string>
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">হোম স্ক্রিনে ফিরে যান</string>
-    <string name="risky_contact_isolation_advice_already_isolating_information">আপনি ইতিমধ্যে তা না করে থাকলে হোম স্ক্রিনে \'কোভিড-১৯ পরীক্ষা\'-তে গিয়ে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করতে পারেন।</string>
+    <string name="risky_contact_isolation_advice_already_isolating_information">আপনার যত তাড়াতাড়ি সম্ভব একটি নিশুল্ক COVID-19 পরীক্ষা করানো উচিৎ, যদি আপনি ইতিমধ্যে তা করে না থাকেন</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">আপনি কোভিড-১৯ ছড়ানোর উচ্চ ঝুঁকিতে রয়েছেন। বাড়িতে অবস্থান করে আপনি নিজেকে ও অন্যদের সুরক্ষিত রাখতে সহায়তা করতে পারেন।</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">আপনি ইতিমধ্যে তা না করে থাকলে হোম স্ক্রিনে \'কোভিড-১৯ পরীক্ষা\'-তে গিয়ে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করতে পারেন।</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">ঝুঁকি কমাতে, আপনার 7 দিনের জন্য প্রতিদিন দ্রুত ল্যাটারাল ফ্লো পরীক্ষা করা এবং রিপোর্ট করা উচিত</string>
@@ -687,7 +687,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">আপনার পরীক্ষার ফলাফল পজিটিভ না হলে বা উপসর্গ না থাকলে আপনার নিজেকে আলাদা করার দরকার নেই</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">কোনো বিশ্বস্ত প্রাপ্তবয়স্ক ব্যক্তিকে এই বার্তা দেখানোর জন্য আপনাকে পরামর্শ দেওয়া হচ্ছে।</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">আপনার উপসর্গ থাকলে বিনামূল্যে একটি PCR পরীক্ষা বুক করুন।</string>
-    <string name="risky_contact_isolation_advice_new_isolation_information">স্ব-বিচ্ছিন্ন থাকুন ও বিনামূল্যে একটি পিসিআর টেস্ট বুক করুন</string>
+    <string name="risky_contact_isolation_advice_new_isolation_information">নিজেকে আলাদা করুন এবং বিনামূল্যে একটি COVID-19 পরীক্ষা করান</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">আপনার কোনো উপসর্গ না থাকলেও আপনি কোভিড-১৯-এ আক্রান্ত হওয়ার ও তা ছড়ানোর উচ্চ ঝুঁকিতে রয়েছেন। বাড়িতে অবস্থান করার মাধ্যমে আপনি নিজেকে ও অন্যদের নিরাপদে রাখতে সহায়তা করতে পারেন।</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">আপনার কোভিড-১৯ আছে কিনা জানতে বিনামূল্যে একটি পিসিআর টেস্ট বুক করুন।</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">NHS নির্দেশনা</string>
@@ -702,10 +702,10 @@
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
     <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
     <string name="venue_alert_m2_take_test_button_title">পরীক্ষা করান</string>
-    <string name="contact_case_continue_isolation_list_item_testing_with_date">আপনি এখনও না করে থাকলে, যত তাড়াতাড়ি সম্ভব আপনাকে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করতে পরামর্শ দেওয়া হচ্ছে। প্রথম পরীক্ষা করার পর, %s তারিখের জন্য আপনার দ্বিতীয় পিসিআর পরীক্ষা বুক করা উচিত।</string>
+    <string name="contact_case_continue_isolation_list_item_testing_with_date">আপনার উপসর্গ থাকলে বিনামূল্যে একটি PCR পরীক্ষা বুক করুন।</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">আপনার উপসর্গ থাকলে বিনামূল্যে একটি PCR পরীক্ষা বুক করুন।</string>
     <string name="contact_case_no_isolation_under_age_limit_list_item_testing_with_date">আপনার উপসর্গ থাকলে বিনামূল্যে একটি PCR পরীক্ষা বুক করুন।</string>
-    <string name="contact_case_start_isolation_list_item_testing_with_date">যত তাড়াতাড়ি সম্ভব আপনাকে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করতে পরামর্শ দেওয়া হচ্ছে। প্রথম পরীক্ষা করার পর, %s তারিখের জন্য আপনার দ্বিতীয় পিসিআর পরীক্ষা বুক করা উচিত।</string>
+    <string name="contact_case_start_isolation_list_item_testing_with_date">আপনাকে যত তাড়াতাড়ি সম্ভব বিনামূল্যে দ্রুত ল্যাটারাল ফ্লো পরীক্ষা করার পরামর্শ দেওয়া হচ্ছে। আপনার %s এ দ্বিতীয়বার একটি দ্রুত ল্যাটারাল ফ্লো পরীক্ষা করাও উচিত।</string>
     <string name="link_isolation_note">https://111.nhs.uk/isolation-note</string>
     <string name="link_isolation_note_wls">https://111.nhs.uk/isolation-note</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">চিকিৎসাগত কারণে আপনি টিকা নিতে অপারগ হলে ন্যায্যতা ও সমতার খাতিরে আপনার স্ববিচ্ছিন্ন থাকার দরকার নাই।</string>
@@ -730,4 +730,7 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">আপনার পরীক্ষার ফলাফল পজিটিভ না হলে বা উপসর্গ না থাকলে আপনার নিজেকে আলাদা করার দরকার নেই</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">কোনো বিশ্বস্ত প্রাপ্তবয়স্ক ব্যক্তিকে এই বার্তা দেখানোর জন্য আপনাকে পরামর্শ দেওয়া হচ্ছে।</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">অন্যদের সঙ্গে, বিশেষ করে বয়স্ক ও ঝুঁকিগ্রস্ত মানুষদের সঙ্গে যোগাযোগ হ্রাস করা সহ, জাতীয় নির্দেশনা অনুসরণ করা এখনও গুরুত্বপূর্ণ।</string>
+    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">আপনাকে যত তাড়াতাড়ি সম্ভব বিনামূল্যে দ্রুত ল্যাটারাল ফ্লো পরীক্ষা করার পরামর্শ দেওয়া হচ্ছে।</string>
+    <string name="contact_case_start_isolation_primary_button_title_wales">বিনামূল্যে একটি দ্রুত ল্যাটারাল ফ্লো কিট পান</string>
 </resources>
