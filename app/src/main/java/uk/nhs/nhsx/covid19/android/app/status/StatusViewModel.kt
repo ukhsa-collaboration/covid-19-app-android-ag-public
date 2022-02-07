@@ -10,6 +10,8 @@ import androidx.lifecycle.Transformations.distinctUntilChanged
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.play.core.review.ReviewManagerFactory
+import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_COVID_STATS
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -22,6 +24,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessRiskyVenueM2Notification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
+import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationPermissionHelper
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
@@ -36,6 +39,8 @@ import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.Sho
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowUnknownTestResult
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxStorageChangeListener
+import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
+import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.NotificationMessage
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
@@ -45,6 +50,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ContactTracingHub
+import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.EnableBluetooth
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ExposureConsent
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.InAppReview
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.IsolationExpiration
@@ -74,6 +80,7 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.AreSystemLevelAnimationsEn
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
+import javax.inject.Named
 
 class StatusViewModel @AssistedInject constructor(
     private val postCodeProvider: PostCodeProvider,
@@ -92,7 +99,9 @@ class StatusViewModel @AssistedInject constructor(
     private val exposureNotificationManager: ExposureNotificationManager,
     private val areSystemLevelAnimationsEnabled: AreSystemLevelAnimationsEnabled,
     private val getLocalMessageFromStorage: GetLocalMessageFromStorage,
+    @Named(AppModule.BLUETOOTH_STATE_NAME) private val bluetoothAvailabilityStateProvider: AvailabilityStateProvider,
     exposureNotificationPermissionHelperFactory: ExposureNotificationPermissionHelper.Factory,
+    private val shouldShowBluetoothSplashScreen: ShouldShowBluetoothSplashScreen,
     @Assisted val statusActivityAction: StatusActivityAction,
 ) : ViewModel() {
 
@@ -119,7 +128,7 @@ class StatusViewModel @AssistedInject constructor(
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val userInboxStorageChangeListener = object : UserInboxStorageChangeListener {
         override fun notifyChanged() {
-            checkShouldShowInformationScreen()
+            checkShouldShowInformationScreen(shouldCheckBluetoothState = false)
         }
     }
 
@@ -157,7 +166,7 @@ class StatusViewModel @AssistedInject constructor(
     }
 
     fun onResume() {
-        updateViewStateAndCheckUserInbox()
+        updateViewStateAndCheckUserInbox(shouldCheckBluetoothState = true)
         sharedPreferences.registerOnSharedPreferenceChangeListener(
             areaInfoChangedListener
         )
@@ -171,9 +180,9 @@ class StatusViewModel @AssistedInject constructor(
         storageBasedUserInbox.removeStorageChangeListener()
     }
 
-    fun updateViewStateAndCheckUserInbox() {
+    fun updateViewStateAndCheckUserInbox(shouldCheckBluetoothState: Boolean = false) {
         updateViewState()
-        checkShouldShowInformationScreen()
+        checkShouldShowInformationScreen(shouldCheckBluetoothState)
     }
 
     @VisibleForTesting
@@ -189,7 +198,9 @@ class StatusViewModel @AssistedInject constructor(
                 showReportSymptomsButton = canReportSymptoms(isolationState),
                 exposureNotificationsEnabled = exposureNotificationManager.isEnabled(),
                 animationsEnabled = animationsProvider.inAppAnimationEnabled && areSystemLevelAnimationsEnabled(),
-                localMessage = getLocalMessageFromStorage()
+                localMessage = getLocalMessageFromStorage(),
+                bluetoothEnabled = bluetoothAvailabilityStateProvider.getState() == ENABLED,
+                showCovidStatsButton = RuntimeBehavior.isFeatureEnabled(LOCAL_COVID_STATS)
             )
             viewStateLiveData.postValue(updatedViewState)
         }
@@ -246,27 +257,29 @@ class StatusViewModel @AssistedInject constructor(
         }
     }
 
-    private fun checkShouldShowInformationScreen() {
-        val navigatedViaActions = checkNavigationViaActions()
+    private fun checkShouldShowInformationScreen(shouldCheckBluetoothState: Boolean) {
+        val navigatedViaActions = navigateViaActions()
         if (!navigatedViaActions) {
-            checkNavigationViaUserInbox()
+            val navigatedViaInbox = navigateViaUserInbox()
+            if (!navigatedViaInbox && shouldCheckBluetoothState && shouldShowBluetoothSplashScreen()) {
+                navigationTarget.value = EnableBluetooth
+            }
         }
     }
 
-    private fun checkNavigationViaActions(): Boolean {
+    private fun navigateViaActions(): Boolean {
         when (statusActivityAction) {
             is NavigateToContactTracingHub ->
                 if (!contactTracingHubActionHandled) {
                     contactTracingHubActionHandled = true
-                    navigationTarget.postValue(
+                    navigationTarget.value =
                         ContactTracingHub(shouldTurnOnContactTracing = statusActivityAction.action == NAVIGATE_AND_TURN_ON)
-                    )
                     return true
                 }
             NavigateToIsolationHub -> {
                 if (!showIsolationHubReminderHandled) {
                     showIsolationHubReminderHandled = true
-                    navigationTarget.postValue(IsolationHub)
+                    navigationTarget.value = IsolationHub
                     return true
                 }
             }
@@ -274,7 +287,7 @@ class StatusViewModel @AssistedInject constructor(
                 if (!showLocalMessageScreenHandled) {
                     showLocalMessageScreenHandled = true
                     analyticsEventProcessor.track(DidAccessLocalInfoScreenViaNotification)
-                    navigationTarget.postValue(LocalMessage)
+                    navigationTarget.value = LocalMessage
                     return true
                 }
             }
@@ -287,7 +300,7 @@ class StatusViewModel @AssistedInject constructor(
             StartInAppReview -> {
                 if (!showInAppReviewHandled) {
                     showInAppReviewHandled = true
-                    navigationTarget.postValue(InAppReview)
+                    navigationTarget.value = InAppReview
                     return true
                 }
             }
@@ -297,26 +310,24 @@ class StatusViewModel @AssistedInject constructor(
         return false
     }
 
-    private fun checkNavigationViaUserInbox() {
-        viewModelScope.launch {
-            val target = when (val item = userInbox.fetchInbox()) {
-                is ShowIsolationExpiration -> IsolationExpiration(item.expirationDate)
-                is ShowTestResult -> {
-                    notificationProvider.cancelTestResult()
-                    TestResult
-                }
-                is ShowUnknownTestResult -> UnknownTestResult
-                is ShowVenueAlert -> VenueAlert(item.venueId, item.messageType)
-                is ShowEncounterDetection -> ExposureConsent
-                is ContinueInitialKeySharing -> ShareKeys(reminder = false)
-                is ShowKeySharingReminder -> ShareKeys(reminder = true)
-                null -> null
+    private fun navigateViaUserInbox(): Boolean {
+        val target = when (val item = userInbox.fetchInbox()) {
+            is ShowIsolationExpiration -> IsolationExpiration(item.expirationDate)
+            is ShowTestResult -> {
+                notificationProvider.cancelTestResult()
+                TestResult
             }
-
-            if (target != null) {
-                navigationTarget.postValue(target)
-            }
+            is ShowUnknownTestResult -> UnknownTestResult
+            is ShowVenueAlert -> VenueAlert(item.venueId, item.messageType)
+            is ShowEncounterDetection -> ExposureConsent
+            is ContinueInitialKeySharing -> ShareKeys(reminder = false)
+            is ShowKeySharingReminder -> ShareKeys(reminder = true)
+            null -> null
         }
+        if (target != null) {
+            navigationTarget.postValue(target)
+        }
+        return target != null
     }
 
     private fun canReportSymptoms(isolationState: IsolationLogicalState): Boolean =
@@ -324,6 +335,10 @@ class StatusViewModel @AssistedInject constructor(
 
     fun localMessageBannerClicked() {
         analyticsEventProcessor.track(DidAccessLocalInfoScreenViaBanner)
+    }
+
+    fun onBluetoothStateChanged() {
+        updateViewState()
     }
 
     sealed class RiskyPostCodeViewState : Parcelable {
@@ -346,7 +361,9 @@ class StatusViewModel @AssistedInject constructor(
         val showReportSymptomsButton: Boolean,
         val exposureNotificationsEnabled: Boolean,
         val animationsEnabled: Boolean,
-        val localMessage: NotificationMessage?
+        val localMessage: NotificationMessage?,
+        val bluetoothEnabled: Boolean,
+        val showCovidStatsButton: Boolean
     )
 
     sealed class PermissionRequestResult {
@@ -380,4 +397,5 @@ sealed class NavigationTarget {
     object LocalMessage : NavigationTarget()
     object IsolationHub : NavigationTarget()
     object InAppReview : NavigationTarget()
+    object EnableBluetooth : NavigationTarget()
 }

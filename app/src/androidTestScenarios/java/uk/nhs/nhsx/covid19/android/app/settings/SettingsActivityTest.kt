@@ -5,6 +5,7 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.AnimationsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.DataAndPrivacyRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.HowAppWorksRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LanguagesRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MyAreaRobot
@@ -19,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.WelcomeRobot
 class SettingsActivityTest : EspressoTest() {
 
     private val settingsRobot = SettingsRobot()
+    private val howAppWorksRobot = HowAppWorksRobot()
     private val languagesRobot = LanguagesRobot()
     private val myDataRobot = MyDataRobot()
     private val venueHistoryRobot = VenueHistoryRobot(context = testAppContext.app)
@@ -117,6 +119,10 @@ class SettingsActivityTest : EspressoTest() {
         welcomeRobot.checkAgeConfirmationDialogIsDisplayed()
 
         welcomeRobot.clickConfirmAgePositive()
+
+        howAppWorksRobot.checkActivityIsDisplayed()
+
+        howAppWorksRobot.clickContinueOnboarding()
 
         dataAndPrivacyRobot.checkActivityIsDisplayed()
 

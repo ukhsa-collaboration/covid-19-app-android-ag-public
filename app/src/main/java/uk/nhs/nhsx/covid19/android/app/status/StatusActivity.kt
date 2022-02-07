@@ -1,25 +1,32 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
+import android.provider.Settings
 import androidx.core.view.isVisible
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.parcel.Parcelize
+import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.about.MoreAboutAppActivity
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.LocaleProvider
 import uk.nhs.nhsx.covid19.android.app.common.assistedViewModel
+import uk.nhs.nhsx.covid19.android.app.common.bluetooth.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.databinding.ActivityStatusBinding
+import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysReminderActivity
+import uk.nhs.nhsx.covid19.android.app.localstats.FetchLocalDataProgressActivity
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction
 import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
+import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.NotificationMessage
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
@@ -28,6 +35,7 @@ import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationActivity
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ContactTracingHub
+import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.EnableBluetooth
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ExposureConsent
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.InAppReview
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.IsolationExpiration
@@ -59,6 +67,7 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import uk.nhs.nhsx.covid19.android.app.widgets.IsolationStatusView
 import java.time.LocalDate
 import javax.inject.Inject
+import javax.inject.Named
 
 class StatusActivity : StatusBaseActivity() {
 
@@ -67,6 +76,10 @@ class StatusActivity : StatusBaseActivity() {
 
     @Inject
     lateinit var localeProvider: LocaleProvider
+
+    @Inject
+    @Named(AppModule.BLUETOOTH_STATE_NAME)
+    lateinit var bluetoothStateProvider: AvailabilityStateProvider
 
     private val statusViewModel: StatusViewModel by assistedViewModel {
         val extras = intent.getParcelableExtra(STATUS_ACTIVITY_ACTION) as? StatusActivityAction ?: None
@@ -89,7 +102,7 @@ class StatusActivity : StatusBaseActivity() {
         startListeningToViewState()
 
         startListeningForNavigationTarget()
-
+        startListeningForBluetoothState()
         setClickListeners()
     }
 
@@ -129,7 +142,14 @@ class StatusActivity : StatusBaseActivity() {
                 LocalMessage -> startActivity<LocalMessageActivity>()
                 IsolationHub -> startActivity<IsolationHubActivity>()
                 InAppReview -> statusViewModel.attemptToStartAppReviewFlow(this)
+                EnableBluetooth -> startActivity<EnableBluetoothActivity>()
             }
+        }
+    }
+
+    private fun startListeningForBluetoothState() {
+        bluetoothStateProvider.availabilityState.observe(this) {
+            statusViewModel.onBluetoothStateChanged()
         }
     }
 
@@ -139,7 +159,9 @@ class StatusActivity : StatusBaseActivity() {
                 viewState.isolationState,
                 viewState.currentDate,
                 viewState.exposureNotificationsEnabled,
-                viewState.animationsEnabled
+                viewState.animationsEnabled,
+                viewState.bluetoothEnabled,
+                viewState.showCovidStatsButton
             )
             handleRiskyPostCodeViewState(viewState.areaRiskState)
             handleReportSymptomsState(viewState.showReportSymptomsButton)
@@ -212,13 +234,28 @@ class StatusActivity : StatusBaseActivity() {
             statusViewModel.localMessageBannerClicked()
             startActivity<LocalMessageActivity>()
         }
+
+        optionLocalData.setOnSingleClickListener {
+            startActivity<FetchLocalDataProgressActivity>()
+        }
+
+        bluetoothStoppedView.activateBluetoothButton.setOnSingleClickListener {
+            val bluetoothSettingsIntent = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
+            try {
+                startActivity(bluetoothSettingsIntent)
+            } catch (e: ActivityNotFoundException) {
+                Snackbar.make(binding.root, R.string.enable_bluetooth_error_hint, Snackbar.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun handleIsolationState(
         isolationState: IsolationViewState,
         currentDate: LocalDate,
         exposureNotificationsEnabled: Boolean,
-        animationsEnabled: Boolean
+        animationsEnabled: Boolean,
+        bluetoothEnabled: Boolean,
+        showCovidStatsButton: Boolean
     ) {
         if (statusViewModel.contactTracingSwitchedOn) {
             binding.contactTracingActiveView.focusOnActiveLabel()
@@ -227,10 +264,10 @@ class StatusActivity : StatusBaseActivity() {
 
         when (isolationState) {
             NotIsolating -> {
-                showDefaultView(exposureNotificationsEnabled, animationsEnabled)
+                showDefaultView(exposureNotificationsEnabled, animationsEnabled, bluetoothEnabled, showCovidStatsButton)
             }
             is Isolating -> {
-                showIsolationView(isolationState, currentDate, exposureNotificationsEnabled, animationsEnabled)
+                showIsolationView(isolationState, currentDate, exposureNotificationsEnabled, animationsEnabled, showCovidStatsButton)
             }
         }
     }
@@ -250,7 +287,8 @@ class StatusActivity : StatusBaseActivity() {
         isolationState: Isolating,
         currentDate: LocalDate,
         exposureNotificationsEnabled: Boolean,
-        animationsEnabled: Boolean
+        animationsEnabled: Boolean,
+        showCovidStatsButton: Boolean
     ) = with(binding) {
         isolationView.initialize(isolationState, currentDate)
         val animationState = when {
@@ -263,22 +301,74 @@ class StatusActivity : StatusBaseActivity() {
         contactTracingView.gone()
         isolationView.visible()
         optionIsolationHub.visible()
+        if (showCovidStatsButton) {
+            optionLocalData.visible()
+            updateLocalDataButtonPositionWhenInIsolation()
+        } else {
+            optionLocalData.gone()
+        }
     }
 
-    private fun showDefaultView(exposureNotificationsEnabled: Boolean, animationsEnabled: Boolean) = with(binding) {
-        contactTracingActiveView.isVisible = exposureNotificationsEnabled
-        contactTracingActiveView.isAnimationEnabled = animationsEnabled
+    private fun updateLocalDataButtonPositionWhenInIsolation() {
+        with(binding) {
+            mainActionsContainer.removeView(optionLocalData)
+            val indexOfSettingsButton = mainActionsContainer.indexOfChild(optionSettings)
+            val targetIndex = if (indexOfSettingsButton <= 0) {
+                0
+            } else {
+                indexOfSettingsButton
+            }
+            mainActionsContainer.addView(optionLocalData, targetIndex)
+        }
+    }
 
-        contactTracingStoppedView.root.isVisible = !exposureNotificationsEnabled
+    private fun updateLocalDataButtonPositionWhenNotInIsolation() {
+        with(binding) {
+            mainActionsContainer.removeView(optionLocalData)
+            val indexOfVenueCheckInButton = mainActionsContainer.indexOfChild(optionVenueCheckIn)
+            val targetIndex = if (indexOfVenueCheckInButton < 0) {
+                0
+            } else {
+                indexOfVenueCheckInButton + 1
+            }
+            mainActionsContainer.addView(optionLocalData, targetIndex)
+        }
+    }
+
+    private fun showDefaultView(
+        exposureNotificationsEnabled: Boolean,
+        animationsEnabled: Boolean,
+        bluetoothEnabled: Boolean,
+        showCovidStatsButton: Boolean
+    ) = with(binding) {
+
+        if (bluetoothEnabled) {
+            contactTracingActiveView.isVisible = exposureNotificationsEnabled
+            contactTracingActiveView.isAnimationEnabled = animationsEnabled
+            contactTracingStoppedView.root.isVisible = !exposureNotificationsEnabled
+            bluetoothStoppedView.root.isVisible = !bluetoothEnabled
+        } else {
+            contactTracingView.visible()
+            bluetoothStoppedView.root.visible()
+            contactTracingStoppedView.root.gone()
+            contactTracingActiveView.gone()
+        }
 
         isolationView.gone()
         contactTracingView.visible()
         optionReportSymptoms.visible()
         optionIsolationHub.gone()
+        if (showCovidStatsButton) {
+            optionLocalData.visible()
+            updateLocalDataButtonPositionWhenNotInIsolation()
+        } else {
+            optionLocalData.gone()
+        }
     }
 
     override fun onResume() {
         super.onResume()
+        bluetoothStateProvider.start(this)
         resetButtonEnabling()
         isVisible = true
         statusViewModel.onResume()
@@ -306,6 +396,7 @@ class StatusActivity : StatusBaseActivity() {
         isVisible = false
         statusViewModel.onPause()
         dateChangeReceiver.unregisterReceiver(this)
+        bluetoothStateProvider.stop(this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -325,6 +416,12 @@ class StatusActivity : StatusBaseActivity() {
                 .apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     putExtra(STATUS_ACTIVITY_ACTION, statusActivityAction)
+                }
+
+        fun getIntentClearTop(context: Context) =
+            Intent(context, StatusActivity::class.java)
+                .apply {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 }
 
         const val STATUS_ACTIVITY_ACTION = "STATUS_ACTIVITY_ACTION"

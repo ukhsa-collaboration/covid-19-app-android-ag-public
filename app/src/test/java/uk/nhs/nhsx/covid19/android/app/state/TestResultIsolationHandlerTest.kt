@@ -195,7 +195,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = positiveTestResultConfirmed.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     @Test
@@ -219,7 +219,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = positiveTestResultConfirmed.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     @Test
@@ -237,7 +237,7 @@ class TestResultIsolationHandlerTest {
             testResult = testResult.toAcknowledgedTestResult()
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -257,7 +257,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = positiveTestResultConfirmed.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     @Test
@@ -281,7 +281,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = positiveTestResultConfirmed.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     @Test
@@ -296,7 +296,7 @@ class TestResultIsolationHandlerTest {
             testResult = positiveTestResultIndicative.toAcknowledgedTestResult()
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -316,7 +316,7 @@ class TestResultIsolationHandlerTest {
             acknowledgedDate = Instant.now(fixedClock)
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = expectedKeySharingInfo), result)
     }
 
     @Test
@@ -335,7 +335,7 @@ class TestResultIsolationHandlerTest {
             positiveTestResultIndicative.toAcknowledgedTestResult()
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -350,7 +350,7 @@ class TestResultIsolationHandlerTest {
             positiveTestResultIndicative.toAcknowledgedTestResult()
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -375,7 +375,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = positiveTestResultConfirmed.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     @Test
@@ -403,7 +403,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = positiveTestResultConfirmed.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     @Test
@@ -427,7 +427,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = positiveTestResultConfirmed.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     @Test
@@ -461,7 +461,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = testResult.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     @Test
@@ -491,7 +491,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = testResult.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     @Test
@@ -511,7 +511,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = positiveTestResultConfirmed.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     @Test
@@ -533,7 +533,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = positiveTestResultConfirmed.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     //endregion
@@ -817,7 +817,7 @@ class TestResultIsolationHandlerTest {
                     acknowledgedDate = Instant.now(fixedClock)
                 )
             else null
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     //endregion
@@ -950,7 +950,7 @@ class TestResultIsolationHandlerTest {
                     acknowledgedDate = Instant.now(fixedClock)
                 )
             else null
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     //endregion
@@ -1084,7 +1084,7 @@ class TestResultIsolationHandlerTest {
                     acknowledgedDate = Instant.now(fixedClock)
                 )
             else null
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     //endregion
@@ -1215,7 +1215,7 @@ class TestResultIsolationHandlerTest {
                     acknowledgedDate = Instant.now(fixedClock)
                 )
             else null
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     //endregion
@@ -1255,7 +1255,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = testResult.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     //endregion
@@ -1303,7 +1303,7 @@ class TestResultIsolationHandlerTest {
             testResult = expectedTestResult
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -1336,7 +1336,7 @@ class TestResultIsolationHandlerTest {
             selfAssessment = null
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -1413,7 +1413,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = testResult.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     @Test
@@ -1500,7 +1500,7 @@ class TestResultIsolationHandlerTest {
                     acknowledgedDate = Instant.now(fixedClock)
                 )
             else null
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     //endregion
@@ -1533,7 +1533,7 @@ class TestResultIsolationHandlerTest {
             testResult = testResult.toAcknowledgedTestResult()
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -1556,7 +1556,7 @@ class TestResultIsolationHandlerTest {
             testResult = negativeTestResultConfirmed.toAcknowledgedTestResult(),
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -1585,7 +1585,7 @@ class TestResultIsolationHandlerTest {
             testResult = expectedTestResult
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -1616,7 +1616,7 @@ class TestResultIsolationHandlerTest {
             testResult = expectedTestResult
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -1644,7 +1644,7 @@ class TestResultIsolationHandlerTest {
             testResult = expectedTestResult
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -1669,7 +1669,7 @@ class TestResultIsolationHandlerTest {
             testResult = negativeTestResultConfirmed.toAcknowledgedTestResult()
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -1701,7 +1701,7 @@ class TestResultIsolationHandlerTest {
             testResult = negativeTestResultConfirmed.toAcknowledgedTestResult()
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -1722,7 +1722,7 @@ class TestResultIsolationHandlerTest {
             testResult = negativeTestResultConfirmed.toAcknowledgedTestResult()
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -1739,7 +1739,7 @@ class TestResultIsolationHandlerTest {
             testResult = negativeTestResultConfirmed.toAcknowledgedTestResult()
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -1773,7 +1773,7 @@ class TestResultIsolationHandlerTest {
             negativeTestResultConfirmed.toAcknowledgedTestResult()
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -2147,7 +2147,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = positiveTestResultConfirmed.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     @Test
@@ -2184,7 +2184,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = receivedTestResult.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     @Test
@@ -2217,7 +2217,7 @@ class TestResultIsolationHandlerTest {
             testResult = receivedTestResult.toAcknowledgedTestResult()
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -2257,7 +2257,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = receivedTestResult.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     @Test
@@ -2408,7 +2408,7 @@ class TestResultIsolationHandlerTest {
             )
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -2445,7 +2445,7 @@ class TestResultIsolationHandlerTest {
             diagnosisKeySubmissionToken = receivedTestResult.diagnosisKeySubmissionToken!!,
             acknowledgedDate = Instant.now(fixedClock)
         )
-        assertEquals(Transition(expectedState, expectedKeySharingInfo), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
     //endregion
@@ -2491,7 +2491,7 @@ class TestResultIsolationHandlerTest {
 
         val expectedState = isolationPositiveTest(relevantTestResult)
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -2597,7 +2597,7 @@ class TestResultIsolationHandlerTest {
             onsetDate = symptomsOnsetDate
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -2634,7 +2634,7 @@ class TestResultIsolationHandlerTest {
             )
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -2685,7 +2685,7 @@ class TestResultIsolationHandlerTest {
             )
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     //endregion
@@ -2800,7 +2800,7 @@ class TestResultIsolationHandlerTest {
             onsetDate = symptomsOnsetDate,
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -2929,7 +2929,7 @@ class TestResultIsolationHandlerTest {
             testResult = receivedTestResult.toAcknowledgedTestResult()
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     @Test
@@ -2966,7 +2966,7 @@ class TestResultIsolationHandlerTest {
             )
         )
 
-        assertEquals(Transition(expectedState, keySharingInfo = null), result)
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = null), result)
     }
 
     //endregion

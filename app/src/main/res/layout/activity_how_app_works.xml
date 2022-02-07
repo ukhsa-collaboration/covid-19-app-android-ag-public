@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/howAppWorksContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_onboarding_toolbar" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingTop="@dimen/vertical_margin_large"
+            android:paddingBottom="@dimen/vertical_margin">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/introMarker"
+                style="@style/GoneInLandscape"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_elbow_bump" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                android:id="@+id/howAppWorksTitle"
+                style="@style/Title1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/onboarding_how_app_works_title" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin">
+
+                <ImageView
+                    android:id="@+id/iconBluetooth"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/ic_onboarding_circle"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_onboarding_how_app_works_bluetooth"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                    android:id="@+id/bluetoothHeader"
+                    style="@style/Title3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/onboarding_how_app_works_bluetooth_bullet_header"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/iconBluetooth"
+                    app:layout_constraintTop_toTopOf="@id/iconBluetooth" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                    android:id="@+id/bluetoothDesc"
+                    style="@style/Body1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    app:rawText="@string/onboarding_how_app_works_bluetooth_bullet_desc"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/bluetoothHeader"
+                    app:layout_constraintTop_toBottomOf="@id/bluetoothHeader" />
+
+                <ImageView
+                    android:id="@+id/iconBattery"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/vertical_margin"
+                    android:background="@drawable/ic_onboarding_circle"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_onboarding_how_app_works_battery"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/bluetoothDesc" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                    android:id="@+id/batteryHeader"
+                    style="@style/Title3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/onboarding_how_app_works_battery_bullet_header"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/iconBattery"
+                    app:layout_constraintTop_toTopOf="@id/iconBattery" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                    android:id="@+id/batteryDesc"
+                    style="@style/Body1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    app:rawText="@string/onboarding_how_app_works_battery_bullet_desc"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/batteryHeader"
+                    app:layout_constraintTop_toBottomOf="@id/batteryHeader" />
+
+                <ImageView
+                    android:id="@+id/iconLocation"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/vertical_margin"
+                    android:background="@drawable/ic_onboarding_circle"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_onboarding_how_app_works_location"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/batteryDesc" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                    android:id="@+id/locationHeader"
+                    style="@style/Title3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/onboarding_how_app_works_location_bullet_header"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/iconLocation"
+                    app:layout_constraintTop_toTopOf="@id/iconLocation" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                    android:id="@+id/locationDesc"
+                    style="@style/Body1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    app:rawText="@string/onboarding_how_app_works_location_bullet_desc"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/locationHeader"
+                    app:layout_constraintTop_toBottomOf="@id/locationHeader" />
+
+                <ImageView
+                    android:id="@+id/iconPrivacy"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/vertical_margin"
+                    android:background="@drawable/ic_onboarding_circle"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_onboarding_how_app_works_privacy"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/locationDesc" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                    android:id="@+id/privacyHeader"
+                    style="@style/Title3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/onboarding_how_app_works_privacy_bullet_header"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/iconPrivacy"
+                    app:layout_constraintTop_toTopOf="@id/iconPrivacy" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                    android:id="@+id/privacyDesc"
+                    style="@style/Body1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    app:rawText="@string/onboarding_how_app_works_privacy_bullet_desc"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/privacyHeader"
+                    app:layout_constraintTop_toBottomOf="@id/privacyHeader" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/continueHowAppWorks"
+        style="@style/PrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_horizontal"
+        android:layout_marginTop="@dimen/vertical_margin"
+        android:layout_marginBottom="@dimen/vertical_margin_large"
+        android:text="@string/onboarding_how_app_works_continue"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</LinearLayout>

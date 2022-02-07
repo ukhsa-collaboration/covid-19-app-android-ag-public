@@ -101,6 +101,7 @@ data class BackgroundTaskTicks(
     var isDisplayingLocalInfoBackgroundTick: Boolean = false,
     var optedOutForContactIsolationBackgroundTick: Boolean = false,
     var appIsUsableBackgroundTick: Boolean = false,
+    var appIsUsableBluetoothOffBackgroundTick: Boolean = false,
     var appIsContactTraceableBackgroundTick: Boolean = false
 ) {
     fun applyToMetrics(metrics: Metrics) {
@@ -126,6 +127,7 @@ data class BackgroundTaskTicks(
         metrics.isDisplayingLocalInfoBackgroundTick += isDisplayingLocalInfoBackgroundTick.toInt()
         metrics.optedOutForContactIsolationBackgroundTick += optedOutForContactIsolationBackgroundTick.toInt()
         metrics.appIsUsableBackgroundTick += appIsUsableBackgroundTick.toInt()
+        metrics.appIsUsableBluetoothOffBackgroundTick += appIsUsableBluetoothOffBackgroundTick.toInt()
         metrics.appIsContactTraceableBackgroundTick += appIsContactTraceableBackgroundTick.toInt()
     }
 }

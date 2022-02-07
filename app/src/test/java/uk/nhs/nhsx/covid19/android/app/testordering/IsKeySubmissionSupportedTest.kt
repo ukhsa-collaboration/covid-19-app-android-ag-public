@@ -23,8 +23,7 @@ class IsKeySubmissionSupportedTest {
     private val isKeySubmissionSupported =
         IsKeySubmissionSupported(isolationStateMachine, testResultIsolationHandler, fixedClock)
 
-    private val expectedCurrentIsolationState = mockk<IsolationState>()
-    private val expectedNewIsolationState = mockk<IsolationState>()
+    private val currentIsolationState = mockk<IsolationState>()
     private val expectedTestResult = mockk<ReceivedTestResult>()
 
     @Test
@@ -37,10 +36,10 @@ class IsKeySubmissionSupportedTest {
     @Test
     fun `when test result supports key submission but key submission should be prevented then return false`() {
         every { expectedTestResult.diagnosisKeySubmissionSupported } returns true
-        every { isolationStateMachine.readState() } returns expectedCurrentIsolationState
+        every { isolationStateMachine.readState() } returns currentIsolationState
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
-                expectedCurrentIsolationState,
+                currentIsolationState,
                 expectedTestResult,
                 Instant.now(fixedClock)
             )
@@ -52,10 +51,10 @@ class IsKeySubmissionSupportedTest {
     @Test
     fun `when test result supports key submission and key submission not prevented then return true`() {
         every { expectedTestResult.diagnosisKeySubmissionSupported } returns true
-        every { isolationStateMachine.readState() } returns expectedCurrentIsolationState
+        every { isolationStateMachine.readState() } returns currentIsolationState
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
-                expectedCurrentIsolationState,
+                currentIsolationState,
                 expectedTestResult,
                 Instant.now(fixedClock)
             )
@@ -67,14 +66,14 @@ class IsKeySubmissionSupportedTest {
     @Test
     fun `when test result supports key submission and state transition imminent then return true`() {
         every { expectedTestResult.diagnosisKeySubmissionSupported } returns true
-        every { isolationStateMachine.readState() } returns expectedCurrentIsolationState
+        every { isolationStateMachine.readState() } returns currentIsolationState
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
-                expectedCurrentIsolationState,
+                currentIsolationState,
                 expectedTestResult,
                 Instant.now(fixedClock)
             )
-        } returns Transition(expectedNewIsolationState, keySharingInfo = null)
+        } returns Transition(mockk(), keySharingInfo = null)
 
         assertTrue(isKeySubmissionSupported(expectedTestResult))
     }

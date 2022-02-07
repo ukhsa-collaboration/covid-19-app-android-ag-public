@@ -51,6 +51,12 @@ enum class FeatureFlag(
         "New no symptoms screen",
         "Show new no symptoms screen",
         defaultValue = false
+    ),
+    LOCAL_COVID_STATS(
+        "feature.LocalCovidStats",
+        "Local Covid Stats page",
+        "Show Local Covid Stats page",
+        defaultValue = false
     )
 }
 

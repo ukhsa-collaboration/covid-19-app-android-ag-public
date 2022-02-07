@@ -19,4 +19,9 @@ class DataAndPrivacyRobot {
         onView(withId(R.id.buttonAgree))
             .perform(scrollTo(), click())
     }
+
+    fun clickNoThanksButton() {
+        onView(withId(R.id.buttonNoThanks))
+            .perform(scrollTo(), click())
+    }
 }

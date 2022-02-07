@@ -25,7 +25,7 @@ class ScreenshotTakingRule : TestWatcher() {
 
         try {
             val outputFolder = File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
                 "covid19/failures/${description.className}"
             )
             val file = File(outputFolder, "${description.methodName}.txt")

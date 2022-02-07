@@ -121,7 +121,7 @@ class AndroidReporter internal constructor(
     @Suppress("DEPRECATION")
     private fun save() {
         val outputFolder = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
             "covid19"
         )
         val file = File(outputFolder, "$screenshotFolderName.json")

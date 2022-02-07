@@ -42,6 +42,10 @@ class WelcomeActivity : BaseActivity() {
             }
         }
 
+        viewModel.showHowAppWorksScreen().observe(this) {
+            HowAppWorksActivity.start(this)
+        }
+
         binding.confirmOnboarding.setOnSingleClickListener {
             viewModel.onConfirmOnboardingClicked()
         }
@@ -54,7 +58,7 @@ class WelcomeActivity : BaseActivity() {
         builder.setPositiveButton(
             R.string.onboarding_age_confirmation_positive
         ) { _, _ ->
-            DataAndPrivacyActivity.start(this)
+            viewModel.onPositiveButtonClicked()
         }
 
         builder.setNegativeButton(

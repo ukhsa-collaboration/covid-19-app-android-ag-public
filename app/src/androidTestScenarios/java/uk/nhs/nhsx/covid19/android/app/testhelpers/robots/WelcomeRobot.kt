@@ -9,20 +9,19 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.testhelpers.isDisplayed
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
+import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
 
-class WelcomeRobot {
-
-    fun checkActivityIsDisplayed() {
-        onView(withId(R.id.welcomeTitle))
-            .check(matches(isDisplayed()))
-    }
+class WelcomeRobot : HasActivity {
+    override val containerId: Int
+        get() = R.id.welcomeTitle
 
     fun clickConfirmOnboarding() {
         onView(withId(R.id.confirmOnboarding))
             .perform(click())
     }
 
-    fun checkAgeConfirmationDialogIsDisplayed() {
+    fun checkAgeConfirmationDialogIsDisplayed() = waitFor {
         onView(withText(R.string.onboarding_age_confirmation_title))
             .inRoot(isDialog())
             .check(matches(isDisplayed()))

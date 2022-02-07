@@ -161,7 +161,7 @@ class TestResultActivityStateTest : EspressoTest() {
         checkGoodNewsState(
             state = NegativeNotInIsolation,
             hasCloseToolbar = false,
-            iconDrawableRes = R.drawable.ic_isolation_expired_or_over,
+            iconDrawableRes = R.drawable.ic_elbow_bump,
             titleStringResource = R.string.expiration_notification_title,
             subtitleStringResource = R.string.test_result_negative_already_not_in_isolation_subtitle,
             actionButtonStringResource = R.string.continue_button,
@@ -194,7 +194,7 @@ class TestResultActivityStateTest : EspressoTest() {
         checkGoodNewsState(
             state = NegativeWontBeInIsolation,
             hasCloseToolbar = false,
-            iconDrawableRes = R.drawable.ic_isolation_expired_or_over,
+            iconDrawableRes = R.drawable.ic_elbow_bump,
             titleStringResource = R.string.expiration_notification_title,
             subtitleStringResource = R.string.test_result_negative_no_self_isolation_subtitle_text,
             actionButtonStringResource = R.string.continue_button,
@@ -273,7 +273,7 @@ class TestResultActivityStateTest : EspressoTest() {
         checkGoodNewsState(
             state = PositiveWontBeInIsolation(ShareKeys(bookFollowUpTest = false)),
             hasCloseToolbar = false,
-            iconDrawableRes = R.drawable.ic_isolation_expired_or_over,
+            iconDrawableRes = R.drawable.ic_elbow_bump,
             titleStringResource = R.string.test_result_your_test_result,
             subtitleStringResource = R.string.test_result_positive_no_self_isolation_subtitle,
             actionButtonStringResource = R.string.continue_button,
@@ -327,7 +327,7 @@ class TestResultActivityStateTest : EspressoTest() {
         checkGoodNewsState(
             state = VoidNotInIsolation,
             hasCloseToolbar = true,
-            iconDrawableRes = R.drawable.ic_isolation_expired_or_over,
+            iconDrawableRes = R.drawable.ic_elbow_bump,
             titleStringResource = R.string.test_result_your_test_result,
             subtitleStringResource = R.string.test_result_void_already_not_in_isolation_subtitle,
             actionButtonStringResource = R.string.book_free_test,

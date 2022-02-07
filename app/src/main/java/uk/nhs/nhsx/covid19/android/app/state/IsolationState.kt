@@ -22,16 +22,11 @@ data class IsolationState(
 ) {
 
     val assumedOnsetDateForExposureKeys: LocalDate?
-        get() =
-            when {
-                testResult != null && testResult.isPositive() &&
-                    (selfAssessment == null || testResult.testEndDate.isBefore(selfAssessment.assumedOnsetDate)) ->
-                    testResult.testEndDate
-                selfAssessment != null ->
-                    selfAssessment.assumedOnsetDate
-                else ->
-                    null
-            }
+        get() = toIsolationInfo().assumedOnsetDateForExposureKeys
+
+    fun toIsolationInfo(): IsolationInfo {
+        return IsolationInfo(selfAssessment, testResult, contact, hasAcknowledgedEndOfIsolation)
+    }
 
     @JsonClass(generateAdapter = true)
     data class Contact(

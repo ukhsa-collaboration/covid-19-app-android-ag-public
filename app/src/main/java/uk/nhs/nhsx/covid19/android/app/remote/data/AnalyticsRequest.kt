@@ -112,6 +112,7 @@ data class Metrics(
     var optedOutForContactIsolation: Int = 0,
     var optedOutForContactIsolationBackgroundTick: Int = 0,
     var appIsUsableBackgroundTick: Int = 0,
+    var appIsUsableBluetoothOffBackgroundTick: Int = 0,
     var appIsContactTraceableBackgroundTick: Int = 0,
     var didAccessSelfIsolationNoteLink: Int = 0
 )

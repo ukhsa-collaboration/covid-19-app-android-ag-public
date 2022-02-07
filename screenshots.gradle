@@ -2,7 +2,7 @@ import java.nio.file.Files
 
 def testReportDirectory = "$buildDir/reports/TestReport"
 def appReportDirectory = "$buildDir/reports/AppReport"
-def folderOnDevice = '/sdcard/Pictures/covid19'
+def folderOnDevice = '/sdcard/Download/covid19'
 
 void deleteDir(File file) {
     def contents = file.listFiles()

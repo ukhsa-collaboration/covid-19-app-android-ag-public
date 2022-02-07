@@ -11,6 +11,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry
 import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 
 @Singleton
+@Deprecated("Use LocalAuthorityPostCodeProvider instead")
 class PostalDistrictProvider @Inject constructor(sharedPreferences: SharedPreferences) {
 
     private val prefs = sharedPreferences.with<String>(VALUE_KEY)

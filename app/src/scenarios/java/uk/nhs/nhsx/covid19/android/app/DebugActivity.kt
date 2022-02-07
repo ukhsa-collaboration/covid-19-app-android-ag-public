@@ -49,7 +49,7 @@ import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateRecommendedActivity
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationActivity
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
-import uk.nhs.nhsx.covid19.android.app.common.EnableBluetoothActivity
+import uk.nhs.nhsx.covid19.android.app.common.bluetooth.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableExposureNotificationsActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableLocationActivity
 import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
@@ -77,6 +77,8 @@ import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationAc
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysReminderActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysResultActivity
 import uk.nhs.nhsx.covid19.android.app.featureflag.testsettings.TestSettingsActivity
+import uk.nhs.nhsx.covid19.android.app.localdata.LocalDataAndStatisticsActivity
+import uk.nhs.nhsx.covid19.android.app.localstats.FetchLocalDataProgressActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.DataAndPrivacyActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateActivity
@@ -250,8 +252,8 @@ class DebugActivity : AppCompatActivity() {
     }
 
     private fun setupUpdateTranslationsFromLokalise() = with(binding) {
-            lokaliseContent.apiIdError.isVisible = LokaliseSettings.apiKey == ""
-            lokaliseContent.projectIdError.isVisible = LokaliseSettings.projectId == ""
+        lokaliseContent.apiIdError.isVisible = LokaliseSettings.apiKey == ""
+        lokaliseContent.projectIdError.isVisible = LokaliseSettings.projectId == ""
 
         localiseHeadingContainer.setOnSingleClickListener {
             if (lokaliseContent.root.visibility == View.GONE) {
@@ -874,6 +876,19 @@ class DebugActivity : AppCompatActivity() {
                     )
                 )
             )
+        }
+
+        addScreenButton("Local Data and Statistics Screen") {
+            startActivity<LocalDataAndStatisticsActivity>()
+        }
+
+        addScreenButton("Local Stats - Fetch Local Data") {
+            startActivity<FetchLocalDataProgressActivity>()
+        }
+
+        addScreenButton("Local Stats - Show Local Data (random data)") {
+            val randomLocalStats = RandomLocalStatsGenerator().generate()
+            startActivity(LocalDataAndStatisticsActivity.getIntent(this, randomLocalStats))
         }
     }
 

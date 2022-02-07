@@ -36,6 +36,7 @@
     <color name="style_green">#4EBD74</color>
     <color name="style_light_blue">#12A0F0</color>
     <color name="style_lighter_blue">#79ABD3</color>
+    <color name="style_gold">#D9C144</color>
 
     <color name="links_toolbar_color">@color/surface_background</color>
     <color name="about_app_text_color">#FAFAFA</color>

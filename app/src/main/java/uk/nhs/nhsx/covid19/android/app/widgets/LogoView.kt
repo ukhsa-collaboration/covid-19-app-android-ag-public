@@ -74,12 +74,12 @@ class LogoView @JvmOverloads constructor(
 
             val description = logoWithDescription.description
             if (isAccessibilityHeadingCompat && description != null) {
-                daLogo.contentDescription = context.getString(description)
-                daLogo.isFocusable = true
+                contentDescription = context.getString(description)
+                isFocusable = true
                 setUpAccessibilityHeading()
             } else {
-                daLogo.contentDescription = null
-                daLogo.isFocusable = false
+                contentDescription = null
+                isFocusable = false
             }
         }
     }

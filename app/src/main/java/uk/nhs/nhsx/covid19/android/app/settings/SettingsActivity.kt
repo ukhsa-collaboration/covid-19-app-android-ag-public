@@ -93,15 +93,11 @@ class SettingsActivity : BaseActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.about_delete_your_data_title))
         builder.setMessage(R.string.delete_data_explanation)
-        builder.setPositiveButton(
-            R.string.about_delete_positive_text
-        ) { _, _ ->
-            viewModel.deleteAllUserData()
+        builder.setPositiveButton(R.string.about_delete_positive_text) { _, _ ->
+            viewModel.dataDeletionConfirmed()
         }
 
-        builder.setNegativeButton(
-            R.string.cancel
-        ) { dialog, _ ->
+        builder.setNegativeButton(R.string.cancel) { dialog, _ ->
             dialog.dismiss()
         }
 

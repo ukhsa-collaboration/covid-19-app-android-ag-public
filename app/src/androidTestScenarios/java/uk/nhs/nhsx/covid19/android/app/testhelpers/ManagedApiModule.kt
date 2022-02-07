@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers
 
 import dagger.Module
 import dagger.Provides
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodesLoader
 import uk.nhs.nhsx.covid19.android.app.remote.AnalyticsApi
 import uk.nhs.nhsx.covid19.android.app.remote.AppAvailabilityApi
 import uk.nhs.nhsx.covid19.android.app.remote.EmptyApi
@@ -13,6 +14,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.IsolationPaymentApi
 import uk.nhs.nhsx.covid19.android.app.remote.KeysDistributionApi
 import uk.nhs.nhsx.covid19.android.app.remote.KeysSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.LocalMessagesApi
+import uk.nhs.nhsx.covid19.android.app.remote.LocalStatsApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockAnalyticsApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockAppAvailabilityApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockEmptyApi
@@ -23,6 +25,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.MockIsolationConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockKeysDistributionApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockKeysSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockLocalMessagesApi
+import uk.nhs.nhsx.covid19.android.app.remote.MockLocalStatsApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockQuestionnaireApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockRemoteServiceExceptionCrashReportSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockRiskyPostDistrictsApi
@@ -132,4 +135,9 @@ class ManagedApiModule(
     @Provides
     @Singleton
     fun provideLocalMessagesApi(): LocalMessagesApi = localMessagesApi
+
+    @Provides
+    @Singleton
+    fun provideLocalStatsApi(localAuthorityPostCodesLoader: LocalAuthorityPostCodesLoader): LocalStatsApi =
+        MockLocalStatsApi(localAuthorityPostCodesLoader)
 }

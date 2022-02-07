@@ -10,7 +10,7 @@ import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationActivity
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableExposureNotificationsActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
-import uk.nhs.nhsx.covid19.android.app.databinding.ActivityPermissionBinding
+import uk.nhs.nhsx.covid19.android.app.databinding.ActivityOnboardingPermissionBluetoothBinding
 import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionViewModel.NavigationTarget.BatteryOptimization
 import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionViewModel.NavigationTarget.EnableExposureNotifications
@@ -28,12 +28,11 @@ class PermissionActivity : BaseActivity() {
     lateinit var factory: ViewModelFactory<PermissionViewModel>
     private val viewModel: PermissionViewModel by viewModels { factory }
 
-    private lateinit var binding: ActivityPermissionBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
-        binding = ActivityPermissionBinding.inflate(layoutInflater)
+
+        val binding = ActivityOnboardingPermissionBluetoothBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.permissionContinue.setOnSingleClickListener {

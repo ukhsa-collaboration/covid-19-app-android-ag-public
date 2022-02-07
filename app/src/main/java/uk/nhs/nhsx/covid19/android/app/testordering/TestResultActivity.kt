@@ -310,7 +310,7 @@ class TestResultActivity : BaseActivity() {
     private fun showGoodNewsState(
         hasCloseToolbar: Boolean = false,
         hasGoodNewsLink: Boolean = true,
-        @DrawableRes iconResource: Int? = R.drawable.ic_isolation_expired_or_over,
+        @DrawableRes iconResource: Int? = R.drawable.ic_elbow_bump,
         @StringRes titleStringResource: Int = R.string.expiration_notification_title,
         @StringRes subtitleStringResource: Int,
         @StringRes goodNewsInfoViewResource: Int = R.string.test_result_no_self_isolation_description,

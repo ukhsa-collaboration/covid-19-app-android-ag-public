@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.status
 import androidx.test.filters.FlakyTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
+import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_COVID_STATS
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result
 import uk.nhs.nhsx.covid19.android.app.exposure.setExposureNotificationResolutionRequired
@@ -20,10 +21,13 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ContactTracingHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalMessageRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MoreAboutAppRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ProgressRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QrScannerRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SettingsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestingHubRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
@@ -40,6 +44,7 @@ class StatusActivityTest : EspressoTest() {
     private val testingHubRobot = TestingHubRobot()
     private val localMessageRobot = LocalMessageRobot()
     private val isolationHelper = IsolationHelper(testAppContext.clock)
+    private val progressRobot = ProgressRobot()
 
     @Test
     fun clickMoreAboutApp() {
@@ -61,6 +66,71 @@ class StatusActivityTest : EspressoTest() {
         statusRobot.clickVenueCheckIn()
 
         qrScannerRobot.checkActivityIsDisplayed()
+    }
+
+    @Test
+    fun checkPositionOfLocalDataButton_whenUserNotInIsolation() {
+        runWithFeatureEnabled(LOCAL_COVID_STATS) {
+            startTestActivity<StatusActivity>()
+
+            statusRobot.checkLocalDataIsDisplayedAfterCheckInVenueButton()
+
+            statusRobot.clickLocalData()
+
+            progressRobot.checkActivityIsDisplayed()
+        }
+    }
+
+    @Test
+    fun checkLocalDataButtonIsGone_whenFeatureIsDisabledAndUserNotInIsolation() {
+        runWithFeature(LOCAL_COVID_STATS, enabled = false) {
+            startTestActivity<StatusActivity>()
+            statusRobot.checkLocalDataIsNotDisplayed()
+        }
+    }
+
+    @Test
+    fun checkPositionOfLocalDataButton_whenUserInIsolation() {
+        runWithFeatureEnabled(LOCAL_COVID_STATS) {
+            testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
+
+            startTestActivity<StatusActivity>()
+
+            statusRobot.checkLocalDataIsDisplayedBeforeSettingsButton()
+
+            statusRobot.clickLocalData()
+
+            progressRobot.checkActivityIsDisplayed()
+        }
+    }
+
+    @Test
+    fun checkLocalDataButtonIsGone_whenFeatureIsDisabledAndUserInIsolation() {
+        runWithFeature(LOCAL_COVID_STATS, enabled = false) {
+            testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
+            startTestActivity<StatusActivity>()
+            statusRobot.checkLocalDataIsNotDisplayed()
+        }
+    }
+
+    @Test
+    fun checkPositionOfLocalDataButton_whenUserInContactIsolation() {
+        runWithFeatureEnabled(LOCAL_COVID_STATS) {
+            testAppContext.setState(isolationHelper.contact().asIsolation())
+
+            startTestActivity<StatusActivity>()
+
+            statusRobot.checkLocalDataIsDisplayedBeforeSettingsButton()
+        }
+    }
+
+    @Test
+    fun checkLocalDataButtonIsGone_whenFeatureIsDisabledAndUserInContactIsolation() {
+        runWithFeature(LOCAL_COVID_STATS, enabled = false) {
+            testAppContext.setState(isolationHelper.contact().asIsolation())
+            startTestActivity<StatusActivity>()
+            statusRobot.checkLocalDataIsNotDisplayed()
+        }
     }
 
     @Test
@@ -237,6 +307,7 @@ class StatusActivityTest : EspressoTest() {
         waitFor { statusRobot.checkLocalMessageBannerIsDisplayed() }
     }
 
+    @Test
     fun whenIsolating_withAnimationDisabled_shouldShowStaticImage() {
         testAppContext.setState(isolationHelper.contact().asIsolation())
 
@@ -245,6 +316,7 @@ class StatusActivityTest : EspressoTest() {
         statusRobot.checkNoAnimationIsDisplayed(isIsolating = true)
     }
 
+    @Test
     fun whenNotIsolating_withAnimationDisabled_shouldShowStaticImage() {
         testAppContext.setState(isolationHelper.neverInIsolation())
 
@@ -253,6 +325,7 @@ class StatusActivityTest : EspressoTest() {
         statusRobot.checkNoAnimationIsDisplayed(isIsolating = false)
     }
 
+    @Test
     fun whenIsolating_withAnimationDisabled_contactTracingOff_shouldNotShowStaticImage() {
         testAppContext.setState(isolationHelper.contact().asIsolation())
         testAppContext.getExposureNotificationApi().setEnabled(false)
@@ -262,6 +335,7 @@ class StatusActivityTest : EspressoTest() {
         statusRobot.checkStaticImageIsNotDisplayed(isIsolating = true)
     }
 
+    @Test
     fun whenNotIsolating_withAnimationDisabled_contactTracingOff_shouldNotShowStaticImage() {
         testAppContext.setState(isolationHelper.neverInIsolation())
         testAppContext.getExposureNotificationApi().setEnabled(false)
@@ -269,6 +343,86 @@ class StatusActivityTest : EspressoTest() {
         startTestActivity<StatusActivity>()
 
         statusRobot.checkStaticImageIsNotDisplayed(isIsolating = false)
+    }
+
+    @Test
+    fun whenBluetoothEnabled_doNotShowBluetoothStoppedView() {
+        testAppContext.setBluetoothEnabled(true)
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkBluetoothStoppedViewIsNotDisplayed()
+    }
+
+    @Test
+    fun onBluetoothDisabledThenEnabled_viewScreenChanges() {
+        testAppContext.setBluetoothEnabled(false)
+        testAppContext.getShouldShowBluetoothSplashScreen().setHasBeenShown(true)
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+        statusRobot.checkBluetoothStoppedViewIsDisplayed()
+
+        testAppContext.setBluetoothEnabled(true)
+
+        statusRobot.checkContactTracingActiveIsDisplayed()
+        statusRobot.checkBluetoothStoppedViewIsNotDisplayed()
+    }
+
+    @Test
+    fun onBluetoothEnabledThenDisabled_viewScreenChanges() {
+        testAppContext.setBluetoothEnabled(true)
+        testAppContext.getShouldShowBluetoothSplashScreen().setHasBeenShown(true)
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkBluetoothStoppedViewIsNotDisplayed()
+        statusRobot.checkContactTracingActiveIsDisplayed()
+
+        testAppContext.setBluetoothEnabled(false)
+
+        statusRobot.checkBluetoothStoppedViewIsDisplayed()
+    }
+
+    @Test
+    fun whenBluetoothDisabled_notIsolating_showBluetoothStoppedView() {
+        testAppContext.setBluetoothEnabled(false)
+        testAppContext.setState(isolationHelper.neverInIsolation())
+        testAppContext.getShouldShowBluetoothSplashScreen().setHasBeenShown(true)
+        startTestActivity<StatusActivity>()
+        statusRobot.checkActivityIsDisplayed()
+        statusRobot.checkBluetoothStoppedViewIsDisplayed()
+    }
+
+    @Test
+    fun whenBluetoothDisabled_inIsolation_doNotShowBluetoothStoppedView() {
+        testAppContext.setBluetoothEnabled(false)
+        testAppContext.setState(isolationHelper.contact().asIsolation())
+        testAppContext.getShouldShowBluetoothSplashScreen().setHasBeenShown(true)
+        startTestActivity<StatusActivity>()
+        statusRobot.checkActivityIsDisplayed()
+        statusRobot.checkBluetoothStoppedViewIsNotDisplayed()
+    }
+
+    @Test
+    fun whenBluetoothDisabled_contactTracingIsOff_showBluetoothStoppedView() {
+        testAppContext.setBluetoothEnabled(false)
+        testAppContext.getExposureNotificationApi().setEnabled(false)
+        testAppContext.getShouldShowBluetoothSplashScreen().setHasBeenShown(true)
+        startTestActivity<StatusActivity>()
+        statusRobot.checkActivityIsDisplayed()
+        statusRobot.checkBluetoothStoppedViewIsDisplayed()
+    }
+
+    @Test
+    fun whenBluetoothDisabled_contactTracingIsOn_showBluetoothStoppedView() {
+        testAppContext.setBluetoothEnabled(false)
+        testAppContext.getExposureNotificationApi().setEnabled(true)
+        testAppContext.getShouldShowBluetoothSplashScreen().setHasBeenShown(true)
+        startTestActivity<StatusActivity>()
+        statusRobot.checkActivityIsDisplayed()
+        statusRobot.checkBluetoothStoppedViewIsDisplayed()
     }
 
     @Test
@@ -399,7 +553,7 @@ class StatusActivityTest : EspressoTest() {
     fun clickToggleContactTracing_whenBackPressed_toggleContactTracingButtonShouldBeEnabled() {
         startTestActivity<StatusActivity>()
 
-        statusRobot.clickToggleContactTracing()
+        statusRobot.clickManageContactTracing()
 
         contactTracingHubRobot.checkActivityIsDisplayed()
 

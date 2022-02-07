@@ -6,7 +6,6 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.LinearLayout
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.databinding.ViewAreaRiskBinding
@@ -41,7 +40,6 @@ class AreaRiskView @JvmOverloads constructor(
     private val transformer = ColorSchemeToRiskLevelPanel()
 
     init {
-        View.inflate(context, R.layout.view_area_risk, this)
         applyAttributes(context, attrs)
         configureLayout()
         setUpAccessibility()

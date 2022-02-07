@@ -8,7 +8,11 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.assistedViewModel
+import uk.nhs.nhsx.covid19.android.app.common.bluetooth.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.databinding.ActivityContactTracingHubBinding
+import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
+import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
+import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.ExposureNotificationReminderDialog
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.PermissionRequestResult.Error
@@ -18,11 +22,16 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpButtonType
 import javax.inject.Inject
+import javax.inject.Named
 
 class ContactTracingHubActivity : BaseActivity() {
 
     @Inject
     lateinit var factory: ContactTracingHubViewModel.Factory
+
+    @Inject
+    @Named(AppModule.BLUETOOTH_STATE_NAME)
+    lateinit var bluetoothStateProvider: AvailabilityStateProvider
 
     private val viewModel: ContactTracingHubViewModel by assistedViewModel {
         factory.create(intent.getBooleanExtra(SHOULD_TURN_ON_CONTACT_TRACING, false))
@@ -52,6 +61,13 @@ class ContactTracingHubActivity : BaseActivity() {
         }
 
         setupOnClickListeners()
+
+        bluetoothStateProvider.availabilityState.observe(this) {
+            if (it == DISABLED) {
+                EnableBluetoothActivity.start(this)
+            }
+        }
+
         viewModel.onCreate()
     }
 
@@ -99,7 +115,13 @@ class ContactTracingHubActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
+        bluetoothStateProvider.start(this)
         viewModel.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        bluetoothStateProvider.stop(this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

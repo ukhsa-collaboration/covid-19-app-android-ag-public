@@ -16,6 +16,7 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle.FULL
 import java.time.format.FormatStyle.LONG
 import java.time.format.FormatStyle.MEDIUM
 import java.time.temporal.ChronoUnit
@@ -62,6 +63,16 @@ fun LocalDate.uiLongFormat(context: Context): String {
             .format(this)
     } else {
         DateTimeFormatter.ofPattern("d MMMM yyyy", context.getResourcesLocale())
+            .format(this)
+    }
+}
+
+fun LocalDate.uiFullFormat(context: Context): String {
+    return if (context.getResourcesLocale().language == SupportedLanguage.CHINESE.code) {
+        DateTimeFormatter.ofLocalizedDate(FULL).withLocale(context.getResourcesLocale())
+            .format(this)
+    } else {
+        DateTimeFormatter.ofPattern("eeee, d MMMM yyyy", context.getResourcesLocale())
             .format(this)
     }
 }

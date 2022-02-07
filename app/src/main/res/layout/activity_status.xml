@@ -43,8 +43,9 @@
             <FrameLayout
                 android:id="@+id/stateContainer"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="wrap_content"
                 android:clipChildren="false"
+                android:minHeight="@dimen/animation_static_image_height"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/riskAreaView">
@@ -70,8 +71,9 @@
                     <uk.nhs.nhsx.covid19.android.app.widgets.DefaultStatusView
                         android:id="@+id/contactTracingActiveView"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:clipChildren="false"
+                        android:minHeight="@dimen/animation_static_image_height"
                         android:visibility="gone"
                         tools:visibility="gone" />
 
@@ -79,9 +81,21 @@
                         android:id="@+id/contactTracingStoppedView"
                         layout="@layout/include_stopped"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="110dp"
+                        android:minHeight="@dimen/animation_static_image_height"
                         android:visibility="gone"
                         tools:visibility="visible" />
+
+                    <include
+                        android:id="@+id/bluetoothStoppedView"
+                        layout="@layout/include_stopped_bluetooth"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="110dp"
+                        android:minHeight="@dimen/animation_static_image_height"
+                        android:visibility="gone"
+                        tools:visibility="gone" />
                 </FrameLayout>
             </FrameLayout>
 
@@ -89,22 +103,22 @@
                 android:id="@+id/localMessageBanner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/stateContainer"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 android:clipToPadding="false"
                 android:visibility="gone"
-                tools:visibility="visible"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/stateContainer"
+                tools:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/mainActionsContainer"
                 style="@style/mainContainerStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingVertical="@dimen/vertical_margin"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/vertical_margin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/localMessageBanner">
@@ -129,6 +143,17 @@
                     app:optionIcon="@drawable/ic_venue_check_in"
                     app:optionIconBackgroundColor="@color/style_purple"
                     app:optionText="@string/status_option_scan_qr_codes" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
+                    android:id="@+id/optionLocalData"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:visibility="gone"
+                    app:optionExternalLink="false"
+                    app:optionIcon="@drawable/ic_local_data"
+                    app:optionIconBackgroundColor="@color/style_gold"
+                    app:optionText="@string/status_option_local_data" />
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
                     android:id="@+id/optionReportSymptoms"

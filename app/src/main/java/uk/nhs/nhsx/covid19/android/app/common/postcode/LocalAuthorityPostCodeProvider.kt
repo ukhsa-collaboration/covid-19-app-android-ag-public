@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.common.postcode
 
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
+import java.lang.IllegalStateException
 import javax.inject.Inject
 import javax.inject.Singleton
 

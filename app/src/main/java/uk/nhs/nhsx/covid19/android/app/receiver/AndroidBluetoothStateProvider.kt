@@ -24,7 +24,8 @@ class AndroidBluetoothStateProvider : AvailabilityStateProvider,
     }
 
     override fun getState(isDebug: Boolean): AvailabilityState {
-        return if (BluetoothAdapter.getDefaultAdapter()?.isEnabled == true || (isEmulator() && isDebug)) {
+        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        return if (bluetoothAdapter?.isEnabled == true || (isEmulator() && bluetoothAdapter == null && isDebug)) {
             ENABLED
         } else {
             DISABLED

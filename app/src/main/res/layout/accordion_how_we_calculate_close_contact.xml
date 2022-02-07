@@ -4,4 +4,6 @@
     style="@style/Body1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="42dp"
+    android:layout_marginTop="10dp"
     app:rawText="@string/contact_case_exposure_info_screen_how_close_contacts_are_calculated_body" />

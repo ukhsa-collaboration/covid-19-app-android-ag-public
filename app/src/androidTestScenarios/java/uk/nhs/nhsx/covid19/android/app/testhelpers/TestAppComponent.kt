@@ -29,6 +29,7 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTyp
 import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsProvider
 import uk.nhs.nhsx.covid19.android.app.state.DisplayStateExpirationNotification
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.status.ShouldShowBluetoothSplashScreen
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessagesProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.DownloadVirologyTestResultWork
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantTestResultProvider
@@ -114,4 +115,7 @@ interface TestAppComponent : ApplicationComponent {
 
     @Singleton
     fun getAnimationsProvider(): AnimationsProvider
+
+    @Singleton
+    fun getShouldShowBluetoothSplashScreen(): ShouldShowBluetoothSplashScreen
 }

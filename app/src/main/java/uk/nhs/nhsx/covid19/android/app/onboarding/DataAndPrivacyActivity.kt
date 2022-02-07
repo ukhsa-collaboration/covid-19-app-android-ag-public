@@ -42,7 +42,10 @@ class DataAndPrivacyActivity : BaseActivity() {
                 PostCodeActivity.start(this@DataAndPrivacyActivity)
             }
 
-            buttonNoThanks.setOnSingleClickListener { finish() }
+            buttonNoThanks.setOnSingleClickListener {
+                setResult(RESULT_OK)
+                finish()
+            }
         }
     }
 

@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.PNG
 import android.graphics.Bitmap.Config.ARGB_8888
 import android.graphics.Canvas
-import android.os.Environment.DIRECTORY_PICTURES
+import android.os.Environment.DIRECTORY_DOWNLOADS
 import android.os.Environment.getExternalStoragePublicDirectory
 import android.util.Log
 import android.view.View
@@ -84,7 +84,7 @@ private fun saveBitmap(
 ): String? {
     val imageFolder = File(
         File(
-            getExternalStoragePublicDirectory(DIRECTORY_PICTURES),
+            getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS),
             rootFolderName
         ).absolutePath,
         parentFolderPath
@@ -142,7 +142,7 @@ class ScreenCaptureProcessorWithSubfolderSupport(
     init {
         val file = File(
             File(
-                getExternalStoragePublicDirectory(DIRECTORY_PICTURES),
+                getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS),
                 folderName
             ).absolutePath,
             parentFolderPath

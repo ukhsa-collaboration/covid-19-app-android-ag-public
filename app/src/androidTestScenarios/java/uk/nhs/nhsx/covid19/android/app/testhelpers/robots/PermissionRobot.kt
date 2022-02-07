@@ -18,4 +18,9 @@ class PermissionRobot {
         onView(withId(R.id.permissionContinue))
             .perform(click())
     }
+
+    fun checkNewLayoutIsDisplayed() {
+        onView(withId(R.id.bluetoothPermissionsContainer))
+            .check(matches(isDisplayed()))
+    }
 }

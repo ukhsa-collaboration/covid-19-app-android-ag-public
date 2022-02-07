@@ -58,6 +58,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.additionalInterceptors
 import uk.nhs.nhsx.covid19.android.app.remote.data.AppAvailabilityResponse
 import uk.nhs.nhsx.covid19.android.app.state.Event
+import uk.nhs.nhsx.covid19.android.app.state.IsolationInfo
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -285,10 +286,10 @@ class TestApplicationContext {
     fun setState(state: IsolationState) {
         val ref = getIsolationStateMachine()
             .stateMachine
-            .getPrivateProperty<StateMachine<IsolationState, Event, SideEffect>, AtomicReference<IsolationState>>(
+            .getPrivateProperty<StateMachine<IsolationInfo, Event, SideEffect>, AtomicReference<IsolationInfo>>(
                 "stateRef"
             )
-        ref?.set(state)
+        ref?.set(state.toIsolationInfo())
     }
 
     fun getRemainingDaysInIsolation(): Int =
@@ -412,6 +413,8 @@ class TestApplicationContext {
     suspend fun getAgeLimitBeforeEncounter(): LocalDate? = component.getAgeLimitBeforeEncounter().invoke()
 
     fun getLastDoseDateLimit(): LocalDate? = component.getLastDoseDateLimit().invoke()
+
+    fun getShouldShowBluetoothSplashScreen() = component.getShouldShowBluetoothSplashScreen()
 
     companion object {
         const val ENGLISH_LOCAL_AUTHORITY = "E07000063"

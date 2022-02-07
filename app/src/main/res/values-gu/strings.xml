@@ -585,9 +585,17 @@
     <string name="when_to_pause_contact_tracing_header">તમારે કૉન્ટેક્ટ ટ્રેસિંગ ફક્ત તો જ થોભાવવું જોઈએ જો તમે:</string>
     <string name="when_to_pause_contact_tracing_reminder">એકવાર તમે આ પરિસ્થિતિથી દૂર જાઓ ત્યારે કૉન્ટેક્ટ ટ્રેસિંગને ફરી ચાલુ કરવાનું ભૂલશો નહીં.</string>
     <string name="when_to_pause_contact_tracing_title">તમારે કૉન્ટેક્ટ ટ્રેસિંગ ફક્ત તો જ થોભાવવું જોઈએ જો તમે:</string>
+    <plurals name="contact_case_start_isolation_how_we_calculate_isolation_days_days_since_encounter">
+        <item quantity="one" />
+        <item quantity="other" />
+    </plurals>
     <plurals name="contact_case_start_isolation_how_we_calculate_isolation_days_isolation_period">
         <item quantity="one">કોઈની સાથે નજીકનો કોન્ટેક્ટ થયો હોય એની તારીખ પછી, તમારે %d દિવસો સુધી સેલ્ફ-આઇસોલેટ થવું.</item>
         <item quantity="other">કોઈની સાથે નજીકનો કોન્ટેક્ટ થયો હોય એની તારીખ પછી, તમારે %d દિવસો સુધી સેલ્ફ-આઇસોલેટ થવું.</item>
+    </plurals>
+    <plurals name="contact_case_start_isolation_how_we_calculate_isolation_days_remaining_days">
+        <item quantity="one" />
+        <item quantity="other" />
     </plurals>
     <string name="about_contact_isolation_opt_out_date">નજીકના કોઇ જેની આઇસોલેશન મુક્તિ તારીખ</string>
     <string name="accessibility_accordion_role_description_collapsed">%s, બટન, નાનું કરેલ</string>
@@ -722,6 +730,70 @@
     <string name="contact_case_summary_submit_button">જવાબો મોકલો</string>
     <string name="contact_case_summary_title">તમારા જવાબો ચેક કરો</string>
     <string name="contact_case_summary_change_age_accessiblity_button">તમારી ઉંમર બદલો</string>
+    <plurals name="local_statistics_main_screen_daily_accessibility_text">
+        <item quantity="one" />
+        <item quantity="other" />
+    </plurals>
+    <plurals name="local_statistics_main_screen_last_7_days_accessibility_text">
+        <item quantity="one">%d છેલ્લા 7 દિવસોમાં પૉઝિટિવ ટેસ્ટ</item>
+        <item quantity="other">%d છેલ્લા 7 દિવસોમાં પૉઝિટિવ ટેસ્ટ્સ</item>
+    </plurals>
+    <string name="bluetooth_activate">તમારા ફોનનાં સેટિંગ્ઝમાં બ્લ્યૂટૂથ ઑન કરો</string>
+    <string name="bluetooth_not_active">કૉન્ટેક્ટ ટ્રેસિંગ બ્લ્યૂટૂથ વિના કામ કરતું નથી</string>
+    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">તમને શક્ય તેટલી જલ્દી મફત રૅપિડ લેટરલ ફ્લો ટેસ્ટ કરાવવાની સલાહ આપવામાં આવે છે.</string>
+    <string name="contact_case_start_isolation_primary_button_title_wales">મફત રૅપિડ લેટરલ ફ્લો કિટ મેળવો</string>
+    <string name="launcher_permissions_bluetooth_button">બ્લ્યૂટૂથ ઑન કરો</string>
+    <string name="launcher_permissions_bluetooth_description">જેઓનો ટેસ્ટ પૉઝિટિવ આવ્યો હોય એવી કોઈ વ્યક્તિ સાથે તમે નજીકના સંપર્કમા આવ્યા છો કે કેમ તે તમને જણાવીને કૉન્ટેક્ટ ટ્રેસિંગ COVID-19નો ફેલાવો અટકાવવામાં મદદ કરે છે.\n\nCOVID-19નો ફેલાવો અટકાવવામાં મદદ કરવા માટે બ્લ્યૂટૂથ ઑન કરો. તમે બ્લ્યૂટૂથ વિના આ ઍપનો ઉપયોગ કરવાનું ચાલુ રાખી શકો છો, પરંતુ કૉન્ટેક્ટ ટ્રેસિંગ કામ કરશે નહિ.</string>
+    <string name="launcher_permissions_bluetooth_hint">તમારા ફોનનાં સેટિંગ્ઝમાં બ્લ્યૂટૂથ ઑન કરો</string>
+    <string name="launcher_permissions_bluetooth_secondary_button">બ્લ્યૂટૂથ વિના ઉપયોગ કરો</string>
+    <string name="launcher_permissions_bluetooth_title">કૉન્ટેક્ટ ટ્રેસિંગ બ્લ્યૂટૂથ વિના કામ કરતું નથી</string>
+    <string name="local_statistics_main_screen_about_data_footnote_1">¹અગાઉના 7 દિવસોમાંથી થયેલો ફેરફાર (%1$s - %2$s)</string>
+    <string name="local_statistics_main_screen_about_data_footnote_2">²100,000 લોકો દીઠ કેસો નમૂનાની તારીખ પ્રમાણે રજૂ કરવામાં આવે છે (એ તારીખ જ્યારે જે વ્યક્તિનો ટેસ્ટ કરવામાં આવી રહ્યો હતો તેની તરફથી નમૂનો લેવામાં આવ્યો હતો).</string>
+    <string name="local_statistics_main_screen_about_the_data_heading">ડેટા વિશે</string>
+    <string name="local_statistics_main_screen_cases_per_hundred_thousand">100,000 લોકો દીઠ કેસો²</string>
+    <string name="local_statistics_main_screen_cases_per_hundred_thousand_accessibility_text">100,000 લોકો દીઠ કેસો²</string>
+    <string name="local_statistics_main_screen_daily">રોજિંદું</string>
+    <string name="local_statistics_main_screen_dashboard_link_title">UK કોરોનાવાઇરસ (COVID-19) ડૅશબૉર્ડ</string>
+    <string name="local_statistics_main_screen_dashboard_url">https://coronavirus.data.gov.uk/</string>
+    <string name="local_statistics_main_screen_england_average">ઇંગ્લૅન્ડ</string>
+    <string name="local_statistics_main_screen_england_rate_100k_accessibility_text">ઇંગ્લૅન્ડ %s</string>
+    <string name="local_statistics_main_screen_england_rate_100k_not_available_accessibility_text">ઇંગ્લૅન્ડમાં 100,000 લોકો દીઠ કેસો ઉપલબ્ધ નથી</string>
+    <string name="local_statistics_main_screen_info">તમારા સ્થાનિક વિસ્તાર માટે લેટેસ્ટ COVID-19 ડેટા જુઓ.</string>
+    <string name="local_statistics_main_screen_last_7_days">છેલ્લા 7 દિવસો</string>
+    <string name="local_statistics_main_screen_last_7_days_not_available_accessibility_text">છેલ્લા 7 દિવસોમાં પૉઝિટિવ ટેસ્ટ્સ ઉપલબ્ધ નથી</string>
+    <string name="local_statistics_main_screen_last_seven_days_rate_down">(%%%2$s) %1$s જેટલો ઘટાડો¹</string>
+    <string name="local_statistics_main_screen_last_seven_days_rate_down_accessibility_text">%1$s (%2$s%%) જેટલો ઘટાડો¹</string>
+    <string name="local_statistics_main_screen_last_seven_days_rate_no_change">કોઈ ફેરફાર નહિ¹</string>
+    <string name="local_statistics_main_screen_last_seven_days_rate_no_change_accessibility_text">અગાઉના 7 દિવસોમાંથી થયેલો કોઈ ફેરફાર નહિ</string>
+    <string name="local_statistics_main_screen_last_seven_days_rate_up">%1$s (%2$s%%) જેટલો વધારો¹</string>
+    <string name="local_statistics_main_screen_last_seven_days_rate_up_accessibility_text">%1$s (%2$s%%) જેટલો વધારો¹</string>
+    <string name="local_statistics_main_screen_last_updated">છેલ્લે %1$s ના રોજ %2$s અપડેટ કરાયું</string>
+    <string name="local_statistics_main_screen_local_authority_lower_tier">સ્થાનિક તંત્ર (નીચલા સ્તરનું)</string>
+    <string name="local_statistics_main_screen_more_info">ડેટાનો સ્રોત અને વધુ માહિતી:</string>
+    <string name="local_statistics_main_screen_navigation_title">સ્થાનિક COVID-19 ડેટા</string>
+    <string name="local_statistics_main_screen_people_tested_positive">પૉઝિટિવ ટેસ્ટ આવ્યો હોય એવા લોકો</string>
+    <string name="local_statistics_main_screen_people_tested_positive_last_updated">લેટેસ્ટ ડેટા %1$s ના રોજ પૂરો પાડવામાં આવ્યો</string>
+    <string name="local_statistics_main_screen_rolling_rate_last_updated">%1$sના રોજ 7 દિવસનો રોલિંગ રેટ</string>
+    <string name="local_statistics_main_screen_title">સ્થાનિક COVID-19 ડેટા</string>
+    <string name="local_statistics_main_screen_wales_average">વેલ્સ</string>
+    <string name="local_statistics_main_screen_wales_rate_100k_accessibility_text">વેલ્સ %s</string>
+    <string name="local_statistics_main_screen_wales_rate_100k_not_available_accessibility_text">વેલ્સમાં 100,000 લોકો દીઠ કેસો ઉપલબ્ધ નથી</string>
+    <string name="local_stats_title">સ્થાનિક COVID-19 ડેટા</string>
+    <string name="onboarding_how_app_works_battery_bullet_desc">કૉન્ટેક્ટ ટ્રેસિંગ બેટરીની બચત કરતી બ્લ્યૂટૂથ ટેકનૉલજિનો ઉપયોગ કરે છે. તમે ઍપના અન્ય વપરાશકર્તાઓ સાથે કેટલા સમયથી નજીકના સંપર્કમાં છો તેનો આમાં અંદાજ મળે છે.</string>
+    <string name="onboarding_how_app_works_battery_bullet_header">તે તમારી બૅટરીને ડાઉન કરશે નહિ</string>
+    <string name="onboarding_how_app_works_bluetooth_bullet_desc">જો બ્લ્યૂટૂથ બંધ કરવામાં આવે તો કૉન્ટેક્ટ ટ્રેસિંગ કામ કરશે નહિ. કોઈ વ્યક્તિ COVID-19ના સંસર્ગમાં આવી છે કે કેમ તેની ઍપ આ રીતે ગણતરી કરશે અને જેઓ નજીકના સંપર્કમાં આવ્યા હોય એવા અન્ય લોકોને જાણ કરશે.</string>
+    <string name="onboarding_how_app_works_bluetooth_bullet_header">આ ઍપ બ્લ્યૂટૂથનો ઉપયોગ કરે છે</string>
+    <string name="onboarding_how_app_works_continue">ચાલુ રાખો</string>
+    <string name="onboarding_how_app_works_location_bullet_desc">આ ઍપનો તમારા સ્થાનની ઓળખ કરવા માટે ઉપયોગ થતો નથી.</string>
+    <string name="onboarding_how_app_works_location_bullet_header">તમારા સ્થાનને ટ્રૅક કરવામાં આવતું નથી</string>
+    <string name="onboarding_how_app_works_privacy_bullet_desc">આ ઍપ તમારી વ્યક્તિગત વિગતો ઍક્સેસ કરતી નથી અને તે તમામ સમયે આરક્ષિત રહેશે.</string>
+    <string name="onboarding_how_app_works_privacy_bullet_header">તમારી ગોપનીયતાનું રક્ષણ કરવામાં આવે છે</string>
+    <string name="onboarding_how_app_works_title">આ ઍપ કઈ રીતે કામ કરે છે</string>
+    <string name="onboarding_permissions_bluetooth_checklist">તમારા ફોનનાં સેટિંગ્ઝમાં બ્લ્યૂટૂથ ઑન કરો\n\n\'સંસર્ગની અધિસૂચનાઓ\'ને (Exposure notifications) માન્ય કરો\n\n\'અધિસૂચનાઓ\'ને (Notifications) માન્ય કરો</string>
+    <string name="onboarding_permissions_bluetooth_description">જેઓનો ટેસ્ટ પૉઝિટિવ આવ્યો હોય એવી કોઈ વ્યક્તિ સાથે તમે નજીકના સંપર્કમા આવ્યા છો કે કેમ તે તમને જણાવીને કૉન્ટેક્ટ ટ્રેસિંગ COVID-19નો ફેલાવો અટકાવવામાં મદદ કરે છે.\n\nકૉન્ટેક્ટ ટ્રેસિંગ કામ કરી શકે તે માટે અને તમને તથા તમારાં પ્રિયજનોને સુરક્ષિત રાખવામાં મદદ કરે છે:</string>
+    <string name="onboarding_permissions_bluetooth_description2">તમે તમારા ફોનનાં સેટિંગ્ઝમાં આ પરવાનગીઓ બદલી શકો છો.</string>
+    <string name="onboarding_permissions_bluetooth_title">કૉન્ટેક્ટ ટ્રેસિંગનો ઉપયોગ કરવા માટે તમને બ્લ્યૂટૂથની જરૂર છે</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information_wls">જોખમ ઓછું કરવા માટે તમારે 7 દિવસો માટે રોજિંદો રૅપિડ લેટરલ ફ્લો ટેસ્ટ કરાવવો જોઈએ અને તે અંગે રિપોર્ટ આપવો જોઈએ</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required_wls">તમારો ટેસ્ટ પૉઝિટિવ આવે અથવા તમને લક્ષણો હોય તે સિવાય તમારે સૅલ્ફ-આઇસોલેટ થવાની જરૂર નથી</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice_wls">અન્યો સાથે, ખાસ કરીને વૃદ્ધ અને કમજોર લોકો સાથે સંપર્ક ઘટાડવા સહિતના રાષ્ટ્રીય નિર્દેશોનું પાલન કરવું હજીયે અગત્યનું છે.</string>
@@ -730,7 +802,5 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">તમારો ટેસ્ટ પૉઝિટિવ આવે અથવા તમને લક્ષણો હોય તે સિવાય તમારે સૅલ્ફ-આઇસોલેટ થવાની જરૂર નથી</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">તમને સલાહ આપવામાં આવે છે કે તમારે આ સંદેશ એક વિશ્વસનીય પુખ્ત વ્યક્તિને બતાવો.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">અન્યો સાથે, ખાસ કરીને વૃદ્ધ અને કમજોર લોકો સાથે સંપર્ક ઘટાડવા સહિતના રાષ્ટ્રીય નિર્દેશોનું પાલન કરવું હજીયે અગત્યનું છે.</string>
-    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
-    <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">તમને શક્ય તેટલી જલ્દી મફત રૅપિડ લેટરલ ફ્લો ટેસ્ટ કરાવવાની સલાહ આપવામાં આવે છે.</string>
-    <string name="contact_case_start_isolation_primary_button_title_wales">મફત રૅપિડ લેટરલ ફ્લો કિટ મેળવો</string>
+    <string name="status_option_local_data">સ્થાનિક COVID-19 ડેટા</string>
 </resources>

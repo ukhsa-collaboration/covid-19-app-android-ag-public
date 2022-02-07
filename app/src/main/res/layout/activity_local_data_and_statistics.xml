@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/localAreaDataAndStatisticsContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/primaryToolbar"
+        layout="@layout/view_toolbar_primary" />
+
+    <ScrollView
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                android:id="@+id/localAreaDataAndStatisticsHeading"
+                style="@style/Title1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_horizontal"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:text="@string/local_statistics_main_screen_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/localAreaDataAndStatisticsViewLatestDataLabel"
+                style="@style/Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/local_statistics_main_screen_info"
+                app:layout_constraintEnd_toEndOf="@id/localAreaDataAndStatisticsHeading"
+                app:layout_constraintStart_toStartOf="@id/localAreaDataAndStatisticsHeading"
+                app:layout_constraintTop_toBottomOf="@id/localAreaDataAndStatisticsHeading" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/localAreaDataAndStatisticsDataContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced"
+                android:layout_marginTop="@dimen/vertical_margin_medium"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="1dp"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/localAreaDataAndStatisticsViewLatestDataLabel">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        style="@style/Title1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="@dimen/vertical_margin_large"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Wokingham" />
+
+                    <TextView
+                        android:id="@+id/localAreaDataAndStatisticsLocalAuthoritySubTitle"
+                        style="@style/Body1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/vertical_margin_small"
+                        android:text="@string/local_statistics_main_screen_local_authority_lower_tier"
+                        app:layout_constraintEnd_toEndOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintStart_toStartOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintTop_toBottomOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle" />
+
+                    <TextView
+                        android:id="@+id/localAreaDataAndStatisticsTestedPositiveTitle"
+                        style="@style/Title5"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/vertical_margin_large"
+                        android:text="@string/local_statistics_main_screen_people_tested_positive"
+                        app:layout_constraintEnd_toEndOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintStart_toStartOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintTop_toBottomOf="@id/localAreaDataAndStatisticsLocalAuthoritySubTitle" />
+
+                    <TextView
+                        android:id="@+id/localAreaDataAndStatisticsLatestDataProvided"
+                        style="@style/Body2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        app:layout_constraintEnd_toEndOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintStart_toStartOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintTop_toBottomOf="@id/localAreaDataAndStatisticsTestedPositiveTitle"
+                        tools:text="Latest data provided on 17 November 2021" />
+
+                    <LinearLayout
+                        android:id="@+id/localAreaDataAndStatisticsDailyCasesContainer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/vertical_margin"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toStartOf="@id/guideline"
+                        app:layout_constraintStart_toStartOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintTop_toBottomOf="@id/localAreaDataAndStatisticsLatestDataProvided">
+
+                        <TextView
+                            android:id="@+id/localAreaDataAndStatisticsDaily"
+                            style="@style/Body1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/vertical_margin_small"
+                            android:text="@string/local_statistics_main_screen_daily" />
+
+                        <TextView
+                            android:id="@+id/localAreaDataAndStatisticsDailyCount"
+                            style="@style/Title1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            tools:text="50" />
+                    </LinearLayout>
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintGuide_percent="0.54"
+                        app:layout_constraintStart_toStartOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle" />
+
+                    <LinearLayout
+                        android:id="@+id/localAreaDataAndStatisticsLastSevenDaysContainer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/vertical_margin"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintStart_toEndOf="@id/guideline"
+                        app:layout_constraintTop_toBottomOf="@id/localAreaDataAndStatisticsLatestDataProvided">
+
+                        <TextView
+                            android:id="@+id/localAreaDataAndStatisticsLastSevenDays"
+                            style="@style/Body1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/vertical_margin_small"
+                            android:text="@string/local_statistics_main_screen_last_7_days" />
+
+                        <TextView
+                            android:id="@+id/localAreaDataAndStatisticsLastSevenDaysCount"
+                            style="@style/Title1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            tools:text="213" />
+
+                        <TextView
+                            android:id="@+id/localAreaDataAndStatisticsLastSevenDaysRate"
+                            style="@style/Body2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:drawableStart="@drawable/ic_gray_same"
+                            android:drawablePadding="@dimen/vertical_margin_small"
+                            android:gravity="center_vertical"
+                            tools:text="Down by 21 (-1%)" />
+                    </LinearLayout>
+
+                    <androidx.constraintlayout.widget.Barrier
+                        android:id="@+id/barrier"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:importantForAccessibility="no"
+                        app:barrierDirection="bottom"
+                        app:constraint_referenced_ids="localAreaDataAndStatisticsDailyCasesContainer,localAreaDataAndStatisticsLastSevenDaysContainer" />
+
+                    <TextView
+                        android:id="@+id/localAreaDataAndStatisticsCasesPerPeople"
+                        style="@style/Title5"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/vertical_margin_large"
+                        android:contentDescription="@string/local_statistics_main_screen_cases_per_hundred_thousand_accessibility_text"
+                        android:importantForAccessibility="yes"
+                        android:text="@string/local_statistics_main_screen_cases_per_hundred_thousand"
+                        app:layout_constraintEnd_toEndOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintStart_toStartOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintTop_toTopOf="@id/barrier" />
+
+                    <TextView
+                        android:id="@+id/localAreaDataAndStatisticsRollingRateDate"
+                        style="@style/Body2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        app:layout_constraintEnd_toEndOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintStart_toStartOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintTop_toBottomOf="@id/localAreaDataAndStatisticsCasesPerPeople"
+                        tools:text="7-day rolling rate as of 12 November 2021" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/localAreaDataAndStatisticsLocalAuthorityRollingRate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:importantForAccessibility="yes"
+                        app:layout_constraintEnd_toEndOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintStart_toStartOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintTop_toBottomOf="@id/localAreaDataAndStatisticsRollingRateDate">
+
+                        <TextView
+                            android:id="@+id/localAreaDataAndStatisticsLocalAuthority"
+                            style="@style/Body1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:importantForAccessibility="no"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/localAreaDataAndStatisticsLocalAuthorityRate"
+                            app:layout_constraintHorizontal_bias="0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Wokingham" />
+
+                        <TextView
+                            android:id="@+id/localAreaDataAndStatisticsLocalAuthorityRate"
+                            style="@style/Title1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:importantForAccessibility="no"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="0dp"
+                            app:layout_constraintBottom_toBottomOf="@id/localAreaDataAndStatisticsLocalAuthority"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/localAreaDataAndStatisticsLocalAuthority"
+                            app:layout_constraintTop_toTopOf="@id/localAreaDataAndStatisticsLocalAuthority"
+                            tools:text="111.2" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/localAreaDataAndStatisticsCountryRollingRate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:importantForAccessibility="yes"
+                        app:layout_constraintEnd_toEndOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintStart_toStartOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintTop_toBottomOf="@id/localAreaDataAndStatisticsLocalAuthorityRollingRate">
+
+                        <TextView
+                            android:id="@+id/localAreaDataAndStatisticsCountry"
+                            style="@style/Body1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:importantForAccessibility="no"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/localAreaDataAndStatisticsCountryRate"
+                            app:layout_constraintHorizontal_bias="0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="England average" />
+
+                        <TextView
+                            android:id="@+id/localAreaDataAndStatisticsCountryRate"
+                            style="@style/Title1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:importantForAccessibility="no"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="0dp"
+                            app:layout_constraintBottom_toBottomOf="@id/localAreaDataAndStatisticsCountry"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/localAreaDataAndStatisticsCountry"
+                            app:layout_constraintTop_toTopOf="@id/localAreaDataAndStatisticsCountry"
+                            tools:text="457.1" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <View
+                        android:id="@+id/lineDivider"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="20dp"
+                        android:background="@color/tertiary_text_grey"
+                        android:importantForAccessibility="no"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/localAreaDataAndStatisticsCountryRollingRate" />
+
+                    <uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView
+                        android:id="@+id/aboutTheData"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:importantForAccessibility="noHideDescendants"
+                        app:accordionContent="@layout/accordion_local_statistics_about_the_data"
+                        app:accordionIconType="chevron"
+                        app:accordionTitle="@string/local_statistics_main_screen_about_the_data_heading"
+                        app:layout_constraintEnd_toEndOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintStart_toStartOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
+                        app:layout_constraintTop_toBottomOf="@id/lineDivider"
+                        tools:accordionExpanded="false" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/localAreaDataAndStatisticsViewLatestLinkLabel"
+                style="@style/Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_medium"
+                android:text="@string/local_statistics_main_screen_more_info"
+                app:layout_constraintEnd_toEndOf="@id/localAreaDataAndStatisticsHeading"
+                app:layout_constraintStart_toStartOf="@id/localAreaDataAndStatisticsHeading"
+                app:layout_constraintTop_toBottomOf="@id/localAreaDataAndStatisticsDataContainer" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                android:id="@+id/localAreaDataAndStatisticsViewLatestLink"
+                style="@style/LinkText.WithIcon"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minWidth="@dimen/minimum_touch_target_size"
+                android:minHeight="@dimen/minimum_touch_target_size"
+                android:paddingTop="4dp"
+                android:paddingBottom="12dp"
+                android:text="@string/local_statistics_main_screen_dashboard_link_title"
+                app:layout_constraintEnd_toEndOf="@id/localAreaDataAndStatisticsHeading"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/localAreaDataAndStatisticsHeading"
+                app:layout_constraintTop_toBottomOf="@id/localAreaDataAndStatisticsViewLatestLinkLabel"
+                app:linkUrl="@string/local_statistics_main_screen_dashboard_url" />
+
+            <TextView
+                android:id="@+id/localAreaDataAndStatisticsViewLatestLastUpdated"
+                style="@style/Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/local_statistics_main_screen_last_updated"
+                app:layout_constraintEnd_toEndOf="@id/localAreaDataAndStatisticsHeading"
+                app:layout_constraintStart_toStartOf="@id/localAreaDataAndStatisticsHeading"
+                app:layout_constraintTop_toBottomOf="@id/localAreaDataAndStatisticsViewLatestLink" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/localAreaDataAndStatisticsViewLatestLastUpdated" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+</LinearLayout>

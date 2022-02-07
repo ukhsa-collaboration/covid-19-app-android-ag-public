@@ -17,6 +17,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BatteryOptimizationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.DataAndPrivacyRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.HowAppWorksRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PermissionRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PostCodeRobot
@@ -34,6 +35,7 @@ class OnboardingScenarioTest(override val configuration: TestConfiguration) : Es
     private val permissionRobot = PermissionRobot()
     private val statusRobot = StatusRobot()
     private val dataAndPrivacyRobot = DataAndPrivacyRobot()
+    private val howAppWorksRobot = HowAppWorksRobot()
     private val ageRestrictionRobot = AgeRestrictionRobot()
     private val batteryOptimizationRobot = BatteryOptimizationRobot()
 
@@ -94,69 +96,91 @@ class OnboardingScenarioTest(override val configuration: TestConfiguration) : Es
     private fun Reporter.performOnboardingWorkflow() {
         startTestActivity<WelcomeActivity>()
 
-        welcomeRobot.checkActivityIsDisplayed()
+        with(welcomeRobot) {
 
-        step(
-            "Start",
-            "The user is presented a screen with information on what this app can do. The user continues."
-        )
+            checkActivityIsDisplayed()
 
-        welcomeRobot.clickConfirmOnboarding()
+            step(
+                "Start",
+                "The user is presented a screen with information on what this app can do. The user continues."
+            )
 
-        waitFor { welcomeRobot.checkAgeConfirmationDialogIsDisplayed() }
+            clickConfirmOnboarding()
 
-        step(
-            "Confirm age",
-            "The user is asked to confirm they are older than 16 years. The user confirms to be older than 16.",
-            isDialog = true
-        )
+            checkAgeConfirmationDialogIsDisplayed()
 
-        welcomeRobot.clickConfirmAgePositive()
+            step(
+                "Confirm age",
+                "The user is asked to confirm they are older than 16 years. The user confirms to be older than 16.",
+                isDialog = true
+            )
 
-        waitFor { dataAndPrivacyRobot.checkActivityIsDisplayed() }
+            clickConfirmAgePositive()
+        }
 
-        step(
-            "Data and privacy",
-            "The user is presented a screen with information on data and privacy notes. The user continues."
-        )
+        with(howAppWorksRobot) {
 
-        dataAndPrivacyRobot.clickConfirmOnboarding()
+            checkActivityIsDisplayed()
 
-        postCodeRobot.checkActivityIsDisplayed()
+            clickContinueOnboarding()
+        }
 
-        step(
-            "Enter postcode",
-            "The user is asked to enter their partial postcode before they can proceed."
-        )
+        with(dataAndPrivacyRobot) {
 
-        postCodeRobot.enterPostCode("N12")
+            waitFor { checkActivityIsDisplayed() }
 
-        step(
-            "Postcode entered",
-            "The user enters a valid postcode and continues."
-        )
+            step(
+                "Data and privacy",
+                "The user is presented a screen with information on data and privacy notes. The user continues."
+            )
 
-        waitFor { postCodeRobot.checkContinueButtonIsDisplayed() }
+            clickConfirmOnboarding()
+        }
 
-        postCodeRobot.clickContinue()
+        with(postCodeRobot) {
 
-        waitFor { localAuthorityRobot.checkActivityIsDisplayed() }
+            checkActivityIsDisplayed()
 
-        step(
-            "Local authority confirmed",
-            "The user confirms a valid local authority."
-        )
+            step(
+                "Enter postcode",
+                "The user is asked to enter their partial postcode before they can proceed."
+            )
 
-        localAuthorityRobot.clickConfirm()
+            enterPostCode("N12")
 
-        waitFor { permissionRobot.checkActivityIsDisplayed() }
+            step(
+                "Postcode entered",
+                "The user enters a valid postcode and continues."
+            )
 
-        step(
-            "Permissions",
-            "The user is presented with information on which permissions are necessary for the app. The user continues."
-        )
+            waitFor { checkContinueButtonIsDisplayed() }
 
-        permissionRobot.clickEnablePermissions()
+            clickContinue()
+        }
+
+        with(localAuthorityRobot) {
+
+            waitFor { checkActivityIsDisplayed() }
+
+            step(
+                "Local authority confirmed",
+                "The user confirms a valid local authority."
+            )
+
+            clickConfirm()
+        }
+
+        with(permissionRobot) {
+
+            waitFor { checkActivityIsDisplayed() }
+
+            step(
+                "Permissions",
+                "The user is presented with information on which permissions are necessary for the app. The user continues."
+            )
+
+            clickEnablePermissions()
+        }
     }
 
     @RetryFlakyTest
@@ -179,7 +203,7 @@ class OnboardingScenarioTest(override val configuration: TestConfiguration) : Es
 
         welcomeRobot.clickConfirmOnboarding()
 
-        waitFor { welcomeRobot.checkAgeConfirmationDialogIsDisplayed() }
+        welcomeRobot.checkAgeConfirmationDialogIsDisplayed()
 
         step(
             "Confirm age",
@@ -278,32 +302,123 @@ class OnboardingScenarioTest(override val configuration: TestConfiguration) : Es
 
         startTestActivity<WelcomeActivity>()
 
-        welcomeRobot.checkActivityIsDisplayed()
+        with(welcomeRobot) {
 
-        welcomeRobot.clickConfirmOnboarding()
+            checkActivityIsDisplayed()
 
-        waitFor { welcomeRobot.checkAgeConfirmationDialogIsDisplayed() }
+            clickConfirmOnboarding()
 
-        welcomeRobot.clickConfirmAgePositive()
+            checkAgeConfirmationDialogIsDisplayed()
+
+            clickConfirmAgePositive()
+        }
+
+        with(howAppWorksRobot) {
+
+            checkActivityIsDisplayed()
+
+            clickContinueOnboarding()
+        }
+
+        with(dataAndPrivacyRobot) {
+
+            waitFor { checkActivityIsDisplayed() }
+
+            clickConfirmOnboarding()
+        }
+
+        with(postCodeRobot) {
+
+            waitFor { checkActivityIsDisplayed() }
+
+            enterPostCode("SE3")
+
+            waitFor { checkContinueButtonIsDisplayed() }
+
+            clickContinue()
+
+            waitFor { localAuthorityRobot.checkActivityIsDisplayed() }
+
+            setScreenOrientation(LANDSCAPE)
+
+            testAppContext.device.pressBack()
+
+            checkActivityIsDisplayed()
+        }
+    }
+
+    @Test
+    fun canTransitionToBluetoothPermissions() {
+        setScreenOrientation(PORTRAIT)
+        startTestActivity<WelcomeActivity>()
+
+        with(welcomeRobot) {
+            checkActivityIsDisplayed()
+
+            clickConfirmOnboarding()
+
+            checkAgeConfirmationDialogIsDisplayed()
+
+            clickConfirmAgePositive()
+        }
+
+        with(howAppWorksRobot) {
+            checkActivityIsDisplayed()
+
+            clickContinueOnboarding()
+        }
+
+        with(dataAndPrivacyRobot) {
+            waitFor { checkActivityIsDisplayed() }
+
+            clickConfirmOnboarding()
+        }
+
+        with(postCodeRobot) {
+            checkActivityIsDisplayed()
+
+            enterPostCode("SE3")
+
+            waitFor { checkContinueButtonIsDisplayed() }
+
+            clickContinue()
+        }
+
+        with(localAuthorityRobot) {
+            waitFor { checkActivityIsDisplayed() }
+            selectLocalAuthority("Greenwich")
+            clickConfirm()
+        }
+
+        with(permissionRobot) {
+            waitFor { checkActivityIsDisplayed() }
+            checkNewLayoutIsDisplayed()
+        }
+    }
+
+    @Test
+    fun goesBackToWelcomeScreenWhenNoThanksButtonClickedAndUseWithBluetoothEnabled() {
+        startTestActivity<WelcomeActivity>()
+
+        with(welcomeRobot) {
+            checkActivityIsDisplayed()
+
+            clickConfirmOnboarding()
+
+            checkAgeConfirmationDialogIsDisplayed()
+
+            clickConfirmAgePositive()
+        }
+
+        with(howAppWorksRobot) {
+            checkActivityIsDisplayed()
+
+            clickContinueOnboarding()
+        }
 
         waitFor { dataAndPrivacyRobot.checkActivityIsDisplayed() }
+        dataAndPrivacyRobot.clickNoThanksButton()
 
-        dataAndPrivacyRobot.clickConfirmOnboarding()
-
-        postCodeRobot.checkActivityIsDisplayed()
-
-        postCodeRobot.enterPostCode("SE3")
-
-        waitFor { postCodeRobot.checkContinueButtonIsDisplayed() }
-
-        postCodeRobot.clickContinue()
-
-        waitFor { localAuthorityRobot.checkActivityIsDisplayed() }
-
-        setScreenOrientation(LANDSCAPE)
-
-        testAppContext.device.pressBack()
-
-        postCodeRobot.checkActivityIsDisplayed()
+        welcomeRobot.checkActivityIsDisplayed()
     }
 }

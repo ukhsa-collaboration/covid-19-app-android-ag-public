@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2020 NHSX. All rights reserved.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mainContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_onboarding_toolbar" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/bluetoothLauncherContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                style="@style/GoneInLandscape"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_battery_optimization" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                android:id="@+id/permissionTitle"
+                style="@style/Title1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:text="@string/launcher_permissions_bluetooth_title" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.StateInfoView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:background="@color/surface_background"
+                app:stateColor="@color/amber"
+                app:stateText="@string/launcher_permissions_bluetooth_hint" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                style="@style/Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                app:rawText="@string/launcher_permissions_bluetooth_description" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/actionButton"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_horizontal"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/launcher_permissions_bluetooth_button" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/secondaryActionButton"
+                style="@style/TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                android:text="@string/launcher_permissions_bluetooth_secondary_button" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

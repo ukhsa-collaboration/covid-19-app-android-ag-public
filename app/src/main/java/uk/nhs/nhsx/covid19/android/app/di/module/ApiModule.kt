@@ -16,6 +16,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.IsolationPaymentApi
 import uk.nhs.nhsx.covid19.android.app.remote.KeysDistributionApi
 import uk.nhs.nhsx.covid19.android.app.remote.KeysSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.LocalMessagesApi
+import uk.nhs.nhsx.covid19.android.app.remote.LocalStatsApi
 import uk.nhs.nhsx.covid19.android.app.remote.QuestionnaireApi
 import uk.nhs.nhsx.covid19.android.app.remote.RemoteServiceExceptionCrashReportSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyPostDistrictsApi
@@ -120,4 +121,9 @@ class ApiModule {
     @Singleton
     fun provideLocalMessagesDistributionApi(@Named(DISTRIBUTION_REMOTE) retrofit: Retrofit): LocalMessagesApi =
         retrofit.create(LocalMessagesApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideLocalStatsDistributionApi(@Named(DISTRIBUTION_REMOTE) retrofit: Retrofit): LocalStatsApi =
+        retrofit.create(LocalStatsApi::class.java)
 }

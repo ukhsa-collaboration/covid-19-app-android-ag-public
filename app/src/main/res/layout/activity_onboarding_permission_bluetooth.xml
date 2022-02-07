@@ -3,7 +3,8 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/permissionContainer"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bluetoothPermissionsContainer"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -40,21 +41,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_large"
-                android:text="@string/permission_title" />
-
-            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
-                style="@style/Title3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin_large"
-                android:text="@string/exposure_notifications_rationale_title" />
+                android:text="@string/onboarding_permissions_bluetooth_title" />
 
             <TextView
                 style="@style/Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"
-                android:text="@string/onboarding_exposure_notifications_description" />
+                android:text="@string/onboarding_permissions_bluetooth_description" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.BulletedParagraphsContainer
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                app:rawText="@string/onboarding_permissions_bluetooth_checklist" />
+
+            <TextView
+                style="@style/Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/onboarding_permissions_bluetooth_description2" />
         </LinearLayout>
 
     </ScrollView>

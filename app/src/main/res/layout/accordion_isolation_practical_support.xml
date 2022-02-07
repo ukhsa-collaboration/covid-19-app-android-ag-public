@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="42dp"
+    android:layout_marginTop="10dp"
     android:orientation="vertical">
 
     <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer

@@ -13,13 +13,13 @@ import org.hamcrest.Matchers
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.testhelpers.NestedScrollViewScrollToAction
+import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.positional.isFollowedBy
+import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.positional.isPrecededBy
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 
-class StatusRobot {
-
-    fun checkActivityIsDisplayed() {
-        onView(withId(R.id.statusContainer))
-            .check(matches(isDisplayed()))
-    }
+class StatusRobot : HasActivity {
+    override val containerId: Int
+        get() = R.id.statusContainer
 
     fun checkReportSymptomsIsDisplayed() {
         onView(withId(R.id.optionReportSymptoms))
@@ -86,7 +86,7 @@ class StatusRobot {
             .perform(NestedScrollViewScrollToAction(), click())
     }
 
-    fun clickToggleContactTracing() {
+    fun clickManageContactTracing() {
         onView(withId(R.id.optionToggleContactTracing))
             .perform(NestedScrollViewScrollToAction(), click())
     }
@@ -98,6 +98,11 @@ class StatusRobot {
 
     fun clickIsolationHub() {
         onView(withId(R.id.optionIsolationHub))
+            .perform(NestedScrollViewScrollToAction(), click())
+    }
+
+    fun clickLocalData() {
+        onView(withId(R.id.optionLocalData))
             .perform(NestedScrollViewScrollToAction(), click())
     }
 
@@ -144,11 +149,6 @@ class StatusRobot {
     fun checkIsolationHubIsEnabled() {
         onView(withId(R.id.optionIsolationHub))
             .check(matches(isEnabled()))
-    }
-
-    fun checkScanQrCodeOptionIsNotDisplayed() {
-        onView(withId(R.id.optionVenueCheckIn))
-            .check(matches(not(isDisplayed())))
     }
 
     fun checkIsolationViewIsDisplayed() {
@@ -211,6 +211,31 @@ class StatusRobot {
 
     fun checkIsolationHubIsNotDisplayed() {
         onView(withId(R.id.optionIsolationHub))
+            .check(matches(not(isDisplayed())))
+    }
+
+    fun checkBluetoothStoppedViewIsNotDisplayed() {
+        onView(withId(R.id.bluetoothStoppedView))
+            .check(matches(not(isDisplayed())))
+    }
+
+    fun checkBluetoothStoppedViewIsDisplayed() {
+        onView(withId(R.id.bluetoothStoppedView))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkLocalDataIsDisplayedAfterCheckInVenueButton() {
+        onView(withId(R.id.optionLocalData))
+            .check(matches(isPrecededBy(R.id.optionVenueCheckIn)))
+    }
+
+    fun checkLocalDataIsDisplayedBeforeSettingsButton() {
+        onView(withId(R.id.optionLocalData))
+            .check(matches(isFollowedBy(R.id.optionSettings)))
+    }
+
+    fun checkLocalDataIsNotDisplayed() {
+        onView(withId(R.id.optionLocalData))
             .check(matches(not(isDisplayed())))
     }
 }

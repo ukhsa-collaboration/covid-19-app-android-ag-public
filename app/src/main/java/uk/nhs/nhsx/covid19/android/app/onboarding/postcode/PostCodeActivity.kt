@@ -90,10 +90,12 @@ class PostCodeActivity : BaseActivity() {
                 MainActivity.start(this)
                 finish()
             } else {
-                startActivity<PermissionActivity>()
+                transitionToPermissionsActivity()
             }
         }
     }
+
+    private fun transitionToPermissionsActivity() = startActivity<PermissionActivity>()
 
     companion object {
         private const val LOCAL_AUTHORITY_REQUEST = 1338

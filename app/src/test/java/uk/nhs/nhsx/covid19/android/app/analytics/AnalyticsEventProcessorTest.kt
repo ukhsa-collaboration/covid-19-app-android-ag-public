@@ -198,7 +198,8 @@ class AnalyticsEventProcessorTest {
                     logItem = AnalyticsLogItem.BackgroundTaskCompletion(
                         backgroundTaskTicks = BackgroundTaskTicks(
                             runningNormallyBackgroundTick = true,
-                            appIsUsableBackgroundTick = false,
+                            appIsUsableBackgroundTick = true,
+                            appIsUsableBluetoothOffBackgroundTick = true,
                             appIsContactTraceableBackgroundTick = true
                         )
                     )

@@ -8,13 +8,16 @@ import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.android.play.core.tasks.Task
+import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_COVID_STATS
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
@@ -43,6 +46,8 @@ import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.Sho
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowUnknownTestResult
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowVenueAlert
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
+import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
+import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.NotificationMessage
@@ -56,6 +61,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolatin
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ContactTracingHub
+import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.EnableBluetooth
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.ExposureConsent
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.InAppReview
 import uk.nhs.nhsx.covid19.android.app.status.NavigationTarget.IsolationExpiration
@@ -111,9 +117,11 @@ class StatusViewModelTest {
     private val exposureNotificationPermissionHelperFactory = mockk<ExposureNotificationPermissionHelper.Factory>()
     private val exposureNotificationPermissionHelper = mockk<ExposureNotificationPermissionHelper>(relaxUnitFun = true)
     private val areSystemLevelAnimationsEnabled = mockk<AreSystemLevelAnimationsEnabled>(relaxUnitFun = true)
+    private val shouldShowBluetoothSplashScreen = mockk<ShouldShowBluetoothSplashScreen>()
 
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-22T10:00:00Z"), ZoneOffset.UTC)
     private val isolationHelper = IsolationLogicalHelper(fixedClock)
+    private val bluetoothAvailabilityStateProvider = mockk<AvailabilityStateProvider>()
 
     private lateinit var testSubject: StatusViewModel
 
@@ -187,7 +195,9 @@ class StatusViewModelTest {
         showReportSymptomsButton = true,
         exposureNotificationsEnabled = false,
         animationsEnabled = false,
-        localMessage = null
+        localMessage = null,
+        bluetoothEnabled = false,
+        showCovidStatsButton = true
     )
 
     @Before
@@ -207,7 +217,9 @@ class StatusViewModelTest {
         coEvery { districtAreaUrlProvider.provide(any()) } returns DEFAULT_LATEST_ADVICE_URL_RES_ID
         coEvery { exposureNotificationManager.isEnabled() } returns false
         coEvery { getLocalMessageFromStorage() } returns null
-
+        every { bluetoothAvailabilityStateProvider.getState(any()) } returns DISABLED
+        mockkObject(RuntimeBehavior)
+        every { RuntimeBehavior.isFeatureEnabled(LOCAL_COVID_STATS) } returns true
         setupTestSubject()
     }
 
@@ -322,11 +334,13 @@ class StatusViewModelTest {
 
     @Test
     fun `onResume updated view state and registers user inbox listener`() {
+        every { shouldShowBluetoothSplashScreen() } returns false
         testSubject.onResume()
 
         verify { viewStateObserver.onChanged(defaultViewState) }
         verify { sharedPreferences.registerOnSharedPreferenceChangeListener(any()) }
         verify { storageBasedUserInbox.setStorageChangeListener(any()) }
+        verify { shouldShowBluetoothSplashScreen() }
     }
 
     @Test
@@ -436,6 +450,29 @@ class StatusViewModelTest {
         testSubject.userInboxStorageChangeListener.notifyChanged()
 
         verify { navigateTo.onChanged(IsolationExpiration(now)) }
+    }
+
+    @Test
+    fun `when no pending activity actions and no inbox items check Bluetooth state`() {
+        setupTestSubject(None)
+        every { shouldShowBluetoothSplashScreen() } returns false
+        every { userInbox.fetchInbox() } returns null
+
+        testSubject.onResume()
+
+        verify { shouldShowBluetoothSplashScreen() }
+    }
+
+    @Test
+    fun `when no pending activity actions and no inbox items if Bluetooth screen should be shown show Bluetooth screen`() {
+        setupTestSubject(None)
+        every { shouldShowBluetoothSplashScreen() } returns true
+        every { userInbox.fetchInbox() } returns null
+
+        testSubject.onResume()
+
+        verify { navigateTo.onChanged(EnableBluetooth) }
+        confirmVerified(navigateTo)
     }
 
     @Test
@@ -704,7 +741,9 @@ class StatusViewModelTest {
             exposureNotificationManager,
             areSystemLevelAnimationsEnabled,
             getLocalMessageFromStorage,
+            bluetoothAvailabilityStateProvider,
             exposureNotificationPermissionHelperFactory,
+            shouldShowBluetoothSplashScreen,
             statusActivityAction
         )
 

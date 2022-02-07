@@ -24,6 +24,7 @@ import uk.nhs.nhsx.covid19.android.app.di.module.SignatureValidationInterceptor.
 import uk.nhs.nhsx.covid19.android.app.network.TrafficLengthObfuscationInterceptor
 import uk.nhs.nhsx.covid19.android.app.remote.UserAgentInterceptor
 import uk.nhs.nhsx.covid19.android.app.util.Base64Decoder
+import uk.nhs.nhsx.covid19.android.app.util.adapters.BigDecimalAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.ColorSchemeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.ContentBlockTypeAdapter
 import uk.nhs.nhsx.covid19.android.app.util.adapters.InstantAdapter
@@ -198,7 +199,7 @@ class NetworkModule(
     companion object {
         const val DISTRIBUTION_REMOTE = "DISTRIBUTION_REMOTE"
         const val API_REMOTE = "API_REMOTE"
-        const val CACHE_SIZE_BYTES: Long = 1024 * 1024 * 5
+        const val CACHE_SIZE_BYTES: Long = 5L * 1024 * 1024
         @VisibleForTesting
         val moshi = Moshi.Builder()
             .add(LocalDateAdapter())
@@ -215,6 +216,7 @@ class NetworkModule(
             )
             .add(LocalInformationAdapter())
             .add(AnalyticsLogStorage.analyticsLogItemAdapter)
+            .add(BigDecimalAdapter)
             .build()
     }
 }

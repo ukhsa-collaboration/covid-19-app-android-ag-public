@@ -18,7 +18,7 @@ import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ClearOutdatedData
 import uk.nhs.nhsx.covid19.android.app.common.DownloadTasksWorker
-import uk.nhs.nhsx.covid19.android.app.common.EnableBluetoothActivity
+import uk.nhs.nhsx.covid19.android.app.common.bluetooth.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableExposureNotificationsActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableLocationActivity
 import uk.nhs.nhsx.covid19.android.app.common.PeriodicTasks
@@ -40,6 +40,8 @@ import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfoProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysReminderActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysResultActivity
+import uk.nhs.nhsx.covid19.android.app.localdata.LocalDataAndStatisticsActivity
+import uk.nhs.nhsx.covid19.android.app.localstats.FetchLocalDataProgressActivity
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.DataAndPrivacyActivity
@@ -184,6 +186,8 @@ interface ApplicationComponent {
 
     fun inject(analyticsReportActivity: AnalyticsReportActivity)
     fun inject(exposureNotificationReviewActivity: ExposureNotificationReviewActivity)
+    fun inject(fetchLocalDataProgressActivity: FetchLocalDataProgressActivity)
+    fun inject(localDataAndStatisticsActivity: LocalDataAndStatisticsActivity)
 
     fun provideAppAvailabilityListener(): AppAvailabilityListener
     fun providePeriodicTasks(): PeriodicTasks

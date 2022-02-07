@@ -585,9 +585,17 @@
     <string name="when_to_pause_contact_tracing_header">শুধু সেসব ক্ষেত্রে কনট্যাক্ট ট্রেসিং থামানো যায় যখন আপনি:</string>
     <string name="when_to_pause_contact_tracing_reminder">এসব অবস্থার বাইরে গেলে কনট্যাক্ট ট্রেসিং আবার চালু করতে ভুলবেন না।</string>
     <string name="when_to_pause_contact_tracing_title">শুধু সেসব ক্ষেত্রে কনট্যাক্ট ট্রেসিং থামানো যায় যখন আপনি:</string>
+    <plurals name="contact_case_start_isolation_how_we_calculate_isolation_days_days_since_encounter">
+        <item quantity="one" />
+        <item quantity="other" />
+    </plurals>
     <plurals name="contact_case_start_isolation_how_we_calculate_isolation_days_isolation_period">
         <item quantity="one">ঘনিষ্ঠ সংস্পর্শে আসার পর %d পূর্ণদিবস পর্যন্ত আপনার স্ব-বিচ্ছিন্ন থাকা উচিৎ।</item>
         <item quantity="other">ঘনিষ্ঠ সংস্পর্শে আসার পর %d পূর্ণদিবস পর্যন্ত আপনার স্ব-বিচ্ছিন্ন থাকা উচিৎ।</item>
+    </plurals>
+    <plurals name="contact_case_start_isolation_how_we_calculate_isolation_days_remaining_days">
+        <item quantity="one" />
+        <item quantity="other" />
     </plurals>
     <string name="about_contact_isolation_opt_out_date">ঘনিষ্ঠ সংস্পর্শ বিচ্ছিন্নতা ব্যতিক্রম তারিখ</string>
     <string name="accessibility_accordion_role_description_collapsed">%s, বাটন, গুটানো</string>
@@ -599,7 +607,7 @@
     <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_body">আপনার ফোন অন্যদের নিকট সংস্পর্শে ছিল কিনা তা যাচাই করতে এই অ্যাপ ব্লুটুথ ব্যবহার করে।\n\nনিকট সংস্পর্শে আসার অর্থ আপনি কারো ২ মিটার দূরত্বের মধ্যে ১৫ মিনিট বা তার বেশি সময় ছিলেন।\n\nঅ্যাপটি বেনামে কাজ করে এবং আপনার অবস্থান ট্র্যাক করার জন্য জিপিএস বা ভেন্যু চেক-ইন ব্যবহার করে না, তাই আপনার গোপনীয়তা সুরক্ষিত।</string>
     <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading">কীভাবে নিকট সংস্পর্শে আসা হিসাব করা হয়</string>
     <string name="contact_case_start_isolation_how_we_calculate_isolation_days_title">কীভাবে স্ব-বিচ্ছিন্ন থাকার দিনসংখ্যা হিসাব করা হয়</string>
-    <string name="continue_to_self_isolate_for">অন্যদের সংস্পর্শ থেকে নিজেকে আলাদা রাখা অব্যাহত রাখুন</string>
+    <string name="continue_to_self_isolate_for">নিজেকে আলাদা রাখা অব্যাহত রাখুন</string>
     <string name="exposure_notification_advised_to_self_isolate_for">স্ব-বিচ্ছিন্ন হন</string>
     <string name="exposure_notification_age_continue_button">চালিয়ে যান</string>
     <string name="exposure_notification_age_description">আপনার স্ব-বিচ্ছিন্ন থাকা দরকার কিনা তা যাচাই করার জন্যই কেবল আমরা আপনার উত্তর ব্যবহার করব।</string>
@@ -667,7 +675,7 @@
     <string name="notification_title_isolation_hub_reminder">স্ব-বিচ্ছিন্ন থাকার ব্যাপারে সহায়তা</string>
     <string name="order_lfd_after_risky_contact_toolbar_title">Get a free test kit</string>
     <string name="risky_contact_isolation_advice_already_isolating_acknowledge_button_text">হোম স্ক্রিনে ফিরে যান</string>
-    <string name="risky_contact_isolation_advice_already_isolating_information">আপনার যত তাড়াতাড়ি সম্ভব একটি নিশুল্ক COVID-19 পরীক্ষা করানো উচিৎ, যদি আপনি ইতিমধ্যে তা করে না থাকেন</string>
+    <string name="risky_contact_isolation_advice_already_isolating_information">আপনার যত তাড়াতাড়ি সম্ভব একটি বিনামূল্যক COVID-19 পরীক্ষা করানো উচিৎ, যদি আপনি ইতিমধ্যে তা করে না থাকেন</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">আপনি কোভিড-১৯ ছড়ানোর উচ্চ ঝুঁকিতে রয়েছেন। বাড়িতে অবস্থান করে আপনি নিজেকে ও অন্যদের সুরক্ষিত রাখতে সহায়তা করতে পারেন।</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">আপনি ইতিমধ্যে তা না করে থাকলে হোম স্ক্রিনে \'কোভিড-১৯ পরীক্ষা\'-তে গিয়ে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করতে পারেন।</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information">ঝুঁকি কমাতে, আপনার 7 দিনের জন্য প্রতিদিন দ্রুত ল্যাটারাল ফ্লো পরীক্ষা করা এবং রিপোর্ট করা উচিত</string>
@@ -675,7 +683,7 @@
     <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">অন্যদের সঙ্গে, বিশেষ করে বয়স্ক ও ঝুঁকিগ্রস্ত মানুষদের সঙ্গে যোগাযোগ হ্রাস করা সহ, জাতীয় নির্দেশনা অনুসরণ করা এখনও গুরুত্বপূর্ণ।</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">আপনার উপসর্গ থাকলে বিনামূল্যে একটি PCR পরীক্ষা বুক করুন।</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করুন</string>
-    <string name="risky_contact_isolation_advice_continue_isolataion_for">অন্যদের সংস্পর্শ থেকে নিজেকে আলাদা রাখা অব্যাহত রাখুন</string>
+    <string name="risky_contact_isolation_advice_continue_isolataion_for">নিজেকে আলাদা রাখা অব্যাহত রাখুন</string>
     <string name="risky_contact_isolation_advice_faq_button_title">সাধারণ প্রশ্নাবলি</string>
     <string name="risky_contact_isolation_advice_further_nhs_guidance">আরও পরামর্শের জন্য, অনুগ্রহ করে ভিজিট করুন:</string>
     <string name="risky_contact_isolation_advice_go_back_to_home">হোম স্ক্রিনে ফিরে যান</string>
@@ -722,6 +730,70 @@
     <string name="contact_case_summary_submit_button">উত্তর জমা দিন</string>
     <string name="contact_case_summary_title">আপনার উত্তর যাচাই করুন</string>
     <string name="contact_case_summary_change_age_accessiblity_button">আপনার বয়স পরিবর্তন করুন</string>
+    <plurals name="local_statistics_main_screen_daily_accessibility_text">
+        <item quantity="one" />
+        <item quantity="other" />
+    </plurals>
+    <plurals name="local_statistics_main_screen_last_7_days_accessibility_text">
+        <item quantity="one">%d গত 7 দিনে করা ইতিবাচক পরীক্ষা</item>
+        <item quantity="other">%d গত 7 দিনে করা ইতিবাচক পরীক্ষাগুলি</item>
+    </plurals>
+    <string name="bluetooth_activate">আপনার ফোন সেটিংসে ব্লুটুথ চালু করুন</string>
+    <string name="bluetooth_not_active">ব্লুটুথ ছাড়া কন্ট্যাক্ট ট্রেসিং কাজ করে না</string>
+    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">আপনাকে যত তাড়াতাড়ি সম্ভব বিনামূল্যে দ্রুত ল্যাটারাল ফ্লো পরীক্ষা করার পরামর্শ দেওয়া হচ্ছে।</string>
+    <string name="contact_case_start_isolation_primary_button_title_wales">বিনামূল্যে একটি দ্রুত ল্যাটারাল ফ্লো কিট পান</string>
+    <string name="launcher_permissions_bluetooth_button">ব্লুটুথ চালু করুন</string>
+    <string name="launcher_permissions_bluetooth_description">পরীক্ষায় পজিটিভ ফল এসেছে এমন কারো সাথে আপনি ঘনিষ্ঠ সংস্পর্শে ছিলেন কিনা তা আপনাকে জানিয়ে, কন্ট্যাক্ট ট্রেসিং COVID-19 এর বিস্তার রোধ করতে সাহায্য করে।\n\nCOVID-19 এর বিস্তার বন্ধ করতে সাহায্য করার জন্য ব্লুটুথ চালু করুন। আপনি ব্লুটুথ ছাড়া এই অ্যাপটি ব্যবহার করা চালিয়ে যেতে পারেন, তবে কন্ট্যাক্ট ট্রেসিং কাজ করবে না।</string>
+    <string name="launcher_permissions_bluetooth_hint">আপনার ফোন সেটিংসে ব্লুটুথ চালু করুন</string>
+    <string name="launcher_permissions_bluetooth_secondary_button">ব্লুটুথ ছাড়া ব্যবহার করুন</string>
+    <string name="launcher_permissions_bluetooth_title">ব্লুটুথ ছাড়া কন্ট্যাক্ট ট্রেসিং কাজ করে না</string>
+    <string name="local_statistics_main_screen_about_data_footnote_1">¹গত 7 দিন থেকে পরিবর্তন (%1$s - %2$s)</string>
+    <string name="local_statistics_main_screen_about_data_footnote_2">²প্রতি 100,000 ব্যক্তির মধ্যে কেস সংখ্যাকে নমুনা তারিখ (যে তারিখে পরীক্ষা করা ব্যক্তির কাছ থেকে নমুনাটি নেওয়া হয়েছে) অনুসারে উপস্থাপিত করা হয়েছে।</string>
+    <string name="local_statistics_main_screen_about_the_data_heading">তথ্য সম্পর্কে</string>
+    <string name="local_statistics_main_screen_cases_per_hundred_thousand">প্রতি 100,000 জন ব্যক্তির মধ্যে কেসের সংখ্যা²</string>
+    <string name="local_statistics_main_screen_cases_per_hundred_thousand_accessibility_text">প্রতি 100,000 জন ব্যক্তির মধ্যে কেসের সংখ্যা²</string>
+    <string name="local_statistics_main_screen_daily">দৈনিক</string>
+    <string name="local_statistics_main_screen_dashboard_link_title">UK কোরোনাভাইরাস (COVID-19) ড্যাশবোর্ড</string>
+    <string name="local_statistics_main_screen_dashboard_url">https://coronavirus.data.gov.uk/</string>
+    <string name="local_statistics_main_screen_england_average">ইংল্যান্ড</string>
+    <string name="local_statistics_main_screen_england_rate_100k_accessibility_text">ইংল্যান্ড %s</string>
+    <string name="local_statistics_main_screen_england_rate_100k_not_available_accessibility_text">প্রতি 100,000 মানুষের অন্তরে ইংল্যান্ডের কেস উপলব্ধ নয়</string>
+    <string name="local_statistics_main_screen_info">আপনার স্থানীয় এলাকার সাম্প্রতিকতম COVID-19 সংক্রান্ত তথ্য দেখুন</string>
+    <string name="local_statistics_main_screen_last_7_days">শেষ 7 দিনে</string>
+    <string name="local_statistics_main_screen_last_7_days_not_available_accessibility_text">গত 7 দিনে করা ইতিবাচক পরীক্ষাগুলি উপলব্ধ নয়</string>
+    <string name="local_statistics_main_screen_last_seven_days_rate_down">(%%%2$s) %1$s রাস পেয়েছে¹</string>
+    <string name="local_statistics_main_screen_last_seven_days_rate_down_accessibility_text">%1$s (%2$s%%) হ্রাস পেয়েছে¹</string>
+    <string name="local_statistics_main_screen_last_seven_days_rate_no_change">কোনো পরিবর্তন নেই¹</string>
+    <string name="local_statistics_main_screen_last_seven_days_rate_no_change_accessibility_text">কোনো পরিবর্তন নেই গত 7 দিন থেকে</string>
+    <string name="local_statistics_main_screen_last_seven_days_rate_up">(%2$s%%) %1$s বৃদ্ধি পেয়েছে¹</string>
+    <string name="local_statistics_main_screen_last_seven_days_rate_up_accessibility_text">¹%1$s (%2$s%%) বৃদ্ধি পেয়েছে</string>
+    <string name="local_statistics_main_screen_last_updated">শেষ আপডেট হয়েছে %1$s %2$s -এ</string>
+    <string name="local_statistics_main_screen_local_authority_lower_tier">স্থানীয় কর্তৃপক্ষ (নিচের স্তর)</string>
+    <string name="local_statistics_main_screen_more_info">তথ্যের উৎস ও আরো তথ্যাবলি:</string>
+    <string name="local_statistics_main_screen_navigation_title">স্থানীয় COVID-19 তথ্য</string>
+    <string name="local_statistics_main_screen_people_tested_positive">পরীক্ষায় পজিটিভ আসা ব্যক্তির সংখ্যা</string>
+    <string name="local_statistics_main_screen_people_tested_positive_last_updated">%1$s তারিখে প্রদান করা সাম্প্রতিকতম ডেটা</string>
+    <string name="local_statistics_main_screen_rolling_rate_last_updated">%1$s-এ 7-দিনের গড় মান</string>
+    <string name="local_statistics_main_screen_title">স্থানীয় COVID-19 তথ্য</string>
+    <string name="local_statistics_main_screen_wales_average">ওয়েল্‌স</string>
+    <string name="local_statistics_main_screen_wales_rate_100k_accessibility_text">ওয়েল্‌স %s</string>
+    <string name="local_statistics_main_screen_wales_rate_100k_not_available_accessibility_text">প্রতি 100,000 মানুষের অন্তরে ওয়েলসের কেস উপলব্ধ নয়</string>
+    <string name="local_stats_title">স্থানীয় COVID-19 তথ্য</string>
+    <string name="onboarding_how_app_works_battery_bullet_desc">কন্ট্যাক্ট ট্রেসিং একটি ব্যাটারি-সাশ্রয়কারী ব্লুটুথ প্রযুক্তি ব্যবহার করে। এটি অনুমান করে যে আপনি কতক্ষণ ধরে অন্যান্য অ্যাপ ব্যবহারকারীদের সাথে ঘনিষ্ঠ সংস্পর্শে ছিলেন।</string>
+    <string name="onboarding_how_app_works_battery_bullet_header">এটি আপনার ব্যাটারি নিঃশেষ করে দেবে না</string>
+    <string name="onboarding_how_app_works_bluetooth_bullet_desc">ব্লুটুথ বন্ধ থাকলে কন্ট্যাক্ট ট্রেসিং কাজ করবে না। এইভাবে অ্যাপটি গণনা করে যে কেউ COVID-19-এর সংস্পর্শে এসেছে কিনা এবং অন্য যারা ঘনিষ্ঠ সংস্পর্শে ছিলেন তাদের অবহিত করবে।</string>
+    <string name="onboarding_how_app_works_bluetooth_bullet_header">এই অ্যাপটি ব্লুটুথ ব্যবহার করে</string>
+    <string name="onboarding_how_app_works_continue">চালিয়ে যান</string>
+    <string name="onboarding_how_app_works_location_bullet_desc">আপনার অবস্থান সনাক্ত করতে এই অ্যাপটি ব্যবহার করা হয় না।</string>
+    <string name="onboarding_how_app_works_location_bullet_header">আপনার অবস্থান ট্র্যাক করা হয় না</string>
+    <string name="onboarding_how_app_works_privacy_bullet_desc">আপনার ব্যক্তিগত বিবরণ এই অ্যাপ দ্বারা অ্যাক্সেস করা যাবে না এবং সর্বদা সুরক্ষিত থাকবে।</string>
+    <string name="onboarding_how_app_works_privacy_bullet_header">আপনার গোপনীয়তা সুরক্ষিত</string>
+    <string name="onboarding_how_app_works_title">এই অ্যাপ কিভাবে কাজ করে</string>
+    <string name="onboarding_permissions_bluetooth_checklist">আপনার ফোন সেটিংসে ব্লুটুথ চালু করুন\n\n‘সংস্পর্শের বিজ্ঞপ্তি’ (Exposure notifications)-কে অনুমতি দিন\n\n‘বিজ্ঞপ্তি’ (Notifications)-কে অনুমতি দিন</string>
+    <string name="onboarding_permissions_bluetooth_description">পরীক্ষায় পজিটিভ ফল এসেছে এমন কারো সাথে আপনি ঘনিষ্ঠ সংস্পর্শে ছিলেন কিনা তা আপনাকে জানিয়ে, কন্ট্যাক্ট ট্রেসিং COVID-19 এর বিস্তার রোধ করতে সাহায্য করে।\n\nকন্ট্যাক্ট ট্রেসিং কাজ করার জন্য, এবং আপনাকে ও আপনার প্রিয়জনকে নিরাপদ রাখতে সাহায্য করার জন্য:</string>
+    <string name="onboarding_permissions_bluetooth_description2">আপনি আপনার ফোন সেটিংসে এই অনুমতিগুলি পরিবর্তন করতে পারেন৷</string>
+    <string name="onboarding_permissions_bluetooth_title">কন্ট্যাক্ট ট্রেসিং ব্যবহার করতে আপনার ব্লুটুথ প্রয়োজন</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_information_wls">ঝুঁকি কমাতে, আপনার 7 দিনের জন্য প্রতিদিন দ্রুত ল্যাটারাল ফ্লো পরীক্ষা করা এবং রিপোর্ট করা উচিত</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required_wls">আপনার পরীক্ষার ফলাফল পজিটিভ না হলে বা উপসর্গ না থাকলে আপনার নিজেকে আলাদা করার দরকার নেই</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice_wls">অন্যদের সঙ্গে, বিশেষ করে বয়স্ক ও ঝুঁকিগ্রস্ত মানুষদের সঙ্গে যোগাযোগ হ্রাস করা সহ, জাতীয় নির্দেশনা অনুসরণ করা এখনও গুরুত্বপূর্ণ।</string>
@@ -730,7 +802,5 @@
     <string name="risky_contact_isolation_advice_minors_no_self_isolation_required_wls">আপনার পরীক্ষার ফলাফল পজিটিভ না হলে বা উপসর্গ না থাকলে আপনার নিজেকে আলাদা করার দরকার নেই</string>
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">কোনো বিশ্বস্ত প্রাপ্তবয়স্ক ব্যক্তিকে এই বার্তা দেখানোর জন্য আপনাকে পরামর্শ দেওয়া হচ্ছে।</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">অন্যদের সঙ্গে, বিশেষ করে বয়স্ক ও ঝুঁকিগ্রস্ত মানুষদের সঙ্গে যোগাযোগ হ্রাস করা সহ, জাতীয় নির্দেশনা অনুসরণ করা এখনও গুরুত্বপূর্ণ।</string>
-    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
-    <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">আপনাকে যত তাড়াতাড়ি সম্ভব বিনামূল্যে দ্রুত ল্যাটারাল ফ্লো পরীক্ষা করার পরামর্শ দেওয়া হচ্ছে।</string>
-    <string name="contact_case_start_isolation_primary_button_title_wales">বিনামূল্যে একটি দ্রুত ল্যাটারাল ফ্লো কিট পান</string>
+    <string name="status_option_local_data">স্থানীয় COVID-19 তথ্য</string>
 </resources>

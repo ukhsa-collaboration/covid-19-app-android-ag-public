@@ -13,7 +13,7 @@ class MockApiBehaviour {
 
     private var previousSuccess = true
 
-    suspend fun <T> invoke(onSuccess: (() -> T)): T {
+    suspend fun <T> invoke(onSuccess: suspend (() -> T)): T {
         delay(delayMillis)
         return when (responseType) {
             ALWAYS_FAIL -> throw Exception()

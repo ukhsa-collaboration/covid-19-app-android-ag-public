@@ -52,9 +52,8 @@ class IsolationTestContext {
     private lateinit var localAuthority: String
     val clock: MockClock = MockClock()
     private val isolationStateMachine = IsolationStateMachine(
-        stateStorage,
+        stateStorage = stateStorage,
         notificationProvider = mockk(relaxUnitFun = true),
-        isolationConfigurationProvider = isolationConfigurationProvider,
         unacknowledgedTestResultsProvider = mockk(relaxUnitFun = true),
         testResultIsolationHandler = TestResultIsolationHandler(
             CalculateKeySubmissionDateRange(
@@ -75,6 +74,7 @@ class IsolationTestContext {
         exposureNotificationHandler = mockk(relaxUnitFun = true),
         keySharingInfoProvider = mockk(relaxUnitFun = true),
         createIsolationLogicalState = createIsolationLogicalState(clock),
+        createIsolationState = createIsolationState(stateStorage.state, isolationConfigurationProvider),
         trackTestResultAnalyticsOnReceive = mockk(relaxUnitFun = true),
         trackTestResultAnalyticsOnAcknowledge = mockk(relaxUnitFun = true),
         scheduleIsolationHubReminder = mockk(relaxUnitFun = true),

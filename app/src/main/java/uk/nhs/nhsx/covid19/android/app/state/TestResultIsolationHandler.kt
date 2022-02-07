@@ -50,7 +50,7 @@ class TestResultIsolationHandler @Inject constructor(
             testAcknowledgedDate
         )
         return applyIsolationUpdate(
-            currentState,
+            currentState.toIsolationInfo(),
             receivedTestResult,
             isolationUpdate,
             testAcknowledgedDate
@@ -112,7 +112,7 @@ class TestResultIsolationHandler @Inject constructor(
                     //  * If there is a positive test stored, we know that the stored test is older than the symptoms,
                     //    otherwise we would have gone into the branch hasBecomeSymptomaticAfterPositiveTest
                     !receivedTestResult.isPositiveUnconfirmedOlderThanNegative(previousTestResult) &&
-                        isTestOlderThanSelfAssessmentSymptoms(receivedTestResult, currentState, clock) ->
+                            isTestOlderThanSelfAssessmentSymptoms(receivedTestResult, currentState, clock) ->
                         getConfirmedDateIfNeeded(receivedTestResult, previousTestResult)?.let { confirmedDate ->
                             Update(testInfo.confirm(confirmedDate))
                         } ?: Update(testInfo)
@@ -142,9 +142,12 @@ class TestResultIsolationHandler @Inject constructor(
                                 indexCase?.isSelfAssessment() == true -> Update(testInfo)
                                 else -> Overwrite(testInfo)
                             }
-                        } else if (isTestOlderThanSelfAssessmentSymptoms(receivedTestResult, currentState, clock, defaultIfNoSymptoms = true) &&
-                            previousTestResult != null &&
-                            isNegativeConfirmedTestAfterPositiveUnconfirmedConfirmatoryDayLimit(testInfo.acknowledgedTestResult, previousTestResult)
+                        } else if (isTestOlderThanSelfAssessmentSymptoms(
+                                receivedTestResult, currentState, clock, defaultIfNoSymptoms = true
+                            ) && previousTestResult != null &&
+                            isNegativeConfirmedTestAfterPositiveUnconfirmedConfirmatoryDayLimit(
+                                testInfo.acknowledgedTestResult, previousTestResult
+                            )
                         ) {
                             Overwrite(testInfo.complete(completedDate = previousTestResult.testEndDate))
                         } else {
@@ -192,8 +195,8 @@ class TestResultIsolationHandler @Inject constructor(
             // date” < “existing positive test end date”, then the newly entered positive test should be used for
             // isolation, but preserve the symptoms
             previousTestResult != null &&
-                previousTestResult.isPositive() &&
-                testInfo.receivedTestResult.isOlderThan(previousTestResult, clock) ->
+                    previousTestResult.isPositive() &&
+                    testInfo.receivedTestResult.isOlderThan(previousTestResult, clock) ->
                 getConfirmedDateIfNeeded(testInfo.receivedTestResult, previousTestResult)?.let { confirmedDate ->
                     Update(testInfo.confirm(confirmedDate))
                 } ?: Update(testInfo)
@@ -252,7 +255,7 @@ class TestResultIsolationHandler @Inject constructor(
     }
 
     private fun applyIsolationUpdate(
-        currentState: IsolationState,
+        currentInfo: IsolationInfo,
         testResult: ReceivedTestResult,
         isolationUpdate: IsolationUpdate,
         testAcknowledgedDate: Instant
@@ -265,44 +268,51 @@ class TestResultIsolationHandler @Inject constructor(
         }
 
         // A confirmed positive test result (expired or not) removes any memory of a contact case (current or past)
-        var newState =
-            if (testResult.isConfirmed() && testResult.isPositive()) currentState.clearContactCase()
-            else currentState
+        var newInfo =
+            if (testResult.isConfirmed() && testResult.isPositive()) currentInfo.clearContactCase()
+            else currentInfo
 
-        newState = when (testResult.testResult) {
+        newInfo = when (testResult.testResult) {
             POSITIVE ->
                 when (isolationUpdate) {
-                    is Update -> updateIndexCaseWithPositiveTestResult(newState, isolationUpdate.testInfoResult)
-                    is Overwrite -> replaceIndexCaseWithPositiveTestResult(newState, isolationUpdate.testInfoResult)
-                    is Confirm -> confirmTestResult(newState, isolationUpdate.confirmedDate)
-                    else -> newState
+                    is Update -> updateIndexCaseWithPositiveTestResult(newInfo, isolationUpdate.testInfoResult)
+                    is Overwrite -> replaceIndexCaseWithPositiveTestResult(newInfo, isolationUpdate.testInfoResult)
+                    is Confirm -> confirmTestResult(newInfo, isolationUpdate.confirmedDate)
+                    else -> newInfo
                 }
             NEGATIVE ->
                 when (isolationUpdate) {
-                    is Update -> newState.copy(
+                    is Update -> newInfo.copy(
                         testResult = isolationUpdate.testInfoResult.acknowledgedTestResult
                     )
-                    is Overwrite -> newState.copy(
+                    is Overwrite -> newInfo.copy(
                         selfAssessment = null,
                         testResult = isolationUpdate.testInfoResult.acknowledgedTestResult
                     )
                     is Confirm -> {
                         Timber.e("Cannot confirm using a negative test result")
-                        newState
+                        newInfo
                     }
-                    is Complete -> completeTestResult(newState, isolationUpdate.completedDate)
-                    is CompleteAndDeleteSymptoms -> completeTestResultAndDeleteSymptoms(newState, isolationUpdate.completedDate)
-                    DeleteSymptoms -> deleteSymptoms(newState)
-                    DeleteTest -> deleteTest(newState)
-                    else -> newState
+                    is Complete -> completeTestResult(newInfo, isolationUpdate.completedDate)
+                    is CompleteAndDeleteSymptoms -> completeTestResultAndDeleteSymptoms(
+                        newInfo,
+                        isolationUpdate.completedDate
+                    )
+                    DeleteSymptoms -> deleteSymptoms(newInfo)
+                    DeleteTest -> deleteTest(newInfo)
+                    else -> newInfo
                 }
-            VOID, PLOD -> newState
+            VOID, PLOD -> newInfo
         }
 
-        val keySharingInfo = createKeySharingInfoOnTestAcknowledged(testResult, testAcknowledgedDate, newState)
+        val keySharingInfo = createKeySharingInfoOnTestAcknowledged(
+            testResult,
+            testAcknowledgedDate,
+            newInfo.assumedOnsetDateForExposureKeys
+        )
 
-        return if (newState == currentState) DoNotTransition(preventKeySubmission = false, keySharingInfo)
-        else Transition(newState, keySharingInfo)
+        return if (newInfo == currentInfo) DoNotTransition(preventKeySubmission = false, keySharingInfo)
+        else Transition(newInfo, keySharingInfo)
     }
 
     private fun ReceivedTestResult.toAcknowledgedTest(acknowledgedDate: Instant): TestInfo? =
@@ -310,15 +320,15 @@ class TestResultIsolationHandler @Inject constructor(
             TestInfo(
                 receivedTestResult = this,
                 acknowledgedTestResult =
-                    AcknowledgedTestResult(
-                        testEndDate(clock),
-                        virologyTestResult,
-                        testKitType,
-                        acknowledgedDate = acknowledgedDate.toLocalDate(clock.zone),
-                        requiresConfirmatoryTest = requiresConfirmatoryTest,
-                        confirmedDate = null,
-                        confirmatoryDayLimit = confirmatoryDayLimit
-                    )
+                AcknowledgedTestResult(
+                    testEndDate(clock),
+                    virologyTestResult,
+                    testKitType,
+                    acknowledgedDate = acknowledgedDate.toLocalDate(clock.zone),
+                    requiresConfirmatoryTest = requiresConfirmatoryTest,
+                    confirmedDate = null,
+                    confirmatoryDayLimit = confirmatoryDayLimit
+                )
             )
         }
 
@@ -348,9 +358,8 @@ class TestResultIsolationHandler @Inject constructor(
     private fun createKeySharingInfoOnTestAcknowledged(
         testResult: ReceivedTestResult,
         testAcknowledgedDate: Instant,
-        state: IsolationState
+        assumedOnsetDate: LocalDate?
     ): KeySharingInfo? {
-        val assumedOnsetDate = state.assumedOnsetDateForExposureKeys
         if (testResult.isPositive() &&
             testResult.diagnosisKeySubmissionSupported &&
             testResult.diagnosisKeySubmissionToken != null &&
@@ -373,32 +382,32 @@ class TestResultIsolationHandler @Inject constructor(
         val selfAssessmentOnsetDate = indexCase?.getSelfAssessmentOnsetDate()
         val previousTestResult = indexCase?.testResult
         return selfAssessmentOnsetDate != null &&
-            previousTestResult != null &&
-            previousTestResult.isPositive() &&
-            selfAssessmentOnsetDate.isAfter(previousTestResult.testEndDate)
+                previousTestResult != null &&
+                previousTestResult.isPositive() &&
+                selfAssessmentOnsetDate.isAfter(previousTestResult.testEndDate)
     }
 
     private fun ReceivedTestResult.isOlderThanPositive(otherTest: AcknowledgedTestResult?): Boolean =
         otherTest != null &&
-            otherTest.testResult == RelevantVirologyTestResult.POSITIVE &&
-            this.isOlderThan(otherTest, clock)
+                otherTest.testResult == RelevantVirologyTestResult.POSITIVE &&
+                this.isOlderThan(otherTest, clock)
 
     private fun ReceivedTestResult.isOlderThanNegative(otherTest: AcknowledgedTestResult?): Boolean =
         otherTest != null &&
-            otherTest.testResult == RelevantVirologyTestResult.NEGATIVE &&
-            this.isOlderThan(otherTest, clock)
+                otherTest.testResult == RelevantVirologyTestResult.NEGATIVE &&
+                this.isOlderThan(otherTest, clock)
 
     private fun ReceivedTestResult.isPositiveUnconfirmedOlderThanNegative(otherTest: AcknowledgedTestResult?): Boolean =
         isPositive() &&
-            !isConfirmed() &&
-            this.isOlderThanNegative(otherTest)
+                !isConfirmed() &&
+                this.isOlderThanNegative(otherTest)
 
     private fun isNegativeTestIrrelevant(
         testResult: ReceivedTestResult,
         currentState: IsolationLogicalState
     ): Boolean =
         isTestBeforeExistingUnconfirmedPositiveTest(testResult, currentState) ||
-            isTestOlderThanSelfAssessmentSymptoms(testResult, currentState, clock)
+                isTestOlderThanSelfAssessmentSymptoms(testResult, currentState, clock)
 
     private fun isTestBeforeExistingUnconfirmedPositiveTest(
         testResult: ReceivedTestResult,
@@ -406,9 +415,9 @@ class TestResultIsolationHandler @Inject constructor(
     ): Boolean {
         val existingTestResult = currentState.getIndexCase()?.testResult
         return existingTestResult != null &&
-            existingTestResult.isPositive() &&
-            !existingTestResult.isConfirmed() &&
-            testResult.testEndDate(clock).isBefore(existingTestResult.testEndDate)
+                existingTestResult.isPositive() &&
+                !existingTestResult.isConfirmed() &&
+                testResult.testEndDate(clock).isBefore(existingTestResult.testEndDate)
     }
 
     private fun isConfirmedTestAfterConfirmatoryDayLimit(
@@ -417,7 +426,7 @@ class TestResultIsolationHandler @Inject constructor(
     ): Boolean {
         val existingTestResult = currentState.getIndexCase()?.testResult
         return existingTestResult != null &&
-            isNegativeConfirmedTestAfterPositiveUnconfirmedConfirmatoryDayLimit(existingTestResult, testResult)
+                isNegativeConfirmedTestAfterPositiveUnconfirmedConfirmatoryDayLimit(existingTestResult, testResult)
     }
 
     private fun isNegativeConfirmedTestAfterPositiveUnconfirmedConfirmatoryDayLimit(
@@ -435,31 +444,31 @@ class TestResultIsolationHandler @Inject constructor(
         }
 
         return oldTest.isPositive() &&
-            !oldTest.isConfirmed() &&
-            oldTest.confirmatoryDayLimit != null &&
-            newTest.testResult == RelevantVirologyTestResult.NEGATIVE &&
-            newTest.isConfirmed() &&
-            !oldTest.isDateWithinConfirmatoryDayLimit(newTest.testEndDate, clock)
+                !oldTest.isConfirmed() &&
+                oldTest.confirmatoryDayLimit != null &&
+                newTest.testResult == RelevantVirologyTestResult.NEGATIVE &&
+                newTest.isConfirmed() &&
+                !oldTest.isDateWithinConfirmatoryDayLimit(newTest.testEndDate, clock)
     }
 
-    private fun IsolationState.clearContactCase(): IsolationState =
+    private fun IsolationInfo.clearContactCase(): IsolationInfo =
         copy(contact = null)
 
     private fun updateIndexCaseWithPositiveTestResult(
-        currentState: IsolationState,
+        isolationInfo: IsolationInfo,
         testInfoResult: TestInfo
-    ): IsolationState =
-        if (currentState.selfAssessment != null) {
-            currentState.copy(testResult = testInfoResult.acknowledgedTestResult)
+    ): IsolationInfo =
+        if (isolationInfo.selfAssessment != null) {
+            isolationInfo.copy(testResult = testInfoResult.acknowledgedTestResult)
         } else {
-            replaceIndexCaseWithPositiveTestResult(currentState, testInfoResult)
+            replaceIndexCaseWithPositiveTestResult(isolationInfo, testInfoResult)
         }
 
     private fun replaceIndexCaseWithPositiveTestResult(
-        currentState: IsolationState,
+        isolationInfo: IsolationInfo,
         testInfoResult: TestInfo
-    ): IsolationState =
-        currentState.copy(
+    ): IsolationInfo =
+        isolationInfo.copy(
             testResult = testInfoResult.acknowledgedTestResult,
             selfAssessment = createSelfAssessmentFromTestResult(
                 testInfoResult.receivedTestResult,
@@ -468,43 +477,43 @@ class TestResultIsolationHandler @Inject constructor(
         )
 
     private fun confirmTestResult(
-        currentState: IsolationState,
+        isolationInfo: IsolationInfo,
         confirmedDate: LocalDate
-    ): IsolationState =
-        if (currentState.testResult != null && currentState.testResult.isPositive()) {
-            currentState.copy(
-                testResult = currentState.testResult.confirm(confirmedDate),
+    ): IsolationInfo =
+        if (isolationInfo.testResult != null && isolationInfo.testResult.isPositive()) {
+            isolationInfo.copy(
+                testResult = isolationInfo.testResult.confirm(confirmedDate),
             )
         } else {
-            Timber.e("There is no positive test result to confirm. Test result: ${currentState.testResult}")
-            currentState
+            Timber.e("There is no positive test result to confirm. Test result: ${isolationInfo.testResult}")
+            isolationInfo
         }
 
     private fun completeTestResult(
-        currentState: IsolationState,
+        isolationInfo: IsolationInfo,
         completedDate: LocalDate
-    ): IsolationState =
-        if (currentState.testResult != null && currentState.testResult.isPositive()) {
-            currentState.copy(
-                testResult = currentState.testResult.complete(completedDate),
+    ): IsolationInfo =
+        if (isolationInfo.testResult != null && isolationInfo.testResult.isPositive()) {
+            isolationInfo.copy(
+                testResult = isolationInfo.testResult.complete(completedDate),
             )
         } else {
-            Timber.e("There is no positive test result to confirm. Test result: ${currentState.testResult}")
-            currentState
+            Timber.e("There is no positive test result to confirm. Test result: ${isolationInfo.testResult}")
+            isolationInfo
         }
 
     private fun completeTestResultAndDeleteSymptoms(
-        currentState: IsolationState,
+        isolationInfo: IsolationInfo,
         completedDate: LocalDate
-    ): IsolationState =
-        completeTestResult(currentState, completedDate)
+    ): IsolationInfo =
+        completeTestResult(isolationInfo, completedDate)
             .copy(selfAssessment = null)
 
-    private fun deleteSymptoms(currentState: IsolationState): IsolationState =
-        currentState.copy(selfAssessment = null)
+    private fun deleteSymptoms(isolationInfo: IsolationInfo): IsolationInfo =
+        isolationInfo.copy(selfAssessment = null)
 
-    private fun deleteTest(currentState: IsolationState): IsolationState =
-        currentState.copy(testResult = null)
+    private fun deleteTest(isolationInfo: IsolationInfo): IsolationInfo =
+        isolationInfo.copy(testResult = null)
 
     private data class TestInfo(
         val receivedTestResult: ReceivedTestResult,
@@ -532,7 +541,7 @@ class TestResultIsolationHandler @Inject constructor(
         ) : TransitionDueToTestResult()
 
         data class Transition(
-            val newState: IsolationState,
+            val newIsolationInfo: IsolationInfo,
             override val keySharingInfo: KeySharingInfo?
         ) : TransitionDueToTestResult()
     }

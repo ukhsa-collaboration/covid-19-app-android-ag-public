@@ -60,13 +60,16 @@
             android:name=".onboarding.PermissionActivity"
             android:label="@string/permission_title" />
         <activity
+            android:name=".onboarding.HowAppWorksActivity"
+            android:label="@string/onboarding_how_app_works_title" />
+        <activity
             android:name=".status.StatusActivity"
             android:label="@string/app_name" />
         <activity
             android:name=".edgecases.DeviceNotSupportedActivity"
             android:label="@string/cant_run_app" />
         <activity
-            android:name=".common.EnableBluetoothActivity"
+            android:name=".common.bluetooth.EnableBluetoothActivity"
             android:label="@string/enable_bluetooth_title" />
         <activity
             android:name=".common.EnableLocationActivity"
@@ -233,6 +236,12 @@
         <activity
             android:name=".exposure.questionnaire.review.ExposureNotificationReviewActivity"
             android:label="@string/contact_case_summary_title" />
+        <activity
+            android:name=".localdata.LocalDataAndStatisticsActivity"
+            android:label="@string/local_statistics_main_screen_navigation_title" />
+        <activity
+            android:name=".localstats.FetchLocalDataProgressActivity"
+            android:label="@string/local_stats_title" />
 
         <!-- Receivers -->
         <receiver

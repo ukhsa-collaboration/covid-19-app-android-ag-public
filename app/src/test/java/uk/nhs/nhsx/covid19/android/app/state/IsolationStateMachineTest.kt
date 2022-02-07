@@ -4,6 +4,7 @@ import com.tinder.StateMachine.Transition
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
@@ -67,9 +68,11 @@ class IsolationStateMachineTest {
     private val exposureNotificationHandler = mockk<ExposureNotificationHandler>(relaxUnitFun = true)
     private val keySharingInfoProvider = mockk<KeySharingInfoProvider>(relaxUnitFun = true)
     private val trackTestResultAnalyticsOnReceive = mockk<TrackTestResultAnalyticsOnReceive>(relaxUnitFun = true)
-    private val trackTestResultAnalyticsOnAcknowledge = mockk<TrackTestResultAnalyticsOnAcknowledge>(relaxUnitFun = true)
+    private val trackTestResultAnalyticsOnAcknowledge =
+        mockk<TrackTestResultAnalyticsOnAcknowledge>(relaxUnitFun = true)
     private val scheduleIsolationHubReminder = mockk<ScheduleIsolationHubReminder>(relaxUnitFun = true)
     private val isolationHubReminderAlarmController = mockk<IsolationHubReminderAlarmController>(relaxUnitFun = true)
+    private val createIsolationState = mockk<CreateIsolationState>(relaxUnitFun = true)
     private val createIsolationLogicalState = createIsolationLogicalState(fixedClock)
 
     private val durationDays = DurationDays()
@@ -77,6 +80,16 @@ class IsolationStateMachineTest {
     @Before
     fun setUp() {
         every { isolationConfigurationProvider.durationDays } returns durationDays
+        val slot = slot<IsolationInfo>()
+        every { createIsolationState(capture(slot)) } answers {
+            IsolationState(
+                isolationConfiguration = DurationDays(),
+                selfAssessment = slot.captured.selfAssessment,
+                testResult = slot.captured.testResult,
+                contact = slot.captured.contact,
+                hasAcknowledgedEndOfIsolation = slot.captured.hasAcknowledgedEndOfIsolation
+            )
+        }
     }
 
     @Test
@@ -997,7 +1010,10 @@ class IsolationStateMachineTest {
         assertEquals(expected = currentState, actual)
 
         val sideEffect = (transition as Transition.Valid).sideEffect
-        assertEquals(SideEffect.HandleAcknowledgedTestResult(currentLogicalState, testResult, keySharingInfo), sideEffect)
+        assertEquals(
+            SideEffect.HandleAcknowledgedTestResult(currentLogicalState, testResult, keySharingInfo),
+            sideEffect
+        )
 
         verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentLogicalState, testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
@@ -1041,7 +1057,10 @@ class IsolationStateMachineTest {
         assertEquals(expected = currentState, actual)
 
         val sideEffect = (transition as Transition.Valid).sideEffect
-        assertEquals(SideEffect.HandleAcknowledgedTestResult(currentLogicalState, testResult, keySharingInfo = null), sideEffect)
+        assertEquals(
+            SideEffect.HandleAcknowledgedTestResult(currentLogicalState, testResult, keySharingInfo = null),
+            sideEffect
+        )
 
         verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentLogicalState, testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
@@ -1089,7 +1108,10 @@ class IsolationStateMachineTest {
         assertEquals(expected = currentState, actual)
 
         val sideEffect = (transition as Transition.Valid).sideEffect
-        assertEquals(SideEffect.HandleAcknowledgedTestResult(currentLogicalState, testResult, keySharingInfo), sideEffect)
+        assertEquals(
+            SideEffect.HandleAcknowledgedTestResult(currentLogicalState, testResult, keySharingInfo),
+            sideEffect
+        )
 
         verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentLogicalState, testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
@@ -1136,7 +1158,7 @@ class IsolationStateMachineTest {
                 testResult,
                 testAcknowledgedDate = Instant.now(fixedClock)
             )
-        } returns TransitionDueToTestResult.Transition(newState, keySharingInfo)
+        } returns TransitionDueToTestResult.Transition(newState.toIsolationInfo(), keySharingInfo)
 
         val testSubject = createIsolationStateMachine(fixedClock)
 
@@ -1148,7 +1170,10 @@ class IsolationStateMachineTest {
         assertEquals(expected = newState, actual)
 
         val sideEffect = (transition as Transition.Valid).sideEffect
-        assertEquals(SideEffect.HandleAcknowledgedTestResult(currentLogicalState, testResult, keySharingInfo), sideEffect)
+        assertEquals(
+            SideEffect.HandleAcknowledgedTestResult(currentLogicalState, testResult, keySharingInfo),
+            sideEffect
+        )
 
         verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentLogicalState, testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
@@ -1193,7 +1218,7 @@ class IsolationStateMachineTest {
                 testResult,
                 testAcknowledgedDate = Instant.now(fixedClock)
             )
-        } returns TransitionDueToTestResult.Transition(newState, keySharingInfo)
+        } returns TransitionDueToTestResult.Transition(newState.toIsolationInfo(), keySharingInfo)
 
         val testSubject = createIsolationStateMachine(fixedClock)
 
@@ -1207,7 +1232,10 @@ class IsolationStateMachineTest {
         val sideEffect = (transition as Transition.Valid).sideEffect
 
         assertEquals(expected, actual)
-        assertEquals(SideEffect.HandleAcknowledgedTestResult(currentLogicalState, testResult, keySharingInfo), sideEffect)
+        assertEquals(
+            SideEffect.HandleAcknowledgedTestResult(currentLogicalState, testResult, keySharingInfo),
+            sideEffect
+        )
         verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentLogicalState, testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
@@ -1259,7 +1287,7 @@ class IsolationStateMachineTest {
                 testResult,
                 testAcknowledgedDate = Instant.now(fixedClock)
             )
-        } returns TransitionDueToTestResult.Transition(newState, keySharingInfo)
+        } returns TransitionDueToTestResult.Transition(newState.toIsolationInfo(), keySharingInfo)
 
         val testSubject = createIsolationStateMachine(fixedClock)
         val transition = testSubject.processEvent(
@@ -1270,7 +1298,10 @@ class IsolationStateMachineTest {
         assertEquals(expected = newState, actual)
 
         val sideEffect = (transition as Transition.Valid).sideEffect
-        assertEquals(SideEffect.HandleAcknowledgedTestResult(currentLogicalState, testResult, keySharingInfo), sideEffect)
+        assertEquals(
+            SideEffect.HandleAcknowledgedTestResult(currentLogicalState, testResult, keySharingInfo),
+            sideEffect
+        )
 
         verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentLogicalState, testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
@@ -1326,7 +1357,7 @@ class IsolationStateMachineTest {
                 testResult,
                 testAcknowledgedDate = Instant.now(fixedClock)
             )
-        } returns TransitionDueToTestResult.Transition(newState, keySharingInfo)
+        } returns TransitionDueToTestResult.Transition(newState.toIsolationInfo(), keySharingInfo)
 
         val testSubject = createIsolationStateMachine(fixedClock)
 
@@ -1340,7 +1371,10 @@ class IsolationStateMachineTest {
         val sideEffect = (transition as Transition.Valid).sideEffect
 
         assertEquals(expected, actual)
-        assertEquals(SideEffect.HandleAcknowledgedTestResult(currentLogicalState, testResult, keySharingInfo), sideEffect)
+        assertEquals(
+            SideEffect.HandleAcknowledgedTestResult(currentLogicalState, testResult, keySharingInfo),
+            sideEffect
+        )
         verify { trackTestResultAnalyticsOnAcknowledge.invoke(currentLogicalState, testResult) }
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
@@ -1522,7 +1556,6 @@ class IsolationStateMachineTest {
         return IsolationStateMachine(
             stateProvider,
             notificationProvider,
-            isolationConfigurationProvider,
             unacknowledgedTestResultsProvider,
             testResultIsolationHandler,
             storageBasedUserInbox,
@@ -1535,7 +1568,8 @@ class IsolationStateMachineTest {
             trackTestResultAnalyticsOnReceive,
             trackTestResultAnalyticsOnAcknowledge,
             scheduleIsolationHubReminder,
-            isolationHubReminderAlarmController
+            isolationHubReminderAlarmController,
+            createIsolationState
         )
     }
 }

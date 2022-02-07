@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_isolation_expired_or_over" />
+                android:src="@drawable/ic_elbow_bump" />
 
             <TextView
                 style="@style/Title1"

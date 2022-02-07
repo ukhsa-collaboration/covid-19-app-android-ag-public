@@ -106,6 +106,7 @@ class AnalyticsMetricsStorageTest : ProviderTest<AnalyticsMetricsStorage, Metric
             "optedOutForContactIsolation":84,
             "optedOutForContactIsolationBackgroundTick":85,
             "appIsUsableBackgroundTick":86,
+            "appIsUsableBluetoothOffBackgroundTick":89,
             "appIsContactTraceableBackgroundTick":87,
             "didAccessSelfIsolationNoteLink":88
             }
@@ -197,7 +198,8 @@ class AnalyticsMetricsStorageTest : ProviderTest<AnalyticsMetricsStorage, Metric
             optedOutForContactIsolationBackgroundTick = 85,
             appIsUsableBackgroundTick = 86,
             appIsContactTraceableBackgroundTick = 87,
-            didAccessSelfIsolationNoteLink = 88
+            didAccessSelfIsolationNoteLink = 88,
+            appIsUsableBluetoothOffBackgroundTick = 89
         )
     }
 }

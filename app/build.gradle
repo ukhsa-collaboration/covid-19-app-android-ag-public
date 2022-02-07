@@ -83,10 +83,6 @@ android {
         viewBinding true
     }
 
-    sourceSets {
-        main.res.srcDirs = ['src/main/res', 'src/main/accordion_contents/res']
-    }
-
     adbOptions {
         installOptions '-g', '-r'
     }

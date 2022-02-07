@@ -10,7 +10,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers.allOf
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.NthChildOf
+import uk.nhs.nhsx.covid19.android.app.R.id
+import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.positional.isNthChildOf
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 
 class SettingsRobot : HasActivity {
@@ -39,7 +40,7 @@ class SettingsRobot : HasActivity {
                 matches(
                     allOf(
                         isDisplayed(),
-                        NthChildOf(withId(R.id.settingsList), 0)
+                        isNthChildOf(withId(id.settingsList), 0)
                     )
                 )
             )
@@ -51,7 +52,7 @@ class SettingsRobot : HasActivity {
                 matches(
                     allOf(
                         isDisplayed(),
-                        NthChildOf(withId(R.id.settingsList), 1)
+                        isNthChildOf(withId(id.settingsList), 1)
                     )
                 )
             )
@@ -63,7 +64,7 @@ class SettingsRobot : HasActivity {
                 matches(
                     allOf(
                         isDisplayed(),
-                        NthChildOf(withId(R.id.settingsList), 2)
+                        isNthChildOf(withId(id.settingsList), 2)
                     )
                 )
             )
@@ -75,7 +76,7 @@ class SettingsRobot : HasActivity {
                 matches(
                     allOf(
                         isDisplayed(),
-                        NthChildOf(withId(R.id.settingsList), 3)
+                        isNthChildOf(withId(id.settingsList), 3)
                     )
                 )
             )
@@ -87,7 +88,7 @@ class SettingsRobot : HasActivity {
                 matches(
                     allOf(
                         isDisplayed(),
-                        NthChildOf(withId(R.id.settingsList), 4)
+                        isNthChildOf(withId(id.settingsList), 4)
                     )
                 )
             )

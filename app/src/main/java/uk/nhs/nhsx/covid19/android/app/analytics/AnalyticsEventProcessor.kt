@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.analytics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AcknowledgedStartOfIsolationDueToRiskyContact
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AskedToShareExposureKeysInTheInitialFlow
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.BackgroundTaskCompletion
@@ -233,11 +234,11 @@ class AnalyticsEventProcessor @Inject constructor(
 
             runningNormallyBackgroundTick = exposureNotificationApi.isRunningNormally()
 
-            val bluetoothState = bluetoothAvailabilityStateProvider.getState()
             val locationState = locationAvailabilityStateProvider.getState()
             val locationServiceIsEnabledOrIsNotRequired = locationState == ENABLED || exposureNotificationApi.deviceSupportsLocationlessScanning()
 
-            appIsUsableBackgroundTick = bluetoothState == ENABLED && locationServiceIsEnabledOrIsNotRequired
+            appIsUsableBackgroundTick = locationServiceIsEnabledOrIsNotRequired
+            appIsUsableBluetoothOffBackgroundTick = bluetoothAvailabilityStateProvider.getState() == DISABLED && locationServiceIsEnabledOrIsNotRequired
             appIsContactTraceableBackgroundTick = exposureNotificationApi.isRunningNormally()
 
             val currentState = createIsolationLogicalState(stateStorage.state)

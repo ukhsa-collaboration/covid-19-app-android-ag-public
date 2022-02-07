@@ -11,7 +11,9 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
 import uk.nhs.nhsx.covid19.android.app.state.CreateIsolationLogicalState
+import uk.nhs.nhsx.covid19.android.app.state.CreateIsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
+import uk.nhs.nhsx.covid19.android.app.state.IsolationInfo
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -38,6 +40,7 @@ class EvaluateTestResultViewStateTest {
     private val computeTestResultViewStateOnNegative = mockk<ComputeTestResultViewStateOnNegative>()
     private val computeTestResultViewStateOnVoid = mockk<ComputeTestResultViewStateOnVoid>()
     private val createIsolationLogicalState = mockk<CreateIsolationLogicalState>()
+    private val createIsolationState = mockk<CreateIsolationState>()
     private val fixedClock = Clock.fixed(Instant.parse("2020-01-01T10:00:00Z"), ZoneOffset.UTC)
 
     private val evaluateTestResultViewState = EvaluateTestResultViewState(
@@ -48,13 +51,17 @@ class EvaluateTestResultViewStateTest {
         computeTestResultViewStateOnNegative,
         computeTestResultViewStateOnVoid,
         createIsolationLogicalState,
+        createIsolationState,
         fixedClock
     )
 
     private val testResult = mockk<ReceivedTestResult>()
     private val stateTransition = DoNotTransition(preventKeySubmission = false, keySharingInfo = mockk())
     private val currentState = mockk<IsolationState>()
+    private val newIsolationState = mockk<IsolationState>()
+    private val currentInfo = mockk<IsolationInfo>()
     private val currentLogicalState = mockk<IsolationLogicalState>()
+    private val newLogicalState = mockk<IsolationLogicalState>()
     private val now = Instant.now(fixedClock)
 
     private val isolationHelper = IsolationHelper(fixedClock)
@@ -63,7 +70,11 @@ class EvaluateTestResultViewStateTest {
     fun setUp() {
         every { getHighestPriorityTestResult() } returns FoundTestResult(testResult)
         every { isolationStateMachine.readState() } returns currentState
+        every { currentState.toIsolationInfo() } returns currentInfo
         every { createIsolationLogicalState(currentState) } returns currentLogicalState
+        every { createIsolationState(currentInfo) } returns newIsolationState
+        every { createIsolationLogicalState(newIsolationState) } returns newLogicalState
+
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(currentState, testResult, now)
         } returns stateTransition
@@ -83,19 +94,21 @@ class EvaluateTestResultViewStateTest {
     fun `when most relevant unacknowledged test result is positive and results in state transition`() {
         val expectedViewState = mockk<TestResultViewState>()
         val newIsolationState = isolationHelper.selfAssessment().asIsolation()
-        val stateTransition = Transition(newIsolationState, keySharingInfo = mockk())
+        val newIsolationInfo = newIsolationState.toIsolationInfo()
+        val stateTransition = Transition(newIsolationInfo, keySharingInfo = mockk())
 
-        val expectedNewIsolationLogicalState = mockk<IsolationLogicalState>()
-        every { createIsolationLogicalState(newIsolationState) } returns expectedNewIsolationLogicalState
+        val isolationLogicalState = mockk<IsolationLogicalState>()
+        every { createIsolationState(newIsolationInfo) } returns newIsolationState
+        every { createIsolationLogicalState(newIsolationState) } returns isolationLogicalState
 
         every { testResult.testResult } returns POSITIVE
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(currentState, testResult, now)
         } returns stateTransition
         every {
-            computeTestResultViewStateOnPositive(currentLogicalState, expectedNewIsolationLogicalState, testResult)
+            computeTestResultViewStateOnPositive(currentLogicalState, isolationLogicalState, testResult)
         } returns expectedViewState
-        every { isolationStateMachine.remainingDaysInIsolation(expectedNewIsolationLogicalState) } returns
+        every { isolationStateMachine.remainingDaysInIsolation(isolationLogicalState) } returns
             DEFAULT_REMAINING_DAYS_IN_ISOLATION.toLong()
 
         val result = evaluateTestResultViewState()
@@ -103,8 +116,8 @@ class EvaluateTestResultViewStateTest {
         assertEquals(expected = ViewState(expectedViewState, DEFAULT_REMAINING_DAYS_IN_ISOLATION), result)
 
         verify {
-            computeTestResultViewStateOnPositive(currentLogicalState, expectedNewIsolationLogicalState, testResult)
-            isolationStateMachine.remainingDaysInIsolation(expectedNewIsolationLogicalState)
+            computeTestResultViewStateOnPositive(currentLogicalState, isolationLogicalState, testResult)
+            isolationStateMachine.remainingDaysInIsolation(isolationLogicalState)
         }
         confirmVerified(computeTestResultViewStateOnNegative, computeTestResultViewStateOnVoid)
     }
@@ -114,9 +127,9 @@ class EvaluateTestResultViewStateTest {
         val expectedViewState = mockk<TestResultViewState>()
         every { testResult.testResult } returns POSITIVE
         every {
-            computeTestResultViewStateOnPositive(currentLogicalState, currentLogicalState, testResult)
+            computeTestResultViewStateOnPositive(currentLogicalState, newLogicalState, testResult)
         } returns expectedViewState
-        every { isolationStateMachine.remainingDaysInIsolation(currentLogicalState) } returns
+        every { isolationStateMachine.remainingDaysInIsolation(newLogicalState) } returns
             DEFAULT_REMAINING_DAYS_IN_ISOLATION.toLong()
 
         val result = evaluateTestResultViewState()
@@ -124,8 +137,8 @@ class EvaluateTestResultViewStateTest {
         assertEquals(expected = ViewState(expectedViewState, DEFAULT_REMAINING_DAYS_IN_ISOLATION), result)
 
         verify {
-            computeTestResultViewStateOnPositive(currentLogicalState, currentLogicalState, testResult)
-            isolationStateMachine.remainingDaysInIsolation(currentLogicalState)
+            computeTestResultViewStateOnPositive(currentLogicalState, newLogicalState, testResult)
+            isolationStateMachine.remainingDaysInIsolation(newLogicalState)
         }
         confirmVerified(computeTestResultViewStateOnNegative, computeTestResultViewStateOnVoid)
     }
@@ -135,8 +148,8 @@ class EvaluateTestResultViewStateTest {
         val expectedViewState = mockk<TestResultViewState>()
 
         every { testResult.testResult } returns NEGATIVE
-        every { computeTestResultViewStateOnNegative(currentLogicalState, currentLogicalState) } returns expectedViewState
-        every { isolationStateMachine.remainingDaysInIsolation(currentLogicalState) } returns
+        every { computeTestResultViewStateOnNegative(currentLogicalState, newLogicalState) } returns expectedViewState
+        every { isolationStateMachine.remainingDaysInIsolation(newLogicalState) } returns
             DEFAULT_REMAINING_DAYS_IN_ISOLATION.toLong()
 
         val result = evaluateTestResultViewState()
@@ -144,8 +157,8 @@ class EvaluateTestResultViewStateTest {
         assertEquals(expected = ViewState(expectedViewState, DEFAULT_REMAINING_DAYS_IN_ISOLATION), result)
 
         verify {
-            computeTestResultViewStateOnNegative(currentLogicalState, currentLogicalState)
-            isolationStateMachine.remainingDaysInIsolation(currentLogicalState)
+            computeTestResultViewStateOnNegative(currentLogicalState, newLogicalState)
+            isolationStateMachine.remainingDaysInIsolation(newLogicalState)
         }
         confirmVerified(computeTestResultViewStateOnPositive, computeTestResultViewStateOnVoid)
     }
@@ -156,7 +169,7 @@ class EvaluateTestResultViewStateTest {
 
         every { testResult.testResult } returns VOID
         every { computeTestResultViewStateOnVoid(currentLogicalState) } returns expectedViewState
-        every { isolationStateMachine.remainingDaysInIsolation(currentLogicalState) } returns
+        every { isolationStateMachine.remainingDaysInIsolation(newLogicalState) } returns
             DEFAULT_REMAINING_DAYS_IN_ISOLATION.toLong()
 
         val result = evaluateTestResultViewState()
@@ -165,7 +178,7 @@ class EvaluateTestResultViewStateTest {
 
         verify {
             computeTestResultViewStateOnVoid(currentLogicalState)
-            isolationStateMachine.remainingDaysInIsolation(currentLogicalState)
+            isolationStateMachine.remainingDaysInIsolation(newLogicalState)
         }
         confirmVerified(computeTestResultViewStateOnPositive, computeTestResultViewStateOnNegative)
     }
@@ -173,7 +186,7 @@ class EvaluateTestResultViewStateTest {
     @Test
     fun `when most relevant unacknowledged test result is plod`() {
         every { testResult.testResult } returns PLOD
-        every { isolationStateMachine.remainingDaysInIsolation(currentLogicalState) } returns
+        every { isolationStateMachine.remainingDaysInIsolation(newLogicalState) } returns
             DEFAULT_REMAINING_DAYS_IN_ISOLATION.toLong()
 
         val result = evaluateTestResultViewState()
@@ -183,7 +196,7 @@ class EvaluateTestResultViewStateTest {
             result
         )
 
-        verify { isolationStateMachine.remainingDaysInIsolation(currentLogicalState) }
+        verify { isolationStateMachine.remainingDaysInIsolation(newLogicalState) }
         confirmVerified(
             computeTestResultViewStateOnPositive,
             computeTestResultViewStateOnNegative,
