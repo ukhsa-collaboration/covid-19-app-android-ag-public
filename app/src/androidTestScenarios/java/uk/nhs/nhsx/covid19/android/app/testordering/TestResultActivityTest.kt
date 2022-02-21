@@ -470,7 +470,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
                     testEndDate = Instant.now(),
                     testResult = VOID,
                     testKitType = LAB_RESULT,
-                    diagnosisKeySubmissionSupported = true,
+                    diagnosisKeySubmissionSupported = false,
                     requiresConfirmatoryTest = false
                 )
             )

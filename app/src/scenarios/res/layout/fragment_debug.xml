@@ -40,6 +40,12 @@
         android:text="Start download task" />
 
     <Button
+        android:id="@+id/virologyResultMock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Virology Test Result" />
+
+    <Button
         android:id="@+id/sendPositiveTestResult"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

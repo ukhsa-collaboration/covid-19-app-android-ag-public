@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import uk.nhs.nhsx.covid19.android.app.R
@@ -97,6 +98,16 @@ class VenueHistoryActivity : BaseActivity() {
         else -> {
             super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        super.onPrepareOptionsMenu(menu)
+        if (binding.venueHistoryList.isVisible) {
+            editButton?.visible()
+        } else {
+            editButton?.gone()
+        }
+        return true
     }
 
     private fun setupViewModelListeners() {

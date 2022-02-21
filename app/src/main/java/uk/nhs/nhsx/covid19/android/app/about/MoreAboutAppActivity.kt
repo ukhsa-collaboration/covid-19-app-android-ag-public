@@ -28,7 +28,7 @@ class MoreAboutAppActivity : BaseActivity() {
 
             textSoftwareName.setText(R.string.app_name)
             textSoftwareVersion.text = BuildConfig.VERSION_NAME
-            textSoftwareDateOfRelease.text = BuildConfig.RELEASE_DATE
+            textSoftwareDateOfRelease.text = getString(R.string.about_this_app_software_information_date_of_release_description)
         }
     }
 

@@ -19,7 +19,8 @@ abstract class BaseTestResultViewModel : ViewModel() {
 
     data class ViewState(
         val mainState: TestResultViewState,
-        val remainingDaysInIsolation: Int
+        val remainingDaysInIsolation: Int,
+        val acknowledgementCompletionActions: AcknowledgementCompletionActions
     )
 
     sealed class NavigationEvent {

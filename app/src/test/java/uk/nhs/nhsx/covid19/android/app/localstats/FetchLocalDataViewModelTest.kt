@@ -7,10 +7,6 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verifyOrder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -19,16 +15,14 @@ import uk.nhs.nhsx.covid19.android.app.common.Lce.Error
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Loading
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Success
 import uk.nhs.nhsx.covid19.android.app.remote.data.LocalStatsResponse
+import uk.nhs.nhsx.covid19.android.app.utils.CoroutineTest
 import java.io.IOException
-import java.lang.IllegalStateException
 
 @ExperimentalCoroutinesApi
-class FetchLocalDataViewModelTest {
+class FetchLocalDataViewModelTest : CoroutineTest() {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
-    private val testDispatcher = TestCoroutineDispatcher()
-    private val testScope = TestCoroutineScope(testDispatcher)
     private val localStatsObserver = mockk<Observer<Lce<LocalStats>>>(relaxUnitFun = true)
     private val fetchLocalStats = mockk<FetchLocalStats>()
     private val localStatsMapper = mockk<LocalStatsMapper>()
@@ -40,13 +34,8 @@ class FetchLocalDataViewModelTest {
         coEvery { fetchLocalStats() } returns mockk()
     }
 
-    @After
-    fun tearDown() {
-        testScope.cleanupTestCoroutines()
-    }
-
     @Test
-    fun `successfully fetch data`() = runBlocking {
+    fun `successfully fetch data`() = runBlockingTest {
         val localStatsResponse = mockk<LocalStatsResponse>()
         coEvery { fetchLocalStats() } returns localStatsResponse
 
@@ -64,7 +53,7 @@ class FetchLocalDataViewModelTest {
     }
 
     @Test
-    fun `error on fetching data`() = runBlocking {
+    fun `error on fetching data`() = runBlockingTest {
         val ioException = IOException()
         coEvery { fetchLocalStats() } throws ioException
 
@@ -79,7 +68,7 @@ class FetchLocalDataViewModelTest {
     }
 
     @Test
-    fun `error on mapping data`() = runBlocking {
+    fun `error on mapping data`() = runBlockingTest {
         val localStatsResponse = mockk<LocalStatsResponse>()
         coEvery { fetchLocalStats() } returns localStatsResponse
 

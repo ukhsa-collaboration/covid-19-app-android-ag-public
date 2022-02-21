@@ -143,5 +143,7 @@ class VenueHistoryRobot(
             .check(matches(isDisplayed()))
         onView(withId(R.id.venueHistoryList))
             .check(matches(not(isDisplayed())))
+        onView(withId(R.id.menuEditAction))
+            .check(doesNotExist())
     }
 }

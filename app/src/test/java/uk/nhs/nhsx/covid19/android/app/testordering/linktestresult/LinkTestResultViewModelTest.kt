@@ -116,6 +116,7 @@ class LinkTestResultViewModelTest : IsolationStateMachineSetupHelper {
             RAPID_RESULT,
             diagnosisKeySubmissionSupported = true,
             requiresConfirmatoryTest = true,
+            shouldOfferFollowUpTest = true,
             confirmatoryDayLimit = 2
         )
 
@@ -126,6 +127,7 @@ class LinkTestResultViewModelTest : IsolationStateMachineSetupHelper {
             testResultResponse.testKit,
             testResultResponse.diagnosisKeySubmissionSupported,
             requiresConfirmatoryTest = testResultResponse.requiresConfirmatoryTest,
+            shouldOfferFollowUpTest = testResultResponse.shouldOfferFollowUpTest,
             confirmatoryDayLimit = testResultResponse.confirmatoryDayLimit
         )
 
@@ -158,7 +160,8 @@ class LinkTestResultViewModelTest : IsolationStateMachineSetupHelper {
             testResultResponse.testResult,
             testResultResponse.testKit,
             testResultResponse.diagnosisKeySubmissionSupported,
-            requiresConfirmatoryTest = testResultResponse.requiresConfirmatoryTest
+            requiresConfirmatoryTest = testResultResponse.requiresConfirmatoryTest,
+            shouldOfferFollowUpTest = testResultResponse.shouldOfferFollowUpTest
         )
 
         every { linkTestResultOnsetDateNeededChecker.isInterestedInAskingForSymptomsOnsetDay(testResult) } returns false
@@ -263,17 +266,19 @@ class LinkTestResultViewModelTest : IsolationStateMachineSetupHelper {
         testEndDate: Instant = Instant.now(),
         diagnosisKeySubmissionSupported: Boolean = true,
         requiresConfirmatoryTest: Boolean = false,
+        shouldOfferFollowUpTest: Boolean = requiresConfirmatoryTest,
         confirmatoryDayLimit: Int? = null
     ): VirologyCtaExchangeResponse {
         val testResultResponse =
             VirologyCtaExchangeResponse(
-                diagnosisKeySubmissionToken,
-                testEndDate,
-                result,
-                testKitType,
-                diagnosisKeySubmissionSupported,
-                requiresConfirmatoryTest,
-                confirmatoryDayLimit
+                diagnosisKeySubmissionToken = diagnosisKeySubmissionToken,
+                testEndDate = testEndDate,
+                testResult = result,
+                testKit = testKitType,
+                diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported,
+                requiresConfirmatoryTest = requiresConfirmatoryTest,
+                shouldOfferFollowUpTest = shouldOfferFollowUpTest,
+                confirmatoryDayLimit = confirmatoryDayLimit
             )
         coEvery { ctaTokenValidator.validate(any()) } returns Success(testResultResponse)
         return testResultResponse

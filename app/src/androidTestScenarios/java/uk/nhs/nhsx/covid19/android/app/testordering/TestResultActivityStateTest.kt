@@ -15,7 +15,8 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.ShareKeys
+import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.FollowUpTest
+import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.NoTest
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeWillBeInIsolation
@@ -24,7 +25,6 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PlodWill
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolationNoChange
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolationAndOrderTest
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWontBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidWillBeInIsolation
@@ -45,10 +45,15 @@ class TestResultActivityStateTest : EspressoTest() {
             )
     }
 
-    private fun setState(state: TestResultViewState, days: Int = -1) {
+    private fun setState(
+        state: TestResultViewState,
+        acknowledgementCompletionActions: AcknowledgementCompletionActions,
+        days: Int = -1
+    ) {
         MockTestResultViewModel.currentOptions = MockTestResultViewModel.currentOptions.copy(
             useMock = true,
             viewState = state,
+            actions = acknowledgementCompletionActions,
             remainingDaysInIsolation = days
         )
 
@@ -65,9 +70,13 @@ class TestResultActivityStateTest : EspressoTest() {
         @StringRes vararg paragraphResources: Int,
         @StringRes goodNewsInfoStringResource: Int,
         hasGoodNewsLink: Boolean
-
     ) {
-        setState(state)
+        setState(
+            state, AcknowledgementCompletionActions(
+                suggestBookTest = NoTest,
+                shouldAllowKeySubmission = false
+            )
+        )
 
         testResultRobot.apply {
             if (hasCloseToolbar) checkHasCloseToolbarOption() else checkNoCloseToolbarOption()
@@ -105,9 +114,13 @@ class TestResultActivityStateTest : EspressoTest() {
         exposureLinksVisible: Boolean,
         @StringRes onlineServiceLinkText: Int,
         @StringRes onlineServiceLinkUrl: Int,
-        @StringRes vararg paragraphResources: Int
+        @StringRes vararg paragraphResources: Int,
+        acknowledgementCompletionActions: AcknowledgementCompletionActions = AcknowledgementCompletionActions(
+            suggestBookTest = NoTest,
+            shouldAllowKeySubmission = false
+        )
     ) {
-        setState(state, days)
+        setState(state, acknowledgementCompletionActions, days)
 
         val title2 = "$days day${if (days > 1) "s" else ""}"
 
@@ -185,7 +198,11 @@ class TestResultActivityStateTest : EspressoTest() {
             title3Visible = false,
             exposureLinksVisible = false,
             onlineServiceLinkText = R.string.test_result_negative_continue_self_isolate_nhs_guidance_label,
-            onlineServiceLinkUrl = R.string.url_nhs_guidance
+            onlineServiceLinkUrl = R.string.url_nhs_guidance,
+            acknowledgementCompletionActions = AcknowledgementCompletionActions(
+                suggestBookTest = NoTest,
+                shouldAllowKeySubmission = false
+            )
         )
     }
 
@@ -207,7 +224,7 @@ class TestResultActivityStateTest : EspressoTest() {
     @Test
     fun showPositiveContinueIsolation() {
         checkIsolationState(
-            state = PositiveContinueIsolation(ShareKeys(bookFollowUpTest = false)),
+            state = PositiveContinueIsolation,
             days = 4,
             hasCloseToolbar = false,
             iconDrawableRes = R.drawable.ic_isolation_continue,
@@ -249,7 +266,7 @@ class TestResultActivityStateTest : EspressoTest() {
     @Test
     fun showPositiveWillBeInIsolation() {
         checkIsolationState(
-            state = PositiveWillBeInIsolation(ShareKeys(bookFollowUpTest = false)),
+            state = PositiveWillBeInIsolation,
             days = 6,
             hasCloseToolbar = false,
             iconDrawableRes = R.drawable.ic_isolation_continue,
@@ -271,7 +288,7 @@ class TestResultActivityStateTest : EspressoTest() {
     @Test
     fun showPositiveWontBeInIsolation() {
         checkGoodNewsState(
-            state = PositiveWontBeInIsolation(ShareKeys(bookFollowUpTest = false)),
+            state = PositiveWontBeInIsolation,
             hasCloseToolbar = false,
             iconDrawableRes = R.drawable.ic_elbow_bump,
             titleStringResource = R.string.test_result_your_test_result,
@@ -305,7 +322,7 @@ class TestResultActivityStateTest : EspressoTest() {
     @Test
     fun showPositiveWillBeInIsolationAndOrderTest() {
         checkIsolationState(
-            state = PositiveWillBeInIsolationAndOrderTest,
+            state = PositiveWillBeInIsolation,
             days = 1,
             hasCloseToolbar = true,
             iconDrawableRes = R.drawable.ic_isolation_book_test,
@@ -318,7 +335,12 @@ class TestResultActivityStateTest : EspressoTest() {
             exposureLinksVisible = true,
             onlineServiceLinkText = R.string.nhs_111_online_service,
             onlineServiceLinkUrl = R.string.url_nhs_111_online,
-            paragraphResources = intArrayOf(R.string.test_result_positive_self_isolate_and_book_test_explanation_1)
+            paragraphResources = intArrayOf(R.string.test_result_positive_self_isolate_and_book_test_explanation_1),
+            acknowledgementCompletionActions =
+            AcknowledgementCompletionActions(
+                suggestBookTest = FollowUpTest,
+                shouldAllowKeySubmission = false
+            )
         )
     }
 
@@ -330,7 +352,7 @@ class TestResultActivityStateTest : EspressoTest() {
             iconDrawableRes = R.drawable.ic_elbow_bump,
             titleStringResource = R.string.test_result_your_test_result,
             subtitleStringResource = R.string.test_result_void_already_not_in_isolation_subtitle,
-            actionButtonStringResource = R.string.book_free_test,
+            actionButtonStringResource = R.string.continue_button,
             paragraphResources = intArrayOf(R.string.for_further_advice_visit),
             goodNewsInfoStringResource = R.string.test_result_no_self_isolation_description,
             hasGoodNewsLink = true
@@ -348,7 +370,7 @@ class TestResultActivityStateTest : EspressoTest() {
             isolationRequestInfoColorResource = R.color.error_red,
             title1 = R.string.test_result_positive_continue_self_isolation_title_1,
             title3Visible = false,
-            actionButtonStringResource = R.string.book_free_test,
+            actionButtonStringResource = R.string.continue_button,
             exposureLinksVisible = false,
             onlineServiceLinkText = R.string.test_result_void_continue_self_isolate_nhs_guidance_label,
             onlineServiceLinkUrl = R.string.url_nhs_guidance,

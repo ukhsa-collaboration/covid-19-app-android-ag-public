@@ -72,12 +72,13 @@ class LinkTestResultViewModel @Inject constructor(
     private fun handleTestResultResponse(testResultResponse: VirologyCtaExchangeResponse) {
         val testResult = with(testResultResponse) {
             ReceivedTestResult(
-                diagnosisKeySubmissionToken,
-                testEndDate,
-                testResult,
-                testKit,
-                diagnosisKeySubmissionSupported,
-                requiresConfirmatoryTest,
+                diagnosisKeySubmissionToken = diagnosisKeySubmissionToken,
+                testEndDate = testEndDate,
+                testResult = testResult,
+                testKitType = testKit,
+                diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported,
+                requiresConfirmatoryTest = requiresConfirmatoryTest,
+                shouldOfferFollowUpTest = shouldOfferFollowUpTest,
                 confirmatoryDayLimit = confirmatoryDayLimit
             )
         }

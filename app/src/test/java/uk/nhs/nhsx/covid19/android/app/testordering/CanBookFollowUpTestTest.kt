@@ -22,6 +22,7 @@ class CanBookFollowUpTestTest {
     @Before
     fun setUp() {
         every { testResult.requiresConfirmatoryTest } returns true
+        every { testResult.shouldOfferFollowUpTest } returns true
     }
 
     @Test
@@ -32,18 +33,20 @@ class CanBookFollowUpTestTest {
     }
 
     @Test
-    fun `when test result requires confirmatory test and current state is NeverIsolating then return true`() {
+    fun `when test result requires confirmatory test but no follow up test should be offered while current state is NeverIsolating then return false`() {
+        every { testResult.shouldOfferFollowUpTest } returns false
+
         val currentState = mockk<NeverIsolating>()
         every { currentState.hasActiveConfirmedPositiveTestResult(fixedClock) } returns false
 
         val newState = mockk<PossiblyIsolating>()
         every { newState.hasCompletedPositiveTestResult() } returns false
 
-        assertTrue(canBookFollowUpTest(currentState, newState, testResult))
+        assertFalse(canBookFollowUpTest(currentState, newState, testResult))
     }
 
     @Test
-    fun `when test result requires confirmatory test and is currently isolating due to a positive confirmed test then return false`() {
+    fun `when test result requires confirmatory test and follow up test should be offered while currently isolating due to a positive confirmed test then return false`() {
         val currentState = mockk<PossiblyIsolating>()
         every { currentState.hasActiveConfirmedPositiveTestResult(fixedClock) } returns true
 
@@ -51,18 +54,7 @@ class CanBookFollowUpTestTest {
     }
 
     @Test
-    fun `when test result requires confirmatory test and new state is NeverIsolating then return false`() {
-        val currentState = mockk<PossiblyIsolating>()
-        every { currentState.hasActiveConfirmedPositiveTestResult(fixedClock) } returns false
-
-        val newState = mockk<NeverIsolating>()
-        every { newState.hasCompletedPositiveTestResult() } returns false
-
-        assertTrue(canBookFollowUpTest(currentState, newState, testResult))
-    }
-
-    @Test
-    fun `when test result requires confirmatory test and new state has a completed positive test then return false`() {
+    fun `when test result requires confirmatory test and follow up test should be offered while new state has a completed positive test then return false`() {
         val currentState = mockk<PossiblyIsolating>()
         every { currentState.hasActiveConfirmedPositiveTestResult(fixedClock) } returns false
 
@@ -73,7 +65,7 @@ class CanBookFollowUpTestTest {
     }
 
     @Test
-    fun `when test result requires confirmatory test, not currently isolating with positive confirmed test nor going to be isolating with positive completed test then return true`() {
+    fun `when test result requires confirmatory test and follow up test should be offered, while not currently isolating with positive confirmed test nor going to be isolating with positive completed test then return true`() {
         val currentState = mockk<PossiblyIsolating>()
         every { currentState.hasActiveConfirmedPositiveTestResult(fixedClock) } returns false
 
@@ -81,5 +73,32 @@ class CanBookFollowUpTestTest {
         every { newState.hasCompletedPositiveTestResult() } returns false
 
         assertTrue(canBookFollowUpTest(currentState, newState, testResult))
+    }
+
+    @Test
+    fun `for a migrating user, when test result requires confirmatory test and no value stored for follow up test then return true`() {
+        every { testResult.shouldOfferFollowUpTest } returns null
+
+        val currentState = mockk<PossiblyIsolating>()
+        every { currentState.hasActiveConfirmedPositiveTestResult(fixedClock) } returns false
+
+        val newState = mockk<PossiblyIsolating>()
+        every { newState.hasCompletedPositiveTestResult() } returns false
+
+        assertTrue(canBookFollowUpTest(currentState, newState, testResult))
+    }
+
+    @Test
+    fun `for a migrating user, when test result does not require confirmatory test and no value stored for follow up test then return false`() {
+        every { testResult.requiresConfirmatoryTest } returns false
+        every { testResult.shouldOfferFollowUpTest } returns null
+
+        val currentState = mockk<PossiblyIsolating>()
+        every { currentState.hasActiveConfirmedPositiveTestResult(fixedClock) } returns false
+
+        val newState = mockk<PossiblyIsolating>()
+        every { newState.hasCompletedPositiveTestResult() } returns false
+
+        assertFalse(canBookFollowUpTest(currentState, newState, testResult))
     }
 }

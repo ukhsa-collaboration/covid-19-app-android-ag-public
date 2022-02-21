@@ -4,6 +4,7 @@ import com.squareup.moshi.JsonDataException
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
+import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_SUCCEED
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyCtaExchangeRequest
@@ -34,6 +35,21 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
     var diagnosisKeySubmissionToken: String? = null
     var testEndDate: Instant? = null
     var testResultForCtaTokenStatusCode = 200
+    var responseMock =
+        VirologyCtaExchangeResponse(
+            diagnosisKeySubmissionToken = DIAGNOSIS_KEY_SUBMISSION_TOKEN,
+            testEndDate = testEndDate ?: Instant.now(clock).minus(2, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS),
+            testResult = NEGATIVE,
+            testKit = LAB_RESULT,
+            diagnosisKeySubmissionSupported = true,
+            requiresConfirmatoryTest = false,
+            confirmatoryDayLimit = null,
+            shouldOfferFollowUpTest = false
+        )
+
+    init {
+        Timber.d("Creating instance")
+    }
 
     fun reset() {
         MockApiModule.behaviour.responseType = ALWAYS_SUCCEED
@@ -44,16 +60,17 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
         testEndDate = null
     }
 
-    override suspend fun getHomeKitOrder(emptyBodyObject: Any): VirologyTestOrderResponse = MockApiModule.behaviour.invoke {
-        val token = diagnosisKeySubmissionToken ?: UUID.randomUUID().toString()
+    override suspend fun getHomeKitOrder(emptyBodyObject: Any): VirologyTestOrderResponse =
+        MockApiModule.behaviour.invoke {
+            val token = diagnosisKeySubmissionToken ?: UUID.randomUUID().toString()
 
-        VirologyTestOrderResponse(
-            websiteUrlWithQuery = "about:blank",
-            tokenParameterValue = "e",
-            testResultPollingToken = pollingToken,
-            diagnosisKeySubmissionToken = token
-        )
-    }
+            VirologyTestOrderResponse(
+                websiteUrlWithQuery = "about:blank",
+                tokenParameterValue = "e",
+                testResultPollingToken = pollingToken,
+                diagnosisKeySubmissionToken = token
+            )
+        }
 
     override suspend fun getTestResult(
         virologyTestResultRequestBody: VirologyTestResultRequestBody
@@ -69,6 +86,7 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
                 testKit = testResponse.testKitType,
                 diagnosisKeySubmissionSupported = testResponse.diagnosisKeySubmissionSupported,
                 requiresConfirmatoryTest = testResponse.requiresConfirmatoryTest,
+                shouldOfferFollowUpTest = testResponse.shouldOfferFollowUpTest,
                 confirmatoryDayLimit = testResponse.confirmatoryDayLimit
             )
         } else {
@@ -104,6 +122,7 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = true,
                         requiresConfirmatoryTest = false,
+                        shouldOfferFollowUpTest = false,
                         confirmatoryDayLimit = null
                     )
                 )
@@ -117,6 +136,7 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = false,
                         requiresConfirmatoryTest = false,
+                        shouldOfferFollowUpTest = false,
                         confirmatoryDayLimit = null
                     )
                 )
@@ -130,6 +150,7 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
                         testKit = RAPID_RESULT,
                         diagnosisKeySubmissionSupported = true,
                         requiresConfirmatoryTest = false,
+                        shouldOfferFollowUpTest = false,
                         confirmatoryDayLimit = null
                     )
                 )
@@ -143,6 +164,7 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
                         testKit = RAPID_RESULT,
                         diagnosisKeySubmissionSupported = true,
                         requiresConfirmatoryTest = true,
+                        shouldOfferFollowUpTest = true,
                         confirmatoryDayLimit = 2
                     )
                 )
@@ -156,6 +178,7 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
                         testKit = RAPID_RESULT,
                         diagnosisKeySubmissionSupported = false,
                         requiresConfirmatoryTest = true,
+                        shouldOfferFollowUpTest = true,
                         confirmatoryDayLimit = null
                     )
                 )
@@ -169,6 +192,7 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
                         testKit = RAPID_SELF_REPORTED,
                         diagnosisKeySubmissionSupported = true,
                         requiresConfirmatoryTest = false,
+                        shouldOfferFollowUpTest = false,
                         confirmatoryDayLimit = null
                     )
                 )
@@ -182,6 +206,7 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
                         testKit = RAPID_SELF_REPORTED,
                         diagnosisKeySubmissionSupported = true,
                         requiresConfirmatoryTest = true,
+                        shouldOfferFollowUpTest = true,
                         confirmatoryDayLimit = 1
                     )
                 )
@@ -195,6 +220,7 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = true,
                         requiresConfirmatoryTest = false,
+                        shouldOfferFollowUpTest = false,
                         confirmatoryDayLimit = null
                     )
                 )
@@ -208,6 +234,7 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = false,
                         requiresConfirmatoryTest = false,
+                        shouldOfferFollowUpTest = false,
                         confirmatoryDayLimit = null
                     )
                 )
@@ -221,6 +248,7 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
                         testKit = RAPID_RESULT,
                         diagnosisKeySubmissionSupported = true,
                         requiresConfirmatoryTest = false,
+                        shouldOfferFollowUpTest = false,
                         confirmatoryDayLimit = null
                     )
                 )
@@ -234,6 +262,7 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = true,
                         requiresConfirmatoryTest = false,
+                        shouldOfferFollowUpTest = false,
                         confirmatoryDayLimit = null
                     )
                 )
@@ -247,6 +276,7 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = false,
                         requiresConfirmatoryTest = false,
+                        shouldOfferFollowUpTest = false,
                         confirmatoryDayLimit = null
                     )
                 )
@@ -260,6 +290,7 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
                         testKit = RAPID_RESULT,
                         diagnosisKeySubmissionSupported = true,
                         requiresConfirmatoryTest = false,
+                        shouldOfferFollowUpTest = false,
                         confirmatoryDayLimit = null
                     )
                 )
@@ -273,9 +304,14 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
                         testKit = LAB_RESULT,
                         diagnosisKeySubmissionSupported = true,
                         requiresConfirmatoryTest = false,
+                        shouldOfferFollowUpTest = false,
                         confirmatoryDayLimit = null
                     )
                 )
+            }
+            MANUAL_CONFIGURATION_TOKEN -> {
+                Timber.d(responseMock.toString())
+                Response.success(responseMock)
             }
             NO_CONNECTION_TOKEN -> {
                 throw IOException("No connection")
@@ -311,6 +347,29 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
         )
     }
 
+    fun mockResponse(
+        diagnosisKeySubmissionToken: String?,
+        virologyTestResultValue: VirologyTestResult,
+        virologyTestKitType: VirologyTestKitType,
+        diagnosisKeySubmissionSupported: Boolean,
+        requiresConfirmatoryTest: Boolean,
+        confirmatoryDayLimit: Int?,
+        shouldOfferFollowUpTest: Boolean,
+        testEndDate: Instant
+    ) {
+        responseMock =
+            VirologyCtaExchangeResponse(
+                diagnosisKeySubmissionToken = diagnosisKeySubmissionToken,
+                testEndDate = testEndDate,
+                testResult = virologyTestResultValue,
+                testKit = virologyTestKitType,
+                diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported,
+                requiresConfirmatoryTest = requiresConfirmatoryTest,
+                confirmatoryDayLimit = confirmatoryDayLimit,
+                shouldOfferFollowUpTest = shouldOfferFollowUpTest
+            )
+    }
+
     companion object {
         const val POSITIVE_PCR_TOKEN = "pstvpstv"
         const val POSITIVE_PCR_TOKEN_NO_KEY_SUBMISSION = "tbdfjaj0"
@@ -329,6 +388,7 @@ class MockVirologyTestingApi @Inject constructor(val clock: Clock) : VirologyTes
         const val UNKNOWN_RESULT_TOKEN = "ebz6dxht"
         const val NO_CONNECTION_TOKEN = "n0c0nneb"
         const val UNEXPECTED_ERROR_TOKEN = "nexpectn"
+        const val MANUAL_CONFIGURATION_TOKEN = "testendd"
 
         const val DIAGNOSIS_KEY_SUBMISSION_TOKEN = "diagnosis_submission_token"
     }
@@ -339,5 +399,6 @@ data class TestResponse(
     val testKitType: VirologyTestKitType,
     val diagnosisKeySubmissionSupported: Boolean = true,
     val requiresConfirmatoryTest: Boolean = false,
+    val shouldOfferFollowUpTest: Boolean = false,
     val confirmatoryDayLimit: Int? = null
 )

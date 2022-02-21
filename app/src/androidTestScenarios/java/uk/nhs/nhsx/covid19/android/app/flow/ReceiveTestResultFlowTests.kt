@@ -157,7 +157,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveIndicativePosTestResultWithKeySubmissionNotSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
@@ -175,7 +175,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
@@ -186,8 +186,28 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
+    fun whenContactCase_withoutPreviousTest_whenAcknowledgingIndicativePosTest_shouldOfferFollowupTestFalse_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() {
+        setContactCaseIsolation()
+
+        startTestActivity<StatusActivity>()
+        statusRobot.checkActivityIsDisplayed()
+
+        val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported(shouldOfferFollowUpTest = false)
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+
+        testResultRobot.clickIsolationActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+        isolationChecker.assertActiveIndexAndContact()
+        checkRelevantTestResultUpdated(testResponse)
+    }
+
+    @Test
     fun whenIndexCase_withPreviousConfirmedPosTest_whenAcknowledgingConfirmedNegTest_showNegAfterPosOrSymptomaticWillBeInIsolation_andContinueIsolation() {
-        val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = false)
+        val previousTest = setSelfAssessmentIsolationWithPositiveTest(
+            requiresConfirmatoryTest = false,
+            shouldOfferFollowUpTest = false
+        )
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -204,7 +224,10 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedVoidTest_showVoidWillBeInIsolation_andContinueIsolation() {
-        val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = false)
+        val previousTest = setSelfAssessmentIsolationWithPositiveTest(
+            requiresConfirmatoryTest = false,
+            shouldOfferFollowUpTest = false
+        )
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -221,7 +244,10 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveContinueIsolation_andContinueIsolation() {
-        val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = false)
+        val previousTest = setSelfAssessmentIsolationWithPositiveTest(
+            requiresConfirmatoryTest = false,
+            shouldOfferFollowUpTest = false
+        )
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -238,7 +264,10 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingIndicativePositiveTest_showPositiveContinueIsolationNoChange_andContinueIsolation() {
-        val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = false)
+        val previousTest = setSelfAssessmentIsolationWithPositiveTest(
+            requiresConfirmatoryTest = false,
+            shouldOfferFollowUpTest = false
+        )
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -255,13 +284,16 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenContactCase_withPrevConfirmedPosTestFromBeforeCurrentIsolation_onAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() {
-        setContactCaseIsolationWithExpiredPositiveTest(requiresConfirmatoryTest = false)
+        setContactCaseIsolationWithExpiredPositiveTest(
+            requiresConfirmatoryTest = false,
+            shouldOfferFollowUpTest = false
+        )
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
@@ -272,13 +304,14 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenIndexCase_withPreviousIndicativePosTest_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() {
-        val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = true)
+        val previousTest =
+            setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = true, shouldOfferFollowUpTest = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
         receiveIndicativePosTestResultWithKeySubmissionNotSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
@@ -289,7 +322,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenIndexCase_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedNegativeTest_showNegativeWontBeInIsolation_andNoIsolation() {
-        setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = true)
+        setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = true, shouldOfferFollowUpTest = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -306,7 +339,8 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenIndexCase_withPrevIndicativePosTest_onAcknowledgingConfirmedNegTestOlderThanIndicative_showNegAfterPosOrSymptomaticWillBeInIsolation_andContIsolation() {
-        val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = true)
+        val previousTest =
+            setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = true, shouldOfferFollowUpTest = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -407,7 +441,8 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     @Test
     fun whenExpiredIndexCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWillBeInIsolation_andStartIsolation_shareKeys() {
         val onsetDate = testEndDate.minus(2, ChronoUnit.DAYS)
-        val previousTest = setExpiredSelfAssessmentIsolationWithNegativeTest(onsetDate.toLocalDate(testAppContext.clock.zone))
+        val previousTest =
+            setExpiredSelfAssessmentIsolationWithNegativeTest(onsetDate.toLocalDate(testAppContext.clock.zone))
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -495,12 +530,20 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenIndexCase_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedNegativeTestOutsideConfirmatoryDayLimit_showNegativeWillBeInIsolation_andContIsolation() {
-        val indicativePositiveTestResult = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = true, confirmatoryDayLimit = 2)
+        val indicativePositiveTestResult = setSelfAssessmentIsolationWithPositiveTest(
+            requiresConfirmatoryTest = true,
+            shouldOfferFollowUpTest = true,
+            confirmatoryDayLimit = 2
+        )
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = false, testEndDate = testEndDate.plus(3, ChronoUnit.DAYS))
+        receiveConfirmedTestResult(
+            NEGATIVE,
+            diagnosisKeySubmissionSupported = false,
+            testEndDate = testEndDate.plus(3, ChronoUnit.DAYS)
+        )
         waitFor { testResultRobot.checkActivityDisplaysNegativeWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
@@ -515,13 +558,13 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenContactCase_withPrevIndicativePosTestFromBeforeCurrentIsolation_onAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andContinueIsolation_orderTest() {
-        setContactCaseIsolationWithExpiredPositiveTest(requiresConfirmatoryTest = true)
+        setContactCaseIsolationWithExpiredPositiveTest(requiresConfirmatoryTest = true, shouldOfferFollowUpTest = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
@@ -532,7 +575,11 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenNotIsolating_withPrevExpiredIndicativePosTest_onAcknowledgingConfirmedNegativeTest_showNegativeNotInIsolation_andNoIsolation() {
-        val indicativePositiveTestResult = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = true, confirmatoryDayLimit = 2)
+        val indicativePositiveTestResult = setExpiredPositiveTestIsolation(
+            requiresConfirmatoryTest = true,
+            shouldOfferFollowUpTest = true,
+            confirmatoryDayLimit = 2
+        )
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -659,7 +706,8 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedNegativeTest_showNegativeNotInIsolation_andNoIsolation() {
-        val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
+        val previousTest =
+            setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false, shouldOfferFollowUpTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -676,7 +724,8 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedVoidTest_showVoidNotInIsolation_andNoIsolation() {
-        val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
+        val previousTest =
+            setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false, shouldOfferFollowUpTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -693,7 +742,8 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() {
-        val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
+        val previousTest =
+            setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false, shouldOfferFollowUpTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -710,7 +760,8 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() {
-        val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = true)
+        val previousTest =
+            setExpiredPositiveTestIsolation(requiresConfirmatoryTest = true, shouldOfferFollowUpTest = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -730,7 +781,8 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_withoutKeysSharing() {
-        val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
+        val previousTest =
+            setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false, shouldOfferFollowUpTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -747,7 +799,8 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation() {
-        val previousTest = setExpiredPositiveTestIsolation(requiresConfirmatoryTest = true)
+        val previousTest =
+            setExpiredPositiveTestIsolation(requiresConfirmatoryTest = true, shouldOfferFollowUpTest = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -767,7 +820,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPosTest_whenAcknowledgingIndicativePosTest_showPosWillBeInIsolationAndOrderTest_andStartIsolation_orderTest() {
-        setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
+        setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false, shouldOfferFollowUpTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -985,7 +1038,10 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingIndicativePositiveTest_showPositiveContinueIsolation_andContinueIsolation_shareKeys() {
-        val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = false)
+        val previousTest = setSelfAssessmentIsolationWithPositiveTest(
+            requiresConfirmatoryTest = false,
+            shouldOfferFollowUpTest = false
+        )
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -1002,7 +1058,10 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenIndexCase_withPreviousConfirmedPositiveTest_whenAcknowledgingIndicativePosTestOlderThanConfirmed_showPositiveContinueIsolation_andContinueIsolation_shareKeys() {
-        val previousTest = setSelfAssessmentIsolationWithPositiveTest(requiresConfirmatoryTest = false)
+        val previousTest = setSelfAssessmentIsolationWithPositiveTest(
+            requiresConfirmatoryTest = false,
+            shouldOfferFollowUpTest = false
+        )
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -1025,7 +1084,10 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenContactCase_withPrevConfirmedPosTestFromBeforeCurrentIsolation_onAcknowledgingIndicativePosTest_showPosContinueIsolation_andContinueIsolation_shareKeysAndBookTest() {
-        setContactCaseIsolationWithExpiredPositiveTest(requiresConfirmatoryTest = false)
+        setContactCaseIsolationWithExpiredPositiveTest(
+            requiresConfirmatoryTest = false,
+            shouldOfferFollowUpTest = false
+        )
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -1041,7 +1103,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenContactCase_withPrevIndicativePosTestFromBeforeCurrentIsolation_onAcknowledgingIndicativePosTest_showPositiveContinueIsolation_shareKeysAndBookTest() {
-        setContactCaseIsolationWithExpiredPositiveTest(requiresConfirmatoryTest = true)
+        setContactCaseIsolationWithExpiredPositiveTest(requiresConfirmatoryTest = true, shouldOfferFollowUpTest = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -1073,7 +1135,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPosTest_whenAcknowledgingIndicativePosTest_showPositiveWillBeInIsolation_andStartIsolation_shareKeysAndBookTest() {
-        setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false)
+        setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false, shouldOfferFollowUpTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
@@ -1131,11 +1193,13 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     private fun setExpiredPositiveTestIsolation(
         requiresConfirmatoryTest: Boolean,
+        shouldOfferFollowUpTest: Boolean,
         confirmatoryDayLimit: Int? = null
     ): AcknowledgedTestResult {
         val previousTest = previousTest(
             testResult = RelevantVirologyTestResult.POSITIVE,
             requiresConfirmatoryTest = requiresConfirmatoryTest,
+            shouldOfferFollowUpTest = shouldOfferFollowUpTest,
             testEndDate = previousIsolationStart,
             confirmatoryDayLimit = confirmatoryDayLimit
         )
@@ -1149,11 +1213,13 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     private fun setSelfAssessmentIsolationWithPositiveTest(
         requiresConfirmatoryTest: Boolean,
+        shouldOfferFollowUpTest: Boolean,
         confirmatoryDayLimit: Int? = null
     ): AcknowledgedTestResult {
         val previousTest = previousTest(
             testResult = RelevantVirologyTestResult.POSITIVE,
             requiresConfirmatoryTest = requiresConfirmatoryTest,
+            shouldOfferFollowUpTest = shouldOfferFollowUpTest,
             testEndDate = testEndDate.toLocalDate(testAppContext.clock.zone),
             confirmatoryDayLimit = confirmatoryDayLimit
         )
@@ -1205,7 +1271,10 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         )
     }
 
-    private fun setContactCaseIsolationWithExpiredPositiveTest(requiresConfirmatoryTest: Boolean) {
+    private fun setContactCaseIsolationWithExpiredPositiveTest(
+        requiresConfirmatoryTest: Boolean,
+        shouldOfferFollowUpTest: Boolean
+    ) {
         testAppContext.setState(
             IsolationState(
                 isolationConfiguration = DurationDays(),
@@ -1216,6 +1285,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
                 testResult = previousTest(
                     testResult = RelevantVirologyTestResult.POSITIVE,
                     requiresConfirmatoryTest = requiresConfirmatoryTest,
+                    shouldOfferFollowUpTest = shouldOfferFollowUpTest,
                     testEndDate = isolationStart.minusDays(12)
                 )
             )
@@ -1241,12 +1311,14 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         previousTest(
             testResult = RelevantVirologyTestResult.NEGATIVE,
             requiresConfirmatoryTest = false,
+            shouldOfferFollowUpTest = false,
             testEndDate = testEndDate.toLocalDate(testAppContext.clock.zone)
         )
 
     private fun previousTest(
         testResult: RelevantVirologyTestResult,
         requiresConfirmatoryTest: Boolean,
+        shouldOfferFollowUpTest: Boolean,
         testEndDate: LocalDate,
         confirmatoryDayLimit: Int? = null
     ): AcknowledgedTestResult =
@@ -1255,6 +1327,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
             testResult,
             testKitType = LAB_RESULT,
             requiresConfirmatoryTest = requiresConfirmatoryTest,
+            shouldOfferFollowUpTest = shouldOfferFollowUpTest,
             acknowledgedDate = testEndDate,
             confirmatoryDayLimit = confirmatoryDayLimit
         )
@@ -1269,13 +1342,15 @@ class ReceiveTestResultFlowTests : EspressoTest() {
             LAB_RESULT,
             testEndDate,
             diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported,
-            requiresConfirmatoryTest = false
+            requiresConfirmatoryTest = false,
+            shouldOfferFollowUpTest = false,
         )
     }
 
     private fun receiveIndicativePosTestResultWithKeySubmissionNotSupported(
         testEndDate: Instant? = null,
-        confirmatoryDayLimit: Int? = null
+        confirmatoryDayLimit: Int? = null,
+        shouldOfferFollowUpTest: Boolean = true
     ): TestResponse {
         return receiveTestResult(
             POSITIVE,
@@ -1283,13 +1358,14 @@ class ReceiveTestResultFlowTests : EspressoTest() {
             testEndDate,
             diagnosisKeySubmissionSupported = false,
             requiresConfirmatoryTest = true,
+            shouldOfferFollowUpTest = shouldOfferFollowUpTest,
             confirmatoryDayLimit = confirmatoryDayLimit
         )
     }
 
     private fun receiveIndicativePosTestResultWithKeySubmissionSupported(
         testEndDate: Instant? = null,
-        confirmatoryDayLimit: Int? = null
+        confirmatoryDayLimit: Int? = null,
     ): TestResponse {
         return receiveTestResult(
             POSITIVE,
@@ -1297,6 +1373,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
             testEndDate,
             diagnosisKeySubmissionSupported = true,
             requiresConfirmatoryTest = true,
+            shouldOfferFollowUpTest = true,
             confirmatoryDayLimit = confirmatoryDayLimit
         )
     }
@@ -1307,6 +1384,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         testEndDate: Instant? = null,
         diagnosisKeySubmissionSupported: Boolean,
         requiresConfirmatoryTest: Boolean,
+        shouldOfferFollowUpTest: Boolean,
         confirmatoryDayLimit: Int? = null
     ): TestResponse {
         testAppContext.virologyTestingApi.testEndDate = testEndDate
@@ -1324,6 +1402,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
             testKit,
             diagnosisKeySubmissionSupported = diagnosisKeySubmissionSupported,
             requiresConfirmatoryTest = requiresConfirmatoryTest,
+            shouldOfferFollowUpTest = shouldOfferFollowUpTest,
             confirmatoryDayLimit = confirmatoryDayLimit
         )
         testAppContext.virologyTestingApi.testResponseForPollingToken = mutableMapOf(
@@ -1385,7 +1464,10 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         assertEquals(acknowledgedTestResult.testKitType, relevantTestResult.testKitType)
         assertEquals(acknowledgedTestResult.requiresConfirmatoryTest, relevantTestResult.requiresConfirmatoryTest)
         assertEquals(confirmedDateShouldBeNull, relevantTestResult.confirmedDate == null)
-        assertEquals(acknowledgedTestResult.confirmatoryTestCompletionStatus, relevantTestResult.confirmatoryTestCompletionStatus)
+        assertEquals(
+            acknowledgedTestResult.confirmatoryTestCompletionStatus,
+            relevantTestResult.confirmatoryTestCompletionStatus
+        )
     }
 
     companion object {

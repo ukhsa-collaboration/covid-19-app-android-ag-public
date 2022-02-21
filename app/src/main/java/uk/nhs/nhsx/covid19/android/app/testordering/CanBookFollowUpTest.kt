@@ -12,7 +12,7 @@ class CanBookFollowUpTest @Inject constructor(
         newState: IsolationLogicalState,
         testResult: ReceivedTestResult
     ): Boolean =
-        testResult.requiresConfirmatoryTest &&
+        testResult.requiresConfirmatoryTest && testResult.shouldOfferFollowUpTest != false &&
             !currentState.hasActiveConfirmedPositiveTestResult(clock) &&
             !newState.hasCompletedPositiveTestResult()
 }

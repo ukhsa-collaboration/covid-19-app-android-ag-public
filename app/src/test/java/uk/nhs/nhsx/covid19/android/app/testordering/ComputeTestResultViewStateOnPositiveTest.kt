@@ -6,11 +6,9 @@ import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.ShareKeys
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolationNoChange
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolationAndOrderTest
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWontBeInIsolation
 import java.time.Clock
 import java.time.Instant
@@ -20,17 +18,14 @@ import kotlin.test.assertEquals
 class ComputeTestResultViewStateOnPositiveTest {
 
     private val isKeySubmissionSupported = mockk<IsKeySubmissionSupported>()
-    private val evaluateTestResultButtonAction = mockk<EvaluateTestResultButtonAction>()
     private val fixedClock = Clock.fixed(Instant.parse("2020-01-01T10:00:00Z"), ZoneOffset.UTC)
 
     private val computeTestResultViewStateOnPositive = ComputeTestResultViewStateOnPositive(
         isKeySubmissionSupported,
-        evaluateTestResultButtonAction,
         fixedClock
     )
 
     private val testResult = mockk<ReceivedTestResult>()
-    private val buttonAction = ShareKeys(bookFollowUpTest = true)
 
     @Before
     fun setUp() {
@@ -43,12 +38,11 @@ class ComputeTestResultViewStateOnPositiveTest {
         val currentState = mockk<PossiblyIsolating>()
         val newState = mockk<PossiblyIsolating>()
 
-        every { evaluateTestResultButtonAction(currentState, newState, testResult) } returns buttonAction
         every { newState.isActiveIsolation(fixedClock) } returns false
 
         val result = computeTestResultViewStateOnPositive(currentState, newState, testResult)
 
-        assertEquals(PositiveWontBeInIsolation(buttonAction), result)
+        assertEquals(PositiveWontBeInIsolation, result)
     }
 
     @Test
@@ -57,13 +51,12 @@ class ComputeTestResultViewStateOnPositiveTest {
         val newState = mockk<IsolationLogicalState>()
 
         every { testResult.requiresConfirmatoryTest } returns false
-        every { evaluateTestResultButtonAction(currentState, newState, testResult) } returns buttonAction
         every { currentState.isActiveIsolation(fixedClock) } returns true
         every { newState.isActiveIsolation(fixedClock) } returns true
 
         val result = computeTestResultViewStateOnPositive(currentState, newState, testResult)
 
-        assertEquals(PositiveContinueIsolation(buttonAction), result)
+        assertEquals(PositiveContinueIsolation, result)
     }
 
     @Test
@@ -72,13 +65,12 @@ class ComputeTestResultViewStateOnPositiveTest {
         val newState = mockk<IsolationLogicalState>()
 
         every { testResult.requiresConfirmatoryTest } returns false
-        every { evaluateTestResultButtonAction(currentState, newState, testResult) } returns buttonAction
         every { currentState.isActiveIsolation(fixedClock) } returns false
         every { newState.isActiveIsolation(fixedClock) } returns true
 
         val result = computeTestResultViewStateOnPositive(currentState, newState, testResult)
 
-        assertEquals(PositiveWillBeInIsolation(buttonAction), result)
+        assertEquals(PositiveWillBeInIsolation, result)
     }
 
     @Test
@@ -88,13 +80,12 @@ class ComputeTestResultViewStateOnPositiveTest {
 
         every { testResult.requiresConfirmatoryTest } returns false
         every { isKeySubmissionSupported(testResult) } returns true
-        every { evaluateTestResultButtonAction(currentState, newState, testResult) } returns buttonAction
         every { currentState.isActiveIsolation(fixedClock) } returns false
         every { newState.isActiveIsolation(fixedClock) } returns true
 
         val result = computeTestResultViewStateOnPositive(currentState, newState, testResult)
 
-        assertEquals(PositiveWillBeInIsolation(buttonAction), result)
+        assertEquals(PositiveWillBeInIsolation, result)
     }
 
     @Test
@@ -119,11 +110,10 @@ class ComputeTestResultViewStateOnPositiveTest {
         every { currentState.hasActiveConfirmedPositiveTestResult(fixedClock) } returns false
         every { newState.isActiveIsolation(fixedClock) } returns true
         every { newState.hasCompletedPositiveTestResult() } returns true
-        every { evaluateTestResultButtonAction(currentState, newState, testResult) } returns buttonAction
 
         val result = computeTestResultViewStateOnPositive(currentState, newState, testResult)
 
-        assertEquals(PositiveContinueIsolation(buttonAction), result)
+        assertEquals(PositiveContinueIsolation, result)
     }
 
     @Test
@@ -135,24 +125,24 @@ class ComputeTestResultViewStateOnPositiveTest {
         every { currentState.hasActiveConfirmedPositiveTestResult(fixedClock) } returns false
         every { newState.isActiveIsolation(fixedClock) } returns true
         every { newState.hasCompletedPositiveTestResult() } returns true
-        every { evaluateTestResultButtonAction(currentState, newState, testResult) } returns buttonAction
 
         val result = computeTestResultViewStateOnPositive(currentState, newState, testResult)
 
-        assertEquals(PositiveWillBeInIsolation(buttonAction), result)
+        assertEquals(PositiveWillBeInIsolation, result)
     }
 
     @Test
-    fun `when new state is isolation with positive indicative test that does not support key sharing then return PositiveWillBeInIsolationAndOrderTest`() {
+    fun `when new state is isolation with positive indicative test that does not support key sharing then return PositiveWillBeInIsolation`() {
         val currentState = mockk<IsolationLogicalState>()
         val newState = mockk<IsolationLogicalState>()
 
         every { currentState.hasActiveConfirmedPositiveTestResult(fixedClock) } returns false
+        every { currentState.isActiveIsolation(fixedClock) } returns false
         every { newState.isActiveIsolation(fixedClock) } returns true
         every { newState.hasCompletedPositiveTestResult() } returns false
 
         val result = computeTestResultViewStateOnPositive(currentState, newState, testResult)
 
-        assertEquals(PositiveWillBeInIsolationAndOrderTest, result)
+        assertEquals(PositiveWillBeInIsolation, result)
     }
 }

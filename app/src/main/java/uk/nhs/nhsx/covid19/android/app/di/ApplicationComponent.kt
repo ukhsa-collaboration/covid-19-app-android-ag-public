@@ -66,6 +66,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationReminderRece
 import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationRetryReceiver
 import uk.nhs.nhsx.covid19.android.app.receiver.SubmitAnalyticsAlarmReceiver
 import uk.nhs.nhsx.covid19.android.app.receiver.UpdateReceiver
+import uk.nhs.nhsx.covid19.android.app.scenariodialog.VirologyTestResultMockFragment
 import uk.nhs.nhsx.covid19.android.app.settings.SettingsActivity
 import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsActivity
 import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsProvider
@@ -108,7 +109,7 @@ import javax.inject.Singleton
         NetworkModule::class,
         ApiModule::class,
         ViewModelModule::class,
-        QrScannerViewModelModule::class
+        QrScannerViewModelModule::class,
     ]
 )
 interface ApplicationComponent {
@@ -188,6 +189,7 @@ interface ApplicationComponent {
     fun inject(exposureNotificationReviewActivity: ExposureNotificationReviewActivity)
     fun inject(fetchLocalDataProgressActivity: FetchLocalDataProgressActivity)
     fun inject(localDataAndStatisticsActivity: LocalDataAndStatisticsActivity)
+    fun inject(virologyTestResultMockFragment: VirologyTestResultMockFragment)
 
     fun provideAppAvailabilityListener(): AppAvailabilityListener
     fun providePeriodicTasks(): PeriodicTasks

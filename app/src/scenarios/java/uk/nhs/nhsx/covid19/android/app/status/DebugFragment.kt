@@ -26,6 +26,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
+import uk.nhs.nhsx.covid19.android.app.scenariodialog.VirologyTestResultMockFragment
 import uk.nhs.nhsx.covid19.android.app.startActivity
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.Error
 import uk.nhs.nhsx.covid19.android.app.status.ExportToFileResult.ResolutionRequired
@@ -183,6 +184,15 @@ class DebugFragment : Fragment() {
         submitAnalyticsUsingAlarmManager.setOnSingleClickListener {
             debugViewModel.submitAnalyticsUsingAlarmManager()
         }
+
+        virologyResultMock.setOnSingleClickListener {
+            openVirologyResultMockConfiguration()
+        }
+    }
+
+    private fun openVirologyResultMockConfiguration() {
+        VirologyTestResultMockFragment()
+            .show(parentFragmentManager, "VirologyTestResultMockFragment")
     }
 
     private fun observeDownloadTaskStatus() {

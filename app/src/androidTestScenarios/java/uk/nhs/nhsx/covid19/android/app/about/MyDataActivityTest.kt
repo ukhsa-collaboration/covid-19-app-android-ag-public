@@ -177,6 +177,30 @@ class MyDataActivityTest : EspressoTest() {
     }
 
     @Test
+    fun shouldOfferFollowUpTestReceivedFollowUpAfterDayLimitTestShouldBeComplete() {
+        displayLastAcknowledgedTestResult(
+            POSITIVE,
+            RAPID_RESULT,
+            requiresConfirmatoryTest = true,
+            completedDate = LocalDate.parse("2020-07-18"),
+            confirmatoryTestCompletionStatus = COMPLETED,
+            shouldOfferFollowUpTest = true
+        )
+    }
+
+    @Test
+    fun shouldOfferFollowUpTestIsFalse() {
+        displayLastAcknowledgedTestResult(
+            POSITIVE,
+            RAPID_RESULT,
+            requiresConfirmatoryTest = true,
+            completedDate = LocalDate.parse("2020-07-18"),
+            confirmatoryTestCompletionStatus = COMPLETED,
+            shouldOfferFollowUpTest = false
+        )
+    }
+
+    @Test
     fun displayLastPositiveAcknowledgedTestResultOfUnknownType() {
         displayLastAcknowledgedTestResult(
             POSITIVE,
@@ -196,6 +220,7 @@ class MyDataActivityTest : EspressoTest() {
         testResult: VirologyTestResult,
         testKitType: VirologyTestKitType?,
         requiresConfirmatoryTest: Boolean = false,
+        shouldOfferFollowUpTest: Boolean? = null,
         completedDate: LocalDate? = null,
         confirmatoryTestCompletionStatus: ConfirmatoryTestCompletionStatus? = completedDate?.let { COMPLETED_AND_CONFIRMED }
     ) {
@@ -208,12 +233,13 @@ class MyDataActivityTest : EspressoTest() {
                     requiresConfirmatoryTest = requiresConfirmatoryTest,
                     acknowledgedDate = LocalDate.now(),
                     confirmedDate = completedDate,
-                    confirmatoryTestCompletionStatus = confirmatoryTestCompletionStatus
+                    confirmatoryTestCompletionStatus = confirmatoryTestCompletionStatus,
+                    shouldOfferFollowUpTest = shouldOfferFollowUpTest
                 ).asIsolation()
             )
 
             NEGATIVE -> {
-                if (requiresConfirmatoryTest || completedDate != null) {
+                if (requiresConfirmatoryTest || completedDate != null || shouldOfferFollowUpTest == true) {
                     throw IllegalArgumentException("Negative test results should not need or accept a follow-up test")
                 }
 
@@ -223,7 +249,8 @@ class MyDataActivityTest : EspressoTest() {
                         testResult = RelevantVirologyTestResult.NEGATIVE,
                         testKitType = testKitType,
                         requiresConfirmatoryTest = requiresConfirmatoryTest,
-                        acknowledgedDate = LocalDate.now()
+                        acknowledgedDate = LocalDate.now(),
+                        shouldOfferFollowUpTest = shouldOfferFollowUpTest
                     ).asIsolation()
                 )
             }
@@ -237,14 +264,16 @@ class MyDataActivityTest : EspressoTest() {
 
         val shouldKitTypeBeVisible = testKitType != null
 
-        val date: String? = completedDate
+        val formattedCompletedDate: String? = completedDate
             ?.uiFormat(InstrumentationRegistry.getInstrumentation().targetContext)
 
+        val showConfirmatoryInformation =
+            shouldOfferFollowUpTest == true || (shouldOfferFollowUpTest == null && requiresConfirmatoryTest)
         waitFor {
             myDataRobot.checkLastTestResultIsDisplayed(
                 shouldKitTypeBeVisible,
-                requiresConfirmatoryTest,
-                date
+                showConfirmatoryInformation = showConfirmatoryInformation,
+                followUpTestEndDate = formattedCompletedDate
             )
         }
     }

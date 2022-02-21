@@ -744,7 +744,7 @@
     <string name="launcher_permissions_bluetooth_hint">ਆਪਣੇ ਫੋਨ ਦੀਆਂ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਬਲੂਟੁੱਥ ਨੂੰ ਚਾਲੂ ਕਰੋ</string>
     <string name="launcher_permissions_bluetooth_secondary_button">ਬਲੂਟੁੱਥ ਤੋਂ ਬਿਨਾਂ ਵਰਤੋਂ</string>
     <string name="launcher_permissions_bluetooth_title">ਬਲੂਟੁੱਥ ਤੋਂ ਬਿਨਾਂ ਸੰਪਰਕ ਟ੍ਰੇਸਿੰਗ ਕੰਮ ਨਹੀਂ ਕਰਦੀ ਹੈ</string>
-    <string name="local_statistics_main_screen_about_data_footnote_1">¹ਪਿਛਲੇ 7 ਦਿਨਾਂ ਤੋਂ ਤਬਦੀਲੀ (%1$s - %2$s)।</string>
+    <string name="local_statistics_main_screen_about_data_footnote_1">¹ਪਿਛਲੇ 7 ਦਿਨਾਂ ਤੋਂ ਤਬਦੀਲੀ (%1$s - %2$s)</string>
     <string name="local_statistics_main_screen_about_data_footnote_2">²ਪ੍ਰਤੀ 100,000 ਲੋਕਾਂ ਦੇ ਮਾਮਲੇ ਨਮੂਨਾ ਮਿਤੀ ਤਕ ਪੇਸ਼ ਕੀਤੇ ਗਏ ਹਨ (ਉਹ ਮਿਤੀ ਜਦੋਂ ਟੈਸਟ ਕੀਤੇ ਜਾ ਰਹੇ ਵਿਅਕਤੀ ਤੋਂ ਨਮੂਨਾ ਲਿਆ ਗਿਆ ਸੀ)।</string>
     <string name="local_statistics_main_screen_about_the_data_heading">ਡਾਟਾ ਬਾਰੇ</string>
     <string name="local_statistics_main_screen_cases_per_hundred_thousand">ਪ੍ਰਤੀ 100,000 ਲੋਕ ਮਾਮਲੇ²</string>

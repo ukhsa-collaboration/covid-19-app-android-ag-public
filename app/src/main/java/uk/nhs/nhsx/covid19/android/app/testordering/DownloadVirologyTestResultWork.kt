@@ -42,6 +42,7 @@ class DownloadVirologyTestResultWork @Inject constructor(
                             testResultResponse.testKit,
                             testResultResponse.diagnosisKeySubmissionSupported,
                             testResultResponse.requiresConfirmatoryTest,
+                            testResultResponse.shouldOfferFollowUpTest,
                             confirmatoryDayLimit = testResultResponse.confirmatoryDayLimit
                         )
 

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:orientation="vertical"
+    android:paddingHorizontal="30dp"
+    android:paddingVertical="16dp">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/virologyTestResultMockDiagnosisKeySubmissionToken"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Diagnosis Key Submission Token" />
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/virologyTestResultMockSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/minimum_touch_target_size"
+        tools:listitem="@android:layout/simple_dropdown_item_1line" />
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/virologyTestKitTypeMockSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/minimum_touch_target_size"
+        tools:listitem="@android:layout/simple_dropdown_item_1line" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="4dp"
+        android:text="Test End Date:" />
+
+    <LinearLayout
+        android:id="@+id/virologySelectDateContainer"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/black_border_background"
+        android:foreground="?selectableItemBackground"
+        android:gravity="center_vertical"
+        android:minWidth="@dimen/minimum_touch_target_size"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/virologyTextSelectDate"
+            style="@style/Title3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
+            android:layout_weight="1"
+            android:text="@string/questionnaire_select_a_date" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_select_date" />
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/virologyDiagnosisKeySubmissionSupportedMock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Diagnosis Key Submission Supported" />
+
+    <CheckBox
+        android:id="@+id/virologyRequiresConfirmatoryTest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Requires Confirmatory Test" />
+
+    <CheckBox
+        android:id="@+id/virologyShouldOfferFollowUpTest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Should Offer Follow-Up Test" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/virologyConfirmatoryDayLimit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Confirmatory Day Limit"
+        android:inputType="number" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/virologySubmitButton"
+        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="Ok" />
+
+</LinearLayout>

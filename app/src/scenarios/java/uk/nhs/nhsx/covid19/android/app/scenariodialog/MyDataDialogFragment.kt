@@ -77,7 +77,8 @@ class MyDataDialogFragment(positiveAction: (() -> Unit)) :
                             acknowledgedDate = LocalDate.now(),
                             testKitType = LAB_RESULT,
                             requiresConfirmatoryTest = false,
-                            confirmedDate = null
+                            confirmedDate = null,
+                            shouldOfferFollowUpTest = null
                         )
                     )
                 } else {

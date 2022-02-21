@@ -90,7 +90,9 @@ class MyDataActivity : BaseActivity() {
                 lastTestResultSection.addItems(testKitTypeSectionItem(acknowledgedTestResult.testKitType))
             }
 
-            if (acknowledgedTestResult.requiresConfirmatoryTest) {
+            val shouldOfferFollowUpTest = acknowledgedTestResult.shouldOfferFollowUpTest
+            val shouldOfferFollowUpTestForBackwardCompatibility = shouldOfferFollowUpTest == null && acknowledgedTestResult.requiresConfirmatoryTest
+            if (shouldOfferFollowUpTest == true || shouldOfferFollowUpTestForBackwardCompatibility) {
                 if (acknowledgedTestResult.confirmedDate != null) {
                     lastTestResultSection.addItems(
                         followUpDateSectionItem(acknowledgedTestResult.confirmedDate),

@@ -14,7 +14,9 @@ import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.Navi
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.NavigateToOrderTest
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.NavigateToShareKeys
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.ViewState
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.ShareKeys
+import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.FollowUpTest
+import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.NoTest
+import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.RegularTest
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.Ignore
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeNotInIsolation
@@ -24,7 +26,6 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PlodWill
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolationNoChange
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolationAndOrderTest
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWontBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidWillBeInIsolation
@@ -73,14 +74,19 @@ class TestResultViewModelTest {
 
     @Test
     fun `onActionButtonClicked emit appropriate navigation event`() {
-        expectedViewStatesWithButtonActions.forEach { (viewState, expectedNavigationEvent) ->
-            every { evaluateTestResultViewState() } returns ViewState(viewState, remainingDaysInIsolation = 0)
+        expectedViewStatesWithButtonActions.forEach { (viewStateAndActions, expectedNavigationEvent) ->
+            every { evaluateTestResultViewState() } returns ViewState(
+                viewStateAndActions.first,
+                remainingDaysInIsolation = 0,
+                viewStateAndActions.second
+            )
 
             createTestSubject()
 
             testSubject.onActionButtonClicked()
 
             verify { acknowledgeTestResult() }
+            println("View state: $viewStateAndActions expectedNavigationEvent: $expectedNavigationEvent")
             verify { navigationObserver.onChanged(expectedNavigationEvent) }
 
             if (expectedNavigationEvent is NavigateToShareKeys) {
@@ -92,24 +98,29 @@ class TestResultViewModelTest {
     private val expectedBookFollowUpTest = true
 
     private val expectedViewStatesWithButtonActions = mapOf(
-        NegativeNotInIsolation to Finish,
-        NegativeWillBeInIsolation to Finish,
-        NegativeWontBeInIsolation to Finish,
-        PositiveContinueIsolationNoChange to Finish,
-        NegativeAfterPositiveOrSymptomaticWillBeInIsolation to Finish,
-        PlodWillContinueWithCurrentState to Finish,
-        Ignore to Finish,
-        PositiveWillBeInIsolationAndOrderTest to NavigateToOrderTest,
-        VoidNotInIsolation to NavigateToOrderTest,
-        VoidWillBeInIsolation to NavigateToOrderTest,
-        PositiveWillBeInIsolation(ShareKeys(expectedBookFollowUpTest)) to NavigateToShareKeys(expectedBookFollowUpTest),
-        PositiveContinueIsolation(ShareKeys(expectedBookFollowUpTest)) to NavigateToShareKeys(expectedBookFollowUpTest),
-        PositiveWontBeInIsolation(ShareKeys(expectedBookFollowUpTest)) to NavigateToShareKeys(expectedBookFollowUpTest)
+        (NegativeNotInIsolation to noKeysNoTest) to Finish,
+        (NegativeWillBeInIsolation to noKeysNoTest) to Finish,
+        (NegativeWontBeInIsolation to noKeysNoTest) to Finish,
+        (PositiveContinueIsolationNoChange to noKeysNoTest) to Finish,
+        (NegativeAfterPositiveOrSymptomaticWillBeInIsolation to noKeysNoTest) to Finish,
+        (PlodWillContinueWithCurrentState to noKeysNoTest) to Finish,
+        (Ignore to noKeysNoTest) to Finish,
+        (VoidNotInIsolation to noKeysNonFollowUpTest) to NavigateToOrderTest,
+        (VoidWillBeInIsolation to noKeysNonFollowUpTest) to NavigateToOrderTest,
+        (PositiveWillBeInIsolation to keysFollowUpTest) to NavigateToShareKeys(expectedBookFollowUpTest),
+        (PositiveContinueIsolation to keysFollowUpTest) to NavigateToShareKeys(expectedBookFollowUpTest),
+        (PositiveWontBeInIsolation to keysFollowUpTest) to NavigateToShareKeys(expectedBookFollowUpTest)
     )
 
     private fun createTestSubject() {
         testSubject = TestResultViewModel(evaluateTestResultViewState, acknowledgeTestResult, analyticsEventProcessor)
         testSubject.viewState().observeForever(viewStateObserver)
         testSubject.navigationEvent().observeForever(navigationObserver)
+    }
+
+    companion object {
+        val noKeysNoTest = AcknowledgementCompletionActions(suggestBookTest = NoTest, shouldAllowKeySubmission = false)
+        val noKeysNonFollowUpTest = AcknowledgementCompletionActions(suggestBookTest = RegularTest, shouldAllowKeySubmission = false)
+        val keysFollowUpTest = AcknowledgementCompletionActions(suggestBookTest = FollowUpTest, shouldAllowKeySubmission = true)
     }
 }

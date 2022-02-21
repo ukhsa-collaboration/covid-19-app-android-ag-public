@@ -1,8 +1,12 @@
 package uk.nhs.nhsx.covid19.android.app.about
 
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.matcher.ViewMatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.R.id
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -98,6 +102,16 @@ class VenueHistoryActivityTest : EspressoTest() {
         checkDoneButtonIsNotDisplayed()
 
         checkEmptyStateIsDisplayed()
+    }
+
+    @Test
+    fun doesNotDisplayEditButtonWhenVenueHistoryIsEmpty() {
+        runBlocking {
+            testAppContext.getVisitedVenuesStorage().setVisits(emptyList())
+            startTestActivity<VenueHistoryActivity>()
+            onView(ViewMatchers.withId(id.menuEditAction))
+                .check(ViewAssertions.doesNotExist())
+        }
     }
 
     private fun checkVisitPositions() = with(venueHistoryRobot) {

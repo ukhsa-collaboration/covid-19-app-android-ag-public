@@ -10,15 +10,15 @@ import android.widget.CompoundButton
 import uk.nhs.nhsx.covid19.android.app.ScenariosDebugAdapter
 import uk.nhs.nhsx.covid19.android.app.databinding.DialogTestResultBinding
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockTestResultViewModel
+import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState
 
 class TestResultDialogFragment(positiveAction: (() -> Unit)) :
     ScenarioDialogFragment<DialogTestResultBinding>(positiveAction) {
     override val title: String = "Test Result Config"
 
-    val viewStateOptions = TestResultViewState::class.nestedClasses
-        .filter { it != TestResultViewState.ButtonAction::class }
-        .map { it.simpleName ?: "" }
+    val viewStateOptions = TestResultViewState.values()
+        .map { it.name }
 
     override fun setupBinding(inflater: LayoutInflater): DialogTestResultBinding =
         DialogTestResultBinding.inflate(inflater)
@@ -27,6 +27,8 @@ class TestResultDialogFragment(positiveAction: (() -> Unit)) :
         setUpUseMock()
         setUpConfiguration()
         setUpRemainingDaysInIsolation()
+        setUpShareKeys()
+        setUpBookTestOptions()
     }
 
     private fun setUpUseMock() = with(binding) {
@@ -74,12 +76,51 @@ class TestResultDialogFragment(positiveAction: (() -> Unit)) :
             ) {
                 MockTestResultViewModel.currentOptions =
                     MockTestResultViewModel.currentOptions.copy(
-                        viewState = TestResultViewState::class.nestedClasses
-                            .firstOrNull { it.simpleName == viewStateOptions[position] }?.objectInstance as TestResultViewState
+                        viewState = TestResultViewState.values()
+                            .first { it.name == viewStateOptions[position] }
                     )
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+        }
+    }
+
+    private fun setUpBookTestOptions() = with(binding.orderTest) {
+        val options = BookTestOption.values()
+        adapter = ScenariosDebugAdapter(
+            context, options.map { it.name }
+        )
+        setSelection(options.indexOf(MockTestResultViewModel.currentOptions.actions.suggestBookTest))
+
+        onItemSelectedListener = object : OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                MockTestResultViewModel.currentOptions =
+                    MockTestResultViewModel.currentOptions.copy(
+                        actions = MockTestResultViewModel.currentOptions.actions.copy(
+                            suggestBookTest = options[position]
+                        )
+                    )
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+        }
+    }
+
+    private fun setUpShareKeys() = with(binding) {
+        shareKeys.isChecked = MockTestResultViewModel.currentOptions.actions.shouldAllowKeySubmission
+        shareKeys.setOnCheckedChangeListener { _, isChecked ->
+            MockTestResultViewModel.currentOptions =
+                MockTestResultViewModel.currentOptions.copy(
+                    actions = MockTestResultViewModel.currentOptions.actions.copy(
+                        shouldAllowKeySubmission =
+                        isChecked
+                    )
+                )
         }
     }
 }

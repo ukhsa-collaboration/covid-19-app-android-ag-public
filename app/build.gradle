@@ -61,7 +61,6 @@ allprojects {
 
 def buildNumber = new File('app/buildNumber').text as Integer
 def versionNameValue = new File('app/versionName').text.trim()
-def releaseDate = new Date().format('MM/yyyy')
 
 android {
     compileSdkVersion 30
@@ -75,7 +74,6 @@ android {
         testInstrumentationRunner "uk.nhs.nhsx.covid19.android.app.util.DoReToAwareAndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         buildConfigField "String", "VERSION_NAME_SHORT", "\"" + versionNameValue + "\""
-        buildConfigField "String", "RELEASE_DATE", "\"" + releaseDate + "\""
         // testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 

@@ -61,6 +61,8 @@ class CtaTokenValidator @Inject constructor(
             Failure(UNEXPECTED)
         else if (!response.requiresConfirmatoryTest && response.confirmatoryDayLimit != null)
             Failure(UNEXPECTED)
+        else if (!response.requiresConfirmatoryTest && response.shouldOfferFollowUpTest)
+            Failure(UNEXPECTED)
         else Success(response)
 
     companion object {

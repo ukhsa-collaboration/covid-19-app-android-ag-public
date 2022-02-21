@@ -63,13 +63,13 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
         private const val TEST_ACKNOWLEDGED_DATE = "2020-01-04"
         private const val TEST_CONFIRMED_DATE = "2020-01-03"
         private const val POSITIVE_TEST_RESULT =
-            """{"testEndDate":"$TEST_END_DATE","testResult":"POSITIVE","testKitType":"LAB_RESULT","acknowledgedDate":"$TEST_ACKNOWLEDGED_DATE","requiresConfirmatoryTest":true,"confirmedDate":"$TEST_CONFIRMED_DATE","confirmatoryTestCompletionStatus":"COMPLETED_AND_CONFIRMED"}"""
+            """{"testEndDate":"$TEST_END_DATE","testResult":"POSITIVE","testKitType":"LAB_RESULT","acknowledgedDate":"$TEST_ACKNOWLEDGED_DATE","requiresConfirmatoryTest":true,"shouldOfferFollowUpTest":true,"confirmedDate":"$TEST_CONFIRMED_DATE","confirmatoryTestCompletionStatus":"COMPLETED_AND_CONFIRMED"}"""
 
         private const val POSITIVE_TEST_RESULT_V1 =
-            """{"testEndDate":"$TEST_END_DATE","testResult":"POSITIVE","testKitType":"LAB_RESULT","acknowledgedDate":"$TEST_ACKNOWLEDGED_DATE","requiresConfirmatoryTest":true,"confirmedDate":"$TEST_CONFIRMED_DATE"}"""
+            """{"testEndDate":"$TEST_END_DATE","testResult":"POSITIVE","testKitType":"LAB_RESULT","acknowledgedDate":"$TEST_ACKNOWLEDGED_DATE","requiresConfirmatoryTest":true,"shouldOfferFollowUpTest":true,"confirmedDate":"$TEST_CONFIRMED_DATE"}"""
 
         private const val NEGATIVE_TEST_RESULT =
-            """{"testEndDate":"$TEST_END_DATE","testResult":"NEGATIVE","testKitType":"LAB_RESULT","acknowledgedDate":"$TEST_ACKNOWLEDGED_DATE","requiresConfirmatoryTest":false}"""
+            """{"testEndDate":"$TEST_END_DATE","testResult":"NEGATIVE","testKitType":"LAB_RESULT","acknowledgedDate":"$TEST_ACKNOWLEDGED_DATE","requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false}"""
 
         private val positiveTestResult = AcknowledgedTestResult(
             testEndDate = LocalDate.parse(TEST_END_DATE),
@@ -77,6 +77,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
             testKitType = LAB_RESULT,
             acknowledgedDate = LocalDate.parse(TEST_ACKNOWLEDGED_DATE),
             requiresConfirmatoryTest = true,
+            shouldOfferFollowUpTest = true,
             confirmedDate = LocalDate.parse(TEST_CONFIRMED_DATE),
             confirmatoryTestCompletionStatus = COMPLETED_AND_CONFIRMED
         )
@@ -85,7 +86,8 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
             testResult = NEGATIVE,
             testKitType = LAB_RESULT,
             acknowledgedDate = LocalDate.parse(TEST_ACKNOWLEDGED_DATE),
-            requiresConfirmatoryTest = false
+            requiresConfirmatoryTest = false,
+            shouldOfferFollowUpTest = false
         )
 
         private const val SYMPTOMATIC_SELF_DIAGNOSIS_DATE = "2020-01-02"

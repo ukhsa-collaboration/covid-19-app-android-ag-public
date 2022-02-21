@@ -6,6 +6,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -16,12 +17,14 @@ import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificati
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationAgeLimitViewModel.ViewState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
+import uk.nhs.nhsx.covid19.android.app.utils.CoroutineTest
 import java.time.Clock
 import java.time.LocalDate
 import uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup.BinaryRadioGroupOption.OPTION_1 as YES
 import uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup.BinaryRadioGroupOption.OPTION_2 as NO
 
-class ExposureNotificationAgeLimitViewModelTest {
+@ExperimentalCoroutinesApi
+class ExposureNotificationAgeLimitViewModelTest : CoroutineTest() {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -32,6 +35,7 @@ class ExposureNotificationAgeLimitViewModelTest {
     private val mockClock: Clock = mockk()
 
     private val testSubject = ExposureNotificationAgeLimitViewModel(
+        testScope,
         mockAgeLimitBeforeEncounter,
         mockIsolationStateMachine,
         mockClock
@@ -52,7 +56,7 @@ class ExposureNotificationAgeLimitViewModelTest {
     }
 
     @Test
-    fun `when not in index case, showSubtitle is true`() {
+    fun `when not in index case, showSubtitle is true`() = runBlockingTest {
         every { mockLogicalState.isActiveIndexCase(mockClock) } returns false
         testSubject.updateViewState()
 
@@ -61,7 +65,7 @@ class ExposureNotificationAgeLimitViewModelTest {
     }
 
     @Test
-    fun `when in index case, showSubtitle is false`() {
+    fun `when in index case, showSubtitle is false`() = runBlockingTest {
         every { mockLogicalState.isActiveIndexCase(mockClock) } returns true
 
         testSubject.updateViewState()
@@ -71,7 +75,7 @@ class ExposureNotificationAgeLimitViewModelTest {
     }
 
     @Test
-    fun `when no option selected, error state set to true`() {
+    fun `when no option selected, error state set to true`() = runBlockingTest {
         every { mockLogicalState.isActiveIndexCase(mockClock) } returns false
 
         testSubject.onClickContinue()
@@ -80,14 +84,16 @@ class ExposureNotificationAgeLimitViewModelTest {
     }
 
     @Test
-    fun `when has selected YES and continue clicked navigate to vaccination status`() {
+    fun `when has selected YES and continue clicked navigate to vaccination status`() = runBlockingTest {
+        every { mockLogicalState.isActiveIndexCase(mockClock) } returns true
+
         testSubject.onAgeLimitOptionChanged(YES)
         testSubject.onClickContinue()
         verify { navigationTargetObserver.onChanged(VaccinationStatus) }
     }
 
     @Test
-    fun `when selected YES, ageLimitSelection is set to YES`() {
+    fun `when selected YES, ageLimitSelection is set to YES`() = runBlockingTest {
         every { mockLogicalState.isActiveIndexCase(mockClock) } returns true
         testSubject.onAgeLimitOptionChanged(YES)
 
@@ -96,7 +102,7 @@ class ExposureNotificationAgeLimitViewModelTest {
     }
 
     @Test
-    fun `when selected NO, ageLimitSelection is set to NO`() {
+    fun `when selected NO, ageLimitSelection is set to NO`() = runBlockingTest {
         every { mockLogicalState.isActiveIndexCase(mockClock) } returns true
         testSubject.onAgeLimitOptionChanged(NO)
 
@@ -105,14 +111,15 @@ class ExposureNotificationAgeLimitViewModelTest {
     }
 
     @Test
-    fun `when has selected NO and continue clicked navigate to review screen`() {
+    fun `when has selected NO and continue clicked navigate to review screen`() = runBlockingTest {
+        every { mockLogicalState.isActiveIndexCase(mockClock) } returns true
         testSubject.onAgeLimitOptionChanged(NO)
         testSubject.onClickContinue()
         verify { navigationTargetObserver.onChanged(Review) }
     }
 
     @Test
-    fun `when get age limit returns null navigate to finish`() {
+    fun `when get age limit returns null navigate to finish`() = runBlockingTest {
         coEvery { mockAgeLimitBeforeEncounter() } returns null
 
         testSubject.updateViewState()

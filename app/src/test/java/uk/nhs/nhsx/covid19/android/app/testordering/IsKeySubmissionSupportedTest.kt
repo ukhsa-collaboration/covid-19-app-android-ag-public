@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 
 import io.mockk.every
 import io.mockk.mockk
+import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -24,57 +25,69 @@ class IsKeySubmissionSupportedTest {
         IsKeySubmissionSupported(isolationStateMachine, testResultIsolationHandler, fixedClock)
 
     private val currentIsolationState = mockk<IsolationState>()
-    private val expectedTestResult = mockk<ReceivedTestResult>()
+    private val testResult = mockk<ReceivedTestResult>()
+
+    @Before
+    fun setUp() {
+        every { testResult.isPositive() } returns true
+    }
+
+    @Test
+    fun `when test result is not positive return false`() {
+        every { testResult.isPositive() } returns false
+
+        assertFalse(isKeySubmissionSupported(testResult))
+    }
 
     @Test
     fun `when test result does not support key submission then return false`() {
-        every { expectedTestResult.diagnosisKeySubmissionSupported } returns false
+        every { testResult.diagnosisKeySubmissionSupported } returns false
 
-        assertFalse(isKeySubmissionSupported(expectedTestResult))
+        assertFalse(isKeySubmissionSupported(testResult))
     }
 
     @Test
     fun `when test result supports key submission but key submission should be prevented then return false`() {
-        every { expectedTestResult.diagnosisKeySubmissionSupported } returns true
+        every { testResult.diagnosisKeySubmissionSupported } returns true
         every { isolationStateMachine.readState() } returns currentIsolationState
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                 currentIsolationState,
-                expectedTestResult,
+                testResult,
                 Instant.now(fixedClock)
             )
         } returns DoNotTransition(preventKeySubmission = true, keySharingInfo = null)
 
-        assertFalse(isKeySubmissionSupported(expectedTestResult))
+        assertFalse(isKeySubmissionSupported(testResult))
     }
 
     @Test
     fun `when test result supports key submission and key submission not prevented then return true`() {
-        every { expectedTestResult.diagnosisKeySubmissionSupported } returns true
+        every { testResult.diagnosisKeySubmissionSupported } returns true
         every { isolationStateMachine.readState() } returns currentIsolationState
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                 currentIsolationState,
-                expectedTestResult,
+                testResult,
                 Instant.now(fixedClock)
             )
         } returns DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
 
-        assertTrue(isKeySubmissionSupported(expectedTestResult))
+        assertTrue(isKeySubmissionSupported(testResult))
     }
 
     @Test
     fun `when test result supports key submission and state transition imminent then return true`() {
-        every { expectedTestResult.diagnosisKeySubmissionSupported } returns true
+        every { testResult.diagnosisKeySubmissionSupported } returns true
         every { isolationStateMachine.readState() } returns currentIsolationState
         every {
             testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
                 currentIsolationState,
-                expectedTestResult,
+                testResult,
                 Instant.now(fixedClock)
             )
         } returns Transition(mockk(), keySharingInfo = null)
 
-        assertTrue(isKeySubmissionSupported(expectedTestResult))
+        assertTrue(isKeySubmissionSupported(testResult))
     }
 }

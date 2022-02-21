@@ -1,11 +1,9 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
-import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AskedToShareExposureKeysInTheInitialFlow
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.Finish
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.OrderTest
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.ButtonAction.ShareKeys
+import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.FollowUpTest
+import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.NoTest
 import javax.inject.Inject
 
 class TestResultViewModel @Inject constructor(
@@ -24,23 +22,24 @@ class TestResultViewModel @Inject constructor(
 
         val navigationEvent = getNavigationEvent()
 
-        if (navigationEvent != null) {
-            navigationEventLiveData.postValue(navigationEvent)
-        } else {
-            Timber.d("Unexpected button action ${viewState.value?.mainState?.buttonAction}")
-        }
+        navigationEventLiveData.postValue(navigationEvent)
     }
 
-    private fun getNavigationEvent(): NavigationEvent? =
-        when (val buttonAction = viewState.value?.mainState?.buttonAction) {
-            Finish -> NavigationEvent.Finish
-            is ShareKeys -> {
+    private fun getNavigationEvent(): NavigationEvent {
+        val completionActions = viewState.value?.acknowledgementCompletionActions
+        return when {
+            completionActions?.shouldAllowKeySubmission == true -> {
                 analyticsEventProcessor.track(AskedToShareExposureKeysInTheInitialFlow)
-                NavigationEvent.NavigateToShareKeys(buttonAction.bookFollowUpTest)
+                NavigationEvent.NavigateToShareKeys(bookFollowUpTest = completionActions.suggestBookTest == FollowUpTest)
             }
-            OrderTest -> NavigationEvent.NavigateToOrderTest
-            else -> null
+            completionActions?.suggestBookTest != NoTest -> {
+                NavigationEvent.NavigateToOrderTest
+            }
+            else -> {
+                NavigationEvent.Finish
+            }
         }
+    }
 
     override fun onBackPressed() {
         acknowledgeTestResultIfNeeded()

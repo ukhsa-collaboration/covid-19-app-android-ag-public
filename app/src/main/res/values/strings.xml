@@ -871,4 +871,5 @@
     <string name="contact_case_start_isolation_primary_button_title_wales">Get a free rapid lateral flow kit</string>
     <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
     <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">You are advised to take a free rapid lateral flow test as soon as possible.</string>
+    <string name="about_this_app_software_information_date_of_release_description">2/2022</string>
 </resources>

@@ -41,5 +41,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/shareKeys"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Share keys" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Order test" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/orderTest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </LinearLayout>

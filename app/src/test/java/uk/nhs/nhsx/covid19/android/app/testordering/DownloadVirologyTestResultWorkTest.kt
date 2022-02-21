@@ -124,6 +124,7 @@ class DownloadVirologyTestResultWorkTest {
                 RAPID_RESULT,
                 diagnosisKeySubmissionSupported = true,
                 requiresConfirmatoryTest = true,
+                shouldOfferFollowUpTest = true,
                 confirmatoryDayLimit = 2
             )
         )
@@ -137,6 +138,7 @@ class DownloadVirologyTestResultWorkTest {
             RAPID_RESULT,
             diagnosisKeySubmissionSupported = true,
             requiresConfirmatoryTest = true,
+            shouldOfferFollowUpTest = true,
             confirmatoryDayLimit = 2
         )
         verify { stateMachine.processEvent(OnTestResult(testResult, testOrderType = INSIDE_APP)) }
@@ -163,6 +165,7 @@ class DownloadVirologyTestResultWorkTest {
                 LAB_RESULT,
                 diagnosisKeySubmissionSupported = true,
                 requiresConfirmatoryTest = false,
+                shouldOfferFollowUpTest = false,
                 confirmatoryDayLimit = null
             )
         )
@@ -175,7 +178,8 @@ class DownloadVirologyTestResultWorkTest {
             NEGATIVE,
             LAB_RESULT,
             diagnosisKeySubmissionSupported = true,
-            requiresConfirmatoryTest = false
+            requiresConfirmatoryTest = false,
+            shouldOfferFollowUpTest = false
         )
         verify { stateMachine.processEvent(OnTestResult(testResult, testOrderType = INSIDE_APP)) }
 
@@ -201,6 +205,7 @@ class DownloadVirologyTestResultWorkTest {
                 LAB_RESULT,
                 diagnosisKeySubmissionSupported = true,
                 requiresConfirmatoryTest = false,
+                shouldOfferFollowUpTest = false,
                 confirmatoryDayLimit = null
             )
         )
@@ -213,7 +218,8 @@ class DownloadVirologyTestResultWorkTest {
             VOID,
             LAB_RESULT,
             diagnosisKeySubmissionSupported = true,
-            requiresConfirmatoryTest = false
+            requiresConfirmatoryTest = false,
+            shouldOfferFollowUpTest = false
         )
         verify { stateMachine.processEvent(OnTestResult(testResult, testOrderType = INSIDE_APP)) }
 
@@ -239,6 +245,7 @@ class DownloadVirologyTestResultWorkTest {
                 LAB_RESULT,
                 diagnosisKeySubmissionSupported = true,
                 requiresConfirmatoryTest = false,
+                shouldOfferFollowUpTest = false,
                 confirmatoryDayLimit = null
             )
         )
@@ -256,6 +263,7 @@ class DownloadVirologyTestResultWorkTest {
                 LAB_RESULT,
                 diagnosisKeySubmissionSupported = true,
                 requiresConfirmatoryTest = true,
+                shouldOfferFollowUpTest = true,
                 confirmatoryDayLimit = null
             )
         )
@@ -267,7 +275,8 @@ class DownloadVirologyTestResultWorkTest {
             NEGATIVE,
             LAB_RESULT,
             diagnosisKeySubmissionSupported = true,
-            requiresConfirmatoryTest = false
+            requiresConfirmatoryTest = false,
+            shouldOfferFollowUpTest = false
         )
         val testResult2 = ReceivedTestResult(
             config2.diagnosisKeySubmissionToken,
@@ -275,7 +284,8 @@ class DownloadVirologyTestResultWorkTest {
             POSITIVE,
             LAB_RESULT,
             diagnosisKeySubmissionSupported = true,
-            requiresConfirmatoryTest = true
+            requiresConfirmatoryTest = true,
+            shouldOfferFollowUpTest = true
         )
         verify { stateMachine.processEvent(OnTestResult(testResult2, testOrderType = INSIDE_APP)) }
         verify { stateMachine.processEvent(OnTestResult(testResult1, testOrderType = INSIDE_APP)) }
@@ -359,6 +369,7 @@ class DownloadVirologyTestResultWorkTest {
                 testKitType,
                 diagnosisKeySubmissionSupported = true,
                 requiresConfirmatoryTest = false,
+                shouldOfferFollowUpTest = false,
                 confirmatoryDayLimit = null
             )
         )

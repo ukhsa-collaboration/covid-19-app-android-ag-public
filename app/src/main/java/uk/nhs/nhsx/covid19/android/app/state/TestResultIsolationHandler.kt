@@ -327,7 +327,8 @@ class TestResultIsolationHandler @Inject constructor(
                     acknowledgedDate = acknowledgedDate.toLocalDate(clock.zone),
                     requiresConfirmatoryTest = requiresConfirmatoryTest,
                     confirmedDate = null,
-                    confirmatoryDayLimit = confirmatoryDayLimit
+                    confirmatoryDayLimit = confirmatoryDayLimit,
+                    shouldOfferFollowUpTest = shouldOfferFollowUpTest
                 )
             )
         }

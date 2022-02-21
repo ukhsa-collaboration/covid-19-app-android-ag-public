@@ -802,8 +802,8 @@
     <string name="local_statistics_main_screen_last_seven_days_rate_down_accessibility_text">¹%1$s(%2$s%%) أكبر بــ</string>
     <string name="local_statistics_main_screen_last_seven_days_rate_no_change">لا تغيير¹</string>
     <string name="local_statistics_main_screen_last_seven_days_rate_no_change_accessibility_text">لا تغيير من السبعة أيام السابقة</string>
-    <string name="local_statistics_main_screen_last_seven_days_rate_up">أقل بــ %1$s (%2$s%%)¹</string>
-    <string name="local_statistics_main_screen_last_seven_days_rate_up_accessibility_text">أقل بــ %1$s (%2$s%%)¹</string>
+    <string name="local_statistics_main_screen_last_seven_days_rate_up">أكبر بــ ¹%1$s(%2$s%%)</string>
+    <string name="local_statistics_main_screen_last_seven_days_rate_up_accessibility_text">اأكبر بــ %1$s (%2$s%%)¹</string>
     <string name="local_statistics_main_screen_last_updated">أخر تحديث في %1$s الساعة %2$s</string>
     <string name="local_statistics_main_screen_local_authority_lower_tier">السلطة المحلية (الطبقة الدنيا)</string>
     <string name="local_statistics_main_screen_more_info">مصدر البيانات ومزيد من المعلومات:</string>

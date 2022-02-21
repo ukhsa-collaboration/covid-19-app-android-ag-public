@@ -18,6 +18,10 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.Finish
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.NavigateToOrderTest
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.NavigateToShareKeys
+import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.ViewState
+import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.FollowUpTest
+import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.NoTest
+import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.RegularTest
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.Ignore
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeNotInIsolation
@@ -27,7 +31,6 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PlodWill
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveContinueIsolationNoChange
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolation
-import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWillBeInIsolationAndOrderTest
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.PositiveWontBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidWillBeInIsolation
@@ -79,18 +82,16 @@ class TestResultActivity : BaseActivity() {
                     showContinueToSelfIsolationScreenOnNegative(viewState.remainingDaysInIsolation)
                 NegativeWontBeInIsolation ->
                     showDoNotHaveToSelfIsolateScreenOnNegative()
-                is PositiveContinueIsolation ->
+                PositiveContinueIsolation ->
                     showContinueToSelfIsolationScreenOnPositive(viewState.remainingDaysInIsolation)
                 PositiveContinueIsolationNoChange ->
                     showContinueToSelfIsolationScreenOnPositiveAndNoChange(viewState.remainingDaysInIsolation)
-                is PositiveWillBeInIsolation ->
-                    showSelfIsolateScreenOnPositive(viewState.remainingDaysInIsolation)
-                is PositiveWontBeInIsolation ->
+                PositiveWillBeInIsolation ->
+                    showWillBeInIsolationOnPositive(viewState)
+                PositiveWontBeInIsolation ->
                     showDoNotHaveToSelfIsolateScreenOnPositive()
                 NegativeAfterPositiveOrSymptomaticWillBeInIsolation ->
                     showContinueToSelfIsolationScreenOnNegativeAfterPositiveOrSymptomatic(viewState.remainingDaysInIsolation)
-                PositiveWillBeInIsolationAndOrderTest ->
-                    showSelfIsolateScreenOnPositiveAndOrderTest(viewState.remainingDaysInIsolation)
                 VoidNotInIsolation ->
                     showAreNotIsolatingScreenOnVoid()
                 VoidWillBeInIsolation ->
@@ -99,6 +100,43 @@ class TestResultActivity : BaseActivity() {
                     showContinueWithCurrentStateScreenOnPlod()
                 Ignore -> finish()
             }
+            updateActionButton(viewState.acknowledgementCompletionActions, viewState.mainState)
+        }
+    }
+
+    private fun showWillBeInIsolationOnPositive(viewState: ViewState) {
+        if (viewState.acknowledgementCompletionActions.suggestBookTest == FollowUpTest && !viewState.acknowledgementCompletionActions.shouldAllowKeySubmission)
+            showSelfIsolateScreenOnPositiveAndOrderTest(viewState.remainingDaysInIsolation)
+        else
+            showSelfIsolateScreenOnPositive(viewState.remainingDaysInIsolation)
+    }
+
+    private fun updateActionButton(
+        acknowledgementCompletionActions: AcknowledgementCompletionActions,
+        mainState: TestResultViewState
+    ) = with(binding) {
+        val showBackToHomeIfNoSpecificAction =
+            mainState in listOf(
+                PlodWillContinueWithCurrentState,
+                NegativeWillBeInIsolation
+            )
+
+        val actionButtonStringResource = when {
+            acknowledgementCompletionActions.shouldAllowKeySubmission -> R.string.continue_button
+            acknowledgementCompletionActions.suggestBookTest == FollowUpTest -> R.string.book_follow_up_test
+            acknowledgementCompletionActions.suggestBookTest == RegularTest -> R.string.book_free_test
+            acknowledgementCompletionActions.suggestBookTest == NoTest -> if (showBackToHomeIfNoSpecificAction) R.string.back_to_home else R.string.continue_button
+            else -> R.string.back_to_home
+        }
+        with(goodNewsContainer) {
+            goodNewsActionButton.text = getString(actionButtonStringResource)
+            goodNewsActionButton.setOnSingleClickListener {
+                viewModel.onActionButtonClicked()
+            }
+        }
+        with(isolationRequestContainer) {
+            isolationRequestActionButton.text = getString(actionButtonStringResource)
+            isolationRequestActionButton.setOnSingleClickListener { viewModel.onActionButtonClicked() }
         }
     }
 
@@ -165,7 +203,6 @@ class TestResultActivity : BaseActivity() {
         @ColorRes stateColor: Int = R.color.error_red,
         @StringRes selfIsolationLabel: Int = R.string.test_result_positive_continue_self_isolation_title_1,
         @StringRes additionalIsolationInfoText: Int? = null,
-        @StringRes actionButtonStringResource: Int = R.string.continue_button,
         exposureLinksVisible: Boolean,
         @StringRes onlineServiceLinkText: Int = R.string.nhs_111_online_service,
         @StringRes onlineServiceLinkUrl: Int = R.string.url_nhs_111_online,
@@ -201,11 +238,6 @@ class TestResultActivity : BaseActivity() {
 
             isolationRequestOnlineServiceLink.setDisplayText(onlineServiceLinkText)
             isolationRequestOnlineServiceLink.setLinkUrl(onlineServiceLinkUrl)
-
-            isolationRequestActionButton.apply {
-                text = getString(actionButtonStringResource)
-                setOnSingleClickListener { viewModel.onActionButtonClicked() }
-            }
         }
     }
 
@@ -238,7 +270,6 @@ class TestResultActivity : BaseActivity() {
             exposureLinksVisible = false,
             stateText = R.string.state_test_negative_info,
             stateColor = R.color.amber,
-            actionButtonStringResource = R.string.back_to_home,
             onlineServiceLinkText = R.string.test_result_negative_continue_self_isolate_nhs_guidance_label,
             onlineServiceLinkUrl = R.string.url_nhs_guidance,
             paragraphResources = intArrayOf(
@@ -253,7 +284,6 @@ class TestResultActivity : BaseActivity() {
             remainingDaysInIsolation = remainingDaysInIsolation,
             iconResource = R.drawable.ic_isolation_book_test,
             stateText = R.string.state_test_void_info,
-            actionButtonStringResource = R.string.book_free_test,
             exposureLinksVisible = false,
             onlineServiceLinkText = R.string.test_result_void_continue_self_isolate_nhs_guidance_label,
             onlineServiceLinkUrl = R.string.url_nhs_guidance,
@@ -296,7 +326,6 @@ class TestResultActivity : BaseActivity() {
             stateColor = R.color.amber,
             selfIsolationLabel = R.string.self_isolate_for,
             additionalIsolationInfoText = R.string.test_result_positive_self_isolate_and_book_test_title_3,
-            actionButtonStringResource = R.string.book_follow_up_test,
             exposureLinksVisible = true,
             paragraphResources = intArrayOf(
                 R.string.test_result_positive_self_isolate_and_book_test_explanation_1,
@@ -314,7 +343,6 @@ class TestResultActivity : BaseActivity() {
         @StringRes titleStringResource: Int = R.string.expiration_notification_title,
         @StringRes subtitleStringResource: Int,
         @StringRes goodNewsInfoViewResource: Int = R.string.test_result_no_self_isolation_description,
-        @StringRes actionButtonStringResource: Int = R.string.continue_button,
         @StringRes vararg paragraphResources: Int = intArrayOf(R.string.for_further_advice_visit)
     ) = with(binding.goodNewsContainer) {
         if (hasCloseToolbar) setCloseToolbar()
@@ -337,12 +365,7 @@ class TestResultActivity : BaseActivity() {
 
         goodNewsSubtitle.text = getString(subtitleStringResource)
         goodNewsParagraphContainer.addAllParagraphs(paragraphResources.map { getString(it) })
-        goodNewsActionButton.text = getString(actionButtonStringResource)
         goodNewsInfoView.stateText = getString(goodNewsInfoViewResource)
-
-        goodNewsActionButton.setOnSingleClickListener {
-            viewModel.onActionButtonClicked()
-        }
     }
 
     private fun showDoNotHaveToSelfIsolateScreenOnPositive() {
@@ -368,8 +391,7 @@ class TestResultActivity : BaseActivity() {
         showGoodNewsState(
             hasCloseToolbar = true,
             titleStringResource = R.string.test_result_your_test_result,
-            subtitleStringResource = R.string.test_result_void_already_not_in_isolation_subtitle,
-            actionButtonStringResource = R.string.book_free_test
+            subtitleStringResource = R.string.test_result_void_already_not_in_isolation_subtitle
         )
     }
     //endregion
@@ -381,7 +403,6 @@ class TestResultActivity : BaseActivity() {
             titleStringResource = R.string.test_result_plod_title,
             subtitleStringResource = R.string.test_result_plod_subtitle,
             goodNewsInfoViewResource = R.string.test_result_plod_description,
-            actionButtonStringResource = R.string.back_to_home,
             hasGoodNewsLink = false,
             iconResource = null,
             paragraphResources = intArrayOf(R.string.test_result_plod_info)

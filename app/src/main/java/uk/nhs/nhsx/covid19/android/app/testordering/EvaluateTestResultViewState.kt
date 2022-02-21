@@ -13,6 +13,7 @@ import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.DoNotTransition
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.Transition
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.ViewState
+import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.NoTest
 import uk.nhs.nhsx.covid19.android.app.testordering.GetHighestPriorityTestResult.HighestPriorityTestResult.FoundTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.GetHighestPriorityTestResult.HighestPriorityTestResult.NoTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.Ignore
@@ -30,12 +31,20 @@ class EvaluateTestResultViewState @Inject constructor(
     private val computeTestResultViewStateOnVoid: ComputeTestResultViewStateOnVoid,
     private val createIsolationLogicalState: CreateIsolationLogicalState,
     private val createIsolationState: CreateIsolationState,
+    private val evaluateAcknowledgementCompletionActions: EvaluateAcknowledgementCompletionActions,
     private val clock: Clock,
 ) {
     operator fun invoke(): ViewState =
         when (val highestPriorityTestResult = getHighestPriorityTestResult()) {
             is FoundTestResult -> computeViewState(highestPriorityTestResult.testResult)
-            NoTestResult -> ViewState(Ignore, stateMachine.remainingDaysInIsolation().toInt())
+            NoTestResult -> ViewState(
+                Ignore,
+                stateMachine.remainingDaysInIsolation().toInt(),
+                AcknowledgementCompletionActions(
+                    suggestBookTest = NoTest,
+                    shouldAllowKeySubmission = false
+                )
+            )
         }
 
     private fun computeViewState(testResult: ReceivedTestResult): ViewState {
@@ -51,9 +60,13 @@ class EvaluateTestResultViewState @Inject constructor(
             VOID -> computeTestResultViewStateOnVoid(currentLogicalState)
             PLOD -> PlodWillContinueWithCurrentState
         }
+
+        val acknowledgementCompletionActions =
+            evaluateAcknowledgementCompletionActions(currentLogicalState, newLogicalState, testResult)
+
         val remainingDaysInIsolation = stateMachine.remainingDaysInIsolation(newLogicalState).toInt()
 
-        return ViewState(testResultViewState, remainingDaysInIsolation)
+        return ViewState(testResultViewState, remainingDaysInIsolation, acknowledgementCompletionActions)
     }
 
     private fun computeIsolationInfoAfterTestResult(

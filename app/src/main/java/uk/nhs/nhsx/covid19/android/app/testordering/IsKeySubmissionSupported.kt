@@ -13,7 +13,8 @@ class IsKeySubmissionSupported @Inject constructor(
     private val clock: Clock
 ) {
     operator fun invoke(testResult: ReceivedTestResult): Boolean =
-        testResult.diagnosisKeySubmissionSupported && !shouldPreventKeySubmission(testResult)
+        testResult.isPositive() &&
+                testResult.diagnosisKeySubmissionSupported && !shouldPreventKeySubmission(testResult)
 
     private fun shouldPreventKeySubmission(testResult: ReceivedTestResult): Boolean {
         val currentState = isolationStateMachine.readState()

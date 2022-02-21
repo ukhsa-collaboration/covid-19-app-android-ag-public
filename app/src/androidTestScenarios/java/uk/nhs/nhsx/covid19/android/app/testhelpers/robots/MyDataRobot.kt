@@ -17,8 +17,8 @@ class MyDataRobot : HasActivity {
 
     fun checkLastTestResultIsDisplayed(
         shouldKitTypeBeVisible: Boolean = true,
-        requiresConfirmatoryTest: Boolean,
-        receivedFollowUpTest: String?
+        showConfirmatoryInformation: Boolean,
+        followUpTestEndDate: String?
     ) {
         onView(withId(R.id.lastTestResultSection))
             .check(matches(isDisplayed()))
@@ -37,8 +37,8 @@ class MyDataRobot : HasActivity {
                 .check(doesNotExist())
         }
 
-        if (requiresConfirmatoryTest) {
-            if (receivedFollowUpTest != null) {
+        if (showConfirmatoryInformation) {
+            if (followUpTestEndDate != null) {
                 onView(withText(R.string.about_test_follow_up_state_complete))
                     .check(matches(isDisplayed()))
                 onView(withText(R.string.about_test_follow_up_date))

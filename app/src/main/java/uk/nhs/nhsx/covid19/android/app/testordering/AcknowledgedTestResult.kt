@@ -19,6 +19,7 @@ data class AcknowledgedTestResult(
     override val testKitType: VirologyTestKitType?,
     val acknowledgedDate: LocalDate,
     val requiresConfirmatoryTest: Boolean = false,
+    val shouldOfferFollowUpTest: Boolean? = null,
     val confirmedDate: LocalDate? = null,
     override val confirmatoryDayLimit: Int? = null,
     val confirmatoryTestCompletionStatus: ConfirmatoryTestCompletionStatus? = null

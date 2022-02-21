@@ -76,6 +76,7 @@ data class ReceivedTestResult(
     override val testKitType: VirologyTestKitType?,
     val diagnosisKeySubmissionSupported: Boolean,
     val requiresConfirmatoryTest: Boolean = false,
+    val shouldOfferFollowUpTest: Boolean? = null,
     val symptomsOnsetDate: SymptomsDate? = null,
     override val confirmatoryDayLimit: Int? = null
 ) : TestResult, Parcelable {

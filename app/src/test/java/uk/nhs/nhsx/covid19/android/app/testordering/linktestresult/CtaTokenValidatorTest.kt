@@ -353,11 +353,22 @@ class CtaTokenValidatorTest {
         assertEquals(Failure(UNEXPECTED), result)
     }
 
+    @Test
+    fun `follow up test should not be offered when confirmatory test is not required`() = runBlocking {
+        val ctaToken = "12345678"
+        setUpTokenResponse(ctaToken, POSITIVE, RAPID_RESULT, requiresConfirmatoryTest = false, shouldOfferFollowUpTest = true)
+
+        val result = testSubject.validate(ctaToken)
+
+        assertEquals(Failure(UNEXPECTED), result)
+    }
+
     private fun setUpTokenResponse(
         ctaToken: String,
         testResult: VirologyTestResult,
         testKitType: VirologyTestKitType,
         requiresConfirmatoryTest: Boolean = false,
+        shouldOfferFollowUpTest: Boolean = requiresConfirmatoryTest,
         confirmatoryDayLimit: Int? = null
     ): Response<VirologyCtaExchangeResponse> {
         val response = Response.success(
@@ -368,6 +379,7 @@ class CtaTokenValidatorTest {
                 testKitType,
                 diagnosisKeySubmissionSupported = true,
                 requiresConfirmatoryTest = requiresConfirmatoryTest,
+                shouldOfferFollowUpTest = shouldOfferFollowUpTest,
                 confirmatoryDayLimit = confirmatoryDayLimit
             )
         )

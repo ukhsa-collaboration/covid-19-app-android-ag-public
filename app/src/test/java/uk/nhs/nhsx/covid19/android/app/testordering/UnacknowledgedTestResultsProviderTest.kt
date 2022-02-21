@@ -121,7 +121,7 @@ class UnacknowledgedTestResultsProviderTest :
 
         testSubject.clearBefore(LocalDate.of(1971, 1, 2))
 
-        assertSharedPreferenceSetsValue("""[{"diagnosisKeySubmissionToken":"token3","testEndDate":"1972-01-01T00:00:00Z","testResult":"NEGATIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":false}]""")
+        assertSharedPreferenceSetsValue("""[{"diagnosisKeySubmissionToken":"token3","testEndDate":"1972-01-01T00:00:00Z","testResult":"NEGATIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false}]""")
     }
 
     @Test
@@ -136,22 +136,22 @@ class UnacknowledgedTestResultsProviderTest :
     companion object {
         val SINGLE_LAB_RESULT_TEST_RESULT_JSON =
             """
-            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":false}]
+            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false}]
             """.trimIndent()
 
         val SINGLE_LAB_RESULT_TEST_RESULT_WITH_EXPLICIT_ONSET_DATE_JSON =
             """
-            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":false,"symptomsOnsetDate":{"explicitDate":"2020-10-07"}}]
+            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false,"symptomsOnsetDate":{"explicitDate":"2020-10-07"}}]
             """.trimIndent()
 
         val SINGLE_LAB_RESULT_TEST_RESULT_WITH_CANNOT_REMEMBER_ONSET_DATE_JSON =
             """
-            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":false,"symptomsOnsetDate":{}}]
+            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false,"symptomsOnsetDate":{}}]
             """.trimIndent()
 
         val SINGLE_RAPID_RESULT_TEST_RESULT_JSON =
             """
-            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":true}]
+            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":true,"shouldOfferFollowUpTest":true}]
             """.trimIndent()
 
         val SINGLE_TEST_RESULT_WITHOUT_REQUIRES_CONFIRMATORY_TEST_JSON =
@@ -161,28 +161,28 @@ class UnacknowledgedTestResultsProviderTest :
 
         val SINGLE_RAPID_SELF_REPORTED_TEST_RESULT_JSON =
             """
-            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_SELF_REPORTED","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":true}]
+            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_SELF_REPORTED","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":true,"shouldOfferFollowUpTest":true}]
             """.trimIndent()
 
         val SINGLE_RAPID_RESULT_UNCONFIRMED_TEST_JSON =
             """
-            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":true,"confirmatoryDayLimit":0}]
+            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":true,"shouldOfferFollowUpTest":true,"confirmatoryDayLimit":0}]
             """.trimIndent()
 
         val MULTIPLE_TEST_RESULTS_JSON =
             """
             [
-            {"diagnosisKeySubmissionToken":"token1","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_SELF_REPORTED","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":true},
-            {"diagnosisKeySubmissionToken":"token2","testEndDate":"1971-01-01T00:00:00Z","testResult":"VOID","testKitType":"RAPID_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":true},
-            {"diagnosisKeySubmissionToken":"token3","testEndDate":"1972-01-01T00:00:00Z","testResult":"NEGATIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":false}
+            {"diagnosisKeySubmissionToken":"token1","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_SELF_REPORTED","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":true,"shouldOfferFollowUpTest":true},
+            {"diagnosisKeySubmissionToken":"token2","testEndDate":"1971-01-01T00:00:00Z","testResult":"VOID","testKitType":"RAPID_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":true,"shouldOfferFollowUpTest":true},
+            {"diagnosisKeySubmissionToken":"token3","testEndDate":"1972-01-01T00:00:00Z","testResult":"NEGATIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false}
             ]
             """.trimIndent()
 
         val MULTIPLE_TEST_RESULTS_NONE_POSITIVE_JSON =
             """
             [
-            {"diagnosisKeySubmissionToken":"token2","testEndDate":"1971-01-01T00:00:00Z","testResult":"VOID","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":false},
-            {"diagnosisKeySubmissionToken":"token3","testEndDate":"1972-01-01T00:00:00Z","testResult":"NEGATIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":false}
+            {"diagnosisKeySubmissionToken":"token2","testEndDate":"1971-01-01T00:00:00Z","testResult":"VOID","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false},
+            {"diagnosisKeySubmissionToken":"token3","testEndDate":"1972-01-01T00:00:00Z","testResult":"NEGATIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false}
             ]
             """.trimIndent()
 
@@ -197,7 +197,8 @@ class UnacknowledgedTestResultsProviderTest :
             POSITIVE,
             LAB_RESULT,
             diagnosisKeySubmissionSupported = false,
-            requiresConfirmatoryTest = false
+            requiresConfirmatoryTest = false,
+            shouldOfferFollowUpTest = false
         )
 
         val SINGLE_RECEIVED_RAPID_RESULT_TEST_RESULT = ReceivedTestResult(
@@ -206,7 +207,8 @@ class UnacknowledgedTestResultsProviderTest :
             POSITIVE,
             RAPID_RESULT,
             diagnosisKeySubmissionSupported = false,
-            requiresConfirmatoryTest = true
+            requiresConfirmatoryTest = true,
+            shouldOfferFollowUpTest = true
         )
 
         val SINGLE_RECEIVED_RAPID_SELF_REPORTED_TEST_RESULT = ReceivedTestResult(
@@ -215,7 +217,8 @@ class UnacknowledgedTestResultsProviderTest :
             POSITIVE,
             RAPID_SELF_REPORTED,
             diagnosisKeySubmissionSupported = false,
-            requiresConfirmatoryTest = true
+            requiresConfirmatoryTest = true,
+            shouldOfferFollowUpTest = true
         )
 
         val SINGLE_RAPID_RESULT_UNCONFIRMED_POSITIVE_TEST_RESULT = ReceivedTestResult(
@@ -225,6 +228,7 @@ class UnacknowledgedTestResultsProviderTest :
             RAPID_RESULT,
             diagnosisKeySubmissionSupported = true,
             requiresConfirmatoryTest = true,
+            shouldOfferFollowUpTest = true,
             confirmatoryDayLimit = 0
         )
         private val singleTestResultWithoutRequiresConfirmatoryTest = listOf(
@@ -244,7 +248,8 @@ class UnacknowledgedTestResultsProviderTest :
                 POSITIVE,
                 RAPID_SELF_REPORTED,
                 diagnosisKeySubmissionSupported = false,
-                requiresConfirmatoryTest = true
+                requiresConfirmatoryTest = true,
+                shouldOfferFollowUpTest = true
             ),
             ReceivedTestResult(
                 "token2",
@@ -252,7 +257,8 @@ class UnacknowledgedTestResultsProviderTest :
                 VOID,
                 RAPID_RESULT,
                 diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = true
+                requiresConfirmatoryTest = true,
+                shouldOfferFollowUpTest = true
             ),
             ReceivedTestResult(
                 "token3",
@@ -260,7 +266,8 @@ class UnacknowledgedTestResultsProviderTest :
                 NEGATIVE,
                 LAB_RESULT,
                 diagnosisKeySubmissionSupported = true,
-                requiresConfirmatoryTest = false
+                requiresConfirmatoryTest = false,
+                shouldOfferFollowUpTest = false
             )
         )
     }

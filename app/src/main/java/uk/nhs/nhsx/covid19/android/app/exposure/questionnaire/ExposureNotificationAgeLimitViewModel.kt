@@ -3,7 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.exposure.questionnaire
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationAgeLimitViewModel.NavigationTarget.Finish
@@ -11,6 +11,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificati
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationAgeLimitViewModel.NavigationTarget.VaccinationStatus
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
+import uk.nhs.nhsx.covid19.android.app.util.getViewModelScopeOrDefault
 import uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup.BinaryRadioGroupOption
 import java.time.Clock
 import java.time.LocalDate
@@ -18,11 +19,19 @@ import javax.inject.Inject
 import uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup.BinaryRadioGroupOption.OPTION_1 as YES
 import uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup.BinaryRadioGroupOption.OPTION_2 as NO
 
-class ExposureNotificationAgeLimitViewModel @Inject constructor(
+class ExposureNotificationAgeLimitViewModel(
+    coroutineScopeOverride: CoroutineScope?,
     private val getAgeLimitBeforeEncounter: GetAgeLimitBeforeEncounter,
     private val isolationStateMachine: IsolationStateMachine,
     private val clock: Clock
 ) : ViewModel() {
+
+    @Inject constructor(
+        getAgeLimitBeforeEncounter: GetAgeLimitBeforeEncounter,
+        isolationStateMachine: IsolationStateMachine,
+        clock: Clock
+    ) : this(coroutineScopeOverride = null, getAgeLimitBeforeEncounter, isolationStateMachine, clock)
+
     private val viewStateLiveData = MutableLiveData<ViewState>()
     fun viewState(): LiveData<ViewState> = viewStateLiveData
 
@@ -31,6 +40,8 @@ class ExposureNotificationAgeLimitViewModel @Inject constructor(
 
     private var ageLimitSelection: BinaryRadioGroupOption? = null
     private var showError: Boolean = false
+
+    private val viewModelScope = getViewModelScopeOrDefault(coroutineScopeOverride)
 
     fun updateViewState() {
         viewModelScope.launch {

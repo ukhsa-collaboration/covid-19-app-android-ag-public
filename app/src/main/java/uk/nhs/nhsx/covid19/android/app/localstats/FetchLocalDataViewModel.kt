@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.common.Lce
-import uk.nhs.nhsx.covid19.android.app.util.getViewModelScope
+import uk.nhs.nhsx.covid19.android.app.util.getViewModelScopeOrDefault
 import javax.inject.Inject
 
 class FetchLocalDataViewModel(
@@ -24,7 +24,7 @@ class FetchLocalDataViewModel(
     private var localStats = MutableLiveData<Lce<LocalStats>>()
     fun localStats(): LiveData<Lce<LocalStats>> = localStats
 
-    private val viewModelScope = getViewModelScope(coroutineScopeProvider)
+    private val viewModelScope = getViewModelScopeOrDefault(coroutineScopeProvider)
 
     fun loadData() {
         localStats.value = Lce.Loading

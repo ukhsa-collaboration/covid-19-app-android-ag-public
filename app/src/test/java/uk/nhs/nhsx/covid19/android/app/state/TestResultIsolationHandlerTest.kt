@@ -61,7 +61,8 @@ class TestResultIsolationHandlerTest {
         testKitType = RAPID_RESULT,
         diagnosisKeySubmissionSupported = false,
         requiresConfirmatoryTest = true,
-        confirmatoryDayLimit = 2
+        confirmatoryDayLimit = 2,
+        shouldOfferFollowUpTest = true
     )
 
     private val positiveTestResultIndicativeWithKeySharingSupported = ReceivedTestResult(
@@ -71,7 +72,8 @@ class TestResultIsolationHandlerTest {
         testKitType = RAPID_RESULT,
         diagnosisKeySubmissionSupported = true,
         requiresConfirmatoryTest = true,
-        confirmatoryDayLimit = 2
+        confirmatoryDayLimit = 2,
+        shouldOfferFollowUpTest = true
     )
 
     private val positiveTestResultConfirmed = ReceivedTestResult(
@@ -80,7 +82,8 @@ class TestResultIsolationHandlerTest {
         testResult = POSITIVE,
         testKitType = LAB_RESULT,
         diagnosisKeySubmissionSupported = true,
-        requiresConfirmatoryTest = false
+        requiresConfirmatoryTest = false,
+        shouldOfferFollowUpTest = false
     )
 
     private val negativeTestResultConfirmed = ReceivedTestResult(
@@ -89,7 +92,8 @@ class TestResultIsolationHandlerTest {
         testResult = NEGATIVE,
         testKitType = LAB_RESULT,
         diagnosisKeySubmissionSupported = false,
-        requiresConfirmatoryTest = false
+        requiresConfirmatoryTest = false,
+        shouldOfferFollowUpTest = false
     )
 
     private val voidTestResultConfirmed = ReceivedTestResult(
@@ -98,7 +102,8 @@ class TestResultIsolationHandlerTest {
         testResult = VOID,
         testKitType = LAB_RESULT,
         diagnosisKeySubmissionSupported = false,
-        requiresConfirmatoryTest = false
+        requiresConfirmatoryTest = false,
+        shouldOfferFollowUpTest = false
     )
 
     private val plodTestResultConfirmed = ReceivedTestResult(
@@ -107,7 +112,8 @@ class TestResultIsolationHandlerTest {
         testResult = PLOD,
         testKitType = LAB_RESULT,
         diagnosisKeySubmissionSupported = false,
-        requiresConfirmatoryTest = false
+        requiresConfirmatoryTest = false,
+        shouldOfferFollowUpTest = false
     )
 
     private val isolationConfiguration = DurationDays()
@@ -2980,7 +2986,8 @@ class TestResultIsolationHandlerTest {
         result: RelevantVirologyTestResult,
         isConfirmed: Boolean,
         testEndDate: Instant = this.testEndDate,
-        confirmatoryDayLimit: Int? = null
+        confirmatoryDayLimit: Int? = null,
+        shouldOfferFollowUpTest: Boolean = !isConfirmed
     ): AcknowledgedTestResult =
         AcknowledgedTestResult(
             testEndDate = testEndDate.toLocalDate(fixedClock.zone),
@@ -2989,7 +2996,8 @@ class TestResultIsolationHandlerTest {
             testKitType = LAB_RESULT,
             requiresConfirmatoryTest = !isConfirmed,
             confirmedDate = null,
-            confirmatoryDayLimit = confirmatoryDayLimit
+            confirmatoryDayLimit = confirmatoryDayLimit,
+            shouldOfferFollowUpTest = shouldOfferFollowUpTest
         )
 
     private fun IsolationState.selfAssessmentSymptomsOnsetInstant(): Instant =
@@ -3070,12 +3078,13 @@ class TestResultIsolationHandlerTest {
             throw IllegalArgumentException("This function cannot be called with a $result test result")
         }
         return AcknowledgedTestResult(
-            testEndDate(fixedClock),
-            result,
-            testKitType,
+            testEndDate = testEndDate(fixedClock),
+            testResult = result,
+            testKitType = testKitType,
             acknowledgedDate = LocalDate.now(fixedClock),
-            requiresConfirmatoryTest,
-            confirmedDate,
+            requiresConfirmatoryTest = requiresConfirmatoryTest,
+            shouldOfferFollowUpTest = shouldOfferFollowUpTest,
+            confirmedDate = confirmedDate,
             confirmatoryDayLimit = confirmatoryDayLimit,
             confirmatoryTestCompletionStatus = confirmedDate?.let { COMPLETED_AND_CONFIRMED }
         )
