@@ -56,7 +56,7 @@
     <string name="you_do_not_appear_to_have_symptoms">ਇੰਝ ਨਹੀਂ ਲੱਗਦਾ ਹੈ ਕਿ ਤੁਹਾਡੇ ਅੰਦਰ ਕੋਰੋਨਾਵਾਇਰਸ ਦੇ ਲੱਛਣ ਹਨ</string>
     <string name="state_and_book_a_test">ਅਤੇ ਟੈਸਟ ਬੁੱਕ ਕਰੋ</string>
     <string name="state_index_info">ਤੁਹਾਨੂੰ ਕੋਰੋਨਾਵਾਇਰਸ ਹੋ ਸਕਦਾ ਹੈ</string>
-    <string name="you_need_to_self_isolate">ਤੁਹਾਨੂੰ ਆਪਣੇ ਆਪ ਨੂੰ ਆਈਸੋਲੇਟ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ</string>
+    <string name="you_need_to_self_isolate">ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖੋ</string>
     <string name="test_result_positive_no_self_isolation_subtitle">ਭਾਵੇਂ ਤੁਹਾਡਾ ਟੈਸਟ ਪੌਜ਼ਿਟਿਵ ਰਿਹਾ ਹੈ, ਤੁਹਾਡਾ ਸੈਲਫ-ਆਈਸੋਲੇਸ਼ਨ ਦਾ ਸਮਾਂ ਖਤਮ ਹੋ ਗਿਆ ਹੈ</string>
     <string name="state_test_positive_info">ਤੁਹਾਡਾ ਕੋਰੋਨਾਵਾਇਰਸ ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਪਾਜ਼ਿਟਿਵ ਹੈ</string>
     <string name="state_test_void_info">ਅਸੀਂ ਤੁਹਾਨੂੰ ਇਹ ਨਹੀਂ ਦੱਸ ਸਕਦੇ ਸੀ ਕਿ ਕੀ ਤੁਹਾਨੂੰ ਕੋਰੋਨਾਵਾਇਰਸ ਸੀ</string>
@@ -127,8 +127,8 @@
         <item quantity="other">ਬਾਕੀ ਦਿਨ</item>
     </plurals>
     <plurals name="isolation_view_accessibility_description" tools:ignore="MissingQuantity">
-        <item quantity="one">ਤੁਹਾਨੂੰ %1$s 23:59 ਵਜੇ ਤੱਕ ਸੈਲਫ-ਆਈਸੋਲੇਸ਼ਨ ਵਿੱਚ ਰਹਿਣ ਦੀ ਲੋੜ ਹੈ। ਉਸ ਸਮੇਂ ਤੱਕ ਹੁਣ ਤੱਕ %2$s ਦਿਨ ਰਹਿੰਦੇ ਹਨ।</item>
-        <item quantity="other">ਤੁਹਾਨੂੰ %1$s 23:59 ਵਜੇ ਤੱਕ ਸੈਲਫ-ਆਈਸੋਲੇਸ਼ਨ ਵਿੱਚ ਰਹਿਣ ਦੀ ਲੋੜ ਹੈ। ਉਸ ਸਮੇਂ ਤੱਕ ਹੁਣ ਤੱਕ %2$s ਦਿਨ ਰਹਿੰਦੇ ਹਨ।</item>
+        <item quantity="one">%1$s ਨੂੰ 23:59 ਵਜੇ ਤਕ ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖੋ। ਉਸ ਤਕ %2$s ਦਿਨ ਬਾਕੀ ਹੈ।</item>
+        <item quantity="other">%1$s ਨੂੰ 23:59 ਵਜੇ ਤਕ ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖੋ। ਉਸ ਤਕ %2$s ਦਿਨ ਬਾਕੀ ਹਨ।</item>
     </plurals>
     <plurals name="resume_contact_tracing_hours">
         <item quantity="one">%d ਘੰਟਾ</item>
@@ -428,7 +428,7 @@
     <string name="link_test_result_symptoms_yes_accessibility">ਹਾਂ, ਮੈਨੂੰ ਲੱਛਣ ਸਨ।</string>
     <string name="risk_level_mass_testing_link_text">ਟੈਸਟ ਸਾਈਟ ਲੱਭੋ</string>
     <string name="risk_level_mass_testing_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/regular-rapid-coronavirus-tests-if-you-do-not-have-symptoms/</string>
-    <string name="risk_level_mass_testing_text">ਜਾਂਚ ਕਰੋ ਕਿ ਤੁਹਾਡੇ ਖੇਤਰ ਵਿੱਚ ਕਿਹੜੀ ਟੈਸਟਿੰਗ ਉਪਲਬਧ ਹੈ ਅਤੇ ਕੀ ਤੁਹਾਨੂੰ ਬੁੱਕ ਕਰਵਾਉਣ ਦੀ ਜ਼ਰੂਰਤ ਹੈ।</string>
+    <string name="risk_level_mass_testing_text">ਟੈਸਟਿੰਗ ਬਾਰੇ ਪਤਾ ਲਗਾਓ</string>
     <string name="risk_level_mass_testing_title">ਤੁਹਾਡੇ ਨਜ਼ਦੀਕੀ ਟੈਸਟਿੰਗ</string>
     <string name="venue_alert_m2_explanation">ਇਸ ਗੱਲ ਦਾ ਜੋਖਮ ਹੈ ਕਿ ਤੁਸੀਂ ਸ਼ਾਇਦ ਵਾਇਰਸ ਦੇ ਸੰਪਰਕ ਵਿੱਚ ਆਏ ਹੋ ਸਕਦੇ ਹੋ। COVID-19 ਵਾਲੇ ਲਗਭਗ 3 ਵਿੱਚੋਂ 1 ਵਿਅਕਤੀ ਨੂੰ ਕੋਈ ਲੱਛਣ ਨਹੀਂ ਹੁੰਦੇ ਹਨ, ਪਰ ਉਹ ਫਿਰ ਵੀ ਇਸ ਨੂੰ ਦੂਜਿਆਂ ਤੱਕ ਫੈਲਾ ਸਕਦੇ ਹਨ ਅਤੇ ਉਹਨਾਂ ਨੂੰ ਜੋਖਮ ਵਿੱਚ ਪਾ ਸਕਦੇ ਹਨ।\n\nਇਸ ਕਾਰਨ ਕਰਕੇ, ਅਸੀਂ ਹੁਣੇ ਇੱਕ ਟੈਸਟ ਬੁੱਕ ਕਰਾਉਣ ਦੀ ਸਿਫਾਰਸ਼ ਕਰਦੇ ਹਾਂ।\n\nਤੁਹਾਨੂੰ ਆਪਣੇ ਆਪ ਨੂੰ ਅਲੱਗ ਰੱਖਣ ਦੀ ਲੋੜ ਨਹੀਂ ਹੁੰਦੀ ਹੈ, ਪਰ ਤੁਹਾਨੂੰ ਨਿਯਮਿਤ ਤੌਰ \'ਤੇ ਆਪਣੇ ਹੱਥ ਧੋਣ ਅਤੇ ਸਮਾਜਕ ਦੂਰੀ ਬਣਾਏ ਰੱਖਣ \'ਤੇ ਨਵੀਨਤਮ ਸਲਾਹ ਦੀ ਪਾਲਣਾ ਕਰਨਾ ਜਾਰੀ ਰੱਖਣਾ ਚਾਹੀਦਾ ਹੈ। ਜੇ ਤੁਹਾਨੂੰ ਕੋਈ ਲੱਛਣ ਹੁੰਦੇ ਹਨ ਤਾਂ ਤੁਹਾਨੂੰ ਅਤੇ ਤੁਹਾਡੇ ਪਰਿਵਾਰ ਨੂੰ ਤੁਰੰਤ ਆਪਣੇ ਆਪ ਨੂੰ ਅਲੱਗ ਕਰ ਦੇਣਾ ਚਾਹੀਦਾ ਹੈ।\n\nਜੇ ਤੁਹਾਡੇ ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਪਾਜ਼ਿਟਿਵ ਆਉਂਦਾ ਹੈ ਤਾਂ ਤੁਹਾਨੂੰ, ਅਤੇ ਤੁਹਾਡੇ ਪਰਿਵਾਰ ਦੇ ਹੋਰਨਾਂ ਨੂੰ, ਆਪਣੇ ਆਪ ਨੂੰ ਤੁਰੰਤ ਅਲੱਗ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ।\n\nਜੇ ਪਿਛਲੇ 90 ਦਿਨਾਂ ਵਿੱਚ ਤੁਹਾਡੇ ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਪਾਜ਼ਿਟਿਵ ਆਇਆ ਹੈ, ਤਾਂ ਤੁਹਾਨੂੰ ਉਦੋਂ ਤੱਕ ਟੈਸਟ ਬੁੱਕ ਕਰਨ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ, ਜਦੋਂ ਤੱਕ ਤੁਹਾਨੂੰ ਲੱਛਣ ਨਹੀਂ ਹਨ।\n\nਕਿਰਪਾ ਕਰਕੇ ਸਾਰੀ ਨਵੀਨਤਮ ਸੇਧ ਦੀ ਪਾਲਣਾ ਕਰਨਾ ਜਾਰੀ ਰੱਖੋ, ਭਾਵੇਂ ਤੁਹਾਨੂੰ ਟੀਕਾ ਲਗਾਇਆ ਗਿਆ ਹੋਵੇ।\n\nਵਧੇਰੇ ਜਾਣਕਾਰੀ, ਸਲਾਹ ਜਾਂ ਸਹਾਇਤਾ ਲਈ ਕਿਰਪਾ ਕਰਕੇ 119 \'ਤੇ ਕਾਲ ਕਰੋ।</string>
     <string name="venue_alert_m2_title">ਤੁਸੀਂ ਹਾਲ ਹੀ ਵਿੱਚ ਕਿਸੇ ਸਥਾਨ \'ਤੇ ਗਏ ਸੀ ਜਿੱਥੇ ਤੁਸੀਂ ਸ਼ਾਇਦ ਦੂਜੇ ਲੋਕਾਂ ਦੇ ਸੰਪਰਕ ਵਿੱਚ ਆਏ ਹੋ ਸਕਦੇ ਹੋ ਜਿਨ੍ਹਾਂ ਨੂੰ COVID-19 ਸੀ।</string>
@@ -610,7 +610,7 @@
     <string name="continue_to_self_isolate_for">ਇਸ ਸਮੇਂ ਲਈ ਸੈਲਫ-ਆਈਸੋਲੇਸ਼ਨ ਵਿੱਚ ਰਹਿਣਾ ਜਾਰੀ ਰੱਖੋ</string>
     <string name="exposure_notification_advised_to_self_isolate_for">ਇਸ ਸਮੇਂ ਲਈ ਸੈਲਫ-ਆਈਸੋਲੇਟ ਕਰੋ</string>
     <string name="exposure_notification_age_continue_button">ਜਾਰੀ ਰੱਖੋ</string>
-    <string name="exposure_notification_age_description">ਅਸੀਂ ਤੁਹਾਡੇ ਜਵਾਬਾਂ ਦੀ ਵਰਤੋਂ ਸਿਰਫ ਇਹ ਜਾਂਚ ਕਰਨ ਲਈ ਕਰਾਂਗੇ ਕਿ ਕੀ ਤੁਹਾਨੂੰ ਆਪਣੇ ਆਪ ਨੂੰ ਅਲੱਗ ਰੱਖਣ ਦੀ ਲੋੜ ਹੈ।</string>
+    <string name="exposure_notification_age_description">ਅਸੀਂ ਤੁਹਾਡੇ ਜਵਾਬਾਂ ਦੀ ਵਰਤੋਂ ਸਿਰਫ ਤੁਹਾਨੂੰ ਸਹੀ ਸਲਾਹ ਦੇਣ ਲਈ ਕਰਾਂਗੇ।</string>
     <string name="exposure_notification_age_error_description">ਜਾਰੀ ਰੱਖਣ ਲਈ, ਤੁਹਾਨੂੰ ਇੱਕ ਜਵਾਬ ਚੁਣਨ ਦੀ ਲੋੜ ਹੈ</string>
     <string name="exposure_notification_age_error_title">ਤਰੁੱਟੀ</string>
     <string name="exposure_notification_age_heading">ਤੁਹਾਡੀ ਉਮਰ</string>
@@ -650,7 +650,7 @@
     <string name="exposure_notification_vaccination_status_error_title">ਤਰੁੱਟੀ</string>
     <string name="exposure_notification_vaccination_status_heading">ਤੁਹਾਡੇ ਟੀਕਾਕਰਨ ਦੀ ਸਥਿਤੀ</string>
     <string name="exposure_notification_vaccination_status_title">ਟੀਕਾਕਰਨ ਸਥਿਤੀ</string>
-    <string name="exposure_notification_warning">ਤੁਹਾਡੀ ਉਮਰ, ਟੀਕਾਕਰਨ ਦੀ ਸਥਿਤੀ, ਜਾਂ ਸੰਪਰਕ ਟ੍ਰੇਸਰਾਂ ਦੀਆਂ ਹਦਾਇਤਾਂ ਦੇ ਆਧਾਰ \'ਤੇ ਤੁਹਾਨੂੰ ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖਣ ਦੀ ਲੋੜ ਹੋ ਸਕਦੀ ਹੈ</string>
+    <string name="exposure_notification_warning">ਤੁਹਾਡੀ ਉਮਰ, ਟੀਕਾਕਰਨ ਦੀ ਸਥਿਤੀ, ਜਾਂ ਸੰਪਰਕ ਟ੍ਰੇਸਰਾਂ ਦੀਆਂ ਹਦਾਇਤਾਂ ਦੇ ਆਧਾਰ \'ਤੇ ਸਲਾਹ ਵੱਖ-ਵੱਖ ਹੋ ਸਕਦੀ ਹੈ</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_1_title">ਤਾਜ਼ਾ ਸਰਕਾਰੀ ਸੇਧ ਪੜ੍ਹੋ</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_2_title">ਆਪਣੀ ਸਥਾਨਕ ਅਥਾਰਿਟੀ ਦੀ ਵੈੱਬਸਾਈਟ ਲੱਭੋ</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_links_subheading">ਹੋਰ ਸਲਾਹ ਭਾਲ ਰਹੇ ਹੋ?</string>
@@ -678,8 +678,8 @@
     <string name="risky_contact_isolation_advice_already_isolating_information">ਜੇਕਰ ਤੁਸੀਂ ਪਹਿਲਾਂ ਹੀ ਨਹੀਂ ਕਰਵਾਇਆ ਹੈ, ਤਾਂ ਤੁਹਾਨੂੰ ਜਿੰਨੀ ਜਲਦੀ ਹੋ ਸਕੇ ਇੱਕ ਮੁਫ਼ਤ COVID-19 ਟੈਸਟ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">ਤੁਸੀਂ COVID-19 ਫੈਲਾਉਣ ਦੇ ਉੱਚ ਜੋਖਮ ਹੇਠ ਆਉਂਦੇ \nਹੋ। ਘਰ ਵਿੱਚ ਰਹਿ ਕੇ ਤੁਸੀਂ ਆਪਣੇ ਆਪ ਅਤੇ ਦੂਜਿਆਂ ਨੂੰ ਸੁਰੱਖਿਅਤ ਰੱਖਣ ਵਿੱਚ ਮਦਦ ਕਰ ਸਕਦੇ ਹੋ।</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">ਜੇ ਤੁਸੀਂ ਪਹਿਲਾਂ ਹੀ ਇਹ ਨਹੀਂ ਕਰ ਲਿਆ ਹੈ, ਤਾਂ ਤੁਸੀਂ ਹੋਮ ਸਕ੍ਰੀਨ \'ਤੇ \'COVID-19 ਲਈ ਟੈਸਟ\' ਤੋਂ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰ ਸਕਦੇ ਹੋ।</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information">ਜੋਖਮ ਨੂੰ ਘਟਾਉਣ ਲਈ, ਤੁਹਾਨੂੰ 7 ਦਿਨਾਂ ਲਈ ਰੋਜ਼ਾਨਾ ਰੈਪਿਡ ਲੈਟਰਲ ਫਲੋ ਟੈਸਟ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ ਅਤੇ ਇਸਦੀ ਰਿਪੋਰਟ ਕਰਨੀ ਚਾਹੀਦੀ ਹੈ</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">ਤੁਹਾਨੂੰ ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖਣ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ ਜਦ ਤੱਕ ਤੁਹਾਡਾ ਟੈਸਟ ਪਾਜ਼ਿਟਿਵ ਨਹੀਂ ਆਉਂਦਾ ਜਾਂ ਤੁਹਾਨੂੰ ਲੱਛਣ ਨਹੀਂ ਹਨ</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information">ਤੁਸੀਂ ਹਾਲੇ ਵੀ COVID-19 ਦੀ ਪਕੜ ਵਿੱਚ ਆਉਣ ਅਤੇ ਇਸਨੂੰ ਫੈਲਾਉਣ ਦੇ ਜੋਖਮ ਵਿੱਚ ਹੋ ਸਕਦੇ ਹੋ</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">ਤੁਹਾਨੂੰ ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖਣ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">ਰਾਸ਼ਟਰੀ ਸੇਧ ਦੀ ਪਾਲਣਾ ਕਰਨਾ ਹਾਲੇ ਵੀ ਮਹੱਤਵਪੂਰਨ ਹੈ ਜਿਸ ਵਿੱਚ ਦੂਜਿਆਂ, ਖ਼ਾਸ ਕਰਕੇ ਬਜ਼ੁਰਗਾਂ ਅਤੇ ਕਮਜ਼ੋਰ ਲੋਕਾਂ, ਨਾਲ ਆਪਣਾ ਸੰਪਰਕ ਘਟਾਉਣਾ ਸ਼ਾਮਲ ਹੈ।</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">ਜੇ ਤੁਹਾਨੂੰ ਲੱਛਣ ਹਨ ਤਾਂ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰੋ।</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰੋ</string>
@@ -688,19 +688,19 @@
     <string name="risky_contact_isolation_advice_further_nhs_guidance">ਵਧੇਰੇ ਸਲਾਹ ਲਈ, ਹੇਠਾਂ ਦਿੱਤੇ ਲਿੰਕ ‘ਤੇ ਜਾਓ:</string>
     <string name="risky_contact_isolation_advice_go_back_to_home">ਵਾਪਸ ਮੁੱਖ ਸਕ੍ਰੀਨ \'ਤੇ</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">ਰਾਸ਼ਟਰੀ ਸੇਧ ਦੀ ਪਾਲਣਾ ਕਰਨਾ ਹਾਲੇ ਵੀ ਮਹੱਤਵਪੂਰਨ ਹੈ ਜਿਸ ਵਿੱਚ ਦੂਜਿਆਂ, ਖ਼ਾਸ ਕਰਕੇ ਬਜ਼ੁਰਗਾਂ ਅਤੇ ਕਮਜ਼ੋਰ ਲੋਕਾਂ, ਨਾਲ ਆਪਣਾ ਸੰਪਰਕ ਘਟਾਉਣਾ ਸ਼ਾਮਲ ਹੈ।</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_heading">ਤੁਹਾਨੂੰ ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖਣ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ ਜਦ ਤੱਕ ਤੁਹਾਡਾ ਟੈਸਟ ਪਾਜ਼ਿਟਿਵ ਨਹੀਂ ਆਉਂਦਾ ਜਾਂ ਤੁਹਾਨੂੰ ਲੱਛਣ ਨਹੀਂ ਹਨ</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_information">ਜੋਖਮ ਨੂੰ ਘਟਾਉਣ ਲਈ, ਤੁਹਾਨੂੰ 7 ਦਿਨਾਂ ਲਈ ਰੋਜ਼ਾਨਾ ਰੈਪਿਡ ਲੈਟਰਲ ਫਲੋ ਟੈਸਟ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ ਅਤੇ ਇਸਦੀ ਰਿਪੋਰਟ ਕਰਨੀ ਚਾਹੀਦੀ ਹੈ</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_heading">ਤੁਹਾਨੂੰ ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖਣ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">ਤੁਸੀਂ ਹਾਲੇ ਵੀ COVID-19 ਦੀ ਪਕੜ ਵਿੱਚ ਆਉਣ ਅਤੇ ਇਸਨੂੰ ਫੈਲਾਉਣ ਦੇ ਜੋਖਮ ਵਿੱਚ ਹੋ ਸਕਦੇ ਹੋ</string>
     <string name="risky_contact_isolation_advice_medically_exempt_research">ਜੇ ਤੁਹਾਨੂੰ ਲੱਛਣ ਹਨ ਤਾਂ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰੋ।</string>
-    <string name="risky_contact_isolation_advice_minors_information">ਜੋਖਮ ਨੂੰ ਘਟਾਉਣ ਲਈ, ਤੁਹਾਨੂੰ 7 ਦਿਨਾਂ ਲਈ ਰੋਜ਼ਾਨਾ ਰੈਪਿਡ ਲੈਟਰਲ ਫਲੋ ਟੈਸਟ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ ਅਤੇ ਇਸਦੀ ਰਿਪੋਰਟ ਕਰਨੀ ਚਾਹੀਦੀ ਹੈ</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">ਤੁਹਾਨੂੰ ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖਣ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ ਜਦ ਤੱਕ ਤੁਹਾਡਾ ਟੈਸਟ ਪਾਜ਼ਿਟਿਵ ਨਹੀਂ ਆਉਂਦਾ ਜਾਂ ਤੁਹਾਨੂੰ ਲੱਛਣ ਨਹੀਂ ਹਨ</string>
-    <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">ਤੁਹਾਨੂੰ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ ਕਿ ਤੁਸੀਂ ਇਹ ਸੁਨੇਹਾ ਕਿਸੇ ਭਰੋਸੇਮੰਦ ਬਾਲਗ ਨੂੰ ਦਿਖਾਓ।</string>
+    <string name="risky_contact_isolation_advice_minors_information">ਤੁਸੀਂ ਹਾਲੇ ਵੀ COVID-19 ਦੀ ਪਕੜ ਵਿੱਚ ਆਉਣ ਅਤੇ ਇਸਨੂੰ ਫੈਲਾਉਣ ਦੇ ਜੋਖਮ ਵਿੱਚ ਹੋ ਸਕਦੇ ਹੋ</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">ਤੁਹਾਨੂੰ ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖਣ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ</string>
+    <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">ਤੁਹਾਨੂੰ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ ਕਿ ਤੁਸੀਂ ਇਹ ਸੁਨੇਹਾ ਕਿਸੇ ਭਰੋਸੇਮੰਦ ਬਾਲਗ ਨੂੰ ਦਿਖਾਓ</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">ਜੇ ਤੁਹਾਨੂੰ ਲੱਛਣ ਹਨ ਤਾਂ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰੋ।</string>
     <string name="risky_contact_isolation_advice_new_isolation_information">ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖੋ ਅਤੇ ਮੁਫ਼ਤ COVID-19 ਟੈਸਟ ਕਰਵਾਓ</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">ਤੁਹਾਨੂੰ COVID-19 ਦੀ ਪਕੜ ਵਿੱਚ ਆਉਣ ਅਤੇ ਇਸਨੂੰ ਫੈਲਾਉਣ ਦਾ ਉੱਚ ਜੋਖਮ ਹੈ, ਭਾਵੇਂ ਤੁਹਾਨੂੰ ਕੋਈ ਲੱਛਣ ਨਾ ਹੋਣ। ਘਰ ਰਹਿ ਕੇ ਤੁਸੀਂ ਆਪਣੇ-ਆਪ ਨੂੰ ਅਤੇ ਦੂਜਿਆਂ ਨੂੰ ਸੁਰੱਖਿਅਤ ਰੱਖਣ ਵਿੱਚ ਮਦਦ ਕਰ ਸਕਦੇ ਹੋ।</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">ਇਹ ਦੇਖਣ ਲਈ ਕਿ ਤੁਹਾਨੂੰ COVID-19 ਹੈ ਜਾਂ ਨਹੀਂ ਮੁਫ਼ਤ PCR ਟੈਸਟ ਬੁੱਕ ਕਰੋ।</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">NHS ਸੇਧ</string>
     <string name="risky_contact_isolation_advice_self_isolate_for">ਇਸ ਸਮੇਂ ਲਈ ਸੈਲਫ-ਆਈਸੋਲੇਟ ਕਰੋ</string>
-    <string name="status_option_isolation_hub">ਸਵੈ-ਇਕਾਂਤ</string>
+    <string name="status_option_isolation_hub">ਖੁਦ ਨੂੰ ਅਲੱਗ ਰੱਖਣਾ (ਸਿਰਫ਼ ਵੇਲਜ਼)</string>
     <string name="test_result_negative_continue_self_isolate_nhs_guidance_label">NHS ਸੇਧ</string>
     <string name="test_result_void_continue_self_isolate_nhs_guidance_label">NHS ਸੇਧ</string>
     <string name="testing_hub_book_lfd_test_description">COVID-19 ਟੈਸਟ ਦੀਆਂ ਵੱਖ-ਵੱਖ ਕਿਸਮਾਂ ਅਤੇ ਟੈਸਟ ਕਰਾਉਣ ਦੇ ਤਰੀਕਿਆਂ ਬਾਰੇ ਜਾਣੋ</string>
@@ -744,7 +744,7 @@
     <string name="launcher_permissions_bluetooth_hint">ਆਪਣੇ ਫੋਨ ਦੀਆਂ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਬਲੂਟੁੱਥ ਨੂੰ ਚਾਲੂ ਕਰੋ</string>
     <string name="launcher_permissions_bluetooth_secondary_button">ਬਲੂਟੁੱਥ ਤੋਂ ਬਿਨਾਂ ਵਰਤੋਂ</string>
     <string name="launcher_permissions_bluetooth_title">ਬਲੂਟੁੱਥ ਤੋਂ ਬਿਨਾਂ ਸੰਪਰਕ ਟ੍ਰੇਸਿੰਗ ਕੰਮ ਨਹੀਂ ਕਰਦੀ ਹੈ</string>
-    <string name="local_statistics_main_screen_about_data_footnote_1">¹ਪਿਛਲੇ 7 ਦਿਨਾਂ ਤੋਂ ਤਬਦੀਲੀ (%1$s - %2$s)</string>
+    <string name="local_statistics_main_screen_about_data_footnote_1">¹ਪਿਛਲੇ 7 ਦਿਨਾਂ ਤੋਂ ਤਬਦੀਲੀ (%1$s - %2$s)।</string>
     <string name="local_statistics_main_screen_about_data_footnote_2">²ਪ੍ਰਤੀ 100,000 ਲੋਕਾਂ ਦੇ ਮਾਮਲੇ ਨਮੂਨਾ ਮਿਤੀ ਤਕ ਪੇਸ਼ ਕੀਤੇ ਗਏ ਹਨ (ਉਹ ਮਿਤੀ ਜਦੋਂ ਟੈਸਟ ਕੀਤੇ ਜਾ ਰਹੇ ਵਿਅਕਤੀ ਤੋਂ ਨਮੂਨਾ ਲਿਆ ਗਿਆ ਸੀ)।</string>
     <string name="local_statistics_main_screen_about_the_data_heading">ਡਾਟਾ ਬਾਰੇ</string>
     <string name="local_statistics_main_screen_cases_per_hundred_thousand">ਪ੍ਰਤੀ 100,000 ਲੋਕ ਮਾਮਲੇ²</string>
@@ -799,4 +799,20 @@
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">ਤੁਹਾਨੂੰ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ ਕਿ ਤੁਸੀਂ ਇਹ ਸੁਨੇਹਾ ਕਿਸੇ ਭਰੋਸੇਮੰਦ ਬਾਲਗ ਨੂੰ ਦਿਖਾਓ।</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">ਰਾਸ਼ਟਰੀ ਸੇਧ ਦੀ ਪਾਲਣਾ ਕਰਨਾ ਹਾਲੇ ਵੀ ਮਹੱਤਵਪੂਰਨ ਹੈ ਜਿਸ ਵਿੱਚ ਦੂਜਿਆਂ, ਖ਼ਾਸ ਕਰਕੇ ਬਜ਼ੁਰਗਾਂ ਅਤੇ ਕਮਜ਼ੋਰ ਲੋਕਾਂ, ਨਾਲ ਆਪਣਾ ਸੰਪਰਕ ਘਟਾਉਣਾ ਸ਼ਾਮਲ ਹੈ।</string>
     <string name="status_option_local_data">ਸਥਾਨਕ COVID-19 ਡਾਟਾ</string>
+    <string name="contact_case_guidance_for_contacts_in_england_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">ਜੇ ਤੁਹਾਨੂੰ COVID-19 ਦੇ ਲੱਛਣ ਹਨ ਤਾਂ PCR ਟੈਸਟ ਕਰਵਾਓ</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">ਆਪਣੇ ਪਰਿਵਾਰ ਵਿੱਚ ਉਸ ਕਿਸੇ ਵੀ ਵਿਅਕਤੀ ਨਾਲ ਨਜ਼ਦੀਕੀ ਸੰਪਰਕ ਨੂੰ ਸੀਮਿਤ ਕਰੋ ਜਿਸ ਨੂੰ COVID-19 ਹੈ</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_wear_a_mask_england">ਭੀੜ-ਭੜੱਕੇ ਵਾਲੀਆਂ, ਬੰਦ ਜਾਂ ਮਾੜੀ ਹਵਾਦਾਰੀ ਵਾਲੀਆਂ ਥਾਵਾਂ \'ਤੇ ਚਿਹਰੇ ਦੀ ਕਵਰਿੰਗ ਪਹਿਨੋ</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_work_from_home_england">ਜੇਕਰ ਤੁਹਾਡੇ ਘਰ ਵਿੱਚ ਕਿਸੇ ਨੂੰ COVID-19 ਹੈ ਤਾਂ ਜੇ ਹੋ ਸਕੇ ਤਾਂ ਘਰੋਂ ਕੰਮ ਕਰੋ</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_primary_button_title_read_guidance_england">ਨਵੀਨਤਮ COVID-19 ਸੇਧ ਪੜ੍ਹੋ</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_get_tested_before_meeting_vulnerable_people_england">ਜੇ ਤੁਹਾਨੂੰ COVID-19 ਦੇ ਲੱਛਣ ਹਨ ਤਾਂ PCR ਟੈਸਟ ਕਰਵਾਓ</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_social_distancing_england">ਆਪਣੇ ਪਰਿਵਾਰ ਵਿੱਚ ਉਸ ਕਿਸੇ ਵੀ ਵਿਅਕਤੀ ਨਾਲ ਨਜ਼ਦੀਕੀ ਸੰਪਰਕ ਨੂੰ ਸੀਮਿਤ ਕਰੋ ਜਿਸ ਨੂੰ COVID-19 ਹੈ</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_wear_a_mask_england">ਭੀੜ-ਭੜੱਕੇ ਵਾਲੀਆਂ, ਬੰਦ ਜਾਂ ਮਾੜੀ ਹਵਾਦਾਰੀ ਵਾਲੀਆਂ ਥਾਵਾਂ \'ਤੇ ਚਿਹਰੇ ਦੀ ਕਵਰਿੰਗ ਪਹਿਨੋ</string>
+    <string name="contact_case_no_isolation_under_age_limit_primary_button_title_read_guidance_england">ਨਵੀਨਤਮ COVID-19 ਸੇਧ ਪੜ੍ਹੋ</string>
+    <string name="onboarding_permissions_bluetooth_continue_button_title">ਜਾਰੀ ਰੱਖੋ</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_get_tested_before_meeting_vulnerable_people_england">ਜੇ ਤੁਹਾਨੂੰ COVID-19 ਦੇ ਲੱਛਣ ਹਨ ਤਾਂ PCR ਟੈਸਟ ਕਰਵਾਓ</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_primary_button_title_read_guidance_england">ਨਵੀਨਤਮ COVID-19 ਸੇਧ ਪੜ੍ਹੋ</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">ਆਪਣੇ ਪਰਿਵਾਰ ਵਿੱਚ ਉਸ ਕਿਸੇ ਵੀ ਵਿਅਕਤੀ ਨਾਲ ਨਜ਼ਦੀਕੀ ਸੰਪਰਕ ਨੂੰ ਸੀਮਿਤ ਕਰੋ ਜਿਸ ਨੂੰ COVID-19 ਹੈ</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">ਭੀੜ-ਭੜੱਕੇ ਵਾਲੀਆਂ, ਬੰਦ ਜਾਂ ਮਾੜੀ ਹਵਾਦਾਰੀ ਵਾਲੀਆਂ ਥਾਵਾਂ \'ਤੇ ਚਿਹਰੇ ਦੀ ਕਵਰਿੰਗ ਪਹਿਨੋ</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">ਜੇਕਰ ਤੁਹਾਡੇ ਘਰ ਵਿੱਚ ਕਿਸੇ ਨੂੰ COVID-19 ਹੈ ਤਾਂ ਜੇ ਹੋ ਸਕੇ ਤਾਂ ਘਰੋਂ ਕੰਮ ਕਰੋ</string>
 </resources>

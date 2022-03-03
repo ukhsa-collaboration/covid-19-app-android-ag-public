@@ -56,7 +56,7 @@
     <string name="you_do_not_appear_to_have_symptoms">Nid yw’n ymddangos bod gennych symptomau coronafeirws.</string>
     <string name="state_and_book_a_test">ac archebwch brawf</string>
     <string name="state_index_info">Efallai bod y coronafeirws arnoch.</string>
-    <string name="you_need_to_self_isolate">Cynghorwn chi i hunanynysu</string>
+    <string name="you_need_to_self_isolate">Hunanynysu</string>
     <string name="test_result_positive_no_self_isolation_subtitle">Er i chi brofi’n bositif, mae eich cyfnod ar gyfer hunanynysu drosodd</string>
     <string name="state_test_positive_info">Mae canlyniad eich prawf coronafirws yn bositif</string>
     <string name="state_test_void_info">Ni allem ddweud a oedd y coronafeirws arnoch.</string>
@@ -135,12 +135,12 @@
         <item quantity="other">diwrnod i fynd</item>
     </plurals>
     <plurals name="isolation_view_accessibility_description" tools:ignore="MissingQuantity">
-        <item quantity="zero">Mae angen ichi hunanynysu tan %1$s am 23:59. Mae %2$s diwrnod tan hynny.</item>
-        <item quantity="one">Mae angen ichi hunanynysu tan %1$s am 23:59. Mae %2$s diwrnod tan hynny.</item>
-        <item quantity="two">Mae angen ichi hunanynysu tan %1$s am 23:59. Mae %2$s diwrnod tan hynny.</item>
-        <item quantity="few">Mae angen ichi hunanynysu tan %1$s am 23:59. Mae %2$s diwrnod tan hynny.</item>
-        <item quantity="many">Mae angen ichi hunanynysu tan %1$s am 23:59. Mae %2$s diwrnod tan hynny.</item>
-        <item quantity="other">Mae angen ichi hunanynysu tan %1$s am 23:59. Mae %2$s diwrnod tan hynny.</item>
+        <item quantity="zero">Hunanynyswch tan %1$s am 23:59. Mae yna %2$s dd/diwrnod tan hynny.</item>
+        <item quantity="one">Hunanynyswch tan %1$s am 23:59. Mae yna %2$s diwrnod tan hynny.</item>
+        <item quantity="two">Hunanynyswch tan %1$s am 23:59. Mae yna %2$s dd/diwrnod tan hynny.</item>
+        <item quantity="few">Hunanynyswch tan %1$s am 23:59. Mae yna %2$s dd/diwrnod tan hynny.</item>
+        <item quantity="many">Hunanynyswch tan %1$s am 23:59. Mae yna %2$s dd/diwrnod tan hynny.</item>
+        <item quantity="other">Hunanynyswch tan %1$s am 23:59. Mae yna %2$s dd/diwrnod tan hynny.</item>
     </plurals>
     <plurals name="resume_contact_tracing_hours">
         <item quantity="zero">%d awr</item>
@@ -444,7 +444,7 @@
     <string name="link_test_result_symptoms_yes_accessibility">Oedd, roedd gen i symptomau.</string>
     <string name="risk_level_mass_testing_link_text">Dod o hyd i safle profi</string>
     <string name="risk_level_mass_testing_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/regular-rapid-coronavirus-tests-if-you-do-not-have-symptoms/</string>
-    <string name="risk_level_mass_testing_text">Gweld pa brofi sydd ar gael yn eich ardal ac os oes angen bwcio.</string>
+    <string name="risk_level_mass_testing_text">Darganfod mwy am brofion</string>
     <string name="risk_level_mass_testing_title">Profi yn agos i chi</string>
     <string name="venue_alert_m2_explanation">Mae risg y buoch mewn cysylltiad â\'r firws. Ni fydd tua 1 ymhob 3 o bobl sydd â COVID-19 yn dioddef unrhyw symptomau, ond eto gallant ei drosglwyddo i chi a throsglwyddo\'r risg i eraill.\n\nAm y rheswm yma, rydym yn argymell eich bod yn archebu prawf nawr. \n\nDoes dim angen i chi hunanynysu, ond dylech barhau i ddilyn y cyngor diweddaraf ar olchi dwylo\'n rheolaidd a chadw pellter cymdeithasol. Os datblygwch unrhyw symptomau, dylech chi a phobl eraill ar eich aelwyd hunanynysu ar unwaith.\n\nOs derbyniwch ganlyniad prawf positif, rhaid i chi a phobl eraill ar eich aelwyd hunanynysu ar unwaith. \n\nDoes dim angen i chi archebu prawf os ydych wedi derbyn canlyniad prawf positif yn ystod y 90 diwrnod diwethaf, oni bai fod symptomau arnoch.\n\nEwch ymlaen i ddilyn yr holl ganllawiau diweddaraf, hyd yn oed os cawsoch eich brechu.\n\nAm fwy o wybodaeth, cyngor, neu gymorth rhowch alwad i 119.</string>
     <string name="venue_alert_m2_title">Gwnaethoch chi ymweld yn ddiweddar â lleoliad lle y gallech fod wedi dod i gysylltiad ag eraill oedd â COVID-19 arnynt.</string>
@@ -638,7 +638,7 @@
     <string name="continue_to_self_isolate_for">Parhewch i hunanynysu am</string>
     <string name="exposure_notification_advised_to_self_isolate_for">Cynghorwn chi i hunanynysu am</string>
     <string name="exposure_notification_age_continue_button">Parhau</string>
-    <string name="exposure_notification_age_description">Ni fyddwn yn defnyddio’ch atebion ond i wirio a allai fod angen i chi hunanynysu.</string>
+    <string name="exposure_notification_age_description">Dim ond i roi\'r cyngor cywir i chi fyddwn ni\'n defnyddio’ch atebion.</string>
     <string name="exposure_notification_age_error_description">I barhau, mae angen i chi ddewis ateb</string>
     <string name="exposure_notification_age_error_title">Gwall</string>
     <string name="exposure_notification_age_heading">Eich oedran</string>
@@ -678,7 +678,7 @@
     <string name="exposure_notification_vaccination_status_error_title">Gwall</string>
     <string name="exposure_notification_vaccination_status_heading">Eich statws brechu</string>
     <string name="exposure_notification_vaccination_status_title">Statws brechu</string>
-    <string name="exposure_notification_warning">Efallai y bydd angen i chi hunanynysu yn ddibynnol ar eich oed, statws brechu neu gyfarwyddiadau gan y rhai sy\'n olrhain cyswllt</string>
+    <string name="exposure_notification_warning">Gallai\'r cyngor amrywio yn ddibynnol ar eich oed, statws brechu neu gyfarwyddiadau gan y rhai sy\'n olrhain cyswllt</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_1_title">Darllenwch ganllawiau diweddaraf y llywodraeth</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_2_title">Dod o hyd i wefan eich awdurdod lleol</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_links_subheading">Yn chwilio am ragor o gyngor?</string>
@@ -706,8 +706,8 @@
     <string name="risky_contact_isolation_advice_already_isolating_information">Os nad ydych eisoes wedi gwneud hynny, dylech gymryd prawf COVID-19 am ddim cyn gynted â phosibl</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">Mae gennych risg uchel o ledaenu COVID-19. Trwy aros gartref, gallwch eich cadw eich hun ac eraill yn ddiogel.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">Os nad ydych chi eisoes wedi gwneud hynny, gallwch archebu prawf PCR am ddim trwy \'Profi am COVID-19’ ar y sgrin gartref.</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information">Er mwyn lleihau risg, dylech gymryd ac adrodd ar brawf llif unffordd cyflym am 7 niwrnod</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Nid oes angen i chi hunanynysu oni bai eich bod yn profi\'n bositif neu os oes gennych chi symptomau</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information">Rydych yn dal i wynebu risg o ddal a lledaenu COVID-19</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Does dim rhaid i chi hunanynysu</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">Mae’n dal i fod yn bwysig dilyn canllawiau cenedlaethol, gan gynnwys lleihau eich cyswllt ag eraill, yn arbennig yr henoed a phobl fregus.</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">Archebwch brawf PCR am ddim os oes gennych chi symptomau.</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">Archebu prawf PCR am ddim</string>
@@ -716,19 +716,19 @@
     <string name="risky_contact_isolation_advice_further_nhs_guidance">I gael rhagor o gyngor ewch i:</string>
     <string name="risky_contact_isolation_advice_go_back_to_home">Yn ôl i’r sgrîn gartref</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">Mae’n dal i fod yn bwysig dilyn canllawiau cenedlaethol, gan gynnwys lleihau eich cyswllt ag eraill, yn arbennig yr henoed a phobl fregus.</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_heading">Nid oes angen i chi hunanynysu oni bai eich bod yn profi\'n bositif neu os oes gennych chi symptomau</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_information">Er mwyn lleihau risg, dylech gymryd ac adrodd ar brawf llif unffordd cyflym am 7 niwrnod</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_heading">Does dim rhaid i chi hunanynysu</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">Rydych yn dal i wynebu risg o ddal a lledaenu COVID-19</string>
     <string name="risky_contact_isolation_advice_medically_exempt_research">Archebwch brawf PCR am ddim os oes gennych chi symptomau.</string>
-    <string name="risky_contact_isolation_advice_minors_information">Er mwyn lleihau risg, dylech gymryd ac adrodd ar brawf llif unffordd cyflym am 7 niwrnod</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Nid oes angen i chi hunanynysu oni bai eich bod yn profi\'n bositif neu os oes gennych chi symptomau</string>
-    <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">Cynghorwn chi i ddangos y neges yma i oedolyn rydych yn ymddiried ynddo.</string>
+    <string name="risky_contact_isolation_advice_minors_information">Rydych yn dal i wynebu risg o ddal a lledaenu COVID-19</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Does dim rhaid i chi hunanynysu</string>
+    <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">Fe\'ch cynghorir i ddangos y neges hon i oedolyn dibynadwy</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">Archebwch brawf PCR am ddim os oes gennych chi symptomau.</string>
     <string name="risky_contact_isolation_advice_new_isolation_information">Hunanynyswch a chymryd prawf COVID-19 am ddim</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">Mae gennych risg uchel o ddal a lledaenu COVID-19, hyd yn oed os nad oes symptomau arnoch. Trwy aros gartref gallwch gadw eich hun a phobl eraill yn ddiogel.</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">Archebwch brawf PCR am ddim i weld a oes COVID-19 arnoch.</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">Canllawiau’r GIG</string>
     <string name="risky_contact_isolation_advice_self_isolate_for">Hunanynyswch am</string>
-    <string name="status_option_isolation_hub">Hunanynysu</string>
+    <string name="status_option_isolation_hub">Hunanynysu (Cymru yn unig)</string>
     <string name="test_result_negative_continue_self_isolate_nhs_guidance_label">Canllawiau’r GIG</string>
     <string name="test_result_void_continue_self_isolate_nhs_guidance_label">Canllawiau’r GIG</string>
     <string name="testing_hub_book_lfd_test_description">Darganfod am y gwahanol fathau o brawf COVID-19 a sut i gael prawf</string>
@@ -839,4 +839,20 @@
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">Cynghorwn chi i ddangos y neges yma i oedolyn rydych yn ymddiried ynddo.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">Mae’n dal i fod yn bwysig dilyn canllawiau cenedlaethol, gan gynnwys lleihau eich cyswllt ag eraill, yn arbennig yr henoed a phobl fregus.</string>
     <string name="status_option_local_data">Data COVID-19 lleol</string>
+    <string name="contact_case_guidance_for_contacts_in_england_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">Cymerwch brawf PCR os oes gennych chi symptomau COVID-19</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">Cyfyngwch gyswllt agos gydag unrhyw un yn eich aelwyd sydd â COVID-19</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_wear_a_mask_england">Gwisgwch orchudd wyneb mewn lleoliadau prysur, amgaeedig neu sydd heb eu hawyru’n dda</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_work_from_home_england">Gweithiwch o gartref os gallwch os oes gan rywun yn eich aelwyd COVID-19</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_primary_button_title_read_guidance_england">Darllenwch y canllaw COVID-19 diweddaraf</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_get_tested_before_meeting_vulnerable_people_england">Cymerwch brawf PCR os oes gennych chi symptomau COVID-19</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_social_distancing_england">Cyfyngwch gyswllt agos gydag unrhyw un yn eich aelwyd sydd â COVID-19</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_wear_a_mask_england">Gwisgwch orchudd wyneb mewn lleoliadau prysur, amgaeedig neu sydd heb eu hawyru’n dda</string>
+    <string name="contact_case_no_isolation_under_age_limit_primary_button_title_read_guidance_england">Darllenwch y canllaw COVID-19 diweddaraf</string>
+    <string name="onboarding_permissions_bluetooth_continue_button_title">Parhau</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_get_tested_before_meeting_vulnerable_people_england">Cymerwch brawf PCR os oes gennych chi symptomau COVID-19</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_primary_button_title_read_guidance_england">Darllenwch y canllaw COVID-19 diweddaraf</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">Cyfyngwch gyswllt agos gydag unrhyw un yn eich aelwyd sydd â COVID-19</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">Gwisgwch orchudd wyneb mewn lleoliadau prysur, amgaeedig neu sydd heb eu hawyru’n dda</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">Gweithiwch o gartref os gallwch os oes gan rywun yn eich aelwyd COVID-19</string>
 </resources>

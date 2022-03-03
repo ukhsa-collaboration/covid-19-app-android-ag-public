@@ -56,7 +56,7 @@
     <string name="you_do_not_appear_to_have_symptoms">আপনার মধ্যে করোনাভাইরাসের উপসর্গ পরিলক্ষিত হয়নি</string>
     <string name="state_and_book_a_test">এবং পরীক্ষা করানোর জন্য বুকিং করুন</string>
     <string name="state_index_info">আপনি সম্ভবত করোনাভাইরাসে আক্রান্ত</string>
-    <string name="you_need_to_self_isolate">আপনাকে স্ব-বিচ্ছিন্ন হতে হবে</string>
+    <string name="you_need_to_self_isolate">নিজেকে আলাদা রাখুন</string>
     <string name="test_result_negative_no_self_isolation_subtitle">আপনার স্ব-বিচ্ছিন্ন থাকা এখন সম্পন্ন হয়েছে</string>
     <string name="test_result_positive_no_self_isolation_subtitle">যদিও পরীক্ষাতে আপনার ফলাফল পজিটিভ এসেছে, তাও আপনার স্ব-বিচ্ছিন্ন থাকার সময় শেষ হয়ে গেছে।</string>
     <string name="state_test_positive_info">আপনার করোনাভাইরাস পরীক্ষার ফলাফল পজিটিভ</string>
@@ -128,8 +128,8 @@
         <item quantity="other">দিন বাকি</item>
     </plurals>
     <plurals name="isolation_view_accessibility_description" tools:ignore="MissingQuantity">
-        <item quantity="one">%1$s-এ 23:59 পর্যন্ত আপনাকে স্ব-বিচ্ছিন্ন থাকতে হবে। ততক্ষণ পর্যন্ত %2$s দিন বাকি রয়েছে।</item>
-        <item quantity="other">%1$s-এ 23:59 পর্যন্ত আপনাকে স্ব-বিচ্ছিন্ন থাকতে হবে। ততক্ষণ পর্যন্ত %2$s দিন বাকি রয়েছে।</item>
+        <item quantity="one">%1$s এ 23:59 পর্যন্ত নিজেকে আলাদা রাখুন। তখন পর্যন্ত %2$s দিন বাকি আছে।</item>
+        <item quantity="other">%1$s এ 23:59 পর্যন্ত নিজেকে আলাদা রাখুন। তখন পর্যন্ত %2$s দিন বাকি আছে।</item>
     </plurals>
     <plurals name="resume_contact_tracing_hours">
         <item quantity="one">%d ঘন্টা</item>
@@ -428,7 +428,7 @@
     <string name="link_test_result_symptoms_yes_accessibility">হ্যাঁ, আমার উপসর্গ ছিল।</string>
     <string name="risk_level_mass_testing_link_text">পরীক্ষার কেন্দ্র খোঁজ করুন</string>
     <string name="risk_level_mass_testing_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/regular-rapid-coronavirus-tests-if-you-do-not-have-symptoms/</string>
-    <string name="risk_level_mass_testing_text">আপনার এলাকায় কী কী পরীক্ষা সহজলভ্য এবং আপনাকে বুকিং দিতে হবে কিনা তা চেক করুন।</string>
+    <string name="risk_level_mass_testing_text">পরীক্ষা করার বিষয়ে জানুন</string>
     <string name="risk_level_mass_testing_title">আপনার কাছাকাছি পরীক্ষার সুযোগ</string>
     <string name="venue_alert_m2_explanation">আপনি এই ভাইরাসের সংস্পর্শে এসে থাকতে পারেন, এমন ঝুঁকি রয়েছে। যাদের দেহে কোভিড-১৯ আছে তাদের প্রতি 3 জনে প্রায় 1 জনের মধ্যে কোনো উপসর্গ থাকে না, তবুও তারা সেটি সংক্রমিত করে অন্যদের ঝুঁকিতে ফেলতে পারে।\n\nএই কারণে, আমরা এখনই একটি পরীক্ষা বুক করতে সুপারিশ করছি।\n\nআপনার স্ব-বিচ্ছিন্ন থাকার দরকার নাই, তবে নিয়মিত হাত ধোয়া এবং সামাজিক দূরত্ব বজায় রাখার ব্যাপারে সর্বশেষ পরামর্শ অনুসরণ অব্যাহত রাখা উচিত। যদি কোনো উপসর্গ দেখা দেয়, তাহলে আপনার এবং আপনার পরিবারের সাথে সাথে নিজেদেরকে স্ব-বিচ্ছিন্ন করা উচিত।\n\nযদি পরীক্ষায় আপনার পজিটিভ ধরা পড়ে, তাহলে আপনার এবং আপনার পরিবারের অন্যান্যদের সাথে সাথে নিজেদেরকে স্ব-বিচ্ছিন্ন করা আবশ্যক।\n\nআপনার যদি গত 90 দিনের মধ্যে পরীক্ষায় পজিটিভ ধরা পড়ে থাকে, তাহলে আপনার উপসর্গ দেখা না দেওয়া পর্যন্ত কোনো পরীক্ষা বুক করার দরকার নেই।\n\nআপনার টিকা দেওয়া হয়ে থাকলেও, সাম্প্রতিকতম সকল নির্দেশিকা অনুসরণ করা অব্যাহত রাখুন।\n\nআরো তথ্য, পরামর্শ বা সহায়তার জন্য দয়া করে 119 নম্বরে কল করুন।</string>
     <string name="venue_alert_m2_title">আপনি সম্প্রতি এমন কোনো জায়গায় গিয়েছিলেন যেখানে হয়তো COVID-19 আক্রান্ত অন্য লোকেদের সংস্পর্শে আসেন।</string>
@@ -610,7 +610,7 @@
     <string name="continue_to_self_isolate_for">নিজেকে আলাদা রাখা অব্যাহত রাখুন</string>
     <string name="exposure_notification_advised_to_self_isolate_for">স্ব-বিচ্ছিন্ন হন</string>
     <string name="exposure_notification_age_continue_button">চালিয়ে যান</string>
-    <string name="exposure_notification_age_description">আপনার স্ব-বিচ্ছিন্ন থাকা দরকার কিনা তা যাচাই করার জন্যই কেবল আমরা আপনার উত্তর ব্যবহার করব।</string>
+    <string name="exposure_notification_age_description">আমরা শুধুমাত্র আপনাকে সঠিক পরামর্শ দেওয়ার জন্য আপনার উত্তরগুলি ব্যবহার করব।</string>
     <string name="exposure_notification_age_error_description">অগ্রসর হতে, একটি উত্তর বেছে নিতে হবে</string>
     <string name="exposure_notification_age_error_title">ত্রুটি</string>
     <string name="exposure_notification_age_heading">আপনার বয়স</string>
@@ -650,7 +650,7 @@
     <string name="exposure_notification_vaccination_status_error_title">ত্রুটি</string>
     <string name="exposure_notification_vaccination_status_heading">আপনার টিকা দেওয়া হয়েছে কিনা</string>
     <string name="exposure_notification_vaccination_status_title">টিকাগ্রহণের অবস্থা</string>
-    <string name="exposure_notification_warning">আপনাকে আপনার বয়স, টিকাকরণের স্থিতি, বা কন্ট্যাক্ট ট্রেসারদের নির্দেশের উপর নির্ভর করে নিজেকে বিচ্ছিন্ন রাখতে হতে পারে</string>
+    <string name="exposure_notification_warning">আপনার বয়স, টিকাকরণের স্থিতি বা কন্ট্যাক্ট ট্রেসারের নির্দেশাবলীর উপর নির্ভর করে পরামর্শের পার্থক্য হতে পারে</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_1_title">সর্বশেষ সরকারি নির্দেশিকা পড়ুন</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_2_title">আপনার স্থানীয় কর্তৃপক্ষের ওয়েবসাইট হলো:</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_links_subheading">আরো পরামর্শ পেতে চান?</string>
@@ -678,8 +678,8 @@
     <string name="risky_contact_isolation_advice_already_isolating_information">আপনার যত তাড়াতাড়ি সম্ভব একটি বিনামূল্যক COVID-19 পরীক্ষা করানো উচিৎ, যদি আপনি ইতিমধ্যে তা করে না থাকেন</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">আপনি কোভিড-১৯ ছড়ানোর উচ্চ ঝুঁকিতে রয়েছেন। বাড়িতে অবস্থান করে আপনি নিজেকে ও অন্যদের সুরক্ষিত রাখতে সহায়তা করতে পারেন।</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">আপনি ইতিমধ্যে তা না করে থাকলে হোম স্ক্রিনে \'কোভিড-১৯ পরীক্ষা\'-তে গিয়ে বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করতে পারেন।</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information">ঝুঁকি কমাতে, আপনার 7 দিনের জন্য প্রতিদিন দ্রুত ল্যাটারাল ফ্লো পরীক্ষা করা এবং রিপোর্ট করা উচিত</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">আপনার পরীক্ষার ফলাফল পজিটিভ না হলে বা উপসর্গ না থাকলে আপনার নিজেকে আলাদা করার দরকার নেই</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information">আপনি এখনও COVID-19 এ আক্রান্ত হওয়া এবং তা ছড়ানোর ঝুঁকিতে থাকতে পারেন</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">আপনার নিজেকে আলাদা রাখার দরকার নেই</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">অন্যদের সঙ্গে, বিশেষ করে বয়স্ক ও ঝুঁকিগ্রস্ত মানুষদের সঙ্গে যোগাযোগ হ্রাস করা সহ, জাতীয় নির্দেশনা অনুসরণ করা এখনও গুরুত্বপূর্ণ।</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">আপনার উপসর্গ থাকলে বিনামূল্যে একটি PCR পরীক্ষা বুক করুন।</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করুন</string>
@@ -688,19 +688,19 @@
     <string name="risky_contact_isolation_advice_further_nhs_guidance">আরও পরামর্শের জন্য, অনুগ্রহ করে ভিজিট করুন:</string>
     <string name="risky_contact_isolation_advice_go_back_to_home">হোম স্ক্রিনে ফিরে যান</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">অন্যদের সঙ্গে, বিশেষ করে বয়স্ক ও ঝুঁকিগ্রস্ত মানুষদের সঙ্গে যোগাযোগ হ্রাস করা সহ, জাতীয় নির্দেশনা অনুসরণ করা এখনও গুরুত্বপূর্ণ।</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_heading">আপনার পরীক্ষার ফলাফল পজিটিভ না হলে বা উপসর্গ না থাকলে আপনার নিজেকে আলাদা করার দরকার নেই</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_information">ঝুঁকি কমাতে, আপনার 7 দিনের জন্য প্রতিদিন দ্রুত ল্যাটারাল ফ্লো পরীক্ষা করা এবং রিপোর্ট করা উচিত</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_heading">আপনার নিজেকে আলাদা রাখার দরকার নেই</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">আপনি এখনও COVID-19 এ আক্রান্ত হওয়া এবং তা ছড়ানোর ঝুঁকিতে থাকতে পারেন</string>
     <string name="risky_contact_isolation_advice_medically_exempt_research">আপনার উপসর্গ থাকলে বিনামূল্যে একটি PCR পরীক্ষা বুক করুন।</string>
-    <string name="risky_contact_isolation_advice_minors_information">ঝুঁকি কমাতে, আপনার 7 দিনের জন্য প্রতিদিন দ্রুত ল্যাটারাল ফ্লো পরীক্ষা করা এবং রিপোর্ট করা উচিত</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">আপনার পরীক্ষার ফলাফল পজিটিভ না হলে বা উপসর্গ না থাকলে আপনার নিজেকে আলাদা করার দরকার নেই</string>
-    <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">কোনো বিশ্বস্ত প্রাপ্তবয়স্ক ব্যক্তিকে এই বার্তা দেখানোর জন্য আপনাকে পরামর্শ দেওয়া হচ্ছে।</string>
+    <string name="risky_contact_isolation_advice_minors_information">আপনি এখনও COVID-19 এ আক্রান্ত হওয়া এবং তা ছড়ানোর ঝুঁকিতে থাকতে পারেন</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">আপনার নিজেকে আলাদা রাখার দরকার নেই</string>
+    <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">আপনাকে এই বার্তাটি একজন বিশ্বস্ত প্রাপ্তবয়স্ক ব্যক্তিকে দেখানোর পরামর্শ দেওয়া হচ্ছে</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">আপনার উপসর্গ থাকলে বিনামূল্যে একটি PCR পরীক্ষা বুক করুন।</string>
     <string name="risky_contact_isolation_advice_new_isolation_information">নিজেকে আলাদা করুন এবং বিনামূল্যে একটি COVID-19 পরীক্ষা করান</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">আপনার কোনো উপসর্গ না থাকলেও আপনি কোভিড-১৯-এ আক্রান্ত হওয়ার ও তা ছড়ানোর উচ্চ ঝুঁকিতে রয়েছেন। বাড়িতে অবস্থান করার মাধ্যমে আপনি নিজেকে ও অন্যদের নিরাপদে রাখতে সহায়তা করতে পারেন।</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">আপনার কোভিড-১৯ আছে কিনা জানতে বিনামূল্যে একটি পিসিআর টেস্ট বুক করুন।</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">NHS নির্দেশনা</string>
     <string name="risky_contact_isolation_advice_self_isolate_for">স্ব-বিচ্ছিন্ন হন</string>
-    <string name="status_option_isolation_hub">স্ব-বিচ্ছিন্ন থাকা</string>
+    <string name="status_option_isolation_hub">নিজেকে আলাদা রাখা (শুধুমাত্র ওয়েলস)</string>
     <string name="test_result_negative_continue_self_isolate_nhs_guidance_label">NHS নির্দেশনা</string>
     <string name="test_result_void_continue_self_isolate_nhs_guidance_label">NHS নির্দেশনা</string>
     <string name="testing_hub_book_lfd_test_description">নানা ধরণের কোভিড-১৯ পরীক্ষা ও যেভাবে পরীক্ষা করাবেন তা জানুন</string>
@@ -803,4 +803,20 @@
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">কোনো বিশ্বস্ত প্রাপ্তবয়স্ক ব্যক্তিকে এই বার্তা দেখানোর জন্য আপনাকে পরামর্শ দেওয়া হচ্ছে।</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">অন্যদের সঙ্গে, বিশেষ করে বয়স্ক ও ঝুঁকিগ্রস্ত মানুষদের সঙ্গে যোগাযোগ হ্রাস করা সহ, জাতীয় নির্দেশনা অনুসরণ করা এখনও গুরুত্বপূর্ণ।</string>
     <string name="status_option_local_data">স্থানীয় COVID-19 তথ্য</string>
+    <string name="contact_case_guidance_for_contacts_in_england_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">আপনার COVID-19 এর লক্ষণ থাকলে একটি PCR পরীক্ষা করান</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">আপনার পরিবারের এমন যে কারোর সাথে ঘনিষ্ঠ যোগাযোগ সীমিত করুন যার COVID-19 আছে</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_wear_a_mask_england">জনবহুল, চারদিক ঘেরা বা দুর্বল বায়ুচলাচলযুক্ত স্থানে মুখ ঢাকার আবরণ পরে থাকুন</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_work_from_home_england">আপনার পরিবারের কারো COVID-19 থাকলে, আপনি যদি পারেন তাহলে বাড়ি থেকে কাজ করুন</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_primary_button_title_read_guidance_england">COVID-19 সংক্রান্ত সর্বশেষ নির্দেশিকা পড়ুন</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_get_tested_before_meeting_vulnerable_people_england">আপনার COVID-19 এর লক্ষণ থাকলে একটি PCR পরীক্ষা করান</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_social_distancing_england">আপনার পরিবারের এমন যে কারোর সাথে ঘনিষ্ঠ যোগাযোগ সীমিত করুন যার COVID-19 আছে</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_wear_a_mask_england">জনবহুল, চারদিক ঘেরা বা দুর্বল বায়ুচলাচলযুক্ত স্থানে মুখ ঢাকার আবরণ পরে থাকুন</string>
+    <string name="contact_case_no_isolation_under_age_limit_primary_button_title_read_guidance_england">COVID-19 সংক্রান্ত সর্বশেষ নির্দেশিকা পড়ুন</string>
+    <string name="onboarding_permissions_bluetooth_continue_button_title">চালিয়ে যান</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_get_tested_before_meeting_vulnerable_people_england">আপনার COVID-19 এর লক্ষণ থাকলে একটি PCR পরীক্ষা করান</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_primary_button_title_read_guidance_england">COVID-19 সংক্রান্ত সর্বশেষ নির্দেশিকা পড়ুন</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">আপনার পরিবারের এমন যে কারোর সাথে ঘনিষ্ঠ যোগাযোগ সীমিত করুন যার COVID-19 আছে</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">জনবহুল, চারদিক ঘেরা বা দুর্বল বায়ুচলাচলযুক্ত স্থানে মুখ ঢাকার আবরণ পরে থাকুন</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">আপনার পরিবারের কারো COVID-19 থাকলে, আপনি যদি পারেন তাহলে বাড়ি থেকে কাজ করুন</string>
 </resources>

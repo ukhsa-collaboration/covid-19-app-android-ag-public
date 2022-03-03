@@ -198,7 +198,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
         exposureNotificationReviewRobot.clickSubmitButton()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMinorViewState(country = ENGLAND, Default)
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsNotIsolatingAsMinorViewState(country = ENGLAND, Default)
     }
 
     @Test

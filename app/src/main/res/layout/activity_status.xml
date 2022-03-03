@@ -142,7 +142,8 @@
                     app:optionExternalLink="false"
                     app:optionIcon="@drawable/ic_venue_check_in"
                     app:optionIconBackgroundColor="@color/style_purple"
-                    app:optionText="@string/status_option_scan_qr_codes" />
+                    app:optionText="@string/status_option_scan_qr_codes"
+                    android:visibility="gone"/>
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
                     android:id="@+id/optionLocalData"

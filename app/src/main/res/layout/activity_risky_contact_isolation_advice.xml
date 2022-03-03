@@ -6,7 +6,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include android:id="@+id/primaryToolbar" layout="@layout/view_toolbar_background" />
+    <include
+        android:id="@+id/primaryToolbar"
+        layout="@layout/view_toolbar_background" />
 
     <ScrollView
         android:id="@+id/riskyContactIsolationAdviceContainer"
@@ -79,20 +81,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/risky_contact_isolation_advice_faq_button_title"
-                app:linkUrl="@string/url_common_questions" />
+                android:visibility="gone"
+                app:linkUrl="@string/url_common_questions"
+                tools:visibility="visible" />
 
             <TextView
+                android:id="@+id/furtherAdviceTextView"
                 style="@style/Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/risky_contact_isolation_advice_further_nhs_guidance" />
+                android:text="@string/risky_contact_isolation_advice_further_nhs_guidance"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                android:id="@+id/nhsGuidanceLinkTextView"
                 style="@style/LinkText.WithIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/risky_contact_isolation_advice_nhs_guidance_link_text"
-                app:linkUrl="@string/url_nhs_guidance" />
+                android:visibility="gone"
+                app:linkUrl="@string/url_nhs_guidance"
+                tools:visibility="visible" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/primaryActionButton"
@@ -100,7 +110,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"
-                tools:text="@string/risky_contact_isolation_advice_book_pcr_test" />
+                tools:text="@string/contact_case_no_isolation_fully_vaccinated_primary_button_title_read_guidance_england" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/secondaryActionButton"

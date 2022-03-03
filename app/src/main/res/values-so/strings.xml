@@ -8,8 +8,8 @@
         <item quantity="other">maalmood ayaa ka hartay</item>
     </plurals>
     <plurals name="isolation_view_accessibility_description">
-        <item quantity="one">Waxaad u baahan tahay inaad isgo\'doomisid ila %1$s markay tahay 23:59. Waxaa jira %2$s maalmood ilaa iyo markaas.</item>
-        <item quantity="other">Waxaad u baahan tahay inaad isgo\'doomisid ila %1$s markay tahay 23:59. Waxaa jira %2$s maalmood ilaa iyo markaas.</item>
+        <item quantity="one">Is gooniyey illaa %1$s saacada 23:59. Waxaa jiro %2$s maalmood la aado illaa kadib.</item>
+        <item quantity="other">Is gooniyey illaa %1$s saacada 23:59. Waxaa jiro %2$s maalmood la aado illaa kadib.</item>
     </plurals>
     <plurals name="resume_contact_tracing_hours">
         <item quantity="one">%d sacad</item>
@@ -324,7 +324,7 @@
     <string name="venue_alert_title">Waxaad dhawaan booqatay goob isla maalintaas ay dad kale oo laga helay coronavirus (COVID-19) ay booqdeen</string>
     <string name="visit_the_link_to_find_out_more">Booqo marrinka si aad wax badan uga ogaato</string>
     <string name="you_do_not_appear_to_have_symptoms">Uma muuqato inaad leedahay astaamaha coronavirus</string>
-    <string name="you_need_to_self_isolate">Waxaad u baahan tahay inaad isu-go’doomisid</string>
+    <string name="you_need_to_self_isolate">Is gooniyey</string>
     <string name="your_isolation_will_finish">Is-go\'doomintaadu waxay dhammaan doontaa  %1$s markay tahay 23:59</string>
     <string name="notification_text_potential_exposure_explanation">Ha welwelin, waan qiimeynay halistaada mana loo baahna in tallaabo la qaado xilligan. Fadlan sii wad feejignaanta oo raac talooyinka ugu dambeeya ee ku saabsan kala fogaanshaha bulshada.</string>
     <string name="notification_title_potential_exposure_explanation">Hubinta Soo-gaarista COVID-19 wala Dhammeeyay</string>
@@ -429,7 +429,7 @@
     <string name="link_test_result_symptoms_yes_accessibility">Haa, waan lahaa astaamo.</string>
     <string name="risk_level_mass_testing_link_text">Raadi goob baaritaan</string>
     <string name="risk_level_mass_testing_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/regular-rapid-coronavirus-tests-if-you-do-not-have-symptoms/</string>
-    <string name="risk_level_mass_testing_text">Hubi wixii baaritaanka ee laga heli karo aaggaaga iyo haddii aad u baahan tahay inaad ballan samaysato.</string>
+    <string name="risk_level_mass_testing_text">Baro wax ku saabsan baaritaanka</string>
     <string name="risk_level_mass_testing_title">Baaritaanka kuu dhow</string>
     <string name="venue_alert_m2_explanation">Halis baa jiri karta in lagu qaadsiiyay coronavirus. Qiyaastii 3dii qof ee qaba COVID-19 mid kamid ah ma laha wax astaamo ah, laakiin wali wey faafin karaan waxayna halis galin karaa dadka kale.\n\nSababtaan awgeed, waxaan kugula talineynaa inaad ballan qabsatid hadda.\n\nUma baahnid inaad is-go\'doomisid, laakiin waa inaad sii raacda tallooyinka ugu dambeeya ee ku saabsan gacmahaaga oo aad si joogto ah u dhaqdo iyo kala fogaanshaha bulshada. Adiga iyo qoyskaagaba waa inaad isla markaaba is-go\'doomisaan haddii aad isku aragtaan wax calaamado ah.\n\nHaddii laga helo cudurka, adiga iyo dadka kale ee qoyskaaga ka mid ah, waa in ay isla markaaba is-go\'doomisaan.\n\nUma baahnid inaad baaritaan ballansatid haddii laga helay cudurka 90-kii maalmood ee la soo dhaafay, illaa aad astaamo isku aragtay mooyee.\n\nFadlan sii raac dhammaan tilmaamaha ugu dambeeyay, xitaa haddii lagu tallaalay.\n\nWixii macluumaad dheeraad ah, talo, ama taageero fadlan wac 119.</string>
     <string name="venue_alert_m2_title">Waxaad dhowaan booqatay goob laga yaabo in COVID-19 ay kugu qaadsiiyeen dad kale.</string>
@@ -611,7 +611,7 @@
     <string name="continue_to_self_isolate_for">Sii wad inaad is-go\'doomiso ilaa</string>
     <string name="exposure_notification_advised_to_self_isolate_for">Is-go’doomi ilaa</string>
     <string name="exposure_notification_age_continue_button">Sii wad</string>
-    <string name="exposure_notification_age_description">Waxaannu kaliya u isticmaali doonnaa jawaabahaaga si aan u hubinno haddii aad u baahan tahay inaad is-go\'doomiso.</string>
+    <string name="exposure_notification_age_description">Waxaanu keliya u adeegsan doonaa jawaabahaaga si aan kuu siino talada saxda ah</string>
     <string name="exposure_notification_age_error_description">Si aad u sii waddo, waxaad u baahan tahay inaad doorato jawaab</string>
     <string name="exposure_notification_age_error_title">Cillad</string>
     <string name="exposure_notification_age_heading">Da\'daada</string>
@@ -651,7 +651,7 @@
     <string name="exposure_notification_vaccination_status_error_title">Cillad</string>
     <string name="exposure_notification_vaccination_status_heading">Marxaladdaada tallalka</string>
     <string name="exposure_notification_vaccination_status_title">Marxaaladda tallaalka</string>
-    <string name="exposure_notification_warning">Waxaa laga yaabaa inaadan u baahan inaad is gooniyeysid, illaamaa si toos ah ay kuugu sheegaan raadraacayaasha u dhawaanshaha</string>
+    <string name="exposure_notification_warning">Talada way ku kala duwanaan kartaa iyadoo ku xirantahay da\'daada, heerkaaga tallaalka, ama tilmaamaha ka yimaada dabagalyaasha xiriirka</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_1_title">Akhriso tilmaamiha ugu dambeeyay ee dawlada</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_2_title">Raadi degelka maamulka golaha deegaankaaga</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_links_subheading">Ma raadinaysaa talo dheeraad ah?</string>
@@ -679,8 +679,8 @@
     <string name="risky_contact_isolation_advice_already_isolating_information">Haddii aadan goor hore sidaa samaynin, waa inaad sida ugu dhakhsaha badan oo suurtagalka ah u qaadataa baatitaan COVID-19 oo bilaash ah</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">Waxaad halis weyn ugu jirtaa inaad faafiso COVID-19. Markaad guriga joogto waxaad gacan ka geysan kartaa inaad naftaada iyo dadka kaleba badbaadiso.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">Haddii aadan sidaas samayn, waxaad baaritaan PCR oo lacag la\'aan ah ee \'Baaritaanka COVID-19\' ka ballansan kartaa shaashadda soo-dhoweynta.</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information">Si aad u yareyso khatarta, waa inaad qaadataa oo aad ka warbixsaa baaritaanka socdaalka dambe ee degdega oo maalinlaha ah ee 7 maalmood</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Uma baahnid inaad is-gooniyeeesho ilaa lagaa helo cudurka ama aad leedahay calaamado</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information">Waxaad weli khatar ugu jiri kartaa qaadida iyo faafinta COVID-19</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Uma baahnid in aad is-go\'doomiso</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">Weli waa muhiim in la raaco hagida habraaca qaranka, oo ay ku jirto yareynta xiriirka dadka kale, gaar ahaan dadka waayeelka ah iyo kuwa nugul.</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">Qabso baaritaan PCR oo bilaash ah, xitaa haddii aad leedahay astaamo.</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">Ballanso baaritaan PCR oo lacag la\'aan ah</string>
@@ -689,19 +689,19 @@
     <string name="risky_contact_isolation_advice_further_nhs_guidance">Wixii talo dheeri ah, fadlan booqo:</string>
     <string name="risky_contact_isolation_advice_go_back_to_home">Ku laabo shaashadda soo-dhoweynta</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">Weli waa muhiim in la raaco hagida habraaca qaranka, oo ay ku jirto yareynta xiriirka dadka kale, gaar ahaan dadka waayeelka ah iyo kuwa nugul.</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_heading">Uma baahnid in aad is-gooniyeeesho ilaa lagaa helo cudurka ama aad leedahay calaamado</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_information">Si aad u yareyso khatarta, waa inaad qaadataa oo aad ka warbixsaa baaritaanka socdaalka dambe ee degdega oo maalinlaha ah ee 7 maalmood</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_heading">Uma baahnid in aad is-go\'doomiso</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">Waxaad weli khatar ugu jiri kartaa qaadida iyo faafinta COVID-19</string>
     <string name="risky_contact_isolation_advice_medically_exempt_research">Qabso baaritaan PCR oo bilaash ah, xitaa haddii aad leedahay astaamo.</string>
-    <string name="risky_contact_isolation_advice_minors_information">Si aad u yareyso khatarta, waa inaad qaadataa oo aad ka warbixsaa baaritaanka socdaalka dambe ee degdega oo maalinlaha ah ee 7 maalmood</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Uma baahnid in aad is-gooniyeeesho ilaa lagaa helo cudurka ama aad leedahay calaamado</string>
-    <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">Waxaa lagugula talinayaa inaad fariintan tustid qof weyn oo aad ku kalsoon tahay.</string>
+    <string name="risky_contact_isolation_advice_minors_information">Waxaad weli khatar ugu jiri kartaa qaadida iyo faafinta COVID-19</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Uma baahnid in aad is-go\'doomiso</string>
+    <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">Waxaa lagula talinayaa in aad tusto fariintaan qof weyn oo lagu kalsoon yahay</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">Qabso baaritaan PCR oo bilaash ah, xitaa haddii aad leedahay astaamo.</string>
     <string name="risky_contact_isolation_advice_new_isolation_information">Is gooniyey oo qaado baaritaanka bilaashka ah ee COVID-19</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">Waxaad halis weyn ugu jirtaa inuu kugu dhaco iyo in aad faafiso COVID-19, xitaa haddii aadan lahayn wax astaamo ah. Markaad guriga joogto waxaad gacan ka geysan kartaa inaad naftaada iyo dadka kaleba badbaadiso.</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">Ballanso baaritaan PCR oo lacag la\'aan ah si aad u ogaato haddii aad leedahay COVID-19.</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">Hagaha NHS</string>
     <string name="risky_contact_isolation_advice_self_isolate_for">Is-go\'doomi ilaa</string>
-    <string name="status_option_isolation_hub">Is-go\'doominta</string>
+    <string name="status_option_isolation_hub">Is go\'doominta (Wales oo Keliya)</string>
     <string name="test_result_negative_continue_self_isolate_nhs_guidance_label">Hagaha NHS</string>
     <string name="test_result_void_continue_self_isolate_nhs_guidance_label">Hagaha NHS</string>
     <string name="testing_hub_book_lfd_test_description">Ogow noocyada kala duwan ee baaritaanka COVID-19 iyo sida la iskaga baaro</string>
@@ -804,4 +804,20 @@
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">Waxaa lagugula talinayaa inaad fariintan tustid qof weyn oo aad ku kalsoon tahay.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">Weli waa muhiim in la raaco hagida habraaca qaranka, oo ay ku jirto yareynta xiriirka dadka kale, gaar ahaan dadka waayeelka ah iyo kuwa nugul.</string>
     <string name="status_option_local_data">Xogta COVID-19 ee Godaha</string>
+    <string name="contact_case_guidance_for_contacts_in_england_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">Qaado baaritaanka PCR haddii aad leedahay astaamaha COVID-19</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">Xaddid isku dhawaanshaha dhow oo lala yeeshta qof kasta oo kamid ah qoyskiina oo qaba COVID-19</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_wear_a_mask_england">Ku xiro daboolaha wajiga meelaha dadka badan, goobaha xiran ama aadka u hawada yar</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_work_from_home_england">Kasoo shaqeey guriga haddii aad awoodo haddii qof qoyskiina ka mid ah uu qabo COVID-19</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_primary_button_title_read_guidance_england">Akhri tilmaamaha ugu dambeeya ee COVID-19</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_get_tested_before_meeting_vulnerable_people_england">Qaado baaritaanka PCR haddii aad leedahay astaamaha COVID-19</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_social_distancing_england">Xaddid isku dhawaanshaha dhow oo lala yeeshta qof kasta oo kamid ah qoyskiina oo qaba COVID-19</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_wear_a_mask_england">Ku xiro daboolaha wajiga meelaha dadka badan, goobaha xiran ama aadka u hawada yar</string>
+    <string name="contact_case_no_isolation_under_age_limit_primary_button_title_read_guidance_england">Akhri tilmaamaha ugu dambeeya ee COVID-19</string>
+    <string name="onboarding_permissions_bluetooth_continue_button_title">Sii Wad</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_get_tested_before_meeting_vulnerable_people_england">Qaado baaritaanka PCR haddii aad leedahay astaamaha COVID-19</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_primary_button_title_read_guidance_england">Akhri tilmaamaha ugu dambeeya ee COVID-19</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">Xaddid isku dhawaanshaha dhow oo lala yeeshta qof kasta oo kamid ah qoyskiina oo qaba COVID-19</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">Ku xiro daboolaha wajiga meelaha dadka badan, goobaha xiran ama aadka u hawada yar</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">Kasoo shaqeey guriga haddii aad awoodo haddii qof qoyskiina ka mid ah uu qabo COVID-19</string>
 </resources>

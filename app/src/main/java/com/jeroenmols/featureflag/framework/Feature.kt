@@ -57,6 +57,12 @@ enum class FeatureFlag(
         "Local Covid Stats page",
         "Show Local Covid Stats page",
         defaultValue = false
+    ),
+    VENUE_CHECK_IN_BUTTON(
+        "feature.VenueCheckIn",
+        "Venue check-in Home Screen button",
+        "Show Venue check-in Home Screen button",
+        defaultValue = false
     )
 }
 

@@ -122,6 +122,13 @@
                     app:layout_constraintStart_toStartOf="@id/venueCheckInTitle"
                     app:layout_constraintTop_toBottomOf="@id/venueCheckInTitle" />
 
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/venueCheckInGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:constraint_referenced_ids="venueCheckInIcon,venueCheckInTitle,venueCheckInText" />
+
                 <ImageView
                     android:id="@+id/checkSymptomsIcon"
                     android:layout_width="48dp"

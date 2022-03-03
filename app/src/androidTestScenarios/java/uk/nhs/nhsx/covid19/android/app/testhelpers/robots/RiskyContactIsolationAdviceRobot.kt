@@ -24,7 +24,10 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceT
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
+import uk.nhs.nhsx.covid19.android.app.testhelpers.assertBrowserIsOpened
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.IconTextViewMatcher.Companion.withIconAndText
+import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.TextViewDrawableMatcher.Companion.withTextViewHasDrawableEnd
+import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.TextViewDrawableMatcher.Companion.withTextViewNoDrawable
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateColor
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateStringResource
 import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
@@ -40,19 +43,43 @@ class RiskyContactIsolationAdviceRobot {
         }
     }
 
-    fun checkIsInNotIsolatingAsMinorViewState(country: SupportedCountry, testingAdviceToShow: TestingAdviceToShow) {
+    fun checkIsNotIsolatingAsMinorViewState(country: SupportedCountry, testingAdviceToShow: TestingAdviceToShow) {
         val adviceValues = when (country) {
             ENGLAND -> RiskyContactIsolationAdviceValues(
                 title = R.string.risky_contact_isolation_advice_minors_no_self_isolation_required,
                 banner = R.string.risky_contact_isolation_advice_minors_information,
-                adviceOne = R.string.risky_contact_isolation_advice_minors_testing_advice,
-                adviceTwo = R.string.risky_contact_isolation_advice_minors_show_to_adult_advice
+                adviceOne =
+                RiskyContactIsolationAdviceEntry(
+                    text = R.string.risky_contact_isolation_advice_minors_show_to_adult_advice,
+                    image = R.drawable.ic_family
+                ),
+                adviceTwo =
+                RiskyContactIsolationAdviceEntry(
+                    text = R.string.contact_case_no_isolation_under_age_limit_list_item_social_distancing_england,
+                    image = R.drawable.ic_social_distancing
+                ),
+                adviceThree = RiskyContactIsolationAdviceEntry(
+                    text = R.string.contact_case_no_isolation_under_age_limit_list_item_get_tested_before_meeting_vulnerable_people_england,
+                    image = R.drawable.ic_get_free_test
+                ),
+                adviceFour = RiskyContactIsolationAdviceEntry(
+                    text = R.string.contact_case_no_isolation_under_age_limit_list_item_wear_a_mask_england,
+                    image = R.drawable.ic_mask
+                )
             )
             WALES -> RiskyContactIsolationAdviceValues(
                 title = R.string.risky_contact_isolation_advice_minors_no_self_isolation_required_wls,
                 banner = R.string.risky_contact_isolation_advice_minors_information_wls,
-                adviceOne = R.string.risky_contact_isolation_advice_minors_testing_advice_wls,
-                adviceTwo = R.string.risky_contact_isolation_advice_minors_show_to_adult_advice_wls
+                adviceOne =
+                RiskyContactIsolationAdviceEntry(
+                    text = R.string.risky_contact_isolation_advice_minors_testing_advice_wls,
+                    image = R.drawable.ic_social_distancing
+                ),
+                adviceTwo =
+                RiskyContactIsolationAdviceEntry(
+                    text = R.string.risky_contact_isolation_advice_minors_show_to_adult_advice_wls,
+                    image = R.drawable.ic_family
+                )
             )
         }
 
@@ -71,33 +98,74 @@ class RiskyContactIsolationAdviceRobot {
             }
 
         checkAdviceList {
-            checkAdvice(
-                stringResId = adviceValues.adviceOne,
-                drawableRes = R.drawable.ic_social_distancing
-            )
-            checkAdvice(
-                stringResId = adviceValues.adviceTwo,
-                drawableRes = R.drawable.ic_family
-            )
-            if (testingAdviceToShow is WalesWithinAdviceWindow) {
-                val formattedDate = testingAdviceToShow.date.uiLongFormat(context)
-                val expectedString = context.getString(
-                    R.string.contact_case_no_isolation_under_age_limit_list_item_testing_with_date,
-                    formattedDate
+            with(adviceValues) {
+                checkAdvice(
+                    stringResId = adviceOne.text,
+                    drawableRes = adviceOne.image
                 )
-                checkAdvice(text = expectedString, drawableRes = R.drawable.ic_get_free_test)
+                checkAdvice(
+                    stringResId = adviceTwo.text,
+                    drawableRes = adviceTwo.image
+                )
+                if (adviceThree != null)
+                    checkAdvice(
+                        stringResId = adviceThree.text,
+                        drawableRes = adviceThree.image
+                    )
+                if (adviceFour != null)
+                    checkAdvice(
+                        stringResId = adviceFour.text,
+                        drawableRes = adviceFour.image
+                    )
+                if (testingAdviceToShow is WalesWithinAdviceWindow) {
+                    val formattedDate = testingAdviceToShow.date.uiLongFormat(context)
+                    val expectedString = context.getString(
+                        R.string.contact_case_no_isolation_under_age_limit_list_item_testing_with_date,
+                        formattedDate
+                    )
+                    checkAdvice(text = expectedString, drawableRes = R.drawable.ic_get_free_test)
+                }
             }
         }
 
-        onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
-            .perform(scrollTo())
-            .check(matches(withText(R.string.risky_contact_isolation_advice_faq_button_title)))
-        onView(withId(R.id.primaryActionButton))
-            .perform(scrollTo())
-            .check(matches(withText(R.string.risky_contact_isolation_advice_book_pcr_test)))
-        onView(withId(R.id.secondaryActionButton))
-            .perform(scrollTo())
-            .check(matches(withText(R.string.risky_contact_isolation_advice_go_back_to_home)))
+        when (country) {
+            ENGLAND -> {
+                onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
+                    .check(matches(not(isDisplayed())))
+                onView(withId(R.id.furtherAdviceTextView))
+                    .check(matches(not(isDisplayed())))
+                onView(withId(R.id.nhsGuidanceLinkTextView))
+                    .check(matches(not(isDisplayed())))
+                onView(withId(R.id.primaryActionButton))
+                    .perform(scrollTo())
+                    .check(matches(withText(R.string.contact_case_no_isolation_under_age_limit_primary_button_title_read_guidance_england)))
+                onView(withId(R.id.primaryActionButton)).check(matches(withTextViewHasDrawableEnd()))
+                onView(withId(R.id.secondaryActionButton))
+                    .perform(scrollTo())
+                    .check(matches(withText(R.string.risky_contact_isolation_advice_go_back_to_home)))
+                assertBrowserIsOpened(R.string.contact_case_guidance_for_contacts_in_england_url) {
+                    clickPrimaryButton()
+                }
+            }
+            else -> {
+                onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
+                    .perform(scrollTo())
+                    .check(matches(withText(R.string.risky_contact_isolation_advice_faq_button_title)))
+                onView(withId(R.id.furtherAdviceTextView))
+                    .perform(scrollTo())
+                    .check(matches(withText(R.string.risky_contact_isolation_advice_further_nhs_guidance)))
+                onView(withId(R.id.nhsGuidanceLinkTextView))
+                    .perform(scrollTo())
+                    .check(matches(withText(R.string.risky_contact_isolation_advice_nhs_guidance_link_text)))
+                onView(withId(R.id.primaryActionButton))
+                    .perform(scrollTo())
+                    .check(matches(withText(R.string.risky_contact_isolation_advice_book_pcr_test)))
+                onView(withId(R.id.primaryActionButton)).check(matches(withTextViewNoDrawable()))
+                onView(withId(R.id.secondaryActionButton))
+                    .perform(scrollTo())
+                    .check(matches(withText(R.string.risky_contact_isolation_advice_go_back_to_home)))
+            }
+        }
     }
 
     fun checkIsInNotIsolatingAsFullyVaccinatedViewState(
@@ -108,14 +176,40 @@ class RiskyContactIsolationAdviceRobot {
             ENGLAND -> RiskyContactIsolationAdviceValues(
                 title = R.string.risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required,
                 banner = R.string.risky_contact_isolation_advice_already_vaccinated_information,
-                adviceOne = R.string.risky_contact_isolation_advice_already_vaccinated_vaccine_research,
-                adviceTwo = R.string.risky_contact_isolation_advice_already_vaccinated_testing_advice
+                adviceOne =
+                RiskyContactIsolationAdviceEntry(
+                    text = R.string.contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england,
+                    image = R.drawable.ic_social_distancing
+                ),
+                adviceTwo =
+                RiskyContactIsolationAdviceEntry(
+                    text = R.string.contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england,
+                    image = R.drawable.ic_get_free_test
+                ),
+                adviceThree =
+                RiskyContactIsolationAdviceEntry(
+                    text = R.string.contact_case_no_isolation_fully_vaccinated_list_item_wear_a_mask_england,
+                    image = R.drawable.ic_mask
+                ),
+                adviceFour =
+                RiskyContactIsolationAdviceEntry(
+                    text = R.string.contact_case_no_isolation_fully_vaccinated_list_item_work_from_home_england,
+                    image = R.drawable.ic_work_from_home
+                ),
             )
             WALES -> RiskyContactIsolationAdviceValues(
                 title = R.string.risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required_wls,
                 banner = R.string.risky_contact_isolation_advice_already_vaccinated_information_wls,
-                adviceOne = R.string.risky_contact_isolation_advice_already_vaccinated_vaccine_research_wls,
-                adviceTwo = R.string.risky_contact_isolation_advice_already_vaccinated_testing_advice_wls
+                adviceOne =
+                RiskyContactIsolationAdviceEntry(
+                    text = R.string.risky_contact_isolation_advice_already_vaccinated_vaccine_research_wls,
+                    image = R.drawable.ic_info
+                ),
+                adviceTwo =
+                RiskyContactIsolationAdviceEntry(
+                    text = R.string.risky_contact_isolation_advice_already_vaccinated_testing_advice_wls,
+                    image = R.drawable.ic_social_distancing
+                )
             )
         }
 
@@ -134,35 +228,62 @@ class RiskyContactIsolationAdviceRobot {
             }
 
         checkAdviceList {
-            checkAdvice(
-                stringResId = adviceValues.adviceOne,
-                drawableRes = R.drawable.ic_info
-            )
-            checkAdvice(
-                stringResId = adviceValues.adviceTwo,
-                drawableRes = R.drawable.ic_social_distancing
-            )
-            if (testingAdviceToShow is WalesWithinAdviceWindow) {
-                val formattedDate = testingAdviceToShow.date.uiLongFormat(context)
-                val expectedString = context.getString(
-                    R.string.contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date,
-                    formattedDate
+            with(adviceValues) {
+                checkAdvice(
+                    stringResId = adviceOne.text,
+                    drawableRes = adviceOne.image
                 )
-                checkAdvice(text = expectedString, drawableRes = R.drawable.ic_get_free_test)
+                checkAdvice(
+                    stringResId = adviceTwo.text,
+                    drawableRes = adviceTwo.image
+                )
+                if (adviceThree != null)
+                    checkAdvice(
+                        stringResId = adviceThree.text,
+                        drawableRes = adviceThree.image
+                    )
+                if (adviceFour != null)
+                    checkAdvice(
+                        stringResId = adviceFour.text,
+                        drawableRes = adviceFour.image
+                    )
+                if (testingAdviceToShow is WalesWithinAdviceWindow) {
+                    val formattedDate = testingAdviceToShow.date.uiLongFormat(context)
+                    val expectedString = context.getString(
+                        R.string.contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date,
+                        formattedDate
+                    )
+                    checkAdvice(text = expectedString, drawableRes = R.drawable.ic_get_free_test)
+                }
             }
         }
-        onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
-            .perform(scrollTo())
-            .check(matches(withText(R.string.risky_contact_isolation_advice_faq_button_title)))
-        onView(withId(R.id.primaryActionButton))
-            .perform(scrollTo())
-            .check(matches(withText(R.string.risky_contact_isolation_advice_book_pcr_test)))
+
+        when (country) {
+            ENGLAND -> {
+                onView(withId(R.id.primaryActionButton))
+                    .perform(scrollTo())
+                    .check(matches(withText(R.string.contact_case_no_isolation_fully_vaccinated_primary_button_title_read_guidance_england)))
+                onView(withId(R.id.primaryActionButton)).check(matches(withTextViewHasDrawableEnd()))
+                onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
+                    .check(matches(not(isDisplayed())))
+            }
+            WALES -> {
+                onView(withId(R.id.primaryActionButton))
+                    .perform(scrollTo())
+                    .check(matches(withText(R.string.risky_contact_isolation_advice_book_pcr_test)))
+                onView(withId(R.id.primaryActionButton)).check(matches(withTextViewNoDrawable()))
+                onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
+                    .perform(scrollTo())
+                    .check(matches(withText(R.string.risky_contact_isolation_advice_faq_button_title)))
+            }
+        }
+
         onView(withId(R.id.secondaryActionButton))
             .perform(scrollTo())
             .check(matches(withText(R.string.risky_contact_isolation_advice_go_back_to_home)))
     }
 
-    fun checkIsInNotIsolatingAsMedicallyExemptViewState() {
+    fun checkIsInNotIsolatingAsMedicallyExemptViewStateForEngland() {
         onView(withId(R.id.riskyContactIsolationAdviceTitle))
             .perform(scrollTo())
             .check(matches(withText(R.string.risky_contact_isolation_advice_medically_exempt_heading)))
@@ -178,24 +299,28 @@ class RiskyContactIsolationAdviceRobot {
             }
         checkAdviceList {
             checkAdvice(
-                stringResId = R.string.risky_contact_isolation_advice_medically_exempt_research,
-                drawableRes = R.drawable.ic_info
-            )
-            checkAdvice(
-                stringResId = R.string.risky_contact_isolation_advice_medically_exempt_group,
-                drawableRes = R.drawable.ic_group_of_people
-            )
-            checkAdvice(
-                stringResId = R.string.risky_contact_isolation_advice_medically_exempt_advice,
+                stringResId = R.string.risky_contact_isolation_advice_medically_exempt_social_distancing_england,
                 drawableRes = R.drawable.ic_social_distancing
+            )
+            checkAdvice(
+                stringResId = R.string.risky_contact_isolation_advice_medically_exempt_get_tested_before_meeting_vulnerable_people_england,
+                drawableRes = R.drawable.ic_get_free_test
+            )
+            checkAdvice(
+                stringResId = R.string.risky_contact_isolation_advice_medically_exempt_wear_a_mask_england,
+                drawableRes = R.drawable.ic_mask
+            )
+            checkAdvice(
+                stringResId = R.string.risky_contact_isolation_advice_medically_exempt_work_from_home_england,
+                drawableRes = R.drawable.ic_work_from_home
             )
         }
         onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
-            .perform(scrollTo())
-            .check(matches(withText(R.string.risky_contact_isolation_advice_faq_button_title)))
+            .check(matches(not(isDisplayed())))
         onView(withId(R.id.primaryActionButton))
             .perform(scrollTo())
-            .check(matches(withText(R.string.risky_contact_isolation_advice_book_pcr_test)))
+            .check(matches(withText(R.string.risky_contact_isolation_advice_medically_exempt_primary_button_title_read_guidance_england)))
+        onView(withId(R.id.primaryActionButton)).check(matches(withTextViewHasDrawableEnd()))
         onView(withId(R.id.secondaryActionButton))
             .perform(scrollTo())
             .check(matches(withText(R.string.risky_contact_isolation_advice_go_back_to_home)))
@@ -221,7 +346,10 @@ class RiskyContactIsolationAdviceRobot {
                 if (testingAdviceToShow is WalesWithinAdviceWindow) {
                     val formattedDate = testingAdviceToShow.date.uiLongFormat(context)
                     val expectedString =
-                        context.getString(R.string.contact_case_start_isolation_list_item_testing_with_date, formattedDate)
+                        context.getString(
+                            R.string.contact_case_start_isolation_list_item_testing_with_date,
+                            formattedDate
+                        )
                     Values(
                         adviceOne = expectedString,
                         buttonTitle = R.string.contact_case_start_isolation_primary_button_title_wales
@@ -269,6 +397,8 @@ class RiskyContactIsolationAdviceRobot {
             .perform(scrollTo())
             .check(matches(withText(values.buttonTitle)))
 
+        onView(withId(R.id.primaryActionButton)).check(matches(withTextViewNoDrawable()))
+
         onView(withId(R.id.secondaryActionButton))
             .perform(scrollTo())
             .check(matches(withText(R.string.risky_contact_isolation_advice_go_back_to_home)))
@@ -313,6 +443,7 @@ class RiskyContactIsolationAdviceRobot {
         onView(withId(R.id.primaryActionButton))
             .perform(scrollTo())
             .check(matches(withText(R.string.risky_contact_isolation_advice_already_isolating_acknowledge_button_text)))
+        onView(withId(R.id.primaryActionButton)).check(matches(withTextViewNoDrawable()))
         onView(withId(R.id.secondaryActionButton))
             .check(matches(withEffectiveVisibility(GONE)))
     }
@@ -370,7 +501,14 @@ class RiskyContactIsolationAdviceRobot {
     private data class RiskyContactIsolationAdviceValues(
         @StringRes val title: Int,
         @StringRes val banner: Int,
-        @StringRes val adviceOne: Int,
-        @StringRes val adviceTwo: Int
+        @StringRes val adviceOne: RiskyContactIsolationAdviceEntry,
+        @StringRes val adviceTwo: RiskyContactIsolationAdviceEntry,
+        @StringRes val adviceThree: RiskyContactIsolationAdviceEntry? = null,
+        @StringRes val adviceFour: RiskyContactIsolationAdviceEntry? = null,
+    )
+
+    private data class RiskyContactIsolationAdviceEntry(
+        @StringRes val text: Int,
+        @DrawableRes val image: Int
     )
 }

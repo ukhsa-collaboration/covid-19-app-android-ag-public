@@ -6,6 +6,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
+import com.google.android.material.button.MaterialButton
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
@@ -27,10 +29,13 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationA
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsFullyVaccinated
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsMedicallyExempt
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceViewModel.ViewState.NotIsolatingAsMinor
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
 import uk.nhs.nhsx.covid19.android.app.util.uiLongFormat
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.openInExternalBrowserForResult
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
@@ -93,7 +98,8 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
         val orderedPcrTest =
             requestCode == TestOrderingActivity.REQUEST_CODE_ORDER_A_TEST && resultCode == Activity.RESULT_OK
         val orderedLfdTest = requestCode == REQUEST_ORDER_LFD
-        if (orderedPcrTest || orderedLfdTest) {
+        val readGuidanceForContacts = requestCode == REQUEST_READ_GUIDANCE
+        if (orderedPcrTest || orderedLfdTest || readGuidanceForContacts) {
             navigateToStatusActivity()
         }
     }
@@ -140,7 +146,7 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
                 else
                     handleNotIsolatingAsFullyVaccinatedForWales(viewState.testingAdviceToShow)
             }
-            NotIsolatingAsMedicallyExempt -> handleNotIsolatingAsMedicallyExempt()
+            NotIsolatingAsMedicallyExempt -> handleNotIsolatingAsMedicallyExemptForEngland()
         }
     }
 
@@ -259,13 +265,27 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
             getString(R.string.risky_contact_isolation_advice_already_vaccinated_information)
 
         adviceContainer.removeAllViews()
-        addAdvice(R.string.risky_contact_isolation_advice_already_vaccinated_vaccine_research, R.drawable.ic_info)
         addAdvice(
-            R.string.risky_contact_isolation_advice_already_vaccinated_testing_advice,
+            R.string.contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england,
             R.drawable.ic_social_distancing
         )
+        addAdvice(
+            R.string.contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england,
+            R.drawable.ic_get_free_test
+        )
+        addAdvice(
+            R.string.contact_case_no_isolation_fully_vaccinated_list_item_wear_a_mask_england,
+            R.drawable.ic_mask
+        )
+        addAdvice(
+            R.string.contact_case_no_isolation_fully_vaccinated_list_item_work_from_home_england,
+            R.drawable.ic_work_from_home
+        )
 
-        setupActionButtonsForNotIsolating()
+        setupActionButtonsForNotIsolating(
+            country = ENGLAND,
+            primaryButtonTitle = R.string.contact_case_no_isolation_fully_vaccinated_primary_button_title_read_guidance_england
+        )
         setAccessibilityTitle(isIsolating = false)
     }
 
@@ -289,7 +309,10 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
             )
         }
 
-        setupActionButtonsForNotIsolating()
+        setupActionButtonsForNotIsolating(
+            country = WALES,
+            primaryButtonTitle = R.string.risky_contact_isolation_advice_book_pcr_test
+        )
         setAccessibilityTitle(isIsolating = false)
     }
 
@@ -301,10 +324,21 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
             getString(R.string.risky_contact_isolation_advice_minors_information)
 
         adviceContainer.removeAllViews()
-        addAdvice(R.string.risky_contact_isolation_advice_minors_testing_advice, R.drawable.ic_social_distancing)
         addAdvice(R.string.risky_contact_isolation_advice_minors_show_to_adult_advice, R.drawable.ic_family)
+        addAdvice(
+            R.string.contact_case_no_isolation_under_age_limit_list_item_social_distancing_england,
+            R.drawable.ic_social_distancing
+        )
+        addAdvice(
+            R.string.contact_case_no_isolation_under_age_limit_list_item_get_tested_before_meeting_vulnerable_people_england,
+            R.drawable.ic_get_free_test
+        )
+        addAdvice(R.string.contact_case_no_isolation_under_age_limit_list_item_wear_a_mask_england, R.drawable.ic_mask)
 
-        setupActionButtonsForNotIsolating()
+        setupActionButtonsForNotIsolating(
+            country = ENGLAND,
+            primaryButtonTitle = R.string.contact_case_no_isolation_under_age_limit_primary_button_title_read_guidance_england
+        )
         setAccessibilityTitle(isIsolating = false)
     }
 
@@ -325,11 +359,14 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
         addAdvice(R.string.risky_contact_isolation_advice_minors_testing_advice_wls, R.drawable.ic_social_distancing)
         addAdvice(R.string.risky_contact_isolation_advice_minors_show_to_adult_advice_wls, R.drawable.ic_family)
 
-        setupActionButtonsForNotIsolating()
+        setupActionButtonsForNotIsolating(
+            country = WALES,
+            primaryButtonTitle = R.string.risky_contact_isolation_advice_book_pcr_test
+        )
         setAccessibilityTitle(isIsolating = false)
     }
 
-    private fun handleNotIsolatingAsMedicallyExempt() = with(binding) {
+    private fun handleNotIsolatingAsMedicallyExemptForEngland() = with(binding) {
         riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_book_test)
         riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_medically_exempt_heading)
         riskyContactIsolationAdviceRemainingDaysInIsolation.gone()
@@ -337,25 +374,64 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
             getString(R.string.risky_contact_isolation_advice_medically_exempt_information)
 
         adviceContainer.removeAllViews()
-        addAdvice(R.string.risky_contact_isolation_advice_medically_exempt_research, R.drawable.ic_info)
-        addAdvice(R.string.risky_contact_isolation_advice_medically_exempt_group, R.drawable.ic_group_of_people)
-        addAdvice(R.string.risky_contact_isolation_advice_medically_exempt_advice, R.drawable.ic_social_distancing)
+        addAdvice(
+            R.string.risky_contact_isolation_advice_medically_exempt_social_distancing_england,
+            R.drawable.ic_social_distancing
+        )
+        addAdvice(
+            R.string.risky_contact_isolation_advice_medically_exempt_get_tested_before_meeting_vulnerable_people_england,
+            R.drawable.ic_get_free_test
+        )
+        addAdvice(
+            R.string.risky_contact_isolation_advice_medically_exempt_wear_a_mask_england,
+            R.drawable.ic_mask
+        )
+        addAdvice(
+            R.string.risky_contact_isolation_advice_medically_exempt_work_from_home_england,
+            R.drawable.ic_work_from_home
+        )
 
-        setupActionButtonsForNotIsolating()
+        setupActionButtonsForNotIsolating(
+            country = ENGLAND,
+            primaryButtonTitle = R.string.risky_contact_isolation_advice_medically_exempt_primary_button_title_read_guidance_england
+        )
         setAccessibilityTitle(isIsolating = false)
     }
 
-    private fun setupActionButtonsForNotIsolating() = with(binding) {
-        riskyContactIsolationAdviceCommonQuestions.visible()
-        primaryActionButton.setText(R.string.risky_contact_isolation_advice_book_pcr_test)
-        primaryActionButton.setOnSingleClickListener {
-            viewModel.onBookPcrTestClicked()
+    private fun setupActionButtonsForNotIsolating(country: SupportedCountry, @StringRes primaryButtonTitle: Int) =
+        with(binding) {
+            when (country) {
+                ENGLAND -> {
+                    riskyContactIsolationAdviceCommonQuestions.gone()
+                    furtherAdviceTextView.gone()
+                    nhsGuidanceLinkTextView.gone()
+
+                    showPrimaryButtonIcon(showIcon = true)
+                    primaryActionButton.setText(primaryButtonTitle)
+                    primaryActionButton.setOnSingleClickListener {
+                        openInExternalBrowserForResult(
+                            getString(R.string.contact_case_guidance_for_contacts_in_england_url),
+                            REQUEST_READ_GUIDANCE
+                        )
+                    }
+                }
+                else -> {
+                    riskyContactIsolationAdviceCommonQuestions.visible()
+                    furtherAdviceTextView.visible()
+                    nhsGuidanceLinkTextView.visible()
+
+                    showPrimaryButtonIcon(showIcon = false)
+                    primaryActionButton.setText(primaryButtonTitle)
+                    primaryActionButton.setOnSingleClickListener {
+                        viewModel.onBookPcrTestClicked()
+                    }
+                }
+            }
+            secondaryActionButton.setOnSingleClickListener {
+                viewModel.onBackToHomeClicked()
+            }
+            secondaryActionButton.visible()
         }
-        secondaryActionButton.setOnSingleClickListener {
-            viewModel.onBackToHomeClicked()
-        }
-        secondaryActionButton.visible()
-    }
 
     private fun addAdvice(@StringRes stringResId: Int, @DrawableRes drawableResId: Int) =
         binding.adviceContainer.addView(
@@ -376,6 +452,16 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
             riskyContactIsolationAdviceTitle.text
         }
         riskyContactIsolationAdviceRemainingDaysInIsolationContainer.setUpAccessibilityHeading()
+    }
+
+    private fun showPrimaryButtonIcon(showIcon: Boolean) {
+        if (showIcon) {
+            binding.primaryActionButton.icon = ContextCompat.getDrawable(this, R.drawable.ic_link)
+            binding.primaryActionButton.iconGravity = MaterialButton.ICON_GRAVITY_TEXT_END
+            binding.primaryActionButton.iconPadding = 8.dpToPx.toInt()
+        } else {
+            binding.primaryActionButton.icon = null
+        }
     }
 
     companion object {
@@ -419,6 +505,7 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
 
         const val OPT_OUT_OF_CONTACT_ISOLATION_EXTRA = "OPT_OUT_OF_CONTACT_ISOLATION_EXTRA"
         const val REQUEST_ORDER_LFD = 1002
+        const val REQUEST_READ_GUIDANCE = 1003
     }
 
     enum class OptOutOfContactIsolationExtra {

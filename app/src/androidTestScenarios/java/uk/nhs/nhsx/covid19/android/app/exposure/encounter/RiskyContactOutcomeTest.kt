@@ -55,7 +55,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMinorViewState(country = ENGLAND, testingAdviceToShow = Default)
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsNotIsolatingAsMinorViewState(country = ENGLAND, testingAdviceToShow = Default)
     }
 
     @Test
@@ -298,7 +298,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMedicallyExemptViewState()
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMedicallyExemptViewStateForEngland()
     }
 
     @Test
@@ -337,7 +337,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMedicallyExemptViewState()
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMedicallyExemptViewStateForEngland()
     }
 
     //endregion

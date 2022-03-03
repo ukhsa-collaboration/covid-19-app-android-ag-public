@@ -1,6 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.Default
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.WalesWithinAdviceWindow
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.Companion.OPT_OUT_OF_CONTACT_ISOLATION_EXTRA
@@ -10,6 +12,10 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationA
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity.OptOutOfContactIsolationExtra.NONE
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
+import uk.nhs.nhsx.covid19.android.app.report.Reported
+import uk.nhs.nhsx.covid19.android.app.report.Reporter
+import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
+import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.assertBrowserIsOpened
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -20,7 +26,8 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import java.time.LocalDate
 
-class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHelper, LocalAuthoritySetupHelper {
+@RunWith(Parameterized::class)
+class RiskyContactIsolationAdviceActivityTest(override val configuration: TestConfiguration) : EspressoTest(), IsolationSetupHelper, LocalAuthoritySetupHelper {
 
     private val robot = RiskyContactIsolationAdviceRobot()
     private val statusRobot = StatusRobot()
@@ -30,7 +37,13 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
 
     // region Minor
     @Test
-    fun startRiskyContactIsolationAdviceAsMinorAsEnglishUser_thenDisplayActivityWithMinorViewState() {
+    @Reported
+    fun startRiskyContactIsolationAdviceAsMinorAsEnglishUser_thenDisplayActivityWithMinorViewState() = reporter(
+        scenario = "Risky contact isolation advice",
+        title = "Risky contact isolation advice for minor - England",
+        description = "Risky contact isolation advice for minor - England",
+        kind = Reporter.Kind.SCREEN
+    ) {
         givenLocalAuthorityIsInEngland()
         givenContactIsolation()
         startTestActivity<RiskyContactIsolationAdviceActivity> {
@@ -38,11 +51,18 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
         }
 
         robot.checkActivityIsDisplayed()
-        robot.checkIsInNotIsolatingAsMinorViewState(country = ENGLAND, testingAdviceToShow = Default)
+        robot.checkIsNotIsolatingAsMinorViewState(country = ENGLAND, testingAdviceToShow = Default)
+        step("Minor in England", "Shows isolation advice for minor in England")
     }
 
     @Test
-    fun startRiskyContactIsolationAdviceAsMinor_asWelshUser_6DaysAfterExposure_thenDisplayMinor_withDefaultTestAdvice() {
+    @Reported
+    fun startRiskyContactIsolationAdviceAsMinor_asWelshUser_6DaysAfterExposure_thenDisplayMinor_withDefaultTestAdvice() = reporter(
+        scenario = "Risky contact isolation advice",
+        title = "Risky contact isolation advice for minor - Wales",
+        description = "Risky contact isolation advice for minor after 6 days exposure - Wales",
+        kind = Reporter.Kind.SCREEN
+    ) {
         givenLocalAuthorityIsInWales()
         givenContactIsolation(exposureDaysAgo = 6)
 
@@ -51,11 +71,18 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
         }
 
         robot.checkActivityIsDisplayed()
-        robot.checkIsInNotIsolatingAsMinorViewState(country = WALES, testingAdviceToShow = Default)
+        robot.checkIsNotIsolatingAsMinorViewState(country = WALES, testingAdviceToShow = Default)
+        step("Minor in Wales", "Shows isolation advice for minor in Wales")
     }
 
     @Test
-    fun startRiskyContactIsolationAdviceAsMinor_asWelshUser_5DaysAfterExposure_thenDisplayMinor_withTestAdviceWithDate() {
+    @Reported
+    fun startRiskyContactIsolationAdviceAsMinor_asWelshUser_5DaysAfterExposure_thenDisplayMinor_withTestAdviceWithDate() = reporter(
+        scenario = "Risky contact isolation advice",
+        title = "Risky contact isolation advice for minor - Wales",
+        description = "Risky contact isolation advice for minor after 5 days exposure - Wales",
+        kind = Reporter.Kind.SCREEN
+    ) {
         givenLocalAuthorityIsInWales()
         givenContactIsolation(exposureDaysAgo = 5)
 
@@ -66,16 +93,23 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
         val pcrAdviceDate = LocalDate.now(testAppContext.clock).plusDays(3)
 
         robot.checkActivityIsDisplayed()
-        robot.checkIsInNotIsolatingAsMinorViewState(
+        robot.checkIsNotIsolatingAsMinorViewState(
             country = WALES,
             testingAdviceToShow = WalesWithinAdviceWindow(date = pcrAdviceDate)
         )
+        step("Minor in Wales", "Shows isolation advice for minor in Wales")
     }
     // endregion
 
     // region FullyVaccinated
     @Test
-    fun startRiskyContactIsolationAdviceAsFullyVaccinatedAsEnglishUser_thenDisplayActivityWithFullyVaccinatedViewState() {
+    @Reported
+    fun startRiskyContactIsolationAdviceAsFullyVaccinatedAsEnglishUser_thenDisplayActivityWithFullyVaccinatedViewState() = reporter(
+        scenario = "Risky contact isolation advice",
+        title = "Risky contact isolation advice for fully vaccinated - England",
+        description = "Risky contact isolation advice for fully vaccinated - England",
+        kind = Reporter.Kind.SCREEN
+    ) {
         givenLocalAuthorityIsInEngland()
         givenContactIsolation()
         startTestActivity<RiskyContactIsolationAdviceActivity> {
@@ -84,10 +118,17 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
 
         robot.checkActivityIsDisplayed()
         robot.checkIsInNotIsolatingAsFullyVaccinatedViewState(country = ENGLAND, testingAdviceToShow = Default)
+        step("Fully vaccinated in England", "Shows isolation advice for fully vaccinated in England")
     }
 
     @Test
-    fun startRiskyContactIsolationAdviceAsFullyVaccinated_asWelshUser_6DaysAfterExposure_thenDisplayFullyVaccinated_withDefaultTestAdvice() {
+    @Reported
+    fun startRiskyContactIsolationAdviceAsFullyVaccinated_asWelshUser_6DaysAfterExposure_thenDisplayFullyVaccinated_withDefaultTestAdvice() = reporter(
+        scenario = "Risky contact isolation advice",
+        title = "Risky contact isolation advice for fully vaccinated - Wales",
+        description = "Risky contact isolation advice for fully vaccinated after 6 days exposure - Wales",
+        kind = Reporter.Kind.SCREEN
+    ) {
         givenLocalAuthorityIsInWales()
         givenContactIsolation(exposureDaysAgo = 6)
 
@@ -97,10 +138,17 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
 
         robot.checkActivityIsDisplayed()
         robot.checkIsInNotIsolatingAsFullyVaccinatedViewState(country = WALES, testingAdviceToShow = Default)
+        step("Fully vaccinated in Wales", "Shows isolation advice for fully vaccinated in Wales")
     }
 
     @Test
-    fun startRiskyContactIsolationAdviceAsFullyVaccinated_asWelshUser_5DaysAfterExposure_thenDisplayFullyVaccinated_withTestAdviceWithDate() {
+    @Reported
+    fun startRiskyContactIsolationAdviceAsFullyVaccinated_asWelshUser_5DaysAfterExposure_thenDisplayFullyVaccinated_withTestAdviceWithDate() = reporter(
+        scenario = "Risky contact isolation advice",
+        title = "Risky contact isolation advice for fully vaccinated - Wales",
+        description = "Risky contact isolation advice for fully vaccinated after 5 days exposure - Wales",
+        kind = Reporter.Kind.SCREEN
+    ) {
         givenLocalAuthorityIsInWales()
         givenContactIsolation(exposureDaysAgo = 5)
 
@@ -115,12 +163,19 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
             country = WALES,
             testingAdviceToShow = WalesWithinAdviceWindow(date = pcrAdviceDate)
         )
+        step("Fully vaccinated in Wales", "Shows isolation advice for fully vaccinated in Wales")
     }
     // endregion
 
     // region MedicallyExempt
     @Test
-    fun startRiskyContactIsolationAdviceAsMedicallyExempt() {
+    @Reported
+    fun startRiskyContactIsolationAdviceAsMedicallyExempt() = reporter(
+        scenario = "Risky contact isolation advice",
+        title = "Risky contact isolation advice for medically exempt - England",
+        description = "Risky contact isolation advice for medically exempt - England",
+        kind = Reporter.Kind.SCREEN
+    ) {
         givenLocalAuthorityIsInEngland()
         givenContactIsolation()
         startTestActivity<RiskyContactIsolationAdviceActivity> {
@@ -128,7 +183,8 @@ class RiskyContactIsolationAdviceActivityTest : EspressoTest(), IsolationSetupHe
         }
 
         robot.checkActivityIsDisplayed()
-        robot.checkIsInNotIsolatingAsMedicallyExemptViewState()
+        robot.checkIsInNotIsolatingAsMedicallyExemptViewStateForEngland()
+        step("Medically exempt in England", "Shows isolation advice for medically exempt in England")
     }
     // endregion
 

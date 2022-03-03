@@ -8,6 +8,8 @@ import android.os.Parcelable
 import android.provider.Settings
 import androidx.core.view.isVisible
 import com.google.android.material.snackbar.Snackbar
+import com.jeroenmols.featureflag.framework.FeatureFlag.VENUE_CHECK_IN_BUTTON
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.android.parcel.Parcelize
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.about.MoreAboutAppActivity
@@ -167,6 +169,7 @@ class StatusActivity : StatusBaseActivity() {
             handleReportSymptomsState(viewState.showReportSymptomsButton)
             handleLocalMessageState(viewState.localMessage)
         }
+        binding.optionVenueCheckIn.isVisible = RuntimeBehavior.isFeatureEnabled(VENUE_CHECK_IN_BUTTON)
     }
 
     private fun handleLocalMessageState(localMessage: NotificationMessage?) = with(binding) {

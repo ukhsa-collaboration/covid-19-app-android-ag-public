@@ -56,7 +56,7 @@
     <string name="you_do_not_appear_to_have_symptoms">لا يبدو لديك أعراض الإصابة بفيروس كورونا</string>
     <string name="state_and_book_a_test">وحجز موعدٍ لإجراء الاختبار</string>
     <string name="state_index_info">ربما تكون مُصابًا بفيروس كورونا</string>
-    <string name="you_need_to_self_isolate">تحتاج إلى تطبيق العزل الذاتي</string>
+    <string name="you_need_to_self_isolate">أعزل نفسك</string>
     <string name="test_result_positive_no_self_isolation_subtitle">على الرغم من تسجيلك لنتيجة إيجابية في الاختبار، إلا أن مدة العزل الذاتي لك قد انتهت</string>
     <string name="state_test_positive_info">نتيجة اختبار الكشف عن إصابتك بفيروس كورونا إيجابية</string>
     <string name="state_test_void_info">تعذّر علينا إخبارك عمّا إذا كنت مُصابًا بفيروس كورونا</string>
@@ -135,12 +135,12 @@
         <item quantity="other">أيام للخروج</item>
     </plurals>
     <plurals name="isolation_view_accessibility_description" tools:ignore="MissingQuantity">
-        <item quantity="zero">تحتاج إلى عزل نفسك ذاتيًا حتى %1$s في تمام الساعة 23:59. يتبقى لك %2$s يوم للخروج حتى ذلك الحين.</item>
-        <item quantity="one">تحتاج إلى عزل نفسك ذاتيًا حتى %1$s في تمام الساعة 23:59. يتبقى لك %2$s يوم للخروج حتى ذلك الحين.</item>
-        <item quantity="two">تحتاج إلى عزل نفسك ذاتيًا حتى %1$s في تمام الساعة 23:59. يتبقى لك %2$s يوم للخروج حتى ذلك الحين.</item>
-        <item quantity="few">تحتاج إلى عزل نفسك ذاتيًا حتى %1$s في تمام الساعة 23:59. يتبقى لك %2$s يوم للخروج حتى ذلك الحين.</item>
-        <item quantity="many">تحتاج إلى عزل نفسك ذاتيًا حتى %1$s في تمام الساعة 23:59. يتبقى لك %2$s يوم للخروج حتى ذلك الحين.</item>
-        <item quantity="other">تحتاج إلى عزل نفسك ذاتيًا حتى %1$s في تمام الساعة 23:59. يتبقى لك %2$s يوم للخروج حتى ذلك الحين.</item>
+        <item quantity="zero">أعزل نفسك حتى %1$s الساعة 23:59. يتبقى %2$s أيام حتى ذلك الحين.</item>
+        <item quantity="one">أعزل نفسك حتى %1$s الساعة 23:59. يتبقى %2$s يوم حتى ذلك الحين.</item>
+        <item quantity="two">أعزل نفسك حتى %1$s الساعة 23:59. يتبقى %2$s أيام حتى ذلك الحين.</item>
+        <item quantity="few">أعزل نفسك حتى %1$s الساعة 23:59. يتبقى %2$s أيام حتى ذلك الحين.</item>
+        <item quantity="many">أعزل نفسك حتى %1$s الساعة 23:59. يتبقى %2$s أيام حتى ذلك الحين.</item>
+        <item quantity="other">أعزل نفسك حتى %1$s الساعة 23:59. يتبقى %2$s أيام حتى ذلك الحين.</item>
     </plurals>
     <plurals name="resume_contact_tracing_hours">
         <item quantity="zero">%d ساعة</item>
@@ -444,7 +444,7 @@
     <string name="link_test_result_symptoms_yes_accessibility">نعم، كان لديّ أعراضٌ.</string>
     <string name="risk_level_mass_testing_link_text">البحث عن موقعٍ لإجراء الاختبارات</string>
     <string name="risk_level_mass_testing_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/regular-rapid-coronavirus-tests-if-you-do-not-have-symptoms/</string>
-    <string name="risk_level_mass_testing_text">استفسر عن الاختبارات المتوفرة في منطقتك وما إذا كنت تحتاج إلى حجز أحدها.</string>
+    <string name="risk_level_mass_testing_text">معرفة المزيد عن الاختبارات</string>
     <string name="risk_level_mass_testing_title">إجراء الاختبار بالقرب منك</string>
     <string name="venue_alert_m2_explanation">ثمة احتمالٌ بأنك قد تعرَّضت للإصابة بالفيروس. يوجد شخصٌ من بين كل 3 أشخاصٍ مُصابين بفيروس كوفيد-19 لا تظهر عليه أيّ أعراضٍ، ولكنه قد يتسبب في تفشي الفيروس وتعريض حياة الآخرين للخطر.\n\nلذلك السبب، نوصيك بطلب حجز اختبارٍ الآن.\n\nلا يجب عليك الخضوع للعزل الذاتي، ولكن ينبغي لك مواصلة اتّباع أحدث النصائح المتعلقة بغسل اليدين بانتظام والحفاظ على مسافة التباعد الجسدي. يجب عليك وعلى أفراد أسرتك الخضوع للعزل الذاتي على الفور إذا ظهر عليكم أيّ أعراضٍ للإصابة بالفيروس.\n\nفي حال تسجيلك أو أيّ فردٍ آخر في أسرتك نتيجة إيجابية في اختبار الكشف عن الإصابة بالفيروس، يتعين عليكم الخضوع للعزل الذاتي على الفور.\n\nلا تحتاج إلى حجز اختبارٍ في حال تسجيلك نتيجة إيجابية في اختبار الكشف عن الإصابة بالفيروس خلال الأيام التسعين الماضية، ما لم تظهر عليك أعراض الإصابة.\n\nيُرجى مواصلة اتّباع أحدث الإرشادات، حتى إذا كنت قد حصلت على تحصينٍ ضد الفيروس.\n\nلمزيدٍ من المعلومات أو النصائح أو الدعم، يُرجى الاتصال على الرقم: 119.</string>
     <string name="venue_alert_m2_title">زرت مؤخرًا مكانًا ما يُحتمل أنك قد خالطت فيه أشخاصًا آخرين مُصابين بفيروس كوفيد-19.</string>
@@ -638,7 +638,7 @@
     <string name="continue_to_self_isolate_for">الاستمرار في العزل الذاتي لمدة</string>
     <string name="exposure_notification_advised_to_self_isolate_for">العزل الذاتي لمدة</string>
     <string name="exposure_notification_age_continue_button">استمرار</string>
-    <string name="exposure_notification_age_description">يُرجى العلم بأننا سنستخدم إجاباتك فقط للتحقق من مدى حاجتك لتطبيق العزل الذاتي.</string>
+    <string name="exposure_notification_age_description">سنستخدم اجاباتك لإعطائك فقط النصائح الصحيحة.</string>
     <string name="exposure_notification_age_error_description">للاستمرار، يجب تحديد إجابة ما</string>
     <string name="exposure_notification_age_error_title">خطأ</string>
     <string name="exposure_notification_age_heading">عمرك</string>
@@ -678,7 +678,7 @@
     <string name="exposure_notification_vaccination_status_error_title">خطأ</string>
     <string name="exposure_notification_vaccination_status_heading">حالة تحصينك ضد الفيروس</string>
     <string name="exposure_notification_vaccination_status_title">حالة التحصين ضد الفيروس</string>
-    <string name="exposure_notification_warning">قد تحتاج الى العزل الذاتي والذي يتوقف على عمرك وحالة التطعيم أو التعليمات من جهات تتبع الاتصال</string>
+    <string name="exposure_notification_warning">قد تختلف النصائح حسب عمرك، حالة التطعيم أو التعليمات من جهات تتبع الأتصال</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_1_title">اقرأ أحدث الإرشادات الحكومية</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_2_title">ابحث عن الموقع الإلكتروني للسلطة المحلية لديك</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_links_subheading">هل تبحث عن المزيد من النصائح؟</string>
@@ -706,8 +706,8 @@
     <string name="risky_contact_isolation_advice_already_isolating_information">إذا لم تكن قد فعلت ذلك قبل الآن، يجب عليك إجراء اختبار COVID-19 مجاني في أسرع وقت ممكن</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">من المُحتمل بدرجة كبيرة أن تتسبّب في تفشي فيروس كوفيد-19. من شأن بقائك في المنزل أن يساعد في الحفاظ على سلامتك وسلامة الآخرين على السواء.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">يمكنك حجز أحد اختبارات PCR المجانية من زرِّ \"إجراء اختبار فيروس كوفيد-19\" الموجود على الشاشة الرئيسية؛ إذا لم يكن قد سبق لك القيام بذلك بالفعل.</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information">للحد من المخاطر، يجب عليك إجراء اختبار التدفق الجانبي السريع والإبلاغ عنه يوميا لمدة 7 أيام</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">لا تحتاج الى العزل الذاتي إلا إذا كانت نتيجة اختبارك إيجابية أو ظهرت عليك أعراض الفيروس</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information">لايزال من الممكن أن تكون معرضا لخطر الأصابة بفيروس COVID-19 ونشره</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">لا تحتاج الى العزلة الذاتية</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">لا يزال من المهم اتباع الإرشادات الوطنية، بما في ذلك الحد من الاختلاط بالآخرين، وبصفة خاصة كبار السن والمعرضين للإصابة بالأمراض.</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">احجز اختبار PCR مجاني، إذا كانت لديك أعراض.</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">حجز اختبار PCR مجاني</string>
@@ -716,19 +716,19 @@
     <string name="risky_contact_isolation_advice_further_nhs_guidance">للاطلاع على المزيد من النصائح، يرجى زيارة الموقع الإلكتروني:</string>
     <string name="risky_contact_isolation_advice_go_back_to_home">الرجوع إلى الشاشة الرئيسية</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">لا يزال من المهم اتباع الإرشادات الوطنية، بما في ذلك الحد من الاختلاط بالآخرين، وبصفة خاصة كبار السن والمعرضين للإصابة بالأمراض.</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_heading">لا تحتاج الى العزل الذاتي إلا إذا كانت نتيجة اختبارك إيجابية أو ظهرت عليك أعراض الفيروس</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_information">للحد من المخاطر، يجب عليك إجراء اختبار التدفق الجانبي السريع والإبلاغ عنه يوميا لمدة 7 أيام</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_heading">لا تحتاج الى العزلة الذاتية</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">لايزال من الممكن أن تكون معرضا لخطر الأصابة بفيروس COVID-19 ونشره</string>
     <string name="risky_contact_isolation_advice_medically_exempt_research">احجز اختبار PCR مجاني، إذا كانت لديك أعراض.</string>
-    <string name="risky_contact_isolation_advice_minors_information">للحد من المخاطر، يجب عليك إجراء اختبار التدفق الجانبي السريع والإبلاغ عنه يوميا لمدة 7 أيام</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">لا تحتاج الى العزل الذاتي إلا إذا كانت نتيجة اختبارك إيجابية أو ظهرت عليك أعراض الفيروس</string>
-    <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">نوصيك بعرض هذه الرسالة على شخصٍ بالغٍ محل ثقةٍ لديك.</string>
+    <string name="risky_contact_isolation_advice_minors_information">لايزال من الممكن أن تكون معرضا لخطر الأصابة بفيروس COVID-19 ونشره</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">لا تحتاج الى العزلة الذاتية</string>
+    <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">يُنصح بإظهار هذه الرسالة لشخص بالغ موثوق به</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">احجز اختبار PCR مجاني، إذا كانت لديك أعراض.</string>
     <string name="risky_contact_isolation_advice_new_isolation_information">أعزل نفسك ذاتيا وقم بإجراء اختبار COVID-19 مجاني</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">ثمة احتمالٌ كبيرٌ بإمكانية إصابتك بفيروس كوفيد-19 أو التسبّب في تفشيه، حتى إذا لم يظهر عليك أيّ أعراضٍ. من شأن البقاء في المنزل أن يساعد في الحفاظ على سلامتك وسلامة الآخرين على السواء.</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">يجب حجز أحد اختبارات PCR المجانية لمعرفة ما إذا كنت مُصابًا بفيروس كوفيد-19.</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">إرشادات هيئة الخدمات الصحية الوطنية (NHS)</string>
     <string name="risky_contact_isolation_advice_self_isolate_for">العزل الذاتي لمدة</string>
-    <string name="status_option_isolation_hub">العزل الذاتي</string>
+    <string name="status_option_isolation_hub">العزل الذاتي (ويلز فقط)</string>
     <string name="test_result_negative_continue_self_isolate_nhs_guidance_label">إرشادات هيئة الخدمات الصحية الوطنية (NHS)</string>
     <string name="test_result_void_continue_self_isolate_nhs_guidance_label">إرشادات هيئة الخدمات الصحية الوطنية (NHS)</string>
     <string name="testing_hub_book_lfd_test_description">تعرّف على المزيد من المعلومات بشأن الأنواع المختلفة لاختبارات فيروس كوفيد-19 وكيفية إجراء الاختبار</string>
@@ -802,8 +802,8 @@
     <string name="local_statistics_main_screen_last_seven_days_rate_down_accessibility_text">¹%1$s(%2$s%%) أكبر بــ</string>
     <string name="local_statistics_main_screen_last_seven_days_rate_no_change">لا تغيير¹</string>
     <string name="local_statistics_main_screen_last_seven_days_rate_no_change_accessibility_text">لا تغيير من السبعة أيام السابقة</string>
-    <string name="local_statistics_main_screen_last_seven_days_rate_up">أكبر بــ ¹%1$s(%2$s%%)</string>
-    <string name="local_statistics_main_screen_last_seven_days_rate_up_accessibility_text">اأكبر بــ %1$s (%2$s%%)¹</string>
+    <string name="local_statistics_main_screen_last_seven_days_rate_up">أقل بــ %1$s (%2$s%%)¹</string>
+    <string name="local_statistics_main_screen_last_seven_days_rate_up_accessibility_text">أقل بــ %1$s (%2$s%%)¹</string>
     <string name="local_statistics_main_screen_last_updated">أخر تحديث في %1$s الساعة %2$s</string>
     <string name="local_statistics_main_screen_local_authority_lower_tier">السلطة المحلية (الطبقة الدنيا)</string>
     <string name="local_statistics_main_screen_more_info">مصدر البيانات ومزيد من المعلومات:</string>
@@ -839,4 +839,20 @@
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">نوصيك بعرض هذه الرسالة على شخصٍ بالغٍ محل ثقةٍ لديك.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">لا يزال من المهم اتباع الإرشادات الوطنية، بما في ذلك الحد من الاختلاط بالآخرين، وبصفة خاصة كبار السن والمعرضين للإصابة بالأمراض.</string>
     <string name="status_option_local_data">بيانات COVID-19 المحلية</string>
+    <string name="contact_case_guidance_for_contacts_in_england_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">قم بإجراء اختبار PCR إذا كانت لديك أعراض COVID-19</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">الحد من الاتصال الوثيق مع أي شخص في منزلك مصاب بفيروس COVID-19</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_wear_a_mask_england">أرتدي غطاء الوجه في الأماكن المزدحمة أوالمغلقة أو سيئة التهوية</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_work_from_home_england">اعمل من المنزل إن استطعت إذا كان احد افراد اسرتك مصابا بفيروس COVID-19</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_primary_button_title_read_guidance_england">اقرأ أحدث الإرشادات المتعلقة بـــــ COVID-19</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_get_tested_before_meeting_vulnerable_people_england">قم بإجراء اختبار PCR إذا كانت لديك أعراض COVID-19</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_social_distancing_england">الحد من الاتصال الوثيق مع أي شخص في منزلك مصاب بفيروس COVID-19</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_wear_a_mask_england">أرتدي غطاء الوجه في الأماكن المزدحمة أوالمغلقة أو سيئة التهوية</string>
+    <string name="contact_case_no_isolation_under_age_limit_primary_button_title_read_guidance_england">اقرأ أحدث الإرشادات المتعلقة بـــــ COVID-19</string>
+    <string name="onboarding_permissions_bluetooth_continue_button_title">أستمر</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_get_tested_before_meeting_vulnerable_people_england">قم بإجراء اختبار PCR إذا كانت لديك أعراض COVID-19</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_primary_button_title_read_guidance_england">اقرأ أحدث الإرشادات المتعلقة بـــــ COVID-19</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">الحد من الاتصال الوثيق مع أي شخص في منزلك مصاب بفيروس COVID-19</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">أرتدي غطاء الوجه في الأماكن المزدحمة أوالمغلقة أو سيئة التهوية</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">اعمل من المنزل إن استطعت إذا كان احد افراد اسرتك مصابا بفيروس COVID-19</string>
 </resources>

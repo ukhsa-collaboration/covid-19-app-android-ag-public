@@ -4,6 +4,7 @@ import androidx.test.filters.FlakyTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_COVID_STATS
+import com.jeroenmols.featureflag.framework.FeatureFlag.VENUE_CHECK_IN_BUTTON
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result
 import uk.nhs.nhsx.covid19.android.app.exposure.setExposureNotificationResolutionRequired
@@ -58,7 +59,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickVenueCheckIn() {
+    fun clickVenueCheckIn() = runWithFeatureEnabled(VENUE_CHECK_IN_BUTTON) {
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
@@ -439,7 +440,7 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickVenueCheckIn_whenBackPressed_venueCheckInButtonShouldBeEnabled() {
+    fun clickVenueCheckIn_whenBackPressed_venueCheckInButtonShouldBeEnabled() = runWithFeatureEnabled(VENUE_CHECK_IN_BUTTON) {
         startTestActivity<StatusActivity>()
 
         statusRobot.clickVenueCheckIn()
@@ -614,5 +615,14 @@ class StatusActivityTest : EspressoTest() {
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
         statusRobot.checkIsolationHubIsEnabled()
+    }
+
+    @Test
+    fun whenCheckInFeatureFlagIsDisabled_optionVenueCheckInIsNotDisplayed() = runWithFeature(VENUE_CHECK_IN_BUTTON, enabled = false) {
+        testAppContext.setState(isolationHelper.neverInIsolation())
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkVenueCheckIsNotDisplayed()
     }
 }

@@ -43,10 +43,10 @@
         <item quantity="other">zostało %d dni</item>
     </plurals>
     <plurals name="isolation_view_accessibility_description">
-        <item quantity="one">Proszę izolować się do %1$s do godz. 23:59. Został %2$s dzień do podanego terminu.</item>
-        <item quantity="few">Proszę izolować się do %1$s do godz. 23:59. Zostały %2$s dni do podanego terminu.</item>
-        <item quantity="many">Proszę izolować się do %1$s do godz. 23:59. Zostały %2$s dni do podanego terminu.</item>
-        <item quantity="other">Proszę izolować się do %1$s do godz. 23:59. Zostały %2$s dni do podanego terminu.</item>
+        <item quantity="one">Izoluj się do %1$s do godz. 23:59. Zostały jeszcze %2$s dni do tego czasu.</item>
+        <item quantity="few">Izoluj się do %1$s do godz. 23:59. Zostało jeszcze %2$s dni do tego czasu.</item>
+        <item quantity="many">Izoluj się do %1$s do godz. 23:59. Zostało jeszcze %2$s dni do tego czasu.</item>
+        <item quantity="other">Izoluj się do %1$s do godz. 23:59. Zostało jeszcze %2$s dni do tego czasu.</item>
     </plurals>
     <plurals name="resume_contact_tracing_hours">
         <item quantity="one">%d godzina</item>
@@ -291,7 +291,7 @@
     <string name="self_isolate_for">Proszę izolować się przez</string>
     <string name="isolate_after_corona_virus_symptoms">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, kliknij w poniższy link do listy najczęściej zadawanych pytań (FAQ).\n\nTwoje objawy wskazują, że mogłeś(-aś) zostać zakażony(-a) koronawirusem. Proszę rozpocząć izolację własną i całego gospodarstwa domowego. Oznacza to pozostanie w domu i nie przyjmowanie żadnych gości. Należy również niezwłocznie zamówić bezpłatny test. Jeżeli nie masz ukończonych 18 lat, radzimy aby pokazać tę wiadomość zaufanej osobie dorosłej.\n\nProszę pozostań w domu, aby chronić siebie i innych.</string>
     <string name="isolate_after_no_corona_virus_symptoms">Wygląda na to, że nie masz żadnych objawów COVID-19, jednak mogą one wystąpić dopiero po jakimś czasie.\n\nZaleca się pozostanie w domu, aby chronić siebie i innych.</string>
-    <string name="you_need_to_self_isolate">Musisz rozpocząć izolację</string>
+    <string name="you_need_to_self_isolate">Izoluj się</string>
     <string name="your_isolation_will_finish">Twoja izolacja zakończy się %1$s o godz. 23:59</string>
     <string name="qr_code_unsupported_title">Przepraszamy, Twój telefon nie obsługuje funkcji meldowania się w lokalach</string>
     <string name="qr_code_unsupported_description">Radzimy porozmawiać z personelem lokalu, aby dowiedzieć się, czy istnieją inne metody zameldowania.</string>
@@ -444,7 +444,7 @@
     <string name="link_test_result_symptoms_yes_accessibility">Tak, wystąpiły u mnie objawy.</string>
     <string name="risk_level_mass_testing_link_text">Znajdź miejsce wykonywania testów</string>
     <string name="risk_level_mass_testing_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/regular-rapid-coronavirus-tests-if-you-do-not-have-symptoms/</string>
-    <string name="risk_level_mass_testing_text">Sprawdź, jakie testy są dostępne w Twojej okolicy oraz czy trzeba je rezerwować.</string>
+    <string name="risk_level_mass_testing_text">Informacje o przeprowadzaniu testów</string>
     <string name="risk_level_mass_testing_title">Testy w Twojej okolicy</string>
     <string name="venue_alert_m2_explanation">Istnieje ryzyko, że mogło dojść do narażenia na kontakt z wirusem. Około 1 na 3 osoby zakażone COVID-19 nie ma żadnych objawów, ale nadal może zarażać innych, stwarzając ryzyko dla ich zdrowia.\n\nZ tego powodu zalecamy, aby teraz zamówić test.\n\nNie trzeba się izolować, ale należy przestrzegać najnowszych zaleceń dotyczących regularnego mycia rąk i utrzymywania dystansu społecznego. Wraz ze wszystkimi domownikami musicie natychmiast poddać się izolacji, jeżeli wystąpią jakiekolwiek objawy.\n\nJeżeli Twój wynik jest dodatni lub wystąpiły u Ciebie objawy, wraz ze wszystkimi domownikami musicie natychmiast poddać się izolacji. \n\nNie trzeba zamawiać testu, jeżeli w ciągu ostatnich 90 dni otrzymało się dodatni wynik testu, chyba że ma się objawy.\n\nNależy nadal przestrzegać najnowszych wytycznych, nawet jeżeli jesteś już zaszczepiony(-a).\n\nW celu uzyskania dalszych informacji, porady lub wsparcia, proszę dzwonić pod nr 119.</string>
     <string name="venue_alert_m2_title">Niedawno odwiedziłeś(-aś) lokal, gdzie mogło dojść do kontaktu z osobami zakażonymi COVID-19.</string>
@@ -632,7 +632,7 @@
     <string name="continue_to_self_isolate_for">Kontynuuj izolację przez</string>
     <string name="exposure_notification_advised_to_self_isolate_for">Proszę izolować się przez</string>
     <string name="exposure_notification_age_continue_button">Kontynuuj</string>
-    <string name="exposure_notification_age_description">Twoje odpowiedzi będą użyte jedynie w celu określenia, czy może być konieczna samoizolacja.</string>
+    <string name="exposure_notification_age_description">Wykorzystamy Twoje odpowiedzi tylko po to, aby udzielić Ci właściwej porady.</string>
     <string name="exposure_notification_age_error_description">Aby kontynuować, musisz wybrać odpowiedź</string>
     <string name="exposure_notification_age_error_title">Błąd</string>
     <string name="exposure_notification_age_heading">Twój wiek</string>
@@ -672,7 +672,7 @@
     <string name="exposure_notification_vaccination_status_error_title">Błąd</string>
     <string name="exposure_notification_vaccination_status_heading">Twój status szczepienia</string>
     <string name="exposure_notification_vaccination_status_title">Status szczepienia</string>
-    <string name="exposure_notification_warning">Może zajść potrzeba samoizolacji w zależności od wieku, statusu szczepień lub instrukcji od pracownika ds. śledzenia kontaktów (contact tracers)</string>
+    <string name="exposure_notification_warning">Porada może się różnić, w zależności od wieku, statusu szczepień lub instrukcji od pracownika ds. śledzenia kontaktów (contact tracer)</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_1_title">Zapoznaj się z najnowszymi wytycznymi rządowymi</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_2_title">Strona, na której dowiesz się, jakie są Twoje władze lokalne</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_links_subheading">Potrzebujesz dalszej porady?</string>
@@ -700,8 +700,8 @@
     <string name="risky_contact_isolation_advice_already_isolating_information">Jeśli jeszcze tego nie zrobiłeś(-aś), wykonaj możliwie najszybciej bezpłatny test na COVID-19</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">Istnieje wysokie ryzyko, że zarazisz inne osoby COVID-19. Pozostając w domu, możesz pomóc chronić siebie i innych.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">Jeżeli jeszcze nie zamówiłeś(-aś) bezpłatnego testu PCR, możesz to zrobić wchodząc w opcję „Testy na COVID-19” na stronie głównej aplikacji.</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information">Aby zmniejszyć ryzyko, przez 7 dni należy codziennie wykonywać i zgłaszać szybkie testy przepływu bocznego</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Nie musisz się izolować, chyba że wynik testu jest pozytywny lub masz objawy</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information">Nadal może grozić Ci zarażenie się wirusem COVID-19 i możesz go rozprzestrzeniać</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">Nie musisz się izolować</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">Nadal ważne jest by przestrzegać krajowych wytycznych, włącznie z ograniczeniem kontaktów z innymi, zwłaszcza z osobami starszymi i wymagającymi specjalnej troski.</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">Zamów bezpłatny test PCR jeżeli masz objawy.</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">Zamów bezpłatny test PCR</string>
@@ -710,19 +710,19 @@
     <string name="risky_contact_isolation_advice_further_nhs_guidance">Aby uzyskać dalsze informacje, należy odwiedzić stronę internetową:</string>
     <string name="risky_contact_isolation_advice_go_back_to_home">Powrót do strony głównej</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">Nadal ważne jest by przestrzegać krajowych wytycznych, włącznie z ograniczeniem kontaktów z innymi, zwłaszcza z osobami starszymi i wymagającymi specjalnej troski.</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_heading">Nie musisz się izolować, chyba że wynik testu jest pozytywny lub masz objawy</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_information">Aby zmniejszyć ryzyko, przez 7 dni należy codziennie wykonywać i zgłaszać szybkie testy przepływu bocznego</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_heading">Nie musisz się izolować</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">Nadal może grozić Ci zarażenie się wirusem COVID-19 i możesz go rozprzestrzeniać</string>
     <string name="risky_contact_isolation_advice_medically_exempt_research">Zamów bezpłatny test PCR jeżeli masz objawy.</string>
-    <string name="risky_contact_isolation_advice_minors_information">Aby zmniejszyć ryzyko, przez 7 dni należy codziennie wykonywać i zgłaszać szybkie testy przepływu bocznego</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Nie musisz się izolować, chyba że wynik testu jest pozytywny lub masz objawy</string>
-    <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">Radzimy aby pokazać tę wiadomość zaufanej osobie dorosłej.</string>
+    <string name="risky_contact_isolation_advice_minors_information">Nadal może grozić Ci zarażenie się wirusem COVID-19 i możesz go rozprzestrzeniać</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">Nie musisz się izolować</string>
+    <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">Radzimy pokazanie tej wiadomości zaufanej osobie dorosłej</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">Zamów bezpłatny test PCR jeżeli masz objawy.</string>
     <string name="risky_contact_isolation_advice_new_isolation_information">Samoizoluj się i wykonaj bezpłatny test na COVID-19</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">Nawet jeśli nie masz żadnych objawów, możesz przechodzić COVID-19 i zarażać inne osoby. Zostając w domu, możesz pomóc chronić siebie i innych.</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">Zamów darmowy test PCR, aby sprawdzić, czy masz COVID-19</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">Wytyczne NHS</string>
     <string name="risky_contact_isolation_advice_self_isolate_for">Proszę izolować się przez</string>
-    <string name="status_option_isolation_hub">Samoizolacja</string>
+    <string name="status_option_isolation_hub">Samoizolacja (dotyczy tylko Walii)</string>
     <string name="test_result_negative_continue_self_isolate_nhs_guidance_label">Wytyczne NHS</string>
     <string name="test_result_void_continue_self_isolate_nhs_guidance_label">Wytyczne NHS</string>
     <string name="testing_hub_book_lfd_test_description">Uzyskaj informacje dotyczące różnych typów testów na COVID-19 oraz jak je przeprowadzić</string>
@@ -829,4 +829,20 @@
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">Radzimy aby pokazać tę wiadomość zaufanej osobie dorosłej.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">Nadal ważne jest by przestrzegać krajowych wytycznych, włącznie z ograniczeniem kontaktów z innymi, zwłaszcza z osobami starszymi i wymagającymi specjalnej troski.</string>
     <string name="status_option_local_data">Lokalne dane dotyczące COVID-19</string>
+    <string name="contact_case_guidance_for_contacts_in_england_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">Jeśli masz objawy COVID-19 zamów bezpłatny test PCR</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">Ogranicz bliski kontakt z ze wszystkimi członkami gospodarstwa domowego zarażonymi COVID-19</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_wear_a_mask_england">Noś zakrycie twarzy w zatłoczonych, zamkniętych lub słabo wentylowanych pomieszczeniach</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_work_from_home_england">Jeżeli ktoś z Twojego gospodarstwa domowego ma COVID-19, w miarę możliwości pracuj z domu</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_primary_button_title_read_guidance_england">Przeczytaj najnowsze wytyczne dotyczące COVID-19</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_get_tested_before_meeting_vulnerable_people_england">Jeśli masz objawy COVID-19 zamów bezpłatny test PCR</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_social_distancing_england">Ogranicz bliski kontakt z ze wszystkimi członkami gospodarstwa domowego zarażonymi COVID-19</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_wear_a_mask_england">Noś zakrycie twarzy w zatłoczonych, zamkniętych lub słabo wentylowanych pomieszczeniach</string>
+    <string name="contact_case_no_isolation_under_age_limit_primary_button_title_read_guidance_england">Przeczytaj najnowsze wytyczne dotyczące COVID-19</string>
+    <string name="onboarding_permissions_bluetooth_continue_button_title">Kontynuuj</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_get_tested_before_meeting_vulnerable_people_england">Jeśli masz objawy COVID-19 zamów bezpłatny test PCR</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_primary_button_title_read_guidance_england">Przeczytaj najnowsze wytyczne dotyczące COVID-19</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">Ogranicz bliski kontakt z ze wszystkimi członkami gospodarstwa domowego zarażonymi COVID-19</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">Noś zakrycie twarzy w zatłoczonych, zamkniętych lub słabo wentylowanych pomieszczeniach</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">Jeżeli ktoś z Twojego gospodarstwa domowego ma COVID-19, w miarę możliwości pracuj z domu</string>
 </resources>

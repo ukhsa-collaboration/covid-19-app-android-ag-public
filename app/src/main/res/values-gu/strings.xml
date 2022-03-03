@@ -56,7 +56,7 @@
     <string name="you_do_not_appear_to_have_symptoms">તમને કોરોનાવાયરસના કોઈ લક્ષણો હોવાનું જણાતું નથી</string>
     <string name="state_and_book_a_test">અને ટેસ્ટ બુક કરાવો</string>
     <string name="state_index_info">તમને કોરોનાવાયરસ હોઈ શકે છે</string>
-    <string name="you_need_to_self_isolate">તમારે સેલ્ફ-આઇસોલેટ થવાની જરૂરિયાત છે.</string>
+    <string name="you_need_to_self_isolate">સેલ્ફ-આઇસોલેટ</string>
     <string name="test_result_positive_no_self_isolation_subtitle">જો કે તમારું પરીક્ષણ સકારાત્મક આવ્યું, પરંતુ તમારો સેલ્ફ-આઇસોલેશનનો સમય પૂરો થઈ ચૂક્યો છે</string>
     <string name="state_test_positive_info">તમારા કોરોનાવાયરસનું ટેસ્ટ પરિણામ સકારાત્મક છે</string>
     <string name="state_test_void_info">તમને કોરોનાવાયરસ હતો કે નહીં તે અમે કહી શક્યા ન હતા</string>
@@ -127,8 +127,8 @@
         <item quantity="other">દિવસો બાકી</item>
     </plurals>
     <plurals name="isolation_view_accessibility_description" tools:ignore="MissingQuantity">
-        <item quantity="one">તમારે %1$s 23:59 સુધી સેલ્ફ-આઇસોલેશનમાં રહેવાની જરૂરિયાત છે. ત્યારબાદ %2$s દિવસો સુધી.</item>
-        <item quantity="other">તમારે %1$s 23:59 સુધી સેલ્ફ-આઇસોલેશનમાં રહેવાની જરૂરિયાત છે. ત્યારબાદ %2$s દિવસો સુધી.</item>
+        <item quantity="one">23:59 વાગ્યે %1$s સુધી સેલ્ફ આઇસોલેટ થાવ. ત્યાં સુધી %2$s દિવસ બાકી છે.</item>
+        <item quantity="other">23:59 વાગ્યે %1$s સુધી સેલ્ફ આઇસોલેટ થાવ. ત્યાં સુધી %2$s દિવસો બાકી છે.</item>
     </plurals>
     <plurals name="resume_contact_tracing_hours">
         <item quantity="one">%d કલાક</item>
@@ -428,7 +428,7 @@
     <string name="link_test_result_symptoms_yes_accessibility">હા, મને લક્ષણો હતાં.</string>
     <string name="risk_level_mass_testing_link_text">ટેસ્ટ સાઇટ શોધો</string>
     <string name="risk_level_mass_testing_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/regular-rapid-coronavirus-tests-if-you-do-not-have-symptoms/</string>
-    <string name="risk_level_mass_testing_text">તમારા એરિયામાં કયું ટેસ્ટિંગ અવેલેબલ છે અને તમે બૂક કરી શકો કે  નહિ</string>
+    <string name="risk_level_mass_testing_text">ટેસ્ટ વિશે જાણો</string>
     <string name="risk_level_mass_testing_title">તમારી નજીક ટેસ્ટિંગ</string>
     <string name="venue_alert_m2_explanation">એવું જોખમ છે કે તમે વાઇરસના કોન્ટેક્ટમાં આવ્યા હોઈ શકો છો. જેઓને COVID-19 હોય છે એવા 3માંથી લગભગ 1 લોકોને કોઈ લક્ષણો જણાતાં નથી, પરંતુ તેમ છતાં તેઓને કારણે અન્યોને ચેપ લાગી શકે છે અને અન્યો પર જોખમ ઊભું થઈ શકે છે.\n\nએટલા માટે અમે ભલામણ કરીએ છીએ કે તમે તરત જ ટેસ્ટ બૂક કરો\n\nતમારું ટેસ્ટ પૉઝિટિવ ન આવે તે સિવાય તમારે સૅલ્ફ-આઇસોલેટ થવાની જરૂર નથી, પણ તમારે નિયમિતપણે તમારા હાથ ધોવા વિશે અને સોશિયલ ડિસ્ટંસ જાળવવા વિશે લેટેસ્ટ સલાહનું પાલન કરવાનું ચાલુ રાખવું જોઈએ. જો તમને કે તમારા ઘરમાં જેઓ રહેતા હોય તેઓને વાયરસના કોઈ પણ લક્ષણો થયા હોય તો તમે અને તમારા ઘરમાં જેઓ રહેતા હોય તેઓએ તરત જ સેલ્ફ આયસોલેટ થવાની જરૂર છે.\n\nજો તમારી ટેસ્ટ પોઝિટિવ આવી હોય તો તમે અને તમારા ઘરમાં જેઓ રહેતા હોય તેઓએ તરત જ સેલ્ફ આયસોલેટ થવાની જરૂર છે. \n\nજો તમે છેલ્લા નેવુ દિવસમાં પોઝિટિવ ટેસ્ટ થયા હોવ તો તમારે ટેસ્ટ બૂક કરવાની જરૂર નથી સિવાય કે તમને કોઈ લક્ષણો હોય.\n\nતમને રસી કે વેક્સિન મળી ગયું હોય તો પણ મહેરબાની કરીને લેટેસ્ટ માર્ગદર્શન પાળજો.\n\nવધુ માહિતી, સલાહ કે સપોર્ટ માટે 119 પર કૉલ કરો</string>
     <string name="venue_alert_m2_title">તમે તાજેતરમાં એક સ્થળની મુલાકાત લીધી હતી જ્યાં તમે એવા અન્ય લોકો સાથે કૉન્ટેક્ટમાં આવ્યા હોય શકો જેમને COVID-19 છે.</string>
@@ -610,7 +610,7 @@
     <string name="continue_to_self_isolate_for">સેલ્ફ-આઇસોલેશનમાં રહેવાનુ ચાલુ રાખો</string>
     <string name="exposure_notification_advised_to_self_isolate_for">માટે સેલ્ફ-આઇસોલેટ થાવ</string>
     <string name="exposure_notification_age_continue_button">ચાલુ રાખો</string>
-    <string name="exposure_notification_age_description">અમે તમારા જવાબોનો ઉપયોગ ફક્ત તે તપાસ માટે કરીશું કે તમારે સેલ્ફ-આઇસોલેટ થવાની જરૂર પડી શકે કે નહીં.</string>
+    <string name="exposure_notification_age_description">તમારા જવાબોનો ઉપયોગ અમે ફક્ત તમને યોગ્ય સલાહ આપવા માટે જ કરીશું.</string>
     <string name="exposure_notification_age_error_description">ચાલુ રાખવા માટે, તમારે કોઈ જવાબ પસંદ કરવાની જરૂર છે</string>
     <string name="exposure_notification_age_error_title">ભૂલ</string>
     <string name="exposure_notification_age_heading">તમારી ઉમર</string>
@@ -650,7 +650,7 @@
     <string name="exposure_notification_vaccination_status_error_title">ભૂલ</string>
     <string name="exposure_notification_vaccination_status_heading">તમારી વેક્સિનની સ્થિતિ</string>
     <string name="exposure_notification_vaccination_status_title">રસીકરણની સ્થિતિ</string>
-    <string name="exposure_notification_warning">તમારી ઉંમર, રસીકરણની સ્થિતિ અથવા કૉન્ટેક્ટ ટ્રેસર્સ તરફથી મળતી સૂચનાઓના આધારે તમારે સૅલ્ફ-આઇસોલેટ થવાની જરૂર પડી શકે છે</string>
+    <string name="exposure_notification_warning">તમારી ઉંમર, રસીકરણની સ્થિતિ અથવા સંપર્ક શોધી કાઢનારાઓની સૂચનાઓના આધારે સલાહ જુદી જુદી હોઈ શકે છે</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_1_title">સરકારના નવીનતમ માર્ગદર્શન વાંચો</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_2_title">તમારી સ્થાનિક ઓથોરિટી વેબસાઇટ શોધો</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_links_subheading">વધુ માટે સલાહ શોધી રહ્યાં છો?</string>
@@ -678,8 +678,8 @@
     <string name="risky_contact_isolation_advice_already_isolating_information">જો તમે પહેલેથી મફત COVID-19 ટેસ્ટ કરાવ્યો ન હોય તો તમારે શક્ય તેટલી જલ્દી તે ટેસ્ટ કરાવવો જોઈએ</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">તમે કોવિડ-19 નો ફેલાવો કરવામાં બહુ જોખમી છો. ઘરે રહેવાથી તમે પોતાને અને બીજાઓને સુરક્ષિત રાખી શકો.</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">જો તમે પહેલાથી આવું ન કર્યું હોય, તો તમે હોમ સ્ક્રીન પર ‘COVID-19 માટેનાં ટેસ્ટ’ પરથી મફત PCR ટેસ્ટ બુક કરી શકો છો</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information">જોખમ ઓછું કરવા માટે તમારે 7 દિવસો માટે રોજિંદો રૅપિડ લેટરલ ફ્લો ટેસ્ટ કરાવવો જોઈએ અને તે અંગે રિપોર્ટ આપવો જોઈએ</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">તમારો ટેસ્ટ પૉઝિટિવ આવે અથવા તમને લક્ષણો હોય તે સિવાય તમારે સૅલ્ફ-આઇસોલેટ થવાની જરૂર નથી</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information">તમને હજી પણ COVID-19 નો ચેપ લાગવાનું અને તેને ફેલાવી શકવાનું જોખમ હોઈ શકે છે</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">તમારે સેલ્ફ-આઇસોલેટ થવાની જરૂર નથી</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">અન્યો સાથે, ખાસ કરીને વૃદ્ધ અને કમજોર લોકો સાથે સંપર્ક ઘટાડવા સહિતના રાષ્ટ્રીય નિર્દેશોનું પાલન કરવું હજીયે અગત્યનું છે.</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">તમને લક્ષણો હોય તો પણ મફત PCR ટેસ્ટ બૂક કરાવો.</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">એક મફત PCR ટેસ્ટ ને બુક કરો</string>
@@ -688,19 +688,19 @@
     <string name="risky_contact_isolation_advice_further_nhs_guidance">વધુ સલાહ માટે, કૃપા કરી મુલાકાત લો:</string>
     <string name="risky_contact_isolation_advice_go_back_to_home">હોમ સ્ક્રીન પર પાછા</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">અન્યો સાથે, ખાસ કરીને વૃદ્ધ અને કમજોર લોકો સાથે સંપર્ક ઘટાડવા સહિતના રાષ્ટ્રીય નિર્દેશોનું પાલન કરવું હજીયે અગત્યનું છે.</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_heading">તમારો ટેસ્ટ પૉઝિટિવ આવે અથવા તમને લક્ષણો હોય તે સિવાય તમારે સૅલ્ફ-આઇસોલેટ થવાની જરૂર નથી</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_information">જોખમ ઓછું કરવા માટે તમારે 7 દિવસો માટે રોજિંદો રૅપિડ લેટરલ ફ્લો ટેસ્ટ કરાવવો જોઈએ અને તે અંગે રિપોર્ટ આપવો જોઈએ</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_heading">તમારે સેલ્ફ-આઇસોલેટ થવાની જરૂર નથી</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">તમને હજી પણ COVID-19 નો ચેપ લાગવાનું અને તેને ફેલાવી શકવાનું જોખમ હોઈ શકે છે</string>
     <string name="risky_contact_isolation_advice_medically_exempt_research">તમને લક્ષણો હોય તો પણ મફત PCR ટેસ્ટ બૂક કરાવો.</string>
-    <string name="risky_contact_isolation_advice_minors_information">જોખમ ઓછું કરવા માટે તમારે 7 દિવસો માટે રોજિંદો રૅપિડ લેટરલ ફ્લો ટેસ્ટ કરાવવો જોઈએ અને તે અંગે રિપોર્ટ આપવો જોઈએ</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">તમારો ટેસ્ટ પૉઝિટિવ આવે અથવા તમને લક્ષણો હોય તે સિવાય તમારે સૅલ્ફ-આઇસોલેટ થવાની જરૂર નથી</string>
-    <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">તમને સલાહ આપવામાં આવે છે કે તમારે આ સંદેશ એક વિશ્વસનીય પુખ્ત વ્યક્તિને બતાવો.</string>
+    <string name="risky_contact_isolation_advice_minors_information">તમને હજી પણ COVID-19 નો ચેપ લાગવાનું અને તેને ફેલાવી શકવાનું જોખમ હોઈ શકે છે</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">તમારે સેલ્ફ-આઇસોલેટ થવાની જરૂર નથી</string>
+    <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">આ મેસેજ કોઈ વિશ્વાસપાત્ર પુખ્ત વ્યક્તિને બતાવવા માટે તમને સલાહ આપવામાં આવે છે</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">તમને લક્ષણો હોય તો પણ મફત PCR ટેસ્ટ બૂક કરાવો.</string>
     <string name="risky_contact_isolation_advice_new_isolation_information">સૅલ્ફ-આઇસોલેટ થાઓ અને મફત COVID-19 ટેસ્ટ કરાવો</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">તમે કોવિડ -19 થી સંક્રમિત થવાનું અને ફેલાવવાનું  જોખમ છે, પછી ભલે તમને કોઈ લક્ષણો ન હોય. ઘરે રહીને તમે તમારી જાતને અને અન્ય લોકોને સુરક્ષિત રાખવામાં મદદ કરી શકો છો.</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">તમે કોવિડ -19 થી સંક્રમિત થયા છો કે નહીં તે જોવા માટે એક મફત PCR ટેસ્ટ  બુક કરો.</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">NHS માર્ગદર્શન</string>
     <string name="risky_contact_isolation_advice_self_isolate_for">માટે સેલ્ફ-આઇસોલેટ થાવ</string>
-    <string name="status_option_isolation_hub">સેલ્ફ-આયસોલેશન</string>
+    <string name="status_option_isolation_hub">સેલ્ફ-આઇસોલેશન (માત્ર વેલ્સ)</string>
     <string name="test_result_negative_continue_self_isolate_nhs_guidance_label">NHS માર્ગદર્શન</string>
     <string name="test_result_void_continue_self_isolate_nhs_guidance_label">NHS માર્ગદર્શન</string>
     <string name="testing_hub_book_lfd_test_description">કોવિડ-19 ટેસ્ટના વિવિધ પ્રકારો અને ટેસ્ટ કેવી રીતે કરાવો તે વિશે જાણો</string>
@@ -803,4 +803,20 @@
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">તમને સલાહ આપવામાં આવે છે કે તમારે આ સંદેશ એક વિશ્વસનીય પુખ્ત વ્યક્તિને બતાવો.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">અન્યો સાથે, ખાસ કરીને વૃદ્ધ અને કમજોર લોકો સાથે સંપર્ક ઘટાડવા સહિતના રાષ્ટ્રીય નિર્દેશોનું પાલન કરવું હજીયે અગત્યનું છે.</string>
     <string name="status_option_local_data">સ્થાનિક COVID-19 ડેટા</string>
+    <string name="contact_case_guidance_for_contacts_in_england_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">જો તમને COVID-19 ના લક્ષણો હોય તો PCR ટેસ્ટ કરાવો</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">તમારા ઘરમાં COVID-19 ધરાવતી કોઈપણ વ્યક્તિ સાથે નજીકના સંપર્કને મર્યાદિત કરો</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_wear_a_mask_england">ભીડવાળી, બંધ અથવા અપૂરતા વેન્ટિલેશનવાળી જગ્યાઓ પર ફેસ માસ્ક પહેરો</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_work_from_home_england">જો તમારા ઘરમાંના કોઈને COVID-19 હોય તો તમે બની શકે તો ઘરેથી કામ કરો</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_primary_button_title_read_guidance_england">નવીનતમ COVID-19 માર્ગદર્શન વાંચો</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_get_tested_before_meeting_vulnerable_people_england">જો તમને COVID-19 ના લક્ષણો હોય તો PCR ટેસ્ટ કરાવો</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_social_distancing_england">તમારા ઘરમાં COVID-19 ધરાવતી કોઈપણ વ્યક્તિ સાથે નજીકના સંપર્કને મર્યાદિત કરો</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_wear_a_mask_england">ભીડવાળી, બંધ અથવા અપૂરતા વેન્ટિલેશનવાળી જગ્યાઓ પર ફેસ માસ્ક પહેરો</string>
+    <string name="contact_case_no_isolation_under_age_limit_primary_button_title_read_guidance_england">નવીનતમ COVID-19 માર્ગદર્શન વાંચો</string>
+    <string name="onboarding_permissions_bluetooth_continue_button_title">ચાલુ રાખો</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_get_tested_before_meeting_vulnerable_people_england">જો તમને COVID-19 ના લક્ષણો હોય તો PCR ટેસ્ટ કરાવો</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_primary_button_title_read_guidance_england">નવીનતમ COVID-19 માર્ગદર્શન વાંચો</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">તમારા ઘરમાં COVID-19 ધરાવતી કોઈપણ વ્યક્તિ સાથે નજીકના સંપર્કને મર્યાદિત કરો</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">ભીડવાળી, બંધ અથવા અપૂરતા વેન્ટિલેશનવાળી જગ્યાઓ પર ફેસ માસ્ક પહેરો</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">જો તમારા ઘરમાંના કોઈને COVID-19 હોય તો તમે બની શકે તો ઘરેથી કામ કરો</string>
 </resources>

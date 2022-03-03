@@ -7,6 +7,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
+import com.jeroenmols.featureflag.framework.FeatureFlag.VENUE_CHECK_IN_BUTTON
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
@@ -49,6 +52,8 @@ class WelcomeActivity : BaseActivity() {
         binding.confirmOnboarding.setOnSingleClickListener {
             viewModel.onConfirmOnboardingClicked()
         }
+
+        binding.venueCheckInGroup.isVisible = RuntimeBehavior.isFeatureEnabled(VENUE_CHECK_IN_BUTTON)
     }
 
     private fun showAgeConfirmationDialog() {

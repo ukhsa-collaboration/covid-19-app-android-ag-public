@@ -5,6 +5,7 @@ import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_COVID_STATS
 import com.jeroenmols.featureflag.framework.FeatureFlag.NEW_NO_SYMPTOMS_SCREEN
 import com.jeroenmols.featureflag.framework.FeatureFlag.REMOTE_SERVICE_EXCEPTION_CRASH_ANALYTICS
 import com.jeroenmols.featureflag.framework.FeatureFlag.SUBMIT_ANALYTICS_VIA_ALARM_MANAGER
+import com.jeroenmols.featureflag.framework.FeatureFlag.VENUE_CHECK_IN_BUTTON
 
 class StoreFeatureFlagProvider : FeatureFlagProvider {
 
@@ -19,6 +20,7 @@ class StoreFeatureFlagProvider : FeatureFlagProvider {
                 REMOTE_SERVICE_EXCEPTION_CRASH_ANALYTICS -> false
                 NEW_NO_SYMPTOMS_SCREEN -> false
                 LOCAL_COVID_STATS -> false
+                VENUE_CHECK_IN_BUTTON -> false
             }
         } else {
             // TestSettings should never be shipped to users

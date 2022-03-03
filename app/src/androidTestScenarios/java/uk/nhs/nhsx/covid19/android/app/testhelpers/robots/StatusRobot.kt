@@ -238,4 +238,9 @@ class StatusRobot : HasActivity {
         onView(withId(R.id.optionLocalData))
             .check(matches(not(isDisplayed())))
     }
+
+    fun checkVenueCheckIsNotDisplayed() {
+        onView(withId(R.id.optionVenueCheckIn))
+            .check(matches(not(isDisplayed())))
+    }
 }

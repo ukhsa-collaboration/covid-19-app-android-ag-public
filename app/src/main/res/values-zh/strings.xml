@@ -56,7 +56,7 @@
     <string name="you_do_not_appear_to_have_symptoms">您似乎没有冠状病毒感染症状</string>
     <string name="state_and_book_a_test">并预定测试</string>
     <string name="state_index_info">您可能有冠状病毒</string>
-    <string name="you_need_to_self_isolate">您需要自我隔离</string>
+    <string name="you_need_to_self_isolate">自我隔离</string>
     <string name="test_result_positive_no_self_isolation_subtitle">尽管您的测试结果呈阳性，但是您的自我隔离期已经结束</string>
     <string name="state_test_positive_info">您的冠状病毒测试结果为阳性</string>
     <string name="state_test_void_info">我们无法确定您是否感染冠状病毒</string>
@@ -125,7 +125,7 @@
         <item quantity="other">还剩天</item>
     </plurals>
     <plurals name="isolation_view_accessibility_description" tools:ignore="MissingQuantity">
-        <item quantity="other">您需要进行自我隔离，直到 %1$s的23:59。在那之前还剩下%1$s天。</item>
+        <item quantity="other">自我隔离至%1$s时23:59，还剩%2$s天。</item>
     </plurals>
     <plurals name="resume_contact_tracing_hours">
         <item quantity="other">%d 小时</item>
@@ -424,7 +424,7 @@
     <string name="link_test_result_symptoms_yes_accessibility">是的，我出现了相关症状。</string>
     <string name="risk_level_mass_testing_link_text">查找检测地点</string>
     <string name="risk_level_mass_testing_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/regular-rapid-coronavirus-tests-if-you-do-not-have-symptoms/</string>
-    <string name="risk_level_mass_testing_text">查看您所在地区可以进行哪些检测以及是否需要预约。</string>
+    <string name="risk_level_mass_testing_text">了解检测相关信息</string>
     <string name="risk_level_mass_testing_title">您附近的检测情况</string>
     <string name="venue_alert_m2_explanation">您有接触过病毒的风险。约有 1/3 的 COVID-19 没有任何症状，但他们仍然可以传播病毒，并将他人置于危险之中。\n\n因此，我们建议您马上预约检测。\n\n您不需要进行自我隔离，但您应该继续遵循最新的防疫建议，经常洗手并保持社交距离。如果您出现任何症状，您和您的家人应立即进行自我隔离。\n\n如果您的检测结果呈阳性，您和其他家庭成员必须立即进行自我隔离。\n\n如果您在过去 90 天内的检测结果呈阳性，则不需要预约检测，除非您出现相关症状。\n\n即使您已接种疫苗，也请继续遵循最新的防疫指南。\n\n如需进一步的信息、建议或支持，请致电 119。</string>
     <string name="venue_alert_m2_title">您最近访问了一个您可能接触过其他 COVID-19 患者的场所。</string>
@@ -603,7 +603,7 @@
     <string name="continue_to_self_isolate_for">继续自我隔离</string>
     <string name="exposure_notification_advised_to_self_isolate_for">自我隔离</string>
     <string name="exposure_notification_age_continue_button">继续</string>
-    <string name="exposure_notification_age_description">我们将只通过您的回答来查看您是否需要自我隔离</string>
+    <string name="exposure_notification_age_description">我们只会根据您的回答给予您正确的建议。</string>
     <string name="exposure_notification_age_error_description">您需要选择一个答案才能继续</string>
     <string name="exposure_notification_age_error_title">错误</string>
     <string name="exposure_notification_age_heading">年龄</string>
@@ -643,7 +643,7 @@
     <string name="exposure_notification_vaccination_status_error_title">错误</string>
     <string name="exposure_notification_vaccination_status_heading">您的接种情况</string>
     <string name="exposure_notification_vaccination_status_title">接种情况</string>
-    <string name="exposure_notification_warning">您可能需要根据自己的年龄、接种情况或接触者追踪器的指示进行自我隔离</string>
+    <string name="exposure_notification_warning">根据您的年龄、接种情况或接触追踪者说明，建议可能会有所不同</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_1_title">请参阅最新政府指南</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_link_2_title">查找地方政府网站</string>
     <string name="isolation_hub_accordion_how_to_self_isolate_links_subheading">寻求更多建议，</string>
@@ -671,8 +671,8 @@
     <string name="risky_contact_isolation_advice_already_isolating_information">若您还未如此行事，请尽快进行免费的COVID-19检测</string>
     <string name="risky_contact_isolation_advice_already_isolating_stay_at_home_advice">您面临着传播新冠病毒的高风险。待在家中可以保护您和他人的安全。</string>
     <string name="risky_contact_isolation_advice_already_isolating_testing_advice">如果您还没有进行检测，可以在主屏幕“COVID-19 检测”中预约 PCR 检测。</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_information">为了降低风险，您应该每天进行快速侧流抗原检测并报告相应结果（持续7天）</string>
-    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">除非检测结果为阳性或出现症状，否则无需自我隔离</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_information">您非常有可能感染和传播 COVID-19</string>
+    <string name="risky_contact_isolation_advice_already_vaccinated_no_self_isolation_required">您无需自我隔离</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_testing_advice">遵守国家指导仍然至关重要，包括减少与他人（特别是老年人和弱势群体）的接触。</string>
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">如果出现症状，请预约免费的PCR检测。</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">预约免费的 PCR 检测</string>
@@ -681,19 +681,19 @@
     <string name="risky_contact_isolation_advice_further_nhs_guidance">有关更多建议，请访问：</string>
     <string name="risky_contact_isolation_advice_go_back_to_home">返回主屏幕</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">遵守国家指导仍然至关重要，包括减少与他人（特别是老年人和弱势群体）的接触。</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_heading">除非检测结果为阳性或出现症状，否则无需自我隔离</string>
-    <string name="risky_contact_isolation_advice_medically_exempt_information">为了降低风险，您应该每天进行快速侧流抗原检测并报告相应结果（持续7天）</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_heading">您无需自我隔离</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_information">您非常有可能感染和传播 COVID-19</string>
     <string name="risky_contact_isolation_advice_medically_exempt_research">如果出现症状，请预约免费的PCR检测。</string>
-    <string name="risky_contact_isolation_advice_minors_information">为了降低风险，您应该每天进行快速侧流抗原检测并报告相应结果（持续7天）</string>
-    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">除非检测结果为阳性或出现症状，否则无需自我隔离</string>
-    <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">建议您将此消息告知您信任的成年人。</string>
+    <string name="risky_contact_isolation_advice_minors_information">您非常有可能感染和传播 COVID-19</string>
+    <string name="risky_contact_isolation_advice_minors_no_self_isolation_required">您无需自我隔离</string>
+    <string name="risky_contact_isolation_advice_minors_show_to_adult_advice">建议将此消息传达给值得信任的成年人</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice">如果出现症状，请预约免费的PCR检测。</string>
     <string name="risky_contact_isolation_advice_new_isolation_information">自我隔离并进行COVID-19免费检测</string>
     <string name="risky_contact_isolation_advice_new_isolation_stay_at_home_advice">即使您没有任何症状，您感染和传播新冠病毒的风险也很高。待在家中可以保护您和他人的安全。</string>
     <string name="risky_contact_isolation_advice_new_isolation_testing_advice">预约免费 PCR 检测，查看您是否感染了新冠病毒。</string>
     <string name="risky_contact_isolation_advice_nhs_guidance_link_text">NHS 指导</string>
     <string name="risky_contact_isolation_advice_self_isolate_for">自我隔离</string>
-    <string name="status_option_isolation_hub">自我隔离</string>
+    <string name="status_option_isolation_hub">自我隔离（仅限威尔士）</string>
     <string name="test_result_negative_continue_self_isolate_nhs_guidance_label">NHS 指导</string>
     <string name="test_result_void_continue_self_isolate_nhs_guidance_label">NHS 指导</string>
     <string name="testing_hub_book_lfd_test_description">了解不同类型的 COVID-19 测试以及如何进行测试</string>
@@ -794,4 +794,20 @@
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">建议您将此消息告知您信任的成年人。</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">遵守国家指导仍然至关重要，包括减少与他人（特别是老年人和弱势群体）的接触。</string>
     <string name="status_option_local_data">COVID-19本地数据</string>
+    <string name="contact_case_guidance_for_contacts_in_england_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">如有 COVID-19 症状，则进行 PCR 检测</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">限制与家中任何感染 COVID-19 之人的密切接触</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_wear_a_mask_england">在拥挤、封闭或通风不良的空间内佩戴面罩</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_list_item_work_from_home_england">若家人感染 COVID-19，则尽可能居家工作</string>
+    <string name="contact_case_no_isolation_fully_vaccinated_primary_button_title_read_guidance_england">阅读最新版 COVID-19 指南</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_get_tested_before_meeting_vulnerable_people_england">如有 COVID-19 症状，则进行 PCR 检测</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_social_distancing_england">限制与家中任何感染 COVID-19 之人的密切接触</string>
+    <string name="contact_case_no_isolation_under_age_limit_list_item_wear_a_mask_england">在拥挤、封闭或通风不良的空间内佩戴面罩</string>
+    <string name="contact_case_no_isolation_under_age_limit_primary_button_title_read_guidance_england">阅读最新版 COVID-19 指南</string>
+    <string name="onboarding_permissions_bluetooth_continue_button_title">继续</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_get_tested_before_meeting_vulnerable_people_england">如有 COVID-19 症状，则进行 PCR 检测</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_primary_button_title_read_guidance_england">阅读最新版 COVID-19 指南</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">限制与家中任何感染 COVID-19 之人的密切接触</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">在拥挤、封闭或通风不良的空间内佩戴面罩</string>
+    <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">若家人感染 COVID-19，则尽可能居家工作</string>
 </resources>
