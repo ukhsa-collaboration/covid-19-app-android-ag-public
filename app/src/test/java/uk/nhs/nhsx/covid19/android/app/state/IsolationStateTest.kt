@@ -6,7 +6,6 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
@@ -23,7 +22,7 @@ class IsolationStateTest {
 
         val spyIsolationState = spyk(
             IsolationState(
-                isolationConfiguration = DurationDays()
+                isolationConfiguration = IsolationConfiguration()
             )
         )
 
@@ -41,7 +40,7 @@ class IsolationStateTest {
 
     @Test
     fun `isolation state can be transformed to isolation info`() {
-        val isolationConfiguration = mockk<DurationDays>()
+        val isolationConfiguration = mockk<IsolationConfiguration>()
         val selfAssessment = mockk<SelfAssessment>()
         val testResult = mockk<AcknowledgedTestResult>()
         val contact = mockk<Contact>()

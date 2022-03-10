@@ -1,21 +1,20 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 
-import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.state.GetLatestConfiguration
+import uk.nhs.nhsx.covid19.android.app.util.isBeforeOrEqual
 import java.time.Clock
 import java.time.Instant
 import java.time.temporal.ChronoUnit.DAYS
 import javax.inject.Inject
-import uk.nhs.nhsx.covid19.android.app.util.isBeforeOrEqual
 
 class RemoveOutdatedRiskyVenuePollingConfigurations @Inject constructor(
     private val riskyVenueCircuitBreakerConfigurationProvider: RiskyVenueCircuitBreakerConfigurationProvider,
-    private val isolationConfigurationProvider: IsolationConfigurationProvider,
+    private val getLatestConfiguration: GetLatestConfiguration,
     private val clock: Clock
 ) {
 
     fun invoke() {
-        val maxDaysUntilExpiry =
-            isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
+        val maxDaysUntilExpiry = getLatestConfiguration().pendingTasksRetentionPeriod
 
         val updatedRiskyVenuePollingConfigs =
             riskyVenueCircuitBreakerConfigurationProvider.configs.filter {

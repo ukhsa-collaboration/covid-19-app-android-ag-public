@@ -226,7 +226,7 @@
     <string name="title_venue_history">Istoricul locațiilor vizitate</string>
     <string name="title_symptoms">Informații despre simptome</string>
     <string name="save">Salvare</string>
-    <string name="about_how_this_app_works_text">Această aplicație folosește tehnologia de urmărire a contactelor pentru a vă ajuta la protejarea dvs. și a celorlalți, astfel încât să putem reveni cu toții la lucrurile care ne plac.\n\nAplicația notifică și înregistrează alți utilizatori ai aplicației din apropiere. Dacă vreunul dintre acești utilizatori este testat ulterior pozitiv pentru coronavirus, veți primi o alertă cu sfaturi.\n\nAplicația vă permite, de asemenea, să vă raportați simptomele și să aflați dacă aveți nevoie de un test.\n\nO mai puteți utiliza și pentru a scana coduri oficiale NHS QR pentru a vă înregistra rapid și ușor în locurile pe care le vizitați.</string>
+    <string name="about_how_this_app_works_text">Această aplicație folosește tehnologia de urmărire a contactelor pentru a vă ajuta la protejarea dvs. și a celorlalți, astfel încât să putem reveni cu toții la lucrurile care ne plac.\n\nAplicația notifică și înregistrează alți utilizatori ai aplicației din apropiere. Dacă vreunul dintre acești utilizatori este testat ulterior pozitiv pentru coronavirus, veți primi o alertă cu sfaturi.\n\nAplicația vă permite, de asemenea, să vă raportați simptomele și să aflați dacă aveți nevoie de un test.</string>
     <string name="title_encounter">Data întâlnirii</string>
     <string name="allow_bluetooth">Permite bluetooth</string>
     <string name="onboarding_subtitle">Ne veți ajuta să învingem COVID-19 prin schimbul de informații anonime despre virusul din regiunea dvs. și despre sănătatea publică, atunci când utilizați aplicația</string>
@@ -545,7 +545,7 @@
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_change">Țineți evidența perioadei de autoizolare cu ajutorul cronometrului de numărătoare inversă de pe ecranul de pornire al aplicației.</string>
     <string name="test_result_plod_title">Rezultatul testului dvs. este slab pozitiv</string>
     <string name="url_download_the_nhs_app">https://www.nhs.uk/app</string>
-    <string name="local_message_banner_read_more">Aflați mai multe</string>
+    <string name="local_message_banner_read_more">Read updated guidance</string>
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">Este important să continuați să vă autoizolați, deoarece ați testat pozitiv.\n\nVă rugăm să stați acasă, pentru a vă menține pe dvs. și pe ceilalți în siguranță. Țineți evidența perioadei de autoizolare cu ajutorul cronometrului de numărătoare inversă de pe ecranul de pornire al aplicației.</string>
@@ -828,4 +828,21 @@
     <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">Limitați contactul apropiat cu orice persoană din gospodăria dvs. care are COVID-19</string>
     <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">Purtați mască facială în spații aglomerate, închise sau slab aerisite</string>
     <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">Dacă cineva din gospodăria dvs. are COVID-19, lucrați de acasă, dacă aveți posibilitatea</string>
+    <string name="contact_case_exposure_info_screen_continue_button_england">Continuați</string>
+    <string name="contact_case_exposure_info_screen_exposure_date_england">Contactul strâns s-a întâmplat pe %s</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_body_england">Aplicația utilizează Bluetooth pentru a verifica dacă telefonul dvs. a fost în contact strâns cu alții.\n\nContactul strâns înseamnă că ați fost la 2 metri de cineva timp de 15 minute sau mai mult.\n\nAplicația este anonimă și nu folosește GPS pentru a vă monitoriza locația, deci confidențialitatea dvs. este protejată.</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading_england">Cum se calculează contactul apropiat</string>
+    <string name="contact_case_exposure_info_screen_information_england">Dacă aveți sub 18 ani, vă recomandăm să arătați acest mesaj unui adult de încredere</string>
+    <string name="contact_case_exposure_info_screen_title_england">Aplicația a detectat că v-ați aflat în apropierea unei persoane care a testat pozitiv pentru coronavirus (COVID-19)</string>
+    <string name="risky_contact_opt_out_advice_mask">Purtați masca de protecție în zone aglomerate sau spații închise</string>
+    <string name="risky_contact_opt_out_advice_meeting_indoors">Aerisiți încăperea atunci când socializați în spații interioare sau socializați în spații exterioare</string>
+    <string name="risky_contact_opt_out_advice_testing_hub">Dacă prezentați simptome de COVID-19, efectuați un test și rămâneți acasă dacă testul este pozitiv</string>
+    <string name="risky_contact_opt_out_advice_title">Respectați cele mai recente recomandări privind COVID-19 pentru a vă proteja pe dvs. și pe cei din jur</string>
+    <string name="risky_contact_opt_out_advice_wash_hands">Spălați-vă pe mâini în mod regulat și acoperiți gura și nasul când tușiți sau strănutați</string>
+    <string name="risky_contact_opt_out_further_advice">Dacă o persoană din locuința dvs. a fost testată pozitiv pentru COVID-19, vizitați:</string>
+    <string name="risky_contact_opt_out_further_advice_link_text">Recomandări pentru contacții din aceeași locuință</string>
+    <string name="risky_contact_opt_out_further_advice_link_url">https://www.gov.uk/government/publications/covid-19-people-with-covid-19-and-their-contacts/covid-19-people-with-covid-19-and-their-contacts#what-to-do-if-you-are-a-close-contact-of-someone-who-has-covid-19</string>
+    <string name="risky_contact_opt_out_primary_button_title">Citiți cele mai recente instrucțiuni referitoare la COVID-19</string>
+    <string name="risky_contact_opt_out_primary_button_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="risky_contact_opt_out_secondary_button_title">Înapoi la ecranul de pornire</string>
 </resources>

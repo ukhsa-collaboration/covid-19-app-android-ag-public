@@ -19,13 +19,14 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class UserInboxIntegrationTest : EspressoTest() {
+class UserInboxIntegrationTest : EspressoTest(), LocalAuthoritySetupHelper {
 
     private val sharedPreferences =
         PreferenceManager.getDefaultSharedPreferences(InstrumentationRegistry.getInstrumentation().targetContext)
@@ -36,6 +37,7 @@ class UserInboxIntegrationTest : EspressoTest() {
     fun setUp() {
         sharedPreferences.edit().clear()
         testSubject = testAppContext.getUserInbox()
+        givenLocalAuthorityIsInEngland()
     }
 
     @Test

@@ -1,7 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.common
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import uk.nhs.nhsx.covid19.android.app.SupportedLanguage
 import java.util.Locale
 import javax.inject.Inject

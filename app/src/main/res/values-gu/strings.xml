@@ -221,7 +221,7 @@
     <string name="title_venue_history">સ્થળનો ઇતિહાસ</string>
     <string name="title_symptoms">લક્ષણોની માહિતી</string>
     <string name="save">સેવ કરો</string>
-    <string name="about_how_this_app_works_text">તમને અને અન્યોની રક્ષા કરવા માટે આ એપ સંપર્ક ટ્રેસિંગ ટેક્નોલોજીનો ઉપયોગ કરે છે જેથી આપણે બધા આપણી ગમતી વસ્તુઓ તરફ પરત ફરી શકીએ.\n\nએપ વપરાશકર્તાની આસપાસના અન્યોને એપ શોધે છે અને લૉગ કરે છે. જો તેમાંથી કોઈ વપરાશકર્તા પછીથી કોરોનાવાયરસ પરીક્ષણ માટે સકારાત્મક નીકળે છે, તો તમે સલાહ સાથે એક ચેતવણી મેળવશો.\n\nએપ તમને પણ તમારા લક્ષણો રિપોર્ટ કરવાનું કહેશે અને તમને પરીક્ષણની જરૂરિયાત છે કે નહીં તે શોધી આપશે.\n\nતમે આ એપનો ઉપયોગ તમે જે સ્થળની મુલાકાત લો તેમાં ઝડપથી અને સરળતાથી ચેક-ઇન કરવા અધિકૃત NHS QR કોડ સ્કેન કરવા માટે કરી શકો.</string>
+    <string name="about_how_this_app_works_text">તમને અને અન્યોની રક્ષા કરવા માટે આ એપ સંપર્ક ટ્રેસિંગ ટેક્નોલોજીનો ઉપયોગ કરે છે જેથી આપણે બધા આપણી ગમતી વસ્તુઓ તરફ પરત ફરી શકીએ.\n\nએપ વપરાશકર્તાની આસપાસના અન્યોને એપ શોધે છે અને લૉગ કરે છે. જો તેમાંથી કોઈ વપરાશકર્તા પછીથી કોરોનાવાયરસ પરીક્ષણ માટે સકારાત્મક નીકળે છે, તો તમે સલાહ સાથે એક ચેતવણી મેળવશો.\n\nએપ તમને પણ તમારા લક્ષણો રિપોર્ટ કરવાનું કહેશે અને તમને પરીક્ષણની જરૂરિયાત છે કે નહીં તે શોધી આપશે.</string>
     <string name="title_encounter">કોન્ટેક્ટમાં આવ્યાની તારીખ</string>
     <string name="allow_bluetooth">બ્લૂટૂથને મંજૂરી આપો</string>
     <string name="onboarding_subtitle">જ્યારે તમે એપનો ઉપયોગ કરશો ત્યારે તમારા ક્ષેત્ર માંના વાયરસ વિશેની અજ્ઞાત માહિતી અને જાહેર આરોગ્ય વિશે માહિતી આપીને COVID-19 ને હરાવવામાં તમે અમારી મદદ કરશો</string>
@@ -402,7 +402,7 @@
     <string name="about_test_kit_type">ટેસ્ટ કીટ પ્રકાર</string>
     <string name="about_test_result">પરિણામ</string>
     <string name="state_test_positive_and_book_test_info">તમારા કોરોનાવાયરસનું ટેસ્ટ પરિણામ સકારાત્મક છે</string>
-    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">જો તમારી ઉંમર 18 વર્ષથી ઓછી હોય તો તમે આ સંદેશ કોઈ વિશ્વાસુ પુખ્ત વ્યક્તિને બતાવો એવી સલાહ આપવામાં આવે છે.</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">જો તમારી ઉંમર 18 વર્ષથી ઓછી છે, તો તમને વિશ્વાસપાત્ર વડીલને વ્યક્તિને આ સંદેશ બતાવવાની સલાહ આપવામાં આવે છે.</string>
     <string name="test_result_positive_self_isolate_and_book_test_explanation_1">સેલ્ફ આયસોલેશનનાં દિવસોનો એપ કેવી રીતે સરવાળો કરે છે એ જાણવા માટે પૂછાતા પ્રશ્નો જૂઓ.\n\nતમે રૅપિડ સ્વૅબ ટેસ્ટ લીધો હોવાથી તમારે હવે રિઝલ્ટ માટે લૅબમાં મોકલવામાં આવેલ અન્ય પ્રકારનો ટેસ્ટ કરાવવાની જરૂર છે.\n\nદરમિયાન, તમે અને તમે જેમની સાથે રહેતા હો એવી કોઈ પણ વ્યક્તિએ તાત્કાલિક સૅલ્ફ-આઇસોલેટ થવાનું રહેશે.</string>
     <string name="test_result_positive_self_isolate_and_book_test_title_3">અને ફૉલો-અપ ટેસ્ટ બૂક કરાવો</string>
     <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
@@ -541,7 +541,7 @@
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_change">એપ હોમ સ્ક્રીન પર કાઉન્ટડાઉન ટાઈમર સાથે તમારા સેલ્ફ-આઇસોલેટ સમયગાળાનો ટ્રેક રાખો.</string>
     <string name="test_result_plod_title">તમારા ટેસ્ટનું રિઝલ્ટ હળવો પોઝિટીવ છે</string>
     <string name="url_download_the_nhs_app">https://www.nhs.uk/app</string>
-    <string name="local_message_banner_read_more">વધુ વાંચો</string>
+    <string name="local_message_banner_read_more">Read updated guidance</string>
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">જ્યારે તમારો ટેસ્ટ પોઝિટીવ છે ત્યારે સેલ્ફ-આઇસોલેટને ચાલુ રાખવું મહત્વપૂર્ણ છે.\n\nતમને પોતાને અને બીજા લોકોને સુરક્ષિત રાખવા માટે કૃપા કરીને ઘરે રહો. એપ હોમ સ્ક્રીન પર કાઉન્ટડાઉન ટાઈમર સાથે તમારા સેલ્ફ-આઇસોલેટ સમયગાળાનો ટ્રેક રાખો.</string>
@@ -819,4 +819,21 @@
     <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">તમારા ઘરમાં COVID-19 ધરાવતી કોઈપણ વ્યક્તિ સાથે નજીકના સંપર્કને મર્યાદિત કરો</string>
     <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">ભીડવાળી, બંધ અથવા અપૂરતા વેન્ટિલેશનવાળી જગ્યાઓ પર ફેસ માસ્ક પહેરો</string>
     <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">જો તમારા ઘરમાંના કોઈને COVID-19 હોય તો તમે બની શકે તો ઘરેથી કામ કરો</string>
+    <string name="contact_case_exposure_info_screen_continue_button_england">ચાલુ રાખો</string>
+    <string name="contact_case_exposure_info_screen_exposure_date_england">%s પર નજીકના કોન્ટેક્ટ થયો</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_body_england">તમારો ફોન અન્ય લોકો સાથે નજીક કૉન્ટેક્ટમાં આવ્યો છે કે કેમ તે ચકાસવા માટે એપ બ્લૂટૂથનો ઉપયોગ કરે છે.\n\nનજીકના કૉન્ટેક્ટનો અર્થ એ છે કે તમે 15 મિનિટ કે તેથી વધુ સમય માટે કોઈ સાથે 2 મીટરથી ઓછા અંતરમાં કૉન્ટેક્ટમાં રહ્યા છો.\n\nઆ ઍપ ગોપનીય છે અને તમારા સ્થાનને ટ્રૅક કરવા માટે ગ્લોબલ પોઝિશનિંગ સિસ્ટમનો (GPS) ઉપયોગ કરતી નથી, તેથી તમારી ગોપનીયતા જળવાઈ રહે છે.</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading_england">નજીકના કોન્ટેક્ટની ગણતરી કેવી રીતે કરવામાં આવે છે</string>
+    <string name="contact_case_exposure_info_screen_information_england">જો તમારી ઉંમર 18 વર્ષથી ઓછી છે, તો તમને વિશ્વાસપાત્ર વડીલને વ્યક્તિને આ સંદેશ બતાવવાની સલાહ આપવામાં આવે છે</string>
+    <string name="contact_case_exposure_info_screen_title_england">એપ્લિકેશને શોધ્યું  કે તમે એ વ્યક્તિની નજીક ગયેલા છો જેને કોરોનાવાયરસ (COVID-19) માટે પોઝીટીવ રિઝલ્ટ થયું હતું.</string>
+    <string name="risky_contact_opt_out_advice_mask">ગીચ અને બંધિયાર જગ્યાઓમાં માસ્ક પહેરો</string>
+    <string name="risky_contact_opt_out_advice_meeting_indoors">જો તમે ઘરની અંદર મળો તો તાજી હવા આવવા દો અથવા બહાર મળો</string>
+    <string name="risky_contact_opt_out_advice_testing_hub">જો તમને COVID-19 લક્ષણો હોય તો ટેસ્ટ કરાવો અને જો તમારો ટેસ્ટ પૉઝિટિવ હોય તો ઘરે રહો</string>
+    <string name="risky_contact_opt_out_advice_title">પોતાનું અને અન્યોનું રક્ષણ કરવા માટે COVID-19ના નવીનતમ નિર્દેશોનું પાલન કરો</string>
+    <string name="risky_contact_opt_out_advice_wash_hands">નિયમિતપણે તમારા હાથ ધુઓ અને ખાંસી તથા છીંક વખતે મોઢું ઢાંકો</string>
+    <string name="risky_contact_opt_out_further_advice">જો તમારા ઘરમાં COVID-19 માટે કોઈ વ્યક્તિનો ટેસ્ટ પૉઝિટિવ આવે તો કૃપા કરીને અહીં મુલાકાત લો:</string>
+    <string name="risky_contact_opt_out_further_advice_link_text">ઘરેલુ સંપર્કો માટે માર્ગદર્શન</string>
+    <string name="risky_contact_opt_out_further_advice_link_url">https://www.gov.uk/government/publications/covid-19-people-with-covid-19-and-their-contacts/covid-19-people-with-covid-19-and-their-contacts#what-to-do-if-you-are-a-close-contact-of-someone-who-has-covid-19</string>
+    <string name="risky_contact_opt_out_primary_button_title">નવીનતમ COVID-19 માર્ગદર્શન વાંચો</string>
+    <string name="risky_contact_opt_out_primary_button_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="risky_contact_opt_out_secondary_button_title">હોમ સ્ક્રીન પર પાછા</string>
 </resources>

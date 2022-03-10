@@ -6,9 +6,10 @@ import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.remote.data.CountrySpecificConfiguration
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
-import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.state.GetLatestConfiguration
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo.NegativeTest
@@ -25,23 +26,32 @@ import java.time.ZoneOffset
 
 class ResetIsolationStateIfNeededTest {
     private val fixedClock = Clock.fixed(Instant.parse("2020-07-28T01:00:00.00Z"), ZoneOffset.UTC)
-    private val durationDays = DurationDays()
-    private val retentionPeriod = durationDays.pendingTasksRetentionPeriod
+    private val isolationConfiguration = IsolationConfiguration()
+    private val configuration = CountrySpecificConfiguration(
+        contactCase = 11,
+        indexCaseSinceSelfDiagnosisOnset = 11,
+        indexCaseSinceSelfDiagnosisUnknownOnset = 9,
+        maxIsolation = 21,
+        indexCaseSinceTestResultEndDate = 11,
+        pendingTasksRetentionPeriod = 14,
+        testResultPollingTokenRetentionPeriod = 28
+    )
+    private val retentionPeriod = isolationConfiguration.pendingTasksRetentionPeriod
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
     private val unacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>(relaxUnitFun = true)
-    private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
-    private val isolationLogicalHelper = IsolationLogicalHelper(fixedClock, durationDays)
+    private val getLatestConfiguration = mockk<GetLatestConfiguration>()
+    private val isolationLogicalHelper = IsolationLogicalHelper(fixedClock, isolationConfiguration)
 
     private val testSubject = ResetIsolationStateIfNeeded(
         isolationStateMachine,
         unacknowledgedTestResultsProvider,
-        isolationConfigurationProvider,
+        getLatestConfiguration,
         fixedClock
     )
 
     @Before
     fun setUp() {
-        every { isolationConfigurationProvider.durationDays } returns durationDays
+        every { getLatestConfiguration() } returns configuration
     }
 
     @Test
@@ -51,7 +61,7 @@ class ResetIsolationStateIfNeededTest {
 
         setIsolationState(
             NeverIsolating(
-                isolationConfiguration = durationDays,
+                isolationConfiguration = isolationConfiguration,
                 negativeTest = NegativeTest(
                     AcknowledgedTestResult(
                         testEndDate = testEndDate,
@@ -67,7 +77,7 @@ class ResetIsolationStateIfNeededTest {
 
         testSubject()
 
-        val retentionPeriod = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
+        val retentionPeriod = getLatestConfiguration().pendingTasksRetentionPeriod
         val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
         verify { unacknowledgedTestResultsProvider.clearBefore(expectedDate) }
         verify { isolationStateMachine.reset() }
@@ -80,7 +90,7 @@ class ResetIsolationStateIfNeededTest {
 
         setIsolationState(
             NeverIsolating(
-                isolationConfiguration = durationDays,
+                isolationConfiguration = isolationConfiguration,
                 negativeTest = NegativeTest(
                     AcknowledgedTestResult(
                         testEndDate = testEndDate,
@@ -96,7 +106,7 @@ class ResetIsolationStateIfNeededTest {
 
         testSubject()
 
-        val retentionPeriod = durationDays.pendingTasksRetentionPeriod
+        val retentionPeriod = isolationConfiguration.pendingTasksRetentionPeriod
         val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
         verify { unacknowledgedTestResultsProvider.clearBefore(expectedDate) }
         verify(exactly = 0) { isolationStateMachine.reset() }
@@ -128,7 +138,7 @@ class ResetIsolationStateIfNeededTest {
 
         testSubject()
 
-        val retentionPeriod = durationDays.pendingTasksRetentionPeriod
+        val retentionPeriod = isolationConfiguration.pendingTasksRetentionPeriod
         val expectedDate = LocalDate.now(fixedClock).minusDays(retentionPeriod.toLong())
         verify { unacknowledgedTestResultsProvider.clearBefore(expectedDate) }
         verify { isolationStateMachine.reset() }

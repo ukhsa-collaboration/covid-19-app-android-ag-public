@@ -9,8 +9,8 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogStorage
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationTokensProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.remote.data.CountrySpecificConfiguration
+import uk.nhs.nhsx.covid19.android.app.state.GetLatestConfiguration
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -24,7 +24,7 @@ class ClearOutdatedDataTest {
         mockk<LastVisitedBookTestTypeVenueDateProvider>(relaxUnitFun = true)
     private val clearOutdatedKeySharingInfo = mockk<ClearOutdatedKeySharingInfo>(relaxUnitFun = true)
     private val clearOutdatedTestOrderPollingConfigs = mockk<ClearOutdatedTestOrderPollingConfigs>(relaxUnitFun = true)
-    private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
+    private val getLatestConfiguration = mockk<GetLatestConfiguration>()
     private val epidemiologyEventProvider = mockk<EpidemiologyEventProvider>(relaxUnitFun = true)
     private val exposureNotificationTokensProvider = mockk<ExposureNotificationTokensProvider>(relaxUnitFun = true)
     private val analyticsLogStorage = mockk<AnalyticsLogStorage>(relaxUnitFun = true)
@@ -35,27 +35,27 @@ class ClearOutdatedDataTest {
         lastVisitedBookTestTypeVenueDateProvider,
         clearOutdatedKeySharingInfo,
         clearOutdatedTestOrderPollingConfigs,
-        isolationConfigurationProvider,
         epidemiologyEventProvider,
         exposureNotificationTokensProvider,
         analyticsLogStorage,
+        getLatestConfiguration,
         fixedClock
     )
 
-    private val expectedIsolationDurationDays = mockk<DurationDays>()
-    private val expectedRetentionPeriod = 14
+    private val configuration = mockk<CountrySpecificConfiguration>()
+    private val retentionPeriod = 14
     private val expectedLocalDateForEpidemiologyEventCleanUp =
         LocalDate.now(fixedClock)
-            .minusDays(expectedRetentionPeriod.toLong())
+            .minusDays(retentionPeriod.toLong())
     private val expectedInstantForAnalyticsLogsCleanUp =
         Instant.now(fixedClock)
             .truncatedTo(ChronoUnit.DAYS)
-            .minus(expectedRetentionPeriod.toLong(), ChronoUnit.DAYS)
+            .minus(retentionPeriod.toLong(), ChronoUnit.DAYS)
 
     @Before
     fun setUp() {
-        every { isolationConfigurationProvider.durationDays } returns expectedIsolationDurationDays
-        every { expectedIsolationDurationDays.pendingTasksRetentionPeriod } returns expectedRetentionPeriod
+        every { getLatestConfiguration() } returns configuration
+        every { configuration.pendingTasksRetentionPeriod } returns retentionPeriod
     }
 
     @Test

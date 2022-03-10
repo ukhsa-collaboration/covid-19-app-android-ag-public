@@ -1,6 +1,8 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
+import com.jeroenmols.featureflag.framework.FeatureFlag.NEW_ENGLAND_CONTACT_CASE_JOURNEY
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.R.string
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.Default
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationAgeLimitActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.OptOutResponseEntry
@@ -11,6 +13,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionTyp
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
+import uk.nhs.nhsx.covid19.android.app.testhelpers.assertBrowserIsOpened
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationAgeLimitRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationReviewRobot
@@ -18,6 +21,8 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationRo
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationVaccinationStatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.RiskyContactIsolationAdviceRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 
@@ -25,6 +30,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
     private val statusRobot = StatusRobot()
     private val exposureNotificationRobot = ExposureNotificationRobot()
+    private val riskyContactIsolationOptOutRobot = RiskyContactIsolationOptOutRobot()
     private val exposureNotificationAgeLimitRobot = ExposureNotificationAgeLimitRobot()
     private val exposureNotificationVaccinationStatusRobot = ExposureNotificationVaccinationStatusRobot()
     private val exposureNotificationReviewRobot = ExposureNotificationReviewRobot(testAppContext)
@@ -33,123 +39,157 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
     override val isolationHelper = IsolationHelper(testAppContext.clock)
 
     @Test
-    fun givenInIndexCaseIsolation_whenReceivesExposureNotification_seesAlreadyIsolatingScreen_clickBackToHome_navigatesToStatusActivity() {
-        givenLocalAuthorityIsInEngland()
-        givenSelfAssessmentIsolation()
+    fun givenInIndexCaseIsolationEnglandNewContactJourneyIsDisabled_whenReceivesExposureNotification_seesAlreadyIsolatingScreen_clickBackToHome_navigatesToHome() {
+        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+            givenLocalAuthorityIsInEngland()
+            givenSelfAssessmentIsolation()
 
-        startTestActivity<StatusActivity>()
-        statusRobot.checkActivityIsDisplayed()
+            startTestActivity<StatusActivity>()
+            statusRobot.checkActivityIsDisplayed()
 
-        testAppContext.sendExposureStateUpdatedBroadcast()
+            testAppContext.sendExposureStateUpdatedBroadcast()
 
-        waitFor { exposureNotificationRobot.checkActivityIsDisplayed() }
-        exposureNotificationRobot.clickContinueButton()
-        selectAdult()
+            waitFor { exposureNotificationRobot.checkActivityIsDisplayed() }
+            exposureNotificationRobot.clickContinueButton()
+            selectAdult()
 
-        selectEnglandMedicallyExemptAnswers()
+            selectEnglandMedicallyExemptAnswers()
 
-        waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
-        exposureNotificationReviewRobot.clickSubmitButton()
+            waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
+            exposureNotificationReviewRobot.clickSubmitButton()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInAlreadyIsolatingViewState(
-            remainingDaysInIsolation = 7,
-            testingAdviceToShow = Default
-        )
-        exposureNotificationRiskyContactIsolationAdviceRobot.clickPrimaryBackToHome()
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInAlreadyIsolatingViewState(
+                remainingDaysInIsolation = 7,
+                testingAdviceToShow = Default
+            )
+            exposureNotificationRiskyContactIsolationAdviceRobot.clickPrimaryBackToHome()
 
-        waitFor { statusRobot.checkActivityIsDisplayed() }
-        statusRobot.checkIsolationViewIsDisplayed()
+            waitFor { statusRobot.checkActivityIsDisplayed() }
+            statusRobot.checkIsolationViewIsDisplayed()
+        }
+    }
+
+    @Test
+    fun givenInIndexCaseIsolationEnglandNewContactJourneyIsEnabled_whenReceivesExposureNotification_seesAlreadyIsolatingScreen_clickBackToHome_navigatesToHome() {
+        runWithFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) {
+            givenLocalAuthorityIsInEngland()
+            givenSelfAssessmentIsolation()
+
+            startTestActivity<StatusActivity>()
+            statusRobot.checkActivityIsDisplayed()
+
+            testAppContext.sendExposureStateUpdatedBroadcast()
+
+            exposureNotificationRobot.checkActivityIsDisplayed()
+            exposureNotificationRobot.clickContinueButton()
+
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInAlreadyIsolatingViewState(
+                remainingDaysInIsolation = 7,
+                testingAdviceToShow = Default
+            )
+            exposureNotificationRiskyContactIsolationAdviceRobot.clickPrimaryBackToHome()
+
+            statusRobot.checkActivityIsDisplayed()
+            statusRobot.checkIsolationViewIsDisplayed()
+        }
     }
 
     @Test
     fun whenUserClicksContinue_navigateToAgeLimitActivity_userCanComeBack() {
-        givenLocalAuthorityIsInEngland()
-        givenContactIsolation()
+        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+            givenLocalAuthorityIsInEngland()
+            givenContactIsolation()
 
-        startTestActivity<ExposureNotificationActivity>()
+            startTestActivity<ExposureNotificationActivity>()
 
-        exposureNotificationRobot.checkActivityIsDisplayed()
+            exposureNotificationRobot.checkActivityIsDisplayed()
 
-        exposureNotificationRobot.clickContinueButton()
+            exposureNotificationRobot.clickContinueButton()
 
-        waitFor { exposureNotificationAgeLimitRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationAgeLimitRobot.checkActivityIsDisplayed() }
 
-        testAppContext.device.pressBack()
+            testAppContext.device.pressBack()
 
-        waitFor { exposureNotificationRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationRobot.checkActivityIsDisplayed() }
 
-        // selection not maintained
+            // selection not maintained
 
-        exposureNotificationRobot.clickContinueButton()
+            exposureNotificationRobot.clickContinueButton()
 
-        waitFor { exposureNotificationAgeLimitRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationAgeLimitRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationAgeLimitRobot.clickYesButton()
+            exposureNotificationAgeLimitRobot.clickYesButton()
 
-        testAppContext.device.pressBack()
+            testAppContext.device.pressBack()
 
-        waitFor { exposureNotificationRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationRobot.clickContinueButton()
+            exposureNotificationRobot.clickContinueButton()
 
-        waitFor { exposureNotificationAgeLimitRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationAgeLimitRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationAgeLimitRobot.checkNothingSelected()
+            exposureNotificationAgeLimitRobot.checkNothingSelected()
+        }
     }
 
     @Test
     fun whenErrorIsShownOnAgeLimitScreen_thenValidAnswerSelected_thenClickContinue_thenNavigateBack_errorIsNotShown_andSelectedValueStored() {
-        givenLocalAuthorityIsInEngland()
-        givenContactIsolation()
+        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+            givenLocalAuthorityIsInEngland()
+            givenContactIsolation()
 
-        startTestActivity<ExposureNotificationAgeLimitActivity>()
+            startTestActivity<ExposureNotificationAgeLimitActivity>()
 
-        waitFor { exposureNotificationAgeLimitRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationAgeLimitRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationAgeLimitRobot.clickContinueButton()
+            exposureNotificationAgeLimitRobot.clickContinueButton()
 
-        waitFor { exposureNotificationAgeLimitRobot.checkErrorVisible(true) }
+            waitFor { exposureNotificationAgeLimitRobot.checkErrorVisible(true) }
 
-        exposureNotificationAgeLimitRobot.clickYesButton()
+            exposureNotificationAgeLimitRobot.clickYesButton()
 
-        exposureNotificationAgeLimitRobot.checkYesSelected()
+            exposureNotificationAgeLimitRobot.checkYesSelected()
 
-        exposureNotificationAgeLimitRobot.checkErrorVisible(true)
+            exposureNotificationAgeLimitRobot.checkErrorVisible(true)
 
-        exposureNotificationAgeLimitRobot.clickContinueButton()
+            exposureNotificationAgeLimitRobot.clickContinueButton()
 
-        testAppContext.device.pressBack()
+            testAppContext.device.pressBack()
 
-        verifyAdult()
+            verifyAdult()
 
-        exposureNotificationAgeLimitRobot.checkErrorVisible(false)
+            exposureNotificationAgeLimitRobot.checkErrorVisible(false)
+        }
     }
 
     @Test
     fun givenContactIsolation_whenSelectingYesToAgeLimitQuestionAndYesToVaccinatedQuestionAndNoToDateQuestionAndClickingConfirm_thenErrorIsShown() {
-        givenLocalAuthorityIsInEngland()
-        givenContactIsolation()
+        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+            givenLocalAuthorityIsInEngland()
+            givenContactIsolation()
 
-        startTestActivity<ExposureNotificationActivity>()
+            startTestActivity<ExposureNotificationActivity>()
 
-        exposureNotificationRobot.checkActivityIsDisplayed()
+            exposureNotificationRobot.checkActivityIsDisplayed()
 
-        exposureNotificationRobot.clickContinueButton()
+            exposureNotificationRobot.clickContinueButton()
 
-        selectAdult()
+            selectAdult()
 
-        waitFor { exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationVaccinationStatusRobot.clickDosesYesButton()
+            exposureNotificationVaccinationStatusRobot.clickDosesYesButton()
 
-        waitFor { exposureNotificationVaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
+            waitFor { exposureNotificationVaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
 
-        exposureNotificationVaccinationStatusRobot.clickDateNoButton()
+            exposureNotificationVaccinationStatusRobot.clickDateNoButton()
 
-        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+            exposureNotificationVaccinationStatusRobot.clickContinueButton()
 
-        exposureNotificationVaccinationStatusRobot.checkErrorVisible(true)
+            exposureNotificationVaccinationStatusRobot.checkErrorVisible(true)
+        }
     }
 
     @Test
@@ -198,7 +238,10 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
         exposureNotificationReviewRobot.clickSubmitButton()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsNotIsolatingAsMinorViewState(country = ENGLAND, Default)
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsNotIsolatingAsMinorViewState(
+            country = ENGLAND,
+            Default
+        )
     }
 
     @Test
@@ -223,56 +266,118 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
         exposureNotificationReviewRobot.clickSubmitButton()
 
         exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(ENGLAND, Default)
+        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
+            ENGLAND,
+            Default
+        )
     }
 
     @Test
     fun whenBackOnAgeLimitScreenFromReviewScreen_backButtonLeadsToExposureNotificationScreen() {
-        givenLocalAuthorityIsInEngland()
-        givenContactIsolation()
+        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+            givenLocalAuthorityIsInEngland()
+            givenContactIsolation()
 
-        startTestActivity<ExposureNotificationActivity>()
+            startTestActivity<ExposureNotificationActivity>()
 
-        exposureNotificationRobot.checkActivityIsDisplayed()
+            exposureNotificationRobot.checkActivityIsDisplayed()
 
-        exposureNotificationRobot.clickContinueButton()
+            exposureNotificationRobot.clickContinueButton()
 
-        selectMinor()
+            selectMinor()
 
-        exposureNotificationReviewRobot.clickChangeAge()
+            exposureNotificationReviewRobot.clickChangeAge()
 
-        verifyMinor()
+            verifyMinor()
 
-        testAppContext.device.pressBack()
+            testAppContext.device.pressBack()
 
-        waitFor { exposureNotificationRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationRobot.checkActivityIsDisplayed() }
+        }
     }
 
     @Test
     fun whenBackOnVaccinationStatusScreenFromReviewScreen_backButtonLeadsToAgeLimitScreen() {
-        givenLocalAuthorityIsInEngland()
-        givenContactIsolation()
+        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+            givenLocalAuthorityIsInEngland()
+            givenContactIsolation()
 
-        startTestActivity<ExposureNotificationActivity>()
+            startTestActivity<ExposureNotificationActivity>()
 
-        exposureNotificationRobot.checkActivityIsDisplayed()
+            exposureNotificationRobot.checkActivityIsDisplayed()
 
-        exposureNotificationRobot.clickContinueButton()
+            exposureNotificationRobot.clickContinueButton()
 
-        selectAdult()
+            selectAdult()
 
-        selectEnglandMedicallyExemptAnswers()
+            selectEnglandMedicallyExemptAnswers()
 
-        exposureNotificationReviewRobot.clickChangeVaccinationStatus()
+            exposureNotificationReviewRobot.clickChangeVaccinationStatus()
 
-        testAppContext.device.pressBack()
+            testAppContext.device.pressBack()
 
-        waitFor { exposureNotificationAgeLimitRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationAgeLimitRobot.checkActivityIsDisplayed() }
+        }
     }
 
     @Test
     fun whenChangingVaccinationStatusOnReviewScreen_navigatesDirectlyToVaccinationStatusScreen_andKeepsVaccinationAnswers() {
+        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+            givenLocalAuthorityIsInEngland()
+            givenContactIsolation()
+
+            startTestActivity<ExposureNotificationActivity>()
+
+            exposureNotificationRobot.checkActivityIsDisplayed()
+
+            exposureNotificationRobot.clickContinueButton()
+
+            selectAdult()
+
+            selectEnglandMedicallyExemptAnswers()
+
+            verifyEnglandMedicallyExemptAnswersOnReviewScreen()
+
+            exposureNotificationReviewRobot.clickChangeVaccinationStatus()
+
+            verifyEnglandMedicallyExemptAnswersOnVaccinationStatusScreen()
+        }
+    }
+
+    @Test
+    fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickPrimaryButton_navigateToStatusActivity() {
+        runWithFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) {
+            runNewAdviceJourney(acknowledgementAction = {
+                assertBrowserIsOpened(string.risky_contact_opt_out_primary_button_url) {
+                    riskyContactIsolationOptOutRobot.clickPrimaryButton_opensInExternalBrowser()
+                }
+            })
+        }
+    }
+
+    @Test
+    fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickSecButton_navigateToStatusActivity() {
+        runWithFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) {
+            runNewAdviceJourney(acknowledgementAction = {
+                riskyContactIsolationOptOutRobot.clickSecondaryButton()
+            })
+        }
+    }
+
+    @Test
+    fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickGuidanceLink_navigateToStatusActivity() {
+        runWithFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) {
+            runNewAdviceJourney(acknowledgementAction = {
+                assertBrowserIsOpened(string.risky_contact_opt_out_further_advice_link_url) {
+                    riskyContactIsolationOptOutRobot.clickGuidance_opensInExternalBrowser()
+                }
+            })
+        }
+    }
+
+    private fun runNewAdviceJourney(acknowledgementAction: () -> Unit) {
         givenLocalAuthorityIsInEngland()
+
         givenContactIsolation()
 
         startTestActivity<ExposureNotificationActivity>()
@@ -281,15 +386,12 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
         exposureNotificationRobot.clickContinueButton()
 
-        selectAdult()
+        riskyContactIsolationOptOutRobot.checkActivityIsDisplayed()
 
-        selectEnglandMedicallyExemptAnswers()
+        acknowledgementAction()
 
-        verifyEnglandMedicallyExemptAnswersOnReviewScreen()
-
-        exposureNotificationReviewRobot.clickChangeVaccinationStatus()
-
-        verifyEnglandMedicallyExemptAnswersOnVaccinationStatusScreen()
+        statusRobot.checkActivityIsDisplayed()
+        statusRobot.checkIsolationViewIsNotDisplayed()
     }
 
     private fun verifyEnglandMedicallyExemptAnswersOnVaccinationStatusScreen() {

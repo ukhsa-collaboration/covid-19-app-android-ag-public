@@ -5,6 +5,7 @@ import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.RiskyContact
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
 
 class CompoundIsolationAnalyticsTest : AnalyticsTest() {
     private var selfDiagnosis = SelfDiagnosis(this)
@@ -12,7 +13,7 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun selfDiagnose_thenRiskyContact_isolatingForBothReasons() {
-        givenLocalAuthorityIsInEngland()
+        givenLocalAuthorityIsInWales()
         startTestActivity<MainActivity>()
         // Current date: 1st Jan
         // Starting state: App running normally, not in isolation
@@ -38,7 +39,10 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
         // Has risky contact on 3nd Jan
         // Isolation end date: 14th Jan
         riskyContact.triggerViaCircuitBreaker(this::advanceToNextBackgroundTaskExecution)
-        riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinated(alreadyIsolating = true)
+        riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(
+            alreadyIsolating = true,
+            country = WALES
+        )
 
         // Current date: 4th Jan -> Analytics packet for: 3rd Jan
         assertOnFields {

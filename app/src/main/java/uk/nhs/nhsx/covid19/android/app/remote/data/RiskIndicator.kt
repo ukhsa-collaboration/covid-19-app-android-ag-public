@@ -3,7 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.remote.data
 import android.os.Parcelable
 import androidx.annotation.DrawableRes
 import com.squareup.moshi.JsonClass
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.AMBER

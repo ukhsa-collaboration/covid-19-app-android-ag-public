@@ -6,7 +6,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogStorage
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationTokensProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
-import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.state.GetLatestConfiguration
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -18,10 +18,10 @@ class ClearOutdatedData @Inject constructor(
     private val lastVisitedBookTestTypeVenueDateProvider: LastVisitedBookTestTypeVenueDateProvider,
     private val clearOutdatedKeySharingInfo: ClearOutdatedKeySharingInfo,
     private val clearOutdatedTestOrderPollingConfigs: ClearOutdatedTestOrderPollingConfigs,
-    private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val epidemiologyEventProvider: EpidemiologyEventProvider,
     private val exposureNotificationTokensProvider: ExposureNotificationTokensProvider,
     private val analyticsLogStorage: AnalyticsLogStorage,
+    private val getLatestConfiguration: GetLatestConfiguration,
     private val clock: Clock
 ) {
 
@@ -38,7 +38,7 @@ class ClearOutdatedData @Inject constructor(
             clearOutdatedKeySharingInfo()
             clearOutdatedTestOrderPollingConfigs()
 
-            val retentionPeriodDays = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
+            val retentionPeriodDays = getLatestConfiguration().pendingTasksRetentionPeriod
             clearOldEpidemiologyEvents(retentionPeriodDays)
             clearOutdatedAnalyticsLogs(retentionPeriodDays)
 

@@ -41,6 +41,7 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.openInExternalBrowserForRe
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpOpensInBrowserWarning
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 import uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
 import java.time.LocalDate
@@ -170,6 +171,8 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
             )
 
             riskyContactIsolationAdviceCommonQuestions.gone()
+            furtherAdviceTextView.visible()
+            nhsGuidanceLinkTextView.visible()
 
             primaryActionButton.setText(R.string.risky_contact_isolation_advice_book_pcr_test)
             primaryActionButton.setOnSingleClickListener {
@@ -210,6 +213,8 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
             )
 
             riskyContactIsolationAdviceCommonQuestions.gone()
+            furtherAdviceTextView.visible()
+            nhsGuidanceLinkTextView.visible()
 
             primaryActionButton.setText(R.string.contact_case_start_isolation_primary_button_title_wales)
             primaryActionButton.setOnSingleClickListener {
@@ -244,6 +249,9 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
         )
 
         riskyContactIsolationAdviceCommonQuestions.gone()
+        furtherAdviceTextView.visible()
+        nhsGuidanceLinkTextView.visible()
+
         primaryActionButton.setText(R.string.risky_contact_isolation_advice_already_isolating_acknowledge_button_text)
         primaryActionButton.setOnSingleClickListener {
             viewModel.onBackToHomeClicked()
@@ -282,6 +290,10 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
             R.drawable.ic_work_from_home
         )
 
+        riskyContactIsolationAdviceCommonQuestions.gone()
+        furtherAdviceTextView.gone()
+        nhsGuidanceLinkTextView.gone()
+
         setupActionButtonsForNotIsolating(
             country = ENGLAND,
             primaryButtonTitle = R.string.contact_case_no_isolation_fully_vaccinated_primary_button_title_read_guidance_england
@@ -309,6 +321,10 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
             )
         }
 
+        riskyContactIsolationAdviceCommonQuestions.visible()
+        furtherAdviceTextView.visible()
+        nhsGuidanceLinkTextView.visible()
+
         setupActionButtonsForNotIsolating(
             country = WALES,
             primaryButtonTitle = R.string.risky_contact_isolation_advice_book_pcr_test
@@ -335,6 +351,10 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
         )
         addAdvice(R.string.contact_case_no_isolation_under_age_limit_list_item_wear_a_mask_england, R.drawable.ic_mask)
 
+        riskyContactIsolationAdviceCommonQuestions.gone()
+        furtherAdviceTextView.gone()
+        nhsGuidanceLinkTextView.gone()
+
         setupActionButtonsForNotIsolating(
             country = ENGLAND,
             primaryButtonTitle = R.string.contact_case_no_isolation_under_age_limit_primary_button_title_read_guidance_england
@@ -358,6 +378,10 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
         }
         addAdvice(R.string.risky_contact_isolation_advice_minors_testing_advice_wls, R.drawable.ic_social_distancing)
         addAdvice(R.string.risky_contact_isolation_advice_minors_show_to_adult_advice_wls, R.drawable.ic_family)
+
+        riskyContactIsolationAdviceCommonQuestions.visible()
+        furtherAdviceTextView.visible()
+        nhsGuidanceLinkTextView.visible()
 
         setupActionButtonsForNotIsolating(
             country = WALES,
@@ -391,6 +415,10 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
             R.drawable.ic_work_from_home
         )
 
+        riskyContactIsolationAdviceCommonQuestions.gone()
+        furtherAdviceTextView.gone()
+        nhsGuidanceLinkTextView.gone()
+
         setupActionButtonsForNotIsolating(
             country = ENGLAND,
             primaryButtonTitle = R.string.risky_contact_isolation_advice_medically_exempt_primary_button_title_read_guidance_england
@@ -414,6 +442,7 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
                             REQUEST_READ_GUIDANCE
                         )
                     }
+                    primaryActionButton.setUpOpensInBrowserWarning()
                 }
                 else -> {
                     riskyContactIsolationAdviceCommonQuestions.visible()

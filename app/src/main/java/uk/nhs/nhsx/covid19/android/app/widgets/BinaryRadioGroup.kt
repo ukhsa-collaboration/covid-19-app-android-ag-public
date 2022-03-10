@@ -9,7 +9,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.databinding.ViewBinaryRadioGroupBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString

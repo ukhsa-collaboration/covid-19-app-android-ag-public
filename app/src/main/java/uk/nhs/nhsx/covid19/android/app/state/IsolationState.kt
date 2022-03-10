@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
 import com.squareup.moshi.JsonClass
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutReason.QUESTIONNAIRE
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import java.time.LocalDate
@@ -14,7 +13,7 @@ const val assumedDaysFromOnsetToSelfAssessment: Long = 2
  * of the isolation state use [IsolationLogicalState] instead.
  */
 data class IsolationState(
-    val isolationConfiguration: DurationDays,
+    val isolationConfiguration: IsolationConfiguration,
     val selfAssessment: SelfAssessment? = null,
     val testResult: AcknowledgedTestResult? = null,
     val contact: Contact? = null,
@@ -50,6 +49,18 @@ data class IsolationState(
     }
 
     enum class OptOutReason {
-        QUESTIONNAIRE
+        QUESTIONNAIRE,
+        NEW_ADVICE
     }
 }
+
+@JsonClass(generateAdapter = true)
+data class IsolationConfiguration(
+    val contactCase: Int = 11,
+    val indexCaseSinceSelfDiagnosisOnset: Int = 11,
+    val indexCaseSinceSelfDiagnosisUnknownOnset: Int = 9,
+    val maxIsolation: Int = 21,
+    val pendingTasksRetentionPeriod: Int = 14,
+    val indexCaseSinceTestResultEndDate: Int = 11,
+    val testResultPollingTokenRetentionPeriod: Int = 28
+)

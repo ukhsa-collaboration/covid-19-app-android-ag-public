@@ -2,8 +2,8 @@ package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
@@ -22,17 +22,17 @@ class IsolationPaymentButtonAnalyticsTest : AnalyticsTest() {
         testAppContext.getIsolationPaymentTokenStateProvider().tokenState = Token("token")
         testAppContext.setState(
             IsolationState(
-                isolationConfiguration = DurationDays(),
+                isolationConfiguration = IsolationConfiguration(),
                 contact = Contact(
-                    exposureDate = LocalDate.now().minus(3, DAYS),
-                    notificationDate = LocalDate.now().minus(2, DAYS)
+                    exposureDate = LocalDate.now(testAppContext.clock).minus(3, DAYS),
+                    notificationDate = LocalDate.now(testAppContext.clock).minus(2, DAYS)
                 )
             )
         )
 
         startTestActivity<StatusActivity>()
 
-        assertOnFields {
+        assertOnFields(implicitlyAssertNotPresent = false) {
             assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
         }
 
@@ -41,7 +41,7 @@ class IsolationPaymentButtonAnalyticsTest : AnalyticsTest() {
         isolationHubRobot.checkActivityIsDisplayed()
         isolationHubRobot.clickItemIsolationPayment()
 
-        assertOnFields {
+        assertOnFields(implicitlyAssertNotPresent = false) {
             assertEquals(1, Metrics::selectedIsolationPaymentsButton)
             assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
         }

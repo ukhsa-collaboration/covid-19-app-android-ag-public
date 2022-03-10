@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.util.isBeforeOrEqual
 import uk.nhs.nhsx.covid19.android.app.util.isEqualOrAfter
 import uk.nhs.nhsx.covid19.android.app.util.selectEarliest
@@ -17,7 +16,7 @@ interface IsolationPeriod {
         this.startDate.isBeforeOrEqual(other.expiryDate) &&
             this.expiryDate.isEqualOrAfter(other.startDate)
 
-    fun capExpiryDate(isolationConfiguration: DurationDays): LocalDate {
+    fun capExpiryDate(isolationConfiguration: IsolationConfiguration): LocalDate {
         val maxExpiryDate = startDate.plusDays(isolationConfiguration.maxIsolation.toLong())
         return selectEarliest(maxExpiryDate, expiryDate)
     }

@@ -5,6 +5,7 @@ import android.app.Instrumentation
 import android.content.Intent
 import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -28,13 +29,15 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
 import java.time.Instant
 import java.time.LocalDate
 import kotlin.test.assertTrue
 
 @RunWith(Parameterized::class)
-class TestResultActivityTest(override val configuration: TestConfiguration) : EspressoTest() {
+class TestResultActivityTest(override val configuration: TestConfiguration) : EspressoTest(),
+    LocalAuthoritySetupHelper {
 
     private val testResultRobot = TestResultRobot(testAppContext.app)
     private val statusRobot = StatusRobot()
@@ -42,6 +45,11 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
     private val shareKeysResultRobot = ShareKeysResultRobot()
     private val isolationHelper = IsolationHelper(testAppContext.clock)
     private val isolationChecker = IsolationChecker(testAppContext)
+
+    @Before
+    fun setUp() {
+        givenLocalAuthorityIsInEngland()
+    }
 
     @Test
     @Reported

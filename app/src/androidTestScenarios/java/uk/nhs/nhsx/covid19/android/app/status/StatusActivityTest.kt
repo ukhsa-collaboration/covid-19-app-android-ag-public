@@ -30,11 +30,12 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestingHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import java.time.LocalDate
 
-class StatusActivityTest : EspressoTest() {
+class StatusActivityTest : EspressoTest(), LocalAuthoritySetupHelper {
 
     private val statusRobot = StatusRobot()
     private val moreAboutAppRobot = MoreAboutAppRobot()
@@ -75,10 +76,6 @@ class StatusActivityTest : EspressoTest() {
             startTestActivity<StatusActivity>()
 
             statusRobot.checkLocalDataIsDisplayedAfterCheckInVenueButton()
-
-            statusRobot.clickLocalData()
-
-            progressRobot.checkActivityIsDisplayed()
         }
     }
 
@@ -93,20 +90,18 @@ class StatusActivityTest : EspressoTest() {
     @Test
     fun checkPositionOfLocalDataButton_whenUserInIsolation() {
         runWithFeatureEnabled(LOCAL_COVID_STATS) {
+            givenLocalAuthorityIsInEngland()
             testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
             startTestActivity<StatusActivity>()
 
             statusRobot.checkLocalDataIsDisplayedBeforeSettingsButton()
-
-            statusRobot.clickLocalData()
-
-            progressRobot.checkActivityIsDisplayed()
         }
     }
 
     @Test
     fun checkLocalDataButtonIsGone_whenFeatureIsDisabledAndUserInIsolation() {
+        givenLocalAuthorityIsInEngland()
         runWithFeature(LOCAL_COVID_STATS, enabled = false) {
             testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
             startTestActivity<StatusActivity>()
@@ -116,6 +111,7 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun checkPositionOfLocalDataButton_whenUserInContactIsolation() {
+        givenLocalAuthorityIsInEngland()
         runWithFeatureEnabled(LOCAL_COVID_STATS) {
             testAppContext.setState(isolationHelper.contact().asIsolation())
 
@@ -127,6 +123,7 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun checkLocalDataButtonIsGone_whenFeatureIsDisabledAndUserInContactIsolation() {
+        givenLocalAuthorityIsInEngland()
         runWithFeature(LOCAL_COVID_STATS, enabled = false) {
             testAppContext.setState(isolationHelper.contact().asIsolation())
             startTestActivity<StatusActivity>()
@@ -310,6 +307,7 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun whenIsolating_withAnimationDisabled_shouldShowStaticImage() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setState(isolationHelper.contact().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -328,6 +326,7 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun whenIsolating_withAnimationDisabled_contactTracingOff_shouldNotShowStaticImage() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setState(isolationHelper.contact().asIsolation())
         testAppContext.getExposureNotificationApi().setEnabled(false)
 
@@ -398,6 +397,7 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun whenBluetoothDisabled_inIsolation_doNotShowBluetoothStoppedView() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setBluetoothEnabled(false)
         testAppContext.setState(isolationHelper.contact().asIsolation())
         testAppContext.getShouldShowBluetoothSplashScreen().setHasBeenShown(true)
@@ -440,17 +440,18 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickVenueCheckIn_whenBackPressed_venueCheckInButtonShouldBeEnabled() = runWithFeatureEnabled(VENUE_CHECK_IN_BUTTON) {
-        startTestActivity<StatusActivity>()
+    fun clickVenueCheckIn_whenBackPressed_venueCheckInButtonShouldBeEnabled() =
+        runWithFeatureEnabled(VENUE_CHECK_IN_BUTTON) {
+            startTestActivity<StatusActivity>()
 
-        statusRobot.clickVenueCheckIn()
+            statusRobot.clickVenueCheckIn()
 
-        testAppContext.device.pressBack()
+            testAppContext.device.pressBack()
 
-        waitFor { statusRobot.checkActivityIsDisplayed() }
+            waitFor { statusRobot.checkActivityIsDisplayed() }
 
-        statusRobot.checkVenueCheckInIsEnabled()
-    }
+            statusRobot.checkVenueCheckInIsEnabled()
+        }
 
     @Test
     fun clickMoreAboutApp_whenBackPressed_moreAboutAppButtonShouldBeEnabled() {
@@ -511,6 +512,7 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun whenUserIsContactCase_reportSymptomsButtonShouldBeDisplayed() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setState(isolationHelper.contact().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -522,6 +524,7 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun whenUserIsIndexCaseTriggeredBySelfAssessment_reportSymptomsButtonShouldNotBeDisplayed() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -533,6 +536,7 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun whenUserIsIndexCaseTriggeredByPositiveTestResultWithUnknownOnsetDate_reportSymptomsButtonShouldBeDisplayed() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setState(
             AcknowledgedTestResult(
                 testEndDate = LocalDate.now(testAppContext.clock),
@@ -582,6 +586,7 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun whenIsolating_isolationHubButtonShouldBeDisplayed() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -602,6 +607,7 @@ class StatusActivityTest : EspressoTest() {
 
     @Test
     fun clickIsolationHub_whenBackPressed_isolationHubButtonShouldBeEnabled() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -618,11 +624,12 @@ class StatusActivityTest : EspressoTest() {
     }
 
     @Test
-    fun whenCheckInFeatureFlagIsDisabled_optionVenueCheckInIsNotDisplayed() = runWithFeature(VENUE_CHECK_IN_BUTTON, enabled = false) {
-        testAppContext.setState(isolationHelper.neverInIsolation())
+    fun whenCheckInFeatureFlagIsDisabled_optionVenueCheckInIsNotDisplayed() =
+        runWithFeature(VENUE_CHECK_IN_BUTTON, enabled = false) {
+            testAppContext.setState(isolationHelper.neverInIsolation())
 
-        startTestActivity<StatusActivity>()
+            startTestActivity<StatusActivity>()
 
-        statusRobot.checkVenueCheckIsNotDisplayed()
-    }
+            statusRobot.checkVenueCheckIsNotDisplayed()
+        }
 }

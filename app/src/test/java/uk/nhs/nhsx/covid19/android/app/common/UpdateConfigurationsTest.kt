@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.common
 
 import io.mockk.coEvery
 import io.mockk.confirmVerified
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
@@ -10,6 +11,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.RiskyVenueConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.remote.IsolationConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.RiskyVenueConfigurationApi
+import uk.nhs.nhsx.covid19.android.app.remote.data.CountrySpecificConfiguration
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.IsolationConfigurationResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueConfigurationDurationDays
@@ -22,16 +24,39 @@ class UpdateConfigurationsTest {
     private val isolationConfigurationApi = mockk<IsolationConfigurationApi>()
     private val riskyVenueConfigurationProvider = mockk<RiskyVenueConfigurationProvider>()
     private val riskyVenueConfigurationApi = mockk<RiskyVenueConfigurationApi>()
+    private val convertIsolationConfigurationResponseToDurationDays =
+        mockk<ConvertIsolationConfigurationResponseToDurationDays>()
 
     private val updateConfigurations = UpdateConfigurations(
         isolationConfigurationProvider,
         isolationConfigurationApi,
         riskyVenueConfigurationProvider,
-        riskyVenueConfigurationApi
+        riskyVenueConfigurationApi,
+        convertIsolationConfigurationResponseToDurationDays
     )
 
     private val expectedIsolationDurationDays = mockk<DurationDays>()
-    private val isolationConfigurationResponse = IsolationConfigurationResponse(expectedIsolationDurationDays)
+
+    private val isolationConfigurationResponse = IsolationConfigurationResponse(
+        englandConfiguration = CountrySpecificConfiguration(
+            contactCase = 11,
+            indexCaseSinceSelfDiagnosisOnset = 11,
+            indexCaseSinceSelfDiagnosisUnknownOnset = 9,
+            maxIsolation = 21,
+            indexCaseSinceTestResultEndDate = 11,
+            pendingTasksRetentionPeriod = 14,
+            testResultPollingTokenRetentionPeriod = 28
+        ),
+        walesConfiguration = CountrySpecificConfiguration(
+            contactCase = 11,
+            indexCaseSinceSelfDiagnosisOnset = 6,
+            indexCaseSinceSelfDiagnosisUnknownOnset = 4,
+            maxIsolation = 16,
+            indexCaseSinceTestResultEndDate = 6,
+            pendingTasksRetentionPeriod = 14,
+            testResultPollingTokenRetentionPeriod = 28
+        )
+    )
     private val expectedRiskyVenueDurationDays = mockk<RiskyVenueConfigurationDurationDays>()
     private val riskyVenueConfigurationResponse = RiskyVenueConfigurationResponse(expectedRiskyVenueDurationDays)
 
@@ -39,6 +64,7 @@ class UpdateConfigurationsTest {
     fun setUp() {
         coEvery { isolationConfigurationApi.getIsolationConfiguration() } returns isolationConfigurationResponse
         coEvery { riskyVenueConfigurationApi.getRiskyVenueConfiguration() } returns riskyVenueConfigurationResponse
+        every { convertIsolationConfigurationResponseToDurationDays.invoke(isolationConfigurationResponse) } returns expectedIsolationDurationDays
     }
 
     @Test

@@ -22,6 +22,7 @@ class ExposureNotificationVaccinationStatusActivityTest : EspressoTest(), Isolat
 
     @Test
     fun whenNotInIndexCase_subtitleIsDisplayed() {
+        givenLocalAuthorityIsInEngland()
         givenContactIsolation()
         startTestActivity<ExposureNotificationVaccinationStatusActivity>()
 

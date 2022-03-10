@@ -1,6 +1,7 @@
 package com.jeroenmols.featureflag.framework
 
 import com.jeroenmols.featureflag.framework.FeatureFlag.BATTERY_OPTIMIZATION
+import com.jeroenmols.featureflag.framework.FeatureFlag.NEW_ENGLAND_CONTACT_CASE_JOURNEY
 import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_COVID_STATS
 import com.jeroenmols.featureflag.framework.FeatureFlag.NEW_NO_SYMPTOMS_SCREEN
 import com.jeroenmols.featureflag.framework.FeatureFlag.REMOTE_SERVICE_EXCEPTION_CRASH_ANALYTICS
@@ -21,6 +22,7 @@ class StoreFeatureFlagProvider : FeatureFlagProvider {
                 NEW_NO_SYMPTOMS_SCREEN -> false
                 LOCAL_COVID_STATS -> false
                 VENUE_CHECK_IN_BUTTON -> false
+                NEW_ENGLAND_CONTACT_CASE_JOURNEY -> true
             }
         } else {
             // TestSettings should never be shipped to users

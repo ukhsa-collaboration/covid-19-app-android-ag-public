@@ -113,10 +113,10 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTyp
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
@@ -171,7 +171,7 @@ class AnalyticsEventProcessorTest {
     @Before
     fun setUp() {
         every { appAvailabilityProvider.isAppAvailable() } returns true
-        every { stateStorage.state } returns IsolationState(DurationDays())
+        every { stateStorage.state } returns IsolationState(IsolationConfiguration())
         coEvery { exposureNotificationApi.isEnabled() } returns true
         coEvery { exposureNotificationApi.isRunningNormally() } returns true
         every { isolationPaymentTokenStateProvider.tokenState } returns Unresolved
@@ -370,7 +370,7 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user is isolating due to contact`() = runBlocking {
         every { stateStorage.state } returns
                 IsolationState(
-                    isolationConfiguration = DurationDays(),
+                    isolationConfiguration = IsolationConfiguration(),
                     contact = isolationHelper.contact()
                 )
 
@@ -399,7 +399,7 @@ class AnalyticsEventProcessorTest {
     fun `on background completed when user was isolating due to contact`() = runBlocking {
         every { stateStorage.state } returns
                 IsolationState(
-                    isolationConfiguration = DurationDays(),
+                    isolationConfiguration = IsolationConfiguration(),
                     contact = isolationHelper.contact(expired = true)
                 )
 
@@ -427,7 +427,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         selfAssessment = isolationHelper.selfAssessment()
                     )
 
@@ -458,7 +458,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         contact = isolationHelper.contact(),
                         selfAssessment = isolationHelper.selfAssessment()
                     )
@@ -492,7 +492,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         selfAssessment = isolationHelper.selfAssessment(expired = true)
                     )
 
@@ -521,7 +521,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         selfAssessment = isolationHelper.selfAssessment(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock),
@@ -562,7 +562,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         selfAssessment = isolationHelper.selfAssessment(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock),
@@ -603,7 +603,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         selfAssessment = isolationHelper.selfAssessment(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock),
@@ -642,7 +642,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         selfAssessment = isolationHelper.selfAssessment(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock).minusDays(2),
@@ -683,7 +683,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         selfAssessment = isolationHelper.selfAssessment(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock).minusDays(2),
@@ -724,7 +724,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         selfAssessment = isolationHelper.selfAssessment(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock).minusDays(2),
@@ -764,7 +764,7 @@ class AnalyticsEventProcessorTest {
             val isolationStart = LocalDate.now(fixedClock).minusDays(1)
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         selfAssessment = SelfAssessment(selfAssessmentDate = isolationStart),
                         testResult = AcknowledgedTestResult(
                             testEndDate = isolationStart.minusDays(2),
@@ -806,7 +806,7 @@ class AnalyticsEventProcessorTest {
             val isolationStart = LocalDate.now(fixedClock).minusDays(1)
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         selfAssessment = SelfAssessment(selfAssessmentDate = isolationStart),
                         testResult = AcknowledgedTestResult(
                             testEndDate = isolationStart.minusDays(2),
@@ -847,7 +847,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         selfAssessment = isolationHelper.selfAssessment(expired = true),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock),
@@ -885,7 +885,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock),
                             acknowledgedDate = LocalDate.now(fixedClock),
@@ -923,7 +923,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock),
                             acknowledgedDate = LocalDate.now(fixedClock),
@@ -961,7 +961,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock),
                             acknowledgedDate = LocalDate.now(fixedClock),
@@ -1000,7 +1000,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock),
                             acknowledgedDate = LocalDate.now(fixedClock),
@@ -1039,7 +1039,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         contact = isolationHelper.contact(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock).minusDays(12),
@@ -1078,7 +1078,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         testResult = AcknowledgedTestResult(
                             testEndDate = LocalDate.now(fixedClock).minusDays(12),
                             acknowledgedDate = LocalDate.now(fixedClock).minusDays(12),
@@ -1299,7 +1299,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         contact = isolationHelper.contactWithOptOutDate(
                             optOutOfContactIsolation = LocalDate.now(fixedClock)
                         )
@@ -1330,7 +1330,7 @@ class AnalyticsEventProcessorTest {
         runBlocking {
             every { stateStorage.state } returns
                     IsolationState(
-                        isolationConfiguration = DurationDays(),
+                        isolationConfiguration = IsolationConfiguration(),
                         contact = isolationHelper.contact(expired = true)
                     )
 

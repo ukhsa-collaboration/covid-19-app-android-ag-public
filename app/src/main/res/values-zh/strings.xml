@@ -218,7 +218,7 @@
     <string name="title_venue_history">访问过的场所</string>
     <string name="title_symptoms">症状信息</string>
     <string name="save">储存</string>
-    <string name="about_how_this_app_works_text">该应用程序使用联系人跟踪技术来帮助您保护自己和他人，这样我们所有人都可以回到自己喜欢的事物上。\n\n该应用会检测并记录附近的其他应用用户。 如果这些用户中的任何一个将来冠状病毒检测呈阳性，您就会收到警报和建议。\n\n该应用程序还可以让您报告症状并确定是否需要进行测试。\n\n您还可以使用它扫描 NHS官方QR码，快速轻松地签到您访问的地方。</string>
+    <string name="about_how_this_app_works_text">该应用程序使用联系人跟踪技术来帮助您保护自己和他人，这样我们所有人都可以回到自己喜欢的事物上。\n\n该应用会检测并记录附近的其他应用用户。 如果这些用户中的任何一个将来冠状病毒检测呈阳性，您就会收到警报和建议。\n\n该应用程序还可以让您报告症状并确定是否需要进行测试。</string>
     <string name="title_encounter">接触日期</string>
     <string name="allow_bluetooth">允许蓝牙</string>
     <string name="onboarding_subtitle">当您使用本应用程序时，通过匿名共享您所在地区的病毒和公共卫生信息，您将帮助我们抗击 COVID-19</string>
@@ -398,7 +398,7 @@
     <string name="about_test_kit_type">检测试剂盒类型</string>
     <string name="about_test_result">结果</string>
     <string name="state_test_positive_and_book_test_info">您的冠状病毒测试结果为阳性</string>
-    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">即使您没有任何症状，您也有感染和传播冠状病毒的高风险。您应在规定的完整隔离期内进行自我隔离。</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">即使没有任何症状，您也极有可能感染和传播该病毒。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。</string>
     <string name="test_result_positive_self_isolate_and_book_test_explanation_1">若要了解应用程序如何计算自我隔离天数，请访问\"常见问题解答\"。\n\n您之前做的是快速拭子检测，因此，您现在需要进行另一种检测，并将检测样本送到实验室去进行化验。\n\n同时，您同与您一起生活的任何人员必须立即自行隔离。</string>
     <string name="test_result_positive_self_isolate_and_book_test_title_3">并预约后续检测</string>
     <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
@@ -537,7 +537,7 @@
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_change">请使用应用程序主屏幕上的倒计时器记录您的自我隔离时间。</string>
     <string name="test_result_plod_title">您的检测结果呈弱阳性</string>
     <string name="url_download_the_nhs_app">https://www.nhs.uk/app</string>
-    <string name="local_message_banner_read_more">阅读更多</string>
+    <string name="local_message_banner_read_more">Read updated guidance</string>
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">因为您的检测结果呈阳性，请务必继续进行自我隔离。\n\n为了自己和他人的安全，请待在家中。请使用应用程序主屏幕上的倒计时器记录您的自我隔离时间。</string>
@@ -810,4 +810,21 @@
     <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">限制与家中任何感染 COVID-19 之人的密切接触</string>
     <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">在拥挤、封闭或通风不良的空间内佩戴面罩</string>
     <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">若家人感染 COVID-19，则尽可能居家工作</string>
+    <string name="contact_case_exposure_info_screen_continue_button_england">继续</string>
+    <string name="contact_case_exposure_info_screen_exposure_date_england">%s发生密切接触</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_body_england">该应用程序通过蓝牙检测您的手机是否与他人有过密切接触。\n\n密切接触是指您在 15 分钟或更长时间内，与某人保持 2 米以内的距离。\n\n该应用匿名使用，不使用全球定位系统 (GPS) 跟踪用户位置，从而保护个人隐私。</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading_england">如何监测密切接触</string>
+    <string name="contact_case_exposure_info_screen_information_england">如果您未满 18 岁，我们建议您将此消息展示给可信任的成年人</string>
+    <string name="contact_case_exposure_info_screen_title_england">本应用程序检测到您曾接触新冠病毒 (COVID-19) 阳性患者</string>
+    <string name="risky_contact_opt_out_advice_mask">在拥挤、封闭的空间内佩戴面罩</string>
+    <string name="risky_contact_opt_out_advice_meeting_indoors">室内会面时请保持室内通风，或者请考虑室外会面</string>
+    <string name="risky_contact_opt_out_advice_testing_hub">若您有 COVID-19 症状，则进行相关检测；若检测结果为阳性，则请居家隔离</string>
+    <string name="risky_contact_opt_out_advice_title">遵循最新的 COVID-19 指南保护自己和他人</string>
+    <string name="risky_contact_opt_out_advice_wash_hands">经常洗手，咳嗽和打喷嚏时捂住口鼻</string>
+    <string name="risky_contact_opt_out_further_advice">若家中有人 COVID-19 检测呈阳性，请访问：</string>
+    <string name="risky_contact_opt_out_further_advice_link_text">家庭接触者指南</string>
+    <string name="risky_contact_opt_out_further_advice_link_url">https://www.gov.uk/government/publications/covid-19-people-with-covid-19-and-their-contacts/covid-19-people-with-covid-19-and-their-contacts#what-to-do-if-you-are-a-close-contact-of-someone-who-has-covid-19</string>
+    <string name="risky_contact_opt_out_primary_button_title">阅读最新版 COVID-19 指南</string>
+    <string name="risky_contact_opt_out_primary_button_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="risky_contact_opt_out_secondary_button_title">返回主屏幕</string>
 </resources>

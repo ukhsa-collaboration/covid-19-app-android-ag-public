@@ -1,7 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.about
 
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
@@ -49,7 +49,7 @@ class UserDataFlowTest : EspressoTest() {
         private val startInstant = Instant.parse("2020-12-11T13:00:00Z")
         private val startDate = startInstant.toLocalDate(ZoneOffset.UTC)
         private val contactCaseIsolation = IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contact = Contact(
                 exposureDate = startDate,
                 notificationDate = startDate,

@@ -26,6 +26,7 @@ class MigrateIsolationState @Inject constructor(
     private val relevantTestResultProvider: RelevantTestResultProvider,
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val migrateTestResults: MigrateTestResults,
+    private val createIsolationConfiguration: CreateIsolationConfiguration,
     private val clock: Clock
 ) {
 
@@ -71,7 +72,7 @@ class MigrateIsolationState @Inject constructor(
 
     private fun createNeverIsolating(testResult: AcknowledgedTestResult?): IsolationState =
         IsolationState(
-            isolationConfiguration = isolationConfigurationProvider.durationDays,
+            isolationConfiguration = createIsolationConfiguration(isolationConfigurationProvider.durationDays),
             testResult = handleNoIndexCase(testResult)
         )
 

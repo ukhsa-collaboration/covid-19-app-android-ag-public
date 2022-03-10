@@ -63,6 +63,12 @@ enum class FeatureFlag(
         "Venue check-in Home Screen button",
         "Show Venue check-in Home Screen button",
         defaultValue = false
+    ),
+    NEW_ENGLAND_CONTACT_CASE_JOURNEY(
+        "feature.NewEnglandContactCaseJourney",
+        "New contact case journey for England (automatic opt-out)",
+        "Show new contact case journey for England (automatic opt-out)",
+        defaultValue = true
     )
 }
 

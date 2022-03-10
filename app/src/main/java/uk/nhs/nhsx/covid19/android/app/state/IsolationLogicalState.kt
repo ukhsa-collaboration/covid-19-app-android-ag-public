@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo.NegativeTest
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
@@ -13,7 +12,7 @@ import java.time.LocalDate
  * High-level representation of the isolation state, as opposed to the low-level [IsolationState].
  */
 sealed class IsolationLogicalState {
-    abstract val isolationConfiguration: DurationDays
+    abstract val isolationConfiguration: IsolationConfiguration
 
     abstract fun remembersIndexCase(): Boolean
     abstract fun remembersIndexCaseWithSelfAssessment(): Boolean
@@ -78,7 +77,7 @@ sealed class IsolationLogicalState {
      * The app does not know about any previous isolation
      */
     data class NeverIsolating(
-        override val isolationConfiguration: DurationDays,
+        override val isolationConfiguration: IsolationConfiguration,
         val negativeTest: NegativeTest?
     ) : IsolationLogicalState() {
 
@@ -133,7 +132,7 @@ sealed class IsolationLogicalState {
      * The app knows about a previous isolation, which might be expired
      */
     data class PossiblyIsolating(
-        override val isolationConfiguration: DurationDays,
+        override val isolationConfiguration: IsolationConfiguration,
         val indexInfo: IndexInfo? = null,
         val contactCase: ContactCase? = null,
         val hasAcknowledgedEndOfIsolation: Boolean = false,

@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import java.time.Clock
@@ -15,7 +14,7 @@ class CalculateContactExpiryDateTest {
     private val fixedClock = Clock.fixed(Instant.parse("2020-01-15T10:00:00Z"), ZoneOffset.UTC)
 
     private val testSubject = CalculateContactExpiryDate()
-    private val isolationConfiguration = DurationDays()
+    private val isolationConfiguration = IsolationConfiguration()
 
     @Test
     fun `when contact has opt-out date, use opt-out date as expiry date`() {

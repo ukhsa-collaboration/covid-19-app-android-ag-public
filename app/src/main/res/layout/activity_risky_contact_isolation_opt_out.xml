@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/riskyContactIsolationOptOutContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/primaryToolbar"
+        layout="@layout/view_toolbar_background" />
+
+    <ScrollView
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingVertical="@dimen/vertical_margin_large">
+
+            <ImageView
+                android:id="@+id/riskyContactAdviceIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_elbow_bump" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                android:id="@+id/riskyContactAdviceTitle"
+                style="@style/TitleIsolation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:text="@string/risky_contact_opt_out_advice_title"
+                android:textAlignment="center" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_medium"
+                app:drawable="@drawable/ic_meeting_outdoor"
+                app:text="@string/risky_contact_opt_out_advice_meeting_indoors" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_medium"
+                app:drawable="@drawable/ic_mask"
+                app:text="@string/risky_contact_opt_out_advice_mask" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_medium"
+                app:drawable="@drawable/ic_testing_hub"
+                app:text="@string/risky_contact_opt_out_advice_testing_hub" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_medium"
+                app:drawable="@drawable/ic_wash_hands"
+                app:text="@string/risky_contact_opt_out_advice_wash_hands" />
+
+            <TextView
+                android:id="@+id/furtherAdviceTextView"
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:text="@string/risky_contact_opt_out_further_advice" />
+
+            <TextView
+                android:id="@+id/nhsGuidanceLinkTextView"
+                style="@style/LinkText.WithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/risky_contact_opt_out_further_advice_link_text"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/primaryActionButton"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:drawableEnd="@drawable/ic_link"
+                android:drawablePadding="8dp"
+                android:drawableTint="?colorOnPrimary"
+                android:text="@string/risky_contact_opt_out_primary_button_title" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/secondaryActionButton"
+                style="@style/TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/risky_contact_opt_out_secondary_button_title" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

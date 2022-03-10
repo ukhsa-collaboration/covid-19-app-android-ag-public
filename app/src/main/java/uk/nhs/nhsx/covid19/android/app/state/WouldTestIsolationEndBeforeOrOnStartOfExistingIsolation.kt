@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
@@ -29,7 +28,7 @@ class WouldTestIsolationEndBeforeOrOnStartOfExistingIsolation @Inject constructo
 
     private fun getIsolationExpiryDateBasedOnTest(
         testResult: ReceivedTestResult,
-        isolationConfiguration: DurationDays
+        isolationConfiguration: IsolationConfiguration
     ): LocalDate? =
         calculateIndexExpiryDate(
             selfAssessment = createSelfAssessmentFromTestResult(testResult, selfAssessmentDate = LocalDate.now(clock)),

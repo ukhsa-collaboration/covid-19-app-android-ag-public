@@ -4,9 +4,10 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.remote.data.CountrySpecificConfiguration
+import uk.nhs.nhsx.covid19.android.app.state.GetLatestConfiguration
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
@@ -16,22 +17,15 @@ class RemoveOutdatedRiskyVenueCircuitBreakerConfigurationsTest {
 
     private val riskyVenuePollingConfigurationProvider =
         mockk<RiskyVenueCircuitBreakerConfigurationProvider>(relaxed = true)
-    private val isolationConfigurationProvider =
-        mockk<IsolationConfigurationProvider>(relaxed = true)
+    private val getLatestConfiguration =
+        mockk<GetLatestConfiguration>(relaxed = true)
     private var clock: Clock = Clock.fixed(Instant.parse("2020-07-28T01:00:00.00Z"), ZoneOffset.UTC)
+    private val configuration = mockk<CountrySpecificConfiguration>()
 
     private val testSubject = RemoveOutdatedRiskyVenuePollingConfigurations(
         riskyVenuePollingConfigurationProvider,
-        isolationConfigurationProvider,
+        getLatestConfiguration,
         clock
-    )
-
-    private val durationDays = DurationDays(
-        contactCase = 14,
-        indexCaseSinceSelfDiagnosisOnset = 7,
-        indexCaseSinceSelfDiagnosisUnknownOnset = 5,
-        maxIsolation = 21,
-        pendingTasksRetentionPeriod = 14
     )
 
     private val activePollingConfiguration = RiskyVenueCircuitBreakerConfiguration(
@@ -68,14 +62,19 @@ class RemoveOutdatedRiskyVenueCircuitBreakerConfigurationsTest {
         anotherOutdatedPollingConfiguration
     )
 
+    @Before
+    fun setUp() {
+        every { getLatestConfiguration() } returns configuration
+        every { configuration.pendingTasksRetentionPeriod } returns 14
+    }
+
     @Test
     fun `no outdated polling configs does not change polling configurations`() = runBlocking {
         every { riskyVenuePollingConfigurationProvider.configs } returns activePollingConfigurations
-        every { isolationConfigurationProvider.durationDays } returns durationDays
 
         testSubject.invoke()
 
-        verify { isolationConfigurationProvider.durationDays }
+        verify { configuration.pendingTasksRetentionPeriod }
         verify {
             riskyVenuePollingConfigurationProvider setProperty "configs" value eq(
                 activePollingConfigurations
@@ -89,11 +88,10 @@ class RemoveOutdatedRiskyVenueCircuitBreakerConfigurationsTest {
             activePollingConfigurations,
             outdatedPollingConfigurations
         ).flatten()
-        every { isolationConfigurationProvider.durationDays } returns durationDays
 
         testSubject.invoke()
 
-        verify { isolationConfigurationProvider.durationDays }
+        verify { configuration.pendingTasksRetentionPeriod }
         verify {
             riskyVenuePollingConfigurationProvider setProperty "configs" value eq(
                 activePollingConfigurations
@@ -104,11 +102,10 @@ class RemoveOutdatedRiskyVenueCircuitBreakerConfigurationsTest {
     @Test
     fun `only outdated polling configs result in configurations provider empty`() = runBlocking {
         every { riskyVenuePollingConfigurationProvider.configs } returns outdatedPollingConfigurations
-        every { isolationConfigurationProvider.durationDays } returns durationDays
 
         testSubject.invoke()
 
-        verify { isolationConfigurationProvider.durationDays }
+        verify { configuration.pendingTasksRetentionPeriod }
         verify {
             riskyVenuePollingConfigurationProvider setProperty "configs" value eq(
                 listOf<RiskyVenueCircuitBreakerConfiguration>()

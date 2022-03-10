@@ -1,6 +1,9 @@
 package uk.nhs.nhsx.covid19.android.app.flow.functionalities
 
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfo
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationOptOutRobot
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationAgeLimitRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationReviewRobot
@@ -17,6 +20,7 @@ class RiskyContact(
     private val vaccinationStatusRobot = ExposureNotificationVaccinationStatusRobot()
     private val reviewRobot = ExposureNotificationReviewRobot(espressoTest.testAppContext)
     private val riskyContactIsolationAdviceRobot = RiskyContactIsolationAdviceRobot()
+    private val riskyContactIsolationOptOutRobot = RiskyContactIsolationOptOutRobot()
 
     fun triggerViaCircuitBreaker(runBackgroundTasks: () -> Unit) {
         val exposureCircuitBreakerInfo = ExposureCircuitBreakerInfo(
@@ -36,7 +40,7 @@ class RiskyContact(
         espressoTest.testAppContext.sendExposureStateUpdatedBroadcast()
     }
 
-    fun acknowledgeIsolatingViaNotMinorNotVaccinated(alreadyIsolating: Boolean = false) {
+    fun acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(alreadyIsolating: Boolean = false, country: SupportedCountry) {
         waitFor { exposureNotificationRobot.clickContinueButton() }
 
         waitFor { ageLimitRobot.checkActivityIsDisplayed() }
@@ -45,7 +49,8 @@ class RiskyContact(
 
         waitFor { vaccinationStatusRobot.checkActivityIsDisplayed() }
         vaccinationStatusRobot.clickDosesNoButton()
-        vaccinationStatusRobot.clickMedicallyExemptNoButton()
+        if (country == ENGLAND)
+            vaccinationStatusRobot.clickMedicallyExemptNoButton()
         vaccinationStatusRobot.clickClinicalTrialNoButton()
         vaccinationStatusRobot.clickContinueButton()
 
@@ -66,7 +71,7 @@ class RiskyContact(
         clickBackToHomeOnIsolationAdviceScreen(alreadyIsolating)
     }
 
-    fun acknowledgeIsolationViaOptOutFullyVaccinated(alreadyIsolating: Boolean = false) {
+    fun acknowledgeIsolationViaOptOutFullyVaccinatedForContactQuestionnaireJourney(alreadyIsolating: Boolean = false) {
         waitFor { exposureNotificationRobot.clickContinueButton() }
 
         waitFor { ageLimitRobot.checkActivityIsDisplayed() }
@@ -82,6 +87,18 @@ class RiskyContact(
         clickSubmitButtonOnReviewScreen()
 
         clickBackToHomeOnIsolationAdviceScreen(alreadyIsolating)
+    }
+
+    fun acknowledgeNoIsolationForNewAdviceJourney() {
+        waitFor { exposureNotificationRobot.clickContinueButton() }
+        riskyContactIsolationOptOutRobot.checkActivityIsDisplayed()
+        waitFor { riskyContactIsolationOptOutRobot.clickSecondaryButton() }
+    }
+
+    fun acknowledgeContinueIsolationForNewAdviceJourney() {
+        waitFor { exposureNotificationRobot.clickContinueButton() }
+        riskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
+        waitFor { riskyContactIsolationAdviceRobot.clickPrimaryBackToHome() }
     }
 
     private fun clickBackToHomeOnIsolationAdviceScreen(alreadyIsolating: Boolean) {

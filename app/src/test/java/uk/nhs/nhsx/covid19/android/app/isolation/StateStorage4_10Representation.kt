@@ -23,8 +23,8 @@ import uk.nhs.nhsx.covid19.android.app.isolation.SymptomaticCaseState.notIsolati
 import uk.nhs.nhsx.covid19.android.app.isolation.TestType.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.isolation.TestType.POSITIVE_CONFIRMED
 import uk.nhs.nhsx.covid19.android.app.isolation.TestType.POSITIVE_UNCONFIRMED
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateJson
@@ -57,12 +57,12 @@ class StateStorage4_10Representation(
 ) : StateRepresentation {
     override val representationName = "4.10"
 
-    override fun setupState(isolationTestContext: IsolationTestContext, isolationConfiguration: DurationDays) =
+    override fun setupState(isolationTestContext: IsolationTestContext, isolationConfiguration: IsolationConfiguration) =
         StateProducer(isolationTestContext, isolationConfiguration).setupState(state, event)
 
     private class StateProducer(
         private val isolationTestContext: IsolationTestContext,
-        private val isolationConfiguration: DurationDays
+        private val isolationConfiguration: IsolationConfiguration
     ) {
         private val today = LocalDate.now(isolationTestContext.clock)
 

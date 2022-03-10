@@ -63,6 +63,7 @@ class FlowTests : EspressoTest(), LocalAuthoritySetupHelper {
 
     @Test
     fun startDefault_selfDiagnose_receiveNegative_notInIsolation() {
+        givenLocalAuthorityIsInEngland()
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
@@ -167,7 +168,7 @@ class FlowTests : EspressoTest(), LocalAuthoritySetupHelper {
         waitFor { exposureNotificationRobot.checkActivityIsDisplayed() }
 
         val contactCaseDays =
-            testAppContext.getIsolationConfigurationProvider().durationDays.contactCase
+            testAppContext.getIsolationConfigurationProvider().durationDays.wales.contactCase
         val expectedExpiryDate = dateNow.plus(contactCaseDays.toLong(), DAYS)
         val actualExpiryDate = (testAppContext.getCurrentLogicalState() as PossiblyIsolating).expiryDate
 

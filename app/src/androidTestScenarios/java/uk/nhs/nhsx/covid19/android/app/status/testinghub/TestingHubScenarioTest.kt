@@ -22,9 +22,10 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAfterRiskyVenu
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestingHubRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import java.time.LocalDate
 
-class TestingHubScenarioTest : EspressoTest() {
+class TestingHubScenarioTest : EspressoTest(), LocalAuthoritySetupHelper {
 
     private val statusRobot = StatusRobot()
     private val testingHubRobot = TestingHubRobot()
@@ -42,6 +43,7 @@ class TestingHubScenarioTest : EspressoTest() {
 
     @Test
     fun activeIsolation_thenNavigateToBookATest_tapBack_shouldShowTestingHub() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -61,6 +63,7 @@ class TestingHubScenarioTest : EspressoTest() {
 
     @Test
     fun activeIsolationFromSelfAssessment_thenNavigateToBookATest_bookATest_shouldShowStatusActivity() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -80,6 +83,7 @@ class TestingHubScenarioTest : EspressoTest() {
 
     @Test
     fun activeIsolationAsContactCase_withRiskyVenueNotification_thenNavigateToSymptomsScreen_thenShouldShowBookATest_shouldShowStatusActivity() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setState(isolationHelper.contact().asIsolation())
         testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue =
             LastVisitedBookTestTypeVenueDate(
@@ -114,6 +118,7 @@ class TestingHubScenarioTest : EspressoTest() {
 
     @Test
     fun activeIsolationAsContactCase_withNoRiskyVenueNotification_thenNavigateToBookATest_shouldShowStatusActivity() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setState(isolationHelper.contact().asIsolation())
         testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue = null
 
@@ -218,6 +223,7 @@ class TestingHubScenarioTest : EspressoTest() {
 
     @Test
     fun activeIsolationAsContactCase_withRiskyVenueNotification_thenNavigateToSymptomsScreen_thenClicksCancel_shouldShowTestingHub() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setState(isolationHelper.contact().asIsolation())
         testAppContext.getLastVisitedBookTestTypeVenueDateProvider().lastVisitedVenue =
             LastVisitedBookTestTypeVenueDate(

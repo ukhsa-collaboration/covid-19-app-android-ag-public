@@ -16,6 +16,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
@@ -386,7 +387,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenExpiredIndexCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWontBeInIsolation_andNoIsolation() {
-        val onsetInstant = testEndDate.minus(DurationDays().indexCaseSinceSelfDiagnosisOnset.toLong(), ChronoUnit.DAYS)
+        val onsetInstant = testEndDate.minus(DurationDays().england.indexCaseSinceSelfDiagnosisOnset.toLong(), ChronoUnit.DAYS)
         val onsetDate = onsetInstant.toLocalDate(testAppContext.clock.zone)
         val previousTest = setExpiredSelfAssessmentIsolationWithNegativeTest(
             selfAssessmentDate = onsetDate,
@@ -413,7 +414,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
 
     @Test
     fun whenExpiredIndexCase_withPrevConfirmedNegTest_onAcknowledgingIndicativePosTestOlderThanNegative_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() {
-        val onsetInstant = testEndDate.minus(DurationDays().indexCaseSinceSelfDiagnosisOnset.toLong(), ChronoUnit.DAYS)
+        val onsetInstant = testEndDate.minus(DurationDays().england.indexCaseSinceSelfDiagnosisOnset.toLong(), ChronoUnit.DAYS)
         val onsetDate = onsetInstant.toLocalDate(testAppContext.clock.zone)
         val previousTest = setExpiredSelfAssessmentIsolationWithNegativeTest(
             selfAssessmentDate = onsetDate,
@@ -514,7 +515,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported(
-            testEndDate = testEndDate.minus(DurationDays().indexCaseSinceTestResultEndDate.toLong(), ChronoUnit.DAYS),
+            testEndDate = testEndDate.minus(DurationDays().england.indexCaseSinceTestResultEndDate.toLong(), ChronoUnit.DAYS),
             confirmatoryDayLimit = 2
         )
 
@@ -1277,7 +1278,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     ) {
         testAppContext.setState(
             IsolationState(
-                isolationConfiguration = DurationDays(),
+                isolationConfiguration = IsolationConfiguration(),
                 contact = isolationHelper.contact(
                     exposureDate = isolationStart,
                     notificationDate = isolationStart
@@ -1296,7 +1297,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         val previousNegativeTest = previousNegativeTest()
         testAppContext.setState(
             IsolationState(
-                isolationConfiguration = DurationDays(),
+                isolationConfiguration = IsolationConfiguration(),
                 contact = isolationHelper.contact(
                     exposureDate = isolationStart,
                     notificationDate = isolationStart

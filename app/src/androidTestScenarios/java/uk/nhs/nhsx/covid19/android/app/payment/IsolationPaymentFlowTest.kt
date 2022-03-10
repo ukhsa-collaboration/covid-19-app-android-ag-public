@@ -8,7 +8,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_FAIL
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_SUCCEED
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
@@ -18,10 +18,11 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationPaymentRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ProgressRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit.DAYS
 
-class IsolationPaymentFlowTest : EspressoTest() {
+class IsolationPaymentFlowTest : EspressoTest(), LocalAuthoritySetupHelper {
 
     private val statusRobot = StatusRobot()
     private val isolationPaymentRobot = IsolationPaymentRobot()
@@ -41,12 +42,13 @@ class IsolationPaymentFlowTest : EspressoTest() {
 
     @Test
     fun whenUserInContactCaseIsolation_performIsolationPaymentFlow_retryOnce_endInStatusActivity() {
+        givenLocalAuthorityIsInEngland()
         MockApiModule.behaviour.responseType = ALWAYS_FAIL
 
         testAppContext.setIsolationPaymentToken("abc")
         testAppContext.setState(
             IsolationState(
-                isolationConfiguration = DurationDays(),
+                isolationConfiguration = IsolationConfiguration(),
                 contact = Contact(
                     exposureDate = LocalDate.now().minus(3, DAYS),
                     notificationDate = LocalDate.now().minus(2, DAYS)

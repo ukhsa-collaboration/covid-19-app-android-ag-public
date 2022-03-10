@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
+import com.jeroenmols.featureflag.framework.FeatureFlag.NEW_ENGLAND_CONTACT_CASE_JOURNEY
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.Default
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.WalesWithinAdviceWindow
@@ -18,6 +19,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationRe
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationVaccinationStatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.RiskyContactIsolationAdviceRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import java.time.LocalDate
@@ -35,110 +37,119 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
     //region England
     @Test
     fun givenContactIsolation_whenSelectingNoToAgeLimitQuestionAndClickingConfirm_thenNavigatesToIsolatingScreenOptingOut() {
-        givenLocalAuthorityIsInEngland()
-        givenContactIsolation()
+        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+            givenLocalAuthorityIsInEngland()
+            givenContactIsolation()
 
-        navigateToAgeLimitActivity()
+            navigateToAgeLimitActivity()
 
-        exposureNotificationAgeLimitRobot.clickNoButton()
+            exposureNotificationAgeLimitRobot.clickNoButton()
 
-        exposureNotificationAgeLimitRobot.clickContinueButton()
+            exposureNotificationAgeLimitRobot.clickContinueButton()
 
-        waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationReviewRobot.verifyReviewViewState(
-            ageResponse = false,
-            vaccinationStatusResponses = emptyList()
-        )
+            exposureNotificationReviewRobot.verifyReviewViewState(
+                ageResponse = false,
+                vaccinationStatusResponses = emptyList()
+            )
 
-        exposureNotificationReviewRobot.clickSubmitButton()
+            exposureNotificationReviewRobot.clickSubmitButton()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsNotIsolatingAsMinorViewState(country = ENGLAND, testingAdviceToShow = Default)
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkIsNotIsolatingAsMinorViewState(
+                country = ENGLAND,
+                testingAdviceToShow = Default
+            )
+        }
     }
 
     @Test
     fun givenContactIsolation_whenSelectingYesToAgeLimitAndVaccinationQuestionsAndClickingConfirm_thenNavigatesToNotIsolatingAsFullyVaccinatedScreen() {
-        givenLocalAuthorityIsInEngland()
-        givenContactIsolation()
+        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+            givenLocalAuthorityIsInEngland()
+            givenContactIsolation()
 
-        navigateToAgeLimitActivity()
+            navigateToAgeLimitActivity()
 
-        exposureNotificationAgeLimitRobot.clickYesButton()
+            exposureNotificationAgeLimitRobot.clickYesButton()
 
-        exposureNotificationAgeLimitRobot.clickContinueButton()
+            exposureNotificationAgeLimitRobot.clickContinueButton()
 
-        waitFor { exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationVaccinationStatusRobot.clickDosesYesButton()
+            exposureNotificationVaccinationStatusRobot.clickDosesYesButton()
 
-        waitFor { exposureNotificationVaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
+            waitFor { exposureNotificationVaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
 
-        exposureNotificationVaccinationStatusRobot.clickDateYesButton()
+            exposureNotificationVaccinationStatusRobot.clickDateYesButton()
 
-        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+            exposureNotificationVaccinationStatusRobot.clickContinueButton()
 
-        waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationReviewRobot.verifyReviewViewState(
-            vaccinationStatusResponses = listOf(
-                OptOutResponseEntry(questionType = FullyVaccinated, response = true),
-                OptOutResponseEntry(questionType = DoseDate, response = true)
+            exposureNotificationReviewRobot.verifyReviewViewState(
+                vaccinationStatusResponses = listOf(
+                    OptOutResponseEntry(questionType = FullyVaccinated, response = true),
+                    OptOutResponseEntry(questionType = DoseDate, response = true)
+                )
             )
-        )
 
-        exposureNotificationReviewRobot.clickSubmitButton()
+            exposureNotificationReviewRobot.clickSubmitButton()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
-            country = ENGLAND,
-            testingAdviceToShow = Default
-        )
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
+                country = ENGLAND,
+                testingAdviceToShow = Default
+            )
+        }
     }
 
     @Test
     fun givenContactIsolation_whenSelectingYesToAgeLimit_thenYesToAllDoses_thenNoToDate_thenYesToClinicalTrial_navigatesToNotIsolatingAsFullyVaccinatedScreen() {
-        givenLocalAuthorityIsInEngland()
-        givenContactIsolation()
+        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+            givenLocalAuthorityIsInEngland()
+            givenContactIsolation()
 
-        navigateToAgeLimitActivity()
+            navigateToAgeLimitActivity()
 
-        exposureNotificationAgeLimitRobot.clickYesButton()
+            exposureNotificationAgeLimitRobot.clickYesButton()
 
-        exposureNotificationAgeLimitRobot.clickContinueButton()
+            exposureNotificationAgeLimitRobot.clickContinueButton()
 
-        waitFor { exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationVaccinationStatusRobot.clickDosesYesButton()
+            exposureNotificationVaccinationStatusRobot.clickDosesYesButton()
 
-        waitFor { exposureNotificationVaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
+            waitFor { exposureNotificationVaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
 
-        exposureNotificationVaccinationStatusRobot.clickDateNoButton()
+            exposureNotificationVaccinationStatusRobot.clickDateNoButton()
 
-        exposureNotificationVaccinationStatusRobot.clickClinicalTrialYesButton()
+            exposureNotificationVaccinationStatusRobot.clickClinicalTrialYesButton()
 
-        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+            exposureNotificationVaccinationStatusRobot.clickContinueButton()
 
-        waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationReviewRobot.verifyReviewViewState(
-            vaccinationStatusResponses = listOf(
-                OptOutResponseEntry(questionType = FullyVaccinated, response = true),
-                OptOutResponseEntry(questionType = DoseDate, response = false),
-                OptOutResponseEntry(questionType = ClinicalTrial, response = true)
+            exposureNotificationReviewRobot.verifyReviewViewState(
+                vaccinationStatusResponses = listOf(
+                    OptOutResponseEntry(questionType = FullyVaccinated, response = true),
+                    OptOutResponseEntry(questionType = DoseDate, response = false),
+                    OptOutResponseEntry(questionType = ClinicalTrial, response = true)
+                )
             )
-        )
 
-        exposureNotificationReviewRobot.clickSubmitButton()
+            exposureNotificationReviewRobot.clickSubmitButton()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
-            country = ENGLAND,
-            testingAdviceToShow = Default
-        )
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
+                country = ENGLAND,
+                testingAdviceToShow = Default
+            )
+        }
     }
 
     private fun navigateToAgeLimitActivity() {
@@ -192,152 +203,160 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
     @Test
     fun givenIsInEngland_inContactIsolation_whenNoToFullyVaccinated_thenNoToMedicallyExempt_thenYesToClinicalTrial_navigatesToNotIsolatingAsFullyVaccinated() {
-        givenLocalAuthorityIsInEngland()
-        givenContactIsolation()
+        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+            givenLocalAuthorityIsInEngland()
+            givenContactIsolation()
 
-        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+            startTestActivity<ExposureNotificationVaccinationStatusActivity>()
 
-        exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
+            exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
 
-        exposureNotificationVaccinationStatusRobot.clickDosesNoButton()
+            exposureNotificationVaccinationStatusRobot.clickDosesNoButton()
 
-        exposureNotificationVaccinationStatusRobot.clickMedicallyExemptNoButton()
+            exposureNotificationVaccinationStatusRobot.clickMedicallyExemptNoButton()
 
-        exposureNotificationVaccinationStatusRobot.clickClinicalTrialYesButton()
+            exposureNotificationVaccinationStatusRobot.clickClinicalTrialYesButton()
 
-        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+            exposureNotificationVaccinationStatusRobot.clickContinueButton()
 
-        waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationReviewRobot.verifyReviewViewState(
-            vaccinationStatusResponses = listOf(
-                OptOutResponseEntry(questionType = FullyVaccinated, response = false),
-                OptOutResponseEntry(questionType = MedicallyExempt, response = false),
-                OptOutResponseEntry(questionType = ClinicalTrial, response = true)
+            exposureNotificationReviewRobot.verifyReviewViewState(
+                vaccinationStatusResponses = listOf(
+                    OptOutResponseEntry(questionType = FullyVaccinated, response = false),
+                    OptOutResponseEntry(questionType = MedicallyExempt, response = false),
+                    OptOutResponseEntry(questionType = ClinicalTrial, response = true)
+                )
             )
-        )
 
-        exposureNotificationReviewRobot.clickSubmitButton()
+            exposureNotificationReviewRobot.clickSubmitButton()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
-            country = ENGLAND,
-            testingAdviceToShow = Default
-        )
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsFullyVaccinatedViewState(
+                country = ENGLAND,
+                testingAdviceToShow = Default
+            )
+        }
     }
 
     @Test
     fun givenIsInEngland_inContactIsolation_whenYesToFullyVaccinated_thenNoToDate_thenNoToClinicalTrial_thenNoToMedicallyExempt_navigatesToIsolationScreen() {
-        givenLocalAuthorityIsInEngland()
-        givenContactIsolation()
+        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+            givenLocalAuthorityIsInEngland()
+            givenContactIsolation()
 
-        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+            startTestActivity<ExposureNotificationVaccinationStatusActivity>()
 
-        exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
+            exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
 
-        waitFor { exposureNotificationVaccinationStatusRobot.clickDosesYesButton() }
+            waitFor { exposureNotificationVaccinationStatusRobot.clickDosesYesButton() }
 
-        waitFor { exposureNotificationVaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
+            waitFor { exposureNotificationVaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
 
-        exposureNotificationVaccinationStatusRobot.clickDateNoButton()
+            exposureNotificationVaccinationStatusRobot.clickDateNoButton()
 
-        exposureNotificationVaccinationStatusRobot.clickClinicalTrialNoButton()
+            exposureNotificationVaccinationStatusRobot.clickClinicalTrialNoButton()
 
-        exposureNotificationVaccinationStatusRobot.clickMedicallyExemptNoButton()
+            exposureNotificationVaccinationStatusRobot.clickMedicallyExemptNoButton()
 
-        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+            exposureNotificationVaccinationStatusRobot.clickContinueButton()
 
-        waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationReviewRobot.verifyReviewViewState(
-            vaccinationStatusResponses = listOf(
-                OptOutResponseEntry(questionType = FullyVaccinated, response = true),
-                OptOutResponseEntry(questionType = DoseDate, response = false),
-                OptOutResponseEntry(questionType = ClinicalTrial, response = false),
-                OptOutResponseEntry(questionType = MedicallyExempt, response = false)
+            exposureNotificationReviewRobot.verifyReviewViewState(
+                vaccinationStatusResponses = listOf(
+                    OptOutResponseEntry(questionType = FullyVaccinated, response = true),
+                    OptOutResponseEntry(questionType = DoseDate, response = false),
+                    OptOutResponseEntry(questionType = ClinicalTrial, response = false),
+                    OptOutResponseEntry(questionType = MedicallyExempt, response = false)
+                )
             )
-        )
 
-        exposureNotificationReviewRobot.clickSubmitButton()
+            exposureNotificationReviewRobot.clickSubmitButton()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(
-            ENGLAND,
-            remainingDaysInIsolation = 9,
-            testingAdviceToShow = Default
-        )
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNewlyIsolatingViewState(
+                ENGLAND,
+                remainingDaysInIsolation = 9,
+                testingAdviceToShow = Default
+            )
+        }
     }
 
     @Test
     fun givenIsInEngland_inContactIsolation_whenNoToFullyVaccinated_thenYesToMedicallyExempt_navigatesToNotIsolatingAsMedicallyExemptScreen() {
-        givenLocalAuthorityIsInEngland()
-        givenContactIsolation()
+        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+            givenLocalAuthorityIsInEngland()
+            givenContactIsolation()
 
-        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+            startTestActivity<ExposureNotificationVaccinationStatusActivity>()
 
-        exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
+            exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
 
-        exposureNotificationVaccinationStatusRobot.clickDosesNoButton()
+            exposureNotificationVaccinationStatusRobot.clickDosesNoButton()
 
-        exposureNotificationVaccinationStatusRobot.clickMedicallyExemptYesButton()
+            exposureNotificationVaccinationStatusRobot.clickMedicallyExemptYesButton()
 
-        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+            exposureNotificationVaccinationStatusRobot.clickContinueButton()
 
-        waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationReviewRobot.verifyReviewViewState(
-            vaccinationStatusResponses = listOf(
-                OptOutResponseEntry(questionType = FullyVaccinated, response = false),
-                OptOutResponseEntry(questionType = MedicallyExempt, response = true)
+            exposureNotificationReviewRobot.verifyReviewViewState(
+                vaccinationStatusResponses = listOf(
+                    OptOutResponseEntry(questionType = FullyVaccinated, response = false),
+                    OptOutResponseEntry(questionType = MedicallyExempt, response = true)
+                )
             )
-        )
 
-        exposureNotificationReviewRobot.clickSubmitButton()
+            exposureNotificationReviewRobot.clickSubmitButton()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMedicallyExemptViewStateForEngland()
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMedicallyExemptViewStateForEngland()
+        }
     }
 
     @Test
     fun givenIsInEngland_inContactIsolation_whenYesToFullyVaccinated_thenNoToDate_thenNoToClinicalTrial_thenYesToExempt_navigatesToNotIsolatingAsMedicallyExempt() {
-        givenLocalAuthorityIsInEngland()
-        givenContactIsolation()
+        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+            givenLocalAuthorityIsInEngland()
+            givenContactIsolation()
 
-        startTestActivity<ExposureNotificationVaccinationStatusActivity>()
+            startTestActivity<ExposureNotificationVaccinationStatusActivity>()
 
-        exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
+            exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
 
-        exposureNotificationVaccinationStatusRobot.clickDosesYesButton()
+            exposureNotificationVaccinationStatusRobot.clickDosesYesButton()
 
-        waitFor { exposureNotificationVaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
+            waitFor { exposureNotificationVaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }
 
-        exposureNotificationVaccinationStatusRobot.clickDateNoButton()
+            exposureNotificationVaccinationStatusRobot.clickDateNoButton()
 
-        exposureNotificationVaccinationStatusRobot.clickClinicalTrialNoButton()
+            exposureNotificationVaccinationStatusRobot.clickClinicalTrialNoButton()
 
-        exposureNotificationVaccinationStatusRobot.clickMedicallyExemptYesButton()
+            exposureNotificationVaccinationStatusRobot.clickMedicallyExemptYesButton()
 
-        exposureNotificationVaccinationStatusRobot.clickContinueButton()
+            exposureNotificationVaccinationStatusRobot.clickContinueButton()
 
-        waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
+            waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
 
-        exposureNotificationReviewRobot.verifyReviewViewState(
-            vaccinationStatusResponses = listOf(
-                OptOutResponseEntry(questionType = FullyVaccinated, response = true),
-                OptOutResponseEntry(questionType = DoseDate, response = false),
-                OptOutResponseEntry(questionType = ClinicalTrial, response = false),
-                OptOutResponseEntry(questionType = MedicallyExempt, response = true)
+            exposureNotificationReviewRobot.verifyReviewViewState(
+                vaccinationStatusResponses = listOf(
+                    OptOutResponseEntry(questionType = FullyVaccinated, response = true),
+                    OptOutResponseEntry(questionType = DoseDate, response = false),
+                    OptOutResponseEntry(questionType = ClinicalTrial, response = false),
+                    OptOutResponseEntry(questionType = MedicallyExempt, response = true)
+                )
             )
-        )
 
-        exposureNotificationReviewRobot.clickSubmitButton()
+            exposureNotificationReviewRobot.clickSubmitButton()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
 
-        exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMedicallyExemptViewStateForEngland()
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInNotIsolatingAsMedicallyExemptViewStateForEngland()
+        }
     }
 
     //endregion

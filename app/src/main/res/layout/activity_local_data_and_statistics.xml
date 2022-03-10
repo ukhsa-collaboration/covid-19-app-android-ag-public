@@ -61,7 +61,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <TextView
+                    <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                         android:id="@+id/localAreaDataAndStatisticsLocalAuthorityTitle"
                         style="@style/Title1"
                         android:layout_width="0dp"
@@ -84,7 +84,7 @@
                         app:layout_constraintStart_toStartOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle"
                         app:layout_constraintTop_toBottomOf="@id/localAreaDataAndStatisticsLocalAuthorityTitle" />
 
-                    <TextView
+                    <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                         android:id="@+id/localAreaDataAndStatisticsTestedPositiveTitle"
                         style="@style/Title5"
                         android:layout_width="0dp"

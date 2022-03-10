@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.state
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
@@ -18,7 +17,7 @@ class WouldTestIsolationEndBeforeOrOnStartOfExistingIsolationTest {
 
     private val calculateIndexExpiryDate = mockk<CalculateIndexExpiryDate>()
 
-    private val isolationConfiguration = DurationDays()
+    private val isolationConfiguration = IsolationConfiguration()
     private val fixedClock = Clock.fixed(Instant.parse("2020-01-15T10:00:00Z"), ZoneOffset.UTC)
 
     private val testSubject = WouldTestIsolationEndBeforeOrOnStartOfExistingIsolation(

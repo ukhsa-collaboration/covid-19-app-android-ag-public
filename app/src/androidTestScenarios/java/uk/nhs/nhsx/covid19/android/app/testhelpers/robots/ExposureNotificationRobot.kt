@@ -7,15 +7,17 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateStringResource
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 
-class ExposureNotificationRobot {
-
-    fun checkActivityIsDisplayed() {
-        onView(withText(R.string.exposure_notification_title))
-            .check(matches(isDisplayed()))
-    }
+class ExposureNotificationRobot : HasActivity {
+    override val containerId: Int
+        get() = R.id.exposureNotificationScrollView
 
     fun clickContinueButton() {
         onView(withId(R.id.primaryActionButton))
@@ -28,12 +30,25 @@ class ExposureNotificationRobot {
             .check(matches(withText(expectedText)))
     }
 
-    fun checkTestingAndIsolationAdviceIsDisplayed(displayed: Boolean) {
+    fun checkIsolationAdviceIsDisplayed(displayed: Boolean, country: SupportedCountry) {
+        val expectedText = if (country == ENGLAND) {
+            R.string.contact_case_exposure_info_screen_information_england
+        } else {
+            R.string.exposure_notification_warning
+        }
+
         onView(withId(R.id.selfIsolationWarning)).apply {
             if (displayed) perform(scrollTo())
         }
-            .check(if (displayed) matches(isDisplayed()) else matches(not(isDisplayed())))
+            .check(
+                if (displayed)
+                    matches(allOf(isDisplayed(), withStateStringResource(expectedText)))
+                else
+                    matches(not(isDisplayed()))
+            )
+    }
 
+    fun checkTestingAdviceIsDisplayed(displayed: Boolean) {
         onView(withId(R.id.testingInformationContainer)).apply {
             if (displayed) perform(scrollTo())
         }

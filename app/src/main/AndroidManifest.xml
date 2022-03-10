@@ -234,6 +234,9 @@
             android:name=".exposure.encounter.RiskyContactIsolationAdviceActivity"
             android:label="@string/empty_accessibility_announcement" />
         <activity
+            android:name=".exposure.encounter.RiskyContactIsolationOptOutActivity"
+            android:label="@string/empty_accessibility_announcement" />
+        <activity
             android:name=".exposure.questionnaire.review.ExposureNotificationReviewActivity"
             android:label="@string/contact_case_summary_title" />
         <activity

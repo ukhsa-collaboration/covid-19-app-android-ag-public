@@ -224,7 +224,7 @@
     <string name="title_venue_history">সাক্ষাৎস্থলের ইতিবৃত্ত</string>
     <string name="title_symptoms">উপসর্গ বিষয়ক তথ্য</string>
     <string name="save">সংরক্ষণ</string>
-    <string name="about_how_this_app_works_text">নিজেকে এবং অন্যকে সুরক্ষিত রাখতে সহায়তা করার জন্য এই অ্যাপ কন্ট্যাক্ট ট্রেসিং প্রযুক্তি ব্যবহার করে যাতে আমরা যা ভালোবাসি তাতে ফিরে যেতে পারি।\n\nকাছাকাছি থাকা অন্যান্য অ্যাপ ব্যবহারকারীদের এই অ্যাপটি শনাক্ত এবং লগ করে। পরবর্তীতে করোনাভাইরাস পরীক্ষাতে যদি এই ব্যবহারকারীদের মধ্যে কোনো ব্যবহারকারীর ফলাফল পজিটিভ আসে তবে আপনি পরামর্শসহ একটি সতর্কবার্তা পাবেন।\n\nএই অ্যাপ আপনার উপসর্গ সম্পর্কে জানাতে এবং আপনার পরীক্ষা করানোর প্রয়োজন আছে কি না তা জানাতে দেয়।\n\nআপনি ঘুরতে যান এমন স্থানসমূহে দ্রুত ও সহজে প্রবেশ করতে এই অ্যাপ অফিসিয়াল NHS QR কোডগুলি স্ক্যান করার জন্যও আপনি তা ব্যবহার করতে পারেন।</string>
+    <string name="about_how_this_app_works_text">নিজেকে এবং অন্যকে সুরক্ষিত রাখতে সহায়তা করার জন্য এই অ্যাপ কন্ট্যাক্ট ট্রেসিং প্রযুক্তি ব্যবহার করে যাতে আমরা যা ভালোবাসি তাতে ফিরে যেতে পারি।\n\nকাছাকাছি থাকা অন্যান্য অ্যাপ ব্যবহারকারীদের এই অ্যাপটি শনাক্ত এবং লগ করে। পরবর্তীতে করোনাভাইরাস পরীক্ষাতে যদি এই ব্যবহারকারীদের মধ্যে কোনো ব্যবহারকারীর ফলাফল পজিটিভ আসে তবে আপনি পরামর্শসহ একটি সতর্কবার্তা পাবেন।\n\nএই অ্যাপ আপনার উপসর্গ সম্পর্কে জানাতে এবং আপনার পরীক্ষা করানোর প্রয়োজন আছে কি না তা জানাতে দেয়।</string>
     <string name="title_encounter">কবলে পড়ার তারিখ</string>
     <string name="allow_bluetooth">ব্লুটুথকে অনুমতি দিন</string>
     <string name="onboarding_subtitle">আপনি যখন অ্যাপটি ব্যবহার করবেন তখন আপনার অঞ্চলে ভাইরাস এবং জনস্বাস্থ্যের তথ্য বেনামে শেয়ার করে আপনি কোভিড-19-কে পরাজিত করতে আমাদের সহায়তা করতে থাকবেন</string>
@@ -402,7 +402,7 @@
     <string name="about_test_kit_type">পরীক্ষা কিটের ধরন</string>
     <string name="about_test_result">ফলাফল</string>
     <string name="state_test_positive_and_book_test_info">আপনার করোনাভাইরাস পরীক্ষার ফলাফল পজিটিভ</string>
-    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">যদি আপনি ১৮ বছরের কম বয়সী হয়ে থাকেন, তাহলে আপনাকে এই বার্তা কোনও বিশ্বস্ত প্রাপ্তবয়স্ককে দেখানোর পরামর্শ দেওয়া হচ্ছে।</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">আপনার বয়স ১৮ বছরের কম হলে, নির্ভরযোগ্য কোনো প্রাপ্তবয়ষ্ক ব্যক্তিকে এই বার্তা দেখানোর জন্য পরামর্শ দেওয়া হচ্ছে।</string>
     <string name="test_result_positive_self_isolate_and_book_test_explanation_1">স্ব-বিচ্ছিন্ন থাকার দিন সংখ্যা এই অ্যাপ কীভাবে গণনা করে তা বুঝতে নিচে প্রদত্ত প্রায়শই জিজ্ঞাসিত প্রশ্নাবলী দেখুন।\n\nআপনি যেহেতু একটি দ্রুত সোয়্যাব পরীক্ষা করিয়েছিলেন, তাই আপনাকে এখন আরেক ধরনের পরীক্ষা করাতে হবে যার ফলাফল যাচাই করার জন্য ল্যাবে পাঠানো হয়।\n\nমধ্যবর্তী সময়ে, আপনাকে এবং আপনার সঙ্গে বসবাসকারী যে কাউকে অবিলম্বে স্ব-বিচ্ছিন্ন হতে হবে।</string>
     <string name="test_result_positive_self_isolate_and_book_test_title_3">এবং একটি ফলো-আপ পরীক্ষা বুক করুন</string>
     <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
@@ -541,7 +541,7 @@
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_change">অ্যাপের হোম স্ক্রিনে কাউন্টডাউন টাইমারের সাহায্যে আপনার স্ব-বিচ্ছিন্নতা পর্ব অনুসরণ করুন।</string>
     <string name="test_result_plod_title">আপনার পরীক্ষার ফলাফল কমজোর পজিটিভ</string>
     <string name="url_download_the_nhs_app">https://www.nhs.uk/app</string>
-    <string name="local_message_banner_read_more">আরো পড়ুন</string>
+    <string name="local_message_banner_read_more">Read updated guidance</string>
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">যেহেতু আপনার সংক্রমণ ধরা পড়েছে, তাই স্ব-বিচ্ছিন্ন থাকা অব্যাহত রাখা জরুরি।\n\nদয়া করে বাসায় থাকুন, আর নিজেকে ও অন্যদের নিরাপদ রাখুন। অ্যাপের হোম স্ক্রিনে কাউন্টডাউন টাইমারের সাহায্যে আপনার স্ব-বিচ্ছিন্নতা পর্ব অনুসরণ করুন।</string>
@@ -819,4 +819,21 @@
     <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">আপনার পরিবারের এমন যে কারোর সাথে ঘনিষ্ঠ যোগাযোগ সীমিত করুন যার COVID-19 আছে</string>
     <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">জনবহুল, চারদিক ঘেরা বা দুর্বল বায়ুচলাচলযুক্ত স্থানে মুখ ঢাকার আবরণ পরে থাকুন</string>
     <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">আপনার পরিবারের কারো COVID-19 থাকলে, আপনি যদি পারেন তাহলে বাড়ি থেকে কাজ করুন</string>
+    <string name="contact_case_exposure_info_screen_continue_button_england">চালিয়ে যান</string>
+    <string name="contact_case_exposure_info_screen_exposure_date_england">নিকট সংস্পর্শে আসার ঘটনা %s তারিখে ঘটেছিল</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_body_england">আপনার ফোন অন্যদের নিকট সংস্পর্শে ছিল কিনা তা যাচাই করতে এই অ্যাপ ব্লুটুথ ব্যবহার করে।\n\nনিকট সংস্পর্শে আসার অর্থ আপনি কারো ২ মিটার দূরত্বের মধ্যে ১৫ মিনিট বা তার বেশি সময় ছিলেন।\n\nঅ্যাপটি অজ্ঞাতপরিচয় এবং আপনার অবস্থান সনাক্ত করতে বিশ্বজনীন অবস্থান সনাক্তকারী ব্যবস্থা (GPS) ব্যবহার করে না, তাই আপনার গোপনীয়তা সুরক্ষিত।</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading_england">নিকট সংস্পর্শ কীভাবে গণনা করা হয়</string>
+    <string name="contact_case_exposure_info_screen_information_england">আপনার বয়স ১৮ বছরের কম হলে, নির্ভরযোগ্য কোনো প্রাপ্তবয়ষ্ক ব্যক্তিকে এই বার্তা দেখানোর জন্য পরামর্শ দেওয়া হচ্ছে</string>
+    <string name="contact_case_exposure_info_screen_title_england">অ্যাপটি সনাক্ত করেছে যে  করোনাভাইরাসে (কোভিড-১৯) আক্রান্ত হিসাবে সনাক্ত হওয়া কারো সংস্পর্শে আপনি গিয়েছিলেন</string>
+    <string name="risky_contact_opt_out_advice_mask">জনবহুল এবং চারদিক ঘেরা জায়গায় মুখ ঢাকার আবরণ পরুন</string>
+    <string name="risky_contact_opt_out_advice_meeting_indoors">আপনি বাড়ির ভিতরে দেখা করলে তাজা বাতাস প্রবেশ করতে দিন, অথবা বাইরে দেখা করুন</string>
+    <string name="risky_contact_opt_out_advice_testing_hub">আপনার COVID-19 এর উপসর্গ থাকলে একটি পরীক্ষা করান এবং আপনার পরীক্ষার ফলাফল পজিটিভ হলে বাড়িতে থাকুন</string>
+    <string name="risky_contact_opt_out_advice_title">নিজেকে এবং অন্যদের রক্ষা করতে সর্বশেষ COVID-19 নির্দেশনা অনুসরণ করুন</string>
+    <string name="risky_contact_opt_out_advice_wash_hands">নিয়মিত আপনার হাত ধুয়ে নিন এবং কাশি ও হাঁচির সময় মুখ ঢেকে রাখুন</string>
+    <string name="risky_contact_opt_out_further_advice">আপনার পরিবারের কারও COVID-19 পরীক্ষার ফল পজিটিভ হয়ে থাকলে, অনুগ্রহ করে দেখুন:</string>
+    <string name="risky_contact_opt_out_further_advice_link_text">পরিবারের সংস্পর্শে থাকা ব্যক্তিদের জন্য নির্দেশনা</string>
+    <string name="risky_contact_opt_out_further_advice_link_url">https://www.gov.uk/government/publications/covid-19-people-with-covid-19-and-their-contacts/covid-19-people-with-covid-19-and-their-contacts#what-to-do-if-you-are-a-close-contact-of-someone-who-has-covid-19</string>
+    <string name="risky_contact_opt_out_primary_button_title">COVID-19 সংক্রান্ত সর্বশেষ নির্দেশিকা পড়ুন</string>
+    <string name="risky_contact_opt_out_primary_button_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="risky_contact_opt_out_secondary_button_title">হোম স্ক্রিনে ফিরে যান</string>
 </resources>

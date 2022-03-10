@@ -15,12 +15,12 @@ import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.U
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.UNKNOWN_RESULT_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.VOID_LFD_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.VOID_PCR_TOKEN
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.report.Reported
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.FLOW
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
 import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.reporter
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
@@ -322,7 +322,7 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
     }
 
     private val contactCaseOnlyIsolation = IsolationState(
-        isolationConfiguration = DurationDays(),
+        isolationConfiguration = IsolationConfiguration(),
         contact = Contact(
             exposureDate = LocalDate.now().minus(2, DAYS),
             notificationDate = LocalDate.now().minus(2, DAYS)

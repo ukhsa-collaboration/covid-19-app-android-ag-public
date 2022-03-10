@@ -50,4 +50,14 @@ class LocalDataAndStatsFlowTest(override val configuration: TestConfiguration) :
             )
         }
     }
+
+    @Test
+    fun accessibilityHeadingsAreSet() {
+        runWithFeatureEnabled(LOCAL_COVID_STATS) {
+            givenLocalAuthorityIsInEngland()
+            startTestActivity<StatusActivity>()
+            statusRobot.clickLocalData()
+            localDataAndStatsRobot.checkAccessibilityHeadingsAreSet()
+        }
+    }
 }

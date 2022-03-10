@@ -8,7 +8,6 @@ import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CalculateKeySubmission
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.SubmissionDateRange
 import uk.nhs.nhsx.covid19.android.app.isolation.createIsolationLogicalState
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
@@ -116,7 +115,7 @@ class TestResultIsolationHandlerTest {
         shouldOfferFollowUpTest = false
     )
 
-    private val isolationConfiguration = DurationDays()
+    private val isolationConfiguration = IsolationConfiguration()
 
     @Before
     fun setUp() {
@@ -152,7 +151,7 @@ class TestResultIsolationHandlerTest {
     @Test
     fun `when in isolation as index and contact case, positive indicative test result is ignored`() {
         val state = IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contact = contactCase(),
             selfAssessment = selfAssessment()
         )
@@ -207,7 +206,7 @@ class TestResultIsolationHandlerTest {
     @Test
     fun `when in isolation as index and contact case, positive confirmed test result removes contact case`() {
         val state = IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contact = contactCase(),
             selfAssessment = selfAssessment()
         )
@@ -415,7 +414,7 @@ class TestResultIsolationHandlerTest {
     @Test
     fun `when not in isolation, with expired contact case, with relevant negative, positive confirmed test result triggers isolation`() {
         val state = IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contact = contactCase(encounterDate = encounterDate.minus(13, DAYS)),
             testResult = acknowledgedTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true)
         )
@@ -439,7 +438,7 @@ class TestResultIsolationHandlerTest {
     @Test
     fun `when not in isolation, with expired contact case, with relevant negative, positive confirmed test result triggers isolation, test result with explicit onset date`() {
         val state = IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contact = contactCase(encounterDate = encounterDate.minus(13, DAYS)),
             testResult = acknowledgedTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true)
         )
@@ -473,7 +472,7 @@ class TestResultIsolationHandlerTest {
     @Test
     fun `when not in isolation, with expired contact case, with relevant negative, positive confirmed test result triggers isolation, test result with cannot remember onset date`() {
         val state = IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contact = contactCase(encounterDate = encounterDate.minus(13, DAYS)),
             testResult = acknowledgedTestResult(RelevantVirologyTestResult.NEGATIVE, isConfirmed = true)
         )
@@ -1517,7 +1516,7 @@ class TestResultIsolationHandlerTest {
     @Test
     fun `when in isolation as index and contact case, with relevant positive unconfirmed, new negative confirmed test result within prescribed day limit replaces index case`() {
         val state = IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contact = contactCase(),
             testResult = acknowledgedTestResult(
                 result = RelevantVirologyTestResult.POSITIVE,
@@ -1656,7 +1655,7 @@ class TestResultIsolationHandlerTest {
     @Test
     fun `when in isolation as contact case, with expired index case, with relevant positive unconfirmed, new negative confirmed test result replaces index case`() {
         val state = IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contact = contactCase(),
             testResult = acknowledgedTestResult(
                 result = RelevantVirologyTestResult.POSITIVE,
@@ -1713,7 +1712,7 @@ class TestResultIsolationHandlerTest {
     @Test
     fun `when in isolation as contact and index case, without relevant positive confirmed, new negative confirmed test result is stored`() {
         val state = IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contact = contactCase(),
             selfAssessment = selfAssessment()
         )
@@ -1811,7 +1810,7 @@ class TestResultIsolationHandlerTest {
         val relevantTestDate = Instant.now(fixedClock).plus(2, DAYS)
 
         val state = IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contact = contactCase(),
             testResult = acknowledgedTestResult(
                 result = RelevantVirologyTestResult.POSITIVE,
@@ -1861,7 +1860,7 @@ class TestResultIsolationHandlerTest {
     @Test
     fun `when in isolation as index and contact case, with relevant positive unconfirmed, negative confirmed test result older than symptoms onset is ignored`() {
         val state = IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contact = contactCase(),
             selfAssessment = selfAssessment(selfAssessmentDate = indexCaseStartDate),
             testResult = acknowledgedTestResult(
@@ -1925,7 +1924,7 @@ class TestResultIsolationHandlerTest {
     @Test
     fun `when in isolation as contact and index case, without relevant positive confirmed, negative confirmed test result older than symptoms onset date is ignored`() {
         val state = IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contact = contactCase(),
             selfAssessment = selfAssessment()
         )
@@ -1996,7 +1995,7 @@ class TestResultIsolationHandlerTest {
     @Test
     fun `when in isolation as contact and index case, void confirmed test result is ignored`() {
         val state = IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contact = contactCase(),
             selfAssessment = selfAssessment()
         )
@@ -2056,7 +2055,7 @@ class TestResultIsolationHandlerTest {
     @Test
     fun `when in isolation as contact and index case, plod confirmed test result is ignored`() {
         val state = IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contact = contactCase(),
             selfAssessment = selfAssessment()
         )
@@ -3004,14 +3003,14 @@ class TestResultIsolationHandlerTest {
         selfAssessment!!.assumedOnsetDate.atStartOfDay().toInstant(ZoneOffset.UTC)
 
     private fun neverIsolating(): IsolationState =
-        IsolationState(isolationConfiguration = DurationDays())
+        IsolationState(isolationConfiguration = IsolationConfiguration())
 
     private fun neverIsolatingWithNegativeTest(testResult: AcknowledgedTestResult): IsolationState {
         if (testResult.testResult != RelevantVirologyTestResult.NEGATIVE) {
             throw IllegalArgumentException("This function can only be called with a negative test result")
         }
         return IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             testResult = testResult
         )
     }
@@ -3021,7 +3020,7 @@ class TestResultIsolationHandlerTest {
         onsetDate: LocalDate? = null
     ): IsolationState =
         IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             selfAssessment = selfAssessment(selfAssessmentDate, onsetDate)
         )
 
@@ -3038,7 +3037,7 @@ class TestResultIsolationHandlerTest {
             throw IllegalArgumentException("This function can only be called with a positive test result")
         }
         return IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             testResult = testResult
         )
     }
@@ -3049,7 +3048,7 @@ class TestResultIsolationHandlerTest {
         testResult: AcknowledgedTestResult
     ): IsolationState =
         IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             selfAssessment = selfAssessment(selfAssessmentDate, onsetDate),
             testResult = testResult
         )
@@ -3058,7 +3057,7 @@ class TestResultIsolationHandlerTest {
         encounterDate: LocalDate = this.encounterDate
     ): IsolationState =
         IsolationState(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contact = contactCase(encounterDate)
         )
 

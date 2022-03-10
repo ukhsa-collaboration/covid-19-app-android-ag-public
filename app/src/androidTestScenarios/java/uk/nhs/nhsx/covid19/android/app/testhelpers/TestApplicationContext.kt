@@ -49,6 +49,7 @@ import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.MockAnalyticsApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockEpidemiologyDataApi
+import uk.nhs.nhsx.covid19.android.app.remote.MockIsolationConfigurationApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockIsolationPaymentApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockKeysSubmissionApi
 import uk.nhs.nhsx.covid19.android.app.remote.MockLocalMessagesApi
@@ -118,6 +119,8 @@ class TestApplicationContext {
     val randomNonRiskyExposureWindowsLimiter = MockRandomNonRiskyExposureWindowsLimiter()
 
     val uuidGenerator = MockUUIDGenerator()
+
+    val mockIsolationConfigurationApi = MockIsolationConfigurationApi()
 
     internal val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
@@ -193,7 +196,8 @@ class TestApplicationContext {
                 keysSubmissionApi,
                 analyticsApi,
                 epidemiologyDataApi,
-                localMessagesApi
+                localMessagesApi,
+                mockIsolationConfigurationApi
             )
         )
         .build()
@@ -226,6 +230,7 @@ class TestApplicationContext {
             setLocale("en")
         }
 
+        setLocalAuthority(ENGLISH_LOCAL_AUTHORITY)
         component.provideIsolationStateMachine().reset()
     }
 
@@ -284,6 +289,8 @@ class TestApplicationContext {
     fun getKeySharingInfoProvider() = component.getKeySharingInfoProvider()
 
     fun setState(state: IsolationState) {
+        val stateStorage = component.getStateStorage()
+        stateStorage.state = state
         val ref = getIsolationStateMachine()
             .stateMachine
             .getPrivateProperty<StateMachine<IsolationInfo, Event, SideEffect>, AtomicReference<IsolationInfo>>(

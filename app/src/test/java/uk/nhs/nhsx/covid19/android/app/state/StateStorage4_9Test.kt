@@ -23,12 +23,14 @@ import java.time.LocalDate
 class StateStorage4_9Test : ProviderTest<StateStorage4_9, State4_9?>() {
 
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
+    private val createIsolationConfiguration = mockk<CreateIsolationConfiguration>()
     override val getTestSubject: (Moshi, SharedPreferences) -> StateStorage4_9 =
         { moshi, sharedPreferences ->
             StateStorage4_9(
                 isolationConfigurationProvider = isolationConfigurationProvider,
                 _moshi = moshi,
-                sharedPreferences = sharedPreferences
+                sharedPreferences = sharedPreferences,
+                createIsolationConfiguration
             )
         }
     override val property = StateStorage4_9::state
@@ -53,6 +55,7 @@ class StateStorage4_9Test : ProviderTest<StateStorage4_9, State4_9?>() {
     @BeforeEach
     fun setUpMock() {
         every { isolationConfigurationProvider.durationDays } returns durationDays
+        every { createIsolationConfiguration.invoke(durationDays) } returns isolationConfiguration
     }
 
     @Test
@@ -64,6 +67,7 @@ class StateStorage4_9Test : ProviderTest<StateStorage4_9, State4_9?>() {
 
     companion object {
         private val durationDays = DurationDays()
+        private val isolationConfiguration = IsolationConfiguration()
         private val startDate = Instant.parse("2020-05-21T10:00:00Z")
         private val expiryDate = LocalDate.of(2020, 7, 22)
         private val dailyContactTestingOptInDate = LocalDate.of(2020, 7, 22)
@@ -100,18 +104,18 @@ class StateStorage4_9Test : ProviderTest<StateStorage4_9, State4_9?>() {
         private val defaultWithPreviousContact = Default4_9(
             previousIsolation = Isolation4_9(
                 startDate,
-                durationDays,
+                isolationConfiguration,
                 contactCase = ContactCase4_9(startDate, null, expiryDate)
             )
         )
-        private val indexCase = Isolation4_9(startDate, durationDays, indexCase = IndexCase4_9(onsetDate, expiryDate, true))
+        private val indexCase = Isolation4_9(startDate, isolationConfiguration, indexCase = IndexCase4_9(onsetDate, expiryDate, true))
         private val contactCaseV4 = Isolation4_9(
             startDate,
-            durationDays,
+            isolationConfiguration,
             contactCase = ContactCase4_9(startDate, notificationDate, expiryDate, dailyContactTestingOptInDate)
         )
 
-        private val contactCase = Isolation4_9(startDate, durationDays, contactCase = ContactCase4_9(startDate, null, expiryDate))
+        private val contactCase = Isolation4_9(startDate, isolationConfiguration, contactCase = ContactCase4_9(startDate, null, expiryDate))
         private const val PARTIAL_JSON =
             """[{"type":"PositiveCase","testDate":"2020-05-21T10:00:00Z","version":1}]"""
     }

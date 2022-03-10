@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo.NegativeTest
@@ -15,7 +14,7 @@ import java.time.LocalDate
 
 class IsolationLogicalHelper(
     val clock: Clock,
-    val isolationConfiguration: DurationDays = DurationDays()
+    val isolationConfiguration: IsolationConfiguration = IsolationConfiguration()
 ) {
 
     fun neverInIsolation(): IsolationLogicalState =
@@ -106,7 +105,7 @@ fun IndexCase.addTestResult(testResult: AcknowledgedTestResult): IndexCase =
 
 fun ContactCase.asIsolation(
     hasAcknowledgedEndOfIsolation: Boolean = false,
-    isolationConfiguration: DurationDays = DurationDays()
+    isolationConfiguration: IsolationConfiguration = IsolationConfiguration()
 ): IsolationLogicalState =
     PossiblyIsolating(
         isolationConfiguration,
@@ -118,7 +117,7 @@ fun ContactCase.asIsolation(
 
 fun IndexCase.asIsolation(
     hasAcknowledgedEndOfIsolation: Boolean = false,
-    isolationConfiguration: DurationDays = DurationDays()
+    isolationConfiguration: IsolationConfiguration = IsolationConfiguration()
 ): IsolationLogicalState =
     PossiblyIsolating(
         isolationConfiguration,
@@ -129,6 +128,6 @@ fun IndexCase.asIsolation(
     )
 
 fun NegativeTest.asIsolation(
-    isolationConfiguration: DurationDays = DurationDays()
+    isolationConfiguration: IsolationConfiguration = IsolationConfiguration()
 ): IsolationLogicalState =
     NeverIsolating(isolationConfiguration, negativeTest = this)

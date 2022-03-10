@@ -4,7 +4,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import kotlin.test.assertFails
 
@@ -59,7 +59,7 @@ class TransitionVerificationTest(
     }
 
     private val testAppContext = IsolationTestContext()
-    private val isolationConfiguration = DurationDays()
+    private val isolationConfiguration = IsolationConfiguration()
     private val stateVerifier = StateVerifier(testAppContext)
 
     @Test

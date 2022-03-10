@@ -13,7 +13,8 @@ class UpdateConfigurations @Inject constructor(
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val isolationConfigurationApi: IsolationConfigurationApi,
     private val riskyVenueConfigurationProvider: RiskyVenueConfigurationProvider,
-    private val riskyVenueConfigurationApi: RiskyVenueConfigurationApi
+    private val riskyVenueConfigurationApi: RiskyVenueConfigurationApi,
+    private val convertIsolationConfigurationResponseToDurationDays: ConvertIsolationConfigurationResponseToDurationDays
 ) {
     suspend operator fun invoke() = withContext(Dispatchers.IO) {
         Timber.d("Updating configurations for isolation and risky venue")
@@ -24,7 +25,7 @@ class UpdateConfigurations @Inject constructor(
     private suspend fun updateIsolationConfiguration() {
         runCatching {
             val response = isolationConfigurationApi.getIsolationConfiguration()
-            isolationConfigurationProvider.durationDays = response.durationDays
+            isolationConfigurationProvider.durationDays = convertIsolationConfigurationResponseToDurationDays(response)
         }
     }
 

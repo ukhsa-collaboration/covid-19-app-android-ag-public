@@ -2,8 +2,8 @@ package uk.nhs.nhsx.covid19.android.app.payment
 
 import io.mockk.mockk
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -41,7 +41,7 @@ class CanClaimIsolationPaymentTest : IsolationStateMachineSetupHelper {
     fun `returns false if in isolation with index case only`() {
         givenIsolationState(
             IsolationState(
-                isolationConfiguration = DurationDays(),
+                isolationConfiguration = IsolationConfiguration(),
                 selfAssessment = isolationHelper.selfAssessment()
             )
         )
@@ -56,7 +56,7 @@ class CanClaimIsolationPaymentTest : IsolationStateMachineSetupHelper {
         val isolationStart = LocalDate.now(clock).minusDays(5)
         givenIsolationState(
             IsolationState(
-                isolationConfiguration = DurationDays(),
+                isolationConfiguration = IsolationConfiguration(),
                 contact = isolationHelper.contact(exposureDate = isolationStart),
                 testResult = AcknowledgedTestResult(
                     testEndDate = isolationStart.plusDays(1),
@@ -77,7 +77,7 @@ class CanClaimIsolationPaymentTest : IsolationStateMachineSetupHelper {
     fun `returns false if in isolation with contact case and no positive tests since start of isolation and contact expired`() {
         givenIsolationState(
             IsolationState(
-                isolationConfiguration = DurationDays(),
+                isolationConfiguration = IsolationConfiguration(),
                 contact = isolationHelper.contact(expired = true)
             )
         )
@@ -91,7 +91,7 @@ class CanClaimIsolationPaymentTest : IsolationStateMachineSetupHelper {
     fun `returns true if in isolation with contact case and no positive tests since start of isolation and contact not expired`() {
         givenIsolationState(
             IsolationState(
-                isolationConfiguration = DurationDays(),
+                isolationConfiguration = IsolationConfiguration(),
                 contact = isolationHelper.contact(expired = false)
             )
         )
@@ -105,7 +105,7 @@ class CanClaimIsolationPaymentTest : IsolationStateMachineSetupHelper {
     fun `returns true if in isolation with contact case and self-assessment index case, without positive test since start of isolation and contact not expired`() {
         givenIsolationState(
             IsolationState(
-                isolationConfiguration = DurationDays(),
+                isolationConfiguration = IsolationConfiguration(),
                 contact = isolationHelper.contact(expired = false),
                 selfAssessment = isolationHelper.selfAssessment(expired = false)
             )
@@ -120,7 +120,7 @@ class CanClaimIsolationPaymentTest : IsolationStateMachineSetupHelper {
     fun `returns true if in isolation with contact case and index case without self-assessment, without positive test since start of isolation and contact not expired`() {
         givenIsolationState(
             IsolationState(
-                isolationConfiguration = DurationDays(),
+                isolationConfiguration = IsolationConfiguration(),
                 contact = isolationHelper.contact(expired = false),
                 testResult = AcknowledgedTestResult(
                     testEndDate = LocalDate.now(clock).minusDays(15),

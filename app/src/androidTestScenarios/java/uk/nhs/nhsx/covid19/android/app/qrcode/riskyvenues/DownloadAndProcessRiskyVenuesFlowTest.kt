@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues
 
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.UserInboxItem.ShowVenueAlert
@@ -11,6 +12,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenue
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenuesResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyWindow
+import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import java.time.Instant
 import java.time.LocalDate
@@ -87,6 +89,11 @@ class DownloadAndProcessRiskyVenuesFlowTest : EspressoTest() {
             messageType = INFORM
         )
     )
+
+    @Before
+    fun setUp() {
+        testAppContext.setLocalAuthority(TestApplicationContext.ENGLISH_LOCAL_AUTHORITY)
+    }
 
     @After
     fun tearDown() {

@@ -1,10 +1,10 @@
 package uk.nhs.nhsx.covid19.android.app.isolation
 
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 
 interface StateRepresentation {
     val representationName: String
-    fun setupState(isolationTestContext: IsolationTestContext, isolationConfiguration: DurationDays)
+    fun setupState(isolationTestContext: IsolationTestContext, isolationConfiguration: IsolationConfiguration)
     fun skipUnsupportedState(state: State)
     fun skipUnsupportedEvent(event: Event)
 }

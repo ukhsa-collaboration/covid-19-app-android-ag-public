@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import android.os.Parcelable
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE

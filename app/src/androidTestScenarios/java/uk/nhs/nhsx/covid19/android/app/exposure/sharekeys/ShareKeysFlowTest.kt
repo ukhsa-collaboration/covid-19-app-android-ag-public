@@ -12,6 +12,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysReminderRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.SymptomsDate
 import java.time.LocalDate
@@ -19,7 +20,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
-class ShareKeysFlowTest : EspressoTest() {
+class ShareKeysFlowTest : EspressoTest(), LocalAuthoritySetupHelper {
 
     private val testResultRobot = TestResultRobot(testAppContext.app)
     private val shareKeysInformationRobot = ShareKeysInformationRobot()
@@ -40,6 +41,7 @@ class ShareKeysFlowTest : EspressoTest() {
     @Before
     fun setUp() {
         testAppContext.getUnacknowledgedTestResultsProvider().add(receivedTestResult)
+        givenLocalAuthorityIsInEngland()
     }
 
     @Test

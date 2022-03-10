@@ -6,7 +6,6 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Isolation4_9.ContactCase4_9
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Isolation4_9.IndexCase4_9
 import uk.nhs.nhsx.covid19.android.app.state.StateJson4_9.ContactCaseJson4_9
@@ -38,7 +37,7 @@ class StateStorage4_9SerializationTest {
                 isolationStart = Instant.now(), expiryDate = LocalDate.now(),
                 indexCase = IndexCase4_9(LocalDate.now(), LocalDate.now(), false),
                 contactCase = ContactCase4_9(Instant.now(), null, LocalDate.now()),
-                isolationConfiguration = DurationDays()
+                isolationConfiguration = IsolationConfiguration()
             )
         )
         val res: String = testSubject.toJson(defaultJson)
@@ -60,7 +59,7 @@ class StateStorage4_9SerializationTest {
                 true
             ),
             contactCase = ContactCaseJson4_9(Instant.now().minus(1, DAYS), null, expiryDate),
-            isolationConfiguration = DurationDays()
+            isolationConfiguration = IsolationConfiguration()
         )
         val res = testSubject.toJson(original)
 

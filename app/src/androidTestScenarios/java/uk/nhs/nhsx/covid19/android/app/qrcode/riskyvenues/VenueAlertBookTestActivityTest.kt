@@ -13,11 +13,12 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAfterRiskyVenueRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.VenueAlertBookTestRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import java.time.Instant
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class VenueAlertBookTestActivityTest : EspressoTest() {
+class VenueAlertBookTestActivityTest : EspressoTest(), LocalAuthoritySetupHelper {
 
     private val venueAlertBookTestRobot = VenueAlertBookTestRobot()
     private val testOrderingRobot = TestOrderingRobot()
@@ -97,6 +98,7 @@ class VenueAlertBookTestActivityTest : EspressoTest() {
 
     @Test
     fun whenActiveIndexCaseIsolation_clickingBookTest_navigateToBookTestScreen() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.getRiskyVenueAlertProvider().riskyVenueAlert = RiskyVenueAlert("1", BOOK_TEST)
 
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())

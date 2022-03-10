@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
@@ -17,7 +16,7 @@ import kotlin.test.assertNull
 class CalculateIndexExpiryDateTest {
 
     private val fixedClock = Clock.fixed(Instant.parse("2020-01-15T10:00:00Z"), ZoneOffset.UTC)
-    private val isolationConfiguration = DurationDays()
+    private val isolationConfiguration = IsolationConfiguration()
 
     private val testSubject = CalculateIndexExpiryDate(fixedClock)
 

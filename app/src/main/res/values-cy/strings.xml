@@ -238,7 +238,7 @@
     <string name="title_venue_history">Lleoliadau y buoch ynddynt</string>
     <string name="title_symptoms">Gwybodaeth am symptomau</string>
     <string name="save">Cadw</string>
-    <string name="about_how_this_app_works_text">Mae\'r ap hwn yn defnyddio technoleg olrhain cysylltiadau i helpu i ddiogelu eich hun ac eraill.\n\nMae\'r ap yn canfod ac yn cofnodi defnyddwyr eraill yr ap sy\'n gyfagos. Os bydd unrhyw un o\'r defnyddwyr hynny yn profi\'n bositif am y coronafeirws yn ddiweddarach, byddwch yn derbyn rhybudd gyda chyngor.\n\nMae\'r ap hefyd yn gadael i chi roi gwybod am eich symptomau a chanfod a oes angen prawf arnoch.\n\nGallwch hefyd ddefnyddio\'r ap hwn i sganio codau QR swyddogol y GIG er mwyn mewngofnodi i leoedd rydych yn ymweld â nhw.</string>
+    <string name="about_how_this_app_works_text">Mae\'r ap hwn yn defnyddio technoleg olrhain cysylltiadau i helpu i ddiogelu eich hun ac eraill.\n\nMae\'r ap yn canfod ac yn cofnodi defnyddwyr eraill yr ap sy\'n gyfagos. Os bydd unrhyw un o\'r defnyddwyr hynny yn profi\'n bositif am y coronafeirws yn ddiweddarach, byddwch yn derbyn rhybudd gyda chyngor.\n\nMae\'r ap hefyd yn gadael i chi roi gwybod am eich symptomau a chanfod a oes angen prawf arnoch.</string>
     <string name="title_encounter">Dyddiad cyfarfyddiad</string>
     <string name="allow_bluetooth">Caniatáu Bluetooth</string>
     <string name="onboarding_subtitle">Byddwch yn ein helpu i drechu COVID-19 drwy rannu gwybodaeth ddienw am y feirws yn eich rhanbarth ac am iechyd y cyhoedd pan fyddwch yn defnyddio’r ap.</string>
@@ -557,7 +557,7 @@
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_change">Gallwch olrhain eich cyfnod hunanynysu gyda’r amserydd cyfrif-i-lawr ar sgrin gartref yr ap.</string>
     <string name="test_result_plod_title">Mae canlyniad eich prawf yn un positif gwan</string>
     <string name="url_download_the_nhs_app">https://www.nhs.uk/app</string>
-    <string name="local_message_banner_read_more">Darllen mwy</string>
+    <string name="local_message_banner_read_more">Read updated guidance</string>
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">Mae’n bwysig parhau i hunanynysu gan eich bod wedi derbyn canlyniad positif i brawf.\n\nArhoswch gartref i’ch cadw eich hun ac eraill yn ddiogel. Gallwch olrhain eich cyfnod hunanynysu gyda’r amserydd cyfrif-i-lawr ar sgrin gartref yr ap.</string>
@@ -855,4 +855,21 @@
     <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">Cyfyngwch gyswllt agos gydag unrhyw un yn eich aelwyd sydd â COVID-19</string>
     <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">Gwisgwch orchudd wyneb mewn lleoliadau prysur, amgaeedig neu sydd heb eu hawyru’n dda</string>
     <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">Gweithiwch o gartref os gallwch os oes gan rywun yn eich aelwyd COVID-19</string>
+    <string name="contact_case_exposure_info_screen_continue_button_england">Parhau</string>
+    <string name="contact_case_exposure_info_screen_exposure_date_england">Digwyddodd cyswllt agos ar %s</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_body_england">Mae\'r ap yn defnyddio Bluetooth i wirio a fu eich ffôn mewn cysylltiad agos ag eraill.\n\nMae cysylltiad agos yn golygu y buoch o fewn 2 fetr i rywun am 15 munud neu fwy.\n\nMae’r ap yn ddienw ac nid yw\'n defnyddio GPS i olrhain eich lleoliad, felly mae\'ch preifatrwydd wedi ei ddiogelu.</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading_england">Sut mae dyddiau hunanynysu yn cael eu cyfrifo</string>
+    <string name="contact_case_exposure_info_screen_information_england">Os ydych o dan 18, dylech ddangos y neges yma i oedolyn rydych chi’n ymddiried ynddo/ynddi</string>
+    <string name="contact_case_exposure_info_screen_title_england">Mae\'r ap wedi darganfod y buoch yn ymyl rhywun a gafodd ganlyniad positif i brawf coronafeirws (COVID-19)</string>
+    <string name="risky_contact_opt_out_advice_mask">Gwisgo gorchudd wyneb mewn lleoliadau prysur ac amgaeedig</string>
+    <string name="risky_contact_opt_out_advice_meeting_indoors">Gadael awyr iach i mewn os byddwch chi\'n cwrdd da do, neu gwrdd tu allan</string>
+    <string name="risky_contact_opt_out_advice_testing_hub">Cymryd prawf os bydd gennych chi symptomau COVID-19 ac aros gartref os byddwch chi\'n cael canlyniad positif</string>
+    <string name="risky_contact_opt_out_advice_title">Dilynwch y canllawiau COVID-19 diweddaraf i ddiogelu eich hun ac eraill</string>
+    <string name="risky_contact_opt_out_advice_wash_hands">Golchi’ch dwylo’n rheolaidd a gorchuddio unrhyw beswch neu disian</string>
+    <string name="risky_contact_opt_out_further_advice">Os bydd rhywun yn eich cartref wedi cael prawf positif ar gyfer COVID-19, ewch i:</string>
+    <string name="risky_contact_opt_out_further_advice_link_text">Canllawiau ar gyfer cysylltiadau yn y cartref</string>
+    <string name="risky_contact_opt_out_further_advice_link_url">https://www.gov.uk/government/publications/covid-19-people-with-covid-19-and-their-contacts/covid-19-people-with-covid-19-and-their-contacts#what-to-do-if-you-are-a-close-contact-of-someone-who-has-covid-19</string>
+    <string name="risky_contact_opt_out_primary_button_title">Darllenwch y canllaw COVID-19 diweddaraf</string>
+    <string name="risky_contact_opt_out_primary_button_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="risky_contact_opt_out_secondary_button_title">Yn ôl i’r sgrîn gartref</string>
 </resources>

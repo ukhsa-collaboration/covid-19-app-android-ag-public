@@ -2,7 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.remote.data
 
 import android.os.Parcelable
 import com.squareup.moshi.JsonClass
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @JsonClass(generateAdapter = true)
 data class TemporaryExposureKeysPayload(

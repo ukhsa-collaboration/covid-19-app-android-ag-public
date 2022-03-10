@@ -12,6 +12,9 @@ import kotlin.test.assertEquals
 class CreateIsolationStateTest {
 
     @MockK
+    private lateinit var stateStorage: StateStorage
+
+    @MockK
     private lateinit var isolationState: IsolationState
 
     @MockK
@@ -24,13 +27,17 @@ class CreateIsolationStateTest {
     private lateinit var durationDays: DurationDays
 
     @MockK
-    private lateinit var mockIsolationConfiguration: DurationDays
+    private lateinit var mockIsolationConfiguration: IsolationConfiguration
+
+    @MockK
+    private lateinit var createIsolationConfiguration: CreateIsolationConfiguration
 
     private lateinit var createIsolationState: CreateIsolationState
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
+        every { stateStorage.state } returns isolationState
         with(isolationInfo) {
             every { selfAssessment } returns mockk()
             every { testResult } returns mockk()
@@ -38,7 +45,8 @@ class CreateIsolationStateTest {
             every { hasAcknowledgedEndOfIsolation } returns false
         }
 
-        createIsolationState = CreateIsolationState(isolationState, isolationConfigurationProvider)
+        createIsolationState =
+            CreateIsolationState(stateStorage, isolationConfigurationProvider, createIsolationConfiguration)
     }
 
     @Test
@@ -48,12 +56,13 @@ class CreateIsolationStateTest {
             every { selfAssessment } returns null
             every { testResult } returns null
             every { isolationConfigurationProvider.durationDays } returns durationDays
+            every { createIsolationConfiguration.invoke(durationDays) } returns mockIsolationConfiguration
         }
 
         val newIsolationState = createIsolationState(isolationInfo)
 
         val expectedIsolationState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = mockIsolationConfiguration,
             selfAssessment = isolationInfo.selfAssessment,
             testResult = isolationInfo.testResult,
             contact = isolationInfo.contact,

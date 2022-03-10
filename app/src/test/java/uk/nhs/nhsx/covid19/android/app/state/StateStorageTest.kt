@@ -24,11 +24,12 @@ import java.time.LocalDate
 class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
 
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
+    private val createIsolationConfiguration = mockk<CreateIsolationConfiguration>()
 
-    override val getTestSubject: (Moshi, SharedPreferences) -> StateStorage = { moshi, sharedPreferences -> StateStorage(isolationConfigurationProvider, moshi, sharedPreferences) }
+    override val getTestSubject: (Moshi, SharedPreferences) -> StateStorage = { moshi, sharedPreferences -> StateStorage(isolationConfigurationProvider, moshi, sharedPreferences, createIsolationConfiguration) }
     override val property = StateStorage::state
     override val key = ISOLATION_STATE_KEY
-    override val defaultValue by lazy { IsolationState(isolationConfigurationProvider.durationDays) }
+    override val defaultValue by lazy { IsolationState(createIsolationConfiguration(isolationConfigurationProvider.durationDays)) }
     override val expectations: List<ProviderTestExpectation<IsolationState>> = generateParameters()
 
     private val durationDays = DurationDays()
@@ -36,6 +37,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
     @BeforeEach
     fun setUpMock() {
         every { isolationConfigurationProvider.durationDays } returns durationDays
+        every { createIsolationConfiguration.invoke(durationDays) } returns IsolationConfiguration()
     }
 
     data class StateRepresentation(
@@ -107,7 +109,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                 json =
                     """{"configuration":$CONFIGURATION,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
-                    isolationConfiguration = DurationDays(),
+                    isolationConfiguration = IsolationConfiguration(),
                     hasAcknowledgedEndOfIsolation = false
                 )
             ),
@@ -116,7 +118,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                 json =
                     """{"configuration":$CONFIGURATION,"testResult":$NEGATIVE_TEST_RESULT,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
-                    isolationConfiguration = DurationDays(),
+                    isolationConfiguration = IsolationConfiguration(),
                     testResult = negativeTestResult
                 )
             ),
@@ -125,7 +127,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                 json =
                     """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION,"hasAcknowledgedEndOfIsolation":true,"version":1}""",
                 state = IsolationState(
-                    isolationConfiguration = DurationDays(),
+                    isolationConfiguration = IsolationConfiguration(),
                     contact = Contact(
                         exposureDate = LocalDate.parse(CONTACT_EXPOSURE_DATE),
                         notificationDate = LocalDate.parse(CONTACT_NOTIFICATION_DATE),
@@ -139,7 +141,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                 json =
                     """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITHOUT_OPT_OUT_OF_CONTACT_ISOLATION,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
-                    isolationConfiguration = DurationDays(),
+                    isolationConfiguration = IsolationConfiguration(),
                     contact = Contact(
                         exposureDate = LocalDate.parse(CONTACT_EXPOSURE_DATE),
                         notificationDate = LocalDate.parse(CONTACT_NOTIFICATION_DATE),
@@ -152,7 +154,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                 json =
                     """{"configuration":$CONFIGURATION,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
-                    isolationConfiguration = DurationDays(),
+                    isolationConfiguration = IsolationConfiguration(),
                     selfAssessment = SelfAssessment(
                         selfAssessmentDate = LocalDate.parse(SYMPTOMATIC_SELF_DIAGNOSIS_DATE),
                         onsetDate = LocalDate.parse(SYMPTOMATIC_ONSET_DATE)
@@ -165,7 +167,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                 json =
                     """{"configuration":$CONFIGURATION,"symptomatic":$SYMPTOMATIC_WITHOUT_ONSET,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
-                    isolationConfiguration = DurationDays(),
+                    isolationConfiguration = IsolationConfiguration(),
                     selfAssessment = SelfAssessment(
                         selfAssessmentDate = LocalDate.parse(SYMPTOMATIC_SELF_DIAGNOSIS_DATE)
                     ),
@@ -177,7 +179,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                 json =
                     """{"configuration":$CONFIGURATION,"testResult":$POSITIVE_TEST_RESULT,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
-                    isolationConfiguration = DurationDays(),
+                    isolationConfiguration = IsolationConfiguration(),
                     selfAssessment = SelfAssessment(
                         selfAssessmentDate = LocalDate.parse(
                             SYMPTOMATIC_SELF_DIAGNOSIS_DATE
@@ -193,7 +195,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                 json =
                     """{"configuration":$CONFIGURATION,"testResult":$NEGATIVE_TEST_RESULT,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
-                    isolationConfiguration = DurationDays(),
+                    isolationConfiguration = IsolationConfiguration(),
                     selfAssessment = SelfAssessment(
                         selfAssessmentDate = LocalDate.parse(
                             SYMPTOMATIC_SELF_DIAGNOSIS_DATE
@@ -211,7 +213,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                 json =
                     """{"configuration":$CONFIGURATION,"testResult":$POSITIVE_TEST_RESULT,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
-                    isolationConfiguration = DurationDays(),
+                    isolationConfiguration = IsolationConfiguration(),
                     testResult = positiveTestResult,
                     hasAcknowledgedEndOfIsolation = false
                 )
@@ -221,7 +223,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                 json =
                     """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION,"testResult":$POSITIVE_TEST_RESULT,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"hasAcknowledgedEndOfIsolation":true,"version":1}""",
                 state = IsolationState(
-                    isolationConfiguration = DurationDays(),
+                    isolationConfiguration = IsolationConfiguration(),
                     contact = Contact(
                         exposureDate = LocalDate.parse(CONTACT_EXPOSURE_DATE),
                         notificationDate = LocalDate.parse(CONTACT_NOTIFICATION_DATE),
@@ -250,7 +252,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                 json =
                     """{"configuration":$CONFIGURATION,"testResult":$POSITIVE_TEST_RESULT_V1,"hasAcknowledgedEndOfIsolation":false,"version":1}""",
                 state = IsolationState(
-                    isolationConfiguration = DurationDays(),
+                    isolationConfiguration = IsolationConfiguration(),
                     testResult = positiveTestResult,
                     hasAcknowledgedEndOfIsolation = false
                 )
@@ -261,7 +263,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                 json =
                     """{"configuration":$CONFIGURATION,"contact":$CONTACT_WITH_OPT_OUT_OF_CONTACT_ISOLATION,"testResult":$POSITIVE_TEST_RESULT,"symptomatic":$SYMPTOMATIC_WITH_ONSET,"hasAcknowledgedEndOfIsolation":true,"version":1}""",
                 state = IsolationState(
-                    isolationConfiguration = DurationDays(),
+                    isolationConfiguration = IsolationConfiguration(),
                     contact = Contact(
                         exposureDate = LocalDate.parse(CONTACT_EXPOSURE_DATE),
                         notificationDate = LocalDate.parse(CONTACT_NOTIFICATION_DATE),
@@ -283,7 +285,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                 name = "null as never isolating",
                 json = null,
                 state = IsolationState(
-                    isolationConfiguration = DurationDays()
+                    isolationConfiguration = IsolationConfiguration()
                 )
             ),
             StateRepresentation(
@@ -291,7 +293,7 @@ class StateStorageTest : ProviderTest<StateStorage, IsolationState>() {
                 json =
                     """{"type":"UnknownCase","testDate":1594733801229,"expiryDate":1595338601229,"version":1}""",
                 state = IsolationState(
-                    isolationConfiguration = DurationDays()
+                    isolationConfiguration = IsolationConfiguration()
                 )
             )
         )

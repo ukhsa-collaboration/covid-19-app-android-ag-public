@@ -6,8 +6,8 @@ import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.ExposureWindowUtils.Companion.getExposureWindow
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.remote.data.CountrySpecificConfiguration
+import uk.nhs.nhsx.covid19.android.app.state.GetLatestConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
@@ -21,17 +21,19 @@ import kotlin.test.assertTrue
 class EvaluateIfConsideredRiskyTest {
 
     private val isolationStateMachine = mockk<IsolationStateMachine>(relaxUnitFun = true)
-    private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
+    private val getLatestConfiguration = mockk<GetLatestConfiguration>()
     private val baseDate: Instant = Instant.parse("2020-07-20T00:00:00Z")
     private val clock = Clock.fixed(baseDate, ZoneOffset.UTC)
     private val evaluateIfConsideredRisky =
-        EvaluateIfConsideredRisky(isolationConfigurationProvider, isolationStateMachine, clock)
-    private val durationDays = DurationDays()
+        EvaluateIfConsideredRisky(isolationStateMachine, getLatestConfiguration, clock)
     private val isolationHelper = IsolationHelper(clock)
+    private val contactCaseDuration = 7
 
     @Before
     fun setUp() {
-        every { isolationConfigurationProvider.durationDays } returns durationDays
+        val configuration = mockk<CountrySpecificConfiguration>()
+        every { getLatestConfiguration() } returns configuration
+        every { configuration.contactCase } returns contactCaseDuration
     }
 
     @Test
@@ -58,7 +60,7 @@ class EvaluateIfConsideredRiskyTest {
     fun `return true when exposure was exactly max duration of contact case days ago`() {
         every { isolationStateMachine.readState() } returns isolationHelper.neverInIsolation()
 
-        val contactCaseExpiryDate = baseDate.minus(durationDays.contactCase.toLong(), ChronoUnit.DAYS)
+        val contactCaseExpiryDate = baseDate.minus(contactCaseDuration.toLong(), ChronoUnit.DAYS)
         val exposureWindow = getExposureWindow(millisSinceEpoch = contactCaseExpiryDate.toEpochMilli())
         val isConsideredRisky = evaluateIfConsideredRisky(exposureWindow, 10.0, 2.0)
 
@@ -69,7 +71,7 @@ class EvaluateIfConsideredRiskyTest {
     fun `return false if exposure more than max duration of contact case days ago`() {
         every { isolationStateMachine.readState() } returns isolationHelper.neverInIsolation()
 
-        val expiredContactDate = baseDate.minus(durationDays.contactCase + 1L, ChronoUnit.DAYS)
+        val expiredContactDate = baseDate.minus(contactCaseDuration + 1L, ChronoUnit.DAYS)
         val exposureWindow = getExposureWindow(millisSinceEpoch = expiredContactDate.toEpochMilli())
         val isConsideredRisky = evaluateIfConsideredRisky(exposureWindow, 10.0, 2.0)
 

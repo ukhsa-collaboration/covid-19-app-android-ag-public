@@ -30,9 +30,9 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
-import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutReason.QUESTIONNAIRE
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.HandleTestResult
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.SendExposedNotification
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult
@@ -75,6 +75,7 @@ class IsolationStateMachineTest {
     private val createIsolationState = mockk<CreateIsolationState>(relaxUnitFun = true)
     private val createIsolationLogicalState = createIsolationLogicalState(fixedClock)
 
+    private val isolationConfiguration = IsolationConfiguration()
     private val durationDays = DurationDays()
 
     @Before
@@ -83,7 +84,7 @@ class IsolationStateMachineTest {
         val slot = slot<IsolationInfo>()
         every { createIsolationState(capture(slot)) } answers {
             IsolationState(
-                isolationConfiguration = DurationDays(),
+                isolationConfiguration = IsolationConfiguration(),
                 selfAssessment = slot.captured.selfAssessment,
                 testResult = slot.captured.testResult,
                 contact = slot.captured.contact,
@@ -94,7 +95,7 @@ class IsolationStateMachineTest {
 
     @Test
     fun `from default to index case on positive self-assessment and user cannot remember onset date`() {
-        val currentState = IsolationState(isolationConfiguration = durationDays)
+        val currentState = IsolationState(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns currentState
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -106,7 +107,7 @@ class IsolationStateMachineTest {
 
         val actualState = testSubject.readState()
         val expectedState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             selfAssessment = SelfAssessment(selfAssessmentDate = LocalDate.now(fixedClock))
         )
         assertEquals(expectedState, actualState)
@@ -127,11 +128,11 @@ class IsolationStateMachineTest {
 
     @Test
     fun `stay in default state on positive self-assessment and resulting self-assessment is expired`() {
-        val currentState = IsolationState(isolationConfiguration = durationDays)
+        val currentState = IsolationState(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns currentState
 
         val onsetDate = LocalDate.now(fixedClock)
-            .minusDays(durationDays.indexCaseSinceSelfDiagnosisOnset.toLong() + 1)
+            .minusDays(isolationConfiguration.indexCaseSinceSelfDiagnosisOnset.toLong() + 1)
 
         val testSubject = createIsolationStateMachine(fixedClock)
         val transition = testSubject.processEvent(
@@ -141,7 +142,7 @@ class IsolationStateMachineTest {
         )
 
         val actualState = testSubject.readState()
-        assertEquals(IsolationState(isolationConfiguration = durationDays), actualState)
+        assertEquals(IsolationState(isolationConfiguration = isolationConfiguration), actualState)
 
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertNull(sideEffect)
@@ -156,7 +157,7 @@ class IsolationStateMachineTest {
 
     @Test
     fun `from default to index state on positive self-assessment and resulting self-assessment not expired`() {
-        val currentState = IsolationState(isolationConfiguration = durationDays)
+        val currentState = IsolationState(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns currentState
 
         val onsetDate = LocalDate.now(fixedClock).minusDays(1)
@@ -168,7 +169,7 @@ class IsolationStateMachineTest {
 
         val actualState = testSubject.readState()
         val expectedState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             selfAssessment = SelfAssessment(selfAssessmentDate = LocalDate.now(fixedClock), onsetDate)
         )
         assertEquals(expectedState, actualState)
@@ -191,7 +192,7 @@ class IsolationStateMachineTest {
     fun `from index case caused by positive test result to index case triggered by self-assessment with onset date equal to test end date`() {
         val testEndDate = LocalDate.now(fixedClock)
         val currentState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             testResult = positiveTest(testEndDate)
         )
         every { stateProvider.state } returns currentState
@@ -216,7 +217,7 @@ class IsolationStateMachineTest {
         val testEndDate = LocalDate.now(fixedClock).minusDays(2)
         val testResult = positiveTest(testEndDate)
         val currentState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             testResult = testResult
         )
         every { stateProvider.state } returns currentState
@@ -252,7 +253,7 @@ class IsolationStateMachineTest {
         val testEndDate = LocalDate.now(fixedClock).minusDays(3)
         val testResult = positiveTest(testEndDate)
         val currentState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             testResult = testResult
         )
         every { stateProvider.state } returns currentState
@@ -284,7 +285,7 @@ class IsolationStateMachineTest {
     @Test
     fun `stay in index case caused by positive test result when onset date is not stated`() {
         val currentState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             testResult = positiveTest()
         )
         every { stateProvider.state } returns currentState
@@ -302,7 +303,7 @@ class IsolationStateMachineTest {
     @Test
     fun `stay in current state on positive self-assessment if already isolating as index case with self-assessment`() {
         val currentState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             selfAssessment = SelfAssessment(selfAssessmentDate = LocalDate.now(fixedClock))
         )
         every { stateProvider.state } returns currentState
@@ -335,7 +336,7 @@ class IsolationStateMachineTest {
             requiresConfirmatoryTest = false
         )
 
-        val isolationState = IsolationState(isolationConfiguration = durationDays)
+        val isolationState = IsolationState(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns isolationState
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -372,7 +373,7 @@ class IsolationStateMachineTest {
             requiresConfirmatoryTest = false
         )
 
-        every { stateProvider.state } returns IsolationState(isolationConfiguration = durationDays)
+        every { stateProvider.state } returns IsolationState(isolationConfiguration = isolationConfiguration)
 
         val testSubject = createIsolationStateMachine(fixedClock)
 
@@ -381,7 +382,7 @@ class IsolationStateMachineTest {
         )
 
         val actual = testSubject.readState()
-        assertEquals(IsolationState(isolationConfiguration = durationDays), actual)
+        assertEquals(IsolationState(isolationConfiguration = isolationConfiguration), actual)
 
         val sideEffect = (transition as Transition.Valid).sideEffect
         assertEquals(HandleTestResult(testResult, testOrderType = INSIDE_APP), sideEffect)
@@ -399,7 +400,7 @@ class IsolationStateMachineTest {
 
     @Test
     fun `from default to contact case on exposed notification contact 5 days ago`() {
-        val currentState = IsolationState(isolationConfiguration = durationDays)
+        val currentState = IsolationState(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns currentState
 
         val today = Clock.fixed(Instant.parse("2020-05-20T10:00:00Z"), ZoneOffset.UTC)
@@ -412,7 +413,7 @@ class IsolationStateMachineTest {
 
         val actual = testSubject.readState()
         val expected = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contact = Contact(
                 exposureDate = exposureDate.toLocalDate(ZoneOffset.UTC),
                 notificationDate = LocalDate.now(today),
@@ -435,7 +436,7 @@ class IsolationStateMachineTest {
 
     @Test
     fun `stay default on exposed notification contact 14 days ago`() {
-        every { stateProvider.state } returns IsolationState(isolationConfiguration = durationDays)
+        every { stateProvider.state } returns IsolationState(isolationConfiguration = isolationConfiguration)
 
         val today = Clock.fixed(Instant.parse("2020-05-20T10:00:00Z"), ZoneOffset.UTC)
         val testSubject = createIsolationStateMachine(today)
@@ -446,7 +447,7 @@ class IsolationStateMachineTest {
         )
 
         val actual = testSubject.readState()
-        val expected = IsolationState(isolationConfiguration = durationDays)
+        val expected = IsolationState(isolationConfiguration = isolationConfiguration)
         assertEquals(expected, actual)
 
         val sideEffect = (transition as Transition.Valid).sideEffect
@@ -462,7 +463,7 @@ class IsolationStateMachineTest {
 
     @Test
     fun `stay default on exposed notification contact 15 days ago`() {
-        every { stateProvider.state } returns IsolationState(isolationConfiguration = durationDays)
+        every { stateProvider.state } returns IsolationState(isolationConfiguration = isolationConfiguration)
 
         val today = Clock.fixed(Instant.parse("2020-05-20T10:00:00Z"), ZoneOffset.UTC)
         val testSubject = createIsolationStateMachine(today)
@@ -473,7 +474,7 @@ class IsolationStateMachineTest {
         )
 
         val actual = testSubject.readState()
-        val expected = IsolationState(isolationConfiguration = durationDays)
+        val expected = IsolationState(isolationConfiguration = isolationConfiguration)
         assertEquals(expected, actual)
 
         val sideEffect = (transition as Transition.Valid).sideEffect
@@ -490,7 +491,7 @@ class IsolationStateMachineTest {
     @Test
     fun `in index case on exposed notification add contact case`() {
         val currenState = SelfAssessment(selfAssessmentDate = LocalDate.now(fixedClock))
-            .asIsolation(isolationConfiguration = durationDays)
+            .asIsolation(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns currenState
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -523,7 +524,7 @@ class IsolationStateMachineTest {
 
     @Test
     fun `in contact case on exposed notification add contact case`() {
-        val currentState = contact().asIsolation(isolationConfiguration = durationDays)
+        val currentState = contact().asIsolation(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns currentState
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -551,7 +552,7 @@ class IsolationStateMachineTest {
     @Test
     fun `stay in index case on exposed notification with confirmed positive test result`() {
         val testEndDate = LocalDate.now(fixedClock).minusDays(3)
-        val initialState = positiveTest(testEndDate).asIsolation(isolationConfiguration = durationDays)
+        val initialState = positiveTest(testEndDate).asIsolation(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns initialState
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -579,7 +580,7 @@ class IsolationStateMachineTest {
     @Test
     fun `add contact case to index case on exposed notification without confirmed positive test result`() {
         val initialState = SelfAssessment(selfAssessmentDate = LocalDate.now(fixedClock))
-            .asIsolation(isolationConfiguration = durationDays)
+            .asIsolation(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns initialState
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -624,7 +625,7 @@ class IsolationStateMachineTest {
             requiresConfirmatoryTest = false
         )
 
-        val currentState = positiveTest().asIsolation(isolationConfiguration = durationDays)
+        val currentState = positiveTest().asIsolation(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns currentState
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -663,7 +664,7 @@ class IsolationStateMachineTest {
             requiresConfirmatoryTest = true
         )
 
-        val currentState = positiveTest().asIsolation(isolationConfiguration = durationDays)
+        val currentState = positiveTest().asIsolation(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns currentState
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -702,7 +703,7 @@ class IsolationStateMachineTest {
             requiresConfirmatoryTest = false
         )
 
-        val currentState = positiveTest().asIsolation(isolationConfiguration = durationDays)
+        val currentState = positiveTest().asIsolation(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns currentState
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -741,7 +742,7 @@ class IsolationStateMachineTest {
             requiresConfirmatoryTest = false
         )
 
-        val currentState = positiveTest().asIsolation(isolationConfiguration = durationDays)
+        val currentState = positiveTest().asIsolation(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns currentState
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -772,7 +773,7 @@ class IsolationStateMachineTest {
     @Test
     fun `add index case to contact case on positive self-assessment and resulting self-assessment not expired`() {
         val contact = contact()
-        val isolation = contact().asIsolation(isolationConfiguration = durationDays)
+        val isolation = contact().asIsolation(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns isolation
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -785,7 +786,7 @@ class IsolationStateMachineTest {
         val actual = testSubject.readState()
         val expected =
             IsolationState(
-                isolationConfiguration = durationDays,
+                isolationConfiguration = isolationConfiguration,
                 selfAssessment = SelfAssessment(selfAssessmentDate = LocalDate.now(fixedClock), onsetDate),
                 contact = contact
             )
@@ -808,7 +809,7 @@ class IsolationStateMachineTest {
     @Test
     fun `add index case to contact case on positive self-assessment and user cannot remember onset date`() {
         val contact = contact()
-        val isolation = contact.asIsolation(isolationConfiguration = durationDays)
+        val isolation = contact.asIsolation(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns isolation
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -819,7 +820,7 @@ class IsolationStateMachineTest {
         val actual = testSubject.readState()
         val expected =
             IsolationState(
-                isolationConfiguration = durationDays,
+                isolationConfiguration = isolationConfiguration,
                 contact = contact,
                 selfAssessment = SelfAssessment(selfAssessmentDate = LocalDate.now(fixedClock))
             )
@@ -851,7 +852,7 @@ class IsolationStateMachineTest {
         )
 
         val currentState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contact = Contact(
                 exposureDate = LocalDate.now(fixedClock),
                 notificationDate = LocalDate.now(fixedClock),
@@ -896,7 +897,7 @@ class IsolationStateMachineTest {
         )
 
         val currentState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contact = Contact(
                 exposureDate = LocalDate.now(fixedClock),
                 notificationDate = LocalDate.now(fixedClock),
@@ -942,7 +943,7 @@ class IsolationStateMachineTest {
         )
 
         val currentState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contact = Contact(
                 exposureDate = LocalDate.now(fixedClock),
                 notificationDate = LocalDate.now(fixedClock)
@@ -990,7 +991,7 @@ class IsolationStateMachineTest {
             acknowledgedDate = Instant.now(fixedClock)
         )
 
-        val currentState = IsolationState(isolationConfiguration = durationDays)
+        val currentState = IsolationState(isolationConfiguration = isolationConfiguration)
         val currentLogicalState = createIsolationLogicalState(currentState)
         every { stateProvider.state } returns currentState
         every {
@@ -1037,7 +1038,7 @@ class IsolationStateMachineTest {
             requiresConfirmatoryTest = false
         )
 
-        val currentState = IsolationState(isolationConfiguration = durationDays)
+        val currentState = IsolationState(isolationConfiguration = isolationConfiguration)
         val currentLogicalState = createIsolationLogicalState(currentState)
         every { stateProvider.state } returns currentState
         every {
@@ -1088,7 +1089,7 @@ class IsolationStateMachineTest {
             acknowledgedDate = Instant.now(fixedClock)
         )
 
-        val currentState = contact().asIsolation(isolationConfiguration = durationDays)
+        val currentState = contact().asIsolation(isolationConfiguration = isolationConfiguration)
         val currentLogicalState = createIsolationLogicalState(currentState)
         every { stateProvider.state } returns currentState
         every {
@@ -1142,10 +1143,10 @@ class IsolationStateMachineTest {
             acknowledgedDate = Instant.now(fixedClock)
         )
 
-        val currentState = IsolationState(isolationConfiguration = durationDays)
+        val currentState = IsolationState(isolationConfiguration = isolationConfiguration)
         val currentLogicalState = createIsolationLogicalState(currentState)
         val newState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contact = Contact(
                 exposureDate = LocalDate.now(fixedClock),
                 notificationDate = LocalDate.now(fixedClock),
@@ -1202,10 +1203,10 @@ class IsolationStateMachineTest {
             acknowledgedDate = Instant.now(fixedClock)
         )
 
-        val currentState = IsolationState(isolationConfiguration = durationDays)
+        val currentState = IsolationState(isolationConfiguration = isolationConfiguration)
         val currentLogicalState = createIsolationLogicalState(currentState)
         val newState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contact = Contact(
                 exposureDate = LocalDate.now(fixedClock).minusDays(12),
                 notificationDate = LocalDate.now(fixedClock).minusDays(12)
@@ -1263,7 +1264,7 @@ class IsolationStateMachineTest {
         )
 
         val currentState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contact = Contact(
                 exposureDate = LocalDate.now(fixedClock),
                 notificationDate = LocalDate.now(fixedClock)
@@ -1333,7 +1334,7 @@ class IsolationStateMachineTest {
         )
 
         val currentState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contact = Contact(
                 exposureDate = LocalDate.now(fixedClock).minusDays(12),
                 notificationDate = LocalDate.now(fixedClock).minusDays(12)
@@ -1390,7 +1391,7 @@ class IsolationStateMachineTest {
     fun `reset should put state machine in default state with no history`() {
         val startDate = LocalDate.now(fixedClock)
         val indexCase = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             selfAssessment = SelfAssessment(startDate)
         )
         every { stateProvider.state } returns indexCase
@@ -1398,7 +1399,7 @@ class IsolationStateMachineTest {
         val testSubject = createIsolationStateMachine(fixedClock)
         testSubject.reset()
 
-        assertEquals(IsolationState(isolationConfiguration = durationDays), testSubject.readState())
+        assertEquals(IsolationState(isolationConfiguration = isolationConfiguration), testSubject.readState())
         coVerify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
             scheduleIsolationHubReminder()
@@ -1410,7 +1411,7 @@ class IsolationStateMachineTest {
     @Test
     fun `remaining days in isolation is 0 when state is NeverIsolating`() {
         val testSubject = createIsolationStateMachine(fixedClock)
-        val logicalState = NeverIsolating(isolationConfiguration = durationDays, negativeTest = null)
+        val logicalState = NeverIsolating(isolationConfiguration = isolationConfiguration, negativeTest = null)
 
         val remainingDaysInIsolation = testSubject.remainingDaysInIsolation(logicalState)
 
@@ -1423,7 +1424,7 @@ class IsolationStateMachineTest {
         val contactExposureDate = LocalDate.now(fixedClock)
         val contactExpiryDate = contactExposureDate.plusDays(14)
         val logicalState = PossiblyIsolating(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contactCase = ContactCase(
                 exposureDate = contactExposureDate,
                 notificationDate = contactExposureDate,
@@ -1443,7 +1444,7 @@ class IsolationStateMachineTest {
         val encounterDate = LocalDate.now(fixedClock).minus(3, ChronoUnit.DAYS)
         val notificationDate = LocalDate.now(fixedClock).minus(2, ChronoUnit.DAYS)
         val contactCaseOnlyIsolation = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contact = Contact(
                 exposureDate = encounterDate,
                 notificationDate = notificationDate,
@@ -1467,7 +1468,7 @@ class IsolationStateMachineTest {
 
     @Test
     fun `when not in isolation, acknowledgeIsolationExpiration does not transition`() {
-        val currentState = IsolationState(isolationConfiguration = durationDays)
+        val currentState = IsolationState(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns currentState
 
         val testSubject = createIsolationStateMachine(fixedClock)
@@ -1482,14 +1483,14 @@ class IsolationStateMachineTest {
         val contact = contact(
             startDate = LocalDate.now(fixedClock).minusDays(14)
         )
-        val currentState = contact.asIsolation(isolationConfiguration = durationDays)
+        val currentState = contact.asIsolation(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns currentState
 
         val testSubject = createIsolationStateMachine(fixedClock)
         testSubject.acknowledgeIsolationExpiration()
 
         val expectedState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contact = contact,
             hasAcknowledgedEndOfIsolation = true
         )
@@ -1503,14 +1504,14 @@ class IsolationStateMachineTest {
         // can actually acknowledge the expiration before the isolation really expires.
 
         val contact = contact()
-        val currentState = contact.asIsolation(isolationConfiguration = durationDays)
+        val currentState = contact.asIsolation(isolationConfiguration = isolationConfiguration)
         every { stateProvider.state } returns currentState
 
         val testSubject = createIsolationStateMachine(fixedClock)
         testSubject.acknowledgeIsolationExpiration()
 
         val expectedState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contact = contact,
             hasAcknowledgedEndOfIsolation = true
         )

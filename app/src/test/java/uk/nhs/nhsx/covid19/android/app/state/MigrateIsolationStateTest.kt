@@ -7,6 +7,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.remote.data.CountrySpecificConfiguration
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
@@ -34,12 +35,26 @@ class MigrateIsolationStateTest {
     private val stateStorage4_9 = mockk<StateStorage4_9>(relaxUnitFun = true)
     private val relevantTestResultProvider = mockk<RelevantTestResultProvider>(relaxUnitFun = true)
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>(relaxUnitFun = true)
+    private val createIsolationConfiguration = mockk<CreateIsolationConfiguration>()
     private val migrateTestResults = mockk<MigrateTestResults>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(Instant.parse("2021-01-15T10:00:00Z"), ZoneOffset.UTC)
 
+    private val isolationConfiguration = IsolationConfiguration(
+        // Just setting a non-default value so that we can distinguish this instance from the default
+        pendingTasksRetentionPeriod = 10
+    )
+
     private val durationDays = DurationDays(
         // Just setting a non-default value so that we can distinguish this instance from the default
-        contactCase = 10
+        england = CountrySpecificConfiguration(
+            contactCase = 111,
+            indexCaseSinceSelfDiagnosisOnset = 61,
+            indexCaseSinceSelfDiagnosisUnknownOnset = 41,
+            maxIsolation = 161,
+            indexCaseSinceTestResultEndDate = 61,
+            pendingTasksRetentionPeriod = 114,
+            testResultPollingTokenRetentionPeriod = 218
+        )
     )
 
     private val migrateIsolationState = MigrateIsolationState(
@@ -48,12 +63,14 @@ class MigrateIsolationStateTest {
         relevantTestResultProvider,
         isolationConfigurationProvider,
         migrateTestResults,
+        createIsolationConfiguration,
         fixedClock
     )
 
     @Before
     fun setUp() {
         every { isolationConfigurationProvider.durationDays } returns durationDays
+        every { createIsolationConfiguration.invoke(durationDays) } returns isolationConfiguration
     }
 
     //region No migration
@@ -79,7 +96,7 @@ class MigrateIsolationStateTest {
         migrateIsolationState()
 
         val expectedIsolationState = IsolationState(
-            isolationConfiguration = durationDays
+            isolationConfiguration = isolationConfiguration
         )
         thenMigrateTo(expectedIsolationState)
     }
@@ -100,7 +117,7 @@ class MigrateIsolationStateTest {
         migrateIsolationState()
 
         val expectedIsolationState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             testResult = AcknowledgedTestResult(
                 testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone),
                 testResult = oldTestResult.testResult,
@@ -120,7 +137,7 @@ class MigrateIsolationStateTest {
         )
         val oldState = Isolation4_9(
             isolationStart = Instant.now(fixedClock).minus(5, DAYS),
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contactCase = null,
             indexCase = oldIndexCase
         )
@@ -139,7 +156,7 @@ class MigrateIsolationStateTest {
         migrateIsolationState()
 
         val expectedIsolationState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             selfAssessment = SelfAssessment(
                 selfAssessmentDate = oldIndexCase.symptomsOnsetDate.plusDays(2),
                 onsetDate = null
@@ -171,7 +188,7 @@ class MigrateIsolationStateTest {
         val oldState = Default4_9(
             previousIsolation = Isolation4_9(
                 isolationStart = Instant.now(fixedClock).minus(5, DAYS),
-                isolationConfiguration = durationDays,
+                isolationConfiguration = isolationConfiguration,
                 contactCase = oldContactCase,
                 indexCase = oldIndexCase
             )
@@ -191,7 +208,7 @@ class MigrateIsolationStateTest {
         migrateIsolationState()
 
         val expectedIsolationState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contact = Contact(
                 exposureDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
                 notificationDate = oldContactCase.notificationDate!!.toLocalDate(fixedClock.zone),
@@ -222,7 +239,7 @@ class MigrateIsolationStateTest {
         )
         val oldState = Isolation4_9(
             isolationStart = Instant.now(fixedClock).minus(5, DAYS),
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             indexCase = null,
             contactCase = oldContactCase
         )
@@ -233,7 +250,7 @@ class MigrateIsolationStateTest {
         migrateIsolationState()
 
         val expectedIsolationState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contact = Contact(
                 exposureDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
                 // We fall back to exposure date when notification date is null
@@ -255,7 +272,7 @@ class MigrateIsolationStateTest {
         )
         val oldState = Isolation4_9(
             isolationStart = Instant.now(fixedClock).minus(5, DAYS),
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             indexCase = null,
             contactCase = oldContactCase
         )
@@ -266,7 +283,7 @@ class MigrateIsolationStateTest {
         migrateIsolationState()
 
         val expectedIsolationState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contact = Contact(
                 exposureDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
                 notificationDate = oldContactCase.notificationDate!!.toLocalDate(fixedClock.zone),
@@ -287,7 +304,7 @@ class MigrateIsolationStateTest {
         )
         val oldState = Isolation4_9(
             isolationStart = Instant.now(fixedClock).minus(5, DAYS),
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             indexCase = null,
             contactCase = oldContactCase
         )
@@ -306,7 +323,7 @@ class MigrateIsolationStateTest {
         migrateIsolationState()
 
         val expectedIsolationState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contact = Contact(
                 exposureDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
                 notificationDate = oldContactCase.notificationDate!!.toLocalDate(fixedClock.zone),
@@ -332,7 +349,7 @@ class MigrateIsolationStateTest {
         )
         val oldState = Isolation4_9(
             isolationStart = Instant.now(fixedClock).minus(5, DAYS),
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             indexCase = oldIndexCase
         )
 
@@ -342,7 +359,7 @@ class MigrateIsolationStateTest {
         migrateIsolationState()
 
         val expectedIsolationState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             selfAssessment = SelfAssessment(
                 selfAssessmentDate = oldIndexCase.symptomsOnsetDate.plusDays(2),
                 onsetDate = null
@@ -361,7 +378,7 @@ class MigrateIsolationStateTest {
         )
         val oldState = Isolation4_9(
             isolationStart = Instant.now(fixedClock).minus(5, DAYS),
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             indexCase = oldIndexCase
         )
 
@@ -379,7 +396,7 @@ class MigrateIsolationStateTest {
         migrateIsolationState()
 
         val expectedIsolationState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             selfAssessment = SelfAssessment(
                 selfAssessmentDate = oldIndexCase.symptomsOnsetDate.plusDays(2),
                 onsetDate = null
@@ -404,7 +421,7 @@ class MigrateIsolationStateTest {
         )
         val oldState = Isolation4_9(
             isolationStart = Instant.now(fixedClock).minus(5, DAYS),
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             indexCase = oldIndexCase
         )
 
@@ -422,7 +439,7 @@ class MigrateIsolationStateTest {
         migrateIsolationState()
 
         val expectedIsolationState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             testResult = AcknowledgedTestResult(
                 testEndDate = oldTestResult.testEndDate.toLocalDate(fixedClock.zone),
                 testResult = oldTestResult.testResult,
@@ -449,7 +466,7 @@ class MigrateIsolationStateTest {
         )
         val oldState = Isolation4_9(
             isolationStart = Instant.now(fixedClock).minus(5, DAYS),
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contactCase = oldContactCase,
             indexCase = oldIndexCase
         )
@@ -468,7 +485,7 @@ class MigrateIsolationStateTest {
         migrateIsolationState()
 
         val expectedIsolationState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contact = Contact(
                 exposureDate = oldContactCase.startDate.toLocalDate(fixedClock.zone),
                 notificationDate = oldContactCase.notificationDate!!.toLocalDate(fixedClock.zone),
@@ -509,7 +526,7 @@ class MigrateIsolationStateTest {
         migrateIsolationState()
 
         val expectedIsolationState = IsolationState(
-            isolationConfiguration = durationDays
+            isolationConfiguration = isolationConfiguration
         )
         thenMigrateTo(expectedIsolationState)
     }
@@ -523,7 +540,7 @@ class MigrateIsolationStateTest {
         )
         val oldState = Isolation4_9(
             isolationStart = Instant.now(fixedClock).minus(5, DAYS),
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             contactCase = null,
             indexCase = oldIndexCase
         )
@@ -534,7 +551,7 @@ class MigrateIsolationStateTest {
         migrateIsolationState()
 
         val expectedIsolationState = IsolationState(
-            isolationConfiguration = durationDays,
+            isolationConfiguration = isolationConfiguration,
             selfAssessment = SelfAssessment(
                 selfAssessmentDate = oldIndexCase.symptomsOnsetDate.plusDays(2),
                 onsetDate = null

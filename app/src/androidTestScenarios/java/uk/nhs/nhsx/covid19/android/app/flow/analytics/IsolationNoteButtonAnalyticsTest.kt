@@ -40,7 +40,7 @@ class IsolationNoteButtonAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
             isolationHubRobot.checkActivityIsDisplayed()
             isolationHubRobot.clickItemIsolationNote()
 
-            assertOnFields {
+            assertOnFields(implicitlyAssertNotPresent = false) {
                 assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
                 assertPresent(Metrics::receivedActiveIpcToken)
                 assertEquals(2, Metrics::didAccessSelfIsolationNoteLink)

@@ -6,8 +6,8 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CalculateKeySubmissionDateRange
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.SubmissionDateRange
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
@@ -102,7 +102,7 @@ class TransmissionRiskLevelApplierTest {
                     selfAssessmentDate = LocalDate.parse("2020-07-21"),
                     onsetDate = symptomsOnsetDate
                 ),
-                isolationConfiguration = DurationDays()
+                isolationConfiguration = IsolationConfiguration()
             )
     }
 
@@ -113,7 +113,7 @@ class TransmissionRiskLevelApplierTest {
                     exposureDate = LocalDate.parse("2020-07-21"),
                     notificationDate = LocalDate.parse("2020-07-21")
                 ),
-                isolationConfiguration = DurationDays()
+                isolationConfiguration = IsolationConfiguration()
             )
     }
 

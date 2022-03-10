@@ -25,7 +25,6 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivi
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.report.Reported
 import uk.nhs.nhsx.covid19.android.app.report.Reporter
@@ -33,6 +32,7 @@ import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.FLOW
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
 import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.reporter
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
@@ -49,12 +49,14 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateR
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult.POSITIVE
 import java.time.LocalDate
 
 @RunWith(Parameterized::class)
-class QuestionnaireScenarioTest(override val configuration: TestConfiguration) : EspressoTest(), IsolationSetupHelper {
+class QuestionnaireScenarioTest(override val configuration: TestConfiguration) : EspressoTest(), IsolationSetupHelper,
+    LocalAuthoritySetupHelper {
 
     private val statusRobot = StatusRobot()
     private val questionnaireRobot = QuestionnaireRobot()
@@ -83,6 +85,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
         description = "User is currently not in isolation, selects symptoms and is notified of coronavirus symptoms",
         kind = FLOW
     ) {
+        givenLocalAuthorityIsInEngland()
         startTestActivity<StatusActivity>()
 
         statusRobot.checkActivityIsDisplayed()
@@ -191,6 +194,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
         description = "User is in contact case isolation, selects symptoms that do not result in isolation due to self-assessment and is asked to continue isolating",
         kind = FLOW
     ) {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setState(isolationHelper.contact().asIsolation())
 
         completeQuestionnaire(selectMainSymptom = false)
@@ -216,6 +220,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
                     "This extends the current isolation and shows the appropriate screen.",
             kind = FLOW
         ) {
+            givenLocalAuthorityIsInEngland()
             isolatingDueToPositiveTestResult(testEndDate = LocalDate.now(testAppContext.clock).minusDays(3))
 
             completeQuestionnaire(selectMainSymptom = true)
@@ -241,6 +246,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
                     "This has no effect on the current isolation and asks the user to keep isolating.",
             kind = FLOW
         ) {
+            givenLocalAuthorityIsInEngland()
             isolatingDueToPositiveTestResult()
 
             completeQuestionnaire(selectMainSymptom = true)
@@ -264,6 +270,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
                     "This has no effect on the current isolation and asks the user to keep isolating.",
             kind = FLOW
         ) {
+            givenLocalAuthorityIsInEngland()
             isolatingDueToPositiveTestResult()
 
             completeQuestionnaire(selectMainSymptom = false)
@@ -284,6 +291,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
         description = "User is in index case isolation due to a positive test result, has no symptoms selected and taps 'I don't have any of these symptoms'",
         kind = FLOW
     ) {
+        givenLocalAuthorityIsInEngland()
         isolatingDueToPositiveTestResult()
 
         startTestActivity<QuestionnaireActivity>()
@@ -444,9 +452,10 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
 
     @Test
     fun contactCase_SelectNotCoronavirusSymptoms_StaysInIsolation() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setState(
             IsolationState(
-                isolationConfiguration = DurationDays(),
+                isolationConfiguration = IsolationConfiguration(),
                 contact = Contact(
                     exposureDate = LocalDate.now().minusDays(1),
                     notificationDate = LocalDate.now()
@@ -475,9 +484,10 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
 
     @Test
     fun contactCase_selectNoCoronavirusSymptoms_staysInIsolation() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setState(
             IsolationState(
-                isolationConfiguration = DurationDays(),
+                isolationConfiguration = IsolationConfiguration(),
                 contact = Contact(
                     exposureDate = LocalDate.now().minusDays(1),
                     notificationDate = LocalDate.now()
@@ -659,6 +669,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
     @Test
     fun startWithNewNoSymptomFeatureEnabled_inActiveIsolation_clickNoSymptoms_showDialogAndConfirm_noSymptomsScreenIsDisplayed() {
         runWithFeatureEnabled(NEW_NO_SYMPTOMS_SCREEN, clearFeatureFlags = true) {
+            givenLocalAuthorityIsInEngland()
             givenContactIsolation()
 
             startTestActivity<QuestionnaireActivity>()

@@ -62,6 +62,7 @@ import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockQrScannerViewModel.Optio
 import uk.nhs.nhsx.covid19.android.app.edgecases.DeviceNotSupportedActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationOptOutActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationAgeLimitActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ExposureNotificationReviewActivity
@@ -824,6 +825,10 @@ class DebugActivity : AppCompatActivity() {
 
         addScreenButton("Self-isolation hub") {
             startActivity<IsolationHubActivity>()
+        }
+
+        addScreenButton("Risky Contact Advice - Opt out") {
+            startActivity<RiskyContactIsolationOptOutActivity>()
         }
 
         addScreenButton("Risky Contact Advice - Under 18 (resets state)") {

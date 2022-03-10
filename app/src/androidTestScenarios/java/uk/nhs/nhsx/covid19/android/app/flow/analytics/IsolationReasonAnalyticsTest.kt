@@ -5,6 +5,7 @@ import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.RiskyContact
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
 import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
 
 class IsolationReasonAnalyticsTest : AnalyticsTest() {
@@ -72,7 +73,7 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun hasHadRiskyContactBackgroundTickIsPresentWhenIsolatingAndFor14DaysAfter() {
-        givenLocalAuthorityIsInEngland()
+        givenLocalAuthorityIsInWales()
         startTestActivity<MainActivity>()
 
         // Current date: 2nd Jan -> Analytics packet for: 1st Jan
@@ -82,7 +83,7 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
         // Has risky contact on 2nd Jan
         // Isolation end date: 13th Jan
         riskyContact.triggerViaCircuitBreaker(this::advanceToNextBackgroundTaskExecution)
-        riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinated()
+        riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(country = WALES)
 
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
         assertOnFields {

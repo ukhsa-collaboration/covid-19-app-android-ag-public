@@ -144,7 +144,7 @@ class LinkTestResultFlowTests : EspressoTest() {
                 notificationDate = contactDate
             ).asIsolation()
         )
-        val contactExpiryDate = contactDate.plusDays(DurationDays().contactCase.toLong())
+        val contactExpiryDate = contactDate.plusDays(DurationDays().england.contactCase.toLong())
 
         startTestActivity<StatusActivity>()
 

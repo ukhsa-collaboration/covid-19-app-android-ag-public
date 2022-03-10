@@ -26,10 +26,10 @@ import uk.nhs.nhsx.covid19.android.app.isolation.Event.terminatedRiskyContactEar
 import uk.nhs.nhsx.covid19.android.app.isolation.StateStorage4_10Representation.Companion.DEFAULT_CONFIRMATORY_DAY_LIMIT
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo.IndexCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutReason.QUESTIONNAIRE
@@ -53,7 +53,7 @@ import kotlin.test.assertTrue
 
 class EventHandler(
     private val isolationTestContext: IsolationTestContext,
-    val isolationConfiguration: DurationDays,
+    val isolationConfiguration: IsolationConfiguration,
 ) {
 
     fun handleEvent(event: Event) {

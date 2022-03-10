@@ -1,7 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.questionnaire.review
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireAndStartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireButDidNotStartIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor

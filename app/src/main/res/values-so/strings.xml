@@ -30,7 +30,7 @@
     <string name="about_feedback_information_text">Haddii aad hayso jawaab-celin ku saabsan barnaamijka, su\'aal aan looga jawaabin su\'aalaheena guud, ama aad leedahay cillad farsamo, waad nala soo xiriiri kartaa adigoo adeegsanaya foomkeena internetka.</string>
     <string name="about_feedback_information_title">Macluumaadka jawaab celinta</string>
     <string name="about_how_this_app_works_link">Sida barnaamijku u shaqeeyo</string>
-    <string name="about_how_this_app_works_text">App-kan wuxuu adeegsadaa tiknooloojiyada raad-raacista shakhsi si uu kaaga caawiyo ilaalinta naftaada iyo dadka kale si aan dhamaanteen ugu laabano waxyaabihii aan jecelnahay.\n\nApp-ka wuxuu aqoonsada wuxuuna isku xiraa isticmalayaasha kale ee dhow ee app-ka isticmaalaa. Haddii mid ka mid ah dadkaas isticmaala ay mar dambe cudurka coronavirus ku dhaco, waxaad heli doontaa digniin talo bixin ah.\n\nApp-ka wuxuu sidoo kale kuu oggolaanayaa inaad ka warbixiso astaamahaaga oo aad ogaato haddii aad u baahan tahay baaritaan.\n\nWaxaad sidoo kale u adeegsan kartaa inaad iskaan-garayso koodhaadhka rasmiga ah ee NHS QR si aad si dhakhso leh oo fudud iskaga xaadiriso meelaha aad booqato.</string>
+    <string name="about_how_this_app_works_text">App-kan wuxuu adeegsadaa tiknooloojiyada raad-raacista shakhsi si uu kaaga caawiyo ilaalinta naftaada iyo dadka kale si aan dhamaanteen ugu laabano waxyaabihii aan jecelnahay.\n\nApp-ka wuxuu aqoonsada wuxuuna isku xiraa isticmalayaasha kale ee dhow ee app-ka isticmaalaa. Haddii mid ka mid ah dadkaas isticmaala ay mar dambe cudurka coronavirus ku dhaco, waxaad heli doontaa digniin talo bixin ah.\n\nApp-ka wuxuu sidoo kale kuu oggolaanayaa inaad ka warbixiso astaamahaaga oo aad ogaato haddii aad u baahan tahay baaritaan.</string>
     <string name="about_manage_my_data">Maaree xogtayda</string>
     <string name="about_my_data_symptoms_date">Taariikh</string>
     <string name="about_negative">Lagama helin</string>
@@ -403,7 +403,7 @@
     <string name="about_test_kit_type">Nooca qalabka baaritaanka</string>
     <string name="about_test_result">Natiijada</string>
     <string name="state_test_positive_and_book_test_info">Natiijada baaritaankaaga coronavirus waxay caddaynaysaa in aad qabtid cudurka</string>
-    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad farriintan u tusiso qof weyn oo aad ku kalsoon tahay.</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad farriintan tustid qof weyn oo aad ku kalsoon tahay.</string>
     <string name="test_result_positive_self_isolate_and_book_test_explanation_1">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo su\'aalaha badana la isweydiiya.\n\nMaadaama lagaa qaaday baaritaan suuf oo deg deg ah, waxaad hadda u baahan tahay in lagaa qaado baaritaan nooc kale oo loo dirayo shaybaar si loo xaqiijiyo natiijada.\n\nTaas ka hor, adiga iyo qof kasta oo aad la nooshahay waa inaad isla markaaba is-go\'doomisaan.</string>
     <string name="test_result_positive_self_isolate_and_book_test_title_3">oo ballanso baaritaan dabagal</string>
     <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
@@ -542,7 +542,7 @@
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_change">La soco wakhtigaaga is-go\'doominta adigoo isticmaalaya wakhtiga tirinta ee saaran shaashadda bogga soo-dhoweynta ee app-ka.</string>
     <string name="test_result_plod_title">Natiijada baaritaankaaga waxay caddaynaysaa in aad cudurka qabtid inkastoo ay daciif tahay</string>
     <string name="url_download_the_nhs_app">https://www.nhs.uk/app</string>
-    <string name="local_message_banner_read_more">Akhri wax dheeraad ah</string>
+    <string name="local_message_banner_read_more">Read updated guidance</string>
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">Waa muhiim inaad sii waddo is-go\'doominta maadaama lagaa helay cudurka.\n\nFadlan guriga joog si aad u ilaaliso naftaada iyo dadka kaleba. La soco wakhtigaaga is-go\'doominta adigoo isticmaalaya wakhtiga tirinta ee saaran shaashadda bogga soo-dhoweynta ee app-ka.</string>
@@ -820,4 +820,22 @@
     <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">Xaddid isku dhawaanshaha dhow oo lala yeeshta qof kasta oo kamid ah qoyskiina oo qaba COVID-19</string>
     <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">Ku xiro daboolaha wajiga meelaha dadka badan, goobaha xiran ama aadka u hawada yar</string>
     <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">Kasoo shaqeey guriga haddii aad awoodo haddii qof qoyskiina ka mid ah uu qabo COVID-19</string>
+    <string name="about_this_app_software_information_date_of_release_description">2/2022</string>
+    <string name="contact_case_exposure_info_screen_continue_button_england">Sii Wad</string>
+    <string name="contact_case_exposure_info_screen_exposure_date_england">Xiriir dhow ayaa dhacay %s</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_body_england">App-ka wuxuu adeegsadaa Bluetooth si uu u hubiyo haddii telefoonkaagu uu u dhowyahay dadka qaba cudurka.\n\nU dhawaanshaha qofka cudurka qaba waxaa laga wadaa inaad qiyaas ahaan 15 daqiiqo ama ka badan u jirtay 2 mitir qofkaas.\n\nApp-ka waa qarsoodi mana adeegsado GPS si uu ula socdo goobtaada, sidaa darteed xogtaada qarsoodiga waa la ilaaliyay.</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading_england">Sida loo xisaabiyo maalmaha is-go\'doominta</string>
+    <string name="contact_case_exposure_info_screen_information_england">Haddii aad ka yar tahay 18, waxaa lagugula talinayaa inaad farriintan tustid qof weyn oo aad ku kalsoon tahay</string>
+    <string name="contact_case_exposure_info_screen_title_england">App-ka wuxuu ogaadey inaad u dhaweyd qof laga helay coronavirus (COVID-19)</string>
+    <string name="risky_contact_opt_out_advice_mask">Ku xiro daboolaha wajiga meelaha dadku ku badan yahay oo xiran</string>
+    <string name="risky_contact_opt_out_advice_meeting_indoors">U oggolow in hawo saafi ah ay soo gasho haddii aad ku kulantaan gudaha, ama aad ku kulantaan dibadda</string>
+    <string name="risky_contact_opt_out_advice_testing_hub">Samey baaritaan haddii aad leedahay calaamadaha COVID-19 oo guriga joog haddii baaritaankaagu yahay mid togan</string>
+    <string name="risky_contact_opt_out_advice_title">Raac tilmaanta ugu dambeeysay ee COVID-19 si aad u ilaaliso naftaada iyo dadka kale</string>
+    <string name="risky_contact_opt_out_advice_wash_hands">Si joogto ah u dhaq gacmahaaga oo dabool qufaca iyo hindhisada</string>
+    <string name="risky_contact_opt_out_further_advice">Haddii qof qoyskaaga ka tirsan oo laga helay COVID-19, fadlan booqo:</string>
+    <string name="risky_contact_opt_out_further_advice_link_text">Tilmaamaha xiriirka qoyska</string>
+    <string name="risky_contact_opt_out_further_advice_link_url">https://www.gov.uk/government/publications/covid-19-people-with-covid-19-and-their-contacts/covid-19-people-with-covid-19-and-their-contacts#what-to-do-if-you-are-a-close-contact-of-someone-who-has-covid-19</string>
+    <string name="risky_contact_opt_out_primary_button_title">Akhri tilmaamaha ugu dambeeya ee COVID-19</string>
+    <string name="risky_contact_opt_out_primary_button_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="risky_contact_opt_out_secondary_button_title">Ku laabo shaashadda soo-dhoweynta</string>
 </resources>

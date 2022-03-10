@@ -33,6 +33,7 @@ import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationAc
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationBroadcastReceiver
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationWorker
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationAdviceActivity
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.RiskyContactIsolationOptOutActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationAgeLimitActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationVaccinationStatusActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.ExposureNotificationReviewActivity
@@ -182,6 +183,7 @@ interface ApplicationComponent {
     fun inject(exposureNotificationVaccinationStatusActivity: ExposureNotificationVaccinationStatusActivity)
     fun inject(isolationHubReminderReceiver: IsolationHubReminderReceiver)
     fun inject(riskyContactIsolationAdviceActivity: RiskyContactIsolationAdviceActivity)
+    fun inject(riskyContactIsolationOptOutActivity: RiskyContactIsolationOptOutActivity)
 
     fun inject(testResultViewModel: BaseTestResultViewModel)
 

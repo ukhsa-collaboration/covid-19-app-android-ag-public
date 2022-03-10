@@ -31,14 +31,14 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.RiskScore.PowerLossParameters
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskScore.RssiParameters
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskScore.SmootherParameters
 import uk.nhs.nhsx.covid19.android.app.remote.data.V2RiskCalculation
-import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.state.GetLatestConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import java.time.Clock
 import java.time.LocalDate
 
 class SendExposureNotification(
     isolationStateMachine: IsolationStateMachine,
-    isolationConfigurationProvider: IsolationConfigurationProvider,
+    getLatestConfiguration: GetLatestConfiguration,
     private val clock: Clock
 ) {
     operator fun invoke(exposureDate: LocalDate) = runBlocking {
@@ -59,8 +59,8 @@ class SendExposureNotification(
     private val handleInitialExposureNotification = mockk<HandleInitialExposureNotification>()
 
     private val evaluateIfConsideredRisky = EvaluateIfConsideredRisky(
-        isolationConfigurationProvider,
         isolationStateMachine,
+        getLatestConfiguration,
         clock
     )
 

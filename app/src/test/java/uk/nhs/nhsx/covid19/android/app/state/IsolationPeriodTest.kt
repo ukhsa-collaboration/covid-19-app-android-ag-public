@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationPeriod.Companion.mergeNewestOverlapping
 import java.time.LocalDate
 import kotlin.test.assertEquals
@@ -80,7 +79,7 @@ class IsolationPeriodTest {
             startDate = LocalDate.of(2020, 1, 1),
             expiryDate = LocalDate.of(2020, 1, 15)
         )
-        val isolationConfiguration = DurationDays(maxIsolation = 20)
+        val isolationConfiguration = IsolationConfiguration(maxIsolation = 20)
 
         val expiryDate = isolationPeriod.capExpiryDate(isolationConfiguration)
 
@@ -93,7 +92,7 @@ class IsolationPeriodTest {
             startDate = LocalDate.of(2020, 1, 1),
             expiryDate = LocalDate.of(2020, 1, 20)
         )
-        val isolationConfiguration = DurationDays(maxIsolation = 20)
+        val isolationConfiguration = IsolationConfiguration(maxIsolation = 20)
 
         val expiryDate = isolationPeriod.capExpiryDate(isolationConfiguration)
 
@@ -107,7 +106,7 @@ class IsolationPeriodTest {
             expiryDate = LocalDate.of(2020, 1, 21)
         )
         val maxIsolation = 20
-        val isolationConfiguration = DurationDays(maxIsolation = maxIsolation)
+        val isolationConfiguration = IsolationConfiguration(maxIsolation = maxIsolation)
 
         val expiryDate = isolationPeriod.capExpiryDate(isolationConfiguration)
 

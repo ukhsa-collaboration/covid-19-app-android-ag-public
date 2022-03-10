@@ -15,9 +15,9 @@ import uk.nhs.nhsx.covid19.android.app.about.mydata.BaseMyDataViewModel.MyDataSt
 import uk.nhs.nhsx.covid19.android.app.about.mydata.MyDataViewModel
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDate
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueConfigurationDurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
@@ -104,7 +104,7 @@ class MyDataViewModelTest : IsolationStateMachineSetupHelper {
 
         givenIsolationState(
             IsolationState(
-                isolationConfiguration = DurationDays(),
+                isolationConfiguration = IsolationConfiguration(),
                 contact = Contact(
                     exposureDate = contactExposureDate,
                     notificationDate = contactNotificationDate,
@@ -138,7 +138,7 @@ class MyDataViewModelTest : IsolationStateMachineSetupHelper {
 
     @Test
     fun `loading user data doesn't return exposure notification details when previously in contact case`() {
-        givenIsolationState(IsolationState(isolationConfiguration = DurationDays()))
+        givenIsolationState(IsolationState(isolationConfiguration = IsolationConfiguration()))
 
         testSubject.onResume()
 
@@ -171,7 +171,7 @@ class MyDataViewModelTest : IsolationStateMachineSetupHelper {
     private val lastDayOfIsolation = LocalDate.parse("2020-05-24")
 
     private val contactAndIndexIsolation = IsolationState(
-        isolationConfiguration = DurationDays(),
+        isolationConfiguration = IsolationConfiguration(),
         contact = Contact(
             exposureDate = contactCaseExposureDate,
             notificationDate = contactCaseNotificationDate,

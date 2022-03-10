@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import androidx.test.rule.GrantPermissionRule
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -14,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.report.Reported
 import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.FLOW
 import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
 import uk.nhs.nhsx.covid19.android.app.report.reporter
+import uk.nhs.nhsx.covid19.android.app.testhelpers.TestApplicationContext
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QrCodeScanResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QrScannerRobot
@@ -28,6 +30,11 @@ class QrCodeScanScenarioTest(override val configuration: TestConfiguration) : Es
     private val qrScannerRobot = QrScannerRobot()
     private val qrCodeScanResultRobot = QrCodeScanResultRobot()
     private val venueAlertInformRobot = VenueAlertInformRobot()
+
+    @Before
+    fun setUp() {
+        testAppContext.setLocalAuthority(TestApplicationContext.ENGLISH_LOCAL_AUTHORITY)
+    }
 
     @After
     fun tearDown() {

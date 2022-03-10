@@ -2,9 +2,10 @@ package uk.nhs.nhsx.covid19.android.app.exposure.sharekeys
 
 import io.mockk.every
 import io.mockk.mockk
+import org.junit.Before
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.remote.data.CountrySpecificConfiguration
+import uk.nhs.nhsx.covid19.android.app.state.GetLatestConfiguration
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -15,17 +16,23 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class CalculateKeySubmissionDateRangeTest {
-    private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
+    private val getLatestConfiguration = mockk<GetLatestConfiguration>()
     private val fixedClock = Clock.fixed(Instant.parse("2020-07-15T12:00:00Z"), ZoneOffset.UTC)
 
     val testSubject = CalculateKeySubmissionDateRange(
-        isolationConfigurationProvider = isolationConfigurationProvider,
-        clock = fixedClock
+        getLatestConfiguration,
+        fixedClock
     )
+
+    @Before
+    fun setUp() {
+        val configuration = mockk<CountrySpecificConfiguration>()
+        every { getLatestConfiguration() } returns configuration
+        every { configuration.contactCase } returns 11
+    }
 
     @Test
     fun `test calculation with onsetDate based start date`() {
-        every { isolationConfigurationProvider.durationDays } returns isolationConfiguration
         val result = testSubject(
             KeySharingInfo(
                 diagnosisKeySubmissionToken = "token",
@@ -43,7 +50,6 @@ class CalculateKeySubmissionDateRangeTest {
 
     @Test
     fun `test calculation with isolationDuration based startDate`() {
-        every { isolationConfigurationProvider.durationDays } returns isolationConfiguration
         val result = testSubject(
             KeySharingInfo(
                 diagnosisKeySubmissionToken = "token",
@@ -61,7 +67,6 @@ class CalculateKeySubmissionDateRangeTest {
 
     @Test
     fun `test calculation with startDate later than endDate`() {
-        every { isolationConfigurationProvider.durationDays } returns isolationConfiguration
         val result = testSubject(
             KeySharingInfo(
                 diagnosisKeySubmissionToken = "token",
@@ -76,6 +81,4 @@ class CalculateKeySubmissionDateRangeTest {
         assertEquals(LocalDate.of(2020, 7, 2), result.lastSubmissionDate)
         assertFalse { result.containsAtLeastOneDay() }
     }
-
-    val isolationConfiguration = DurationDays(contactCase = 11)
 }

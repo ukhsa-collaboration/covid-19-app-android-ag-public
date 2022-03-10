@@ -15,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType.EXPOSUR
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventType.EXPOSURE_WINDOW_POSITIVE_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.EpidemiologyEventWithType
 import uk.nhs.nhsx.covid19.android.app.remote.data.Infectiousness.HIGH
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import kotlin.test.assertEquals
@@ -30,13 +31,13 @@ class ExposureWindowAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun submitsExposureWindowData_whenUserHasRiskyContact() = runBlocking {
-        givenLocalAuthorityIsInEngland()
+        givenLocalAuthorityIsInWales()
         startTestActivity<MainActivity>()
 
         testAppContext.epidemiologyDataApi.clear()
 
         riskyContact.triggerViaBroadcastReceiver()
-        riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinated()
+        riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(country = WALES)
 
         val expectedEvents = getEncounterEpidemiologyEvents()
 
@@ -45,11 +46,11 @@ class ExposureWindowAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun submitsExposureWindowData_whenUserReceivesPositiveTest() = runBlocking {
-        givenLocalAuthorityIsInEngland()
+        givenLocalAuthorityIsInWales()
         startTestActivity<MainActivity>()
 
         riskyContact.triggerViaBroadcastReceiver()
-        riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinated()
+        riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(country = WALES)
 
         testAppContext.epidemiologyDataApi.clear()
 

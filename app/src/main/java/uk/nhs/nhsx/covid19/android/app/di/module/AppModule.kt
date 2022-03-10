@@ -18,7 +18,6 @@ import uk.nhs.nhsx.covid19.android.app.packagemanager.PackageManager
 import uk.nhs.nhsx.covid19.android.app.permissions.PermissionsManager
 import uk.nhs.nhsx.covid19.android.app.qrcode.BarcodeDetectorBuilder
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
-import uk.nhs.nhsx.covid19.android.app.state.StateStorage
 import uk.nhs.nhsx.covid19.android.app.status.DateChangeReceiver
 import uk.nhs.nhsx.covid19.android.app.util.AndroidBase64Decoder
 import uk.nhs.nhsx.covid19.android.app.util.AndroidBase64Encoder
@@ -141,9 +140,6 @@ class AppModule(
 
     @Provides
     fun provideSecureRandom(): SecureRandom = SecureRandom()
-
-    @Provides
-    fun provideIsolationState(stateStorage: StateStorage) = stateStorage.state
 
     companion object {
         const val BLUETOOTH_STATE_NAME = "BLUETOOTH_STATE"

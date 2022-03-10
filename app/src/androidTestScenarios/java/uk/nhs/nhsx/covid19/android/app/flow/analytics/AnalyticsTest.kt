@@ -13,6 +13,7 @@ import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
 import org.junit.After
 import org.junit.Before
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import java.time.LocalDate
@@ -25,6 +26,15 @@ import java.util.concurrent.TimeoutException
 import kotlin.test.assertNotNull
 
 abstract class AnalyticsTest : EspressoTest(), LocalAuthoritySetupHelper {
+    val isolationConfiguration = IsolationConfiguration(
+        contactCase = 11,
+        indexCaseSinceSelfDiagnosisOnset = 11,
+        indexCaseSinceSelfDiagnosisUnknownOnset = 9,
+        maxIsolation = 21,
+        indexCaseSinceTestResultEndDate = 11,
+        pendingTasksRetentionPeriod = 14,
+        testResultPollingTokenRetentionPeriod = 28
+    )
 
     @CallSuper
     @Before
@@ -33,6 +43,8 @@ abstract class AnalyticsTest : EspressoTest(), LocalAuthoritySetupHelper {
 
         testAppContext.clock.currentInstant =
             LocalDate.of(2020, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC)
+
+        testAppContext.mockIsolationConfigurationApi.setIsolationConfigurationForAnalytics(isolationConfiguration)
         givenLocalAuthorityIsInWales()
     }
 

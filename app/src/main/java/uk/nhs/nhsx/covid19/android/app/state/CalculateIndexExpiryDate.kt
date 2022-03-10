@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResult
 import java.time.Clock
@@ -14,7 +13,7 @@ class CalculateIndexExpiryDate @Inject constructor(
     operator fun invoke(
         selfAssessment: SelfAssessment?,
         testResult: TestResult?,
-        isolationConfiguration: DurationDays
+        isolationConfiguration: IsolationConfiguration
     ): LocalDate? =
         when {
             selfAssessment != null -> {

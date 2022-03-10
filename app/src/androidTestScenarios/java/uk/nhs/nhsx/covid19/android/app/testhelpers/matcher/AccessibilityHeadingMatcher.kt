@@ -7,11 +7,10 @@ import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
 
-class AccessibilityHeadingMatcher() :
-    TypeSafeMatcher<View?>(View::class.java) {
+class AccessibilityHeadingMatcher : TypeSafeMatcher<View?>(View::class.java) {
     var resourceName: String? = null
 
-    protected override fun matchesSafely(target: View?): Boolean {
+    override fun matchesSafely(target: View?): Boolean {
         require(target != null) { "Cannot match a null view" }
 
         val delegate = ViewCompat.getAccessibilityDelegate(target)

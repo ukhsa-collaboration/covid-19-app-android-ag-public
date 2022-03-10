@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
@@ -12,7 +11,7 @@ import java.time.LocalDate
 
 class IsolationHelper(
     val clock: Clock,
-    val isolationConfiguration: DurationDays = DurationDays()
+    val isolationConfiguration: IsolationConfiguration = IsolationConfiguration()
 ) {
 
     fun neverInIsolation(): IsolationState =
@@ -61,7 +60,7 @@ fun IsolationState.addTestResult(testResult: AcknowledgedTestResult): IsolationS
 
 fun Contact.asIsolation(
     hasAcknowledgedEndOfIsolation: Boolean = false,
-    isolationConfiguration: DurationDays = DurationDays()
+    isolationConfiguration: IsolationConfiguration = IsolationConfiguration()
 ): IsolationState =
     IsolationState(
         isolationConfiguration,
@@ -71,7 +70,7 @@ fun Contact.asIsolation(
 
 fun SelfAssessment.asIsolation(
     hasAcknowledgedEndOfIsolation: Boolean = false,
-    isolationConfiguration: DurationDays = DurationDays()
+    isolationConfiguration: IsolationConfiguration = IsolationConfiguration()
 ): IsolationState =
     IsolationState(
         isolationConfiguration,
@@ -81,7 +80,7 @@ fun SelfAssessment.asIsolation(
 
 fun AcknowledgedTestResult.asIsolation(
     hasAcknowledgedEndOfIsolation: Boolean = false,
-    isolationConfiguration: DurationDays = DurationDays()
+    isolationConfiguration: IsolationConfiguration = IsolationConfiguration()
 ): IsolationState =
     IsolationState(
         isolationConfiguration,

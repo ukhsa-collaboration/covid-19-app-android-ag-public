@@ -1,6 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers.setup
 
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutReason
@@ -28,7 +28,7 @@ interface IsolationSetupHelper : HasTestAppContext {
         val exposureDate = LocalDate.now(testAppContext.clock).minusDays(exposureDaysAgo)
         testAppContext.setState(
             IsolationState(
-                isolationConfiguration = DurationDays(),
+                isolationConfiguration = IsolationConfiguration(),
                 selfAssessment = isolationHelper.selfAssessment(),
                 contact = isolationHelper.contact(exposureDate = exposureDate)
             )

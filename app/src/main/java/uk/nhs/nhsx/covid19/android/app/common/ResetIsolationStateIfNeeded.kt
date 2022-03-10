@@ -1,6 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.common
 
-import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.state.GetLatestConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -11,13 +11,13 @@ import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 class ResetIsolationStateIfNeeded @Inject constructor(
-    val isolationStateMachine: IsolationStateMachine,
-    val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider,
-    val isolationConfigurationProvider: IsolationConfigurationProvider,
-    val clock: Clock
+    private val isolationStateMachine: IsolationStateMachine,
+    private val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider,
+    private val getLatestConfiguration: GetLatestConfiguration,
+    private val clock: Clock
 ) {
     operator fun invoke() {
-        val retentionPeriodDays = isolationConfigurationProvider.durationDays.pendingTasksRetentionPeriod
+        val retentionPeriodDays = getLatestConfiguration().pendingTasksRetentionPeriod
 
         val state = isolationStateMachine.readLogicalState()
         if (!state.isActiveIsolation(clock)) {

@@ -4,6 +4,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.RiskyContact
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
@@ -40,7 +41,6 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
 
     private fun triggerRiskyContactAndAcknowledge(acknowledgement: () -> Unit) {
         startTestActivity<MainActivity>()
-        assertAnalyticsPacketIsNormal()
 
         riskyContact.triggerViaCircuitBreaker(this::advanceToNextBackgroundTaskExecution)
         acknowledgement()
@@ -58,16 +58,39 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
 
     @Test
     fun notIsolating_riskyContact_declareFullyVaccinated_isolationAcknowledged_andOptedOutOfContactIsolation() {
+        givenLocalAuthorityIsInWales()
         assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
-            acknowledgement = riskyContact::acknowledgeIsolationViaOptOutFullyVaccinated,
+            acknowledgement = riskyContact::acknowledgeIsolationViaOptOutFullyVaccinatedForContactQuestionnaireJourney,
+            hasOptedOutOfContactIsolation = true
+        )
+    }
+
+    @Test
+    fun notIsolating_riskyContact_newAdvice_andOptedOutOfContactIsolation_forEngland() {
+        givenLocalAuthorityIsInEngland()
+        assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+            acknowledgement = riskyContact::acknowledgeNoIsolationForNewAdviceJourney,
+            hasOptedOutOfContactIsolation = true
+        )
+    }
+
+    @Test
+    fun isolating_riskyContact_newAdvice_andOptedOutOfContactIsolation_forEngland() {
+        givenLocalAuthorityIsInEngland()
+        givenSelfAssessmentIsolation()
+
+        assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+            acknowledgement = riskyContact::acknowledgeContinueIsolationForNewAdviceJourney,
             hasOptedOutOfContactIsolation = true
         )
     }
 
     @Test
     fun notIsolating_riskyContact_declareNotFullyVaccinated_isolationAcknowledged() {
-        givenLocalAuthorityIsInEngland()
-        assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(riskyContact::acknowledgeIsolatingViaNotMinorNotVaccinated)
+        givenLocalAuthorityIsInWales()
+        assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(acknowledgement = {
+            riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(country = WALES)
+        })
     }
 
     @Test
@@ -83,11 +106,11 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
 
     @Test
     fun isolating_riskyContact_declareFullyVaccinated_isolationAcknowledged_andOptedOutOfContactIsolation() {
-        givenLocalAuthorityIsInEngland()
+        givenLocalAuthorityIsInWales()
         givenSelfAssessmentIsolation()
         assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
             acknowledgement = {
-                riskyContact.acknowledgeIsolationViaOptOutFullyVaccinated(alreadyIsolating = true)
+                riskyContact.acknowledgeIsolationViaOptOutFullyVaccinatedForContactQuestionnaireJourney(alreadyIsolating = true)
             },
             hasOptedOutOfContactIsolation = true
         )
@@ -95,11 +118,11 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
 
     @Test
     fun isolating_riskyContact_declareNotFullyVaccinated_isolationAcknowledged() {
-        givenLocalAuthorityIsInEngland()
+        givenLocalAuthorityIsInWales()
         givenSelfAssessmentIsolation()
         assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
             acknowledgement = {
-                riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinated(alreadyIsolating = true)
+                riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(alreadyIsolating = true, country = WALES)
             }
         )
     }

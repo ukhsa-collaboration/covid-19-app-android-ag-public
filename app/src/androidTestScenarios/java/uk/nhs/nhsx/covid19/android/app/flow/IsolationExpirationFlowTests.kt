@@ -10,8 +10,8 @@ import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntr
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.receiver.ExpirationCheckReceiver
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationAlarmController
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
@@ -86,7 +86,7 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
         testAppContext.clock.currentInstant = Instant.parse("2020-01-01T20:00:00Z")
 
         val expiryDate = LocalDate.now(testAppContext.clock).plus(1, DAYS)
-        setIsolationWithExpiryDate(expiryDate)
+        setIsolationWithExpiryDate(expiryDate, isolationConfiguration)
 
         startTestActivity<StatusActivity>()
 
@@ -125,7 +125,7 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
     @RetryFlakyTest
     fun startIndexCase_indexExpires_acknowledgeExpiration_notInIsolation() {
         val expiryDate = LocalDate.now(testAppContext.clock)
-        setIsolationWithExpiryDate(expiryDate)
+        setIsolationWithExpiryDate(expiryDate, isolationConfiguration)
 
         startTestActivity<StatusActivity>()
 
@@ -146,15 +146,15 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
         waitFor { statusRobot.checkActivityIsDisplayed() }
     }
 
-    private fun setIsolationWithExpiryDate(expiryDate: LocalDate) {
+    private fun setIsolationWithExpiryDate(expiryDate: LocalDate, isolationConfiguration: IsolationConfiguration) {
         val selfAssessmentDate = LocalDate.now(testAppContext.clock)
             .plusDays(
                 DAYS.between(LocalDate.now(testAppContext.clock), expiryDate) -
-                    DurationDays().indexCaseSinceSelfDiagnosisUnknownOnset.toLong()
+                        isolationConfiguration.indexCaseSinceSelfDiagnosisUnknownOnset.toLong()
             )
 
         testAppContext.setState(
-            SelfAssessment(selfAssessmentDate).asIsolation()
+            SelfAssessment(selfAssessmentDate).asIsolation(isolationConfiguration = isolationConfiguration)
         )
 
         val logicalState = testAppContext.getIsolationStateMachine().readLogicalState()

@@ -185,16 +185,20 @@ class IsolationStateMachine @Inject constructor(
             }
 
             on<OnOptOutOfContactIsolation> { optOutEvent ->
-                var newInfo = this.copy(
-                    contact = this.contact!!.copy(
-                        optOutOfContactIsolation = OptOutOfContactIsolation(
-                            date = optOutEvent.encounterDate,
-                            reason = optOutEvent.reason
+                if (contact != null && contact.optOutOfContactIsolation == null) {
+                    var newInfo = this.copy(
+                        contact = contact.copy(
+                            optOutOfContactIsolation = OptOutOfContactIsolation(
+                                date = optOutEvent.encounterDate,
+                                reason = optOutEvent.reason
+                            )
                         )
                     )
-                )
-                newInfo = updateHasAcknowledgedEndOfIsolation(currentInfo = this, newInfo)
-                transitionTo(newInfo)
+                    newInfo = updateHasAcknowledgedEndOfIsolation(currentInfo = this, newInfo)
+                    transitionTo(newInfo)
+                } else {
+                    dontTransition()
+                }
             }
 
             on<OnAcknowledgeIsolationExpiration> {

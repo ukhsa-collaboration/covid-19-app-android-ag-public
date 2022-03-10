@@ -28,6 +28,7 @@ class IsolationHubScenarioTest : EspressoTest(), IsolationSetupHelper, LocalAuth
     @Test
     fun whenInActiveIsolationAndNoBookTestTypeVenueVisitStored_bookATest_navigateToStatusActivity() {
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_INTERNAL_BROWSER) {
+            givenLocalAuthorityIsInEngland()
             givenContactIsolation()
             navigateToIsolationHub()
 
@@ -49,6 +50,7 @@ class IsolationHubScenarioTest : EspressoTest(), IsolationSetupHelper, LocalAuth
 
     @Test
     fun whenInIsolation_clickIsolationNoteItem_openBrowserWithCorrectUrl() {
+        givenLocalAuthorityIsInEngland()
         givenContactIsolation()
         navigateToIsolationHub()
 
@@ -63,6 +65,7 @@ class IsolationHubScenarioTest : EspressoTest(), IsolationSetupHelper, LocalAuth
     @Test
     fun whenInIsolation_clickIsolationNoteItem_closeBrowser_shouldShowStatusActivity() {
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
+            givenLocalAuthorityIsInEngland()
             givenContactIsolation()
             navigateToIsolationHub()
 

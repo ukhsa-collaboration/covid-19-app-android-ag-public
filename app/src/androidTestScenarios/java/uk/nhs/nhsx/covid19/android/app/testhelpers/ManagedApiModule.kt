@@ -49,7 +49,8 @@ class ManagedApiModule(
     private val keysSubmissionApi: MockKeysSubmissionApi,
     private val analyticsApi: MockAnalyticsApi,
     private val mockEpidemiologyDataApi: MockEpidemiologyDataApi,
-    private val localMessagesApi: MockLocalMessagesApi
+    private val localMessagesApi: MockLocalMessagesApi,
+    private val mockIsolationConfigurationApi: MockIsolationConfigurationApi
 ) {
 
     @Provides
@@ -95,8 +96,7 @@ class ManagedApiModule(
 
     @Provides
     @Singleton
-    fun provideIsolationConfigurationApi(): IsolationConfigurationApi =
-        MockIsolationConfigurationApi()
+    fun provideIsolationConfigurationApi(): IsolationConfigurationApi = mockIsolationConfigurationApi
 
     @Provides
     @Singleton

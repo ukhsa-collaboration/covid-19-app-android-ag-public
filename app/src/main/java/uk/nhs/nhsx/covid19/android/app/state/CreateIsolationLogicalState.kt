@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.state
 
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo.IndexCase
@@ -33,7 +32,7 @@ class CreateIsolationLogicalState @Inject constructor(
     private fun createIsolationLogicalState(
         contactCase: ContactCase?,
         indexInfo: IndexInfo?,
-        isolationConfiguration: DurationDays,
+        isolationConfiguration: IsolationConfiguration,
         hasAcknowledgedEndOfIsolation: Boolean
     ): IsolationLogicalState {
         val isolationPeriods = mutableListOf<IsolationPeriod>().apply {
@@ -69,7 +68,7 @@ class CreateIsolationLogicalState @Inject constructor(
 
     private fun createNeverIsolating(
         testResult: AcknowledgedTestResult?,
-        isolationConfiguration: DurationDays
+        isolationConfiguration: IsolationConfiguration
     ): NeverIsolating =
         NeverIsolating(
             isolationConfiguration = isolationConfiguration,

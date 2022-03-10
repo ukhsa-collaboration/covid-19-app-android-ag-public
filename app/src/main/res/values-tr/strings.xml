@@ -223,7 +223,7 @@
     <string name="title_venue_history">Gidilen mekan geçmişi</string>
     <string name="title_symptoms">Belirtilere Dair Bilgiler</string>
     <string name="save">Kaydet</string>
-    <string name="about_how_this_app_works_text">Bu uygulama, kendinizi ve başkalarını korumanıza yardımcı olmak üzere temas takibi teknolojisini kullanmaktadır. Bu şekilde hepimiz sevdiğimiz şeyleri yapmaya geri dönebiliriz.\n\nUygulama yakındaki diğer kullanıcılara bildirim göndererek onları kaydeder. Bu kullanıcılardan herhangi birinin ilerleyen günlerde koronavirüs testinin pozitif çıkması halinde, tavsiyeler içeren bir uyarı alacaksınız.\n\nUygulama aynı zamanda belirtilerinizi bildirmenize ve teste ihtiyacınız olup olmadığını tespit etmenize olanak tanır.\n\nUygulamayı ayrıca resmi NHS QR kodlarını hızlı ve kolay bir biçimde taratarak ziyaret ettiğiniz yerlere giriş yapmak için kullanabilirsiniz.</string>
+    <string name="about_how_this_app_works_text">Bu uygulama, kendinizi ve başkalarını korumanıza yardımcı olmak üzere temas takibi teknolojisini kullanmaktadır. Bu şekilde hepimiz sevdiğimiz şeyleri yapmaya geri dönebiliriz.\n\nUygulama yakındaki diğer kullanıcılara bildirim göndererek onları kaydeder. Bu kullanıcılardan herhangi birinin ilerleyen günlerde koronavirüs testinin pozitif çıkması halinde, tavsiyeler içeren bir uyarı alacaksınız.\n\nUygulama aynı zamanda belirtilerinizi bildirmenize ve teste ihtiyacınız olup olmadığını tespit etmenize olanak tanır.</string>
     <string name="title_encounter">Karşılaşma tarihi</string>
     <string name="allow_bluetooth">Bluetooth\'a İzin Ver</string>
     <string name="onboarding_subtitle">Uygulamayı kullandığınızda bölgenizdeki virüs ve halk sağlığı ile ilgili anonim bilgileri paylaşarak COVID-19’u yenmemize yardımcı olacaksınız</string>
@@ -542,7 +542,7 @@
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_change">Karantina sürenizi uygulama ana ekranındaki geri sayım sayacı ile takip edin.</string>
     <string name="test_result_plod_title">Testinizin sonucu zayıf pozitif.</string>
     <string name="url_download_the_nhs_app">https://www.nhs.uk/app</string>
-    <string name="local_message_banner_read_more">Daha fazla bilgi</string>
+    <string name="local_message_banner_read_more">Read updated guidance</string>
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">Test sonucunuz pozitif çıktığından karantinaya devam etmeniz önemlidir.\n\nKendinizi ve başkalarını güvende tutmak için lütfen evde kalın. Karantina sürenizi uygulama ana ekranındaki geri sayım sayacı ile takip edin.</string>
@@ -820,4 +820,21 @@
     <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">Evde COVID-19 olan kimselerle yakın teması sınırlandırın</string>
     <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">Kalabalık, kapalı veya iyi havalandırılmayan yerlerde maske takın</string>
     <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">Ev halkından biri COVID-19 olduysa, mümkünse evden çalışın</string>
+    <string name="contact_case_exposure_info_screen_continue_button_england">Devam</string>
+    <string name="contact_case_exposure_info_screen_exposure_date_england">%s tarihinde yakın temas meydana geldi</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_body_england">Uygulama, başkalarıyla yakın temasta bulunup bulunmadığınızı kontrol etmek için  telefonunuzun Bluetooth işlevini kullanır.\n\nYakın temas, birisinin 15 dakika boyunca ya da daha uzun bir süreyle 2 metre yakınında bulunmuş olmanız anlamına gelir.\n\nUygulama anonimdir ve GPS yardımıyla yerinizi tespit etmediği için gizliliğiniz koruma altındadır.</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading_england">Yakın temas nasıl tespit edilir?</string>
+    <string name="contact_case_exposure_info_screen_information_england">Eğer 18 yaşın altındaysanız bu mesajı güvendiğiniz bir yetişkine göstermeniz tavsiye edilir</string>
+    <string name="contact_case_exposure_info_screen_title_england">Uygulama, koronavirüs (COVID-19) test sonucu pozitif olan birisinin yakınında bulunduğunuzu tespit etti</string>
+    <string name="risky_contact_opt_out_advice_mask">Kalabalık ve kapalı alanlarda maske takın</string>
+    <string name="risky_contact_opt_out_advice_meeting_indoors">Kapalı alanda buluşacaksanız ortamı havalandırın</string>
+    <string name="risky_contact_opt_out_advice_testing_hub">COVID-19 belirtileriniz varsa test yaptırın ve test sonucu pozitif çıkarsa evde kalın</string>
+    <string name="risky_contact_opt_out_advice_title">Kendinizi ve başkalarını korumak için en güncel COVID-19 yönergelerine uyun</string>
+    <string name="risky_contact_opt_out_advice_wash_hands">Ellerinizi düzenli olarak yıkayın ve öksürük ve hapşırma esnasında ağzınızı kapatın</string>
+    <string name="risky_contact_opt_out_further_advice">Evden birinin COVID-19 testinin pozitif çıkması halinde lütfen ziyaret edin:</string>
+    <string name="risky_contact_opt_out_further_advice_link_text">Ev temaslılarıyla ilgili yönerge</string>
+    <string name="risky_contact_opt_out_further_advice_link_url">https://www.gov.uk/government/publications/covid-19-people-with-covid-19-and-their-contacts/covid-19-people-with-covid-19-and-their-contacts#what-to-do-if-you-are-a-close-contact-of-someone-who-has-covid-19</string>
+    <string name="risky_contact_opt_out_primary_button_title">Güncel COVID-19 yönergesini okuyun</string>
+    <string name="risky_contact_opt_out_primary_button_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="risky_contact_opt_out_secondary_button_title">Ana ekrana geri dön</string>
 </resources>

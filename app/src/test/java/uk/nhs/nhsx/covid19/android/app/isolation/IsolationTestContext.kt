@@ -4,13 +4,19 @@ import android.content.SharedPreferences
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Moshi.Builder
 import com.squareup.moshi.adapters.EnumJsonAdapter
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogStorage
 import uk.nhs.nhsx.covid19.android.app.common.ResetIsolationStateIfNeeded
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CalculateKeySubmissionDateRange
+import uk.nhs.nhsx.covid19.android.app.remote.data.CountrySpecificConfiguration
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.CalculateIndexExpiryDate
+import uk.nhs.nhsx.covid19.android.app.state.CreateIsolationConfiguration
+import uk.nhs.nhsx.covid19.android.app.state.GetLatestConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState
@@ -39,14 +45,24 @@ import java.time.ZoneOffset
 class IsolationTestContext {
 
     private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>(relaxUnitFun = true)
+    private val getLatestConfiguration = mockk<GetLatestConfiguration>(relaxUnitFun = true)
     private val sharedPreferences: SharedPreferences = mockk()
+    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider = mockk()
+    private val createIsolationConfiguration: CreateIsolationConfiguration = CreateIsolationConfiguration(localAuthorityPostCodeProvider)
 
-    private val stateStorage = StateStorage(isolationConfigurationProvider, provideMoshi(), sharedPreferences)
+    private val stateStorage =
+        StateStorage(isolationConfigurationProvider, provideMoshi(), sharedPreferences, createIsolationConfiguration)
 
     init {
-        every { isolationConfigurationProvider.durationDays } returns DurationDays()
+        val durationDays = DurationDays()
+        every { isolationConfigurationProvider.durationDays } returns durationDays
+        val countrySpecificConfiguration = mockk<CountrySpecificConfiguration>()
+        every { getLatestConfiguration() } returns countrySpecificConfiguration
+        every { countrySpecificConfiguration.contactCase } returns durationDays.england.contactCase
+        every { countrySpecificConfiguration.pendingTasksRetentionPeriod } returns durationDays.england.pendingTasksRetentionPeriod
         every { sharedPreferences.edit() } returns mockk(relaxed = true)
         every { sharedPreferences.all[ISOLATION_STATE_KEY] } returns null
+        coEvery { localAuthorityPostCodeProvider.getPostCodeDistrict() } returns ENGLAND
     }
 
     private lateinit var localAuthority: String
@@ -57,7 +73,7 @@ class IsolationTestContext {
         unacknowledgedTestResultsProvider = mockk(relaxUnitFun = true),
         testResultIsolationHandler = TestResultIsolationHandler(
             CalculateKeySubmissionDateRange(
-                isolationConfigurationProvider,
+                getLatestConfiguration,
                 clock
             ),
             WouldTestIsolationEndBeforeOrOnStartOfExistingIsolation(
@@ -74,7 +90,11 @@ class IsolationTestContext {
         exposureNotificationHandler = mockk(relaxUnitFun = true),
         keySharingInfoProvider = mockk(relaxUnitFun = true),
         createIsolationLogicalState = createIsolationLogicalState(clock),
-        createIsolationState = createIsolationState(stateStorage.state, isolationConfigurationProvider),
+        createIsolationState = createIsolationState(
+            stateStorage,
+            isolationConfigurationProvider,
+            createIsolationConfiguration
+        ),
         trackTestResultAnalyticsOnReceive = mockk(relaxUnitFun = true),
         trackTestResultAnalyticsOnAcknowledge = mockk(relaxUnitFun = true),
         scheduleIsolationHubReminder = mockk(relaxUnitFun = true),
@@ -84,7 +104,7 @@ class IsolationTestContext {
     private val resetStateIfNeeded = ResetIsolationStateIfNeeded(
         isolationStateMachine,
         unacknowledgedTestResultsProvider = mockk(relaxUnitFun = true),
-        isolationConfigurationProvider,
+        getLatestConfiguration,
         clock
     )
 
@@ -136,7 +156,7 @@ class IsolationTestContext {
 
     fun sendExposureNotification(exposureDate: LocalDate) {
         val sendExposureNotification =
-            SendExposureNotification(isolationStateMachine, isolationConfigurationProvider, clock)
+            SendExposureNotification(isolationStateMachine, getLatestConfiguration, clock)
         sendExposureNotification(exposureDate)
     }
 

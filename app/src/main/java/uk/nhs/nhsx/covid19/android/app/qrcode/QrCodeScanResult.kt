@@ -1,7 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.qrcode
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 sealed class QrCodeScanResult : Parcelable {
 

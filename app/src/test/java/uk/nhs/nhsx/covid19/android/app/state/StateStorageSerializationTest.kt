@@ -4,7 +4,6 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import org.junit.Assert
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutOfContactIsolation
@@ -32,7 +31,7 @@ class StateStorageSerializationTest {
     @Test
     fun `serialize and deserialize never isolating`() {
         val stateJson = IsolationStateJson(
-            configuration = DurationDays()
+            configuration = IsolationConfiguration()
         )
         val res: String = testSubject.toJson(stateJson)
 
@@ -44,7 +43,7 @@ class StateStorageSerializationTest {
         val fixedClock = Clock.fixed(Instant.parse("2020-01-10T10:00:00Z"), ZoneOffset.UTC)
 
         val original = IsolationStateJson(
-            configuration = DurationDays(),
+            configuration = IsolationConfiguration(),
             contact = Contact(
                 exposureDate = LocalDate.now(fixedClock).minusDays(1),
                 notificationDate = LocalDate.now(fixedClock).minusDays(2),
@@ -74,7 +73,7 @@ class StateStorageSerializationTest {
         val fixedClock = Clock.fixed(Instant.parse("2020-01-10T10:00:00Z"), ZoneOffset.UTC)
 
         val original = IsolationStateJson(
-            configuration = DurationDays(),
+            configuration = IsolationConfiguration(),
             contact = Contact(
                 exposureDate = LocalDate.now(fixedClock).minusDays(1),
                 notificationDate = LocalDate.now(fixedClock).minusDays(2),
@@ -117,7 +116,7 @@ class StateStorageSerializationTest {
 
         val isolationStateJson = testSubject.fromJson(state)
         val expected = IsolationStateJson(
-            configuration = DurationDays(),
+            configuration = IsolationConfiguration(),
             contact = Contact(
                 exposureDate = LocalDate.parse(exposureDate),
                 notificationDate = LocalDate.parse(notificationDate),

@@ -7,7 +7,6 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Default4_9
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Isolation4_9
 import uk.nhs.nhsx.covid19.android.app.state.State4_9.Isolation4_9.ContactCase4_9
@@ -25,7 +24,8 @@ import javax.inject.Inject
 class StateStorage4_9 @Inject constructor(
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     _moshi: Moshi,
-    override val sharedPreferences: SharedPreferences
+    override val sharedPreferences: SharedPreferences,
+    val createIsolationConfiguration: CreateIsolationConfiguration
 ) : Provider {
     override val moshi: Moshi = _moshi
         .newBuilder()
@@ -34,7 +34,7 @@ class StateStorage4_9 @Inject constructor(
 
     private var storedStates: List<StateJson4_9>? by listStorage(STATE_KEY)
     val state: State4_9?
-        get() = storedStates?.lastOrNull()?.toState(isolationConfigurationProvider.durationDays)
+        get() = storedStates?.lastOrNull()?.toState(createIsolationConfiguration(isolationConfigurationProvider.durationDays))
 
     fun clear() {
         storedStates = null
@@ -73,7 +73,7 @@ sealed class StateJson4_9 {
         val expiryDate: LocalDate,
         val indexCase: IndexCaseJson4_9?,
         val contactCase: ContactCaseJson4_9?,
-        val isolationConfiguration: DurationDays?,
+        val isolationConfiguration: IsolationConfiguration?,
         override val version: Int = 4
     ) : StateJson4_9()
 
@@ -104,11 +104,11 @@ sealed class StateJson4_9 {
         val expiryDate: LocalDate,
         val indexCase: IndexCase4_9?,
         val contactCase: ContactCase4_9?,
-        val isolationConfiguration: DurationDays
+        val isolationConfiguration: IsolationConfiguration
     )
 }
 
-private fun StateJson4_9.toState(latestIsolationConfiguration: DurationDays): State4_9 =
+private fun StateJson4_9.toState(latestIsolationConfiguration: IsolationConfiguration): State4_9 =
     when (this) {
         is DefaultJson4_9 -> when (this.version) {
             1 -> {
@@ -241,7 +241,7 @@ sealed class State4_9 {
     @Deprecated("Not used anymore since 4.10. Use IsolationState instead.")
     data class Isolation4_9(
         val isolationStart: Instant,
-        val isolationConfiguration: DurationDays,
+        val isolationConfiguration: IsolationConfiguration,
         val indexCase: IndexCase4_9? = null,
         val contactCase: ContactCase4_9? = null
     ) : State4_9() {

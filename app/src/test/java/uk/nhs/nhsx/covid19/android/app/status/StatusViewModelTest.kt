@@ -49,13 +49,13 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTyp
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.NotificationMessage
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.INFORM
 import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsProvider
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.NeverIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -755,7 +755,7 @@ class StatusViewModelTest {
         private const val DEFAULT_POST_CODE = "A1"
         private val DEFAULT_INFORMATION_SCREEN_STATE = null
         private val DEFAULT_ISOLATION_VIEW_STATE = NotIsolating
-        private val DEFAULT_ISOLATION_STATE = NeverIsolating(isolationConfiguration = DurationDays(), negativeTest = null)
+        private val DEFAULT_ISOLATION_STATE = NeverIsolating(isolationConfiguration = IsolationConfiguration(), negativeTest = null)
         private const val DEFAULT_LATEST_ADVICE_URL_RES_ID = 0
     }
 }

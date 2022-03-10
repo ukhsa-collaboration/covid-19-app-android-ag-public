@@ -28,6 +28,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.assertBrowserIsOpened
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.IconTextViewMatcher.Companion.withIconAndText
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.TextViewDrawableMatcher.Companion.withTextViewHasDrawableEnd
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.TextViewDrawableMatcher.Companion.withTextViewNoDrawable
+import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.isAnnouncedAsOpenInBrowser
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateColor
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateStringResource
 import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
@@ -139,7 +140,9 @@ class RiskyContactIsolationAdviceRobot {
                 onView(withId(R.id.primaryActionButton))
                     .perform(scrollTo())
                     .check(matches(withText(R.string.contact_case_no_isolation_under_age_limit_primary_button_title_read_guidance_england)))
-                onView(withId(R.id.primaryActionButton)).check(matches(withTextViewHasDrawableEnd()))
+                onView(withId(R.id.primaryActionButton)).check(
+                    matches(allOf(withTextViewHasDrawableEnd(), isAnnouncedAsOpenInBrowser()))
+                )
                 onView(withId(R.id.secondaryActionButton))
                     .perform(scrollTo())
                     .check(matches(withText(R.string.risky_contact_isolation_advice_go_back_to_home)))
@@ -150,13 +153,34 @@ class RiskyContactIsolationAdviceRobot {
             else -> {
                 onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
                     .perform(scrollTo())
-                    .check(matches(withText(R.string.risky_contact_isolation_advice_faq_button_title)))
+                    .check(
+                        matches(
+                            allOf(
+                                withText(R.string.risky_contact_isolation_advice_faq_button_title),
+                                isDisplayed()
+                            )
+                        )
+                    )
                 onView(withId(R.id.furtherAdviceTextView))
                     .perform(scrollTo())
-                    .check(matches(withText(R.string.risky_contact_isolation_advice_further_nhs_guidance)))
+                    .check(
+                        matches(
+                            allOf(
+                                withText(R.string.risky_contact_isolation_advice_further_nhs_guidance),
+                                isDisplayed()
+                            )
+                        )
+                    )
                 onView(withId(R.id.nhsGuidanceLinkTextView))
                     .perform(scrollTo())
-                    .check(matches(withText(R.string.risky_contact_isolation_advice_nhs_guidance_link_text)))
+                    .check(
+                        matches(
+                            allOf(
+                                withText(R.string.risky_contact_isolation_advice_nhs_guidance_link_text),
+                                isDisplayed()
+                            )
+                        )
+                    )
                 onView(withId(R.id.primaryActionButton))
                     .perform(scrollTo())
                     .check(matches(withText(R.string.risky_contact_isolation_advice_book_pcr_test)))
@@ -260,21 +284,55 @@ class RiskyContactIsolationAdviceRobot {
 
         when (country) {
             ENGLAND -> {
+                onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
+                    .check(matches(not(isDisplayed())))
+                onView(withId(R.id.furtherAdviceTextView))
+                    .check(matches(not(isDisplayed())))
+                onView(withId(R.id.nhsGuidanceLinkTextView))
+                    .check(matches(not(isDisplayed())))
+
                 onView(withId(R.id.primaryActionButton))
                     .perform(scrollTo())
-                    .check(matches(withText(R.string.contact_case_no_isolation_fully_vaccinated_primary_button_title_read_guidance_england)))
-                onView(withId(R.id.primaryActionButton)).check(matches(withTextViewHasDrawableEnd()))
+                    .check(
+                        matches(
+                            allOf(
+                                withText(R.string.contact_case_no_isolation_fully_vaccinated_primary_button_title_read_guidance_england),
+                                withTextViewHasDrawableEnd(),
+                                isAnnouncedAsOpenInBrowser()
+                            )
+                        )
+                    )
                 onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
                     .check(matches(not(isDisplayed())))
             }
             WALES -> {
-                onView(withId(R.id.primaryActionButton))
-                    .perform(scrollTo())
-                    .check(matches(withText(R.string.risky_contact_isolation_advice_book_pcr_test)))
-                onView(withId(R.id.primaryActionButton)).check(matches(withTextViewNoDrawable()))
                 onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
                     .perform(scrollTo())
-                    .check(matches(withText(R.string.risky_contact_isolation_advice_faq_button_title)))
+                    .check(
+                        matches(
+                            allOf(
+                                withText(R.string.risky_contact_isolation_advice_faq_button_title),
+                                isDisplayed()
+                            )
+                        )
+                    )
+                onView(withId(R.id.furtherAdviceTextView))
+                    .perform(scrollTo())
+                    .check(matches(isDisplayed()))
+                onView(withId(R.id.nhsGuidanceLinkTextView))
+                    .perform(scrollTo())
+                    .check(matches(isDisplayed()))
+
+                onView(withId(R.id.primaryActionButton))
+                    .perform(scrollTo())
+                    .check(
+                        matches(
+                            allOf(
+                                withText(R.string.risky_contact_isolation_advice_book_pcr_test),
+                                withTextViewNoDrawable()
+                            )
+                        )
+                    )
             }
         }
 
@@ -317,10 +375,22 @@ class RiskyContactIsolationAdviceRobot {
         }
         onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
             .check(matches(not(isDisplayed())))
+        onView(withId(R.id.furtherAdviceTextView))
+            .check(matches(not(isDisplayed())))
+        onView(withId(R.id.nhsGuidanceLinkTextView))
+            .check(matches(not(isDisplayed())))
+
         onView(withId(R.id.primaryActionButton))
             .perform(scrollTo())
-            .check(matches(withText(R.string.risky_contact_isolation_advice_medically_exempt_primary_button_title_read_guidance_england)))
-        onView(withId(R.id.primaryActionButton)).check(matches(withTextViewHasDrawableEnd()))
+            .check(
+                matches(
+                    allOf(
+                        withText(R.string.risky_contact_isolation_advice_medically_exempt_primary_button_title_read_guidance_england),
+                        withTextViewHasDrawableEnd(),
+                        isAnnouncedAsOpenInBrowser()
+                    )
+                )
+            )
         onView(withId(R.id.secondaryActionButton))
             .perform(scrollTo())
             .check(matches(withText(R.string.risky_contact_isolation_advice_go_back_to_home)))
@@ -393,11 +463,17 @@ class RiskyContactIsolationAdviceRobot {
         onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
             .check(matches(not(isDisplayed())))
 
+        onView(withId(R.id.furtherAdviceTextView))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+
+        onView(withId(R.id.nhsGuidanceLinkTextView))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+
         onView(withId(R.id.primaryActionButton))
             .perform(scrollTo())
-            .check(matches(withText(values.buttonTitle)))
-
-        onView(withId(R.id.primaryActionButton)).check(matches(withTextViewNoDrawable()))
+            .check(matches(allOf(withText(values.buttonTitle), withTextViewNoDrawable())))
 
         onView(withId(R.id.secondaryActionButton))
             .perform(scrollTo())
@@ -440,10 +516,23 @@ class RiskyContactIsolationAdviceRobot {
         }
         onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
             .check(matches(not(isDisplayed())))
+        onView(withId(R.id.furtherAdviceTextView))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+        onView(withId(R.id.nhsGuidanceLinkTextView))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+
         onView(withId(R.id.primaryActionButton))
             .perform(scrollTo())
-            .check(matches(withText(R.string.risky_contact_isolation_advice_already_isolating_acknowledge_button_text)))
-        onView(withId(R.id.primaryActionButton)).check(matches(withTextViewNoDrawable()))
+            .check(
+                matches(
+                    allOf(
+                        withText(R.string.risky_contact_isolation_advice_already_isolating_acknowledge_button_text),
+                        withTextViewNoDrawable()
+                    )
+                )
+            )
         onView(withId(R.id.secondaryActionButton))
             .check(matches(withEffectiveVisibility(GONE)))
     }

@@ -6,8 +6,8 @@ import io.mockk.slot
 import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
-import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.remote.data.CountrySpecificConfiguration
+import uk.nhs.nhsx.covid19.android.app.state.GetLatestConfiguration
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderPollingConfig
 import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingTokensProvider
 import java.time.Clock
@@ -19,20 +19,20 @@ import kotlin.test.assertTrue
 class ClearOutdatedTestOrderPollingConfigsTest {
 
     private val testOrderingTokensProvider = mockk<TestOrderingTokensProvider>(relaxUnitFun = true)
-    private val isolationConfigurationProvider = mockk<IsolationConfigurationProvider>()
+    private val getLatestConfiguration = mockk<GetLatestConfiguration>()
     private val fixedClock = Clock.fixed(Instant.parse("2021-01-30T10:00:00.00Z"), ZoneOffset.UTC)
 
     private val clearOutdatedTestOrderPollingConfigs = ClearOutdatedTestOrderPollingConfigs(
         testOrderingTokensProvider,
-        isolationConfigurationProvider,
+        getLatestConfiguration,
         fixedClock
     )
 
     @Before
     fun setUp() {
-        every { isolationConfigurationProvider.durationDays } returns DurationDays(
-            testResultPollingTokenRetentionPeriod = 28
-        )
+        val configuration = mockk<CountrySpecificConfiguration>()
+        every { getLatestConfiguration() } returns configuration
+        every { configuration.testResultPollingTokenRetentionPeriod } returns 28
     }
 
     @Test

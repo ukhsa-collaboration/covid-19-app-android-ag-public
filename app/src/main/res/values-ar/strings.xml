@@ -238,7 +238,7 @@
     <string name="title_venue_history">تاريخ الأماكن</string>
     <string name="title_symptoms">تفاصيل الأعراض</string>
     <string name="save">حفظ</string>
-    <string name="about_how_this_app_works_text">يستخدم هذا التطبيق تقنية تتبع الاتصال للمساعدة في حمايتك وحماية الأشخاص الآخرين لكي يتسنى لنا جميعًا العودة إلى ممارسة الأمور التي نحبها مرة أخرى.\n\nيعمل التطبيق على ملاحظة وتسجيل مُستخدمي التطبيق الآخرين الموجودين بالقرب منك. وعند تسجيل أحد هؤلاء المستخدمين لنتيجة إيجابية في اختبار لاحق للكشف عن الإصابة بفيروس كورونا، فستتلقى تنبيهًا مصحوبًا بالنصائح ذات الصلة للتعامل مع هذا الأمر.\n\nيساعدك التطبيق أيضًا في الإبلاغ عن الأعراض التي لديك ومعرفة ما إذا كنت تحتاج إلى إجراء اختبار.\n\nويمكنك أيضًا استخدامه في إجراء مسح ضوئي لرموز NHS QR الرسمية لتتمكن من تسجيل الدخول إلى الأماكن التي تزورها بكل سهولة ويسر.</string>
+    <string name="about_how_this_app_works_text">يستخدم هذا التطبيق تقنية تتبع الاتصال للمساعدة في حمايتك وحماية الأشخاص الآخرين لكي يتسنى لنا جميعًا العودة إلى ممارسة الأمور التي نحبها مرة أخرى.\n\nيعمل التطبيق على ملاحظة وتسجيل مُستخدمي التطبيق الآخرين الموجودين بالقرب منك. وعند تسجيل أحد هؤلاء المستخدمين لنتيجة إيجابية في اختبار لاحق للكشف عن الإصابة بفيروس كورونا، فستتلقى تنبيهًا مصحوبًا بالنصائح ذات الصلة للتعامل مع هذا الأمر.\n\nيساعدك التطبيق أيضًا في الإبلاغ عن الأعراض التي لديك ومعرفة ما إذا كنت تحتاج إلى إجراء اختبار.</string>
     <string name="title_encounter">تاريخ المقابلة</string>
     <string name="allow_bluetooth">السماح باستخدام البلوتوث</string>
     <string name="onboarding_subtitle">سوف تساعدنا في القضاء على فيروس كوفيد-19 عن طريق مشاركة المعلومات المتعلقة بالفيروس في منطقتك والمعلومات ذات الصلة بالصحة العامة دون الحاجة إلى كشف هويتك الشخصية عند استخدامك لهذا التطبيق.</string>
@@ -418,7 +418,7 @@
     <string name="about_test_kit_type">نوع مجموعة الاختبار</string>
     <string name="about_test_result">النتيجة</string>
     <string name="state_test_positive_and_book_test_info">نتيجة اختبار الكشف عن إصابتك بفيروس كورونا إيجابية</string>
-    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">إذا كنت دون سنِّ 18 عامًا، فيجب عليك عرض هذه الرسالة على أحد الأشخاص البالغين الموثوقين.</string>
+    <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">إذا كان عمرك أقل من 18 عامًا، فإننا نوصيك بعرض هذه الرسالة على شخصٍ بالغٍ محل ثقةٍ لديك.</string>
     <string name="test_result_positive_self_isolate_and_book_test_explanation_1">لفهم الطريقة التي يحسب بها التطبيق عدد أيام العزل الذاتي، يُرجى زيارة الأسئلة الشائعة.\n\nنظرًا لإجرائك اختبار مسحة سريع، فإنك تحتاج الآن إلى إجراء اختبارٍ من نوعٍ آخر يتم إرساله إلى أحد المُختبرات للتحقق من النتيجة.\n\nفي تلك الأثناء، يتعين عليك وعلى الأشخاص الآخرين الذين تعيش معهم الخضوع للعزل الذاتي على الفور.</string>
     <string name="test_result_positive_self_isolate_and_book_test_title_3">وحجز اختبار متابعة</string>
     <string name="about_lfd_self_reported">RAPID_SELF_REPORTED</string>
@@ -557,7 +557,7 @@
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_change">يمكنك متابعة مدة العزل الذاتي لك من خلال مؤقت العدّ التنازلي الموجود في الشاشة الرئيسية للتطبيق.</string>
     <string name="test_result_plod_title">نتيجة اختبارك إيجابية ضعيفة</string>
     <string name="url_download_the_nhs_app">https://www.nhs.uk/app</string>
-    <string name="local_message_banner_read_more">قراءة المزيد</string>
+    <string name="local_message_banner_read_more">Read updated guidance</string>
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">من المُهم الاستمرار في العزل الذاتي لأنك سجَّلت نتيجة إيجابية في الاختبار.\n\nيُرجى البقاء في المنزل لحماية نفسك والآخرين. يجب متابعة مدة العزل الذاتي لك من خلال مؤقت العدّ التنازلي الموجود في الشاشة الرئيسية للتطبيق.</string>
@@ -855,4 +855,21 @@
     <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">الحد من الاتصال الوثيق مع أي شخص في منزلك مصاب بفيروس COVID-19</string>
     <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">أرتدي غطاء الوجه في الأماكن المزدحمة أوالمغلقة أو سيئة التهوية</string>
     <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">اعمل من المنزل إن استطعت إذا كان احد افراد اسرتك مصابا بفيروس COVID-19</string>
+    <string name="contact_case_exposure_info_screen_continue_button_england">أستمر</string>
+    <string name="contact_case_exposure_info_screen_exposure_date_england">حدثت المخالطة عن كثب في %s</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_body_england">يستخدم التطبيق خاصية البلوتوث لمعرفة ما إذا قد وُجد هاتفك متقاربًا عن كثب مع هواتف أخرى.\n\nتعني المخالطة عن كثب أنك كنت موجودًا على مسافة فاصلة في حدود 2 متر من شخصٍ ما لمدة 15 دقيقة أو أكثر.\n\nالتطبيق لا يكشف عن الهوية ولا يستخدم نظام تحديد المواقع العالمي (GPS) لتحديد موقعك، إذا خصوصيتك محمية.</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading_england">كيفية حساب مسافة المخالطة عن كثب</string>
+    <string name="contact_case_exposure_info_screen_information_england">إذا كان عمرك أقل من 18 عامًا، فإننا نوصيك بعرض هذه الرسالة على شخصٍ بالغٍ محل ثقةٍ لديك</string>
+    <string name="contact_case_exposure_info_screen_title_england">لقد اكتشف التطبيق أنك كنت مخالطًا لشخصٍ ما سجَّل نتيجة إيجابية في اختبار الكشف عن الإصابة بفيروس كورونا (كوفيد-19)</string>
+    <string name="risky_contact_opt_out_advice_mask">ارتدي غطاء الوجه في الأماكن المزدحمة والمغلقة</string>
+    <string name="risky_contact_opt_out_advice_meeting_indoors">دع الهواء النقي يدخل إذا تقابلت مع احد في الداخل وإلا يمكنك الإلتقاء معه في الهواء الطلق</string>
+    <string name="risky_contact_opt_out_advice_testing_hub">قم بإجراء اختبار إذا كانت لديك أعراض COVID-19 وابق في المنزل إذا كانت نتيجة اختبارك إيجابية</string>
+    <string name="risky_contact_opt_out_advice_title">أتبع أحدث إرشادات COVID-19 لحماية نفسك والآخرين</string>
+    <string name="risky_contact_opt_out_advice_wash_hands">أغسل يديك بانتظام وغطي وجهك أثناء السعال والعطس</string>
+    <string name="risky_contact_opt_out_further_advice">إذا كانت نتيجة اختبار أحد أفراد أسرتك بفيروس COVID-19 إيجابية، رجاء زيارة:</string>
+    <string name="risky_contact_opt_out_further_advice_link_text">إرشادات الأتصالات الأسرية</string>
+    <string name="risky_contact_opt_out_further_advice_link_url">https://www.gov.uk/government/publications/covid-19-people-with-covid-19-and-their-contacts/covid-19-people-with-covid-19-and-their-contacts#what-to-do-if-you-are-a-close-contact-of-someone-who-has-covid-19</string>
+    <string name="risky_contact_opt_out_primary_button_title">اقرأ أحدث الإرشادات المتعلقة بـــــ COVID-19</string>
+    <string name="risky_contact_opt_out_primary_button_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="risky_contact_opt_out_secondary_button_title">الرجوع إلى الشاشة الرئيسية</string>
 </resources>

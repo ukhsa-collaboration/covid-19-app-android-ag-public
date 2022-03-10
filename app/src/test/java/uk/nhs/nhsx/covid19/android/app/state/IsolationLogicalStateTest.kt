@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.state
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.ContactCase
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo
@@ -34,7 +33,7 @@ class IsolationLogicalStateTest {
     @Test
     fun `hasExpired returns true when expiry date is yesterday`() {
         val expiryDateYesterday = PossiblyIsolating(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contactCase = ContactCase(
                 exposureDate = mockkDate(),
                 notificationDate = mockkDate(),
@@ -50,7 +49,7 @@ class IsolationLogicalStateTest {
     @Test
     fun `hasExpired returns true when expiry date is today`() {
         val expiryDateToday = PossiblyIsolating(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contactCase = ContactCase(
                 exposureDate = mockkDate(),
                 notificationDate = mockkDate(),
@@ -66,7 +65,7 @@ class IsolationLogicalStateTest {
     @Test
     fun `hasExpired returns false when expiry date is tomorrow`() {
         val expiryDateTomorrow = PossiblyIsolating(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contactCase = ContactCase(
                 exposureDate = mockkDate(),
                 notificationDate = mockkDate(),
@@ -2113,62 +2112,62 @@ class IsolationLogicalStateTest {
     //region NeverIsolating
     @Test
     fun `remembersContactCase returns false when never isolating`() {
-        val testSubject = NeverIsolating(isolationConfiguration = DurationDays(), negativeTest = null)
+        val testSubject = NeverIsolating(isolationConfiguration = IsolationConfiguration(), negativeTest = null)
 
         assertFalse(testSubject.remembersContactCase())
     }
 
     @Test
     fun `remembersIndexCase returns false when never isolating`() {
-        val testSubject = NeverIsolating(isolationConfiguration = DurationDays(), negativeTest = null)
+        val testSubject = NeverIsolating(isolationConfiguration = IsolationConfiguration(), negativeTest = null)
 
         assertFalse(testSubject.remembersIndexCase())
     }
 
     @Test
     fun `remembersIndexCaseWithSelfAssessment returns false when never isolating`() {
-        val testSubject = NeverIsolating(isolationConfiguration = DurationDays(), negativeTest = null)
+        val testSubject = NeverIsolating(isolationConfiguration = IsolationConfiguration(), negativeTest = null)
 
         assertFalse(testSubject.remembersIndexCaseWithSelfAssessment())
     }
 
     @Test
     fun `isActiveIsolation returns false when never isolating`() {
-        val testSubject = NeverIsolating(isolationConfiguration = DurationDays(), negativeTest = null)
+        val testSubject = NeverIsolating(isolationConfiguration = IsolationConfiguration(), negativeTest = null)
 
         assertFalse(testSubject.isActiveIsolation(fixedClock))
     }
 
     @Test
     fun `isActiveIndexCase returns false when never isolating`() {
-        val testSubject = NeverIsolating(isolationConfiguration = DurationDays(), negativeTest = null)
+        val testSubject = NeverIsolating(isolationConfiguration = IsolationConfiguration(), negativeTest = null)
 
         assertFalse(testSubject.isActiveIndexCase(fixedClock))
     }
 
     @Test
     fun `isActiveContactCase returns false when never isolating`() {
-        val testSubject = NeverIsolating(isolationConfiguration = DurationDays(), negativeTest = null)
+        val testSubject = NeverIsolating(isolationConfiguration = IsolationConfiguration(), negativeTest = null)
 
         assertFalse(testSubject.isActiveContactCase(fixedClock))
     }
 
     @Test
     fun `getIndexCase returns null when never isolating`() {
-        val testSubject = NeverIsolating(isolationConfiguration = DurationDays(), negativeTest = null)
+        val testSubject = NeverIsolating(isolationConfiguration = IsolationConfiguration(), negativeTest = null)
 
         assertNull(testSubject.getIndexCase())
     }
     @Test
     fun `getActiveIndexCase returns null when never isolating`() {
-        val testSubject = NeverIsolating(isolationConfiguration = DurationDays(), negativeTest = null)
+        val testSubject = NeverIsolating(isolationConfiguration = IsolationConfiguration(), negativeTest = null)
 
         assertNull(testSubject.getActiveIndexCase(fixedClock))
     }
 
     @Test
     fun `getActiveContactCase returns null when never isolating`() {
-        val testSubject = NeverIsolating(isolationConfiguration = DurationDays(), negativeTest = null)
+        val testSubject = NeverIsolating(isolationConfiguration = IsolationConfiguration(), negativeTest = null)
 
         assertNull(testSubject.getActiveContactCase(fixedClock))
     }
@@ -2177,14 +2176,14 @@ class IsolationLogicalStateTest {
     //region canReportSymptoms tests
     @Test
     fun `when user is not is isolation and we don't remember about the previous isolation can report symptoms`() {
-        val testSubject = NeverIsolating(isolationConfiguration = DurationDays(), negativeTest = null)
+        val testSubject = NeverIsolating(isolationConfiguration = IsolationConfiguration(), negativeTest = null)
         assertTrue(testSubject.canReportSymptoms(fixedClock))
     }
 
     @Test
     fun `when user is not in isolation and we remember about the previous isolation can report symptoms`() {
         val testSubject = PossiblyIsolating(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contactCase = ContactCase(
                 exposureDate = mockkDate(),
                 notificationDate = mockkDate(),
@@ -2206,7 +2205,7 @@ class IsolationLogicalStateTest {
     @Test
     fun `when user is in isolation due to risky contact can report symptoms`() {
         val testSubject = PossiblyIsolating(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contactCase = ContactCase(
                 exposureDate = mockkDate(),
                 notificationDate = mockkDate(),
@@ -2223,7 +2222,7 @@ class IsolationLogicalStateTest {
     @Test
     fun `when user is in isolation due to positive test result no onset date defined can report symptoms`() {
         val testSubject = PossiblyIsolating(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contactCase = ContactCase(
                 exposureDate = mockkDate(),
                 notificationDate = mockkDate(),
@@ -2244,7 +2243,7 @@ class IsolationLogicalStateTest {
     @Test
     fun `when user is in isolation due to positive test result with onset date defined cannot report symptoms`() {
         val testSubject = PossiblyIsolating(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contactCase = ContactCase(
                 exposureDate = mockkDate(),
                 notificationDate = mockkDate(),
@@ -2266,7 +2265,7 @@ class IsolationLogicalStateTest {
     @Test
     fun `when user is in isolation due to completed questionnaire cannot report symptoms`() {
         val testSubject = PossiblyIsolating(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contactCase = ContactCase(
                 exposureDate = mockkDate(),
                 notificationDate = mockkDate(),
@@ -2288,7 +2287,7 @@ class IsolationLogicalStateTest {
     @Test
     fun `when user has expired self assessment index case can report symptoms`() {
         val testSubject = PossiblyIsolating(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contactCase = ContactCase(
                 exposureDate = mockkDate(),
                 notificationDate = mockkDate(),
@@ -2355,7 +2354,7 @@ class IsolationLogicalStateTest {
         indexInfo: IndexInfo? = null
     ): PossiblyIsolating =
         PossiblyIsolating(
-            isolationConfiguration = DurationDays(),
+            isolationConfiguration = IsolationConfiguration(),
             contactCase = contactCase,
             indexInfo = indexInfo,
             startDate = mockkDate(),

@@ -9,7 +9,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -80,7 +80,7 @@ class IsolationTests(
     }
 
     private val isolationTestContext = IsolationTestContext()
-    private val isolationConfiguration = DurationDays()
+    private val isolationConfiguration = IsolationConfiguration()
     private val stateVerifier = StateVerifier(isolationTestContext)
     private val eventHandler = EventHandler(isolationTestContext, isolationConfiguration)
 
@@ -125,7 +125,7 @@ class IsolationTests(
             Initial:   ${transition.initialState}
             Event:     ${transition.event}
             Expected:  ${transition.finalState}
-            Reference: ${System.getProperty("isolationModel.repo") ?: "https://isolationModel.repo"}/blob/${source.commit}/${source.referenceBasePath}/${transition.reference!!.file}#L${transition.reference.line}
+            Reference: ${System.getProperty("isolationModel.repo") ?: "https://isolationModel.repo"}/blob/${source.commit}/${source.referenceBasePath}/${transition.reference.file}#L${transition.reference.line}
     
             ContactCase:    ${(currentLogicalState as? PossiblyIsolating)?.contactCase}
             

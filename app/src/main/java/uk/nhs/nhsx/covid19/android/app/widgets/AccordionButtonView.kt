@@ -7,12 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.accessibility.AccessibilityEvent
 import android.widget.LinearLayout
+import androidx.annotation.LayoutRes
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
 import androidx.core.view.isVisible
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.databinding.ViewAccordionBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
@@ -39,6 +40,21 @@ class AccordionButtonView @JvmOverloads constructor(
         }
 
     private val accessibleView: View by lazy { binding.accordionTitle }
+
+    var title: String? = null
+        get() = binding.titleTextView.text.toString()
+        set(value) {
+            field = value
+            binding.titleTextView.text = field
+        }
+
+    @LayoutRes
+    var content: Int = -1
+        set(value) {
+            field = value
+            binding.accordionContent.removeAllViews()
+            LayoutInflater.from(context).inflate(field, binding.accordionContent, true)
+        }
 
     private val expandIcon: Int
         get() = when (iconType) {
@@ -71,11 +87,12 @@ class AccordionButtonView @JvmOverloads constructor(
             0,
             0
         ).apply {
-            val title = getString(context, R.styleable.AccordionButtonView_accordionTitle)
-            binding.titleTextView.text = title
+            title = getString(context, R.styleable.AccordionButtonView_accordionTitle)
 
             val contentRef = getResourceId(R.styleable.AccordionButtonView_accordionContent, -1)
-            LayoutInflater.from(context).inflate(contentRef, binding.accordionContent, true)
+            if (contentRef != -1) {
+                LayoutInflater.from(context).inflate(contentRef, binding.accordionContent, true)
+            }
             isExpanded = getBoolean(R.styleable.AccordionButtonView_accordionExpanded, DEFAULT_STATE)
 
             val iconTypeInt = getInteger(R.styleable.AccordionButtonView_accordionIconType, 1)

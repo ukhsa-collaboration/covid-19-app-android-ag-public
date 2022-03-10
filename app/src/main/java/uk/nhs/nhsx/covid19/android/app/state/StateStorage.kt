@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.state
 import android.content.SharedPreferences
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
@@ -18,13 +17,14 @@ import javax.inject.Singleton
 class StateStorage @Inject constructor(
     private val isolationConfigurationProvider: IsolationConfigurationProvider,
     override val moshi: Moshi,
-    override val sharedPreferences: SharedPreferences
+    override val sharedPreferences: SharedPreferences,
+    private val createIsolationConfiguration: CreateIsolationConfiguration
 ) : Provider {
 
     private var storedState: IsolationStateJson? by storage(ISOLATION_STATE_KEY)
 
     var state: IsolationState
-        get() = storedState?.toMigratedState() ?: IsolationState(isolationConfigurationProvider.durationDays)
+        get() = storedState?.toMigratedState() ?: IsolationState(createIsolationConfiguration(isolationConfigurationProvider.durationDays))
         set(newState) {
             storedState = newState.toStateJson()
         }
@@ -38,7 +38,7 @@ private const val LATEST_ISOLATION_STATE_JSON_VERSION = 1
 
 @JsonClass(generateAdapter = true)
 data class IsolationStateJson(
-    val configuration: DurationDays,
+    val configuration: IsolationConfiguration,
     val contact: Contact? = null,
     val testResult: AcknowledgedTestResult? = null,
     val symptomatic: SymptomaticCase? = null,

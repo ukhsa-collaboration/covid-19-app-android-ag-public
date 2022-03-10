@@ -7,6 +7,7 @@
     android:orientation="vertical">
 
     <ScrollView
+        android:id="@+id/exposureNotificationScrollView"
         style="@style/ScrollContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,12 +30,13 @@
                 android:src="@drawable/coronavirus" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                android:id="@+id/exposureNotificationHeading"
                 style="@style/TitleIsolation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_large"
-                android:text="@string/exposure_notification_title"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                tools:text="@string/exposure_notification_title" />
 
             <TextView
                 android:id="@+id/closeContactDate"
@@ -46,12 +48,13 @@
                 tools:text="Close contact happened on 11 August 2021" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.AccordionButtonView
+                android:id="@+id/closeContactAccordionButtonView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"
-                app:accordionContent="@layout/accordion_how_we_calculate_close_contact"
                 app:accordionIconType="chevron"
-                app:accordionTitle="@string/contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading" />
+                tools:accordionContent="@layout/accordion_how_we_calculate_close_contact"
+                tools:accordionTitle="@string/contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.StateInfoView
                 android:id="@+id/selfIsolationWarning"
@@ -59,30 +62,22 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"
                 android:background="@color/surface_background"
-                app:stateColor="@color/amber"
-                app:stateText="@string/exposure_notification_warning" />
+                tools:stateColor="@color/amber"
+                tools:stateText="@string/exposure_notification_warning" />
 
             <LinearLayout
                 android:id="@+id/testingInformationContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/ic_onboarding_circle"
-                    android:contentDescription="@null"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_report_symptoms" />
-
-                <TextView
-                    style="@style/Body1"
-                    android:layout_width="wrap_content"
+                <uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="@string/exposure_notification_testing_information" />
+                    app:drawable="@drawable/ic_report_symptoms"
+                    app:text="@string/exposure_notification_testing_information" />
             </LinearLayout>
 
             <View
@@ -96,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"
-                android:text="@string/continue_button" />
+                tools:text="@string/continue_button" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

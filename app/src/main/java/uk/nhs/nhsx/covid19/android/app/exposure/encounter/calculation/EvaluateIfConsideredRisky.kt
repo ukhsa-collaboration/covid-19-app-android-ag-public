@@ -2,7 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation
 
 import com.google.android.gms.nearby.exposurenotification.ExposureWindow
 import timber.log.Timber
-import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
+import uk.nhs.nhsx.covid19.android.app.state.GetLatestConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.util.isEqualOrAfter
 import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
@@ -14,8 +14,8 @@ import java.time.ZoneOffset
 import javax.inject.Inject
 
 class EvaluateIfConsideredRisky @Inject constructor(
-    private val isolationConfigurationProvider: IsolationConfigurationProvider,
     private val isolationStateMachine: IsolationStateMachine,
+    private val getLatestConfiguration: GetLatestConfiguration,
     private val clock: Clock
 ) {
 
@@ -35,7 +35,7 @@ class EvaluateIfConsideredRisky @Inject constructor(
     }
 
     private fun ExposureWindow.isRecentExposure(): Boolean {
-        val contactCaseIsolationDuration = isolationConfigurationProvider.durationDays.contactCase.toLong()
+        val contactCaseIsolationDuration = getLatestConfiguration().contactCase.toLong()
         val oldestPossibleContactCaseIsolationDate =
             LocalDate.now(clock).minusDays(contactCaseIsolationDuration).atStartOfDay()
         val encounterDate: LocalDateTime =
