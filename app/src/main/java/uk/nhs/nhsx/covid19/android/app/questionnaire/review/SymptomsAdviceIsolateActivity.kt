@@ -1,30 +1,44 @@
 package uk.nhs.nhsx.covid19.android.app.questionnaire.review
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import com.google.android.material.button.MaterialButton
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
+import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.databinding.ActivitySymptomsAdviceIsolateBinding
+import uk.nhs.nhsx.covid19.android.app.questionnaire.NewGuidanceForSymptomaticCaseEnglandActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsDidUpdateIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenSelfAssessmentNoImpactOnIsolation
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoIndexCaseThenIsolationDueToSelfAssessmentAdvice.AdviceForEngland
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoIndexCaseThenIsolationDueToSelfAssessmentAdvice.AdviceForWales
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
-import uk.nhs.nhsx.covid19.android.app.testordering.TestOrderingActivity
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.openInExternalBrowserForResult
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 import uk.nhs.nhsx.covid19.android.app.widgets.StateInfoParams
+import javax.inject.Inject
 
 class SymptomsAdviceIsolateActivity : BaseActivity() {
+
+    @Inject
+    lateinit var factory: ViewModelFactory<SymptomsAdviseIsolateViewModel>
+
+    private val viewModel: SymptomsAdviseIsolateViewModel by viewModels { factory }
 
     private lateinit var binding: ActivitySymptomsAdviceIsolateBinding
 
@@ -54,8 +68,19 @@ class SymptomsAdviceIsolateActivity : BaseActivity() {
                 handleIndexCaseThenHasSymptomsNoEffectOnIsolation()
             IndexCaseThenNoSymptoms ->
                 handleIndexCaseThenNoSymptoms()
-            is NoIndexCaseThenIsolationDueToSelfAssessment ->
-                handleNoIndexCaseThenIsolationDueToSelfAssessment(isolationSymptomAdvice.remainingDaysInIsolation)
+            is NoIndexCaseThenIsolationDueToSelfAssessment -> {
+                viewModel.viewState().observe(this) { viewState ->
+                    when (viewState.country) {
+                        AdviceForEngland -> {
+                            handleNoIndexCaseThenIsolationDueToSelfAssessmentForEngland()
+                        }
+                        AdviceForWales -> {
+                            handleNoIndexCaseThenIsolationDueToSelfAssessmentForWales(isolationSymptomAdvice.remainingDaysInIsolation)
+                        }
+                    }
+                }
+                viewModel.handleLocalAuthorityAdvice()
+            }
             is NoIndexCaseThenSelfAssessmentNoImpactOnIsolation ->
                 handleNoIndexCaseThenSelfAssessmentNoImpactOnIsolation(isolationSymptomAdvice.remainingDaysInIsolation)
         }
@@ -63,7 +88,7 @@ class SymptomsAdviceIsolateActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_ORDER_A_TEST && resultCode == Activity.RESULT_OK) {
+        if (requestCode == ORDER_LFD_EXTERNAL_LINK) {
             navigateToStatusActivity()
         }
     }
@@ -94,6 +119,7 @@ class SymptomsAdviceIsolateActivity : BaseActivity() {
             buttonText = R.string.continue_button,
             buttonAction = { navigateToStatusActivity() },
             explanationParagraphs = intArrayOf(R.string.symptoms_advice_isolate_paragraphs_continue_isolation),
+            showIcon = false
         )
 
     private fun handleIndexCaseThenHasSymptomsNoEffectOnIsolation() =
@@ -103,10 +129,14 @@ class SymptomsAdviceIsolateActivity : BaseActivity() {
                 preBigText = R.string.symptoms_advice_isolate_heading_continue_isolation_no_change,
             ),
             showExposureFaqsLinkTextView = false,
-            stateInfoParams = StateInfoParams(R.string.symptoms_advice_isolate_info_continue_isolation_no_change, R.color.error_red),
+            stateInfoParams = StateInfoParams(
+                R.string.symptoms_advice_isolate_info_continue_isolation_no_change,
+                R.color.error_red
+            ),
             buttonText = R.string.continue_button,
             buttonAction = { navigateToStatusActivity() },
             explanationParagraphs = intArrayOf(R.string.symptoms_advice_isolate_paragraphs_continue_isolation_no_change),
+            showIcon = false
         )
 
     private fun handleIndexCaseThenNoSymptoms() =
@@ -116,13 +146,17 @@ class SymptomsAdviceIsolateActivity : BaseActivity() {
                 preBigText = R.string.symptoms_advice_isolate_heading_continue_isolation_no_symptoms,
             ),
             showExposureFaqsLinkTextView = false,
-            stateInfoParams = StateInfoParams(R.string.symptoms_advice_isolate_info_continue_isolation_no_symptoms, R.color.error_red),
+            stateInfoParams = StateInfoParams(
+                R.string.symptoms_advice_isolate_info_continue_isolation_no_symptoms,
+                R.color.error_red
+            ),
             buttonText = R.string.continue_button,
             buttonAction = { navigateToStatusActivity() },
             explanationParagraphs = intArrayOf(R.string.symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms),
+            showIcon = false
         )
 
-    private fun handleNoIndexCaseThenIsolationDueToSelfAssessment(remainingDaysInIsolation: Int) =
+    private fun handleNoIndexCaseThenIsolationDueToSelfAssessmentForWales(remainingDaysInIsolation: Int) =
         setupUi(
             showCloseButtonInToolbar = true,
             stateIconResource = R.drawable.ic_isolation_book_test,
@@ -139,16 +173,43 @@ class SymptomsAdviceIsolateActivity : BaseActivity() {
             stateInfoParams = StateInfoParams(R.string.state_index_info, R.color.amber),
             buttonText = R.string.book_free_test,
             buttonAction = {
-                startActivityForResult(
-                    TestOrderingActivity.getIntent(this),
-                    REQUEST_CODE_ORDER_A_TEST
+                openInExternalBrowserForResult(
+                    getString(R.string.get_tested_wales_link_url),
+                    ORDER_LFD_EXTERNAL_LINK
                 )
             },
             explanationParagraphs = intArrayOf(
                 R.string.isolate_after_corona_virus_symptoms,
                 R.string.exposure_faqs_title
             ),
+            showIcon = true
         )
+
+    private fun handleNoIndexCaseThenIsolationDueToSelfAssessmentForEngland() {
+        setupUi(
+            showCloseButtonInToolbar = false,
+            stateIconResource = R.drawable.ic_share_keys_reminder,
+            isolationDescription = IsolationDescription(
+                postBigText = R.string.isolation_advice_symptomatic_title_england
+            ),
+            showExposureFaqsLinkTextView = false,
+            stateInfoParams = StateInfoParams(
+                R.string.isolation_advice_symptomatic_info_england,
+                R.color.amber,
+                R.style.ActionText
+            ),
+            buttonText = R.string.isolation_advice_symptomatic_primary_button_title_england,
+            buttonAction = {
+                startActivity(NewGuidanceForSymptomaticCaseEnglandActivity.getIntent(this))
+            },
+            explanationParagraphs = intArrayOf(
+                R.string.isolation_advice_symptomatic_description_england
+            ),
+            showIcon = false
+        )
+        binding.forFurtherAdviseTextView.gone()
+        binding.onlineServiceLinkTextView.gone()
+    }
 
     private fun handleNoIndexCaseThenSelfAssessmentNoImpactOnIsolation(remainingDaysInIsolation: Int) =
         setupUi(
@@ -167,6 +228,7 @@ class SymptomsAdviceIsolateActivity : BaseActivity() {
             buttonText = R.string.back_to_home,
             buttonAction = { navigateToStatusActivity() },
             explanationParagraphs = intArrayOf(R.string.isolate_after_no_corona_virus_symptoms),
+            showIcon = false
         )
 
     private fun setupUi(
@@ -177,7 +239,8 @@ class SymptomsAdviceIsolateActivity : BaseActivity() {
         @StringRes vararg explanationParagraphs: Int,
         @StringRes buttonText: Int,
         showCloseButtonInToolbar: Boolean = false,
-        buttonAction: () -> Unit
+        buttonAction: () -> Unit,
+        showIcon: Boolean
     ) = with(binding) {
         if (showCloseButtonInToolbar) {
             setCloseToolbar(primaryToolbar.toolbar, R.string.empty, R.drawable.ic_close_primary)
@@ -198,6 +261,7 @@ class SymptomsAdviceIsolateActivity : BaseActivity() {
 
         stateActionButton.text = getString(buttonText)
         stateActionButton.setOnSingleClickListener(buttonAction)
+        stateActionButtonIcon(showIcon)
     }
 
     private fun setupIsolationDescriptionView(isolationDescription: IsolationDescription) = with(binding) {
@@ -231,9 +295,19 @@ class SymptomsAdviceIsolateActivity : BaseActivity() {
         }
     }
 
+    private fun stateActionButtonIcon(showIcon: Boolean) {
+        if (showIcon) {
+            binding.stateActionButton.icon = ContextCompat.getDrawable(this, R.drawable.ic_link)
+            binding.stateActionButton.iconGravity = MaterialButton.ICON_GRAVITY_TEXT_END
+            binding.stateActionButton.iconPadding = 8.dpToPx.toInt()
+        } else {
+            binding.stateActionButton.icon = null
+        }
+    }
+
     companion object {
-        const val REQUEST_CODE_ORDER_A_TEST = 1337
         const val EXTRA_ISOLATION_SYMPTOM_ADVICE = "EXTRA_ISOLATION_SYMPTOM_ADVICE"
+        const val ORDER_LFD_EXTERNAL_LINK = 1350
 
         fun start(context: Context, isolationSymptomAdvice: IsolationSymptomAdvice) =
             context.startActivity(

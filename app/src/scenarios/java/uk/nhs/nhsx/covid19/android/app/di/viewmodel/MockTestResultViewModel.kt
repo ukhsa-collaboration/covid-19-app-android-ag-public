@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.di.viewmodel
 
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgementCompletionActions
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.Finish
@@ -19,7 +20,8 @@ class MockTestResultViewModel : BaseTestResultViewModel() {
             suggestBookTest = NoTest,
             shouldAllowKeySubmission = false
         ),
-        val remainingDaysInIsolation: Int = 8
+        val remainingDaysInIsolation: Int = 8,
+        val country: PostCodeDistrict = PostCodeDistrict.WALES
     )
 
     init {
@@ -28,7 +30,9 @@ class MockTestResultViewModel : BaseTestResultViewModel() {
                 currentOptions.viewState,
                 currentOptions.remainingDaysInIsolation,
                 currentOptions.actions
-            )
+            ).apply {
+                country = currentOptions.country
+            }
         )
     }
 

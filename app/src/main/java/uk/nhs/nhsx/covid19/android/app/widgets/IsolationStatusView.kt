@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.databinding.ViewIsolationStatusBinding
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.Isolating
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
@@ -46,7 +48,7 @@ class IsolationStatusView @JvmOverloads constructor(
             }
         }
 
-    fun initialize(isolation: Isolating, currentDate: LocalDate) = with(binding) {
+    fun initialize(isolation: Isolating, currentDate: LocalDate, country: PostCodeDistrict) = with(binding) {
         setUpAccessibilityHeading()
 
         val totalDurationInDays = ChronoUnit.DAYS.between(
@@ -68,12 +70,36 @@ class IsolationStatusView @JvmOverloads constructor(
 
         isolationDaysToGo.text = daysToGo.toString()
 
-        contentDescription = context.resources.getQuantityString(
-            R.plurals.isolation_view_accessibility_description,
-            daysToGo,
-            lastDayOfIsolation.uiFormat(context),
-            daysToGo
-        )
+        when (country) {
+            ENGLAND -> {
+                imgCirclePulseAnim.setImageResource(R.drawable.ic_blue_circle)
+                imgCircleSmallPulseAnim.setImageResource(R.drawable.ic_blue_circle)
+                imgRedCircle.setImageResource(R.drawable.ic_blue_circle)
+                imgCircleIsolationStatic.setImageResource(R.drawable.ic_blue_circle_static)
+                isolationCountdownView.setForegroundColor(resources.getColor(R.color.no_isolation_blue))
+                titleIsolationCountdown.text = resources.getString(R.string.be_careful_until_date_title)
+                contentDescription = context.resources.getQuantityString(
+                    R.plurals.isolation_view_accessibility_description_england,
+                    daysToGo,
+                    lastDayOfIsolation.uiFormat(context),
+                    daysToGo
+                )
+            }
+            else -> {
+                imgCirclePulseAnim.setImageResource(R.drawable.ic_red_circle)
+                imgCircleSmallPulseAnim.setImageResource(R.drawable.ic_red_circle)
+                imgRedCircle.setImageResource(R.drawable.ic_red_circle)
+                imgCircleIsolationStatic.setImageResource(R.drawable.ic_red_circle_static)
+                isolationCountdownView.setForegroundColor(resources.getColor(R.color.error_red))
+                titleIsolationCountdown.text = resources.getString(R.string.you_need_to_self_isolate)
+                contentDescription = context.resources.getQuantityString(
+                    R.plurals.isolation_view_accessibility_description,
+                    daysToGo,
+                    lastDayOfIsolation.uiFormat(context),
+                    daysToGo
+                )
+            }
+        }
     }
 
     enum class AnimationState {

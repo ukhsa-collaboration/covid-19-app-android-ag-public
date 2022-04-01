@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.flow
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
@@ -47,6 +48,8 @@ class LinkTestResultFlowTests : EspressoTest() {
 
     @Test
     fun startIndexCase_linkPositiveTestResult_shouldContinueIsolation() {
+        testAppContext.setLocalAuthority(TestApplicationContext.WELSH_LOCAL_AUTHORITY)
+
         testAppContext.setState(
             isolationHelper.selfAssessment().asIsolation()
         )
@@ -134,6 +137,8 @@ class LinkTestResultFlowTests : EspressoTest() {
 
     @Test
     fun startContactCase_linkTooOldPositiveTestResult_shouldContinueIsolation() {
+        testAppContext.setLocalAuthority(TestApplicationContext.WELSH_LOCAL_AUTHORITY)
+
         val contactInstant = Instant.now(testAppContext.clock).minus(2, ChronoUnit.DAYS)
         testAppContext.virologyTestingApi.testEndDate = contactInstant.minus(11, ChronoUnit.DAYS)
 
@@ -196,7 +201,7 @@ class LinkTestResultFlowTests : EspressoTest() {
         linkTestResultSymptomsRobot.clickNo()
 
         waitFor {
-            testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(remainingDaysInIsolation = 9)
+            testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND)
         }
 
         testResultRobot.clickIsolationActionButton()
@@ -246,7 +251,7 @@ class LinkTestResultFlowTests : EspressoTest() {
         linkTestResultOnsetDateRobot.clickContinueButton()
 
         waitFor {
-            testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(remainingDaysInIsolation = 8)
+            testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND)
         }
 
         testResultRobot.clickIsolationActionButton()

@@ -25,8 +25,6 @@ import uk.nhs.nhsx.covid19.android.app.state.SideEffect.HandleAcknowledgedTestRe
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.HandleTestResult
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.SendExposedNotification
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult
-import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubReminderAlarmController
-import uk.nhs.nhsx.covid19.android.app.status.isolationhub.ScheduleIsolationHubReminder
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
@@ -106,8 +104,6 @@ class IsolationStateMachine @Inject constructor(
     private val createIsolationLogicalState: CreateIsolationLogicalState,
     private val trackTestResultAnalyticsOnReceive: TrackTestResultAnalyticsOnReceive,
     private val trackTestResultAnalyticsOnAcknowledge: TrackTestResultAnalyticsOnAcknowledge,
-    private val scheduleIsolationHubReminder: ScheduleIsolationHubReminder,
-    private val isolationHubReminderAlarmController: IsolationHubReminderAlarmController,
     private val createIsolationState: CreateIsolationState
 ) {
     private var _stateMachine = createStateMachine()
@@ -228,15 +224,6 @@ class IsolationStateMachine @Inject constructor(
                 val isInIsolation = currentLogicalState.isActiveIsolation(clock)
                 if (!isInIsolation && willBeInIsolation) {
                     analyticsEventProcessor.track(StartedIsolation)
-                    /*
-                    If the user has started isolation as an index case, they have already acknowledged the start of
-                    the isolation so we schedule the reminder. For contact case, they are put into isolation immediately
-                    after receiving the exposure notification - they haven't acknowledged the start of the isolation yet
-                    so in that case we do not schedule the reminder.
-                     */
-                    if (newLogicalState.isActiveIndexCase(clock)) {
-                        scheduleIsolationHubReminder()
-                    }
                 }
                 Timber.d("transition from $currentIsolationInfo to $newIsolationInfo")
             }
@@ -269,7 +256,6 @@ class IsolationStateMachine @Inject constructor(
             } else {
                 isolationExpirationAlarmController.cancelExpirationCheckIfAny()
                 exposureNotificationHandler.cancel()
-                isolationHubReminderAlarmController.cancel()
             }
         }
     }

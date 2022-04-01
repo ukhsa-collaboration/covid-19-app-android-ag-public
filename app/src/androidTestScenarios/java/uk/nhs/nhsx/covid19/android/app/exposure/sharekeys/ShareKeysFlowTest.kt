@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.exposure.sharekeys
 
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.exposure.setTemporaryExposureKeyHistoryResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -47,7 +48,7 @@ class ShareKeysFlowTest : EspressoTest(), LocalAuthoritySetupHelper {
     @Test
     fun whenSuccessfullySharingKeys_ShareKeysInfoIsRemoved() {
         startTestActivity<StatusActivity>()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
         testResultRobot.clickIsolationActionButton()
         assertNotNull(testAppContext.getKeySharingInfoProvider().keySharingInfo)
         shareKeysInformationRobot.checkActivityIsDisplayed()
@@ -58,7 +59,7 @@ class ShareKeysFlowTest : EspressoTest(), LocalAuthoritySetupHelper {
     @Test
     fun whenAppIsLaunched_andInitialFlowWasNotCompleted_shouldShowInitialKeySharingFlow() {
         startTestActivity<StatusActivity>()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
         testResultRobot.clickIsolationActionButton()
         assertNotNull(testAppContext.getKeySharingInfoProvider().keySharingInfo)
 
@@ -74,7 +75,7 @@ class ShareKeysFlowTest : EspressoTest(), LocalAuthoritySetupHelper {
     @Test
     fun whenAppIsLaunched_andInitialFlowIsDeniedMoreThan24HoursLater_shouldRemoveShareKeysInfo() {
         startTestActivity<StatusActivity>()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
         testResultRobot.clickIsolationActionButton()
         assertNotNull(testAppContext.getKeySharingInfoProvider().keySharingInfo)
         testAppContext.clock.currentInstant = testAppContext.clock.instant().plus(25, ChronoUnit.HOURS)
@@ -93,7 +94,7 @@ class ShareKeysFlowTest : EspressoTest(), LocalAuthoritySetupHelper {
     @Test
     fun whenDeclineSharingKeysInitially_whenAppIsLaunchedMoreThan24HoursLater_showReminderScreen() {
         startTestActivity<StatusActivity>()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
         testResultRobot.clickIsolationActionButton()
         assertNotNull(testAppContext.getKeySharingInfoProvider().keySharingInfo)
         testAppContext.setTemporaryExposureKeyHistoryResolutionRequired(testAppContext.app, false)
@@ -114,7 +115,7 @@ class ShareKeysFlowTest : EspressoTest(), LocalAuthoritySetupHelper {
     @Test
     fun whenDeclineSharingKeysInitially_whenAppIsLaunchedWithin24Hours_showStatusScreen() {
         startTestActivity<StatusActivity>()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
         testResultRobot.clickIsolationActionButton()
         assertNotNull(testAppContext.getKeySharingInfoProvider().keySharingInfo)
         testAppContext.setTemporaryExposureKeyHistoryResolutionRequired(testAppContext.app, false)

@@ -59,7 +59,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="@string/you_need_to_self_isolate" />
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/margin_horizontal"
+            android:text="@string/be_careful_until_date_title" />
 
         <TextView
             android:id="@+id/subTitleIsolationCountdown"
@@ -78,7 +80,7 @@
         app:cpb_background_progressbar_color="?colorSurface"
         app:cpb_background_progressbar_width="6dp"
         app:cpb_progress="30"
-        app:cpb_progressbar_color="?attr/colorError"
+        app:cpb_progressbar_color="@color/no_isolation_blue"
         app:cpb_progressbar_width="6dp"
         app:cpb_round_border="true"
         android:layout_marginTop="20dp"

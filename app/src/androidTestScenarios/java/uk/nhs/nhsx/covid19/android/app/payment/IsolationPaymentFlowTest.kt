@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.payment
 
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_EXTERNAL_BROWSER
 import org.junit.After
@@ -18,6 +19,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationPaymentRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ProgressRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit.DAYS
@@ -41,7 +43,8 @@ class IsolationPaymentFlowTest : EspressoTest(), LocalAuthoritySetupHelper {
     }
 
     @Test
-    fun whenUserInContactCaseIsolation_performIsolationPaymentFlow_retryOnce_endInStatusActivity() {
+    fun whenUserInContactCaseIsolation_performIsolationPaymentFlow_retryOnce_endInStatusActivity() =
+        runWithFeatureEnabled(SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND) {
         givenLocalAuthorityIsInEngland()
         MockApiModule.behaviour.responseType = ALWAYS_FAIL
 

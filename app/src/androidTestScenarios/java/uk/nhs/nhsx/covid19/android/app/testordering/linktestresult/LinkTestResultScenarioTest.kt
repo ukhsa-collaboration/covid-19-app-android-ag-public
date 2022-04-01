@@ -4,6 +4,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_LFD_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NO_CONNECTION_TOKEN
@@ -83,7 +84,7 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
 
         waitFor { linkTestResultSymptomsRobot.clickNo() }
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
         step(
             stepName = "Positive test result",
@@ -192,7 +193,7 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
 
         linkTestResultSymptomsRobot.clickNo()
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
     }
 
     @Test
@@ -202,7 +203,7 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
         linkTestResultRobot.enterCtaToken(POSITIVE_LFD_TOKEN)
         linkTestResultRobot.clickContinue()
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
     }
 
     @Test
@@ -212,7 +213,7 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
         linkTestResultRobot.enterCtaToken(POSITIVE_RAPID_SELF_REPORTED_TOKEN)
         linkTestResultRobot.clickContinue()
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
     }
 
     @Test

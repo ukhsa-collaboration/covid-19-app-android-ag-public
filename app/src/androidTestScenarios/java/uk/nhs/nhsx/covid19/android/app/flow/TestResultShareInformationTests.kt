@@ -28,7 +28,7 @@ class TestResultShareInformationTests : EspressoTest() {
 
     @Before
     fun setUp() {
-        testAppContext.setLocalAuthority(TestApplicationContext.ENGLISH_LOCAL_AUTHORITY)
+        testAppContext.setLocalAuthority(TestApplicationContext.WELSH_LOCAL_AUTHORITY)
     }
 
     @Test
@@ -54,7 +54,7 @@ class TestResultShareInformationTests : EspressoTest() {
         linkTestResultSymptomsRobot.clickNo()
 
         waitFor {
-            testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(remainingDaysInIsolation = 9)
+            testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(remainingDaysInIsolation = 4)
         }
 
         testResultRobot.clickIsolationActionButton()
@@ -94,7 +94,7 @@ class TestResultShareInformationTests : EspressoTest() {
             linkTestResultSymptomsRobot.clickNo()
 
             waitFor {
-                testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(remainingDaysInIsolation = 9)
+                testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(remainingDaysInIsolation = 4)
             }
 
             testResultRobot.clickIsolationActionButton()

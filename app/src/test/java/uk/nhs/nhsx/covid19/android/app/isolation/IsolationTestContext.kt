@@ -97,8 +97,6 @@ class IsolationTestContext {
         ),
         trackTestResultAnalyticsOnReceive = mockk(relaxUnitFun = true),
         trackTestResultAnalyticsOnAcknowledge = mockk(relaxUnitFun = true),
-        scheduleIsolationHubReminder = mockk(relaxUnitFun = true),
-        isolationHubReminderAlarmController = mockk(relaxUnitFun = true)
     )
 
     private val resetStateIfNeeded = ResetIsolationStateIfNeeded(

@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
-import com.jeroenmols.featureflag.framework.FeatureFlag.NEW_ENGLAND_CONTACT_CASE_JOURNEY
+import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_ENGLAND_CONTACT_CASE_FLOW
+import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_WALES_CONTACT_CASE_FLOW
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
@@ -8,6 +9,7 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationAgeLimitRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
@@ -21,8 +23,8 @@ class ExposureNotificationActivityTest : EspressoTest(), IsolationSetupHelper, L
     override val isolationHelper = IsolationHelper(testAppContext.clock)
 
     @Test
-    fun whenInWalesAndHasContactAndIndexIsolation_displayEncounterDateAndHideTestingAndIsolationAdvice() {
-        runWithFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) {
+    fun whenInWalesAndHasContactAndIndexIsolation_displayEncounterDateAndShowTestingAndIsolationAdvice() {
+        runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
             givenLocalAuthorityIsInWales()
             givenSelfAssessmentAndContactIsolation()
 
@@ -30,14 +32,14 @@ class ExposureNotificationActivityTest : EspressoTest(), IsolationSetupHelper, L
 
             waitFor { exposureNotificationRobot.checkActivityIsDisplayed() }
             checkDateIsDisplayed()
-            exposureNotificationRobot.checkIsolationAdviceIsDisplayed(displayed = false, WALES)
+            exposureNotificationRobot.checkIsolationAdviceIsDisplayed(displayed = true, WALES)
             exposureNotificationRobot.checkTestingAdviceIsDisplayed(displayed = false)
         }
     }
 
     @Test
     fun whenInWalesAndHasContactIsolation_andNotInActiveIndexCaseIsolation_displayEncounterDateAndShowTestingAndIsolationAdvice() {
-        runWithFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) {
+        runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
             givenLocalAuthorityIsInWales()
             givenContactIsolation()
 
@@ -46,13 +48,13 @@ class ExposureNotificationActivityTest : EspressoTest(), IsolationSetupHelper, L
             waitFor { exposureNotificationRobot.checkActivityIsDisplayed() }
             checkDateIsDisplayed()
             exposureNotificationRobot.checkIsolationAdviceIsDisplayed(displayed = true, WALES)
-            exposureNotificationRobot.checkTestingAdviceIsDisplayed(displayed = true)
+            exposureNotificationRobot.checkTestingAdviceIsDisplayed(displayed = false)
         }
     }
 
     @Test
     fun whenInEnglandAndHasContactIsolation_andNotInActiveIndexCaseIsolation_displayEncounterDateAndHideTestingAdvice() {
-        runWithFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) {
+        runWithFeature(OLD_ENGLAND_CONTACT_CASE_FLOW, false) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()
 
@@ -66,8 +68,21 @@ class ExposureNotificationActivityTest : EspressoTest(), IsolationSetupHelper, L
     }
 
     @Test
+    fun whenInWalesAndHasContactIsolation_displayWalesStringIds() {
+        runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
+            givenLocalAuthorityIsInWales()
+            givenContactIsolation()
+
+            startTestActivity<ExposureNotificationActivity>()
+
+            waitFor { exposureNotificationRobot.checkActivityIsDisplayed() }
+            exposureNotificationRobot.checkWalesStringAreDisplayed()
+        }
+    }
+
+    @Test
     fun whenContinueButtonIsClicked_showExposureNotificationAgeLimitActivityForWales() {
-        runWithFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) {
+        runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
             givenLocalAuthorityIsInWales()
             givenContactIsolation()
 
@@ -77,13 +92,13 @@ class ExposureNotificationActivityTest : EspressoTest(), IsolationSetupHelper, L
 
             exposureNotificationRobot.clickContinueButton()
 
-            waitFor { exposureNotificationAgeLimitRobot.checkActivityIsDisplayed() }
+            waitFor { riskyContactIsolationOptOutRobot.checkActivityIsDisplayed() }
         }
     }
 
     @Test
     fun whenContinueButtonIsClicked_showRiskyContactIsolationOptOutActivityForEngland() {
-        runWithFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) {
+        runWithFeature(OLD_ENGLAND_CONTACT_CASE_FLOW, false) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()
 
@@ -109,5 +124,21 @@ class ExposureNotificationActivityTest : EspressoTest(), IsolationSetupHelper, L
         val encounterDate = testAppContext.getIsolationStateMachine().readState().contact?.exposureDate
         val encounterDateText = encounterDate?.uiLongFormat(testAppContext.app) ?: ""
         waitFor { exposureNotificationRobot.checkEncounterDateIsDisplayed(encounterDateText) }
+    }
+
+    @Test
+    fun whenInWalesAndHasContactIsolation_andNotInActiveIndexCaseIsolation_whileNewContactJourneyFeatureDisabled_showExposureNotificationAgeLimitActivity() {
+        runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
+            givenLocalAuthorityIsInWales()
+            givenContactIsolation()
+
+            startTestActivity<ExposureNotificationActivity>()
+
+            waitFor { exposureNotificationRobot.checkActivityIsDisplayed() }
+
+            exposureNotificationRobot.clickContinueButton()
+
+            waitFor { exposureNotificationAgeLimitRobot.checkActivityIsDisplayed() }
+        }
     }
 }

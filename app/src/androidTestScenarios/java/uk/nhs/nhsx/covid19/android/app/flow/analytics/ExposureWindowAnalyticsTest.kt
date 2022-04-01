@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import com.google.android.gms.nearby.exposurenotification.ScanInstance
+import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_WALES_CONTACT_CASE_FLOW
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
@@ -18,6 +19,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.Infectiousness.HIGH
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import kotlin.test.assertEquals
 
 class ExposureWindowAnalyticsTest : AnalyticsTest() {
@@ -30,39 +32,47 @@ class ExposureWindowAnalyticsTest : AnalyticsTest() {
         }
 
     @Test
-    fun submitsExposureWindowData_whenUserHasRiskyContact() = runBlocking {
-        givenLocalAuthorityIsInWales()
-        startTestActivity<MainActivity>()
+    fun submitsExposureWindowData_whenUserHasRiskyContact() {
+        runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
+            runBlocking {
+                givenLocalAuthorityIsInWales()
+                startTestActivity<MainActivity>()
 
-        testAppContext.epidemiologyDataApi.clear()
+                testAppContext.epidemiologyDataApi.clear()
 
-        riskyContact.triggerViaBroadcastReceiver()
-        riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(country = WALES)
+                riskyContact.triggerViaBroadcastReceiver()
+                riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(country = WALES)
 
-        val expectedEvents = getEncounterEpidemiologyEvents()
+                val expectedEvents = getEncounterEpidemiologyEvents()
 
-        assertEquals(expectedEvents, events)
+                assertEquals(expectedEvents, events)
+            }
+        }
     }
 
     @Test
-    fun submitsExposureWindowData_whenUserReceivesPositiveTest() = runBlocking {
-        givenLocalAuthorityIsInWales()
-        startTestActivity<MainActivity>()
+    fun submitsExposureWindowData_whenUserReceivesPositiveTest() {
+        runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
+            runBlocking {
+                givenLocalAuthorityIsInWales()
+                startTestActivity<MainActivity>()
 
-        riskyContact.triggerViaBroadcastReceiver()
-        riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(country = WALES)
+                riskyContact.triggerViaBroadcastReceiver()
+                riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(country = WALES)
 
-        testAppContext.epidemiologyDataApi.clear()
+                testAppContext.epidemiologyDataApi.clear()
 
-        manualTestResultEntry.enterPositive(
-            LAB_RESULT,
-            SymptomsAndOnsetFlowConfiguration(),
-            expectedScreenState = PositiveContinueIsolation
-        )
+                manualTestResultEntry.enterPositive(
+                    LAB_RESULT,
+                    SymptomsAndOnsetFlowConfiguration(),
+                    expectedScreenState = PositiveContinueIsolation
+                )
 
-        val expectedEvents = getPositiveTestEpidemiologyEvents()
+                val expectedEvents = getPositiveTestEpidemiologyEvents()
 
-        assertEquals(expectedEvents, events)
+                assertEquals(expectedEvents, events)
+            }
+        }
     }
 
     private suspend fun getEncounterEpidemiologyEvents(): List<EpidemiologyEventWithType> {

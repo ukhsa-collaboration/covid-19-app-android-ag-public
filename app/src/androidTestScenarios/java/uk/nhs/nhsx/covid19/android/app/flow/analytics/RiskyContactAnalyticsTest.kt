@@ -1,5 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
+import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_ENGLAND_CONTACT_CASE_FLOW
+import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_WALES_CONTACT_CASE_FLOW
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.RiskyContact
@@ -7,6 +9,8 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
 
 class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
@@ -49,20 +53,36 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
     private fun remembersIsolation() = testAppContext.getIsolationStateMachine().readLogicalState() is PossiblyIsolating
 
     @Test
-    fun notIsolating_riskyContact_declareMinor_isolationAcknowledged_andOptedOutOfContactIsolation() {
-        assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
-            acknowledgement = riskyContact::acknowledgeIsolationViaOptOutMinor,
-            hasOptedOutOfContactIsolation = true
-        )
+    fun notIsolating_riskyContact_declareMinor_isolationAcknowledged_andOptedOutOfContactIsolation_Wales() {
+        runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
+            givenLocalAuthorityIsInWales()
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+                acknowledgement = riskyContact::acknowledgeIsolationViaOptOutMinor,
+                hasOptedOutOfContactIsolation = true
+            )
+        }
+    }
+
+    @Test
+    fun notIsolating_riskyContact_declareMinor_isolationAcknowledged_andOptedOutOfContactIsolation_England() {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
+            givenLocalAuthorityIsInEngland()
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+                acknowledgement = riskyContact::acknowledgeIsolationViaOptOutMinor,
+                hasOptedOutOfContactIsolation = true
+            )
+        }
     }
 
     @Test
     fun notIsolating_riskyContact_declareFullyVaccinated_isolationAcknowledged_andOptedOutOfContactIsolation() {
-        givenLocalAuthorityIsInWales()
-        assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
-            acknowledgement = riskyContact::acknowledgeIsolationViaOptOutFullyVaccinatedForContactQuestionnaireJourney,
-            hasOptedOutOfContactIsolation = true
-        )
+        runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
+            givenLocalAuthorityIsInWales()
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+                acknowledgement = riskyContact::acknowledgeIsolationViaOptOutFullyVaccinatedForContactQuestionnaireJourney,
+                hasOptedOutOfContactIsolation = true
+            )
+        }
     }
 
     @Test
@@ -86,44 +106,96 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
     }
 
     @Test
-    fun notIsolating_riskyContact_declareNotFullyVaccinated_isolationAcknowledged() {
-        givenLocalAuthorityIsInWales()
-        assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(acknowledgement = {
-            riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(country = WALES)
-        })
+    fun notIsolating_riskyContact_newAdvice_andOptedOutOfContactIsolation_forWales() {
+        runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
+            givenLocalAuthorityIsInWales()
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+                acknowledgement = riskyContact::acknowledgeNoIsolationForNewAdviceJourney,
+                hasOptedOutOfContactIsolation = true
+            )
+        }
     }
 
     @Test
-    fun isolating_riskyContact_declareMinor_isolationAcknowledged_andOptedOutOfContactIsolation() {
-        givenSelfAssessmentIsolation()
-        assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
-            acknowledgement = {
-                riskyContact.acknowledgeIsolationViaOptOutMinor(alreadyIsolating = true)
-            },
-            hasOptedOutOfContactIsolation = true
-        )
+    fun isolating_riskyContact_newAdvice_andOptedOutOfContactIsolation_forWales() {
+        runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
+            givenLocalAuthorityIsInWales()
+            givenSelfAssessmentIsolation()
+
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+                acknowledgement = riskyContact::acknowledgeContinueIsolationForNewAdviceJourney,
+                hasOptedOutOfContactIsolation = true
+            )
+        }
+    }
+
+    @Test
+    fun notIsolating_riskyContact_declareNotFullyVaccinated_isolationAcknowledged() {
+        runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
+            givenLocalAuthorityIsInWales()
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(acknowledgement = {
+                riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(country = WALES)
+            })
+        }
+    }
+
+    @Test
+    fun isolating_riskyContact_declareMinor_isolationAcknowledged_andOptedOutOfContactIsolation_Wales() {
+        runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
+            givenLocalAuthorityIsInWales()
+            givenSelfAssessmentIsolation()
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+                acknowledgement = {
+                    riskyContact.acknowledgeIsolationViaOptOutMinor(alreadyIsolating = true)
+                },
+                hasOptedOutOfContactIsolation = true
+            )
+        }
+    }
+
+    @Test
+    fun isolating_riskyContact_declareMinor_isolationAcknowledged_andOptedOutOfContactIsolation_England() {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
+            givenLocalAuthorityIsInEngland()
+            givenSelfAssessmentIsolation()
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+                acknowledgement = {
+                    riskyContact.acknowledgeIsolationViaOptOutMinor(alreadyIsolating = true)
+                },
+                hasOptedOutOfContactIsolation = true
+            )
+        }
     }
 
     @Test
     fun isolating_riskyContact_declareFullyVaccinated_isolationAcknowledged_andOptedOutOfContactIsolation() {
-        givenLocalAuthorityIsInWales()
-        givenSelfAssessmentIsolation()
-        assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
-            acknowledgement = {
-                riskyContact.acknowledgeIsolationViaOptOutFullyVaccinatedForContactQuestionnaireJourney(alreadyIsolating = true)
-            },
-            hasOptedOutOfContactIsolation = true
-        )
+        runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
+            givenLocalAuthorityIsInWales()
+            givenSelfAssessmentIsolation()
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+                acknowledgement = {
+                    riskyContact.acknowledgeIsolationViaOptOutFullyVaccinatedForContactQuestionnaireJourney(
+                        alreadyIsolating = true
+                    )
+                },
+                hasOptedOutOfContactIsolation = true
+            )
+        }
     }
 
     @Test
     fun isolating_riskyContact_declareNotFullyVaccinated_isolationAcknowledged() {
-        givenLocalAuthorityIsInWales()
-        givenSelfAssessmentIsolation()
-        assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
-            acknowledgement = {
-                riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(alreadyIsolating = true, country = WALES)
-            }
-        )
+        runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
+            givenLocalAuthorityIsInWales()
+            givenSelfAssessmentIsolation()
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+                acknowledgement = {
+                    riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(
+                        alreadyIsolating = true,
+                        country = WALES
+                    )
+                }
+            )
+        }
     }
 }

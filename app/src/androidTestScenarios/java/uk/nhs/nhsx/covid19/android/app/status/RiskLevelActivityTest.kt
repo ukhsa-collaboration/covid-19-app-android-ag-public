@@ -243,8 +243,6 @@ class RiskLevelActivityTest : EspressoTest() {
         }
 
         riskLevelRobot.checkActivityIsDisplayed()
-
-        riskLevelRobot.checkMassTestingIsDisplayed()
     }
 
     @Test
@@ -257,8 +255,6 @@ class RiskLevelActivityTest : EspressoTest() {
         }
 
         riskLevelRobot.checkActivityIsDisplayed()
-
-        riskLevelRobot.checkMassTestingIsNotDisplayed()
     }
 
     @Test
@@ -273,8 +269,6 @@ class RiskLevelActivityTest : EspressoTest() {
         }
 
         riskLevelRobot.checkActivityIsDisplayed()
-
-        riskLevelRobot.checkMassTestingIsDisplayed()
     }
 
     private fun getTierFiveRisk(postCode: String) = Risk(

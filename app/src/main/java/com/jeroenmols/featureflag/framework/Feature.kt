@@ -64,11 +64,35 @@ enum class FeatureFlag(
         "Show Venue check-in Home Screen button",
         defaultValue = false
     ),
-    NEW_ENGLAND_CONTACT_CASE_JOURNEY(
-        "feature.NewEnglandContactCaseJourney",
-        "New contact case journey for England (automatic opt-out)",
+    OLD_ENGLAND_CONTACT_CASE_FLOW(
+        "feature.ContactCaseNoQuestionnaireJourneyEngland",
+        "Old England contact case flow",
         "Show new contact case journey for England (automatic opt-out)",
-        defaultValue = true
+        defaultValue = false
+    ),
+    OLD_WALES_CONTACT_CASE_FLOW(
+        "feature.ContactCaseNoQuestionnaireJourneyWales",
+        "Old Wales contact case flow",
+        "Show new contact case journey for Wales (automatic opt-out)",
+        defaultValue = false
+    ),
+    TESTING_FOR_COVID19_HOME_SCREEN_BUTTON(
+        "feature.TestingCOVIDHub",
+        "Testing for COVID-19 Home Screen button",
+        "Show Testing for COVID-19 Home Screen button",
+        defaultValue = false
+    ),
+    SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND(
+        "feature.SelfIsolationHubEngland",
+        "Self Isolation Home Screen button England",
+        "Show Self Isolation Home Screen button for England",
+        defaultValue = false
+    ),
+    SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES(
+        "feature.SelfIsolationHubWales",
+        "Self Isolation Home Screen button Wales",
+        "Show Self Isolation Home Screen button for Wales",
+        defaultValue = false
     )
 }
 

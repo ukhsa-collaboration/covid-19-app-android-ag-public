@@ -287,6 +287,10 @@ class CircularProgressBar(context: Context, attrs: AttributeSet? = null) : View(
         backgroundProgressBarColor = backgroundColor
     }
 
+    fun setForegroundColor(foregroundColor: Int) {
+        progressBarColor = foregroundColor
+    }
+
     private fun manageColor() {
         foregroundPaint.shader = createLinearGradient(
             progressBarColorStart ?: progressBarColor,

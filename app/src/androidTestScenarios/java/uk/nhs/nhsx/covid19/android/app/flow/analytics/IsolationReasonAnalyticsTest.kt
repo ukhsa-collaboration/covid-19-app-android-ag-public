@@ -1,11 +1,13 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
+import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_WALES_CONTACT_CASE_FLOW
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.RiskyContact
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
 
 class IsolationReasonAnalyticsTest : AnalyticsTest() {
@@ -73,57 +75,59 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun hasHadRiskyContactBackgroundTickIsPresentWhenIsolatingAndFor14DaysAfter() {
-        givenLocalAuthorityIsInWales()
-        startTestActivity<MainActivity>()
+        runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
+            givenLocalAuthorityIsInWales()
+            startTestActivity<MainActivity>()
 
-        // Current date: 2nd Jan -> Analytics packet for: 1st Jan
-        // Starting state: App running normally, not in isolation
-        assertAnalyticsPacketIsNormal()
+            // Current date: 2nd Jan -> Analytics packet for: 1st Jan
+            // Starting state: App running normally, not in isolation
+            assertAnalyticsPacketIsNormal()
 
-        // Has risky contact on 2nd Jan
-        // Isolation end date: 13th Jan
-        riskyContact.triggerViaCircuitBreaker(this::advanceToNextBackgroundTaskExecution)
-        riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(country = WALES)
+            // Has risky contact on 2nd Jan
+            // Isolation end date: 13th Jan
+            riskyContact.triggerViaCircuitBreaker(this::advanceToNextBackgroundTaskExecution)
+            riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(country = WALES)
 
-        // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
-        assertOnFields {
-            // Now in isolation due to risky contact
-            assertEquals(1, Metrics::receivedRiskyContactNotification)
-            assertEquals(1, Metrics::receivedActiveIpcToken)
-            assertEquals(1, Metrics::startedIsolation)
-            assertEquals(1, Metrics::acknowledgedStartOfIsolationDueToRiskyContact)
-            assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
-            assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
-            assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
+            // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
+            assertOnFields {
+                // Now in isolation due to risky contact
+                assertEquals(1, Metrics::receivedRiskyContactNotification)
+                assertEquals(1, Metrics::receivedActiveIpcToken)
+                assertEquals(1, Metrics::startedIsolation)
+                assertEquals(1, Metrics::acknowledgedStartOfIsolationDueToRiskyContact)
+                assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
+                assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
+                assertPresent(Metrics::isIsolatingBackgroundTick)
+                assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
+            }
+
+            // Dates: 4th Jan -> Analytics packet for: 3rd Jan
+            assertOnFields {
+                // Still in isolation
+                assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
+                assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
+                assertPresent(Metrics::isIsolatingBackgroundTick)
+                assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
+            }
+
+            // Dates: 5th-13th Jan -> Analytics packets for: 4th-12th Jan
+            assertOnFieldsForDateRange(5..13) {
+                // Still in isolation
+                assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
+                assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
+                assertPresent(Metrics::isIsolatingBackgroundTick)
+                assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
+            }
+
+            // Dates: 14th-27th Jan -> Analytics packets for: 13th-26th Jan
+            assertOnFieldsForDateRange(14..27) {
+                // Isolation is over, but isolation reason still stored for 14 days
+                assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
+            }
+
+            // Current date: 28th Jan -> Analytics packet for: 27th Jan
+            // Previous isolation reason no longer stored
+            assertAnalyticsPacketIsNormal()
         }
-
-        // Dates: 4th Jan -> Analytics packet for: 3rd Jan
-        assertOnFields {
-            // Still in isolation
-            assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
-            assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
-            assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
-        }
-
-        // Dates: 5th-13th Jan -> Analytics packets for: 4th-12th Jan
-        assertOnFieldsForDateRange(5..13) {
-            // Still in isolation
-            assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
-            assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
-            assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
-        }
-
-        // Dates: 14th-27th Jan -> Analytics packets for: 13th-26th Jan
-        assertOnFieldsForDateRange(14..27) {
-            // Isolation is over, but isolation reason still stored for 14 days
-            assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
-        }
-
-        // Current date: 28th Jan -> Analytics packet for: 27th Jan
-        // Previous isolation reason no longer stored
-        assertAnalyticsPacketIsNormal()
     }
 }

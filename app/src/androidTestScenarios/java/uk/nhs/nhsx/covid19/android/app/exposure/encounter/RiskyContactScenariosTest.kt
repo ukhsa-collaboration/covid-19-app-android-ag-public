@@ -1,9 +1,11 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
-import com.jeroenmols.featureflag.framework.FeatureFlag.NEW_ENGLAND_CONTACT_CASE_JOURNEY
+import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_ENGLAND_CONTACT_CASE_FLOW
+import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_WALES_CONTACT_CASE_FLOW
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R.string
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.Default
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.WalesWithinAdviceWindow
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationAgeLimitActivity
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.OptOutResponseEntry
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.review.QuestionType.VaccinationStatusQuestionType.ClinicalTrial
@@ -25,6 +27,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
+import java.time.LocalDate
 
 class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, IsolationSetupHelper {
 
@@ -40,7 +43,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
     @Test
     fun givenInIndexCaseIsolationEnglandNewContactJourneyIsDisabled_whenReceivesExposureNotification_seesAlreadyIsolatingScreen_clickBackToHome_navigatesToHome() {
-        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInEngland()
             givenSelfAssessmentIsolation()
 
@@ -71,8 +74,40 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
     }
 
     @Test
+    fun givenInIndexCaseIsolationWalesNewContactJourneyIsDisabled_whenReceivesExposureNotification_seesAlreadyIsolatingScreen_clickBackToHome_navigatesToHome() {
+        runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
+            givenLocalAuthorityIsInWales()
+            givenSelfAssessmentIsolation()
+
+            startTestActivity<StatusActivity>()
+            statusRobot.checkActivityIsDisplayed()
+
+            testAppContext.sendExposureStateUpdatedBroadcast()
+
+            waitFor { exposureNotificationRobot.checkActivityIsDisplayed() }
+            exposureNotificationRobot.clickContinueButton()
+            selectAdult()
+
+            selectFullyVaccinatedAnswers()
+
+            waitFor { exposureNotificationReviewRobot.checkActivityIsDisplayed() }
+            exposureNotificationReviewRobot.clickSubmitButton()
+
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInAlreadyIsolatingViewState(
+                remainingDaysInIsolation = 7,
+                testingAdviceToShow = WalesWithinAdviceWindow(LocalDate.now())
+            )
+            exposureNotificationRiskyContactIsolationAdviceRobot.clickPrimaryBackToHome()
+
+            waitFor { statusRobot.checkActivityIsDisplayed() }
+            statusRobot.checkIsolationViewIsDisplayed()
+        }
+    }
+
+    @Test
     fun givenInIndexCaseIsolationEnglandNewContactJourneyIsEnabled_whenReceivesExposureNotification_seesAlreadyIsolatingScreen_clickBackToHome_navigatesToHome() {
-        runWithFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) {
+        runWithFeature(OLD_ENGLAND_CONTACT_CASE_FLOW, false) {
             givenLocalAuthorityIsInEngland()
             givenSelfAssessmentIsolation()
 
@@ -97,8 +132,55 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
     }
 
     @Test
+    fun givenInContactCaseIsolationWalesNewContactJourneyIsEnabled_whenReceivesExposureNotification_clickBackToHome_navigatesToHome() {
+        runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
+            givenLocalAuthorityIsInWales()
+
+            startTestActivity<StatusActivity>()
+            statusRobot.checkActivityIsDisplayed()
+
+            testAppContext.sendExposureStateUpdatedBroadcast()
+
+            exposureNotificationRobot.checkActivityIsDisplayed()
+            exposureNotificationRobot.clickContinueButton()
+
+            riskyContactIsolationOptOutRobot.checkActivityIsDisplayed()
+            riskyContactIsolationOptOutRobot.clickSecondaryButton()
+
+            statusRobot.checkActivityIsDisplayed()
+            statusRobot.checkIsolationViewIsNotDisplayed()
+        }
+    }
+
+    @Test
+    fun givenInIndexCaseIsolationWalesNewContactJourneyIsEnabled_whenReceivesExposureNotification_seesAlreadyIsolatingScreen_clickBackToHome_navigatesToHome() {
+        runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
+            givenLocalAuthorityIsInWales()
+            givenSelfAssessmentIsolation()
+
+            startTestActivity<StatusActivity>()
+            statusRobot.checkActivityIsDisplayed()
+
+            testAppContext.sendExposureStateUpdatedBroadcast()
+
+            exposureNotificationRobot.checkActivityIsDisplayed()
+            exposureNotificationRobot.clickContinueButton()
+
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkActivityIsDisplayed()
+            exposureNotificationRiskyContactIsolationAdviceRobot.checkIsInAlreadyIsolatingViewState(
+                remainingDaysInIsolation = 7,
+                testingAdviceToShow = WalesWithinAdviceWindow(LocalDate.now())
+            )
+            exposureNotificationRiskyContactIsolationAdviceRobot.clickPrimaryBackToHome()
+
+            statusRobot.checkActivityIsDisplayed()
+            statusRobot.checkIsolationViewIsDisplayed()
+        }
+    }
+
+    @Test
     fun whenUserClicksContinue_navigateToAgeLimitActivity_userCanComeBack() {
-        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()
 
@@ -136,7 +218,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
     @Test
     fun whenErrorIsShownOnAgeLimitScreen_thenValidAnswerSelected_thenClickContinue_thenNavigateBack_errorIsNotShown_andSelectedValueStored() {
-        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()
 
@@ -166,7 +248,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
     @Test
     fun givenContactIsolation_whenSelectingYesToAgeLimitQuestionAndYesToVaccinatedQuestionAndNoToDateQuestionAndClickingConfirm_thenErrorIsShown() {
-        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()
 
@@ -259,7 +341,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
         exposureNotificationReviewRobot.clickChangeVaccinationStatus()
 
-        selectEnglandFullyVaccinatedAnswers()
+        selectFullyVaccinatedAnswers()
 
         verifyEnglandFullyVaccinatedAnswersOnReviewScreen()
 
@@ -274,7 +356,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
     @Test
     fun whenBackOnAgeLimitScreenFromReviewScreen_backButtonLeadsToExposureNotificationScreen() {
-        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()
 
@@ -298,7 +380,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
     @Test
     fun whenBackOnVaccinationStatusScreenFromReviewScreen_backButtonLeadsToAgeLimitScreen() {
-        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()
 
@@ -322,7 +404,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
     @Test
     fun whenChangingVaccinationStatusOnReviewScreen_navigatesDirectlyToVaccinationStatusScreen_andKeepsVaccinationAnswers() {
-        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()
 
@@ -345,8 +427,21 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
     }
 
     @Test
-    fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickPrimaryButton_navigateToStatusActivity() {
-        runWithFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) {
+    fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickPrimaryButton_navigateToStatusActivity_England() {
+        runWithFeature(OLD_ENGLAND_CONTACT_CASE_FLOW, false) {
+            givenLocalAuthorityIsInEngland()
+            runNewAdviceJourney(acknowledgementAction = {
+                assertBrowserIsOpened(string.risky_contact_opt_out_primary_button_url) {
+                    riskyContactIsolationOptOutRobot.clickPrimaryButton_opensInExternalBrowser()
+                }
+            })
+        }
+    }
+
+    @Test
+    fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickPrimaryButton_navigateToStatusActivity_Wales() {
+        runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
+            givenLocalAuthorityIsInWales()
             runNewAdviceJourney(acknowledgementAction = {
                 assertBrowserIsOpened(string.risky_contact_opt_out_primary_button_url) {
                     riskyContactIsolationOptOutRobot.clickPrimaryButton_opensInExternalBrowser()
@@ -357,7 +452,8 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
 
     @Test
     fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickSecButton_navigateToStatusActivity() {
-        runWithFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) {
+        runWithFeature(OLD_ENGLAND_CONTACT_CASE_FLOW, false) {
+            givenLocalAuthorityIsInEngland()
             runNewAdviceJourney(acknowledgementAction = {
                 riskyContactIsolationOptOutRobot.clickSecondaryButton()
             })
@@ -365,8 +461,31 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
     }
 
     @Test
-    fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickGuidanceLink_navigateToStatusActivity() {
-        runWithFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) {
+    fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickSecButton_navigateToStatusActivity_Wales() {
+        runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
+            givenLocalAuthorityIsInWales()
+            runNewAdviceJourney(acknowledgementAction = {
+                riskyContactIsolationOptOutRobot.clickSecondaryButton()
+            })
+        }
+    }
+
+    @Test
+    fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickGuidanceLink_navigateToStatusActivity_England() {
+        runWithFeature(OLD_ENGLAND_CONTACT_CASE_FLOW, false) {
+            givenLocalAuthorityIsInEngland()
+            runNewAdviceJourney(acknowledgementAction = {
+                assertBrowserIsOpened(string.risky_contact_opt_out_further_advice_link_url) {
+                    riskyContactIsolationOptOutRobot.clickGuidance_opensInExternalBrowser()
+                }
+            })
+        }
+    }
+
+    @Test
+    fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickGuidanceLink_navigateToStatusActivity_Wales() {
+        runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
+            givenLocalAuthorityIsInWales()
             runNewAdviceJourney(acknowledgementAction = {
                 assertBrowserIsOpened(string.risky_contact_opt_out_further_advice_link_url) {
                     riskyContactIsolationOptOutRobot.clickGuidance_opensInExternalBrowser()
@@ -418,7 +537,7 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
         exposureNotificationVaccinationStatusRobot.clickContinueButton()
     }
 
-    private fun selectEnglandFullyVaccinatedAnswers() {
+    private fun selectFullyVaccinatedAnswers() {
         exposureNotificationVaccinationStatusRobot.checkActivityIsDisplayed()
         waitFor { exposureNotificationVaccinationStatusRobot.clickDosesYesButton() }
         waitFor { exposureNotificationVaccinationStatusRobot.checkDosesDateQuestionContainerDisplayed(true) }

@@ -34,7 +34,7 @@ class ExposureNotificationRobot : HasActivity {
         val expectedText = if (country == ENGLAND) {
             R.string.contact_case_exposure_info_screen_information_england
         } else {
-            R.string.exposure_notification_warning
+            R.string.contact_case_exposure_info_screen_information_wales
         }
 
         onView(withId(R.id.selfIsolationWarning)).apply {
@@ -53,5 +53,14 @@ class ExposureNotificationRobot : HasActivity {
             if (displayed) perform(scrollTo())
         }
             .check(if (displayed) matches(isDisplayed()) else matches(not(isDisplayed())))
+    }
+
+    fun checkWalesStringAreDisplayed() {
+        onView(withText(R.string.contact_case_exposure_info_screen_title_wales))
+            .check(matches(isDisplayed()))
+        onView(withText(R.string.contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading_wales))
+            .check(matches(isDisplayed()))
+        onView(withText(R.string.contact_case_exposure_info_screen_continue_button_wales))
+            .check(matches(isDisplayed()))
     }
 }

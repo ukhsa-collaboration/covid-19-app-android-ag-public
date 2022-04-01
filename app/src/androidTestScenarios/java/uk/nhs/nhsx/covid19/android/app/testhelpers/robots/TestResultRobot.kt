@@ -15,8 +15,11 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers
+import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.containsStringResourceAt
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.isAccessibilityHeading
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.paragraphsContainerContainsStringResource
@@ -51,16 +54,37 @@ class TestResultRobot(
             .check(matches(isDisplayed()))
     }
 
-    fun checkActivityDisplaysPositiveWillBeInIsolation() {
-        onView(withText(R.string.self_isolate_for))
-            .perform(scrollTo())
-            .check(matches(isDisplayed()))
+    fun checkActivityDisplaysPositiveWillBeInIsolation(country: PostCodeDistrict) {
+        if (country == PostCodeDistrict.ENGLAND) {
+            onView(withText(R.string.index_case_isolation_advice_heading_title_england))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
 
-        onView(withText(R.string.state_test_positive_info))
-            .check(matches(isDisplayed()))
+            onView(withText(R.string.index_case_isolation_advice_information_box_description_england))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
 
-        onView(withText(R.string.test_result_negative_then_positive_continue_explanation))
-            .check(matches(isDisplayed()))
+            onView(withId(R.id.isolationRequestTitle1))
+                .check(matches(isDisplayed()))
+            onView(withId(R.id.isolationRequestTitle2))
+                .check(matches(not(isDisplayed())))
+            onView(withId(R.id.isolationRequestTitle3))
+                .check(matches(not(isDisplayed())))
+        } else {
+            onView(withText(R.string.self_isolate_for))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+
+            onView(withText(R.string.state_test_positive_info))
+                .check(matches(isDisplayed()))
+
+            onView(withText(R.string.test_result_negative_then_positive_continue_explanation))
+                .check(matches(isDisplayed()))
+            onView(withId(R.id.isolationRequestTitle1))
+                .check(matches(isDisplayed()))
+            onView(withId(R.id.isolationRequestTitle2))
+                .check(matches(isDisplayed()))
+        }
     }
 
     fun checkActivityDisplaysPositiveWillBeInIsolation(remainingDaysInIsolation: Int) {
@@ -82,15 +106,37 @@ class TestResultRobot(
             .check(matches(isDisplayed()))
     }
 
-    fun checkActivityDisplaysPositiveContinueIsolation() {
-        onView(withText(R.string.test_result_positive_continue_self_isolation_title_1))
-            .check(matches(isDisplayed()))
+    fun checkActivityDisplaysPositiveContinueIsolation(country: PostCodeDistrict) {
+        if (country == ENGLAND) {
+            onView(withText(R.string.index_case_continue_isolation_advice_heading_title_england))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
 
-        onView(withText(R.string.state_test_positive_info))
-            .check(matches(isDisplayed()))
+            onView(
+                allOf(
+                    withId(R.id.stateTextView),
+                    withText(R.string.index_case_isolation_advice_information_box_description_england)
+                )
+            )
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
 
-        onView(withText(R.string.test_result_positive_continue_self_isolate_explanation_1))
-            .check(matches(isDisplayed()))
+            onView(withId(R.id.isolationRequestTitle1))
+                .check(matches(isDisplayed()))
+            onView(withId(R.id.isolationRequestTitle2))
+                .check(matches(not(isDisplayed())))
+            onView(withId(R.id.isolationRequestTitle3))
+                .check(matches(not(isDisplayed())))
+        } else {
+            onView(withText(R.string.test_result_positive_continue_self_isolation_title_1))
+                .check(matches(isDisplayed()))
+
+            onView(withText(R.string.state_test_positive_info))
+                .check(matches(isDisplayed()))
+
+            onView(withText(R.string.test_result_positive_continue_self_isolate_explanation_1))
+                .check(matches(isDisplayed()))
+        }
     }
 
     fun checkActivityDisplaysPositiveContinueIsolation(remainingDaysInIsolation: Int) {
@@ -123,15 +169,25 @@ class TestResultRobot(
             .check(matches(isDisplayed()))
     }
 
-    fun checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() {
-        onView(withText(R.string.self_isolate_for))
-            .check(matches(isDisplayed()))
+    fun checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest(country: PostCodeDistrict) {
+        if (country == ENGLAND) {
+            onView(withText(R.string.index_case_isolation_advice_heading_title_england))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
 
-        onView(withText(R.string.test_result_positive_self_isolate_and_book_test_title_3))
-            .check(matches(isDisplayed()))
+            onView(withText(R.string.index_case_isolation_advice_information_box_description_england))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+        } else {
+            onView(withText(R.string.self_isolate_for))
+                .check(matches(isDisplayed()))
 
-        onView(withText(R.string.state_test_positive_and_book_test_info))
-            .check(matches(isDisplayed()))
+            onView(withText(R.string.test_result_positive_self_isolate_and_book_test_title_3))
+                .check(matches(isDisplayed()))
+
+            onView(withText(R.string.state_test_positive_and_book_test_info))
+                .check(matches(isDisplayed()))
+        }
     }
 
     fun checkActivityDisplaysPositiveWontBeInIsolation() {
@@ -225,6 +281,11 @@ class TestResultRobot(
     fun checkIsolationActionButtonShowsContinue() {
         onView(withId(R.id.isolationRequestActionButton))
             .check(matches(withText(R.string.continue_button)))
+    }
+
+    fun checkIsolationActionButtonShowsAnonymouslyNotifyOthers() {
+        onView(withId(R.id.isolationRequestActionButton))
+            .check(matches(withText(R.string.index_case_isolation_advice_primary_button_title_england)))
     }
 
     fun checkIsolationActionButtonShowsBackHome() {
@@ -425,7 +486,7 @@ class TestResultRobot(
 
     fun checkHasCloseToolbarOption() {
         onView(
-            Matchers.allOf(
+            allOf(
                 Matchers.instanceOf(AppCompatImageButton::class.java),
                 withParent(withId(R.id.primaryToolbar))
             )

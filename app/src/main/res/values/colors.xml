@@ -26,6 +26,9 @@
     <color name="focus_yellow">#FFEB3B</color>
     <color name="amber">#FFB81C</color>
 
+    <!--no isolation, England colors-->
+    <color name="no_isolation_blue">#00A9CE</color>
+
     <!-- use case relevant colors -->
     <color name="qr_code_overlay">#AA000000</color>
     <color name="about_app_text_color">#333333</color>

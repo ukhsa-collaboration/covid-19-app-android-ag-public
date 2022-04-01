@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -9,6 +10,8 @@ import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AskedToShareExposureKeysInTheInitialFlow
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.Finish
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.NavigateToOrderTest
@@ -38,9 +41,13 @@ class TestResultViewModelTest {
     private val evaluateTestResultViewState = mockk<EvaluateTestResultViewState>(relaxed = true)
     private val acknowledgeTestResult = mockk<AcknowledgeTestResult>(relaxUnitFun = true)
     private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxUnitFun = true)
+    private val localAuthorityPostCodeProvider = mockk<LocalAuthorityPostCodeProvider>(relaxUnitFun = true) {
+        coEvery { requirePostCodeDistrict() } returns PostCodeDistrict.ENGLAND
+    }
 
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxed = true)
     private val navigationObserver = mockk<Observer<NavigationEvent>>(relaxed = true)
+    private val localAuthorityPostCodeObserver = mockk<Observer<Unit>>(relaxed = true)
 
     private lateinit var testSubject: TestResultViewModel
 
@@ -113,14 +120,21 @@ class TestResultViewModelTest {
     )
 
     private fun createTestSubject() {
-        testSubject = TestResultViewModel(evaluateTestResultViewState, acknowledgeTestResult, analyticsEventProcessor)
+        testSubject = TestResultViewModel(
+            evaluateTestResultViewState,
+            acknowledgeTestResult,
+            analyticsEventProcessor,
+            localAuthorityPostCodeProvider
+        )
         testSubject.viewState().observeForever(viewStateObserver)
         testSubject.navigationEvent().observeForever(navigationObserver)
     }
 
     companion object {
         val noKeysNoTest = AcknowledgementCompletionActions(suggestBookTest = NoTest, shouldAllowKeySubmission = false)
-        val noKeysNonFollowUpTest = AcknowledgementCompletionActions(suggestBookTest = RegularTest, shouldAllowKeySubmission = false)
-        val keysFollowUpTest = AcknowledgementCompletionActions(suggestBookTest = FollowUpTest, shouldAllowKeySubmission = true)
+        val noKeysNonFollowUpTest =
+            AcknowledgementCompletionActions(suggestBookTest = RegularTest, shouldAllowKeySubmission = false)
+        val keysFollowUpTest =
+            AcknowledgementCompletionActions(suggestBookTest = FollowUpTest, shouldAllowKeySubmission = true)
     }
 }

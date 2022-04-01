@@ -69,13 +69,16 @@ class SelfDiagnosis(
     }
 
     fun selfDiagnosePositiveAndOrderTest(receiveResultImmediately: Boolean) {
+        selfDiagnosePositive(receiveResultImmediately)
+        orderTest()
+    }
+
+    fun selfDiagnosePositive(receiveResultImmediately: Boolean) {
         espressoTest.testAppContext.virologyTestingApi.pollingTestResultHttpStatusCode =
             if (receiveResultImmediately) 200 else 204
 
         selfDiagnosePositive(CannotRememberDate)
 
         symptomsAdviceIsolateRobot.clickBottomActionButton()
-
-        orderTest()
     }
 }

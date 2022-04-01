@@ -4,18 +4,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jeroenmols.featureflag.framework.FeatureFlag.NEW_ENGLAND_CONTACT_CASE_JOURNEY
+import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_ENGLAND_CONTACT_CASE_FLOW
+import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_WALES_CONTACT_CASE_FLOW
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.exposure.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.ContactJourney.NewEnglandJourney
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.ContactJourney.NewWalesJourney
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.ContactJourney.QuestionnaireJourney
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.NavigationTarget.ExposureNotificationAgeLimit
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.NavigationTarget.NewEnglandContactAdvice
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.NavigationTarget.NewContactJourney
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.NavigationTarget.ContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.OptOutReason.NEW_ADVICE
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -51,10 +54,10 @@ class ExposureNotificationViewModel @Inject constructor(
         }
         viewModelScope.launch {
             contactJourneyLiveData.postValue(
-                if (shouldShowNewEnglandJourney()) {
-                    NewEnglandJourney(encounterDate)
-                } else {
-                    QuestionnaireJourney(
+                when {
+                    shouldShowNewContactJourneyEngland() -> NewEnglandJourney(encounterDate)
+                    shouldShowNewContactJourneyWales() -> NewWalesJourney(encounterDate)
+                    else -> QuestionnaireJourney(
                         encounterDate = encounterDate,
                         shouldShowTestingAndIsolationAdvice = !isolationStateMachine.readLogicalState()
                             .isActiveIndexCase(clock)
@@ -67,20 +70,33 @@ class ExposureNotificationViewModel @Inject constructor(
     fun onPrimaryButtonClick() {
         viewModelScope.launch {
             navigationTarget.value = when {
-                shouldShowNewEnglandJourney() && isolationStateMachine.readLogicalState().isActiveIndexCase(clock) -> {
+                shouldShowNewContactJourneyEngland() && isolationStateMachine.readLogicalState().isActiveIndexCase(clock) -> {
                     optOutOfContactIsolation(reason = NEW_ADVICE)
                     acknowledgeRiskyContact()
                     ContinueIsolation
                 }
-                shouldShowNewEnglandJourney() -> NewEnglandContactAdvice
+                shouldShowNewContactJourneyWales() && isolationStateMachine.readLogicalState().isActiveIndexCase(clock) -> {
+                    optOutOfContactIsolation(reason = NEW_ADVICE)
+                    acknowledgeRiskyContact()
+                    ContinueIsolation
+                }
+                shouldShowNewContactJourneyEngland() -> NewContactJourney
+                shouldShowNewContactJourneyWales() -> NewContactJourney
                 else -> ExposureNotificationAgeLimit
             }
         }
     }
 
-    private suspend fun shouldShowNewEnglandJourney(): Boolean =
+    private suspend fun shouldShowNewContactJourneyEngland(): Boolean =
         withContext(viewModelScope.coroutineContext) {
-            RuntimeBehavior.isFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) && localAuthorityPostCodeProvider.requirePostCodeDistrict() == ENGLAND
+            !RuntimeBehavior.isFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) &&
+            localAuthorityPostCodeProvider.requirePostCodeDistrict() == ENGLAND
+        }
+
+    private suspend fun shouldShowNewContactJourneyWales(): Boolean =
+        withContext(viewModelScope.coroutineContext) {
+            !RuntimeBehavior.isFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) &&
+                    localAuthorityPostCodeProvider.requirePostCodeDistrict() == WALES
         }
 
     sealed class ContactJourney(open val encounterDate: LocalDate) {
@@ -90,11 +106,13 @@ class ExposureNotificationViewModel @Inject constructor(
         ) : ContactJourney(encounterDate)
 
         data class NewEnglandJourney(override val encounterDate: LocalDate) : ContactJourney(encounterDate)
+
+        data class NewWalesJourney(override val encounterDate: LocalDate) : ContactJourney(encounterDate)
     }
 
     sealed class NavigationTarget {
         object ExposureNotificationAgeLimit : NavigationTarget()
-        object NewEnglandContactAdvice : NavigationTarget()
+        object NewContactJourney : NavigationTarget()
         object ContinueIsolation : NavigationTarget()
     }
 }

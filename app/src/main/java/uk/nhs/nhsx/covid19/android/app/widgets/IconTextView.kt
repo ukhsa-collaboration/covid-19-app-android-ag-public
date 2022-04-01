@@ -54,6 +54,11 @@ class IconTextView @JvmOverloads constructor(
         this.layoutParams = layoutParams
     }
 
+    fun updateText(value: String) {
+        _text = value
+        binding.iconViewText.text = value
+    }
+
     companion object {
         private const val VERTICAL_MARGIN_IN_DP = 12
         private const val DEFAULT_TEXT = ""

@@ -2,7 +2,8 @@ package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.jeroenmols.featureflag.framework.FeatureFlag.NEW_ENGLAND_CONTACT_CASE_JOURNEY
+import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_ENGLAND_CONTACT_CASE_FLOW
+import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_WALES_CONTACT_CASE_FLOW
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -16,11 +17,12 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.exposure.OptOutOfContactIsolation
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.ContactJourney
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.ContactJourney.NewEnglandJourney
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.ContactJourney.NewWalesJourney
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.ContactJourney.QuestionnaireJourney
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.NavigationTarget
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.NavigationTarget.ContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.NavigationTarget.ExposureNotificationAgeLimit
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.NavigationTarget.NewEnglandContactAdvice
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.NavigationTarget.NewContactJourney
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
@@ -67,34 +69,59 @@ class ExposureNotificationViewModelTest : CoroutineTest() {
 
     @Test
     fun `when encounter date is present and not in active index case isolation then update view state to show isolation and testing advice for Wales`() {
-        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
-        checkViewStateOfIsolationAndTestingAdvice(
-            isActiveIndexCase = false,
-            contactJourney = QuestionnaireJourney(
-                encounterDate = expectedEncounterDate,
-                shouldShowTestingAndIsolationAdvice = true
+        runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
+            coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+            checkViewStateOfIsolationAndTestingAdvice(
+                isActiveIndexCase = false,
+                contactJourney = NewWalesJourney(
+                    encounterDate = expectedEncounterDate
+                )
             )
-        )
+        }
     }
 
     @Test
     fun `when encounter date is present and not in active index case isolation then update view state to show isolation and testing advice for England`() {
-        checkViewStateOfIsolationAndTestingAdvice(
-            isActiveIndexCase = false,
-            contactJourney = NewEnglandJourney(encounterDate = expectedEncounterDate)
-        )
+        runWithFeature(OLD_ENGLAND_CONTACT_CASE_FLOW, false) {
+            checkViewStateOfIsolationAndTestingAdvice(
+                isActiveIndexCase = false,
+                contactJourney = NewEnglandJourney(encounterDate = expectedEncounterDate)
+            )
+        }
     }
 
     @Test
-    fun `when encounter date is present and in active index case isolation then update view state to hide isolation and testing advice for Wales`() {
-        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
-        checkViewStateOfIsolationAndTestingAdvice(
-            isActiveIndexCase = true,
-            contactJourney = QuestionnaireJourney(
-                encounterDate = expectedEncounterDate,
-                shouldShowTestingAndIsolationAdvice = false
+    fun `when encounter date is present and not in active index case isolation then update view state to show questionnaire for England`() {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW, true) {
+            checkViewStateOfIsolationAndTestingAdvice(
+                isActiveIndexCase = false,
+                contactJourney = QuestionnaireJourney(encounterDate = expectedEncounterDate, true)
             )
-        )
+        }
+    }
+
+    @Test
+    fun `when encounter date is present and not in active index case isolation then update view state to show questionnaire for Wales`() {
+        runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW, true) {
+            coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+            checkViewStateOfIsolationAndTestingAdvice(
+                isActiveIndexCase = false,
+                contactJourney = QuestionnaireJourney(encounterDate = expectedEncounterDate, true)
+            )
+        }
+    }
+
+    @Test
+    fun `when encounter date is present and in active index case isolation then update view state to show isolation and testing advice for Wales`() {
+        runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
+            coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+            checkViewStateOfIsolationAndTestingAdvice(
+                isActiveIndexCase = true,
+                contactJourney = NewWalesJourney(
+                    encounterDate = expectedEncounterDate
+                )
+            )
+        }
     }
 
     @Test
@@ -116,7 +143,7 @@ class ExposureNotificationViewModelTest : CoroutineTest() {
 
     @Test
     fun `opts-out of contact isolation and acknowledges exposure notification on primary button click when user is in England and is already isolating as index case`() {
-        runWithFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) {
+        runWithFeature(OLD_ENGLAND_CONTACT_CASE_FLOW, false) {
             coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
             val isolationLogicalState = mockk<IsolationLogicalState>()
             every { isolationStateMachine.readLogicalState() } returns isolationLogicalState
@@ -129,8 +156,22 @@ class ExposureNotificationViewModelTest : CoroutineTest() {
     }
 
     @Test
+    fun `opts-out of contact isolation and acknowledges exposure notification on primary button click when user is in Wales and is already isolating as index case`() {
+        runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
+            coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+            val isolationLogicalState = mockk<IsolationLogicalState>()
+            every { isolationStateMachine.readLogicalState() } returns isolationLogicalState
+            every { isolationLogicalState.isActiveIndexCase(fixedClock) } returns true
+
+            testSubject.onPrimaryButtonClick()
+
+            verify { navigationTargetObserver.onChanged(ContinueIsolation) }
+        }
+    }
+
+    @Test
     fun `opens new England advice on primary button click when user is in England`() {
-        runWithFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) {
+        runWithFeature(OLD_ENGLAND_CONTACT_CASE_FLOW, false) {
             coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
             val isolationLogicalState = mockk<IsolationLogicalState>()
             every { isolationStateMachine.readLogicalState() } returns isolationLogicalState
@@ -138,13 +179,27 @@ class ExposureNotificationViewModelTest : CoroutineTest() {
 
             testSubject.onPrimaryButtonClick()
 
-            verify { navigationTargetObserver.onChanged(NewEnglandContactAdvice) }
+            verify { navigationTargetObserver.onChanged(NewContactJourney) }
         }
     }
 
     @Test
-    fun `opens age question screen on primary button click when user is in Wales`() {
-        runWithFeatureEnabled(NEW_ENGLAND_CONTACT_CASE_JOURNEY) {
+    fun `opens new England advice on primary button click when user is in Wales`() {
+        runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
+            coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+            val isolationLogicalState = mockk<IsolationLogicalState>()
+            every { isolationStateMachine.readLogicalState() } returns isolationLogicalState
+            every { isolationLogicalState.isActiveIndexCase(fixedClock) } returns false
+
+            testSubject.onPrimaryButtonClick()
+
+            verify { navigationTargetObserver.onChanged(NewContactJourney) }
+        }
+    }
+
+    @Test
+    fun `opens age question screen on primary button click when feature flag is disabled`() {
+        runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW, true) {
             coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
 
             testSubject.onPrimaryButtonClick()
@@ -154,8 +209,8 @@ class ExposureNotificationViewModelTest : CoroutineTest() {
     }
 
     @Test
-    fun `opens age question screen on primary button click when user is in England and new contact case journey is disabled`() {
-        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+    fun `opens age question screen on primary button click and new contact case journey feature flag is disabled`() {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
 
             testSubject.onPrimaryButtonClick()

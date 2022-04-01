@@ -11,7 +11,6 @@ import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.ShouldShowEncount
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
-import uk.nhs.nhsx.covid19.android.app.status.isolationhub.ScheduleIsolationHubReminder
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
@@ -24,17 +23,13 @@ class AcknowledgeRiskyContactTest {
     private val exposureNotificationRetryAlarmController =
         mockk<ExposureNotificationRetryAlarmController>(relaxed = true)
     private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxed = true)
-    private val scheduleIsolationHubReminder = mockk<ScheduleIsolationHubReminder>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-01-01T10:00:00Z"), ZoneOffset.UTC)
     private val isolationHelper = IsolationLogicalHelper(fixedClock)
 
     private val acknowledgeRiskyContact = AcknowledgeRiskyContact(
         exposureNotificationRetryAlarmController,
         shouldShowEncounterDetectionActivityProvider,
-        analyticsEventProcessor,
-        isolationStateMachine,
-        scheduleIsolationHubReminder,
-        fixedClock
+        analyticsEventProcessor
     )
 
     @Test
@@ -47,7 +42,6 @@ class AcknowledgeRiskyContactTest {
         verify { exposureNotificationRetryAlarmController.cancel() }
         verify { shouldShowEncounterDetectionActivityProvider setProperty "value" value null }
         verify { analyticsEventProcessor.track(AcknowledgedStartOfIsolationDueToRiskyContact) }
-        verify(exactly = 0) { scheduleIsolationHubReminder() }
     }
 
     @Test
@@ -60,6 +54,5 @@ class AcknowledgeRiskyContactTest {
         verify { exposureNotificationRetryAlarmController.cancel() }
         verify { shouldShowEncounterDetectionActivityProvider setProperty "value" value null }
         verify { analyticsEventProcessor.track(AcknowledgedStartOfIsolationDueToRiskyContact) }
-        verify { scheduleIsolationHubReminder() }
     }
 }

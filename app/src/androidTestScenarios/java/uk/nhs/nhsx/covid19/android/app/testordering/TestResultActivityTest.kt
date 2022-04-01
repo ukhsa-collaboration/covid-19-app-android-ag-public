@@ -9,8 +9,11 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.exposure.setTemporaryExposureKeyHistoryResolutionRequired
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -59,6 +62,8 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
         description = "User receives positive confirmatory test result while in isolation",
         kind = SCREEN
     ) {
+        givenLocalAuthorityIsInWales()
+
         testAppContext.setState(isolationHelper.contact().asIsolation())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
@@ -74,9 +79,56 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysPositiveContinueIsolation()
+        testResultRobot.checkActivityDisplaysPositiveContinueIsolation(WALES)
         testResultRobot.checkExposureLinkIsDisplayed()
         testResultRobot.checkIsolationActionButtonShowsContinue()
+
+        testResultRobot.clickIsolationActionButton()
+
+        step(
+            stepName = "Positive in isolation",
+            stepDescription = "User receives positive test result while in isolation"
+        )
+
+        waitFor { shareKeysInformationRobot.checkActivityIsDisplayed() }
+
+        shareKeysInformationRobot.clickContinueButton()
+
+        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+
+        shareKeysResultRobot.clickActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        isolationChecker.assertActiveIndexNoContact()
+    }
+
+    @Test
+    @Reported
+    fun showContinueToSelfIsolateScreenOnPositiveConfirmatoryForEngland() = reporter(
+        scenario = "Test result",
+        title = "Positive confirmatory in isolation",
+        description = "User receives positive confirmatory test result while in isolation",
+        kind = SCREEN
+    ) {
+        testAppContext.setState(isolationHelper.contact().asIsolation())
+
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "a",
+                testEndDate = Instant.now(),
+                testResult = POSITIVE,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
+            )
+        )
+
+        startTestActivity<TestResultActivity>()
+
+        testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND)
+        testResultRobot.checkExposureLinkIsDisplayed()
+        testResultRobot.checkIsolationActionButtonShowsAnonymouslyNotifyOthers()
 
         testResultRobot.clickIsolationActionButton()
 
@@ -212,7 +264,8 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
     @RetryFlakyTest
     @Test
-    fun showIsolationScreenWhenReceivingNegativeConfirmatoryAndThenPositiveConfirmatoryTestResultAndSharingKeys() {
+    fun showIsolationScreenWhenReceivingNegativeConfirmatoryAndThenPositiveConfirmatoryTestResultAndSharingKeysForEngland() {
+        givenLocalAuthorityIsInEngland()
         testAppContext.setState(
             AcknowledgedTestResult(
                 testEndDate = LocalDate.now(),
@@ -236,7 +289,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation()
+        testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(country = ENGLAND)
 
         testResultRobot.checkExposureLinkIsDisplayed()
 
@@ -260,6 +313,8 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
     @RetryFlakyTest
     @Test
     fun showIsolationScreenWhenReceivingNegativeConfirmatoryAndThenPositiveConfirmatoryTestResultAndRefusingToShareKeys() {
+        givenLocalAuthorityIsInWales()
+
         testAppContext.setTemporaryExposureKeyHistoryResolutionRequired(testAppContext.app, false)
 
         testAppContext.setState(isolationHelper.neverInIsolation())
@@ -288,7 +343,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation()
+        testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(country = WALES)
 
         testResultRobot.checkExposureLinkIsDisplayed()
 
@@ -541,5 +596,61 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
         testAppContext.device.pressBack()
 
         waitFor { assertTrue(activity!!.isDestroyed) }
+    }
+
+    @RetryFlakyTest
+    @Test
+    fun showIsolationAdviceScreenWhenReceivingPositiveConfirmatoryTestResultAndSharingKeysForEngland() {
+        givenLocalAuthorityIsInEngland()
+
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "a2",
+                testEndDate = Instant.now(),
+                testResult = POSITIVE,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
+            )
+        )
+
+        startTestActivity<TestResultActivity>()
+
+        testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(country = ENGLAND)
+
+        testResultRobot.checkExposureLinkIsDisplayed()
+
+        testResultRobot.checkIsolationActionButtonShowsContinue()
+
+        testResultRobot.clickIsolationActionButton()
+
+        waitFor { shareKeysInformationRobot.checkActivityIsDisplayed() }
+    }
+
+    @RetryFlakyTest
+    @Test
+    fun showIsolationAdviceScreenWhenReceivingPositiveUnConfirmedTestResultAndDoNotRequireConfirmatoryTestForEngland() {
+        givenLocalAuthorityIsInEngland()
+
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "a2",
+                testEndDate = Instant.now(),
+                testResult = POSITIVE,
+                testKitType = RAPID_RESULT,
+                diagnosisKeySubmissionSupported = false,
+                requiresConfirmatoryTest = false
+            )
+        )
+
+        startTestActivity<TestResultActivity>()
+
+        testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(country = ENGLAND)
+
+        testResultRobot.checkExposureLinkIsDisplayed()
+
+        testResultRobot.checkIsolationActionButtonShowsContinue()
+
+        testResultRobot.clickIsolationActionButton()
     }
 }

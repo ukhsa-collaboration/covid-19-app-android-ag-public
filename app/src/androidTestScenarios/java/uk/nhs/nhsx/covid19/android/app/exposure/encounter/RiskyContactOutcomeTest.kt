@@ -1,6 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
-import com.jeroenmols.featureflag.framework.FeatureFlag.NEW_ENGLAND_CONTACT_CASE_JOURNEY
+import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_ENGLAND_CONTACT_CASE_FLOW
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.Default
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.WalesWithinAdviceWindow
@@ -19,7 +19,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationRe
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ExposureNotificationVaccinationStatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.RiskyContactIsolationAdviceRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import java.time.LocalDate
@@ -37,7 +37,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
     //region England
     @Test
     fun givenContactIsolation_whenSelectingNoToAgeLimitQuestionAndClickingConfirm_thenNavigatesToIsolatingScreenOptingOut() {
-        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()
 
@@ -67,7 +67,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
     @Test
     fun givenContactIsolation_whenSelectingYesToAgeLimitAndVaccinationQuestionsAndClickingConfirm_thenNavigatesToNotIsolatingAsFullyVaccinatedScreen() {
-        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()
 
@@ -109,7 +109,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
     @Test
     fun givenContactIsolation_whenSelectingYesToAgeLimit_thenYesToAllDoses_thenNoToDate_thenYesToClinicalTrial_navigatesToNotIsolatingAsFullyVaccinatedScreen() {
-        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()
 
@@ -203,7 +203,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
     @Test
     fun givenIsInEngland_inContactIsolation_whenNoToFullyVaccinated_thenNoToMedicallyExempt_thenYesToClinicalTrial_navigatesToNotIsolatingAsFullyVaccinated() {
-        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()
 
@@ -242,7 +242,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
     @Test
     fun givenIsInEngland_inContactIsolation_whenYesToFullyVaccinated_thenNoToDate_thenNoToClinicalTrial_thenNoToMedicallyExempt_navigatesToIsolationScreen() {
-        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()
 
@@ -287,7 +287,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
     @Test
     fun givenIsInEngland_inContactIsolation_whenNoToFullyVaccinated_thenYesToMedicallyExempt_navigatesToNotIsolatingAsMedicallyExemptScreen() {
-        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()
 
@@ -320,7 +320,7 @@ class RiskyContactOutcomeTest : EspressoTest(), LocalAuthoritySetupHelper, Isola
 
     @Test
     fun givenIsInEngland_inContactIsolation_whenYesToFullyVaccinated_thenNoToDate_thenNoToClinicalTrial_thenYesToExempt_navigatesToNotIsolatingAsMedicallyExempt() {
-        runWithFeature(NEW_ENGLAND_CONTACT_CASE_JOURNEY, enabled = false) {
+        runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()
 

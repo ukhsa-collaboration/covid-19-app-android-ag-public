@@ -75,7 +75,8 @@ class MainActivityFlowTest : EspressoTest() {
     fun startingAppWithOnboardingCompletedAndPolicyAcceptedWithLocalAuthoritySet_shouldShowStatusScreen() {
         testAppContext.setOnboardingCompleted(true)
         testAppContext.setPolicyUpdateAccepted(true)
-        testAppContext.setLocalAuthority("1")
+
+        testAppContext.setLocalAuthority("E07000240")
 
         startTestActivity<MainActivity>()
 
@@ -119,6 +120,8 @@ class MainActivityFlowTest : EspressoTest() {
         setupOnboardingComplete()
         testAppContext.getExposureNotificationApi().setEnabled(false)
 
+        testAppContext.setLocalAuthority("E07000240")
+
         startTestActivity<MainActivity> {
             putExtra(NotificationProvider.CONTACT_TRACING_HUB_ACTION, ContactTracingHubAction.ONLY_NAVIGATE)
         }
@@ -132,6 +135,8 @@ class MainActivityFlowTest : EspressoTest() {
         testAppContext.getExposureNotificationApi().setEnabled(false)
         testAppContext.getExposureNotificationApi().activationResult = Result.Success()
 
+        testAppContext.setLocalAuthority("E07000240")
+
         startTestActivity<MainActivity> {
             putExtra(NotificationProvider.CONTACT_TRACING_HUB_ACTION, ContactTracingHubAction.NAVIGATE_AND_TURN_ON)
         }
@@ -143,6 +148,8 @@ class MainActivityFlowTest : EspressoTest() {
     @Test
     fun whenStartedFromIsolationHubReminderNotification_navigateToIsolationHub_tapBack_navigateToStatusActivity() {
         setupOnboardingComplete()
+
+        testAppContext.setLocalAuthority("E07000240")
 
         startTestActivity<MainActivity> {
             putExtra(NotificationProvider.TAPPED_ON_ISOLATION_HUB_REMINDER_NOTIFICATION, true)
@@ -158,7 +165,9 @@ class MainActivityFlowTest : EspressoTest() {
     @Test
     fun whenStartedFromLocalMessagesNotification_navigateToLocalMessages_tapBack_navigateToStatusActivity() {
         setupOnboardingComplete()
+
         testAppContext.setLocalAuthority("E07000240")
+
         testAppContext.setPostCode("AL1")
         testAppContext.getLocalMessagesProvider().localMessages = MockLocalMessagesApi.successResponse
 
@@ -176,6 +185,8 @@ class MainActivityFlowTest : EspressoTest() {
     @Test
     fun whenNotificationFlagIsNotSet_navigateToStatusActivity() {
         setupOnboardingComplete()
+
+        testAppContext.setLocalAuthority("E07000240")
 
         startTestActivity<MainActivity>()
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/riskyContactIsolationOptOutContainer"
+    android:id="@+id/symptomaticContactIsolationGuidanceContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -24,7 +24,7 @@
             android:paddingVertical="@dimen/vertical_margin_large">
 
             <ImageView
-                android:id="@+id/riskyContactAdviceIcon"
+                android:id="@+id/symptomaticContactAdviceIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -32,62 +32,71 @@
                 android:src="@drawable/ic_elbow_bump" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
-                android:id="@+id/riskyContactAdviceTitle"
+                android:id="@+id/symptomaticContactAdviceTitle"
                 style="@style/TitleIsolation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_large"
-                android:text="@string/risky_contact_opt_out_advice_title"
+                android:text="@string/symptomatic_contact_guidance_title_england"
                 android:textAlignment="center" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
-                android:id="@+id/riskyContactAdviceFreshAir"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin_medium"
-                app:drawable="@drawable/ic_meeting_outdoor"
-                app:text="@string/risky_contact_opt_out_advice_meeting_indoors" />
-
-            <uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
-               android:id="@+id/riskyContactAdviceFaceCovering"
+                android:id="@+id/symptomaticContactAdviceFaceCovering"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_medium"
                 app:drawable="@drawable/ic_mask"
-                app:text="@string/risky_contact_opt_out_advice_mask" />
+                app:text="@string/symptomatic_contact_guidance_mask_england" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
-                android:id="@+id/riskyContactAdviceTestingHub"
+                android:id="@+id/symptomaticContactAdviceTestingHub"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_medium"
-                app:drawable="@drawable/ic_testing_hub"
-                app:text="@string/risky_contact_opt_out_advice_testing_hub" />
+                app:drawable="@drawable/ic_social_distancing"
+                app:text="@string/symptomatic_contact_guidance_testing_hub_england" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
-                android:id="@+id/riskyContactAdviceWashHands"
+                android:id="@+id/symptomaticContactAdviceFreshAir"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_medium"
+                app:drawable="@drawable/ic_meeting_outdoor"
+                app:text="@string/symptomatic_contact_guidance_meeting_indoors_england" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
+                android:id="@+id/symptomaticContactAdviceWashHands"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_medium"
                 app:drawable="@drawable/ic_wash_hands"
-                app:text="@string/risky_contact_opt_out_advice_wash_hands" />
+                app:text="@string/symptomatic_contact_guidance_wash_hands_england" />
 
-            <TextView
-                android:id="@+id/furtherAdviceTextView"
-                style="@style/Body1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin_large"
-                android:visibility="gone"
-                android:text="@string/risky_contact_opt_out_further_advice" />
 
-            <TextView
-                android:id="@+id/nhsGuidanceLinkTextView"
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                android:id="@+id/exposureFaqsLinkTextView"
                 style="@style/LinkText.WithIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:text="@string/risky_contact_opt_out_further_advice_link_text"/>
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/symptomatic_contact_guidance_common_questions_link_england"
+                app:linkUrl="@string/url_exposure_faqs" />
+
+            <TextView
+                android:id="@+id/forFurtherAdviseTextView"
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/symptomatic_contact_guidance_further_advice_england" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                android:id="@+id/onlineServiceLinkTextView"
+                style="@style/LinkText.WithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/symptomatic_contact_guidance_nhs_online_link_england"
+                app:linkUrl="@string/url_nhs_111_online" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/primaryActionButton"
@@ -95,17 +104,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_medium"
-                android:drawableEnd="@drawable/ic_link"
-                android:drawablePadding="8dp"
                 android:drawableTint="?colorOnPrimary"
-                android:text="@string/risky_contact_opt_out_primary_button_title" />
+                android:text="@string/symptomatic_contact_primary_button_title_england" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/secondaryActionButton"
-                style="@style/TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/risky_contact_opt_out_secondary_button_title" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

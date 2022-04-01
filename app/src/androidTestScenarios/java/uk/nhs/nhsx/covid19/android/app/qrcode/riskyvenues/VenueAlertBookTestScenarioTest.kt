@@ -7,6 +7,7 @@ import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.OrderTest
 import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
+import uk.nhs.nhsx.covid19.android.app.questionnaire.NewGuidanceForSymptomaticCasesEnglandRobot
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessment
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
@@ -24,9 +25,10 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestOrderingRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.VenueAlertBookTestRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import java.time.Instant
 
-class VenueAlertBookTestScenarioTest : EspressoTest() {
+class VenueAlertBookTestScenarioTest : EspressoTest(), LocalAuthoritySetupHelper {
 
     private val venueAlertBookTestRobot = VenueAlertBookTestRobot()
     private val symptomsAfterRiskyVenueVisitRobot = SymptomsAfterRiskyVenueRobot()
@@ -36,6 +38,7 @@ class VenueAlertBookTestScenarioTest : EspressoTest() {
     private val symptomsAdviceIsolateRobot = SymptomsAdviceIsolateRobot()
     private val orderLfdTestRobot = OrderLfdTestRobot()
     private val browserRobot = BrowserRobot()
+    private val guidanceForSymptomaticCasesEnglandRobot = NewGuidanceForSymptomaticCasesEnglandRobot()
 
     private val statusRobot = StatusRobot()
     private val orderTest = OrderTest(this)
@@ -125,7 +128,8 @@ class VenueAlertBookTestScenarioTest : EspressoTest() {
     }
 
     @Test
-    fun whenNotInActiveIndexCaseIsolation_navigateToSymptomsAfterRiskyVenue_clickHasSymptoms_completeQuestionnaire_orderTest_shouldShowStatusActivity() {
+    fun notActiveIndexCaseIsolation_navigateToSymptomsAfterRiskyVenue_hasSymptoms_completeQuestionnaire_shouldShowNewAdviceActivity_forWales() {
+        givenLocalAuthorityIsInWales()
         testAppContext.setState(isolationHelper.contact().asIsolation())
 
         startVenueAlertBookTestActivity()
@@ -149,12 +153,62 @@ class VenueAlertBookTestScenarioTest : EspressoTest() {
             NoIndexCaseThenIsolationDueToSelfAssessment(testAppContext.getRemainingDaysInIsolation())
         ) }
         symptomsAdviceIsolateRobot.clickBottomActionButton()
+    }
 
-        waitFor { testOrderingRobot.checkActivityIsDisplayed() }
+    @Test
+    fun notActiveIndexCaseIsolation_navigateToSymptomsAfterRiskyVenue_hasSymptoms_completeQuestionnaire_shouldShowNewAdvice_showStatusActivity_forEngland() {
+        testAppContext.setState(isolationHelper.contact().asIsolation())
 
-        orderTest()
+        startVenueAlertBookTestActivity()
+
+        waitFor { venueAlertBookTestRobot.checkActivityIsDisplayed() }
+        venueAlertBookTestRobot.clickBookTestButton()
+
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed() }
+        symptomsAfterRiskyVenueVisitRobot.clickHasSymptomsButton()
+
+        waitFor { questionnaireRobot.checkActivityIsDisplayed() }
+        questionnaireRobot.selectSymptomsAtPositions(2)
+        questionnaireRobot.reviewSymptoms()
+
+        waitFor { reviewSymptomsRobot.checkActivityIsDisplayed() }
+        reviewSymptomsRobot.selectCannotRememberDate()
+        reviewSymptomsRobot.confirmSelection()
+
+        waitFor { symptomsAdviceIsolateRobot.checkActivityIsDisplayed() }
+
+        symptomsAdviceIsolateRobot.clickBottomActionButton()
+
+        waitFor { guidanceForSymptomaticCasesEnglandRobot.checkActivityIsDisplayed() }
+
+        guidanceForSymptomaticCasesEnglandRobot.clickPrimaryActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    @Test
+    fun whenNotInActiveIndexCaseIsolation_navigateToSymptomsAfterRiskyVenue_clickHasSymptoms_completeQuestionnaire_shouldShowNewAdviceActivity_forEngland() {
+        testAppContext.setState(isolationHelper.contact().asIsolation())
+
+        startVenueAlertBookTestActivity()
+
+        waitFor { venueAlertBookTestRobot.checkActivityIsDisplayed() }
+        venueAlertBookTestRobot.clickBookTestButton()
+
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed() }
+        symptomsAfterRiskyVenueVisitRobot.clickHasSymptomsButton()
+
+        waitFor { questionnaireRobot.checkActivityIsDisplayed() }
+        questionnaireRobot.selectSymptomsAtPositions(2)
+        questionnaireRobot.reviewSymptoms()
+
+        waitFor { reviewSymptomsRobot.checkActivityIsDisplayed() }
+        reviewSymptomsRobot.selectCannotRememberDate()
+        reviewSymptomsRobot.confirmSelection()
+
+        waitFor { symptomsAdviceIsolateRobot.checkActivityIsDisplayed() }
+
+        symptomsAdviceIsolateRobot.clickBottomActionButton()
     }
 
     @Test

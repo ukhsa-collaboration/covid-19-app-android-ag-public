@@ -13,6 +13,9 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsDidUpdateIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
@@ -29,7 +32,7 @@ class SymptomsAdviceIsolateRobot : HasActivity {
     override val containerId: Int
         get() = R.id.symptomsAdviceIsolateContainer
 
-    fun checkViewState(isolationSymptomAdvice: IsolationSymptomAdvice) {
+    fun checkViewState(isolationSymptomAdvice: IsolationSymptomAdvice, country: PostCodeDistrict = WALES) {
         when (isolationSymptomAdvice) {
             is IndexCaseThenHasSymptomsDidUpdateIsolation ->
                 checkIndexCaseThenHasSymptomsDidUpdateIsolationIsDisplayed(isolationSymptomAdvice.remainingDaysInIsolation)
@@ -38,7 +41,14 @@ class SymptomsAdviceIsolateRobot : HasActivity {
             IndexCaseThenNoSymptoms ->
                 checkIndexCaseThenNoSymptomsIsDisplayed()
             is NoIndexCaseThenIsolationDueToSelfAssessment ->
-                checkNoIndexCaseThenIsolationDueToSelfAssessmentIsDisplayed(isolationSymptomAdvice.remainingDaysInIsolation)
+                when (country) {
+                    ENGLAND -> {
+                        checkNoIndexCaseThenIsolationDueToSelfAssessmentIsDisplayedEngland()
+                    }
+                    else -> {
+                        checkNoIndexCaseThenIsolationDueToSelfAssessmentIsDisplayedWales(isolationSymptomAdvice.remainingDaysInIsolation)
+                    }
+                }
             is NoIndexCaseThenSelfAssessmentNoImpactOnIsolation ->
                 checkNoIndexCaseThenSelfAssessmentNoImpactOnIsolationIsDisplayed(isolationSymptomAdvice.remainingDaysInIsolation)
         }
@@ -83,7 +93,18 @@ class SymptomsAdviceIsolateRobot : HasActivity {
         checkBottomActionButtonIsDisplayedWithText(R.string.continue_button)
     }
 
-    private fun checkNoIndexCaseThenIsolationDueToSelfAssessmentIsDisplayed(remainingDaysInIsolation: Int) {
+    private fun checkNoIndexCaseThenIsolationDueToSelfAssessmentIsDisplayedEngland() {
+        checkCloseIconInToolbarIsNotDisplayed()
+        checkPreDaysTextViewIsNotDisplayed()
+        checkDaysUntilExpirationTextViewIsNotDisplayed()
+        checkPostDaysTextViewIsDisplayed(R.string.isolation_advice_symptomatic_title_england)
+        checkExposureLinkIsNotDisplayed()
+        checkStateInfo(R.string.isolation_advice_symptomatic_info_england, R.color.amber)
+        checkExplanationText(R.string.isolation_advice_symptomatic_description_england)
+        checkBottomActionButtonIsDisplayedWithText(R.string.isolation_advice_symptomatic_primary_button_title_england)
+    }
+
+    private fun checkNoIndexCaseThenIsolationDueToSelfAssessmentIsDisplayedWales(remainingDaysInIsolation: Int) {
         checkCloseIconInToolbarIsDisplayed()
         checkPreDaysTextViewIsDisplayed(R.string.self_isolate_for)
         checkDaysUntilExpirationTextViewIsDisplayed(
@@ -131,6 +152,11 @@ class SymptomsAdviceIsolateRobot : HasActivity {
         onView(withId(R.id.preDaysTextView))
             .check(matches(isDisplayed()))
             .check(matches(withText(textResId)))
+    }
+
+    private fun checkPreDaysTextViewIsNotDisplayed() {
+        onView(withId(R.id.preDaysTextView))
+            .check(matches(not(isDisplayed())))
     }
 
     private fun checkDaysUntilExpirationTextViewIsDisplayed(text: String) {

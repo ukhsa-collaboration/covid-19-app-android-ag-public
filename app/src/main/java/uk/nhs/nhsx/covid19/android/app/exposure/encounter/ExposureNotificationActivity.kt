@@ -15,9 +15,10 @@ import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.databinding.ActivityExposureNotificationBinding
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.ContactJourney
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.ContactJourney.NewEnglandJourney
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.ContactJourney.NewWalesJourney
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.ContactJourney.QuestionnaireJourney
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.NavigationTarget.ExposureNotificationAgeLimit
-import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.NavigationTarget.NewEnglandContactAdvice
+import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.NavigationTarget.NewContactJourney
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationViewModel.NavigationTarget.ContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationAgeLimitActivity
 import uk.nhs.nhsx.covid19.android.app.startActivity
@@ -57,7 +58,7 @@ class ExposureNotificationActivity : BaseActivity() {
         viewModel.navigationTarget().observe(this) {
             when (it) {
                 ExposureNotificationAgeLimit -> ExposureNotificationAgeLimitActivity.start(this)
-                NewEnglandContactAdvice -> startActivity<RiskyContactIsolationOptOutActivity>()
+                NewContactJourney -> startActivity<RiskyContactIsolationOptOutActivity>()
                 ContinueIsolation -> RiskyContactIsolationAdviceActivity.start(this)
             }
         }
@@ -67,6 +68,7 @@ class ExposureNotificationActivity : BaseActivity() {
         val formattedDate = contactJourney.encounterDate.uiLongFormat(this@ExposureNotificationActivity)
         when (contactJourney) {
             is NewEnglandJourney -> renderViewForNewEnglandJourney(formattedDate)
+            is NewWalesJourney -> renderViewForNewWalesJourney(formattedDate)
             is QuestionnaireJourney -> renderViewForQuestionnaireJourney(
                 formattedDate,
                 contactJourney.shouldShowTestingAndIsolationAdvice
@@ -84,6 +86,21 @@ class ExposureNotificationActivity : BaseActivity() {
         primaryActionButton.text = getString(string.contact_case_exposure_info_screen_continue_button_england)
         selfIsolationWarning.apply {
             stateText = getString(string.contact_case_exposure_info_screen_information_england)
+            stateColor = ContextCompat.getColor(context, color.amber)
+        }
+        testingInformationContainer.gone()
+    }
+
+    private fun renderViewForNewWalesJourney(formattedDate: String) = with(binding) {
+        exposureNotificationHeading.text = getString(string.contact_case_exposure_info_screen_title_wales)
+        closeContactDate.text =
+            getString(string.contact_case_exposure_info_screen_exposure_date_wales, formattedDate)
+        closeContactAccordionButtonView.title =
+            getString(string.contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading_wales)
+        closeContactAccordionButtonView.content = layout.accordion_how_we_calculate_close_contact_wales
+        primaryActionButton.text = getString(string.contact_case_exposure_info_screen_continue_button_wales)
+        selfIsolationWarning.apply {
+            stateText = getString(string.contact_case_exposure_info_screen_information_wales)
             stateColor = ContextCompat.getColor(context, color.amber)
         }
         testingInformationContainer.gone()

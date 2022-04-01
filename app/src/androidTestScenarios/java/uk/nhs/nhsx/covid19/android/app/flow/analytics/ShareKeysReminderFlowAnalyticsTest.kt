@@ -5,16 +5,15 @@ import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.flow.analytics.ShareKeysReminderFlowAnalyticsTest.KeySharingReminderTestFlow.CONSENT_AND_SUCCESS
 import uk.nhs.nhsx.covid19.android.app.flow.analytics.ShareKeysReminderFlowAnalyticsTest.KeySharingReminderTestFlow.CONSENT_BUT_FAILURE
 import uk.nhs.nhsx.covid19.android.app.flow.analytics.ShareKeysReminderFlowAnalyticsTest.KeySharingReminderTestFlow.NO_CONSENT
-import uk.nhs.nhsx.covid19.android.app.flow.functionalities.PollingTestResult
+import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ShareKeysReminder
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
-import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 
 class ShareKeysReminderFlowAnalyticsTest : AnalyticsTest() {
 
     private var selfDiagnosis = SelfDiagnosis(this)
-    private var pollingTestResult = PollingTestResult(testAppContext)
+    private var manuelTestResultEntry = ManualTestResultEntry(testAppContext)
     private var shareKeysReminder = ShareKeysReminder(this.testAppContext)
 
     private enum class KeySharingReminderTestFlow {
@@ -48,36 +47,34 @@ class ShareKeysReminderFlowAnalyticsTest : AnalyticsTest() {
         // Complete questionnaire with risky symptoms and order test on 2nd Jan
         // Symptom onset date: Don't remember
         // Isolation end date: 10th Jan
-        selfDiagnosis.selfDiagnosePositiveAndOrderTest(receiveResultImmediately = false)
+        selfDiagnosis.selfDiagnosePositiveAndPressBack()
 
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
         assertOnFields {
             // Now in isolation due to self-diagnosis
             assertEquals(1, Metrics::completedQuestionnaireAndStartedIsolation)
             assertEquals(1, Metrics::startedIsolation)
-            assertEquals(1, Metrics::launchedTestOrdering)
+            assertEquals(0, Metrics::launchedTestOrdering)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
         }
 
-        pollingTestResult.receiveAndAcknowledgePositiveTestResultAndDeclineKeySharing(
-            LAB_RESULT,
-            this::advanceToNextBackgroundTaskExecution
-        )
+        manuelTestResultEntry.enterPositivePCRTestResultAndDeclineExposureKeySharing(this::advanceToNextBackgroundTaskExecution)
 
         // Current date: 4th Jan -> Analytics packet for: 3rd Jan
         assertOnFields {
             // Still in isolation, for both self-diagnosis and positive test result
             assertEquals(1, Metrics::receivedPositiveTestResult)
-            assertEquals(1, Metrics::receivedPositiveTestResultViaPolling)
+            assertEquals(0, Metrics::receivedPositiveTestResultViaPolling)
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForTestedPositiveBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(Metrics::hasTestedPositiveBackgroundTick)
+            assertPresent(Metrics::receivedPositiveTestResultEnteredManually)
             assertEquals(1, Metrics::askedToShareExposureKeysInTheInitialFlow)
         }
 

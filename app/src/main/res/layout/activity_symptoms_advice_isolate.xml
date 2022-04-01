@@ -90,6 +90,7 @@
                 app:linkUrl="@string/url_exposure_faqs"/>
 
             <TextView
+                android:id="@+id/forFurtherAdviseTextView"
                 style="@style/Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -104,7 +105,7 @@
                 android:text="@string/nhs_111_online_service"
                 app:linkUrl="@string/url_nhs_111_online" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/stateActionButton"
                 style="@style/PrimaryButton"
                 android:layout_width="match_parent"

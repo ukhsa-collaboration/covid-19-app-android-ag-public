@@ -95,7 +95,7 @@
                         android:layout_marginTop="110dp"
                         android:minHeight="@dimen/animation_static_image_height"
                         android:visibility="gone"
-                        tools:visibility="gone" />
+                        tools:visibility="visible" />
                 </FrameLayout>
             </FrameLayout>
 
@@ -174,7 +174,8 @@
                     app:optionExternalLink="false"
                     app:optionIcon="@drawable/ic_testing_hub"
                     app:optionIconBackgroundColor="@color/style_lighter_blue"
-                    app:optionText="@string/status_option_testing_hub" />
+                    app:optionText="@string/status_option_testing_hub"
+                    android:visibility="gone"/>
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
                     android:id="@+id/optionLinkTestResult"

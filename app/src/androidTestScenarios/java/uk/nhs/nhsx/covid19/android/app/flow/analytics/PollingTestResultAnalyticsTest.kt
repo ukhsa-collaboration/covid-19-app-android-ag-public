@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
+import org.junit.Ignore
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.PollingTestResult
@@ -10,6 +11,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESUL
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 
+@Ignore // see COV-17660 for explanation
 class PollingTestResultAnalyticsTest : AnalyticsTest() {
 
     private var selfDiagnosis = SelfDiagnosis(this)

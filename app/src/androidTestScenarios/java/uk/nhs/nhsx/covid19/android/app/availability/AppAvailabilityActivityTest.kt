@@ -55,7 +55,8 @@ class AppAvailabilityActivityTest : EspressoTest() {
 
     @Test
     fun showStatusScreenWhenPassingAllAppAvailabilityChecks() {
-        testAppContext.setLocalAuthority("1")
+        testAppContext.setLocalAuthority("E07000240")
+
         testAppContext.setAppAvailability(supported)
 
         startTestActivity<AppAvailabilityActivity>()

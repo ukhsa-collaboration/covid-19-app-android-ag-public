@@ -7,6 +7,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isEnabled
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers
@@ -16,6 +17,8 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.NestedScrollViewScrollToActio
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.positional.isFollowedBy
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.positional.isPrecededBy
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
+import uk.nhs.nhsx.covid19.android.app.util.uiFormat
+import java.time.LocalDate
 
 class StatusRobot : HasActivity {
     override val containerId: Int
@@ -242,5 +245,35 @@ class StatusRobot : HasActivity {
     fun checkVenueCheckIsNotDisplayed() {
         onView(withId(R.id.optionVenueCheckIn))
             .check(matches(not(isDisplayed())))
+    }
+
+    fun checkTestingHubIsNotDisplayed() {
+        onView(withId(R.id.optionTestingHub))
+            .check(matches(not(isDisplayed())))
+    }
+
+    fun checkTestingHubIsDisplayed() {
+        onView(withId(R.id.optionTestingHub))
+            .check(matches(isDisplayed()))
+    }
+
+    fun checkIsolationViewHasCorrectContentDescriptionForWales(lastDayOfIsolation: LocalDate) {
+        onView(withId(R.id.isolationView))
+            .check(matches(withContentDescription(context.resources.getQuantityString(
+                R.plurals.isolation_view_accessibility_description,
+                4,
+                lastDayOfIsolation.uiFormat(context),
+                "4"
+            ))))
+    }
+
+    fun checkIsolationViewHasCorrectContentDescriptionForEngland(lastDayOfIsolation: LocalDate) {
+        onView(withId(R.id.isolationView))
+            .check(matches(withContentDescription(context.resources.getQuantityString(
+                R.plurals.isolation_view_accessibility_description_england,
+                9,
+                lastDayOfIsolation.uiFormat(context),
+                "9"
+            ))))
     }
 }

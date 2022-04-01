@@ -9,6 +9,8 @@ import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.android.play.core.tasks.Task
 import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_COVID_STATS
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import io.mockk.called
@@ -32,6 +34,9 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessRiskyVenueM2Notification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationPermissionHelper
@@ -117,6 +122,7 @@ class StatusViewModelTest {
     private val exposureNotificationPermissionHelperFactory = mockk<ExposureNotificationPermissionHelper.Factory>()
     private val exposureNotificationPermissionHelper = mockk<ExposureNotificationPermissionHelper>(relaxUnitFun = true)
     private val areSystemLevelAnimationsEnabled = mockk<AreSystemLevelAnimationsEnabled>(relaxUnitFun = true)
+    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider = mockk<LocalAuthorityPostCodeProvider>()
     private val shouldShowBluetoothSplashScreen = mockk<ShouldShowBluetoothSplashScreen>()
 
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-22T10:00:00Z"), ZoneOffset.UTC)
@@ -197,7 +203,9 @@ class StatusViewModelTest {
         animationsEnabled = false,
         localMessage = null,
         bluetoothEnabled = false,
-        showCovidStatsButton = true
+        showCovidStatsButton = true,
+        country = ENGLAND,
+        showIsolationHubButton = false
     )
 
     @Before
@@ -218,6 +226,7 @@ class StatusViewModelTest {
         coEvery { exposureNotificationManager.isEnabled() } returns false
         coEvery { getLocalMessageFromStorage() } returns null
         every { bluetoothAvailabilityStateProvider.getState(any()) } returns DISABLED
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
         mockkObject(RuntimeBehavior)
         every { RuntimeBehavior.isFeatureEnabled(LOCAL_COVID_STATS) } returns true
         setupTestSubject()
@@ -723,6 +732,68 @@ class StatusViewModelTest {
         confirmVerified(navigateTo)
     }
 
+    @Test
+    fun `when local authority provides England view state should be updated for it`() {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(country = ENGLAND)) }
+    }
+
+    @Test
+    fun `when local authority provides Wales view state should be updated for it`() {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(country = WALES, showIsolationHubButton = false)) }
+    }
+
+    @Test
+    fun `given user is in isolation when local authority provides England and SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND is true self isolation hub should be visible`() {
+        mockkStatic(RuntimeBehavior::class)
+        every { RuntimeBehavior.isFeatureEnabled(SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND) } returns true
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(country = ENGLAND, showIsolationHubButton = true)) }
+    }
+
+    @Test
+    fun `given user is in isolation when local authority provides England and SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND is false self isolation hub should not be visible`() {
+        mockkStatic(RuntimeBehavior::class)
+        every { RuntimeBehavior.isFeatureEnabled(SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND) } returns false
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(country = ENGLAND, showIsolationHubButton = false)) }
+    }
+
+    @Test
+    fun `given user is in isolation when local authority provides Wales and SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES is true self isolation hub should be visible`() {
+        mockkStatic(RuntimeBehavior::class)
+        every { RuntimeBehavior.isFeatureEnabled(SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES) } returns true
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(country = WALES, showIsolationHubButton = true)) }
+    }
+
+    @Test
+    fun `given user is in isolation when local authority provides Wales and SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES is false self isolation hub should not be visible`() {
+        mockkStatic(RuntimeBehavior::class)
+        every { RuntimeBehavior.isFeatureEnabled(SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES) } returns false
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(country = WALES, showIsolationHubButton = false)) }
+    }
+
     private fun setupTestSubject(statusActivityAction: StatusActivityAction = None) {
         testSubject = StatusViewModel(
             postCodeProvider,
@@ -744,7 +815,8 @@ class StatusViewModelTest {
             bluetoothAvailabilityStateProvider,
             exposureNotificationPermissionHelperFactory,
             shouldShowBluetoothSplashScreen,
-            statusActivityAction
+            statusActivityAction,
+            localAuthorityPostCodeProvider
         )
 
         testSubject.viewState.observeForever(viewStateObserver)

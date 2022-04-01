@@ -246,6 +246,9 @@
             android:name=".localstats.FetchLocalDataProgressActivity"
             android:label="@string/local_stats_title" />
 
+        <activity android:name=".questionnaire.NewGuidanceForSymptomaticCaseEnglandActivity"
+            android:label="@string/symptomatic_contact_guidance_title_england"/>
+
         <!-- Receivers -->
         <receiver
             android:name=".exposure.encounter.ExposureNotificationBroadcastReceiver"
@@ -262,7 +265,6 @@
         <receiver android:name=".receiver.ExposureNotificationRetryReceiver" />
         <receiver android:name=".receiver.SubmitAnalyticsAlarmReceiver" />
         <receiver android:name=".analytics.AnalyticsAggregatorReceiver" />
-        <receiver android:name=".status.isolationhub.IsolationHubReminderReceiver" />
         <receiver android:name=".receiver.AlarmRestarter">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

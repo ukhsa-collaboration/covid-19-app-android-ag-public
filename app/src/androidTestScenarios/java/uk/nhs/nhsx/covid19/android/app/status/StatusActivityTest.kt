@@ -4,6 +4,9 @@ import androidx.test.filters.FlakyTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_COVID_STATS
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES
+import com.jeroenmols.featureflag.framework.FeatureFlag.TESTING_FOR_COVID19_HOME_SCREEN_BUTTON
 import com.jeroenmols.featureflag.framework.FeatureFlag.VENUE_CHECK_IN_BUTTON
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.MockExposureNotificationApi.Result
@@ -18,6 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.NavigateToContactTracingHub
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.NavigateToLocalMessage
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ContactTracingHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalMessageRobot
@@ -354,6 +358,7 @@ class StatusActivityTest : EspressoTest(), LocalAuthoritySetupHelper {
         statusRobot.checkBluetoothStoppedViewIsNotDisplayed()
     }
 
+    @RetryFlakyTest
     @Test
     fun onBluetoothDisabledThenEnabled_viewScreenChanges() {
         testAppContext.setBluetoothEnabled(false)
@@ -361,15 +366,16 @@ class StatusActivityTest : EspressoTest(), LocalAuthoritySetupHelper {
 
         startTestActivity<StatusActivity>()
 
-        statusRobot.checkActivityIsDisplayed()
-        statusRobot.checkBluetoothStoppedViewIsDisplayed()
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+        waitFor { statusRobot.checkBluetoothStoppedViewIsDisplayed() }
 
         testAppContext.setBluetoothEnabled(true)
 
-        statusRobot.checkContactTracingActiveIsDisplayed()
-        statusRobot.checkBluetoothStoppedViewIsNotDisplayed()
+        waitFor { statusRobot.checkContactTracingActiveIsDisplayed() }
+        waitFor { statusRobot.checkBluetoothStoppedViewIsNotDisplayed() }
     }
 
+    @RetryFlakyTest
     @Test
     fun onBluetoothEnabledThenDisabled_viewScreenChanges() {
         testAppContext.setBluetoothEnabled(true)
@@ -377,12 +383,14 @@ class StatusActivityTest : EspressoTest(), LocalAuthoritySetupHelper {
 
         startTestActivity<StatusActivity>()
 
-        statusRobot.checkBluetoothStoppedViewIsNotDisplayed()
-        statusRobot.checkContactTracingActiveIsDisplayed()
+        waitFor { statusRobot.checkBluetoothStoppedViewIsNotDisplayed() }
+        waitFor { statusRobot.checkContactTracingActiveIsDisplayed() }
 
         testAppContext.setBluetoothEnabled(false)
 
-        statusRobot.checkBluetoothStoppedViewIsDisplayed()
+        startTestActivity<StatusActivity>()
+
+        waitFor { statusRobot.checkBluetoothStoppedViewIsDisplayed() }
     }
 
     @Test
@@ -570,31 +578,72 @@ class StatusActivityTest : EspressoTest(), LocalAuthoritySetupHelper {
     }
 
     @Test
-    fun clickTestingHub_whenBackPressed_TestingHubButtonShouldBeEnabled() {
-        startTestActivity<StatusActivity>()
+    fun clickTestingHub_whenBackPressed_TestingHubButtonShouldBeEnabled() =
+        runWithFeatureEnabled(TESTING_FOR_COVID19_HOME_SCREEN_BUTTON) {
+            startTestActivity<StatusActivity>()
 
-        statusRobot.clickTestingHub()
+            statusRobot.clickTestingHub()
 
-        testingHubRobot.checkActivityIsDisplayed()
+            testingHubRobot.checkActivityIsDisplayed()
 
-        testAppContext.device.pressBack()
+            testAppContext.device.pressBack()
 
-        waitFor { statusRobot.checkActivityIsDisplayed() }
+            waitFor { statusRobot.checkActivityIsDisplayed() }
 
-        statusRobot.checkTestingHubIsEnabled()
-    }
+            statusRobot.checkTestingHubIsEnabled()
+        }
 
     @Test
-    fun whenIsolating_isolationHubButtonShouldBeDisplayed() {
-        givenLocalAuthorityIsInEngland()
-        testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
+    fun whenIsolating_selfIsolationHubFeatureFlagIsEnabled_isolationHubButtonShouldBeDisplayed_forEngland() =
+        runWithFeatureEnabled(SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND) {
+            givenLocalAuthorityIsInEngland()
+            testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
-        startTestActivity<StatusActivity>()
+            startTestActivity<StatusActivity>()
 
-        statusRobot.checkActivityIsDisplayed()
+            statusRobot.checkActivityIsDisplayed()
 
-        statusRobot.checkIsolationHubIsDisplayed()
-    }
+            statusRobot.checkIsolationHubIsDisplayed()
+        }
+
+    @Test
+    fun whenIsolating_selfIsolationHubFeatureFlagIsEnabled_isolationHubButtonShouldBeDisplayed_forWales() =
+        runWithFeatureEnabled(SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES) {
+            givenLocalAuthorityIsInWales()
+            testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
+
+            startTestActivity<StatusActivity>()
+
+            statusRobot.checkActivityIsDisplayed()
+
+            statusRobot.checkIsolationHubIsDisplayed()
+        }
+
+    @Test
+    fun whenIsolating_selfIsolationHubFeatureFlagIsDisabled_ButtonShouldNotBeDisplayed_forEngland() =
+        runWithFeature(SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND, enabled = false) {
+            givenLocalAuthorityIsInEngland()
+            testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
+
+            startTestActivity<StatusActivity>()
+
+            statusRobot.checkActivityIsDisplayed()
+
+            statusRobot.checkIsolationHubIsNotDisplayed()
+        }
+
+    @Test
+    fun whenIsolating_selfIsolationHubFeatureFlagIsDisabled_ButtonShouldNotBeDisplayed_forWales() =
+        runWithFeature(SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES, enabled = false) {
+            givenLocalAuthorityIsInWales()
+            testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
+
+            startTestActivity<StatusActivity>()
+
+            statusRobot.checkActivityIsDisplayed()
+
+            statusRobot.checkIsolationHubIsNotDisplayed()
+        }
 
     @Test
     fun whenNotIsolating_isolationHubButtonShouldNotBeDisplayed() {
@@ -606,22 +655,42 @@ class StatusActivityTest : EspressoTest(), LocalAuthoritySetupHelper {
     }
 
     @Test
-    fun clickIsolationHub_whenBackPressed_isolationHubButtonShouldBeEnabled() {
-        givenLocalAuthorityIsInEngland()
-        testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
+    fun clickIsolationHub_whenBackPressed_isolationHubButtonShouldBeEnabled_forEngland() =
+        runWithFeatureEnabled(SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND) {
+            givenLocalAuthorityIsInEngland()
+            testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
-        startTestActivity<StatusActivity>()
+            startTestActivity<StatusActivity>()
 
-        statusRobot.clickIsolationHub()
+            statusRobot.clickIsolationHub()
 
-        isolationHubRobot.checkActivityIsDisplayed()
+            isolationHubRobot.checkActivityIsDisplayed()
 
-        testAppContext.device.pressBack()
+            testAppContext.device.pressBack()
 
-        waitFor { statusRobot.checkActivityIsDisplayed() }
+            waitFor { statusRobot.checkActivityIsDisplayed() }
 
-        statusRobot.checkIsolationHubIsEnabled()
-    }
+            statusRobot.checkIsolationHubIsEnabled()
+        }
+
+    @Test
+    fun clickIsolationHub_whenBackPressed_isolationHubButtonShouldBeEnabled_forWales() =
+        runWithFeatureEnabled(SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES) {
+            givenLocalAuthorityIsInWales()
+            testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
+
+            startTestActivity<StatusActivity>()
+
+            statusRobot.clickIsolationHub()
+
+            isolationHubRobot.checkActivityIsDisplayed()
+
+            testAppContext.device.pressBack()
+
+            waitFor { statusRobot.checkActivityIsDisplayed() }
+
+            statusRobot.checkIsolationHubIsEnabled()
+        }
 
     @Test
     fun whenCheckInFeatureFlagIsDisabled_optionVenueCheckInIsNotDisplayed() =
@@ -631,5 +700,23 @@ class StatusActivityTest : EspressoTest(), LocalAuthoritySetupHelper {
             startTestActivity<StatusActivity>()
 
             statusRobot.checkVenueCheckIsNotDisplayed()
+        }
+
+    @Test
+    fun whenTestingHubFeatureFlagIsEnabled_optionTestingHubIsDisplayed() =
+        runWithFeatureEnabled(TESTING_FOR_COVID19_HOME_SCREEN_BUTTON) {
+
+            startTestActivity<StatusActivity>()
+
+            statusRobot.checkTestingHubIsDisplayed()
+        }
+
+    @Test
+    fun whenTestingHubFeatureFlagIsDisabled_optionTestingHubIsNotDisplayed() =
+        runWithFeature(TESTING_FOR_COVID19_HOME_SCREEN_BUTTON, enabled = false) {
+
+            startTestActivity<StatusActivity>()
+
+            statusRobot.checkTestingHubIsNotDisplayed()
         }
 }

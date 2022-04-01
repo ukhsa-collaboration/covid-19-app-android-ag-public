@@ -11,6 +11,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_COVID_STATS
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -23,6 +25,10 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessRiskyVenueM2Notification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationManager
@@ -103,6 +109,7 @@ class StatusViewModel @AssistedInject constructor(
     exposureNotificationPermissionHelperFactory: ExposureNotificationPermissionHelper.Factory,
     private val shouldShowBluetoothSplashScreen: ShouldShowBluetoothSplashScreen,
     @Assisted val statusActivityAction: StatusActivityAction,
+    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider
 ) : ViewModel() {
 
     var contactTracingSwitchedOn = false
@@ -191,6 +198,7 @@ class StatusViewModel @AssistedInject constructor(
     ) {
         viewModelScope.launch {
             val isolationState = isolationStateMachine.readLogicalState()
+            val country = localAuthorityPostCodeProvider.requirePostCodeDistrict()
             val updatedViewState = ViewState(
                 currentDate = currentDate,
                 areaRiskState = getAreaRiskViewState(),
@@ -200,10 +208,20 @@ class StatusViewModel @AssistedInject constructor(
                 animationsEnabled = animationsProvider.inAppAnimationEnabled && areSystemLevelAnimationsEnabled(),
                 localMessage = getLocalMessageFromStorage(),
                 bluetoothEnabled = bluetoothAvailabilityStateProvider.getState() == ENABLED,
-                showCovidStatsButton = RuntimeBehavior.isFeatureEnabled(LOCAL_COVID_STATS)
+                showCovidStatsButton = RuntimeBehavior.isFeatureEnabled(LOCAL_COVID_STATS),
+                country = country,
+                showIsolationHubButton = shouldShowIsolationHubButtonForEngland(country) || shouldShowIsolationHubButtonForWales(country)
             )
             viewStateLiveData.postValue(updatedViewState)
         }
+    }
+
+    private fun shouldShowIsolationHubButtonForWales(country: PostCodeDistrict): Boolean {
+        return RuntimeBehavior.isFeatureEnabled(SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES) && country == WALES
+    }
+
+    private fun shouldShowIsolationHubButtonForEngland(country: PostCodeDistrict): Boolean {
+        return RuntimeBehavior.isFeatureEnabled(SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND) && country == ENGLAND
     }
 
     private suspend fun getIsolationViewState(isolationState: IsolationLogicalState): IsolationViewState =
@@ -363,7 +381,9 @@ class StatusViewModel @AssistedInject constructor(
         val animationsEnabled: Boolean,
         val localMessage: NotificationMessage?,
         val bluetoothEnabled: Boolean,
-        val showCovidStatsButton: Boolean
+        val showCovidStatsButton: Boolean,
+        val country: PostCodeDistrict,
+        val showIsolationHubButton: Boolean
     )
 
     sealed class PermissionRequestResult {

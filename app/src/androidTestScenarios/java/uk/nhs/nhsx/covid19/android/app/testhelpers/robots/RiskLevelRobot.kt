@@ -76,18 +76,4 @@ class RiskLevelRobot {
         onView(withId(R.id.riskLevelFooter))
             .perform(scrollTo()).check(matches(isDisplayed()))
     }
-
-    fun checkMassTestingIsDisplayed() {
-        onView(withId(R.id.massTestingContainer))
-            .perform(scrollTo())
-            .check(matches(isDisplayed()))
-    }
-
-    fun checkMassTestingIsNotDisplayed() {
-        onView(withId(R.id.buttonRiskLevelLink))
-            .perform(scrollTo())
-
-        onView(withId(R.id.massTestingContainer))
-            .check(matches(not(isDisplayed())))
-    }
 }

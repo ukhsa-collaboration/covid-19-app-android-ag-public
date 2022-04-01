@@ -33,6 +33,7 @@
     <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
     <string name="url_latest_government_guidance_wls">https://gov.wales/self-isolation</string>
     <string formatted="false" name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
+    <string name="get_tested_wales_link_url">https://gov.wales/testing-coronavirus</string>
 
     <!-- Plurals -->
     <plurals name="state_isolation_days">
@@ -164,7 +165,7 @@
     <string name="qr_code_permission_denied_subtitle">This app uses your camera to check in to venues like bars and restaurants.\n\nPlease allow camera permissions to scan the official NHS QR code.</string>
     <string name="qr_code_permission_denied_action">Allow camera permissions</string>
     <string name="qr_code_cancel_check_in">Wrong check-in? Tap to cancel.</string>
-    <string name="book_free_test">Book a free test</string>
+    <string name="book_free_test">Get a rapid lateral flow test kit</string>
     <string name="book_follow_up_test">Book a follow-up test</string>
     <string name="book_free_test_now">Book a test for yourself</string>
     <string name="status_option_report_symptoms">Check symptoms</string>
@@ -221,7 +222,7 @@
     <string name="questionnaire_change">Change</string>
     <string name="questionnaire_change_announcement">Change symptom %1$s</string>
     <string name="state_index_take_coronavirus_test">Take a free coronavirus test</string>
-    <string name="state_and_book_a_test">and book a test</string>
+    <string name="state_and_book_a_test">and get a COVID-19 test</string>
     <string name="state_index_info">You may have coronavirus</string>
     <string name="you_do_not_appear_to_have_symptoms">You do not appear to have coronavirus symptoms</string>
     <string name="state_test_positive_info">Your coronavirus test result is positive</string>
@@ -256,6 +257,22 @@
     <string name="for_further_advice_visit">For further advice, please visit:</string>
     <string name="test_result_your_test_result">Your test result</string>
     <string name="test_result_positive_continue_self_isolation_title_1">Continue to self-isolate for</string>
+    <string name="index_case_isolation_advice_heading_title_england">Your COVID-19 test result is positive</string>
+    <string name="index_case_isolation_advice_information_box_description_england">Anonymously notify others through the app</string>
+    <string name="index_case_isolation_advice_body_england">Your test result shows that you had COVID-19 at the time of the test. You have been sent more information by email, text or phone.\n\nAnonymously notify anyone who has been in close contact with you to let them know they may have been at risk. Your privacy is protected and your personal information will not be shared.\n\nIf you are under 18, you are advised to show this message to a trusted adult.</string>
+    <string name="index_case_isolation_advice_common_question_link_button_england">Common questions</string>
+    <string name="index_case_isolation_advice_further_advice_england">For further advice, please visit:</string>
+    <string name="index_case_isolation_advice_nhs_onilne_link_button_england">NHS 111 online</string>
+    <string name="index_case_isolation_advice_primary_button_title_england">Anonymously notify others</string>
+
+    <string name="index_case_continue_isolation_advice_heading_title_england">Your coronavirus test result is positive</string>
+    <string name="index_case_continue_isolation_advice_information_box_description_england">If you are under 18, you are advised to show this message to a trusted adult.</string>
+    <string name="index_case_continue_isolation_advice_body_england">Your test results shows that you had COVID-19 at the time of the test. You have been sent more information by email, text or phone.\n\nAnonymously notify anyone who has been in close contact with you to let them know they may have been at risk. Your privacy is protected and your personal information will not be shared.\n\nIf you are under 18, you are advised to show this message to a trusted adult.</string>
+    <string name="index_case_continue_isolation_advice_common_question_link_button_england">Common questions</string>
+    <string name="index_case_continue_isolation_advice_further_advice_england">For further advice, please visit:</string>
+    <string name="index_case_continue_isolation_advice_nhs_onilne_link_button_england">NHS 111 online</string>
+    <string name="index_case_continue_isolation_advice_primary_button_title_england">Continue</string>
+
     <string name="test_result_positive_continue_self_isolate_explanation_1">To understand how the app calculates self-isolation days, visit the link to the FAQs below.\n\nYour test result shows that you had the virus at the time of the test. You have been sent an email or text with more information.</string>
     <string name="test_result_positive_continue_self_isolate_explanation_2">Don’t worry - for most people symptoms are quite mild. However, if your symptoms do worsen then you should call 111 or visit nhs.uk for more advice.</string>
     <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">If you are under 18, you are advised to show this message to a trusted adult.</string>
@@ -288,10 +305,10 @@
     <string name="title_symptoms">Symptoms information</string>
     <string name="edit_postcode_district_title">Edit postcode district</string>
     <string name="save">Save</string>
-    <string name="about_how_this_app_works_text">This app uses contact tracing technology to help protect yourself and others so we can all get back to the things we love.\n\nThe app notices and logs other nearby app users. If any of those users later test positive for coronavirus, you’ll receive an alert with advice.\n\nThe app also lets you report your symptoms and find out if you need a test.</string>
+    <string name="about_how_this_app_works_text">This app uses contact tracing technology that detects and anonymously logs other nearby app users. If any of those users later test positive for COVID-19 youʼll receive an alert with the latest advice.\n\nYou can also find the latest COVID-19 guidance for your area, and check your symptoms.</string>
     <string name="about_how_this_app_works_link">How the app works</string>
     <string name="about_your_data_title">About your data</string>
-    <string name="about_your_data_text">The app has access to the postcode district you added in the registration, a history of the places you’ve checked into in the last 14 days, your last test result and the start date of your symptoms. When you use QR codes to check into venues, venue data is stored for 21 days. You can delete the stored data whenever you want.</string>
+    <string name="about_your_data_text">The app uses the postcode district and local authority that you entered when you first used the app. The app also holds your last result and the start date of any symptoms you have entered. You can delete the stored data whenever you want.</string>
     <string name="about_your_data_additional_text">You can manage your data in the app settings.</string>
     <string name="title_exposure_notification">Exposure notification</string>
     <string name="about_encounter_date">Encounter date</string>
@@ -331,13 +348,13 @@
     <string name="onboarding_welcome_title">This app helps us keep each other safe</string>
     <string name="onboarding_subtitle">You will be helping us beat COVID-19 by sharing anonymous information about the virus in your region and public health when you use the app.</string>
     <string name="onboarding_notifications_title">Get notified</string>
-    <string name="onboarding_notifications_text">Find out when you’ve been near other app users who have tested positive for coronavirus.</string>
+    <string name="onboarding_notifications_text">Find out when you’ve been near other app users who have tested positive for COVID-19</string>
     <string name="onboarding_venue_check_in_title">Check into venues</string>
     <string name="onboarding_venue_check_in_text">Use the app’s QR code scanner to check into places like bars and restaurants without having to fill out any forms.</string>
     <string name="onboarding_check_symptoms_title">Check your symptoms</string>
-    <string name="onboarding_check_symptoms_text">Feeling unwell? Find out whether you could have coronavirus and order a free test if you need one.</string>
-    <string name="onboarding_isolation_countdown_title">Isolation countdown</string>
-    <string name="onboarding_isolation_countdown_text">If you are isolating, the app will count down the days and give you the right information.</string>
+    <string name="onboarding_check_symptoms_text">Feeling unwell? Find out whether you could have COVID-19 symptoms</string>
+    <string name="onboarding_isolation_countdown_title">Staying at home with COVID-19</string>
+    <string name="onboarding_isolation_countdown_text">If you are staying at home because you know you have COVID-19, the app will count down the days</string>
     <string name="onboarding_age_confirmation_title">Are you 16 years or over?</string>
     <string name="onboarding_age_confirmation_text">You must confirm that you are 16 years or over to be able to use this app.</string>
     <string name="onboarding_age_confirmation_positive">I am 16 or over</string>
@@ -346,10 +363,10 @@
     <string name="onboarding_age_restriction_text">Thank you for your interest. This app is only for people aged 16 years or over.</string>
     <string name="onboarding_privacy_title">Protecting your privacy</string>
     <string name="onboarding_privacy_control_title">You are in control</string>
-    <string name="onboarding_privacy_control_text">The NHS values your privacy, meaning the app cannot tell who you are, where you are or who is with you.\n\nIf you test positive for coronavirus, you can choose to share your data with the NHS so we can alert other app users in England, Wales, Scotland, Northern Ireland, Jersey and Gibraltar. By selecting continue we will be able to send notifications to other app users who need to be alerted across these locations.\n\nWe use automated decision making to help determine which other users need to be anonymously alerted.</string>
+    <string name="onboarding_privacy_control_text">The NHS values your privacy, meaning the app cannot tell who you are, or where you are.\n\nIf you test positive for COVID-19, you can choose to share your random ID so we can alert other app users in England, Wales, Scotland, Northern Ireland, Jersey and Gibraltar. By selecting continue we will be able to send notifications to other app users who need to be alerted.\n\nWe use automated decision making to help determine which other users need to be anonymously alerted.</string>
     <string name="onboarding_privacy_your_data_title">Your data</string>
-    <string name="onboarding_privacy_your_data_text1">The app securely and anonymously stores data for 14 days after it has been recorded. When you use QR codes to check into venues, venue data is stored for 21 days. You can delete the data from the app at anytime in your app settings, or by uninstalling the app. Your phone may keep some basic data – this is controlled by your phone’s operating system.</string>
-    <string name="onboarding_privacy_your_data_text2">When you use the app you will be helping your community stay healthy and save lives.  Anonymous information from the app helps us know where the virus is and how to control it.</string>
+    <string name="onboarding_privacy_your_data_text1">The app securely and anonymously stores data for 14 days after it has been recorded. You can delete the data from the app at anytime in your app settings, or by uninstalling the app. Your phone may keep some basic data - this is controlled by your phoneʼs operating system.</string>
+    <string name="onboarding_privacy_your_data_text2">Anonymous information from the app helps us to determine which other users need to be anonymously alerted.</string>
     <string name="onboarding_before_activating_app">Before you activate this app, please read the privacy notice and agree to the terms of use.</string>
     <string name="onboarding_before_activating_app_announcement">Important: Before you activate this app, please read the privacy notice and agree to the terms of use.</string>
     <string name="onboarding_no_thanks">No, thanks</string>
@@ -380,9 +397,10 @@
     <string name="device_not_supported_next_steps_link_url">https://faq.covid19.nhs.uk/article/KA-01386</string>
     <string name="valid_auth_code_is_required">Code not recognised or may have expired. Make sure you are not trying to enter a rapid lateral flow self-test ID number.</string>
     <string name="self_isolate_for">Self-isolate for</string>
-    <string name="isolate_after_corona_virus_symptoms">To understand how the app calculates self-isolation days, visit the link to the FAQs below.\n\nYour symptoms suggest you may have coronavirus. Please isolate yourself and anyone else in your household. That means staying at home with no visitors. You should also book a free test immediately. If you are under 18, you are advised to show this message to a trusted adult.\n\nPlease stay at home to keep yourself and others safe.</string>
+    <string name="isolate_after_corona_virus_symptoms">To understand how the app calculates self-isolation days, visit the link to the Common questions below.\n\nYour symptoms suggest you may have coronavirus. Please stay at home and take a COVID-19 test to keep yourself and others safe.\n\nIf you are under 18, you are advised to show this message to a trusted adult.</string>
     <string name="isolate_after_no_corona_virus_symptoms">You do not appear to have any COVID-19 symptoms, but it can take time for symptoms to develop.\n\nYou are advised to stay at home to keep yourself and others safe.</string>
     <string name="you_need_to_self_isolate">Self-isolate</string>
+    <string name="be_careful_until_date_title">Take extra care and protect others</string>
     <string name="your_isolation_will_finish">Your self-isolation will finish on %1$s at 23:59</string>
     <string name="qr_code_unsupported_title">Sorry, your phone doesn’t support venue check-in</string>
     <string name="qr_code_unsupported_description">We advise you to speak to a member of staff at the venue to see if there are other ways of checking in.</string>
@@ -415,7 +433,7 @@
     <string name="accessibility_announcement_venue_checkin_date">Venue check-in for %s</string>
     <string name="visit_the_link_to_find_out_more">Visit the link to find out more</string>
     <string name="about_feedback_information_title">Feedback information</string>
-    <string name="about_feedback_information_text">If you have feedback about the app, a question that’s not answered in our common questions, or you have a technical problem, you can contact us using our online form.</string>
+    <string name="about_feedback_information_text">If you have feedback about the app, a question thatʼs not answered in our common questions, or you have a technical problem, please get in touch. You can contact us using our online form or call 119.</string>
     <string name="about_provide_feedback_link">Feedback information</string>
     <string name="state_test_positive_then_negative_info">Your coronavirus test result is negative. However, you should stay in self-isolation. This is because you either have a previous positive test result or have recently reported symptoms.</string>
     <string name="test_result_positive_then_negative_explanation">To understand how the app calculates self-isolation days, visit the FAQs.\n\nYour current test result shows that you did not have the virus at the time of testing. If you have recently reported symptoms, make sure you have booked a test. If you develop symptoms, report them on this app. If you are under 18, you are advised to show this message to a trusted adult.</string>
@@ -580,7 +598,7 @@
     <string name="animations_description">This will not change how your app works. It will only change the animation.</string>
     <string name="animations_dialog_title">Change your device settings to allow home screen circle animation.</string>
     <string name="animations_dialog_text">Your device accessibility settings are stopping animations. You will need to change this to turn on animations in the NHS COVID-19 app.</string>
-    <string name="about_no_vaccination_status_title">This app does not contain your coronavirus (COVID-19) vaccination status</string>
+    <string name="about_no_vaccination_status_title">This app does not contain your COVID-19 vaccination status</string>
     <string name="about_no_vaccination_status_text">This app protects your privacy and identity. It does not know who you are and is not linked to your medical records.\n\nIf you live in England, use the separate NHS app to see your COVID-19 status and other health information.</string>
     <string name="about_download_the_nhs_app">Download the NHS app</string>
     <string name="url_download_the_nhs_app">https://www.nhs.uk/app</string>
@@ -736,7 +754,9 @@
     <string name="exposure_notification_title">The app has detected that you have been near someone who tested positive for coronavirus (COVID-19)</string>
     <string name="exposure_notification_warning">Advice may differ depending on your age, vaccination status, or instructions from contact tracers</string>
     <string name="contact_case_exposure_info_screen_title_england">The app has detected that you have been near someone who tested positive for coronavirus (COVID-19)</string>
+    <string name="contact_case_exposure_info_screen_title_wales">The app has detected that you have been near someone who tested positive for coronavirus (COVID-19)</string>
     <string name="contact_case_exposure_info_screen_information_england">If you are under 18, you are advised to show this message to a trusted adult</string>
+    <string name="contact_case_exposure_info_screen_information_wales">If you are under 18, you are advised to show this message to a trusted adult</string>
     <string name="exposure_notification_testing_information">If you have symptoms, select “Check symptoms” on the home screen and get a test.</string>
     <string name="exposure_notification_age_info">[to be deleted]</string>
     <string name="exposure_notification_age_heading">Your age</string>
@@ -792,11 +812,15 @@
     <string name="new_no_symptoms_action_button_text">new_no_symptoms_action_button_text</string>
     <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading">How close contact is calculated</string>
     <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading_england">How close contact is calculated</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading_wales">How close contact is calculated</string>
     <string name="contact_case_exposure_info_screen_continue_button_england">Continue</string>
+    <string name="contact_case_exposure_info_screen_continue_button_wales">Continue</string>
     <string name="contact_case_exposure_info_screen_exposure_date">Close contact happened on %s</string>
     <string name="contact_case_exposure_info_screen_exposure_date_england">Close contact happened on %s</string>
+    <string name="contact_case_exposure_info_screen_exposure_date_wales">Close contact happened on %s</string>
     <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_body">The app uses Bluetooth to check if your phone has been in close contact with others.\n\nClose contact means you were within 2 metres of someone for 15 minutes or more.\n\nThe app is anonymous and does not use GPS or venue check-in to track your location, so your privacy is protected.</string>
     <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_body_england">The app uses Bluetooth to check if your phone has been in close contact with others.\n\nClose contact means you were within 2 metres of someone for 15 minutes or more.\n\nThe app is anonymous and does not use GPS to track your location, so your privacy is protected.</string>
+    <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_body_wales">The app uses Bluetooth to check if your phone has been in close contact with others.\n\nClose contact means you were within 2 metres of someone for 15 minutes or more.\n\nThe app is anonymous and does not use GPS or venue check-in to track your location, so your privacy is protected.</string>
     <string name="contact_case_start_isolation_how_we_calculate_isolation_days_title">How self-isolation days are calculated</string>
     <string name="exposure_notification_clinical_trial_question">Are you taking part in an MHRA-approved COVID-19 vaccine clinical trial?</string>
     <string name="exposure_notification_clinical_trial_yes">Yes</string>
@@ -882,7 +906,7 @@
     <string name="contact_case_start_isolation_primary_button_title_wales">Get a free rapid lateral flow kit</string>
     <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
     <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">You are advised to take a free rapid lateral flow test as soon as possible.</string>
-    <string name="about_this_app_software_information_date_of_release_description">2/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">3/2022</string>
     <string name="exposure_notification_message">Exposure notifications are off during this period</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">Limit close contact with anyone in your household who has COVID-19</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">Take a PCR test if you have symptoms of COVID-19</string>
@@ -905,5 +929,30 @@
     <string name="risky_contact_opt_out_further_advice_link_url">https://www.gov.uk/government/publications/covid-19-people-with-covid-19-and-their-contacts/covid-19-people-with-covid-19-and-their-contacts#what-to-do-if-you-are-a-close-contact-of-someone-who-has-covid-19</string>
     <string name="risky_contact_opt_out_primary_button_title">Read latest COVID-19 guidance</string>
     <string name="risky_contact_opt_out_primary_button_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="risky_contact_opt_out_primary_button_url_wales">https://gov.wales/self-isolation</string>
     <string name="risky_contact_opt_out_secondary_button_title">Back to home screen</string>
+    <string name="risky_contact_opt_out_advice_title_wales">You no longer need to self-isolate as a close contact in Wales</string>
+    <string name="risky_contact_opt_out_advice_meeting_indoors_wales">Meet outdoors where possible and ensure good ventilation if indoors</string>
+    <string name="risky_contact_opt_out_advice_mask_wales">Wear a face covering in indoor public places, especially if you feel unwell</string>
+    <string name="risky_contact_opt_out_advice_testing_hub_wales">Take a lateral flow test if you have COVID-19 symptoms and self-isolate if your test is positive</string>
+    <string name="risky_contact_opt_out_advice_wash_hands_wales">Wash hands regularly and cover coughs and sneezes</string>
+    <string name="risky_contact_opt_out_primary_button_title_wales">Read latest advice</string>
+    <string name="risky_contact_opt_out_secondary_button_title_wales">Back to home screen</string>
+    <string name="isolation_advice_symptomatic_title_england">You may have COVID-19</string>
+    <string name="isolation_advice_symptomatic_info_england">Try to minimise contact with others</string>
+    <string name="isolation_advice_symptomatic_description_england">Your symptoms suggest you may have coronavirus.\n\nIf you are under 18, you are advised to show this message to a trusted adult.\n\nIf you are outside of England and Wales, you need to follow the guidance for the country you are in.</string>
+    <string name="isolation_advice_symptomatic_primary_button_title_england">Continue</string>
+    <string name="symptomatic_contact_guidance_title_england">Follow the latest COVID-19 guidance</string>
+    <string name="symptomatic_contact_guidance_mask_england">To reduce risk to others, wear a face covering if you need to leave home</string>
+    <string name="symptomatic_contact_guidance_testing_hub_england">Try to stay at home, and avoid close contact with other people, especially those who are at higher risk from COVID-19</string>
+    <string name="symptomatic_contact_guidance_meeting_indoors_england">Avoid crowded and enclosed places and meet outside if necessary</string>
+    <string name="symptomatic_contact_guidance_wash_hands_england">Wash your hands regularly and cover coughs and sneezes</string>
+    <string name="symptomatic_contact_primary_button_title_england">Back to home screen</string>
+    <string name="symptomatic_contact_guidance_common_questions_link_england">Common questions</string>
+    <string name="symptomatic_contact_guidance_further_advice_england">For further advice, please visit:</string>
+    <string name="symptomatic_contact_guidance_nhs_online_link_england">NHS 111 online</string>
+    <plurals name="isolation_view_accessibility_description_england">
+        <item quantity="one">Take extra care and protect others until %1$s at 23:59. There is %2$s day to go until then.</item>
+        <item quantity="other">Take extra care and protect others until %1$s at 23:59. There are %2$s days to go until then.</item>
+    </plurals>
 </resources>

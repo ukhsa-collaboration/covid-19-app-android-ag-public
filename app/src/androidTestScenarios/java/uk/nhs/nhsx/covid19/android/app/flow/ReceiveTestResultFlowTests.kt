@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.flow
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.OrderTest
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ShareKeys
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ShareKeysAndBookTest
@@ -124,7 +125,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
         shareKeys()
@@ -141,7 +142,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = false)
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -158,7 +159,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveIndicativePosTestResultWithKeySubmissionNotSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
@@ -176,7 +177,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
@@ -194,7 +195,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported(shouldOfferFollowUpTest = false)
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -254,7 +255,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
         shareKeys()
@@ -274,7 +275,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveIndicativePosTestResultWithKeySubmissionNotSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolationNoChange() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
         waitFor { statusRobot.checkActivityIsDisplayed() }
@@ -294,7 +295,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
@@ -312,7 +313,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveIndicativePosTestResultWithKeySubmissionNotSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
@@ -375,7 +376,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
             confirmatoryDayLimit = 2
         )
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -453,7 +454,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
             confirmatoryDayLimit = 2
         )
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
         shareKeys()
@@ -475,7 +476,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
             confirmatoryDayLimit = 2
         )
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -497,7 +498,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
             confirmatoryDayLimit = 2
         )
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -565,7 +566,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
@@ -696,7 +697,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
@@ -827,7 +828,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
@@ -878,7 +879,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
         shareKeys()
@@ -895,7 +896,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = false)
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -912,7 +913,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
@@ -929,7 +930,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
         shareKeys()
@@ -946,7 +947,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = false)
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
         waitFor { statusRobot.checkActivityIsDisplayed() }
@@ -963,7 +964,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
         orderTest()
@@ -1014,7 +1015,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveIndicativePosTestResultWithKeySubmissionSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
 
         shareKeysAndBookTest()
 
@@ -1030,7 +1031,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
         shareKeysAndBookTest()
 
         isolationChecker.assertActiveIndexAndContact()
@@ -1048,7 +1049,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveIndicativePosTestResultWithKeySubmissionSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
         testResultRobot.clickIsolationActionButton()
 
         shareKeys()
@@ -1070,7 +1071,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionSupported(
             testEndDate = testEndDate.minus(1, ChronoUnit.DAYS)
         )
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
         testResultRobot.clickIsolationActionButton()
 
         shareKeys()
@@ -1094,7 +1095,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
 
         shareKeysAndBookTest()
 
@@ -1110,7 +1111,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
 
         shareKeysAndBookTest()
 
@@ -1126,7 +1127,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
         shareKeysAndBookTest()
 
@@ -1142,7 +1143,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
         shareKeysAndBookTest()
 
@@ -1158,7 +1159,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
         shareKeysAndBookTest()
 
@@ -1174,7 +1175,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionSupported()
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
         shareKeysAndBookTest()
 

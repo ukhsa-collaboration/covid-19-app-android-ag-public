@@ -1,17 +1,22 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.encounter
 
-import androidx.test.platform.app.InstrumentationRegistry
+import org.junit.Before
 import org.junit.Test
-import uk.nhs.nhsx.covid19.android.app.R.string
-import uk.nhs.nhsx.covid19.android.app.testhelpers.assertBrowserIsOpened
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 
-class RiskyContactIsolationOptOutActivityTest : EspressoTest() {
+class RiskyContactIsolationOptOutActivityTest : EspressoTest(), LocalAuthoritySetupHelper {
 
-    private val context = InstrumentationRegistry.getInstrumentation().targetContext
     private val riskyContactIsolationOptOutRobot = RiskyContactIsolationOptOutRobot()
     private val statusRobot = StatusRobot()
+
+    @Before
+    fun setUp() {
+        givenLocalAuthorityIsInEngland()
+    }
 
     @Test
     fun activityIsDisplayed() {
@@ -32,14 +37,22 @@ class RiskyContactIsolationOptOutActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickPrimaryButtonShouldNavigateToExternalLink() {
+    fun clickPrimaryButtonShouldNavigateToExternalLinkForEngland() {
         startTestActivity<RiskyContactIsolationOptOutActivity>()
 
         riskyContactIsolationOptOutRobot.checkActivityIsDisplayed()
 
-        assertBrowserIsOpened(context.getString(string.risky_contact_opt_out_primary_button_url)) {
-            riskyContactIsolationOptOutRobot.clickPrimaryButton_opensInExternalBrowser()
-        }
+        riskyContactIsolationOptOutRobot.checkPrimaryButtonUrl(ENGLAND)
+    }
+
+    @Test
+    fun clickPrimaryButtonShouldNavigateToExternalLinkForWales() {
+        givenLocalAuthorityIsInWales()
+        startTestActivity<RiskyContactIsolationOptOutActivity>()
+
+        riskyContactIsolationOptOutRobot.checkActivityIsDisplayed()
+
+        riskyContactIsolationOptOutRobot.checkPrimaryButtonUrl(WALES)
     }
 
     @Test
@@ -48,8 +61,25 @@ class RiskyContactIsolationOptOutActivityTest : EspressoTest() {
 
         riskyContactIsolationOptOutRobot.checkActivityIsDisplayed()
 
-        assertBrowserIsOpened(context.getString(string.risky_contact_opt_out_further_advice_link_url)) {
-            riskyContactIsolationOptOutRobot.clickGuidance_opensInExternalBrowser()
-        }
+        riskyContactIsolationOptOutRobot.checkGuidanceUrl()
+    }
+
+    @Test
+    fun verifyEnglandStringAreDisplayed() {
+        startTestActivity<RiskyContactIsolationOptOutActivity>()
+
+        riskyContactIsolationOptOutRobot.checkActivityIsDisplayed()
+
+        riskyContactIsolationOptOutRobot.checkEnglandAdviceCopiesAreDisplayed()
+    }
+
+    @Test
+    fun verifyWalesStringAreDisplayed() {
+        givenLocalAuthorityIsInWales()
+        startTestActivity<RiskyContactIsolationOptOutActivity>()
+
+        riskyContactIsolationOptOutRobot.checkActivityIsDisplayed()
+
+        waitFor { riskyContactIsolationOptOutRobot.checkWalesAdviceCopiesAreDisplayed() }
     }
 }

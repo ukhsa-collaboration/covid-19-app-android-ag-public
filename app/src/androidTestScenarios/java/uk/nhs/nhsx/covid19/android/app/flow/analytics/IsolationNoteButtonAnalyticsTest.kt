@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_EXTERNAL_BROWSER
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
@@ -20,7 +21,8 @@ class IsolationNoteButtonAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
     override val isolationHelper = IsolationHelper(testAppContext.clock)
 
     @Test
-    fun whenClickingIsolationNoteItemMultipleTimes_forEachClick_increaseDidAccessSelfIsolation() {
+    fun whenClickingIsolationNoteItemMultipleTimes_forEachClick_increaseDidAccessSelfIsolation() =
+        runWithFeatureEnabled(SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES) {
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
             givenContactIsolation()
 

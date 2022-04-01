@@ -8,6 +8,7 @@ import android.os.Parcelable
 import android.provider.Settings
 import androidx.core.view.isVisible
 import com.google.android.material.snackbar.Snackbar
+import com.jeroenmols.featureflag.framework.FeatureFlag.TESTING_FOR_COVID19_HOME_SCREEN_BUTTON
 import com.jeroenmols.featureflag.framework.FeatureFlag.VENUE_CHECK_IN_BUTTON
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.android.parcel.Parcelize
@@ -17,6 +18,7 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.LocaleProvider
 import uk.nhs.nhsx.covid19.android.app.common.assistedViewModel
 import uk.nhs.nhsx.covid19.android.app.common.bluetooth.EnableBluetoothActivity
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.databinding.ActivityStatusBinding
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationActivity
@@ -163,13 +165,16 @@ class StatusActivity : StatusBaseActivity() {
                 viewState.exposureNotificationsEnabled,
                 viewState.animationsEnabled,
                 viewState.bluetoothEnabled,
-                viewState.showCovidStatsButton
+                viewState.showCovidStatsButton,
+                viewState.country,
+                viewState.showIsolationHubButton
             )
             handleRiskyPostCodeViewState(viewState.areaRiskState)
             handleReportSymptomsState(viewState.showReportSymptomsButton)
             handleLocalMessageState(viewState.localMessage)
         }
         binding.optionVenueCheckIn.isVisible = RuntimeBehavior.isFeatureEnabled(VENUE_CHECK_IN_BUTTON)
+        binding.optionTestingHub.isVisible = RuntimeBehavior.isFeatureEnabled(TESTING_FOR_COVID19_HOME_SCREEN_BUTTON)
     }
 
     private fun handleLocalMessageState(localMessage: NotificationMessage?) = with(binding) {
@@ -258,7 +263,9 @@ class StatusActivity : StatusBaseActivity() {
         exposureNotificationsEnabled: Boolean,
         animationsEnabled: Boolean,
         bluetoothEnabled: Boolean,
-        showCovidStatsButton: Boolean
+        showCovidStatsButton: Boolean,
+        country: PostCodeDistrict,
+        showIsolationHubButton: Boolean
     ) {
         if (statusViewModel.contactTracingSwitchedOn) {
             binding.contactTracingActiveView.focusOnActiveLabel()
@@ -270,7 +277,15 @@ class StatusActivity : StatusBaseActivity() {
                 showDefaultView(exposureNotificationsEnabled, animationsEnabled, bluetoothEnabled, showCovidStatsButton)
             }
             is Isolating -> {
-                showIsolationView(isolationState, currentDate, exposureNotificationsEnabled, animationsEnabled, showCovidStatsButton)
+                showIsolationView(
+                    isolationState,
+                    currentDate,
+                    exposureNotificationsEnabled,
+                    animationsEnabled,
+                    showCovidStatsButton,
+                    country,
+                    showIsolationHubButton
+                )
             }
         }
     }
@@ -291,9 +306,11 @@ class StatusActivity : StatusBaseActivity() {
         currentDate: LocalDate,
         exposureNotificationsEnabled: Boolean,
         animationsEnabled: Boolean,
-        showCovidStatsButton: Boolean
+        showCovidStatsButton: Boolean,
+        country: PostCodeDistrict,
+        showIsolationHubButton: Boolean
     ) = with(binding) {
-        isolationView.initialize(isolationState, currentDate)
+        isolationView.initialize(isolationState, currentDate, country)
         val animationState = when {
             animationsEnabled && exposureNotificationsEnabled -> IsolationStatusView.AnimationState.ANIMATION_ENABLED_EN_ENABLED
             !animationsEnabled && exposureNotificationsEnabled -> IsolationStatusView.AnimationState.ANIMATION_DISABLED_EN_ENABLED
@@ -303,7 +320,7 @@ class StatusActivity : StatusBaseActivity() {
 
         contactTracingView.gone()
         isolationView.visible()
-        optionIsolationHub.visible()
+        optionIsolationHub.isVisible = showIsolationHubButton
         if (showCovidStatsButton) {
             optionLocalData.visible()
             updateLocalDataButtonPositionWhenInIsolation()

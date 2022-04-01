@@ -12,6 +12,8 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.databinding.ActivityTestResultBinding
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysInformationActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
@@ -74,6 +76,10 @@ class TestResultActivity : BaseActivity() {
             }
         }
 
+        fetchViewState()
+    }
+
+    private fun fetchViewState() {
         viewModel.viewState().observe(this) { viewState ->
             when (viewState.mainState) {
                 NegativeNotInIsolation ->
@@ -83,9 +89,12 @@ class TestResultActivity : BaseActivity() {
                 NegativeWontBeInIsolation ->
                     showDoNotHaveToSelfIsolateScreenOnNegative()
                 PositiveContinueIsolation ->
-                    showContinueToSelfIsolationScreenOnPositive(viewState.remainingDaysInIsolation)
+                    showContinueToSelfIsolationScreenOnPositive(viewState.remainingDaysInIsolation, viewState.country)
                 PositiveContinueIsolationNoChange ->
-                    showContinueToSelfIsolationScreenOnPositiveAndNoChange(viewState.remainingDaysInIsolation)
+                    showContinueToSelfIsolationScreenOnPositiveAndNoChange(
+                        viewState.remainingDaysInIsolation,
+                        viewState.country
+                    )
                 PositiveWillBeInIsolation ->
                     showWillBeInIsolationOnPositive(viewState)
                 PositiveWontBeInIsolation ->
@@ -100,20 +109,21 @@ class TestResultActivity : BaseActivity() {
                     showContinueWithCurrentStateScreenOnPlod()
                 Ignore -> finish()
             }
-            updateActionButton(viewState.acknowledgementCompletionActions, viewState.mainState)
+            updateActionButton(viewState.acknowledgementCompletionActions, viewState.mainState, viewState.country)
         }
     }
 
     private fun showWillBeInIsolationOnPositive(viewState: ViewState) {
         if (viewState.acknowledgementCompletionActions.suggestBookTest == FollowUpTest && !viewState.acknowledgementCompletionActions.shouldAllowKeySubmission)
-            showSelfIsolateScreenOnPositiveAndOrderTest(viewState.remainingDaysInIsolation)
+            showSelfIsolateScreenOnPositiveAndOrderTest(viewState.remainingDaysInIsolation, viewState.country)
         else
-            showSelfIsolateScreenOnPositive(viewState.remainingDaysInIsolation)
+            showSelfIsolateScreenOnPositive(viewState.remainingDaysInIsolation, viewState.country)
     }
 
     private fun updateActionButton(
         acknowledgementCompletionActions: AcknowledgementCompletionActions,
-        mainState: TestResultViewState
+        mainState: TestResultViewState,
+        country: PostCodeDistrict?
     ) = with(binding) {
         val showBackToHomeIfNoSpecificAction =
             mainState in listOf(
@@ -122,7 +132,10 @@ class TestResultActivity : BaseActivity() {
             )
 
         val actionButtonStringResource = when {
-            acknowledgementCompletionActions.shouldAllowKeySubmission -> R.string.continue_button
+            acknowledgementCompletionActions.shouldAllowKeySubmission -> getButtonLabelWhenKeySubmissionIsAllowed(
+                mainState,
+                country
+            )
             acknowledgementCompletionActions.suggestBookTest == FollowUpTest -> R.string.book_follow_up_test
             acknowledgementCompletionActions.suggestBookTest == RegularTest -> R.string.book_free_test
             acknowledgementCompletionActions.suggestBookTest == NoTest -> if (showBackToHomeIfNoSpecificAction) R.string.back_to_home else R.string.continue_button
@@ -137,6 +150,17 @@ class TestResultActivity : BaseActivity() {
         with(isolationRequestContainer) {
             isolationRequestActionButton.text = getString(actionButtonStringResource)
             isolationRequestActionButton.setOnSingleClickListener { viewModel.onActionButtonClicked() }
+        }
+    }
+
+    private fun getButtonLabelWhenKeySubmissionIsAllowed(
+        mainState: TestResultViewState,
+        country: PostCodeDistrict?
+    ): Int {
+        return if ((mainState == PositiveContinueIsolation || mainState == PositiveContinueIsolationNoChange) && country == ENGLAND) {
+            R.string.index_case_isolation_advice_primary_button_title_england
+        } else {
+            R.string.continue_button
         }
     }
 
@@ -241,27 +265,93 @@ class TestResultActivity : BaseActivity() {
         }
     }
 
-    private fun showContinueToSelfIsolationScreenOnPositive(remainingDaysInIsolation: Int) {
-        showIsolationState(
-            remainingDaysInIsolation = remainingDaysInIsolation,
-            exposureLinksVisible = true,
-            paragraphResources = intArrayOf(
-                R.string.test_result_positive_continue_self_isolate_explanation_1,
-                R.string.test_result_positive_continue_self_isolate_explanation_2,
-                R.string.exposure_faqs_title
-            )
-        )
+    private fun showIsolationAdviceForEngland(
+        hasCloseToolbar: Boolean = false,
+        @DrawableRes iconResource: Int = R.drawable.ic_isolation_continue,
+        @StringRes stateText: Int = R.string.index_case_isolation_advice_information_box_description_england,
+        @ColorRes stateColor: Int = R.color.amber,
+        @StringRes title: Int = R.string.index_case_isolation_advice_heading_title_england,
+        @StringRes onlineServiceLinkText: Int = R.string.index_case_isolation_advice_nhs_onilne_link_button_england,
+        @StringRes onlineServiceLinkUrl: Int = R.string.url_nhs_111_online,
+        @StringRes paragraphText: Int = R.string.index_case_isolation_advice_body_england
+    ) = with(binding) {
+        if (hasCloseToolbar) {
+            setCloseToolbar()
+        }
+        goodNewsContainer.root.gone()
+        with(isolationRequestContainer) {
+
+            root.visible()
+            exposureFaqsLink.visible()
+
+            isolationRequestImage.setImageResource(iconResource)
+
+            val titleText = getString(title)
+            isolationRequestTitle1.text = titleText
+            isolationRequestTitle2.gone()
+            isolationRequestTitle3.gone()
+
+            accessibilityContainer.contentDescription = titleText
+            accessibilityContainer.setUpAccessibilityHeading()
+
+            isolationRequestContainer.isolationRequestInfoView.apply {
+                this.stateText = getString(stateText)
+                this.stateColor = getColor(stateColor)
+            }
+
+            isolationRequestParagraphContainer.setRawText(getString(paragraphText))
+
+            isolationRequestOnlineServiceLink.setDisplayText(onlineServiceLinkText)
+            isolationRequestOnlineServiceLink.setLinkUrl(onlineServiceLinkUrl)
+        }
     }
 
-    private fun showContinueToSelfIsolationScreenOnPositiveAndNoChange(remainingDaysInIsolation: Int) {
-        showIsolationState(
-            remainingDaysInIsolation = remainingDaysInIsolation,
-            exposureLinksVisible = true,
-            paragraphResources = intArrayOf(
-                R.string.test_result_positive_continue_self_isolate_no_change_explanation_1,
-                R.string.exposure_faqs_title
+    private fun showContinueToSelfIsolationScreenOnPositive(remainingDaysInIsolation: Int, country: PostCodeDistrict?) {
+        if (country == ENGLAND) {
+            showIsolationAdviceForEngland(
+                hasCloseToolbar = false,
+                stateText = R.string.index_case_isolation_advice_information_box_description_england,
+                title = R.string.index_case_continue_isolation_advice_heading_title_england,
+                onlineServiceLinkText = R.string.index_case_continue_isolation_advice_nhs_onilne_link_button_england,
+                onlineServiceLinkUrl = R.string.url_nhs_111_online,
+                paragraphText = R.string.index_case_continue_isolation_advice_body_england
             )
-        )
+        } else {
+            showIsolationState(
+                remainingDaysInIsolation = remainingDaysInIsolation,
+                exposureLinksVisible = true,
+                paragraphResources = intArrayOf(
+                    R.string.test_result_positive_continue_self_isolate_explanation_1,
+                    R.string.test_result_positive_continue_self_isolate_explanation_2,
+                    R.string.exposure_faqs_title
+                )
+            )
+        }
+    }
+
+    private fun showContinueToSelfIsolationScreenOnPositiveAndNoChange(
+        remainingDaysInIsolation: Int,
+        country: PostCodeDistrict?
+    ) {
+        if (country == ENGLAND) {
+            showIsolationAdviceForEngland(
+                hasCloseToolbar = false,
+                stateText = R.string.index_case_isolation_advice_information_box_description_england,
+                title = R.string.index_case_continue_isolation_advice_heading_title_england,
+                onlineServiceLinkText = R.string.index_case_continue_isolation_advice_nhs_onilne_link_button_england,
+                onlineServiceLinkUrl = R.string.url_nhs_111_online,
+                paragraphText = R.string.index_case_continue_isolation_advice_body_england
+            )
+        } else {
+            showIsolationState(
+                remainingDaysInIsolation = remainingDaysInIsolation,
+                exposureLinksVisible = true,
+                paragraphResources = intArrayOf(
+                    R.string.test_result_positive_continue_self_isolate_no_change_explanation_1,
+                    R.string.exposure_faqs_title
+                )
+            )
+        }
     }
 
     private fun showContinueToSelfIsolationScreenOnNegative(remainingDaysInIsolation: Int) {
@@ -304,34 +394,44 @@ class TestResultActivity : BaseActivity() {
         )
     }
 
-    private fun showSelfIsolateScreenOnPositive(remainingDaysInIsolation: Int) {
-        showIsolationState(
-            remainingDaysInIsolation = remainingDaysInIsolation,
-            selfIsolationLabel = R.string.self_isolate_for,
-            stateText = R.string.state_test_positive_info,
-            exposureLinksVisible = true,
-            paragraphResources = intArrayOf(
-                R.string.test_result_negative_then_positive_continue_explanation,
-                R.string.exposure_faqs_title
+    private fun showSelfIsolateScreenOnPositive(remainingDaysInIsolation: Int, country: PostCodeDistrict?) {
+        if (country != null && country == PostCodeDistrict.ENGLAND) {
+            showIsolationAdviceForEngland()
+        } else {
+            showIsolationState(
+                remainingDaysInIsolation = remainingDaysInIsolation,
+                selfIsolationLabel = R.string.self_isolate_for,
+                stateText = R.string.state_test_positive_info,
+                exposureLinksVisible = true,
+                paragraphResources = intArrayOf(
+                    R.string.test_result_negative_then_positive_continue_explanation,
+                    R.string.exposure_faqs_title
+                )
             )
-        )
+        }
     }
 
-    private fun showSelfIsolateScreenOnPositiveAndOrderTest(remainingDaysInIsolation: Int) {
-        showIsolationState(
-            hasCloseToolbar = true,
-            remainingDaysInIsolation = remainingDaysInIsolation,
-            iconResource = R.drawable.ic_isolation_book_test,
-            stateText = R.string.state_test_positive_and_book_test_info,
-            stateColor = R.color.amber,
-            selfIsolationLabel = R.string.self_isolate_for,
-            additionalIsolationInfoText = R.string.test_result_positive_self_isolate_and_book_test_title_3,
-            exposureLinksVisible = true,
-            paragraphResources = intArrayOf(
-                R.string.test_result_positive_self_isolate_and_book_test_explanation_1,
-                R.string.exposure_faqs_title
+    private fun showSelfIsolateScreenOnPositiveAndOrderTest(remainingDaysInIsolation: Int, country: PostCodeDistrict?) {
+        if (country != null && country == PostCodeDistrict.ENGLAND) {
+            showIsolationAdviceForEngland(
+                hasCloseToolbar = true
             )
-        )
+        } else {
+            showIsolationState(
+                hasCloseToolbar = true,
+                remainingDaysInIsolation = remainingDaysInIsolation,
+                iconResource = R.drawable.ic_isolation_book_test,
+                stateText = R.string.state_test_positive_and_book_test_info,
+                stateColor = R.color.amber,
+                selfIsolationLabel = R.string.self_isolate_for,
+                additionalIsolationInfoText = R.string.test_result_positive_self_isolate_and_book_test_title_3,
+                exposureLinksVisible = true,
+                paragraphResources = intArrayOf(
+                    R.string.test_result_positive_self_isolate_and_book_test_explanation_1,
+                    R.string.exposure_faqs_title
+                )
+            )
+        }
     }
     //endregion
 

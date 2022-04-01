@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
+import androidx.annotation.StyleRes
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.databinding.ViewStateInfoBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
@@ -31,6 +32,12 @@ class StateInfoView @JvmOverloads constructor(
             binding.stateColorView.setBackgroundColor(stateColor)
         }
 
+    var stateStyle: Int = 0
+        set(value) {
+            field = value
+            binding.stateTextView.setTextAppearance(stateStyle)
+        }
+
     init {
         applyAttributes(context, attrs)
         binding.stateTextView.setUpAccessibilityHeading()
@@ -39,6 +46,7 @@ class StateInfoView @JvmOverloads constructor(
     fun setStateInfoParams(stateInfoParams: StateInfoParams) {
         stateText = context.getString(stateInfoParams.text)
         stateColor = context.getColor(stateInfoParams.color)
+        stateStyle = stateInfoParams.style
     }
 
     override fun announceForAccessibility(error: CharSequence) {
@@ -67,5 +75,6 @@ class StateInfoView @JvmOverloads constructor(
 
 data class StateInfoParams(
     @StringRes val text: Int,
-    @ColorRes val color: Int
+    @ColorRes val color: Int,
+    @StyleRes val style: Int = R.style.Title2
 )

@@ -48,6 +48,7 @@
     <!-- Used for action text within row item or radio tile -->
     <style name="ActionText">
         <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:textStyle">normal</item>
         <item name="android:textSize">16sp</item>
     </style>
 

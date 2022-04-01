@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 
 abstract class BaseTestResultViewModel : ViewModel() {
@@ -21,7 +22,9 @@ abstract class BaseTestResultViewModel : ViewModel() {
         val mainState: TestResultViewState,
         val remainingDaysInIsolation: Int,
         val acknowledgementCompletionActions: AcknowledgementCompletionActions
-    )
+    ) {
+        var country: PostCodeDistrict? = null
+    }
 
     sealed class NavigationEvent {
         data class NavigateToShareKeys(val bookFollowUpTest: Boolean) : NavigationEvent()

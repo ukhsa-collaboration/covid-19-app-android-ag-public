@@ -37,8 +37,6 @@ import uk.nhs.nhsx.covid19.android.app.state.SideEffect.HandleTestResult
 import uk.nhs.nhsx.covid19.android.app.state.SideEffect.SendExposedNotification
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.DoNotTransition
-import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubReminderAlarmController
-import uk.nhs.nhsx.covid19.android.app.status.isolationhub.ScheduleIsolationHubReminder
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
@@ -70,8 +68,6 @@ class IsolationStateMachineTest {
     private val trackTestResultAnalyticsOnReceive = mockk<TrackTestResultAnalyticsOnReceive>(relaxUnitFun = true)
     private val trackTestResultAnalyticsOnAcknowledge =
         mockk<TrackTestResultAnalyticsOnAcknowledge>(relaxUnitFun = true)
-    private val scheduleIsolationHubReminder = mockk<ScheduleIsolationHubReminder>(relaxUnitFun = true)
-    private val isolationHubReminderAlarmController = mockk<IsolationHubReminderAlarmController>(relaxUnitFun = true)
     private val createIsolationState = mockk<CreateIsolationState>(relaxUnitFun = true)
     private val createIsolationLogicalState = createIsolationLogicalState(fixedClock)
 
@@ -117,7 +113,6 @@ class IsolationStateMachineTest {
 
         verify {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -149,7 +144,6 @@ class IsolationStateMachineTest {
 
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateDefaultChecks()
@@ -179,7 +173,6 @@ class IsolationStateMachineTest {
 
         verify {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -356,7 +349,6 @@ class IsolationStateMachineTest {
         verify { storageBasedUserInbox.notifyChanges() }
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateDefaultChecks()
@@ -392,7 +384,6 @@ class IsolationStateMachineTest {
         verify(exactly = 0) {
             analyticsEventProcessor.track(ReceivedUnconfirmedPositiveTestResult)
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateDefaultChecks()
@@ -426,7 +417,6 @@ class IsolationStateMachineTest {
 
         verify(exactly = 1) { exposureNotificationHandler.show() }
         verify(exactly = 1) { analyticsEventProcessor.track(StartedIsolation) }
-        verify(exactly = 0) { scheduleIsolationHubReminder() }
 
         newStateIsolationChecks(
             currentState = currentState,
@@ -455,7 +445,6 @@ class IsolationStateMachineTest {
 
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateDefaultChecks()
@@ -482,7 +471,6 @@ class IsolationStateMachineTest {
 
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateDefaultChecks()
@@ -513,7 +501,6 @@ class IsolationStateMachineTest {
         assertEquals(SendExposedNotification, sideEffect)
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -540,7 +527,6 @@ class IsolationStateMachineTest {
         assertEquals(null, sideEffect)
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -568,7 +554,6 @@ class IsolationStateMachineTest {
 
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -605,7 +590,6 @@ class IsolationStateMachineTest {
         verify(exactly = 1) { exposureNotificationHandler.show() }
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -644,7 +628,6 @@ class IsolationStateMachineTest {
         verify { storageBasedUserInbox.notifyChanges() }
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -683,7 +666,6 @@ class IsolationStateMachineTest {
         verify { storageBasedUserInbox.notifyChanges() }
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -722,7 +704,6 @@ class IsolationStateMachineTest {
         verify { storageBasedUserInbox.notifyChanges() }
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -761,7 +742,6 @@ class IsolationStateMachineTest {
         verify { storageBasedUserInbox.notifyChanges() }
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -797,7 +777,6 @@ class IsolationStateMachineTest {
 
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -831,7 +810,6 @@ class IsolationStateMachineTest {
 
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -876,7 +854,6 @@ class IsolationStateMachineTest {
         verify { storageBasedUserInbox.notifyChanges() }
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -922,7 +899,6 @@ class IsolationStateMachineTest {
         verify { storageBasedUserInbox.notifyChanges() }
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -967,7 +943,6 @@ class IsolationStateMachineTest {
         verify { storageBasedUserInbox.notifyChanges() }
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -1021,7 +996,6 @@ class IsolationStateMachineTest {
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateDefaultChecks()
@@ -1068,7 +1042,6 @@ class IsolationStateMachineTest {
         verify(exactly = 0) { keySharingInfoProvider setProperty "keySharingInfo" value any<KeySharingInfo>() }
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateDefaultChecks()
@@ -1119,7 +1092,6 @@ class IsolationStateMachineTest {
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -1180,7 +1152,6 @@ class IsolationStateMachineTest {
         verify(exactly = 1) { unacknowledgedTestResultsProvider.remove(testResult) }
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
         verify { analyticsEventProcessor.track(StartedIsolation) }
-        verify(exactly = 0) { scheduleIsolationHubReminder() }
 
         newStateIsolationChecks(
             currentState = currentState,
@@ -1242,7 +1213,6 @@ class IsolationStateMachineTest {
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateDefaultChecks()
@@ -1309,7 +1279,6 @@ class IsolationStateMachineTest {
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateIsolationChecks(
@@ -1381,7 +1350,6 @@ class IsolationStateMachineTest {
         verify(exactly = 1) { keySharingInfoProvider setProperty "keySharingInfo" value eq(keySharingInfo) }
         verify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateDefaultChecks()
@@ -1402,7 +1370,6 @@ class IsolationStateMachineTest {
         assertEquals(IsolationState(isolationConfiguration = isolationConfiguration), testSubject.readState())
         coVerify(exactly = 0) {
             analyticsEventProcessor.track(StartedIsolation)
-            scheduleIsolationHubReminder()
         }
 
         newStateDefaultChecks()
@@ -1522,7 +1489,6 @@ class IsolationStateMachineTest {
     private fun newStateDefaultChecks() {
         verify { alarmController.cancelExpirationCheckIfAny() }
         verify { exposureNotificationHandler.cancel() }
-        verify { isolationHubReminderAlarmController.cancel() }
     }
 
     private fun newStateIsolationChecks(currentState: IsolationState, newState: IsolationState) {
@@ -1568,8 +1534,6 @@ class IsolationStateMachineTest {
             createIsolationLogicalState,
             trackTestResultAnalyticsOnReceive,
             trackTestResultAnalyticsOnAcknowledge,
-            scheduleIsolationHubReminder,
-            isolationHubReminderAlarmController,
             createIsolationState
         )
     }

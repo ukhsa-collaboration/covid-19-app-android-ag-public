@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.status.isolationhub
 
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_EXTERNAL_BROWSER
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
 import org.junit.Test
@@ -26,7 +27,8 @@ class IsolationHubScenarioTest : EspressoTest(), IsolationSetupHelper, LocalAuth
     override val isolationHelper = IsolationHelper(testAppContext.clock)
 
     @Test
-    fun whenInActiveIsolationAndNoBookTestTypeVenueVisitStored_bookATest_navigateToStatusActivity() {
+    fun whenInActiveIsolationAndNoBookTestTypeVenueVisitStored_bookATest_navigateToStatusActivity() =
+        runWithFeatureEnabled(SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND) {
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_INTERNAL_BROWSER) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()
@@ -49,7 +51,8 @@ class IsolationHubScenarioTest : EspressoTest(), IsolationSetupHelper, LocalAuth
     }
 
     @Test
-    fun whenInIsolation_clickIsolationNoteItem_openBrowserWithCorrectUrl() {
+    fun whenInIsolation_clickIsolationNoteItem_openBrowserWithCorrectUrl() =
+        runWithFeatureEnabled(SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND) {
         givenLocalAuthorityIsInEngland()
         givenContactIsolation()
         navigateToIsolationHub()
@@ -63,7 +66,8 @@ class IsolationHubScenarioTest : EspressoTest(), IsolationSetupHelper, LocalAuth
     }
 
     @Test
-    fun whenInIsolation_clickIsolationNoteItem_closeBrowser_shouldShowStatusActivity() {
+    fun whenInIsolation_clickIsolationNoteItem_closeBrowser_shouldShowStatusActivity() =
+        runWithFeatureEnabled(SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND) {
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
             givenLocalAuthorityIsInEngland()
             givenContactIsolation()

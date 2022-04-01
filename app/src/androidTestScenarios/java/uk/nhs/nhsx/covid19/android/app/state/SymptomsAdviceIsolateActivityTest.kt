@@ -3,6 +3,9 @@ package uk.nhs.nhsx.covid19.android.app.state
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import org.junit.After
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsDidUpdateIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
@@ -12,8 +15,9 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvi
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 
-class SymptomsAdviceIsolateActivityTest : EspressoTest() {
+class SymptomsAdviceIsolateActivityTest : EspressoTest(), LocalAuthoritySetupHelper {
 
     private val symptomsAdviceIsolateRobot = SymptomsAdviceIsolateRobot()
 
@@ -25,8 +29,17 @@ class SymptomsAdviceIsolateActivityTest : EspressoTest() {
     }
 
     @Test
-    fun whenNotIsolating_thenTransitionToIndexCaseDueToSelfAssessment() {
-        verifyViewState(NoIndexCaseThenIsolationDueToSelfAssessment(remainingDaysInIsolation))
+    fun whenNotIsolating_thenTransitionToIndexCaseDueToSelfAssessmentForEngland() {
+        givenLocalAuthorityIsInEngland()
+
+        verifyViewState(NoIndexCaseThenIsolationDueToSelfAssessment(remainingDaysInIsolation), ENGLAND)
+    }
+
+    @Test
+    fun whenNotIsolating_thenTransitionToIndexCaseDueToSelfAssessmentForWales() {
+        givenLocalAuthorityIsInWales()
+
+        verifyViewState(NoIndexCaseThenIsolationDueToSelfAssessment(remainingDaysInIsolation), WALES)
     }
 
     @Test
@@ -49,7 +62,7 @@ class SymptomsAdviceIsolateActivityTest : EspressoTest() {
         verifyViewState(IndexCaseThenNoSymptoms)
     }
 
-    private fun verifyViewState(isolationSymptomAdvice: IsolationSymptomAdvice) {
+    private fun verifyViewState(isolationSymptomAdvice: IsolationSymptomAdvice, country: PostCodeDistrict = WALES) {
         startTestActivity<SymptomsAdviceIsolateActivity> {
             putExtra(
                 SymptomsAdviceIsolateActivity.EXTRA_ISOLATION_SYMPTOM_ADVICE,
@@ -57,6 +70,6 @@ class SymptomsAdviceIsolateActivityTest : EspressoTest() {
             )
         }
         symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
-        symptomsAdviceIsolateRobot.checkViewState(isolationSymptomAdvice)
+        symptomsAdviceIsolateRobot.checkViewState(isolationSymptomAdvice, country)
     }
 }

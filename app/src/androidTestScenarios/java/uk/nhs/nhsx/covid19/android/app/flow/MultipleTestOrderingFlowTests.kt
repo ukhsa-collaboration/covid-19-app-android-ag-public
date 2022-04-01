@@ -1,8 +1,10 @@
 package uk.nhs.nhsx.covid19.android.app.flow
 
+import com.jeroenmols.featureflag.framework.FeatureFlag.TESTING_FOR_COVID19_HOME_SCREEN_BUTTON
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.OrderTest
 import uk.nhs.nhsx.covid19.android.app.remote.TestResponse
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
@@ -21,6 +23,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestingHubRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
@@ -44,7 +47,8 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCase_receiveNegativeAndPositiveTestResultsSequentially_shouldIsolate() {
+    fun startIndexCase_receiveNegativeAndPositiveTestResultsSequentially_shouldIsolate() =
+        runWithFeatureEnabled(TESTING_FOR_COVID19_HOME_SCREEN_BUTTON) {
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -75,7 +79,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         runBackgroundTasks()
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -93,7 +97,8 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCase_receiveNegativeAndNegativeTestResultsSequentially_shouldEndIsolationOnFirstNegativeTestResult() {
+    fun startIndexCase_receiveNegativeAndNegativeTestResultsSequentially_shouldEndIsolationOnFirstNegativeTestResult() =
+        runWithFeatureEnabled(TESTING_FOR_COVID19_HOME_SCREEN_BUTTON) {
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -137,7 +142,8 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
     @RetryFlakyTest
     @Test
-    fun startIndexCase_receiveMultipleTestResultsAtTheSameTime_firstPositive_thenNegative_shouldIsolate() {
+    fun startIndexCase_receiveMultipleTestResultsAtTheSameTime_firstPositive_thenNegative_shouldIsolate() =
+        runWithFeatureEnabled(TESTING_FOR_COVID19_HOME_SCREEN_BUTTON) {
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -165,7 +171,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -187,7 +193,8 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCaseWithPositiveTestResult_receiveNegativeTestResult_shouldStayInIsolation() {
+    fun startIndexCaseWithPositiveTestResult_receiveNegativeTestResult_shouldStayInIsolation() =
+        runWithFeatureEnabled(TESTING_FOR_COVID19_HOME_SCREEN_BUTTON) {
         testAppContext.setState(
             isolationHelper.selfAssessment().asIsolation()
                 .addTestResult(
@@ -223,7 +230,8 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCase_receivePositiveTestResult_thenVoidTestResult_thenNegativeTestResult_shouldStayInIsolation() {
+    fun startIndexCase_receivePositiveTestResult_thenVoidTestResult_thenNegativeTestResult_shouldStayInIsolation() =
+        runWithFeatureEnabled(TESTING_FOR_COVID19_HOME_SCREEN_BUTTON) {
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()
@@ -246,7 +254,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 

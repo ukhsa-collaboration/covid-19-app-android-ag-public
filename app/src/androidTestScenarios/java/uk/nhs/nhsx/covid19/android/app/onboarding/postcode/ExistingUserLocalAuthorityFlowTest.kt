@@ -45,7 +45,8 @@ class ExistingUserLocalAuthorityFlowTest : EspressoTest() {
         testAppContext.setPostCode(postCode)
         testAppContext.setOnboardingCompleted(true)
         testAppContext.setPolicyUpdateAccepted(true)
-        testAppContext.setLocalAuthority("1")
+
+        testAppContext.setLocalAuthority("E07000240")
 
         startTestActivity<MainActivity>()
 

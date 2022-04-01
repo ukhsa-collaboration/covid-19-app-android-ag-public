@@ -1,5 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.flow.functionalities
 
+import uk.nhs.nhsx.covid19.android.app.exposure.executeWithTheUserDecliningExposureKeySharing
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveWillBeInIsolation
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveWillBeInIsolationAndOrderTest
@@ -20,6 +22,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BookFollowUpTestRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultOnsetDateRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultSymptomsRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.waitFor
@@ -36,6 +39,7 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
     private val bookFollowUpTestRobot = BookFollowUpTestRobot()
     private val shareKeys = ShareKeys()
     private val shareKeysAndBookTest = ShareKeysAndBookTest(testAppContext.app)
+    private val shareKeysInformationRobot = ShareKeysInformationRobot()
 
     fun enterPositive(
         virologyTestKitType: VirologyTestKitType,
@@ -77,16 +81,16 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
 
         when (expectedScreenState) {
             is PositiveWillBeInIsolationAndOrderTest -> {
-                waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest() }
+                waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest(WALES) }
                 testResultRobot.clickCloseButton()
             }
             is PositiveContinueIsolation -> {
-                waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation() }
+                waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(WALES) }
                 testResultRobot.clickIsolationActionButton()
                 shareKeys()
             }
             is PositiveWillBeInIsolation -> {
-                waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation() }
+                waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(WALES) }
                 if (requiresConfirmatoryTest) {
                     if (expectedScreenState.includeBookATestFlow) {
                         shareKeysAndBookTest()
@@ -128,6 +132,16 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
         linkTestResultRobot.enterCtaToken(token)
 
         linkTestResultRobot.clickContinue()
+    }
+
+    fun enterPositivePCRTestResultAndDeclineExposureKeySharing(backGroundTask: () -> Unit) {
+        manuallyEnterTestResult(POSITIVE_PCR_TOKEN, testAppContext.clock.instant())
+        testResultRobot.clickIsolationActionButton()
+        backGroundTask()
+        testAppContext.executeWithTheUserDecliningExposureKeySharing {
+            shareKeysInformationRobot.clickContinueButton()
+            waitFor { statusRobot.checkActivityIsDisplayed() }
+        }
     }
 
     data class SymptomsAndOnsetFlowConfiguration(
