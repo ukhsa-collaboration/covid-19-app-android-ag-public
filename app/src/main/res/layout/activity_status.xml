@@ -124,6 +124,16 @@
                 app:layout_constraintTop_toBottomOf="@id/localMessageBanner">
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
+                    android:id="@+id/optionCovidGuidance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    app:optionExternalLink="false"
+                    app:optionIcon="@drawable/ic_advice"
+                    app:optionIconBackgroundColor="@color/style_dark_teal"
+                    app:optionText="@string/home_covid19_guidance_button_title" />
+
+                <uk.nhs.nhsx.covid19.android.app.widgets.StatusOptionView
                     android:id="@+id/optionIsolationHub"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

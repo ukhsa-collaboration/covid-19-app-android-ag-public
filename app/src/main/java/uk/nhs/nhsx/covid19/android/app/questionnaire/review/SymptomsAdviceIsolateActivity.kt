@@ -179,8 +179,7 @@ class SymptomsAdviceIsolateActivity : BaseActivity() {
                 )
             },
             explanationParagraphs = intArrayOf(
-                R.string.isolate_after_corona_virus_symptoms,
-                R.string.exposure_faqs_title
+                R.string.isolate_after_corona_virus_symptoms
             ),
             showIcon = true
         )

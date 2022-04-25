@@ -57,7 +57,7 @@ class TestResultActivity : BaseActivity() {
         appComponent.inject(this)
         binding = ActivityTestResultBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        viewModel.fetchCountry()
         startViewModelListeners()
     }
 

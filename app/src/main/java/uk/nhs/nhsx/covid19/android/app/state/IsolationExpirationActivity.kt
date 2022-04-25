@@ -12,7 +12,10 @@ import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.databinding.ActivityIsolationExpirationBinding
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.openInExternalBrowserForResult
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpLinkTypeWithBrowserWarning
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -31,11 +34,6 @@ class IsolationExpirationActivity : BaseActivity() {
         binding = ActivityIsolationExpirationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.buttonReturnToHomeScreen.setOnSingleClickListener {
-            viewModel.acknowledgeIsolationExpiration()
-            StatusActivity.start(this)
-        }
-
         registerViewModelListeners()
 
         val isolationExpiryDateString = intent.getStringExtra(EXTRA_EXPIRY_DATE)
@@ -53,10 +51,69 @@ class IsolationExpirationActivity : BaseActivity() {
     }
 
     private fun registerViewModelListeners() = viewModel.viewState().observe(this) {
-        displayExpirationDescription(it.expired, it.expiryDate, it.showTemperatureNotice)
+        displayExpirationDescription(it.expired, it.expiryDate, it.showTemperatureNotice, it.isActiveOrPreviousIndexCase)
     }
 
     private fun displayExpirationDescription(
+        expired: Boolean,
+        expiryDate: LocalDate,
+        showTemperatureNotice: Boolean,
+        isActiveOrPreviousIndexCase: Boolean
+    ) {
+        if (isActiveOrPreviousIndexCase)
+            setUpUIIndexCaseWales(expired)
+        else
+            setUpDefaultUI(expired, expiryDate, showTemperatureNotice)
+    }
+
+    private fun setUpUIIndexCaseWales(
+        expired: Boolean
+    ) {
+        val doneIconImageResource =
+            if (expired) R.drawable.ic_elbow_bump
+            else R.drawable.ic_isolation_continue
+        binding.doneIcon.setImageResource(doneIconImageResource)
+        binding.expirationDescription.text =
+            if (expired) getString(R.string.expiration_notification_description_passed_wales)
+            else getString(R.string.your_isolation_are_ending_soon_wales)
+
+        binding.goodNewsTitle.isVisible = false
+        binding.expirationDescription.setPadding(
+            binding.expirationDescription.paddingStart,
+            32.dpToPx.toInt(),
+            binding.expirationDescription.paddingEnd,
+            binding.expirationDescription.paddingBottom
+        )
+
+        if (expired) {
+            binding.continueIsolationIfPositiveView.isVisible = true
+            binding.temperatureNoticeView.isVisible = false
+        } else {
+            binding.temperatureNoticeView.isVisible = true
+            binding.continueIsolationIfPositiveView.isVisible = false
+            binding.temperatureNoticeView.stateText = getString(R.string.expiration_notification_callout_advice_wales)
+        }
+        binding.WalesTestAdvice.text =
+            if (expired) getString(R.string.expiration_notification_testing_advice_wales_after_isolation_ended_wales)
+            else getString(R.string.expiration_notification_testing_advice_wales_before_isolation_ended_wales)
+
+        binding.primaryReturnToHomeScreenButton.isVisible = false
+
+        binding.covidGuidanceLinkButton.isVisible = true
+        binding.covidGuidanceLinkButton.setOnSingleClickListener {
+            openInExternalBrowserForResult(
+                getString(R.string.url_latest_government_guidance_wls), READ_COVID_GUIDANCE)
+        }
+        binding.covidGuidanceLinkButton.setUpLinkTypeWithBrowserWarning(binding.covidGuidanceLinkButton.text)
+
+        binding.secondaryReturnToHomeScreenButton.isVisible = true
+        binding.secondaryReturnToHomeScreenButton.setOnSingleClickListener {
+            viewModel.acknowledgeIsolationExpiration()
+            StatusActivity.start(this)
+        }
+    }
+
+    private fun setUpDefaultUI(
         expired: Boolean,
         expiryDate: LocalDate,
         showTemperatureNotice: Boolean
@@ -68,12 +125,30 @@ class IsolationExpirationActivity : BaseActivity() {
             pattern,
             lastDayOfIsolation.uiFormat(this)
         )
+        binding.primaryReturnToHomeScreenButton.setOnSingleClickListener {
+            viewModel.acknowledgeIsolationExpiration()
+            StatusActivity.start(this)
+        }
 
         binding.temperatureNoticeView.isVisible = showTemperatureNotice
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == READ_COVID_GUIDANCE) {
+            viewModel.acknowledgeIsolationExpiration()
+            navigateToStatusActivity()
+        }
+    }
+
+    private fun navigateToStatusActivity() {
+        StatusActivity.start(this)
+        finish()
+    }
+
     companion object {
         const val EXTRA_EXPIRY_DATE = "EXTRA_EXPIRY_DATE"
+        const val READ_COVID_GUIDANCE = 1351
 
         fun start(context: Context, expiryDate: String) =
             context.startActivity(getIntent(context, expiryDate))

@@ -93,6 +93,18 @@ enum class FeatureFlag(
         "Self Isolation Home Screen button Wales",
         "Show Self Isolation Home Screen button for Wales",
         defaultValue = false
+    ),
+    COVID19_GUIDANCE_HOME_SCREEN_BUTTON_ENGLAND(
+        "feature.CovidGuidanceHubEngland",
+        "COVID-19 Guidance Home Screen button England",
+        "Show COVID-19 Guidance Home Screen button for England",
+        defaultValue = true
+    ),
+    COVID19_GUIDANCE_HOME_SCREEN_BUTTON_WALES(
+        "feature.CovidGuidanceHubWales",
+        "COVID-19 Guidance Home Screen button Wales",
+        "Show COVID-19 Guidance Home Screen button for Wales",
+        defaultValue = true
     )
 }
 

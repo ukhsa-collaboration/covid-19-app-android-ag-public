@@ -117,7 +117,7 @@ class SymptomsAdviceIsolateRobot : HasActivity {
         checkPostDaysTextViewIsDisplayed(R.string.state_and_book_a_test)
         checkExposureLinkIsDisplayed()
         checkStateInfo(R.string.state_index_info, R.color.amber)
-        checkExplanationText(R.string.isolate_after_corona_virus_symptoms, R.string.exposure_faqs_title)
+        checkExplanationText(R.string.isolate_after_corona_virus_symptoms)
         checkBottomActionButtonIsDisplayedWithText(R.string.book_free_test)
     }
 

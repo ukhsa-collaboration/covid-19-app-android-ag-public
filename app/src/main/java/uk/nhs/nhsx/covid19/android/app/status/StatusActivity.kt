@@ -19,6 +19,8 @@ import uk.nhs.nhsx.covid19.android.app.common.LocaleProvider
 import uk.nhs.nhsx.covid19.android.app.common.assistedViewModel
 import uk.nhs.nhsx.covid19.android.app.common.bluetooth.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.databinding.ActivityStatusBinding
 import uk.nhs.nhsx.covid19.android.app.di.module.AppModule
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationActivity
@@ -59,6 +61,8 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewS
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Risk
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState.Unknown
 import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingHubActivity
+import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubActivity
+import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubWalesActivity
 import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubActivity
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessageActivity
 import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubActivity
@@ -172,6 +176,8 @@ class StatusActivity : StatusBaseActivity() {
             handleRiskyPostCodeViewState(viewState.areaRiskState)
             handleReportSymptomsState(viewState.showReportSymptomsButton)
             handleLocalMessageState(viewState.localMessage)
+            handleCovidGuidanceHubState(viewState.showCovidGuidanceHubButton)
+            setupCovidGuidanceHubListener(viewState.country)
         }
         binding.optionVenueCheckIn.isVisible = RuntimeBehavior.isFeatureEnabled(VENUE_CHECK_IN_BUTTON)
         binding.optionTestingHub.isVisible = RuntimeBehavior.isFeatureEnabled(TESTING_FOR_COVID19_HOME_SCREEN_BUTTON)
@@ -184,6 +190,10 @@ class StatusActivity : StatusBaseActivity() {
 
     private fun handleReportSymptomsState(showReportSymptomsButton: Boolean) {
         binding.optionReportSymptoms.isVisible = showReportSymptomsButton
+    }
+
+    private fun handleCovidGuidanceHubState(showCovidGuidanceHubButton: Boolean) {
+        binding.optionCovidGuidance.isVisible = showCovidGuidanceHubButton
     }
 
     private fun setClickListeners() = with(binding) {
@@ -253,6 +263,17 @@ class StatusActivity : StatusBaseActivity() {
                 startActivity(bluetoothSettingsIntent)
             } catch (e: ActivityNotFoundException) {
                 Snackbar.make(binding.root, R.string.enable_bluetooth_error_hint, Snackbar.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun setupCovidGuidanceHubListener(country: PostCodeDistrict) {
+        binding.optionCovidGuidance.setOnSingleClickListener {
+            binding.optionCovidGuidance.isEnabled = false
+            when (country) {
+                ENGLAND -> startActivity<GuidanceHubActivity>()
+                WALES -> startActivity<GuidanceHubWalesActivity>()
+                else -> throw IllegalStateException("The post code district is not England or Wales")
             }
         }
     }
@@ -399,6 +420,7 @@ class StatusActivity : StatusBaseActivity() {
 
     private fun resetButtonEnabling() = with(binding) {
         arrayOf(
+            optionCovidGuidance,
             optionReportSymptoms,
             optionTestingHub,
             optionIsolationHub,

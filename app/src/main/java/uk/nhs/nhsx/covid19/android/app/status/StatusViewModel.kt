@@ -10,6 +10,8 @@ import androidx.lifecycle.Transformations.distinctUntilChanged
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.play.core.review.ReviewManagerFactory
+import com.jeroenmols.featureflag.framework.FeatureFlag.COVID19_GUIDANCE_HOME_SCREEN_BUTTON_ENGLAND
+import com.jeroenmols.featureflag.framework.FeatureFlag.COVID19_GUIDANCE_HOME_SCREEN_BUTTON_WALES
 import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_COVID_STATS
 import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND
 import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES
@@ -210,7 +212,8 @@ class StatusViewModel @AssistedInject constructor(
                 bluetoothEnabled = bluetoothAvailabilityStateProvider.getState() == ENABLED,
                 showCovidStatsButton = RuntimeBehavior.isFeatureEnabled(LOCAL_COVID_STATS),
                 country = country,
-                showIsolationHubButton = shouldShowIsolationHubButtonForEngland(country) || shouldShowIsolationHubButtonForWales(country)
+                showIsolationHubButton = shouldShowIsolationHubButtonForEngland(country) || shouldShowIsolationHubButtonForWales(country),
+                showCovidGuidanceHubButton = shouldShowCovidGuidanceHubForEngland(country) || shouldShowCovidGuidanceHubButtonForWales(country)
             )
             viewStateLiveData.postValue(updatedViewState)
         }
@@ -222,6 +225,14 @@ class StatusViewModel @AssistedInject constructor(
 
     private fun shouldShowIsolationHubButtonForEngland(country: PostCodeDistrict): Boolean {
         return RuntimeBehavior.isFeatureEnabled(SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND) && country == ENGLAND
+    }
+
+    private fun shouldShowCovidGuidanceHubButtonForWales(country: PostCodeDistrict): Boolean {
+        return RuntimeBehavior.isFeatureEnabled(COVID19_GUIDANCE_HOME_SCREEN_BUTTON_WALES) && country == WALES
+    }
+
+    private fun shouldShowCovidGuidanceHubForEngland(country: PostCodeDistrict): Boolean {
+        return RuntimeBehavior.isFeatureEnabled(COVID19_GUIDANCE_HOME_SCREEN_BUTTON_ENGLAND) && country == ENGLAND
     }
 
     private suspend fun getIsolationViewState(isolationState: IsolationLogicalState): IsolationViewState =
@@ -383,7 +394,8 @@ class StatusViewModel @AssistedInject constructor(
         val bluetoothEnabled: Boolean,
         val showCovidStatsButton: Boolean,
         val country: PostCodeDistrict,
-        val showIsolationHubButton: Boolean
+        val showIsolationHubButton: Boolean,
+        val showCovidGuidanceHubButton: Boolean
     )
 
     sealed class PermissionRequestResult {

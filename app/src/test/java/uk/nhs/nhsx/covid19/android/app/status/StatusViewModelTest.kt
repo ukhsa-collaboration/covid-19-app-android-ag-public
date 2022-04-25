@@ -8,6 +8,8 @@ import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.android.play.core.tasks.Task
+import com.jeroenmols.featureflag.framework.FeatureFlag.COVID19_GUIDANCE_HOME_SCREEN_BUTTON_ENGLAND
+import com.jeroenmols.featureflag.framework.FeatureFlag.COVID19_GUIDANCE_HOME_SCREEN_BUTTON_WALES
 import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_COVID_STATS
 import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND
 import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES
@@ -205,7 +207,8 @@ class StatusViewModelTest {
         bluetoothEnabled = false,
         showCovidStatsButton = true,
         country = ENGLAND,
-        showIsolationHubButton = false
+        showIsolationHubButton = false,
+        showCovidGuidanceHubButton = true
     )
 
     @Before
@@ -747,7 +750,7 @@ class StatusViewModelTest {
 
         testSubject.updateViewState()
 
-        verify { viewStateObserver.onChanged(defaultViewState.copy(country = WALES, showIsolationHubButton = false)) }
+        verify { viewStateObserver.onChanged(defaultViewState.copy(country = WALES, showIsolationHubButton = false, showCovidGuidanceHubButton = true)) }
     }
 
     @Test
@@ -780,7 +783,7 @@ class StatusViewModelTest {
 
         testSubject.updateViewState()
 
-        verify { viewStateObserver.onChanged(defaultViewState.copy(country = WALES, showIsolationHubButton = true)) }
+        verify { viewStateObserver.onChanged(defaultViewState.copy(country = WALES, showIsolationHubButton = true, showCovidGuidanceHubButton = true)) }
     }
 
     @Test
@@ -791,7 +794,51 @@ class StatusViewModelTest {
 
         testSubject.updateViewState()
 
-        verify { viewStateObserver.onChanged(defaultViewState.copy(country = WALES, showIsolationHubButton = false)) }
+        verify { viewStateObserver.onChanged(defaultViewState.copy(country = WALES, showIsolationHubButton = false, showCovidGuidanceHubButton = true)) }
+    }
+
+    @Test
+    fun `given local authority provides Wales and COVID19_GUIDANCE_HOME_SCREEN_BUTTON_WALES is false then covid guidance hub should not be visible`() {
+        mockkStatic(RuntimeBehavior::class)
+        every { RuntimeBehavior.isFeatureEnabled(COVID19_GUIDANCE_HOME_SCREEN_BUTTON_WALES) } returns false
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(country = WALES, showCovidGuidanceHubButton = false)) }
+    }
+
+    @Test
+    fun `given local authority provides Wales and COVID19_GUIDANCE_HOME_SCREEN_BUTTON_WALES is true then covid guidance hub should be visible`() {
+        mockkStatic(RuntimeBehavior::class)
+        every { RuntimeBehavior.isFeatureEnabled(COVID19_GUIDANCE_HOME_SCREEN_BUTTON_WALES) } returns true
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(country = WALES, showCovidGuidanceHubButton = true)) }
+    }
+
+    @Test
+    fun `given local authority provides England and COVID19_GUIDANCE_HOME_SCREEN_BUTTON_ENGLAND is false then covid guidance hub should not be visible`() {
+        mockkStatic(RuntimeBehavior::class)
+        every { RuntimeBehavior.isFeatureEnabled(COVID19_GUIDANCE_HOME_SCREEN_BUTTON_ENGLAND) } returns false
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(country = ENGLAND, showCovidGuidanceHubButton = false)) }
+    }
+
+    @Test
+    fun `given local authority provides ENGLAND and COVID19_GUIDANCE_HOME_SCREEN_BUTTON_ENGLAND is true then covid guidance hub should be visible`() {
+        mockkStatic(RuntimeBehavior::class)
+        every { RuntimeBehavior.isFeatureEnabled(COVID19_GUIDANCE_HOME_SCREEN_BUTTON_ENGLAND) } returns true
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(country = ENGLAND, showCovidGuidanceHubButton = true)) }
     }
 
     private fun setupTestSubject(statusActivityAction: StatusActivityAction = None) {

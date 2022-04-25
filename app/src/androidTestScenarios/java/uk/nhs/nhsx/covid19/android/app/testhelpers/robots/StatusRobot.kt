@@ -109,6 +109,10 @@ class StatusRobot : HasActivity {
             .perform(NestedScrollViewScrollToAction(), click())
     }
 
+    fun clickCovidGuidanceHub() {
+        onView(withId(R.id.optionCovidGuidance)).perform(click())
+    }
+
     fun checkVenueCheckInIsEnabled() {
         onView(withId(R.id.optionVenueCheckIn))
             .check(matches(isEnabled()))
@@ -275,5 +279,15 @@ class StatusRobot : HasActivity {
                 lastDayOfIsolation.uiFormat(context),
                 "9"
             ))))
+    }
+
+    fun checkCovidGuidanceHubIsNotDisplayed() {
+        onView(withId(R.id.optionCovidGuidance))
+            .check(matches(not(isDisplayed())))
+    }
+
+    fun checkCovidGuidanceHubIsDisplayed() {
+        onView(withId(R.id.optionCovidGuidance))
+            .check(matches(isDisplayed()))
     }
 }

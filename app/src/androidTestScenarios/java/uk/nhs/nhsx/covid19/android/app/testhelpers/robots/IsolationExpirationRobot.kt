@@ -28,10 +28,33 @@ class IsolationExpirationRobot : HasActivity {
             .check(matches(withText(willFinishText)))
     }
 
+    fun checkIsolationWillFinishWales(numberOfIsolationDays: Int) {
+        val willFinishText = context.getString(
+            R.string.your_isolation_are_ending_soon_wales,
+            numberOfIsolationDays - 1
+        )
+        onView(withId(R.id.expirationDescription))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+            .check(matches(withText(willFinishText)))
+    }
+
     fun checkIsolationHasFinished(expiryDate: LocalDate) {
         val hasFinishedText = context.getString(
             R.string.expiration_notification_description_passed,
             expiryDate.minusDays(1).uiFormat(context)
+        )
+
+        onView(withId(R.id.expirationDescription))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+            .check(matches(withText(hasFinishedText)))
+    }
+
+    fun checkIsolationHasFinishedWales(numberOfIsolationDays: Int) {
+        val hasFinishedText = context.getString(
+            R.string.expiration_notification_description_passed_wales,
+            numberOfIsolationDays - 1
         )
 
         onView(withId(R.id.expirationDescription))
@@ -51,8 +74,18 @@ class IsolationExpirationRobot : HasActivity {
             .check(matches(withText(hasFinishedText)))
     }
 
-    fun clickBackToHomeButton() {
-        onView(withId(R.id.buttonReturnToHomeScreen))
+    fun clickPrimaryBackToHomeButton() {
+        onView(withId(R.id.primaryReturnToHomeScreenButton))
+            .perform(scrollTo(), click())
+    }
+
+    fun clickSecondaryBackToHomeButton() {
+        onView(withId(R.id.secondaryReturnToHomeScreenButton))
+            .perform(scrollTo(), click())
+    }
+
+    fun clickCovidGuidanceLinkButton() {
+        onView(withId(R.id.covidGuidanceLinkButton))
             .perform(scrollTo(), click())
     }
 }

@@ -38,4 +38,5 @@ class MockTestResultViewModel : BaseTestResultViewModel() {
 
     override fun onActionButtonClicked() = navigationEventLiveData.postValue(Finish)
     override fun onBackPressed() = Unit
+    override fun fetchCountry() { }
 }

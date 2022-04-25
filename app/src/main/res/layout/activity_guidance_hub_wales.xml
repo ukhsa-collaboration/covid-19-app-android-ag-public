@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/guidanceHubWalesContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/titleToolbar"
+        layout="@layout/view_toolbar_primary" />
+
+    <ScrollView
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:paddingVertical="12dp">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView
+                android:id="@+id/itemOne"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:navigationItemDescription="@string/covid_guidance_hub_wales_button_one_description"
+                app:navigationItemIsExternalLink="true"
+                app:navigationItemTitle="@string/covid_guidance_hub_wales_button_one_title" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView
+                android:id="@+id/itemTwo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:navigationItemDescription="@string/covid_guidance_hub_wales_button_two_description"
+                app:navigationItemIsExternalLink="true"
+                app:navigationItemTitle="@string/covid_guidance_hub_wales_button_two_title" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView
+                android:id="@+id/itemThree"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:navigationItemDescription="@string/covid_guidance_hub_wales_button_three_description"
+                app:navigationItemIsExternalLink="true"
+                app:navigationItemTitle="@string/covid_guidance_hub_wales_button_three_title" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView
+                android:id="@+id/itemFour"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:navigationItemDescription="@string/covid_guidance_hub_wales_button_four_description"
+                app:navigationItemIsExternalLink="true"
+                app:navigationItemTitle="@string/covid_guidance_hub_wales_button_four_title" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView
+                android:id="@+id/itemFive"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:navigationItemDescription="@string/covid_guidance_hub_wales_button_five_description"
+                app:navigationItemIsExternalLink="true"
+                app:navigationItemTitle="@string/covid_guidance_hub_wales_button_five_title" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView
+                android:id="@+id/itemSix"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:navigationItemDescription="@string/covid_guidance_hub_wales_button_six_description"
+                app:navigationItemIsExternalLink="true"
+                app:navigationItemTitle="@string/covid_guidance_hub_wales_button_six_title" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView
+                android:id="@+id/itemSeven"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:navigationItemDescription="@string/covid_guidance_hub_wales_button_seven_description"
+                app:navigationItemIsExternalLink="true"
+                app:navigationItemTitle="@string/covid_guidance_hub_wales_button_seven_title" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

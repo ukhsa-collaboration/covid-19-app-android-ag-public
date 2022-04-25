@@ -32,6 +32,7 @@
     <color name="style_yellow">#DBB75A</color>
     <color name="style_pink">#BF5F8A</color>
     <color name="style_teal">#63AAAA</color>
+    <color name="style_dark_teal">#009dc0</color>
     <color name="style_red">#F39892</color>
     <color name="style_green">#4EBD74</color>
     <color name="style_light_blue">#12A0F0</color>

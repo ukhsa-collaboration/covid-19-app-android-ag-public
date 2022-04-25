@@ -126,6 +126,7 @@ class TestResultViewModelTest {
             analyticsEventProcessor,
             localAuthorityPostCodeProvider
         )
+        testSubject.fetchCountry()
         testSubject.viewState().observeForever(viewStateObserver)
         testSubject.navigationEvent().observeForever(navigationObserver)
     }

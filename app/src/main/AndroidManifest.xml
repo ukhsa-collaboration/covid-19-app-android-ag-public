@@ -189,6 +189,12 @@
             android:name=".exposure.sharekeys.ShareKeysReminderActivity"
             android:label="@string/share_keys_reminder_title" />
         <activity
+            android:name=".status.guidancehub.GuidanceHubActivity"
+            android:label="@string/home_covid19_guidance_button_title" />
+        <activity
+            android:name=".status.guidancehub.GuidanceHubWalesActivity"
+            android:label="@string/home_covid19_guidance_button_title" />
+        <activity
             android:name=".status.contacttracinghub.ContactTracingHubActivity"
             android:label="@string/contact_tracing_hub_title" />
         <activity

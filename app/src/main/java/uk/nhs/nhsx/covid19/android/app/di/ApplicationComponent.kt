@@ -82,6 +82,8 @@ import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusBaseActivity
 import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingHubActivity
+import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubActivity
+import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubWalesActivity
 import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubActivity
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.GetLocalMessageFromStorage
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessageActivity
@@ -182,6 +184,8 @@ interface ApplicationComponent {
     fun inject(exposureNotificationVaccinationStatusActivity: ExposureNotificationVaccinationStatusActivity)
     fun inject(riskyContactIsolationAdviceActivity: RiskyContactIsolationAdviceActivity)
     fun inject(riskyContactIsolationOptOutActivity: RiskyContactIsolationOptOutActivity)
+    fun inject(guidanceHubActivity: GuidanceHubActivity)
+    fun inject(guidanceHubWalesActivity: GuidanceHubWalesActivity)
 
     fun inject(testResultViewModel: BaseTestResultViewModel)
 

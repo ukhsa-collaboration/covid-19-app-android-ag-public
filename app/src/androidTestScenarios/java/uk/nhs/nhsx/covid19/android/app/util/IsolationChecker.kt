@@ -48,4 +48,10 @@ class IsolationChecker(private val testAppContext: TestApplicationContext) {
         assertFalse(state.isActiveContactCase(testAppContext.clock))
         assertFalse(state.remembersIndexCase())
     }
+
+    fun assertExpiredContactAndIndex() {
+        val state = testAppContext.getCurrentLogicalState()
+        assertTrue(state is PossiblyIsolating)
+        assertTrue(state.remembersBothCases())
+    }
 }

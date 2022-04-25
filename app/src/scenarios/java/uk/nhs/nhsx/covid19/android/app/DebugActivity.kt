@@ -137,6 +137,7 @@ import uk.nhs.nhsx.covid19.android.app.status.RiskLevelActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.RiskyPostCodeViewState
 import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingHubActivity
+import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubActivity
 import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubActivity
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessageActivity
 import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubActivity
@@ -894,6 +895,10 @@ class DebugActivity : AppCompatActivity() {
         addScreenButton("Local Stats - Show Local Data (random data)") {
             val randomLocalStats = RandomLocalStatsGenerator().generate()
             startActivity(LocalDataAndStatisticsActivity.getIntent(this, randomLocalStats))
+        }
+
+        addScreenButton("Guidance Hub") {
+            startActivity<GuidanceHubActivity>()
         }
     }
 

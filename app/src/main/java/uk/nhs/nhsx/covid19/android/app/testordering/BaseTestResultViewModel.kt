@@ -18,6 +18,8 @@ abstract class BaseTestResultViewModel : ViewModel() {
 
     abstract fun onBackPressed()
 
+    abstract fun fetchCountry()
+
     data class ViewState(
         val mainState: TestResultViewState,
         val remainingDaysInIsolation: Int,

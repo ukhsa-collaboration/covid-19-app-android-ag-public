@@ -1,7 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.testordering
 
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AskedToShareExposureKeysInTheInitialFlow
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
@@ -10,20 +9,12 @@ import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.NoTest
 import javax.inject.Inject
 
 class TestResultViewModel @Inject constructor(
-    evaluateTestResultViewState: EvaluateTestResultViewState,
+    private val evaluateTestResultViewState: EvaluateTestResultViewState,
     private val acknowledgeTestResult: AcknowledgeTestResult,
     private val analyticsEventProcessor: AnalyticsEventProcessor,
     private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider
 ) : BaseTestResultViewModel() {
     private var wasAcknowledged = false
-
-    init {
-        viewModelScope.launch {
-            viewState.postValue(evaluateTestResultViewState().apply {
-                country = localAuthorityPostCodeProvider.requirePostCodeDistrict()
-            })
-        }
-    }
 
     override fun onActionButtonClicked() {
         acknowledgeTestResultIfNeeded()
@@ -46,6 +37,14 @@ class TestResultViewModel @Inject constructor(
             else -> {
                 NavigationEvent.Finish
             }
+        }
+    }
+
+    override fun fetchCountry() {
+        runBlocking {
+            viewState.postValue(evaluateTestResultViewState().apply {
+                country = localAuthorityPostCodeProvider.requirePostCodeDistrict()
+            })
         }
     }
 

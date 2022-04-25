@@ -14,6 +14,8 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESUL
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationAlarmController
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState
+import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
@@ -81,7 +83,8 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
     }
 
     @Test
-    fun startIndexCase_dayBeforeIndexExpiresBefore9pm_doNotInform_after9m_inform_acknowledgeExpiration_indexExpires_notInIsolation() {
+    fun startIndexCase_dayBeforeIndexExpiresBefore9pm_doNotInform_after9m_inform_acknowledgeExpiration_indexExpires_notInIsolation_england() {
+        givenLocalAuthorityIsInEngland()
         // Day before expiry, at 8pm
         testAppContext.clock.currentInstant = Instant.parse("2020-01-01T20:00:00Z")
 
@@ -105,7 +108,84 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
 
         waitFor { isolationExpirationRobot.checkIsolationWillFinish(expiryDate) }
 
-        isolationExpirationRobot.clickBackToHomeButton()
+        isolationExpirationRobot.clickPrimaryBackToHomeButton()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        testAppContext.device.pressBack()
+
+        // Day of expiry
+        testAppContext.clock.currentInstant = Instant.parse("2020-01-02T00:00:00Z")
+
+        waitFor { isolationChecker.assertExpiredIndexNoContact() }
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    @Test
+    fun startIndexCase_dayBeforeIndexExpiresBefore9pm_doNotInform_after9m_inform_acknowledgeExpiration_indexExpires_notInIsolation_wales() {
+        givenLocalAuthorityIsInWales()
+        // Day before expiry, at 8pm
+        testAppContext.clock.currentInstant = Instant.parse("2020-01-01T20:00:00Z")
+
+        val expiryDate = LocalDate.now(testAppContext.clock).plus(1, DAYS)
+        setIsolationWithExpiryDate(expiryDate, isolationConfiguration)
+
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        testAppContext.device.pressBack()
+
+        // Day before expiry, at 9pm
+        testAppContext.clock.currentInstant = Instant.parse("2020-01-01T21:00:00Z")
+
+        startTestActivity<StatusActivity>()
+
+        isolationChecker.assertActiveIndexNoContact()
+
+        isolationExpirationRobot.checkActivityIsDisplayed()
+
+        waitFor { isolationExpirationRobot.checkIsolationWillFinishWales(isolationConfiguration.indexCaseSinceTestResultEndDate) }
+
+        isolationExpirationRobot.clickSecondaryBackToHomeButton()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        testAppContext.device.pressBack()
+
+        // Day of expiry
+        testAppContext.clock.currentInstant = Instant.parse("2020-01-02T00:00:00Z")
+
+        waitFor { isolationChecker.assertExpiredIndexNoContact() }
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    @Test
+    fun startIndexCase_dayBeforeIndexExpiresAfter9m_inform_clickCovidGuidanceLinkButton_backToStatus_wales() {
+        givenLocalAuthorityIsInWales()
+        // Day before expiry, at 9pm
+        testAppContext.clock.currentInstant = Instant.parse("2020-01-01T21:00:00Z")
+
+        val expiryDate = LocalDate.now(testAppContext.clock).plus(1, DAYS)
+        setIsolationWithExpiryDate(expiryDate, isolationConfiguration)
+
+        startTestActivity<StatusActivity>()
+
+        isolationChecker.assertActiveIndexNoContact()
+
+        isolationExpirationRobot.checkActivityIsDisplayed()
+
+        waitFor { isolationExpirationRobot.checkIsolationWillFinishWales(isolationConfiguration.indexCaseSinceTestResultEndDate) }
+
+        isolationExpirationRobot.clickCovidGuidanceLinkButton()
+
+        testAppContext.device.pressBack()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
@@ -123,7 +203,8 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
 
     @Test
     @RetryFlakyTest
-    fun startIndexCase_indexExpires_acknowledgeExpiration_notInIsolation() {
+    fun startIndexCase_indexExpires_acknowledgeExpiration_notInIsolation_england() {
+        givenLocalAuthorityIsInEngland()
         val expiryDate = LocalDate.now(testAppContext.clock)
         setIsolationWithExpiryDate(expiryDate, isolationConfiguration)
 
@@ -135,7 +216,241 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
 
         waitFor { isolationExpirationRobot.checkIsolationHasFinished(expiryDate) }
 
-        isolationExpirationRobot.clickBackToHomeButton()
+        isolationExpirationRobot.clickPrimaryBackToHomeButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        testAppContext.device.pressBack()
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    @Test
+    @RetryFlakyTest
+    fun startIndexCase_indexExpires_acknowledgeExpiration_notInIsolation_wales() {
+        givenLocalAuthorityIsInWales()
+        val expiryDate = LocalDate.now(testAppContext.clock)
+        setIsolationWithExpiryDate(expiryDate, isolationConfiguration)
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { isolationChecker.assertExpiredIndexNoContact() }
+
+        waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
+
+        waitFor { isolationExpirationRobot.checkIsolationHasFinishedWales(isolationConfiguration.indexCaseSinceTestResultEndDate) }
+
+        isolationExpirationRobot.clickSecondaryBackToHomeButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        testAppContext.device.pressBack()
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    @Test
+    fun startIndexCase_indexExpires_clickCovidGuidanceLinkButton_wales() {
+        givenLocalAuthorityIsInWales()
+        val expiryDate = LocalDate.now(testAppContext.clock)
+        setIsolationWithExpiryDate(expiryDate, isolationConfiguration)
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { isolationChecker.assertExpiredIndexNoContact() }
+
+        waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
+
+        waitFor { isolationExpirationRobot.checkIsolationHasFinishedWales(isolationConfiguration.indexCaseSinceTestResultEndDate) }
+
+        isolationExpirationRobot.clickCovidGuidanceLinkButton()
+
+        testAppContext.device.pressBack()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        testAppContext.device.pressBack()
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    @Test
+    fun startContactCase_contactExpires_acknowledgeExpiration_notInIsolation_england() {
+        givenLocalAuthorityIsInEngland()
+        val expiryDate = LocalDate.now(testAppContext.clock)
+        setContactCaseIsolationWithExpiryDate(expiryDate, isolationConfiguration)
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { isolationChecker.assertExpiredContactNoIndex() }
+
+        waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
+
+        waitFor { isolationExpirationRobot.checkIsolationHasFinished(expiryDate) }
+
+        isolationExpirationRobot.clickPrimaryBackToHomeButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        testAppContext.device.pressBack()
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    @Test
+    fun startContactCase_contactExpires_acknowledgeExpiration_notInIsolation_Wales() {
+        givenLocalAuthorityIsInWales()
+        val expiryDate = LocalDate.now(testAppContext.clock)
+        setContactCaseIsolationWithExpiryDate(expiryDate, isolationConfiguration)
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { isolationChecker.assertExpiredContactNoIndex() }
+
+        waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
+
+        waitFor { isolationExpirationRobot.checkIsolationHasFinished(expiryDate) }
+
+        isolationExpirationRobot.clickPrimaryBackToHomeButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        testAppContext.device.pressBack()
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    @Test
+    fun startContactCase_dayBeforeContactExpiresAfter9m_inform_clickBackToHome_wales() {
+        givenLocalAuthorityIsInWales()
+        // Day before expiry, at 9pm
+        testAppContext.clock.currentInstant = Instant.parse("2020-01-01T21:00:00Z")
+
+        val expiryDate = LocalDate.now(testAppContext.clock).plus(1, DAYS)
+        setContactCaseIsolationWithExpiryDate(expiryDate, isolationConfiguration)
+
+        startTestActivity<StatusActivity>()
+
+        isolationChecker.assertActiveContactNoIndex()
+
+        waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
+
+        waitFor { isolationExpirationRobot.checkIsolationWillFinish(expiryDate) }
+
+        isolationExpirationRobot.clickPrimaryBackToHomeButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        testAppContext.device.pressBack()
+
+        // Day of expiry
+        testAppContext.clock.currentInstant = Instant.parse("2020-01-02T00:00:00Z")
+
+        waitFor { isolationChecker.assertExpiredContactNoIndex() }
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    @Test
+    fun startContactCase_dayBeforeContactExpiresAfter9m_inform_clickBackToHome_England() {
+        givenLocalAuthorityIsInEngland()
+        // Day before expiry, at 9pm
+        testAppContext.clock.currentInstant = Instant.parse("2020-01-01T21:00:00Z")
+
+        val expiryDate = LocalDate.now(testAppContext.clock).plus(1, DAYS)
+        setContactCaseIsolationWithExpiryDate(expiryDate, isolationConfiguration)
+
+        startTestActivity<StatusActivity>()
+
+        isolationChecker.assertActiveContactNoIndex()
+
+        waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
+
+        waitFor { isolationExpirationRobot.checkIsolationWillFinish(expiryDate) }
+
+        isolationExpirationRobot.clickPrimaryBackToHomeButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        testAppContext.device.pressBack()
+
+        // Day of expiry
+        testAppContext.clock.currentInstant = Instant.parse("2020-01-02T00:00:00Z")
+
+        waitFor { isolationChecker.assertExpiredContactNoIndex() }
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    @Test
+    fun expiredContactAndIndexCase_indexNewest_inform_clickBackToHome_Wales() {
+        givenLocalAuthorityIsInWales()
+
+        val expiryDateContactCase = LocalDate.now(testAppContext.clock)
+            .minusDays(isolationConfiguration.indexCaseSinceTestResultEndDate.toLong() + 1)
+        val expiryDateIndexCase = LocalDate.now(testAppContext.clock)
+
+        setContactCaseAndIndexIsolationWithExpiryDate(
+            expiryDateContact = expiryDateContactCase,
+            expiryDateIndex = expiryDateIndexCase,
+            isolationConfiguration
+        )
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { isolationChecker.assertExpiredContactAndIndex() }
+
+        waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
+
+        waitFor { isolationExpirationRobot.checkIsolationHasFinishedWales(isolationConfiguration.indexCaseSinceTestResultEndDate) }
+
+        isolationExpirationRobot.clickSecondaryBackToHomeButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        testAppContext.device.pressBack()
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+    }
+
+    @Test
+    fun expiredContactAndIndexCase_contactNewest_inform_clickBackToHome_Wales() {
+        givenLocalAuthorityIsInWales()
+
+        val expiryDateIndexCase = LocalDate.now(testAppContext.clock).minusDays(isolationConfiguration.contactCase.toLong() + 1)
+        val expiryDateContactCase = LocalDate.now(testAppContext.clock)
+
+        setContactCaseAndIndexIsolationWithExpiryDate(
+            expiryDateContact = expiryDateContactCase,
+            expiryDateIndex = expiryDateIndexCase,
+            isolationConfiguration
+        )
+
+        startTestActivity<StatusActivity>()
+
+        waitFor { isolationChecker.assertExpiredContactAndIndex() }
+
+        waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
+
+        waitFor { isolationExpirationRobot.checkIsolationHasFinished(expiryDateContactCase) }
+
+        isolationExpirationRobot.clickPrimaryBackToHomeButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
@@ -160,6 +475,56 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
         val logicalState = testAppContext.getIsolationStateMachine().readLogicalState()
         assertTrue(logicalState is PossiblyIsolating)
         assertEquals(expiryDate, logicalState.expiryDate)
+    }
+
+    private fun setContactCaseIsolationWithExpiryDate(
+        expiryDate: LocalDate,
+        isolationConfiguration: IsolationConfiguration
+    ) {
+        val exposureDate = LocalDate.now(testAppContext.clock)
+            .plusDays(
+                DAYS.between(LocalDate.now(testAppContext.clock), expiryDate) -
+                        isolationConfiguration.contactCase.toLong()
+            )
+
+        testAppContext.setState(
+            Contact(exposureDate = exposureDate, notificationDate = exposureDate.plusDays(1))
+                .asIsolation(isolationConfiguration = isolationConfiguration)
+        )
+
+        val logicalState = testAppContext.getIsolationStateMachine().readLogicalState()
+        assertTrue(logicalState is PossiblyIsolating)
+        assertEquals(expiryDate, logicalState.expiryDate)
+    }
+
+    private fun setContactCaseAndIndexIsolationWithExpiryDate(
+        expiryDateContact: LocalDate,
+        expiryDateIndex: LocalDate,
+        isolationConfiguration: IsolationConfiguration
+    ) {
+        val exposureDate = LocalDate.now(testAppContext.clock)
+            .plusDays(
+                DAYS.between(LocalDate.now(testAppContext.clock), expiryDateContact) -
+                        isolationConfiguration.contactCase.toLong()
+            )
+
+        val selfAssessmentDate = LocalDate.now(testAppContext.clock)
+            .plusDays(
+                DAYS.between(LocalDate.now(testAppContext.clock), expiryDateIndex) -
+                        isolationConfiguration.indexCaseSinceSelfDiagnosisUnknownOnset.toLong()
+            )
+
+        testAppContext.setState(
+            IsolationState(
+                isolationConfiguration = isolationConfiguration,
+                selfAssessment = SelfAssessment(selfAssessmentDate),
+                contact = Contact(exposureDate, exposureDate.plusDays(1))
+            )
+        )
+
+        val logicalState = testAppContext.getIsolationStateMachine().readLogicalState()
+        assertTrue(logicalState is PossiblyIsolating)
+        assertTrue { logicalState.remembersBothCases() }
     }
 
     private fun cancelAlarm(intent: PendingIntent?) {

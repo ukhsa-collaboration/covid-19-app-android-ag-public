@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
 import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockTestResultViewModel
@@ -15,6 +16,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
+import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.FollowUpTest
 import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.NoTest
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
@@ -29,13 +31,18 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.Positive
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidWillBeInIsolation
 
-class TestResultActivityStateTest : EspressoTest() {
+class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
     val context = testAppContext.app
     private val testResultRobot = TestResultRobot(context)
     private val browserRobot = BrowserRobot()
 
     private fun getString(resourceId: Int): String =
         context.resources.getString(resourceId)
+
+    @Before
+    fun setUp() {
+        givenLocalAuthorityIsInEngland()
+    }
 
     @After
     fun resetViewModel() {
