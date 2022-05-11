@@ -56,7 +56,6 @@ class ShareKeysReminderFlowAnalyticsTest : AnalyticsTest() {
             assertEquals(1, Metrics::startedIsolation)
             assertEquals(0, Metrics::launchedTestOrdering)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
         }
@@ -72,7 +71,6 @@ class ShareKeysReminderFlowAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingForTestedPositiveBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(Metrics::hasTestedPositiveBackgroundTick)
             assertPresent(Metrics::receivedPositiveTestResultEnteredManually)
             assertEquals(1, Metrics::askedToShareExposureKeysInTheInitialFlow)
@@ -85,7 +83,6 @@ class ShareKeysReminderFlowAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingForTestedPositiveBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(Metrics::hasTestedPositiveBackgroundTick)
             assertEquals(1, Metrics::totalShareExposureKeysReminderNotifications)
         }
@@ -103,7 +100,6 @@ class ShareKeysReminderFlowAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingForTestedPositiveBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(Metrics::hasTestedPositiveBackgroundTick)
             when (reminderFlow) {
                 NO_CONSENT -> { }
@@ -124,7 +120,6 @@ class ShareKeysReminderFlowAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingForTestedPositiveBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(Metrics::hasTestedPositiveBackgroundTick)
         }
 
@@ -132,7 +127,6 @@ class ShareKeysReminderFlowAnalyticsTest : AnalyticsTest() {
         assertOnFieldsForDateRange(12..25) {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(Metrics::hasTestedPositiveBackgroundTick)
         }
 

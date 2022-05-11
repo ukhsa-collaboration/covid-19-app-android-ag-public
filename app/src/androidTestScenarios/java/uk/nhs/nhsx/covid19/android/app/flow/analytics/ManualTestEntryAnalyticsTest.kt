@@ -196,7 +196,6 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
                 }
             }
             assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
             if (requiresConfirmatoryTest) {
@@ -218,7 +217,6 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             if (requiresConfirmatoryTest) {
                 assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
             }
@@ -232,7 +230,6 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         assertOnFieldsForDateRange(14..27) {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(hasTestedPositiveBackgroundTickMetric)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             if (symptomsAndOnsetFlowConfiguration?.didRememberOnsetSymptomsDate == true) {
                 assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             }
@@ -285,7 +282,6 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
                 }
             }
             assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
             if (requiresConfirmatoryTest) {
@@ -309,7 +305,6 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             if (requiresConfirmatoryTest) {
                 assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
             }
@@ -325,7 +320,6 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(hasTestedPositiveBackgroundTickMetric)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
         }
 
         // Current date: 28th Jan -> Analytics packet for: 27th Jan
@@ -378,7 +372,6 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
         }
 
         // Enters positive LFD test result on 3rd Jan
@@ -397,7 +390,6 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
             if (requiresConfirmatoryTest) {
@@ -421,7 +413,6 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             assertPresent(hasTestedPositiveBackgroundTickMetric)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             if (requiresConfirmatoryTest) {
                 assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
             }
@@ -431,7 +422,6 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         assertOnFieldsForDateRange(12..25) {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
         }
 
@@ -485,7 +475,6 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
         }
 
         // Enters positive LFD test result on 3rd Jan
@@ -507,7 +496,6 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
             if (requiresConfirmatoryTest) {
@@ -525,7 +513,6 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
             if (requiresConfirmatoryTest) {
@@ -537,7 +524,6 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         assertOnFieldsForDateRange(12..25) {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
         }
 

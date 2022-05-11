@@ -260,7 +260,6 @@ class AnalyticsEventProcessor @Inject constructor(
 
             if (currentState is PossiblyIsolating) {
                 hasHadRiskyContactBackgroundTick = currentState.remembersContactCase()
-                hasSelfDiagnosedPositiveBackgroundTick = currentState.remembersIndexCase()
                 hasSelfDiagnosedBackgroundTick = currentState.remembersIndexCaseWithSelfAssessment()
                 currentState.getTestResultIfPositive()?.let { acknowledgedPositiveTestResult ->
                     val testKitType = acknowledgedPositiveTestResult.testKitType

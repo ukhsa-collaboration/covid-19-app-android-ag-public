@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventsGroup
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogEntry
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogStorage
@@ -51,7 +53,7 @@ class AnalyticsReportActivity : AppCompatActivity() {
     private fun getHeading() =
         if (showAsItems) R.string.analytics_report_title_items else R.string.analytics_report_title_payload
 
-    private fun logAsPayload(formatted: Boolean = false): String {
+    private suspend fun logAsPayload(formatted: Boolean = false): String {
         val logItems = analyticsLogStorage.value
         val start = logItems.minOf { it.instant }
         val end = logItems.maxOf { it.instant }
@@ -74,10 +76,12 @@ class AnalyticsReportActivity : AppCompatActivity() {
     }
 
     private fun updateDataDump(formatted: Boolean = false) {
-        binding.analyticsData.text = if (showAsItems)
-            logAsEntryList(formatted)
-        else
-            logAsPayload(formatted)
+        lifecycleScope.launch {
+            binding.analyticsData.text = if (showAsItems)
+                logAsEntryList(formatted)
+            else
+                logAsPayload(formatted)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

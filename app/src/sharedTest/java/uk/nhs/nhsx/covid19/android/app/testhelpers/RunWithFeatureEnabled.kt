@@ -30,7 +30,23 @@ fun runWithFeature(feature: Feature, enabled: Boolean, action: () -> Unit) {
     }
 }
 
-suspend fun coRunWithFeature(feature: Feature, enabled: Boolean, clearFeatureFlags: Boolean = false, action: suspend () -> Unit) {
+fun runWithFeatures(featureList: List<Feature>, enabled: Boolean, action: () -> Unit) {
+    for (feature in featureList) {
+        setupFeature(feature, enabled)
+    }
+    try {
+        action()
+    } finally {
+        FeatureFlagTestHelper.clearFeatureFlags()
+    }
+}
+
+suspend fun coRunWithFeature(
+    feature: Feature,
+    enabled: Boolean,
+    clearFeatureFlags: Boolean = false,
+    action: suspend () -> Unit
+) {
     if (clearFeatureFlags) {
         FeatureFlagTestHelper.clearFeatureFlags()
     }

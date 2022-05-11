@@ -443,7 +443,6 @@ class AnalyticsEventProcessorTest {
                                 appIsUsableBackgroundTick = true,
                                 appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
                                 hasSelfDiagnosedBackgroundTick = true
                             )
@@ -478,8 +477,7 @@ class AnalyticsEventProcessorTest {
                                 isIsolatingForHadRiskyContactBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
                                 hasHadRiskyContactBackgroundTick = true,
-                                hasSelfDiagnosedBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true
+                                hasSelfDiagnosedBackgroundTick = true
                             )
                         )
                     )
@@ -507,8 +505,7 @@ class AnalyticsEventProcessorTest {
                                 runningNormallyBackgroundTick = true,
                                 appIsUsableBackgroundTick = true,
                                 appIsContactTraceableBackgroundTick = true,
-                                hasSelfDiagnosedBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true
+                                hasSelfDiagnosedBackgroundTick = true
                             )
                         )
                     )
@@ -545,7 +542,6 @@ class AnalyticsEventProcessorTest {
                                 appIsUsableBackgroundTick = true,
                                 appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
                                 isIsolatingForTestedPositiveBackgroundTick = true,
                                 hasSelfDiagnosedBackgroundTick = true,
@@ -586,7 +582,6 @@ class AnalyticsEventProcessorTest {
                                 appIsUsableBackgroundTick = true,
                                 appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
                                 isIsolatingForTestedLFDPositiveBackgroundTick = true,
                                 hasSelfDiagnosedBackgroundTick = true,
@@ -625,7 +620,6 @@ class AnalyticsEventProcessorTest {
                                 appIsUsableBackgroundTick = true,
                                 appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
                                 isIsolatingForTestedSelfRapidPositiveBackgroundTick = true,
                                 hasSelfDiagnosedBackgroundTick = true,
@@ -666,7 +660,6 @@ class AnalyticsEventProcessorTest {
                                 appIsUsableBackgroundTick = true,
                                 appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
                                 isIsolatingForTestedPositiveBackgroundTick = true,
                                 hasSelfDiagnosedBackgroundTick = true,
@@ -707,7 +700,6 @@ class AnalyticsEventProcessorTest {
                                 appIsUsableBackgroundTick = true,
                                 appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
                                 isIsolatingForTestedLFDPositiveBackgroundTick = true,
                                 hasSelfDiagnosedBackgroundTick = true,
@@ -746,7 +738,6 @@ class AnalyticsEventProcessorTest {
                                 appIsUsableBackgroundTick = true,
                                 appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
                                 isIsolatingForTestedSelfRapidPositiveBackgroundTick = true,
                                 hasSelfDiagnosedBackgroundTick = true,
@@ -788,7 +779,6 @@ class AnalyticsEventProcessorTest {
                                 appIsUsableBackgroundTick = true,
                                 appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
                                 hasSelfDiagnosedBackgroundTick = true,
                                 hasTestedPositiveBackgroundTick = true,
@@ -830,7 +820,6 @@ class AnalyticsEventProcessorTest {
                                 appIsUsableBackgroundTick = true,
                                 appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForSelfDiagnosedBackgroundTick = true,
                                 hasSelfDiagnosedBackgroundTick = true,
                                 hasTestedPositiveBackgroundTick = true,
@@ -872,7 +861,6 @@ class AnalyticsEventProcessorTest {
                                 appIsContactTraceableBackgroundTick = true,
                                 hasSelfDiagnosedBackgroundTick = true,
                                 hasTestedPositiveBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true
                             )
                         )
                     )
@@ -908,7 +896,6 @@ class AnalyticsEventProcessorTest {
                                 appIsUsableBackgroundTick = true,
                                 appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForTestedPositiveBackgroundTick = true,
                                 hasTestedPositiveBackgroundTick = true
                             )
@@ -946,7 +933,6 @@ class AnalyticsEventProcessorTest {
                                 appIsUsableBackgroundTick = true,
                                 appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForTestedLFDPositiveBackgroundTick = true,
                                 hasTestedLFDPositiveBackgroundTick = true,
                             )
@@ -984,7 +970,6 @@ class AnalyticsEventProcessorTest {
                                 appIsUsableBackgroundTick = true,
                                 appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForTestedSelfRapidPositiveBackgroundTick = true,
                                 hasTestedSelfRapidPositiveBackgroundTick = true,
                                 isIsolatingForUnconfirmedTestBackgroundTick = true
@@ -1024,7 +1009,6 @@ class AnalyticsEventProcessorTest {
                                 appIsUsableBackgroundTick = true,
                                 appIsContactTraceableBackgroundTick = true,
                                 isIsolatingBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true,
                                 isIsolatingForTestedLFDPositiveBackgroundTick = true,
                                 hasTestedLFDPositiveBackgroundTick = true
                             )
@@ -1065,7 +1049,6 @@ class AnalyticsEventProcessorTest {
                                 isIsolatingForHadRiskyContactBackgroundTick = true,
                                 hasHadRiskyContactBackgroundTick = true,
                                 hasTestedPositiveBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true
                             )
                         )
                     )
@@ -1099,8 +1082,7 @@ class AnalyticsEventProcessorTest {
                                 runningNormallyBackgroundTick = true,
                                 appIsUsableBackgroundTick = true,
                                 appIsContactTraceableBackgroundTick = true,
-                                hasTestedPositiveBackgroundTick = true,
-                                hasSelfDiagnosedPositiveBackgroundTick = true
+                                hasTestedPositiveBackgroundTick = true
                             )
                         )
                     )

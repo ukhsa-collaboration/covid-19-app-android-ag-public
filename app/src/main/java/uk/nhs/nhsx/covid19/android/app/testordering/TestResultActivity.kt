@@ -157,7 +157,8 @@ class TestResultActivity : BaseActivity() {
         mainState: TestResultViewState,
         country: PostCodeDistrict?
     ): Int {
-        return if ((mainState == PositiveContinueIsolation || mainState == PositiveContinueIsolationNoChange) && country == ENGLAND) {
+        return if ((mainState == PositiveContinueIsolation || mainState == PositiveContinueIsolationNoChange || mainState == PositiveWillBeInIsolation) &&
+            country == ENGLAND) {
             R.string.index_case_isolation_advice_primary_button_title_england
         } else {
             R.string.continue_button

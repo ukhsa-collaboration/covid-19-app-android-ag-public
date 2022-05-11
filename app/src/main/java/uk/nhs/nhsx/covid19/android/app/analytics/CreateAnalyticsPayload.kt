@@ -9,16 +9,18 @@ import javax.inject.Singleton
 class CreateAnalyticsPayload @Inject constructor(
     private val calculateMissingSubmissionDays: CalculateMissingSubmissionDays,
     private val metadataProvider: MetadataProvider,
-    private val updateStatusStorage: UpdateStatusStorage
+    private val updateStatusStorage: UpdateStatusStorage,
+    private val filterAnalyticsEvents: FilterAnalyticsEvents
 ) {
 
-    operator fun invoke(group: AnalyticsEventsGroup): AnalyticsPayload {
+    suspend operator fun invoke(group: AnalyticsEventsGroup): AnalyticsPayload {
         val missingSubmissionDays = calculateMissingSubmissionDays(group.analyticsWindow)
         val metrics = group.entries.toMetrics(missingSubmissionDays)
+        val filteredMetrics = filterAnalyticsEvents(metrics)
 
         return AnalyticsPayload(
             analyticsWindow = group.analyticsWindow,
-            metrics = metrics,
+            metrics = filteredMetrics,
             metadata = metadataProvider.getMetadata(),
             includesMultipleApplicationVersions = updateStatusStorage.value.defaultFalse()
         )

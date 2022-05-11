@@ -18,14 +18,18 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
 
     private val riskyContact = RiskyContact(this)
 
-    private fun assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+    private fun assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContactWhenOldContactCaseFlow(
         acknowledgement: () -> Unit,
-        hasOptedOutOfContactIsolation: Boolean = false
+        hasOptedOutOfContactIsolation: Boolean = false,
+        usesOldContactCaseFlow: Boolean = true
     ) {
         triggerRiskyContactAndAcknowledge(acknowledgement)
 
         assertOnFields(implicitlyAssertNotPresent = false) {
-            assertEquals(1, Metrics::acknowledgedStartOfIsolationDueToRiskyContact)
+            if (usesOldContactCaseFlow)
+                assertEquals(1, Metrics::acknowledgedStartOfIsolationDueToRiskyContact)
+            else
+                assertNull(Metrics::acknowledgedStartOfIsolationDueToRiskyContact)
             if (hasOptedOutOfContactIsolation) {
                 assertEquals(1, Metrics::optedOutForContactIsolation)
                 assertPresent(Metrics::optedOutForContactIsolationBackgroundTick)
@@ -56,9 +60,10 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
     fun notIsolating_riskyContact_declareMinor_isolationAcknowledged_andOptedOutOfContactIsolation_Wales() {
         runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInWales()
-            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContactWhenOldContactCaseFlow(
                 acknowledgement = riskyContact::acknowledgeIsolationViaOptOutMinor,
-                hasOptedOutOfContactIsolation = true
+                hasOptedOutOfContactIsolation = true,
+                usesOldContactCaseFlow = true
             )
         }
     }
@@ -67,9 +72,10 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
     fun notIsolating_riskyContact_declareMinor_isolationAcknowledged_andOptedOutOfContactIsolation_England() {
         runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInEngland()
-            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContactWhenOldContactCaseFlow(
                 acknowledgement = riskyContact::acknowledgeIsolationViaOptOutMinor,
-                hasOptedOutOfContactIsolation = true
+                hasOptedOutOfContactIsolation = true,
+                usesOldContactCaseFlow = true
             )
         }
     }
@@ -78,9 +84,10 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
     fun notIsolating_riskyContact_declareFullyVaccinated_isolationAcknowledged_andOptedOutOfContactIsolation() {
         runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInWales()
-            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContactWhenOldContactCaseFlow(
                 acknowledgement = riskyContact::acknowledgeIsolationViaOptOutFullyVaccinatedForContactQuestionnaireJourney,
-                hasOptedOutOfContactIsolation = true
+                hasOptedOutOfContactIsolation = true,
+                usesOldContactCaseFlow = true
             )
         }
     }
@@ -88,9 +95,10 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
     @Test
     fun notIsolating_riskyContact_newAdvice_andOptedOutOfContactIsolation_forEngland() {
         givenLocalAuthorityIsInEngland()
-        assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+        assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContactWhenOldContactCaseFlow(
             acknowledgement = riskyContact::acknowledgeNoIsolationForNewAdviceJourney,
-            hasOptedOutOfContactIsolation = true
+            hasOptedOutOfContactIsolation = true,
+            usesOldContactCaseFlow = false
         )
     }
 
@@ -99,9 +107,10 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
         givenLocalAuthorityIsInEngland()
         givenSelfAssessmentIsolation()
 
-        assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+        assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContactWhenOldContactCaseFlow(
             acknowledgement = riskyContact::acknowledgeContinueIsolationForNewAdviceJourney,
-            hasOptedOutOfContactIsolation = true
+            hasOptedOutOfContactIsolation = true,
+            usesOldContactCaseFlow = false
         )
     }
 
@@ -109,9 +118,10 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
     fun notIsolating_riskyContact_newAdvice_andOptedOutOfContactIsolation_forWales() {
         runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
             givenLocalAuthorityIsInWales()
-            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContactWhenOldContactCaseFlow(
                 acknowledgement = riskyContact::acknowledgeNoIsolationForNewAdviceJourney,
-                hasOptedOutOfContactIsolation = true
+                hasOptedOutOfContactIsolation = true,
+                usesOldContactCaseFlow = false
             )
         }
     }
@@ -122,9 +132,10 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
             givenLocalAuthorityIsInWales()
             givenSelfAssessmentIsolation()
 
-            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContactWhenOldContactCaseFlow(
                 acknowledgement = riskyContact::acknowledgeContinueIsolationForNewAdviceJourney,
-                hasOptedOutOfContactIsolation = true
+                hasOptedOutOfContactIsolation = true,
+                usesOldContactCaseFlow = false
             )
         }
     }
@@ -133,7 +144,7 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
     fun notIsolating_riskyContact_declareNotFullyVaccinated_isolationAcknowledged() {
         runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInWales()
-            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(acknowledgement = {
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContactWhenOldContactCaseFlow(acknowledgement = {
                 riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(country = WALES)
             })
         }
@@ -144,11 +155,12 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
         runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInWales()
             givenSelfAssessmentIsolation()
-            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContactWhenOldContactCaseFlow(
                 acknowledgement = {
                     riskyContact.acknowledgeIsolationViaOptOutMinor(alreadyIsolating = true)
                 },
-                hasOptedOutOfContactIsolation = true
+                hasOptedOutOfContactIsolation = true,
+                usesOldContactCaseFlow = true
             )
         }
     }
@@ -158,11 +170,12 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
         runWithFeatureEnabled(OLD_ENGLAND_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInEngland()
             givenSelfAssessmentIsolation()
-            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContactWhenOldContactCaseFlow(
                 acknowledgement = {
                     riskyContact.acknowledgeIsolationViaOptOutMinor(alreadyIsolating = true)
                 },
-                hasOptedOutOfContactIsolation = true
+                hasOptedOutOfContactIsolation = true,
+                usesOldContactCaseFlow = true
             )
         }
     }
@@ -172,13 +185,14 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
         runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInWales()
             givenSelfAssessmentIsolation()
-            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContactWhenOldContactCaseFlow(
                 acknowledgement = {
                     riskyContact.acknowledgeIsolationViaOptOutFullyVaccinatedForContactQuestionnaireJourney(
                         alreadyIsolating = true
                     )
                 },
-                hasOptedOutOfContactIsolation = true
+                hasOptedOutOfContactIsolation = true,
+                usesOldContactCaseFlow = true
             )
         }
     }
@@ -188,7 +202,7 @@ class RiskyContactAnalyticsTest : AnalyticsTest(), IsolationSetupHelper {
         runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
             givenLocalAuthorityIsInWales()
             givenSelfAssessmentIsolation()
-            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContact(
+            assertAcknowledgingRiskyContactIncrementsAcknowledgedStartOfIsolationDueToRiskyContactWhenOldContactCaseFlow(
                 acknowledgement = {
                     riskyContact.acknowledgeIsolatingViaNotMinorNotVaccinatedForContactQuestionnaireJourney(
                         alreadyIsolating = true,

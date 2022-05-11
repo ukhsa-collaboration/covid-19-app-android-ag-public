@@ -111,8 +111,7 @@ class MigrateMetricsLogStorageToLogStorage @Inject constructor(
             BackgroundTaskTicks(
                 runningNormallyBackgroundTick = runningNormallyBackgroundTick.toBoolean(),
                 isIsolatingBackgroundTick = isIsolatingBackgroundTick.toBoolean(),
-                isIsolatingForHadRiskyContactBackgroundTick = isIsolatingForHadRiskyContactBackgroundTick.toBoolean(),
-                hasSelfDiagnosedPositiveBackgroundTick = hasSelfDiagnosedPositiveBackgroundTick.toBoolean(),
+                isIsolatingForHadRiskyContactBackgroundTick = isIsolatingForHadRiskyContactBackgroundTick?.toBoolean() ?: false,
                 isIsolatingForSelfDiagnosedBackgroundTick = isIsolatingForSelfDiagnosedBackgroundTick.toBoolean(),
                 isIsolatingForTestedPositiveBackgroundTick = isIsolatingForTestedPositiveBackgroundTick.toBoolean(),
                 hasHadRiskyContactBackgroundTick = hasHadRiskyContactBackgroundTick.toBoolean(),

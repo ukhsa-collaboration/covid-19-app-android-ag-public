@@ -9,6 +9,7 @@ import io.mockk.every
 import io.mockk.mockk
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogStorage
 import uk.nhs.nhsx.covid19.android.app.common.ResetIsolationStateIfNeeded
+import uk.nhs.nhsx.covid19.android.app.util.adapters.SerializeNulls
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CalculateKeySubmissionDateRange
@@ -121,6 +122,7 @@ class IsolationTestContext {
                 ObservationType::class.java,
                 EnumJsonAdapter.create(ObservationType::class.java).withUnknownFallback(gen)
             )
+            .add(SerializeNulls.jsonAdapterFactory)
             .add(AnalyticsLogStorage.analyticsLogItemAdapter)
             .build()
     }

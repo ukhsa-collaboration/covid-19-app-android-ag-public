@@ -238,7 +238,7 @@
     <string name="expiration_notification_description_passed_wales">Your 5 full days of self-isolation have ended</string>
     <string name="expiration_notification_testing_advice_wales_before_isolation_ended_wales">It is safe to leave self-isolation if you have negative lateral flow tests on day 5 and day 6. \n\nYou do not need to enter your negative test results into the app.</string>
     <string name="expiration_notification_testing_advice_wales_after_isolation_ended_wales">It is safe to leave self-isolation if you had negative lateral flow tests on day 5 and 6. \n\nYou do not need to enter your negative test results into the app.</string>
-    <string name="expiration_notification_callout_advice_wales">Take lateral flow tests on day 5 and 6</string>
+    <string name="expiration_notification_callout_advice_wales">Take lateral flow tests on day 5 and day 6</string>
     <string name="expiration_notification_callout_advice_after_isolation_ended_wales">You should continue to self-isolate if either of your test results were positive or you have a high temperature</string>
     <string name="expiration_notification_recommendation">For further advice, please visit:</string>
     <string name="expiration_notification_link_button_title_wales">Read the COVID-19 guidance</string>
@@ -956,7 +956,7 @@
     <string name="contact_case_start_isolation_primary_button_title_wales">Get a free rapid lateral flow kit</string>
     <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
     <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">You are advised to take a free rapid lateral flow test as soon as possible.</string>
-    <string name="about_this_app_software_information_date_of_release_description">04/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">05/2022</string>
     <string name="exposure_notification_message">Exposure notifications are off during this period</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">Limit close contact with anyone in your household who has COVID-19</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">Take a PCR test if you have symptoms of COVID-19</string>

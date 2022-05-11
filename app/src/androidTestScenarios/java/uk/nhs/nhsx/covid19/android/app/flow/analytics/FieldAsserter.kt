@@ -7,7 +7,7 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-typealias MetricsProperty = KProperty1<Metrics, Int>
+typealias MetricsProperty = KProperty1<Metrics, Int?>
 
 class FieldAsserter(private val implicitlyAssertNotPresent: Boolean = true) {
 
@@ -34,6 +34,10 @@ class FieldAsserter(private val implicitlyAssertNotPresent: Boolean = true) {
 
     fun assertPresent(field: MetricsProperty) {
         fieldToAssertion[field] = AssertPresent(field)
+    }
+
+    fun assertNull(field: MetricsProperty) {
+        fieldToAssertion[field] = AssertNull(field)
     }
 
     fun assertEquals(expected: Int, field: MetricsProperty) {
@@ -72,9 +76,20 @@ class FieldAsserter(private val implicitlyAssertNotPresent: Boolean = true) {
     private class AssertPresent(private val field: MetricsProperty) : MetricsAssertion {
 
         override fun assert(metrics: Metrics, dayOfAssertion: Int?) {
+            val metric = field.get(metrics)
             assertTrue(
-                field.get(metrics) > 0,
+                metric != null && metric > 0,
                 "AssertPresent failed, ${field.name} was not present. ${formatDateForErrorMessage(dayOfAssertion)}"
+            )
+        }
+    }
+
+    private class AssertNull(private val field: MetricsProperty) : MetricsAssertion {
+        override fun assert(metrics: Metrics, dayOfAssertion: Int?) {
+            val metric = field.get(metrics)
+            assertTrue(
+                metric == null,
+                "AssertNull failed, ${field.name} has value of non-null. ${formatDateForErrorMessage(dayOfAssertion)}"
             )
         }
     }
@@ -90,9 +105,9 @@ class FieldAsserter(private val implicitlyAssertNotPresent: Boolean = true) {
                 expected,
                 actual,
                 "AssertEquals failed, expected ${field.name} to have value $expected but found $actual. ${
-                formatDateForErrorMessage(
-                    dayOfAssertion
-                )
+                    formatDateForErrorMessage(
+                        dayOfAssertion
+                    )
                 }"
             )
         }
@@ -104,11 +119,11 @@ class FieldAsserter(private val implicitlyAssertNotPresent: Boolean = true) {
         override fun assert(metrics: Metrics, dayOfAssertion: Int?) {
             val actual = field.get(metrics)
             assertTrue(
-                actual < metrics.totalBackgroundTasks,
+                actual != null && actual < metrics.totalBackgroundTasks,
                 "AssertLessThanTotalBackgroundTasks failed for ${field.name}, actually had value of $actual. ${
-                formatDateForErrorMessage(
-                    dayOfAssertion
-                )
+                    formatDateForErrorMessage(
+                        dayOfAssertion
+                    )
                 }"
             )
         }
@@ -121,9 +136,9 @@ class FieldAsserter(private val implicitlyAssertNotPresent: Boolean = true) {
                 0,
                 field.get(metrics),
                 "Implicit AssertNotPresent failed, $field was unexpectedly present. ${
-                formatDateForErrorMessage(
-                    dayOfAssertion
-                )
+                    formatDateForErrorMessage(
+                        dayOfAssertion
+                    )
                 }"
             )
         }

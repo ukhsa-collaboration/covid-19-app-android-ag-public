@@ -293,7 +293,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
         testResultRobot.checkExposureLinkIsDisplayed()
 
-        testResultRobot.checkIsolationActionButtonShowsContinue()
+        testResultRobot.checkIsolationActionButtonShowsAnonymouslyNotifyOthers()
 
         testResultRobot.clickIsolationActionButton()
 
@@ -620,7 +620,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
         testResultRobot.checkExposureLinkIsDisplayed()
 
-        testResultRobot.checkIsolationActionButtonShowsContinue()
+        testResultRobot.checkIsolationActionButtonShowsAnonymouslyNotifyOthers()
 
         testResultRobot.clickIsolationActionButton()
 

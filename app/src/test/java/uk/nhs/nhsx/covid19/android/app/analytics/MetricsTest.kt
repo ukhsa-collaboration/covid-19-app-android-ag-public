@@ -625,17 +625,6 @@ class MetricsTest {
     }
 
     @Test
-    fun `add hasSelfDiagnosedPositiveBackgroundTick for events in same analytics window`() =
-        runBlocking {
-            `test aggregation of analytics metrics`(
-                BackgroundTaskCompletion(
-                    BackgroundTaskTicks(hasSelfDiagnosedPositiveBackgroundTick = true)
-                ),
-                totalBackgroundTasksMetric.copy(hasSelfDiagnosedPositiveBackgroundTick = 9)
-            )
-        }
-
-    @Test
     fun `add isIsolatingBackgroundTick for events in same analytics window`() = runBlocking {
         `test aggregation of analytics metrics`(
             BackgroundTaskCompletion(

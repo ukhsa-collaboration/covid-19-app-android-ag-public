@@ -82,12 +82,6 @@ class MigrateMetricsLogStorageToLogStorageTest {
             analyticsLogStorage.add(
                 AnalyticsLogEntry(
                     instant,
-                    BackgroundTaskCompletion(BackgroundTaskTicks(hasSelfDiagnosedPositiveBackgroundTick = true))
-                )
-            )
-            analyticsLogStorage.add(
-                AnalyticsLogEntry(
-                    instant,
                     BackgroundTaskCompletion(BackgroundTaskTicks(isIsolatingBackgroundTick = true))
                 )
             )
@@ -153,8 +147,6 @@ class MigrateMetricsLogStorageToLogStorageTest {
             MetricsLogEntry(backgroundTaskMetrics.copy(encounterDetectionPausedBackgroundTick = 1), instant)
         private val hasHadRiskyContactBackgroundTick =
             logEntry.copy(backgroundTaskMetrics.copy(hasHadRiskyContactBackgroundTick = 1), instant)
-        private val hasSelfDiagnosedPositiveBackgroundTick =
-            MetricsLogEntry(backgroundTaskMetrics.copy(hasSelfDiagnosedPositiveBackgroundTick = 1), instant)
         private val isIsolatingBackgroundTick =
             MetricsLogEntry(backgroundTaskMetrics.copy(isIsolatingBackgroundTick = 1), instant)
         private val receivedNegativeTestResult = logEntry.copy(metrics = Metrics(receivedNegativeTestResult = 1))
@@ -193,7 +185,6 @@ class MigrateMetricsLogStorageToLogStorageTest {
             networkStats,
             encounterDetectionPausedBackgroundTick,
             hasHadRiskyContactBackgroundTick,
-            hasSelfDiagnosedPositiveBackgroundTick,
             isIsolatingBackgroundTick,
             receivedNegativeTestResult,
             receivedPositiveTestResult,

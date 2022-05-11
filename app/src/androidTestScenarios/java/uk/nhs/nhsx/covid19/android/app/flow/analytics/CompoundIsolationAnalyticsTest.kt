@@ -1,13 +1,14 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_WALES_CONTACT_CASE_FLOW
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.RiskyContact
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
-import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatures
 
 class CompoundIsolationAnalyticsTest : AnalyticsTest() {
     private var selfDiagnosis = SelfDiagnosis(this)
@@ -15,7 +16,7 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun selfDiagnose_thenRiskyContact_isolatingForBothReasons() {
-        runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
+        runWithFeatures(listOf(OLD_WALES_CONTACT_CASE_FLOW, SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES), true) {
             givenLocalAuthorityIsInWales()
             startTestActivity<MainActivity>()
             // Current date: 1st Jan
@@ -36,7 +37,6 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
                 assertPresent(Metrics::isIsolatingBackgroundTick)
                 assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
                 assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-                assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             }
 
             // Has risky contact on 3nd Jan
@@ -57,7 +57,6 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
                 assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
                 assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
                 assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-                assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
                 assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
                 assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
             }
@@ -69,7 +68,6 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
                 assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
                 assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
                 assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-                assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
                 assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
                 assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
             }
@@ -80,7 +78,6 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
                 assertPresent(Metrics::isIsolatingBackgroundTick)
                 assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
                 assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-                assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
                 assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
                 assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
             }
@@ -89,7 +86,6 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
             assertOnFieldsForDateRange(15..28) {
                 // Isolation is over, but isolation reason still stored for 14 days
                 assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-                assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
                 assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
             }
 

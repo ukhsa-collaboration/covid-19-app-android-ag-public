@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.analytics
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import junit.framework.Assert.assertEquals
@@ -46,7 +45,7 @@ class SubmitAnalyticsTest {
 
     @Before
     fun setupMocks() {
-        every { createAnalyticsPayload.invoke(any()) } returns payload
+        coEvery { createAnalyticsPayload.invoke(any()) } returns payload
     }
 
     @Test
@@ -106,7 +105,7 @@ class SubmitAnalyticsTest {
             assertEquals(Success(Unit), result)
 
             verify { migrateMetricsLogStorageToLogStorage.invoke() }
-            verify(exactly = 2) { createAnalyticsPayload.invoke(group) }
+            coVerify(exactly = 2) { createAnalyticsPayload.invoke(group) }
             coVerify(exactly = 2) { analyticsApi.submitAnalytics(payload) }
             verify(exactly = 2) { analyticsSubmissionLogStorage.addDate(analyticsWindow.startDateToLocalDate()) }
             verify(exactly = 2) {
@@ -128,7 +127,7 @@ class SubmitAnalyticsTest {
 
             assertTrue(result is Failure)
 
-            verify(exactly = 1) { createAnalyticsPayload.invoke(group) }
+            coVerify(exactly = 1) { createAnalyticsPayload.invoke(group) }
             verify(exactly = 0) { analyticsSubmissionLogStorage.addDate(any()) }
             verify(exactly = 0) { analyticsSubmissionLogStorage.removeBeforeOrEqual(any()) }
         }

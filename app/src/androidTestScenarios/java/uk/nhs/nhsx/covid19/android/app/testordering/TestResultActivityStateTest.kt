@@ -3,10 +3,9 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockTestResultViewModel
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
@@ -39,19 +38,6 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
     private fun getString(resourceId: Int): String =
         context.resources.getString(resourceId)
 
-    @Before
-    fun setUp() {
-        givenLocalAuthorityIsInEngland()
-    }
-
-    @After
-    fun resetViewModel() {
-        MockTestResultViewModel.currentOptions =
-            MockTestResultViewModel.currentOptions.copy(
-                useMock = false
-            )
-    }
-
     private fun setState(
         state: TestResultViewState,
         acknowledgementCompletionActions: AcknowledgementCompletionActions,
@@ -61,7 +47,8 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
             useMock = true,
             viewState = state,
             actions = acknowledgementCompletionActions,
-            remainingDaysInIsolation = days
+            remainingDaysInIsolation = days,
+            country = WALES
         )
 
         startTestActivity<TestResultActivity>()

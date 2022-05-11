@@ -1,13 +1,14 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_WALES_CONTACT_CASE_FLOW
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.RiskyContact
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
-import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatures
 import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
 
 class IsolationReasonAnalyticsTest : AnalyticsTest() {
@@ -45,7 +46,6 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
         }
 
         // Dates: 4th-11th Jan -> Analytics packets for: 3rd-10th Jan
@@ -54,7 +54,6 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
         }
 
         isolationChecker.assertExpiredIndexNoContact()
@@ -63,7 +62,6 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
         assertOnFieldsForDateRange(12..25) {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
         }
 
         // Current date: 26th Jan -> Analytics packet for: 25th Jan
@@ -75,7 +73,7 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
 
     @Test
     fun hasHadRiskyContactBackgroundTickIsPresentWhenIsolatingAndFor14DaysAfter() {
-        runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
+        runWithFeatures(listOf(OLD_WALES_CONTACT_CASE_FLOW, SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES), true) {
             givenLocalAuthorityIsInWales()
             startTestActivity<MainActivity>()
 

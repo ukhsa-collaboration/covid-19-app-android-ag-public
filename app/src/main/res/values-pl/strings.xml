@@ -845,7 +845,7 @@
     <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">Ogranicz bliski kontakt z ze wszystkimi członkami gospodarstwa domowego zarażonymi COVID-19</string>
     <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">Noś zakrycie twarzy w zatłoczonych, zamkniętych lub słabo wentylowanych pomieszczeniach</string>
     <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">Jeżeli ktoś z Twojego gospodarstwa domowego ma COVID-19, w miarę możliwości pracuj z domu</string>
-    <string name="about_this_app_software_information_date_of_release_description">04/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">05/2022</string>
     <string name="contact_case_exposure_info_screen_continue_button_england">Kontynuuj</string>
     <string name="contact_case_exposure_info_screen_continue_button_wales">Kontynuuj</string>
     <string name="contact_case_exposure_info_screen_exposure_date_england">Bliski kontakt miał miejsce dnia %s</string>

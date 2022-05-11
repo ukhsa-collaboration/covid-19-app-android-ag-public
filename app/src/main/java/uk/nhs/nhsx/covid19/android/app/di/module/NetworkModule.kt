@@ -20,6 +20,7 @@ import uk.nhs.covid19.config.Remote
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogStorage
 import uk.nhs.nhsx.covid19.android.app.analytics.NetworkStatsInterceptor
 import uk.nhs.nhsx.covid19.android.app.analytics.StripOutLastModifiedHeaderInterceptor
+import uk.nhs.nhsx.covid19.android.app.util.adapters.SerializeNulls
 import uk.nhs.nhsx.covid19.android.app.di.module.SignatureValidationInterceptor.Companion.HEADER_REQUEST_ID
 import uk.nhs.nhsx.covid19.android.app.network.TrafficLengthObfuscationInterceptor
 import uk.nhs.nhsx.covid19.android.app.remote.UserAgentInterceptor
@@ -215,6 +216,7 @@ class NetworkModule(
                 EnumJsonAdapter.create(ObservationType::class.java).withUnknownFallback(gen)
             )
             .add(LocalInformationAdapter())
+            .add(SerializeNulls.jsonAdapterFactory)
             .add(AnalyticsLogStorage.analyticsLogItemAdapter)
             .add(BigDecimalAdapter)
             .build()

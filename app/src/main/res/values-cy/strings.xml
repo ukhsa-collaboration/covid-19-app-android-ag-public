@@ -915,7 +915,7 @@
         <item quantity="other">Byddwch yn ofalus iawn a diogelu eraill tan  %1$s am 23:59. Mae yna %2$s dd/diwrnod tan hynny.</item>
     </plurals>
     <string name="be_careful_until_date_title">Byddwch yn ofalus iawn a diogelu eraill</string>
-    <string name="about_this_app_software_information_date_of_release_description">04/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">05/2022</string>
     <string name="back_to_home_screen">Yn ôl i’r sgrîn gartref</string>
     <string name="covid_guidance_hub_check_ssp_description">Dysgu am brofion ar gyfer COVID-19</string>
     <string name="covid_guidance_hub_check_ssp_title">Canllawiau diweddaraf profion COVID-19</string>

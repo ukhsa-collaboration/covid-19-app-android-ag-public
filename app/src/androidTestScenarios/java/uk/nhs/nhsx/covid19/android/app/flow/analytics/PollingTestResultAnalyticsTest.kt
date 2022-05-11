@@ -108,7 +108,6 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
             assertEquals(1, Metrics::startedIsolation)
             assertEquals(1, Metrics::launchedTestOrdering)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
         }
@@ -137,7 +136,6 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
             assertEquals(1, Metrics::askedToShareExposureKeysInTheInitialFlow)
             if (shouldConsentToKeySharing) {
@@ -155,7 +153,6 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
             if (!shouldConsentToKeySharing || !keySharingSucceeds) {
                 assertEquals(1, Metrics::totalShareExposureKeysReminderNotifications)
@@ -169,7 +166,6 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
         }
 
@@ -177,7 +173,6 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
         assertOnFieldsForDateRange(12..25) {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
         }
 
@@ -232,7 +227,6 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
             assertEquals(1, Metrics::startedIsolation)
             assertEquals(1, Metrics::launchedTestOrdering)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
         }
@@ -251,7 +245,6 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
                 assertEquals(1, it)
             }
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertLessThanTotalBackgroundTasks(Metrics::isIsolatingBackgroundTick)
             assertLessThanTotalBackgroundTasks(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
         }
@@ -261,7 +254,6 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
         assertOnFieldsForDateRange(5..17) {
             // Isolation is over, but isolation reason still stored for 14 days
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
         }
 
         // Current date: 18th Jan -> Analytics packet for: 17th Jan
@@ -305,7 +297,6 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
             assertEquals(1, Metrics::startedIsolation)
             assertEquals(1, Metrics::launchedTestOrdering)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedPositiveBackgroundTick)
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
         }
@@ -322,7 +313,6 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
             }
             ignore(
                 Metrics::hasSelfDiagnosedBackgroundTick,
-                Metrics::hasSelfDiagnosedPositiveBackgroundTick,
                 Metrics::isIsolatingBackgroundTick,
                 Metrics::isIsolatingForSelfDiagnosedBackgroundTick
             )

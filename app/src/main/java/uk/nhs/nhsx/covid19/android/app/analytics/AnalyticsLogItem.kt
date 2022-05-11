@@ -31,7 +31,8 @@ sealed class AnalyticsLogItem {
 enum class RegularAnalyticsEventType(
     var applyToMetrics: (metrics: Metrics) -> Unit,
 ) {
-    ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT({ it.acknowledgedStartOfIsolationDueToRiskyContact++ }),
+    ACKNOWLEDGED_START_OF_ISOLATION_DUE_TO_RISKY_CONTACT({ it.acknowledgedStartOfIsolationDueToRiskyContact =
+        it.acknowledgedStartOfIsolationDueToRiskyContact?.inc() }),
     QR_CODE_CHECK_IN({ it.checkedIn++ }),
     CANCELED_CHECK_IN({ it.canceledCheckIn++ }),
     COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION({ it.completedQuestionnaireAndStartedIsolation++ }),
@@ -42,16 +43,16 @@ enum class RegularAnalyticsEventType(
     RECEIVED_RISKY_CONTACT_NOTIFICATION({ it.receivedRiskyContactNotification = 1 }),
     RISKY_CONTACT_REMINDER_NOTIFICATION({ it.totalRiskyContactReminderNotifications++ }),
     STARTED_ISOLATION({ it.startedIsolation++ }),
-    RECEIVED_ACTIVE_IPC_TOKEN({ it.receivedActiveIpcToken++ }),
-    SELECTED_ISOLATION_PAYMENTS_BUTTON({ it.selectedIsolationPaymentsButton++ }),
-    LAUNCHED_ISOLATION_PAYMENTS_APPLICATION({ it.launchedIsolationPaymentsApplication++ }),
+    RECEIVED_ACTIVE_IPC_TOKEN({ it.receivedActiveIpcToken = it.receivedActiveIpcToken?.inc() }),
+    SELECTED_ISOLATION_PAYMENTS_BUTTON({ it.selectedIsolationPaymentsButton = it.selectedIsolationPaymentsButton?.inc() }),
+    LAUNCHED_ISOLATION_PAYMENTS_APPLICATION({ it.launchedIsolationPaymentsApplication = it.launchedIsolationPaymentsApplication?.inc() }),
     LAUNCHED_TEST_ORDERING({ it.launchedTestOrdering++ }),
     RECEIVED_UNCONFIRMED_POSITIVE_TEST_RESULT({ it.receivedUnconfirmedPositiveTestResult++ }),
     DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT({ it.didHaveSymptomsBeforeReceivedTestResult++ }),
     DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT({ it.didRememberOnsetSymptomsDateBeforeReceivedTestResult++ }),
     DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY({ it.didAskForSymptomsOnPositiveTestEntry++ }),
-    RECEIVED_RISKY_VENUE_M1_WARNING({ it.receivedRiskyVenueM1Warning++ }),
-    RECEIVED_RISKY_VENUE_M2_WARNING({ it.receivedRiskyVenueM2Warning++ }),
+    RECEIVED_RISKY_VENUE_M1_WARNING({ it.receivedRiskyVenueM1Warning = it.receivedRiskyVenueM1Warning?.inc() }),
+    RECEIVED_RISKY_VENUE_M2_WARNING({ it.receivedRiskyVenueM2Warning = it.receivedRiskyVenueM2Warning?.inc() }),
     TOTAL_ALARM_MANAGER_BACKGROUND_TASKS({ it.totalAlarmManagerBackgroundTasks++ }),
     ASKED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW({ it.askedToShareExposureKeysInTheInitialFlow++ }),
     CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW({ it.consentedToShareExposureKeysInTheInitialFlow++ }),
@@ -67,15 +68,15 @@ enum class RegularAnalyticsEventType(
     POSITIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST({ it.positiveLabResultAfterPositiveSelfRapidTest++ }),
     NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_WITHIN_TIME_LIMIT({ it.negativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit++ }),
     NEGATIVE_LAB_RESULT_AFTER_POSITIVE_SELF_RAPID_TEST_OUTSIDE_TIME_LIMIT({ it.negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit++ }),
-    DID_ACCESS_RISKY_VENUE_M2_NOTIFICATION({ it.didAccessRiskyVenueM2Notification++ }),
-    SELECTED_TAKE_TEST_M2_JOURNEY({ it.selectedTakeTestM2Journey++ }),
-    SELECTED_TAKE_TEST_LATER_M2_JOURNEY({ it.selectedTakeTestLaterM2Journey++ }),
-    SELECTED_HAS_SYMPTOMS_M2_JOURNEY({ it.selectedHasSymptomsM2Journey++ }),
-    SELECTED_HAS_NO_SYMPTOMS_M2_JOURNEY({ it.selectedHasNoSymptomsM2Journey++ }),
-    SELECTED_LFD_TEST_ORDERING_M2_JOURNEY({ it.selectedLFDTestOrderingM2Journey++ }),
-    SELECTED_HAS_LFD_TEST_M2_JOURNEY({ it.selectedHasLFDTestM2Journey++ }),
+    DID_ACCESS_RISKY_VENUE_M2_NOTIFICATION({ it.didAccessRiskyVenueM2Notification = it.didAccessRiskyVenueM2Notification?.inc() }),
+    SELECTED_TAKE_TEST_M2_JOURNEY({ it.selectedTakeTestM2Journey = it.selectedTakeTestM2Journey?.inc() }),
+    SELECTED_TAKE_TEST_LATER_M2_JOURNEY({ it.selectedTakeTestLaterM2Journey = it.selectedTakeTestLaterM2Journey?.inc() }),
+    SELECTED_HAS_SYMPTOMS_M2_JOURNEY({ it.selectedHasSymptomsM2Journey = it.selectedHasSymptomsM2Journey?.inc() }),
+    SELECTED_HAS_NO_SYMPTOMS_M2_JOURNEY({ it.selectedHasNoSymptomsM2Journey = it.selectedHasNoSymptomsM2Journey?.inc() }),
+    SELECTED_LFD_TEST_ORDERING_M2_JOURNEY({ it.selectedLFDTestOrderingM2Journey = it.selectedLFDTestOrderingM2Journey?.inc() }),
+    SELECTED_HAS_LFD_TEST_M2_JOURNEY({ it.selectedHasLFDTestM2Journey = it.selectedHasLFDTestM2Journey?.inc() }),
     OPTED_OUT_FOR_CONTACT_ISOLATION({ it.optedOutForContactIsolation++ }),
-    DID_ACCESS_SELF_ISOLATION_NOTE_LINK({ it.didAccessSelfIsolationNoteLink++ }),
+    DID_ACCESS_SELF_ISOLATION_NOTE_LINK({ it.didAccessSelfIsolationNoteLink = it.didAccessSelfIsolationNoteLink?.inc() }),
 }
 
 @JsonClass(generateAdapter = true)
@@ -83,7 +84,6 @@ data class BackgroundTaskTicks(
     var runningNormallyBackgroundTick: Boolean = false,
     var isIsolatingBackgroundTick: Boolean = false,
     var isIsolatingForHadRiskyContactBackgroundTick: Boolean = false,
-    var hasSelfDiagnosedPositiveBackgroundTick: Boolean = false,
     var isIsolatingForSelfDiagnosedBackgroundTick: Boolean = false,
     var isIsolatingForTestedPositiveBackgroundTick: Boolean = false,
     var isIsolatingForTestedLFDPositiveBackgroundTick: Boolean = false,
@@ -108,8 +108,8 @@ data class BackgroundTaskTicks(
         metrics.totalBackgroundTasks++
         metrics.runningNormallyBackgroundTick += runningNormallyBackgroundTick.toInt()
         metrics.isIsolatingBackgroundTick += isIsolatingBackgroundTick.toInt()
-        metrics.isIsolatingForHadRiskyContactBackgroundTick += isIsolatingForHadRiskyContactBackgroundTick.toInt()
-        metrics.hasSelfDiagnosedPositiveBackgroundTick += hasSelfDiagnosedPositiveBackgroundTick.toInt()
+        metrics.isIsolatingForHadRiskyContactBackgroundTick = metrics.isIsolatingForHadRiskyContactBackgroundTick?.plus(
+            isIsolatingForHadRiskyContactBackgroundTick.toInt())
         metrics.isIsolatingForSelfDiagnosedBackgroundTick += isIsolatingForSelfDiagnosedBackgroundTick.toInt()
         metrics.isIsolatingForTestedPositiveBackgroundTick += isIsolatingForTestedPositiveBackgroundTick.toInt()
         metrics.isIsolatingForTestedLFDPositiveBackgroundTick += isIsolatingForTestedLFDPositiveBackgroundTick.toInt()
@@ -122,8 +122,10 @@ data class BackgroundTaskTicks(
         metrics.hasTestedLFDPositiveBackgroundTick += hasTestedLFDPositiveBackgroundTick.toInt()
         metrics.hasTestedSelfRapidPositiveBackgroundTick += hasTestedSelfRapidPositiveBackgroundTick.toInt()
         metrics.encounterDetectionPausedBackgroundTick += encounterDetectionPausedBackgroundTick.toInt()
-        metrics.haveActiveIpcTokenBackgroundTick += haveActiveIpcTokenBackgroundTick.toInt()
-        metrics.hasReceivedRiskyVenueM2WarningBackgroundTick += hasReceivedRiskyVenueM2WarningBackgroundTick.toInt()
+        metrics.haveActiveIpcTokenBackgroundTick = metrics.haveActiveIpcTokenBackgroundTick?.plus(
+            haveActiveIpcTokenBackgroundTick.toInt())
+        metrics.hasReceivedRiskyVenueM2WarningBackgroundTick = metrics.hasReceivedRiskyVenueM2WarningBackgroundTick?.plus(
+            hasReceivedRiskyVenueM2WarningBackgroundTick.toInt())
         metrics.isDisplayingLocalInfoBackgroundTick += isDisplayingLocalInfoBackgroundTick.toInt()
         metrics.optedOutForContactIsolationBackgroundTick += optedOutForContactIsolationBackgroundTick.toInt()
         metrics.appIsUsableBackgroundTick += appIsUsableBackgroundTick.toInt()

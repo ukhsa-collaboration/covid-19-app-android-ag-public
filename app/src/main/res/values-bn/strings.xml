@@ -875,7 +875,7 @@
         <item quantity="other">পর্যন্ত অতিরিক্ত যত্ন নিন এবং অন্যদের সুরক্ষিত রাখুন %1$s এ 23:59 । তখন পর্যন্ত %2$s দিন বাকি আছে।</item>
     </plurals>
     <string name="be_careful_until_date_title">অতিরিক্ত যত্ন নিন এবং অন্যদের রক্ষা করুন</string>
-    <string name="about_this_app_software_information_date_of_release_description">04/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">05/2022</string>
     <string name="back_to_home_screen">হোম স্ক্রিনে ফিরে যান</string>
     <string name="covid_guidance_hub_check_ssp_description">COVID-19 এর পরীক্ষা সম্পর্কে জানুন</string>
     <string name="covid_guidance_hub_check_ssp_title">COVID-19 পরীক্ষার সর্বশেষ নির্দেশনা</string>

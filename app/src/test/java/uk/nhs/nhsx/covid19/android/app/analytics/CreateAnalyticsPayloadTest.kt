@@ -1,5 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.analytics
 
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -19,11 +21,13 @@ class CreateAnalyticsPayloadTest {
     private val calculateMissingSubmissionDays = mockk<CalculateMissingSubmissionDays>()
     private val metadataProvider = mockk<MetadataProvider>()
     private val updateStatusStorage = mockk<UpdateStatusStorage>()
+    private val filterAnalyticsEvents = mockk<FilterAnalyticsEvents>()
 
     private val testSubject = CreateAnalyticsPayload(
         calculateMissingSubmissionDays,
         metadataProvider,
-        updateStatusStorage
+        updateStatusStorage,
+        filterAnalyticsEvents
     )
 
     @Before
@@ -31,6 +35,7 @@ class CreateAnalyticsPayloadTest {
         every { calculateMissingSubmissionDays.invoke(any()) } returns missingSubmissionDays
         every { metadataProvider.getMetadata() } returns metadata
         every { updateStatusStorage.value } returns updateStatus
+        coEvery { filterAnalyticsEvents.invoke(any()) } returns metrics
     }
 
     @Test
@@ -40,8 +45,19 @@ class CreateAnalyticsPayloadTest {
         verify { calculateMissingSubmissionDays.invoke(analyticsWindow) }
         verify { updateStatusStorage.value }
         verify { metadataProvider.getMetadata() }
+        coVerify { filterAnalyticsEvents.invoke(metrics) }
 
         assertEquals(expectedPayload, payload)
+    }
+
+    @Test
+    fun `payload has null fields from filtered analytics`() = runBlocking {
+        coEvery { filterAnalyticsEvents.invoke(any()) } returns metrics.copy(receivedActiveIpcToken = null)
+
+        val expectedFilteredPayload = expectedPayload.copy(metrics = metrics.copy(receivedActiveIpcToken = null))
+
+        val payload = testSubject.invoke(group)
+        assertEquals(expectedFilteredPayload, payload)
     }
 
     private val metadata = Metadata(
