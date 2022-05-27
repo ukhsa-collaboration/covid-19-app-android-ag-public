@@ -2,6 +2,8 @@ package uk.nhs.nhsx.covid19.android.app.remote
 
 import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Cardinal
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NonCardinal
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
 import uk.nhs.nhsx.covid19.android.app.remote.data.QuestionnaireResponse
 
@@ -102,7 +104,20 @@ class MockQuestionnaireApi : QuestionnaireApi {
             )
         ),
         riskThreshold = 0.5f,
-        symptomsOnsetWindowDays = 5
+        symptomsOnsetWindowDays = 5,
+        cardinal = Cardinal(title = TranslatableString(
+            mapOf(
+                "en-GB" to "Do you have a high temperature?"
+            )
+        )),
+        noncardinal = NonCardinal(title = TranslatableString(
+            mapOf(
+                "en-GB" to "Do you have any of these symptoms?"
+            )
+        ), description = TranslatableString(
+            mapOf(
+                "en-GB" to "Shivering or chills\n\nA new, continuous cough\n\nA loss or change to your sense of smell or taste\n\nShortness of breath\n\nFeeling tired or exhausted\n\nAn aching body\n\nA headache\n\nA sore throat\n\nA blocked or runny nose\n\nLoss of appetite\n\nDiarrhoea\n\nFeeling sick or being sick"
+            )))
     )
 
     override suspend fun fetchQuestionnaire(): QuestionnaireResponse =

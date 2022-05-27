@@ -7,7 +7,7 @@ import com.squareup.moshi.JsonClass
 data class IsolationConfigurationResponse(
     @Json(name = "england")
     val englandConfiguration: CountrySpecificConfiguration,
-    @Json(name = "wales")
+    @Json(name = "wales_v2")
     val walesConfiguration: CountrySpecificConfiguration,
 )
 
@@ -36,7 +36,7 @@ data class DurationDays(
     val wales: CountrySpecificConfiguration = CountrySpecificConfiguration(
         contactCase = 11,
         indexCaseSinceSelfDiagnosisOnset = 6,
-        indexCaseSinceSelfDiagnosisUnknownOnset = 4,
+        indexCaseSinceSelfDiagnosisUnknownOnset = 6,
         maxIsolation = 16,
         indexCaseSinceTestResultEndDate = 6,
         pendingTasksRetentionPeriod = 14,

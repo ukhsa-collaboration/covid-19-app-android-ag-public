@@ -11,23 +11,23 @@
     <string name="url_postal_code_risk_more_info">https://faq.covid19.nhs.uk/article/KA-01236/en-us</string>
     <string name="url_how_app_works">https://covid19.nhs.uk/introducing-the-app-polish.html</string>
     <string name="url_common_questions">https://covid19.nhs.uk/common-questions-polish.html</string>
-    <string name="url_latest_advice">https://www.nhs.uk/get-tested</string>
+    <string name="url_latest_advice">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/</string>
     <string name="url_latest_advice_in_isolation">https://faq.covid19.nhs.uk/article/KA-01237/en-us</string>
-    <string name="url_order_test_privacy">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information/testing-for-coronavirus-privacy-information</string>
-    <string name="url_order_test_for_someone_else">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
+    <string name="url_order_test_privacy">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information</string>
+    <string name="url_order_test_for_someone_else">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/</string>
     <string name="url_provide_feedback">https://covid19.nhs.uk/contact-us.html</string>
 
     <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_terms_of_use_wls">https://covid19.nhs.uk/terms-of-use-polish.html</string>
-    <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/</string>
+    <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/encyclopaedia/c/article/coronavirus(covid19)/</string>
     <string name="url_accessibility_statement_wls">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info_wls">https://faq.covid19.nhs.uk/article/KA-01236/en-us</string>
     <string name="url_how_app_works_wls">https://covid19.nhs.uk/introducing-the-app-polish.html</string>
     <string name="url_common_questions_wls">https://covid19.nhs.uk/common-questions-polish.html</string>
     <string name="url_latest_advice_wls">https://gov.wales/coronavirus</string>
     <string name="url_latest_advice_in_isolation_wls">https://faq.covid19.nhs.uk/article/KA-01237/en-us</string>
-    <string name="url_order_test_privacy_wls">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information/testing-for-coronavirus-privacy-information</string>
-    <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
+    <string name="url_order_test_privacy_wls">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information</string>
+    <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/</string>
 
     <!-- Plurals -->
     <plurals name="state_isolation_days">
@@ -443,7 +443,7 @@
     <string name="link_test_result_symptoms_yes">Tak</string>
     <string name="link_test_result_symptoms_yes_accessibility">Tak, wystąpiły u mnie objawy.</string>
     <string name="risk_level_mass_testing_link_text">Znajdź miejsce wykonywania testów</string>
-    <string name="risk_level_mass_testing_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/regular-rapid-coronavirus-tests-if-you-do-not-have-symptoms/</string>
+    <string name="risk_level_mass_testing_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/get-tested-for-coronavirus/</string>
     <string name="risk_level_mass_testing_text">Informacje o przeprowadzaniu testów</string>
     <string name="risk_level_mass_testing_title">Testy w Twojej okolicy</string>
     <string name="venue_alert_m2_explanation">Istnieje ryzyko, że mogło dojść do narażenia na kontakt z wirusem. Około 1 na 3 osoby zakażone COVID-19 nie ma żadnych objawów, ale nadal może zarażać innych, stwarzając ryzyko dla ich zdrowia.\n\nZ tego powodu zalecamy, aby teraz zamówić test.\n\nNie trzeba się izolować, ale należy przestrzegać najnowszych zaleceń dotyczących regularnego mycia rąk i utrzymywania dystansu społecznego. Wraz ze wszystkimi domownikami musicie natychmiast poddać się izolacji, jeżeli wystąpią jakiekolwiek objawy.\n\nJeżeli Twój wynik jest dodatni lub wystąpiły u Ciebie objawy, wraz ze wszystkimi domownikami musicie natychmiast poddać się izolacji. \n\nNie trzeba zamawiać testu, jeżeli w ciągu ostatnich 90 dni otrzymało się dodatni wynik testu, chyba że ma się objawy.\n\nNależy nadal przestrzegać najnowszych wytycznych, nawet jeżeli jesteś już zaszczepiony(-a).\n\nW celu uzyskania dalszych informacji, porady lub wsparcia, proszę dzwonić pod nr 119.</string>
@@ -496,7 +496,7 @@
     <string name="share_keys_reminder_privacy_banner">Nikt nie będzie wiedział, że powiadomienie pochodzi od Ciebie</string>
     <string name="share_keys_reminder_share_button">Powiadom innych</string>
     <string name="share_keys_reminder_title">Przypomnienie o powiadomieniu innych osób</string>
-    <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/regular-rapid-coronavirus-tests-if-you-do-not-have-symptoms/</string>
+    <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/get-tested-for-coronavirus/</string>
     <string name="url_nhs_get_tested_wls">https://gov.wales/get-tested-coronavirus-covid-19</string>
     <string name="camera_active_accessibility_announcement">Funkcja aparatu jest aktywna. Skieruj telefon na oficjalny plakat z kodem NHS QR, aby zameldować się w lokalu.</string>
     <string name="contact_tracing_hub_consider_pausing_text">telefon przechowywany jest w szafce/schowku lub w pomieszczeniach do wspólnego użytku;\n\npracujesz za przezroczystym ekranem, w pełni chroniącym Cię przed kontaktem z innymi;\n\njesteś pracownikiem służby zdrowia lub opieki społecznej, noszącym medyczną odzież ochronną, taką jak maseczki chirurgiczne;\n\njesteś pracownikiem służby zdrowia pracującym w budynku, takim jak szpital lub poradnia lekarzy rodzinnych.</string>
@@ -556,7 +556,7 @@
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation">Oznacza to, że okres izolacji uległ zmianie i wynosi 10 pełnych dni liczonych od dnia, gdy wystąpiły objawy. Ma to na celu zapobieganie rozprzestrzenianiu się wirusa na inne osoby.</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_change">Licznik znajdujący się na stronie głównej aplikacji pomoże Ci w kontroli czasu samoizolacji.</string>
     <string name="test_result_plod_title">Twój wynik testu jest słabo dodatni</string>
-    <string name="url_download_the_nhs_app">https://www.nhs.uk/app</string>
+    <string name="url_download_the_nhs_app">https://www.nhs.uk/nhs-app/</string>
     <string name="local_message_banner_read_more">Dowiedz się więcej</string>
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
@@ -727,10 +727,10 @@
     <string name="test_result_void_continue_self_isolate_nhs_guidance_label">Wytyczne NHS</string>
     <string name="testing_hub_book_lfd_test_description">Uzyskaj informacje dotyczące różnych typów testów na COVID-19 oraz jak je przeprowadzić</string>
     <string name="testing_hub_book_lfd_test_title">Zrób test na COVID-19</string>
-    <string name="url_latest_government_guidance">https://www.gov.uk/government/publications/covid-19-stay-at-home-guidance/stay-at-home-guidance-for-households-with-possible-coronavirus-covid-19-infection</string>
+    <string name="url_latest_government_guidance">https://www.gov.uk/guidance/people-with-symptoms-of-a-respiratory-infection-including-covid-19</string>
     <string name="url_latest_government_guidance_wls">https://gov.wales/self-isolation</string>
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
-    <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
+    <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/encyclopaedia/c/article/coronavirus(covid19)/</string>
     <string name="venue_alert_m2_take_test_button_title">Poddaj się testowi</string>
     <string name="contact_case_continue_isolation_list_item_testing_with_date">Zamów bezpłatny test PCR jeżeli masz objawy.</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">Zamów bezpłatny test PCR jeżeli masz objawy.</string>
@@ -766,7 +766,7 @@
     </plurals>
     <string name="bluetooth_activate">Włącz połączenie Bluetooth w ustawieniach telefonu</string>
     <string name="bluetooth_not_active">Śledzenie kontaktów nie działa bez włączonego połączenia Bluetooth</string>
-    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-tested-coronavirus-covid-19</string>
     <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">Zaleca się możliwie najszybsze wykonanie bezpłatnego testu przepływu bocznego.</string>
     <string name="contact_case_start_isolation_primary_button_title_wales">Otrzymaj bezpłatny szybki test przepływu bocznego</string>
     <string name="launcher_permissions_bluetooth_button">Włącz połączenie Bluetooth</string>
@@ -829,7 +829,7 @@
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">Radzimy aby pokazać tę wiadomość zaufanej osobie dorosłej.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">Nadal ważne jest by przestrzegać krajowych wytycznych, włącznie z ograniczeniem kontaktów z innymi, zwłaszcza z osobami starszymi i wymagającymi specjalnej troski.</string>
     <string name="status_option_local_data">Lokalne dane dotyczące COVID-19</string>
-    <string name="contact_case_guidance_for_contacts_in_england_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="contact_case_guidance_for_contacts_in_england_url">https://www.gov.uk/guidance/living-safely-with-respiratory-infections-including-covid-19</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">Jeśli masz objawy COVID-19 zamów bezpłatny test PCR</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">Ogranicz bliski kontakt z ze wszystkimi członkami gospodarstwa domowego zarażonymi COVID-19</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_wear_a_mask_england">Noś zakrycie twarzy w zatłoczonych, zamkniętych lub słabo wentylowanych pomieszczeniach</string>
@@ -873,7 +873,7 @@
     <string name="risky_contact_opt_out_advice_mask_wales">Zalecamy noszenia twarzy w zamkniętych miejscach publicznych, zwłaszcza jeśli źle się czujesz</string>
     <string name="risky_contact_opt_out_advice_meeting_indoors">Przewietrz pomieszczenie przed spotkaniem z innymi lub spotkajcie się na świeżym powietrzu</string>
     <string name="risky_contact_opt_out_advice_meeting_indoors_wales">W miarę możliwości zalecamy spotykanie się na zewnątrz i zapewnienie dobrej wentylacji w pomieszczeniu</string>
-    <string name="risky_contact_opt_out_advice_testing_hub">Zrób test, jeśli masz objawy COVID-19 i zostań w domu, jeśli wynik testu będzie pozytywny</string>
+    <string name="risky_contact_opt_out_advice_testing_hub">Większość ludzi nie musi już wykonywać testu. Zapoznaj się z najnowszymi wytycznymi dotyczącymi COVID-19 i sprawdź, czy kwalifikujesz się do bezpłatnych testów</string>
     <string name="risky_contact_opt_out_advice_testing_hub_wales">Jeśli masz objawy COVID-19 zrób test przepływu bocznego i jeśli jego wynik będzie pozytywny zostań w domu</string>
     <string name="risky_contact_opt_out_advice_title">Stosuj się do najnowszych wskazówek dotyczących COVID-19, aby chronić siebie i innych</string>
     <string name="risky_contact_opt_out_advice_title_wales">Na terenie Walii nie trzeba już izolować się po bliskim kontakcie</string>
@@ -881,10 +881,10 @@
     <string name="risky_contact_opt_out_advice_wash_hands_wales">Regularnie myj ręce i zakrywaj twarz kiedy kaszlesz i kichasz</string>
     <string name="risky_contact_opt_out_further_advice">Jeśli ktoś z Twojego gospodarstwa domowego uzyskał pozytywny wynik testu na COVID-19, odwiedź:</string>
     <string name="risky_contact_opt_out_further_advice_link_text">Wskazówki dotyczące kontaktów domowych</string>
-    <string name="risky_contact_opt_out_further_advice_link_url">https://www.gov.uk/government/publications/covid-19-people-with-covid-19-and-their-contacts/covid-19-people-with-covid-19-and-their-contacts#what-to-do-if-you-are-a-close-contact-of-someone-who-has-covid-19</string>
+    <string name="risky_contact_opt_out_further_advice_link_url">https://www.gov.uk/guidance/people-with-symptoms-of-a-respiratory-infection-including-covid-19#what-to-do-if-you-are-a-close-contact-of-someone-who-has-had-a-positive-test-result-for-covid-19</string>
     <string name="risky_contact_opt_out_primary_button_title">Przeczytaj najnowsze wytyczne dotyczące COVID-19</string>
     <string name="risky_contact_opt_out_primary_button_title_wales">Zapoznaj się z najnowszymi wytycznymi</string>
-    <string name="risky_contact_opt_out_primary_button_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="risky_contact_opt_out_primary_button_url">https://www.gov.uk/guidance/living-safely-with-respiratory-infections-including-covid-19</string>
     <string name="risky_contact_opt_out_primary_button_url_wales">https://gov.wales/self-isolation</string>
     <string name="risky_contact_opt_out_secondary_button_title">Powrót do strony głównej</string>
     <string name="risky_contact_opt_out_secondary_button_title_wales">Powrót do strony głównej</string>
@@ -957,4 +957,46 @@
     <string name="home_covid19_guidance_button_title">Wytyczne w kwestii COVID-19</string>
     <string name="index_case_continue_isolation_advice_further_advice_england">Aby uzyskać dalsze informacje, należy odwiedzić stronę internetową:</string>
     <string name="your_isolation_are_ending_soon_wales">Twój okres 5 pełnych dni samoizolacji wkrótce się kończy</string>
+    <string name="check_answers_change_button">Zmień</string>
+    <string name="check_answers_heading">Sprawdź swoje odpowiedzi</string>
+    <string name="check_answers_no_answer">Nie</string>
+    <string name="check_answers_submit_button">Wyślij odpowiedzi</string>
+    <string name="check_answers_yes_answer">Tak</string>
+    <string name="generic_step_label">Krok %1$d z %2$d</string>
+    <string name="home_new_label">NOWOŚĆ</string>
+    <string name="home_new_label_accessibility_text">Nowość</string>
+    <string name="how_you_feel_continue_button">Kontynuuj</string>
+    <string name="how_you_feel_description">Czy czujesz się dostatecznie dobrze, aby iść do pracy lub wykonywać normalne czynności?</string>
+    <string name="how_you_feel_error_description">Aby kontynuować wybierz \'Tak\' lub \'Nie\'</string>
+    <string name="how_you_feel_error_title">Wystąpił problem</string>
+    <string name="how_you_feel_header">Jak się czujesz</string>
+    <string name="how_you_feel_no_option">Nie</string>
+    <string name="how_you_feel_step_2_of_3">Krok 2 z 3</string>
+    <string name="how_you_feel_yes_option">Tak</string>
+    <string name="symptom_checker_advice_bulleted_paragraph_body">martwisz się swoimi objawami\n\nTwoje objawy się nasilają</string>
+    <string name="symptom_checker_advice_bulleted_paragraph_header">Wejdź online na NHS 111 lub skontaktuj się ze swoim lekarzem rodzinnym, jeśli:</string>
+    <string name="symptom_checker_advice_continue_normal_activities_header">Możesz kontynuować normalne czynności</string>
+    <string name="symptom_checker_advice_emergency_contact_body">W sytuacji awaryjnej natychmiast udaj się na pogotowie lub zadzwoń pod numer 999.</string>
+    <string name="symptom_checker_advice_icon_header">Kiedy zasięgnąć porady lekarza</string>
+    <string name="symptom_checker_advice_notice_body_one">Na podstawie Twoich odpowiedzi, zastosuj się do najnowszych wskazówek na GOV.UK</string>
+    <string name="symptom_checker_advice_notice_body_two">Jeżeli nie masz ukończonych 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.</string>
+    <string name="symptom_checker_advice_notice_continue_normal_activities_link_text">Bezpieczne życie z infekcjami dróg oddechowych, w tym COVID-19</string>
+    <string name="symptom_checker_advice_notice_continue_normal_activities_link_url">https://www.gov.uk/guidance/living-safely-with-respiratory-infections-including-covid-19</string>
+    <string name="symptom_checker_advice_notice_header">Porada dla Ciebie</string>
+    <string name="symptom_checker_advice_notice_stay_at_home_link_text">Osoby z objawami infekcji dróg oddechowych, włącznie z COVID-19</string>
+    <string name="symptom_checker_advice_notice_stay_at_home_link_url">https://www.gov.uk/guidance/people-with-symptoms-of-a-respiratory-infection-including-covid-19</string>
+    <string name="symptom_checker_advice_stay_at_home_header">Staraj się pozostać w domu i unikaj kontaktu z innymi</string>
+    <string name="your_symptoms_continue_button">Kontynuuj</string>
+    <string name="your_symptoms_error_description">Aby kontynuować, musisz odpowiedzieć na pytanie \'%s\'</string>
+    <string name="your_symptoms_error_title">Wystąpił problem</string>
+    <string name="your_symptoms_first_no_option">Nie</string>
+    <string name="your_symptoms_first_no_option_accessibility_text">Nie, nie mam żadnego z tych objawów</string>
+    <string name="your_symptoms_first_yes_option">Tak</string>
+    <string name="your_symptoms_first_yes_option_accessibility_text">ਹਾਂ, ਮੇਰੇ ਵਿੱਚ ਉੱਪਰ ਦਿੱਤਿਆਂ ਵਿੱਚੋਂ ਇੱਕ ਲੱਛਣ ਹੈ</string>
+    <string name="your_symptoms_no_questions_answerd_error_description">Aby kontynuować wybierz \'Tak\' lub \'Nie\'</string>
+    <string name="your_symptoms_second_no_option">Nie</string>
+    <string name="your_symptoms_second_no_option_accessibility_text">Nie, nie mam tego objawu</string>
+    <string name="your_symptoms_second_yes_option">Tak</string>
+    <string name="your_symptoms_second_yes_option_accessibility_text">Tak, mam ten objaw</string>
+    <string name="your_symptoms_title">Twoje objawy</string>
 </resources>

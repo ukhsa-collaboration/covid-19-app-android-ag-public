@@ -97,7 +97,7 @@
     <string name="delete_data_explanation">您通过此应用共享的任何信息仅用于公共健康目的。 点击“删除数据”后，保留的数据将被删除。 此删除包括任何活跃的自我隔离期以及剩下时间。 请注意，您的手机将保留一些信息，例如手机收集的、用于记录其他应用程序用户的数据。 此数据不受应用程序控制，而是由手机的操作系统控制。 删除后，如果您想再次使用该应用程序，则必须再次进行设置。</string>
     <string name="about_delete_positive_text">删除数据</string>
     <string name="url_privacy_notice">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
-    <string name="url_latest_advice">https://www.nhs.uk/get-tested</string>
+    <string name="url_latest_advice">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/</string>
     <string name="cancel">取消</string>
     <string name="notification_action_exposure_reminder">打开接触追踪</string>
     <string name="notification_title_exposure_reminder">开启联系人追踪，帮助保护自己和他人。</string>
@@ -116,8 +116,8 @@
     <string name="url_accessibility_statement">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info">https://faq.covid19.nhs.uk/article/KA-01250/en-us</string>
     <string name="url_common_questions">https://covid19.nhs.uk/common-questions-chinese.html</string>
-    <string name="url_order_test_privacy">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information/testing-for-coronavirus-privacy-information</string>
-    <string name="url_order_test_for_someone_else">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
+    <string name="url_order_test_privacy">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information</string>
+    <string name="url_order_test_for_someone_else">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/</string>
     <plurals name="state_isolation_days" tools:ignore="MissingQuantity">
         <item quantity="other">%d 天</item>
     </plurals>
@@ -138,7 +138,7 @@
     <string name="empty" translatable="false" />
     <string name="onboarding_exposure_notifications_description">如果您与冠状病毒检查呈阳性的人员有过密切接触，本应用程序将向您发送警报。\n\n为了启用本应用程序“对接触者进行跟踪”的功能，您需要允许 “暴露通知”。\n\n如果您改变主意，则可以随时更改设置的权限。\n\n如果您改变主意，则可以随时更改设置的权限。</string>
     <string name="privacy_notice">隐私声明</string>
-    <string name="nhs_111_online_service">NHS 111 online</string>
+    <string name="nhs_111_online_service">在线 NHS 111</string>
     <string name="post_code_rationale">邮政编码区域有助于了解冠状病毒在不同地区的传播。 这样可以确保我们为您所在地区提供最佳的公共卫生建议。\n\n请放心。 您的邮政编码区域将不会用于追踪您的位置。</string>
     <string name="enable_bluetooth_rationale">本应用程序使用蓝牙来获悉您的手机何时靠近了也安装了本应用程序的另一部手机。如果您关闭了蓝牙，本应用程序将无法运行。\n\n本应用程序使用了一种可节省电池的“蓝牙低能耗”技术。\n\n请进入设置并打开蓝牙。</string>
     <string name="enable_bluetooth_error_hint">请在您的设备设置中打开蓝牙。</string>
@@ -268,15 +268,15 @@
     <string name="submit_keys_information_title">帮助通知其他人</string>
     <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
     <string name="url_terms_of_use_wls">https://covid19.nhs.uk/terms-of-use-chinese.html</string>
-    <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/</string>
+    <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/encyclopaedia/c/article/coronavirus(covid19)/</string>
     <string name="url_accessibility_statement_wls">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info_wls">https://faq.covid19.nhs.uk/article/KA-01250/en-us</string>
     <string name="url_how_app_works_wls">https://covid19.nhs.uk/introducing-the-app-chinese.html</string>
     <string name="url_common_questions_wls">https://covid19.nhs.uk/common-questions-chinese.html</string>
     <string name="url_latest_advice_wls">https://gov.wales/coronavirus</string>
     <string name="url_latest_advice_in_isolation_wls">https://faq.covid19.nhs.uk/article/KA-01251/en-us</string>
-    <string name="url_order_test_privacy_wls">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information/testing-for-coronavirus-privacy-information</string>
-    <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
+    <string name="url_order_test_privacy_wls">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information</string>
+    <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/</string>
     <string name="status_option_link_test_result">输入检测结果</string>
     <string name="about_software_information_text_app_version">应用程序版本</string>
     <string name="about_software_information_text_app_manufacturer_value">UK Health Security Agency\nNobel House\n17 Smith Square\nLondon\nSW1P 3HX\nUK</string>
@@ -423,7 +423,7 @@
     <string name="link_test_result_symptoms_yes">是</string>
     <string name="link_test_result_symptoms_yes_accessibility">是的，我出现了相关症状。</string>
     <string name="risk_level_mass_testing_link_text">查找检测地点</string>
-    <string name="risk_level_mass_testing_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/regular-rapid-coronavirus-tests-if-you-do-not-have-symptoms/</string>
+    <string name="risk_level_mass_testing_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/get-tested-for-coronavirus/</string>
     <string name="risk_level_mass_testing_text">了解检测相关信息</string>
     <string name="risk_level_mass_testing_title">您附近的检测情况</string>
     <string name="venue_alert_m2_explanation">您有接触过病毒的风险。约有 1/3 的 COVID-19 没有任何症状，但他们仍然可以传播病毒，并将他人置于危险之中。\n\n因此，我们建议您马上预约检测。\n\n您不需要进行自我隔离，但您应该继续遵循最新的防疫建议，经常洗手并保持社交距离。如果您出现任何症状，您和您的家人应立即进行自我隔离。\n\n如果您的检测结果呈阳性，您和其他家庭成员必须立即进行自我隔离。\n\n如果您在过去 90 天内的检测结果呈阳性，则不需要预约检测，除非您出现相关症状。\n\n即使您已接种疫苗，也请继续遵循最新的防疫指南。\n\n如需进一步的信息、建议或支持，请致电 119。</string>
@@ -466,7 +466,7 @@
     <string name="what_is_random_id_text">您将被要求分享一个“随机 ID”。这是一个随机生成的代码，可以与其他开启了“接触风险通知”的手机进行共享。</string>
     <string name="what_is_random_id_title">它是如何发挥作用的？</string>
     <string name="getting_tested_online_service">正在测试</string>
-    <string name="message_develop_coronavirus_symptoms">如果您出现任何列明的症状，请通过本应用程序进行报告。\n\n有关更多建议，请访问：\n\n</string>
+    <string name="message_develop_coronavirus_symptoms">如果您出现任何列明的症状，请通过本应用程序进行报告。\n\n有关更多建议，请访问：</string>
     <string name="notification_text_share_keys_reminder">在保护您隐私的同时，让其他人知道他们可能有感染冠状病毒的风险。</string>
     <string name="notification_title_share_keys_reminder">通知他人，提醒风险</string>
     <string name="share_keys_reminder_do_not_share_button">不通知其他人</string>
@@ -476,7 +476,7 @@
     <string name="share_keys_reminder_privacy_banner">没有人知道该通知是由您发出的。</string>
     <string name="share_keys_reminder_share_button">通知其他人</string>
     <string name="share_keys_reminder_title">通知他人，提醒风险</string>
-    <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/regular-rapid-coronavirus-tests-if-you-do-not-have-symptoms/</string>
+    <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/get-tested-for-coronavirus/</string>
     <string name="url_nhs_get_tested_wls">https://gov.wales/get-tested-coronavirus-covid-19</string>
     <string name="camera_active_accessibility_announcement">启动摄像头，将其对准一个 NHS 官方二维码，扫描后入场。</string>
     <string name="contact_tracing_hub_consider_pausing_text">将手机放于储物柜或公共区域\n\n在固定的透明屏障后工作，并且完全与其他人隔绝\n\n您是卫生和社会护理工作者，并且穿戴了医用级个人防护装备（如医用口罩）\n\n您是在医院或社区诊所等医疗机构工作的医疗工作者</string>
@@ -536,7 +536,7 @@
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation">这意味着您的隔离期从症状出现之日起已变为 10 整天。这是为了避免病毒传播给他人。</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_change">请使用应用程序主屏幕上的倒计时器记录您的自我隔离时间。</string>
     <string name="test_result_plod_title">您的检测结果呈弱阳性</string>
-    <string name="url_download_the_nhs_app">https://www.nhs.uk/app</string>
+    <string name="url_download_the_nhs_app">https://www.nhs.uk/nhs-app/</string>
     <string name="local_message_banner_read_more">阅读更多</string>
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
@@ -698,10 +698,10 @@
     <string name="test_result_void_continue_self_isolate_nhs_guidance_label">NHS 指导</string>
     <string name="testing_hub_book_lfd_test_description">了解不同类型的 COVID-19 测试以及如何进行测试</string>
     <string name="testing_hub_book_lfd_test_title">接受新冠病毒检测</string>
-    <string name="url_latest_government_guidance">https://www.gov.uk/government/publications/covid-19-stay-at-home-guidance/stay-at-home-guidance-for-households-with-possible-coronavirus-covid-19-infection</string>
+    <string name="url_latest_government_guidance">https://www.gov.uk/guidance/people-with-symptoms-of-a-respiratory-infection-including-covid-19</string>
     <string name="url_latest_government_guidance_wls">https://gov.wales/self-isolation</string>
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
-    <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
+    <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/encyclopaedia/c/article/coronavirus(covid19)/</string>
     <string name="venue_alert_m2_take_test_button_title">进行检测</string>
     <string name="contact_case_continue_isolation_list_item_testing_with_date">如果出现症状，请预约免费的PCR检测。</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">如果出现症状，请预约免费的PCR检测。</string>
@@ -731,7 +731,7 @@
     </plurals>
     <string name="bluetooth_activate">在手机设置中打开Bluetooth</string>
     <string name="bluetooth_not_active">接触者追踪需要使用Bluetooth功能</string>
-    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms</string>
+    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-tested-coronavirus-covid-19</string>
     <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">建议您尽快进行免费快速侧流检测。</string>
     <string name="contact_case_start_isolation_primary_button_title_wales">获取免费快速侧流检测试剂盒</string>
     <string name="launcher_permissions_bluetooth_button">打开Bluetooth</string>
@@ -794,7 +794,7 @@
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">建议您将此消息告知您信任的成年人。</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">遵守国家指导仍然至关重要，包括减少与他人（特别是老年人和弱势群体）的接触。</string>
     <string name="status_option_local_data">COVID-19本地数据</string>
-    <string name="contact_case_guidance_for_contacts_in_england_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="contact_case_guidance_for_contacts_in_england_url">https://www.gov.uk/guidance/living-safely-with-respiratory-infections-including-covid-19</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">如有 COVID-19 症状，则进行 PCR 检测</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">限制与家中任何感染 COVID-19 之人的密切接触</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_wear_a_mask_england">在拥挤、封闭或通风不良的空间内佩戴面罩</string>
@@ -827,7 +827,7 @@
     <string name="index_case_isolation_advice_further_advice_england">有关更多建议，请访问：</string>
     <string name="index_case_isolation_advice_heading_title_england">您的 COVID-19 检测结果呈阳性</string>
     <string name="index_case_isolation_advice_information_box_description_england">通过应用匿名通知他人</string>
-    <string name="index_case_isolation_advice_nhs_onilne_link_button_england">NHS 111 online</string>
+    <string name="index_case_isolation_advice_nhs_onilne_link_button_england">在线 NHS 111</string>
     <string name="index_case_isolation_advice_primary_button_title_england">匿名通知他人</string>
     <string name="isolation_advice_symptomatic_description_england">您的症状表明您可能感染了新冠肺炎。\n\n即使没有任何症状，您也极有可能感染和传播该病毒。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。\n\n如果您不在英格兰和威尔士，你则需要遵循所在国家/地区的指南。</string>
     <string name="isolation_advice_symptomatic_info_england">尽可能减少与他人的接触</string>
@@ -837,7 +837,7 @@
     <string name="risky_contact_opt_out_advice_mask_wales">在室内公共场所佩戴面罩，尤其是当您感觉身体不适时</string>
     <string name="risky_contact_opt_out_advice_meeting_indoors">室内会面时请保持室内通风，或者请考虑室外会面</string>
     <string name="risky_contact_opt_out_advice_meeting_indoors_wales">尽可能在室外会面，如确需在室内会面，请保证通风良好</string>
-    <string name="risky_contact_opt_out_advice_testing_hub">若您有 COVID-19 症状，则进行相关检测；若检测结果为阳性，则请居家隔离</string>
+    <string name="risky_contact_opt_out_advice_testing_hub">大多数人无需参加检测。阅读最新版 COVID-19 指导意见，检查您是否有资格获取免费检测</string>
     <string name="risky_contact_opt_out_advice_testing_hub_wales">若您存在 COVID-19 症状，请进行侧流检测；若检测结果呈阳性，则请自我隔离</string>
     <string name="risky_contact_opt_out_advice_title">遵循最新的 COVID-19 指南保护自己和他人</string>
     <string name="risky_contact_opt_out_advice_title_wales">在威尔士，您作为密切接触者已无需自我隔离</string>
@@ -845,10 +845,10 @@
     <string name="risky_contact_opt_out_advice_wash_hands_wales">经常洗手，并在咳嗽和打喷嚏时捂住口鼻</string>
     <string name="risky_contact_opt_out_further_advice">若家中有人 COVID-19 检测呈阳性，请访问：</string>
     <string name="risky_contact_opt_out_further_advice_link_text">家庭接触者指南</string>
-    <string name="risky_contact_opt_out_further_advice_link_url">https://www.gov.uk/government/publications/covid-19-people-with-covid-19-and-their-contacts/covid-19-people-with-covid-19-and-their-contacts#what-to-do-if-you-are-a-close-contact-of-someone-who-has-covid-19</string>
+    <string name="risky_contact_opt_out_further_advice_link_url">https://www.gov.uk/guidance/people-with-symptoms-of-a-respiratory-infection-including-covid-19#what-to-do-if-you-are-a-close-contact-of-someone-who-has-had-a-positive-test-result-for-covid-19</string>
     <string name="risky_contact_opt_out_primary_button_title">阅读最新版 COVID-19 指南</string>
     <string name="risky_contact_opt_out_primary_button_title_wales">阅读最新建议</string>
-    <string name="risky_contact_opt_out_primary_button_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="risky_contact_opt_out_primary_button_url">https://www.gov.uk/guidance/living-safely-with-respiratory-infections-including-covid-19</string>
     <string name="risky_contact_opt_out_primary_button_url_wales">https://gov.wales/self-isolation</string>
     <string name="risky_contact_opt_out_secondary_button_title">返回主屏幕</string>
     <string name="risky_contact_opt_out_secondary_button_title_wales">返回主屏幕</string>
@@ -856,7 +856,7 @@
     <string name="symptomatic_contact_guidance_further_advice_england">有关更多建议，请访问：</string>
     <string name="symptomatic_contact_guidance_mask_england">为减少传染给他人的风险，如需离家外出，请佩戴面罩</string>
     <string name="symptomatic_contact_guidance_meeting_indoors_england">避免前往拥挤和封闭的场所，必要时在室外会面</string>
-    <string name="symptomatic_contact_guidance_nhs_online_link_england">NHS 111 online</string>
+    <string name="symptomatic_contact_guidance_nhs_online_link_england">在线 NHS 111</string>
     <string name="symptomatic_contact_guidance_testing_hub_england">尽可能居家隔离并避免与他人密切接触，尤其是那些 COVID-19 高风险人群</string>
     <string name="symptomatic_contact_guidance_title_england">遵循最新版 COVID-19 指南</string>
     <string name="symptomatic_contact_guidance_wash_hands_england">经常洗手，咳嗽和打喷嚏时捂住口鼻</string>
@@ -919,4 +919,46 @@
     <string name="home_covid19_guidance_button_title">COVID-19 指南</string>
     <string name="index_case_continue_isolation_advice_further_advice_england">有关更多建议，请访问：</string>
     <string name="your_isolation_are_ending_soon_wales">5天的自我隔离即将结束</string>
+    <string name="check_answers_change_button">修改</string>
+    <string name="check_answers_heading">检查您的答案</string>
+    <string name="check_answers_no_answer">否</string>
+    <string name="check_answers_submit_button">提交信息</string>
+    <string name="check_answers_yes_answer">是</string>
+    <string name="generic_step_label">第 %1$d 步/共 %2$d 步</string>
+    <string name="home_new_label">全新</string>
+    <string name="home_new_label_accessibility_text">全新</string>
+    <string name="how_you_feel_continue_button">继续</string>
+    <string name="how_you_feel_description">您觉得身体好到可以去上班或做正常的活动吗？</string>
+    <string name="how_you_feel_error_description">如需继续，请选择\'是\'或\'否\'</string>
+    <string name="how_you_feel_error_title">出现问题</string>
+    <string name="how_you_feel_header">您的感受</string>
+    <string name="how_you_feel_no_option">否</string>
+    <string name="how_you_feel_step_2_of_3">第 2 步/共 3 步</string>
+    <string name="how_you_feel_yes_option">是</string>
+    <string name="symptom_checker_advice_bulleted_paragraph_body">担心自己的症状\n\n症状恶化</string>
+    <string name="symptom_checker_advice_bulleted_paragraph_header">若出现以下情况，请在线访问 NHS 111 或联系家庭医生 (GP)：</string>
+    <string name="symptom_checker_advice_continue_normal_activities_header">可以继续正常活动</string>
+    <string name="symptom_checker_advice_emergency_contact_body">在紧急情况下，请立即前往急诊室 (A&amp;E) 或拨打 999。</string>
+    <string name="symptom_checker_advice_icon_header">就医时间</string>
+    <string name="symptom_checker_advice_notice_body_one">基于您的答案，请遵循 GOV.UK 上的最新指导</string>
+    <string name="symptom_checker_advice_notice_body_two">即使没有任何症状，您也极有可能感染和传播该病毒。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。</string>
+    <string name="symptom_checker_advice_notice_continue_normal_activities_link_text">与呼吸道感染安全相处，包括 COVID-19</string>
+    <string name="symptom_checker_advice_notice_continue_normal_activities_link_url">https://www.gov.uk/guidance/living-safely-with-respiratory-infections-including-covid-19</string>
+    <string name="symptom_checker_advice_notice_header">您的建议</string>
+    <string name="symptom_checker_advice_notice_stay_at_home_link_text">呼吸道感染症状者，包括 COVID-19</string>
+    <string name="symptom_checker_advice_notice_stay_at_home_link_url">https://www.gov.uk/guidance/people-with-symptoms-of-a-respiratory-infection-including-covid-19</string>
+    <string name="symptom_checker_advice_stay_at_home_header">尽量待在家中，远离他人</string>
+    <string name="your_symptoms_continue_button">继续</string>
+    <string name="your_symptoms_error_description">如需继续，您需要回答 \'%s\'</string>
+    <string name="your_symptoms_error_title">出现问题</string>
+    <string name="your_symptoms_first_no_option">否</string>
+    <string name="your_symptoms_first_no_option_accessibility_text">否，我没有任何这些症状</string>
+    <string name="your_symptoms_first_yes_option">是</string>
+    <string name="your_symptoms_first_yes_option_accessibility_text">是，我有上述症状之一</string>
+    <string name="your_symptoms_no_questions_answerd_error_description">如需继续，请选择\'是\'或\'否\'</string>
+    <string name="your_symptoms_second_no_option">否</string>
+    <string name="your_symptoms_second_no_option_accessibility_text">否，我没有此症状</string>
+    <string name="your_symptoms_second_yes_option">是</string>
+    <string name="your_symptoms_second_yes_option_accessibility_text">是，我有此症状</string>
+    <string name="your_symptoms_title">您的症状</string>
 </resources>

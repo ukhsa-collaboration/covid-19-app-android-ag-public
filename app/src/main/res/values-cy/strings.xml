@@ -97,7 +97,7 @@
     <string name="delete_data_explanation">Dim ond at ddibenion iechyd y cyhoedd y defnyddir unrhyw wybodaeth y byddwch yn ei rhannu trwy gyfrwng yr ap hwn. Bydd y data a gedwir yn cael eu dileu unwaith y byddwch yn clicio \"Dileu data\". Bydd hefyd yn dileu unrhyw ddiwrnodau hunanynysu sydd gennych yn weddill. Sylwch y bydd eich ffôn yn cadw rhywfaint o wybodaeth, megis y data y mae eich ffôn yn eu casglu i gofnodi defnyddwyr eraill yr ap. Nid yw\'r data hyn yn cael eu rheoli gan yr ap ond gan system weithredu eich ffôn. Os ydych am barhau i ddefnyddio\'r ap hwn yn nes ymlaen, bydd rhaid i chi ei sefydlu eto.</string>
     <string name="about_delete_positive_text">Dileu data</string>
     <string name="url_privacy_notice">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information/ap-covid-19-y-gig</string>
-    <string name="url_latest_advice">https://www.nhs.uk/get-tested</string>
+    <string name="url_latest_advice">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/</string>
     <string name="cancel">Canslo</string>
     <string name="notification_action_exposure_reminder">Troi olrhain cysylltiadau ymlaen.</string>
     <string name="notification_title_exposure_reminder">Ailddechreuwch y cyfleuster olrhain cysylltiadau i helpu i’ch amddiffyn eich hun ac eraill.</string>
@@ -116,8 +116,8 @@
     <string name="url_accessibility_statement">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info">https://faq.covid19.nhs.uk/article/KA-01192/en-us</string>
     <string name="url_common_questions">https://covid19.nhs.uk/common-questions-welsh.html</string>
-    <string name="url_order_test_privacy">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information/testing-for-coronavirus-privacy-information</string>
-    <string name="url_order_test_for_someone_else">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
+    <string name="url_order_test_privacy">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information</string>
+    <string name="url_order_test_for_someone_else">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/</string>
     <plurals name="state_isolation_days" tools:ignore="MissingQuantity">
         <item quantity="zero">%d ddiwrnod</item>
         <item quantity="one">%d ddiwrnod</item>
@@ -288,15 +288,15 @@
     <string name="submit_keys_information_title">Helpu i hysbysu eraill</string>
     <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information/ap-covid-19-y-gig</string>
     <string name="url_terms_of_use_wls">https://covid19.nhs.uk/terms-of-use-welsh.html</string>
-    <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/</string>
+    <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/encyclopaedia/c/article/coronavirus(covid19)/</string>
     <string name="url_accessibility_statement_wls">https://covid19.nhs.uk/accessibility.html</string>
     <string name="url_postal_code_risk_more_info_wls">https://faq.covid19.nhs.uk/article/KA-01192/en-us</string>
     <string name="url_how_app_works_wls">https://covid19.nhs.uk/introducing-the-app-welsh.html</string>
     <string name="url_common_questions_wls">https://covid19.nhs.uk/common-questions-welsh.html</string>
     <string name="url_latest_advice_wls">https://llyw.cymru/coronafeirws</string>
     <string name="url_latest_advice_in_isolation_wls">https://faq.covid19.nhs.uk/article/KA-01193/en-us</string>
-    <string name="url_order_test_privacy_wls">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information/testing-for-coronavirus-privacy-information</string>
-    <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing-and-tracing/get-a-test-to-check-if-you-have-coronavirus/</string>
+    <string name="url_order_test_privacy_wls">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information</string>
+    <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/</string>
     <string name="status_option_link_test_result">Nodwch ganlyniad y prawf</string>
     <string name="about_software_information_text_app_version">Fersiwn yr ap</string>
     <string name="about_software_information_text_app_manufacturer_value">UK Health Security Agency\nNobel House\n17 Smith Square\nLondon\nSW1P 3HX\nUK</string>
@@ -443,7 +443,7 @@
     <string name="link_test_result_symptoms_yes">Ydw</string>
     <string name="link_test_result_symptoms_yes_accessibility">Oedd, roedd gen i symptomau.</string>
     <string name="risk_level_mass_testing_link_text">Dod o hyd i safle profi</string>
-    <string name="risk_level_mass_testing_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/regular-rapid-coronavirus-tests-if-you-do-not-have-symptoms/</string>
+    <string name="risk_level_mass_testing_link_url">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/get-tested-for-coronavirus/</string>
     <string name="risk_level_mass_testing_text">Darganfod mwy am brofion</string>
     <string name="risk_level_mass_testing_title">Profi yn agos i chi</string>
     <string name="venue_alert_m2_explanation">Mae risg y buoch mewn cysylltiad â\'r firws. Ni fydd tua 1 ymhob 3 o bobl sydd â COVID-19 yn dioddef unrhyw symptomau, ond eto gallant ei drosglwyddo i chi a throsglwyddo\'r risg i eraill.\n\nAm y rheswm yma, rydym yn argymell eich bod yn archebu prawf nawr. \n\nDoes dim angen i chi hunanynysu, ond dylech barhau i ddilyn y cyngor diweddaraf ar olchi dwylo\'n rheolaidd a chadw pellter cymdeithasol. Os datblygwch unrhyw symptomau, dylech chi a phobl eraill ar eich aelwyd hunanynysu ar unwaith.\n\nOs derbyniwch ganlyniad prawf positif, rhaid i chi a phobl eraill ar eich aelwyd hunanynysu ar unwaith. \n\nDoes dim angen i chi archebu prawf os ydych wedi derbyn canlyniad prawf positif yn ystod y 90 diwrnod diwethaf, oni bai fod symptomau arnoch.\n\nEwch ymlaen i ddilyn yr holl ganllawiau diweddaraf, hyd yn oed os cawsoch eich brechu.\n\nAm fwy o wybodaeth, cyngor, neu gymorth rhowch alwad i 119.</string>
@@ -496,7 +496,7 @@
     <string name="share_keys_reminder_privacy_banner">Ni fydd unrhyw un yn gwybod bod yr hysbysiad yn gysylltiedig â chi</string>
     <string name="share_keys_reminder_share_button">Hysbysu eraill</string>
     <string name="share_keys_reminder_title">Nodyn atgoffa i hysbysu eraill</string>
-    <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/regular-rapid-coronavirus-tests-if-you-do-not-have-symptoms/</string>
+    <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/get-tested-for-coronavirus/</string>
     <string name="url_nhs_get_tested_wls">https://llyw.cymru/cael-prawf-coronafeirws-covid-19?_ga=2.119681037.461135782.1628007884-2142473961.1612823651</string>
     <string name="camera_active_accessibility_announcement">Mae\'r camera\'n weithredol. Anelwch ef at boster cod QR swyddogol y GIG i fewngofnodi i leoliad</string>
     <string name="contact_tracing_hub_consider_pausing_text">eich bod yn storio eich ffôn mewn locer neu ardal gymunol\n\neich bod yn gweithio y tu ôl i sgrîn dryloyw sefydlog ac wedi\'ch amddiffyn yn llawn rhag pobl eraill\n\neich bod yn weithiwr ym maes iechyd a gofal cymdeithasol ac yn gwisgo PPE o safon feddygol, er enghraifft masg llawfeddygol\n\neich bod yn weithiwr gofal iechyd sy\'n gweithio mewn adeilad gofal iechyd fel ysbyty neu feddygfa Teulu</string>
@@ -556,7 +556,7 @@
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation">Mae hyn yn golygu bod eich cyfnod ynysu wedi newid i 10 diwrnod llawn o’r diwrnod y dechreuodd eich symptomau. Mae angen gwneud hyn i osgoi lledaenu’r feirws i eraill.</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_change">Gallwch olrhain eich cyfnod hunanynysu gyda’r amserydd cyfrif-i-lawr ar sgrin gartref yr ap.</string>
     <string name="test_result_plod_title">Mae canlyniad eich prawf yn un positif gwan</string>
-    <string name="url_download_the_nhs_app">https://www.nhs.uk/app</string>
+    <string name="url_download_the_nhs_app">https://www.nhs.uk/nhs-app/</string>
     <string name="local_message_banner_read_more">Darllen mwy</string>
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
@@ -733,10 +733,10 @@
     <string name="test_result_void_continue_self_isolate_nhs_guidance_label">Canllawiau’r GIG</string>
     <string name="testing_hub_book_lfd_test_description">Darganfod am y gwahanol fathau o brawf COVID-19 a sut i gael prawf</string>
     <string name="testing_hub_book_lfd_test_title">Ewch am brawf COVID-19</string>
-    <string name="url_latest_government_guidance">https://www.gov.uk/government/publications/covid-19-stay-at-home-guidance/stay-at-home-guidance-for-households-with-possible-coronavirus-covid-19-infection</string>
+    <string name="url_latest_government_guidance">https://www.gov.uk/guidance/people-with-symptoms-of-a-respiratory-infection-including-covid-19</string>
     <string name="url_latest_government_guidance_wls">https://llyw.cymru/canllawiau-hunanynysu?_ga=2.39196963.1478961316.1625138741-2142473961.1612823651</string>
     <string name="url_nhs_guidance">https://www.nhs.uk/conditions/coronavirus-covid-19/</string>
-    <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/coronavirus%282019ncov%29</string>
+    <string name="url_nhs_guidance_wls">https://111.wales.nhs.uk/encyclopaedia/c/article/coronavirus(covid19)/</string>
     <string name="venue_alert_m2_take_test_button_title">Ewch am brawf</string>
     <string name="contact_case_continue_isolation_list_item_testing_with_date">Archebwch brawf PCR am ddim os oes gennych chi symptomau.</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_testing_with_date">Archebwch brawf PCR am ddim os oes gennych chi symptomau.</string>
@@ -776,7 +776,7 @@
     </plurals>
     <string name="bluetooth_activate">Trowch Bluetooth ymlaen yng ngosodiadau eich ffôn</string>
     <string name="bluetooth_not_active">Dydy olrhain cyswllt ddim yn gweithio heb Bluetooth</string>
-    <string name="contact_case_start_isolation_book_lfd_test_url">https://llyw.cymru/prawf-covid-19-cyflym-heb-symptomau</string>
+    <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-tested-coronavirus-covid-19</string>
     <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">Fe’ch cynghorir i gymryd prawf llif unffordd cyflym am ddim cyn gynted â phosibl.</string>
     <string name="contact_case_start_isolation_primary_button_title_wales">Casglwch becyn llif unffordd cyflym am ddim</string>
     <string name="launcher_permissions_bluetooth_button">Trowch Bluetooth ymlaen</string>
@@ -839,7 +839,7 @@
     <string name="risky_contact_isolation_advice_minors_show_to_adult_advice_wls">Cynghorwn chi i ddangos y neges yma i oedolyn rydych yn ymddiried ynddo.</string>
     <string name="risky_contact_isolation_advice_minors_testing_advice_wls">Mae’n dal i fod yn bwysig dilyn canllawiau cenedlaethol, gan gynnwys lleihau eich cyswllt ag eraill, yn arbennig yr henoed a phobl fregus.</string>
     <string name="status_option_local_data">Data COVID-19 lleol</string>
-    <string name="contact_case_guidance_for_contacts_in_england_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="contact_case_guidance_for_contacts_in_england_url">https://www.gov.uk/guidance/living-safely-with-respiratory-infections-including-covid-19</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">Cymerwch brawf PCR os oes gennych chi symptomau COVID-19</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">Cyfyngwch gyswllt agos gydag unrhyw un yn eich aelwyd sydd â COVID-19</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_wear_a_mask_england">Gwisgwch orchudd wyneb mewn lleoliadau prysur, amgaeedig neu sydd heb eu hawyru’n dda</string>
@@ -882,7 +882,7 @@
     <string name="risky_contact_opt_out_advice_mask_wales">Gwisgo gorchudd wyneb mewn llefydd cyhoeddus dan do, yn arbennig os nad ydych chi\'n teimlo\'n dda</string>
     <string name="risky_contact_opt_out_advice_meeting_indoors">Gadael awyr iach i mewn os byddwch chi\'n cwrdd da do, neu gwrdd tu allan</string>
     <string name="risky_contact_opt_out_advice_meeting_indoors_wales">Cwrdd tu allan ble fo\'n bosibl a sicrhau awyru da os ydych dan do</string>
-    <string name="risky_contact_opt_out_advice_testing_hub">Cymryd prawf os bydd gennych chi symptomau COVID-19 ac aros gartref os byddwch chi\'n cael canlyniad positif</string>
+    <string name="risky_contact_opt_out_advice_testing_hub">Nid oes angen i\'r rhan fwyaf o bobl gymryd rawf mwyach. Darllenwch y canllaw COVID-19 diweddaraf a gwirio os ydych chi\'n gymwys i gael prawf am ddim</string>
     <string name="risky_contact_opt_out_advice_testing_hub_wales">Cymryd prawf llif unffordd os bydd gennych chi symptomau COVID-19 a hunanynysu os byddwch chi\'n cael canlyniad positif</string>
     <string name="risky_contact_opt_out_advice_title">Dilynwch y canllawiau COVID-19 diweddaraf i ddiogelu eich hun ac eraill</string>
     <string name="risky_contact_opt_out_advice_title_wales">Nid oes angen i chi hunanynysu mwyach fel cyswllt agos yng Nghymru</string>
@@ -890,10 +890,10 @@
     <string name="risky_contact_opt_out_advice_wash_hands_wales">Golchi dwylo’n rheolaidd a gorchuddio unrhyw beswch neu disian</string>
     <string name="risky_contact_opt_out_further_advice">Os bydd rhywun yn eich cartref wedi cael prawf positif ar gyfer COVID-19, ewch i:</string>
     <string name="risky_contact_opt_out_further_advice_link_text">Canllawiau ar gyfer cysylltiadau yn y cartref</string>
-    <string name="risky_contact_opt_out_further_advice_link_url">https://www.gov.uk/government/publications/covid-19-people-with-covid-19-and-their-contacts/covid-19-people-with-covid-19-and-their-contacts#what-to-do-if-you-are-a-close-contact-of-someone-who-has-covid-19</string>
+    <string name="risky_contact_opt_out_further_advice_link_url">https://www.gov.uk/guidance/people-with-symptoms-of-a-respiratory-infection-including-covid-19#what-to-do-if-you-are-a-close-contact-of-someone-who-has-had-a-positive-test-result-for-covid-19</string>
     <string name="risky_contact_opt_out_primary_button_title">Darllenwch y canllaw COVID-19 diweddaraf</string>
     <string name="risky_contact_opt_out_primary_button_title_wales">Darllen y cyngor diweddaraf</string>
-    <string name="risky_contact_opt_out_primary_button_url">https://www.gov.uk/guidance/covid-19-coronavirus-restrictions-what-you-can-and-cannot-do</string>
+    <string name="risky_contact_opt_out_primary_button_url">https://www.gov.uk/guidance/living-safely-with-respiratory-infections-including-covid-19</string>
     <string name="risky_contact_opt_out_primary_button_url_wales">https://llyw.cymru/canllawiau-hunanynysu?_ga=2.39196963.1478961316.1625138741-2142473961.1612823651</string>
     <string name="risky_contact_opt_out_secondary_button_title">Yn ôl i’r sgrîn gartref</string>
     <string name="risky_contact_opt_out_secondary_button_title_wales">Yn ôl i’r sgrîn gartref</string>
@@ -969,4 +969,46 @@
     <string name="home_covid19_guidance_button_title">Canllaw COVID-19</string>
     <string name="index_case_continue_isolation_advice_further_advice_england">I gael rhagor o gyngor ewch i:</string>
     <string name="your_isolation_are_ending_soon_wales">Mae eich 5 diwrnod llawn o hunanynysu yn dod i ben yn fuan</string>
+    <string name="check_answers_change_button">Newid</string>
+    <string name="check_answers_heading">Gwirio’ch atebion</string>
+    <string name="check_answers_no_answer">Nac ydw</string>
+    <string name="check_answers_submit_button">Cyflwynwch eich atebion</string>
+    <string name="check_answers_yes_answer">Ydw</string>
+    <string name="generic_step_label">Cam %1$d o %2$d</string>
+    <string name="home_new_label">NEWYDD</string>
+    <string name="home_new_label_accessibility_text">Newydd</string>
+    <string name="how_you_feel_continue_button">Parhau</string>
+    <string name="how_you_feel_description">Ydych chi\'n teimlo\'n ddigon da i wneud eich gweithgareddau arferol?</string>
+    <string name="how_you_feel_error_description">I barhau, mae angen i chi ddewis \'Ydw\' neu \'Nac ydw\'</string>
+    <string name="how_you_feel_error_title">Mae yna broblem</string>
+    <string name="how_you_feel_header">Sut ydych chi\'n teimlo</string>
+    <string name="how_you_feel_no_option">Nac ydw</string>
+    <string name="how_you_feel_step_2_of_3">Cam 2 o 3</string>
+    <string name="how_you_feel_yes_option">Ydw</string>
+    <string name="symptom_checker_advice_bulleted_paragraph_body">rydych yn poeni am eich symptomau\n\nmae’ch symptomau\'n gwaethygu</string>
+    <string name="symptom_checker_advice_bulleted_paragraph_header">Ewch i GIG 111 ar-lein neu cysylltwch â’ch meddyg teulu os:</string>
+    <string name="symptom_checker_advice_continue_normal_activities_header">Gallwch barhau gyda’ch gweithgareddau arferol</string>
+    <string name="symptom_checker_advice_emergency_contact_body">Mewn argyfwng, ewch i\'r Adran Ddamweiniau ac Achosion Brys ar unwaith neu ffonio 999.</string>
+    <string name="symptom_checker_advice_icon_header">Pryd i geisio cyngor meddygol</string>
+    <string name="symptom_checker_advice_notice_body_one">Yn seiliedig ar eich atebion, dilynwch y canllawiau diweddaraf ar GOV.UK</string>
+    <string name="symptom_checker_advice_notice_body_two">Os ydych dan 18 oed, rydym yn eich cynghori i ddangos y neges yma i oedolyn rydych yn ymddiried ynddo.</string>
+    <string name="symptom_checker_advice_notice_continue_normal_activities_link_text">Byw\'n ddiogel gyda heintiau resbiradol, yn cynnwys COVID-19</string>
+    <string name="symptom_checker_advice_notice_continue_normal_activities_link_url">https://www.gov.uk/guidance/living-safely-with-respiratory-infections-including-covid-19</string>
+    <string name="symptom_checker_advice_notice_header">Eich cyngor</string>
+    <string name="symptom_checker_advice_notice_stay_at_home_link_text">Pobl gyda symptomau haint resbiradol yn cynnwys COVID-19</string>
+    <string name="symptom_checker_advice_notice_stay_at_home_link_url">https://www.gov.uk/guidance/people-with-symptoms-of-a-respiratory-infection-including-covid-19</string>
+    <string name="symptom_checker_advice_stay_at_home_header">Ceisiwch aros gartref ac i ffwrdd oddi wrth eraill</string>
+    <string name="your_symptoms_continue_button">Parhau</string>
+    <string name="your_symptoms_error_description">I barhau, mae angen i chi ateb \'%s\'</string>
+    <string name="your_symptoms_error_title">Mae yna broblem</string>
+    <string name="your_symptoms_first_no_option">Nac oes</string>
+    <string name="your_symptoms_first_no_option_accessibility_text">Na, nid oes gen i un o\'r symptomau hyn</string>
+    <string name="your_symptoms_first_yes_option">Oes</string>
+    <string name="your_symptoms_first_yes_option_accessibility_text">Oes, mae gen i un o\'r symptomau uchod</string>
+    <string name="your_symptoms_no_questions_answerd_error_description">I barhau, mae angen i chi ddewis \'Oes\' neu \'Nac oes\'</string>
+    <string name="your_symptoms_second_no_option">Nac oes</string>
+    <string name="your_symptoms_second_no_option_accessibility_text">Na, nid oes gen i\'r symptom hwn</string>
+    <string name="your_symptoms_second_yes_option">Oes</string>
+    <string name="your_symptoms_second_yes_option_accessibility_text">Oes, mae gen i\'r symptom hwn</string>
+    <string name="your_symptoms_title">Eich symptomau</string>
 </resources>

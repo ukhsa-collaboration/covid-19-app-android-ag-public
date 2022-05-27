@@ -1,5 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState
@@ -11,12 +13,18 @@ import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
 import javax.inject.Inject
 
 class LinkTestResultOnsetDateNeededChecker @Inject constructor(
-    private val isolationStateMachine: IsolationStateMachine
+    private val isolationStateMachine: IsolationStateMachine,
+    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider
 ) {
 
-    fun isInterestedInAskingForSymptomsOnsetDay(testResult: ReceivedTestResult): Boolean {
+    suspend fun isInterestedInAskingForSymptomsOnsetDay(testResult: ReceivedTestResult): Boolean {
         val currentState = isolationStateMachine.readLogicalState()
-        if (testResult.testKitType == LAB_RESULT && testResult.testResult == POSITIVE && !testResult.requiresConfirmatoryTest) {
+        if (localAuthorityPostCodeProvider.requirePostCodeDistrict() == WALES) {
+            if (testResult.testResult == POSITIVE && !testResult.requiresConfirmatoryTest) {
+                val consideredSymptomatic = currentState.isConsideredSymptomatic()
+                return !consideredSymptomatic && !currentState.hasPositiveTestResult()
+            }
+        } else if (testResult.testKitType == LAB_RESULT && testResult.testResult == POSITIVE && !testResult.requiresConfirmatoryTest) {
             val consideredSymptomatic = currentState.isConsideredSymptomatic()
             return !consideredSymptomatic && !currentState.hasPositiveTestResult()
         }

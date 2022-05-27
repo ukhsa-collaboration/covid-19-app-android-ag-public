@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.flow.functionalities
 
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.exposure.executeWithTheUserDecliningExposureKeySharing
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveContinueIsolation
@@ -46,7 +47,8 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
         symptomsAndOnsetFlowConfiguration: SymptomsAndOnsetFlowConfiguration? = null,
         expectedScreenState: ExpectedScreenAfterPositiveTestResult,
         requiresConfirmatoryTest: Boolean = false,
-        testEndDate: Instant = testAppContext.clock.instant()
+        testEndDate: Instant = testAppContext.clock.instant(),
+        country: PostCodeDistrict = WALES
     ) {
         val token = when (virologyTestKitType) {
             LAB_RESULT -> POSITIVE_PCR_TOKEN
@@ -81,16 +83,16 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
 
         when (expectedScreenState) {
             is PositiveWillBeInIsolationAndOrderTest -> {
-                waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest(WALES) }
+                waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolationAndOrderTest(country) }
                 testResultRobot.clickCloseButton()
             }
             is PositiveContinueIsolation -> {
-                waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(WALES) }
+                waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(country) }
                 testResultRobot.clickIsolationActionButton()
                 shareKeys()
             }
             is PositiveWillBeInIsolation -> {
-                waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(WALES) }
+                waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(country) }
                 if (requiresConfirmatoryTest) {
                     if (expectedScreenState.includeBookATestFlow) {
                         shareKeysAndBookTest()

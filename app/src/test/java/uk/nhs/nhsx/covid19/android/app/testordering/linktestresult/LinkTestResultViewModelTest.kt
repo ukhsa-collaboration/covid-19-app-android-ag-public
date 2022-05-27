@@ -5,7 +5,6 @@ import androidx.lifecycle.Observer
 import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyOrder
@@ -131,7 +130,7 @@ class LinkTestResultViewModelTest : IsolationStateMachineSetupHelper {
             confirmatoryDayLimit = testResultResponse.confirmatoryDayLimit
         )
 
-        every { linkTestResultOnsetDateNeededChecker.isInterestedInAskingForSymptomsOnsetDay(testResult) } returns true
+        coEvery { linkTestResultOnsetDateNeededChecker.isInterestedInAskingForSymptomsOnsetDay(testResult) } returns true
 
         testSubject.ctaToken = "ctaToken"
         testSubject.onContinueButtonClicked()
@@ -164,7 +163,7 @@ class LinkTestResultViewModelTest : IsolationStateMachineSetupHelper {
             shouldOfferFollowUpTest = testResultResponse.shouldOfferFollowUpTest
         )
 
-        every { linkTestResultOnsetDateNeededChecker.isInterestedInAskingForSymptomsOnsetDay(testResult) } returns false
+        coEvery { linkTestResultOnsetDateNeededChecker.isInterestedInAskingForSymptomsOnsetDay(testResult) } returns false
 
         testSubject.ctaToken = "ctaToken"
         testSubject.onContinueButtonClicked()

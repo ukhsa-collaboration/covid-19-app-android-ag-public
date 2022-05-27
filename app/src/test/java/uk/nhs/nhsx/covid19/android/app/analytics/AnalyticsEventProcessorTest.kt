@@ -110,6 +110,7 @@ import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Token
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState.Unresolved
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.LastCompletedV2SymptomsQuestionnaireDateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.DISABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
@@ -147,6 +148,7 @@ class AnalyticsEventProcessorTest {
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-21T10:00:00Z"), ZoneOffset.UTC)
     private val bluetoothAvailabilityStateProvider = mockk<AvailabilityStateProvider>()
     private val locationAvailabilityStateProvider = mockk<AvailabilityStateProvider>()
+    private val lastCompletedV2SymptomsQuestionnaireDateProvider = mockk<LastCompletedV2SymptomsQuestionnaireDateProvider>(relaxed = true)
 
     private val isolationHelper = IsolationHelper(fixedClock)
 
@@ -162,6 +164,7 @@ class AnalyticsEventProcessorTest {
         lastVisitedBookTestTypeVenueDateProvider,
         onboardingCompletedProvider,
         getLocalMessageFromStorage,
+        lastCompletedV2SymptomsQuestionnaireDateProvider,
         bluetoothAvailabilityStateProvider,
         locationAvailabilityStateProvider,
         testCoroutineScope,
@@ -181,6 +184,8 @@ class AnalyticsEventProcessorTest {
         coEvery { getLocalMessageFromStorage.invoke() } returns null
         every { bluetoothAvailabilityStateProvider.getState() } returns ENABLED
         every { locationAvailabilityStateProvider.getState() } returns ENABLED
+        every { lastCompletedV2SymptomsQuestionnaireDateProvider.lastCompletedV2SymptomsQuestionnaireAndStayAtHome } returns null
+        every { lastCompletedV2SymptomsQuestionnaireDateProvider.lastCompletedV2SymptomsQuestionnaire } returns null
     }
 
     //region background ticks
@@ -246,7 +251,7 @@ class AnalyticsEventProcessorTest {
                         backgroundTaskTicks = BackgroundTaskTicks(
                             runningNormallyBackgroundTick = true,
                             appIsUsableBackgroundTick = true,
-                            appIsContactTraceableBackgroundTick = true
+                            appIsContactTraceableBackgroundTick = true,
                         )
                     )
                 )
@@ -1329,6 +1334,100 @@ class AnalyticsEventProcessorTest {
                                 appIsContactTraceableBackgroundTick = true,
                                 hasHadRiskyContactBackgroundTick = true,
                                 optedOutForContactIsolationBackgroundTick = false
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed updates hasCompletedV2SymptomsQuestionnaireBackgroundTick when LastCompletedV2SymptomsQuestionnaireDate timestamp is set`() =
+        runBlocking {
+            every { lastCompletedV2SymptomsQuestionnaireDateProvider.containsCompletedV2SymptomsQuestionnaire() } returns true
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
+                                hasCompletedV2SymptomsQuestionnaireBackgroundTick = true
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed updates hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick when LastCompletedV2SymptomsQuestionnaireAndStayAtHomeDate timestamp is set`() =
+        runBlocking {
+            every { lastCompletedV2SymptomsQuestionnaireDateProvider.containsCompletedV2SymptomsQuestionnaireAndTryToStayAtHomeResult() } returns true
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true,
+                                hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick = true
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed does not set hasCompletedV2SymptomsQuestionnaireBackgroundTick when LastCompletedV2SymptomsQuestionnaire timestamp is not set`() =
+        runBlocking {
+            every { lastCompletedV2SymptomsQuestionnaireDateProvider.containsCompletedV2SymptomsQuestionnaire() } returns false
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+    @Test
+    fun `on background completed does not set hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick when LastCompletedV2SymptomsQuestionnaireAndStayAtHomeDate timestamp is not set`() =
+        runBlocking {
+            every { lastCompletedV2SymptomsQuestionnaireDateProvider.containsCompletedV2SymptomsQuestionnaireAndTryToStayAtHomeResult() } returns false
+
+            testSubject.track(BackgroundTaskCompletion)
+
+            verify {
+                analyticsLogStorage.add(
+                    AnalyticsLogEntry(
+                        instant = Instant.now(fixedClock),
+                        logItem = AnalyticsLogItem.BackgroundTaskCompletion(
+                            backgroundTaskTicks = BackgroundTaskTicks(
+                                runningNormallyBackgroundTick = true,
+                                appIsUsableBackgroundTick = true,
+                                appIsContactTraceableBackgroundTick = true
                             )
                         )
                     )

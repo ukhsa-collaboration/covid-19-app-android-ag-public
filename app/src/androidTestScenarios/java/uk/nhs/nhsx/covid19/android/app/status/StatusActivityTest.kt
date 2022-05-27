@@ -832,4 +832,26 @@ class StatusActivityTest(override val configuration: TestConfiguration) : Espres
 
             statusRobot.checkCovidGuidanceHubIsNotDisplayed()
         }
+
+    @Test
+    fun whenUserHasNotSeenNewReportSymptomsLabelForEngland_shouldBeDisplayed() {
+        givenLocalAuthorityIsInEngland()
+        startTestActivity<StatusActivity>()
+
+        waitFor { statusRobot.checkNewLabelIsDisplayed(true) }
+    }
+
+    @Test
+    fun whenUserHasSeenNewReportSymptomsLabelForEngland_shouldBeHidden() {
+        givenLocalAuthorityIsInEngland()
+        startTestActivity<StatusActivity>()
+
+        waitFor { statusRobot.checkNewLabelIsDisplayed(true) }
+
+        statusRobot.clickReportSymptoms()
+
+        testAppContext.device.pressBack()
+
+        waitFor { statusRobot.checkNewLabelIsDisplayed(false) }
+    }
 }

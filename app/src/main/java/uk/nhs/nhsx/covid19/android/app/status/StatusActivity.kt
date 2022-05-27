@@ -32,6 +32,7 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.QrScannerActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.YourSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.NotificationMessage
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType
@@ -174,7 +175,10 @@ class StatusActivity : StatusBaseActivity() {
                 viewState.showIsolationHubButton
             )
             handleRiskyPostCodeViewState(viewState.areaRiskState)
-            handleReportSymptomsState(viewState.showReportSymptomsButton)
+            handleReportSymptomsState(
+                viewState.showReportSymptomsButton,
+                viewState.showReportSymptomsNewLabel
+            )
             handleLocalMessageState(viewState.localMessage)
             handleCovidGuidanceHubState(viewState.showCovidGuidanceHubButton)
             setupCovidGuidanceHubListener(viewState.country)
@@ -188,8 +192,9 @@ class StatusActivity : StatusBaseActivity() {
         localMessageBanner.isVisible = localMessage != null
     }
 
-    private fun handleReportSymptomsState(showReportSymptomsButton: Boolean) {
+    private fun handleReportSymptomsState(showReportSymptomsButton: Boolean, showReportSymptomsNewLabel: Boolean) {
         binding.optionReportSymptoms.isVisible = showReportSymptomsButton
+        binding.optionReportSymptoms.shouldDisplayNewFunctionalityLabel = showReportSymptomsNewLabel
     }
 
     private fun handleCovidGuidanceHubState(showCovidGuidanceHubButton: Boolean) {
@@ -199,7 +204,16 @@ class StatusActivity : StatusBaseActivity() {
     private fun setClickListeners() = with(binding) {
         optionReportSymptoms.setOnSingleClickListener {
             optionReportSymptoms.isEnabled = false
-            startActivity<QuestionnaireActivity>()
+            statusViewModel.viewState.value?.country?.let { country ->
+                when (country) {
+                    WALES -> startActivity<QuestionnaireActivity>()
+                    ENGLAND -> {
+                        statusViewModel.reportSymptomsClicked()
+                        startActivity<YourSymptomsActivity>()
+                    }
+                    else -> throw IllegalStateException("The post code district is not England or Wales")
+                }
+            }
         }
 
         optionTestingHub.setOnSingleClickListener {

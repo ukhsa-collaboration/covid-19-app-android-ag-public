@@ -111,7 +111,8 @@ class StatusViewModel @AssistedInject constructor(
     exposureNotificationPermissionHelperFactory: ExposureNotificationPermissionHelper.Factory,
     private val shouldShowBluetoothSplashScreen: ShouldShowBluetoothSplashScreen,
     @Assisted val statusActivityAction: StatusActivityAction,
-    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider
+    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider,
+    private val newFunctionalityLabelProvider: NewFunctionalityLabelProvider
 ) : ViewModel() {
 
     var contactTracingSwitchedOn = false
@@ -120,6 +121,7 @@ class StatusViewModel @AssistedInject constructor(
     var showIsolationHubReminderHandled = false
     var didTrackRiskyVenueM2NotificationAnalytics = false
     var showInAppReviewHandled = false
+    var showReportSymptomsNewLabelHandled = false
 
     private val viewStateLiveData = MutableLiveData<ViewState>()
     val viewState = distinctUntilChanged(viewStateLiveData)
@@ -213,7 +215,8 @@ class StatusViewModel @AssistedInject constructor(
                 showCovidStatsButton = RuntimeBehavior.isFeatureEnabled(LOCAL_COVID_STATS),
                 country = country,
                 showIsolationHubButton = shouldShowIsolationHubButtonForEngland(country) || shouldShowIsolationHubButtonForWales(country),
-                showCovidGuidanceHubButton = shouldShowCovidGuidanceHubForEngland(country) || shouldShowCovidGuidanceHubButtonForWales(country)
+                showCovidGuidanceHubButton = shouldShowCovidGuidanceHubForEngland(country) || shouldShowCovidGuidanceHubButtonForWales(country),
+                showReportSymptomsNewLabel = !newFunctionalityLabelProvider.hasSeenReportSymptomsNewLabel && country == ENGLAND
             )
             viewStateLiveData.postValue(updatedViewState)
         }
@@ -370,6 +373,14 @@ class StatusViewModel @AssistedInject constructor(
         updateViewState()
     }
 
+    fun reportSymptomsClicked() {
+        if (!showReportSymptomsNewLabelHandled) {
+            newFunctionalityLabelProvider.hasSeenReportSymptomsNewLabel = true
+            updateViewState()
+            showReportSymptomsNewLabelHandled = true
+        }
+    }
+
     sealed class RiskyPostCodeViewState : Parcelable {
         @Parcelize
         data class Risk(
@@ -395,7 +406,8 @@ class StatusViewModel @AssistedInject constructor(
         val showCovidStatsButton: Boolean,
         val country: PostCodeDistrict,
         val showIsolationHubButton: Boolean,
-        val showCovidGuidanceHubButton: Boolean
+        val showCovidGuidanceHubButton: Boolean,
+        val showReportSymptomsNewLabel: Boolean
     )
 
     sealed class PermissionRequestResult {

@@ -10,6 +10,8 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.BackgroundTaskCo
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CanceledCheckIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireAndStartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireButDidNotStartIsolation
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedV2SymptomsQuestionnaire
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedV2SymptomsQuestionnaireAndStayAtHome
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInReminderScreen
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInTheInitialFlow
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaBanner
@@ -60,6 +62,8 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ASKED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_AND_STAY_AT_HOME
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_REMINDER_SCREEN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER
@@ -109,6 +113,7 @@ import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenState
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.LastCompletedV2SymptomsQuestionnaireDateProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityState.ENABLED
 import uk.nhs.nhsx.covid19.android.app.receiver.AvailabilityStateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
@@ -138,6 +143,7 @@ class AnalyticsEventProcessor @Inject constructor(
     private val lastVisitedBookTestTypeVenueDateProvider: LastVisitedBookTestTypeVenueDateProvider,
     private val onboardingCompletedProvider: OnboardingCompletedProvider,
     private val getLocalMessageFromStorage: GetLocalMessageFromStorage,
+    private val lastCompletedV2SymptomsQuestionnaireDateProvider: LastCompletedV2SymptomsQuestionnaireDateProvider,
     @Named(AppModule.BLUETOOTH_STATE_NAME) private val bluetoothAvailabilityStateProvider: AvailabilityStateProvider,
     @Named(AppModule.LOCATION_STATE_NAME) private val locationAvailabilityStateProvider: AvailabilityStateProvider,
     @Named(AppModule.APPLICATION_SCOPE) private val analyticsEventScope: CoroutineScope,
@@ -218,6 +224,8 @@ class AnalyticsEventProcessor @Inject constructor(
         SelectedHasLfdTestM2Journey -> Event(SELECTED_HAS_LFD_TEST_M2_JOURNEY)
         OptedOutForContactIsolation -> Event(OPTED_OUT_FOR_CONTACT_ISOLATION)
         DidAccessSelfIsolationNoteLink -> Event(DID_ACCESS_SELF_ISOLATION_NOTE_LINK)
+        CompletedV2SymptomsQuestionnaire -> Event(COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE)
+        CompletedV2SymptomsQuestionnaireAndStayAtHome -> Event(COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_AND_STAY_AT_HOME)
     }
 
     private fun updateNetworkStats() = AnalyticsLogItem.UpdateNetworkStats(
@@ -284,5 +292,11 @@ class AnalyticsEventProcessor @Inject constructor(
 
             optedOutForContactIsolationBackgroundTick =
                 stateStorage.state.contact?.optOutOfContactIsolation?.reason != null
+
+            hasCompletedV2SymptomsQuestionnaireBackgroundTick =
+                lastCompletedV2SymptomsQuestionnaireDateProvider.containsCompletedV2SymptomsQuestionnaire()
+
+            hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick =
+                lastCompletedV2SymptomsQuestionnaireDateProvider.containsCompletedV2SymptomsQuestionnaireAndTryToStayAtHomeResult()
         }
 }

@@ -1,9 +1,10 @@
 package uk.nhs.nhsx.covid19.android.app.flow
 
 import org.junit.After
-import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
@@ -35,11 +36,6 @@ class LinkTestResultFlowTests : EspressoTest() {
     private val shareKeysResultRobot = ShareKeysResultRobot()
     private val isolationHelper = IsolationHelper(testAppContext.clock)
     private val isolationChecker = IsolationChecker(testAppContext)
-
-    @Before
-    fun setUp() {
-        testAppContext.setLocalAuthority(TestApplicationContext.ENGLISH_LOCAL_AUTHORITY)
-    }
 
     @After
     fun tearDown() {
@@ -89,6 +85,7 @@ class LinkTestResultFlowTests : EspressoTest() {
 
     @Test
     fun startContactCase_linkJustExpiredPositiveTestResult_shouldEndIsolation() {
+        testAppContext.setLocalAuthority(TestApplicationContext.ENGLISH_LOCAL_AUTHORITY)
         val contactInstant = Instant.now(testAppContext.clock).minus(2, ChronoUnit.DAYS)
         testAppContext.virologyTestingApi.testEndDate = contactInstant.minus(10, ChronoUnit.DAYS)
 
@@ -183,44 +180,45 @@ class LinkTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startDefault_linkPositiveTestResult_noSymptoms_shouldIsolate() {
-        startTestActivity<StatusActivity>()
-
-        statusRobot.checkActivityIsDisplayed()
-
-        statusRobot.clickLinkTestResult()
-
-        linkTestResultRobot.checkActivityIsDisplayed()
-
-        linkTestResultRobot.enterCtaToken(MockVirologyTestingApi.POSITIVE_PCR_TOKEN)
-
-        linkTestResultRobot.clickContinue()
-
-        waitFor { linkTestResultSymptomsRobot.checkActivityIsDisplayed() }
-
-        linkTestResultSymptomsRobot.clickNo()
-
-        waitFor {
-            testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND)
-        }
-
-        testResultRobot.clickIsolationActionButton()
-
-        shareKeysInformationRobot.checkActivityIsDisplayed()
-
-        shareKeysInformationRobot.clickContinueButton()
-
-        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
-
-        shareKeysResultRobot.clickActionButton()
-
-        waitFor { statusRobot.checkActivityIsDisplayed() }
-
-        isolationChecker.assertActiveIndexNoContact()
+    fun startDefault_linkPositivePCRTestResult_noSymptoms_shouldIsolate() {
+        testAppContext.setLocalAuthority(TestApplicationContext.ENGLISH_LOCAL_AUTHORITY)
+        startDefaultLinkPositiveTestResultNoSymptomsShouldIsolate(
+            MockVirologyTestingApi.POSITIVE_PCR_TOKEN,
+            ENGLAND
+        )
     }
 
     @Test
-    fun startDefault_linkPositiveTestResult_confirmSymptoms_selectSymptomsDate_shouldIsolate() {
+    fun startDefault_linkPositiveLFDTestResult_noSymptoms_shouldIsolate_wales() {
+        testAppContext.setLocalAuthority(TestApplicationContext.WELSH_LOCAL_AUTHORITY)
+        startDefaultLinkPositiveTestResultNoSymptomsShouldIsolate(
+            MockVirologyTestingApi.POSITIVE_LFD_TOKEN,
+            WALES
+        )
+    }
+
+    @Test
+    fun startDefault_linkPositivePCRTestResult_confirmSymptoms_selectSymptomsDate_shouldIsolate() {
+        testAppContext.setLocalAuthority(TestApplicationContext.ENGLISH_LOCAL_AUTHORITY)
+        startDefaultLinkPositiveTestResultConfirmSymptomsSelectSymptomsDateShouldIsolate(
+            MockVirologyTestingApi.POSITIVE_PCR_TOKEN,
+            ENGLAND
+        )
+    }
+
+    @Test
+    fun startDefault_linkPositiveLFDTestResult_confirmSymptoms_selectSymptomsDate_shouldIsolate_wales() {
+        testAppContext.setLocalAuthority(TestApplicationContext.WELSH_LOCAL_AUTHORITY)
+        startDefaultLinkPositiveTestResultConfirmSymptomsSelectSymptomsDateShouldIsolate(
+            MockVirologyTestingApi.POSITIVE_LFD_TOKEN,
+            WALES
+        )
+    }
+
+    private fun startDefaultLinkPositiveTestResultConfirmSymptomsSelectSymptomsDateShouldIsolate(
+        testType: String,
+        postCodeDistrict: PostCodeDistrict
+    ) {
         val now = Instant.parse("2021-01-10T10:00:00Z")
         testAppContext.clock.currentInstant = now
         testAppContext.virologyTestingApi.testEndDate = now.minus(2, ChronoUnit.DAYS)
@@ -232,7 +230,7 @@ class LinkTestResultFlowTests : EspressoTest() {
 
         linkTestResultRobot.checkActivityIsDisplayed()
 
-        linkTestResultRobot.enterCtaToken(MockVirologyTestingApi.POSITIVE_PCR_TOKEN)
+        linkTestResultRobot.enterCtaToken(testType)
 
         linkTestResultRobot.clickContinue()
 
@@ -251,7 +249,46 @@ class LinkTestResultFlowTests : EspressoTest() {
         linkTestResultOnsetDateRobot.clickContinueButton()
 
         waitFor {
-            testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND)
+            testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(postCodeDistrict)
+        }
+
+        testResultRobot.clickIsolationActionButton()
+
+        shareKeysInformationRobot.checkActivityIsDisplayed()
+
+        shareKeysInformationRobot.clickContinueButton()
+
+        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+
+        shareKeysResultRobot.clickActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        isolationChecker.assertActiveIndexNoContact()
+    }
+
+    private fun startDefaultLinkPositiveTestResultNoSymptomsShouldIsolate(
+        testType: String,
+        postCodeDistrict: PostCodeDistrict
+    ) {
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        statusRobot.clickLinkTestResult()
+
+        linkTestResultRobot.checkActivityIsDisplayed()
+
+        linkTestResultRobot.enterCtaToken(testType)
+
+        linkTestResultRobot.clickContinue()
+
+        waitFor { linkTestResultSymptomsRobot.checkActivityIsDisplayed() }
+
+        linkTestResultSymptomsRobot.clickNo()
+
+        waitFor {
+            testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(postCodeDistrict)
         }
 
         testResultRobot.clickIsolationActionButton()

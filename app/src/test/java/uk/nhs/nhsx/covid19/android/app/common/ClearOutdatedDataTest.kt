@@ -9,6 +9,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogStorage
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationTokensProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.LastCompletedV2SymptomsQuestionnaireDateProvider
 import uk.nhs.nhsx.covid19.android.app.remote.data.CountrySpecificConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.GetLatestConfiguration
 import java.time.Clock
@@ -29,6 +30,7 @@ class ClearOutdatedDataTest {
     private val exposureNotificationTokensProvider = mockk<ExposureNotificationTokensProvider>(relaxUnitFun = true)
     private val analyticsLogStorage = mockk<AnalyticsLogStorage>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(Instant.parse("2021-01-01T00:00:00.00Z"), ZoneOffset.UTC)
+    private val lastCompletedV2SymptomsQuestionnaireDateProvider = mockk<LastCompletedV2SymptomsQuestionnaireDateProvider>(relaxUnitFun = true)
 
     private val clearOutdatedData = ClearOutdatedData(
         resetIsolationStateIfNeeded,
@@ -39,6 +41,7 @@ class ClearOutdatedDataTest {
         exposureNotificationTokensProvider,
         analyticsLogStorage,
         getLatestConfiguration,
+        lastCompletedV2SymptomsQuestionnaireDateProvider,
         fixedClock
     )
 
@@ -59,8 +62,10 @@ class ClearOutdatedDataTest {
     }
 
     @Test
-    fun `verify call order when clearing outdated data and a date is stored for a book a test type venue visit`() {
+    fun `verify call order when clearing outdated data and a date is stored for a book a test type venue visit and v2 symptoms questionnaire`() {
         every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns true
+        every { lastCompletedV2SymptomsQuestionnaireDateProvider.containsCompletedV2SymptomsQuestionnaire() } returns true
+        every { lastCompletedV2SymptomsQuestionnaireDateProvider.containsCompletedV2SymptomsQuestionnaireAndTryToStayAtHomeResult() } returns true
 
         clearOutdatedData()
 
@@ -77,12 +82,34 @@ class ClearOutdatedDataTest {
     @Test
     fun `verify call order when clearing outdated data and no date is stored for a book a test type venue visit`() {
         every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns false
+        every { lastCompletedV2SymptomsQuestionnaireDateProvider.containsCompletedV2SymptomsQuestionnaire() } returns true
+        every { lastCompletedV2SymptomsQuestionnaireDateProvider.containsCompletedV2SymptomsQuestionnaireAndTryToStayAtHomeResult() } returns true
 
         clearOutdatedData()
 
         verifyOrder {
             resetIsolationStateIfNeeded()
             lastVisitedBookTestTypeVenueDateProvider setProperty "lastVisitedVenue" value null
+            clearOutdatedKeySharingInfo()
+            clearOutdatedTestOrderPollingConfigs()
+            epidemiologyEventProvider.clearOnAndBefore(expectedLocalDateForEpidemiologyEventCleanUp)
+            analyticsLogStorage.removeBeforeOrEqual(expectedInstantForAnalyticsLogsCleanUp)
+            exposureNotificationTokensProvider.clear()
+        }
+    }
+
+    @Test
+    fun `verify call order when clearing outdated data and no dates are stored for v2 symptoms questionnaire with result`() {
+        every { lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk() } returns true
+        every { lastCompletedV2SymptomsQuestionnaireDateProvider.containsCompletedV2SymptomsQuestionnaire() } returns false
+        every { lastCompletedV2SymptomsQuestionnaireDateProvider.containsCompletedV2SymptomsQuestionnaireAndTryToStayAtHomeResult() } returns false
+
+        clearOutdatedData()
+
+        verifyOrder {
+            resetIsolationStateIfNeeded()
+            lastCompletedV2SymptomsQuestionnaireDateProvider setProperty "lastCompletedV2SymptomsQuestionnaire" value null
+            lastCompletedV2SymptomsQuestionnaireDateProvider setProperty "lastCompletedV2SymptomsQuestionnaireAndStayAtHome" value null
             clearOutdatedKeySharingInfo()
             clearOutdatedTestOrderPollingConfigs()
             epidemiologyEventProvider.clearOnAndBefore(expectedLocalDateForEpidemiologyEventCleanUp)

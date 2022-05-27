@@ -49,10 +49,10 @@ import uk.nhs.nhsx.covid19.android.app.availability.AppAvailabilityActivity
 import uk.nhs.nhsx.covid19.android.app.availability.UpdateRecommendedActivity
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationActivity
 import uk.nhs.nhsx.covid19.android.app.common.ApplicationLocaleProvider
-import uk.nhs.nhsx.covid19.android.app.common.bluetooth.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableExposureNotificationsActivity
 import uk.nhs.nhsx.covid19.android.app.common.EnableLocationActivity
 import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
+import uk.nhs.nhsx.covid19.android.app.common.bluetooth.EnableBluetoothActivity
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityActivity
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityInformationActivity
 import uk.nhs.nhsx.covid19.android.app.databinding.ActivityDebugBinding
@@ -112,6 +112,17 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolat
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.CardinalSymptom
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.CheckYourAnswersActivity
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.CheckYourAnswersActivity.Companion.SYMPTOMS_DATA_KEY
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.HowDoYouFeelSymptom
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.NonCardinalSymptoms
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.SymptomCheckerAdviceActivity
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.SymptomCheckerAdviceResult
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.SymptomCheckerAdviceResult.CONTINUE_NORMAL_ACTIVITIES
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.SymptomCheckerAdviceResult.TRY_TO_STAY_AT_HOME
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.SymptomsCheckerQuestions
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.YourSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.GREEN
 import uk.nhs.nhsx.covid19.android.app.remote.data.NHSTemporaryExposureKey
 import uk.nhs.nhsx.covid19.android.app.remote.data.Policy
@@ -899,6 +910,55 @@ class DebugActivity : AppCompatActivity() {
 
         addScreenButton("Guidance Hub") {
             startActivity<GuidanceHubActivity>()
+        }
+
+        addScreenButton("Check Your Answers") {
+            startActivity<CheckYourAnswersActivity>() {
+                putExtra(
+                    SYMPTOMS_DATA_KEY,
+                    SymptomsCheckerQuestions(
+                        nonCardinalSymptoms = NonCardinalSymptoms(
+                            title = TranslatableString(mapOf("en-GB" to "Do you have any of these symptoms?")),
+                            isChecked = true,
+                            nonCardinalSymptomsText = TranslatableString(mapOf("en-GB" to "Shivering or chills\n\nA new, continuous cough\n\nA loss or change to your sense of smell or taste\n\nShortness of breath\n\nFeeling tired or exhausted\n\nAn aching body\n\nA headache\n\nA sore throat\n\nA blocked or runny nose\n\nLoss of appetite\n\nDiarrhoea\n\nFeeling sick or being sick"))
+                        ),
+                        cardinalSymptom = CardinalSymptom(
+                            title = TranslatableString(mapOf("en-GB" to "Do you have a high temperature?")),
+                            isChecked = true
+                        ),
+                        howDoYouFeelSymptom = HowDoYouFeelSymptom(true)
+                    )
+                )
+            }
+        }
+
+        addScreenButton("Your Symptoms Activity") {
+            startActivity<YourSymptomsActivity>()
+        }
+
+        addScreenButton("Symptoms Checker Advice - Continue normal activities") {
+            openSymptomsCheckerAdviceScreen(CONTINUE_NORMAL_ACTIVITIES)
+        }
+
+        addScreenButton("Symptoms Checker Advice - Try to stay at home") {
+            openSymptomsCheckerAdviceScreen(TRY_TO_STAY_AT_HOME)
+        }
+    }
+
+    private fun openSymptomsCheckerAdviceScreen(result: SymptomCheckerAdviceResult) {
+        startActivity<SymptomCheckerAdviceActivity>() {
+            putExtra(
+                SymptomCheckerAdviceActivity.VALUE_KEY_QUESTIONS,
+                SymptomsCheckerQuestions(
+                    null,
+                    null,
+                    null
+                )
+            )
+            putExtra(
+                SymptomCheckerAdviceActivity.VALUE_KEY_RESULT,
+                result
+            )
         }
     }
 

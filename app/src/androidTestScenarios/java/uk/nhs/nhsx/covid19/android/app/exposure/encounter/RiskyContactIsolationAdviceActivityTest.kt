@@ -293,7 +293,7 @@ class RiskyContactIsolationAdviceActivityTest(override val configuration: TestCo
             testingAdviceToShow = Default
         )
 
-        assertBrowserIsOpened("https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms") {
+        assertBrowserIsOpened("https://gov.wales/get-tested-coronavirus-covid-19") {
             robot.clickPrimaryButton()
         }
         statusRobot.checkActivityIsDisplayed()
@@ -317,7 +317,7 @@ class RiskyContactIsolationAdviceActivityTest(override val configuration: TestCo
             testingAdviceToShow = WalesWithinAdviceWindow(date = pcrAdviceDate)
         )
 
-        assertBrowserIsOpened("https://gov.wales/get-rapid-lateral-flow-covid-19-tests-if-you-do-not-have-symptoms") {
+        assertBrowserIsOpened("https://gov.wales/get-tested-coronavirus-covid-19") {
             robot.clickPrimaryButton()
         }
         statusRobot.checkActivityIsDisplayed()

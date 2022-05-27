@@ -114,5 +114,9 @@ data class Metrics(
     var appIsUsableBackgroundTick: Int = 0,
     var appIsUsableBluetoothOffBackgroundTick: Int = 0,
     var appIsContactTraceableBackgroundTick: Int = 0,
-    @SerializeNulls var didAccessSelfIsolationNoteLink: Int? = 0
+    @SerializeNulls var didAccessSelfIsolationNoteLink: Int? = 0,
+    var completedV2SymptomsQuestionnaire: Int = 0,
+    var completedV2SymptomsQuestionnaireAndStayAtHome: Int = 0,
+    var hasCompletedV2SymptomsQuestionnaireBackgroundTick: Int = 0,
+    var hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick: Int = 0
 )

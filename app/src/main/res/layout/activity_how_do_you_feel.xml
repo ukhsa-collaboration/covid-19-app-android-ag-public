@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/howDoYouFeelContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/primaryToolbar"
+        layout="@layout/view_toolbar_primary" />
+
+    <ScrollView
+        android:id="@+id/howDoYouFeelScrollViewContainer"
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingVertical="@dimen/vertical_margin_large">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ErrorView
+                android:id="@+id/howDoYouFeelErrorView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                android:visibility="gone"
+                app:error_description="@string/how_you_feel_error_description"
+                app:error_title="@string/how_you_feel_error_title" />
+
+            <ImageView
+                android:id="@+id/howDoYouFeelIcon"
+                style="@style/GoneInLandscape"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_isolation_continue" />
+
+            <TextView
+                android:id="@+id/howDoYouFeelTextStep"
+                style="@style/HeaderSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:textAllCaps="false" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                android:id="@+id/textReviewSymptomsTitle"
+                style="@style/Title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:text="@string/how_you_feel_description" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup
+                android:id="@+id/howDoYouFeelBinaryRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                app:option1ContentDescription="@string/how_you_feel_yes_option"
+                app:option1Text="@string/how_you_feel_yes_option"
+                app:option2ContentDescription="@string/how_you_feel_no_option"
+                app:option2Text="@string/how_you_feel_no_option" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/howDoYouFeelContinueButton"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:text="@string/how_you_feel_continue_button" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

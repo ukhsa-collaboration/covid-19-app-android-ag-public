@@ -12,3 +12,16 @@ data class Symptom(
     val description: TranslatableString,
     val riskWeight: Double = 0.0
 ) : Parcelable
+
+@Parcelize
+@JsonClass(generateAdapter = true)
+data class Cardinal(
+    val title: TranslatableString
+) : Parcelable
+
+@Parcelize
+@JsonClass(generateAdapter = true)
+data class NonCardinal(
+    val title: TranslatableString,
+    val description: TranslatableString
+) : Parcelable

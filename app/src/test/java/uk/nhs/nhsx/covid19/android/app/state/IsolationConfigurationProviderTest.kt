@@ -60,7 +60,7 @@ class IsolationConfigurationProviderTest : ProviderTest<IsolationConfigurationPr
             wales = CountrySpecificConfiguration(
                 contactCase = 11,
                 indexCaseSinceSelfDiagnosisOnset = 6,
-                indexCaseSinceSelfDiagnosisUnknownOnset = 4,
+                indexCaseSinceSelfDiagnosisUnknownOnset = 6,
                 maxIsolation = 16,
                 indexCaseSinceTestResultEndDate = 6,
                 pendingTasksRetentionPeriod = 14,

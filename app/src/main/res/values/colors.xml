@@ -75,6 +75,7 @@
     <color name="item_user_data_border">#DDDDDD</color>
 
     <color name="qr_more_info_button_border">#80FFFFFF</color>
+    <color name="new_label_orange">#bc5a00</color>
 
     <!-- local message banner -->
     <color name="colorOnAmber">#212B32</color>

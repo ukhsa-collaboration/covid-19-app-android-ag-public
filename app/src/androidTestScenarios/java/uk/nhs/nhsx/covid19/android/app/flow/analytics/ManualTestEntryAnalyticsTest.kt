@@ -2,6 +2,9 @@ package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveContinueIsolation
@@ -32,6 +35,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             ),
             requiresConfirmatoryTest = false,
             expectedScreenState = PositiveWillBeInIsolation(),
+            country = WALES,
             Metrics::receivedPositiveTestResultEnteredManually,
             Metrics::isIsolatingForTestedPositiveBackgroundTick,
             Metrics::hasTestedPositiveBackgroundTick
@@ -58,7 +62,10 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     fun manuallyEnterPositiveUnassistedLFDTest_enterSymptomsLater() {
         manuallyEnterPositiveTestAndGoIntoIsolationThenEnterSymptoms(
             RAPID_SELF_REPORTED,
-            symptomsAndOnsetFlowConfiguration = null,
+            symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
+                didHaveSymptoms = false,
+                didRememberOnsetSymptomsDate = false
+            ),
             requiresConfirmatoryTest = false,
             expectedScreenState = PositiveWillBeInIsolation(),
             Metrics::receivedPositiveSelfRapidTestResultEnteredManually,
@@ -71,7 +78,10 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     fun manuallyEnterPositiveAssistedLFDTest_enterSymptomsLater() {
         manuallyEnterPositiveTestAndGoIntoIsolationThenEnterSymptoms(
             RAPID_RESULT,
-            symptomsAndOnsetFlowConfiguration = null,
+            symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
+                didHaveSymptoms = false,
+                didRememberOnsetSymptomsDate = false
+            ),
             requiresConfirmatoryTest = false,
             expectedScreenState = PositiveWillBeInIsolation(),
             Metrics::receivedPositiveLFDTestResultEnteredManually,
@@ -90,6 +100,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             ),
             requiresConfirmatoryTest = false,
             expectedScreenState = PositiveWillBeInIsolation(),
+            country = WALES,
             Metrics::receivedPositiveTestResultEnteredManually,
             Metrics::isIsolatingForTestedPositiveBackgroundTick,
             Metrics::hasTestedPositiveBackgroundTick
@@ -106,6 +117,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             ),
             requiresConfirmatoryTest = false,
             expectedScreenState = PositiveWillBeInIsolation(),
+            country = WALES,
             Metrics::receivedPositiveTestResultEnteredManually,
             Metrics::isIsolatingForTestedPositiveBackgroundTick,
             Metrics::hasTestedPositiveBackgroundTick
@@ -113,12 +125,14 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun manuallyEnterPositiveAssistedLFDTestAndGoIntoIsolation() {
+    fun manuallyEnterPositiveAssistedLFDTestAndGoIntoIsolationEngland() {
+        givenLocalAuthorityIsInEngland()
         manuallyEnterPositiveTestAndGoIntoIsolation(
             RAPID_RESULT,
             symptomsAndOnsetFlowConfiguration = null,
             requiresConfirmatoryTest = false,
             expectedScreenState = PositiveWillBeInIsolation(),
+            country = ENGLAND,
             Metrics::receivedPositiveLFDTestResultEnteredManually,
             Metrics::isIsolatingForTestedLFDPositiveBackgroundTick,
             Metrics::hasTestedLFDPositiveBackgroundTick
@@ -126,12 +140,116 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun manuallyEnterPositiveUnassistedLFDTestAndGoIntoIsolation() {
+    fun manuallyEnterPositiveAssistedLFDTest_noSymptoms_thenGoIntoIsolation_Wales() {
+        manuallyEnterPositiveTestAndGoIntoIsolation(
+            RAPID_RESULT,
+            symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
+                didHaveSymptoms = false,
+                didRememberOnsetSymptomsDate = false
+            ),
+            requiresConfirmatoryTest = false,
+            expectedScreenState = PositiveWillBeInIsolation(),
+            country = WALES,
+            Metrics::receivedPositiveLFDTestResultEnteredManually,
+            Metrics::isIsolatingForTestedLFDPositiveBackgroundTick,
+            Metrics::hasTestedLFDPositiveBackgroundTick
+        )
+    }
+
+    @Test
+    fun manuallyEnterPositiveAssistedLFDTest_confirmSymptoms_selectExplicitDate_thenGoIntoIsolation_Wales() {
+        manuallyEnterPositiveTestAndGoIntoIsolation(
+            RAPID_RESULT,
+            symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
+                didHaveSymptoms = true,
+                didRememberOnsetSymptomsDate = true
+            ),
+            requiresConfirmatoryTest = false,
+            expectedScreenState = PositiveWillBeInIsolation(),
+            country = WALES,
+            Metrics::receivedPositiveLFDTestResultEnteredManually,
+            Metrics::isIsolatingForTestedLFDPositiveBackgroundTick,
+            Metrics::hasTestedLFDPositiveBackgroundTick
+        )
+    }
+
+    @Test
+    fun manuallyEnterPositiveAssistedLFDTest_confirmSymptoms_cannotRememberOnsetDate_thenGoIntoIsolation_Wales() {
+        manuallyEnterPositiveTestAndGoIntoIsolation(
+            RAPID_RESULT,
+            symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
+                didHaveSymptoms = true,
+                didRememberOnsetSymptomsDate = false
+            ),
+            requiresConfirmatoryTest = false,
+            expectedScreenState = PositiveWillBeInIsolation(),
+            country = WALES,
+            Metrics::receivedPositiveLFDTestResultEnteredManually,
+            Metrics::isIsolatingForTestedLFDPositiveBackgroundTick,
+            Metrics::hasTestedLFDPositiveBackgroundTick
+        )
+    }
+
+    @Test
+    fun manuallyEnterPositiveUnassistedLFDTestAndGoIntoIsolationEngland() {
+        givenLocalAuthorityIsInEngland()
         manuallyEnterPositiveTestAndGoIntoIsolation(
             RAPID_SELF_REPORTED,
             symptomsAndOnsetFlowConfiguration = null,
             requiresConfirmatoryTest = false,
             expectedScreenState = PositiveWillBeInIsolation(),
+            country = ENGLAND,
+            Metrics::receivedPositiveSelfRapidTestResultEnteredManually,
+            Metrics::isIsolatingForTestedSelfRapidPositiveBackgroundTick,
+            Metrics::hasTestedSelfRapidPositiveBackgroundTick
+        )
+    }
+
+    @Test
+    fun manuallyEnterPositiveUnassistedLFDTest_noSymptoms_thenGoIntoIsolation_Wales() {
+        manuallyEnterPositiveTestAndGoIntoIsolation(
+            RAPID_SELF_REPORTED,
+            symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
+                didHaveSymptoms = false,
+                didRememberOnsetSymptomsDate = false
+            ),
+            requiresConfirmatoryTest = false,
+            expectedScreenState = PositiveWillBeInIsolation(),
+            country = WALES,
+            Metrics::receivedPositiveSelfRapidTestResultEnteredManually,
+            Metrics::isIsolatingForTestedSelfRapidPositiveBackgroundTick,
+            Metrics::hasTestedSelfRapidPositiveBackgroundTick
+        )
+    }
+
+    @Test
+    fun manuallyEnterPositiveUnassistedLFDTest_confirmSymptoms_selectExplicitDate_thenGoIntoIsolation_Wales() {
+        manuallyEnterPositiveTestAndGoIntoIsolation(
+            RAPID_SELF_REPORTED,
+            symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
+                didHaveSymptoms = true,
+                didRememberOnsetSymptomsDate = true
+            ),
+            requiresConfirmatoryTest = false,
+            expectedScreenState = PositiveWillBeInIsolation(),
+            country = WALES,
+            Metrics::receivedPositiveSelfRapidTestResultEnteredManually,
+            Metrics::isIsolatingForTestedSelfRapidPositiveBackgroundTick,
+            Metrics::hasTestedSelfRapidPositiveBackgroundTick
+        )
+    }
+
+    @Test
+    fun manuallyEnterPositiveUnassistedLFDTest_confirmSymptoms_cannotRememberOnsetDate_thenGoIntoIsolation_Wales() {
+        manuallyEnterPositiveTestAndGoIntoIsolation(
+            RAPID_SELF_REPORTED,
+            symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
+                didHaveSymptoms = true,
+                didRememberOnsetSymptomsDate = false
+            ),
+            requiresConfirmatoryTest = false,
+            expectedScreenState = PositiveWillBeInIsolation(),
+            country = WALES,
             Metrics::receivedPositiveSelfRapidTestResultEnteredManually,
             Metrics::isIsolatingForTestedSelfRapidPositiveBackgroundTick,
             Metrics::hasTestedSelfRapidPositiveBackgroundTick
@@ -145,6 +263,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             symptomsAndOnsetFlowConfiguration = null,
             requiresConfirmatoryTest = true,
             expectedScreenState = PositiveWillBeInIsolation(),
+            country = WALES,
             Metrics::receivedPositiveLFDTestResultEnteredManually,
             Metrics::isIsolatingForTestedLFDPositiveBackgroundTick,
             Metrics::hasTestedLFDPositiveBackgroundTick
@@ -159,6 +278,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         symptomsAndOnsetFlowConfiguration: SymptomsAndOnsetFlowConfiguration?,
         requiresConfirmatoryTest: Boolean,
         expectedScreenState: ExpectedScreenAfterPositiveTestResult,
+        country: PostCodeDistrict,
         receivedPositiveTestResultEnteredManuallyMetric: MetricsProperty,
         isIsolatingForTestedPositiveBackgroundTickMetric: MetricsProperty,
         hasTestedPositiveBackgroundTickMetric: MetricsProperty
@@ -175,7 +295,8 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             testKitType,
             requiresConfirmatoryTest = requiresConfirmatoryTest,
             symptomsAndOnsetFlowConfiguration = symptomsAndOnsetFlowConfiguration,
-            expectedScreenState = expectedScreenState
+            expectedScreenState = expectedScreenState,
+            country = country
         )
 
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan

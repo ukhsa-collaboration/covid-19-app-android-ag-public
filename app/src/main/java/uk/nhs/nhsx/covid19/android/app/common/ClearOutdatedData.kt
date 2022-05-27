@@ -6,6 +6,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogStorage
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureNotificationTokensProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.calculation.EpidemiologyEventProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.LastCompletedV2SymptomsQuestionnaireDateProvider
 import uk.nhs.nhsx.covid19.android.app.state.GetLatestConfiguration
 import java.time.Clock
 import java.time.Instant
@@ -22,6 +23,7 @@ class ClearOutdatedData @Inject constructor(
     private val exposureNotificationTokensProvider: ExposureNotificationTokensProvider,
     private val analyticsLogStorage: AnalyticsLogStorage,
     private val getLatestConfiguration: GetLatestConfiguration,
+    private val lastCompletedV2SymptomsQuestionnaireDateProvider: LastCompletedV2SymptomsQuestionnaireDateProvider,
     private val clock: Clock
 ) {
 
@@ -33,6 +35,14 @@ class ClearOutdatedData @Inject constructor(
 
             if (!lastVisitedBookTestTypeVenueDateProvider.containsBookTestTypeVenueAtRisk()) {
                 lastVisitedBookTestTypeVenueDateProvider.lastVisitedVenue = null
+            }
+
+            if (!lastCompletedV2SymptomsQuestionnaireDateProvider.containsCompletedV2SymptomsQuestionnaire()) {
+                lastCompletedV2SymptomsQuestionnaireDateProvider.lastCompletedV2SymptomsQuestionnaire = null
+            }
+
+            if (!lastCompletedV2SymptomsQuestionnaireDateProvider.containsCompletedV2SymptomsQuestionnaireAndTryToStayAtHomeResult()) {
+                lastCompletedV2SymptomsQuestionnaireDateProvider.lastCompletedV2SymptomsQuestionnaireAndStayAtHome = null
             }
 
             clearOutdatedKeySharingInfo()

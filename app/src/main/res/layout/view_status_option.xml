@@ -31,12 +31,27 @@
         android:layout_weight="1"
         tools:text="Status option text" />
 
+    <TextView
+        android:id="@+id/statusOptionNewLabel"
+        style="@style/Body1.Bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/new_label_background"
+        android:contentDescription="@string/home_new_label_accessibility_text"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="2dp"
+        android:text="@string/home_new_label"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
     <ImageView
         android:id="@+id/statusOptionLinkIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@null"
         android:layout_marginEnd="16dp"
+        android:contentDescription="@null"
         android:src="@drawable/ic_chevron_right" />
-
 </merge>

@@ -13,7 +13,6 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.ExposureCircuitBreakerInfo
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.OrderTest
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.SelfDiagnosis
-import uk.nhs.nhsx.covid19.android.app.questionnaire.NewGuidanceForSymptomaticCasesEnglandRobot
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.MANUAL_CONFIGURATION_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.MockVirologyTestingApi.Companion.NEGATIVE_PCR_TOKEN
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_RESULT
@@ -50,7 +49,6 @@ class FlowTests : EspressoTest(), LocalAuthoritySetupHelper {
     private val orderTest = OrderTest(this)
     private val selfDiagnosis = SelfDiagnosis(this)
     private val testingHubRobot = TestingHubRobot()
-    private val guidanceForSymptomaticCasesEnglandRobot = NewGuidanceForSymptomaticCasesEnglandRobot()
     private val isolationHelper = IsolationHelper(testAppContext.clock)
 
     @Before
@@ -72,7 +70,7 @@ class FlowTests : EspressoTest(), LocalAuthoritySetupHelper {
         val walesConfiguration = IsolationConfiguration(
             contactCase = 11,
             indexCaseSinceSelfDiagnosisOnset = 6,
-            indexCaseSinceSelfDiagnosisUnknownOnset = 4,
+            indexCaseSinceSelfDiagnosisUnknownOnset = 6,
             maxIsolation = 16,
             indexCaseSinceTestResultEndDate = 6,
             pendingTasksRetentionPeriod = 14,
@@ -108,54 +106,6 @@ class FlowTests : EspressoTest(), LocalAuthoritySetupHelper {
         await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
             !testAppContext.getCurrentLogicalState().isActiveIsolation(testAppContext.clock)
         }
-    }
-
-    @Test
-    fun startDefault_selfDiagnose_hasNegativeLFDTest_notInIsolation_forEngland() {
-        givenLocalAuthorityIsInEngland()
-        startTestActivity<StatusActivity>()
-
-        statusRobot.checkActivityIsDisplayed()
-
-        assertEquals(isolationHelper.neverInIsolation(), testAppContext.getCurrentState())
-
-        selfDiagnosis.selfDiagnosePositive(receiveResultImmediately = true)
-
-        waitFor { guidanceForSymptomaticCasesEnglandRobot.checkActivityIsDisplayed() }
-
-        guidanceForSymptomaticCasesEnglandRobot.clickPrimaryActionButton()
-
-        waitFor { statusRobot.checkIsolationViewIsDisplayed() }
-
-        statusRobot.checkIsolationViewHasCorrectContentDescriptionForEngland((testAppContext.getCurrentLogicalState() as PossiblyIsolating).expiryDate.minusDays(1))
-
-        statusRobot.clickLinkTestResult()
-
-        linkTestResultRobot.checkActivityIsDisplayed()
-
-        linkTestResultRobot.enterCtaToken(MANUAL_CONFIGURATION_TOKEN)
-
-        linkTestResultRobot.clickContinue()
-
-        waitFor { testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation() }
-
-        testResultRobot.clickGoodNewsActionButton()
-
-        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
-            !testAppContext.getCurrentLogicalState().isActiveIsolation(testAppContext.clock)
-        }
-    }
-
-    @Test
-    fun startDefault_selfDiagnose_receiveNegative_notInIsolation_forEngland() {
-        givenLocalAuthorityIsInEngland()
-        startTestActivity<StatusActivity>()
-
-        statusRobot.checkActivityIsDisplayed()
-
-        assertEquals(isolationHelper.neverInIsolation(), testAppContext.getCurrentState())
-
-        selfDiagnosis.selfDiagnosePositive(receiveResultImmediately = true)
     }
 
     @Test

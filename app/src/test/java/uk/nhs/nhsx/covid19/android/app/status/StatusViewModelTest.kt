@@ -126,6 +126,7 @@ class StatusViewModelTest {
     private val areSystemLevelAnimationsEnabled = mockk<AreSystemLevelAnimationsEnabled>(relaxUnitFun = true)
     private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider = mockk<LocalAuthorityPostCodeProvider>()
     private val shouldShowBluetoothSplashScreen = mockk<ShouldShowBluetoothSplashScreen>()
+    private val newFunctionalityLabelProvider = mockk<NewFunctionalityLabelProvider>()
 
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-22T10:00:00Z"), ZoneOffset.UTC)
     private val isolationHelper = IsolationLogicalHelper(fixedClock)
@@ -208,7 +209,8 @@ class StatusViewModelTest {
         showCovidStatsButton = true,
         country = ENGLAND,
         showIsolationHubButton = false,
-        showCovidGuidanceHubButton = true
+        showCovidGuidanceHubButton = true,
+        showReportSymptomsNewLabel = false
     )
 
     @Before
@@ -230,6 +232,7 @@ class StatusViewModelTest {
         coEvery { getLocalMessageFromStorage() } returns null
         every { bluetoothAvailabilityStateProvider.getState(any()) } returns DISABLED
         coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
+        every { newFunctionalityLabelProvider.hasSeenReportSymptomsNewLabel } returns true
         mockkObject(RuntimeBehavior)
         every { RuntimeBehavior.isFeatureEnabled(LOCAL_COVID_STATS) } returns true
         setupTestSubject()
@@ -736,6 +739,45 @@ class StatusViewModelTest {
     }
 
     @Test
+    fun `when local authority provides England and user has not seen new report symptoms label update view state for it`() {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
+        every { newFunctionalityLabelProvider.hasSeenReportSymptomsNewLabel } returns false
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(showReportSymptomsNewLabel = true)) }
+    }
+
+    @Test
+    fun `when local authority provides England and user has seen new report symptoms label update view state for it`() {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
+        every { newFunctionalityLabelProvider.hasSeenReportSymptomsNewLabel } returns true
+
+        testSubject.updateViewState()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(showReportSymptomsNewLabel = false)) }
+    }
+
+    @Test
+    fun `when local authority provides Wales view state should not show new report symptoms label`() {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+        every { newFunctionalityLabelProvider.hasSeenReportSymptomsNewLabel } returns false
+
+        testSubject.updateViewState()
+
+        verify {
+            viewStateObserver.onChanged(
+                defaultViewState.copy(
+                    country = WALES,
+                    showIsolationHubButton = false,
+                    showCovidGuidanceHubButton = true,
+                    showReportSymptomsNewLabel = false
+                )
+            )
+        }
+    }
+
+    @Test
     fun `when local authority provides England view state should be updated for it`() {
         coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
 
@@ -863,7 +905,8 @@ class StatusViewModelTest {
             exposureNotificationPermissionHelperFactory,
             shouldShowBluetoothSplashScreen,
             statusActivityAction,
-            localAuthorityPostCodeProvider
+            localAuthorityPostCodeProvider,
+            newFunctionalityLabelProvider
         )
 
         testSubject.viewState.observeForever(viewStateObserver)

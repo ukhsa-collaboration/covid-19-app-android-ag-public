@@ -9,8 +9,10 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isEnabled
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers
+import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.testhelpers.NestedScrollViewScrollToAction
@@ -67,6 +69,11 @@ class StatusRobot : HasActivity {
     fun checkStaticImageIsNotDisplayed(isIsolating: Boolean) {
         val staticImageResId = if (isIsolating) R.id.imgCircleIsolationStatic else R.id.imgCircleStatic
         onView(withId(staticImageResId)).check(matches(not(isDisplayed())))
+    }
+
+    fun checkNewLabelIsDisplayed(isDisplayed: Boolean) {
+        onView(allOf(withId(R.id.statusOptionNewLabel), withParent(withId(R.id.optionReportSymptoms))))
+            .check(matches(if (isDisplayed) isDisplayed() else not(isDisplayed())))
     }
 
     fun clickReportSymptoms() {
@@ -265,9 +272,9 @@ class StatusRobot : HasActivity {
         onView(withId(R.id.isolationView))
             .check(matches(withContentDescription(context.resources.getQuantityString(
                 R.plurals.isolation_view_accessibility_description,
-                4,
+                6,
                 lastDayOfIsolation.uiFormat(context),
-                "4"
+                "6"
             ))))
     }
 

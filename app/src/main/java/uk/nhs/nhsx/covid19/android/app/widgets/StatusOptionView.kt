@@ -12,8 +12,10 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.databinding.ViewStatusOptionBinding
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.dpToPx
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.getString
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.gone
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpButtonType
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpLinkTypeWithBrowserWarning
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
 
 class StatusOptionView @JvmOverloads constructor(
     context: Context,
@@ -27,6 +29,20 @@ class StatusOptionView @JvmOverloads constructor(
         set(value) {
             field = value
             binding.statusOptionText.text = value
+        }
+
+    var shouldDisplayNewFunctionalityLabel: Boolean = false
+        set(value) {
+            field = value
+            var contentDescriptionText = ""
+            if (value) {
+                binding.statusOptionNewLabel.visible()
+                contentDescriptionText = "${binding.statusOptionText.text} ${binding.statusOptionNewLabel.contentDescription}"
+            } else {
+                binding.statusOptionNewLabel.gone()
+                contentDescriptionText = binding.statusOptionText.text.toString()
+            }
+            setUpButtonType(contentDescriptionText)
         }
 
     private var attrIsExternalLink: Boolean = false

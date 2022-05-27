@@ -251,9 +251,22 @@
         <activity
             android:name=".localstats.FetchLocalDataProgressActivity"
             android:label="@string/local_stats_title" />
-
-        <activity android:name=".questionnaire.NewGuidanceForSymptomaticCaseEnglandActivity"
+        <activity
+            android:name=".questionnaire.NewGuidanceForSymptomaticCaseEnglandActivity"
             android:label="@string/symptomatic_contact_guidance_title_england"/>
+        <activity
+            android:name=".questionnaire.symptomchecker.YourSymptomsActivity"
+            android:label="@string/your_symptoms_title" />
+        <activity
+            android:name=".questionnaire.symptomchecker.HowDoYouFeelActivity"
+            android:label="@string/how_you_feel_header" />
+        <activity
+            android:name=".questionnaire.symptomchecker.SymptomCheckerAdviceActivity"
+            android:label="@string/empty_accessibility_announcement" />
+
+        <activity
+            android:name=".questionnaire.symptomchecker.CheckYourAnswersActivity"
+            android:label="@string/check_answers_heading" />
 
         <!-- Receivers -->
         <receiver

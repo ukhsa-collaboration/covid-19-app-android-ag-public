@@ -26,6 +26,7 @@ import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateStorage
 import uk.nhs.nhsx.covid19.android.app.payment.IsolationPaymentTokenStateProvider
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.DownloadAndProcessRiskyVenues
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.LastVisitedBookTestTypeVenueDateProvider
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.LastCompletedV2SymptomsQuestionnaireDateProvider
 import uk.nhs.nhsx.covid19.android.app.settings.animations.AnimationsProvider
 import uk.nhs.nhsx.covid19.android.app.state.DisplayStateExpirationNotification
 import uk.nhs.nhsx.covid19.android.app.state.IsolationConfigurationProvider
@@ -98,6 +99,9 @@ interface TestAppComponent : ApplicationComponent {
 
     @Singleton
     fun getLastVisitedBookTestTypeVenueDateProvider(): LastVisitedBookTestTypeVenueDateProvider
+
+    @Singleton
+    fun getLastCompletedV2SymptomsQuestionnaireDateProvider(): LastCompletedV2SymptomsQuestionnaireDateProvider
 
     @Singleton
     fun getSubmitAnalyticsAlarmController(): SubmitAnalyticsAlarmController

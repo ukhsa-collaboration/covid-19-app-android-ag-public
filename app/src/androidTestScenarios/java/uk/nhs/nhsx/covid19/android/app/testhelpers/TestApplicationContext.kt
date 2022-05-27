@@ -380,6 +380,9 @@ class TestApplicationContext {
     fun getLastVisitedBookTestTypeVenueDateProvider() =
         component.getLastVisitedBookTestTypeVenueDateProvider()
 
+    fun getLastCompletedV2SymptomsQuestionnaireDateProvider() =
+        component.getLastCompletedV2SymptomsQuestionnaireDateProvider()
+
     fun getAlarmManager() =
         component.getAlarmManager()
 

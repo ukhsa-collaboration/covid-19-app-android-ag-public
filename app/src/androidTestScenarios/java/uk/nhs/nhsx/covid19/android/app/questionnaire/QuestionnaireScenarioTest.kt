@@ -15,7 +15,6 @@ import org.junit.runners.Parameterized
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_FAIL
 import uk.nhs.nhsx.covid19.android.app.MockApiResponseType.ALWAYS_SUCCEED
 import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
-import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.di.MockApiModule
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsDidUpdateIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
@@ -65,7 +64,6 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
     private val reviewSymptomsRobot = ReviewSymptomsRobot()
     private val symptomsAdviceIsolateRobot = SymptomsAdviceIsolateRobot()
     private val newNoSymptomsRobot = NewNoSymptomsRobot()
-    private val guidanceForSymptomaticCasesEnglandRobot = NewGuidanceForSymptomaticCasesEnglandRobot()
 
     override val isolationHelper = IsolationHelper(testAppContext.clock)
 
@@ -150,153 +148,6 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
         )
 
         statusRobot.checkActivityIsDisplayed()
-    }
-
-    @Test
-    @Reported
-    fun whenNotIsolating_userSelectsPositiveSymptoms_showNewAdvice_transitionsIntoIsolation_forEngland() = reporter(
-        scenario = "Self Diagnosis England",
-        title = "Currently not in isolation - Positive symptoms",
-        description = "User is currently not in isolation, selects symptoms and is notified of coronavirus symptoms",
-        kind = FLOW
-    ) {
-        givenLocalAuthorityIsInEngland()
-        startTestActivity<StatusActivity>()
-
-        statusRobot.checkActivityIsDisplayed()
-
-        step(
-            stepName = "Home screen - Default state",
-            stepDescription = "When the user is on the Home screen they can tap 'Report symptoms'"
-        )
-
-        statusRobot.clickReportSymptoms()
-
-        questionnaireRobot.checkActivityIsDisplayed()
-
-        step(
-            stepName = "Symptom list",
-            stepDescription = "The user is presented a list of symptoms"
-        )
-
-        questionnaireRobot.selectSymptomsAtPositions(0, 1, 2)
-
-        step(
-            stepName = "Symptom selected",
-            stepDescription = "The user selects a symptom and confirms the screen"
-        )
-
-        questionnaireRobot.reviewSymptoms()
-
-        reviewSymptomsRobot.checkActivityIsDisplayed()
-
-        step(
-            stepName = "Review symptoms",
-            stepDescription = "The user is presented a list of the selected symptoms for review"
-        )
-
-        reviewSymptomsRobot.selectCannotRememberDate()
-
-        step(
-            stepName = "No Date",
-            stepDescription = "The user can specify an onset date or tick that they don't remember the onset date, before confirming"
-        )
-
-        reviewSymptomsRobot.confirmSelection()
-
-        symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
-
-        symptomsAdviceIsolateRobot.checkViewState(
-            NoIndexCaseThenIsolationDueToSelfAssessment(testAppContext.getRemainingDaysInIsolation()), ENGLAND
-        )
-
-        step(
-            stepName = "Positive Symptoms screen",
-            stepDescription = "We suggest that user may have covid19 and advised to stay at home. They choose to click continue"
-        )
-
-        symptomsAdviceIsolateRobot.clickBottomActionButton()
-        waitFor { guidanceForSymptomaticCasesEnglandRobot.checkActivityIsDisplayed() }
-
-        step(
-            stepName = "new guidance screen for England",
-            stepDescription = "Display new guidance to user inform of bullet points. They choose to click back button"
-        )
-
-        guidanceForSymptomaticCasesEnglandRobot.clickPrimaryActionButton()
-
-        step(
-            stepName = "Home screen - Isolation state",
-            stepDescription = "The user is presented with the home screen in isolation state"
-        )
-
-        statusRobot.checkActivityIsDisplayed()
-    }
-
-    @Test
-    @Reported
-    fun whenNotIsolating_userSelectsPositiveSymptoms_transitionsIntoIsolation_forEngland() = reporter(
-        scenario = "Self Diagnosis England",
-        title = "Currently not in isolation - Positive symptoms",
-        description = "User is currently not in isolation, selects symptoms and is notified of coronavirus symptoms",
-        kind = FLOW
-    ) {
-        givenLocalAuthorityIsInEngland()
-        startTestActivity<StatusActivity>()
-
-        statusRobot.checkActivityIsDisplayed()
-
-        step(
-            stepName = "Home screen - Default state",
-            stepDescription = "When the user is on the Home screen they can tap 'Report symptoms'"
-        )
-
-        statusRobot.clickReportSymptoms()
-
-        questionnaireRobot.checkActivityIsDisplayed()
-
-        step(
-            stepName = "Symptom list",
-            stepDescription = "The user is presented a list of symptoms"
-        )
-
-        questionnaireRobot.selectSymptomsAtPositions(0, 1, 2)
-
-        step(
-            stepName = "Symptom selected",
-            stepDescription = "The user selects a symptom and confirms the screen"
-        )
-
-        questionnaireRobot.reviewSymptoms()
-
-        reviewSymptomsRobot.checkActivityIsDisplayed()
-
-        step(
-            stepName = "Review symptoms",
-            stepDescription = "The user is presented a list of the selected symptoms for review"
-        )
-
-        reviewSymptomsRobot.selectCannotRememberDate()
-
-        step(
-            stepName = "No Date",
-            stepDescription = "The user can specify an onset date or tick that they don't remember the onset date, before confirming"
-        )
-
-        reviewSymptomsRobot.confirmSelection()
-
-        symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
-
-        symptomsAdviceIsolateRobot.checkViewState(
-            NoIndexCaseThenIsolationDueToSelfAssessment(testAppContext.getRemainingDaysInIsolation()), ENGLAND
-        )
-
-        step(
-            stepName = "Positive Symptoms screen",
-            stepDescription = "We suggest that user may have covid19 and advised to stay at home. They choose to click continue"
-        )
-
-        symptomsAdviceIsolateRobot.clickBottomActionButton()
     }
 
     @Test

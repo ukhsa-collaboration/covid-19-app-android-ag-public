@@ -24,11 +24,13 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoIsolationSymptomAd
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.QuestionnaireIsolationHandler
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Cardinal
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.LoadQuestionnaire
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.AdviceScreen
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.NewNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.ReviewSymptoms
+import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NonCardinal
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireState
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireViewModel
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
@@ -72,6 +74,8 @@ class QuestionnaireViewModelTest {
         coEvery { loadQuestionnaire.invoke() } returns Success(
             QuestionnaireResponse(
                 listOf(),
+                Cardinal(title = TranslatableString(mapOf())),
+                NonCardinal(title = TranslatableString(mapOf()), description = TranslatableString(mapOf())),
                 riskThreshold = 100.0f,
                 symptomsOnsetWindowDays = 14
             )
@@ -100,6 +104,8 @@ class QuestionnaireViewModelTest {
         coEvery { loadQuestionnaire.invoke() } returns Success(
             QuestionnaireResponse(
                 listOf(),
+                Cardinal(title = TranslatableString(mapOf())),
+                NonCardinal(title = TranslatableString(mapOf()), description = TranslatableString(mapOf())),
                 riskThreshold = 100.0f,
                 symptomsOnsetWindowDays = 14
             )

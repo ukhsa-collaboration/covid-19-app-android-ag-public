@@ -77,6 +77,8 @@ enum class RegularAnalyticsEventType(
     SELECTED_HAS_LFD_TEST_M2_JOURNEY({ it.selectedHasLFDTestM2Journey = it.selectedHasLFDTestM2Journey?.inc() }),
     OPTED_OUT_FOR_CONTACT_ISOLATION({ it.optedOutForContactIsolation++ }),
     DID_ACCESS_SELF_ISOLATION_NOTE_LINK({ it.didAccessSelfIsolationNoteLink = it.didAccessSelfIsolationNoteLink?.inc() }),
+    COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE({ it.completedV2SymptomsQuestionnaire++ }),
+    COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_AND_STAY_AT_HOME({ it.completedV2SymptomsQuestionnaireAndStayAtHome++ })
 }
 
 @JsonClass(generateAdapter = true)
@@ -102,7 +104,9 @@ data class BackgroundTaskTicks(
     var optedOutForContactIsolationBackgroundTick: Boolean = false,
     var appIsUsableBackgroundTick: Boolean = false,
     var appIsUsableBluetoothOffBackgroundTick: Boolean = false,
-    var appIsContactTraceableBackgroundTick: Boolean = false
+    var appIsContactTraceableBackgroundTick: Boolean = false,
+    var hasCompletedV2SymptomsQuestionnaireBackgroundTick: Boolean = false,
+    var hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick: Boolean = false,
 ) {
     fun applyToMetrics(metrics: Metrics) {
         metrics.totalBackgroundTasks++
@@ -131,5 +135,7 @@ data class BackgroundTaskTicks(
         metrics.appIsUsableBackgroundTick += appIsUsableBackgroundTick.toInt()
         metrics.appIsUsableBluetoothOffBackgroundTick += appIsUsableBluetoothOffBackgroundTick.toInt()
         metrics.appIsContactTraceableBackgroundTick += appIsContactTraceableBackgroundTick.toInt()
+        metrics.hasCompletedV2SymptomsQuestionnaireBackgroundTick += hasCompletedV2SymptomsQuestionnaireBackgroundTick.toInt()
+        metrics.hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick += hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick.toInt()
     }
 }

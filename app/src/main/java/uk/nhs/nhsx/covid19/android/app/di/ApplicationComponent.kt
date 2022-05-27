@@ -61,6 +61,10 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VisitedVenuesStorage
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.CheckYourAnswersActivity
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.HowDoYouFeelActivity
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.YourSymptomsActivity
+import uk.nhs.nhsx.covid19.android.app.questionnaire.symptomchecker.SymptomCheckerAdviceActivity
 import uk.nhs.nhsx.covid19.android.app.receiver.AlarmRestarter
 import uk.nhs.nhsx.covid19.android.app.receiver.ExpirationCheckReceiver
 import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationReminderReceiver
@@ -186,6 +190,10 @@ interface ApplicationComponent {
     fun inject(riskyContactIsolationOptOutActivity: RiskyContactIsolationOptOutActivity)
     fun inject(guidanceHubActivity: GuidanceHubActivity)
     fun inject(guidanceHubWalesActivity: GuidanceHubWalesActivity)
+    fun inject(howDoYouFeelActivity: HowDoYouFeelActivity)
+    fun inject(checkYourAnswersActivity: CheckYourAnswersActivity)
+    fun inject(symptomCheckerAdviceActivity: SymptomCheckerAdviceActivity)
+    fun inject(yourSymptomsActivity: YourSymptomsActivity)
 
     fun inject(testResultViewModel: BaseTestResultViewModel)
 

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/yourSymptomsContainer"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/primaryToolbar"
+        layout="@layout/view_toolbar_primary" />
+
+    <LinearLayout
+        android:id="@+id/yourSymptomsLoadingContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        tools:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="?attr/colorPrimary" />
+
+        <TextView
+            android:id="@+id/loadingText"
+            style="@style/ActionText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/loading" />
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/yourSymptomsErrorStateContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <ImageView
+            style="@style/GoneInLandscape"
+            android:id="@+id/imageError"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:contentDescription="@null"
+            android:src="@drawable/image_error"
+            android:layout_marginTop="120dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/textErrorTitle"
+            style="@style/Title1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="56dp"
+            android:gravity="center"
+            android:text="@string/something_went_wrong"
+            app:layout_constraintTop_toBottomOf="@id/imageError" />
+
+        <TextView
+            android:id="@+id/textErrorMessage"
+            style="@style/Body1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/questionnaire_error_description"
+            app:layout_constraintTop_toBottomOf="@id/textErrorTitle" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonTryAgain"
+            style="@style/PrimaryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/test_ordering_failure_action"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textErrorMessage" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:id="@+id/yourSymptomsScrollViewContainer"
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal_reduced"
+            android:paddingBottom="@dimen/vertical_margin_large">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ErrorView
+                android:id="@+id/yourSymptomsErrorView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                android:visibility="gone"
+                app:error_title="@string/your_symptoms_error_title" />
+
+            <TextView
+                android:id="@+id/yourSymptomsStepOf"
+                style="@style/HeaderSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:textAllCaps="false"/>
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                android:id="@+id/textNonCardinalSymptomsTitle"
+                style="@style/Title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                android:layout_marginTop="@dimen/vertical_margin" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.BulletedParagraphsContainer
+                android:id="@+id/nonCardinalBulletParagraph"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:layout_marginStart="@dimen/margin_horizontal_list_item"
+                android:layout_marginEnd="@dimen/margin_horizontal_reduced_relative"
+                app:paddingBetweenItems= "@dimen/paragraph_container_padding_between_items_small"/>
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup
+                android:id="@+id/nonCardinalBinaryRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/vertical_margin"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                app:option1ContentDescription="@string/your_symptoms_first_yes_option_accessibility_text"
+                app:option1Text="@string/your_symptoms_first_yes_option"
+                app:option2ContentDescription="@string/your_symptoms_first_no_option_accessibility_text"
+                app:option2Text="@string/your_symptoms_first_no_option" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                android:id="@+id/textCardinalSymptomTitle"
+                style="@style/Title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                android:layout_marginTop="@dimen/vertical_margin" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup
+                android:id="@+id/cardinalBinaryRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/vertical_margin"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                app:option1ContentDescription="@string/your_symptoms_second_yes_option_accessibility_text"
+                app:option1Text="@string/your_symptoms_second_yes_option"
+                app:option2ContentDescription="@string/your_symptoms_second_no_option_accessibility_text"
+                app:option2Text="@string/your_symptoms_second_no_option" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/yourSymptomsContinueButton"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced_relative"
+                android:layout_gravity="bottom|center_horizontal"
+                android:text="@string/continue_button" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

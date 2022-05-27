@@ -61,15 +61,28 @@ abstract class BaseParagraphsContainer @JvmOverloads constructor(
         }
     }
 
+    private fun addAllBoldParagraphs(vararg paragraphs: String) {
+        removeAllViews()
+        for ((index, paragraph) in paragraphs.withIndex()) {
+            addParagraph(index, paragraph, boldTextStyle = true)
+        }
+    }
+
     fun setRawText(rawText: String, separator: String = "\n\n") =
         addAllParagraphs(*rawText.split(separator).toTypedArray())
 
-    private fun addParagraph(index: Int, text: String): BaseParagraphsContainer {
+    fun setRawBoldText(rawText: String, separator: String = "\n\n") =
+        addAllBoldParagraphs(*rawText.split(separator).toTypedArray())
+
+    private fun addParagraph(index: Int, text: String, boldTextStyle: Boolean = false): BaseParagraphsContainer {
         val view = configureParagraphLayout(index, text)
         val paragraphText = view.findViewById<TextView>(R.id.paragraphText)
         paragraphText.text = text
         addView(view)
 
+        if (boldTextStyle) {
+            paragraphText.setTextAppearance(R.style.Body1_Bold)
+        }
         if (textColor != 0) {
             paragraphText.setTextColor(textColor)
         }
